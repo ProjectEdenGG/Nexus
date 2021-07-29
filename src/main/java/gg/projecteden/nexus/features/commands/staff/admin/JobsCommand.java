@@ -14,8 +14,6 @@ import gg.projecteden.nexus.models.scheduledjobs.ScheduledJobsService;
 import gg.projecteden.nexus.models.scheduledjobs.common.AbstractJob;
 import gg.projecteden.nexus.models.scheduledjobs.common.AbstractJob.JobStatus;
 import gg.projecteden.nexus.models.scheduledjobs.common.RetryIfInterrupted;
-import gg.projecteden.nexus.models.scheduledjobs.jobs.Test2Job;
-import gg.projecteden.nexus.models.scheduledjobs.jobs.TestJob;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.Time;
@@ -31,6 +29,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static gg.projecteden.nexus.models.scheduledjobs.common.AbstractJob.getNextExecutionTime;
 
@@ -118,12 +117,12 @@ public class JobsCommand extends CustomCommand {
 
 		Exception lastException = null;
 
-		Function<Class<?>[], String> parameterFormatter = parameters -> Arrays.stream(parameters)
+		Function<Stream<Class<?>>, String> parameterFormatter = parameters -> parameters
 			.map(parameter -> parameter.getSimpleName() + ".class")
 			.collect(Collectors.joining("&f, &e"));
 
 		Function<Constructor<?>, String> constructorFormatter = constructor -> " &cnew " + job.getSimpleName() + "(&e"
-			+ parameterFormatter.apply(Arrays.stream(constructor.getParameters()).map(Parameter::getType).toArray(Class<?>[]::new)) + "&c);";
+			+ parameterFormatter.apply(Arrays.stream(constructor.getParameters()).map(Parameter::getType)) + "&c);";
 
 		constructorLoop: for (Constructor<AbstractJob> constructor : constructors) {
 			final int parameterCount = constructor.getParameterCount();
@@ -133,13 +132,9 @@ public class JobsCommand extends CustomCommand {
 					continue;
 
 				Object[] parameters = new Object[parameterCount];
-				int i = 0;
-				for (String arg : args) {
+				for (int i = 0; i < args.length; i++) {
 					try {
-						final Parameter parameter = constructor.getParameters()[i];
-						final Class<?> type = parameter.getType();
-						parameters[i] = convert(arg, null, type, parameter, parameter.getName(), event, true);
-						++i;
+						parameters[i] = convert(args[i], null, constructor.getParameters()[i], event, true);
 					} catch (Exception ex) {
 						lastException = ex;
 						continue constructorLoop;
@@ -154,7 +149,7 @@ public class JobsCommand extends CustomCommand {
 				} catch (Exception ex) {
 					if (ex instanceof IllegalArgumentException && ex.getMessage().contains("argument type mismatch"))
 						throw new InvalidInputException(constructorFormatter.apply(constructor) + " does not match provided ("
-							+ parameterFormatter.apply(Arrays.stream(parameters).map(Object::getClass).toArray(Class<?>[]::new)) + ")");
+							+ parameterFormatter.apply(Arrays.stream(parameters).map(Object::getClass)) + ")");
 					rethrow(ex);
 				}
 			}
@@ -183,18 +178,6 @@ public class JobsCommand extends CustomCommand {
 		}
 	}
 
-	@Path("test <seconds> <message...>")
-	void test(int seconds, String message) {
-		new TestJob(uuid(), message).schedule(seconds);
-		send(PREFIX + "Scheduled test job");
-	}
-
-	@Path("test2 <seconds> <wait> <message...>")
-	void test2(int seconds, int wait, String message) {
-		new Test2Job(uuid(), wait, message).schedule(seconds);
-		send(PREFIX + "Scheduled test job");
-	}
-
 	@ConverterFor(JobType.class)
 	JobType convertToJobClass(String value) {
 		return AbstractJob.getSubclasses().stream()
@@ -206,7 +189,10 @@ public class JobsCommand extends CustomCommand {
 
 	@TabCompleterFor(JobType.class)
 	List<String> tabCompleteJobClass(String filter) {
-		return AbstractJob.getSubclasses().stream().map(Class::getSimpleName).toList();
+		return AbstractJob.getSubclasses().stream()
+			.map(Class::getSimpleName)
+			.filter(className -> className.toLowerCase().startsWith(filter.toLowerCase()))
+			.toList();
 	}
 
 }

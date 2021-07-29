@@ -272,7 +272,12 @@ public abstract class ICustomCommand {
 	);
 
 	@SneakyThrows
-	public Object convert(String value, Object context, Class<?> type, Parameter parameter, String name, CommandEvent event, boolean required) {
+	public Object convert(String value, Object context, Parameter parameter, CommandEvent event, boolean required) {
+		return convert(value, context, parameter.getType(), parameter, parameter.getName(), event, required);
+	}
+
+	@SneakyThrows
+	private Object convert(String value, Object context, Class<?> type, Parameter parameter, String name, CommandEvent event, boolean required) {
 		Arg annotation = parameter.getDeclaredAnnotation(Arg.class);
 
 		double argMinDefault = (Double) Arg.class.getDeclaredMethod("min").getDefaultValue();
