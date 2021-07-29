@@ -91,6 +91,8 @@ public class BearFair21 implements Listener {
 		addTokenMax(BF21PointSource.SEEKER, 25);
 		addTokenMax(BF21PointSource.REFLECTION, 25);
 		addTokenMax(BF21PointSource.TRADER, 50);
+
+		startup();
 	}
 
 	public static World getWorld() {
@@ -275,7 +277,6 @@ public class BearFair21 implements Listener {
 	}
 
 	public static void startup() {
-		Quests.startup();
 		Rides.startup();
 	}
 

@@ -28,6 +28,7 @@ public class Events extends Feature {
 	@Override
 	public void onStop() {
 		MiniGolf.shutdown();
+		BearFair21.shutdown();
 	}
 
 }

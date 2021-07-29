@@ -26,7 +26,7 @@ public class ArmorStandStalker {
 	public static final List<Stalker> stalkers = new ArrayList<>() {{
 		switch (Nexus.getEnv()) {
 			case TEST ->
-				add(Stalker.builder().uuid("c590d410-2604-48bb-aa3b-dd78419bf672").world("world").radius(25).percentage(1.0).build());
+				add(Stalker.builder().uuid("c590d410-2604-48bb-aa3b-dd78419bf672").world("world").radius(25).percentage(.1).build());
 			case PROD -> {
 				// Spawn - Wakka Crate
 				add(Stalker.builder().uuid("ab374814-dbda-4d83-a796-87c8037ee7d2").world("survival").build());

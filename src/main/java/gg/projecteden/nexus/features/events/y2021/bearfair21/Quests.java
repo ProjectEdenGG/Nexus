@@ -94,9 +94,7 @@ public class Quests implements Listener {
 		new TreasureChests();
 		//
 		nextStepNPCTask();
-	}
 
-	public static void startup() {
 		Collector.startup();
 		ClientsideContentManager.startup();
 		PugmasIsland.startup();

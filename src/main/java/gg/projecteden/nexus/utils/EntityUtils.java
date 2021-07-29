@@ -79,16 +79,16 @@ public class EntityUtils {
 		if (percent == null)
 			standLocation.setDirection(playerLocation.subtract(standLocation.toVector()));
 		else {
-//			Nexus.log("Old Dir: " + standLocation.getDirection());
+//			Nexus.debug("Old Dir: " + standLocation.toVector());
 
 			Vector diff = playerLocation.subtract(standLocation.toVector());
-//			Nexus.log("diff: " + diff);
+//			Nexus.debug("diff: " + diff);
 
 			Vector percentage = diff.multiply(percent);
-//			Nexus.log(percent + "% = " + percentage);
+//			Nexus.debug(percent + "% = " + percentage);
 
 			standLocation.setDirection(percentage);
-//			Nexus.log("New Dir: " + standLocation.getDirection());
+//			Nexus.debug("New Dir: " + standLocation.getDirection());
 		}
 
 		double yaw = standLocation.getYaw() - standYaw;

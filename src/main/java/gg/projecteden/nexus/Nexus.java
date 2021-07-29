@@ -5,7 +5,6 @@ import com.comphenix.protocol.ProtocolManager;
 import com.onarandombox.MultiverseCore.MultiverseCore;
 import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.discord.Discord;
-import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
 import gg.projecteden.nexus.features.listeners.TemporaryListener;
 import gg.projecteden.nexus.features.menus.SignMenuFactory;
 import gg.projecteden.nexus.framework.commands.Commands;
@@ -35,7 +34,6 @@ import net.luckperms.api.LuckPerms;
 import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -63,7 +61,6 @@ import java.util.Locale;
 
 import static gg.projecteden.utils.TimeUtils.shortDateTimeFormat;
 import static gg.projecteden.utils.TimeUtils.shortTimeFormat;
-import static java.util.stream.Collectors.joining;
 import static org.reflections.ReflectionUtils.getMethods;
 import static org.reflections.ReflectionUtils.withAnnotation;
 
@@ -234,12 +231,9 @@ public class Nexus extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		Locale.setDefault(Locale.US);
-		PlayerUtils.getOnlinePlayers().forEach(Name::of); // cache online usernames
 
 		new Timer("Enable", () -> {
-			String loadedWorlds = Bukkit.getWorlds().stream().map(World::getName).collect(joining(", "));
-//			Nexus.log("Loaded worlds: " + loadedWorlds);
-
+			new Timer(" Cache Usernames", () -> PlayerUtils.getOnlinePlayers().forEach(Name::of));
 			new Timer(" Config", this::setupConfig);
 			new Timer(" Databases", this::databases);
 			new Timer(" Hooks", this::hooks);
@@ -252,7 +246,6 @@ public class Nexus extends JavaPlugin {
 				commands = new Commands(this, "gg.projecteden.nexus.features");
 				commands.registerAll();
 			});
-			new Timer(" BearFair21 ", BearFair21::startup);
 		});
 	}
 
@@ -263,7 +256,6 @@ public class Nexus extends JavaPlugin {
 		try { PlayerUtils.runCommandAsConsole("save-all");				} catch (Throwable ex) { ex.printStackTrace(); }
 		try { cron.stop();												} catch (Throwable ex) { ex.printStackTrace(); }
 		try { protocolManager.removePacketListeners(this);				} catch (Throwable ex) { ex.printStackTrace(); }
-		try { BearFair21.shutdown(); 										} catch (Throwable ex) { ex.printStackTrace(); }
 		try { commands.unregisterAll();									} catch (Throwable ex) { ex.printStackTrace(); }
 		try { features.unregisterExcept(Discord.class, Chat.class);		} catch (Throwable ex) { ex.printStackTrace(); }
 		try { features.unregister(Discord.class, Chat.class);			} catch (Throwable ex) { ex.printStackTrace(); }
