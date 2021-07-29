@@ -57,6 +57,7 @@ import static gg.projecteden.utils.TimeUtils.shortDateFormat;
 public class Justice extends Feature implements Listener {
 	public static final String PREFIX = StringUtils.getPrefix("Justice");
 	public static final String DISCORD_PREFIX = StringUtils.getDiscordPrefix("Justice");
+	public static final String URL = "https://justice." + Nexus.DOMAIN;
 
 	private void broadcast(Punishment punishment, String message) {
 		broadcast(historyClick(punishment, new JsonBuilder(message)));

@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.economy.commands;
 
+import gg.projecteden.nexus.features.wiki._WikiSearchCommand.WikiType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -33,7 +34,7 @@ public class EconomyCommand extends CustomCommand {
 	void sell() {
 		line(3);
 		send("&3There are a few ways you can trade with other players:");
-		send(json("&3[+] &eShops").url("https://wiki.projecteden.gg/wiki/Shops").hover("&3Click to open the wiki section on Shops."));
+		send(json("&3[+] &eShops").url(WikiType.SERVER.getBasePath() + "Shops").hover("&3Click to open the wiki section on Shops."));
 		send("&3[+] &eSimply ask in chat!");
 		line();
 		send(json("&3 « &eClick here to return to the economy menu.").command("/economy"));
@@ -61,7 +62,7 @@ public class EconomyCommand extends CustomCommand {
 		send(json("&3[+] &eSelling items at the &c/market").suggest("/market"));
 		send(json("&3[+] &eSelling items at the &c/market &3in the &eresource world").hover("&3Non auto-farmable resources sell for more in this world").suggest("/warp resource"));
 		send(json("&3[+] &eSelling items to other players").command("/economy selling").hover("&3Click for a few tips on how to sell to other players"));
-		send(json("&3[+] &eKilling mobs").url("https://wiki.projecteden.gg/wiki/Main_Page#Mobs").hover("&3Click to open the wiki section on mobs."));
+		send(json("&3[+] &eKilling mobs").url(WikiType.SERVER.getBasePath() + "Main_Page#Mobs").hover("&3Click to open the wiki section on mobs."));
 		send("&3[+] &eWorking for other players");
 		send(json("&3[+] &eVoting and getting &2&lTop Voter").command("/vote"));
 		send(json("&3[+] &eWinning Events").hover("&3Make sure to check Discord's &e#announcements &3channel and the home page for upcoming events!"));

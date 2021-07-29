@@ -4,6 +4,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.crates.models.CrateType;
 import gg.projecteden.nexus.features.discord.DiscordId.User;
+import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
@@ -187,7 +188,7 @@ public class EndOfMonth {
 
 			msg += System.lineSeparator();
 			msg += System.lineSeparator();
-			msg += "**<https://projecteden.gg/vote>**";
+			msg += "**<" + EdenSocialMediaSite.WEBSITE.getUrl() + "/vote>**";
 			return msg;
 		}
 	}

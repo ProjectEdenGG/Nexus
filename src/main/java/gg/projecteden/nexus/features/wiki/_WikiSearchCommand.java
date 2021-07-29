@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.wiki;
 
 import com.google.gson.annotations.SerializedName;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.wiki._WikiSearchCommand.SearchResult.Query.Result;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Async;
@@ -33,7 +34,7 @@ public abstract class _WikiSearchCommand extends CustomCommand {
 	@Getter
 	@AllArgsConstructor
 	public enum WikiType {
-		SERVER("https://wiki.projecteden.gg", "/w/api.php", "/wiki/"),
+		SERVER("https://wiki." + Nexus.DOMAIN, "/w/api.php", "/wiki/"),
 		MINECRAFT("https://minecraft.fandom.com", "/api.php", "/");
 
 		private final String url, apiPath, basePath;

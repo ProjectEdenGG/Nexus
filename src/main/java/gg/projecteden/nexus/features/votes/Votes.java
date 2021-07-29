@@ -5,6 +5,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.features.discord.Discord;
+import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.features.votes.vps.VPS;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
 import gg.projecteden.nexus.framework.features.Feature;
@@ -89,7 +90,7 @@ public class Votes extends Feature implements Listener {
 	}
 
 	private static MessageEmbed createEmbed(String username) {
-		EmbedBuilder builder = new EmbedBuilder().setTitle("https://projecteden.gg/vote").setDescription("");
+		EmbedBuilder builder = new EmbedBuilder().setTitle(EdenSocialMediaSite.WEBSITE.getUrl() + "/vote").setDescription("");
 		for (VoteSite value : VoteSite.values())
 			builder.appendDescription(System.lineSeparator() + "**" + value.name().toUpperCase() + "**: [Click to vote!](" + value.getUrl(username) + ")");
 		return builder.build();

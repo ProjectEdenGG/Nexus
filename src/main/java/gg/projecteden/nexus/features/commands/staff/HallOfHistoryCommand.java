@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands.staff;
 
 import gg.projecteden.nexus.features.commands.AgeCommand.ServerAge;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
+import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -91,7 +92,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 			send("  &eAbout me: &3" + nerd.getAbout());
 		if (nerd.isMeetMeVideo()) {
 			line();
-			String url = "https://projecteden.gg/meet/" + nerd.getName().toLowerCase();
+			String url = EdenSocialMediaSite.WEBSITE.getUrl() + "/meet/" + nerd.getName().toLowerCase();
 			send(json("  &eMeet Me!&c " + url).url(url));
 		}
 	}

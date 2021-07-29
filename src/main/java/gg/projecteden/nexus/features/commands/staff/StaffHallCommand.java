@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands.staff;
 
 import com.google.common.base.Strings;
+import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
@@ -98,7 +99,7 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 			line();
 		}
 		if (nerd.isMeetMeVideo()) {
-			send(json("&eMeet me! &chttps://projecteden.gg/meet/" + nerd.getName().toLowerCase()).url("https://projecteden.gg/meet/" + nerd.getName().toLowerCase()));
+			send(json("&eMeet me! &c" + EdenSocialMediaSite.WEBSITE.getUrl() + "/meet/" + nerd.getName().toLowerCase()).url(EdenSocialMediaSite.WEBSITE.getUrl() + "/meet/" + nerd.getName().toLowerCase()));
 			line();
 		}
 	}

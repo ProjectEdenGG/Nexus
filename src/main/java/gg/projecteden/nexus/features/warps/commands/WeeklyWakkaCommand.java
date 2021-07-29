@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.warps.commands;
 
 import gg.projecteden.nexus.features.crates.models.CrateType;
+import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -38,8 +39,8 @@ public class WeeklyWakkaCommand extends _WarpCommand implements Listener {
 		add(new JsonBuilder("&3You can reset your McMMO stats when maxed with &c/mcmmo reset &3for unique gear and in-game money.").command("/mcmmo reset").hover("&eClick to run the command!"));
 		add(new JsonBuilder("&3Considering a donor perk, but not sure? You can test many of the commands in the donor test world- find it in the &c/warps &3menu!").command("/warps"));
 		add(new JsonBuilder("&3Each month the community has a group goal for voting." +
-				" You can see progress on our website (&eprojecteden.gg/vote&3). Reaching the goal means a prize for the whole community the following month!").url("https://projecteden.gg/vote").hover("&eClick to visit the site!"));
-		add(new JsonBuilder("&3Have you checked out our YouTube channel yet? We highlight our server, updates, and our dedicated staff members! &eClick here to visit!").url("https://yt.projecteden.gg").hover("&eClick to visit the site!"));
+				" You can see progress on our website (&e" + EdenSocialMediaSite.WEBSITE.getUrl() + "/vote&3). Reaching the goal means a prize for the whole community the following month!").url(EdenSocialMediaSite.WEBSITE.getUrl() + "/vote").hover("&eClick to visit the site!"));
+		add(new JsonBuilder("&3Have you checked out our YouTube channel yet? We highlight our server, updates, and our dedicated staff members! &eClick here to visit!").url(EdenSocialMediaSite.YOUTUBE.getUrl()).hover("&eClick to visit the site!"));
 		add(new JsonBuilder("&3You can buy extra plots in the creative world through the vote point store or the donor perk store. If you have more than one plot, you can merge adjacent plots to form larger plots."));
 		add(new JsonBuilder("&3Want a schematic of your creative plot? You can request one with &c/dlrequest"));
 		add(new JsonBuilder("&3Have you visited the resource world &c/market &3yet? You can earn a large profit selling farmed resources!").command("/market").hover("&eClick to run the command!"));
@@ -48,8 +49,8 @@ public class WeeklyWakkaCommand extends _WarpCommand implements Listener {
 		add(new JsonBuilder("&3We hold many events during the year! Check back frequently for holiday fun all year round."));
 		add(new JsonBuilder("&3Have you thanked a code nerd today? ;)").suggest("Thank you code nerds for your hard work! <3").hover("&eClick to thank the code nerds!"));
 		add(new JsonBuilder("&3Our server has hundreds of hours of custom code thanks to the work of our code nerds- but many of the most loved features came from community suggestions. " +
-				"Head to the Discord (&ediscord.projecteden.gg&3) if you have an idea for a feature.").url("discord.projecteden.gg").hover("&eClick to visit the site!"));
-		add(new JsonBuilder("&3If you see a bug, please report it in the #bugs-support-and-suggestions channel on our Discord server (&ediscord.projecteden.gg&3).").url("https://discord.projecteden.gg").hover("&eClick to visit the site!"));
+				"Head to the Discord (&e" + EdenSocialMediaSite.DISCORD.getUrl() + "&3) if you have an idea for a feature.").url(EdenSocialMediaSite.DISCORD.getUrl()).hover("&eClick to visit the site!"));
+		add(new JsonBuilder("&3If you see a bug, please report it in the #bugs-support-and-suggestions channel on our Discord server (&e" + EdenSocialMediaSite.DISCORD.getUrl() + "&3).").url(EdenSocialMediaSite.DISCORD.getUrl()).hover("&eClick to visit the site!"));
 		add(new JsonBuilder("&3Tired of logs and stairs placing the wrong way?  Try ")
 				.next("&c/swl ").command("/swl").hover("&eClick to run the command!").group()
 				.next("&3(sideways logs) and ").group()

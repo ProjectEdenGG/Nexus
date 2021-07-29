@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands.ranks;
 
+import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Async;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -14,7 +15,7 @@ public class BuilderCommand extends CustomCommand {
 		super(event);
 	}
 
-	String builderApp = "https://projecteden.gg/apply/builder";
+	String builderApp = EdenSocialMediaSite.WEBSITE.getUrl() + "/apply/builder";
 
 	@Path
 	void builder() {

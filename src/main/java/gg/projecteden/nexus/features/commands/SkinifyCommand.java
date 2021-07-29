@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands;
 
+import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -16,6 +17,6 @@ public class SkinifyCommand extends CustomCommand {
 
 	@Path("[player]")
 	void skin(@Arg("self") OfflinePlayer player) {
-		send(json("&eClick here &3to Project Eden-ify your skin!").url("http://projecteden.gg/skins/?uuid=" + player.getUniqueId()));
+		send(json("&eClick here &3to Project Eden-ify your skin!").url(EdenSocialMediaSite.WEBSITE.getUrl() + "/skins/?uuid=" + player.getUniqueId()));
 	}
 }

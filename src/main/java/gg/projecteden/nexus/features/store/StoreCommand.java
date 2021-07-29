@@ -49,7 +49,7 @@ import static gg.projecteden.utils.StringUtils.prettyMoney;
 
 @Aliases({"donate", "buy"})
 public class StoreCommand extends CustomCommand {
-	public static final String URL = "https://store.projecteden.gg";
+	public static final String URL = "https://store." + Nexus.DOMAIN;
 	private static final String PLUS = "&3[+] &e";
 
 	private final ContributorService service = new ContributorService();

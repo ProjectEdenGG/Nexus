@@ -5,6 +5,7 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import gg.projecteden.exceptions.EdenException;
 import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.features.discord.HandledBy;
+import gg.projecteden.nexus.features.justice.Justice;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.punishments.Punishments;
 import gg.projecteden.nexus.utils.Name;
@@ -34,7 +35,7 @@ public class HistoryDiscordCommand extends Command {
 				OfflinePlayer player = PlayerUtils.getPlayer(args[0]);
 
 				if (Punishments.of(player).hasHistory())
-					event.reply("<https://justice.projecteden.gg/history/" + Name.of(player) + ">");
+					event.reply("<" + Justice.URL + "/history/" + Name.of(player) + ">");
 				else
 					event.reply("No history found");
 			} catch (Exception ex) {

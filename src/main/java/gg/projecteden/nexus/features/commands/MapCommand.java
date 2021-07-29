@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands;
 
 import de.bluecolored.bluemap.api.BlueMapAPI;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -16,6 +17,8 @@ import java.util.Map;
 @Aliases({"maplink", "livemap"})
 @Description("Generate a link to our web map, allowing you to see the entire world from your browser")
 public class MapCommand extends CustomCommand {
+	public static final String URL = "https://map." + Nexus.DOMAIN;
+	public static final String STAFF_URL = "https://staffmap." + Nexus.DOMAIN;
 
 	public MapCommand(CommandEvent event) {
 		super(event);
@@ -31,14 +34,14 @@ public class MapCommand extends CustomCommand {
 		Map<String, String> names = new HashMap<>();
 		BlueMapAPI.getInstance().ifPresent(api -> api.getMaps().forEach(map -> names.put(map.getWorld().getSaveFolder().toFile().getName().toLowerCase(), map.getId())));
 
-		String subdomain = "map";
+		String URL = MapCommand.URL;
 		if (isStaff())
 			if (!names.isEmpty() && !names.containsKey(world))
-				subdomain = "staffmap";
+				URL = MapCommand.STAFF_URL;
 
-		String link = "http://" + subdomain + ".projecteden.gg/#" + names.getOrDefault(world, world) + ":" + x + ":0:" + z + ":30:0:0:0:0:perspective";
+		String link = URL + "/#" + names.getOrDefault(world, world) + ":" + x + ":0:" + z + ":30:0:0:0:0:perspective";
 
-		send(json("&3Map: &ehttp://map.projecteden.gg").url("http://map.projecteden.gg"));
+		send(json("&3Map: &e" + URL).url(URL));
 		send(json("&3Current Location: &e" + link).url(link));
 		send("&eTip: &3Zoom in, right click and drag");
 	}

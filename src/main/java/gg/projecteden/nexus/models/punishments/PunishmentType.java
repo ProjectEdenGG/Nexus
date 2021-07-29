@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.models.punishments;
 
 import gg.projecteden.nexus.features.discord.Discord;
+import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.framework.interfaces.IsColoredAndNamed;
 import gg.projecteden.nexus.models.discord.DiscordUser;
@@ -77,7 +78,7 @@ public enum PunishmentType implements IsColoredAndNamed {
 			if (punishment.getExpiration() != null)
 				message += nl + "&3Expires in: &3" + Timespan.of(punishment.getExpiration()).format(FormatType.LONG);
 
-			message += nl + nl + "&3Appeal at &chttps://projecteden.gg/appeal";
+			message += nl + nl + "&3Appeal at &c" + EdenSocialMediaSite.WEBSITE.getUrl() + "/appeal";
 
 			return message;
 		}

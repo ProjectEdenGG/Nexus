@@ -72,6 +72,7 @@ public class Nexus extends JavaPlugin {
 	private static Nexus instance;
 	@Getter
 	private final static HeadDatabaseAPI headAPI = new HeadDatabaseAPI();
+	public static final String DOMAIN = "projecteden.gg";
 
 	public Nexus() {
 		if (instance == null)

@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands.staff;
 
 import com.onarandombox.multiverseinventories.share.Sharables;
 import com.onarandombox.multiverseinventories.utils.configuration.json.JsonConfiguration;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -114,7 +115,7 @@ public class RestoreInventoryCommand extends CustomCommand {
 		});
 
 		Discord.log(PREFIX + name() + " restored " + owner.getName() + "'s " + gameMode.name().toLowerCase()
-				+ " " + type + " from <https://paste.projecteden.gg/" + code + ".json>");
+				+ " " + type + " from <https://paste." + Nexus.DOMAIN + "/" + code + ".json>");
 	}
 
 	private void sendRestoreButtons(String gamemode) {

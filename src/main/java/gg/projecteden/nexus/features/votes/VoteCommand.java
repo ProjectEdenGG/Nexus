@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.votes;
 
+import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.features.votes.vps.VPS;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -73,7 +74,7 @@ public class VoteCommand extends CustomCommand {
 		send(PLUS + "You have &e" + voter.getPoints() + " &3vote points");
 		line();
 		send(json(PLUS + "Visit the &eVote Points Store").command("/vps"));
-		send(json(PLUS + "View top voters, prizes and more on our &ewebsite").url("https://projecteden.gg/vote"));
+		send(json(PLUS + "View top voters, prizes and more on our &ewebsite").url(EdenSocialMediaSite.WEBSITE.getUrl() + "/vote"));
 	}
 
 	@Permission("group.admin")

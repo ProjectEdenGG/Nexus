@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands.staff;
 
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.StateFlag;
+import gg.projecteden.nexus.features.wiki._WikiSearchCommand.WikiType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -67,7 +68,7 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 		send(json("&3[+] &c/ptime <time>").hover("&eChange the appearance of time.").suggest("/ptime night"));
 		send(json("&3[+] &c/speed <speed>").hover("&eChange your walk or fly speed.").suggest("/speed "));
 		send(json("&3[+] &c/jump").hover("&eJump forward").suggest("/jump"));
-		send(json("&3[+] See the &ecreative commands wiki &3for more info").hover("&eClick to open the wiki").url("https://wiki.projecteden.gg/wiki/Commands#Creative"));
+		send(json("&3[+] See the &ecreative commands wiki &3for more info").hover("&eClick to open the wiki").url(WikiType.SERVER.getBasePath() + "Commands#Creative"));
 		send("&3[+] &eYou can also use WorldEdit, VoxelSniper, and a compass to teleport through walls");
 		line();
 	}

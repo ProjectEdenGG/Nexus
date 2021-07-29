@@ -298,7 +298,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 
 	@Getter
 	private enum ReferralSite {
-		DIRECT("server", "bnn.gg", "projecteden.gg", "51.", "192."),
+		DIRECT("server", "bnn.gg", Nexus.DOMAIN, "51.", "192."),
 		BIZ("bi", "bl", "bz", "iz", "play.biz", "baz"),
 		MCSL("mscl", "mscsl", "mcssl", "mccl"),
 		MCMP("mmcmp"),
@@ -361,8 +361,8 @@ public class ReferralCommand extends CustomCommand implements Listener {
 			hostname = hostname.split(":")[0];
 		if (hostname.endsWith("."))
 			hostname = hostname.substring(0, hostname.length() - 1);
-		if (hostname.equalsIgnoreCase("server.projecteden.gg"))
-			hostname = "projecteden.gg";
+		if (hostname.equalsIgnoreCase("server." + Nexus.DOMAIN))
+			hostname = Nexus.DOMAIN;
 
 		referral.setIp(hostname);
 		service.save(referral);

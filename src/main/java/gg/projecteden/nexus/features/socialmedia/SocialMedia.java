@@ -131,18 +131,18 @@ public class SocialMedia extends Feature implements Listener {
 	}
 
 	public enum EdenSocialMediaSite {
-		WEBSITE("https://projecteden.gg"),
+		WEBSITE("https://" + Nexus.DOMAIN),
 		DISCORD(null) {
 			@Override
 			@NotNull
 			public String getUrl() {
-				String url = "https://discord.projecteden.gg";
+				String url = "https://discord." + Nexus.DOMAIN;
 				if (Discord.getGuild() != null && Discord.getGuild().getBoostTier().getKey() == 3)
 					url = "https://discord.gg/ProjectEdenGG";
 				return url;
 			}
 		},
-		YOUTUBE("https://youtube.projecteden.gg"),
+		YOUTUBE("https://youtube." + Nexus.DOMAIN),
 		TWITTER("https://twitter.com/ProjectEdenGG"),
 		INSTAGRAM("https://instagram.com/ProjectEdenGG"),
 		REDDIT("https://reddit.com/u/ProjectEdenGG"),

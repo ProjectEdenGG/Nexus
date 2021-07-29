@@ -4,6 +4,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -79,7 +80,7 @@ public class HasReadRules implements PlayerOwnedObject {
 				new ArrayList<>() {{
 					add(new JsonBuilder("&e6. &3Do not do a staff member's job if they are available to do it themselves"));
 					add(new JsonBuilder("&e7. &3No inappropriate content"));
-					add(new JsonBuilder("&e8. &3No ban evading (that includes using Discord). Appeal at &chttps://projecteden.gg/appeal"));
+					add(new JsonBuilder("&e8. &3No ban evading (that includes using Discord). Appeal at &c" + EdenSocialMediaSite.WEBSITE.getUrl() + "/appeal"));
 					add(new JsonBuilder("&e9. &3Keep heavily opinionated and political arguments out of public chats"));
 					add(new JsonBuilder("&e10. &3Streaming/YouTubers are welcome under 3 conditions &e(Click to view)").command("/rules streaming"));
 				}},

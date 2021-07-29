@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.features.discord.DiscordId.Role;
 import gg.projecteden.nexus.features.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.features.discord.HandledBy;
+import gg.projecteden.nexus.features.justice.Justice;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.hours.Hours;
 import gg.projecteden.nexus.models.hours.HoursService;
@@ -68,7 +69,7 @@ public class SuggestDiscordCommand extends Command {
 				String hoursMonthly = TimespanBuilder.of(hours.getMonthly()).noneDisplay(true).format();
 				String history = "None";
 				if (Punishments.of(nerd).hasHistory())
-					 history = Punishments.of(nerd).getPunishments().size() + " [View](https://justice.projecteden.gg/history/" + nerd.getName() + ")";
+					 history = Punishments.of(nerd).getPunishments().size() + " [View](" + Justice.URL + "/history/" + nerd.getName() + ")";
 
 				EmbedBuilder embed = new EmbedBuilder()
 						.appendDescription("\n:information_source: **Rank**: " + nerd.getRank().getName())

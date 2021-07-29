@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands.info;
 
+import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -26,7 +27,7 @@ public class FilidWelcCommand extends CustomCommand {
 				"\n&eMake sure to join &c/discord &etoo!"));
 		send(json("&3[+] &eDiscord").command("/discord").hover("&eA community skype-like program including " +
 				"\n&etext chats and voice chats"));
-		send(json("&3[+] &eWebsite").url("https://projecteden.gg/").hover("&eThe homepage for the server"));
+		send(json("&3[+] &eWebsite").url(EdenSocialMediaSite.WEBSITE.getUrl()).hover("&eThe homepage for the server"));
 		send(json("&3[+] &eVoting").command("/vote").hover("&eVote for our server to support us!"));
 		line();
 		runCommandAsConsole("curiosity cake " + name());

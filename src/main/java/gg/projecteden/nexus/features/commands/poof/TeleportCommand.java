@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands.poof;
 
 import de.bluecolored.bluemap.api.BlueMapAPI;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -41,7 +42,7 @@ import static gg.projecteden.nexus.utils.StringUtils.getTeleportCommand;
 @Aliases({"tp", "tppos"})
 @Redirect(from = "/tpo", to = "/tp override")
 public class TeleportCommand extends CustomCommand implements Listener {
-	private static final String mapLinkRegex = "(http(s)?:\\/\\/)?(blue|staff)?map.projecteden.gg/#[a-zA-Z\\d_]+(:-?[\\d]+(\\.[\\d]+)?){8}.*";
+	private static final String mapLinkRegex = "(http(s)?:\\/\\/)?(blue|staff)?map." + Nexus.DOMAIN + "/#[a-zA-Z\\d_]+(:-?[\\d]+(\\.[\\d]+)?){8}.*";
 
 	public TeleportCommand(@NonNull CommandEvent event) {
 		super(event);

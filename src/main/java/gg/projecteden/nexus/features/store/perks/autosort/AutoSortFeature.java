@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.store.perks.autosort;
 
+import gg.projecteden.nexus.features.store.StoreCommand;
 import gg.projecteden.nexus.features.store.perks.autosort.features.AutoTool;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.NoPermissionException;
 import lombok.AllArgsConstructor;
@@ -39,7 +40,7 @@ public enum AutoSortFeature {
 	public void checkPermission(HasPlayer player) throws NoPermissionException {
 		if (hasPermission(player)) return;
 
-		throw new NoPermissionException("Purchase at https://store.projecteden.gg");
+		throw new NoPermissionException("Purchase at " + StoreCommand.URL);
 	}
 
 	public boolean hasPermission(HasPlayer player) {

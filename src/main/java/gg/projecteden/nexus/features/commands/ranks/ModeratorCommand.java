@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands.ranks;
 
+import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Async;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -14,7 +15,7 @@ public class ModeratorCommand extends CustomCommand {
 		super(event);
 	}
 
-	String modApp = "https://projecteden.gg/apply/mod";
+	String modApp = EdenSocialMediaSite.WEBSITE.getUrl() + "/apply/mod";
 
 	@Path
 	void moderator() {

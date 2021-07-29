@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands.info;
 
 import gg.projecteden.nexus.features.chat.Chat;
+import gg.projecteden.nexus.features.wiki._WikiSearchCommand.WikiType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
@@ -53,7 +54,7 @@ public class FAQCommand extends CustomCommand {
 		send(json("&6[S] &6Skyblock &7- &3For the Skyblock world"));
 		line();
 		send(json("&3[+] &3Use &c/ch <letter> &3to switch channels").hover("&eE.g. &c/ch g&3, &c/ch l"));
-		send(json("&3[+] &eClick here &3to open the &ewiki").url("https://wiki.projecteden.gg/wiki/Chat"));
+		send(json("&3[+] &eClick here &3to open the &ewiki").url(WikiType.SERVER.getBasePath() + "Chat"));
 		line();
 		back();
 	}
@@ -80,7 +81,7 @@ public class FAQCommand extends CustomCommand {
 		send(json("&eYes&3, McMMO has been &eheavily nerfed&3, as we are a survival server."));
 		send(json("&3There are still benefits for higher levels, &ehowever &3they will not entirely change the survival gameplay."));
 		line();
-		send(json("&3[+] &eClick here &3to open the &ewiki &3on &emcMMO").url("https://wiki.projecteden.gg/wiki/McMMO"));
+		send(json("&3[+] &eClick here &3to open the &ewiki &3on &emcMMO").url(WikiType.SERVER.getBasePath() + "McMMO"));
 		line();
 		back();
 	}
@@ -140,7 +141,7 @@ public class FAQCommand extends CustomCommand {
 		line();
 		send("&3Build an your empire up from a couple dozen blocks in the sky");
 		line();
-		send(json("&3[+] &eClick here &3to open the &ewiki").url("https://wiki.projecteden.gg/wiki/Skyblock"));
+		send(json("&3[+] &eClick here &3to open the &ewiki").url(WikiType.SERVER.getBasePath() + "Skyblock"));
 		send(json("&3[+] &eUse &c/skyblock &eto play").suggest("/skyblock"));
 		line();
 		back("whatcanido");
@@ -159,7 +160,7 @@ public class FAQCommand extends CustomCommand {
 		send("&3  [+] &eParkour");
 		send("&3  [+] &3and lots more!");
 		send(json("&3[+] &eMinigame Nights &3hosted weekly at &e4PM ET &3every &eSaturday").hover("&eClick here &3to see when the next Minigame Night is").command("/mgn"));
-		send(json("&3[+] &eClick here &3to open the &ewiki").url("https://wiki.projecteden.gg/wiki/Minigames"));
+		send(json("&3[+] &eClick here &3to open the &ewiki").url(WikiType.SERVER.getBasePath() + "Minigames"));
 		line();
 		send(json("&3[+] &eUse &c/gl &eto play").suggest("/gl"));
 		line();
@@ -173,7 +174,7 @@ public class FAQCommand extends CustomCommand {
 		send("&3Build to your hearts desire");
 		line();
 		send("&3[+] &3Access to &eWorldEdit &3and &eVoxelSniper");
-		send(json("&3[+] &eClick here &3to open the &ewiki").url("https://wiki.projecteden.gg/wiki/Creative"));
+		send(json("&3[+] &eClick here &3to open the &ewiki").url(WikiType.SERVER.getBasePath() + "Creative"));
 		line();
 		send(json("&3[+] &eUse &c/creative &eto play").suggest("/creative"));
 		line();
@@ -188,7 +189,7 @@ public class FAQCommand extends CustomCommand {
 		line();
 		send(json("&3[+] &eWarps").command("/warps"));
 		send(json("&3[+] &eEconomy").command("/economy"));
-		send(json("&3[+] &eClick here &3to open the &ewiki &3on &emcMMO").url("https://wiki.projecteden.gg/wiki/McMMO"));
+		send(json("&3[+] &eClick here &3to open the &ewiki &3on &emcMMO").url(WikiType.SERVER.getBasePath() + "McMMO"));
 		line();
 		back("whatcanido");
 	}

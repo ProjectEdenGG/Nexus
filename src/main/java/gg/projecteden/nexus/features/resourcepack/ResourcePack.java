@@ -28,7 +28,7 @@ import java.util.List;
 
 @NoArgsConstructor
 public class ResourcePack extends Feature implements Listener {
-	static final String URL = "http://cdn.projecteden.gg/ResourcePack.zip";
+	static final String URL = "http://cdn." + Nexus.DOMAIN + "/ResourcePack.zip";
 	static final String fileName = "ResourcePack.zip";
 	@Getter
 	static final String fileRegex = "[\\w]+";

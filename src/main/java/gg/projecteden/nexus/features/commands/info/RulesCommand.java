@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands.info;
 
+import gg.projecteden.nexus.features.wiki._WikiSearchCommand.WikiType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -58,7 +59,7 @@ public class RulesCommand extends CustomCommand {
 			if (!rulesType.isHide())
 				send(json("&3[+] &e" + camelCase(rulesType) + " Rules").command("/rules " + rulesType.name().toLowerCase()));
 
-		send(json("&3[+] &eOther Rules").url("https://wiki.projecteden.gg/wiki/Main_Page#Discord_rules"));
+		send(json("&3[+] &eOther Rules").url(WikiType.SERVER.getBasePath() + "Main_Page#Discord_rules"));
 		line();
 
 		RulesSection.MAIN.markRead(player());

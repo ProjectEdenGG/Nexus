@@ -22,6 +22,7 @@ import gg.projecteden.nexus.models.boost.Boostable;
 import gg.projecteden.nexus.models.boost.Booster;
 import gg.projecteden.nexus.models.boost.Booster.Boost;
 import gg.projecteden.nexus.models.boost.BoosterService;
+import gg.projecteden.nexus.models.costume.Costume;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -107,7 +108,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 	@Path("menu")
 	void menu() {
 		if (booster.getNonExpiredBoosts().isEmpty())
-			error("You do not have any boosts! Purchase them at &ehttps://store.projecteden.gg/category/boosts");
+			error("You do not have any boosts! Purchase them at &e" +  Costume.STORE_URL);
 
 		new BoostMenu().open(player());
 	}
