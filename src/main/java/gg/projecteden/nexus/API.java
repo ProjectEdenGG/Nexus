@@ -15,10 +15,12 @@ import gg.projecteden.nexus.framework.persistence.serializer.mongodb.MobHeadConv
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.PrivateChannelConverter;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.PublicChannelConverter;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.QuestConverter;
+import gg.projecteden.nexus.utils.SerializationUtils.JSON.LocalDateTimeGsonSerializer;
 import gg.projecteden.nexus.utils.SerializationUtils.JSON.LocationGsonSerializer;
 import gg.projecteden.utils.Env;
 import org.bukkit.Location;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -66,7 +68,9 @@ public class API extends EdenAPI {
 
 	@Override
 	public GsonBuilder getPrettyPrinter() {
-		return super.getPrettyPrinter().registerTypeAdapter(Location.class, new LocationGsonSerializer());
+		return super.getPrettyPrinter()
+			.registerTypeAdapter(Location.class, new LocationGsonSerializer())
+			.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeGsonSerializer());
 	}
 
 }

@@ -307,7 +307,10 @@ public class StringUtils extends gg.projecteden.utils.StringUtils {
 	}
 
 	public static String getShortishLocationString(Location loc) {
-		return (int) loc.getX() + " " + (int) loc.getY() + " " +  (int) loc.getZ() + " " + df.format(loc.getYaw()) + " " + df.format(loc.getPitch()) + " " + loc.getWorld().getName();
+		String coords = (int) loc.getX() + " " + (int) loc.getY() + " " + (int) loc.getZ();
+		if (loc.getYaw() != 0 || loc.getPitch() != 0)
+			coords += " " + df.format(loc.getYaw()) + " " + df.format(loc.getPitch());
+		return coords + " " + loc.getWorld().getName();
 	}
 
 	public static String getCoordinateString(Location loc) {
