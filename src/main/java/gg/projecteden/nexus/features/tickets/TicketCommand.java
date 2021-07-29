@@ -10,8 +10,9 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
-import gg.projecteden.nexus.models.ticket.Ticket;
-import gg.projecteden.nexus.models.ticket.TicketService;
+import gg.projecteden.nexus.models.ticket.Tickets;
+import gg.projecteden.nexus.models.ticket.Tickets.Ticket;
+import gg.projecteden.nexus.models.ticket.TicketsService;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
@@ -23,11 +24,12 @@ import java.util.List;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 public class TicketCommand extends CustomCommand {
-	private final TicketService service = new TicketService();
+	private final TicketsService service = new TicketsService();
+	private final Tickets tickets = service.get0();
 
 	public TicketCommand(CommandEvent event) {
 		super(event);
-		PREFIX = Tickets.PREFIX;
+		PREFIX = TicketFeature.PREFIX;
 	}
 
 	@Path
@@ -52,7 +54,7 @@ public class TicketCommand extends CustomCommand {
 
 		Runnable run = () -> {
 			Ticket ticket = new Ticket(player(), stripColor(description));
-			service.saveSync(ticket);
+			service.save(tickets);
 
 			send(PREFIX + "You have submitted a ticket. Staff have been alerted, please wait patiently for a response. &eThank you!");
 			send(" &eYour ticket (&c#" + ticket.getId() + "&e): &3" + ticket.getDescription());
@@ -65,7 +67,7 @@ public class TicketCommand extends CustomCommand {
 			onlineMods.forEach(mod -> Jingle.PING.play(mod.getOnlinePlayer()));
 			Broadcast.staffIngame().message("").send();
 			Broadcast.staffIngame().message(PREFIX + "&e" + name() + " &3opened ticket &c#" + ticket.getId() + "&3: &e" + ticket.getDescription()).send();
-			Broadcast.staffIngame().message(Tickets.getTicketButtons(ticket)).send();
+			Broadcast.staffIngame().message(TicketFeature.getTicketButtons(ticket)).send();
 		};
 
 		if (isStaff())

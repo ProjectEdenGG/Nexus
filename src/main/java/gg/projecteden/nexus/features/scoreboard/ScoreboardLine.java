@@ -15,7 +15,8 @@ import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.scoreboard.ScoreboardUser;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
-import gg.projecteden.nexus.models.ticket.TicketService;
+import gg.projecteden.nexus.models.ticket.Tickets;
+import gg.projecteden.nexus.models.ticket.TicketsService;
 import gg.projecteden.nexus.models.vote.Voter;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -55,9 +56,10 @@ public enum ScoreboardLine {
 	TICKETS {
 		@Override
 		public String render(Player player) {
-			TicketService service = new TicketService();
-			int open = service.getAllOpen().size();
-			int all = service.getAll().size();
+			final TicketsService service = new TicketsService();
+			final Tickets tickets = service.get0();
+			int open = tickets.getAllOpen().size();
+			int all = tickets.getAll().size();
 			return "&3Tickets: &" + (open == 0 ? "e" : "c") + open + " &3/ " + all;
 		}
 	},

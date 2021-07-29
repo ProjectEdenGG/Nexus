@@ -7,13 +7,14 @@ import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.features.discord.DiscordId.Role;
 import gg.projecteden.nexus.features.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.features.discord.HandledBy;
-import gg.projecteden.nexus.features.tickets.Tickets;
+import gg.projecteden.nexus.features.tickets.TicketFeature;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.models.ticket.Ticket;
-import gg.projecteden.nexus.models.ticket.TicketService;
+import gg.projecteden.nexus.models.ticket.Tickets;
+import gg.projecteden.nexus.models.ticket.Tickets.Ticket;
+import gg.projecteden.nexus.models.ticket.TicketsService;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
@@ -49,14 +50,15 @@ public class TicketsDiscordCommand extends Command {
 					throw new InvalidInputException("Ticket ID must be a number");
 
 				final String nl = System.lineSeparator();
-				final TicketService service = new TicketService();
-				final Ticket ticket = service.get(Integer.parseInt(id));
+				final TicketsService service = new TicketsService();
+				final Tickets tickets = service.get0();
+				final Ticket ticket = tickets.get(Integer.parseInt(id));
 
 				switch (args[0].toLowerCase()) {
 					case "view" -> {
 						String message = PREFIX + "**#" + ticket.getId() + "** ";
 						message += ticket.isOpen() ? "(Open)" : "(Closed)";
-						message += nl + "**Owner:** " + ticket.getOwnerName();
+						message += nl + "**Owner:** " + ticket.getNickname();
 						message += nl + "**When:** " + ticket.getTimespan() + " ago";
 						message += nl + "**Description:** " + ticket.getDescription();
 						event.reply(message);
@@ -66,18 +68,18 @@ public class TicketsDiscordCommand extends Command {
 							throw new InvalidInputException("Ticket already closed");
 
 						ticket.setOpen(false);
-						service.save(ticket);
+						service.save(tickets);
 
-						Tickets.broadcast(ticket, null, Nickname.of(player) + " closed ticket #" + ticket.getId());
+						TicketFeature.broadcast(ticket, null, Nickname.of(player) + " closed ticket #" + ticket.getId());
 					}
 					case "reopen" -> {
 						if (ticket.isOpen())
 							throw new InvalidInputException("Ticket already open");
 
 						ticket.setOpen(true);
-						service.save(ticket);
+						service.save(tickets);
 
-						Tickets.broadcast(ticket, null, Nickname.of(player) + " reopened ticket #" + ticket.getId());
+						TicketFeature.broadcast(ticket, null, Nickname.of(player) + " reopened ticket #" + ticket.getId());
 					}
 				}
 			} catch (Exception ex) {

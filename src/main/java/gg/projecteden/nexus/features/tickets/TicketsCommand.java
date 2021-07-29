@@ -8,8 +8,9 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
-import gg.projecteden.nexus.models.ticket.Ticket;
-import gg.projecteden.nexus.models.ticket.TicketService;
+import gg.projecteden.nexus.models.ticket.Tickets;
+import gg.projecteden.nexus.models.ticket.Tickets.Ticket;
+import gg.projecteden.nexus.models.ticket.TicketsService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
@@ -24,7 +25,8 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 public class TicketsCommand extends CustomCommand {
-	private TicketService service = new TicketService();
+	private final TicketsService service = new TicketsService();
+	private final Tickets tickets = service.get0();
 
 	public TicketsCommand(CommandEvent event) {
 		super(event);
@@ -32,31 +34,31 @@ public class TicketsCommand extends CustomCommand {
 
 	@Path
 	void tickets() {
-		List<Ticket> open = service.getAllOpen();
+		List<Ticket> open = tickets.getAllOpen();
 		if (open.size() == 0)
 			error("There are no open tickets");
 
 		open.stream()
 				.filter(ticket -> ticket.canBeSeenBy(player()))
-				.forEach(ticket -> Tickets.showTicket(player(), ticket));
+				.forEach(ticket -> TicketFeature.showTicket(player(), ticket));
 	}
 
 	@Path("page [page]")
 	void run(@Arg("1") int page) {
-		List<Ticket> collect = service.getAll().stream()
+		List<Ticket> collect = tickets.getAll().stream()
 				.filter(ticket -> ticket.canBeSeenBy(player()))
 				.collect(Collectors.toList());
 
-		paginate(collect, (ticket, index) -> Tickets.formatTicket(player(), ticket), "/tickets page", page);
+		paginate(collect, (ticket, index) -> TicketFeature.formatTicket(player(), ticket), "/tickets page", page);
 	}
 
 	@Path("view <id>")
 	void view(Ticket ticket) {
 		send(PREFIX + "&c#" + ticket.getId());
-		send("&3Owner: &e" + ticket.getOwnerName());
+		send("&3Owner: &e" + ticket.getNickname());
 		send("&3When: &e" + ticket.getTimespan() + " &3ago");
 		send("&3Description: &e" + ticket.getDescription());
-		send(Tickets.getTicketButtons(ticket));
+		send(TicketFeature.getTicketButtons(ticket));
 	}
 
 	@Path("(tp|teleport) <id>")
@@ -70,12 +72,12 @@ public class TicketsCommand extends CustomCommand {
 		player().teleportAsync(ticket.getLocation(), TeleportCause.COMMAND);
 
 		String message = "&e" + nickname() + " &3teleported to ticket &e#" + ticket.getId();
-		Tickets.broadcast(ticket, player(), message);
+		TicketFeature.broadcast(ticket, player(), message);
 
 		send(PREFIX + "Teleporting to ticket &e#" + ticket.getId());
 
 		Tasks.wait(15 * 20, () -> {
-			if (service.get(ticket.getId()).isOpen())
+			if (ticket.isOpen())
 				send(json(PREFIX + "&3Click here to &cclose &3the ticket")
 						.command("/tickets confirmclose " + ticket.getId())
 						.hover("&eClick to close"));
@@ -85,7 +87,7 @@ public class TicketsCommand extends CustomCommand {
 	@Confirm
 	@Path("confirmclose <id>")
 	void confirmClose(Ticket ticket) {
-		if (service.get(ticket.getId()).isOpen())
+		if (ticket.isOpen())
 			close(ticket);
 		else
 			send(player(), PREFIX + "&cTicket already closed");
@@ -97,11 +99,11 @@ public class TicketsCommand extends CustomCommand {
 			error("Ticket already closed");
 
 		ticket.setOpen(false);
-		ticket.setClosedByUuid(uuid().toString());
-		service.save(ticket);
+		ticket.setClosedBy(uuid());
+		service.save(tickets);
 
 		String message = "&e" + nickname() + " &cclosed &3ticket &e#" + ticket.getId();
-		Tickets.broadcast(ticket, player(), message);
+		TicketFeature.broadcast(ticket, player(), message);
 
 		send(PREFIX + "Ticket &e#" + ticket.getId() + " &cclosed");
 	}
@@ -112,10 +114,10 @@ public class TicketsCommand extends CustomCommand {
 			error("Ticket already open");
 
 		ticket.setOpen(true);
-		service.save(ticket);
+		service.save(tickets);
 
 		String message = "&e" + nickname() + " &areopened &3ticket &e#" + ticket.getId();
-		Tickets.broadcast(ticket, player(), message);
+		TicketFeature.broadcast(ticket, player(), message);
 
 		send(PREFIX + "Ticket &e#" + ticket.getId() + " &areopened");
 	}
@@ -124,18 +126,17 @@ public class TicketsCommand extends CustomCommand {
 	@Permission("group.moderator")
 	void statsClosed(@Arg("1") int page) {
 		Map<UUID, Integer> closers = new HashMap<>();
-		for (Ticket ticket : service.getAll()) {
+		for (Ticket ticket : tickets.getAll()) {
 			if (ticket.isOpen())
 				continue;
 
-			if (ticket.getClosedByUuid() == null)
+			if (ticket.getClosedBy() == null)
 				continue;
 
-			if (ticket.getClosedByUuid().equals(ticket.getUuid()))
+			if (ticket.getClosedBy().equals(ticket.getUuid()))
 				continue;
 
-			UUID closedByUuid = UUID.fromString(ticket.getClosedByUuid());
-			closers.put(closedByUuid, closers.getOrDefault(closedByUuid, 0) + 1);
+			closers.put(ticket.getClosedBy(), closers.getOrDefault(ticket.getClosedBy(), 0) + 1);
 		}
 
 		BiFunction<UUID, String, JsonBuilder> formatter = (uuid, index) ->
@@ -148,7 +149,7 @@ public class TicketsCommand extends CustomCommand {
 		if (!Utils.isInt(value))
 			error("Ticket ID must be a number");
 
-		Ticket ticket = service.get(Integer.parseInt(value));
+		Ticket ticket = tickets.get(Integer.parseInt(value));
 
 		if (!ticket.canBeSeenBy(player()))
 			error("You cannot view that ticket");
