@@ -7,12 +7,12 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-@PlayerClass(AFKSettings.class)
-public class AFKSettingsService extends MongoService<AFKSettings> {
-	private final static Map<UUID, AFKSettings> cache = new ConcurrentHashMap<>();
+@PlayerClass(AFKUser.class)
+public class AFKUserService extends MongoService<AFKUser> {
+	private final static Map<UUID, AFKUser> cache = new ConcurrentHashMap<>();
 	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
-	public Map<UUID, AFKSettings> getCache() {
+	public Map<UUID, AFKUser> getCache() {
 		return cache;
 	}
 

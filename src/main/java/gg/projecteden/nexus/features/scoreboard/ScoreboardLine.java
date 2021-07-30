@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.scoreboard;
 import com.gmail.nossr50.datatypes.player.McMMOPlayer;
 import com.gmail.nossr50.util.player.UserManager;
 import gg.projecteden.nexus.features.commands.PushCommand;
-import gg.projecteden.nexus.models.afk.AFKPlayer;
+import gg.projecteden.nexus.models.afk.AFKUser;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.chat.Channel;
 import gg.projecteden.nexus.models.chat.Chatter;
@@ -230,9 +230,9 @@ public enum ScoreboardLine {
 	AFK {
 		@Override
 		public String render(Player player) {
-			AFKPlayer afkPlayer = gg.projecteden.nexus.features.afk.AFK.get(player);
-			if (afkPlayer.isAfk())
-				return "&3AFK for: &e" + Timespan.of(afkPlayer.getTime()).format();
+			AFKUser afkUser = gg.projecteden.nexus.features.afk.AFK.get(player);
+			if (afkUser.isAfk())
+				return "&3AFK for: &e" + Timespan.of(afkUser.getTime()).format();
 			return null;
 		}
 	};

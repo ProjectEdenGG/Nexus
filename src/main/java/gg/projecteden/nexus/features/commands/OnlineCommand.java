@@ -6,7 +6,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.models.afk.AFKPlayer;
+import gg.projecteden.nexus.models.afk.AFKUser;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.hours.Hours;
 import gg.projecteden.nexus.models.hours.HoursService;
@@ -106,8 +106,8 @@ public class OnlineCommand extends CustomCommand {
 		String afk = "";
 
 		if (modifiers.contains("AFK")) {
-			AFKPlayer afkPlayer = AFK.get(player);
-			String timeAFK = Timespan.of(afkPlayer.getTime()).format();
+			AFKUser afkUser = AFK.get(player);
+			String timeAFK = Timespan.of(afkUser.getTime()).format();
 			afk = "&3AFK for: &e" + timeAFK + "\n \n";
 		}
 
