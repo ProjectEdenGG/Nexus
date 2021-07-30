@@ -1,54 +1,78 @@
 package gg.projecteden.nexus.models.afk;
 
-import com.dieselpoint.norm.serialize.DbSerializer;
+import dev.morphia.annotations.Converters;
+import dev.morphia.annotations.Entity;
+import dev.morphia.annotations.Id;
+import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
-import gg.projecteden.nexus.framework.persistence.serializer.mysql.LocationSerializer;
+import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.afk.events.NotAFKEvent;
 import gg.projecteden.nexus.models.afk.events.NowAFKEvent;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
-import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.Time;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.audience.MessageType;
-import net.kyori.adventure.text.TextComponent;
-import org.bukkit.Bukkit;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @Data
+@Builder
+@Entity(value = "afk_user", noClassnameStored = true)
 @NoArgsConstructor
-@Table(name = "afk")
-public class AFKPlayer {
-	private String uuid;
-	private boolean isAfk;
+@AllArgsConstructor
+@RequiredArgsConstructor
+@Converters(UUIDConverter.class)
+public class AFKUser implements PlayerOwnedObject {
+	@Id
+	@NonNull
+	private UUID uuid;
+
+	private boolean afk;
 	private String message;
 	private LocalDateTime time;
-	@DbSerializer(LocationSerializer.class)
 	private Location location;
 	private boolean forceAfk;
 
-	public AFKPlayer(Player player) {
-		this(player.getUniqueId());
+	private Map<AFKSetting, Boolean> settings = new HashMap<>();
+
+	@Getter
+	@AllArgsConstructor
+	public enum AFKSetting {
+		MOB_TARGETING(false),
+		MOB_SPAWNING(false),
+		BROADCASTS(true),
+		;
+
+		private final boolean defaultValue;
 	}
 
-	public AFKPlayer(UUID uuid) {
-		this.uuid = uuid.toString();
-		update();
+	public boolean getSetting(AFKSetting setting) {
+		return settings.getOrDefault(setting, setting.defaultValue);
 	}
 
-	public Player getPlayer() {
-		return Bukkit.getPlayer(UUID.fromString(uuid));
+	public void setSetting(AFKSetting setting, boolean value) {
+		if (value == setting.defaultValue)
+			settings.remove(setting);
+		else
+			settings.put(setting, value);
 	}
 
 	public void setMessage(String message) {
@@ -60,11 +84,11 @@ public class AFKPlayer {
 	}
 
 	public boolean isNotAfk() {
-		return !isAfk;
+		return !afk;
 	}
 
 	public boolean isTimeAfk() {
-		return time.until(LocalDateTime.now(), ChronoUnit.SECONDS) > 240;
+		return time != null && time.until(LocalDateTime.now(), ChronoUnit.SECONDS) > 240;
 	}
 
 	public boolean isNotTimeAfk() {
@@ -76,7 +100,6 @@ public class AFKPlayer {
 		if (player != null)
 			this.location = player.getLocation().clone();
 	}
-
 
 	public void forceAfk(Runnable action) {
 		setForceAfk(true);
@@ -114,27 +137,36 @@ public class AFKPlayer {
 	}
 
 	public void message() {
-		if (isAfk)
-			PlayerUtils.send(getPlayer(), "&7* You are now AFK" + (message == null ? "" : ". Your auto-reply message is set to:\n &e" + message));
+		if (afk)
+			sendMessage("&7* You are now AFK" + (message == null ? "" : ". Your auto-reply message is set to:\n &e" + message));
 		else
-			PlayerUtils.send(getPlayer(), "&7* You are no longer AFK");
+			sendMessage("&7* You are no longer AFK");
 	}
 
 	private void broadcast() {
-		if (!new AFKSettingsService().get(UUID.fromString(uuid)).isBroadcasts())
+		if (!isOnline() || !getSetting(AFKSetting.BROADCASTS))
 			return;
 
-		TextComponent broadcast = new JsonBuilder("&7* &e" + Nickname.of(getPlayer()) + " &7is " + (isAfk ? "now" : "no longer") + " AFK").build();
+		Component broadcast = new JsonBuilder("&7* &e" + getNickname() + " &7is " + (afk ? "now" : "no longer") + " AFK").build();
 		PlayerUtils.getOnlinePlayers().forEach(_player -> {
-			if (!PlayerUtils.canSee(_player, getPlayer()))
+			final Player player = getPlayer();
+			if (!PlayerUtils.canSee(_player, player))
 				return;
-			if (_player.getUniqueId() == getPlayer().getUniqueId())
+			if (PlayerUtils.isSelf(_player, player))
 				return;
 			if (MuteMenuUser.hasMuted(_player, MuteMenuItem.AFK))
 				return;
 
-			_player.sendMessage(getPlayer(), broadcast, MessageType.CHAT);
+			_player.sendMessage(player, broadcast, MessageType.CHAT);
 		});
+	}
+
+	public void reset() {
+		afk = false;
+		message = null;
+		time = null;
+		location = null;
+		forceAfk = false;
 	}
 
 }

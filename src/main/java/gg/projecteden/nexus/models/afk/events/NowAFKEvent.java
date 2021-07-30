@@ -1,11 +1,11 @@
 package gg.projecteden.nexus.models.afk.events;
 
-import gg.projecteden.nexus.models.afk.AFKPlayer;
+import gg.projecteden.nexus.models.afk.AFKUser;
 
 public class NowAFKEvent extends AFKEvent {
 
-	public NowAFKEvent(AFKPlayer player) {
-		super(player);
+	public NowAFKEvent(AFKUser user) {
+		super(user);
 	}
 
 }

@@ -40,7 +40,7 @@ public class StaffAlerts implements Listener {
 
 	@EventHandler
 	public void notAFK(NotAFKEvent event){
-		readyToStalk(event.getPlayer().getPlayer(), "afk");
+		readyToStalk(event.getUser().getOnlinePlayer(), "afk");
 	}
 
 	@EventHandler
