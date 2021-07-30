@@ -14,8 +14,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 
-import static gg.projecteden.utils.StringUtils.camelCase;
-
 public class SoulboundEnchant extends CustomEnchant {
 	public static final String NBT_KEY = "soulbound";
 
@@ -24,11 +22,8 @@ public class SoulboundEnchant extends CustomEnchant {
 	}
 
 	@Override
-	public @NotNull String getDisplayName(int level) {
-		if (level >= getMaxLevel())
-			return camelCase(getName()) + " ∞";
-
-		return super.getDisplayName(level);
+	public int getMaxLevel() {
+		return 5;
 	}
 
 	@NoArgsConstructor
@@ -44,10 +39,7 @@ public class SoulboundEnchant extends CustomEnchant {
 				if (level <= 0)
 					continue;
 
-				if (level < enchant.getMaxLevel())
-					--level;
-
-				if (level == 0)
+				if (--level == 0)
 					drop.removeEnchantment(enchant);
 				else
 					drop.addUnsafeEnchantment(enchant, level);

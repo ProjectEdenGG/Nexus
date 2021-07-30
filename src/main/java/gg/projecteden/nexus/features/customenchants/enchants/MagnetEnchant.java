@@ -31,6 +31,11 @@ public class MagnetEnchant extends CustomEnchant {
 		super(key);
 	}
 
+	@Override
+	public int getMaxLevel() {
+		return 3;
+	}
+
 	private static final int RADIUS_MULTIPLIER = 5;
 
 	static {
