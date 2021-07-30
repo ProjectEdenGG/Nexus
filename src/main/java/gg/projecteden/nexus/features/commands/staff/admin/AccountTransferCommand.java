@@ -204,7 +204,7 @@ public class AccountTransferCommand extends CustomCommand {
 			current.setCurrentStreak(previous.getCurrentStreak());
 			current.getCurrentStreak().setUuid(current.getUuid());
 			current.getPastStreaks().addAll(previous.getPastStreaks());
-			previous.setCurrentStreak(new DailyStreak());
+			previous.setCurrentStreak(new DailyStreak(current.getUuid()));
 			previous.getPastStreaks().clear();
 		}
 	}

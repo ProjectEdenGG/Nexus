@@ -19,7 +19,9 @@ import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import static gg.projecteden.nexus.utils.StringUtils.getPrefix;
@@ -40,14 +42,14 @@ public class DailyRewardUser implements PlayerOwnedObject {
 
 	public DailyStreak getCurrentStreak() {
 		if (currentStreak == null)
-			currentStreak = new DailyStreak();
+			currentStreak = new DailyStreak(uuid);
 		return currentStreak;
 	}
 
 	public void endStreak() {
 		currentStreak.end();
 		pastStreaks.add(currentStreak);
-		currentStreak = new DailyStreak();
+		currentStreak = new DailyStreak(uuid);
 	}
 
 	@Data
@@ -60,12 +62,12 @@ public class DailyRewardUser implements PlayerOwnedObject {
 		private UUID uuid;
 		private int streak;
 		private boolean earnedToday;
-		private List<Integer> claimed = new ArrayList<>();
+		private Set<Integer> claimed = new HashSet<>();
 		private LocalDate start = LocalDate.now();
 		private LocalDate end;
 
 		public void increaseStreak() {
-			Nexus.log("[DailyRewards] Increasing streak for " + Name.of(getOfflinePlayer()));
+			Nexus.log("[DailyRewards] Increasing streak for " + Name.of(uuid));
 			earnedToday = true;
 			++streak;
 			PlayerUtils.send(getOfflinePlayer(), new JsonBuilder()
@@ -74,18 +76,15 @@ public class DailyRewardUser implements PlayerOwnedObject {
 		}
 
 		public boolean hasClaimed(int day) {
-			return claimed != null && claimed.contains(day);
+			return claimed.contains(day);
 		}
 
 		public void claim(int day){
-			if (claimed == null)
-				claimed = new ArrayList<>();
 			claimed.add(day);
 		}
 
 		public void unclaim(Integer day) {
-			if (claimed != null)
-				claimed.remove(day);
+			claimed.remove(day);
 		}
 
 		public void end() {
