@@ -11,8 +11,8 @@ import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
-import gg.projecteden.nexus.models.vote.VotePoints;
-import gg.projecteden.nexus.models.vote.VotePointsService;
+import gg.projecteden.nexus.models.voter.Voter;
+import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -55,8 +55,8 @@ public class Easter21User implements PlayerOwnedObject {
 		eventUser.giveTokens(5);
 		eventUserService.save(eventUser);
 
-		VotePointsService votePointsService = new VotePointsService();
-		VotePoints votePoints = votePointsService.get(uuid);
+		VoterService voterService = new VoterService();
+		Voter voter = voterService.get(uuid);
 
 		BankerService bankerService = new BankerService();
 		switch (found.size()) {
@@ -65,8 +65,8 @@ public class Easter21User implements PlayerOwnedObject {
 				sendMessage(PREFIX + "You have received &e$5,000 &3for finding &e5 easter eggs");
 			}
 			case 10 -> {
-				votePoints.givePoints(25);
-				votePointsService.save(votePoints);
+				voter.givePoints(25);
+				voterService.save(voter);
 				sendMessage(PREFIX + "You have received &e25 vote points &3for finding &e10 easter eggs");
 			}
 			case 20 -> {
@@ -74,8 +74,8 @@ public class Easter21User implements PlayerOwnedObject {
 				sendMessage(PREFIX + "You have received &e$10,000 &3for finding &e20 easter eggs");
 			}
 			case 30 -> {
-				votePoints.givePoints(50);
-				votePointsService.save(votePoints);
+				voter.givePoints(50);
+				voterService.save(voter);
 				sendMessage(PREFIX + "You have received &e50 vote points &3for finding &e30 easter eggs");
 			}
 			case 35 -> {

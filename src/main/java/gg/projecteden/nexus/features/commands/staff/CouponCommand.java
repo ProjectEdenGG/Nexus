@@ -27,7 +27,7 @@ import gg.projecteden.nexus.models.coupon.Coupons.Coupon;
 import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
-import gg.projecteden.nexus.models.vote.Voter;
+import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -72,7 +72,7 @@ public class CouponCommand extends CustomCommand implements Listener {
 			@Override
 			void use(PlayerInteractEvent event) {
 				int amount = extractValue(event.getItem());
-				new Voter(event.getPlayer()).givePoints(amount);
+				new VoterService().edit(event.getPlayer(), voter -> voter.givePoints(amount));
 				PlayerUtils.send(event.getPlayer(), "&3You have been given &e" + amount + "&3 vote points");
 				ItemStack item = event.getItem();
 				item.setAmount(item.getAmount() - 1);

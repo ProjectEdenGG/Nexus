@@ -5,7 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.models.vote.Voter;
+import gg.projecteden.nexus.models.voter.VoterService;
 import lombok.NonNull;
 
 public class VPSCommand extends CustomCommand {
@@ -24,7 +24,7 @@ public class VPSCommand extends CustomCommand {
 		if (Nexus.getPerms().playerHas("creative", player(), "plots.plot.6"))
 			error("You have already purchased the maximum amount of plots");
 
-		new Voter(player()).takePoints(150);
+		new VoterService().edit(player(), voter -> voter.takePoints(150));
 		runCommandAsConsole("permhelper add plots " + name() + " 1");
 		send(PREFIX + "Purchased &e1 creative plot &3for &e150 vote points");
 	}

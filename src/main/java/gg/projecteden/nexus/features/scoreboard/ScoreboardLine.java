@@ -17,7 +17,7 @@ import gg.projecteden.nexus.models.scoreboard.ScoreboardUser;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.models.ticket.Tickets;
 import gg.projecteden.nexus.models.ticket.TicketsService;
-import gg.projecteden.nexus.models.vote.Voter;
+import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -180,7 +180,7 @@ public enum ScoreboardLine {
 	VOTE_POINTS {
 		@Override
 		public String render(Player player) {
-			return "&3Vote Points: &e" + new Voter(player).getPoints();
+			return "&3Vote Points: &e" + new VoterService().get(player).getPoints();
 		}
 	},
 

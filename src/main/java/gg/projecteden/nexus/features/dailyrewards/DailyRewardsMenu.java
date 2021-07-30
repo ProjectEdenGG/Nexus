@@ -14,7 +14,7 @@ import gg.projecteden.nexus.models.dailyreward.DailyReward;
 import gg.projecteden.nexus.models.dailyreward.DailyRewardService;
 import gg.projecteden.nexus.models.dailyreward.Reward;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
-import gg.projecteden.nexus.models.vote.Voter;
+import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -196,7 +196,7 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 				}
 
 				if (votePoints != null) {
-					new Voter(player).givePoints(votePoints);
+					new VoterService().edit(player, voter -> voter.givePoints(votePoints));
 					PlayerUtils.send(player, PREFIX + "&e" + votePoints + " &3vote points has been added to your balance");
 				}
 

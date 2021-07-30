@@ -14,7 +14,7 @@ import gg.projecteden.nexus.models.inviterewards.InviteRewards;
 import gg.projecteden.nexus.models.inviterewards.InviteRewardsService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.models.vote.Voter;
+import gg.projecteden.nexus.models.voter.VoterService;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
@@ -110,7 +110,7 @@ public class InviteRewardsCommand extends CustomCommand {
 	}
 
 	private void reward(Player inviter) {
-		new Voter(inviter).givePoints(15);
+		new VoterService().edit(inviter, voter -> voter.givePoints(15));
 	}
 
 	private long getMinutesPlayed(Player player) {

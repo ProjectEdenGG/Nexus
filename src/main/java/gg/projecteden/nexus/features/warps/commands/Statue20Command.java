@@ -15,7 +15,7 @@ import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.models.statuehunt.StatueHunt;
 import gg.projecteden.nexus.models.statuehunt.StatueHuntService;
-import gg.projecteden.nexus.models.vote.Voter;
+import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.models.warps.Warp;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -158,7 +158,7 @@ public class Statue20Command extends _WarpCommand implements Listener {
 		int found = statueHunt.getFound().size();
 
 		if (found == 5) {
-			new Voter(event.getPlayer()).givePoints(10);
+			new VoterService().edit(event.getPlayer(), voter -> voter.givePoints(10));
 			send(event.getPlayer(), PREFIX + "You also received &e10 Vote Points &3for finding 5 statues in total");
 			return;
 		}

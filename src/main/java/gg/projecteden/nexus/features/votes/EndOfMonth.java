@@ -9,8 +9,8 @@ import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
-import gg.projecteden.nexus.models.vote.TopVoter;
-import gg.projecteden.nexus.models.vote.VoteService;
+import gg.projecteden.nexus.models.voter.TopVoter;
+import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -19,14 +19,14 @@ import gg.projecteden.nexus.utils.Tasks;
 import lombok.Data;
 import lombok.NonNull;
 import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.time.Month;
+import java.time.YearMonth;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -36,31 +36,27 @@ import java.util.stream.Collectors;
 public class EndOfMonth {
 
 	public static CompletableFuture<Void> run() {
-		return run(null);
+		return run(YearMonth.now().minusMonths(1));
 	}
 
-	public static CompletableFuture<Void> run(Month month) {
+	public static CompletableFuture<Void> run(YearMonth yearMonth) {
 		CompletableFuture<Void> future = new CompletableFuture<>();
-		if (month == null)
-			month = LocalDateTime.now().getMonth().minus(1);
-
-		final Month finalMonth = month;
 		Tasks.async(() -> {
 			try {
-				TopVoterData data = new TopVoterData(finalMonth);
+				TopVoterData data = new TopVoterData(yearMonth);
 				Nexus.log(data.toString());
 
 				Koda.announce(data.getDiscordMessage());
 				writeHtml(data);
 
 				if (data.getMysteryChestWinner() != null)
-					CrateType.MYSTERY.give(PlayerUtils.getPlayer(data.getMysteryChestWinner().getUuid()));
+					CrateType.MYSTERY.give(PlayerUtils.getPlayer(data.getMysteryChestWinner().getVoter()));
 
 				Tasks.sync(() -> {
 					BankerService bankerService = new BankerService();
-					data.getEco30kWinners().forEach(topVoter -> bankerService.deposit(PlayerUtils.getPlayer(topVoter.getUuid()), 30000, ShopGroup.SURVIVAL, TransactionCause.VOTE_REWARD));
-					data.getEco20kWinners().forEach(topVoter -> bankerService.deposit(PlayerUtils.getPlayer(topVoter.getUuid()), 20000, ShopGroup.SURVIVAL, TransactionCause.VOTE_REWARD));
-					data.getEco15kWinners().forEach(topVoter -> bankerService.deposit(PlayerUtils.getPlayer(topVoter.getUuid()), 15000, ShopGroup.SURVIVAL, TransactionCause.VOTE_REWARD));
+					data.getEco30kWinners().forEach(topVoter -> bankerService.deposit(topVoter.getVoter().getOfflinePlayer(), 30000, ShopGroup.SURVIVAL, TransactionCause.VOTE_REWARD));
+					data.getEco20kWinners().forEach(topVoter -> bankerService.deposit(topVoter.getVoter().getOfflinePlayer(), 20000, ShopGroup.SURVIVAL, TransactionCause.VOTE_REWARD));
+					data.getEco15kWinners().forEach(topVoter -> bankerService.deposit(topVoter.getVoter().getOfflinePlayer(), 15000, ShopGroup.SURVIVAL, TransactionCause.VOTE_REWARD));
 
 					future.complete(null);
 				});
@@ -75,7 +71,7 @@ public class EndOfMonth {
 	@Data
 	public static class TopVoterData {
 		@NonNull
-		private Month month;
+		private YearMonth yearMonth;
 		@NonNull
 		private List<TopVoter> topVoters;
 		private int total;
@@ -89,16 +85,16 @@ public class EndOfMonth {
 		private List<TopVoter> eco15kWinners;
 		private TopVoter mysteryChestWinner;
 
-		public TopVoterData(Month month) {
-			this.month = month;
-			compute(new VoteService().getTopVoters(month));
+		public TopVoterData(@NotNull YearMonth yearMonth) {
+			this.yearMonth = yearMonth;
+			compute(new VoterService().getTopVoters(yearMonth));
 		}
 
 		private void compute(@NonNull List<TopVoter> topVoters) {
 			this.topVoters = topVoters;
 
-			total = topVoters.stream().map(TopVoter::getCount).mapToInt(Long::intValue).sum();
-			scores = topVoters.stream().map(TopVoter::getCount).map(Long::intValue).distinct().collect(Collectors.toList());
+			total = topVoters.stream().map(TopVoter::getCount).mapToInt(Integer::valueOf).sum();
+			scores = topVoters.stream().map(TopVoter::getCount).distinct().collect(Collectors.toList());
 			if (scores.size() < 3)
 				throw new NexusException("Not enough top scores, something must be wrong. (Scores: " + scores + ")");
 
@@ -137,12 +133,7 @@ public class EndOfMonth {
 			if (topVoters.size() > 0)
 				names = topVoters.stream()
 						.filter(Objects::nonNull)
-						.map(topVoter -> {
-							OfflinePlayer player = PlayerUtils.getPlayer(topVoter.getUuid());
-							if (player != null)
-								return Name.of(player);
-							return "Unknown";
-						})
+						.map(topVoter -> Name.of(PlayerUtils.getPlayer(topVoter.getVoter())))
 						.collect(Collectors.joining(", "));
 			if (names == null || names.length() == 0)
 				return "None :(";
@@ -151,7 +142,7 @@ public class EndOfMonth {
 
 		public String getDiscordMessage() {
 			String msg = "";
-			msg += "***Time to congratulate the Top Voters of " + StringUtils.camelCase(month.name()) + "!***";
+			msg += "***Time to congratulate the Top Voters of " + StringUtils.camelCase(yearMonth.getMonth().name()) + "!***";
 			msg += System.lineSeparator();
 			msg += System.lineSeparator();
 			msg += ":first_place:   **First place** ($10/$60,000/3 MC): " + getAsString(first) + " (" + first.get(0).getCount() + ")";
@@ -199,7 +190,7 @@ public class EndOfMonth {
 		try (BufferedWriter writer = Files.newBufferedWriter(table, StandardCharsets.UTF_8)) {
 			int index = 0;
 			for (TopVoter topVoter : data.getTopVoters()) {
-				OfflinePlayer player = PlayerUtils.getPlayer(topVoter.getUuid());
+				OfflinePlayer player = topVoter.getVoter().getOfflinePlayer();
 				++index;
 
 				writer.write("  <tr>" + System.lineSeparator());

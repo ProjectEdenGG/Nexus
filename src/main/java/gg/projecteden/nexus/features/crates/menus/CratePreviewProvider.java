@@ -10,8 +10,8 @@ import gg.projecteden.nexus.features.crates.Crates;
 import gg.projecteden.nexus.features.crates.models.CrateLoot;
 import gg.projecteden.nexus.features.crates.models.CrateType;
 import gg.projecteden.nexus.features.menus.MenuUtils;
-import gg.projecteden.nexus.models.vote.VoteService;
-import gg.projecteden.nexus.models.vote.Voter;
+import gg.projecteden.nexus.models.voter.Voter;
+import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -40,9 +40,9 @@ public class CratePreviewProvider extends MenuUtils implements InventoryProvider
 		if (type == CrateType.VOTE)
 			contents.set(0, 4, ClickableItem.from(
 					new ItemBuilder(Material.TRIPWIRE_HOOK).glow().name("&eBuy 1 Key for 2 Vote Points")
-							.lore("&3Your Points: &e" + ((Voter) new VoteService().get(player)).getPoints()).build(),
+							.lore("&3Your Points: &e" + new VoterService().get(player).getPoints()).build(),
 					e -> {
-						Voter voter = new VoteService().get(player);
+						Voter voter = new VoterService().get(player);
 						if (voter.getPoints() < 2) return;
 						voter.takePoints(2);
 						type.giveVPS(player, 1);

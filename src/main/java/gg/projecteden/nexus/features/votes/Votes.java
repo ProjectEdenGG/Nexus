@@ -18,13 +18,11 @@ import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.models.setting.Setting;
-import gg.projecteden.nexus.models.setting.SettingService;
-import gg.projecteden.nexus.models.vote.TopVoter;
-import gg.projecteden.nexus.models.vote.Vote;
-import gg.projecteden.nexus.models.vote.VoteService;
-import gg.projecteden.nexus.models.vote.VoteSite;
-import gg.projecteden.nexus.models.vote.Voter;
+import gg.projecteden.nexus.models.voter.TopVoter;
+import gg.projecteden.nexus.models.voter.VoteSite;
+import gg.projecteden.nexus.models.voter.Voter;
+import gg.projecteden.nexus.models.voter.Voter.Vote;
+import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
@@ -75,13 +73,13 @@ public class Votes extends Feature implements Listener {
 			if (Discord.getGuild() == null)
 				return;
 
-			VoteService service = new VoteService();
+			VoterService service = new VoterService();
 			service.getActiveVotes().forEach(vote -> {
 				LocalDateTime expiration = vote.getTimestamp().plusHours(vote.getSite().getExpirationHours());
 				if (!expiration.isBefore(LocalDateTime.now())) return;
 
-				vote.setExpired(true);
-				service.save(vote);
+				vote.setActive(false);
+				service.save(service.get(vote.getUuid()));
 				write();
 
 				sendVoteReminder(vote);
@@ -91,21 +89,20 @@ public class Votes extends Feature implements Listener {
 
 	private static MessageEmbed createEmbed(String username) {
 		EmbedBuilder builder = new EmbedBuilder().setTitle(EdenSocialMediaSite.WEBSITE.getUrl() + "/vote").setDescription("");
-		for (VoteSite value : VoteSite.values())
+		for (VoteSite value : VoteSite.getValues())
 			builder.appendDescription(System.lineSeparator() + "**" + value.name().toUpperCase() + "**: [Click to vote!](" + value.getUrl(username) + ")");
 		return builder.build();
 	}
 
 	private void sendVoteReminder(Vote vote) {
-		DiscordUser discordUser = new DiscordUserService().get(UUID.fromString(vote.getUuid()));
+		DiscordUser discordUser = new DiscordUserService().get(vote.getUuid());
 		if (discordUser.getUserId() == null)
 			return;
 
-		Setting reminders = new SettingService().get(vote.getUuid(), "vote-reminders");
-		if (reminders.getValue() != null && !reminders.getBoolean())
+		if (!vote.getVoter().isReminders())
 			return;
 
-		if (!new CooldownService().check(UUID.fromString(vote.getUuid()), "vote-reminder", Time.MINUTE.x(10)))
+		if (!new CooldownService().check(vote.getUuid(), "vote-reminder", Time.MINUTE.x(10)))
 			return;
 
 		User user = Bot.KODA.jda().retrieveUserById(discordUser.getUserId()).complete();
@@ -139,9 +136,11 @@ public class Votes extends Feature implements Listener {
 		if (site == null)
 			return;
 
-		Vote vote = new Vote(uuid.toString(), site, extraVotePoints(), timestamp);
-		final VoteService voteService = new VoteService();
-		voteService.save(vote);
+		final VoterService voteService = new VoterService();
+		final Voter voter = voteService.get(uuid);
+		Vote vote = new Vote(uuid, site, extraVotePoints(), timestamp);
+		voter.vote(vote);
+		voteService.save(voter);
 
 		int sum = voteService.getTopVoters(LocalDateTime.now().getMonth()).stream()
 			.mapToInt(topVoter -> Long.valueOf(topVoter.getCount()).intValue()).sum();
@@ -165,22 +164,19 @@ public class Votes extends Feature implements Listener {
 
 		if (player != null) {
 			int points = vote.getExtra() + basePoints;
-			new Voter(player).givePoints(points);
+			voter.givePoints(points);
 			PlayerUtils.send(player, VPS.PREFIX + "You have received " + points + plural(" point", points));
 		}
 
-		if (!YearMonth.of(2021, Month.JULY).equals(YearMonth.now()) || Dev.GRIFFIN.is(uuid)) { // TODO Remove
-			final DailyVoteRewardService dailyVoteRewardService = new DailyVoteRewardService();
-			final DailyVoteReward dailyVoteReward = dailyVoteRewardService.get(player);
-			Tasks.wait(Time.SECOND, () -> {
-				if (voteService.getTodaysVotes(uuid.toString()).size() >= 5) {
-					if (!dailyVoteReward.getCurrentStreak().isEarnedToday()) {
-						dailyVoteReward.getCurrentStreak().incrementStreak();
-						dailyVoteRewardService.save(dailyVoteReward);
-					}
+		if (!YearMonth.of(2021, Month.JULY).equals(YearMonth.now()) || Dev.GRIFFIN.is(uuid)) // TODO Remove
+			if (voter.getTodaysVotes().size() >= 5) {
+				final DailyVoteRewardService dailyVoteRewardService = new DailyVoteRewardService();
+				final DailyVoteReward dailyVoteReward = dailyVoteRewardService.get(player);
+				if (!dailyVoteReward.getCurrentStreak().isEarnedToday()) {
+					dailyVoteReward.getCurrentStreak().incrementStreak();
+					dailyVoteRewardService.save(dailyVoteReward);
 				}
-			});
-		}
+			}
 
 		Tasks.async(Votes::write);
 	}
@@ -212,18 +208,18 @@ public class Votes extends Feature implements Listener {
 
 	protected static void write() {
 		Tasks.async(() -> {
-			List<TopVoter> topVoters = new VoteService().getTopVoters(LocalDateTime.now().getMonth());
+			List<TopVoter> topVoters = new VoterService().getTopVoters(LocalDateTime.now().getMonth());
 
 			try (BufferedWriter writer = Files.newBufferedWriter(Paths.get("plugins/website/votes_monthly_top.html"), StandardCharsets.UTF_8)) {
 				int index = 0;
 				for (TopVoter topVoter : topVoters) {
 					if (++index <= 3) {
 						String name = "Unknown";
-						try { name = Nerd.of(topVoter.getUuid()).getName(); } catch (PlayerNotFoundException ignore) {}
+						try { name = topVoter.getVoter().getNickname(); } catch (PlayerNotFoundException ignore) {}
 
 						writer.write("<div class=\"col-sm-4\">" + System.lineSeparator());
 						writer.write("  <h3 style=\"text-align: center;\">#" + index + "</h3>" + System.lineSeparator());
-						writer.write("  <img class=\"center\" style=\"border-radius: 12px; width: 75%%\" src=\"https://crafatar.com/avatars/" + topVoter.getUuid() + "?overlay\">" + System.lineSeparator());
+						writer.write("  <img class=\"center\" style=\"border-radius: 12px; width: 75%%\" src=\"https://crafatar.com/avatars/" + topVoter.getVoter().getUuid() + "?overlay\">" + System.lineSeparator());
 						writer.write("  <h3 style=\"text-align: center;\">" + name + "</h3>" + System.lineSeparator());
 						writer.write("  <h4 style=\"text-align: center;\">" + topVoter.getCount() + "</p>" + System.lineSeparator());
 						writer.write("</div>" + System.lineSeparator());
@@ -240,9 +236,7 @@ public class Votes extends Feature implements Listener {
 					if (++index > 3) {
 						if (index < 54) {
 							String name = "Unknown";
-							try {
-								name = Nerd.of(topVoter.getUuid()).getName();
-							} catch (PlayerNotFoundException ignore) {}
+							try { name = topVoter.getVoter().getNickname(); } catch (PlayerNotFoundException ignore) {}
 
 							writer.write("  <tr>" + System.lineSeparator());
 							writer.write("    <th>" + index + "</th>" + System.lineSeparator());
@@ -259,15 +253,13 @@ public class Votes extends Feature implements Listener {
 
 
 			try (BufferedWriter writer = Files.newBufferedWriter(Paths.get("plugins/website/votes.html"), StandardCharsets.UTF_8)) {
-				List<TopVoter> allTimeTopVoters = new VoteService().getTopVoters();
+				List<TopVoter> allTimeTopVoters = new VoterService().getTopVoters();
 
 				int index = 0;
 				for (TopVoter topVoter : allTimeTopVoters) {
 					if (++index <= 50) {
 						String name = "Unknown";
-						try {
-							name = Nerd.of(topVoter.getUuid()).getName();
-						} catch (PlayerNotFoundException ignore) {}
+						try { name = topVoter.getVoter().getNickname(); } catch (PlayerNotFoundException ignore) {}
 
 						writer.write("  <tr>" + System.lineSeparator());
 						writer.write("	<th>" + index + "</th>" + System.lineSeparator());
@@ -289,7 +281,7 @@ public class Votes extends Feature implements Listener {
 			}
 
 			try {
-				List<Vote> activeVotes = new VoteService().getActiveVotes();
+				List<Vote> activeVotes = new VoterService().getActiveVotes();
 				File file = Paths.get("plugins/website/votes_voted.yml").toFile();
 				if (!file.exists()) file.createNewFile();
 				YamlConfiguration config = new YamlConfiguration();

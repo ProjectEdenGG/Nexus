@@ -201,7 +201,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 
 		for (HallOfHistory hallOfHistory : service.getAll()) {
 			long days = 0;
-			days: for (LocalDate date = ServerAge.getEpoch().toLocalDate(); date.isBefore(now); date = date.plusDays(1)) {
+			days: for (LocalDate date = ServerAge.getEPOCH().toLocalDate(); date.isBefore(now); date = date.plusDays(1)) {
 				for (RankHistory rankHistory : hallOfHistory.getRankHistory()) {
 					LocalDate from = rankHistory.getPromotionDate();
 					LocalDate to = rankHistory.getResignationDate();
@@ -243,7 +243,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 			List<RankHistory> history = hallOfHistory.getRankHistory();
 			history.sort(Comparator.comparing(RankHistory::getPromotionDate));
 
-			if (nerd.getFirstJoin().isBefore(ServerAge.getEpoch().minusYears(1)))
+			if (nerd.getFirstJoin().isBefore(ServerAge.getEPOCH().minusYears(1)))
 				continue;
 
 			long days = nerd.getFirstJoin().toLocalDate().until(history.get(0).getPromotionDate(), ChronoUnit.DAYS);

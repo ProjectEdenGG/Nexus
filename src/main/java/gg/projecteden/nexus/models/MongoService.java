@@ -42,6 +42,10 @@ public abstract class MongoService<T extends PlayerOwnedObject> extends gg.proje
 				(ex instanceof MappingException && ex.getCause() instanceof ConcurrentModificationException);
 	}
 
+	public void cacheAll() {
+		database.createQuery(getPlayerClass()).find().forEachRemaining(object -> getCache().put(object.getUuid(), object));
+	}
+
 	@Override
 	public void saveSync(T object) {
 		try {

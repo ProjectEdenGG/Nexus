@@ -30,7 +30,7 @@ import org.bukkit.event.Listener;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -76,9 +76,9 @@ public class Leaderboards implements Listener {
 		VOTES(2700, 2699, 2698) {
 			@Override
 			Map<UUID, String> getTop() {
-				return new TopVoterData(LocalDateTime.now().getMonth()).getTopVoters().subList(0, 3).stream()
+				return new TopVoterData(YearMonth.now()).getTopVoters().subList(0, 3).stream()
 						.collect(Collectors.toMap(
-								topVoter -> UUID.fromString(topVoter.getUuid()),
+								topVoter -> topVoter.getVoter().getUuid(),
 								topVoter -> String.valueOf(topVoter.getCount()),
 								(h1, h2) -> h1, LinkedHashMap::new
 						));

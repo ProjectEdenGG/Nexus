@@ -10,8 +10,8 @@ import gg.projecteden.nexus.features.votes.vps.VPSMenu.VPSPage.VPSSlot;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
-import gg.projecteden.nexus.models.vote.VoteService;
-import gg.projecteden.nexus.models.vote.Voter;
+import gg.projecteden.nexus.models.voter.Voter;
+import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import org.bukkit.Material;
@@ -29,9 +29,9 @@ import static gg.projecteden.nexus.utils.StringUtils.plural;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 public class VPSProvider extends MenuUtils implements InventoryProvider {
-	private VPSMenu menu;
-	private VPSPage page;
-	private int index;
+	private final VPSMenu menu;
+	private final VPSPage page;
+	private final int index;
 
 	public VPSProvider(VPSMenu menu, VPSPage page) {
 		this.menu = menu;
@@ -41,7 +41,7 @@ public class VPSProvider extends MenuUtils implements InventoryProvider {
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
-		Voter voter = new VoteService().get(player);
+		Voter voter = new VoterService().get(player);
 
 		addCloseItem(contents);
 		addPagination(contents, player);

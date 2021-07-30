@@ -9,7 +9,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.models.vote.Voter;
+import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -108,7 +108,7 @@ public class BannerCommand extends CustomCommand implements Listener {
 		ConfirmationMenu.builder()
 				.onConfirm(e -> {
 					try {
-						new Voter(event.getPlayer()).takePoints(5);
+						new VoterService().edit(event.getPlayer(), voter -> voter.takePoints(5));
 					} catch (InvalidInputException ex) {
 						send(event.getPlayer(), ex.getMessage());
 						return;

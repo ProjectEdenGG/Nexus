@@ -28,7 +28,7 @@ public class ShopService extends MongoService<Shop> {
 	}
 
 	static {
-		Tasks.async(() -> database.createQuery(Shop.class).find().forEachRemaining(shop -> cache.put(shop.getUuid(), shop)));
+		Tasks.async(() -> new ShopService().cacheAll());
 	}
 
 	public List<Shop> getShops() {

@@ -10,7 +10,7 @@ import gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.islands.MainIsland.MainNPCs;
 import gg.projecteden.nexus.models.bearfair20.BearFair20User;
 import gg.projecteden.nexus.models.bearfair20.BearFair20UserService;
-import gg.projecteden.nexus.models.vote.Voter;
+import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LuckPermsUtils.PermissionChange;
@@ -515,7 +515,7 @@ public class MainIsland implements Listener, BearFairIsland {
 			}
 			default -> {
 				reward = "30 Vote Points";
-				new Voter(player).givePoints(30);
+				new VoterService().edit(player, voter -> voter.givePoints(30));
 			}
 		}
 		return reward;

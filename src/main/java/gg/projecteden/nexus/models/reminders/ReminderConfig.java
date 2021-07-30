@@ -8,9 +8,9 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
-import gg.projecteden.nexus.models.vote.VoteService;
-import gg.projecteden.nexus.models.vote.VoteSite;
-import gg.projecteden.nexus.models.vote.Voter;
+import gg.projecteden.nexus.models.voter.VoteSite;
+import gg.projecteden.nexus.models.voter.Voter;
+import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.models.wallsofgrace.WallsOfGrace;
 import gg.projecteden.nexus.models.wallsofgrace.WallsOfGraceService;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -257,8 +257,8 @@ public class ReminderConfig implements ConfigurationSerializable {
 		public enum ReminderCondition {
 			// Return true if you want to show the announcement
 			VOTE(player -> {
-				Voter voter = new VoteService().get(player);
-				return voter.getActiveVotes().size() < VoteSite.values().length - 2;
+				Voter voter = new VoterService().get(player);
+				return voter.getActiveVotes().size() < VoteSite.getValues().size() - 2;
 			}),
 			DISCORD_LINK(player -> {
 				DiscordUser user = new DiscordUserService().get(player);
