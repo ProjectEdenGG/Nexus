@@ -25,8 +25,9 @@ import gg.projecteden.nexus.models.contributor.Contributor.Purchase;
 import gg.projecteden.nexus.models.contributor.ContributorService;
 import gg.projecteden.nexus.models.costume.CostumeUser;
 import gg.projecteden.nexus.models.costume.CostumeUserService;
-import gg.projecteden.nexus.models.dailyreward.DailyReward;
-import gg.projecteden.nexus.models.dailyreward.DailyRewardService;
+import gg.projecteden.nexus.models.dailyreward.DailyRewardUser;
+import gg.projecteden.nexus.models.dailyreward.DailyRewardUser.DailyStreak;
+import gg.projecteden.nexus.models.dailyreward.DailyRewardUserService;
 import gg.projecteden.nexus.models.dailyvotereward.DailyVoteReward;
 import gg.projecteden.nexus.models.dailyvotereward.DailyVoteReward.DailyVoteStreak;
 import gg.projecteden.nexus.models.dailyvotereward.DailyVoteRewardService;
@@ -196,22 +197,15 @@ public class AccountTransferCommand extends CustomCommand {
 		}
 	}
 
-	static class DailyRewardsTransferer implements Transferer {
+	@Service(DailyRewardUserService.class)
+	static class DailyRewardsTransferer extends MongoTransferer<DailyRewardUser> {
 		@Override
-		public void transfer(OfflinePlayer old, OfflinePlayer target) {
-			final DailyRewardService service = new DailyRewardService();
-			final DailyReward previous = service.get(old);
-			final DailyReward current = service.get(target);
-
-			current.setStreak(previous.getStreak());
-			current.setClaimed(previous.getClaimed());
-			if (!current.isEarnedToday())
-				current.setEarnedToday(previous.isEarnedToday());
-
-			previous.setActive(false);
-
-			service.save(previous);
-			service.save(current);
+		public void transfer(DailyRewardUser previous, DailyRewardUser current) {
+			current.setCurrentStreak(previous.getCurrentStreak());
+			current.getCurrentStreak().setUuid(current.getUuid());
+			current.getPastStreaks().addAll(previous.getPastStreaks());
+			previous.setCurrentStreak(new DailyStreak());
+			previous.getPastStreaks().clear();
 		}
 	}
 

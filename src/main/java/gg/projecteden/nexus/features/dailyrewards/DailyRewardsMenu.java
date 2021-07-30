@@ -10,14 +10,15 @@ import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
-import gg.projecteden.nexus.models.dailyreward.DailyReward;
-import gg.projecteden.nexus.models.dailyreward.DailyRewardService;
+import gg.projecteden.nexus.models.dailyreward.DailyRewardUser;
+import gg.projecteden.nexus.models.dailyreward.DailyRewardUserService;
 import gg.projecteden.nexus.models.dailyreward.Reward;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.utils.Utils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -30,7 +31,7 @@ import static gg.projecteden.nexus.features.menus.SignMenuFactory.ARROWS;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
-	private final DailyReward dailyReward;
+	private final DailyRewardUser user;
 
 	private static final int MAX_DAY = DailyRewardsFeature.getMaxDays();
 
@@ -40,8 +41,8 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 
 	private static final String PREFIX = StringUtils.getPrefix("DailyRewards");
 
-	DailyRewardsMenu(DailyReward dailyReward) {
-		this.dailyReward = dailyReward;
+	DailyRewardsMenu(DailyRewardUser user) {
+		this.user = user;
 	}
 
 	@Override
@@ -63,8 +64,8 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 		for (int i = 1; i <= MAX_DAY; i++) {
 			final int day = i;
 			if (ResourcePack.isEnabledFor(player)) {
-				if (dailyReward.getStreak() >= day) {
-					if (dailyReward.hasClaimed(day)) {
+				if (user.getCurrentStreak().getStreak() >= day) {
+					if (user.getCurrentStreak().hasClaimed(day)) {
 						items.add(ClickableItem.empty(new ItemBuilder(Material.ARROW)
 								.name("&eDay " + day)
 								.lore("&3Claimed")
@@ -74,7 +75,7 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 								.name("&eDay " + day)
 								.lore("&6&lUnclaimed", "&3Click to select reward.")
 								.customModelData(1000 + day)
-								.build(), e -> new SelectItemMenu(dailyReward, day, contents.pagination().getPage()).open(player)));
+								.build(), e -> new SelectItemMenu(user, day, contents.pagination().getPage()).open(player)));
 					}
 				} else {
 					items.add(ClickableItem.empty(new ItemBuilder(Material.ARROW)
@@ -84,13 +85,13 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 							.build()));
 				}
 			} else {
-				if (dailyReward.getStreak() >= day) {
-					if (dailyReward.hasClaimed(day)) {
+				if (user.getCurrentStreak().getStreak() >= day) {
+					if (user.getCurrentStreak().hasClaimed(day)) {
 						ItemStack item = nameItem(claimed.clone(), "&eDay " + day, "&3Claimed" + "", day);
 						items.add(ClickableItem.empty(addGlowing(item)));
 					} else {
 						ItemStack item = nameItem(unclaimed.clone(), "&eDay " + day, "&6&lUnclaimed||" + "&3Click to select reward.", day);
-						items.add(ClickableItem.from(item, e -> new SelectItemMenu(dailyReward, day, contents.pagination().getPage()).open(player)));
+						items.add(ClickableItem.from(item, e -> new SelectItemMenu(user, day, contents.pagination().getPage()).open(player)));
 					}
 				} else {
 					ItemStack item = nameItem(locked.clone(), "&eDay " + day, "&cLocked" + "", day);
@@ -109,12 +110,12 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 	}
 
 	public static class SelectItemMenu extends MenuUtils implements InventoryProvider {
-		private final DailyReward dailyReward;
+		private final DailyRewardUser user;
 		private final int day;
 		private final int page;
 
-		public SelectItemMenu(DailyReward dailyReward, int day, int page) {
-			this.dailyReward = dailyReward;
+		public SelectItemMenu(DailyRewardUser user, int day, int page) {
+			this.user = user;
 			this.day = day;
 			this.page = page;
 		}
@@ -131,7 +132,7 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 
 		@Override
 		public void init(Player player, InventoryContents contents) {
-			addBackItem(contents, e -> new DailyRewardsMenu(dailyReward).open(dailyReward.getOfflinePlayer().getPlayer(), page));
+			addBackItem(contents, e -> new DailyRewardsMenu(user).open(user.getOnlinePlayer(), page));
 
 			List<Reward> rewards = DailyRewardsFeature.getRewards(day);
 
@@ -141,7 +142,7 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 				String rewardDescription = "&e" + camelCase(currentReward.getDescription());
 
 				ItemStack item;
-				if (currentReward.getItems() != null)
+				if (!Utils.isNullOrEmpty(currentReward.getItems()))
 					item = nameItem(currentReward.getItems().get(0).clone(), rewardDescription, "&3Click to claim");
 				else
 					item = nameItem(addGlowing(new ItemStack(Material.PAPER)), rewardDescription, "&3Click to claim");
@@ -151,8 +152,7 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 		}
 
 		private void applyReward(int day, int option) {
-			Player player = dailyReward.getOfflinePlayer().getPlayer();
-			assert player != null;
+			Player player = user.getOnlinePlayer();
 
 			Reward reward = DailyRewardsFeature.getReward(day, option);
 			List<ItemStack> items = reward.getItems();
@@ -161,9 +161,9 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 			Integer votePoints = reward.getVotePoints();
 			String command = reward.getCommand();
 
-			if (dailyReward.hasClaimed(day)) return;
+			if (user.getCurrentStreak().hasClaimed(day)) return;
 
-			if (items != null) {
+			if (!Utils.isNullOrEmpty(items)) {
 				for (ItemStack item : items) {
 					ItemStack clone = item.clone();
 					if (Reward.RequiredSubmenu.COLOR.contains(clone.getType())) {
@@ -208,9 +208,9 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 		}
 
 		public void saveAndReturn(int day) {
-			dailyReward.claim(day);
-			new DailyRewardService().save(dailyReward);
-			new DailyRewardsMenu(dailyReward).open(dailyReward.getOfflinePlayer().getPlayer(), page);
+			user.getCurrentStreak().claim(day);
+			new DailyRewardUserService().save(user);
+			new DailyRewardsMenu(user).open(user.getOnlinePlayer(), page);
 		}
 	}
 

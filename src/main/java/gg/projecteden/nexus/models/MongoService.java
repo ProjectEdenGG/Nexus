@@ -43,7 +43,7 @@ public abstract class MongoService<T extends PlayerOwnedObject> extends gg.proje
 	}
 
 	public void cacheAll() {
-		database.createQuery(getPlayerClass()).find().forEachRemaining(object -> getCache().put(object.getUuid(), object));
+		database.createQuery(getPlayerClass()).find().forEachRemaining(this::cache);
 	}
 
 	@Override

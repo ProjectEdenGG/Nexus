@@ -13,7 +13,7 @@ import java.util.List;
 @Data
 public class Reward {
 	private String description;
-	private List<ItemStack> items;
+	private List<ItemStack> items = new ArrayList<>();
 	private Integer money;
 	private Integer levels;
 	private Integer votePoints;
@@ -23,20 +23,12 @@ public class Reward {
 		this.description = description;
 	}
 
-	public Reward item(ItemStack... items) {
-		if (this.items == null) this.items = new ArrayList();
-		this.items.addAll(Arrays.asList(items));
-		return this;
-	}
-
 	public Reward item(Material material) {
 		return item(material, 1);
 	}
 
 	public Reward item(Material material, int amount) {
-		if (items == null) items = new ArrayList<>();
-		this.items.add(new ItemStack(material, amount));
-		return this;
+		return item(new ItemStack(material, amount));
 	}
 
 	public Reward item(MaterialTag materialTag) {
@@ -44,20 +36,16 @@ public class Reward {
 	}
 
 	public Reward item(MaterialTag materialTag, int amount) {
-		if (items == null) items = new ArrayList<>();
-		materialTag.getValues().forEach(material -> this.items.add(new ItemStack(material, amount)));
+		materialTag.getValues().forEach(material -> item(new ItemStack(material, amount)));
 		return this;
 	}
 
 	public Reward item(ItemBuilder builder) {
-		if (this.items == null) this.items = new ArrayList();
-		this.items.add(builder.build());
-		return this;
+		return item(builder.build());
 	}
 
-	public Reward item(ItemStack item) {
-		if (this.items == null) this.items = new ArrayList();
-		this.items.add(item);
+	public Reward item(ItemStack... items) {
+		this.items.addAll(Arrays.asList(items));
 		return this;
 	}
 

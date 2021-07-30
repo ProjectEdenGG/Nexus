@@ -1,8 +1,9 @@
 package gg.projecteden.nexus.features.dailyrewards;
 
 import gg.projecteden.nexus.framework.features.Feature;
-import gg.projecteden.nexus.models.dailyreward.DailyReward;
-import gg.projecteden.nexus.models.dailyreward.DailyRewardService;
+import gg.projecteden.nexus.models.dailyreward.DailyRewardUser;
+import gg.projecteden.nexus.models.dailyreward.DailyRewardUser.DailyStreak;
+import gg.projecteden.nexus.models.dailyreward.DailyRewardUserService;
 import gg.projecteden.nexus.models.dailyreward.Reward;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -50,19 +51,19 @@ public class DailyRewardsFeature extends Feature {
 		Tasks.repeatAsync(Time.SECOND, Time.SECOND.x(6), () -> {
 			lastTaskTime = LocalDateTime.now();
 
-			DailyRewardService service = new DailyRewardService();
+			DailyRewardUserService service = new DailyRewardUserService();
 			for (Player player : PlayerUtils.getOnlinePlayers()) {
 				try {
 					if (new HoursService().get(player.getUniqueId()).getDaily() < Time.MINUTE.x(15) / 20)
 						continue;
 
-					DailyReward dailyReward = service.get(player);
-					if (dailyReward.isEarnedToday())
+					DailyRewardUser user = service.get(player);
+					if (user.getCurrentStreak().isEarnedToday())
 						continue;
 
 					Tasks.sync(() -> {
-						dailyReward.increaseStreak();
-						service.save(dailyReward);
+						user.getCurrentStreak().increaseStreak();
+						service.save(user);
 					});
 				} catch (Exception ex) {
 					ex.printStackTrace();
@@ -70,14 +71,14 @@ public class DailyRewardsFeature extends Feature {
 			}
 
 			Tasks.waitAsync(Time.SECOND.x(3), () -> {
-				for (DailyReward dailyReward : service.getAllNotEarnedToday()) {
+				for (DailyRewardUser user : service.getAllNotEarnedToday()) {
 					try {
-						if (new HoursService().get(dailyReward.getOfflinePlayer().getUniqueId()).getDaily() < Time.MINUTE.x(15) / 20)
+						if (new HoursService().get(user.getOfflinePlayer().getUniqueId()).getDaily() < Time.MINUTE.x(15) / 20)
 							continue;
 
 						Tasks.sync(() -> {
-							dailyReward.increaseStreak();
-							service.save(dailyReward);
+							user.getCurrentStreak().increaseStreak();
+							service.save(user);
 						});
 					} catch (Exception ex) {
 						ex.printStackTrace();
@@ -88,20 +89,17 @@ public class DailyRewardsFeature extends Feature {
 	}
 
 	public static void dailyReset() {
-		DailyRewardService service = new DailyRewardService();
-		List<DailyReward> dailyRewards = service.getAll();
-		for (DailyReward dailyReward : dailyRewards) {
-			if (!dailyReward.isEarnedToday()) {
-				dailyReward.setActive(false);
-				service.save(dailyReward);
-				dailyReward = new DailyReward(dailyReward.getUuid());
-			}
+		final DailyRewardUserService service = new DailyRewardUserService();
+		for (DailyRewardUser user : service.getCache().values()) {
+			final DailyStreak streak = user.getCurrentStreak();
+			if (!streak.isEarnedToday())
+				user.endStreak();
 
-			dailyReward.setEarnedToday(false);
-			if (dailyReward.getOfflinePlayer().isOnline())
-				dailyReward.increaseStreak();
+			streak.setEarnedToday(false);
+			if (user.getOfflinePlayer().isOnline())
+				streak.increaseStreak();
 
-			service.save(dailyReward);
+			service.save(user);
 		}
 	}
 
@@ -109,8 +107,8 @@ public class DailyRewardsFeature extends Feature {
 		return rewards1.size();
 	}
 
-	public static void menu(Player player, DailyReward dailyReward) {
-		new DailyRewardsMenu(dailyReward).open(player);
+	public static void menu(Player player, DailyRewardUser user) {
+		new DailyRewardsMenu(user).open(player);
 	}
 
 	public static Reward getReward(int day, int option) {

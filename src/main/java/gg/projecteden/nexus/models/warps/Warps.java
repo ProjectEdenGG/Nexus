@@ -65,12 +65,6 @@ public class Warps implements PlayerOwnedObject {
 		private WarpType type;
 		private Location location;
 
-		public Warp(OLD_Warp oldWarp) {
-			this.name = oldWarp.getName();
-			this.type = WarpType.valueOf(oldWarp.getType());
-			this.location = oldWarp.getLocation();
-		}
-
 		public void teleportAsync(Player player) {
 			if (location == null)
 				throw new InvalidInputException("Location is null!");

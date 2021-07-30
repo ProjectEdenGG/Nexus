@@ -10,28 +10,28 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CommandCooldownException;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.models.dailyreward.DailyReward;
-import gg.projecteden.nexus.models.dailyreward.DailyRewardService;
-import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.models.dailyreward.DailyRewardUser;
+import gg.projecteden.nexus.models.dailyreward.DailyRewardUserService;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.utils.TimeUtils.Time;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.function.BiFunction;
 
 import static gg.projecteden.utils.TimeUtils.shortDateTimeFormat;
 
 @Aliases({"dr", "dailyreward"})
 @Permission("daily.rewards")
 public class DailyRewardsCommand extends CustomCommand {
-	private DailyRewardService service = new DailyRewardService();
-	private DailyReward dailyReward;
+	private final DailyRewardUserService service = new DailyRewardUserService();
+	private DailyRewardUser user;
 
 	public DailyRewardsCommand(CommandEvent event) {
 		super(event);
-		if (sender() instanceof Player)
-			dailyReward = service.get(player());
+		if (isPlayerCommandEvent())
+			user = service.get(player());
 	}
 
 	@Path
@@ -39,7 +39,7 @@ public class DailyRewardsCommand extends CustomCommand {
 		if (WorldGroup.SURVIVAL != WorldGroup.of(player()))
 			error("&cYou must be in the survival worlds to claim this reward.");
 
-		DailyRewardsFeature.menu(player(), dailyReward);
+		DailyRewardsFeature.menu(player(), user);
 	}
 
 	@Path("getLastTaskTime")
@@ -48,68 +48,45 @@ public class DailyRewardsCommand extends CustomCommand {
 		send(shortDateTimeFormat(DailyRewardsFeature.getLastTaskTime()));
 	}
 
-	@Path("getAll")
-	@Permission("getAll")
-	void getAll() {
-		for (DailyReward reward : service.getAll())
-			send("Object: " + reward);
-	}
-
-	@Path("dailyreset")
-	@Permission("dailyreset")
-	void dailyReset() {
-		console();
-		DailyRewardsFeature.dailyReset();
-	}
-
 	@Path("streak [player]")
-	void streak(@Arg("self") OfflinePlayer player) {
-		int streak = dailyReward.getStreak();
-		if (!player().equals(player)) {
-			streak = ((DailyReward) service.get(player)).getStreak();
-		}
-		send(PREFIX + Nickname.of(player) + "'s streak: &e" + streak);
+	void streak(@Arg("self") DailyRewardUser user) {
+		send(PREFIX + (isSelf(user) ? "Your" : user.getNickname() + "'s") + " streak: &e" + user.getCurrentStreak().getStreak());
 	}
 
 	@Path("today [player]")
-	void today(@Arg("self") OfflinePlayer player) {
-		boolean earnedToday = dailyReward.isEarnedToday();
-		if (!isSelf(player))
-			earnedToday = ((DailyReward) service.get(player)).isEarnedToday();
-
-		send(PREFIX + Nickname.of(player) + " has " + (earnedToday ? "&e" : "&cnot ") + "earned &3today's reward");
+	void today(@Arg("self") DailyRewardUser user) {
+		boolean earnedToday = user.getCurrentStreak().isEarnedToday();
+		send(PREFIX + (isSelf(user) ? "You have" : user.getNickname() + " has") + (earnedToday ? "&e" : "&cnot ") + "earned &3today's reward");
 	}
 
 	@Path("unclaim <player> <day>")
-	@Permission("modify")
-	void unclaim(OfflinePlayer player, int day) {
-		dailyReward = service.get(player);
-		dailyReward.unclaim(day);
-		service.save(dailyReward);
-		send(PREFIX + "Unclaimed day " + day + " for player " + Nickname.of(player));
+	@Permission(value = "group.admin", absolute = true)
+	void unclaim(DailyRewardUser user, int day) {
+		user.getCurrentStreak().unclaim(day);
+		service.save(this.user);
+		send(PREFIX + "Unclaimed day " + day + " for player " + user.getNickname());
 	}
 
 	@Path("set <player> <day>")
-	@Permission("modify")
-	void setDay(OfflinePlayer player, int day) {
-		dailyReward = service.get(player);
-		dailyReward.setStreak(day);
-		service.save(dailyReward);
-		send(PREFIX + "Streak set to " + dailyReward.getStreak() + " for player " + Nickname.of(player));
+	@Permission(value = "group.admin", absolute = true)
+	void setDay(DailyRewardUser user, int day) {
+		user.getCurrentStreak().setStreak(day);
+		service.save(this.user);
+		send(PREFIX + "Streak set to " + this.user.getCurrentStreak().getStreak() + " for player " + user.getNickname());
 	}
 
 	private static final String resetCooldownType = "dailyRewards-reset";
 
 	@Confirm
-	@Path("reset")
-	void reset() {
+	@Path("reset [player]")
+	void reset(@Arg(value = "self", permission = "group.admin") DailyRewardUser user) {
 		try {
 			if (!new CooldownService().check(player(), resetCooldownType, Time.DAY))
 				throw new CommandCooldownException(player(), resetCooldownType);
 
-			dailyReward.setActive(false);
-			service.save(dailyReward);
-			send(player(), PREFIX + "Your streak has been cleared; you will be able to begin claiming rewards again tomorrow.");
+			user.endStreak();
+			service.save(user);
+			send(player(), PREFIX + "Your streak has been cleared");
 			player().closeInventory();
 		} catch (CommandCooldownException ex) {
 			send(player(), ex.getMessage());
@@ -119,19 +96,15 @@ public class DailyRewardsCommand extends CustomCommand {
 	@Async
 	@Path("top [page]")
 	void top(@Arg("1") int page) {
-		List<DailyReward> results = service.getPage(page);
-		if (results.size() == 0) {
-			send(PREFIX + "&cNo results on page " + page);
-			return;
-		}
+		final BiFunction<DailyRewardUser, String, JsonBuilder> formatter = (user, index) ->
+			json("&3" + index + " &e" + user.getNickname() + " &7- " + user.getCurrentStreak().getStreak());
 
-		send("");
-		send(PREFIX + "Top streaks:");
-		int i = (page - 1) * 10 + 1;
-		for (DailyReward dailyReward : results) {
-			send("&3" + i + " &e" + Nickname.of(dailyReward.getOfflinePlayer()) + " &7- " + dailyReward.getStreak());
-			++i;
-		}
+		final List<DailyRewardUser> sorted = service.getAll().stream()
+			.filter(user -> user.getCurrentStreak().getStreak() > 0)
+			.sorted(Comparator.<DailyRewardUser>comparingInt(user -> user.getCurrentStreak().getStreak()).reversed())
+			.toList();
+
+		paginate(sorted, formatter, "/dailyrewards top", page);
 	}
 
 }
