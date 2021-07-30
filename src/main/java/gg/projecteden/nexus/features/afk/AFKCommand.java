@@ -5,8 +5,6 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
 import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown.Part;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.DescriptionExtra;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.afk.AFKUser;
@@ -15,6 +13,7 @@ import gg.projecteden.nexus.models.afk.AFKUserService;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.PrivateChannel;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.Time;
@@ -55,43 +54,27 @@ public class AFKCommand extends CustomCommand implements Listener {
 			user.forceAfk(user::afk);
 	}
 
-	@Path("settings mobTargeting [enable]")
-	@Description("Disable mobs targeting you while you are AFK")
-	@DescriptionExtra("Must be AFK for longer than 4 minutes")
-	void mobTargeting(Boolean enable) {
-		AFKUser user = service.get(player());
-		if (enable == null)
-			enable = !user.getSetting(AFKSetting.MOB_TARGETING);
-
-		user.setSetting(AFKSetting.MOB_TARGETING, enable);
-		service.save(user);
-		send(PREFIX + "Mobs " + (enable ? "&awill" : "&cwill not") + " &3target you while you are AFK");
+	@Path("settings")
+	void settings() {
+		send(PREFIX + "Available settings:");
+		for (AFKSetting setting : AFKSetting.values()) {
+			final JsonBuilder json = json("&e " + camelCase(setting) + " &7- " + setting.getDescription());
+			final String extra = setting.getDescriptionExtra();
+			if (!isNullOrEmpty(extra))
+				json.hover("&f" + extra);
+			send(json.suggest("/afk settings " + setting.name().toLowerCase() + " "));
+		}
 	}
 
-	@Path("settings mobSpawning [enable]")
-	@Description("Disable mobs spawning near you while you are AFK. Helps with server lag and spawn rates for active players")
-	@DescriptionExtra("Must be AFK for longer than 4 minutes")
-	void mobSpawning(Boolean enable) {
-		error("Temporarily disabled");
-
+	@Path("settings <setting> [value]")
+	void settings(AFKSetting setting, Boolean value) {
 		AFKUser user = service.get(player());
-		if (enable == null)
-			enable = !user.getSetting(AFKSetting.MOB_SPAWNING);
+		if (value == null)
+			value = !user.getSetting(setting);
 
-		user.setSetting(AFKSetting.MOB_SPAWNING, enable);
+		user.setSetting(setting, value);
 		service.save(user);
-		send(PREFIX + "Mobs " + (enable ? "&awill" : "&cwill not") + " &3spawn near you while you are AFK");
-	}
-
-	@Path("settings broadcasts [enable]")
-	void hideBroadcasts(Boolean enable) {
-		AFKUser user = service.get(player());
-		if (enable == null)
-			enable = !user.getSetting(AFKSetting.BROADCASTS);
-
-		user.setSetting(AFKSetting.BROADCASTS, enable);
-		service.save(user);
-		send(PREFIX + "Your own AFK broadcasts are now " + (enable ? "&ashown" : "&chidden") + " &3from other players");
+		send(PREFIX + setting.getMessage().apply(value));
 	}
 
 	@EventHandler(ignoreCancelled = true)

@@ -30,6 +30,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
@@ -56,12 +57,27 @@ public class AFKUser implements PlayerOwnedObject {
 	@Getter
 	@AllArgsConstructor
 	public enum AFKSetting {
-		MOB_TARGETING(false),
-		MOB_SPAWNING(false),
-		BROADCASTS(true),
+		MOB_TARGETING(
+			false,
+			"Disable mobs targeting you while you are AFK",
+			"Must be AFK for longer than 4 minutes",
+			value -> "Mobs " + (value ? "&awill" : "&cwill not") + " &3target you while you are AFK"),
+		MOB_SPAWNING(
+			false,
+			"Disable mobs spawning near you while you are AFK. Helps with server lag and spawn rates for active players",
+			"Must be AFK for longer than 4 minutes",
+			value -> "Mobs " + (value ? "&awill" : "&cwill not") + " &3spawn near you while you are AFK"),
+		BROADCASTS(
+			true,
+			"Hides your AFK broadcasts from other players",
+			null,
+			value -> "Your own AFK broadcasts are now " + (value ? "&ashown" : "&chidden") + " &3from other players"),
 		;
 
 		private final boolean defaultValue;
+		private final String description;
+		private final String descriptionExtra;
+		private final Function<Boolean, String> message;
 	}
 
 	public boolean getSetting(AFKSetting setting) {
