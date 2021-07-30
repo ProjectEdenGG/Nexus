@@ -8,9 +8,10 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.NoPermissionException;
-import gg.projecteden.nexus.models.warps.Warp;
-import gg.projecteden.nexus.models.warps.WarpService;
 import gg.projecteden.nexus.models.warps.WarpType;
+import gg.projecteden.nexus.models.warps.Warps;
+import gg.projecteden.nexus.models.warps.Warps.Warp;
+import gg.projecteden.nexus.models.warps.WarpsService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.utils.Utils.MinMaxResult;
 import lombok.NoArgsConstructor;
@@ -24,7 +25,8 @@ import static gg.projecteden.nexus.utils.Utils.getMin;
 
 @NoArgsConstructor
 public abstract class _WarpCommand extends CustomCommand {
-	WarpService service = new WarpService();
+	protected final WarpsService service = new WarpsService();
+	protected final Warps warps = service.get0();
 
 	public _WarpCommand(CommandEvent event) {
 		super(event);
@@ -44,6 +46,10 @@ public abstract class _WarpCommand extends CustomCommand {
 		if (!isNullOrEmpty(permission))
 			if (!sender().hasPermission(permission))
 				throw new NoPermissionException();
+	}
+
+	protected void save() {
+		service.save(warps);
 	}
 
 	@Path("(list|warps) [filter]")
@@ -70,11 +76,12 @@ public abstract class _WarpCommand extends CustomCommand {
 	@Permission(value = "group.staff", absolute = true)
 	public void set(@Arg(tabCompleter = Warp.class) String name) {
 		checkPermission();
-		Warp warp = service.get(name, getWarpType());
+		Warp warp = getWarpType().get(name);
 		if (warp != null)
 			error("That warp is already set.");
 
-		service.save(new Warp(name, location(), getWarpType().name()));
+		getWarpType().add(name, location());
+		save();
 		send(PREFIX + "&e" + name + " &3set to your current location");
 	}
 
@@ -82,7 +89,9 @@ public abstract class _WarpCommand extends CustomCommand {
 	@Permission(value = "group.staff", absolute = true)
 	public void reset(@Arg(tabCompleter = Warp.class) String name) {
 		checkPermission();
-		service.save(new Warp(name, location(), getWarpType().name()));
+		getWarpType().delete(name);
+		getWarpType().add(name, location());
+		save();
 		send(PREFIX + "&e" + name + " &3set to your current location");
 	}
 
@@ -90,7 +99,8 @@ public abstract class _WarpCommand extends CustomCommand {
 	@Permission(value = "group.staff", absolute = true)
 	public void delete(Warp warp) {
 		checkPermission();
-		service.delete(warp);
+		warps.delete(warp);
+		save();
 		send(PREFIX + "Successfully deleted warp &e" + warp.getName());
 	}
 
@@ -125,7 +135,7 @@ public abstract class _WarpCommand extends CustomCommand {
 	}
 
 	public Optional<Warp> getNearestWarp(Location location) {
-		List<Warp> warps = new WarpService().getWarpsByType(getWarpType());
+		List<Warp> warps = getWarpType().getAll();
 
 		MinMaxResult<Warp> result = getMin(warps, warp -> {
 			if (!location.getWorld().equals(warp.getLocation().getWorld())) return null;
@@ -140,16 +150,18 @@ public abstract class _WarpCommand extends CustomCommand {
 		if ("skyblock".equalsIgnoreCase(value))
 			error("&cSkyblock is currently disabled while we update it");
 
-		Warp warp = service.get(value, getWarpType());
-		if (warp == null) error("That warp is not set");
+		Warp warp = getWarpType().get(value);
+		if (warp == null)
+			error("That warp is not set");
+
 		return warp;
 	}
 
 	@TabCompleterFor(Warp.class)
 	List<String> tabCompleteWarp(String filter) {
-		return service.getWarpsByType(getWarpType()).stream()
-				.filter(warp -> filter == null || warp.getName().toLowerCase().startsWith(filter.toLowerCase()))
+		return getWarpType().getAll().stream()
 				.map(Warp::getName)
+				.filter(name -> filter == null || name.toLowerCase().startsWith(filter.toLowerCase()))
 				.collect(Collectors.toList());
 	}
 

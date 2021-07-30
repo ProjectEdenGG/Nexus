@@ -42,7 +42,6 @@ import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
 import gg.projecteden.nexus.models.punishments.Punishment;
 import gg.projecteden.nexus.models.punishments.PunishmentType;
 import gg.projecteden.nexus.models.punishments.Punishments;
-import gg.projecteden.nexus.models.warps.WarpService;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LocationUtils.RelativeLocation;
@@ -512,7 +511,7 @@ public class MinigamesCommand extends CustomCommand {
 			error("There is no pending game invite");
 
 		if (world() != Minigames.getWorld()) {
-			new WarpService().get("minigames", WarpType.NORMAL).teleportAsync(player());
+			WarpType.NORMAL.get("minigames").teleportAsync(player());
 			Tasks.wait(5, this::acceptInvite);
 		} else
 			runCommand(inviteCommand);

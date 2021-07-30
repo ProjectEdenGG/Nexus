@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.warps;
 
-import gg.projecteden.nexus.models.warps.WarpService;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Getter;
@@ -12,7 +11,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class Warps {
 	@Getter
-	private static Location spawn = new WarpService().get("spawn", WarpType.NORMAL).getLocation();
+	private static Location spawn = WarpType.NORMAL.get("spawn").getLocation();
 
 	public static void spawn(Player player) {
 		player.teleportAsync(spawn);

@@ -8,9 +8,8 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.bearfair20.BearFair20UserService;
-import gg.projecteden.nexus.models.warps.Warp;
-import gg.projecteden.nexus.models.warps.WarpService;
 import gg.projecteden.nexus.models.warps.WarpType;
+import gg.projecteden.nexus.models.warps.Warps.Warp;
 import lombok.NoArgsConstructor;
 import org.bukkit.event.Listener;
 
@@ -36,17 +35,17 @@ public class BearFair20Command extends _WarpCommand implements Listener {
 //		if (user.isFirstVisit())
 //			error("To unlock the warp, you must first travel to Bear Fair aboard the space yacht at spawn");
 
-		teleport(new WarpService().get("bearfair", WarpType.BEAR_FAIR20));
+		teleport(getWarpType().get("bearfair"));
 	}
 
 	@Path("gallery")
 	void warpToGallery() {
-		teleport(new WarpService().get("gallery", WarpType.BEAR_FAIR20));
+		teleport(getWarpType().get("gallery"));
 	}
 
 	@Path("store")
 	void warpToStore() {
-		teleport(new WarpService().get("store", WarpType.BEAR_FAIR20));
+		teleport(getWarpType().get("store"));
 	}
 
 //	@Path("quests giveAllQuestItem")
@@ -249,7 +248,6 @@ public class BearFair20Command extends _WarpCommand implements Listener {
 	@Path("warps set <name>")
 	@Permission("group.admin")
 	public void set(@Arg(tabCompleter = Warp.class) String name) {
-		player();
 		super.set(name);
 	}
 
@@ -262,22 +260,19 @@ public class BearFair20Command extends _WarpCommand implements Listener {
 	@Path("warps (teleport|tp) <name>")
 	@Permission("group.admin")
 	public void teleport(Warp warp) {
-		player();
 		super.teleport(warp);
 	}
 
 	@Path("warps <name>")
 	@Permission("group.admin")
 	public void tp(Warp warp) {
-		player();
 		super.tp(warp);
 	}
 
 	@TabCompleteIgnore(permission = "group.admin")
 	@Path("warps tp nearest")
 	public void teleportNearest() {
-		player();
-		getNearestWarp(location()).ifPresent(warp -> warp.teleportAsync(player()));
+		super.teleportNearest();
 	}
 
 	@Override

@@ -6,9 +6,8 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.models.warps.Warp;
-import gg.projecteden.nexus.models.warps.WarpService;
 import gg.projecteden.nexus.models.warps.WarpType;
+import gg.projecteden.nexus.models.warps.Warps.Warp;
 import gg.projecteden.nexus.models.weeklywakka.WeeklyWakka;
 import gg.projecteden.nexus.models.weeklywakka.WeeklyWakkaService;
 import gg.projecteden.nexus.utils.CitizensUtils;
@@ -125,12 +124,10 @@ public class WeeklyWakkaCommand extends _WarpCommand implements Listener {
 	@Path("move")
 	@Permission(value = "group.admin", absolute = true)
 	public void move() {
-		List<Warp> warps = new WarpService().getWarpsByType(WarpType.WEEKLY_WAKKA);
+		List<Warp> warps = WarpType.WEEKLY_WAKKA.getAll();
 		WeeklyWakkaService service = new WeeklyWakkaService();
 		WeeklyWakka weeklyWakka = service.get0();
-		Warp currentWarp = warps.stream().filter(warp -> warp.getName().equals(weeklyWakka.getCurrentLocation())).findFirst().orElse(null);
-		if (currentWarp != null)
-			warps.remove(currentWarp);
+		warps.stream().filter(warp -> warp.getName().equals(weeklyWakka.getCurrentLocation())).findFirst().ifPresent(warps::remove);
 		List<JsonBuilder> newTips = new ArrayList<>();
 		for (JsonBuilder tip : tips) {
 			if (weeklyWakka.getCurrentTip() == null) {

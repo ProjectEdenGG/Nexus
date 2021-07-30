@@ -5,13 +5,13 @@ import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.MenuUtils;
-import gg.projecteden.nexus.features.warps.Warps;
+import gg.projecteden.nexus.features.warps.Warps.LegacySurvivalWarp;
+import gg.projecteden.nexus.features.warps.Warps.SurvivalWarp;
 import gg.projecteden.nexus.models.home.Home;
 import gg.projecteden.nexus.models.home.HomeOwner;
 import gg.projecteden.nexus.models.home.HomeService;
-import gg.projecteden.nexus.models.warps.Warp;
-import gg.projecteden.nexus.models.warps.WarpService;
 import gg.projecteden.nexus.models.warps.WarpType;
+import gg.projecteden.nexus.models.warps.Warps.Warp;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.NoArgsConstructor;
 import org.bukkit.Material;
@@ -23,7 +23,6 @@ import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @NoArgsConstructor
 public class ATPMenu extends MenuUtils implements InventoryProvider {
-	private final WarpService service = new WarpService();
 	private ATPGroup group;
 
 	public ATPMenu(ATPGroup group) {
@@ -51,10 +50,10 @@ public class ATPMenu extends MenuUtils implements InventoryProvider {
 		contents.set(0, 0, ClickableItem.from(closeItem(), e -> player.closeInventory()));
 
 		if (group.equals(ATPGroup.LEGACY)) {
-			for (Warps.LegacySurvivalWarp warp : Warps.LegacySurvivalWarp.values()) {
+			for (LegacySurvivalWarp warp : LegacySurvivalWarp.values()) {
 				if (warp.name().equalsIgnoreCase("nether")) continue;
 				contents.set(warp.getColumn(), warp.getRow(), ClickableItem.from(warp.getMenuItem(), e -> {
-					Warp toWarp = service.get("legacy_" + warp.name().replace("_", ""), WarpType.ATP);
+					Warp toWarp = WarpType.ATP.get("legacy_" + warp.name().replace("_", ""));
 					new AnimalTeleportPens(player).confirm(player, toWarp.getLocation());
 				}));
 			}
@@ -63,10 +62,10 @@ public class ATPMenu extends MenuUtils implements InventoryProvider {
 			contents.set(3, 7, ClickableItem.from(newWorld, e -> new ATPMenu(ATPGroup.SURVIVAL).open(player)));
 
 		} else {
-			for (Warps.SurvivalWarp warp : Warps.SurvivalWarp.values()) {
+			for (SurvivalWarp warp : SurvivalWarp.values()) {
 				if (warp.name().equalsIgnoreCase("nether")) continue;
 				contents.set(warp.getColumn(), warp.getRow(), ClickableItem.from(warp.getMenuItem(), e -> {
-					Warp toWarp = service.get(warp.name().replace("_", ""), WarpType.ATP);
+					Warp toWarp = WarpType.ATP.get(warp.name().replace("_", ""));
 					new AnimalTeleportPens(player).confirm(player, toWarp.getLocation());
 				}));
 			}

@@ -8,7 +8,6 @@ import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.nerd.Nerd;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,9 +15,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.conversations.Conversable;
 import org.bukkit.entity.Player;
 
 import java.time.LocalDateTime;
@@ -48,7 +45,7 @@ public class Tickets implements PlayerOwnedObject {
 	}
 
 	public Ticket get(int id) {
-		return tickets.get(id);
+		return tickets.get(id - 1);
 	}
 
 	@Data
@@ -73,13 +70,6 @@ public class Tickets implements PlayerOwnedObject {
 			this.location = player.getLocation();
 			this.description = description;
 			tickets.getTickets().add(this);
-		}
-
-		public <T extends Conversable> T getOwner() {
-			if (StringUtils.getUUID0().equals(uuid))
-				return (T) Bukkit.getConsoleSender();
-
-			return (T) getOfflinePlayer();
 		}
 
 		public boolean ownsTicket(Player player) {

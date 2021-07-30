@@ -16,8 +16,8 @@ import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.models.statuehunt.StatueHunt;
 import gg.projecteden.nexus.models.statuehunt.StatueHuntService;
 import gg.projecteden.nexus.models.voter.VoterService;
-import gg.projecteden.nexus.models.warps.Warp;
 import gg.projecteden.nexus.models.warps.WarpType;
+import gg.projecteden.nexus.models.warps.Warps.Warp;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.LuckPermsUtils.PermissionChange;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -33,8 +33,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.Optional;
 
 @NoArgsConstructor
 public class Statue20Command extends _WarpCommand implements Listener {
@@ -72,32 +70,28 @@ public class Statue20Command extends _WarpCommand implements Listener {
 	@Path("(teleport|tp|warp) <name>")
 	@Permission("group.staff")
 	public void teleport(Warp warp) {
-		warp.teleportAsync(player());
-		send(PREFIX + "&3Warping to &e" + warp.getName());
+		super.teleport(warp);
 	}
 
-	@Path("<name>")
 	@Override
+	@Path("<name>")
 	@Permission("group.staff")
 	public void tp(Warp warp) {
-		teleport(warp);
+		super.tp(warp);
 	}
 
 	@Path("tp nearest")
 	@Override
 	@Permission("group.staff")
 	public void teleportNearest() {
-		getNearestWarp(location()).ifPresent(this::teleport);
+		super.teleportNearest();
 	}
 
 	@Path("nearest")
 	@Override
 	@Permission("group.staff")
 	public void nearest() {
-		Optional<Warp> warp = getNearestWarp(location());
-		if (!warp.isPresent())
-			error("No nearest warp found");
-		send(PREFIX + "Nearest warp is &e" + warp.get().getName() + " &3(&e" + (int) warp.get().getLocation().distance(location()) + " &3blocks away)");
+		super.nearest();
 	}
 
 	@Permission("group.staff")

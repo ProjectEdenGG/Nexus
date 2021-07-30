@@ -14,7 +14,6 @@ import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.tip.Tip;
 import gg.projecteden.nexus.models.tip.Tip.TipType;
 import gg.projecteden.nexus.models.tip.TipService;
-import gg.projecteden.nexus.models.warps.WarpService;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -322,14 +321,14 @@ public class Misc implements Listener {
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
 		if (toSpawn.contains(event.getPlayer().getUniqueId())) {
-			new WarpService().get("spawn", WarpType.NORMAL).teleportAsync(event.getPlayer());
+			WarpType.NORMAL.get("spawn").teleportAsync(event.getPlayer());
 			Nexus.log("Teleporting resource world player " + Name.of(event.getPlayer()) + " to spawn");
 			toSpawn.remove(event.getPlayer().getUniqueId());
 		}
 
 		Tasks.wait(5, () -> {
 			if (toSpawn.contains(event.getPlayer().getUniqueId())) {
-				new WarpService().get("spawn", WarpType.NORMAL).teleportAsync(event.getPlayer());
+				WarpType.NORMAL.get("spawn").teleportAsync(event.getPlayer());
 				Nexus.log("Teleporting resource world player " + Name.of(event.getPlayer()) + " to spawn [2]");
 				toSpawn.remove(event.getPlayer().getUniqueId());
 			}

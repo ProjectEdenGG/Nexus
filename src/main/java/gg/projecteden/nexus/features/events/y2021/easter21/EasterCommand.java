@@ -7,9 +7,8 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.easter21.Easter21User;
 import gg.projecteden.nexus.models.easter21.Easter21UserService;
-import gg.projecteden.nexus.models.warps.Warp;
-import gg.projecteden.nexus.models.warps.WarpService;
 import gg.projecteden.nexus.models.warps.WarpType;
+import gg.projecteden.nexus.models.warps.Warps.Warp;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
@@ -80,8 +79,7 @@ public class EasterCommand extends CustomCommand implements Listener {
 	@Path("start")
 	@Permission("group.admin")
 	void start() {
-		WarpService warpService = new WarpService();
-		List<Warp> locations = warpService.getWarpsByType(WarpType.EASTER21);
+		List<Warp> locations = WarpType.EASTER21.getAll();
 		for (Warp warp : locations)
 			warp.getLocation().getBlock().setType(Material.DRAGON_EGG);
 
@@ -91,8 +89,7 @@ public class EasterCommand extends CustomCommand implements Listener {
 	@Path("end")
 	@Permission("group.admin")
 	void end() {
-		WarpService warpService = new WarpService();
-		List<Warp> locations = warpService.getWarpsByType(WarpType.EASTER21);
+		List<Warp> locations = WarpType.EASTER21.getAll();
 		for (Warp warp : locations)
 			warp.getLocation().getBlock().setType(Material.AIR);
 

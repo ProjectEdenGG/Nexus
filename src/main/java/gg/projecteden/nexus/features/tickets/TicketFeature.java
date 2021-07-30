@@ -47,8 +47,8 @@ public class TicketFeature {
 				if (player == null || !staff.getUniqueId().equals(player.getUniqueId()))
 					uuids.add(staff.getUniqueId());
 
-		if (ticket.getOwner() instanceof Player owner)
-			uuids.add(owner.getUniqueId());
+		if (!StringUtils.isUUID0(ticket.getUuid()))
+			uuids.add(ticket.getUuid());
 
 		uuids.forEach(uuid -> PlayerUtils.send(uuid, PREFIX + message));
 	}

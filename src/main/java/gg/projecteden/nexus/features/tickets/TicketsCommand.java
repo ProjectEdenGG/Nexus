@@ -12,9 +12,9 @@ import gg.projecteden.nexus.models.ticket.Tickets;
 import gg.projecteden.nexus.models.ticket.Tickets.Ticket;
 import gg.projecteden.nexus.models.ticket.TicketsService;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import java.util.HashMap;
@@ -64,7 +64,7 @@ public class TicketsCommand extends CustomCommand {
 	@Path("(tp|teleport) <id>")
 	void teleport(Ticket ticket) {
 		if (ticket.getLocation() == null)
-			if (ticket.getOwner() instanceof ConsoleCommandSender)
+			if (StringUtils.isUUID0(ticket.getUuid()))
 				error("That ticket was created by console, so you can not teleport to it");
 			else
 				error("That ticket does not have a location");

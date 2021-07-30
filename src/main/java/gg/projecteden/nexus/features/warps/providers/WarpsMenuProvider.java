@@ -10,13 +10,11 @@ import gg.projecteden.nexus.features.warps.Warps;
 import gg.projecteden.nexus.features.warps.WarpsMenu;
 import gg.projecteden.nexus.models.buildcontest.BuildContest;
 import gg.projecteden.nexus.models.buildcontest.BuildContestService;
-import gg.projecteden.nexus.models.warps.Warp;
-import gg.projecteden.nexus.models.warps.WarpService;
 import gg.projecteden.nexus.models.warps.WarpType;
+import gg.projecteden.nexus.models.warps.WarpsService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -36,7 +34,7 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 			case BUILD_CONTESTS -> contents.set(0, 0, ClickableItem.from(backItem(), e -> WarpsMenu.open(player, WarpMenu.OTHER)));
 		}
 
-		WarpService warpService = new WarpService();
+		WarpsService warpsService = new WarpsService();
 
 		switch (menu) {
 			case MAIN -> {
@@ -62,15 +60,14 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 			case SURVIVAL -> {
 				for (Warps.SurvivalWarp warp : Warps.SurvivalWarp.values()) {
 					contents.set(warp.getColumn(), warp.getRow(), ClickableItem.from(nameItem(warp.getItemStack(), "&3" + warp.getDisplayName(), "&eClick to go to the " + warp.getDisplayName() + " warp"), e -> {
-						Warp warp1 = warpService.getNormalWarp(warp.name().replace("_", ""));
-						warp1.teleportAsync(player);
+						WarpType.NORMAL.get(warp.name().replace("_", "")).teleportAsync(player);
 					}));
 				}
 				ItemStack shops = nameItem(Material.EMERALD, "&3Shops", "&eThis will open||&ethe shop menu");
 				ItemStack resource = nameItem(Material.DIAMOND_PICKAXE, "&3Resource", "&eClick to teleport to the resource world");
 				ItemStack legacy = nameItem(Material.MOSSY_COBBLESTONE, "&3Legacy", "&eClick to view legacy world warps");
 				contents.set(1, 7, ClickableItem.from(shops, e -> new MainMenuProvider(null).open(player)));
-				contents.set(2, 7, ClickableItem.from(resource, e -> warpService.get("resource", WarpType.NORMAL).teleportAsync(player)));
+				contents.set(2, 7, ClickableItem.from(resource, e -> WarpType.NORMAL.get("resource").teleportAsync(player)));
 				contents.set(3, 7, ClickableItem.from(legacy, e -> WarpsMenu.open(player, WarpMenu.LEGACY)));
 				contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.BOOK).name("&3Info").lore("&eThese are the " +
 						"survival world warps.").lore("&eThey are spread out across the entire world.").loreize(false).build()));
@@ -78,12 +75,7 @@ public class WarpsMenuProvider extends MenuUtils implements InventoryProvider {
 			case LEGACY -> {
 				for (Warps.LegacySurvivalWarp warp : Warps.LegacySurvivalWarp.values()) {
 					contents.set(warp.getColumn(), warp.getRow(), ClickableItem.from(nameItem(warp.getItemStack(), "&3" + warp.getDisplayName(), "&eClick to go to the " + warp.getDisplayName() + " warp"), e -> {
-						Warp warp1 = warpService.get("legacy_" + warp.name().replace("_", ""), WarpType.NORMAL);
-						if (warp1 == null) {
-							PlayerUtils.send(player, StringUtils.getPrefix("Warps") + "&cThere was an error while trying to teleport you to the warp");
-							return;
-						}
-						warp1.teleportAsync(player);
+						WarpType.NORMAL.get("legacy_" + warp.name().replace("_", "")).teleportAsync(player);
 					}));
 				}
 				ItemStack shops2 = nameItem(Material.EMERALD, "&3Shops", "&eThis will open||&ethe shop menu");

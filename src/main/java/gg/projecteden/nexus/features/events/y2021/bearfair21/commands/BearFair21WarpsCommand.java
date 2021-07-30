@@ -5,7 +5,6 @@ import gg.projecteden.nexus.features.warps.commands._WarpCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.models.warps.WarpService;
 import gg.projecteden.nexus.models.warps.WarpType;
 
 @Aliases({"bearfair21warp", "bf21warps", "bf21warp"})
@@ -21,7 +20,7 @@ public class BearFair21WarpsCommand extends _WarpCommand {
 			if (!BearFair21.canWarp())
 				error("Soon™");
 
-		teleport(new WarpService().get("bearfair", WarpType.BEAR_FAIR21));
+		teleport(getWarpType().get("bearfair"));
 	}
 
 	@Override

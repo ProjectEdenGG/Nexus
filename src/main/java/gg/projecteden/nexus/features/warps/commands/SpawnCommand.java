@@ -5,9 +5,8 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.models.warps.Warp;
-import gg.projecteden.nexus.models.warps.WarpService;
 import gg.projecteden.nexus.models.warps.WarpType;
+import gg.projecteden.nexus.models.warps.WarpsService;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
 import org.bukkit.entity.Player;
@@ -17,7 +16,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 @NoArgsConstructor
 public class SpawnCommand extends CustomCommand implements Listener {
-	private final WarpService service = new WarpService();
+	private final WarpsService service = new WarpsService();
 
 	public SpawnCommand(CommandEvent event) {
 		super(event);
@@ -32,8 +31,7 @@ public class SpawnCommand extends CustomCommand implements Listener {
 
 	@Path("[world]")
 	void run(@Arg("survival") SpawnType spawnType) {
-		Warp warp = service.get(spawnType.name(), WarpType.NORMAL);
-		warp.teleportAsync(player());
+		WarpType.NORMAL.get(spawnType.name()).teleportAsync(player());
 	}
 
 	@Path("force [player]")
@@ -48,7 +46,7 @@ public class SpawnCommand extends CustomCommand implements Listener {
 		if (event.getPlayer().hasPlayedBefore())
 			return;
 
-		Tasks.wait(1, () -> new WarpService().get("spawn", WarpType.NORMAL).teleportAsync(event.getPlayer()));
+		Tasks.wait(1, () -> WarpType.NORMAL.get("spawn").teleportAsync(event.getPlayer()));
 	}
 
 }

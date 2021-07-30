@@ -10,9 +10,8 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.buildcontest.BuildContest;
 import gg.projecteden.nexus.models.buildcontest.BuildContestService;
-import gg.projecteden.nexus.models.warps.Warp;
-import gg.projecteden.nexus.models.warps.WarpService;
 import gg.projecteden.nexus.models.warps.WarpType;
+import gg.projecteden.nexus.models.warps.Warps.Warp;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.Time;
@@ -31,7 +30,6 @@ import java.util.List;
 @Aliases("bc")
 @NoArgsConstructor
 public class BuildContestCommand extends CustomCommand implements Listener {
-	private final WarpService warpService = new WarpService();
 	private final BuildContestService service = new BuildContestService();
 	private final BuildContest buildContest = service.get0();
 
@@ -44,7 +42,7 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 		if (!buildContest.isActive())
 			error("There are no active build contests running");
 
-		Warp warp = warpService.get("buildcontest" + buildContest.getId(), WarpType.NORMAL);
+		Warp warp = WarpType.NORMAL.get("buildcontest" + buildContest.getId());
 		if (warp == null)
 			error("That warp is not set.");
 		warp.teleportAsync(player());
