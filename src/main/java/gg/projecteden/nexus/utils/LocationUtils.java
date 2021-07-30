@@ -374,10 +374,17 @@ public class LocationUtils {
 		}
 
 		private static double trim(String string) {
-			if (isNullOrEmpty(string)) return 0;
-			if (Utils.isDouble(string)) return Double.parseDouble(string);
-			string = StringUtils.right(string, string.length() - 1);
-			if (isNullOrEmpty(string)) return 0;
+			if (isNullOrEmpty(string))
+				return 0;
+
+			if (Utils.isDouble(string))
+				return Double.parseDouble(string);
+
+			string = StringUtils.right(string, string.length() - 1).replaceAll(",", "");
+
+			if (isNullOrEmpty(string))
+				return 0;
+
 			return Double.parseDouble(string);
 		}
 	}
