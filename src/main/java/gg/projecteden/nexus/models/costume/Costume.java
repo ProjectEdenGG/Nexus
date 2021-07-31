@@ -43,7 +43,7 @@ public class Costume {
 		private final EquipmentSlot slot;
 
 		public CustomModelFolder getFolder() {
-			return ROOT_FOLDER.getFolder("/costumes/" + name().toLowerCase());
+			return getRootFolder().getFolder("/costumes/" + name().toLowerCase());
 		}
 	}
 
@@ -59,9 +59,13 @@ public class Costume {
 	}
 
 	private static final List<Costume> costumes = new ArrayList<>();
-	public static final CustomModelFolder ROOT_FOLDER = ResourcePack.getRootFolder().getFolder("/costumes");
+	public static final String ROOT_FOLDER = "/costumes";
 	public static final String EXCLUSIVE = "exclusive";
 	public static final String STORE_URL = StoreCommand.URL + "/category/costumes";
+
+	public static CustomModelFolder getRootFolder() {
+		return ResourcePack.getRootFolder().getFolder(ROOT_FOLDER);
+	}
 
 	static {
 		load();

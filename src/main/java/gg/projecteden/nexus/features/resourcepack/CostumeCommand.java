@@ -104,7 +104,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 		protected final CustomModelFolder folder;
 
 		public CostumeMenu() {
-			this(null, ROOT_FOLDER);
+			this(null, Costume.getRootFolder());
 		}
 
 		@Override
@@ -271,7 +271,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 				.lore("", "&eClick to view the costume store");
 
 			contents.set(0, 8, ClickableItem.from(info.build(), e ->
-				new CostumeStoreMenu(this, ROOT_FOLDER).open(user.getOnlinePlayer())));
+				new CostumeStoreMenu(this, Costume.getRootFolder()).open(user.getOnlinePlayer())));
 
 			final Costume costume = user.getActiveCostume();
 			if (costume != null) {
