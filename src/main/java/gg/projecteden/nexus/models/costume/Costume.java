@@ -28,6 +28,7 @@ public class Costume {
 		this.type = type;
 		this.item = new ItemBuilder(model.getItem())
 			.undroppable()
+			.unframeable()
 			.unplaceable()
 			.unstorable()
 			.untradeable().build();

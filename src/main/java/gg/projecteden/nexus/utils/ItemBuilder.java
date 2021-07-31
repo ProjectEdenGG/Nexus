@@ -482,6 +482,10 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		 */
 		DROPPABLE(true),
 		/**
+		 * Whether an item can be placed in an item frame
+		 */
+		FRAMEABLE(true),
+		/**
 		 * Whether an item can be placed
 		 */
 		PLACEABLE(true),
@@ -548,6 +552,10 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 
 	public ItemBuilder undroppable() {
 		return setting(ItemSetting.DROPPABLE, false);
+	}
+
+	public ItemBuilder unframeable() {
+		return setting(ItemSetting.FRAMEABLE, false);
 	}
 
 	public ItemBuilder unplaceable() {
