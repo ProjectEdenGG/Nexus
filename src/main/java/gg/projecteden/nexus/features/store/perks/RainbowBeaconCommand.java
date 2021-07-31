@@ -12,10 +12,14 @@ import gg.projecteden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import java.util.ArrayList;
@@ -29,11 +33,9 @@ import static gg.projecteden.nexus.features.store.perks.RainbowBeaconCommand.PER
 public class RainbowBeaconCommand extends CustomCommand implements Listener {
 	public static final String PERMISSION = "rainbow.beacon";
 	private final RainbowBeaconService service = new RainbowBeaconService();
-	private RainbowBeacon rainbowBeacon;
 
 	public RainbowBeaconCommand(CommandEvent event) {
 		super(event);
-		rainbowBeacon = service.get(player());
 	}
 
 	@Path("start [player]")
@@ -100,6 +102,33 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 				event.setCancelled(true);
 				break;
 			}
+	}
+
+	@EventHandler
+	public void onBlockPistonExtend(BlockPistonExtendEvent event) {
+		handlePiston(event, event.getBlocks(), event.getDirection());
+	}
+
+	@EventHandler
+	public void onBlockPistonRetract(BlockPistonRetractEvent event) {
+		handlePiston(event, event.getBlocks(), event.getDirection());
+	}
+
+	private void handlePiston(Cancellable event, List<Block> blocks, BlockFace direction) {
+		for (RainbowBeacon rainbowBeacon : service.getCache().values()) {
+			final Location location = rainbowBeacon.getLocation();
+			for (Block block : blocks) {
+				if (block.getLocation().equals(location)) {
+					event.setCancelled(true);
+					return;
+				}
+
+				if (block.getRelative(direction).getLocation().equals(location)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+		}
 	}
 
 	static {
