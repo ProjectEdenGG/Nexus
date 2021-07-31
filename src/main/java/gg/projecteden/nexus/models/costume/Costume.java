@@ -72,6 +72,9 @@ public class Costume {
 	}
 
 	public static void load() {
+		final CostumeUserService service = new CostumeUserService();
+		service.saveCache();
+		service.clearCache();
 		costumes.clear();
 		for (CostumeType type : CostumeType.values())
 			load(type, type.getFolder());
