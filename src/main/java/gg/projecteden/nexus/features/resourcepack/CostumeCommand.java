@@ -24,7 +24,9 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -56,6 +58,11 @@ public class CostumeCommand extends CustomCommand implements Listener {
 	@Path
 	void menu() {
 		new CostumeInventoryMenu().open(player());
+	}
+
+	@Path("off [player]")
+	void off(@Arg(value = "self", permission = "group.staff") CostumeUser user) {
+		user.setActiveCostume(null);
 	}
 
 	@Path("store")
@@ -95,6 +102,14 @@ public class CostumeCommand extends CustomCommand implements Listener {
 	@Permission("group.admin")
 	void list(@Arg("1") int page) {
 		paginate(Costume.values(), (costume, index) -> json("&3" + index + " &e" + costume.getId()), "/costume list", page);
+	}
+
+	@EventHandler
+	public void onInventoryClose(InventoryCloseEvent event) {
+		final CostumeUserService service = new CostumeUserService();
+		final CostumeUser user = service.get(event.getPlayer());
+		if (user.getActiveCostume() == null)
+			Tasks.wait(1, user::sendResetPackets);
 	}
 
 	@AllArgsConstructor

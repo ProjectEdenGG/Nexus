@@ -8,7 +8,6 @@ import gg.projecteden.nexus.framework.persistence.serializer.mongodb.CostumeConv
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.costume.Costume.CostumeType;
 import gg.projecteden.nexus.utils.PacketUtils;
-import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,9 +21,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -60,14 +57,11 @@ public class CostumeUser implements PlayerOwnedObject {
 	}
 
 	public void sendResetPackets() {
-		Set<EquipmentSlot> slotsReset = EnumSet.noneOf(EquipmentSlot.class);
-		for (CostumeType type : CostumeType.values()) {
-			EquipmentSlot slot = type.getSlot();
-			if (slotsReset.contains(slot)) continue;
-			slotsReset.add(slot);
-			ItemStack item = getOnlinePlayer().getInventory().getItem(slot);
-			Tasks.wait(1, () -> sendPacket(item, slot));
-		}
+		if (!isOnline())
+			return;
+
+		for (EquipmentSlot slot : CostumeType.getSlots())
+			sendPacket(getOnlinePlayer().getInventory().getItem(slot), slot);
 	}
 
 	private void sendPacket(ItemStack item, EquipmentSlot slot) {
@@ -77,6 +71,9 @@ public class CostumeUser implements PlayerOwnedObject {
 	}
 
 	private boolean shouldSendPacket() {
+		if (!isOnline())
+			return false;
+
 		final Player player = getOnlinePlayer();
 		if (activeCostume == null)
 			return false;

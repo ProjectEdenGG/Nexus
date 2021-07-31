@@ -32,7 +32,7 @@ public class ItemSettingsListener implements Listener {
 	}
 
 	@EventHandler
-	public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
+	public void on(PlayerInteractEntityEvent event) {
 		if (!(event.getRightClicked() instanceof ItemFrame))
 			return;
 

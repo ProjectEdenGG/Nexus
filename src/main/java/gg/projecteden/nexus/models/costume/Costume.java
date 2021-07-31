@@ -12,7 +12,11 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+
+import static java.util.stream.Collectors.toSet;
 
 @Data
 @AllArgsConstructor
@@ -45,6 +49,10 @@ public class Costume {
 
 		public CustomModelFolder getFolder() {
 			return getRootFolder().getFolder("/costumes/" + name().toLowerCase());
+		}
+
+		public static Set<EquipmentSlot> getSlots() {
+			return Arrays.stream(values()).map(CostumeType::getSlot).collect(toSet());
 		}
 	}
 
