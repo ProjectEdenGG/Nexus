@@ -7,11 +7,14 @@ import gg.projecteden.nexus.models.autotorch.AutoTorchUser;
 import gg.projecteden.nexus.utils.CompletableTask;
 import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.nexus.utils.WorldGuardFlagUtils;
 import lombok.NoArgsConstructor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
@@ -68,9 +71,14 @@ public class AutoTorch extends Feature {
 
 					return true;
 				}).thenAccept(success -> {
-					// remove a torch from player's inventory
-					if (success && gameMode.isSurvival())
-						item.setAmount(item.getAmount()-1);
+					if (success) {
+						// play sound
+						new SoundBuilder(Sound.BLOCK_WOOD_PLACE).location(block).category(SoundCategory.BLOCKS).play();
+
+						// remove a torch from player's inventory
+						if (gameMode.isSurvival())
+							item.setAmount(item.getAmount() - 1);
+					}
 				});
 			});
 		});
