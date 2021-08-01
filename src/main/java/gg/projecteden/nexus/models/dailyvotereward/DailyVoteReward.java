@@ -38,18 +38,19 @@ public class DailyVoteReward implements PlayerOwnedObject {
 
 	public DailyVoteStreak getCurrentStreak() {
 		if (currentStreak == null)
-			currentStreak = new DailyVoteStreak();
+			currentStreak = new DailyVoteStreak(uuid);
 		return currentStreak;
 	}
 
 	public void endStreak() {
 		currentStreak.end();
 		pastStreaks.add(currentStreak);
-		currentStreak = new DailyVoteStreak();
+		currentStreak = new DailyVoteStreak(uuid);
 	}
 
 	@Data
 	@NoArgsConstructor
+	@RequiredArgsConstructor
 	public static class DailyVoteStreak implements PlayerOwnedObject {
 		@NonNull
 		private UUID uuid;
