@@ -22,9 +22,8 @@ import gg.projecteden.nexus.models.shop.ShopService;
 import gg.projecteden.nexus.models.tip.Tip;
 import gg.projecteden.nexus.models.tip.Tip.TipType;
 import gg.projecteden.nexus.models.tip.TipService;
-import gg.projecteden.nexus.models.warps.Warp;
-import gg.projecteden.nexus.models.warps.WarpService;
 import gg.projecteden.nexus.models.warps.WarpType;
+import gg.projecteden.nexus.models.warps.Warps.Warp;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -472,7 +471,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 			.air(false)
 			.paste();
 
-		Warp warp = new WarpService().get(worldName, WarpType.NORMAL);
+		Warp warp = WarpType.NORMAL.get(worldName);
 		Nexus.getMultiverseCore().getMVWorldManager().getMVWorld(worldName).setSpawnLocation(warp.getLocation());
 		getFilidNPC().spawn(new Location(Bukkit.getWorld(worldName), .5, 151, -36.5, 0F, 0F));
 
