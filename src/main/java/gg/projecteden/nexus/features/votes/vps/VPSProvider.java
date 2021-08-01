@@ -41,7 +41,8 @@ public class VPSProvider extends MenuUtils implements InventoryProvider {
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
-		Voter voter = new VoterService().get(player);
+		VoterService service = new VoterService();
+		Voter voter = service.get(player);
 
 		addCloseItem(contents);
 		addPagination(contents, player);
@@ -76,6 +77,7 @@ public class VPSProvider extends MenuUtils implements InventoryProvider {
 
 				if (item.getPrice() > 0) {
 					voter.takePoints(item.getPrice());
+					service.save(voter);
 					PlayerUtils.send(player, PREFIX + "You spent &e" + item.getPrice() + plural(" &3point", item.getPrice())
 							+ " on &e" + stripColor(item.getName()) + "&3. &e" + voter.getPoints() + " &3points remaining.");
 				}
