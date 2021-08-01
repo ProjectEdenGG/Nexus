@@ -74,7 +74,7 @@ public class VoterService extends MongoService<Voter> {
 
 	public List<TopVoter> getTopVoters() {
 		return getCache().values().stream()
-			.sorted(Comparator.comparingInt(Voter::getCount))
+			.sorted(Comparator.comparingInt(Voter::getCount).reversed())
 			.map(voter -> new TopVoter(voter, null, voter.getVotes()))
 			.toList();
 	}
@@ -89,11 +89,12 @@ public class VoterService extends MongoService<Voter> {
 
 	public List<TopVoter> getTopVoters(YearMonth yearMonth) {
 		return getCache().values().stream()
-			.sorted(Comparator.comparingInt(Voter::getCount))
 			.map(voter -> new TopVoter(voter, yearMonth, voter.getVotes().stream()
 				.filter(vote -> yearMonth.equals(YearMonth.from(vote.getTimestamp())))
 				.toList()
-			)).toList();
+			))
+			.sorted(Comparator.comparingInt(TopVoter::getCount).reversed())
+			.toList();
 	}
 
 	public List<Vote> getActiveVotes() {

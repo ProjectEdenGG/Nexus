@@ -15,7 +15,7 @@ public class TopVoter {
 	private Voter voter;
 
 	private YearMonth yearMonth;
-	List<Vote> votes;
+	private List<Vote> votes;
 
 	public int getCount() {
 		return votes.size();

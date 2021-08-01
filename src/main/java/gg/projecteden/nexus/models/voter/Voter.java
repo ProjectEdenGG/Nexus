@@ -33,7 +33,7 @@ public class Voter implements PlayerOwnedObject {
 	private UUID uuid;
 	private List<Vote> votes = new ArrayList<>();
 	private int points;
-	private boolean reminders;
+	private boolean reminders = true;
 	private int headCoupons;
 
 	public void vote(Vote vote) {
