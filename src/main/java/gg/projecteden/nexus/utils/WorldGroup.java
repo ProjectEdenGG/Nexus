@@ -1,10 +1,9 @@
 package gg.projecteden.nexus.utils;
 
 import lombok.Getter;
+import me.lexikiq.HasLocation;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
@@ -61,12 +60,8 @@ public enum WorldGroup {
 		return getWorlds().stream().map(PlayerUtils::getOnlinePlayers).flatMap(Collection::stream).toList();
 	}
 
-	public static WorldGroup of(Entity entity) {
-		return of(entity.getWorld());
-	}
-
-	public static WorldGroup of(Location location) {
-		return of(location.getWorld());
+	public static WorldGroup of(HasLocation location) {
+		return of(location.getLocation().getWorld());
 	}
 
 	public static WorldGroup of(World world) {
@@ -84,4 +79,17 @@ public enum WorldGroup {
 
 		return UNKNOWN;
 	}
+
+	public static boolean isResourceWorld(HasLocation location) {
+		return isResourceWorld(location.getLocation().getWorld());
+	}
+
+	public static boolean isResourceWorld(World world) {
+		return isResourceWorld(world.getName());
+	}
+
+	public static boolean isResourceWorld(String world) {
+		return world.toLowerCase().startsWith("resource");
+	}
+
 }

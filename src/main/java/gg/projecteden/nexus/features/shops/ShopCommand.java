@@ -1,12 +1,12 @@
 package gg.projecteden.nexus.features.shops;
 
-import gg.projecteden.nexus.features.shops.ShopMenuFunctions.FilterSearchType;
 import gg.projecteden.nexus.features.shops.providers.BrowseProductsProvider;
 import gg.projecteden.nexus.features.shops.providers.BrowseShopsProvider;
 import gg.projecteden.nexus.features.shops.providers.MainMenuProvider;
 import gg.projecteden.nexus.features.shops.providers.PlayerShopProvider;
 import gg.projecteden.nexus.features.shops.providers.YourShopProvider;
 import gg.projecteden.nexus.features.shops.providers.YourShopProvider.CollectItemsProvider;
+import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.FilterSearchType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -101,9 +101,6 @@ public class ShopCommand extends CustomCommand implements Listener {
 
 	@Path("collect")
 	void collect() {
-		if (world().getName().startsWith("resource"))
-			error("You cannot use player shops while in the resource world");
-
 		new CollectItemsProvider(null).open(player());
 	}
 

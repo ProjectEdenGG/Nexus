@@ -3,8 +3,9 @@ package gg.projecteden.nexus.features.shops.providers;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.shops.ShopMenuFunctions.FilterSearchType;
 import gg.projecteden.nexus.features.shops.Shops;
+import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.FilterSearchType;
+import gg.projecteden.nexus.features.shops.providers.common.ShopProvider;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import org.bukkit.Material;
@@ -17,9 +18,9 @@ import java.util.function.Predicate;
 import static gg.projecteden.nexus.features.menus.SignMenuFactory.ARROWS;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
-public class SearchProductsProvider extends _ShopProvider {
+public class SearchProductsProvider extends ShopProvider {
 
-	public SearchProductsProvider(_ShopProvider previousMenu) {
+	public SearchProductsProvider(ShopProvider previousMenu) {
 		this.previousMenu = previousMenu;
 	}
 

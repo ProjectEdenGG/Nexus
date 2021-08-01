@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.framework.commands.models;
 
 import gg.projecteden.annotations.Disabled;
+import gg.projecteden.annotations.Environments;
 import gg.projecteden.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
@@ -30,6 +31,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.SneakyThrows;
+import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -470,6 +472,10 @@ public abstract class ICustomCommand {
 
 		List<Method> filtered = methods.stream()
 			.filter(method -> method.getAnnotation(Disabled.class) == null)
+			.filter(method -> {
+				final Environments envs = method.getAnnotation(Environments.class);
+				return envs == null || ArrayUtils.contains(envs.value(), Nexus.getEnv());
+			})
 			.filter(method -> hasPermission(event.getSender(), method))
 			.collect(Collectors.toList());
 

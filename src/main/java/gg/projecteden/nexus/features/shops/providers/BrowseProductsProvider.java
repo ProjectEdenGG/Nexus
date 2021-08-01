@@ -4,16 +4,16 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.Pagination;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.shops.ShopMenuFunctions.Filter;
-import gg.projecteden.nexus.features.shops.ShopMenuFunctions.FilterEmptyStock;
-import gg.projecteden.nexus.features.shops.ShopMenuFunctions.FilterExchangeType;
-import gg.projecteden.nexus.features.shops.ShopMenuFunctions.FilterMarketItems;
-import gg.projecteden.nexus.features.shops.ShopMenuFunctions.FilterRequiredType;
-import gg.projecteden.nexus.features.shops.ShopMenuFunctions.FilterSearchType;
-import gg.projecteden.nexus.features.shops.ShopMenuFunctions.FilterType;
+import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.Filter;
+import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.FilterEmptyStock;
+import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.FilterExchangeType;
+import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.FilterMarketItems;
+import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.FilterRequiredType;
+import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.FilterSearchType;
+import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.FilterType;
+import gg.projecteden.nexus.features.shops.providers.common.ShopProvider;
 import gg.projecteden.nexus.models.shop.Shop;
 import gg.projecteden.nexus.models.shop.Shop.Product;
-import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.Getter;
@@ -30,31 +30,31 @@ import static gg.projecteden.nexus.utils.ItemUtils.getRawShulkerContents;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static java.util.stream.Collectors.toList;
 
-public class BrowseProductsProvider extends _ShopProvider {
+public class BrowseProductsProvider extends ShopProvider {
 	@Getter
 	protected List<Filter> filters;
 	protected Shop shop;
 
-	public BrowseProductsProvider(_ShopProvider previousMenu) {
+	public BrowseProductsProvider(ShopProvider previousMenu) {
 		this(previousMenu, null, new ArrayList<>());
 	}
 
-	public BrowseProductsProvider(_ShopProvider previousMenu, Shop shop) {
+	public BrowseProductsProvider(ShopProvider previousMenu, Shop shop) {
 		this(previousMenu, shop, new ArrayList<>());
 	}
 
-	public BrowseProductsProvider(_ShopProvider previousMenu, Filter filter) {
+	public BrowseProductsProvider(ShopProvider previousMenu, Filter filter) {
 		this(previousMenu, null, Collections.singletonList(filter));
 	}
 
-	public BrowseProductsProvider(_ShopProvider previousMenu, Shop shop, Filter filter) {
+	public BrowseProductsProvider(ShopProvider previousMenu, Shop shop, Filter filter) {
 		this(previousMenu, shop, Collections.singletonList(filter));
 	}
 
-	public BrowseProductsProvider(_ShopProvider previousMenu, Shop shop, List<Filter> filters) {
+	public BrowseProductsProvider(ShopProvider previousMenu, Shop shop, List<Filter> filters) {
 		this.previousMenu = previousMenu;
 		if (previousMenu != null && previousMenu.getPreviousMenu() != null && previousMenu.getPreviousMenu().getPreviousMenu() != null
-				&& previousMenu.getPreviousMenu().getClass() == this.getClass())
+			&& previousMenu.getPreviousMenu().getClass() == this.getClass())
 			this.previousMenu = previousMenu.getPreviousMenu().getPreviousMenu();
 		this.shop = shop;
 		this.filters = new ArrayList<>(filters);
@@ -77,6 +77,7 @@ public class BrowseProductsProvider extends _ShopProvider {
 	public void init(Player player, InventoryContents contents) {
 		super.init(player, contents);
 
+		filters.add(FilterRequiredType.REQUIRED.of("No resource world items", product -> !product.isResourceWorld()));
 		addFilters(player, contents);
 		addItems(player, contents);
 	}
@@ -92,7 +93,7 @@ public class BrowseProductsProvider extends _ShopProvider {
 		Filter searchFilter = getFilter(FilterSearchType.class);
 		if (searchFilter != null) {
 			ItemStack search = new ItemBuilder(Material.COMPASS).name("&6Current filter: &e" + searchFilter.getMessage())
-					.lore("").lore("&7Click to remove filter").glow().build();
+				.lore("").lore("&7Click to remove filter").glow().build();
 			contents.set(0, 4, ClickableItem.from(search, e -> {
 				filters.remove(searchFilter);
 				open(player, contents.pagination().getPage());
@@ -107,8 +108,8 @@ public class BrowseProductsProvider extends _ShopProvider {
 		FilterEmptyStock next = filter.nextWithLoop();
 
 		ItemBuilder item = new ItemBuilder(Material.BUCKET).name("&6Empty Stock:")
-				.lore("&e⬇ " + camelCase(filter.name()))
-				.lore("&7⬇ " + camelCase(next.name()));
+			.lore("&e⬇ " + camelCase(filter.name()))
+			.lore("&7⬇ " + camelCase(next.name()));
 		contents.set(5, 3, ClickableItem.from(item.build(), e -> {
 			formatFilter(stockFilter, next);
 			open(player, contents.pagination().getPage());
@@ -121,9 +122,9 @@ public class BrowseProductsProvider extends _ShopProvider {
 		FilterExchangeType next = filter.nextWithLoop();
 
 		ItemBuilder item = new ItemBuilder(Material.HOPPER).name("&6Filter by:")
-				.lore("&7⬇ " + camelCase(filter.previousWithLoop().name()))
-				.lore("&e⬇ " + camelCase(filter.name()))
-				.lore("&7⬇ " + camelCase(next.name()));
+			.lore("&7⬇ " + camelCase(filter.previousWithLoop().name()))
+			.lore("&e⬇ " + camelCase(filter.name()))
+			.lore("&7⬇ " + camelCase(next.name()));
 		contents.set(5, 4, ClickableItem.from(item.build(), e -> {
 			formatFilter(exchangeFilter, next);
 			open(player, contents.pagination().getPage());
@@ -136,18 +137,12 @@ public class BrowseProductsProvider extends _ShopProvider {
 		FilterMarketItems next = filter.nextWithLoop();
 
 		ItemBuilder item = new ItemBuilder(Material.OAK_SIGN).name("&6Market Items:")
-				.lore("&e⬇ " + camelCase(filter.name()))
-				.lore("&7⬇ " + camelCase(next.name()));
+			.lore("&e⬇ " + camelCase(filter.name()))
+			.lore("&7⬇ " + camelCase(next.name()));
 		contents.set(5, 5, ClickableItem.from(item.build(), e -> {
 			formatFilter(marketFilter, next);
 			open(player, contents.pagination().getPage());
 		}));
-
-		if (shopGroup == ShopGroup.SURVIVAL) {
-			boolean isResourceWorld = player.getWorld().getName().startsWith("resource");
-			Filter world = FilterRequiredType.REQUIRED.of("This worlds items", product -> isResourceWorld == product.isResourceWorld());
-			filters.add(world);
-		}
 	}
 
 	public void addItems(Player player, InventoryContents contents) {
@@ -160,9 +155,9 @@ public class BrowseProductsProvider extends _ShopProvider {
 		List<Product> products = new ArrayList<Product>() {{
 			shops.forEach(shop -> addAll(shop.getProducts(shopGroup)));
 		}}.stream()
-				.filter(product -> !isFiltered(product))
-				.sorted(Product::compareTo)
-				.collect(toList());
+			.filter(product -> !isFiltered(product))
+			.sorted(Product::compareTo)
+			.collect(toList());
 
 		ClickableItem empty = ClickableItem.empty(new ItemStack(Material.BARRIER));
 
@@ -177,30 +172,30 @@ public class BrowseProductsProvider extends _ShopProvider {
 			items.add(empty);
 
 		products.subList(start, Math.min(end, products.size()))
-				.forEach(product -> {
-					try {
-						items.add(ClickableItem.from(product.getItemWithCustomerLore().build(), e -> {
-							if (!product.isPurchasable())
+			.forEach(product -> {
+				try {
+					items.add(ClickableItem.from(product.getItemWithCustomerLore().build(), e -> {
+						if (!product.isPurchasable())
+							return;
+
+						try {
+							if (handleRightClick(product, e))
 								return;
 
-							try {
-								if (handleRightClick(product, e))
-									return;
-
-								if (isLeftClick(e))
-									product.process(player);
-								else if (isShiftLeftClick(e))
-									processAll(player, page, product);
-								open(player, page);
-							} catch (Exception ex) {
-								PlayerUtils.send(player, PREFIX + "&c" + ex.getMessage());
-							}
-						}));
-					} catch (Exception ex) {
-						Nexus.severe("Error formatting product in BrowseItemsProvider: " + product.toString());
-						ex.printStackTrace();
-					}
-				});
+							if (isLeftClick(e))
+								product.process(player);
+							else if (isShiftLeftClick(e))
+								processAll(player, page, product);
+							open(player, page);
+						} catch (Exception ex) {
+							PlayerUtils.send(player, PREFIX + "&c" + ex.getMessage());
+						}
+					}));
+				} catch (Exception ex) {
+					Nexus.severe("Error formatting product in BrowseItemsProvider: " + product.toString());
+					ex.printStackTrace();
+				}
+			});
 
 		if (end < products.size())
 			items.add(empty);
@@ -210,16 +205,16 @@ public class BrowseProductsProvider extends _ShopProvider {
 
 	private void processAll(Player player, Pagination page, Product product) {
 		ConfirmationMenu.builder()
-				.title("&4" + product.getExchange().getCustomerAction() + " all?")
-				.onConfirm(e2 -> {
-					try {
-						product.processAll(player);
-					} catch (Exception ex) {
-						PlayerUtils.send(player, PREFIX + "&c" + ex.getMessage());
-					}
-				})
-				.onFinally(e2 -> open(player, page))
-				.open(player);
+			.title("&4" + product.getExchange().getCustomerAction() + " all?")
+			.onConfirm(e2 -> {
+				try {
+					product.processAll(player);
+				} catch (Exception ex) {
+					PlayerUtils.send(player, PREFIX + "&c" + ex.getMessage());
+				}
+			})
+			.onFinally(e2 -> open(player, page))
+			.open(player);
 	}
 
 	public boolean isFiltered(Product product) {
@@ -253,10 +248,10 @@ public class BrowseProductsProvider extends _ShopProvider {
 		return null;
 	}
 
-	public static class ShulkerContentsProvider extends  _ShopProvider {
+	public static class ShulkerContentsProvider extends ShopProvider {
 		private final Product product;
 
-		public ShulkerContentsProvider(_ShopProvider previousMenu, Product product) {
+		public ShulkerContentsProvider(ShopProvider previousMenu, Product product) {
 			this.previousMenu = previousMenu;
 			this.product = product;
 			this.rows = 4;

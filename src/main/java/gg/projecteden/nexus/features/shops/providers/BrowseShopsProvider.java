@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.shops.providers;
 
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
+import gg.projecteden.nexus.features.shops.providers.common.ShopProvider;
 import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.shop.Shop;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -13,9 +14,9 @@ import java.util.List;
 
 import static gg.projecteden.nexus.utils.StringUtils.plural;
 
-public class BrowseShopsProvider extends _ShopProvider {
+public class BrowseShopsProvider extends ShopProvider {
 
-	public BrowseShopsProvider(_ShopProvider previousMenu) {
+	public BrowseShopsProvider(ShopProvider previousMenu) {
 		this.previousMenu = previousMenu;
 	}
 

@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.shops;
 
-import gg.projecteden.nexus.features.shops.Shops.Market;
 import gg.projecteden.nexus.features.shops.providers.BrowseMarketProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;

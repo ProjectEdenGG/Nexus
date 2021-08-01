@@ -69,7 +69,7 @@ import static gg.projecteden.utils.StringUtils.camelCase;
 
 @Data
 @Builder
-@Entity(value = "shop")
+@Entity(value = "shop", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
@@ -83,6 +83,9 @@ public class Shop implements PlayerOwnedObject {
 	private List<Product> products = new ArrayList<>();
 	@Embedded
 	private List<ItemStack> holding = new ArrayList<>();
+	@Embedded
+	private List<Material> disabledResourceMarketItems = new ArrayList<>();
+
 	// TODO holding for money, maybe? would make withdrawing money more complicated
 	// private double profit;
 
@@ -139,7 +142,6 @@ public class Shop implements PlayerOwnedObject {
 
 	public enum ShopGroup {
 		SURVIVAL,
-		RESOURCE,
 		SKYBLOCK,
 		ONEBLOCK;
 
@@ -152,14 +154,11 @@ public class Shop implements PlayerOwnedObject {
 		}
 
 		public static ShopGroup of(String world) {
-			if (WorldGroup.of(world) == WorldGroup.SURVIVAL)
-				return SURVIVAL;
-			if (WorldGroup.of(world) == WorldGroup.SKYBLOCK)
-				return SKYBLOCK;
-			if (WorldGroup.of(world) == WorldGroup.ONEBLOCK)
-				return ONEBLOCK;
-
-			return null;
+			try {
+				return valueOf(WorldGroup.of(world).name());
+			} catch (IllegalArgumentException ex) {
+				return null;
+			}
 		}
 	}
 
@@ -270,15 +269,15 @@ public class Shop implements PlayerOwnedObject {
 		public void log(Player customer, int times) {
 			for (int i = 0; i < times; i++) {
 				List<String> columns = new ArrayList<>(Arrays.asList(
-						DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()),
-						getUuid().toString(),
-						Name.of(getShop().getOfflinePlayer()),
-						customer.getUniqueId().toString(),
-						customer.getName(),
-						getShopGroup().name(),
-						item.getType().name(),
-						String.valueOf(item.getAmount()),
-						exchangeType.name()
+					DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()),
+					getUuid().toString(),
+					Name.of(getShop().getOfflinePlayer()),
+					customer.getUniqueId().toString(),
+					customer.getName(),
+					getShopGroup().name(),
+					item.getType().name(),
+					String.valueOf(item.getAmount()),
+					exchangeType.name()
 				));
 
 				if (price instanceof ItemStack) {
@@ -346,8 +345,8 @@ public class Shop implements PlayerOwnedObject {
 			ItemBuilder builder = getItemWithLore().lore(getExchange().getLore());
 
 			builder.lore("")
-					.lore("&7Left click to " + getExchange().getCustomerAction().toLowerCase())
-					.lore("&7Shift+Left click to " + getExchange().getCustomerAction().toLowerCase() + " all");
+				.lore("&7Left click to " + getExchange().getCustomerAction().toLowerCase())
+				.lore("&7Shift+Left click to " + getExchange().getCustomerAction().toLowerCase() + " all");
 
 			return builder;
 		}
@@ -565,16 +564,16 @@ public class Shop implements PlayerOwnedObject {
 			int stock = (int) product.getStock();
 			String desc = "&7Buy &e" + product.getItem().getAmount() + " &7for &a" + prettyPrice();
 
-			if (product.getUuid().equals(StringUtils.getUUID0()))
+			if (product.isMarket())
 				return Arrays.asList(
-						desc,
-						"&7Owner: &6Market"
+					desc,
+					"&7Owner: &6Market"
 				);
 			else
 				return Arrays.asList(
-						desc,
-						"&7Stock: " + (stock > 0 ? "&e" : "&c") + stock,
-						"&7Owner: &e" + Nickname.of(product.getShop().getOfflinePlayer())
+					desc,
+					"&7Stock: " + (stock > 0 ? "&e" : "&c") + stock,
+					"&7Owner: &e" + Nickname.of(product.getShop().getOfflinePlayer())
 				);
 		}
 
@@ -582,8 +581,8 @@ public class Shop implements PlayerOwnedObject {
 		public List<String> getOwnLore() {
 			int stock = (int) product.getStock();
 			return Arrays.asList(
-					"&7Selling &e" + product.getItem().getAmount() + " &7for &a" + prettyPrice(),
-					"&7Stock: " + (stock > 0 ? "&e" : "&c") + stock
+				"&7Selling &e" + product.getItem().getAmount() + " &7for &a" + prettyPrice(),
+				"&7Stock: " + (stock > 0 ? "&e" : "&c") + stock
 			);
 		}
 	}
@@ -648,16 +647,16 @@ public class Shop implements PlayerOwnedObject {
 		public List<String> getLore() {
 			int stock = (int) product.getStock();
 			String desc = "&7Buy &e" + product.getItem().getAmount() + " &7for &a" + prettyPrice();
-			if (product.getUuid().equals(StringUtils.getUUID0()))
+			if (product.isMarket())
 				return Arrays.asList(
-						desc,
-						"&7Owner: &6Market"
+					desc,
+					"&7Owner: &6Market"
 				);
 			else
 				return Arrays.asList(
-						desc,
-						"&7Stock: " + (stock > 0 ? "&e" : "&c") + stock,
-						"&7Owner: &e" + Nickname.of(product.getShop().getOfflinePlayer())
+					desc,
+					"&7Stock: " + (stock > 0 ? "&e" : "&c") + stock,
+					"&7Owner: &e" + Nickname.of(product.getShop().getOfflinePlayer())
 				);
 		}
 
@@ -665,8 +664,8 @@ public class Shop implements PlayerOwnedObject {
 		public List<String> getOwnLore() {
 			int stock = (int) product.getStock();
 			return Arrays.asList(
-					"&7Selling &e" + product.getItem().getAmount() + " &7for &a" + prettyPrice(),
-					"&7Stock: " + (stock > 0 ? "&e" : "&c") + stock
+				"&7Selling &e" + product.getItem().getAmount() + " &7for &a" + prettyPrice(),
+				"&7Stock: " + (stock > 0 ? "&e" : "&c") + stock
 			);
 		}
 	}
@@ -705,6 +704,21 @@ public class Shop implements PlayerOwnedObject {
 			product.getShop().addHolding(product.getItem());
 		}
 
+		public BigDecimal processResourceMarket(Player customer, ItemStack item) {
+			if (product.getItem().getAmount() != 1)
+				throw new InvalidInputException("Resource market product amount must be 1 (" + pretty(product.getItem()) + ")");
+
+			BigDecimal profit = new BigDecimal(0);
+			for (int i = 0; i < item.getAmount(); i++) {
+				transaction(customer);
+				profit = profit.add(BigDecimal.valueOf(price));
+			}
+
+			product.log(customer, item.getAmount());
+
+			return profit;
+		}
+
 		@Override
 		public String prettyPrice(int count) {
 			return prettyMoney(price * count);
@@ -736,24 +750,24 @@ public class Shop implements PlayerOwnedObject {
 		@Override
 		public List<String> getLore() {
 			String desc = "&7Sell &e" + product.getItem().getAmount() + " &7for &a" + prettyPrice();
-			if (product.getUuid().equals(StringUtils.getUUID0()))
+			if (product.isMarket())
 				return Arrays.asList(
-						desc,
-						"&7Owner: &6Market"
+					desc,
+					"&7Owner: &6Market"
 				);
 			else
 				return Arrays.asList(
-						desc,
-						"&7Stock: &e" + prettyMoney(product.getCalculatedStock(), false),
-						"&7Owner: &e" + Nickname.of(product.getShop().getOfflinePlayer())
+					desc,
+					"&7Stock: &e" + prettyMoney(product.getCalculatedStock(), false),
+					"&7Owner: &e" + Nickname.of(product.getShop().getOfflinePlayer())
 				);
 		}
 
 		@Override
 		public List<String> getOwnLore() {
 			return Arrays.asList(
-					"&7Buying &e" + product.getItem().getAmount() + " &7for &a" + prettyPrice(),
-					"&7Stock: &e" + prettyMoney(product.getCalculatedStock(), false)
+				"&7Buying &e" + product.getItem().getAmount() + " &7for &a" + prettyPrice(),
+				"&7Stock: &e" + prettyMoney(product.getCalculatedStock(), false)
 			);
 		}
 
