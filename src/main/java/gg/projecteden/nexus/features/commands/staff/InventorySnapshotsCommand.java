@@ -17,8 +17,11 @@ import gg.projecteden.nexus.models.inventoryhistory.InventoryHistory;
 import gg.projecteden.nexus.models.inventoryhistory.InventoryHistory.InventorySnapshot;
 import gg.projecteden.nexus.models.inventoryhistory.InventoryHistory.SnapshotReason;
 import gg.projecteden.nexus.models.inventoryhistory.InventoryHistoryService;
+import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -28,18 +31,25 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.BiFunction;
 
 import static gg.projecteden.nexus.utils.PlayerUtils.getPlayer;
@@ -53,6 +63,8 @@ import static gg.projecteden.utils.TimeUtils.shortishDateTimeFormat;
 public class InventorySnapshotsCommand extends CustomCommand implements Listener {
 	public static final String PREFIX = StringUtils.getPrefix("InventorySnapshots");
 	private final InventoryHistoryService service = new InventoryHistoryService();
+
+	private static final Map<UUID, InventorySnapshot> applyingToChest = new HashMap<>();
 
 	public InventorySnapshotsCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -181,13 +193,45 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 						snapshot.apply(player, owner.getPlayer());
 				}));
 			contents.set(0, 5, ClickableItem.from(applyToChest, e -> {
-				// TODO
-				PlayerUtils.send(player, "TODO");
+				player.closeInventory();
+				applyingToChest.put(player.getUniqueId(), snapshot);
+				PlayerUtils.send(player, PREFIX + "Click on a chest to apply the inventory to it");
 			}));
 			contents.set(0, 7, ClickableItem.from(teleport, e -> player.teleportAsync(snapshot.getLocation(), TeleportCause.COMMAND)));
 			contents.set(0, 8, ClickableItem.empty(info));
 			formatInventoryContents(contents, snapshot.getContents().toArray(ItemStack[]::new));
 		}
+	}
+
+	@EventHandler
+	public void onPlayerInteract(PlayerInteractEvent event) {
+		final Player player = event.getPlayer();
+		final UUID uuid = player.getUniqueId();
+		final Block block = event.getClickedBlock();
+
+		if (!applyingToChest.containsKey(uuid))
+			return;
+
+		if (BlockUtils.isNullOrAir(block) || !MaterialTag.CHESTS.isTagged(block.getType()))
+			return;
+
+		if (!(block.getState() instanceof InventoryHolder holder))
+			return;
+
+		final Inventory inventory = holder.getInventory();
+		final long freeSpace = Arrays.stream(inventory.getContents()).filter(ItemUtils::isNullOrAir).count();
+
+		final InventorySnapshot snapshot = applyingToChest.get(uuid);
+		final List<ItemStack> contents = snapshot.getContents().stream().filter(item -> !ItemUtils.isNullOrAir(item)).toList();
+
+		if (contents.size() > freeSpace) {
+			PlayerUtils.send(player, PREFIX + "&cSnapshot contents too large for this inventory");
+			return;
+		}
+
+		inventory.setContents(snapshot.getContents().toArray(new ItemStack[0]));
+		PlayerUtils.send(player, PREFIX + "Snapshot contents applied to inventory (&4Warning&c: does not include exp&3)");
+		applyingToChest.remove(uuid);
 	}
 
 }
