@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.votes.DailyVoteRewardsCommand.VoteStreakRew
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.mail.Mailer.Mail;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -60,6 +61,8 @@ public class DailyVoteReward implements PlayerOwnedObject {
 		public void incrementStreak() {
 			++streak;
 			earnedToday = true;
+
+			sendMessage(StringUtils.getPrefix("DailyVoteRewards") + "Your streak has &eincreased&3!");
 
 			for (VoteStreakReward reward : VoteStreakReward.values())
 				if (reward.getDay() == streak % 30)

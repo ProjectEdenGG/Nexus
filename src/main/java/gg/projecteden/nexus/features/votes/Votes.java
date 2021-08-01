@@ -25,7 +25,6 @@ import gg.projecteden.nexus.models.voter.Voter.Vote;
 import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.Time;
@@ -46,8 +45,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.time.Month;
-import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
@@ -168,15 +165,14 @@ public class Votes extends Feature implements Listener {
 			PlayerUtils.send(player, VPS.PREFIX + "You have received " + points + plural(" point", points));
 		}
 
-		if (!YearMonth.of(2021, Month.JULY).equals(YearMonth.now()) || Dev.GRIFFIN.is(uuid)) // TODO Remove
-			if (voter.getTodaysVotes().size() >= 5) {
-				final DailyVoteRewardService dailyVoteRewardService = new DailyVoteRewardService();
-				final DailyVoteReward dailyVoteReward = dailyVoteRewardService.get(player);
-				if (!dailyVoteReward.getCurrentStreak().isEarnedToday()) {
-					dailyVoteReward.getCurrentStreak().incrementStreak();
-					dailyVoteRewardService.save(dailyVoteReward);
-				}
+		if (voter.getTodaysVotes().size() >= 5) {
+			final DailyVoteRewardService dailyVoteRewardService = new DailyVoteRewardService();
+			final DailyVoteReward dailyVoteReward = dailyVoteRewardService.get(player);
+			if (!dailyVoteReward.getCurrentStreak().isEarnedToday()) {
+				dailyVoteReward.getCurrentStreak().incrementStreak();
+				dailyVoteRewardService.save(dailyVoteReward);
 			}
+		}
 
 		Tasks.async(Votes::write);
 	}
