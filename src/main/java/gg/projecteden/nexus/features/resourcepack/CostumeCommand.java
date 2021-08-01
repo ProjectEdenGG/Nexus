@@ -146,7 +146,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 
 			for (CustomModelFolder subfolder : folder.getFolders()) {
 				if (subfolder.getPath().contains(EXCLUSIVE))
-					return;
+					continue;
 
 				CustomModel firstModel = subfolder.getIcon();
 				ItemStack item = new ItemStack(Material.BARRIER);
