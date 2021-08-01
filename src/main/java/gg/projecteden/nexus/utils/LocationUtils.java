@@ -397,6 +397,13 @@ public class LocationUtils {
 				location1.getBlockZ() == location2.getBlockZ();
 	}
 
+	public static boolean vectorLocationsEqual(@Nullable Vector vector1, @Nullable Vector vector2) {
+		if (vector1 == null || vector2 == null) return false;
+		return vector1.getBlockX() == vector2.getBlockX() &&
+			vector1.getBlockY() == vector2.getBlockY() &&
+			vector1.getBlockZ() == vector2.getBlockZ();
+	}
+
 	public static boolean isFuzzyEqual(@Nullable Location location1, @Nullable Location location2) {
 		if (locationsEqual(location1, location2))
 			return true;

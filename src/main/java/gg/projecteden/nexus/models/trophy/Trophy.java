@@ -6,8 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.lexikiq.HasUniqueId;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,6 +40,13 @@ public enum Trophy {
 	BEAR_FAIR_2021(Material.CAKE, 1),
 	BEAR_FAIR_2021_MINIGAME_NIGHT_QUEST(Material.CYAN_STAINED_GLASS_PANE, 101),
 	BEAR_FAIR_2021_MINIGOLF(Material.GOLD_INGOT, 2),
+
+	BIRTHDAY_PARTY_2021(Material.CAKE, 3) {
+		@Override
+		public String toString() {
+			return "Griffin & Wakka Birthday Party 2021 Trophy";
+		}
+	},
 	;
 
 	@NonNull
@@ -66,7 +73,7 @@ public enum Trophy {
 			.toList();
 	}
 
-	public void give(Player player) {
+	public void give(HasUniqueId player) {
 		TrophyHolderService trophyService = new TrophyHolderService();
 		TrophyHolder holder = trophyService.get(player);
 		holder.earnAndMessage(this);

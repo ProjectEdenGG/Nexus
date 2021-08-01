@@ -41,6 +41,7 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.utils.RandomUtils;
 import gg.projecteden.utils.TimeUtils.Time;
+import me.lexikiq.HasPlayer;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Location;
@@ -261,19 +262,19 @@ public class Quests implements Listener {
 		}
 	}
 
-	public static void sound_obtainItem(Player player) {
+	public static void sound_obtainItem(HasPlayer player) {
 		new SoundBuilder(Sound.ENTITY_PLAYER_LEVELUP).receiver(player).volume(0.5).pitch(2.0).play();
 	}
 
-	public static void sound_completeQuest(Player player) {
+	public static void sound_completeQuest(HasPlayer player) {
 		new SoundBuilder(Sound.UI_TOAST_CHALLENGE_COMPLETE).receiver(player).volume(0.5).play();
 	}
 
-	public static void sound_villagerNo(Player player) {
+	public static void sound_villagerNo(HasPlayer player) {
 		new SoundBuilder(Sound.ENTITY_VILLAGER_NO).receiver(player).volume(0.5).play();
 	}
 
-	public static void sound_npcAlert(Player player) {
+	public static void sound_npcAlert(HasPlayer player) {
 		new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BIT).receiver(player).volume(0.5).play();
 	}
 
