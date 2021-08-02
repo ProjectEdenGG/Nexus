@@ -48,11 +48,22 @@ public class CustomModelFolder {
 	}
 
 	public CustomModel getIcon() {
+		return getIcon(model -> true);
+	}
+
+	public CustomModel getIcon(java.util.function.Predicate<CustomModel> predicate) {
 		if (!models.isEmpty()) {
-			return models.stream()
-					.filter(model -> model.getFileName().equals("icon"))
-					.findFirst()
-					.orElse(models.get(0));
+			final CustomModel icon = models.stream()
+				.filter(model -> model.getFileName().equals("icon"))
+				.findFirst()
+				.orElse(null);
+
+			if (icon != null && predicate.test(icon))
+				return icon;
+
+			for (CustomModel next : models)
+				if (predicate.test(next))
+					return next;
 		}
 
 		for (CustomModelFolder folder : folders) {

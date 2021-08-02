@@ -27,7 +27,7 @@ public class Costume {
 	private final ItemStack item;
 
 	public Costume(CustomModel model, CostumeType type) {
-		this.id = model.getFolder().getDisplayPath().replace("costumes/", "") + "/" + model.getFileName();
+		this.id = getId(model);
 		this.model = model;
 		this.type = type;
 		this.item = new ItemBuilder(model.getItem())
@@ -36,6 +36,10 @@ public class Costume {
 			.unplaceable()
 			.unstorable()
 			.untradeable().build();
+	}
+
+	public static String getId(CustomModel model) {
+		return model.getFolder().getDisplayPath().replace("costumes/", "") + "/" + model.getFileName();
 	}
 
 	@Getter
@@ -54,6 +58,10 @@ public class Costume {
 		public static Set<EquipmentSlot> getSlots() {
 			return Arrays.stream(values()).map(CostumeType::getSlot).collect(toSet());
 		}
+	}
+
+	public static Costume of(CustomModel model) {
+		return of(getId(model));
 	}
 
 	public static Costume of(String id) {

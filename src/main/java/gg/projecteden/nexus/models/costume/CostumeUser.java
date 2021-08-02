@@ -4,6 +4,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.resourcepack.CustomModel;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.CostumeConverter;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.costume.Costume.CostumeType;
@@ -47,6 +48,14 @@ public class CostumeUser implements PlayerOwnedObject {
 		this.activeCostume = activeCostume;
 		if (activeCostume == null)
 			sendResetPackets();
+	}
+
+	public boolean owns(CustomModel model) {
+		return owns(Costume.of(model));
+	}
+
+	public boolean owns(Costume costume) {
+		return ownedCostumes.contains(costume);
 	}
 
 	public void sendCostumePacket() {
