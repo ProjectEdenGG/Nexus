@@ -197,9 +197,10 @@ public class TestCommand extends CustomCommand implements Listener {
 			send(block.getType().name());
 	}
 
-	@Path("removeTest")
-	void removeTest() {
+	@Path("inventoryRemove")
+	void inventoryRemove() {
 		PlayerInventory inventory = inventory();
+		inventory.remove(Material.ANDESITE);
 		inventory.remove(new ItemStack(Material.DIRT, 2));
 		inventory.removeItem(new ItemStack(Material.COBBLESTONE, 4));
 		inventory.removeItemAnySlot(new ItemStack(Material.STONE, 6));

@@ -28,6 +28,7 @@ import java.util.List;
 import static gg.projecteden.nexus.features.wither.WitherChallenge.currentFight;
 import static gg.projecteden.nexus.features.wither.WitherChallenge.maintenance;
 import static gg.projecteden.nexus.features.wither.WitherChallenge.queue;
+import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
 
 @Redirect(from = "/wchat", to = "/wither chat")
 public class WitherCommand extends CustomCommand {
@@ -168,6 +169,8 @@ public class WitherCommand extends CustomCommand {
 		if (!currentFight.getHostPlayer().equals(player()))
 			error("You are not the host of the challenging party");
 		if (!checkHasItems()) return;
+		removeRequiredItems(Material.WITHER_SKELETON_SKULL, 3);
+		removeRequiredItems(Material.SOUL_SAND, 4);
 		player().getInventory().removeItem(new ItemStack(Material.WITHER_SKELETON_SKULL, 3), new ItemStack(Material.SOUL_SAND, 4));
 		int partySize = currentFight.getParty().size();
 
@@ -197,6 +200,24 @@ public class WitherCommand extends CustomCommand {
 						currentFight.start();
 				})
 				.start();
+	}
+
+	private void removeRequiredItems(Material material, int amount) {
+		int removed = 0;
+		for (ItemStack content : inventory().getContents()) {
+			if (isNullOrAir(content))
+				continue;
+			if (content.getType() != material)
+				continue;
+
+			while (content.getAmount() > 0) {
+				content.setAmount(content.getAmount() - 1);
+				if (++removed == amount)
+					return;
+			}
+		}
+
+		error("Could not remove " + (amount - removed) + " " + camelCase(material) + " from your inventory");
 	}
 
 	@Path("chat <message...>")
