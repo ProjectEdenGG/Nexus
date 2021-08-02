@@ -171,7 +171,6 @@ public class WitherCommand extends CustomCommand {
 		if (!checkHasItems()) return;
 		removeRequiredItems(Material.WITHER_SKELETON_SKULL, 3);
 		removeRequiredItems(Material.SOUL_SAND, 4);
-		player().getInventory().removeItem(new ItemStack(Material.WITHER_SKELETON_SKULL, 3), new ItemStack(Material.SOUL_SAND, 4));
 		int partySize = currentFight.getParty().size();
 
 		String message = "&e" + Nickname.of(currentFight.getHostPlayer()) +
