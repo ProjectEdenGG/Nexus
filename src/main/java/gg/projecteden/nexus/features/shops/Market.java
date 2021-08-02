@@ -16,17 +16,15 @@ import java.util.List;
 
 public class Market {
 	private static final ShopService service = new ShopService();
-	private static final Shop market = service.getMarket();
-
 	public static final List<Product> RESOURCE_WORLD_PRODUCTS = new ArrayList<>();
 
 	public static void load() {
+		final Shop market = service.getMarket();
+
 		market.getProducts().clear();
 		RESOURCE_WORLD_PRODUCTS.clear();
 
 		addItems();
-
-		service.save(market);
 	}
 
 	private static void addItems() {
@@ -220,14 +218,16 @@ public class Market {
 	}
 
 	private static void addBuyItem(ShopGroup shopGroup, boolean isResourceWorld, ItemStack item, double price) {
-		add(new Product(StringUtils.getUUID0(), shopGroup, isResourceWorld, item, -1, ExchangeType.BUY, price * BoostConfig.multiplierOf(Boostable.MARKET_SELL_PRICES)));
+		final Product product = new Product(StringUtils.getUUID0(), shopGroup, isResourceWorld, item, -1, ExchangeType.BUY, price * BoostConfig.multiplierOf(Boostable.MARKET_SELL_PRICES));
+
+		if (product.isResourceWorld())
+			RESOURCE_WORLD_PRODUCTS.add(product);
+
+		add(product);
 	}
 
 	private static void add(Product product) {
-		if (product.isResourceWorld() && product.getExchangeType() == ExchangeType.BUY)
-			RESOURCE_WORLD_PRODUCTS.add(product);
-
-		market.getProducts().add(product);
+		service.getMarket().getProducts().add(product);
 	}
 
 }

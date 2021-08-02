@@ -3,8 +3,6 @@ package gg.projecteden.nexus.models.shop;
 import gg.projecteden.mongodb.annotations.PlayerClass;
 import gg.projecteden.nexus.models.MongoService;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -27,10 +25,6 @@ public class ShopService extends MongoService<Shop> {
 		return saveQueue;
 	}
 
-	static {
-		Tasks.async(() -> new ShopService().cacheAll());
-	}
-
 	public List<Shop> getShops() {
 		return new ArrayList<>(cache.values());
 	}
@@ -38,7 +32,7 @@ public class ShopService extends MongoService<Shop> {
 	public List<Shop> getShopsSorted(ShopGroup shopGroup) {
 		return getShops().stream()
 				.filter(shop -> !shop.isMarket() && !shop.getProducts(shopGroup).isEmpty())
-				.sorted(Comparator.comparing(shop -> shop.getInStock(shopGroup).size(), Comparator.reverseOrder()))
+				.sorted(Comparator.<Shop>comparingInt(shop -> shop.getInStock(shopGroup).size()).reversed())
 				.collect(Collectors.toList());
 	}
 
@@ -47,11 +41,11 @@ public class ShopService extends MongoService<Shop> {
 	}
 
 	@Override
-	public void save(Shop object) {
-		if (StringUtils.isUUID0(object.getUuid()))
+	public void save(Shop shop) {
+		if (shop.isMarket())
 			return;
 
-		super.save(object);
+		super.save(shop);
 	}
 
 }
