@@ -128,10 +128,7 @@ public enum Package {
 
 		@Override
 		public void handleApply(HasUniqueId uuid) {
-			BoosterService service = new BoosterService();
-			Booster booster = service.get(uuid);
-			booster.add(getType(), 2, Time.DAY);
-			service.save(booster);
+			new BoosterService().edit(uuid, booster -> booster.add(getType(), 2, Time.DAY));
 		}
 
 		@Override
@@ -159,10 +156,7 @@ public enum Package {
 
 		@Override
 		public void handleApply(HasUniqueId uuid) {
-			BoosterService service = new BoosterService();
-			Booster booster = service.get(uuid);
-			booster.add(getType(), 1.5, Time.DAY);
-			service.save(booster);
+			new BoosterService().edit(uuid, booster -> booster.add(getType(), 1.5, Time.DAY));
 		}
 
 		@Override
@@ -190,10 +184,7 @@ public enum Package {
 
 		@Override
 		public void handleApply(HasUniqueId uuid) {
-			BoosterService service = new BoosterService();
-			Booster booster = service.get(uuid);
-			booster.add(getType(), 1.5, Time.DAY);
-			service.save(booster);
+			new BoosterService().edit(uuid, booster -> booster.add(getType(), 1.5, Time.DAY));
 		}
 
 		@Override
@@ -221,10 +212,7 @@ public enum Package {
 
 		@Override
 		public void handleApply(HasUniqueId uuid) {
-			BoosterService service = new BoosterService();
-			Booster booster = service.get(uuid);
-			booster.add(getType(), 2.5, Time.DAY);
-			service.save(booster);
+			new BoosterService().edit(uuid, booster -> booster.add(getType(), 2.5, Time.DAY));
 		}
 
 		@Override
@@ -252,10 +240,7 @@ public enum Package {
 
 		@Override
 		public void handleApply(HasUniqueId uuid) {
-			BoosterService service = new BoosterService();
-			Booster booster = service.get(uuid);
-			booster.add(getType(), 1.5, Time.DAY);
-			service.save(booster);
+			new BoosterService().edit(uuid, booster -> booster.add(getType(), 1.5, Time.DAY));
 		}
 
 		@Override
@@ -283,10 +268,7 @@ public enum Package {
 
 		@Override
 		public void handleApply(HasUniqueId uuid) {
-			BoosterService service = new BoosterService();
-			Booster booster = service.get(uuid);
-			booster.add(getType(), 2, Time.DAY);
-			service.save(booster);
+			new BoosterService().edit(uuid, booster -> booster.add(getType(), 2, Time.DAY));
 		}
 
 		@Override
@@ -314,10 +296,7 @@ public enum Package {
 
 		@Override
 		public void handleApply(HasUniqueId uuid) {
-			BoosterService service = new BoosterService();
-			Booster booster = service.get(uuid);
-			booster.add(getType(), 2, Time.DAY);
-			service.save(booster);
+			new BoosterService().edit(uuid, booster -> booster.add(getType(), 2, Time.DAY));
 		}
 
 		@Override
