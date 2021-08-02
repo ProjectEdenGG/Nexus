@@ -32,10 +32,10 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.models.autotorch.AutoTorchService;
 import gg.projecteden.nexus.models.autotorch.AutoTorchUser;
 import gg.projecteden.nexus.models.boost.Boostable;
-import gg.projecteden.nexus.models.boost.Booster;
 import gg.projecteden.nexus.models.boost.BoosterService;
 import gg.projecteden.nexus.models.contributor.Contributor;
 import gg.projecteden.nexus.models.contributor.ContributorService;
+import gg.projecteden.nexus.models.costume.CostumeUserService;
 import gg.projecteden.nexus.models.home.HomeService;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.PackageExpireJob;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -312,6 +312,26 @@ public enum Package {
 		@Override
 		public boolean has(OfflinePlayer player) {
 			return count(player) > 0;
+		}
+	},
+
+	@Id("4610203")
+	@Category(StoreCategory.VISUALS)
+	@Display(value = Material.STONE_BUTTON, customModelData = 208)
+	COSTUMES_VOUCHER {
+		@Override
+		public void handleApply(HasUniqueId uuid) {
+			new CostumeUserService().edit(uuid, user -> user.addVouchers(1));
+		}
+	},
+
+	@Id("4610206")
+	@Category(StoreCategory.VISUALS)
+	@Display(value = Material.STONE_BUTTON, customModelData = 208)
+	COSTUMES_5_VOUCHERS {
+		@Override
+		public void handleApply(HasUniqueId uuid) {
+			new CostumeUserService().edit(uuid, user -> user.addVouchers(5));
 		}
 	},
 

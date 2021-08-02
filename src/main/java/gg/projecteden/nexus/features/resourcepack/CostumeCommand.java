@@ -85,7 +85,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 	@Permission("group.admin")
 	@Path("vouchers add <amount> [player]")
 	void vouchers_add(int amount, @Arg("self") CostumeUser user) {
-		user.setVouchers(user.getVouchers() + amount);
+		user.addVouchers(amount);
 		service.save(user);
 		send(PREFIX + "Gave &e" + amount + " &3vouchers to &e" + user.getNickname() + "&3. New balance: &e" + user.getVouchers());
 	}
@@ -93,7 +93,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 	@Permission("group.admin")
 	@Path("vouchers remove <amount> [player]")
 	void vouchers_remove(int amount, @Arg("self") CostumeUser user) {
-		user.setVouchers(user.getVouchers() - amount);
+		user.takeVouchers(amount);
 		service.save(user);
 		send(PREFIX + "Removed &e" + amount + " &3vouchers from &e" + user.getNickname() + "&3. New balance: &e" + user.getVouchers());
 	}
@@ -256,7 +256,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 				if (user.getVouchers() > 0) {
 					ConfirmationMenu.builder()
 						.onConfirm(e2 -> {
-							user.setVouchers(user.getVouchers() - 1);
+							user.takeVouchers(1);
 							user.getOwnedCostumes().add(costume);
 							service.save(user);
 						})

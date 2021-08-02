@@ -186,7 +186,7 @@ public class AccountTransferCommand extends CustomCommand {
 	static class CostumeUserTransferer extends MongoTransferer<CostumeUser> {
 		@Override
 		public void transfer(CostumeUser previous, CostumeUser current) {
-			current.setVouchers(current.getVouchers() + previous.getVouchers());
+			current.addVouchers(previous.getVouchers());
 			if (current.getActiveCostume() == null)
 				current.setActiveCostume(previous.getActiveCostume());
 			current.getOwnedCostumes().addAll(previous.getOwnedCostumes());
