@@ -113,10 +113,10 @@ public class BoostsCommand extends CustomCommand implements Listener {
 		new BoostMenu().open(player());
 	}
 
-	@Path("give <player> <type> <multiplier> <duration> [amount]")
-	void give(Booster booster, Boostable type, double multiplier, int duration, @Arg("1") int amount) {
+	@Path("give <player> <type> <multiplier> <seconds> [amount]")
+	void give(Booster booster, Boostable type, double multiplier, Timespan seconds, @Arg("1") int amount) {
 		for (int i = 0; i < amount; i++)
-			booster.add(type, multiplier, duration);
+			booster.add(type, multiplier, seconds.getOriginal());
 		service.save(booster);
 
 		send(PREFIX + "Gave " + amount + " " + plural(camelCase(type) + " boost", amount) + " to " + booster.getNickname());
