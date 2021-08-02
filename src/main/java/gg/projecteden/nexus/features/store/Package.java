@@ -100,6 +100,302 @@ public enum Package {
 	@Display(Material.OAK_SIGN)
 	CUSTOM_PREFIX_ONE_MONTH,
 
+	@Id("2965488")
+	@Category(StoreCategory.CHAT)
+	@Permission("jq.custom")
+	@Display(Material.MAGENTA_GLAZED_TERRACOTTA)
+	CUSTOM_JOIN_QUIT_MESSAGES_LIFETIME,
+
+	@Id("2965489")
+	@Category(StoreCategory.CHAT)
+	@Permission("jq.custom")
+	@ExpirationDays(30)
+	@Display(Material.MAGENTA_GLAZED_TERRACOTTA)
+	CUSTOM_JOIN_QUIT_MESSAGES_ONE_MONTH,
+
+	@Id("3239567")
+	@Category(StoreCategory.CHAT)
+	@Permission(EmotesCommand.PERMISSION)
+	@Display(Material.TOTEM_OF_UNDYING)
+	EMOTES,
+
+	@Id("4496330")
+	@Category(StoreCategory.BOOSTS)
+	EXPERIENCE {
+		public Boostable getType() {
+			return Boostable.valueOf(name());
+		}
+
+		@Override
+		public void handleApply(HasUniqueId uuid) {
+			BoosterService service = new BoosterService();
+			Booster booster = service.get(uuid);
+			booster.add(getType(), 2, Time.DAY);
+			service.save(booster);
+		}
+
+		@Override
+		public @NotNull ItemBuilder getDisplayItem() {
+			return getType().getDisplayItem();
+		}
+
+		@Override
+		public int count(OfflinePlayer player) {
+			return new BoosterService().get(player).count(getType());
+		}
+
+		@Override
+		public boolean has(OfflinePlayer player) {
+			return count(player) > 0;
+		}
+	},
+
+	@Id("4496331")
+	@Category(StoreCategory.BOOSTS)
+	MCMMO_EXPERIENCE {
+		public Boostable getType() {
+			return Boostable.valueOf(name());
+		}
+
+		@Override
+		public void handleApply(HasUniqueId uuid) {
+			BoosterService service = new BoosterService();
+			Booster booster = service.get(uuid);
+			booster.add(getType(), 1.5, Time.DAY);
+			service.save(booster);
+		}
+
+		@Override
+		public @NotNull ItemBuilder getDisplayItem() {
+			return getType().getDisplayItem();
+		}
+
+		@Override
+		public int count(OfflinePlayer player) {
+			return new BoosterService().get(player).count(getType());
+		}
+
+		@Override
+		public boolean has(OfflinePlayer player) {
+			return count(player) > 0;
+		}
+	},
+
+	@Id("4496334")
+	@Category(StoreCategory.BOOSTS)
+	MARKET_SELL_PRICES {
+		public Boostable getType() {
+			return Boostable.valueOf(name());
+		}
+
+		@Override
+		public void handleApply(HasUniqueId uuid) {
+			BoosterService service = new BoosterService();
+			Booster booster = service.get(uuid);
+			booster.add(getType(), 1.5, Time.DAY);
+			service.save(booster);
+		}
+
+		@Override
+		public @NotNull ItemBuilder getDisplayItem() {
+			return getType().getDisplayItem();
+		}
+
+		@Override
+		public int count(OfflinePlayer player) {
+			return new BoosterService().get(player).count(getType());
+		}
+
+		@Override
+		public boolean has(OfflinePlayer player) {
+			return count(player) > 0;
+		}
+	},
+
+	@Id("4496336")
+	@Category(StoreCategory.BOOSTS)
+	MYSTERY_CRATE_KEY {
+		public Boostable getType() {
+			return Boostable.valueOf(name());
+		}
+
+		@Override
+		public void handleApply(HasUniqueId uuid) {
+			BoosterService service = new BoosterService();
+			Booster booster = service.get(uuid);
+			booster.add(getType(), 2.5, Time.DAY);
+			service.save(booster);
+		}
+
+		@Override
+		public @NotNull ItemBuilder getDisplayItem() {
+			return getType().getDisplayItem();
+		}
+
+		@Override
+		public int count(OfflinePlayer player) {
+			return new BoosterService().get(player).count(getType());
+		}
+
+		@Override
+		public boolean has(OfflinePlayer player) {
+			return count(player) > 0;
+		}
+	},
+
+	@Id("4496339")
+	@Category(StoreCategory.BOOSTS)
+	VOTE_POINTS {
+		public Boostable getType() {
+			return Boostable.valueOf(name());
+		}
+
+		@Override
+		public void handleApply(HasUniqueId uuid) {
+			BoosterService service = new BoosterService();
+			Booster booster = service.get(uuid);
+			booster.add(getType(), 1.5, Time.DAY);
+			service.save(booster);
+		}
+
+		@Override
+		public @NotNull ItemBuilder getDisplayItem() {
+			return getType().getDisplayItem();
+		}
+
+		@Override
+		public int count(OfflinePlayer player) {
+			return new BoosterService().get(player).count(getType());
+		}
+
+		@Override
+		public boolean has(OfflinePlayer player) {
+			return count(player) > 0;
+		}
+	},
+
+	@Id("4496340")
+	@Category(StoreCategory.BOOSTS)
+	KILLER_MONEY {
+		public Boostable getType() {
+			return Boostable.valueOf(name());
+		}
+
+		@Override
+		public void handleApply(HasUniqueId uuid) {
+			BoosterService service = new BoosterService();
+			Booster booster = service.get(uuid);
+			booster.add(getType(), 2, Time.DAY);
+			service.save(booster);
+		}
+
+		@Override
+		public @NotNull ItemBuilder getDisplayItem() {
+			return getType().getDisplayItem();
+		}
+
+		@Override
+		public int count(OfflinePlayer player) {
+			return new BoosterService().get(player).count(getType());
+		}
+
+		@Override
+		public boolean has(OfflinePlayer player) {
+			return count(player) > 0;
+		}
+	},
+
+	@Id("4496341")
+	@Category(StoreCategory.BOOSTS)
+	MINIGAME_DAILY_TOKENS {
+		public Boostable getType() {
+			return Boostable.valueOf(name());
+		}
+
+		@Override
+		public void handleApply(HasUniqueId uuid) {
+			BoosterService service = new BoosterService();
+			Booster booster = service.get(uuid);
+			booster.add(getType(), 2, Time.DAY);
+			service.save(booster);
+		}
+
+		@Override
+		public @NotNull ItemBuilder getDisplayItem() {
+			return getType().getDisplayItem();
+		}
+
+		@Override
+		public int count(OfflinePlayer player) {
+			return new BoosterService().get(player).count(getType());
+		}
+
+		@Override
+		public boolean has(OfflinePlayer player) {
+			return count(player) > 0;
+		}
+	},
+
+	@Id("3218615")
+	@Category(StoreCategory.VISUALS)
+	@Permission(WingsCommand.PERMISSION)
+	@Permission("wings.style.*")
+	@Display(Material.ELYTRA)
+	PARTICLE_WINGS,
+
+	@Id("2559650")
+	@Category(StoreCategory.VISUALS)
+	@PermissionGroup("store.npc")
+	@Command("/permhelper add npcs [player] 1")
+	@Display(Material.ARMOR_STAND)
+	NPC {
+		@Override
+		public int count(OfflinePlayer player) {
+			return NumericPermission.NPCS.getLimit(player);
+		}
+
+		@Override
+		public boolean has(OfflinePlayer player) {
+			return count(player) > 0;
+		}
+	},
+
+	@Id("2886239")
+	@Category(StoreCategory.VISUALS)
+	@Permission(InvisibleArmorCommand.PERMISSION)
+	@Display(Material.CHAINMAIL_CHESTPLATE)
+	INVISIBLE_ARMOR,
+
+	@Id("2495900")
+	@Category(StoreCategory.VISUALS)
+	@Permission(RainbowArmorCommand.PERMISSION)
+	@Display(Material.LEATHER_CHESTPLATE)
+	RAINBOW_ARMOR,
+
+	@Id("2856645")
+	@Category(StoreCategory.VISUALS)
+	@Permission(RainbowBeaconCommand.PERMISSION)
+	@Display(Material.BEACON)
+	RAINBOW_BEACON,
+
+	@Id("2495885")
+	@Category(StoreCategory.VISUALS)
+	@Permission(FireworkCommand.PERMISSION)
+	@Display(Material.FIREWORK_ROCKET)
+	FIREWORKS,
+
+	@Id("4158709")
+	@Category(StoreCategory.VISUALS)
+	@Permission(EntityNameCommand.PERMISSION)
+	@Display(Material.NAME_TAG)
+	ENTITY_NAME,
+
+	@Id("2019265")
+	@Category(StoreCategory.VISUALS)
+	@Permission(PlayerTimeCommand.PERMISSION)
+	@Display(Material.DAYLIGHT_DETECTOR)
+	PTIME,
+
 	@Id("2019251")
 	@Category(StoreCategory.INVENTORY)
 	@Permission(AutoSortCommand.PERMISSION)
@@ -127,31 +423,17 @@ public enum Package {
 		}
 	},
 
-	@Id("2965488")
-	@Category(StoreCategory.CHAT)
-	@Permission("jq.custom")
-	@Display(Material.MAGENTA_GLAZED_TERRACOTTA)
-	CUSTOM_JOIN_QUIT_MESSAGES_LIFETIME,
+	@Id("2559439")
+	@Category(StoreCategory.INVENTORY)
+	@Permission(ItemNameCommand.PERMISSION)
+	@Display(Material.ANVIL)
+	ITEM_NAME,
 
-	@Id("2965489")
-	@Category(StoreCategory.CHAT)
-	@Permission("jq.custom")
-	@ExpirationDays(30)
-	@Display(Material.MAGENTA_GLAZED_TERRACOTTA)
-	CUSTOM_JOIN_QUIT_MESSAGES_ONE_MONTH,
-
-	@Id("3239567")
-	@Category(StoreCategory.CHAT)
-	@Permission(EmotesCommand.PERMISSION)
-	@Display(Material.TOTEM_OF_UNDYING)
-	EMOTES,
-
-	@Id("3218615")
-	@Category(StoreCategory.VISUALS)
-	@Permission(WingsCommand.PERMISSION)
-	@Permission("wings.style.*")
-	@Display(Material.ELYTRA)
-	PARTICLE_WINGS,
+	@Id("4365867")
+	@Category(StoreCategory.INVENTORY)
+	@Permission(WorkbenchCommand.PERMISSION)
+	@Display(Material.CRAFTING_TABLE)
+	WORKBENCH,
 
 	@Id("2019259")
 	@Category(StoreCategory.INVENTORY)
@@ -169,11 +451,29 @@ public enum Package {
 		}
 	},
 
-	@Id("4365867")
+	@Id("2019264")
 	@Category(StoreCategory.INVENTORY)
-	@Permission(WorkbenchCommand.PERMISSION)
-	@Display(Material.CRAFTING_TABLE)
-	WORKBENCH,
+	@Permission(DonorSkullCommand.PERMISSION)
+	@Display(Material.PLAYER_HEAD)
+	DONOR_SKULL,
+
+	@Id("2496109")
+	@Category(StoreCategory.INVENTORY)
+	@Permission(HatCommand.PERMISSION)
+	@Display(Material.DIAMOND_HELMET)
+	HAT,
+
+	@Id("2678893")
+	@Category(StoreCategory.INVENTORY)
+	@Permission("fireworkbow.infinite")
+	@Display(Material.BOW)
+	FIREWORK_BOW_INFINITE,
+
+	@Id("2678902")
+	@Category(StoreCategory.INVENTORY)
+	@Permission("fireworkbow.single")
+	@Display(Material.BOW)
+	FIREWORK_BOW_SINGLE,
 
 	@Id("2019261")
 	@Category(StoreCategory.MISC)
@@ -195,71 +495,6 @@ public enum Package {
 		}
 	},
 
-	@Id("2559650")
-	@Category(StoreCategory.VISUALS)
-	@PermissionGroup("store.npc")
-	@Command("/permhelper add npcs [player] 1")
-	@Display(Material.ARMOR_STAND)
-	NPC {
-		@Override
-		public int count(OfflinePlayer player) {
-			return NumericPermission.NPCS.getLimit(player);
-		}
-
-		@Override
-		public boolean has(OfflinePlayer player) {
-			return count(player) > 0;
-		}
-	},
-
-	@Id("2019264")
-	@Category(StoreCategory.INVENTORY)
-	@Permission(DonorSkullCommand.PERMISSION)
-	@Display(Material.PLAYER_HEAD)
-	DONOR_SKULL,
-
-	@Id("2496109")
-	@Category(StoreCategory.INVENTORY)
-	@Permission(HatCommand.PERMISSION)
-	@Display(Material.DIAMOND_HELMET)
-	HAT,
-
-	@Id("2019265")
-	@Category(StoreCategory.VISUALS)
-	@Permission(PlayerTimeCommand.PERMISSION)
-	@Display(Material.DAYLIGHT_DETECTOR)
-	PTIME,
-
-	@Id("2559439")
-	@Category(StoreCategory.INVENTORY)
-	@Permission(ItemNameCommand.PERMISSION)
-	@Display(Material.ANVIL)
-	ITEM_NAME,
-
-	@Id("4158709")
-	@Category(StoreCategory.VISUALS)
-	@Permission(EntityNameCommand.PERMISSION)
-	@Display(Material.NAME_TAG)
-	ENTITY_NAME,
-
-	@Id("2495885")
-	@Category(StoreCategory.VISUALS)
-	@Permission(FireworkCommand.PERMISSION)
-	@Display(Material.FIREWORK_ROCKET)
-	FIREWORKS,
-
-	@Id("2678902")
-	@Category(StoreCategory.INVENTORY)
-	@Permission("fireworkbow.single")
-	@Display(Material.BOW)
-	FIREWORK_BOW_SINGLE,
-
-	@Id("2678893")
-	@Category(StoreCategory.INVENTORY)
-	@Permission("fireworkbow.infinite")
-	@Display(Material.BOW)
-	FIREWORK_BOW_INFINITE,
-
 	@Id("2495909")
 	@Category(StoreCategory.MISC)
 	@Command("/permhelper add plots [player] 1")
@@ -276,24 +511,6 @@ public enum Package {
 			return count(player) > 0;
 		}
 	},
-
-	@Id("2495900")
-	@Category(StoreCategory.VISUALS)
-	@Permission(RainbowArmorCommand.PERMISSION)
-	@Display(Material.LEATHER_CHESTPLATE)
-	RAINBOW_ARMOR,
-
-	@Id("2886239")
-	@Category(StoreCategory.VISUALS)
-	@Permission(InvisibleArmorCommand.PERMISSION)
-	@Display(Material.CHAINMAIL_CHESTPLATE)
-	INVISIBLE_ARMOR,
-
-	@Id("2856645")
-	@Category(StoreCategory.VISUALS)
-	@Permission(RainbowBeaconCommand.PERMISSION)
-	@Display(Material.BEACON)
-	RAINBOW_BEACON,
 
 	@Id("2495867")
 	@Category(StoreCategory.PETS)
@@ -467,223 +684,6 @@ public enum Package {
 	@PermissionGroup("store.disguises.other")
 	@Display(Material.SLIME_SPAWN_EGG)
 	DISGUISES_OTHER,
-
-	@Id("4496330")
-	@Category(StoreCategory.BOOSTS)
-	EXPERIENCE {
-		public Boostable getType() {
-			return Boostable.valueOf(name());
-		}
-
-		@Override
-		public void handleApply(HasUniqueId uuid) {
-			BoosterService service = new BoosterService();
-			Booster booster = service.get(uuid);
-			booster.add(getType(), 2, Time.DAY);
-			service.save(booster);
-		}
-
-		@Override
-		public @NotNull ItemBuilder getDisplayItem() {
-			return getType().getDisplayItem();
-		}
-
-		@Override
-		public int count(OfflinePlayer player) {
-			return new BoosterService().get(player).count(getType());
-		}
-
-		@Override
-		public boolean has(OfflinePlayer player) {
-			return count(player) > 0;
-		}
-	},
-
-	@Id("4496331")
-	@Category(StoreCategory.BOOSTS)
-	MCMMO_EXPERIENCE {
-		public Boostable getType() {
-			return Boostable.valueOf(name());
-		}
-
-		@Override
-		public void handleApply(HasUniqueId uuid) {
-			BoosterService service = new BoosterService();
-			Booster booster = service.get(uuid);
-			booster.add(getType(), 1.5, Time.DAY);
-			service.save(booster);
-		}
-
-		@Override
-		public @NotNull ItemBuilder getDisplayItem() {
-			return getType().getDisplayItem();
-		}
-
-		@Override
-		public int count(OfflinePlayer player) {
-			return new BoosterService().get(player).count(getType());
-		}
-
-		@Override
-		public boolean has(OfflinePlayer player) {
-			return count(player) > 0;
-		}
-	},
-
-	@Id("4496334")
-	@Category(StoreCategory.BOOSTS)
-	MARKET_SELL_PRICES {
-		public Boostable getType() {
-			return Boostable.valueOf(name());
-		}
-
-		@Override
-		public void handleApply(HasUniqueId uuid) {
-			BoosterService service = new BoosterService();
-			Booster booster = service.get(uuid);
-			booster.add(getType(), 1.5, Time.DAY);
-			service.save(booster);
-		}
-
-		@Override
-		public @NotNull ItemBuilder getDisplayItem() {
-			return getType().getDisplayItem();
-		}
-
-		@Override
-		public int count(OfflinePlayer player) {
-			return new BoosterService().get(player).count(getType());
-		}
-
-		@Override
-		public boolean has(OfflinePlayer player) {
-			return count(player) > 0;
-		}
-	},
-
-	@Id("4496339")
-	@Category(StoreCategory.BOOSTS)
-	VOTE_POINTS {
-		public Boostable getType() {
-			return Boostable.valueOf(name());
-		}
-
-		@Override
-		public void handleApply(HasUniqueId uuid) {
-			BoosterService service = new BoosterService();
-			Booster booster = service.get(uuid);
-			booster.add(getType(), 1.5, Time.DAY);
-			service.save(booster);
-		}
-
-		@Override
-		public @NotNull ItemBuilder getDisplayItem() {
-			return getType().getDisplayItem();
-		}
-
-		@Override
-		public int count(OfflinePlayer player) {
-			return new BoosterService().get(player).count(getType());
-		}
-
-		@Override
-		public boolean has(OfflinePlayer player) {
-			return count(player) > 0;
-		}
-	},
-
-	@Id("4496341")
-	@Category(StoreCategory.BOOSTS)
-	MINIGAME_DAILY_TOKENS {
-		public Boostable getType() {
-			return Boostable.valueOf(name());
-		}
-
-		@Override
-		public void handleApply(HasUniqueId uuid) {
-			BoosterService service = new BoosterService();
-			Booster booster = service.get(uuid);
-			booster.add(getType(), 2, Time.DAY);
-			service.save(booster);
-		}
-
-		@Override
-		public @NotNull ItemBuilder getDisplayItem() {
-			return getType().getDisplayItem();
-		}
-
-		@Override
-		public int count(OfflinePlayer player) {
-			return new BoosterService().get(player).count(getType());
-		}
-
-		@Override
-		public boolean has(OfflinePlayer player) {
-			return count(player) > 0;
-		}
-	},
-
-	@Id("4496340")
-	@Category(StoreCategory.BOOSTS)
-	KILLER_MONEY {
-		public Boostable getType() {
-			return Boostable.valueOf(name());
-		}
-
-		@Override
-		public void handleApply(HasUniqueId uuid) {
-			BoosterService service = new BoosterService();
-			Booster booster = service.get(uuid);
-			booster.add(getType(), 2, Time.DAY);
-			service.save(booster);
-		}
-
-		@Override
-		public @NotNull ItemBuilder getDisplayItem() {
-			return getType().getDisplayItem();
-		}
-
-		@Override
-		public int count(OfflinePlayer player) {
-			return new BoosterService().get(player).count(getType());
-		}
-
-		@Override
-		public boolean has(OfflinePlayer player) {
-			return count(player) > 0;
-		}
-	},
-
-	@Id("4496336")
-	@Category(StoreCategory.BOOSTS)
-	MYSTERY_CRATE_KEY {
-		public Boostable getType() {
-			return Boostable.valueOf(name());
-		}
-
-		@Override
-		public void handleApply(HasUniqueId uuid) {
-			BoosterService service = new BoosterService();
-			Booster booster = service.get(uuid);
-			booster.add(getType(), 2.5, Time.DAY);
-			service.save(booster);
-		}
-
-		@Override
-		public @NotNull ItemBuilder getDisplayItem() {
-			return getType().getDisplayItem();
-		}
-
-		@Override
-		public int count(OfflinePlayer player) {
-			return new BoosterService().get(player).count(getType());
-		}
-
-		@Override
-		public boolean has(OfflinePlayer player) {
-			return count(player) > 0;
-		}
-	},
 
 	;
 
