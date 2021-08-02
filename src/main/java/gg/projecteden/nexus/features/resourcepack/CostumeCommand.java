@@ -39,7 +39,6 @@ import static gg.projecteden.nexus.models.costume.Costume.ROOT_FOLDER;
 
 @NoArgsConstructor
 @Aliases("costumes")
-@Permission("group.admin") // TODO Remove
 public class CostumeCommand extends CustomCommand implements Listener {
 	private final CostumeUserService service = new CostumeUserService();
 
