@@ -18,15 +18,18 @@ import java.util.Set;
 
 public enum Rarity {
 	// @formatter:off
-	COMMON(ColorType.LIGHT_GREEN.getChatColor(),	0, 5),
-	UNCOMMON(ColorType.GREEN.getChatColor(), 		6, 11),
-	RARE(ColorType.PINK.getChatColor(),				12, 19),
-	EXOTIC(ColorType.PURPLE.getChatColor(),			20, 29),
+	ORDINARY(ColorType.LIGHT_GRAY.getChatColor(),	0, 5),
+	COMMON(ColorType.LIGHT_GREEN.getChatColor(),	6, 11),
+	UNCOMMON(ColorType.GREEN.getChatColor(), 		12, 19),
+	RARE(ColorType.PINK.getChatColor(),				20, 29),
 	EPIC(ColorType.YELLOW.getChatColor(),			30, 39),
 	// Uncraftable
-	LEGENDARY(ColorType.ORANGE.getChatColor(), 	false, 40, 49),
-	MYTHIC(ColorType.CYAN.getChatColor(), 		false, 50, 55),
-	ARTIFACT(ColorType.LIGHT_RED.getChatColor(),false, 55, 60),
+	EXOTIC(ColorType.PURPLE.getChatColor(),		false, 40, 49),
+	LEGENDARY(ColorType.ORANGE.getChatColor(), 	false, 50, 55),
+	MYTHIC(ColorType.CYAN.getChatColor(), 		false, 56, 60),
+
+	// Quest Related
+	ARTIFACT(ColorType.LIGHT_RED.getChatColor()),
 	// Code Related
 	UNIQUE(ColorType.LIGHT_BLUE.getChatColor());
 	// @formatter:on
@@ -98,9 +101,9 @@ public enum Rarity {
 
 		Rarity rarity;
 		if (isCraftable)
-			rarity = getRarity(sum, true, COMMON, EPIC, condition, debugger);
+			rarity = getRarity(sum, true, ORDINARY, EPIC, condition, debugger);
 		else
-			rarity = getRarity(sum, false, LEGENDARY, ARTIFACT, condition, debugger);
+			rarity = getRarity(sum, false, EXOTIC, MYTHIC, condition, debugger);
 
 		return rarity;
 	}
@@ -137,7 +140,7 @@ public enum Rarity {
 			else if (sum <= maximum.getMin())
 				result = minimum;
 			else
-				result = COMMON;
+				result = ORDINARY;
 		}
 
 		return result;
