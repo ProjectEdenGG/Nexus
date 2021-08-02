@@ -147,7 +147,11 @@ public class CostumeCommand extends CustomCommand implements Listener {
 				if (subfolder.getPath().contains(EXCLUSIVE))
 					continue;
 
-				CustomModel firstModel = subfolder.getIcon(user::owns);
+				CustomModel firstModel = subfolder.getIcon(model -> {
+					if (this instanceof CostumeStoreMenu)
+						return true;
+					return user.owns(model);
+				});
 				ItemStack item = new ItemStack(Material.BARRIER);
 				if (firstModel != null)
 					item = firstModel.getDisplayItem();
