@@ -35,6 +35,7 @@ import gg.projecteden.nexus.models.boost.Boostable;
 import gg.projecteden.nexus.models.boost.BoosterService;
 import gg.projecteden.nexus.models.contributor.Contributor;
 import gg.projecteden.nexus.models.contributor.ContributorService;
+import gg.projecteden.nexus.models.costume.CostumeUser;
 import gg.projecteden.nexus.models.costume.CostumeUserService;
 import gg.projecteden.nexus.models.home.HomeService;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.PackageExpireJob;
@@ -323,6 +324,12 @@ public enum Package {
 		public void handleApply(HasUniqueId uuid) {
 			new CostumeUserService().edit(uuid, user -> user.addVouchers(1));
 		}
+
+		@Override
+		public boolean has(OfflinePlayer player) {
+			final CostumeUser user = new CostumeUserService().get(player);
+			return user.getOwnedCostumes().size() + user.getVouchers() >= 1;
+		}
 	},
 
 	@Id("4610206")
@@ -332,6 +339,12 @@ public enum Package {
 		@Override
 		public void handleApply(HasUniqueId uuid) {
 			new CostumeUserService().edit(uuid, user -> user.addVouchers(5));
+		}
+
+		@Override
+		public boolean has(OfflinePlayer player) {
+			final CostumeUser user = new CostumeUserService().get(player);
+			return user.getOwnedCostumes().size() + user.getVouchers() >= 5;
 		}
 	},
 
