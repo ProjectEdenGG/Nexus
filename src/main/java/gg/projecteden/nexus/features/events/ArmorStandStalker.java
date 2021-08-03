@@ -34,6 +34,8 @@ public class ArmorStandStalker {
 				add(Stalker.builder().uuid("720fc446-7598-4a99-9493-40bc784667dc").world(BearFair21.getWorld()).build());
 				// New Spawn - Owl on Fletcher Building
 				add(Stalker.builder().uuid("39fa0c4e-76bf-4773-bd32-c61e1cae3fc3").world("buildadmin").radius(25).build());
+				// Store Gallery - Chat
+				add(Stalker.builder().uuid("7db21c72-6264-4b6f-94ef-0368989dc568").world("server").radius(15).build());
 			}
 		}
 	}};
