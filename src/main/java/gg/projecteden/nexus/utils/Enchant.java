@@ -16,8 +16,8 @@ import java.util.List;
 
 /**
  * Glorified enum of enchantments but with sane names
- * If replaces an old CustomEnchantments enchant, please
- * @see OldCEConverter.ConversionEnchant
+ * <p>
+ * If replacing an old CustomEnchantments enchant, please use {@link OldCEConverter.ConversionEnchant}
  */
 @UtilityClass
 public class Enchant {
