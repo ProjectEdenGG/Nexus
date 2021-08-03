@@ -67,7 +67,7 @@ public class CustomModelFolder {
 		}
 
 		for (CustomModelFolder folder : folders) {
-			CustomModel icon = folder.getIcon();
+			CustomModel icon = folder.getIcon(predicate);
 			if (icon != null)
 				return icon;
 		}
