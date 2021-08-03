@@ -113,5 +113,6 @@ public class ItemTagsCommand extends CustomCommand {
 	@Permission("group.admin")
 	void reload() {
 		ItemTags.reloadConfig();
+		send(PREFIX + "Reloaded config");
 	}
 }
