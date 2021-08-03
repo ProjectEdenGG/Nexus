@@ -257,7 +257,7 @@ public class ItemUtils {
 
 	public static List<Enchantment> getApplicableEnchantments(ItemStack item) {
 		List<Enchantment> applicable = new ArrayList<>();
-		for (Enchantment enchantment : Enchantment.values()) {
+		for (Enchantment enchantment : Enchant.values()) {
 			try {
 				item = new ItemStack(item.getType());
 				item.addEnchantment(enchantment, 1);
