@@ -8,6 +8,8 @@ import fr.minuskube.inv.content.InventoryProvider;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.store.annotations.Category.StoreCategory;
+import gg.projecteden.nexus.features.store.gallery.StoreGalleryNPCs;
+import gg.projecteden.nexus.features.store.gallery.StoreGalleryNPCs.DisplaySet;
 import gg.projecteden.nexus.features.store.perks.NPCListener;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -22,6 +24,7 @@ import gg.projecteden.nexus.models.contributor.Contributor.Purchase;
 import gg.projecteden.nexus.models.contributor.ContributorService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Name;
@@ -246,6 +249,32 @@ public class StoreCommand extends CustomCommand {
 	void expire(Package packageType, @Arg("self") OfflinePlayer player) {
 		packageType.expire(player);
 		send(PREFIX + "Removed package " + camelCase(packageType) + " from " + Nickname.of(player));
+	}
+
+	@Path("gallery")
+	@Permission("group.admin")
+	void gallery() {
+		WarpType.STAFF.get("store").teleportAsync(player());
+//		WarpType.NORMAL.get("storegallery").teleportAsync(player()); TODO
+		send(PREFIX + "Updated skins");
+	}
+
+	@Path("gallery updateSkins")
+	@Permission("group.admin")
+	void gallery_updateSkins() {
+		StoreGalleryNPCs.updateSkins();
+		send(PREFIX + "Updated skins");
+	}
+
+	@Path("gallery debug displays")
+	@Permission("group.admin")
+	void gallery_debug_displays() {
+		for (DisplaySet display : StoreGalleryNPCs.getDisplays()) {
+			send(display.getId() + ":");
+			send(" 1: " + display.getDisplay1().getId());
+			send(" 2: " + display.getDisplay2().getId());
+			send(" 3: " + display.getDisplay3().getId());
+		}
 	}
 
 }

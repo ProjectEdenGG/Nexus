@@ -193,7 +193,7 @@ public class StoreGalleryNPCs {
 	}
 
 	@Data
-	static class Display {
+	public static class Display {
 		@NonNull
 		private final Integer id;
 		private String skinName = null;
