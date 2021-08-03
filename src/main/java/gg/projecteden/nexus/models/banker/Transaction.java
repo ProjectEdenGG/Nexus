@@ -54,7 +54,7 @@ public class Transaction {
 		else if ("MARKET_SELL".equals(dbObject.get("cause")))
 			dbObject.put("cause", "MARKET_SALE");
 
-		if (dbObject.get("shopGroup") == null)
+		if (dbObject.get("shopGroup") == null || dbObject.get("shopGroup").equals("RESOURCE"))
 			dbObject.put("shopGroup", ShopGroup.SURVIVAL);
 	}
 
