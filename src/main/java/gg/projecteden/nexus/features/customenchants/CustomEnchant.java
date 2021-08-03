@@ -68,7 +68,7 @@ public abstract class CustomEnchant extends Enchantment {
 
 	@Override
 	public boolean canEnchantItem(@NotNull ItemStack itemStack) {
-		return false;
+		return getItemTarget().includes(itemStack);
 	}
 
 	@Override
