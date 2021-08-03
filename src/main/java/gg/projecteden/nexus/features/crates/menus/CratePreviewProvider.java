@@ -37,18 +37,23 @@ public class CratePreviewProvider extends MenuUtils implements InventoryProvider
 
 		Pagination page = contents.pagination();
 
-		if (type == CrateType.VOTE)
+		if (type == CrateType.VOTE) {
+			final VoterService voterService = new VoterService();
+			final Voter voter = voterService.get(player);
 			contents.set(0, 4, ClickableItem.from(
 					new ItemBuilder(Material.TRIPWIRE_HOOK).glow().name("&eBuy 1 Key for 2 Vote Points")
-							.lore("&3Your Points: &e" + new VoterService().get(player).getPoints()).build(),
+							.lore("&3Your Points: &e" + voter.getPoints()).build(),
 					e -> {
-						Voter voter = new VoterService().get(player);
-						if (voter.getPoints() < 2) return;
+						if (voter.getPoints() < 2)
+							return;
+
 						voter.takePoints(2);
+						voterService.save(voter);
 						type.giveVPS(player, 1);
 						type.previewDrops(null).open(player, page.getPage());
 					}
 			));
+		}
 
 		List<ClickableItem> items = new ArrayList<>();
 		if (loot == null) {

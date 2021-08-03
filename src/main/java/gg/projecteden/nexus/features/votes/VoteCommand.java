@@ -153,6 +153,7 @@ public class VoteCommand extends CustomCommand {
 	@Path("points set <player> <number>")
 	void setPoints(Voter voter, int number) {
 		voter.setPoints(number);
+		service.save(voter);
 		send("&e" + voter.getNickname() + " &3now has &e" + voter.getPoints() + plural(" &3vote point", voter.getPoints()));
 	}
 
@@ -160,6 +161,7 @@ public class VoteCommand extends CustomCommand {
 	@Path("points give <player> <number>")
 	void givePoints(Voter voter, int number) {
 		voter.givePoints(number);
+		service.save(voter);
 		send("&e" + voter.getNickname() + " &3now has &e" + voter.getPoints() + plural(" &3vote point", voter.getPoints()));
 	}
 
@@ -167,6 +169,7 @@ public class VoteCommand extends CustomCommand {
 	@Path("points take <player> <number>")
 	void takePoints(Voter voter, int number) {
 		voter.takePoints(number);
+		service.save(voter);
 		send("&e" + voter.getNickname() + " &3now has &e" + voter.getPoints() + plural(" &3vote point", voter.getPoints()));
 	}
 

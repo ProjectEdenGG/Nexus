@@ -133,13 +133,12 @@ public class Votes extends Feature implements Listener {
 		if (site == null)
 			return;
 
-		final VoterService voteService = new VoterService();
-		final Voter voter = voteService.get(uuid);
+		final VoterService voterService = new VoterService();
+		final Voter voter = voterService.get(uuid);
 		Vote vote = new Vote(uuid, site, extraVotePoints(), timestamp);
 		voter.vote(vote);
-		voteService.save(voter);
 
-		int sum = voteService.getTopVoters(LocalDateTime.now().getMonth()).stream()
+		int sum = voterService.getTopVoters(LocalDateTime.now().getMonth()).stream()
 			.mapToInt(topVoter -> Long.valueOf(topVoter.getCount()).intValue()).sum();
 		int left = 0;
 		if (GOAL > sum)
@@ -164,6 +163,8 @@ public class Votes extends Feature implements Listener {
 			voter.givePoints(points);
 			PlayerUtils.send(player, VPS.PREFIX + "You have received " + points + plural(" point", points));
 		}
+
+		voterService.save(voter);
 
 		if (voter.getTodaysVotes().size() >= 5) {
 			final DailyVoteRewardService dailyVoteRewardService = new DailyVoteRewardService();
