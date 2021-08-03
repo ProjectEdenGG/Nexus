@@ -9,6 +9,7 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Koda;
+import gg.projecteden.nexus.features.crates.GemCommand;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
@@ -16,6 +17,7 @@ import gg.projecteden.nexus.models.mcmmo.McMMOPrestige;
 import gg.projecteden.nexus.models.mcmmo.McMMOService;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
+import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -44,8 +46,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				"Any helmet of your choice that gives you night vision for deep mining expeditions") {
 				@Override
 				void onClick(Player player) {
-					PlayerUtils.giveItem(player, new ItemBuilder(Material.PAPER).name("&eMcMMOReset Coupon").lore("&3Coupon for Glowing Enchant").build());
-					PlayerUtils.send(player, "&ePut in a &c/ticket &eto have a staff member add glowing to a helmet you own.");
+					PlayerUtils.giveItem(player, GemCommand.makeGem(Enchant.GLOWING, 1));
 				}
 		},
 		EXCAVATION(2, 2, Material.DIAMOND_SHOVEL,

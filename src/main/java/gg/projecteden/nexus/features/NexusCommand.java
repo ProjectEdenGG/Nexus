@@ -7,6 +7,7 @@ import fr.minuskube.inv.SmartInvsPlugin;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.crates.models.CrateType;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
+import gg.projecteden.nexus.features.customenchants.OldCEConverter;
 import gg.projecteden.nexus.features.listeners.TemporaryListener;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
@@ -431,6 +432,11 @@ public class NexusCommand extends CustomCommand implements Listener {
 		};
 
 		paginate(PlayerUtils.getAdvancements().values(), formatter, "/nexus advancements " + player.getName(), page);
+	}
+
+	@Path("convertEnchants")
+	void convertEnchants() {
+		OldCEConverter.convertItem(getToolRequired());
 	}
 
 	@ConverterFor(Timespan.class)

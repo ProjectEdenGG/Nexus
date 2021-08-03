@@ -1,15 +1,12 @@
 package gg.projecteden.nexus.features.crates;
 
+import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Utils;
+import gg.projecteden.nexus.utils.*;
 import lombok.NoArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -78,46 +75,39 @@ public class GemCommand extends CustomCommand implements Listener {
 			return;
 		}
 		if (tool.getEnchantments().containsKey(enchantment)) {
-			if (tool.getEnchantments().get(enchantment) > level) {
+			if (enchantment == Enchant.GLOWING) {
+				level = tool.getEnchantmentLevel(Enchant.GLOWING) + 1;
+			}
+			else if (tool.getEnchantments().get(enchantment) > level) {
 				PlayerUtils.send(player, "&cThe tool you are holding already has that enchantment at a higher level");
 				return;
 			}
+			else if (tool.getEnchantments().get(enchantment) == level) {
+				level++;
+			}
 		}
-		playAnimation().thenAccept(bool -> {
-			if (!bool) return;
-			if (inventory.getItemInOffHand().equals(gem))
-				inventory.setItemInOffHand(null);
-			else
-				inventory.removeItem(gem);
-			tool.addUnsafeEnchantment(enchantment, level);
-		});
-	}
-
-	public CompletableFuture<Boolean> playAnimation() {
-		CompletableFuture<Boolean> bool = new CompletableFuture<>();
-		bool.complete(true);
-		return bool;
+		if (inventory.getItemInOffHand().equals(gem))
+			inventory.setItemInOffHand(null);
+		else
+			inventory.removeItem(gem);
+		tool.addUnsafeEnchantment(enchantment, level);
+		CustomEnchants.update(tool);
 	}
 
 	public boolean isGem(ItemStack item) {
 		if (ItemUtils.isNullOrAir(item)) return false;
 		if (!item.getType().equals(Material.EMERALD)) return false;
-		if (item.getEnchantments().size() == 0) return false;
-		if (new ItemBuilder(item).customModelData() != 1) return false;
-		return true;
+		if (item.getEnchantments().isEmpty()) return false;
+		return new ItemBuilder(item).customModelData() == 1;
 	}
 
-	public ItemStack makeGem(Enchantment enchantment, int level) {
+	public static ItemStack makeGem(Enchantment enchantment, int level) {
 		return new ItemBuilder(Material.EMERALD)
 				.name("&#0fa8ffGem of " + StringUtils.camelCase(enchantment.getKey().getKey()))
 				.enchant(enchantment, level)
 				.lore(" ", "&fHold this gem and a tool", "&fto apply this enchantment")
 				.customModelData(1)
 				.build();
-	}
-
-	public void sendError(Player player) {
-		PlayerUtils.send(player, "gem error lol");
 	}
 
 }

@@ -2,6 +2,8 @@ package gg.projecteden.nexus.utils;
 
 import gg.projecteden.nexus.features.customenchants.CustomEnchant;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
+import gg.projecteden.nexus.features.customenchants.OldCEConverter;
+import gg.projecteden.nexus.features.customenchants.enchants.GlowingEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.MagnetEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.SoulboundEnchant;
 import lombok.experimental.UtilityClass;
@@ -14,6 +16,8 @@ import java.util.List;
 
 /**
  * Glorified enum of enchantments but with sane names
+ * If replaces an old CustomEnchantments enchant, please
+ * @see OldCEConverter.ConversionEnchant
  */
 @UtilityClass
 public class Enchant {
@@ -219,6 +223,11 @@ public class Enchant {
 	 * Attract dropped items
 	 */
 	public static final CustomEnchant MAGNET = CustomEnchants.get(MagnetEnchant.class);
+
+	/**
+	 * Gives night vision when applied to helmets
+	 */
+	public static final CustomEnchant GLOWING = CustomEnchants.get(GlowingEnchant.class);
 
 	private static final List<Enchantment> values = new ArrayList<>();
 
