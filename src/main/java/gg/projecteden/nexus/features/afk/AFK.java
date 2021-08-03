@@ -40,7 +40,7 @@ public class AFK extends Feature {
 	public void onStop() {
 		final AFKUserService service = new AFKUserService();
 		for (Player player : PlayerUtils.getOnlinePlayers())
-			service.save(service.get(player));
+			service.saveSync(service.get(player));
 	}
 
 	public static boolean isSameLocation(Location from, Location to) {
