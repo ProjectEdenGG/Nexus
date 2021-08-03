@@ -22,8 +22,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -40,7 +41,7 @@ public class CostumeUser implements PlayerOwnedObject {
 	private int vouchers;
 
 	private Costume activeCostume;
-	private List<Costume> ownedCostumes = new ArrayList<>();
+	private Set<Costume> ownedCostumes = new HashSet<>();
 
 	private static final List<WorldGroup> DISABLED_WORLDS = List.of(WorldGroup.MINIGAMES);
 	private static final List<GameMode> DISABLED_GAMEMODES = List.of(GameMode.SPECTATOR);

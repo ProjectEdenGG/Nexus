@@ -8,6 +8,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
+import org.bukkit.Material;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
@@ -105,7 +106,8 @@ public class Costume {
 			load(type, subfolder);
 
 		for (CustomModel model : folder.getModels())
-			costumes.add(new Costume(model, type));
+			if (model.getMaterial() != Material.CYAN_STAINED_GLASS_PANE) // legacy gg hat
+				costumes.add(new Costume(model, type));
 	}
 
 }
