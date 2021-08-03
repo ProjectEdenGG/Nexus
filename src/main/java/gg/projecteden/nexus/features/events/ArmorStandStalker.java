@@ -34,8 +34,28 @@ public class ArmorStandStalker {
 				add(Stalker.builder().uuid("720fc446-7598-4a99-9493-40bc784667dc").world(BearFair21.getWorld()).build());
 				// New Spawn - Owl on Fletcher Building
 				add(Stalker.builder().uuid("39fa0c4e-76bf-4773-bd32-c61e1cae3fc3").world("buildadmin").radius(25).build());
-				// Store Gallery - Chat
+
+				// Store Gallery
+				// Main Front Right
+				add(Stalker.builder().uuid("d0734ba2-45e9-4e87-97dc-688e036a20b4").world("server").radius(30).build());
+				// Main Front Left
+				add(Stalker.builder().uuid("9b6298c9-3513-48fa-bf2d-f591268e70db").world("server").radius(30).build());
+				// Main Back Right
+				add(Stalker.builder().uuid("5a843299-859d-492a-a61d-d0e9dac61575").world("server").radius(30).build());
+				// Main Back Left
+				add(Stalker.builder().uuid("1f7cfa85-a51b-46db-8ddd-16be8893ed6f").world("server").radius(30).build());
+				// Terrarium
+				add(Stalker.builder().uuid("997895f8-de5a-4a55-95b5-647fb9fff288").world("server").radius(15).build());
+				// Visuals
+				add(Stalker.builder().uuid("24279890-0c9a-4558-ba6c-7987e206773b").world("server").radius(15).build());
+				// Misc
+				add(Stalker.builder().uuid("1427660f-18a5-4547-86ce-91d70e6e97ce").world("server").radius(15).build());
+				// Chat
 				add(Stalker.builder().uuid("7db21c72-6264-4b6f-94ef-0368989dc568").world("server").radius(15).build());
+				// Inventory
+				add(Stalker.builder().uuid("dc665efe-a7be-4486-89fe-ac1db3895247").world("server").radius(15).build());
+				// Pets
+				add(Stalker.builder().uuid("c3b60f46-ab34-48e8-820f-249e7ee03571").world("server").radius(15).build());
 			}
 		}
 	}};
