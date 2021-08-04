@@ -46,6 +46,7 @@ import java.util.List;
 
 import static gg.projecteden.nexus.utils.BlockUtils.isNullOrAir;
 import static gg.projecteden.nexus.utils.PlayerUtils.getAdvancement;
+import static gg.projecteden.nexus.utils.PlayerUtils.isVanished;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 public class Restrictions implements Listener {
@@ -173,6 +174,12 @@ public class Restrictions implements Listener {
 	public void onOneBlockFallingCommand(PlayerCommandPreprocessEvent event) {
 		Player player = event.getPlayer();
 		if (!Arrays.asList(WorldGroup.ONEBLOCK, WorldGroup.SKYBLOCK).contains(WorldGroup.of(player)))
+			return;
+
+		if (isVanished(player))
+			return;
+
+		if (player.getLocation().getY() < 300)
 			return;
 
 		if (player.getFallDistance() > 5 && !player.isFlying()) {
