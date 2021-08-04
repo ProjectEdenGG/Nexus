@@ -39,7 +39,7 @@ public class DailyVoteRewardsCommand extends CustomCommand {
 	void streak(@Arg("1") int page) {
 		final List<DailyVoteReward> all = service.getAll().stream()
 			.filter(rewards -> rewards.getCurrentStreak().getStreak() > 0)
-			.sorted(Comparator.comparing(rewards -> rewards.getCurrentStreak().getStreak()))
+			.sorted(Comparator.<DailyVoteReward>comparingInt(rewards -> rewards.getCurrentStreak().getStreak()).reversed())
 			.collect(Collectors.toList());
 
 		final BiFunction<DailyVoteReward, String, JsonBuilder> formatter = (rewards, index) ->
