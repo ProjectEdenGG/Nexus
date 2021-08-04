@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
+import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @NoArgsConstructor
 public class DiscordBridgeListener extends ListenerAdapter {
@@ -37,7 +38,7 @@ public class DiscordBridgeListener extends ListenerAdapter {
 				if (!event.getAuthor().getId().equals(User.UBER.getId()))
 					return;
 
-			String content = event.getMessage().getContentDisplay().trim();
+			String content = stripColor(event.getMessage().getContentDisplay().trim());
 
 			try {
 				content = EmojiParser.parseToAliases(content);
