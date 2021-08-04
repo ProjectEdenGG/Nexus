@@ -4,6 +4,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.utils.WorldGroup;
 import org.bukkit.inventory.ItemStack;
 
 @Permission("combine.use")
@@ -15,6 +16,9 @@ public class CombineCommand extends CustomCommand {
 
 	@Path
 	void run() {
+		if (worldGroup() != WorldGroup.SURVIVAL)
+			permissionError();
+
 		for (int slot = 0; slot < inventory().getContents().length; slot++) {
 			if (inventory().getContents()[slot] == null)
 				continue;
