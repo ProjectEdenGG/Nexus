@@ -36,8 +36,8 @@ public class ParticleEffectManager extends AmbienceManager {
 	}
 
 	public void tick() {
-		for (UUID uuid : activeEffects.keySet()) {
-			Iterator<ParticleEffect> iterator = getEffects(uuid).iterator();
+		for (List<ParticleEffect> iterable : activeEffects.values()) {
+			Iterator<ParticleEffect> iterator = iterable.iterator();
 
 			while (iterator.hasNext()) {
 				ParticleEffect instance = iterator.next();
