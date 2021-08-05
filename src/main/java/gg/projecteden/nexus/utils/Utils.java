@@ -18,6 +18,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.InventoryView;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.objenesis.ObjenesisStd;
 import org.reflections.Reflections;
 
@@ -31,6 +32,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static org.reflections.ReflectionUtils.getAllMethods;
@@ -194,9 +196,10 @@ public class Utils extends gg.projecteden.utils.Utils {
 	 * @return whether an object was removed
 	 */
 	@Contract(mutates = "param2")
-	public static boolean removeEntityFrom(UUID uuid, Iterable<? extends HasUniqueId> from) {
+	public static HasUniqueId removeEntityFrom(UUID uuid, Iterable<? extends HasUniqueId> from) {
 		Objects.requireNonNull(uuid, "uuid");
-		return removeFirstIf(hasUUID -> hasUUID != null && hasUUID.getUniqueId().equals(uuid), from);
+		Predicate<HasUniqueId> predicate = hasUUID -> hasUUID != null && hasUUID.getUniqueId().equals(uuid);
+		return removeFirstIf(predicate, (Iterable<HasUniqueId>) from);
 	}
 
 	/**
@@ -206,7 +209,7 @@ public class Utils extends gg.projecteden.utils.Utils {
 	 * @return whether an object was removed
 	 */
 	@Contract(mutates = "param2")
-	public static boolean removeEntityFrom(HasUniqueId entity, Iterable<? extends HasUniqueId> from) {
+	public static HasUniqueId removeEntityFrom(HasUniqueId entity, Iterable<? extends HasUniqueId> from) {
 		return removeEntityFrom(Preconditions.checkNotNull(entity, "entity").getUniqueId(), from);
 	}
 
@@ -215,6 +218,27 @@ public class Utils extends gg.projecteden.utils.Utils {
 		if (object == null)
 			throw new InvalidInputException(error);
 		return object;
+	}
+
+	/**
+	 * Clones a collection of objects.
+	 * @param list collection of clonable objects
+	 * @return a new list with a clone of the input objects
+	 * @throws IllegalArgumentException an object could not be cloned
+	 */
+	@NotNull
+	public static <T extends Cloneable> List<T> clone(Iterable<T> list) throws IllegalArgumentException {
+		List<T> output = new ArrayList<>();
+		for (T item : list) {
+			try {
+				// for some reason the interface does not make the "clone" method public and instead
+				// recommends you to do it, forcing this dumb workaround
+				output.add((T) item.getClass().getMethod("clone").invoke(item));
+			} catch (Exception e) {
+				throw new IllegalArgumentException("Object failed to clone");
+			}
+		}
+		return output;
 	}
 
 }

@@ -625,7 +625,7 @@ public class PlayerUtils {
 		if (!alwaysMail)
 			excess = giveItemsAndGetExcess(offlinePlayer.getPlayer(), finalItems);
 		else
-			excess = ItemUtils.clone(items);
+			excess = Utils.clone(items);
 		if (Utils.isNullOrEmpty(excess)) return;
 
 		MailerService service = new MailerService();
