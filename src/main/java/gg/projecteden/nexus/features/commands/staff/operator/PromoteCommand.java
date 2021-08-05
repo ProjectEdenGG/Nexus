@@ -32,7 +32,7 @@ public class PromoteCommand extends CustomCommand {
 
 		if (nerd.getOfflinePlayer().isOnline()) {
 			nerd.getOnlinePlayer().sendMessage(Component.text("\n", NamedTextColor.DARK_AQUA)
-				.append(Component.text("Congratulations!", NamedTextColor.YELLOW, TextDecoration.BOLD))
+				.append(Component.text("Congratulations! ", NamedTextColor.YELLOW, TextDecoration.BOLD))
 				.append(Component.text("You've been promoted to ")).append(next.asComponent())
 				.append(Component.text("!")));
 

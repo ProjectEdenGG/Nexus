@@ -69,16 +69,17 @@ public class CostumeCommand extends CustomCommand implements Listener {
 		new CostumeStoreMenu().open(player());
 	}
 
-	@Path("reload")
-	void reload() {
-		Costume.load();
-		send(PREFIX + "Loaded " + Costume.values().size() + " costumes");
-	}
-
 	@Path("vouchers [player]")
 	void vouchers(@Arg("self") CostumeUser user) {
 		send(PREFIX + (isSelf(user) ? "Your" : user.getNickname() + "'s") + " vouchers: &e" + user.getVouchers());
 		send(json(PREFIX + "Spend them in &c/costumes store").command("/costumes store"));
+	}
+
+	@Permission("group.admin")
+	@Path("reload")
+	void reload() {
+		Costume.load();
+		send(PREFIX + "Loaded " + Costume.values().size() + " costumes");
 	}
 
 	@Permission("group.admin")
