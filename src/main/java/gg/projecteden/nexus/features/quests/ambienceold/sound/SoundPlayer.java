@@ -1,11 +1,11 @@
 package gg.projecteden.nexus.features.quests.ambienceold.sound;
 
 import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,14 +16,7 @@ public class SoundPlayer {
 	public void update() {
 		// process scheduled sounds
 		long time = System.currentTimeMillis();
-		Iterator<ScheduledSound> iter = scheduledSounds.iterator();
-		while (iter.hasNext()) {
-			ScheduledSound scheduledSound = iter.next();
-			if (time - scheduledSound.getStartTime() >= scheduledSound.getDelay()) {
-				playSound(scheduledSound);
-				iter.remove();
-			}
-		}
+		Utils.removeIf(scheduledSound -> time - scheduledSound.getStartTime() >= scheduledSound.getDelay(), this::playSound, scheduledSounds);
 	}
 
 	public void playSound(Sound sound, double x, double y, double z) {

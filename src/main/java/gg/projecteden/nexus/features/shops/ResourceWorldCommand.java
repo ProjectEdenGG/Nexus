@@ -29,6 +29,7 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.utils.Env;
 import gg.projecteden.utils.TimeUtils.Time;
@@ -64,7 +65,6 @@ import java.math.BigDecimal;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -295,15 +295,13 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 		if (!(tnt.getSource() instanceof Player player))
 			return;
 
-		final Iterator<Block> iterator = event.blockList().iterator();
-		while (iterator.hasNext()) {
-			final Block next = iterator.next();
-			for (ItemStack drop : next.getDrops())
-				if (trySell(player, next.getState(), drop)) {
-					next.setType(Material.AIR);
-					iterator.remove();
-				}
-		}
+		Utils.removeIf(block -> {
+			final BlockState state = block.getState();
+			for (ItemStack drop : block.getDrops())
+				if (trySell(player, state, drop))
+					return true;
+			return false;
+		}, block -> block.setType(Material.AIR), event.blockList());
 	}
 
 	private boolean trySell(Player player, BlockState block, ItemStack drop) {

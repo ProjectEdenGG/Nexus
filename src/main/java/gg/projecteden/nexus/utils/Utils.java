@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.utils;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
@@ -27,8 +28,9 @@ import java.lang.annotation.Target;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import static org.reflections.ReflectionUtils.getAllMethods;
@@ -185,9 +187,27 @@ public class Utils extends gg.projecteden.utils.Utils {
 	@Getter
 	private static final Gson gson = new GsonBuilder().addSerializationExclusionStrategy(strategy).create();
 
+	/**
+	 * Removes the first entity in an iterable whose UUID matches {@code uuid}.
+	 * @param uuid UUID to search for and remove
+	 * @param from collection of entities
+	 * @return whether an object was removed
+	 */
 	@Contract(mutates = "param2")
-	public static <T extends Collection<? extends HasUniqueId>> void removeEntityFrom(HasUniqueId entity, T from) {
-		from.removeIf(player -> player.getUniqueId().equals(entity.getUniqueId()));
+	public static boolean removeEntityFrom(UUID uuid, Iterable<? extends HasUniqueId> from) {
+		Objects.requireNonNull(uuid, "uuid");
+		return removeFirstIf(hasUUID -> hasUUID != null && hasUUID.getUniqueId().equals(uuid), from);
+	}
+
+	/**
+	 * Removes the first entity in an iterable whose UUID matches {@code entity}'s UUID.
+	 * @param entity entity to remove
+	 * @param from collection of entities
+	 * @return whether an object was removed
+	 */
+	@Contract(mutates = "param2")
+	public static boolean removeEntityFrom(HasUniqueId entity, Iterable<? extends HasUniqueId> from) {
+		return removeEntityFrom(Preconditions.checkNotNull(entity, "entity").getUniqueId(), from);
 	}
 
 	@Contract(value = "null, _ -> fail; _, _ -> param1", pure = true)

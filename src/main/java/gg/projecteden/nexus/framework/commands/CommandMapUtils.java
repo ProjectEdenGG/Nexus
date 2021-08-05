@@ -5,6 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.DoubleSlash;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
+import gg.projecteden.nexus.utils.Utils;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -16,7 +17,6 @@ import org.bukkit.plugin.SimplePluginManager;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Iterator;
 import java.util.Map;
 
 @SuppressWarnings("unchecked")
@@ -81,15 +81,7 @@ public class CommandMapUtils {
 	}
 
 	void unregister(String name) {
-		Iterator<Command> iterator = knownCommandMap.values().iterator();
-
-		while (iterator.hasNext()) {
-			Command command = iterator.next();
-			if (command instanceof PluginCommand && name.equals(command.getLabel())) {
-				command.unregister(commandMap);
-				iterator.remove();
-			}
-		}
+		Utils.removeIf(command -> command instanceof PluginCommand && name.equals(command.getLabel()), command -> command.unregister(commandMap), knownCommandMap.values());
 	}
 
 }

@@ -2,13 +2,13 @@ package gg.projecteden.nexus.features.ambience.effects.sounds.common;
 
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.utils.Utils;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.SoundCategory;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -23,14 +23,7 @@ public class SoundPlayer implements PlayerOwnedObject {
 	public void update() {
 		// process scheduled sounds
 		long time = System.currentTimeMillis();
-		Iterator<ScheduledSound> iter = scheduledSounds.iterator();
-		while (iter.hasNext()) {
-			ScheduledSound scheduledSound = iter.next();
-			if (time - scheduledSound.getStartTime() >= scheduledSound.getDelay()) {
-				playSound(scheduledSound);
-				iter.remove();
-			}
-		}
+		Utils.removeIf(scheduledSound -> time - scheduledSound.getStartTime() >= scheduledSound.getDelay(), this::playSound, scheduledSounds);
 	}
 
 	public void playSound(Sound sound, Location location) {
