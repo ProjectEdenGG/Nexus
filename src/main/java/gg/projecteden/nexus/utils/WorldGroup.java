@@ -16,17 +16,17 @@ import java.util.stream.Collectors;
 public enum WorldGroup {
 	SURVIVAL("world", "world_nether", "world_the_end",
 			"survival", "survival_nether", "survival_the_end",
-			"legacy", "legacy_nether", "legacy_the_end",
-			"resource", "resource_nether", "resource_the_end",
-			"staff_world", "staff_world_nether", "staff_world_the_end",
-			"safepvp", "events"),
+		"legacy", "legacy_nether", "legacy_the_end",
+		"resource", "resource_nether", "resource_the_end",
+		"staff_world", "staff_world_nether", "staff_world_the_end",
+		"safepvp", "events"),
 	CREATIVE("creative", "buildcontest"),
 	MINIGAMES("gameworld", "blockball", "deathswap", "deathswap_nether", "uhc", "uhc_nether", "bingo", "bingo_nether"),
 	SKYBLOCK("bskyblock_world", "bskyblock_world_nether", "bskyblock_world_the_end"),
 	ONEBLOCK("oneblock_world", "oneblock_world_nether"),
 	ADVENTURE("stranded", "aeveon_project"),
 	EVENTS("bearfair21"),
-	STAFF("buildadmin", "jail", "pirate", "tiger"),
+	STAFF("buildadmin", "jail", "pirate", "tiger", "trees"),
 	UNKNOWN;
 
 	private final List<String> worldNames;
