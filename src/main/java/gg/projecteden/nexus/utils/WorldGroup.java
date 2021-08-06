@@ -26,7 +26,7 @@ public enum WorldGroup {
 	ONEBLOCK("oneblock_world", "oneblock_world_nether"),
 	ADVENTURE("stranded", "aeveon_project"),
 	EVENTS("bearfair21"),
-	STAFF("buildadmin", "jail", "pirate", "tiger", "trees"),
+	STAFF("buildadmin", "jail", "pirate", "tiger"),
 	UNKNOWN;
 
 	private final List<String> worldNames;
