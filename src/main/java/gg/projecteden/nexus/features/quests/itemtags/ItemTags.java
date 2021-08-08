@@ -75,10 +75,11 @@ public class ItemTags extends Feature {
 	}
 
 	public static int getCustomEnchantVal(String enchant) {
-		if (!customEnchantsConfigMap.containsKey(enchant))
+		String enchantStr = enchant.replaceAll(" ", "_").trim();
+		if (!customEnchantsConfigMap.containsKey(enchantStr))
 			return 0;
 
-		return customEnchantsConfigMap.get(enchant);
+		return customEnchantsConfigMap.get(enchantStr);
 	}
 
 	public static Integer getArmorMaterialVal(Material material) {
