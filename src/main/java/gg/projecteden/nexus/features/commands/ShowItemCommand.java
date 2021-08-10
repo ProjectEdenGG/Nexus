@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.chat.bridge.IngameBridgeListener;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
 import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown.Part;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -18,6 +19,7 @@ import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.utils.TimeUtils.Time;
 import lombok.Data;
 import lombok.NonNull;
@@ -41,38 +43,41 @@ import java.util.Map;
 import static gg.projecteden.nexus.features.discord.Discord.discordize;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
-@Description("Display an item's enchants in chat")
-public class ShowEnchantsCommand extends CustomCommand {
+@Description("Display an item in chat")
+@Aliases("showenchants")
+public class ShowItemCommand extends CustomCommand {
 
 	@Data
 	private class ItemData {
 		private Map<Enchantment, Integer> enchantsMap = new HashMap<>();
-		private List<String> customEnchantsList = new ArrayList<>();;
-		private List<String> loreList = new ArrayList<>();;
+		private List<String> customEnchantsList = new ArrayList<>();
+		;
+		private List<String> loreList = new ArrayList<>();
+		;
 	}
 
-	public ShowEnchantsCommand(@NonNull CommandEvent event) {
+	public ShowItemCommand(@NonNull CommandEvent event) {
 		super(event);
 	}
 
 	@Path("<hand|offhand|helmet|chestplate|leggings|boots> [message...]")
-	@Permission("showenchants.use")
-	@Cooldown(value = @Part(Time.MINUTE), bypass = "showenchants.bypasscooldown")
+	@Permission("showitems.use")
+	@Cooldown(value = @Part(Time.MINUTE), bypass = "group.admin")
 	void run(String type, String message) {
 		Player player = player();
 		ItemStack item = getItem(player, type);
 		if (ItemUtils.isNullOrAir(item))
 			error("You're not holding anything in that slot");
 
-		ItemData data = new ItemData();
-		if (message == null) message = "";
+		if (message == null)
+			message = "";
 
 		String itemId = item.getType().name();
 		if (item.getItemMeta() == null)
 			error("Your item has no meta");
 
 		String itemName = item.getItemMeta().getDisplayName();
-		String material = getPrettyName(itemId);
+		String material = StringUtils.camelCase(itemId);
 		if (isNullOrEmpty(itemName))
 			itemName = material;
 
@@ -86,17 +91,26 @@ public class ShowEnchantsCommand extends CustomCommand {
 		// Ingame
 		ChatColor color = channel.getMessageColor();
 		JsonBuilder json = json()
-				.next(channel.getChatterFormat(chatter))
-				.group()
-				.next((isNullOrEmpty(message) ? "" : message + " "))
-				.next(color + "&l[" + itemName + color + (amount > 1 ? " x" + amount : "") + "&l]")
-				.hover(item);
+			.next(channel.getChatterFormat(chatter))
+			.group()
+			.next((isNullOrEmpty(message) ? "" : message + " "))
+			.next(color + "&l[" + itemName + color + (amount > 1 ? " x" + amount : "") + "&l]")
+			.hover(item);
 
 		Broadcast.ingame().channel(channel).sender(chatter).message(json).messageType(MessageType.CHAT).send();
 
-		// Discord
+		/*
+			Discord
+
+		 	TODO show...
+		 	- Potion effects
+		 	- Arrow effects
+		 	- Firework stuff
+		 	- Book title
+		 */
 		if (channel.getDiscordTextChannel() != null) {
-			getEnchants(item, data);
+			ItemData data = new ItemData();
+			setupEnchantsAndLore(item, data);
 			String enchants = getEnchantsDiscord(data);
 
 			String durability = String.valueOf(((int) item.getType().getMaxDurability()) - ((Damageable) item.getItemMeta()).getDamage());
@@ -120,21 +134,25 @@ public class ShowEnchantsCommand extends CustomCommand {
 			discordMessage = IngameBridgeListener.parseMentions(discordMessage);
 
 			MessageBuilder content = new MessageBuilder()
-					.setContent(stripColor(user.getBridgeName() + " **>** " + discordMessage))
-					.setEmbed(embed.build());
+				.setContent(stripColor(user.getBridgeName() + " **>** " + discordMessage))
+				.setEmbed(embed.build());
 
 			Discord.send(content, channel.getDiscordTextChannel());
 		}
 	}
 
-	private void getEnchants(ItemStack item, ItemData data) {
+	private void setupEnchantsAndLore(ItemStack item, ItemData data) {
 		if (item.getType().equals(Material.ENCHANTED_BOOK)) {
 			EnchantmentStorageMeta book = (EnchantmentStorageMeta) item.getItemMeta();
 			data.setEnchantsMap(book.getStoredEnchants());
-		} else {
+		} else
 			data.setEnchantsMap(item.getEnchantments());
+
+		if (item.getItemMeta().hasLore()) {
+			List<String> lore = item.getItemMeta().getLore();
+			if (lore != null)
+				data.getLoreList().addAll(lore);
 		}
-		getCustomEnchants(item, data);
 	}
 
 	private String getEnchantsDiscord(ItemData data) {
@@ -144,50 +162,24 @@ public class ShowEnchantsCommand extends CustomCommand {
 			int level = entry.getValue();
 			string.append(getEnchantNameAndLevel(enchant, level)).append(System.lineSeparator());
 		}
-		string.append(getCustomEnchantsDiscord(data));
+		string.append(getLoreDiscord(data));
 		return stripColor(string.toString());
 	}
 
-	private void getCustomEnchants(ItemStack item, ItemData data) {
-		// Check lore
-		if (item.getItemMeta().hasLore()) {
-			List<String> lore = item.getItemMeta().getLore();
-			if (lore == null) return;
-
-			for (String line : lore) {
-				// TODO: Figure out a better way to determine custom enchantments, lore can be colored too.
-				// if the lore is colored, its a custom enchantment, so add it to the list
-				if (line.length() != stripColor(line).length()) {
-					data.getCustomEnchantsList().add(line);
-				} else {
-					// else, it's just lore
-					data.getLoreList().add(line);
-				}
-			}
-		}
-	}
-
-	private String getCustomEnchantsDiscord(ItemData data) {
+	private String getLoreDiscord(ItemData data) {
 		StringBuilder string = new StringBuilder();
-		for (String customEnchant : data.getCustomEnchantsList()) {
-			string.append(customEnchant).append(System.lineSeparator());
-		}
-		return string.toString();
-	}
+		List<String> enchants = data.getEnchantsMap().keySet().stream().map(enchantment -> enchantment.getKey().getKey()).toList();
+		for (String line : data.getLoreList()) {
+			String _line = stripColor(line)
+				.replaceAll(" [IVXLC]+", "")
+				.replaceAll(" ", "_")
+				.toLowerCase();
 
-	private void checkItem(ItemStack item) throws InvalidInputException {
-		if (item == null || item.getType().equals(Material.AIR))
-			throw new InvalidInputException("You selected nothing!");
-		if (!item.getType().equals(Material.ENCHANTED_BOOK)) {
-			if (!item.getItemMeta().hasEnchants()) {
-				throw new InvalidInputException("That item doesn't have any enchants!");
-			}
-		} else {
-			EnchantmentStorageMeta book = (EnchantmentStorageMeta) item.getItemMeta();
-			if (!book.hasStoredEnchants()) {
-				throw new InvalidInputException("That book doesn't have any enchants!");
-			}
+			if (!enchants.contains(_line))
+				string.append(line).append(System.lineSeparator());
 		}
+
+		return string.toString();
 	}
 
 	private ItemStack getItem(Player player, String arg) throws InvalidInputException {
@@ -228,44 +220,16 @@ public class ShowEnchantsCommand extends CustomCommand {
 					item = inv.getBoots();
 				break;
 		}
-		checkItem(item);
+
+		if (item == null || item.getType().equals(Material.AIR))
+			throw new InvalidInputException("You selected nothing!");
+
 		return item;
 	}
 
-	public static String getPrettyName(String item) {
-		String out = "";
-		if (item.contains("_")) {
-			String[] parts = item.split("_");
-			for (String part : parts) {
-				String temp = part.substring(0, 1).toUpperCase();
-				String temp2 = part.substring(1).toLowerCase();
-				out += temp + temp2 + " ";
-			}
-		} else {
-			out = item.substring(0, 1).toUpperCase() + item.substring(1).toLowerCase();
-		}
-		return out.trim();
-	}
-
 	static String getEnchantNameAndLevel(String enchantment, int lvl) {
-		String level = intToRoman(lvl);
-		String enchant = getPrettyName(enchantment);
+		String level = StringUtils.toRoman(lvl);
+		String enchant = StringUtils.camelCase(enchantment);
 		return enchant + " " + level;
 	}
-
-	static String intToRoman(int num) {
-		String[] str = new String[]{"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
-		int[] val = new int[]{1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
-
-		StringBuilder sb = new StringBuilder();
-
-		for (int i = 0; i < val.length; i++) {
-			while (num >= val[i]) {
-				num -= val[i];
-				sb.append(str[i]);
-			}
-		}
-		return sb.toString();
-	}
-
 }
