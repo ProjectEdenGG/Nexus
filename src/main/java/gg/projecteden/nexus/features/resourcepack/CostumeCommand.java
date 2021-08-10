@@ -14,10 +14,13 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.costume.Costume;
 import gg.projecteden.nexus.models.costume.CostumeUser;
 import gg.projecteden.nexus.models.costume.CostumeUserService;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.utils.TimeUtils.Time;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -31,7 +34,10 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.BiFunction;
 
 import static gg.projecteden.nexus.features.resourcepack.CustomModel.ICON;
 import static gg.projecteden.nexus.models.costume.Costume.EXCLUSIVE;
@@ -102,6 +108,22 @@ public class CostumeCommand extends CustomCommand implements Listener {
 	@Permission("group.admin")
 	void list(@Arg("1") int page) {
 		paginate(Costume.values(), (costume, index) -> json("&3" + index + " &e" + costume.getId()), "/costume list", page);
+	}
+
+	@Path("top [page]")
+	@Permission("group.admin")
+	void top(@Arg("1") int page) {
+		Map<Costume, Integer> counts = new HashMap<>() {{
+			for (CostumeUser user : service.getAll())
+				if (user.getNerd().getRank() != Rank.ADMIN)
+					for (Costume costume : user.getOwnedCostumes())
+						put(costume, getOrDefault(costume, 0) + 1);
+		}};
+
+		final BiFunction<Costume, String, JsonBuilder> formatter = (costume, index) ->
+			json("&3" + index + " &e" + costume.getId() + " &7- " + counts.get(costume));
+
+		paginate(Utils.sortByValueReverse(counts).keySet(), formatter, "/costume top", page);
 	}
 
 	@EventHandler
