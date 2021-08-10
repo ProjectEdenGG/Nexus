@@ -51,9 +51,7 @@ public class ShowItemCommand extends CustomCommand {
 	private class ItemData {
 		private Map<Enchantment, Integer> enchantsMap = new HashMap<>();
 		private List<String> customEnchantsList = new ArrayList<>();
-		;
 		private List<String> loreList = new ArrayList<>();
-		;
 	}
 
 	public ShowItemCommand(@NonNull CommandEvent event) {
