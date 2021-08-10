@@ -38,6 +38,7 @@ public class ItemTags extends Feature {
 	private static class Level {
 		String name;
 		int value;
+		boolean uncraftable;
 	}
 
 	@Override
@@ -61,15 +62,17 @@ public class ItemTags extends Feature {
 			try {
 				enchantLvl = Integer.parseInt(level.getName());
 				if (enchantLvl == lvl)
-					return new Pair<>(level.getValue(), false);
+					return new Pair<>(level.getValue(), level.isUncraftable());
 
 			} catch (Exception ignored) {
 
 			}
 		}
 
-		if (lvl > enchantLvl)
+		// "above"
+		if (lvl > enchantLvl) {
 			return new Pair<>(levels.get(levels.size() - 1).getValue(), true);
+		}
 
 		return new Pair<>(0, false);
 	}
@@ -109,9 +112,10 @@ public class ItemTags extends Feature {
 				List<Level> levels = new ArrayList<>();
 				ConfigurationSection section = config.getConfigurationSection(enchantments.getCurrentPath() + "." + key);
 				if (section != null) {
+					boolean uncraftable = section.getBoolean("uncraftable", false);
 					for (String sectionKey : section.getKeys(false)) {
 						int value = section.getInt(sectionKey);
-						levels.add(new Level(sectionKey, value));
+						levels.add(new Level(sectionKey, value, uncraftable));
 					}
 				}
 

@@ -110,7 +110,7 @@ public enum Rarity {
 
 	private static Rarity getRarity(int sum, boolean isCraftable, @NonNull Rarity minimum, @NonNull Rarity maximum, Condition condition, Player debugger) {
 		if (condition != null && condition != Condition.PRISTINE) {
-			int value = (Condition.values().length - (condition.ordinal() + 1)) * 5;
+			int value = (Condition.values().length * 5) - ((condition.ordinal() + 1) * 5);
 			sum -= value;
 			ItemTags.debug(debugger, "    &3Condition effect: &e" + -value);
 			ItemTags.debug(debugger, "    &3New sum: &e" + sum);

@@ -9,11 +9,6 @@ import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import org.bukkit.inventory.ItemStack;
 
-import static gg.projecteden.nexus.features.quests.itemtags.ItemTagsUtils.addCondition;
-import static gg.projecteden.nexus.features.quests.itemtags.ItemTagsUtils.addRarity;
-import static gg.projecteden.nexus.features.quests.itemtags.ItemTagsUtils.finalizeItem;
-import static gg.projecteden.nexus.features.quests.itemtags.ItemTagsUtils.updateItem;
-
 public class ItemTagsCommand extends CustomCommand {
 
 	public ItemTagsCommand(CommandEvent event) {
@@ -64,7 +59,7 @@ public class ItemTagsCommand extends CustomCommand {
 	void update() {
 		ItemStack tool = getToolRequired();
 
-		ItemStack updated = updateItem(tool);
+		ItemStack updated = ItemTagsUtils.updateItem(tool);
 		int heldSlot = inventory().getHeldItemSlot();
 		inventory().setItem(heldSlot, updated);
 	}
@@ -79,7 +74,7 @@ public class ItemTagsCommand extends CustomCommand {
 			if (ItemUtils.isNullOrAir(item))
 				continue;
 
-			ItemStack updated = updateItem(item);
+			ItemStack updated = ItemTagsUtils.updateItem(item);
 			item.setItemMeta(updated.getItemMeta());
 			++count;
 		}
@@ -92,7 +87,7 @@ public class ItemTagsCommand extends CustomCommand {
 	void setRarity(Rarity rarity) {
 		ItemStack tool = getToolRequired();
 
-		ItemStack updated = finalizeItem(addRarity(tool, rarity, true));
+		ItemStack updated = ItemTagsUtils.finalizeItem(ItemTagsUtils.addRarity(tool, rarity, true));
 		int heldSlot = inventory().getHeldItemSlot();
 		inventory().setItem(heldSlot, updated);
 	}
@@ -102,7 +97,7 @@ public class ItemTagsCommand extends CustomCommand {
 	void setCondition(Condition condition) {
 		ItemStack tool = getToolRequired();
 
-		ItemStack updated = finalizeItem(addCondition(tool, condition, true));
+		ItemStack updated = ItemTagsUtils.finalizeItem(ItemTagsUtils.addCondition(tool, condition, true));
 		ItemUtils.setDurability(updated, RandomUtils.randomInt(condition.getMin(), condition.getMax()));
 
 		int heldSlot = inventory().getHeldItemSlot();
