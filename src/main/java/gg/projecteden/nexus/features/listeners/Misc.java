@@ -24,6 +24,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.utils.TimeUtils.Time;
 import lombok.Getter;
@@ -71,6 +72,7 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.CraftingInventory;
@@ -78,6 +80,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.MapMeta;
@@ -90,6 +93,7 @@ import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static gg.projecteden.nexus.utils.ItemUtils.getTool;
@@ -104,6 +108,37 @@ public class Misc implements Listener {
 				continue;
 
 			world.setKeepSpawnInMemory(false);
+		}
+	}
+
+	private static final Map<MaterialTag, EquipmentSlot> slots = Map.of(
+		MaterialTag.ALL_HELMETS, EquipmentSlot.HEAD,
+		MaterialTag.ALL_CHESTPLATES, EquipmentSlot.CHEST,
+		MaterialTag.ALL_LEGGINGS, EquipmentSlot.LEGS,
+		MaterialTag.ALL_BOOTS, EquipmentSlot.FEET
+	);
+
+	@EventHandler
+	public void onPlayerInteract(PlayerInteractEvent event) {
+		if (!ActionGroup.RIGHT_CLICK.applies(event))
+			return;
+
+		if (event.getHand() != EquipmentSlot.HAND)
+			return;
+
+		final ItemStack item = event.getItem();
+		final PlayerInventory inventory = event.getPlayer().getInventory();
+
+		if (!MaterialTag.ARMOR.isTagged(item))
+			return;
+
+		for (MaterialTag tag : slots.keySet()) {
+			final EquipmentSlot slot = slots.get(tag);
+			if (tag.isTagged(item)) {
+				final ItemStack existing = ItemUtils.clone(inventory.getItem(slot));
+				inventory.setItem(slot, ItemUtils.clone(item));
+				inventory.setItem(EquipmentSlot.HAND, existing);
+			}
 		}
 	}
 

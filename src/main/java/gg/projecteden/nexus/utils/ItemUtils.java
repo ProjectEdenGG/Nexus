@@ -64,6 +64,13 @@ public class ItemUtils {
 		return true;
 	}
 
+	public static @Nullable ItemStack clone(@Nullable ItemStack itemStack) {
+		if (isNullOrAir(itemStack))
+			return null;
+
+		return itemStack.clone();
+	}
+
 	public static void combine(List<ItemStack> itemStacks, ItemStack... newItemStacks) {
 		combine(itemStacks, Arrays.asList(newItemStacks));
 	}
