@@ -11,6 +11,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.LuckPermsUtils.PermissionChange;
+import gg.projecteden.nexus.utils.WorldGuardFlagUtils;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.dv8tion.jda.annotations.ReplaceWith;
@@ -46,6 +47,15 @@ public class WorldGuardEditCommand extends CustomCommand implements Listener {
 			off(player());
 			send("&eWorldGuard editing &cdisabled");
 		}
+	}
+
+	@Path("flags registry [enable]")
+	void flags_registry_allow(Boolean enable) {
+		if (enable == null)
+			enable = !WorldGuardFlagUtils.registry.isInitialized();
+
+		WorldGuardFlagUtils.registry.setInitialized(enable);
+		send(PREFIX + "Flag registry " + (enable ? "&aenabled" : "&cdisabled"));
 	}
 
 	private void on(Player player) {
