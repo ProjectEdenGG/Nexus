@@ -38,7 +38,7 @@ public class HomeOwner implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private List<Home> homes = new ArrayList<>();
-	private boolean autoLock;
+	private boolean autoLock = true;
 	private boolean usedDeathHome;
 	private int extraHomes;
 
