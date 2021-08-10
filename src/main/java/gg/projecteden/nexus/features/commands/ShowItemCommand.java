@@ -155,11 +155,14 @@ public class ShowItemCommand extends CustomCommand {
 	private String getEnchantsDiscord(ItemData data) {
 		StringBuilder string = new StringBuilder();
 		for (Map.Entry<Enchantment, Integer> entry : data.getEnchantsMap().entrySet()) {
-			String enchant = entry.getKey().getKey().getKey();
-			int level = entry.getValue();
-			string.append(getEnchantNameAndLevel(enchant, level)).append(System.lineSeparator());
+			String enchant = StringUtils.camelCase(entry.getKey().getKey().getKey());
+			String level = StringUtils.toRoman(entry.getValue());
+			String enchantLevel = enchant + " " + level;
+
+			string.append(enchantLevel).append(System.lineSeparator());
 		}
 		string.append(getLoreDiscord(data));
+
 		return stripColor(string.toString());
 	}
 
@@ -218,15 +221,9 @@ public class ShowItemCommand extends CustomCommand {
 				break;
 		}
 
-		if (item == null || item.getType().equals(Material.AIR))
+		if (ItemUtils.isNullOrAir(item))
 			throw new InvalidInputException("You selected nothing!");
 
 		return item;
-	}
-
-	static String getEnchantNameAndLevel(String enchantment, int lvl) {
-		String level = StringUtils.toRoman(lvl);
-		String enchant = StringUtils.camelCase(enchantment);
-		return enchant + " " + level;
 	}
 }
