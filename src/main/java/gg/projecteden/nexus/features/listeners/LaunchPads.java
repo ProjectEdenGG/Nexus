@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.listeners;
 
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.Tasks;
 import kotlin.Pair;
 import lombok.AllArgsConstructor;
@@ -14,6 +13,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -50,6 +50,9 @@ public class LaunchPads implements Listener {
 		Player player = event.getPlayer();
 		if (player.isSneaking()) return;
 
+		event.setCancelled(true);
+		event.setUseInteractedBlock(Result.DENY);
+
 		Block redstone = block.getRelative(0, -1, 0).getLocation().getBlock();
 		Block sign = block.getRelative(0, -2, 0).getLocation().getBlock();
 
@@ -59,13 +62,14 @@ public class LaunchPads implements Listener {
 		if (MaterialTag.ALL_SIGNS.isTagged(sign)) {
 			launchPlayer(player, new LaunchConfig(sign));
 		} else if (Minigames.isMinigameWorld(player.getWorld()))
-			launchPlayer(player, new LaunchConfig(10.0, 45.0, -1.0));
+			launchPlayer(player, new LaunchConfig(10.0, 45.0, null));
 	}
 
 	@Data
 	@AllArgsConstructor
 	private static class LaunchConfig {
-		private double power, angle, direction = -1;
+		private double power, angle;
+		private Double direction;
 
 		LaunchConfig(Block block) {
 			Sign sign = (Sign) block.getState();
@@ -87,18 +91,18 @@ public class LaunchPads implements Listener {
 
 		double power = config.getPower();
 		double angle = config.getAngle();
-		double direction = config.getDirection();
+		Double direction = config.getDirection();
 
 		if (power == 0)
 			return;
 
-		if (direction == -1.0)
-			direction = player.getLocation().getYaw();
+		if (direction == null)
+			direction = (double) player.getLocation().getYaw();
 		power *= 2;
 
 		Location launchLocation = getCenteredLocation(player.getLocation());
 		launchLocation.setPitch((float) -angle);
-		launchLocation.setYaw((float) direction);
+		launchLocation.setYaw(direction.floatValue());
 
 		FallingBlock fallingBlock = spawnFallingBlock(power, launchLocation);
 
@@ -151,32 +155,10 @@ public class LaunchPads implements Listener {
 			}
 
 			if (block == null || isOnGround || isDead || isInVoid || isNotMoving || isDifferentWorld || isInLiquid || player.isOnGround()) {
-
-				if (Dev.WAKKA.is(player) || Dev.GRIFFIN.is(player)) {
-					if (!player.isOnGround()) {
-						player.sendMessage("");
-						player.sendMessage("Ending launch because:");
-						if (block == null) player.sendMessage("  block is null");
-						else if (isOnGround) player.sendMessage("  block is on ground");
-						else if (isDead) player.sendMessage("  block is dead");
-						else if (isInVoid) player.sendMessage("  block is in void");
-						else if (isNotMoving) player.sendMessage("  block velocity is 0");
-						else if (isDifferentWorld) player.sendMessage("  player world and block world are different");
-						else if (isInLiquid) player.sendMessage("  block is in liquid");
-						else if (player.isOnline()) player.sendMessage("  player is on ground");
-					}
-				}
-
 				if (player.isOnGround()) {
 					Tasks.wait(3, () -> {
-						if (player.isOnGround()) {
-							if (Dev.WAKKA.is(player) || Dev.GRIFFIN.is(player)) {
-								player.sendMessage("");
-								player.sendMessage("Ending launch because:");
-								player.sendMessage("  player is on ground 2");
-							}
+						if (player.isOnGround())
 							cancelLaunch(player, fallingBlock, taskId.get());
-						}
 					});
 				} else {
 					if (block != null) {
