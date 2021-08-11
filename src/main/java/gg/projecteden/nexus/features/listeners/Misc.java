@@ -119,6 +119,31 @@ public class Misc implements Listener {
 	);
 
 	@EventHandler
+	public void onBreakArmorStand(EntityDeathEvent event) {
+		if (!event.getEntityType().equals(EntityType.ARMOR_STAND))
+			return;
+
+		if (!WorldGroup.of(event.getEntity()).equals(WorldGroup.SURVIVAL))
+			return;
+
+		EntityDamageEvent damageEvent = event.getEntity().getLastDamageCause();
+		if (damageEvent == null)
+			return;
+
+		boolean cancel = false;
+		if (damageEvent.getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
+			cancel = true;
+
+		} else if (damageEvent instanceof EntityDamageByEntityEvent entityDamageEntityEvent) {
+			if (!(entityDamageEntityEvent.getDamager() instanceof Player))
+				cancel = true;
+		}
+
+		if (cancel)
+			event.setCancelled(true);
+	}
+
+	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		if (!ActionGroup.RIGHT_CLICK.applies(event))
 			return;
