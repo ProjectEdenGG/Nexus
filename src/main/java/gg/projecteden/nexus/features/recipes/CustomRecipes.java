@@ -156,6 +156,10 @@ public class CustomRecipes extends Feature implements Listener {
 				} catch (IllegalArgumentException ignore) { }
 			}
 			if (blockMaterial == null) continue;
+
+			if (slab == Material.QUARTZ_SLAB)
+				blockMaterial = Material.QUARTZ_BLOCK;
+
 			List<Material> slabsGroup = new ArrayList<>();
 			for (int i = 0; i < 4; i++)
 				slabsGroup.add(slab);
