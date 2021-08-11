@@ -1,10 +1,12 @@
 package gg.projecteden.nexus.features.listeners;
 
 import gg.projecteden.nexus.features.minigames.Minigames;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import kotlin.Pair;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -12,7 +14,6 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -23,18 +24,20 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.material.MaterialData;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static gg.projecteden.nexus.utils.LocationUtils.getCenteredLocation;
+import static gg.projecteden.utils.Utils.isDouble;
 
 public class LaunchPads implements Listener {
-	private static final Map<Player, Integer> taskIDs = new HashMap<>();
-	private static final Map<Player, FallingBlock> launchPadPlayers = new HashMap<>();
+	private static final Map<UUID, Pair<FallingBlock, Integer>> launchPadPlayers = new HashMap<>();
 	private static final List<UUID> launchPadBlockUUIDs = new ArrayList<>();
 
 	@EventHandler
@@ -47,45 +50,46 @@ public class LaunchPads implements Listener {
 		Player player = event.getPlayer();
 		if (player.isSneaking()) return;
 
-		Block below = block.getRelative(0, -1, 0).getLocation().getBlock();
-		if (!(below.getType().equals(Material.REDSTONE_ORE))) return;
+		Block redstone = block.getRelative(0, -1, 0).getLocation().getBlock();
+		Block sign = block.getRelative(0, -2, 0).getLocation().getBlock();
 
-		event.setCancelled(true);
-		event.setUseInteractedBlock(Event.Result.DENY);
+		if (!(redstone.getType().equals(Material.REDSTONE_ORE))) return;
+		if (launchPadPlayers.containsKey(player.getUniqueId())) return;
 
-		Block belowBelow = below.getRelative(0, -1, 0).getLocation().getBlock();
-		Material belowBelowType = belowBelow.getType();
+		if (MaterialTag.ALL_SIGNS.isTagged(sign)) {
+			launchPlayer(player, new LaunchConfig(sign));
+		} else if (Minigames.isMinigameWorld(player.getWorld()))
+			launchPlayer(player, new LaunchConfig(10.0, 45.0, -1.0));
+	}
 
-		if (!ItemUtils.isNullOrAir(belowBelowType) && MaterialTag.SIGNS.isTagged(belowBelowType)) {
-			Sign sign = (Sign) belowBelow.getState();
+	@Data
+	@AllArgsConstructor
+	private static class LaunchConfig {
+		private double power, angle, direction = -1;
+
+		LaunchConfig(Block block) {
+			Sign sign = (Sign) block.getState();
 			String[] lines = sign.getLines();
 
-			if (!lines[0].equalsIgnoreCase("[LaunchPad]")) return;
-			if (lines[1].equalsIgnoreCase("") || lines[2].equalsIgnoreCase("")) return;
+			if (!lines[0].equalsIgnoreCase("[LaunchPad]") || !isDouble(lines[1]) || !isDouble(lines[2])) return;
 
-			double power = Double.parseDouble(lines[1]);
-			double angle = Double.parseDouble(lines[2]);
+			power = Double.parseDouble(lines[1]);
+			angle = Double.parseDouble(lines[2]);
 
-			if (!lines[3].equalsIgnoreCase("")) {
-				double direction = Double.parseDouble(lines[3]);
-				launchPlayer(player, power, angle, direction);
-			}
-
-			launchPlayer(player, power, angle);
-		} else if (Minigames.isMinigameWorld(player.getWorld()))
-			launchPlayer(player);
+			if (isDouble(lines[3]))
+				direction = Double.parseDouble(lines[3]);
+		}
 	}
 
-	public void launchPlayer(Player player) {
-		launchPlayer(player, 10.0, 45.0, -1.0);
-	}
+	public void launchPlayer(Player player, LaunchConfig config) {
+		if (launchPadPlayers.get(player.getUniqueId()) != null)
+			return;
 
-	public void launchPlayer(Player player, double power, double angle) {
-		launchPlayer(player, power, angle, -1.0);
-	}
+		double power = config.getPower();
+		double angle = config.getAngle();
+		double direction = config.getDirection();
 
-	public void launchPlayer(Player player, double power, double angle, double direction) {
-		if (launchPadPlayers.get(player) != null)
+		if (power == 0)
 			return;
 
 		if (direction == -1.0)
@@ -96,88 +100,102 @@ public class LaunchPads implements Listener {
 		launchLocation.setPitch((float) -angle);
 		launchLocation.setYaw((float) direction);
 
-		MaterialData PISTON = new MaterialData(Material.LEGACY_PISTON_MOVING_PIECE);
+		FallingBlock fallingBlock = spawnFallingBlock(power, launchLocation);
 
-		FallingBlock fallingBlock = launchLocation.getWorld().spawnFallingBlock(launchLocation, PISTON.getItemType(), PISTON.getData());
-		launchPadPlayers.put(player, fallingBlock);
+		launchPadPlayers.put(player.getUniqueId(), task(player, fallingBlock));
 		launchPadBlockUUIDs.add(fallingBlock.getUniqueId());
-		fallingBlock.setVelocity(launchLocation.getDirection().normalize().multiply(power / 15.0));
 
-		playerVelTask(player);
 		player.getWorld().createExplosion(player.getLocation(), -1);
 	}
 
-	private void playerVelTask(Player player) {
-		taskIDs.put(player, Tasks.repeat(0, 1, () -> {
+	@NotNull
+	private FallingBlock spawnFallingBlock(double power, Location launchLocation) {
+		MaterialData PISTON = new MaterialData(Material.LEGACY_PISTON_MOVING_PIECE);
+
+		FallingBlock fallingBlock = launchLocation.getWorld().spawnFallingBlock(launchLocation, PISTON.getItemType(), PISTON.getData());
+		fallingBlock.setVelocity(launchLocation.getDirection().normalize().multiply(power / 15.0));
+		fallingBlock.setDropItem(false);
+		return fallingBlock;
+	}
+
+	private Pair<FallingBlock, Integer> task(Player player, FallingBlock fallingBlock) {
+		AtomicInteger taskId = new AtomicInteger(-1);
+		taskId.set(Tasks.repeat(0, 1, () -> {
 			boolean endFlight = false;
-			FallingBlock fBlock = launchPadPlayers.get(player);
+			Pair<FallingBlock, Integer> pair = launchPadPlayers.get(player.getUniqueId());
+			if (pair == null)
+				return;
 
-			if (fBlock != null) {
-				fBlock.setDropItem(false);
+			FallingBlock block = pair.getFirst();
 
-				fBlock.getWorld();
-				if (!player.getLocation().getWorld().equals(fBlock.getWorld()) || fBlock.getLocation().clone().add(fBlock.getLocation().getDirection().clone().multiply(0.5)).getBlock().isLiquid())
+			boolean isInLiquid = true, isDifferentWorld = true, isOnGround = true, isDead = true, isInVoid = true, isNotMoving = true;
+
+			if (block != null) {
+				if (fallingBlock.getUniqueId() != block.getUniqueId()) {
+					cancelLaunch(player, fallingBlock, taskId.get());
+					return;
+				}
+
+				isInLiquid = block.getLocation().clone().add(block.getLocation().getDirection().clone().multiply(0.5)).getBlock().isLiquid();
+				isDifferentWorld = !block.getWorld().equals(player.getLocation().getWorld());
+				isOnGround = block.isOnGround();
+				isDead = block.isDead();
+				isInVoid = block.getLocation().getY() < -10.0;
+				isNotMoving = block.getVelocity().length() == 0.0;
+
+				if (isDifferentWorld || isInLiquid)
 					endFlight = true;
 
-				if (!fBlock.isDead() && !endFlight)
-					player.setVelocity(fBlock.getVelocity());
+				if (!isDead && !endFlight)
+					player.setVelocity(block.getVelocity());
 			}
 
-			if (fBlock == null || fBlock.isOnGround() || fBlock.isDead() || fBlock.getLocation().getY() < -10.0
-					|| fBlock.getVelocity().length() == 0.0 || endFlight || player.isOnGround()) {
+			if (block == null || isOnGround || isDead || isInVoid || isNotMoving || isDifferentWorld || isInLiquid || player.isOnGround()) {
 
-
-//				if (Dev.WAKKA.is(player) || Dev.GRIFFIN.is(player)) {
-//					if (!player.isOnGround()) {
-//						player.sendMessage("");
-//						player.sendMessage("Ending launch because:");
-//						if (fBlock == null)
-//							player.sendMessage("  block is null");
-//						else if (fBlock.isOnGround())
-//							player.sendMessage("  block is on ground");
-//						else if (fBlock.isDead())
-//							player.sendMessage("  block is dead");
-//						else if (fBlock.getLocation().getY() < -10.0)
-//							player.sendMessage("  block is in void");
-//						else if (fBlock.getVelocity().length() == 0.0)
-//							player.sendMessage("  block velocity is 0");
-//						else if (endFlight)
-//							player.sendMessage("  either player world and block world are different OR block is in liquid");
-//					}
-//				}
+				if (Dev.WAKKA.is(player) || Dev.GRIFFIN.is(player)) {
+					if (!player.isOnGround()) {
+						player.sendMessage("");
+						player.sendMessage("Ending launch because:");
+						if (block == null) player.sendMessage("  block is null");
+						else if (isOnGround) player.sendMessage("  block is on ground");
+						else if (isDead) player.sendMessage("  block is dead");
+						else if (isInVoid) player.sendMessage("  block is in void");
+						else if (isNotMoving) player.sendMessage("  block velocity is 0");
+						else if (isDifferentWorld) player.sendMessage("  player world and block world are different");
+						else if (isInLiquid) player.sendMessage("  block is in liquid");
+						else if (player.isOnline()) player.sendMessage("  player is on ground");
+					}
+				}
 
 				if (player.isOnGround()) {
-					Tasks.wait(Time.SECOND, () -> {
+					Tasks.wait(3, () -> {
 						if (player.isOnGround()) {
-//							if (Dev.WAKKA.is(player) || Dev.GRIFFIN.is(player)) {
-//								player.sendMessage("");
-//								player.sendMessage("Ending launch because:");
-//								player.sendMessage("  player is on ground");
-//							}
-							cancelLaunch(player);
+							if (Dev.WAKKA.is(player) || Dev.GRIFFIN.is(player)) {
+								player.sendMessage("");
+								player.sendMessage("Ending launch because:");
+								player.sendMessage("  player is on ground 2");
+							}
+							cancelLaunch(player, fallingBlock, taskId.get());
 						}
 					});
 				} else {
-					Tasks.wait(Time.SECOND, () -> {
-						if (fBlock != null) {
-							fBlock.remove();
-							launchPadBlockUUIDs.remove(fBlock.getUniqueId());
-						}
+					if (block != null) {
+						block.remove();
+						launchPadBlockUUIDs.remove(block.getUniqueId());
+					}
 
-						cancelLaunch(player);
-					});
+					cancelLaunch(player, fallingBlock, taskId.get());
 				}
 			}
 		}));
+
+		return new Pair<>(fallingBlock, taskId.get());
 	}
 
-	private void cancelLaunch(Player player) {
-		launchPadPlayers.remove(player);
-		cancelPlayerVelTask(player);
-	}
-
-	private void cancelPlayerVelTask(Player player) {
-		Tasks.cancel(taskIDs.get(player));
+	private void cancelLaunch(Player player, FallingBlock fallingBlock, int taskId) {
+		launchPadPlayers.remove(player.getUniqueId());
+		if (fallingBlock != null) fallingBlock.remove();
+		Tasks.cancel(taskId);
 	}
 
 	@EventHandler
@@ -193,21 +211,20 @@ public class LaunchPads implements Listener {
 		Entity entity = event.getEntity();
 		if (!(entity instanceof Player player)) return;
 
-		if (launchPadPlayers.get(player) != null)
+		if (launchPadPlayers.get(player.getUniqueId()) != null)
 			event.setCancelled(true);
 	}
 
 	@EventHandler
 	public void onFlightToggle(final PlayerToggleFlightEvent event) {
-		if (launchPadPlayers.get(event.getPlayer()) != null)
+		if (launchPadPlayers.get(event.getPlayer().getUniqueId()) != null)
 			event.setCancelled(true);
 	}
 
 	@EventHandler
 	public void onTeleport(final PlayerTeleportEvent event) {
-		if (launchPadPlayers.get(event.getPlayer()) != null) {
+		if (launchPadPlayers.get(event.getPlayer().getUniqueId()) != null)
 			event.setCancelled(true);
-		}
 	}
 
 }

@@ -489,6 +489,10 @@ public class MaterialTag implements Tag<Material> {
 		return materials.toString();
 	}
 
+	public Material random() {
+		return RandomUtils.randomMaterial(this);
+	}
+
 	public enum MatchMode {
 		PREFIX,
 		SUFFIX,
