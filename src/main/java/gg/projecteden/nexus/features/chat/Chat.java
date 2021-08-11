@@ -253,8 +253,9 @@ public class Chat extends Feature {
 						Set<Chatter> recipients = broadcast.channel.getRecipients(sender);
 						players = recipients.stream().map(Chatter::getOnlinePlayer).toList();
 
-						if (broadcast.messageType == MessageType.CHAT && broadcast.muteMenuItem.name().startsWith("CHANNEL_"))
-							new PublicChatEvent(sender, broadcast.channel, asLegacyText(broadcast.message)).checkWasSeen();
+						if (broadcast.messageType == MessageType.CHAT)
+							if (broadcast.muteMenuItem != null && broadcast.muteMenuItem.name().startsWith("CHANNEL_"))
+								new PublicChatEvent(sender, broadcast.channel, asLegacyText(broadcast.message)).checkWasSeen();
 					}
 
 					players.stream()
