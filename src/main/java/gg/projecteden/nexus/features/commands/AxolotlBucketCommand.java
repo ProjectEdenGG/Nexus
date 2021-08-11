@@ -20,25 +20,14 @@ import org.bukkit.event.player.PlayerBucketEntityEvent;
 import org.bukkit.inventory.ItemStack;
 
 @NoArgsConstructor
-@Permission("group.seniorstaff")
-public class AxolotlCommand extends CustomCommand implements Listener {
+@Permission("axolotlbucket.use")
+public class AxolotlBucketCommand extends CustomCommand implements Listener {
 
-	public AxolotlCommand(@NonNull CommandEvent event) {
+	public AxolotlBucketCommand(@NonNull CommandEvent event) {
 		super(event);
 	}
 
-	@Path("hat <variant>")
-	void hat(Axolotl.Variant variant) {
-		giveItem(new ItemBuilder(Material.STONE_BUTTON)
-			.customModelData(100 + variant.ordinal())
-			.soulbound()
-			.untrashable()
-			.untradeable()
-			.unplaceable()
-			.build());
-	}
-
-	@Path("bucket <variant> [amount]")
+	@Path("<variant> [amount]")
 	void variant(Axolotl.Variant variant, @Arg("1") int amount) {
 		for (int i = 0; i < amount; i++)
 			PlayerUtils.giveItem(player(), new ItemBuilder(Material.AXOLOTL_BUCKET).axolotl(variant).build());
