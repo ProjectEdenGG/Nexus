@@ -148,6 +148,11 @@ public class Misc implements Listener {
 		if (!ActionGroup.RIGHT_CLICK.applies(event))
 			return;
 
+		// Ignore McMMO blocks
+		if (event.getClickedBlock() != null)
+			if (List.of(Material.IRON_BLOCK, Material.GOLD_BLOCK).contains(event.getClickedBlock().getType()))
+				return;
+
 		if (event.getHand() != EquipmentSlot.HAND)
 			return;
 
