@@ -111,13 +111,6 @@ public class Misc implements Listener {
 		}
 	}
 
-	private static final Map<MaterialTag, EquipmentSlot> slots = Map.of(
-		MaterialTag.ALL_HELMETS, EquipmentSlot.HEAD,
-		MaterialTag.ALL_CHESTPLATES, EquipmentSlot.CHEST,
-		MaterialTag.ALL_LEGGINGS, EquipmentSlot.LEGS,
-		MaterialTag.ALL_BOOTS, EquipmentSlot.FEET
-	);
-
 	@EventHandler
 	public void onBreakArmorStand(EntityDeathEvent event) {
 		if (!event.getEntityType().equals(EntityType.ARMOR_STAND))
@@ -142,6 +135,13 @@ public class Misc implements Listener {
 		if (cancel)
 			event.setCancelled(true);
 	}
+
+	private static final Map<MaterialTag, EquipmentSlot> slots = Map.of(
+		MaterialTag.ALL_HELMETS, EquipmentSlot.HEAD,
+		new MaterialTag(MaterialTag.ALL_CHESTPLATES).append(Material.ELYTRA), EquipmentSlot.CHEST,
+		MaterialTag.ALL_LEGGINGS, EquipmentSlot.LEGS,
+		MaterialTag.ALL_BOOTS, EquipmentSlot.FEET
+	);
 
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {

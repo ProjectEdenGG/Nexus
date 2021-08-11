@@ -125,50 +125,43 @@ public class LaunchPads implements Listener {
 	private Pair<FallingBlock, Integer> task(Player player, FallingBlock fallingBlock) {
 		AtomicInteger taskId = new AtomicInteger(-1);
 		taskId.set(Tasks.repeat(0, 1, () -> {
-			boolean endFlight = false;
 			Pair<FallingBlock, Integer> pair = launchPadPlayers.get(player.getUniqueId());
 			if (pair == null)
 				return;
 
 			FallingBlock block = pair.getFirst();
+			int currentTaskId = pair.getSecond();
 
-			boolean isInLiquid = true, isDifferentWorld = true, isOnGround = true, isDead = true, isInVoid = true, isNotMoving = true;
+			Runnable cancel = () -> cancelLaunch(player, fallingBlock, taskId.get());
 
-			if (block != null) {
-				if (fallingBlock.getUniqueId() != block.getUniqueId()) {
-					cancelLaunch(player, fallingBlock, taskId.get());
-					return;
-				}
-
-				isInLiquid = block.getLocation().clone().add(block.getLocation().getDirection().clone().multiply(0.5)).getBlock().isLiquid();
-				isDifferentWorld = !block.getWorld().equals(player.getLocation().getWorld());
-				isOnGround = block.isOnGround();
-				isDead = block.isDead();
-				isInVoid = block.getLocation().getY() < -10.0;
-				isNotMoving = block.getVelocity().length() == 0.0;
-
-				if (isDifferentWorld || isInLiquid)
-					endFlight = true;
-
-				if (!isDead && !endFlight)
-					player.setVelocity(block.getVelocity());
+			if (block == null) {
+				cancel.run();
+				return;
 			}
 
-			if (block == null || isOnGround || isDead || isInVoid || isNotMoving || isDifferentWorld || isInLiquid || player.isOnGround()) {
-				if (player.isOnGround()) {
-					Tasks.wait(3, () -> {
-						if (player.isOnGround())
-							cancelLaunch(player, fallingBlock, taskId.get());
-					});
-				} else {
-					if (block != null) {
-						block.remove();
-						launchPadBlockUUIDs.remove(block.getUniqueId());
-					}
-
-					cancelLaunch(player, fallingBlock, taskId.get());
-				}
+			if (block.getUniqueId() != fallingBlock.getUniqueId()) {
+				cancel.run();
+				return;
 			}
+
+			if (currentTaskId != taskId.get()) {
+				cancel.run();
+				return;
+			}
+
+			final boolean isOnGround = block.isOnGround();
+			final boolean isDead = block.isDead();
+			final boolean isInVoid = block.getLocation().getY() < -10.0;
+			final boolean isNotMoving = block.getVelocity().length() == 0.0;
+			final boolean isDifferentWorld = !block.getWorld().equals(player.getLocation().getWorld());
+			final boolean isInLiquid = block.getLocation().clone().add(block.getLocation().getDirection().clone().multiply(0.5)).getBlock().isLiquid();
+
+			final boolean endLaunch = isOnGround || isDead || isInVoid || isNotMoving || isDifferentWorld || isInLiquid;
+
+			if (endLaunch)
+				cancel.run();
+			else
+				player.setVelocity(block.getVelocity());
 		}));
 
 		return new Pair<>(fallingBlock, taskId.get());
@@ -176,8 +169,12 @@ public class LaunchPads implements Listener {
 
 	private void cancelLaunch(Player player, FallingBlock fallingBlock, int taskId) {
 		launchPadPlayers.remove(player.getUniqueId());
-		if (fallingBlock != null) fallingBlock.remove();
 		Tasks.cancel(taskId);
+
+		if (fallingBlock != null) {
+			launchPadBlockUUIDs.remove(fallingBlock.getUniqueId());
+			fallingBlock.remove();
+		}
 	}
 
 	@EventHandler
