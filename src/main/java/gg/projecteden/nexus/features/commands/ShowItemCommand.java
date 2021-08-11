@@ -10,13 +10,11 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown.Part;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.ChatterService;
 import gg.projecteden.nexus.models.chat.PublicChannel;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.utils.TimeUtils.Time;
@@ -40,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 
 import static gg.projecteden.nexus.features.discord.Discord.discordize;
+import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @Description("Display an item in chat")
@@ -58,10 +57,10 @@ public class ShowItemCommand extends CustomCommand {
 
 	@Path("<hand|offhand|helmet|chestplate|leggings|boots> [message...]")
 	@Cooldown(value = @Part(Time.MINUTE), bypass = "group.admin")
-	void run(String type, String message) {
+	void run(String slot, String message) {
 		Player player = player();
-		ItemStack item = getItem(player, type);
-		if (ItemUtils.isNullOrAir(item))
+		ItemStack item = getItem(player, slot);
+		if (isNullOrAir(item))
 			error("You're not holding anything in that slot");
 
 		if (message == null)
@@ -180,47 +179,21 @@ public class ShowItemCommand extends CustomCommand {
 		return string.toString();
 	}
 
-	private ItemStack getItem(Player player, String arg) throws InvalidInputException {
-		ItemStack item = new ItemStack(Material.AIR);
+	private ItemStack getItem(Player player, String slot) {
+		ItemStack item = null;
 		PlayerInventory inv = player.getInventory();
-		switch (arg.toLowerCase()) {
-			case "offhand":
-				if (!inv.getItemInOffHand().getType().equals(Material.AIR))
-					item = inv.getItemInOffHand();
-				break;
-			case "mainhand":
-			case "hand":
-				if (!inv.getItemInMainHand().getType().equals(Material.AIR))
-					item = inv.getItemInMainHand();
-				break;
-			case "hat":
-			case "head":
-			case "helm":
-			case "helmet":
-				if (inv.getHelmet() != null)
-					item = inv.getHelmet();
-				break;
-			case "chest":
-			case "chestplate":
-				if (inv.getChestplate() != null)
-					item = inv.getChestplate();
-				break;
-			case "pants":
-			case "legs":
-			case "leggings":
-				if (inv.getLeggings() != null)
-					item = inv.getLeggings();
-				break;
-			case "boots":
-			case "feet":
-			case "shoes":
-				if (inv.getBoots() != null)
-					item = inv.getBoots();
-				break;
+		switch (slot.toLowerCase()) {
+			case "offhand" -> item = inv.getItemInOffHand();
+			case "mainhand", "hand" -> item = inv.getItemInMainHand();
+			case "hat", "head", "helm", "helmet" -> item = inv.getHelmet();
+			case "chest", "chestplate" -> item = inv.getChestplate();
+			case "pants", "legs", "leggings" -> item = inv.getLeggings();
+			case "boots", "feet", "shoes" -> item = inv.getBoots();
+			default -> error("Unknown slot &e" + slot);
 		}
 
-		if (ItemUtils.isNullOrAir(item))
-			error("You selected nothing!");
+		if (isNullOrAir(item))
+			error("Item in " + slot + " not found");
 
 		return item;
 	}
