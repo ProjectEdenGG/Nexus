@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.commands.staff.operator;
+package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -16,7 +16,7 @@ import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
 @Aliases("ench")
-@Permission("group.seniorstaff")
+@Permission("enchant.use")
 public class EnchantCommand extends CustomCommand {
 
 	public EnchantCommand(@NonNull CommandEvent event) {
@@ -41,7 +41,7 @@ public class EnchantCommand extends CustomCommand {
 
 			tool.setItemMeta(meta);
 			CustomEnchants.update(tool);
-			send(PREFIX + "Added enchant " + camelCase(enchantment.getKey().getKey()) + " " + level);
+			send(PREFIX + "Added enchant &e" + camelCase(enchantment.getKey().getKey()) + " " + level);
 		} catch (IllegalArgumentException ex) {
 			throw new InvalidInputException(ex.getMessage());
 		}
@@ -52,12 +52,12 @@ public class EnchantCommand extends CustomCommand {
 		final ItemStack tool = getToolRequired();
 		tool.removeEnchantment(enchantment);
 		CustomEnchants.update(tool);
-		send(PREFIX + "Removed enchant " + camelCase(enchantment.getKey().getKey()));
+		send(PREFIX + "Removed enchant &e" + camelCase(enchantment.getKey().getKey()));
 	}
 
 	@Path("get <enchant>")
 	void get(Enchantment enchantment) {
-		send(PREFIX + "Level of " + camelCase(enchantment.getKey().getKey()) + ": " + getToolRequired().getEnchantmentLevel(enchantment));
+		send(PREFIX + "Level of &e" + camelCase(enchantment.getKey().getKey()) + "&3: &e" + getToolRequired().getEnchantmentLevel(enchantment));
 	}
 
 }
