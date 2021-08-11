@@ -55,6 +55,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -566,10 +567,13 @@ public abstract class ICustomCommand {
 	}
 
 	protected List<String> tabCompleteEnum(String filter, Class<? extends Enum<?>> clazz) {
-		return Arrays.stream(clazz.getEnumConstants())
-				.map(value -> value.toString().toLowerCase().replaceAll(" ", "_"))
-				.filter(value -> value.toLowerCase().startsWith(filter.toLowerCase()))
-				.collect(Collectors.toList());
+		return tabCompleteEnum(filter, clazz, value -> value.name().toLowerCase().replaceAll(" ", "_"));
+	}
+
+	protected <T extends Enum<?>> List<String> tabCompleteEnum(String filter, Class<? extends T> clazz, Function<T, String> formatter) {
+		return Arrays.stream(clazz.getEnumConstants()).map(formatter)
+			.filter(value -> value.toLowerCase().startsWith(filter.toLowerCase()))
+			.collect(Collectors.toList());
 	}
 
 }

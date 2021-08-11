@@ -5,11 +5,13 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import lombok.NonNull;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -50,6 +52,11 @@ public class PronounsCommand extends CustomCommand {
 		} catch (InvalidInputException ex) {
 			throw new InvalidInputException("Pronoun &e" + value + " &cnot whitelisted");
 		}
+	}
+
+	@TabCompleterFor(Pronoun.class)
+	List<String> tabCompletePronoun(String filter) {
+		return tabCompleteEnum(filter, Pronoun.class, Pronoun::toString);
 	}
 
 }
