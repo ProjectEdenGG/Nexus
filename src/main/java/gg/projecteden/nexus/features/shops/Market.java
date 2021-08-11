@@ -198,11 +198,11 @@ public class Market {
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.PACKED_ICE, 1, .50);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.GRAVEL, 1, 0.60);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.GRASS_BLOCK, 1, 1);
-		addBuyItem(ShopGroup.SURVIVAL, true, Material.TUBE_CORAL_BLOCK, 1, 13.75);
-		addBuyItem(ShopGroup.SURVIVAL, true, Material.BRAIN_CORAL_BLOCK, 1, 13.75);
-		addBuyItem(ShopGroup.SURVIVAL, true, Material.BUBBLE_CORAL_BLOCK, 1, 13.75);
-		addBuyItem(ShopGroup.SURVIVAL, true, Material.FIRE_CORAL_BLOCK, 1, 13.75);
-		addBuyItem(ShopGroup.SURVIVAL, true, Material.HORN_CORAL_BLOCK, 1, 13.75);
+		addBuyItem(ShopGroup.SURVIVAL, true, Material.TUBE_CORAL_BLOCK, 1, 8);
+		addBuyItem(ShopGroup.SURVIVAL, true, Material.BRAIN_CORAL_BLOCK, 1, 8);
+		addBuyItem(ShopGroup.SURVIVAL, true, Material.BUBBLE_CORAL_BLOCK, 1, 8);
+		addBuyItem(ShopGroup.SURVIVAL, true, Material.FIRE_CORAL_BLOCK, 1, 8);
+		addBuyItem(ShopGroup.SURVIVAL, true, Material.HORN_CORAL_BLOCK, 1, 8);
 	}
 
 	private static void addSellItem(ShopGroup shopGroup, boolean isResourceWorld, Material material, int quantity, double price) {
