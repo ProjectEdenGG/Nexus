@@ -9,7 +9,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
 import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown.Part;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.chat.Chatter;
@@ -58,7 +57,6 @@ public class ShowItemCommand extends CustomCommand {
 	}
 
 	@Path("<hand|offhand|helmet|chestplate|leggings|boots> [message...]")
-	@Permission("showitems.use")
 	@Cooldown(value = @Part(Time.MINUTE), bypass = "group.admin")
 	void run(String type, String message) {
 		Player player = player();
@@ -99,12 +97,12 @@ public class ShowItemCommand extends CustomCommand {
 		/*
 			Discord
 
-		 	TODO show...
-		 	- Potion effects
-		 	- Arrow effects
-		 	- Firework stuff
-		 	- Book title
-		 */
+			TODO show...
+			- Potion effects
+			- Arrow effects
+			- Firework stuff
+			- Book title
+		*/
 		if (channel.getDiscordTextChannel() != null) {
 			ItemData data = new ItemData();
 			setupEnchantsAndLore(item, data);
@@ -222,7 +220,7 @@ public class ShowItemCommand extends CustomCommand {
 		}
 
 		if (ItemUtils.isNullOrAir(item))
-			throw new InvalidInputException("You selected nothing!");
+			error("You selected nothing!");
 
 		return item;
 	}

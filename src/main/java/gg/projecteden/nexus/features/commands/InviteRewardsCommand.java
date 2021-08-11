@@ -22,7 +22,7 @@ import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @Aliases("invited")
 @Permission("invite.rewards")
-@Description("Recieve a reward for inviting a player to the server")
+@Description("Receive a reward for inviting a player to the server")
 public class InviteRewardsCommand extends CustomCommand {
 
 	InviteRewardsCommand(CommandEvent event) {
