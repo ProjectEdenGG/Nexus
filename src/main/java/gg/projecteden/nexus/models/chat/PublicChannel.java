@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.models.chat;
 
 import gg.projecteden.nexus.features.chat.Chat;
+import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.features.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
@@ -25,6 +26,7 @@ public class PublicChannel implements Channel {
 	private ChatColor messageColor;
 	private TextChannel discordTextChannel;
 	private ChatColor discordColor;
+	private MuteMenuItem muteMenuItem;
 	@Builder.Default
 	private boolean censor = true;
 	private boolean isPrivate;

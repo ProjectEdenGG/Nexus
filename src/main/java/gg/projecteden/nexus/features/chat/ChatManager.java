@@ -14,7 +14,6 @@ import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.Time;
 import lombok.Getter;
 import lombok.Setter;
@@ -104,8 +103,7 @@ public class ChatManager {
 	}
 
 	public static void process(PublicChatEvent event) {
-		if (!event.wasSeen())
-			Tasks.wait(1, () -> event.getChatter().sendMessage(Chat.PREFIX + "No one can hear you! Type &c/ch g &3to talk globally"));
+		event.checkWasSeen();
 
 		String chatterFormat = event.getChannel().getChatterFormat(event.getChatter());
 		JsonBuilder json = new JsonBuilder(chatterFormat);

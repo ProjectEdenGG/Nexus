@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.chat;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.alerts.AlertsListener;
 import gg.projecteden.nexus.features.chat.bridge.IngameBridgeListener;
+import gg.projecteden.nexus.features.chat.events.PublicChatEvent;
 import gg.projecteden.nexus.features.chat.translator.Translator;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.features.discord.Discord;
@@ -40,6 +41,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 
+import static gg.projecteden.nexus.utils.AdventureUtils.asLegacyText;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 public class Chat extends Feature {
@@ -82,6 +84,7 @@ public class Chat extends Feature {
 		GLOBAL(PublicChannel.builder()
 				.name("Global")
 				.nickname("G")
+				.muteMenuItem(MuteMenuItem.CHANNEL_GLOBAL)
 				.discordTextChannel(TextChannel.BRIDGE)
 				.discordColor(ChatColor.DARK_PURPLE)
 				.color(ChatColor.DARK_GREEN)
@@ -91,6 +94,7 @@ public class Chat extends Feature {
 		LOCAL(PublicChannel.builder()
 				.name("Local")
 				.nickname("L")
+				.muteMenuItem(MuteMenuItem.CHANNEL_LOCAL)
 				.color(ChatColor.YELLOW)
 				.local(true)
 				.crossWorld(false)
@@ -128,6 +132,7 @@ public class Chat extends Feature {
 		MINIGAMES(PublicChannel.builder()
 				.name("Minigames")
 				.nickname("M")
+				.muteMenuItem(MuteMenuItem.CHANNEL_MINIGAMES)
 				.color(ChatColor.DARK_AQUA)
 				.local(false)
 				.crossWorld(true)
@@ -135,6 +140,7 @@ public class Chat extends Feature {
 		CREATIVE(PublicChannel.builder()
 				.name("Creative")
 				.nickname("C")
+				.muteMenuItem(MuteMenuItem.CHANNEL_CREATIVE)
 				.color(ChatColor.AQUA)
 				.local(false)
 				.crossWorld(false)
@@ -142,6 +148,7 @@ public class Chat extends Feature {
 		SKYBLOCK(PublicChannel.builder()
 				.name("Skyblock")
 				.nickname("B")
+				.muteMenuItem(MuteMenuItem.CHANNEL_SKYBLOCK)
 				.color(ChatColor.GOLD)
 				.local(false)
 				.crossWorld(false)
@@ -184,7 +191,7 @@ public class Chat extends Feature {
 			this.sender = sender == null ? Identity.nil() : sender;
 			this.prefix = prefix;
 			this.message = message;
-			this.muteMenuItem = muteMenuItem;
+			this.muteMenuItem = muteMenuItem == null ? this.channel.getMuteMenuItem() : muteMenuItem;
 			this.messageType = messageType == null ? MessageType.SYSTEM : messageType;
 			this.targets = Utils.isNullOrEmpty(targets) ? List.of(Target.INGAME, Target.DISCORD) : targets;
 
@@ -242,8 +249,12 @@ public class Chat extends Feature {
 					List<Player> players = PlayerUtils.getOnlinePlayers();
 
 					if (broadcast.channel != null && broadcast.sender != Identity.nil()) {
-						Set<Chatter> recipients = broadcast.channel.getRecipients(new ChatterService().get(broadcast.sender.uuid()));
+						final Chatter sender = new ChatterService().get(broadcast.sender.uuid());
+						Set<Chatter> recipients = broadcast.channel.getRecipients(sender);
 						players = recipients.stream().map(Chatter::getOnlinePlayer).toList();
+
+						if (broadcast.messageType == MessageType.CHAT && broadcast.muteMenuItem.name().startsWith("CHANNEL_"))
+							new PublicChatEvent(sender, broadcast.channel, asLegacyText(broadcast.message)).checkWasSeen();
 					}
 
 					players.stream()
