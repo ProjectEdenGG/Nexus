@@ -159,15 +159,13 @@ public class Misc implements Listener {
 		final ItemStack item = event.getItem();
 		final PlayerInventory inventory = event.getPlayer().getInventory();
 
-		if (!MaterialTag.ARMOR.isTagged(item))
-			return;
-
 		for (MaterialTag tag : slots.keySet()) {
 			final EquipmentSlot slot = slots.get(tag);
 			if (tag.isTagged(item)) {
 				final ItemStack existing = ItemUtils.clone(inventory.getItem(slot));
 				inventory.setItem(slot, ItemUtils.clone(item));
 				inventory.setItem(EquipmentSlot.HAND, existing);
+				return;
 			}
 		}
 	}
