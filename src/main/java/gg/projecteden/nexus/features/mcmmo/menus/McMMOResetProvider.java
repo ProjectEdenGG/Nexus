@@ -211,7 +211,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 					.name("&e" + StringUtils.camelCase(skill.name()))
 					.lore("&3Level: &e" + mcmmoPlayer.getSkillLevel(PrimarySkillType.valueOf(skill.name())) +
 							"|| ||&3&lReward:" +
-							"||&f" + DEPOSIT_PRETTY +
+							"||&f" + DEPOSIT_PRETTY + " (x2.5 for level 200)" +
 							"||&f" + skill.getRewardDescription() +
 							"|| ||&3Number of Prestieges: &e" + mcMMOPrestige.getPrestige(skill.name()))
 					.build();
