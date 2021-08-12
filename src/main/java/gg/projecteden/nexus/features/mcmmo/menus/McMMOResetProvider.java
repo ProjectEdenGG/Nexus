@@ -31,7 +31,11 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
-	McMMOService service = new McMMOService();
+	private static final McMMOService service = new McMMOService();
+	private static final int DEPOSIT = 10000; // eco reward for prestige
+	private static final String DEPOSIT_PRETTY = StringUtils.prettyMoney(DEPOSIT);
+	private static final int DEPOSIT_ALL = 20000; // bonus eco reward for prestiging all
+	private static final float MAX_DEPOSIT_MULTIPLIER = 2.5f; // bonus multiplier for individual eco prestiges for reaching tier two
 
 	@Getter
 	@AllArgsConstructor
@@ -149,6 +153,13 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 		abstract void onClick(Player player);
 	}
 
+	private static final int TIER_ONE = 100;
+	private static final int TIER_TWO = 200;
+	private static final int TIER_ONE_ALL = ResetSkillType.values().length * TIER_ONE;
+
+	// renders the combined total profit of all prestiges + the bonus amount
+	private static final String DEPOSIT_ALL_PRETTY = StringUtils.prettyMoney(DEPOSIT_ALL + (ResetSkillType.values().length * DEPOSIT));
+
 	@Override
 	public void open(Player player) {
 		SmartInventory.builder()
@@ -164,15 +175,16 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 
 		ItemStack all = new ItemBuilder(Material.BEACON)
 				.name("&eAll Skills")
-				.lore("&3Power Level: &e" + mcmmoPlayer.getPowerLevel() + "/1300" +
-						"|| ||&3&lReward:||" +
-						"&f- $150,000||&f- All normal rewards||" + "&f- When your health gets low, this breastplate will give you the " +
-						"strength of an angry barbarian!").build();
-		if (mcmmoPlayer.getPowerLevel() >= 1300) addGlowing(all);
+				.lore("&3Power Level: &e" + mcmmoPlayer.getPowerLevel() + "/" + TIER_ONE_ALL +
+						"|| ||&3&lReward:" +
+						"||&f- " + DEPOSIT_ALL_PRETTY +
+						"||&f- All normal rewards" +
+						"||&f- When your health gets low, this breastplate will give you the strength of an angry barbarian!").build();
+		if (mcmmoPlayer.getPowerLevel() >= TIER_ONE_ALL) addGlowing(all);
 		ItemStack reset = new ItemBuilder(Material.BARRIER).name("&cReset all with &lno reward").build();
 
 		contents.set(0, 4, ClickableItem.from(all, (e) -> {
-			if (mcmmoPlayer.getPowerLevel() < 1300)
+			if (mcmmoPlayer.getPowerLevel() < TIER_ONE_ALL)
 				return;
 
 			ConfirmationMenu.builder()
@@ -199,16 +211,16 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 					.name("&e" + StringUtils.camelCase(skill.name()))
 					.lore("&3Level: &e" + mcmmoPlayer.getSkillLevel(PrimarySkillType.valueOf(skill.name())) +
 							"|| ||&3&lReward:" +
-							"||&f$10,000" +
+							"||&f" + DEPOSIT_PRETTY +
 							"||&f" + skill.getRewardDescription() +
 							"|| ||&3Number of Prestieges: &e" + mcMMOPrestige.getPrestige(skill.name()))
 					.build();
 
-			if (mcmmoPlayer.getSkillLevel(PrimarySkillType.valueOf(skill.name())) >= 100)
+			if (mcmmoPlayer.getSkillLevel(PrimarySkillType.valueOf(skill.name())) >= TIER_ONE)
 				addGlowing(item);
 
 			contents.set(skill.getRow(), skill.getColumn(), ClickableItem.from(item, (e) -> {
-				if (mcmmoPlayer.getSkillLevel(PrimarySkillType.valueOf(skill.name())) < 100)
+				if (mcmmoPlayer.getSkillLevel(PrimarySkillType.valueOf(skill.name())) < TIER_ONE)
 					return;
 
 				ConfirmationMenu.builder()
@@ -230,10 +242,10 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 	}
 
 	public void prestigeAll(Player player) {
-		Koda.say(Nickname.of(player) + " has reset all of their McMMO skills!");
+		Koda.say(Nickname.of(player) + " has reset all of their mcMMO skills!");
 
 		PlayerUtils.runCommandAsConsole("ce give " + player.getName() + " diamond_chestplate enlighted:1 beserk:1 durability:3 mending:1");
-		new BankerService().deposit(player, 20000, ShopGroup.SURVIVAL, TransactionCause.MCMMO_RESET);
+		new BankerService().deposit(player, DEPOSIT_ALL, ShopGroup.SURVIVAL, TransactionCause.MCMMO_RESET);
 
 		for (PrimarySkillType skillType : PrimarySkillType.values()) {
 			if (skillType.isChildSkill()) continue;
@@ -247,8 +259,12 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 	public void prestige(Player player, ResetSkillType skill, boolean broadcast) {
 		McMMOPlayer mcmmoPlayer = UserManager.getPlayer(player);
 
+		int reward = DEPOSIT;
+		if (mcmmoPlayer.getSkillLevel(PrimarySkillType.valueOf(skill.name())) >= TIER_TWO)
+			reward *= MAX_DEPOSIT_MULTIPLIER;
+
 		skill.onClick(player);
-		new BankerService().deposit(player, 10000, ShopGroup.SURVIVAL, TransactionCause.MCMMO_RESET);
+		new BankerService().deposit(player, reward, ShopGroup.SURVIVAL, TransactionCause.MCMMO_RESET);
 		mcmmoPlayer.modifySkill(PrimarySkillType.valueOf(skill.name()), 0);
 
 		McMMOPrestige mcMMOPrestige = service.getPrestige(player.getUniqueId().toString());
