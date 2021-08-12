@@ -32,11 +32,15 @@ public class PlayerTimeCommand extends CustomCommand {
 	@Path("<time> [player]")
 	public void time(String time, @Arg(value = "self", permission = "group.staff") Player player) {
 		long ticks = PlayerUtils.setPlayerTime(player, time);
+		String type = "set";
+		if (time.startsWith("@"))
+			type = "locked";
+
 		if (isSelf(player))
-			send(PREFIX + "Player time set to &e" + DescParseTickFormat.format12(ticks) + " &3or &e" + ticks + " ticks");
+			send(PREFIX + "Player time " + type + " to &e" + DescParseTickFormat.format12(ticks) + " &3or &e" + ticks + " ticks");
 		else {
-			send(player, PREFIX + "Player time set to &e" + DescParseTickFormat.format12(ticks) + " &3or &e" + ticks + " ticks");
-			send(PREFIX + "&e" + player.getName() + "'s&3 player time set to &e" + DescParseTickFormat.format12(ticks) + " &3or &e" + ticks + " ticks");
+			send(player, PREFIX + "Player time  " + type + "  to &e" + DescParseTickFormat.format12(ticks) + " &3or &e" + ticks + " ticks");
+			send(PREFIX + "&e" + player.getName() + "'s&3 player time " + type + " to &e" + DescParseTickFormat.format12(ticks) + " &3or &e" + ticks + " ticks");
 		}
 	}
 
