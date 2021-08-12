@@ -35,7 +35,9 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 	private static final int DEPOSIT = 10000; // eco reward for prestige
 	private static final String DEPOSIT_PRETTY = StringUtils.prettyMoney(DEPOSIT);
 	private static final int DEPOSIT_ALL = 20000; // bonus eco reward for prestiging all
+	private static final String DEPOSIT_ALL_PRETTY = StringUtils.prettyMoney(DEPOSIT_ALL);
 	private static final float MAX_DEPOSIT_MULTIPLIER = 2.5f; // bonus multiplier for individual eco prestiges for reaching tier two
+	private static final float MAX_DEPOSIT_ALL_MULTIPLIER = 1.25f; // bonus multiplier for DEPOSIT_ALL if all are tier two
 
 	@Getter
 	@AllArgsConstructor
@@ -157,9 +159,6 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 	private static final int TIER_TWO = 200;
 	private static final int TIER_ONE_ALL = ResetSkillType.values().length * TIER_ONE;
 
-	// renders the combined total profit of all prestiges + the bonus amount
-	private static final String DEPOSIT_ALL_PRETTY = StringUtils.prettyMoney(DEPOSIT_ALL + (ResetSkillType.values().length * DEPOSIT));
-
 	@Override
 	public void open(Player player) {
 		SmartInventory.builder()
@@ -177,7 +176,8 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				.name("&eAll Skills")
 				.lore("&3Power Level: &e" + mcmmoPlayer.getPowerLevel() + "/" + TIER_ONE_ALL +
 						"|| ||&3&lReward:" +
-						"||&f- " + DEPOSIT_ALL_PRETTY +
+						"||&f- " + DEPOSIT_PRETTY + " per level " + TIER_ONE + " skill (x" + MAX_DEPOSIT_MULTIPLIER + " if level " + TIER_TWO + ")" +
+						"||&f- " + DEPOSIT_ALL_PRETTY + " bonus (x" + MAX_DEPOSIT_ALL_MULTIPLIER + " if every skill is level " + TIER_TWO + ")" +
 						"||&f- All normal rewards" +
 						"||&f- When your health gets low, this breastplate will give you the strength of an angry barbarian!").build();
 		if (mcmmoPlayer.getPowerLevel() >= TIER_ONE_ALL) addGlowing(all);
@@ -245,12 +245,20 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 		Koda.say(Nickname.of(player) + " has reset all of their mcMMO skills!");
 
 		PlayerUtils.runCommandAsConsole("ce give " + player.getName() + " diamond_chestplate enlighted:1 beserk:1 durability:3 mending:1");
-		new BankerService().deposit(player, DEPOSIT_ALL, ShopGroup.SURVIVAL, TransactionCause.MCMMO_RESET);
 
+		McMMOPlayer mcmmoPlayer = UserManager.getPlayer(player);
+		boolean allMax = true;
 		for (PrimarySkillType skillType : PrimarySkillType.values()) {
 			if (skillType.isChildSkill()) continue;
+			if (mcmmoPlayer.getSkillLevel(skillType) < TIER_TWO)
+				allMax = false;
 			prestige(player, ResetSkillType.valueOf(skillType.name()), false);
 		}
+		int deposit = DEPOSIT_ALL;
+		if (allMax)
+			deposit += MAX_DEPOSIT_ALL_MULTIPLIER;
+		new BankerService().deposit(player, deposit, ShopGroup.SURVIVAL, TransactionCause.MCMMO_RESET);
+
 		McMMOPrestige mcMMOPrestige = service.getPrestige(player.getUniqueId().toString());
 		mcMMOPrestige.prestige("all");
 		service.save(mcMMOPrestige);
