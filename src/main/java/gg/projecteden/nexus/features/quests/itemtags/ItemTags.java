@@ -77,10 +77,10 @@ public class ItemTags extends Feature {
 		return new Pair<>(0, false);
 	}
 
-	public static int getCustomEnchantVal(String enchant) {
+	public static Integer getCustomEnchantVal(String enchant) {
 		String enchantStr = enchant.replaceAll(" ", "_").trim();
 		if (!customEnchantsConfigMap.containsKey(enchantStr))
-			return 0;
+			return null;
 
 		return customEnchantsConfigMap.get(enchantStr);
 	}
