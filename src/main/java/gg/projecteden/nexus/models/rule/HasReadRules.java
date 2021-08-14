@@ -83,6 +83,7 @@ public class HasReadRules implements PlayerOwnedObject {
 					add(new JsonBuilder("&e8. &3No ban evading (that includes using Discord). Appeal at &c" + EdenSocialMediaSite.WEBSITE.getUrl() + "/appeal"));
 					add(new JsonBuilder("&e9. &3Keep heavily opinionated and political arguments out of public chats"));
 					add(new JsonBuilder("&e10. &3Streaming/YouTubers are welcome under 3 conditions &e(Click to view)").command("/rules streaming"));
+					add(new JsonBuilder("&e11. &3Do not impersonate others"));
 				}},
 				new JsonBuilder()
 						.next("&e « Previous page  ").command("/rules community 1").group()
@@ -91,12 +92,12 @@ public class HasReadRules implements PlayerOwnedObject {
 		),
 		COMMUNITY3(
 				new ArrayList<>() {{
-					add(new JsonBuilder("&e11. &3Do not impersonate others"));
 					add(new JsonBuilder("&e12. &3No advertising"));
 					add(new JsonBuilder("&e13. &3English only in public chats. Use local/PM for other languages"));
 					add(new JsonBuilder("&e14. &3Report all bugs and exploitable features, and do not abuse them"));
 					add(new JsonBuilder("&e15. &3Do not call out vanished staff members"));
 					add(new JsonBuilder("&e16. &3Don't make fun of or correct other people's typos"));
+					add(new JsonBuilder("&e17. &3No alt accounts"));
 				}},
 				new JsonBuilder()
 						.next("&e « Previous page  ").command("/rules community 2").group()
