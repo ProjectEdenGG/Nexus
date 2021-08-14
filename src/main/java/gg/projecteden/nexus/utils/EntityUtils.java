@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.utils;
 
 import me.lexikiq.HasPlayer;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -50,10 +51,12 @@ public class EntityUtils {
 		List<T> entities = location.getNearbyEntities(radius, radius, radius).stream()
 			.filter(_entity -> type.isAssignableFrom(_entity.getClass()))
 			.filter(_entity -> {
-				if (_entity instanceof Player) {
+				if (_entity instanceof Player player) {
 					if (CitizensUtils.isNPC(_entity))
 						return false;
-					if (PlayerUtils.isVanished((Player) _entity))
+					if (PlayerUtils.isVanished(player))
+						return false;
+					if (GameMode.SPECTATOR.equals(player.getGameMode()))
 						return false;
 				}
 
