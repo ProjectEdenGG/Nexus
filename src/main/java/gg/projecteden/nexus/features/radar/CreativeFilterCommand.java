@@ -1,5 +1,8 @@
 package gg.projecteden.nexus.features.radar;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -12,6 +15,7 @@ import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import me.lexikiq.HasUniqueId;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -30,12 +34,16 @@ import org.bukkit.event.inventory.InventoryCreativeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -43,16 +51,38 @@ import java.util.function.Supplier;
 @NoArgsConstructor
 public class CreativeFilterCommand extends CustomCommand implements Listener {
 
+	private static final CacheLoader<UUID, Boolean> SHOULD_FILTER_CACHE = new CacheLoader<>() {
+		@Override
+		public Boolean load(@NotNull UUID uuid) throws NullPointerException {
+			Player player = Bukkit.getPlayer(uuid);
+			if (player == null) {
+				throw new NullPointerException("Creative filter cache called for offline user");
+			}
+			return WorldGroup.of(player.getWorld()) == WorldGroup.CREATIVE && Rank.of(player) == Rank.GUEST;
+		}
+	};
+
+	private static final LoadingCache<UUID, Boolean> cache = CacheBuilder.newBuilder()
+		.expireAfterWrite(10, TimeUnit.SECONDS)
+		.build(SHOULD_FILTER_CACHE);
+
 	public CreativeFilterCommand(@NonNull CommandEvent event) {
 		super(event);
 	}
 
-	private static boolean shouldFilterItems(HumanEntity player) {
-		return WorldGroup.of(player.getWorld()) == WorldGroup.CREATIVE && Rank.of((Player) player) == Rank.GUEST;
+	private static boolean shouldFilterItems(HasUniqueId player) {
+		try {
+			return cache.get(player.getUniqueId());
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+			return true;
+		}
 	}
 
-	private static void filter(Supplier<HumanEntity> player, Supplier<ItemStack> getter, Consumer<ItemStack> setter) {
-		if (!shouldFilterItems(player.get()))
+	private static void filter(Supplier<HumanEntity> playerSupplier, Supplier<ItemStack> getter, Consumer<ItemStack> setter) {
+		if (!(playerSupplier.get() instanceof Player player))
+			return;
+		if (!shouldFilterItems(player))
 			return;
 
 		ItemStack item = getter.get();
