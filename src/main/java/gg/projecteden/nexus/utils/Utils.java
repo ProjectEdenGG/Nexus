@@ -10,6 +10,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -275,8 +276,11 @@ public class Utils extends gg.projecteden.utils.Utils {
 	@Data
 	@RequiredArgsConstructor
 	@AllArgsConstructor
+	@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 	public static class QueuedTask {
+		@EqualsAndHashCode.Include
 		private @NonNull UUID uuid;
+		@EqualsAndHashCode.Include
 		private @NonNull String type;
 		private @NonNull Runnable task;
 		private boolean completeBeforeShutdown;
