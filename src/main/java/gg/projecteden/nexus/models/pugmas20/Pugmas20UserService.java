@@ -10,15 +10,10 @@ import java.util.concurrent.ConcurrentHashMap;
 @PlayerClass(Pugmas20User.class)
 public class Pugmas20UserService extends MongoService<Pugmas20User> {
 	private final static Map<UUID, Pugmas20User> cache = new ConcurrentHashMap<>();
-	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	@Override
 	public Map<UUID, Pugmas20User> getCache() {
 		return cache;
-	}
-
-	protected Map<UUID, Integer> getSaveQueue() {
-		return saveQueue;
 	}
 
 }

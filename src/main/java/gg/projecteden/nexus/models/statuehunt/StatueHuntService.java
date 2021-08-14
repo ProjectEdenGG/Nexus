@@ -10,14 +10,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @PlayerClass(StatueHunt.class)
 public class StatueHuntService extends MongoService<StatueHunt> {
 	private final static Map<UUID, StatueHunt> cache = new ConcurrentHashMap<>();
-	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	@Override
 	public Map<UUID, StatueHunt> getCache() {
 		return cache;
-	}
-
-	protected Map<UUID, Integer> getSaveQueue() {
-		return saveQueue;
 	}
 }

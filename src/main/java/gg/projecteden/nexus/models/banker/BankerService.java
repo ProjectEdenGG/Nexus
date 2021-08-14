@@ -18,14 +18,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @PlayerClass(Banker.class)
 public class BankerService extends MongoService<Banker> {
 	private static final Map<UUID, Banker> cache = new ConcurrentHashMap<>();
-	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, Banker> getCache() {
 		return cache;
-	}
-
-	protected Map<UUID, Integer> getSaveQueue() {
-		return saveQueue;
 	}
 
 	public double getBalance(OfflinePlayer player, ShopGroup shopGroup) {

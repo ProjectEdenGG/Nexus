@@ -3,6 +3,8 @@ package gg.projecteden.nexus.models;
 import dev.morphia.mapping.MappingException;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Utils;
+import gg.projecteden.nexus.utils.Utils.QueuedTask;
 import gg.projecteden.utils.TimeUtils.Time;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
@@ -11,9 +13,6 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class MongoService<T extends PlayerOwnedObject> extends gg.projecteden.mongodb.MongoService<T> {
 
@@ -58,30 +57,12 @@ public abstract class MongoService<T extends PlayerOwnedObject> extends gg.proje
 		}
 	}
 
-	protected abstract Map<UUID, Integer> getSaveQueue();
-
 	public void queueSave(int delayTicks, T object) {
 		Tasks.async(() -> queueSaveSync(delayTicks, object));
 	}
 
 	public void queueSaveSync(int delayTicks, T object) {
-		UUID uuid = object.getUuid();
-		AtomicInteger taskId = new AtomicInteger(0);
-
-		Runnable resave = () -> {
-			synchronized (object) {
-				if (getSaveQueue().containsKey(uuid))
-					if (getSaveQueue().get(uuid).equals(taskId.get()))
-						saveSync(object);
-			}
-		};
-
-		if (Bukkit.isPrimaryThread())
-			taskId.set(Tasks.wait(delayTicks, resave));
-		else
-			taskId.set(Tasks.waitAsync(delayTicks, resave));
-
-		getSaveQueue().put(uuid, taskId.get());
+		Utils.queue(delayTicks, new QueuedTask(object.getUuid(), "mongo save " + object.getClass().getSimpleName(), () -> saveSync(object), true));
 	}
 
 	public void delete(T object) {

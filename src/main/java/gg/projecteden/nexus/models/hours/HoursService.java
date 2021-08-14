@@ -44,14 +44,9 @@ import static gg.projecteden.utils.StringUtils.camelCase;
 @PlayerClass(Hours.class)
 public class HoursService extends MongoService<Hours> {
 	private final static Map<UUID, Hours> cache = new ConcurrentHashMap<>();
-	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, Hours> getCache() {
 		return cache;
-	}
-
-	protected Map<UUID, Integer> getSaveQueue() {
-		return saveQueue;
 	}
 
 	protected Hours getNoCache(UUID uuid) {

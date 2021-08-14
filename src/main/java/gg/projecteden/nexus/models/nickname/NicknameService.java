@@ -11,14 +11,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @PlayerClass(Nickname.class)
 public class NicknameService extends MongoService<Nickname> {
 	private final static Map<UUID, Nickname> cache = new ConcurrentHashMap<>();
-	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, Nickname> getCache() {
 		return cache;
-	}
-
-	protected Map<UUID, Integer> getSaveQueue() {
-		return saveQueue;
 	}
 
 	public Nickname getFromNickname(String nickname) {

@@ -15,14 +15,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @PlayerClass(Punishments.class)
 public class PunishmentsService extends MongoService<Punishments> {
 	private final static Map<UUID, Punishments> cache = new ConcurrentHashMap<>();
-	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, Punishments> getCache() {
 		return cache;
-	}
-
-	protected Map<UUID, Integer> getSaveQueue() {
-		return saveQueue;
 	}
 
 	public List<Punishments> getAlts(Punishments player) {

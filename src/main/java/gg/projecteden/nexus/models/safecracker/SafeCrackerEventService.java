@@ -13,14 +13,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @Disabled
 public class SafeCrackerEventService extends MongoService<SafeCrackerEvent> {
 	private final static Map<UUID, SafeCrackerEvent> cache = new ConcurrentHashMap<>();
-	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, SafeCrackerEvent> getCache() {
 		return cache;
-	}
-
-	protected Map<UUID, Integer> getSaveQueue() {
-		return saveQueue;
 	}
 
 	public SafeCrackerGame getActiveEvent() {

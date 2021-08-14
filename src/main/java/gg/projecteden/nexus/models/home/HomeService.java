@@ -12,14 +12,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @PlayerClass(HomeOwner.class)
 public class HomeService extends MongoService<HomeOwner> {
 	private final static Map<UUID, HomeOwner> cache = new ConcurrentHashMap<>();
-	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, HomeOwner> getCache() {
 		return cache;
-	}
-
-	protected Map<UUID, Integer> getSaveQueue() {
-		return saveQueue;
 	}
 
 	@Override

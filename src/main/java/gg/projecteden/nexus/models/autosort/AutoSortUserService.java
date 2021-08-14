@@ -10,14 +10,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @PlayerClass(AutoSortUser.class)
 public class AutoSortUserService extends MongoService<AutoSortUser> {
 	private final static Map<UUID, AutoSortUser> cache = new ConcurrentHashMap<>();
-	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, AutoSortUser> getCache() {
 		return cache;
-	}
-
-	protected Map<UUID, Integer> getSaveQueue() {
-		return saveQueue;
 	}
 
 }

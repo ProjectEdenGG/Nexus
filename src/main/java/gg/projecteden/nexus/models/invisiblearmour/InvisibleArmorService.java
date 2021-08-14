@@ -10,14 +10,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @PlayerClass(InvisibleArmor.class)
 public class InvisibleArmorService extends MongoService<InvisibleArmor> {
 	private final static Map<UUID, InvisibleArmor> cache = new ConcurrentHashMap<>();
-	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, InvisibleArmor> getCache() {
 		return cache;
-	}
-
-	protected Map<UUID, Integer> getSaveQueue() {
-		return saveQueue;
 	}
 
 }

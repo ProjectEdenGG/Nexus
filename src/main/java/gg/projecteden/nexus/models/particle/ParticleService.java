@@ -10,14 +10,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @PlayerClass(ParticleOwner.class)
 public class ParticleService extends MongoService<ParticleOwner> {
 	private final static Map<UUID, ParticleOwner> cache = new ConcurrentHashMap<>();
-	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, ParticleOwner> getCache() {
 		return cache;
-	}
-
-	protected Map<UUID, Integer> getSaveQueue() {
-		return saveQueue;
 	}
 
 	@Override

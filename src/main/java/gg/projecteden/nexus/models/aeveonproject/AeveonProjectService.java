@@ -12,14 +12,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @PlayerClass(AeveonProjectUser.class)
 public class AeveonProjectService extends MongoService<AeveonProjectUser> {
 	private final static Map<UUID, AeveonProjectUser> cache = new ConcurrentHashMap<>();
-	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, AeveonProjectUser> getCache() {
 		return cache;
-	}
-
-	protected Map<UUID, Integer> getSaveQueue() {
-		return saveQueue;
 	}
 
 	public boolean hasStarted(OfflinePlayer player) {

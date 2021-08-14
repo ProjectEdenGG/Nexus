@@ -12,14 +12,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @PlayerClass(EventUser.class)
 public class EventUserService extends MongoService<EventUser> {
 	private final static Map<UUID, EventUser> cache = new ConcurrentHashMap<>();
-	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, EventUser> getCache() {
 		return cache;
-	}
-
-	protected Map<UUID, Integer> getSaveQueue() {
-		return saveQueue;
 	}
 
 	public List<EventUser> getTopTokens() {

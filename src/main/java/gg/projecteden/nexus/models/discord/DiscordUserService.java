@@ -13,14 +13,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @PlayerClass(DiscordUser.class)
 public class DiscordUserService extends MongoService<DiscordUser> {
 	private final static Map<UUID, DiscordUser> cache = new ConcurrentHashMap<>();
-	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, DiscordUser> getCache() {
 		return cache;
-	}
-
-	protected Map<UUID, Integer> getSaveQueue() {
-		return saveQueue;
 	}
 
 	public DiscordUser checkVerified(String userId) {

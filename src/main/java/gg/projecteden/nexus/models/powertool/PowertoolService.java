@@ -12,14 +12,9 @@ import static gg.projecteden.utils.Utils.isNullOrEmpty;
 @PlayerClass(PowertoolUser.class)
 public class PowertoolService extends MongoService<PowertoolUser> {
 	private final static Map<UUID, PowertoolUser> cache = new ConcurrentHashMap<>();
-	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, PowertoolUser> getCache() {
 		return cache;
-	}
-
-	protected Map<UUID, Integer> getSaveQueue() {
-		return saveQueue;
 	}
 
 	@Override

@@ -14,14 +14,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @PlayerClass(ClientsideContent.class)
 public class ClientsideContentService extends MongoService<ClientsideContent> {
 	private final static Map<UUID, ClientsideContent> cache = new ConcurrentHashMap<>();
-	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, ClientsideContent> getCache() {
 		return cache;
-	}
-
-	protected Map<UUID, Integer> getSaveQueue() {
-		return saveQueue;
 	}
 
 	public List<Content> getList() {

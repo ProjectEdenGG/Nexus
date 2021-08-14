@@ -12,14 +12,9 @@ import static gg.projecteden.utils.Utils.isNullOrEmpty;
 @PlayerClass(CostumeUser.class)
 public class CostumeUserService extends MongoService<CostumeUser> {
 	private final static Map<UUID, CostumeUser> cache = new ConcurrentHashMap<>();
-	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, CostumeUser> getCache() {
 		return cache;
-	}
-
-	protected Map<UUID, Integer> getSaveQueue() {
-		return saveQueue;
 	}
 
 	@Override

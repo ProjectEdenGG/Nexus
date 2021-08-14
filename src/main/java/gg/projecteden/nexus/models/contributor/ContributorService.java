@@ -21,14 +21,9 @@ import static com.mongodb.client.model.Sorts.descending;
 @PlayerClass(Contributor.class)
 public class ContributorService extends MongoService<Contributor> {
 	private final static Map<UUID, Contributor> cache = new ConcurrentHashMap<>();
-	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, Contributor> getCache() {
 		return cache;
-	}
-
-	protected Map<UUID, Integer> getSaveQueue() {
-		return saveQueue;
 	}
 
 	public List<Purchase> getRecent() {

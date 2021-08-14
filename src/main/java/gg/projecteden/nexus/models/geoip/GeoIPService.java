@@ -16,14 +16,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @PlayerClass(GeoIP.class)
 public class GeoIPService extends MongoService<GeoIP> {
 	private final static Map<UUID, GeoIP> cache = new ConcurrentHashMap<>();
-	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, GeoIP> getCache() {
 		return cache;
-	}
-
-	protected Map<UUID, Integer> getSaveQueue() {
-		return saveQueue;
 	}
 
 	private static final String URL = "https://api.ipstack.com/%s?access_key=%s";

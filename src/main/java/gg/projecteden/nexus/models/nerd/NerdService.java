@@ -20,14 +20,9 @@ import static java.util.stream.Collectors.toList;
 @PlayerClass(Nerd.class)
 public class NerdService extends MongoService<Nerd> {
 	private final static Map<UUID, Nerd> cache = new ConcurrentHashMap<>();
-	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, Nerd> getCache() {
 		return cache;
-	}
-
-	protected Map<UUID, Integer> getSaveQueue() {
-		return saveQueue;
 	}
 
 	public List<Nerd> find(String partialName) {

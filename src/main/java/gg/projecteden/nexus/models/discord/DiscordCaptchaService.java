@@ -10,14 +10,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @PlayerClass(DiscordCaptcha.class)
 public class DiscordCaptchaService extends MongoService<DiscordCaptcha> {
 	private final static Map<UUID, DiscordCaptcha> cache = new ConcurrentHashMap<>();
-	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, DiscordCaptcha> getCache() {
 		return cache;
-	}
-
-	protected Map<UUID, Integer> getSaveQueue() {
-		return saveQueue;
 	}
 
 	public DiscordCaptcha get() {

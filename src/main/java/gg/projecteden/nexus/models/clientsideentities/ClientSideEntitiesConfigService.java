@@ -10,14 +10,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @PlayerClass(ClientSideEntitiesConfig.class)
 public class ClientSideEntitiesConfigService extends MongoService<ClientSideEntitiesConfig> {
 	private final static Map<UUID, ClientSideEntitiesConfig> cache = new ConcurrentHashMap<>();
-	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, ClientSideEntitiesConfig> getCache() {
 		return cache;
-	}
-
-	protected Map<UUID, Integer> getSaveQueue() {
-		return saveQueue;
 	}
 
 }

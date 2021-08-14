@@ -22,14 +22,9 @@ import java.util.stream.Stream;
 @PlayerClass(Voter.class)
 public class VoterService extends MongoService<Voter> {
 	private final static Map<UUID, Voter> cache = new ConcurrentHashMap<>();
-	private static final Map<UUID, Integer> saveQueue = new ConcurrentHashMap<>();
 
 	public Map<UUID, Voter> getCache() {
 		return cache;
-	}
-
-	protected Map<UUID, Integer> getSaveQueue() {
-		return saveQueue;
 	}
 
 	static {
