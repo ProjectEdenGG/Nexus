@@ -16,12 +16,16 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+
+import static gg.projecteden.utils.StringUtils.camelCase;
 
 @Data
 @Builder
@@ -65,13 +69,17 @@ public class Warps implements PlayerOwnedObject {
 		private WarpType type;
 		private Location location;
 
-		public void teleportAsync(Player player) {
-			if (location == null)
-				throw new InvalidInputException("Location is null!");
-			if (location.getWorld() == null)
-				throw new InvalidInputException("World is null!");
+		public @NotNull CompletableFuture<Boolean> teleportAsync(Player player) {
+			return teleportAsync(player, TeleportCause.COMMAND);
+		}
 
-			player.teleportAsync(location, TeleportCause.COMMAND);
+		public @NotNull CompletableFuture<Boolean> teleportAsync(Player player, TeleportCause teleportCause) {
+			if (location == null)
+				throw new InvalidInputException("Location of " + camelCase(type) + " warp " + name + " is null!");
+			if (location.getWorld() == null)
+				throw new InvalidInputException("World of " + camelCase(type) + " warp " + name + " is null!");
+
+			return player.teleportAsync(location, teleportCause);
 		}
 	}
 
