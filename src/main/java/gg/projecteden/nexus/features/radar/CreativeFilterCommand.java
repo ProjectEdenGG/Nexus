@@ -200,10 +200,7 @@ public class CreativeFilterCommand extends CustomCommand implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPlaceBlock(BlockPlaceEvent event) {
 		Player player = event.getPlayer();
-		if (WorldGroup.of(player.getWorld()) != WorldGroup.CREATIVE)
-			return;
-
-		if (Rank.of(player) != Rank.GUEST)
+		if (!shouldFilterItems(player))
 			return;
 
 		Material type = event.getBlock().getType();
