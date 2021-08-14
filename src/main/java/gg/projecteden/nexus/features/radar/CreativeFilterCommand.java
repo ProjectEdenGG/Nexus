@@ -12,7 +12,6 @@ import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import me.lexikiq.HasUniqueId;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -48,11 +47,7 @@ public class CreativeFilterCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	private static boolean shouldFilterItems(HasUniqueId uuid) {
-		Player player = Bukkit.getPlayer(uuid.getUniqueId());
-		if (player == null)
-			throw new NullPointerException("Creative filter cache called for offline user");
-
+	private static boolean shouldFilterItems(Player player) {
 		return WorldGroup.of(player.getWorld()) == WorldGroup.CREATIVE && Rank.of(player) == Rank.GUEST;
 	}
 
