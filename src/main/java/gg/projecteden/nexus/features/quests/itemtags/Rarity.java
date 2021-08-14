@@ -80,7 +80,7 @@ public enum Rarity {
 		ItemTags.debug(debugger, isArmor ? "  &3Armor material: &e" + itemType : "  &3Tool material: &e" + itemType);
 
 		int val_material = getMaterialVal(itemStack);
-		ItemTags.debug(debugger, "    &3Material sum: &e" + number(val_material));
+		ItemTags.debug(debugger, "    &3Sum: &e" + number(val_material));
 
 		int val_vanillaEnchants = 0;
 		int val_customEnchants = 0;

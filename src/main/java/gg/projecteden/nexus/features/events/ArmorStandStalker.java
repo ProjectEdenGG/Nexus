@@ -37,25 +37,25 @@ public class ArmorStandStalker {
 
 				// Store Gallery
 				// Main Front Right
-				add(Stalker.builder().uuid("d0734ba2-45e9-4e87-97dc-688e036a20b4").world("server").radius(30).build());
+				add(Stalker.builder().uuid("7233fac4-fe0e-420f-bd0f-08d98850a12f").world("server").radius(30).build());
 				// Main Front Left
-				add(Stalker.builder().uuid("9b6298c9-3513-48fa-bf2d-f591268e70db").world("server").radius(30).build());
+				add(Stalker.builder().uuid("f36b3e67-8625-417d-b221-cfb7398fd032").world("server").radius(30).build());
 				// Main Back Right
-				add(Stalker.builder().uuid("5a843299-859d-492a-a61d-d0e9dac61575").world("server").radius(30).build());
+				add(Stalker.builder().uuid("36def925-a5d7-4d95-9fdb-4280a12b88c1").world("server").radius(30).build());
 				// Main Back Left
-				add(Stalker.builder().uuid("1f7cfa85-a51b-46db-8ddd-16be8893ed6f").world("server").radius(30).build());
+				add(Stalker.builder().uuid("b21f06db-5063-4989-9f5e-f950eacb3616").world("server").radius(30).build());
 				// Terrarium
-				add(Stalker.builder().uuid("997895f8-de5a-4a55-95b5-647fb9fff288").world("server").radius(15).build());
+				add(Stalker.builder().uuid("082596b4-e945-4807-8f5c-edbceafa7efd").world("server").radius(15).build());
 				// Visuals
-				add(Stalker.builder().uuid("24279890-0c9a-4558-ba6c-7987e206773b").world("server").radius(15).build());
+				add(Stalker.builder().uuid("b6ed6258-c5df-4b39-9b1a-3157724f9696").world("server").radius(15).build());
 				// Misc
-				add(Stalker.builder().uuid("1427660f-18a5-4547-86ce-91d70e6e97ce").world("server").radius(15).build());
+				add(Stalker.builder().uuid("a24fcd8f-77c5-4f14-b87a-707a13151b77").world("server").radius(15).build());
 				// Chat
-				add(Stalker.builder().uuid("7db21c72-6264-4b6f-94ef-0368989dc568").world("server").radius(15).build());
+				add(Stalker.builder().uuid("e7515522-04b7-4a61-8fc4-53ef5d2ebec7").world("server").radius(15).build());
 				// Inventory
-				add(Stalker.builder().uuid("dc665efe-a7be-4486-89fe-ac1db3895247").world("server").radius(15).build());
+				add(Stalker.builder().uuid("ceacf6c5-e422-4da6-a228-527bce1f88d7").world("server").radius(15).build());
 				// Pets
-				add(Stalker.builder().uuid("c3b60f46-ab34-48e8-820f-249e7ee03571").world("server").radius(15).build());
+				add(Stalker.builder().uuid("1829db93-2ae1-4485-a486-9848e8026262").world("server").radius(15).build());
 			}
 		}
 	}};
@@ -115,9 +115,7 @@ public class ArmorStandStalker {
 				this.world = world;
 				return this;
 			}
-
 		}
-
 	}
 
 	private void lookAt(ArmorStand armorStand, Stalker stalker, Player player) {
