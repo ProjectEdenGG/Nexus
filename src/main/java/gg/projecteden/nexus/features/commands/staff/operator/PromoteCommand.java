@@ -6,6 +6,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -25,9 +26,8 @@ public class PromoteCommand extends CustomCommand {
 		if (rank == next)
 			error("User is already max rank");
 
-		for (Rank _rank : Rank.values())
-			runCommandAsConsole("lp user " + nerd.getName() + " parent remove " + _rank.name());
-		runCommandAsConsole("lp user " + nerd.getName() + " parent add " + next.name());
+		GroupChange.remove().player(nerd).groups(Rank.values()).run();
+		GroupChange.add().player(nerd).group(rank).run();
 		send(PREFIX + "Promoted " + nerd.getName() + " to " + next.getColoredName());
 
 		if (nerd.getOfflinePlayer().isOnline()) {

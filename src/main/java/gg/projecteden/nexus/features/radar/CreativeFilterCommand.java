@@ -1,8 +1,5 @@
 package gg.projecteden.nexus.features.radar;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -34,16 +31,12 @@ import org.bukkit.event.inventory.InventoryCreativeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -51,32 +44,16 @@ import java.util.function.Supplier;
 @NoArgsConstructor
 public class CreativeFilterCommand extends CustomCommand implements Listener {
 
-	private static final CacheLoader<UUID, Boolean> SHOULD_FILTER_CACHE = new CacheLoader<>() {
-		@Override
-		public Boolean load(@NotNull UUID uuid) throws NullPointerException {
-			Player player = Bukkit.getPlayer(uuid);
-			if (player == null) {
-				throw new NullPointerException("Creative filter cache called for offline user");
-			}
-			return WorldGroup.of(player.getWorld()) == WorldGroup.CREATIVE && Rank.of(player) == Rank.GUEST;
-		}
-	};
-
-	private static final LoadingCache<UUID, Boolean> cache = CacheBuilder.newBuilder()
-		.expireAfterWrite(10, TimeUnit.SECONDS)
-		.build(SHOULD_FILTER_CACHE);
-
 	public CreativeFilterCommand(@NonNull CommandEvent event) {
 		super(event);
 	}
 
-	private static boolean shouldFilterItems(HasUniqueId player) {
-		try {
-			return cache.get(player.getUniqueId());
-		} catch (ExecutionException e) {
-			e.printStackTrace();
-			return true;
-		}
+	private static boolean shouldFilterItems(HasUniqueId uuid) {
+		Player player = Bukkit.getPlayer(uuid.getUniqueId());
+		if (player == null)
+			throw new NullPointerException("Creative filter cache called for offline user");
+
+		return WorldGroup.of(player.getWorld()) == WorldGroup.CREATIVE && Rank.of(player) == Rank.GUEST;
 	}
 
 	private static void filter(Supplier<HumanEntity> playerSupplier, Supplier<ItemStack> getter, Consumer<ItemStack> setter) {

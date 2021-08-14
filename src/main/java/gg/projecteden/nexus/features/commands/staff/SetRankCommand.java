@@ -5,6 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange;
 import lombok.NonNull;
 import org.bukkit.OfflinePlayer;
 
@@ -17,9 +18,8 @@ public class SetRankCommand extends CustomCommand {
 
 	@Path("<player> <rank>")
 	void set(OfflinePlayer player, Rank rank) {
-		for (Rank _rank : Rank.values())
-			runCommandAsConsole("lp user " + player.getName() + " parent remove " + _rank.name());
-		runCommandAsConsole("lp user " + player.getName() + " parent add " + rank.name());
+		GroupChange.remove().player(player).groups(Rank.values()).run();
+		GroupChange.add().player(player).group(rank).run();
 		send(PREFIX + "Set " + player.getName() + "'s rank to " + rank.getColoredName());
 	}
 

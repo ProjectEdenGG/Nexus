@@ -1,6 +1,8 @@
 package gg.projecteden.nexus.utils;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.utils.Utils.QueuedTask;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +24,9 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
@@ -201,7 +205,7 @@ public class LuckPermsUtils {
 			@NonNull
 			private final GroupChangeType type;
 			private UUID uuid;
-			private String group;
+			private List<String> groups;
 
 			public GroupChangeBuilder player(HasUniqueId player) {
 				this.uuid = player.getUniqueId();
@@ -217,15 +221,28 @@ public class LuckPermsUtils {
 				return this;
 			}
 
+			public GroupChangeBuilder group(Rank group) {
+				return group(group.name());
+			}
+
 			public GroupChangeBuilder group(String group) {
-				this.group = group;
+				return groups(group);
+			}
+
+			public GroupChangeBuilder groups(Rank... groups) {
+				return groups(Arrays.stream(groups).map(Rank::name).toArray(String[]::new));
+			}
+
+			public GroupChangeBuilder groups(String... groups) {
+				this.groups = Arrays.asList(groups);
 				return this;
 			}
 
 			public void run() {
-				String command = "lp user " + uuid.toString() + " parent " + type + " " + group;
+				for (String group : groups)
+					runCommandAsConsole("lp user " + uuid.toString() + " parent " + type + " " + group);
 
-				runCommandAsConsole(command);
+				Utils.queue(5, new QueuedTask(uuid, "rank cache refresh", () -> Rank.CACHE.refresh(uuid)));
 			}
 		}
 	}

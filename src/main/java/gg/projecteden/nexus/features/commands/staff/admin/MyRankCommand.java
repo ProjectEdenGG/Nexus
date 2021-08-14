@@ -5,6 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange;
 import lombok.NonNull;
 
 @Permission("set.my.rank")
@@ -16,9 +17,8 @@ public class MyRankCommand extends CustomCommand {
 
 	@Path("<rank>")
 	void set(Rank rank) {
-		for (Rank _rank : Rank.values())
-			runCommandAsConsole("lp user " + name() + " parent remove " + _rank.name());
-		runCommandAsConsole("lp user " + name() + " parent add " + rank.name());
+		GroupChange.remove().player(player()).groups(Rank.values()).run();
+		GroupChange.add().player(player()).group(rank).run();
 		send(PREFIX + "Set your rank to " + rank.getColoredName());
 	}
 

@@ -43,6 +43,7 @@ import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
+import gg.projecteden.nexus.utils.Utils.QueuedTask;
 import gg.projecteden.utils.TimeUtils.Time;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import lombok.AllArgsConstructor;
@@ -95,6 +96,13 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 	public NexusCommand(CommandEvent event) {
 		super(event);
+	}
+
+	@Override
+	public void _shutdown() {
+		for (QueuedTask task : Utils.TASK_QUEUE.keySet())
+			if (task.isCompleteBeforeShutdown())
+				task.getTask().run();
 	}
 
 	private static final LocalDateTime epoch = LocalDateTime.now();

@@ -20,6 +20,7 @@ import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import gg.projecteden.nexus.utils.Tasks;
@@ -140,8 +141,8 @@ public class HoursCommand extends CustomCommand {
 
 						if (hours.getTotal() > DAY) {
 							Tasks.sync(() -> {
-								PlayerUtils.runCommandAsConsole("lp user " + player.getName() + " parent remove " + Rank.GUEST.name());
-								PlayerUtils.runCommandAsConsole("lp user " + player.getName() + " parent add " + Rank.MEMBER.name());
+								GroupChange.remove().player(player).group(Rank.GUEST).run();
+								GroupChange.add().player(player).group(Rank.MEMBER).run();
 								Koda.say("Congrats on Member rank, " + Nickname.of(player) + "!");
 								Jingle.RANKUP.play(player);
 								PlayerUtils.send(player, "");

@@ -1,5 +1,8 @@
 package gg.projecteden.nexus.models.nerd;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.Colored;
@@ -25,6 +28,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -146,19 +151,33 @@ public enum Rank implements IsColoredAndNamed {
 				.collect(Collectors.toList());
 	}
 
-	public static Rank of(UUID player) {
-		return of(Bukkit.getOfflinePlayer(player));
-	}
+	private static final List<Rank> REVERSED = Arrays.asList(Rank.values());
+	static { Collections.reverse(REVERSED); }
+
+	public static final LoadingCache<UUID, Rank> CACHE = CacheBuilder.newBuilder()
+		.expireAfterWrite(10, TimeUnit.SECONDS)
+		.build(new CacheLoader<>() {
+			@Override
+			public Rank load(@NotNull UUID uuid) {
+				for (Rank rank : REVERSED)
+					if (Nexus.getPerms().playerInGroup(null, Bukkit.getOfflinePlayer(uuid), rank.name()))
+						return rank;
+
+				return GUEST;
+			}
+		});
 
 	public static Rank of(HasOfflinePlayer player) {
-		List<Rank> ranks = Arrays.asList(Rank.values());
-		Collections.reverse(ranks);
+		return of(player.getOfflinePlayer().getUniqueId());
+	}
 
-		for (Rank rank : ranks)
-			if (Nexus.getPerms().playerInGroup(null, player.getOfflinePlayer(), rank.name()))
-				return rank;
-
-		return GUEST;
+	public static Rank of(UUID uuid) {
+		try {
+			return CACHE.get(uuid);
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+			return GUEST;
+		}
 	}
 
 	public static Rank getByString(String input) {

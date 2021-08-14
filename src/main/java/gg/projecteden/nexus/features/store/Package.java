@@ -810,7 +810,7 @@ public enum Package {
 
 		String permissionGroup = getPermissionGroup();
 		if (!isNullOrEmpty(permissionGroup))
-			PlayerUtils.runCommandAsConsole("lp user " + player.getUniqueId() + " parent add " + permissionGroup);
+			GroupChange.add().player(player).group(permissionGroup).run();
 
 		getCommands().stream()
 				.map(command -> command.replaceAll("\\[player]", Objects.requireNonNull(Name.of(player))))

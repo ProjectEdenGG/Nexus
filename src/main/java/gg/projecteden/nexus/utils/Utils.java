@@ -8,9 +8,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import me.lexikiq.HasUniqueId;
+import org.bukkit.Bukkit;
 import org.bukkit.Rotation;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -30,8 +35,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -239,6 +247,40 @@ public class Utils extends gg.projecteden.utils.Utils {
 			}
 		}
 		return output;
+	}
+
+	public static void queue(int delayTicks, QueuedTask task) {
+		AtomicInteger taskId = new AtomicInteger(0);
+
+		Runnable resave = () -> {
+			synchronized (task) {
+				if (TASK_QUEUE.containsKey(task))
+					if (TASK_QUEUE.get(task).equals(taskId.get())) {
+						task.task.run();
+						TASK_QUEUE.remove(task);
+					}
+			}
+		};
+
+		if (Bukkit.isPrimaryThread())
+			taskId.set(Tasks.wait(delayTicks, resave));
+		else
+			taskId.set(Tasks.waitAsync(delayTicks, resave));
+
+		TASK_QUEUE.put(task, taskId.get());
+	}
+
+	public static final Map<QueuedTask, Integer> TASK_QUEUE = new ConcurrentHashMap<>();
+
+	@Data
+	@RequiredArgsConstructor
+	@AllArgsConstructor
+	public static class QueuedTask {
+		private @NonNull UUID uuid;
+		private @NonNull String type;
+		private @NonNull Runnable task;
+		private boolean completeBeforeShutdown;
+
 	}
 
 }
