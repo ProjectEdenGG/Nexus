@@ -59,7 +59,7 @@ public class AFK extends Feature {
 		final List<Player> players = PlayerUtils.getOnlinePlayers();
 		final List<AFKUser> afkUsers = players.stream()
 			.map(AFK::get)
-			.filter(user -> user.isTimeAfk() && !user.isLimbo())
+			.filter(AFKUser::isTimeAfk)
 			.toList();
 
 		if (players.size() == afkUsers.size())
