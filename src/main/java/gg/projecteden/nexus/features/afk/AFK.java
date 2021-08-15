@@ -15,6 +15,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,13 +26,14 @@ public class AFK extends Feature {
 	@Override
 	public void onStart() {
 		Tasks.repeat(Time.SECOND.x(5), Time.SECOND.x(3), () -> {
-			afkCheck();
-			limboCheck();
+			List<Player> onlinePlayers = Collections.unmodifiableList(PlayerUtils.getOnlinePlayers());
+			afkCheck(onlinePlayers);
+			limboCheck(onlinePlayers);
 		});
 	}
 
-	private static void afkCheck() {
-		PlayerUtils.getOnlinePlayers().stream().map(AFK::get).forEach(user -> {
+	private static void afkCheck(List<Player> onlinePlayers) {
+		onlinePlayers.stream().map(AFK::get).forEach(user -> {
 			try {
 				final Player player = user.getOnlinePlayer();
 				if (!isSameLocation(user.getLocation(), player.getLocation()) && player.getVehicle() == null)
@@ -48,7 +50,7 @@ public class AFK extends Feature {
 		});
 	}
 
-	private static void limboCheck() {
+	private static void limboCheck(List<Player> players) {
 		if (Nexus.EPOCH.isAfter(LocalDateTime.now().minusMinutes(2)))
 			return;
 
@@ -56,7 +58,6 @@ public class AFK extends Feature {
 		if (Bukkit.getTPS()[1] >= 17)
 			return;
 
-		final List<Player> players = PlayerUtils.getOnlinePlayers();
 		final List<AFKUser> afkUsers = players.stream()
 			.map(AFK::get)
 			.filter(AFKUser::isTimeAfk)

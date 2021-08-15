@@ -22,7 +22,7 @@ import org.bukkit.Bukkit;
 import org.inventivetalent.glow.GlowAPI;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -156,16 +156,13 @@ public enum Rank implements IsColoredAndNamed {
 
 	public static final LoadingCache<UUID, Rank> CACHE = CacheBuilder.newBuilder()
 		.expireAfterWrite(10, TimeUnit.SECONDS)
-		.build(new CacheLoader<>() {
-			@Override
-			public Rank load(@NotNull UUID uuid) {
-				for (Rank rank : REVERSED)
-					if (Nexus.getPerms().playerInGroup(null, Bukkit.getOfflinePlayer(uuid), rank.name()))
-						return rank;
+		.build(CacheLoader.from(uuid -> {
+			for (Rank rank : REVERSED)
+				if (Nexus.getPerms().playerInGroup(null, Bukkit.getOfflinePlayer(uuid), rank.name()))
+					return rank;
 
-				return GUEST;
-			}
-		});
+			return GUEST;
+		}));
 
 	public static Rank of(HasOfflinePlayer player) {
 		return of(player.getOfflinePlayer().getUniqueId());

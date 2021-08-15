@@ -28,7 +28,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -37,8 +36,8 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
@@ -74,7 +73,7 @@ public class AFKUser implements PlayerOwnedObject {
 			return false;
 
 		if (worldGuardUtils == null)
-			worldGuardUtils = new WorldGuardUtils(Objects.requireNonNull(Bukkit.getWorld("server")));
+			worldGuardUtils = new WorldGuardUtils("server");
 
 		if (!worldGuardUtils.isInRegion(getOnlinePlayer().getLocation(), "limbo"))
 			return false;
@@ -106,19 +105,19 @@ public class AFKUser implements PlayerOwnedObject {
 		final Back back = backService.get(player);
 		final Location location = back.getLocations().isEmpty() ? null : back.getLocations().remove(0);
 
+		CompletableFuture<Boolean> teleport;
 		if (location == null) {
 			Nexus.severe("[AFK] Back location for " + getNickname() + " is null");
-			WarpType.NORMAL.get("spawn").teleportAsync(getOnlinePlayer(), TeleportCause.PLUGIN).thenRun(() -> {
-				afk = false;
-				notAfk();
-			});
+			teleport = WarpType.NORMAL.get("spawn").teleportAsync(getOnlinePlayer(), TeleportCause.PLUGIN);
 		} else {
-			player.teleportAsync(location, TeleportCause.PLUGIN).thenRun(() -> {
-				afk = false;
-				notAfk();
-			});
+			teleport = player.teleportAsync(location, TeleportCause.PLUGIN);
 			backService.save(back);
 		}
+
+		teleport.thenRun(() -> {
+			afk = false;
+			notAfk();
+		});
 	}
 
 	@Getter
