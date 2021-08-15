@@ -38,7 +38,7 @@ public class WorldBanCommand extends CustomCommand implements Listener {
 		line();
 		send(PREFIX + "World banned players:");
 		bans.forEach(worldBan ->
-				send(" &e" + worldBan.getOfflinePlayer().getName() + "&7 - &3" + String.join("&e, &3", worldBan.getBanNames())));
+				send(" &e" + worldBan.getName() + "&7 - &3" + String.join("&e, &3", worldBan.getBanNames())));
 		line();
 	}
 

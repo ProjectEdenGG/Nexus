@@ -4,9 +4,8 @@ import gg.projecteden.mongodb.annotations.PlayerClass;
 import gg.projecteden.nexus.models.MongoService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
+import me.lexikiq.HasUniqueId;
 import org.apache.commons.lang.Validate;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
@@ -23,31 +22,31 @@ public class BankerService extends MongoService<Banker> {
 		return cache;
 	}
 
-	public double getBalance(OfflinePlayer player, ShopGroup shopGroup) {
+	public double getBalance(HasUniqueId player, ShopGroup shopGroup) {
 		Validate.notNull(shopGroup, "Shop Group cannot be null");
 		return this.get(player).getBalance(shopGroup).doubleValue();
 	}
 
-	public String getBalanceFormatted(OfflinePlayer player, ShopGroup shopGroup) {
+	public String getBalanceFormatted(HasUniqueId player, ShopGroup shopGroup) {
 		Validate.notNull(shopGroup, "Shop Group cannot be null");
 		return this.get(player).getBalanceFormatted(shopGroup);
 	}
 
-	public boolean has(OfflinePlayer player, double money, ShopGroup shopGroup) {
+	public boolean has(HasUniqueId player, double money, ShopGroup shopGroup) {
 		Validate.notNull(shopGroup, "Shop Group cannot be null");
 		return this.get(player).has(money, shopGroup);
 	}
 
-	public boolean has(OfflinePlayer player, BigDecimal money, ShopGroup shopGroup) {
+	public boolean has(HasUniqueId player, BigDecimal money, ShopGroup shopGroup) {
 		Validate.notNull(shopGroup, "Shop Group cannot be null");
 		return this.get(player).has(money, shopGroup);
 	}
 
-	public void deposit(OfflinePlayer player, double amount, ShopGroup shopGroup, TransactionCause cause) {
+	public void deposit(HasUniqueId player, double amount, ShopGroup shopGroup, TransactionCause cause) {
 		deposit(player, BigDecimal.valueOf(amount), shopGroup, cause);
 	}
 
-	public void deposit(OfflinePlayer player, BigDecimal money, ShopGroup shopGroup, TransactionCause cause) {
+	public void deposit(HasUniqueId player, BigDecimal money, ShopGroup shopGroup, TransactionCause cause) {
 		Validate.notNull(shopGroup, "Shop Group cannot be null");
 		Banker banker = get(player);
 		banker.deposit(money, shopGroup, cause);
@@ -55,21 +54,21 @@ public class BankerService extends MongoService<Banker> {
 	}
 
 	public void deposit(Transaction transaction) {
-		deposit(Bukkit.getOfflinePlayer(transaction.getReceiver()), transaction.getAmount(), transaction.getShopGroup(), transaction);
+		deposit(transaction::getReceiver, transaction.getAmount(), transaction.getShopGroup(), transaction);
 	}
 
-	public void deposit(OfflinePlayer player, BigDecimal money, ShopGroup shopGroup, Transaction transaction) {
+	public void deposit(HasUniqueId player, BigDecimal money, ShopGroup shopGroup, Transaction transaction) {
 		Validate.notNull(shopGroup, "Shop Group cannot be null");
 		Banker banker = get(player);
 		banker.deposit(money, shopGroup, transaction);
 		queueSave(5, banker);
 	}
 
-	public void withdraw(OfflinePlayer player, double amount, ShopGroup shopGroup, TransactionCause cause) {
+	public void withdraw(HasUniqueId player, double amount, ShopGroup shopGroup, TransactionCause cause) {
 		withdraw(player, BigDecimal.valueOf(amount), shopGroup, cause);
 	}
 
-	public void withdraw(OfflinePlayer player, BigDecimal money, ShopGroup shopGroup, TransactionCause cause) {
+	public void withdraw(HasUniqueId player, BigDecimal money, ShopGroup shopGroup, TransactionCause cause) {
 		Validate.notNull(shopGroup, "Shop Group cannot be null");
 		Banker banker = get(player);
 		banker.withdraw(money, shopGroup, cause);
@@ -77,21 +76,21 @@ public class BankerService extends MongoService<Banker> {
 	}
 
 	public void withdraw(Transaction transaction) {
-		withdraw(Bukkit.getOfflinePlayer(transaction.getReceiver()), transaction.getAmount(), transaction.getShopGroup(), transaction);
+		withdraw(transaction::getReceiver, transaction.getAmount(), transaction.getShopGroup(), transaction);
 	}
 
-	public void withdraw(OfflinePlayer player, BigDecimal money, ShopGroup shopGroup, Transaction transaction) {
+	public void withdraw(HasUniqueId player, BigDecimal money, ShopGroup shopGroup, Transaction transaction) {
 		Validate.notNull(shopGroup, "Shop Group cannot be null");
 		Banker banker = get(player);
 		banker.withdraw(money, shopGroup, transaction);
 		queueSave(5, banker);
 	}
 
-	public void transfer(OfflinePlayer from, OfflinePlayer to, double amount, ShopGroup shopGroup, TransactionCause cause) {
+	public void transfer(HasUniqueId from, HasUniqueId to, double amount, ShopGroup shopGroup, TransactionCause cause) {
 		transfer(from, to, BigDecimal.valueOf(amount), shopGroup, cause);
 	}
 
-	public void transfer(OfflinePlayer from, OfflinePlayer to, BigDecimal money, ShopGroup shopGroup, TransactionCause cause) {
+	public void transfer(HasUniqueId from, HasUniqueId to, BigDecimal money, ShopGroup shopGroup, TransactionCause cause) {
 		transfer(get(from), get(to), money, shopGroup, cause);
 	}
 
@@ -102,7 +101,7 @@ public class BankerService extends MongoService<Banker> {
 		queueSave(5, to);
 	}
 
-	public void transfer(OfflinePlayer from, OfflinePlayer to, BigDecimal money, ShopGroup shopGroup, Transaction transaction) {
+	public void transfer(HasUniqueId from, HasUniqueId to, BigDecimal money, ShopGroup shopGroup, Transaction transaction) {
 		transfer(get(from), this.get(to), money, shopGroup, transaction);
 	}
 
@@ -113,11 +112,11 @@ public class BankerService extends MongoService<Banker> {
 		queueSave(5, to);
 	}
 
-	public void setBalance(OfflinePlayer player, double balance, ShopGroup shopGroup, TransactionCause cause) {
+	public void setBalance(HasUniqueId player, double balance, ShopGroup shopGroup, TransactionCause cause) {
 		setBalance(player, BigDecimal.valueOf(balance), shopGroup, cause);
 	}
 
-	public void setBalance(OfflinePlayer player, BigDecimal balance, ShopGroup shopGroup, TransactionCause cause) {
+	public void setBalance(HasUniqueId player, BigDecimal balance, ShopGroup shopGroup, TransactionCause cause) {
 		Validate.notNull(shopGroup, "Shop Group cannot be null");
 		Banker banker = get(player);
 		banker.setBalance(balance, shopGroup, cause);
@@ -125,10 +124,10 @@ public class BankerService extends MongoService<Banker> {
 	}
 
 	public void setBalance(Transaction transaction) {
-		setBalance(Bukkit.getOfflinePlayer(transaction.getReceiver()), transaction.getAmount(), transaction.getShopGroup(), transaction);
+		setBalance(transaction::getReceiver, transaction.getAmount(), transaction.getShopGroup(), transaction);
 	}
 
-	public void setBalance(OfflinePlayer player, BigDecimal balance, ShopGroup shopGroup, Transaction transaction) {
+	public void setBalance(HasUniqueId player, BigDecimal balance, ShopGroup shopGroup, Transaction transaction) {
 		Validate.notNull(shopGroup, "Shop Group cannot be null");
 		Banker banker = get(player);
 		banker.setBalance(balance, shopGroup, transaction);

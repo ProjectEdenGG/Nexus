@@ -58,7 +58,7 @@ public class PrivateChannel implements Channel {
 
 	public Set<String> getOthersNames(Chatter chatter) {
 		return getOthers(chatter).stream()
-				.map(recipient -> Nickname.of(recipient.getOfflinePlayer()))
+				.map(Nickname::of)
 				.collect(Collectors.toSet());
 	}
 

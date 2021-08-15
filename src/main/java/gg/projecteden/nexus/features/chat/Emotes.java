@@ -7,7 +7,6 @@ import gg.projecteden.nexus.models.emote.EmoteUser;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import lombok.Getter;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.OfflinePlayer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -79,8 +78,7 @@ public enum Emotes {
 
 	public static void process(ChatEvent event) {
 		if (event.getChatter() == null) return;
-		OfflinePlayer player = event.getChatter().getOfflinePlayer();
-		EmoteUser user = new EmoteService().get(player);
+		EmoteUser user = new EmoteService().get(event.getChatter());
 		if (!user.isEnabled())
 			return;
 

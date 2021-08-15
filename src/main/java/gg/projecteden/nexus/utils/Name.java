@@ -48,6 +48,8 @@ public class Name {
 	public @Nullable String of(@NotNull HasOfflinePlayer hasPlayer) {
 		if (hasPlayer instanceof Player online)
 			return of(online);
+		if (hasPlayer instanceof HasUniqueId hasUUID)
+			return of(hasUUID);
 
 		return of(hasPlayer.getOfflinePlayer());
 	}
@@ -65,7 +67,7 @@ public class Name {
 		if (player != null)
 			return of(player);
 		else
-			return of(playerLike.getOfflinePlayer());
+			return of(playerLike.getUniqueId());
 	}
 
 	public @NotNull String put(@NotNull UUID uuid, @NotNull String name) {

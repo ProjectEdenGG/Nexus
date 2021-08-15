@@ -23,6 +23,7 @@ import lombok.experimental.Accessors;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -174,9 +175,10 @@ public enum PunishmentType implements IsColoredAndNamed {
 
 	void kick(OfflinePlayer player, Punishment punishment) {
 		Runnable task = () -> {
-			if (player.isOnline() && player.getPlayer() != null) {
-				player.getPlayer().leaveVehicle();
-				player.getPlayer().kick(punishment.getDisconnectMessage());
+			Player oPlayer = player.getPlayer();
+			if (oPlayer != null) {
+				oPlayer.leaveVehicle();
+				oPlayer.kick(punishment.getDisconnectMessage());
 			}
 		};
 

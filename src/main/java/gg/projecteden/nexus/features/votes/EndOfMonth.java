@@ -18,7 +18,6 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Data;
 import lombok.NonNull;
-import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedWriter;
@@ -54,9 +53,9 @@ public class EndOfMonth {
 
 				Tasks.sync(() -> {
 					BankerService bankerService = new BankerService();
-					data.getEco30kWinners().forEach(topVoter -> bankerService.deposit(topVoter.getVoter().getOfflinePlayer(), 30000, ShopGroup.SURVIVAL, TransactionCause.VOTE_REWARD));
-					data.getEco20kWinners().forEach(topVoter -> bankerService.deposit(topVoter.getVoter().getOfflinePlayer(), 20000, ShopGroup.SURVIVAL, TransactionCause.VOTE_REWARD));
-					data.getEco15kWinners().forEach(topVoter -> bankerService.deposit(topVoter.getVoter().getOfflinePlayer(), 15000, ShopGroup.SURVIVAL, TransactionCause.VOTE_REWARD));
+					data.getEco30kWinners().forEach(topVoter -> bankerService.deposit(topVoter.getVoter(), 30000, ShopGroup.SURVIVAL, TransactionCause.VOTE_REWARD));
+					data.getEco20kWinners().forEach(topVoter -> bankerService.deposit(topVoter.getVoter(), 20000, ShopGroup.SURVIVAL, TransactionCause.VOTE_REWARD));
+					data.getEco15kWinners().forEach(topVoter -> bankerService.deposit(topVoter.getVoter(), 15000, ShopGroup.SURVIVAL, TransactionCause.VOTE_REWARD));
 
 					future.complete(null);
 				});
@@ -190,12 +189,11 @@ public class EndOfMonth {
 		try (BufferedWriter writer = Files.newBufferedWriter(table, StandardCharsets.UTF_8)) {
 			int index = 0;
 			for (TopVoter topVoter : data.getTopVoters()) {
-				OfflinePlayer player = topVoter.getVoter().getOfflinePlayer();
 				++index;
 
 				writer.write("  <tr>" + System.lineSeparator());
 				writer.write("    <th>" + index + "</th>" + System.lineSeparator());
-				writer.write("    <th>" + Name.of(player) + "</th>" + System.lineSeparator());
+				writer.write("    <th>" + topVoter.getVoter().getName() + "</th>" + System.lineSeparator());
 				writer.write("    <th>" + topVoter.getCount() + "</th>" + System.lineSeparator());
 				writer.write("  <tr>" + System.lineSeparator());
 			}

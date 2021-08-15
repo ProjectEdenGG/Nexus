@@ -41,7 +41,7 @@ public class Compass implements PlayerOwnedObject {
 		if (!enabled)
 			return;
 
-		if (!getOfflinePlayer().isOnline())
+		if (!isOnline())
 			return;
 
 		stop();

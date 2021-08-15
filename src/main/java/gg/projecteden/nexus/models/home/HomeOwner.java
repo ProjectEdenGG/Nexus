@@ -89,7 +89,7 @@ public class HomeOwner implements PlayerOwnedObject {
 	}
 
 	public boolean hasGivenAccessTo(OfflinePlayer player) {
-		Trust trust = new TrustService().get(getOfflinePlayer());
+		Trust trust = new TrustService().get(this);
 		return trust.trusts(Type.HOMES, player);
 	}
 

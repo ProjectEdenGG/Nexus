@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.particles.providers.ParticleColorMenuProvid
 import gg.projecteden.nexus.features.particles.providers.WingsTypeProvider;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Features;
+import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.utils.EnumUtils;
 import lombok.Getter;
@@ -240,9 +241,8 @@ public enum ParticleSetting {
 		@Override
 		Object getDefault(ParticleOwner particleOwner, ParticleType particleType) {
 			for (int i = 1; i <= 16; i++)
-				if (particleOwner.getOfflinePlayer().isOnline())
-					if (particleOwner.getOnlinePlayer().hasPermission("wings.style." + i))
-						return WingsEffect.WingStyle.values()[i - 1];
+				if (LuckPermsUtils.hasPermission(particleOwner, "wings.style." + i))
+					return WingsEffect.WingStyle.values()[i - 1];
 			return WingsEffect.WingStyle.ONE;
 		}
 	},

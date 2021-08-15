@@ -51,7 +51,7 @@ public class PublicChannel implements Channel {
 	}
 
 	public String getChatterFormat(Chatter chatter) {
-		return color + "[" + nickname.toUpperCase() + "] " + Nerd.of(chatter.getOfflinePlayer()).getChatFormat() + " " + color + ChatColor.BOLD + "> " + getMessageColor();
+		return color + "[" + nickname.toUpperCase() + "] " + Nerd.of(chatter).getChatFormat() + " " + color + ChatColor.BOLD + "> " + getMessageColor();
 	}
 
 	public Set<Chatter> getRecipients(Chatter chatter) {

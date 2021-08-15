@@ -14,7 +14,8 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.Timespan.TimespanBuilder;
 import joptsimple.internal.Strings;
-import org.bukkit.OfflinePlayer;
+
+import java.util.UUID;
 
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
@@ -29,21 +30,21 @@ public class HoursDiscordCommand extends Command {
 	protected void execute(CommandEvent event) {
 		Tasks.async(() -> {
 			try {
-				OfflinePlayer player;
+				UUID playerUUID;
 
 				String[] args = event.getArgs().split(" ");
 				if (args.length > 0 && !Strings.isNullOrEmpty(args[0]))
-					player = PlayerUtils.getPlayer(args[0]);
+					playerUUID = PlayerUtils.getPlayer(args[0]).getUniqueId();
 				else
 					try {
 						DiscordUser user = new DiscordUserService().checkVerified(event.getAuthor().getId());
-						player = user.getOfflinePlayer();
+						playerUUID = user.getUniqueId();
 					} catch (InvalidInputException ex) {
 						throw new InvalidInputException("You must either link your Discord and Minecraft accounts or supply a name");
 					}
 
 				HoursService service = new HoursService();
-				Hours hours = service.get(player.getUniqueId());
+				Hours hours = service.get(playerUUID);
 
 				String message = "**[Hours]** " + hours.getName() + "'s in-game playtime";
 				message += System.lineSeparator() + "Total: **" + TimespanBuilder.of(hours.getTotal()).noneDisplay(true).format() + "**";

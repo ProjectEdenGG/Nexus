@@ -81,7 +81,7 @@ public class ScoreboardUser implements PlayerOwnedObject {
 
 	public void pause() {
 		if (scoreboard != null) {
-			if (getOfflinePlayer().isOnline())
+			if (isOnline())
 				scoreboard.unsubscribe(getOnlinePlayer());
 			scoreboard.delete();
 			scoreboard = null;
@@ -128,7 +128,7 @@ public class ScoreboardUser implements PlayerOwnedObject {
 		if (scoreboard == null)
 			return;
 
-		if (!getOfflinePlayer().isOnline()) {
+		if (!isOnline()) {
 			pause();
 			return;
 		}

@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.PublicChannel;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import lombok.NonNull;
 
 @Aliases("fc")
@@ -20,7 +21,7 @@ public class ForceChannelCommand extends CustomCommand {
 	@Path("<player> <channel>")
 	void forceChannel(Chatter chatter, PublicChannel channel) {
 		chatter.setActiveChannel(channel, true);
-		send("&3Forced &e" + chatter.getOfflinePlayer().getName() + " &3to " + channel.getColor() + channel.getName());
+		send("&3Forced &e" + Nickname.of(chatter) + " &3to " + channel.getColor() + channel.getName());
 	}
 
 }

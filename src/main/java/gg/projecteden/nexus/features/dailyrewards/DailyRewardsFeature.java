@@ -21,18 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.bukkit.Material.*;
-import static org.bukkit.enchantments.Enchantment.ARROW_DAMAGE;
-import static org.bukkit.enchantments.Enchantment.ARROW_INFINITE;
-import static org.bukkit.enchantments.Enchantment.ARROW_KNOCKBACK;
-import static org.bukkit.enchantments.Enchantment.DAMAGE_ALL;
-import static org.bukkit.enchantments.Enchantment.DIG_SPEED;
-import static org.bukkit.enchantments.Enchantment.DURABILITY;
-import static org.bukkit.enchantments.Enchantment.FIRE_ASPECT;
-import static org.bukkit.enchantments.Enchantment.KNOCKBACK;
-import static org.bukkit.enchantments.Enchantment.LUCK;
-import static org.bukkit.enchantments.Enchantment.LURE;
-import static org.bukkit.enchantments.Enchantment.MENDING;
-import static org.bukkit.enchantments.Enchantment.SILK_TOUCH;
+import static org.bukkit.enchantments.Enchantment.*;
 
 public class DailyRewardsFeature extends Feature {
 	private static final List<Reward> rewards1 = setupDailyRewards(1);
@@ -73,7 +62,7 @@ public class DailyRewardsFeature extends Feature {
 			Tasks.waitAsync(Time.SECOND.x(3), () -> {
 				for (DailyRewardUser user : service.getAllNotEarnedToday()) {
 					try {
-						if (new HoursService().get(user.getOfflinePlayer().getUniqueId()).getDaily() < Time.MINUTE.x(15) / 20)
+						if (new HoursService().get(user.getUniqueId()).getDaily() < Time.MINUTE.x(15) / 20)
 							continue;
 
 						Tasks.sync(() -> {
@@ -96,7 +85,7 @@ public class DailyRewardsFeature extends Feature {
 				user.endStreak();
 
 			streak.setEarnedToday(false);
-			if (user.getOfflinePlayer().isOnline())
+			if (user.isOnline())
 				streak.increaseStreak();
 
 			service.save(user);

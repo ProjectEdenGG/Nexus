@@ -69,7 +69,7 @@ public class CurrentTimeCommand extends CustomCommand {
 
 		DateFormat format = getDateFormat();
 		format.setTimeZone(TimeZone.getTimeZone(geoIp.getTimezone().getId()));
-		send(PREFIX + "The current time for &e" + geoIp.getOfflinePlayer().getName() + " &3is &e" + format.format(new Date()));
+		send(PREFIX + "The current time for &e" + geoIp.getName() + " &3is &e" + format.format(new Date()));
 	}
 
 	@NotNull

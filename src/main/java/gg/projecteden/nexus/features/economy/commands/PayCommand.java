@@ -46,7 +46,7 @@ public class PayCommand extends CustomCommand {
 			error("You cannot pay yourself");
 
 		try {
-			service.transfer(self, banker, amount, world, TransactionCause.PAY.of(player(), banker.getOfflinePlayer(), amount, world, reason));
+			service.transfer(self, banker, amount, world, TransactionCause.PAY.of(player(), banker, amount, world, reason));
 		} catch (NegativeBalanceException ex) {
 			throw new NotEnoughMoneyException();
 		}

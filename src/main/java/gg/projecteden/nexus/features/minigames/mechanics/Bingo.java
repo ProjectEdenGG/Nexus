@@ -134,10 +134,10 @@ public final class Bingo extends TeamlessVanillaMechanic {
 	}
 
 	private void removeBedSpawnLocation(OfflinePlayer offlinePlayer) {
-		if (!offlinePlayer.isOnline() || offlinePlayer.getPlayer() == null)
+		final Player player = offlinePlayer.getPlayer();
+		if (player == null)
 			return;
 
-		final Player player = offlinePlayer.getPlayer();
 		if (player.getBedSpawnLocation() == null)
 			return;
 

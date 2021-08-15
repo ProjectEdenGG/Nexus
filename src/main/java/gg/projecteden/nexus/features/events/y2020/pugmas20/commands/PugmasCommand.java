@@ -232,7 +232,7 @@ public class PugmasCommand extends CustomCommand implements Listener {
 				.map(ItemStack::getAmount)
 				.findFirst();
 
-		int tokensLeft = Math.abs(Pugmas20.checkDailyTokens(user.getOfflinePlayer(), "themines_" + oreType.name(), 0));
+		int tokensLeft = Math.abs(Pugmas20.checkDailyTokens(user, "themines_" + oreType.name(), 0));
 		int perToken = amount.orElse(0);
 
 		return tokensLeft * perToken;

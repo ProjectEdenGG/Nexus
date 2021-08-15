@@ -53,9 +53,9 @@ public class GeoIPCommand extends CustomCommand implements Listener {
 	void geoip(GeoIP geoIp) {
 		String location = geoIp.getFriendlyLocationString();
 		if (isPlayer())
-			send(json("&3Location of &e" + geoIp.getOfflinePlayer().getName() + "&3: &e" + location).hover(geoIp.getIp()).insert(geoIp.getIp()));
+			send(json("&3Location of &e" + geoIp.getName() + "&3: &e" + location).hover(geoIp.getIp()).insert(geoIp.getIp()));
 		else
-			send("Location of " + geoIp.getOfflinePlayer().getName() + " (" + geoIp.getIp() + "): " + location);
+			send("Location of " + geoIp.getName() + " (" + geoIp.getIp() + "): " + location);
 	}
 
 	@EventHandler

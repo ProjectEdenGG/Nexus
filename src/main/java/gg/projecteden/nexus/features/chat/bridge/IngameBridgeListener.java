@@ -53,7 +53,7 @@ public class IngameBridgeListener implements Listener {
 
 				Nickname fromNickname = new NicknameService().getFromNickname(search);
 				if (fromNickname != null) {
-					mentioned = new DiscordUserService().get(fromNickname.getOfflinePlayer());
+					mentioned = new DiscordUserService().get(fromNickname);
 					if (mentioned.getUserId() != null) {
 						message = message.replace(group, "<@" + mentioned.getUserId() + ">");
 						continue;

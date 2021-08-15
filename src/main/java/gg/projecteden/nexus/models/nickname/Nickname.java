@@ -153,7 +153,7 @@ public class Nickname extends gg.projecteden.models.nickname.Nickname implements
 		}
 
 		private Nickname getData() {
-			return new NicknameService().get(getOfflinePlayer());
+			return new NicknameService().get(this);
 		}
 
 		private void responseReceived() {

@@ -153,10 +153,10 @@ public class ChatManager {
 			recipient.setLastPrivateMessage(event.getChannel());
 
 			if (!recipient.equals(event.getChatter())) {
-				boolean canSee = canSee(event.getChatter().getOfflinePlayer(), recipient.getOfflinePlayer());
-				JsonBuilder notOnline = new JsonBuilder(Chat.PREFIX).next(new PlayerNotOnlineException(recipient.getOfflinePlayer()).getJson());
+				boolean canSee = canSee(event.getChatter(), recipient);
+				JsonBuilder notOnline = new JsonBuilder(Chat.PREFIX).next(new PlayerNotOnlineException(recipient).getJson());
 
-				if (!recipient.getOfflinePlayer().isOnline())
+				if (!recipient.isOnline())
 					event.getChatter().sendMessage(notOnline);
 				else {
 					recipient.sendMessage(event, from, MessageType.CHAT);

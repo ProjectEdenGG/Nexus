@@ -134,7 +134,7 @@ public class Censor {
 							else
 								type = PunishmentType.WARN;
 
-							Punishments.of(event.getChatter().getOfflinePlayer()).add(Punishment.ofType(type)
+							Punishments.of(event.getChatter()).add(Punishment.ofType(type)
 									.punisher(StringUtils.getUUID0())
 									.input(censorItem.getPunishReason() + ": " + event.getOriginalMessage())
 									.now(true));

@@ -2,11 +2,9 @@ package gg.projecteden.nexus.models;
 
 import gg.projecteden.mongodb.annotations.PlayerClass;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.Tasks;
+import me.lexikiq.HasUniqueId;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.UUID;
@@ -23,20 +21,8 @@ public abstract class DatabaseService {
 		throw new UnsupportedOperationException();
 	}
 
-	public <T> T get(Player player) {
+	public <T> T get(HasUniqueId player) {
 		return get(player.getUniqueId());
-	}
-
-	public <T> T get(OfflinePlayer player) {
-		return get(player.getUniqueId());
-	}
-
-	public <T> T get(Nerd nerd) {
-		return get(nerd.getOfflinePlayer());
-	}
-
-	public <T> T get(PlayerOwnedObject player) {
-		return get(player.getUuid());
 	}
 
 	abstract public <T> List<T> getAll();

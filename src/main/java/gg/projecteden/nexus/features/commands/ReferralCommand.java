@@ -33,7 +33,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.bukkit.OfflinePlayer;
+import me.lexikiq.HasUniqueId;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -170,7 +170,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 		private final List<UUID> readRules = new ArrayList<>();
 		private final HoursService hoursService = new HoursService();
 
-		void add(OfflinePlayer player) {
+		void add(HasUniqueId player) {
 			final UUID uuid = player.getUniqueId();
 			players.add(uuid);
 			secondsPlayed.put(uuid, hoursService.get(player).getTotal());
@@ -226,7 +226,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 
 			final String site = getSite(ip);
 
-			turnoverData.computeIfAbsent(site, $ -> new TurnoverData(site)).add(referral.getOfflinePlayer());
+			turnoverData.computeIfAbsent(site, $ -> new TurnoverData(site)).add(referral);
 		}
 
 		final List<TurnoverData> sorted = turnoverData.values().stream().sorted(Comparator.comparing(TurnoverData::mean)).toList();

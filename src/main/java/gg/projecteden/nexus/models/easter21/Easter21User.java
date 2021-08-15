@@ -61,7 +61,7 @@ public class Easter21User implements PlayerOwnedObject {
 		BankerService bankerService = new BankerService();
 		switch (found.size()) {
 			case 5 -> {
-				bankerService.deposit(TransactionCause.EVENT.of(null, getOfflinePlayer(), BigDecimal.valueOf(5000), ShopGroup.SURVIVAL, "Found 5 easter eggs"));
+				bankerService.deposit(TransactionCause.EVENT.of(null, this, BigDecimal.valueOf(5000), ShopGroup.SURVIVAL, "Found 5 easter eggs"));
 				sendMessage(PREFIX + "You have received &e$5,000 &3for finding &e5 easter eggs");
 			}
 			case 10 -> {
@@ -70,7 +70,7 @@ public class Easter21User implements PlayerOwnedObject {
 				sendMessage(PREFIX + "You have received &e25 vote points &3for finding &e10 easter eggs");
 			}
 			case 20 -> {
-				bankerService.deposit(TransactionCause.EVENT.of(null, getOfflinePlayer(), BigDecimal.valueOf(10000), ShopGroup.SURVIVAL, "Found 20 easter eggs"));
+				bankerService.deposit(TransactionCause.EVENT.of(null, this, BigDecimal.valueOf(10000), ShopGroup.SURVIVAL, "Found 20 easter eggs"));
 				sendMessage(PREFIX + "You have received &e$10,000 &3for finding &e20 easter eggs");
 			}
 			case 30 -> {
@@ -79,7 +79,7 @@ public class Easter21User implements PlayerOwnedObject {
 				sendMessage(PREFIX + "You have received &e50 vote points &3for finding &e30 easter eggs");
 			}
 			case 35 -> {
-				bankerService.deposit(TransactionCause.EVENT.of(null, getOfflinePlayer(), BigDecimal.valueOf(35000), ShopGroup.SURVIVAL, "Found 35 easter eggs"));
+				bankerService.deposit(TransactionCause.EVENT.of(null, this, BigDecimal.valueOf(35000), ShopGroup.SURVIVAL, "Found 35 easter eggs"));
 				sendMessage(PREFIX + "You have received &e$35,000 &3for finding &e35 easter eggs");
 			}
 		}

@@ -27,13 +27,13 @@ import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.TimeUtils.Time;
 import lombok.Getter;
 import lombok.Setter;
+import me.lexikiq.HasUniqueId;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -161,7 +161,7 @@ public class Pugmas20 implements Listener {
 		tokenMaxes.put(("pugmas20_" + id).toLowerCase(), amount);
 	}
 
-	public static int checkDailyTokens(OfflinePlayer player, String id, int amount) {
+	public static int checkDailyTokens(HasUniqueId player, String id, int amount) {
 		EventUserService service = new EventUserService();
 		EventUser user = service.get(player);
 

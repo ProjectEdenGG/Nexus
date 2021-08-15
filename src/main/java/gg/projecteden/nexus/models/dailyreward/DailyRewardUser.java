@@ -9,7 +9,6 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Name;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -70,7 +69,7 @@ public class DailyRewardUser implements PlayerOwnedObject {
 			Nexus.log("[DailyRewards] Increasing streak for " + Name.of(uuid));
 			earnedToday = true;
 			++streak;
-			PlayerUtils.send(getOfflinePlayer(), new JsonBuilder()
+			sendMessage(new JsonBuilder()
 				.next(getPrefix("DailyRewards") + "Your streak has &eincreased&3! " + "Use &c/dailyrewards &3to claim your reward")
 				.command("/dr"));
 		}
