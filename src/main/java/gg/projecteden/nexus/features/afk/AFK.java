@@ -10,20 +10,15 @@ import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.Time;
-import lombok.NoArgsConstructor;
 import me.lexikiq.HasUniqueId;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerMoveEvent;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-@NoArgsConstructor
-public class AFK extends Feature implements Listener {
+public class AFK extends Feature {
 	public static final String PREFIX = StringUtils.getPrefix("AFK");
 	private static final AFKUserService service = new AFKUserService();
 
@@ -73,15 +68,6 @@ public class AFK extends Feature implements Listener {
 			return;
 
 		afkUsers.forEach(AFKUser::limbo);
-	}
-
-	@EventHandler
-	public void onPlayerMove(PlayerMoveEvent event) {
-		final Player player = event.getPlayer();
-		if (!player.getWorld().getName().equals("server"))
-			return;
-
-		get(player).unlimbo();
 	}
 
 	@Override

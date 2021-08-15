@@ -10,11 +10,14 @@ import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.M
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.afk.events.NotAFKEvent;
 import gg.projecteden.nexus.models.afk.events.NowAFKEvent;
+import gg.projecteden.nexus.models.back.Back;
+import gg.projecteden.nexus.models.back.BackService;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.TimeUtils.Time;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,6 +28,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -33,6 +37,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -57,7 +62,6 @@ public class AFKUser implements PlayerOwnedObject {
 	private boolean forceAfk;
 
 	private boolean limbo;
-	private Location limboLocation;
 
 	private Map<AFKSetting, Boolean> settings = new HashMap<>();
 
@@ -65,14 +69,28 @@ public class AFKUser implements PlayerOwnedObject {
 		new AFKUserService().save(this);
 	}
 
+	private static WorldGuardUtils worldGuardUtils;
+
+	public boolean isLimbo() {
+		if (!isOnline() || !isAfk() || !limbo)
+			return false;
+
+		if (worldGuardUtils == null)
+			worldGuardUtils = new WorldGuardUtils(Objects.requireNonNull(Bukkit.getWorld("server")));
+
+		if (!worldGuardUtils.isInRegion(getOnlinePlayer().getLocation(), "limbo"))
+			return false;
+
+		return true;
+	}
+
 	public void limbo() {
 		if (!isOnline() || isLimbo())
 			return;
 
 		final Player player = getOnlinePlayer();
-		limboLocation = player.getLocation();
 		forceAfk = true;
-		WarpType.STAFF.get("limbo").teleportAsync(player, TeleportCause.PLUGIN).thenRun(() -> {
+		WarpType.STAFF.get("limbo").teleportAsync(player).thenRun(() -> {
 			update();
 			limbo = true;
 			forceAfk = false;
@@ -82,18 +100,25 @@ public class AFKUser implements PlayerOwnedObject {
 	}
 
 	public void unlimbo() {
-		if (!isOnline() || !isLimbo())
+		if (!isLimbo())
 			return;
-
-		final Player player = getOnlinePlayer();
-		if (limboLocation == null) {
-			Nexus.severe("Limbo location for " + getNickname() + " is null!");
-			WarpType.NORMAL.get("spawn").teleportAsync(getOnlinePlayer(), TeleportCause.PLUGIN);
-			return;
-		}
 
 		limbo = false;
-		player.teleportAsync(limboLocation);
+
+		final Player player = getOnlinePlayer();
+		final BackService backService = new BackService();
+		final Back back = backService.get(player);
+		final Location location = back.getLocations().get(0);
+
+		if (location == null) {
+			Nexus.severe("[AFK] Back location for " + getNickname() + " is null");
+			WarpType.NORMAL.get("spawn").teleportAsync(getOnlinePlayer(), TeleportCause.PLUGIN);
+		} else {
+			player.teleportAsync(location, TeleportCause.PLUGIN);
+			back.getLocations().remove(0);
+			backService.save(back);
+		}
+
 		save();
 	}
 
@@ -184,10 +209,10 @@ public class AFKUser implements PlayerOwnedObject {
 	}
 
 	public void notAfk() {
+		unlimbo();
 		setAfk(false);
 		setMessage(null);
 		update();
-		unlimbo();
 
 		new NotAFKEvent(this).callEvent();
 
