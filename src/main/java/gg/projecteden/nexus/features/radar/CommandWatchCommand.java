@@ -6,7 +6,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -35,7 +34,7 @@ public class CommandWatchCommand extends CustomCommand implements Listener {
 
 	@Path("<player>")
 	void commandWatch(Player target) {
-		if (!isAdmin() && !Rank.GUEST.equals(Nerd.of(target).getRank()))
+		if (!isAdmin() && !Rank.GUEST.equals(Rank.of(target)))
 			error("You can only command watch guests");
 
 		watchMap.putIfAbsent(target, new ArrayList<>());

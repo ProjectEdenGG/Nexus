@@ -147,8 +147,8 @@ public class TeleportCommand extends CustomCommand implements Listener {
 		SettingService settingService = new SettingService();
 		Setting setting = settingService.get(to, "tpDisable");
 		if (setting.getBoolean()) {
-			Rank fromRank = Nerd.of(from).getRank();
-			Rank toRank = Nerd.of(to).getRank();
+			Rank fromRank = Rank.of(from);
+			Rank toRank = Rank.of(to);
 			if (fromRank.ordinal() > toRank.ordinal())
 				if (!(Arrays.asList(Rank.BUILDER, Rank.ARCHITECT).contains(toRank) && fromRank == Rank.MODERATOR))
 					return false;

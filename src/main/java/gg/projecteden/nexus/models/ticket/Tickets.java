@@ -7,7 +7,7 @@ import gg.projecteden.mongodb.serializers.LocalDateTimeConverter;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
-import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -77,7 +77,7 @@ public class Tickets implements PlayerOwnedObject {
 		}
 
 		public boolean canBeSeenBy(Player player) {
-			return Nerd.of(player).getRank().isMod() || ownsTicket(player);
+			return Rank.of(player).isMod() || ownsTicket(player);
 		}
 
 		public void setOpen(boolean open) {

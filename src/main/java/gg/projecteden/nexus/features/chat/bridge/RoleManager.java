@@ -4,7 +4,6 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
-import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
@@ -39,7 +38,7 @@ public class RoleManager {
 			return;
 
 		String nickname = Nickname.of(user);
-		Color roleColor = Nerd.of(user).getRank().getDiscordColor();
+		Color roleColor = user.getRank().getDiscordColor();
 
 		if (roleColor == null) {
 			user.setRoleId(null);

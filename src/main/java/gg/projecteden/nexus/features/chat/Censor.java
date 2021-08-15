@@ -124,7 +124,7 @@ public class Censor {
 						event.setCancelled(true);
 
 					if (censorItem.isPunish()) {
-						if (!event.getChatter().getNerd().getRank().isStaff()) {
+						if (!event.getChatter().getRank().isStaff()) {
 							event.setCancelled(true);
 
 							PunishmentType type;

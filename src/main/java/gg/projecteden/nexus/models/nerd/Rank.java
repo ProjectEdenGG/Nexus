@@ -125,7 +125,7 @@ public enum Rank implements IsColoredAndNamed {
 
 	public List<Nerd> getOnlineNerds() {
 		return PlayerUtils.getOnlinePlayers().stream()
-				.filter(player -> Nerd.of(player).getRank() == this)
+				.filter(player -> Rank.of(player) == this)
 				.map(Nerd::of)
 				.sorted(Comparator.comparing(Nerd::getNickname))
 				.collect(Collectors.toList());
@@ -137,7 +137,7 @@ public enum Rank implements IsColoredAndNamed {
 
 	public static List<Nerd> getOnlineStaff() {
 		return PlayerUtils.getOnlinePlayers().stream()
-				.filter(player -> Nerd.of(player).getRank().isStaff() && Nerd.of(player).getRank().isActive())
+				.filter(player -> Rank.of(player).isStaff() && Rank.of(player).isActive())
 				.map(Nerd::of)
 				.sorted(Comparator.comparing(Nerd::getNickname))
 				.collect(Collectors.toList());
@@ -145,7 +145,7 @@ public enum Rank implements IsColoredAndNamed {
 
 	public static List<Nerd> getOnlineMods() {
 		return PlayerUtils.getOnlinePlayers().stream()
-				.filter(player -> Nerd.of(player).getRank().isMod() && Nerd.of(player).getRank().isActive())
+				.filter(player -> Rank.of(player).isMod() && Rank.of(player).isActive())
 				.map(Nerd::of)
 				.sorted(Comparator.comparing(Nerd::getNickname))
 				.collect(Collectors.toList());

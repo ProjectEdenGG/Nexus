@@ -5,7 +5,7 @@ import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.discord.DiscordUser;
-import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -243,7 +243,7 @@ public class Discord extends Feature {
 
 	private static String getStaffBridgeTopic() {
 		List<Player> players = PlayerUtils.getOnlinePlayers().stream()
-				.filter(player -> Nerd.of(player).getRank().isStaff())
+				.filter(player -> Rank.of(player).isStaff())
 				.sorted(Comparator.comparing(Nickname::of))
 				.collect(Collectors.toList());
 

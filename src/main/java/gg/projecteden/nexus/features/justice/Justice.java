@@ -105,7 +105,7 @@ public class Justice extends Feature implements Listener {
 
 		punishments.getAnyActiveBan().ifPresent(kick);
 
-		if (!punishments.getNerd().getRank().isStaff())
+		if (!punishments.getRank().isStaff())
 			for (UUID alt : punishments.getAlts())
 				Punishments.of(alt).getActiveAltBan().ifPresent(kick);
 
@@ -227,7 +227,7 @@ public class Justice extends Feature implements Listener {
 						+ watchlist.getReason() + " &cby &e" + punisher + " &con &e" + timestamp));
 			};
 
-			if (Nerd.of(player).getRank().isMod())
+			if (Rank.of(player).isMod())
 				for (Player onlinePlayer : PlayerUtils.getOnlinePlayers())
 					Punishments.of(onlinePlayer).getActiveWatchlist().ifPresent(watchlist ->
 							PlayerUtils.send(player, new JsonBuilder(PREFIX).next(notification.apply(watchlist))));

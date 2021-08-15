@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import gg.projecteden.nexus.models.mail.Mailer.Mail;
 import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.nickname.NicknameService;
 import gg.projecteden.nexus.utils.AdventureUtils;
@@ -92,6 +93,10 @@ public interface PlayerOwnedObject extends gg.projecteden.interfaces.PlayerOwned
 
 	default @NotNull Nerd getNerd() {
 		return Nerd.of(this);
+	}
+
+	default @NotNull Rank getRank() {
+		return Rank.of(this);
 	}
 
 	default @NotNull Nerd getOnlineNerd() {

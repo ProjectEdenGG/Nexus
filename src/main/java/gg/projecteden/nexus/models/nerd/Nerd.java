@@ -134,9 +134,12 @@ public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwned
 		return true;
 	}
 
+	// this is just here for the ToString.Include
 	@ToString.Include
+	@NotNull
+	@Override
 	public Rank getRank() {
-		return Rank.of(this);
+		return PlayerOwnedObject.super.getRank();
 	}
 
 	/**

@@ -7,7 +7,6 @@ import gg.projecteden.nexus.features.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.features.discord.DiscordId.User;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
-import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.setting.Setting;
 import gg.projecteden.nexus.models.setting.SettingService;
@@ -66,7 +65,7 @@ public class DiscordListener extends ListenerAdapter {
 					if (user != null) {
 						Discord.addRole(event.getUser().getId(), Role.VERIFIED);
 
-						if (Nerd.of(user.getUuid()).getRank() == Rank.VETERAN)
+						if (user.getRank() == Rank.VETERAN)
 							Discord.addRole(event.getUser().getId(), Role.VETERAN);
 
 						if (LuckPermsUtils.hasPermission(user, "donated"))

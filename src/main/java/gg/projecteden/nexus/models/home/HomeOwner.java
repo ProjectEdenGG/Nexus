@@ -63,7 +63,7 @@ public class HomeOwner implements PlayerOwnedObject {
 
 	@ToString.Include
 	public int getHomesLimit() {
-		Rank rank = getNerd().getRank();
+		Rank rank = getRank();
 		if (rank.isAdmin())
 			return 999;
 		return rank.enabledOrdinal() + 3 + extraHomes;
