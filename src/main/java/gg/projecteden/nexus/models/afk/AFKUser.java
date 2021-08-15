@@ -104,14 +104,19 @@ public class AFKUser implements PlayerOwnedObject {
 		final Player player = getOnlinePlayer();
 		final BackService backService = new BackService();
 		final Back back = backService.get(player);
-		final Location location = back.getLocations().get(0);
+		final Location location = back.getLocations().isEmpty() ? null : back.getLocations().remove(0);
 
 		if (location == null) {
 			Nexus.severe("[AFK] Back location for " + getNickname() + " is null");
-			WarpType.NORMAL.get("spawn").teleportAsync(getOnlinePlayer(), TeleportCause.PLUGIN);
+			WarpType.NORMAL.get("spawn").teleportAsync(getOnlinePlayer(), TeleportCause.PLUGIN).thenRun(() -> {
+				afk = false;
+				notAfk();
+			});
 		} else {
-			player.teleportAsync(location, TeleportCause.PLUGIN);
-			back.getLocations().remove(0);
+			player.teleportAsync(location, TeleportCause.PLUGIN).thenRun(() -> {
+				afk = false;
+				notAfk();
+			});
 			backService.save(back);
 		}
 	}
