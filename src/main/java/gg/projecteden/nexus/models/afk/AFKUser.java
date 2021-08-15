@@ -94,9 +94,10 @@ public class AFKUser implements PlayerOwnedObject {
 			update();
 			limbo = true;
 			forceAfk = false;
+			save();
 		});
+
 		sendMessage(AFK.PREFIX + "You have been sent to AFK limbo. Move around to exit");
-		save();
 	}
 
 	public void unlimbo() {
