@@ -146,7 +146,7 @@ public final class WorldGuardUtils {
 
 	public @NotNull Set<ProtectedRegion> getRegionsAt(@NotNull Location location) {
 		try {
-			return REGIONS_AT_CACHE.get(location);
+			return REGIONS_AT_CACHE.get(location.toBlockLocation());
 		} catch (ExecutionException ex) {
 			ex.printStackTrace();
 			return Collections.emptySet();
