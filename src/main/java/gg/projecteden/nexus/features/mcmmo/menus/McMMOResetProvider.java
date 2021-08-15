@@ -162,7 +162,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 	@Override
 	public void open(Player player) {
 		SmartInventory.builder()
-				.provider(new McMMOResetProvider())
+				.provider(this)
 				.size(6, 9)
 				.title(StringUtils.colorize("McMMO Reset"))
 				.build().open(player);
