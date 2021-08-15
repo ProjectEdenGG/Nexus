@@ -1,12 +1,13 @@
 package gg.projecteden.nexus.features.votes.vps;
 
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.voter.VoterService;
+import gg.projecteden.nexus.utils.LuckPermsUtils;
 import lombok.NonNull;
+import net.luckperms.api.context.ImmutableContextSet;
 
 public class VPSCommand extends CustomCommand {
 
@@ -21,7 +22,7 @@ public class VPSCommand extends CustomCommand {
 
 	@Path("buy plot")
 	void buyPlot() {
-		if (Nexus.getPerms().playerHas("creative", player(), "plots.plot.6"))
+		if (LuckPermsUtils.hasPermission(uuid(), "plots.plot.6", ImmutableContextSet.of("world", "creative")))
 			error("You have already purchased the maximum amount of plots");
 
 		new VoterService().edit(player(), voter -> voter.takePoints(150));

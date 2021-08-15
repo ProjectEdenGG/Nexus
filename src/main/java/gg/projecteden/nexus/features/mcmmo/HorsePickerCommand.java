@@ -4,12 +4,12 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -129,7 +129,7 @@ public class HorsePickerCommand extends CustomCommand {
 			for (HorseMarking marking : HorseMarking.values()) {
 				contents.set(1, column++, ClickableItem.from(nameItem(marking.getItem(), marking.getName()), e -> {
 					spawnHorse(player, color, Horse.Style.valueOf(marking.name()));
-					Nexus.getPerms().playerRemove(player, "horsepicker.pick");
+					LuckPermsUtils.PermissionChange.unset().permission("horsepicker.pick").player(player).runAsync();
 				}));
 			}
 		}

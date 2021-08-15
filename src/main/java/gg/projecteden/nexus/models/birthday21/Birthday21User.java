@@ -79,7 +79,7 @@ public class Birthday21User implements PlayerOwnedObject {
 		BankerService bankerService = new BankerService();
 		switch (found.size()) {
 			case 5 -> {
-				bankerService.deposit(Transaction.TransactionCause.EVENT.of(null, getOfflinePlayer(), BigDecimal.valueOf(5000), Shop.ShopGroup.SURVIVAL, "Found 5 birthday cakes"));
+				bankerService.deposit(Transaction.TransactionCause.EVENT.of(null, this, BigDecimal.valueOf(5000), Shop.ShopGroup.SURVIVAL, "Found 5 birthday cakes"));
 				sendMessage(PREFIX + "You have received &e$5,000 &3for finding &e5 birthday cakes");
 			}
 			case 10 -> {
@@ -88,11 +88,11 @@ public class Birthday21User implements PlayerOwnedObject {
 				sendMessage(PREFIX + "You have received &e25 vote points &3for finding &e10 birthday cakes");
 			}
 			case 20 -> {
-				bankerService.deposit(Transaction.TransactionCause.EVENT.of(null, getOfflinePlayer(), BigDecimal.valueOf(10000), Shop.ShopGroup.SURVIVAL, "Found 20 birthday cakes"));
+				bankerService.deposit(Transaction.TransactionCause.EVENT.of(null, this, BigDecimal.valueOf(10000), Shop.ShopGroup.SURVIVAL, "Found 20 birthday cakes"));
 				sendMessage(PREFIX + "You have received &e$10,000 &3for finding &e20 birthday cakes");
 			}
 			case 24 -> {
-				bankerService.deposit(Transaction.TransactionCause.EVENT.of(null, getOfflinePlayer(), BigDecimal.valueOf(15000), Shop.ShopGroup.SURVIVAL, "Found 24 birthday cakes"));
+				bankerService.deposit(Transaction.TransactionCause.EVENT.of(null, this, BigDecimal.valueOf(15000), Shop.ShopGroup.SURVIVAL, "Found 24 birthday cakes"));
 				voter.givePoints(25);
 				voterService.save(voter);
 				sendMessage(PREFIX + "You have received &e25 vote points &3and &e$15,000 &3for finding &eall 24 birthday cakes");

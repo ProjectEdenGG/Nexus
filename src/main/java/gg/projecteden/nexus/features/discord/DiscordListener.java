@@ -12,6 +12,7 @@ import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.setting.Setting;
 import gg.projecteden.nexus.models.setting.SettingService;
 import gg.projecteden.nexus.utils.HttpUtils;
+import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -68,7 +69,7 @@ public class DiscordListener extends ListenerAdapter {
 						if (Nerd.of(user.getUuid()).getRank() == Rank.VETERAN)
 							Discord.addRole(event.getUser().getId(), Role.VETERAN);
 
-						if (Nexus.getPerms().playerHas(null, user.getOfflinePlayer(), "donated"))
+						if (LuckPermsUtils.hasPermission(user, "donated"))
 							Discord.addRole(event.getUser().getId(), Role.SUPPORTER);
 					}
 				});
@@ -77,7 +78,7 @@ public class DiscordListener extends ListenerAdapter {
 	}
 
 	@Data
-	private class RandomPugClubResponse {
+	private static class RandomPugClubResponse {
 		private String image;
 		private String link;
 	}

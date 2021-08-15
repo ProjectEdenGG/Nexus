@@ -1,15 +1,16 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.LuckPermsUtils.PermissionChange;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import net.luckperms.api.context.ImmutableContextSet;
 import org.bukkit.OfflinePlayer;
 
 import java.util.ArrayList;
@@ -55,8 +56,8 @@ public class PermHelperCommand extends CustomCommand {
 			List<Integer> ints = new ArrayList<>();
 
 			for (int i = 1; i <= MAX; i++)
-				if (Nexus.getPerms().playerHas(world, player, permission + i)) {
-					Nexus.getPerms().playerRemove(world, player, permission + i);
+				if (LuckPermsUtils.hasPermission(player, permission + i, ImmutableContextSet.of("world", world))) {
+					LuckPermsUtils.PermissionChange.unset().permission(permission + i).player(player).world(world).runAsync();
 					ints.add(i);
 				}
 
@@ -65,7 +66,7 @@ public class PermHelperCommand extends CustomCommand {
 
 		public int getLimit(OfflinePlayer player) {
 			for (int i = MAX; i > 0; i--)
-				if (Nexus.getPerms().playerHas(world, player, permission + i))
+				if (LuckPermsUtils.hasPermission(player, permission + i, ImmutableContextSet.of("world", world)))
 					return i;
 			return 0;
 		}

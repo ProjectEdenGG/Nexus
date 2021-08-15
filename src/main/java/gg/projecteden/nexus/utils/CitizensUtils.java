@@ -5,7 +5,6 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import lombok.Builder;
-import me.lexikiq.HasOfflinePlayer;
 import me.lexikiq.HasUniqueId;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.SpawnReason;
@@ -58,9 +57,9 @@ public class CitizensUtils {
 	 * @param npc NPC to update
 	 * @param player a server member
 	 */
-	public static void updateNameAndSkin(NPC npc, HasOfflinePlayer player) {
-		updateName(npc, Nickname.of(player.getOfflinePlayer()));
-		updateSkin(npc, Name.of(player.getOfflinePlayer()));
+	public static void updateNameAndSkin(NPC npc, HasUniqueId player) {
+		updateName(npc, Nickname.of(player));
+		updateSkin(npc, Name.of(player));
 	}
 
 	/**
@@ -115,13 +114,16 @@ public class CitizensUtils {
 	}
 	*/
 
-	public static NPC spawnNPC(HasOfflinePlayer owner, Location location) {
-		NPC npc = Nexus.getCitizens().getNPCRegistry().createNPC(EntityType.PLAYER, Nickname.of(owner.getOfflinePlayer()));
+	public static NPC spawnNPC(HasUniqueId owner, Location location) {
+		String nickname = Nickname.of(owner);
+		String name = Name.of(owner);
+
+		NPC npc = Nexus.getCitizens().getNPCRegistry().createNPC(EntityType.PLAYER, nickname);
 		npc.spawn(location, SpawnReason.PLUGIN);
 		Owner npcOwner = new Owner();
-		npcOwner.setOwner(Nickname.of(owner.getOfflinePlayer()), owner.getOfflinePlayer().getUniqueId());
+		npcOwner.setOwner(nickname, owner.getUniqueId());
 		npc.addTrait(npcOwner);
-		updateSkin(npc, Name.of(owner.getOfflinePlayer()), true);
+		updateSkin(npc, name, true);
 		return npc;
 	}
 

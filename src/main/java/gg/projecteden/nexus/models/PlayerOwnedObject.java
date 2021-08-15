@@ -21,7 +21,6 @@ import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,6 +41,19 @@ public interface PlayerOwnedObject extends gg.projecteden.interfaces.PlayerOwned
 	@Override
 	default @NotNull UUID getUniqueId() {return getUuid();}
 
+	/**
+	 * Gets the offline player for this object.
+	 * <p>
+	 * <b>WARNING:</b> This method involves I/O operations to fetch user data which can be costly,
+	 * especially if used in a Task. Please consider if {@link #getUuid()}, {@link #getName()},
+	 * or {@link #isOnline()} are suitable for your purposes.
+	 * </p>
+	 * If a method requires {@link OfflinePlayer} and just uses it for {@link #getUniqueId()},
+	 * consider changing the parameter of the method to {@link HasUniqueId}.
+	 * @return offline player
+	 * @deprecated method can be costly and often unnecessary
+	 */
+	@Deprecated
 	default @NotNull OfflinePlayer getOfflinePlayer() {
 		return Bukkit.getOfflinePlayer(getUuid());
 	}
@@ -51,7 +63,7 @@ public interface PlayerOwnedObject extends gg.projecteden.interfaces.PlayerOwned
 	 * @return online player or null
 	 */
 	default @Nullable Player getPlayer() {
-		return getOfflinePlayer().getPlayer();
+		return Bukkit.getPlayer(getUuid());
 	}
 
 	/**
@@ -60,14 +72,14 @@ public interface PlayerOwnedObject extends gg.projecteden.interfaces.PlayerOwned
 	 * @throws PlayerNotOnlineException player is not online
 	 */
 	default @NotNull Player getOnlinePlayer() throws PlayerNotOnlineException {
-		Player player = getOfflinePlayer().getPlayer();
+		Player player = getPlayer();
 		if (player == null)
-			throw new PlayerNotOnlineException(getOfflinePlayer());
+			throw new PlayerNotOnlineException(getUuid());
 		return player;
 	}
 
 	default boolean isOnline() {
-		return getOfflinePlayer().isOnline();
+		return getPlayer() != null;
 	}
 
 	default boolean isAfk() {
@@ -176,7 +188,7 @@ public interface PlayerOwnedObject extends gg.projecteden.interfaces.PlayerOwned
 	}
 
 	@Override
-	default @NonNull Identity identity() {
+	default @NotNull Identity identity() {
 		return Identity.identity(getUuid());
 	}
 

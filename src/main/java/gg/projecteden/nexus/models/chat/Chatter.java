@@ -4,7 +4,6 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
 import gg.projecteden.nexus.features.chat.ChatManager;
 import gg.projecteden.nexus.features.chat.translator.Language;
@@ -14,6 +13,7 @@ import gg.projecteden.nexus.framework.persistence.serializer.mongodb.PrivateChan
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.PublicChannelConverter;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import lombok.AllArgsConstructor;
@@ -86,13 +86,7 @@ public class Chatter implements PlayerOwnedObject {
 		if (channel.getPermission().isEmpty() && channel.getRank() == null)
 			return true;
 
-		boolean hasPerm;
-		if (isOnline())
-			hasPerm = getOnlinePlayer().hasPermission(channel.getPermission());
-		else
-			hasPerm = Nexus.getPerms().playerHas(null, getOfflinePlayer(), channel.getPermission());
-
-		if (!hasPerm)
+		if (!LuckPermsUtils.hasPermission(this, channel.getPermission()))
 			return false;
 
 		if (channel.getRank() != null)

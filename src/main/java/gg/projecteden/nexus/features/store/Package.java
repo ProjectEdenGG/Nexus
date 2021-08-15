@@ -51,6 +51,7 @@ import gg.projecteden.utils.TimeUtils.Time;
 import gg.projecteden.utils.Utils;
 import lombok.SneakyThrows;
 import me.lexikiq.HasUniqueId;
+import net.luckperms.api.context.ImmutableContextSet;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -715,8 +716,10 @@ public enum Package {
 		}
 
 		List<String> permissions = getPermissions();
-		if (!Utils.isNullOrEmpty(permissions))
-			return LuckPermsUtils.hasPermission(player, permissions.get(0), getWorld());
+		if (!Utils.isNullOrEmpty(permissions)) {
+			org.bukkit.World world = getWorld();
+			return LuckPermsUtils.hasPermission(player, permissions.get(0), world == null ? ImmutableContextSet.empty() : ImmutableContextSet.of("world", world.getName()));
+		}
 
 		String permissionGroup = getPermissionGroup();
 		if (!StringUtils.isNullOrEmpty(permissionGroup))
