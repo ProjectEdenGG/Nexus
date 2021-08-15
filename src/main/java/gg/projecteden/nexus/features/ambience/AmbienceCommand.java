@@ -141,6 +141,8 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 
 			ambience.play();
 		}
+
+		service.save(config);
 	}
 
 	@EventHandler
