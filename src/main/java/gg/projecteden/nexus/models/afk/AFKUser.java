@@ -61,8 +61,6 @@ public class AFKUser implements PlayerOwnedObject {
 	private Location location;
 	private boolean forceAfk;
 
-	private boolean limbo;
-
 	private Map<AFKSetting, Boolean> settings = new HashMap<>();
 
 	private void save() {
@@ -72,7 +70,7 @@ public class AFKUser implements PlayerOwnedObject {
 	private static WorldGuardUtils worldGuardUtils;
 
 	public boolean isLimbo() {
-		if (!isOnline() || !isAfk() || !limbo)
+		if (!isOnline())
 			return false;
 
 		if (worldGuardUtils == null)
@@ -92,7 +90,6 @@ public class AFKUser implements PlayerOwnedObject {
 		forceAfk = true;
 		WarpType.STAFF.get("limbo").teleportAsync(player).thenRun(() -> {
 			update();
-			limbo = true;
 			forceAfk = false;
 			save();
 		});
@@ -103,8 +100,6 @@ public class AFKUser implements PlayerOwnedObject {
 	public void unlimbo() {
 		if (!isLimbo())
 			return;
-
-		limbo = false;
 
 		final Player player = getOnlinePlayer();
 		final BackService backService = new BackService();
@@ -119,8 +114,6 @@ public class AFKUser implements PlayerOwnedObject {
 			back.getLocations().remove(0);
 			backService.save(back);
 		}
-
-		save();
 	}
 
 	@Getter
@@ -210,7 +203,8 @@ public class AFKUser implements PlayerOwnedObject {
 	}
 
 	public void notAfk() {
-		unlimbo();
+		if (isAfk())
+			unlimbo();
 		setAfk(false);
 		setMessage(null);
 		update();
@@ -252,7 +246,6 @@ public class AFKUser implements PlayerOwnedObject {
 		time = null;
 		location = null;
 		forceAfk = false;
-		limbo = false;
 	}
 
 }
