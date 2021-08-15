@@ -6,11 +6,11 @@ import gg.projecteden.nexus.models.afk.AFKUser;
 import gg.projecteden.nexus.models.afk.AFKUserService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.Time;
 import me.lexikiq.HasUniqueId;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -53,15 +53,13 @@ public class AFK extends Feature {
 			return;
 
 		// 5 min average above 17
-		// TODO Uncomment
-//		if (Bukkit.getTPS()[1] >= 17)
-//			return;
+		if (Bukkit.getTPS()[1] >= 17)
+			return;
 
 		final List<Player> players = PlayerUtils.getOnlinePlayers();
 		final List<AFKUser> afkUsers = players.stream()
 			.map(AFK::get)
 			.filter(user -> user.isTimeAfk() && !user.isLimbo())
-			.filter(Dev.GRIFFIN::is) // TODO Remove
 			.toList();
 
 		if (players.size() == afkUsers.size())
