@@ -97,7 +97,7 @@ public class LuckPermsUtils {
 	}
 
 	public static boolean hasGroup(@NotNull UUID player, @NotNull String group) {
-		return hasGroup(player, Objects.requireNonNull(getGroup(group), "Could not find group"));
+		return hasGroup(player, Objects.requireNonNull(getGroup(group), "Could not find group " + group));
 	}
 
 	public static boolean hasGroup(@NotNull HasUniqueId player, @NotNull String group) {
