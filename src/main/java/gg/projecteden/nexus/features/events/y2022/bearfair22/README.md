@@ -12,7 +12,10 @@ Ideas:
 
 Improvements that need to be made from last year:
 
-- **Event needs to end before or on the 1th of July** *for 2022*
+- Timing
+    - Event needs to end before or on the 1st of July, to avoid the 4th
+    - Lasts 2 weeks instead of 1
+        - Cycle the events, allows for 2 chances to play the daily events
 - More puzzles for Quests & Minigames, and less scav hunts
     - Make these puzzles easily understood on what needs to be done
     - Per player difficulty setting? Easier difficulty would require more times completed / less of a prize:
@@ -55,3 +58,4 @@ Improvements that need to be made from last year:
 - Add more easter eggs or random useless features/builds
 - When giving a player a kit, place the items in the players hotbar, moving any items currently occupying those slots
   into their inventory
+- Pugmas island could have a daily advent thing 
