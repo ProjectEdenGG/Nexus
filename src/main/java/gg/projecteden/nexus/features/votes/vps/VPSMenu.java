@@ -234,83 +234,83 @@ public enum VPSMenu {
 
 			add(VPSPage.builder().items(new HashMap<>() {{
 				put(10, VPSSlot.builder()
-						.name("2 Horse Spawn Eggs")
-						.displayAndGive(Material.HORSE_SPAWN_EGG, 2)
-						.price(100));
-				put(11, VPSSlot.builder()
-						.name("2 Donkey Spawn Eggs")
-						.displayAndGive(Material.DONKEY_SPAWN_EGG, 2)
-						.price(100));
-				put(12, VPSSlot.builder()
-						.name("2 Llama Spawn Eggs")
-						.displayAndGive(Material.LLAMA_SPAWN_EGG, 2)
-						.price(100));
-				put(13, VPSSlot.builder()
-						.name("2 Cow Spawn Eggs")
-						.displayAndGive(Material.COW_SPAWN_EGG, 2)
-						.price(150));
-				put(14, VPSSlot.builder()
-						.name("2 Mooshroom Spawn Eggs")
-						.displayAndGive(Material.MOOSHROOM_SPAWN_EGG, 2)
-						.price(200));
-				put(15, VPSSlot.builder()
-						.name("2 Sheep Spawn Eggs")
-						.displayAndGive(Material.SHEEP_SPAWN_EGG, 2)
-						.price(100));
-				put(16, VPSSlot.builder()
-						.name("2 Pig Spawn Eggs")
-						.displayAndGive(Material.PIG_SPAWN_EGG, 2)
+						.name("Horse Spawn Egg")
+						.displayAndGive(Material.HORSE_SPAWN_EGG)
 						.price(50));
+				put(11, VPSSlot.builder()
+						.name("Donkey Spawn Egg")
+						.displayAndGive(Material.DONKEY_SPAWN_EGG)
+						.price(50));
+				put(12, VPSSlot.builder()
+						.name("Llama Spawn Egg")
+						.displayAndGive(Material.LLAMA_SPAWN_EGG)
+						.price(50));
+				put(13, VPSSlot.builder()
+						.name("Cow Spawn Egg")
+						.displayAndGive(Material.COW_SPAWN_EGG)
+						.price(75));
+				put(14, VPSSlot.builder()
+						.name("Mooshroom Spawn Egg")
+						.displayAndGive(Material.MOOSHROOM_SPAWN_EGG)
+						.price(100));
+				put(15, VPSSlot.builder()
+						.name("Sheep Spawn Egg")
+						.displayAndGive(Material.SHEEP_SPAWN_EGG)
+						.price(50));
+				put(16, VPSSlot.builder()
+						.name("Pig Spawn Egg")
+						.displayAndGive(Material.PIG_SPAWN_EGG)
+						.price(25));
 
 				put(19, VPSSlot.builder()
-						.name("2 Villager Spawn Eggs")
-						.displayAndGive(Material.VILLAGER_SPAWN_EGG, 2)
-						.price(200));
+						.name("Villager Spawn Egg")
+						.displayAndGive(Material.VILLAGER_SPAWN_EGG)
+						.price(100));
 				put(20, VPSSlot.builder()
-						.name("2 Fox Spawn Eggs")
-						.displayAndGive(Material.FOX_SPAWN_EGG, 2)
-						.price(200));
+						.name("Fox Spawn Egg")
+						.displayAndGive(Material.FOX_SPAWN_EGG)
+						.price(100));
 				put(21, VPSSlot.builder()
-						.name("2 Ocelot Spawn Eggs")
-						.displayAndGive(Material.OCELOT_SPAWN_EGG, 2)
-						.price(50));
+						.name("Ocelot Spawn Egg")
+						.displayAndGive(Material.OCELOT_SPAWN_EGG)
+						.price(25));
 				put(22, VPSSlot.builder()
-						.name("2 Cat Spawn Eggs")
-						.displayAndGive(Material.CAT_SPAWN_EGG, 2)
-						.price(35));
+						.name("Cat Spawn Egg")
+						.displayAndGive(Material.CAT_SPAWN_EGG)
+						.price(20));
 				put(23, VPSSlot.builder()
-						.name("2 Wolf Spawn Eggs")
-						.displayAndGive(Material.WOLF_SPAWN_EGG, 2)
-						.price(35));
+						.name("Wolf Spawn Egg")
+						.displayAndGive(Material.WOLF_SPAWN_EGG)
+						.price(20));
 				put(24, VPSSlot.builder()
-						.name("2 Bunny Spawn Eggs")
-						.displayAndGive(Material.RABBIT_SPAWN_EGG, 2)
-						.price(50));
+						.name("Bunny Spawn Egg")
+						.displayAndGive(Material.RABBIT_SPAWN_EGG)
+						.price(25));
 				put(25, VPSSlot.builder()
-						.name("2 Parrot Spawn Eggs")
-						.displayAndGive(Material.PARROT_SPAWN_EGG, 2)
-						.price(75));
+						.name("Parrot Spawn Egg")
+						.displayAndGive(Material.PARROT_SPAWN_EGG)
+						.price(40));
 
 				put(29, VPSSlot.builder()
-						.name("2 Panda Spawn Eggs")
-						.displayAndGive(Material.PANDA_SPAWN_EGG, 2)
-						.price(100));
+						.name("Panda Spawn Egg")
+						.displayAndGive(Material.PANDA_SPAWN_EGG)
+						.price(50));
 				put(30, VPSSlot.builder()
-						.name("2 Dolphin Spawn Eggs")
-						.displayAndGive(Material.DOLPHIN_SPAWN_EGG, 2)
-						.price(150));
-				put(31, VPSSlot.builder()
-						.name("2 Turtle Spawn Eggs")
-						.displayAndGive(Material.TURTLE_SPAWN_EGG, 2)
+						.name("Dolphin Spawn Egg")
+						.displayAndGive(Material.DOLPHIN_SPAWN_EGG)
 						.price(75));
+				put(31, VPSSlot.builder()
+						.name("Turtle Spawn Egg")
+						.displayAndGive(Material.TURTLE_SPAWN_EGG)
+						.price(40));
 				put(32, VPSSlot.builder()
-						.name("2 Bee Spawn Eggs")
-						.displayAndGive(Material.BEE_SPAWN_EGG, 2)
-						.price(150));
+						.name("Bee Spawn Egg")
+						.displayAndGive(Material.BEE_SPAWN_EGG)
+						.price(75));
 				put(33, VPSSlot.builder()
-						.name("2 Strider Spawn Eggs")
-						.displayAndGive(Material.STRIDER_SPAWN_EGG, 2)
-						.price(100));
+						.name("Strider Spawn Egg")
+						.displayAndGive(Material.STRIDER_SPAWN_EGG)
+						.price(50));
 
 				put(40, VPSSlot.builder()
 						.name("1 Name Tag")
