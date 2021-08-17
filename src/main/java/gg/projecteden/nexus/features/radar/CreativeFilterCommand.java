@@ -114,10 +114,11 @@ public class CreativeFilterCommand extends CustomCommand implements Listener {
 
 	private static final int MAX_DROPS_PER_TICK = 27*5; // these are item stacks, not individual items. breaking a chest gives 27 items. 5 players all breaking a chest in creative at once is a generous max
 	private static final AtomicInteger DROPS_THIS_TICK = new AtomicInteger(); // count of all item stacks dropped in the creative worlds this tick
-	private static final AtomicInteger resetDropsTaskId = new AtomicInteger(-1); // we don't need a million tasks trying to reset DROPS_THIS_TICK!
+	private static int resetDropsTaskId = -1; // we don't need a million tasks trying to reset DROPS_THIS_TICK!
 	private static void resetDrops() {
+		LIMIT_CHECKS_THIS_TICK.clear();
 		DROPS_THIS_TICK.set(0);
-		resetDropsTaskId.set(-1);
+		resetDropsTaskId = -1;
 	}
 
 	// does not run the limiter if it has been run by another item within IGNORE_LIMITER_RADIUS this tick
@@ -129,10 +130,8 @@ public class CreativeFilterCommand extends CustomCommand implements Listener {
 		if (WorldGroup.of(event.getEntity().getWorld()) != WorldGroup.CREATIVE)
 			return;
 
-		synchronized (resetDropsTaskId) {
-			if (resetDropsTaskId.get() == -1)
-				resetDropsTaskId.set(Tasks.wait(1, CreativeFilterCommand::resetDrops));
-		}
+		if (resetDropsTaskId == -1)
+			resetDropsTaskId = Tasks.wait(1, CreativeFilterCommand::resetDrops);
 
 		if (DROPS_THIS_TICK.incrementAndGet() > MAX_DROPS_PER_TICK) {
 			event.setCancelled(true);
@@ -152,8 +151,7 @@ public class CreativeFilterCommand extends CustomCommand implements Listener {
 		}
 
 		LIMIT_CHECKS_THIS_TICK.add(location);
-		Tasks.wait(1, () -> LIMIT_CHECKS_THIS_TICK.remove(location));
-		Tasks.wait(2, () -> limitDrops(location));
+		Tasks.wait(1, () -> limitDrops(location));
 	}
 
 	private void limitDrops(Location location) {
