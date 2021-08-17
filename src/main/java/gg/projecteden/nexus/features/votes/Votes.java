@@ -166,7 +166,11 @@ public class Votes extends Feature implements Listener {
 
 		voterService.save(voter);
 
-		if (voter.getTodaysVotes().size() >= 5) {
+		final int allVotes = voter.getVotes().size();
+		final int todaysVotes = voter.getTodaysVotes().size();
+
+		Nexus.log("[VoteStreak] " + name + " - Total votes: " + allVotes + " / Today's votes: " + todaysVotes);
+		if (todaysVotes >= 5) {
 			final DailyVoteRewardService dailyVoteRewardService = new DailyVoteRewardService();
 			final DailyVoteReward dailyVoteReward = dailyVoteRewardService.get(player);
 			if (!dailyVoteReward.getCurrentStreak().isEarnedToday()) {

@@ -4,6 +4,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.votes.DailyVoteRewardsCommand.VoteStreakReward;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
@@ -60,6 +61,7 @@ public class DailyVoteReward implements PlayerOwnedObject {
 		private LocalDate end;
 
 		public void incrementStreak() {
+			Nexus.log("[VoteStreak] Increasing streak for " + getNickname());
 			++streak;
 			earnedToday = true;
 

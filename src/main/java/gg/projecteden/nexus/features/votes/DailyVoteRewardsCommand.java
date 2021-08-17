@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.votes;
 
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.crates.models.CrateType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -52,10 +53,13 @@ public class DailyVoteRewardsCommand extends CustomCommand {
 		for (DailyVoteReward rewards : service.getAll()) {
 			final DailyVoteStreak streak = rewards.getCurrentStreak();
 
-			if (!streak.isEarnedToday())
+			if (!streak.isEarnedToday()) {
+				Nexus.log("[VoteStreak] Ending streak for " + rewards.getNickname() + " | " + streak);
 				rewards.endStreak();
-			else
+			} else {
+				Nexus.log("[VoteStreak] Continuing streak for " + rewards.getNickname() + " | " + streak);
 				streak.setEarnedToday(false);
+			}
 
 			service.save(rewards);
 		}
