@@ -26,6 +26,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -117,6 +118,15 @@ public class AFKCommand extends CustomCommand implements Listener {
 			else
 				user.update();
 		});
+	}
+
+	@EventHandler
+	public void onPlayerFish(PlayerFishEvent event) {
+		AFKUser user = AFK.get(event.getPlayer());
+		if (user.isAfk() && !user.isForceAfk())
+			user.notAfk();
+		else
+			user.update();
 	}
 
 	@EventHandler

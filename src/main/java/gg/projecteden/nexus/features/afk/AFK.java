@@ -12,6 +12,7 @@ import gg.projecteden.utils.TimeUtils.Time;
 import me.lexikiq.HasUniqueId;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.time.LocalDateTime;
@@ -35,8 +36,7 @@ public class AFK extends Feature {
 	private static void afkCheck(List<Player> onlinePlayers) {
 		onlinePlayers.stream().map(AFK::get).forEach(user -> {
 			try {
-				final Player player = user.getOnlinePlayer();
-				if (!isSameLocation(user.getLocation(), player.getLocation()) && player.getVehicle() == null)
+				if (hasMoved(user))
 					if (user.isAfk() && !user.isForceAfk())
 						user.notAfk();
 					else
@@ -48,6 +48,22 @@ public class AFK extends Feature {
 				ex.printStackTrace();
 			}
 		});
+	}
+
+	private static boolean hasMoved(AFKUser user) {
+		final Player player = user.getOnlinePlayer();
+		final Entity vehicle = player.getVehicle();
+
+		if (vehicle == null || user.getLocation() == null)
+			return !isSameLocation(user.getLocation(), player.getLocation());
+
+		final float previousYaw = user.getLocation().getYaw();
+		final float previousPitch = user.getLocation().getPitch();
+
+		final float currentYaw = player.getLocation().getYaw();
+		final float currentPitch = player.getLocation().getPitch();
+
+		return previousYaw != currentYaw && previousPitch != currentPitch;
 	}
 
 	private static void limboCheck(List<Player> players) {
