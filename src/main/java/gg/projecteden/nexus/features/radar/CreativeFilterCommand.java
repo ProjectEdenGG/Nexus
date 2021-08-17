@@ -1,10 +1,12 @@
 package gg.projecteden.nexus.features.radar;
 
+import com.google.common.collect.Comparators;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.utils.CompletableTask;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -34,6 +36,7 @@ import org.bukkit.inventory.PlayerInventory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -155,18 +158,14 @@ public class CreativeFilterCommand extends CustomCommand implements Listener {
 
 	private void limitDrops(Location location) {
 		Collection<Item> entities = location.getNearbyEntitiesByType(Item.class, RADIUS, item -> !item.isDead());
+		if (entities.size() <= MAX_DROPPED_ENTITIES)
+			return;
 
-		Tasks.async(() -> {
-			if (entities.size() <= MAX_DROPPED_ENTITIES)
-				return;
-
+		CompletableTask.supplyAsync(() -> {
 			List<Item> sortedEntities = new ArrayList<>(entities);
 			sortedEntities.sort(Comparator.comparing(Entity::getTicksLived).reversed());
-
-			while (sortedEntities.size() > MAX_DROPPED_ENTITIES) {
-				sortedEntities.remove(0).remove();
-			}
-		});
+			return sortedEntities.subList(0, sortedEntities.size() - MAX_DROPPED_ENTITIES);
+		}).thenAcceptSync(items -> items.forEach(Item::remove));
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
