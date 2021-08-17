@@ -153,7 +153,7 @@ public class Nickname extends gg.projecteden.models.nickname.Nickname implements
 		}
 
 		private Nickname getData() {
-			return new NicknameService().get(getOfflinePlayer());
+			return new NicknameService().get(this);
 		}
 
 		private void responseReceived() {
@@ -204,7 +204,7 @@ public class Nickname extends gg.projecteden.models.nickname.Nickname implements
 			Nickname data = getData();
 			EmbedBuilder embed = new EmbedBuilder()
 					.setThumbnail("https://minotar.net/helm/" + getName() + "/100.png")
-					.setColor(getNerd().getRank().getDiscordColor());
+					.setColor(getRank().getDiscordColor());
 
 			List<NicknameHistoryEntry> nicknameHistory = data.getNicknameHistory();
 			if (!nicknameHistory.isEmpty()) {

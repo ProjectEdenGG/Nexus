@@ -7,7 +7,6 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
-import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.AllArgsConstructor;
@@ -48,7 +47,7 @@ public class Home implements PlayerOwnedObject {
 		this.uuid = uuid;
 		this.name = name;
 		this.location = location;
-		this.locked = getOwner().isAutoLock() || Nerd.of(getOfflinePlayer()).getRank().isStaff();
+		this.locked = getOwner().isAutoLock() || Rank.of(this).isStaff();
 		this.item = item;
 
 		validateName(name);
@@ -91,7 +90,7 @@ public class Home implements PlayerOwnedObject {
 			return true;
 		if (Rank.of(player).isStaff())
 			return true;
-		if (player.getUniqueId().equals(getOfflinePlayer().getUniqueId()))
+		if (player.getUniqueId().equals(getUniqueId()))
 			return true;
 
 		return getOwner().hasGivenAccessTo(player) || accessList.contains(player.getUniqueId());

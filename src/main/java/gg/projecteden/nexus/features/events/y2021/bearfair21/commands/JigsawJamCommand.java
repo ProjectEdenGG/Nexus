@@ -296,7 +296,7 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 	}
 
 	private void end(JigsawJammer jammer) {
-		Discord.staffLog(DISCORD_PREFIX + jammer.getOfflinePlayer().getName() + " finished in " + Timespan.of(jammer.getTime() / 20).format());
+		Discord.staffLog(DISCORD_PREFIX + jammer.getName() + " finished in " + Timespan.of(jammer.getTime() / 20).format());
 		jammer.setPlaying(false);
 		jammer.setTime(0);
 		new JigsawJamService().save(jammer);

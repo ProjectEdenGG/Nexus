@@ -40,7 +40,7 @@ public class Tip implements PlayerOwnedObject {
 
 	public boolean show(TipType tipType) {
 		if (!isOnline())
-			throw new PlayerNotOnlineException(getOfflinePlayer());
+			throw new PlayerNotOnlineException(this);
 
 		if (!received.contains(tipType)) {
 			received.add(tipType);

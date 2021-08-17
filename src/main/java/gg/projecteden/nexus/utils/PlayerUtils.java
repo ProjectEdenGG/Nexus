@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.resourcepack.CustomModel;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
+import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.mail.Mailer;
 import gg.projecteden.nexus.models.mail.Mailer.Mail;
 import gg.projecteden.nexus.models.mail.MailerService;
@@ -24,7 +25,6 @@ import me.lexikiq.HasOfflinePlayer;
 import me.lexikiq.HasPlayer;
 import me.lexikiq.HasUniqueId;
 import me.lexikiq.OptionalPlayer;
-import me.lexikiq.OptionalPlayerLike;
 import net.dv8tion.jda.annotations.ReplaceWith;
 import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
@@ -70,7 +70,7 @@ import static gg.projecteden.utils.StringUtils.isUuid;
 @UtilityClass
 public class PlayerUtils {
 
-	public enum Dev implements OptionalPlayerLike {
+	public enum Dev implements PlayerOwnedObject {
 		GRIFFIN("86d7e0e2-c95e-4f22-8f99-a6e83b398307"),
 		WAKKA("e9e07315-d32c-4df7-bd05-acfe51108234"),
 		BLAST("a4274d94-10f2-4663-af3b-a842c7ec729c"),
@@ -88,27 +88,8 @@ public class PlayerUtils {
 			this.uuid = UUID.fromString(uuid);
 		}
 
-		public @Nullable Player getPlayer() {
-			return getOfflinePlayer().getPlayer();
-		}
-
-		public @NotNull Player getOnlinePlayer() throws PlayerNotOnlineException {
-			OfflinePlayer offlinePlayer = getOfflinePlayer();
-			if (!offlinePlayer.isOnline() || offlinePlayer.getPlayer() == null)
-				throw new PlayerNotOnlineException(offlinePlayer);
-			return offlinePlayer.getPlayer();
-		}
-
-		public @NotNull OfflinePlayer getOfflinePlayer() {
-			return PlayerUtils.getPlayer(uuid);
-		}
-
-		public Nerd getNerd() {
-			return Nerd.of(getOfflinePlayer());
-		}
-
 		public void send(String message) {
-			PlayerUtils.send(getOfflinePlayer(), message);
+			PlayerUtils.send(this, message);
 		}
 
 		public boolean is(HasUniqueId player) {

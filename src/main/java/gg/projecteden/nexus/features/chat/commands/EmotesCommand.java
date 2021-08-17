@@ -12,7 +12,7 @@ import gg.projecteden.nexus.models.emote.EmoteUser;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import lombok.NonNull;
-import me.lexikiq.HasOfflinePlayer;
+import me.lexikiq.HasUniqueId;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.OfflinePlayer;
 
@@ -32,7 +32,7 @@ public class EmotesCommand extends CustomCommand {
 	 * @param emote emote to check
 	 * @return if a user can use the specified emote
 	 */
-	public static boolean hasEmotePermissions(HasOfflinePlayer player, Emotes emote) {
+	public static boolean hasEmotePermissions(HasUniqueId player, Emotes emote) {
 		return hasEmotePermissions(player) || LuckPermsUtils.hasPermission(player, PERMISSION + "." + emote.name().toLowerCase());
 	}
 
@@ -41,7 +41,7 @@ public class EmotesCommand extends CustomCommand {
 	 * @param player player to check
 	 * @return if a user is able to use all emotes
 	 */
-	public static boolean hasEmotePermissions(HasOfflinePlayer player) {
+	public static boolean hasEmotePermissions(HasUniqueId player) {
 		return LuckPermsUtils.hasPermission(player, PERMISSION);
 	}
 

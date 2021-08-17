@@ -14,6 +14,7 @@ import gg.projecteden.nexus.utils.SymbolBanner.Symbol;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.lexikiq.HasOfflinePlayer;
+import me.lexikiq.HasUniqueId;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -297,8 +298,8 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 
 	// Skulls
 
-	public ItemBuilder skullOwner(HasOfflinePlayer offlinePlayer) {
-		SkullMeta skullMeta = SkinCache.of(offlinePlayer.getOfflinePlayer()).getHeadMeta();
+	public ItemBuilder skullOwner(HasUniqueId hasUUID) {
+		SkullMeta skullMeta = SkinCache.of(hasUUID).getHeadMeta();
 		((SkullMeta) itemMeta).setPlayerProfile(skullMeta.getPlayerProfile());
 		return this;
 	}

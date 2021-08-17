@@ -261,7 +261,7 @@ public class Chat extends Feature {
 					players.stream()
 							.map(player -> new ChatterService().get(player))
 							.filter(chatter -> chatter.hasJoined(broadcast.channel))
-							.filter(chatter -> !MuteMenuUser.hasMuted(chatter.getOfflinePlayer(), broadcast.muteMenuItem))
+							.filter(chatter -> !MuteMenuUser.hasMuted(chatter, broadcast.muteMenuItem))
 							.forEach(chatter -> chatter.sendMessage(broadcast.sender, component, broadcast.messageType));
 				}
 			},

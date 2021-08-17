@@ -7,26 +7,30 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import me.lexikiq.HasOfflinePlayer;
 import me.lexikiq.HasUniqueId;
 import net.luckperms.api.LuckPerms;
+import net.luckperms.api.context.ContextSet;
 import net.luckperms.api.context.ImmutableContextSet;
+import net.luckperms.api.model.PermissionHolder;
 import net.luckperms.api.model.data.NodeMap;
 import net.luckperms.api.model.group.Group;
 import net.luckperms.api.model.group.GroupManager;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.model.user.UserManager;
 import net.luckperms.api.node.Node;
+import net.luckperms.api.query.QueryMode;
+import net.luckperms.api.query.QueryOptions;
+import net.luckperms.api.util.Tristate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
@@ -34,6 +38,7 @@ import java.util.function.BiConsumer;
 import static gg.projecteden.nexus.utils.PlayerUtils.runCommandAsConsole;
 import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
 
+// TODO: rewrite to respect the CompletableFutures returned by some methods
 public class LuckPermsUtils {
 
 	private static LuckPerms lp() {
@@ -52,43 +57,113 @@ public class LuckPermsUtils {
 
 	@NotNull
 	@SneakyThrows
-	public static User getUser(HasUniqueId player) {
-		User user = lp().getUserManager().getUser(player.getUniqueId());
-		if (user == null) user = lp().getUserManager().loadUser(player.getUniqueId()).get();
+	public static User getUser(@NotNull UUID player) {
+		User user = lp().getUserManager().getUser(player);
+		if (user == null) user = lp().getUserManager().loadUser(player).get();
 		return user;
 	}
 
+	@NotNull
+	public static User getUser(@NotNull HasUniqueId player) {
+		return getUser(player.getUniqueId());
+	}
+
 	@Nullable
-	public static Group getGroup(String group) {
+	public static Group getGroup(@NotNull String group) {
 		return groupManager().getGroup(group);
 	}
 
 	@NotNull
-	public static Collection<Group> getGroups(HasUniqueId player) {
-		User user = getUser(player);
+	public static Collection<Group> getGroups(@NotNull PermissionHolder user) {
 		return user.getInheritedGroups(user.getQueryOptions());
 	}
 
-	public static boolean hasGroup(HasUniqueId player, String group) {
-		return hasGroup(player, getGroup(group));
+	@NotNull
+	public static Collection<Group> getGroups(@NotNull UUID player) {
+		return getGroups(getUser(player));
 	}
 
-	public static boolean hasGroup(HasUniqueId player, Group group) {
+	@NotNull
+	public static Collection<Group> getGroups(@NotNull HasUniqueId player) {
+		return getGroups(player.getUniqueId());
+	}
+
+	public static boolean hasGroup(@NotNull UUID player, @NotNull Group group) {
 		return getGroups(player).contains(group);
 	}
 
-	public static boolean hasPermission(HasOfflinePlayer player, String permission) {
-		// TODO: briefly cache values (1-2 sec) like worldguard?
-		Player _player = player.getOfflinePlayer().getPlayer();
-		return hasPermission(player, permission, _player == null ? null : _player.getWorld());
+	public static boolean hasGroup(@NotNull HasUniqueId player, @NotNull Group group) {
+		return hasGroup(player.getUniqueId(), group);
 	}
 
-	public static boolean hasPermission(HasOfflinePlayer player, String permission, String world) {
-		return hasPermission(player, permission, Bukkit.getWorld(world));
+	public static boolean hasGroup(@NotNull UUID player, @NotNull String group) {
+		return hasGroup(player, Objects.requireNonNull(getGroup(group), "Could not find group"));
 	}
 
-	public static boolean hasPermission(HasOfflinePlayer player, String permission, World world) {
-		return Nexus.getPerms().playerHas(world == null ? null : world.getName(), player.getOfflinePlayer(), permission);
+	public static boolean hasGroup(@NotNull HasUniqueId player, @NotNull String group) {
+		return hasGroup(player.getUniqueId(), group);
+	}
+
+	public static boolean hasPermission(@NotNull HasUniqueId player, @NotNull String permission) {
+		return getPermission(player, permission).asBoolean();
+	}
+
+	public static boolean hasPermission(@NotNull HasUniqueId player, @NotNull String permission, @NotNull ContextSet contextOverrides) {
+		return getPermission(player, permission, contextOverrides).asBoolean();
+	}
+
+	public static boolean hasPermission(@NotNull UUID player, @NotNull String permission) {
+		return getPermission(player, permission).asBoolean();
+	}
+
+	public static boolean hasPermission(@NotNull UUID player, @NotNull String permission, @NotNull ContextSet contextOverrides) {
+		return getPermission(player, permission, contextOverrides).asBoolean();
+	}
+
+	public static boolean hasPermission(@NotNull PermissionHolder player, @NotNull String permission) {
+		return getPermission(player, permission).asBoolean();
+	}
+
+	public static boolean hasPermission(@NotNull PermissionHolder player, @NotNull String permission, @NotNull ContextSet contextOverrides) {
+		return getPermission(player, permission, contextOverrides).asBoolean();
+	}
+
+	@NotNull
+	public static Tristate getPermission(@NotNull PermissionHolder user, @NotNull String permission, @NotNull ContextSet contextOverrides) {
+		QueryOptions options = user.getQueryOptions();
+		if (!contextOverrides.isEmpty()) {
+			ImmutableContextSet.Builder builder = ImmutableContextSet.builder();
+			if (options.mode() == QueryMode.CONTEXTUAL)
+				builder.addAll(options.context());
+			builder.addAll(contextOverrides);
+			options = options.toBuilder().context(builder.build()).build();
+		}
+		return user.getCachedData().getPermissionData(options).checkPermission(permission);
+	}
+
+	@NotNull
+	public static Tristate getPermission(@NotNull PermissionHolder player, @NotNull String permission) {
+		return getPermission(player, permission, ImmutableContextSet.empty());
+	}
+
+	@NotNull
+	public static Tristate getPermission(@NotNull UUID player, @NotNull String permission, @NotNull ContextSet contextOverrides) {
+		return getPermission(getUser(player), permission, contextOverrides);
+	}
+
+	@NotNull
+	public static Tristate getPermission(@NotNull UUID player, @NotNull String permission) {
+		return getPermission(player, permission, ImmutableContextSet.empty());
+	}
+
+	@NotNull
+	public static Tristate getPermission(@NotNull HasUniqueId player, @NotNull String permission, @NotNull ContextSet contextOverrides) {
+		return getPermission(player.getUniqueId(), permission, contextOverrides);
+	}
+
+	@NotNull
+	public static Tristate getPermission(@NotNull HasUniqueId player, @NotNull String permission) {
+		return getPermission(player, permission, ImmutableContextSet.empty());
 	}
 
 	@AllArgsConstructor

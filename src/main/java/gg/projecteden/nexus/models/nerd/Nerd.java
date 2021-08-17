@@ -9,7 +9,6 @@ import dev.morphia.annotations.PreLoad;
 import gg.projecteden.mongodb.serializers.LocalDateConverter;
 import gg.projecteden.mongodb.serializers.LocalDateTimeConverter;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.discord.Discord;
@@ -19,6 +18,7 @@ import gg.projecteden.nexus.framework.interfaces.IsColoredAndNicknamed;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
@@ -39,7 +39,7 @@ import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
+import java.awt.Color;
 import java.io.File;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
@@ -134,9 +134,12 @@ public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwned
 		return true;
 	}
 
+	// this is just here for the ToString.Include
 	@ToString.Include
+	@NotNull
+	@Override
 	public Rank getRank() {
-		return Rank.of(getOfflinePlayer());
+		return PlayerOwnedObject.super.getRank();
 	}
 
 	/**
@@ -181,9 +184,9 @@ public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwned
 		if (!isNullOrEmpty(prefix))
 			prefix = "&8&l[&f" + prefix + "&8&l]";
 
-		if (Nexus.getPerms().playerHas(null, getOfflinePlayer(), "donated") && checkmark)
+		if (LuckPermsUtils.hasPermission(uuid, "donated") && checkmark)
 			prefix = CHECK + " " + prefix;
-		return colorize((prefix.trim() + " " + (rank.getChatColor() + Nickname.of(getOfflinePlayer())).trim())).trim();
+		return colorize((prefix.trim() + " " + (rank.getChatColor() + Nickname.of(this)).trim())).trim();
 	}
 
 	@ToString.Include
@@ -228,7 +231,7 @@ public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwned
 	}
 
 	public Location getLocation() {
-		if (getOfflinePlayer().isOnline())
+		if (isOnline())
 			return getOnlinePlayer().getPlayer().getLocation();
 
 		try {
@@ -238,7 +241,7 @@ public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwned
 
 			World world = getDimension();
 			if (world == null)
-				throw new InvalidInputException("Player is not in a valid world (" + world + ")");
+				throw new InvalidInputException("Player is not in a valid world");
 
 			NBTList<Double> pos = file.getDoubleList("Pos");
 			NBTList<Float> rotation = file.getFloatList("Rotation");

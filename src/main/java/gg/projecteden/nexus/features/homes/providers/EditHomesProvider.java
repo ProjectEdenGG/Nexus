@@ -9,7 +9,7 @@ import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.trust.providers.TrustProvider;
 import gg.projecteden.nexus.models.home.HomeOwner;
 import gg.projecteden.nexus.models.home.HomeService;
-import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Material;
@@ -74,7 +74,7 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 	public void format_AutoLock(InventoryContents contents) {
 		ItemBuilder item = new ItemBuilder(Material.REDSTONE);
 
-		if (Nerd.of(homeOwner.getOfflinePlayer()).getRank().isStaff()) {
+		if (Rank.of(homeOwner).isStaff()) {
 			item.name("&eAuto Lock &f| &aON").lore("&fAny new homes you set will be automatically locked||&f||&cRequired for staff members").glow();
 			contents.set(0, 3, ClickableItem.empty(item.build()));
 		} else {

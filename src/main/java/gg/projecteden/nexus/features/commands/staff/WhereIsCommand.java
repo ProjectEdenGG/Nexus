@@ -5,7 +5,6 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.whereis.WhereIs;
 import gg.projecteden.nexus.models.whereis.WhereIsService;
@@ -132,7 +131,7 @@ public class WhereIsCommand extends CustomCommand {
 			return;
 		}
 
-		GlowAPI.setGlowing(glower, Nerd.of(glower).getRank().getGlowColor(), viewer);
+		GlowAPI.setGlowing(glower, Rank.of(glower).getGlowColor(), viewer);
 	}
 
 	private static void unglow(Player viewer) {

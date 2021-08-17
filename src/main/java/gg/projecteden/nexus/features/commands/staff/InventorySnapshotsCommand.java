@@ -203,7 +203,7 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 		}
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true) // TODO: use TemporaryListener?
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		final Player player = event.getPlayer();
 		final UUID uuid = player.getUniqueId();
@@ -217,6 +217,8 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 
 		if (!(block.getState() instanceof InventoryHolder holder))
 			return;
+
+		event.setCancelled(true);
 
 		final Inventory inventory = holder.getInventory();
 		final long freeSpace = Arrays.stream(inventory.getContents()).filter(ItemUtils::isNullOrAir).count();

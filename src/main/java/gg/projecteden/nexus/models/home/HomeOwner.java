@@ -63,7 +63,7 @@ public class HomeOwner implements PlayerOwnedObject {
 
 	@ToString.Include
 	public int getHomesLimit() {
-		Rank rank = getNerd().getRank();
+		Rank rank = getRank();
 		if (rank.isAdmin())
 			return 999;
 		return rank.enabledOrdinal() + 3 + extraHomes;
@@ -89,7 +89,7 @@ public class HomeOwner implements PlayerOwnedObject {
 	}
 
 	public boolean hasGivenAccessTo(OfflinePlayer player) {
-		Trust trust = new TrustService().get(getOfflinePlayer());
+		Trust trust = new TrustService().get(this);
 		return trust.trusts(Type.HOMES, player);
 	}
 

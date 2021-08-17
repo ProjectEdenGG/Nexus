@@ -157,7 +157,7 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 	public void onMatchQuit(MinigamerQuitEvent event) {
 		ScoreboardService service = new ScoreboardService();
 		ScoreboardUser user = service.get(event.getMinigamer().getPlayer());
-		if (user.isActive() && user.getOfflinePlayer().isOnline())
+		if (user.isActive() && user.isOnline())
 			user.on();
 	}
 
@@ -166,7 +166,7 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 		ScoreboardService service = new ScoreboardService();
 		event.getMatch().getMinigamers().forEach(minigamer -> {
 			ScoreboardUser user = service.get(minigamer.getPlayer());
-			if (user.isActive() && user.getOfflinePlayer().isOnline())
+			if (user.isActive() && user.isOnline())
 				user.on();
 		});
 	}
@@ -182,7 +182,7 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 	public void onMcMMOScoreboardEnd(McMMOScoreboardRevertEvent event) {
 		ScoreboardService service = new ScoreboardService();
 		ScoreboardUser user = service.get(event.getTargetPlayer());
-		if (user.isActive() && user.getOfflinePlayer().isOnline())
+		if (user.isActive() && user.isOnline())
 			user.on();
 	}
 

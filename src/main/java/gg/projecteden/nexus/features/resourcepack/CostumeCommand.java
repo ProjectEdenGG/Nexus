@@ -115,7 +115,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 	void top(@Arg("1") int page) {
 		Map<Costume, Integer> counts = new HashMap<>() {{
 			for (CostumeUser user : service.getAll())
-				if (user.getNerd().getRank() != Rank.ADMIN)
+				if (user.getRank() != Rank.ADMIN)
 					for (Costume costume : user.getOwnedCostumes())
 						put(costume, getOrDefault(costume, 0) + 1);
 		}};

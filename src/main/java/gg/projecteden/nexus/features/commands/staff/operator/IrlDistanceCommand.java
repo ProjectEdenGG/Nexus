@@ -26,8 +26,8 @@ public class IrlDistanceCommand extends CustomCommand {
 
 		String mi = distance.getMilesFormatted();
 		String km = distance.getKilometersFormatted();
-		String message = "&e" + from.getOfflinePlayer().getName() + " &3is &e" + mi + " miles &3or &e" + km + " kilometers &3away from ";
-		send(PREFIX + message + (isSelf(to.getOfflinePlayer()) ? "you" : "&e" + to.getOfflinePlayer().getName()));
+		String message = "&e" + from.getName() + " &3is &e" + mi + " miles &3or &e" + km + " kilometers &3away from ";
+		send(PREFIX + message + (isSelf(to) ? "you" : "&e" + to.getName()));
 	}
 
 }

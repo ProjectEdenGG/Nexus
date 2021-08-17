@@ -35,8 +35,8 @@ public class PublicChatEvent extends MinecraftChatEvent {
 
 	public boolean wasSeen() {
 		if (channel.getDiscordTextChannel() != null) return true;
-		return recipients.stream().anyMatch(recipient -> chatter.getOfflinePlayer() != recipient.getOfflinePlayer() &&
-				PlayerUtils.canSee(chatter.getOfflinePlayer(), recipient.getOfflinePlayer()));
+		return recipients.stream().anyMatch(recipient -> !chatter.getUniqueId().equals(recipient.getUniqueId()) &&
+				PlayerUtils.canSee(chatter, recipient));
 	}
 
 	@Override

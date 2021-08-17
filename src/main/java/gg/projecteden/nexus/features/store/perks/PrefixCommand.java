@@ -10,6 +10,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.emote.EmoteService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.NerdService;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.StringUtils.Gradient;
 import gg.projecteden.nexus.utils.StringUtils.Rainbow;
@@ -91,7 +92,7 @@ public class PrefixCommand extends CustomCommand {
 		String prefix = nerd.getPrefix();
 
 		if (isNullOrEmpty(prefix))
-			prefix = Nerd.of(player()).getRank().getPrefix();
+			prefix = Rank.of(player()).getPrefix();
 
 		if (isNullOrEmpty(prefix))
 			error((isSelf(nerd) ? "You do" : nerd.getNickname() + " does") + " not have a prefix");

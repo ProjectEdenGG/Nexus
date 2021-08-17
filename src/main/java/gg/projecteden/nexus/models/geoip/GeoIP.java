@@ -9,7 +9,6 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.HttpUtils;
-import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.Utils.SerializedExclude;
 import gg.projecteden.utils.StringUtils;
 import lombok.Data;
@@ -206,9 +205,9 @@ public class GeoIP implements PlayerOwnedObject {
 
 		public static double distance(GeoIP from, GeoIP to) {
 			if (from.getLatitude() == null || from.getLongitude() == null)
-				throw new InvalidInputException("Could not find " + Name.of(from.getOfflinePlayer()) + "'s location");
+				throw new InvalidInputException("Could not find " + from.getName() + "'s location");
 			if (to.getLatitude() == null || to.getLongitude() == null)
-				throw new InvalidInputException("Could not find " + Name.of(to.getOfflinePlayer()) + "'s location");
+				throw new InvalidInputException("Could not find " + to.getName() + "'s location");
 
 			double latFrom = Math.toRadians(from.getLatitude()), longFrom = Math.toRadians(from.getLongitude()),
 					latTo = Math.toRadians(to.getLatitude()), longTo = Math.toRadians(to.getLongitude());

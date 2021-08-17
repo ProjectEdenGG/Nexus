@@ -4,7 +4,6 @@ import com.destroystokyo.paper.event.player.PlayerAdvancementCriterionGrantEvent
 import gg.projecteden.nexus.features.chat.Censor;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.chat.Koda;
-import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -194,8 +193,7 @@ public class Restrictions implements Listener {
 		if (event.getFrom().getWorld().getEnvironment() == Environment.THE_END || event.getTo().getWorld().getEnvironment() != Environment.THE_END)
 			return;
 
-		Nerd nerd = Nerd.of(event.getPlayer());
-		if (nerd.getRank().gte(Rank.TRUSTED))
+		if (Rank.of(event.getPlayer()).gte(Rank.TRUSTED))
 			return;
 
 		AdvancementProgress progress = event.getPlayer().getAdvancementProgress(getAdvancement("story/follow_ender_eye"));
@@ -223,7 +221,7 @@ public class Restrictions implements Listener {
 		if (event.getPlayer().hasPermission("worldedit.bypass.material"))
 			return;
 
-		if (!Arrays.asList(Rank.GUEST, Rank.MEMBER).contains(Nerd.of(event.getPlayer()).getRank()))
+		if (!Arrays.asList(Rank.GUEST, Rank.MEMBER).contains(Rank.of(event.getPlayer())))
 			return;
 
 		String command = event.getMessage().toLowerCase();

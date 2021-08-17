@@ -32,7 +32,7 @@ import net.dv8tion.jda.api.utils.TimeUtil;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.OfflinePlayer;
 
-import java.awt.*;
+import java.awt.Color;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -92,7 +92,7 @@ public class BridgeCommand extends CustomCommand {
 			if (user.getRoleId() == null || user.getUuid() == null)
 				continue;
 
-			Rank playerRank = Rank.of(user.getOfflinePlayer());
+			Rank playerRank = Rank.of(user);
 			if (playerRank != rank)
 				continue;
 

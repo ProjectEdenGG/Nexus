@@ -367,11 +367,15 @@ public abstract class CustomCommand extends ICustomCommand {
 		return Bukkit.getOfflinePlayer(uuid());
 	}
 
+	protected PlayerOwnedObject playerOwnedObject() {
+		return this::uuid;
+	}
+
 	protected Nerd nerd() {
 		return Nerd.of(player());
 	}
 
-	protected UUID uuid() {
+	protected @NotNull UUID uuid() {
 		if (isPlayer())
 			return player().getUniqueId();
 		return StringUtils.getUUID0();

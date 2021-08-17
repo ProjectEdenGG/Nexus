@@ -7,7 +7,6 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.crates.GemCommand;
 import gg.projecteden.nexus.features.menus.MenuUtils;
@@ -19,6 +18,7 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.LuckPermsUtils.PermissionChange;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -115,7 +115,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				"One horse, your favorite color, max stats. Simple, No?") {
 				@Override
 				void onClick(Player player) {
-					Nexus.getPerms().playerAdd(player, "horsepicker.pick");
+					LuckPermsUtils.PermissionChange.set().permission("horsepicker.pick").player(player).runAsync();
 					PlayerUtils.send(player, "&eUse &c/horsepicker &eto pick your horse. Make sure you are standing in an open area or the horse might die!");
 				}
 		},
@@ -162,7 +162,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 	@Override
 	public void open(Player player) {
 		SmartInventory.builder()
-				.provider(new McMMOResetProvider())
+				.provider(this)
 				.size(6, 9)
 				.title(StringUtils.colorize("McMMO Reset"))
 				.build().open(player);

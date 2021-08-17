@@ -19,7 +19,6 @@ import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SerializationUtils.JSON;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -231,7 +230,7 @@ public class Shop implements PlayerOwnedObject {
 
 		public double getCalculatedStock() {
 			if (exchangeType == ExchangeType.BUY && stock == -1)
-				return new BankerService().getBalance(getShop().getOfflinePlayer(), shopGroup);
+				return new BankerService().getBalance(getShop(), shopGroup);
 			else
 				return stock;
 		}
@@ -271,7 +270,7 @@ public class Shop implements PlayerOwnedObject {
 				List<String> columns = new ArrayList<>(Arrays.asList(
 					DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()),
 					getUuid().toString(),
-					Name.of(getShop().getOfflinePlayer()),
+					getShop().getName(),
 					customer.getUniqueId().toString(),
 					customer.getName(),
 					getShopGroup().name(),
@@ -546,8 +545,8 @@ public class Shop implements PlayerOwnedObject {
 				return;
 
 			TransactionCause cause = product.isMarket() ? TransactionCause.MARKET_SALE : TransactionCause.SHOP_SALE;
-			Transaction transaction = cause.of(customer, product.getShop().getOfflinePlayer(), BigDecimal.valueOf(price), product.getShopGroup(), pretty(product.getItem()));
-			new BankerService().transfer(customer, product.getShop().getOfflinePlayer(), BigDecimal.valueOf(price), product.getShopGroup(), transaction);
+			Transaction transaction = cause.of(customer, product.getShop(), BigDecimal.valueOf(price), product.getShopGroup(), pretty(product.getItem()));
+			new BankerService().transfer(customer, product.getShop(), BigDecimal.valueOf(price), product.getShopGroup(), transaction);
 		}
 
 		public boolean canFulfillPurchase() {
@@ -573,7 +572,7 @@ public class Shop implements PlayerOwnedObject {
 				return Arrays.asList(
 					desc,
 					"&7Stock: " + (stock > 0 ? "&e" : "&c") + stock,
-					"&7Owner: &e" + Nickname.of(product.getShop().getOfflinePlayer())
+					"&7Owner: &e" + Nickname.of(product.getShop())
 				);
 		}
 
@@ -656,7 +655,7 @@ public class Shop implements PlayerOwnedObject {
 				return Arrays.asList(
 					desc,
 					"&7Stock: " + (stock > 0 ? "&e" : "&c") + stock,
-					"&7Owner: &e" + Nickname.of(product.getShop().getOfflinePlayer())
+					"&7Owner: &e" + Nickname.of(product.getShop())
 				);
 		}
 
@@ -733,8 +732,8 @@ public class Shop implements PlayerOwnedObject {
 			if (price <= 0)
 				return;
 			TransactionCause cause = product.isMarket() ? TransactionCause.MARKET_PURCHASE : TransactionCause.SHOP_PURCHASE;
-			Transaction transaction = cause.of(product.getShop().getOfflinePlayer(), customer, BigDecimal.valueOf(price), product.getShopGroup(), pretty(product.getItem()));
-			new BankerService().transfer(product.getShop().getOfflinePlayer(), customer, BigDecimal.valueOf(price), product.getShopGroup(), transaction);
+			Transaction transaction = cause.of(product.getShop(), customer, BigDecimal.valueOf(price), product.getShopGroup(), pretty(product.getItem()));
+			new BankerService().transfer(product.getShop(), customer, BigDecimal.valueOf(price), product.getShopGroup(), transaction);
 		}
 
 		@Override
@@ -759,7 +758,7 @@ public class Shop implements PlayerOwnedObject {
 				return Arrays.asList(
 					desc,
 					"&7Stock: &e" + prettyMoney(product.getCalculatedStock(), false),
-					"&7Owner: &e" + Nickname.of(product.getShop().getOfflinePlayer())
+					"&7Owner: &e" + Nickname.of(product.getShop())
 				);
 		}
 

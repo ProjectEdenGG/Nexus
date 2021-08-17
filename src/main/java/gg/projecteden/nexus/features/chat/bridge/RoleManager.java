@@ -4,14 +4,12 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
-import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import net.dv8tion.jda.api.entities.Role;
-import org.bukkit.OfflinePlayer;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -31,20 +29,16 @@ public class RoleManager {
 			return;
 
 		DiscordUserService service = new DiscordUserService();
-		OfflinePlayer player = user.getOfflinePlayer();
 
-		if (player == null)
-			return;
-
-		String name = Name.of(player);
+		String name = Name.of(user);
 		if (name == null)
 			return;
 
-		if (ignore.contains(player.getUniqueId()))
+		if (ignore.contains(user.getUniqueId()))
 			return;
 
-		String nickname = Nickname.of(player);
-		Color roleColor = Nerd.of(player).getRank().getDiscordColor();
+		String nickname = Nickname.of(user);
+		Color roleColor = user.getRank().getDiscordColor();
 
 		if (roleColor == null) {
 			user.setRoleId(null);
@@ -70,7 +64,7 @@ public class RoleManager {
 					debug("    No matching role found, creating a new one");
 					Discord.getGuild().createRole()
 							.setName(nickname)
-							.setColor(Nerd.of(player).getRank().getDiscordColor())
+							.setColor(roleColor)
 							.queue();
 					return;
 				}

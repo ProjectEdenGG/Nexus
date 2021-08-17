@@ -29,7 +29,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -183,7 +183,7 @@ public class Koda {
 							+ mgn.getTimeFormatted() + ". That is in " + mgn.getUntil());
 				break;
 			case "canihaveop":
-				if (event.getChatter() != null && event.getChatter().getOfflinePlayer().isOnline()) {
+				if (event.getChatter() != null && event.getChatter().isOnline()) {
 					Player player = event.getChatter().getOnlinePlayer();
 					double health = player.getHealth();
 					player.setHealth(20);
@@ -201,7 +201,7 @@ public class Koda {
 				}
 				break;
 			case "canibestaff":
-				if (event.getChatter() != null && event.getChatter().getOfflinePlayer().isOnline()) {
+				if (event.getChatter() != null && event.getChatter().isOnline()) {
 					Player player = event.getChatter().getOnlinePlayer();
 					if (Rank.of(player) == Rank.GUEST) {
 						String command = "staff";

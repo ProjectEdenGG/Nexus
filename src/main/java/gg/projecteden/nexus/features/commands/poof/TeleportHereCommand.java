@@ -32,7 +32,7 @@ public class TeleportHereCommand extends CustomCommand implements Listener {
 				nerd.getOnlinePlayer().teleportAsync(location(), TeleportCause.COMMAND);
 		else {
 			if (!player().hasPermission("essentials.tphere"))
-				throw new PlayerNotOnlineException(nerd.getOfflinePlayer());
+				throw new PlayerNotOnlineException(nerd);
 
 			nerd.setTeleportOnLogin(location());
 			new NerdService().save(nerd);

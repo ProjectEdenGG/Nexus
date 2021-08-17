@@ -124,7 +124,7 @@ public class Censor {
 						event.setCancelled(true);
 
 					if (censorItem.isPunish()) {
-						if (!event.getChatter().getNerd().getRank().isStaff()) {
+						if (!event.getChatter().getRank().isStaff()) {
 							event.setCancelled(true);
 
 							PunishmentType type;
@@ -134,7 +134,7 @@ public class Censor {
 							else
 								type = PunishmentType.WARN;
 
-							Punishments.of(event.getChatter().getOfflinePlayer()).add(Punishment.ofType(type)
+							Punishments.of(event.getChatter()).add(Punishment.ofType(type)
 									.punisher(StringUtils.getUUID0())
 									.input(censorItem.getPunishReason() + ": " + event.getOriginalMessage())
 									.now(true));

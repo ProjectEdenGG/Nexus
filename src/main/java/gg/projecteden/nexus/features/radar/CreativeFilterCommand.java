@@ -1,10 +1,12 @@
 package gg.projecteden.nexus.features.radar;
 
+import com.google.common.collect.Comparators;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.utils.CompletableTask;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -12,7 +14,6 @@ import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import me.lexikiq.HasUniqueId;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -35,6 +36,7 @@ import org.bukkit.inventory.PlayerInventory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -48,11 +50,7 @@ public class CreativeFilterCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	private static boolean shouldFilterItems(HasUniqueId uuid) {
-		Player player = Bukkit.getPlayer(uuid.getUniqueId());
-		if (player == null)
-			throw new NullPointerException("Creative filter cache called for offline user");
-
+	private static boolean shouldFilterItems(Player player) {
 		return WorldGroup.of(player.getWorld()) == WorldGroup.CREATIVE && Rank.of(player) == Rank.GUEST;
 	}
 
@@ -116,10 +114,11 @@ public class CreativeFilterCommand extends CustomCommand implements Listener {
 
 	private static final int MAX_DROPS_PER_TICK = 27*5; // these are item stacks, not individual items. breaking a chest gives 27 items. 5 players all breaking a chest in creative at once is a generous max
 	private static final AtomicInteger DROPS_THIS_TICK = new AtomicInteger(); // count of all item stacks dropped in the creative worlds this tick
-	private static final AtomicInteger resetDropsTaskId = new AtomicInteger(-1); // we don't need a million tasks trying to reset DROPS_THIS_TICK!
+	private static int resetDropsTaskId = -1; // we don't need a million tasks trying to reset DROPS_THIS_TICK!
 	private static void resetDrops() {
+		LIMIT_CHECKS_THIS_TICK.clear();
 		DROPS_THIS_TICK.set(0);
-		resetDropsTaskId.set(-1);
+		resetDropsTaskId = -1;
 	}
 
 	// does not run the limiter if it has been run by another item within IGNORE_LIMITER_RADIUS this tick
@@ -131,10 +130,8 @@ public class CreativeFilterCommand extends CustomCommand implements Listener {
 		if (WorldGroup.of(event.getEntity().getWorld()) != WorldGroup.CREATIVE)
 			return;
 
-		synchronized (resetDropsTaskId) {
-			if (resetDropsTaskId.get() == -1)
-				resetDropsTaskId.set(Tasks.wait(1, CreativeFilterCommand::resetDrops));
-		}
+		if (resetDropsTaskId == -1)
+			resetDropsTaskId = Tasks.wait(1, CreativeFilterCommand::resetDrops);
 
 		if (DROPS_THIS_TICK.incrementAndGet() > MAX_DROPS_PER_TICK) {
 			event.setCancelled(true);
@@ -154,24 +151,19 @@ public class CreativeFilterCommand extends CustomCommand implements Listener {
 		}
 
 		LIMIT_CHECKS_THIS_TICK.add(location);
-		Tasks.wait(1, () -> LIMIT_CHECKS_THIS_TICK.remove(location));
-		Tasks.wait(2, () -> limitDrops(location));
+		Tasks.wait(1, () -> limitDrops(location));
 	}
 
 	private void limitDrops(Location location) {
 		Collection<Item> entities = location.getNearbyEntitiesByType(Item.class, RADIUS, item -> !item.isDead());
+		if (entities.size() <= MAX_DROPPED_ENTITIES)
+			return;
 
-		Tasks.async(() -> {
-			if (entities.size() <= MAX_DROPPED_ENTITIES)
-				return;
-
+		CompletableTask.supplyAsync(() -> {
 			List<Item> sortedEntities = new ArrayList<>(entities);
 			sortedEntities.sort(Comparator.comparing(Entity::getTicksLived).reversed());
-
-			while (sortedEntities.size() > MAX_DROPPED_ENTITIES) {
-				sortedEntities.remove(0).remove();
-			}
-		});
+			return sortedEntities.subList(0, sortedEntities.size() - MAX_DROPPED_ENTITIES);
+		}).thenAcceptSync(items -> items.forEach(Item::remove));
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

@@ -4,7 +4,6 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
 import gg.projecteden.nexus.features.chat.ChatManager;
 import gg.projecteden.nexus.features.chat.translator.Language;
@@ -14,6 +13,7 @@ import gg.projecteden.nexus.framework.persistence.serializer.mongodb.PrivateChan
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.PublicChannelConverter;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import lombok.AllArgsConstructor;
@@ -21,6 +21,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.entity.Player;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -47,8 +48,9 @@ public class Chatter implements PlayerOwnedObject {
 	private Language language;
 
 	public void playSound() {
-		if (isOnline())
-			Jingle.PING.play(getOfflinePlayer().getPlayer());
+		Player player = getPlayer();
+		if (player != null)
+			Jingle.PING.play(player);
 	}
 
 	public void say(String message) {
@@ -69,13 +71,13 @@ public class Chatter implements PlayerOwnedObject {
 	public void setActiveChannel(Channel channel, boolean silent) {
 		if (channel == null) {
 			if (!silent)
-				Nerd.of(getOfflinePlayer()).sendMessage(PREFIX + "You are no longer speaking in a channel");
+				sendMessage(PREFIX + "You are no longer speaking in a channel");
 		} else {
 			if (channel instanceof PublicChannel publicChannel)
 				joinSilent(publicChannel);
 
 			if (!silent)
-				Nerd.of(getOfflinePlayer()).sendMessage(PREFIX + channel.getAssignMessage(this));
+				sendMessage(PREFIX + channel.getAssignMessage(this));
 		}
 
 		this.activeChannel = channel;
@@ -86,13 +88,7 @@ public class Chatter implements PlayerOwnedObject {
 		if (channel.getPermission().isEmpty() && channel.getRank() == null)
 			return true;
 
-		boolean hasPerm;
-		if (isOnline())
-			hasPerm = getOnlinePlayer().hasPermission(channel.getPermission());
-		else
-			hasPerm = Nexus.getPerms().playerHas(null, getOfflinePlayer(), channel.getPermission());
-
-		if (!hasPerm)
+		if (!LuckPermsUtils.hasPermission(this, channel.getPermission()))
 			return false;
 
 		if (channel.getRank() != null)
@@ -188,7 +184,7 @@ public class Chatter implements PlayerOwnedObject {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		Chatter chatter = (Chatter) o;
-		return Objects.equals(getOfflinePlayer().getUniqueId(), chatter.getOfflinePlayer().getUniqueId());
+		return Objects.equals(getUniqueId(), chatter.getUniqueId());
 	}
 
 	private void save() {

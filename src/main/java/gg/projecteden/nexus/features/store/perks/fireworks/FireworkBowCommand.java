@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.features.store.perks.fireworks;
 
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.utils.LuckPermsUtils;
 import org.bukkit.Material;
 
 public class FireworkBowCommand extends CustomCommand {
@@ -23,7 +23,7 @@ public class FireworkBowCommand extends CustomCommand {
 		runCommandAsOp("ce enchant firework");
 		if (player().hasPermission("fireworkbow.single")) {
 			send("&eYou have created your one firework bow! If you lose this bow, you won't be able to get another unless you purchase the command again.");
-			Nexus.getPerms().playerRemove(player(), "fireworkbow.single");
+			LuckPermsUtils.PermissionChange.unset().uuid(uuid()).permission("firework.single").run();
 		}
 
 	}

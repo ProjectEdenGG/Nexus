@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.commands.staff;
 
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.flags.Flag;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
@@ -63,9 +62,8 @@ public class WorldGuardEditCommand extends CustomCommand implements Listener {
 	}
 
 	private void off(Player player) {
-		Nexus.getPerms().playerRemove(player, PERMISSION);
-		PermissionChange.unset().player(player).permission(PERMISSION).world(player.getLocation()).run();
-		PermissionChange.unset().player(player).permission(PERMISSION).run();
+		PermissionChange.unset().player(player).permission(PERMISSION).world(player.getLocation()).runAsync();
+		PermissionChange.unset().player(player).permission(PERMISSION).runAsync();
 	}
 
 	public static boolean canWorldGuardEdit(Permissible permissible) {

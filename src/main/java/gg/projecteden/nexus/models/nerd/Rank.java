@@ -7,22 +7,22 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.framework.interfaces.IsColoredAndNamed;
+import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.utils.EnumUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import me.lexikiq.HasOfflinePlayer;
+import me.lexikiq.HasUniqueId;
 import net.luckperms.api.model.group.Group;
 import net.luckperms.api.node.matcher.NodeMatcher;
 import net.luckperms.api.node.types.InheritanceNode;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Bukkit;
 import org.inventivetalent.glow.GlowAPI;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -125,7 +125,7 @@ public enum Rank implements IsColoredAndNamed {
 
 	public List<Nerd> getOnlineNerds() {
 		return PlayerUtils.getOnlinePlayers().stream()
-				.filter(player -> Nerd.of(player).getRank() == this)
+				.filter(player -> Rank.of(player) == this)
 				.map(Nerd::of)
 				.sorted(Comparator.comparing(Nerd::getNickname))
 				.collect(Collectors.toList());
@@ -137,7 +137,7 @@ public enum Rank implements IsColoredAndNamed {
 
 	public static List<Nerd> getOnlineStaff() {
 		return PlayerUtils.getOnlinePlayers().stream()
-				.filter(player -> Nerd.of(player).getRank().isStaff() && Nerd.of(player).getRank().isActive())
+				.filter(player -> Rank.of(player).isStaff() && Rank.of(player).isActive())
 				.map(Nerd::of)
 				.sorted(Comparator.comparing(Nerd::getNickname))
 				.collect(Collectors.toList());
@@ -145,7 +145,7 @@ public enum Rank implements IsColoredAndNamed {
 
 	public static List<Nerd> getOnlineMods() {
 		return PlayerUtils.getOnlinePlayers().stream()
-				.filter(player -> Nerd.of(player).getRank().isMod() && Nerd.of(player).getRank().isActive())
+				.filter(player -> Rank.of(player).isMod() && Rank.of(player).isActive())
 				.map(Nerd::of)
 				.sorted(Comparator.comparing(Nerd::getNickname))
 				.collect(Collectors.toList());
@@ -158,14 +158,14 @@ public enum Rank implements IsColoredAndNamed {
 		.expireAfterWrite(10, TimeUnit.SECONDS)
 		.build(CacheLoader.from(uuid -> {
 			for (Rank rank : REVERSED)
-				if (Nexus.getPerms().playerInGroup(null, Bukkit.getOfflinePlayer(uuid), rank.name()))
+				if (LuckPermsUtils.hasGroup(uuid, rank.name().toLowerCase()))
 					return rank;
 
 			return GUEST;
 		}));
 
-	public static Rank of(HasOfflinePlayer player) {
-		return of(player.getOfflinePlayer().getUniqueId());
+	public static Rank of(HasUniqueId player) {
+		return of(player.getUniqueId());
 	}
 
 	public static Rank of(UUID uuid) {

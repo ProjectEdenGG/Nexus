@@ -89,7 +89,7 @@ public class AFKCommand extends CustomCommand implements Listener {
 
 		if (event.getChannel() instanceof PrivateChannel) {
 			for (Chatter recipient : event.getRecipients()) {
-				if (!recipient.getOfflinePlayer().isOnline()) continue;
+				if (!recipient.isOnline()) continue;
 				if (!PlayerUtils.canSee(user.getPlayer(), recipient.getOnlinePlayer())) return;
 				AFKUser to = AFK.get(recipient.getOnlinePlayer());
 				if (to.isAfk()) {

@@ -12,8 +12,8 @@ import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Nerd.StaffMember;
 import gg.projecteden.nexus.models.nerd.NerdService;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.NonNull;
 import org.bukkit.OfflinePlayer;
@@ -72,19 +72,18 @@ public class NerdCommand extends CustomCommand {
 	@ConverterFor(StaffMember.class)
 	StaffMember convertToStaffMember(String value) {
 		OfflinePlayer player = convertToOfflinePlayer(value);
-		Nerd nerd = Nerd.of(player);
-		if (!nerd.getRank().isStaff())
-			error(Nickname.of(nerd) + " is not staff");
+		if (!Rank.of(player).isStaff())
+			error(Nickname.of(player) + " is not staff");
 		return new StaffMember(player.getUniqueId());
 	}
 
 	@TabCompleterFor(StaffMember.class)
 	List<String> tabCompleteStaffMember(String filter) {
 		return new HoursService().getActivePlayers().stream()
-			.filter(player -> Nerd.of(player).getRank().isStaff())
+			.filter(player -> Rank.of(player).isStaff())
 			.map(PlayerUtils::getPlayer)
-			.map(Name::of)
-			.filter(name -> name != null && name.toLowerCase().startsWith(filter.toLowerCase()))
+			.map(Nickname::of)
+			.filter(name -> name.toLowerCase().startsWith(filter.toLowerCase()))
 			.collect(Collectors.toList());
 	}
 

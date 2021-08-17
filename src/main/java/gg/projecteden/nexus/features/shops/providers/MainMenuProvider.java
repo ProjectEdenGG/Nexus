@@ -62,7 +62,7 @@ public class MainMenuProvider extends ShopProvider {
 				index.set(0);
 
 			ItemBuilder owner = new ItemBuilder(Material.PLAYER_HEAD)
-					.skullOwner(shops.get(index.getAndIncrement()).getOfflinePlayer())
+					.skullOwner(shops.get(index.getAndIncrement()))
 					.name("&6&lBrowse Shops");
 
 			contents.set(1, 4, ClickableItem.from(owner.build(), e -> new BrowseShopsProvider(this).open(player)));

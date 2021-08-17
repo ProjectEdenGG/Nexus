@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.radar;
 
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
-import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.models.warps.Warps.Warp;
 import gg.projecteden.nexus.models.warps.WarpsService;
@@ -46,8 +46,7 @@ public class AntiXray implements Listener {
 		Player player = event.getPlayer();
 		if (WorldGroup.of(player) != WorldGroup.SURVIVAL) return;
 		if (!player.getGameMode().equals(GameMode.SURVIVAL)) return;
-		Nerd nerd = Nerd.of(player);
-		if (nerd.getRank().isStaff()) return;
+		if (Rank.of(player).isStaff()) return;
 
 		Material ore = event.getBlock().getType();
 		if (!countMap.containsKey(ore)) return;

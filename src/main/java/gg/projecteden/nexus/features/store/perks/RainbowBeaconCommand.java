@@ -92,7 +92,7 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 
 		send(PREFIX + "Active beacons:");
 		for (RainbowBeacon rainbowBeacon : service.getCache().values())
-			send("&e" + rainbowBeacon.getOfflinePlayer().getName() + " &7- " + (rainbowBeacon.getTaskId() == null ? "Inactive" : "&aActive"));
+			send("&e" + rainbowBeacon.getNickname() + " &7- " + (rainbowBeacon.getTaskId() == null ? "Inactive" : "&aActive"));
 	}
 
 	@EventHandler
