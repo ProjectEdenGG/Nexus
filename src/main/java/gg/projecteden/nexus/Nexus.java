@@ -70,6 +70,7 @@ public class Nexus extends JavaPlugin {
 	@Getter
 	private Features features;
 	private static Nexus instance;
+	public static final LocalDateTime EPOCH = LocalDateTime.now();
 	@Getter
 	private final static HeadDatabaseAPI headAPI = new HeadDatabaseAPI();
 	public static final String DOMAIN = "projecteden.gg";

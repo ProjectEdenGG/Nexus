@@ -73,7 +73,6 @@ import org.bukkit.plugin.Plugin;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -105,11 +104,9 @@ public class NexusCommand extends CustomCommand implements Listener {
 				task.getTask().run();
 	}
 
-	private static final LocalDateTime epoch = LocalDateTime.now();
-
 	@Path("uptime")
 	void uptime() {
-		send(PREFIX + "Up for &e" + Timespan.of(epoch).format());
+		send(PREFIX + "Up for &e" + Timespan.of(Nexus.EPOCH).format());
 	}
 
 	@Path("reload cancel")

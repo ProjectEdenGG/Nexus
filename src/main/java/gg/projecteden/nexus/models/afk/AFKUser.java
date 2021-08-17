@@ -4,14 +4,20 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.afk.events.NotAFKEvent;
 import gg.projecteden.nexus.models.afk.events.NowAFKEvent;
+import gg.projecteden.nexus.models.back.Back;
+import gg.projecteden.nexus.models.back.BackService;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
+import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.TimeUtils.Time;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,12 +30,14 @@ import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
@@ -53,6 +61,68 @@ public class AFKUser implements PlayerOwnedObject {
 	private boolean forceAfk;
 
 	private Map<AFKSetting, Boolean> settings = new HashMap<>();
+
+	private void save() {
+		new AFKUserService().save(this);
+	}
+
+	private static WorldGuardUtils worldGuardUtils;
+
+	public boolean isLimbo() {
+		if (!isOnline())
+			return false;
+
+		if (worldGuardUtils == null)
+			worldGuardUtils = new WorldGuardUtils("server");
+
+		if (!worldGuardUtils.isInRegion(getOnlinePlayer().getLocation(), "limbo"))
+			return false;
+
+		return true;
+	}
+
+	public void limbo() {
+		if (!isOnline() || isLimbo())
+			return;
+
+		Nexus.log("[AFK] Sending " + getNickname() + " to limbo");
+
+		final Player player = getOnlinePlayer();
+		forceAfk = true;
+		WarpType.STAFF.get("limbo").teleportAsync(player).thenRun(() -> {
+			update();
+			forceAfk = false;
+			save();
+		});
+
+		sendMessage(AFK.PREFIX + "You have been sent to AFK limbo. Move around to exit");
+	}
+
+	public void unlimbo() {
+		if (!isLimbo())
+			return;
+
+		Nexus.log("[AFK] Returning " + getNickname() + " from limbo");
+
+		final Player player = getOnlinePlayer();
+		final BackService backService = new BackService();
+		final Back back = backService.get(player);
+		final Location location = back.getLocations().isEmpty() ? null : back.getLocations().remove(0);
+
+		CompletableFuture<Boolean> teleport;
+		if (location == null) {
+			Nexus.severe("[AFK] Back location for " + getNickname() + " is null");
+			teleport = WarpType.NORMAL.get("spawn").teleportAsync(getOnlinePlayer(), TeleportCause.PLUGIN);
+		} else {
+			teleport = player.teleportAsync(location, TeleportCause.PLUGIN);
+			backService.save(back);
+		}
+
+		teleport.thenRun(() -> {
+			afk = false;
+			notAfk();
+		});
+	}
 
 	@Getter
 	@AllArgsConstructor
@@ -141,10 +211,11 @@ public class AFKUser implements PlayerOwnedObject {
 	}
 
 	public void notAfk() {
+		if (isAfk())
+			unlimbo();
 		setAfk(false);
 		setMessage(null);
-		setTime();
-		setLocation();
+		update();
 
 		new NotAFKEvent(this).callEvent();
 

@@ -26,6 +26,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 @Aliases("away")
@@ -123,8 +125,24 @@ public class AFKCommand extends CustomCommand implements Listener {
 	}
 
 	@EventHandler
+	public void onPlayerJoin(PlayerJoinEvent event) {
+		AFK.get(event.getPlayer()).unlimbo();
+	}
+
+	@EventHandler
 	public void onQuit(PlayerQuitEvent event) {
 		service.edit(event.getPlayer(), AFKUser::reset);
+	}
+
+	@EventHandler
+	public void onPlayerMove(PlayerMoveEvent event) {
+		final Player player = event.getPlayer();
+		if (!player.getWorld().getName().equals("server"))
+			return;
+
+		final AFKUser user = AFK.get(player);
+		if (user.isAfk())
+			user.unlimbo();
 	}
 
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)

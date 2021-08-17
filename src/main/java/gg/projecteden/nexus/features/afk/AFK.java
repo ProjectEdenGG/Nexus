@@ -6,23 +6,37 @@ import gg.projecteden.nexus.models.afk.AFKUser;
 import gg.projecteden.nexus.models.afk.AFKUserService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.Time;
 import me.lexikiq.HasUniqueId;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 public class AFK extends Feature {
+	public static final String PREFIX = StringUtils.getPrefix("AFK");
 	private static final AFKUserService service = new AFKUserService();
 
 	@Override
 	public void onStart() {
-		Tasks.repeat(Time.SECOND.x(5), Time.SECOND.x(3), () -> PlayerUtils.getOnlinePlayers().stream().map(AFK::get).forEach(user -> {
+		Tasks.repeat(Time.SECOND.x(5), Time.SECOND.x(3), () -> {
+			List<Player> onlinePlayers = Collections.unmodifiableList(PlayerUtils.getOnlinePlayers());
+			afkCheck(onlinePlayers);
+			limboCheck(onlinePlayers);
+		});
+	}
+
+	private static void afkCheck(List<Player> onlinePlayers) {
+		onlinePlayers.stream().map(AFK::get).forEach(user -> {
 			try {
-				final Player player = user.getOnlinePlayer();
-				if (!isSameLocation(user.getLocation(), player.getLocation()) && player.getVehicle() == null)
+				if (hasMoved(user))
 					if (user.isAfk() && !user.isForceAfk())
 						user.notAfk();
 					else
@@ -33,7 +47,42 @@ public class AFK extends Feature {
 				Nexus.warn("Error in AFK scheduler: " + ex.getMessage());
 				ex.printStackTrace();
 			}
-		}));
+		});
+	}
+
+	private static boolean hasMoved(AFKUser user) {
+		final Player player = user.getOnlinePlayer();
+		final Entity vehicle = player.getVehicle();
+
+		if (vehicle == null || user.getLocation() == null)
+			return !isSameLocation(user.getLocation(), player.getLocation());
+
+		final float previousYaw = user.getLocation().getYaw();
+		final float previousPitch = user.getLocation().getPitch();
+
+		final float currentYaw = player.getLocation().getYaw();
+		final float currentPitch = player.getLocation().getPitch();
+
+		return previousYaw != currentYaw && previousPitch != currentPitch;
+	}
+
+	private static void limboCheck(List<Player> players) {
+		if (Nexus.EPOCH.isAfter(LocalDateTime.now().minusMinutes(2)))
+			return;
+
+		// 5 min average above 17
+		if (Bukkit.getTPS()[1] >= 17)
+			return;
+
+		final List<AFKUser> afkUsers = players.stream()
+			.map(AFK::get)
+			.filter(AFKUser::isTimeAfk)
+			.toList();
+
+		if (players.size() == afkUsers.size())
+			return;
+
+		afkUsers.forEach(AFKUser::limbo);
 	}
 
 	@Override

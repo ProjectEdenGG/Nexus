@@ -1,6 +1,8 @@
 package gg.projecteden.nexus.utils;
 
-import com.google.common.base.Preconditions;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.math.Vector3;
@@ -31,10 +33,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -48,29 +55,41 @@ public final class WorldGuardUtils {
 	private final World worldEditWorld;
 	@NotNull
 	private final RegionManager manager;
+	@NotNull
+	private final static Map<org.bukkit.World, LoadingCache<BlockVector3, Set<ProtectedRegion>>> REGIONS_AT_CACHE = new HashMap<>();
+
 	public static final @Nullable WorldGuardPlugin plugin = (WorldGuardPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldGuard");
 
-	public WorldGuardUtils(@NotNull org.bukkit.entity.Entity entity) {
+	public WorldGuardUtils(@NotNull Entity entity) {
 		this(entity.getWorld());
 	}
 
-	public WorldGuardUtils(@NotNull org.bukkit.Location location) {
+	public WorldGuardUtils(@NotNull Location location) {
 		this(location.getWorld());
 	}
 
-	public WorldGuardUtils(@NotNull org.bukkit.block.Block block) {
+	public WorldGuardUtils(@NotNull Block block) {
 		this(block.getWorld());
 	}
 
 	public WorldGuardUtils(@NotNull String world) {
-		this(Preconditions.checkNotNull(Bukkit.getWorld(world), "No world could be found by the name " + world));
+		this(Objects.requireNonNull(Bukkit.getWorld(world), "No world could be found by the name " + world));
 	}
 
 	public WorldGuardUtils(@NotNull org.bukkit.World world) {
 		this.world = world;
 		this.bukkitWorld = new BukkitWorld(world);
 		this.worldEditWorld = bukkitWorld;
-		this.manager = Preconditions.checkNotNull(WorldGuard.getInstance().getPlatform().getRegionContainer().get(bukkitWorld), "Could not load RegionManager");
+		this.manager = getManager(bukkitWorld);
+
+		REGIONS_AT_CACHE.putIfAbsent(world, CacheBuilder.newBuilder()
+			.expireAfterWrite(10, TimeUnit.SECONDS)
+			.build(CacheLoader.from(location -> getManager(bukkitWorld).getApplicableRegions(location).getRegions())));
+	}
+
+	@NotNull
+	private static RegionManager getManager(BukkitWorld bukkitWorld) {
+		return Objects.requireNonNull(WorldGuard.getInstance().getPlatform().getRegionContainer().get(bukkitWorld), "Could not load RegionManager for world " + bukkitWorld.getName());
 	}
 
 	public @NotNull RegionContainer getContainer() {
@@ -126,20 +145,29 @@ public final class WorldGuardUtils {
 		return new CuboidRegion(worldEditWorld, toBlockVector3(min), toBlockVector3(max));
 	}
 
+	public @NotNull Set<ProtectedRegion> getRegionsAt(@NotNull BlockVector3 location) {
+		try {
+			return REGIONS_AT_CACHE.get(world).get(location);
+		} catch (ExecutionException ex) {
+			ex.printStackTrace();
+			return Collections.emptySet();
+		}
+	}
+
 	public @NotNull Set<ProtectedRegion> getRegionsAt(@NotNull Location location) {
 		if (!isSameWorld(location))
-			return new HashSet<>();
+			return Collections.emptySet();
 
-		return manager.getApplicableRegions(toBlockVector3(location)).getRegions();
+		return getRegionsAt(toBlockVector3(location));
 	}
 
 	public @NotNull Set<ProtectedRegion> getRegionsAt(@NotNull Vector vector) {
-		return getRegionsAt(vector.toLocation(world));
+		return getRegionsAt(toBlockVector3(vector));
 	}
 
 	public @NotNull Set<String> getRegionNamesAt(@NotNull Location location) {
 		if (!isSameWorld(location))
-			return new HashSet<>();
+			return Collections.emptySet();
 
 		return getRegionsAt(location).stream().map(ProtectedRegion::getId).collect(Collectors.toSet());
 	}

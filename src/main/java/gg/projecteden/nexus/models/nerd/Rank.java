@@ -22,7 +22,7 @@ import net.md_5.bungee.api.ChatColor;
 import org.inventivetalent.glow.GlowAPI;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -156,16 +156,13 @@ public enum Rank implements IsColoredAndNamed {
 
 	public static final LoadingCache<UUID, Rank> CACHE = CacheBuilder.newBuilder()
 		.expireAfterWrite(10, TimeUnit.SECONDS)
-		.build(new CacheLoader<>() {
-			@Override
-			public Rank load(@NotNull UUID uuid) {
-				for (Rank rank : REVERSED)
-					if (LuckPermsUtils.hasGroup(uuid, rank.name().toLowerCase()))
-						return rank;
+		.build(CacheLoader.from(uuid -> {
+			for (Rank rank : REVERSED)
+				if (LuckPermsUtils.hasGroup(uuid, rank.name().toLowerCase()))
+					return rank;
 
-				return GUEST;
-			}
-		});
+			return GUEST;
+		}));
 
 	public static Rank of(HasUniqueId player) {
 		return of(player.getUniqueId());
