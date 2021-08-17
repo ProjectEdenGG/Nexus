@@ -158,7 +158,7 @@ public enum Rank implements IsColoredAndNamed {
 		.expireAfterWrite(10, TimeUnit.SECONDS)
 		.build(CacheLoader.from(uuid -> {
 			for (Rank rank : REVERSED)
-				if (LuckPermsUtils.hasGroup(uuid, rank.name().toLowerCase()))
+				if (rank.isActive() && LuckPermsUtils.hasGroup(uuid, rank.name().toLowerCase()))
 					return rank;
 
 			return GUEST;
