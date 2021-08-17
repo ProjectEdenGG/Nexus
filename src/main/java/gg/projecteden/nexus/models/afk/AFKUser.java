@@ -85,6 +85,8 @@ public class AFKUser implements PlayerOwnedObject {
 		if (!isOnline() || isLimbo())
 			return;
 
+		Nexus.log("[AFK] Sending " + getNickname() + " to limbo");
+
 		final Player player = getOnlinePlayer();
 		forceAfk = true;
 		WarpType.STAFF.get("limbo").teleportAsync(player).thenRun(() -> {
@@ -99,6 +101,8 @@ public class AFKUser implements PlayerOwnedObject {
 	public void unlimbo() {
 		if (!isLimbo())
 			return;
+
+		Nexus.log("[AFK] Returning " + getNickname() + " from limbo");
 
 		final Player player = getOnlinePlayer();
 		final BackService backService = new BackService();
