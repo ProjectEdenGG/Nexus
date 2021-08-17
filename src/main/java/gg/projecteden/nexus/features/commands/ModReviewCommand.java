@@ -185,7 +185,7 @@ public class ModReviewCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
-		if (Rank.of(event.getPlayer()) != Rank.ADMIN)
+		if (!Rank.of(event.getPlayer()).isAdmin())
 			return;
 
 		ModReview modReview = new ModReviewService().get0();
