@@ -106,13 +106,8 @@ public class Mailer implements PlayerOwnedObject {
 		if (groups.isEmpty())
 			return;
 
-		String message;
-		if (groups.size() == 1)
-			message = "an unclaimed delivery in &e" + groups.get(0);
-		else
-			message = "unclaimed deliveries in &e" + asOxfordList(groups, "&3, &e");
-
-		sendMessage(json(MailCommand.PREFIX + "&3You have " + message + "&3, use &c/mail box &3to claim it!")
+		String message = groups.size() == 1 ? groups.get(0) : asOxfordList(groups, "&3, &e");
+		sendMessage(json(MailCommand.PREFIX + "&3You have unclaimed mail in &e" + message + "&3, use &c/mail box &3to claim it!")
 				.command("/mail box")
 				.hover("&eClick to view your mail box"));
 	}
@@ -187,7 +182,6 @@ public class Mailer implements PlayerOwnedObject {
 
 			getOwner().getMail(worldGroup).add(this);
 			sent = LocalDateTime.now();
-			new MailerService().save(getOwner());
 		}
 
 		public boolean hasMessage() {
