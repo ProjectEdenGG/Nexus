@@ -17,14 +17,16 @@ import gg.projecteden.nexus.utils.RandomUtils;
 import lombok.NoArgsConstructor;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
+import org.bukkit.Chunk;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Permission("group.staff")
@@ -143,8 +145,16 @@ public class WeeklyWakkaCommand extends _WarpCommand implements Listener {
 		weeklyWakka.setCurrentTip(String.valueOf(tips.indexOf(newTip)));
 		weeklyWakka.getFoundPlayers().clear();
 		service.save(weeklyWakka);
+
 		NPC npc = getNPC();
-		npc.teleport(newWarp.getLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
+
+		final World world = newWarp.getLocation().getWorld();
+		final CompletableFuture<Chunk> oldLocation = world.getChunkAtAsync(npc.getStoredLocation());
+		final CompletableFuture<Chunk> newLocation = world.getChunkAtAsync(newWarp.getLocation());
+		final Runnable teleport = () -> npc.teleport(newWarp.getLocation(), TeleportCause.PLUGIN);
+
+		CompletableFuture.allOf(oldLocation, newLocation).thenRun(teleport);
+
 		if (sender() != null)
 			send(json("The Weekly Wakka NPC has moved to location #" + newWarp.getName()).command("/weeklywakka " + newWarp.getName()));
 	}
