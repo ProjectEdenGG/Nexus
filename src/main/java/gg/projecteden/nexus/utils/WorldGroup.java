@@ -2,6 +2,7 @@ package gg.projecteden.nexus.utils;
 
 import lombok.Getter;
 import me.lexikiq.HasLocation;
+import me.lexikiq.OptionalLocation;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -60,8 +61,8 @@ public enum WorldGroup {
 		return getWorlds().stream().map(PlayerUtils::getOnlinePlayers).flatMap(Collection::stream).toList();
 	}
 
-	public static WorldGroup of(HasLocation location) {
-		return of(location.getLocation().getWorld());
+	public static WorldGroup of(OptionalLocation location) {
+		return location.getLocation() == null ? UNKNOWN : of(location.getLocation().getWorld());
 	}
 
 	public static WorldGroup of(World world) {

@@ -25,16 +25,20 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Firework;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.TNTPrimed;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.AreaEffectCloudApplyEvent;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.PotionSplashEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -100,12 +104,12 @@ public class PVPCommand extends CustomCommand implements Listener {
 	 * @param victim user who is getting attacked
 	 * @param attacker user who is attacking
 	 */
-	public void processAttack(@NotNull EntityDamageEvent event, @NotNull PVP victim, @Nullable PVP attacker) {
+	public void processAttack(@NotNull Cancellable event, @NotNull PVP victim, @Nullable PVP attacker) {
 		if (attacker == null)
 			return;
 		if (victim.equals(attacker))
 			return;
-		if (WorldGroup.of(event.getEntity()) != WorldGroup.SURVIVAL) return;
+		if (WorldGroup.of(victim) != WorldGroup.SURVIVAL) return;
 
 		// Cancel if both players do not have pvp on
 		if (!victim.isEnabled() || !attacker.isEnabled()) {
@@ -230,6 +234,26 @@ public class PVPCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onDamageByBlock(EntityDamageByBlockEvent event) {
 		processAttack(event, service.get(event.getEntity()), getDamageCause(event));
+	}
+
+	@EventHandler
+	public void onPotionSplash(PotionSplashEvent event) {
+		if (!(event.getPotion().getShooter() instanceof Player attacker))
+			return;
+
+		for (LivingEntity affectedEntity : event.getAffectedEntities())
+			if (affectedEntity instanceof Player victim)
+				processAttack(event, service.get(victim), service.get(attacker));
+	}
+
+	@EventHandler
+	public void onAreaEffectCloudApply(AreaEffectCloudApplyEvent event) {
+		if (!(event.getEntity().getSource() instanceof Player attacker))
+			return;
+
+		for (LivingEntity affectedEntity : event.getAffectedEntities())
+			if (affectedEntity instanceof Player victim)
+				processAttack(event, service.get(victim), service.get(attacker));
 	}
 
 	@EventHandler
