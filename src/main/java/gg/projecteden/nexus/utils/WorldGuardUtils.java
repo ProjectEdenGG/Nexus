@@ -34,6 +34,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -54,8 +55,8 @@ public final class WorldGuardUtils {
 	private final World worldEditWorld;
 	@NotNull
 	private final RegionManager manager;
-	@NotNull // TODO: per-world cache? RegionManager might break if world reloads, should test first
-	private final LoadingCache<BlockVector3, Set<ProtectedRegion>> regionsAtCache;
+	@NotNull
+	private final static Map<org.bukkit.World, LoadingCache<BlockVector3, Set<ProtectedRegion>>> REGIONS_AT_CACHE = new HashMap<>();
 
 	public static final @Nullable WorldGuardPlugin plugin = (WorldGuardPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldGuard");
 
@@ -79,10 +80,16 @@ public final class WorldGuardUtils {
 		this.world = world;
 		this.bukkitWorld = new BukkitWorld(world);
 		this.worldEditWorld = bukkitWorld;
-		this.manager = Objects.requireNonNull(WorldGuard.getInstance().getPlatform().getRegionContainer().get(bukkitWorld), "Could not load RegionManager");
-		this.regionsAtCache = CacheBuilder.newBuilder()
+		this.manager = getManager(bukkitWorld);
+
+		REGIONS_AT_CACHE.putIfAbsent(world, CacheBuilder.newBuilder()
 			.expireAfterWrite(10, TimeUnit.SECONDS)
-			.build(CacheLoader.from(location -> manager.getApplicableRegions(location).getRegions()));
+			.build(CacheLoader.from(location -> getManager(bukkitWorld).getApplicableRegions(location).getRegions())));
+	}
+
+	@NotNull
+	private static RegionManager getManager(BukkitWorld bukkitWorld) {
+		return Objects.requireNonNull(WorldGuard.getInstance().getPlatform().getRegionContainer().get(bukkitWorld), "Could not load RegionManager for world " + bukkitWorld.getName());
 	}
 
 	public @NotNull RegionContainer getContainer() {
@@ -140,7 +147,7 @@ public final class WorldGuardUtils {
 
 	public @NotNull Set<ProtectedRegion> getRegionsAt(@NotNull BlockVector3 location) {
 		try {
-			return regionsAtCache.get(location);
+			return REGIONS_AT_CACHE.get(world).get(location);
 		} catch (ExecutionException ex) {
 			ex.printStackTrace();
 			return Collections.emptySet();
