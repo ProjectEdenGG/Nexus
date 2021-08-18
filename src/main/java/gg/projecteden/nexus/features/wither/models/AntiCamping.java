@@ -1,9 +1,6 @@
 package gg.projecteden.nexus.features.wither.models;
 
-import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.utils.TimeUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +11,8 @@ import org.bukkit.util.Vector;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+
+import static gg.projecteden.nexus.features.wither.models.WitherFight.subtitle;
 
 @RequiredArgsConstructor
 public class AntiCamping {
@@ -28,14 +27,11 @@ public class AntiCamping {
 
 	public int start() {
 		return Tasks.repeat(TimeUtils.Time.SECOND, TimeUtils.Time.SECOND, () -> {
-			if (currentFight.shouldRegen) {
+			if (currentFight.shouldRegen)
 				return;
-			}
 
-			for (UUID uuid : currentFight.getAlivePlayers()) {
-
-				Player player = PlayerUtils.getPlayer(uuid).getPlayer();
-
+			for (Player player : currentFight.alivePlayers()) {
+				UUID uuid = player.getUniqueId();
 				if (recentLocations.containsKey(uuid)) {
 					Location recent = recentLocations.get(uuid);
 					Location now = player.getLocation();
@@ -48,12 +44,7 @@ public class AntiCamping {
 						int seconds = secondsCamping.containsKey(uuid) ? secondsCamping.get(uuid) + 1 : 1;
 
 						if (seconds == anticampingTeleport) {
-							new TitleBuilder()
-								.subtitle("&8&kbbb &4&lThe Wither Pulls You Closer &8&kbbb")
-								.fade(5)
-								.stay(40)
-								.players(player)
-								.send();
+							subtitle(player, "&8&kbbb &4&lThe Wither Pulls You Closer &8&kbbb");
 
 							Vector vector = currentFight.getWither().getLocation().toVector().subtract(player.getLocation().toVector());
 							vector.add(new Vector(0, .3, 0)).normalize().multiply(1.1);

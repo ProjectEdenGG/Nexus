@@ -42,6 +42,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static org.reflections.ReflectionUtils.getAllMethods;
@@ -285,6 +286,17 @@ public class Utils extends gg.projecteden.utils.Utils {
 		private @NonNull Runnable task;
 		private boolean completeBeforeShutdown;
 
+	}
+
+	public static <T> T tryCalculate(int times, Supplier<T> to) {
+		int count = 0;
+		while (++count <= times) {
+			final T result = to.get();
+			if (result != null)
+				return result;
+		}
+
+		return null;
 	}
 
 }

@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features;
 import de.tr7zw.nbtapi.NBTCompound;
 import de.tr7zw.nbtapi.NBTEntity;
 import de.tr7zw.nbtapi.NBTFile;
+import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.SmartInvsPlugin;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.crates.models.CrateType;
@@ -254,7 +255,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 		PlayerUtils.getOnlinePlayers().stream()
 				.filter(player -> SmartInvsPlugin.manager().getInventory(player).isPresent())
 				.forEach(player -> playerInventoryMap.put(player.getName(),
-						SmartInvsPlugin.manager().getInventory(player).get().getTitle()));
+						SmartInvsPlugin.manager().getInventory(player).map(SmartInventory::getTitle).orElse(null)));
 
 		if (playerInventoryMap.isEmpty())
 			error("No SmartInvs open");

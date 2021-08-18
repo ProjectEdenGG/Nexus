@@ -35,8 +35,8 @@ public class DifficultySelectionMenu extends MenuUtils implements InventoryProvi
 			contents.set(row, column, ClickableItem.from(item, e -> {
 				WitherFight fight;
 				try {
-					fight = difficulty.witherFightClass.newInstance();
-				} catch (InstantiationException | IllegalAccessException ex) {
+					fight = difficulty.witherFightClass.getConstructor().newInstance();
+				} catch (Exception ex) {
 					ex.printStackTrace();
 					return;
 				}

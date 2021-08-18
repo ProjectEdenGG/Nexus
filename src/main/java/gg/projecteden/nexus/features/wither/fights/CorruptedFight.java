@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.wither.fights;
 
-import com.destroystokyo.paper.Title;
 import gg.projecteden.nexus.features.crates.models.CrateType;
 import gg.projecteden.nexus.features.wither.WitherChallenge;
 import gg.projecteden.nexus.features.wither.models.WitherFight;
@@ -36,8 +35,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
-
 @NoArgsConstructor
 public class CorruptedFight extends WitherFight {
 
@@ -53,8 +50,7 @@ public class CorruptedFight extends WitherFight {
 	@Override
 	public void start() {
 		super.start();
-		for (UUID uuid : alivePlayers)
-			PlayerUtils.getPlayer(uuid).getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 999999, 0));
+		alivePlayers().forEach(player -> player.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 999999, 0)));
 	}
 
 	@EventHandler
@@ -117,9 +113,9 @@ public class CorruptedFight extends WitherFight {
 		if (event.getEntity() != this.wither) return;
 		if (RandomUtils.chanceOf(30))
 			if (RandomUtils.chanceOf(35))
-				EnumUtils.random(CounterAttack.class).execute(alivePlayers);
+				EnumUtils.random(CounterAttack.class).execute(alivePlayers());
 			else
-				EnumUtils.random(CorruptedCounterAttacks.class).execute(alivePlayers);
+				EnumUtils.random(CorruptedCounterAttacks.class).execute(alivePlayers());
 	}
 
 	@EventHandler
@@ -168,9 +164,8 @@ public class CorruptedFight extends WitherFight {
 	public enum CorruptedCounterAttacks {
 		SCRAMBLE_INVENTORY {
 			@Override
-			public void execute(List<UUID> uuids) {
-				for (UUID uuid : uuids) {
-					Player player = PlayerUtils.getPlayer(uuid).getPlayer();
+			public void execute(List<Player> players) {
+				for (Player player : players) {
 					List<ItemStack> contents = new ArrayList<>();
 					for (int i = 0; i < 36; i++)
 						contents.add(player.getInventory().getContents()[i]);
@@ -179,16 +174,14 @@ public class CorruptedFight extends WitherFight {
 					for (int i = 0; i < 36; i++)
 						player.getInventory().setItem(i, contents.get(i));
 					player.getInventory().setItemInOffHand(contents.get(contents.size() - 1));
-					player.sendTitle(new Title("", colorize("&8&kbbb &4&lInventory Scrambled &8&kbbb"), 10, 40, 10));
+					subtitle(player, "&8&kbbb &4&lInventory Scrambled &8&kbbb");
 				}
 			}
 		},
 		STRIP_ARMOR_PIECE {
 			@Override
-			public void execute(List<UUID> uuids) {
-				for (UUID uuid : uuids) {
-					Player player = PlayerUtils.getPlayer(uuid).getPlayer();
-					if (player == null) continue;
+			public void execute(List<Player> players) {
+				for (Player player : players) {
 					List<ItemStack> armor = new ArrayList<>(Arrays.asList(player.getInventory().getArmorContents()));
 					if (Utils.isNullOrEmpty(armor)) continue;
 					ItemStack item = RandomUtils.randomElement(armor);
@@ -196,25 +189,21 @@ public class CorruptedFight extends WitherFight {
 						armor.set(armor.indexOf(item), null);
 						player.getInventory().setArmorContents(armor.toArray(ItemStack[]::new));
 						player.getInventory().addItem(item);
-						player.sendTitle(new Title("", colorize("&8&kbbb &4&lArmor Piece Stripped &8&kbbb"), 10, 40, 10));
+						subtitle(player, "&8&kbbb &4&lArmor Piece Stripped &8&kbbb");
 					}
 				}
 			}
 		},
 		SMITE {
 			@Override
-			public void execute(List<UUID> uuids) {
-				for (UUID uuid : uuids) {
-					Player player = PlayerUtils.getPlayer(uuid).getPlayer();
-					if (player == null) continue;
+			public void execute(List<Player> players) {
+				for (Player player : players)
 					player.getLocation().getWorld().strikeLightning(player.getLocation());
-
-				}
 			}
 		},
 		WITHER_SKELETONS {
 			@Override
-			public void execute(List<UUID> uuids) {
+			public void execute(List<Player> players) {
 				List<Location> locations = new ArrayList<>();
 				for (int iteration = 0; iteration < 5; iteration++) {
 					double angle = 360.0 / 5 * iteration;
@@ -229,15 +218,14 @@ public class CorruptedFight extends WitherFight {
 		},
 		HUNGER {
 			@Override
-			public void execute(List<UUID> uuids) {
-				for (UUID uuid : uuids)
-					if (PlayerUtils.getPlayer(uuid).getPlayer() != null)
-						PlayerUtils.getPlayer(uuid).getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, Time.SECOND.x(10), 3, true));
+			public void execute(List<Player> players) {
+				for (Player player : players)
+					player.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, Time.SECOND.x(10), 3, true));
 			}
 		},
 		SILVERFISH {
 			@Override
-			public void execute(List<UUID> uuids) {
+			public void execute(List<Player> players) {
 				Location witherLoc = WitherChallenge.currentFight.wither.getLocation().clone();
 				for (int i = 0; i < 10; i++) {
 					double x = RandomUtils.randomDouble(-2.5, 2.5);
@@ -249,15 +237,13 @@ public class CorruptedFight extends WitherFight {
 		},
 		WEAKNESS {
 			@Override
-			public void execute(List<UUID> uuids) {
-				for (UUID uuid : uuids)
-					if (PlayerUtils.getPlayer(uuid).getPlayer() != null)
-						PlayerUtils.getPlayer(uuid).getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, Time.SECOND.x(10), 1, true));
+			public void execute(List<Player> players) {
+				for (Player player : players)
+					player.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, Time.SECOND.x(10), 1, true));
 			}
 		};
 
-
-		public abstract void execute(List<UUID> uuids);
+		public abstract void execute(List<Player> players);
 	}
 
 }

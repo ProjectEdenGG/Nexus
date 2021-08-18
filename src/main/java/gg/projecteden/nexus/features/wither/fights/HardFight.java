@@ -45,7 +45,7 @@ public class HardFight extends WitherFight {
 	public void counterAttack(EntityDamageByEntityEvent event) {
 		if (event.getEntity() != this.wither) return;
 		if (!RandomUtils.chanceOf(10)) return;
-		EnumUtils.random(CounterAttack.class).execute(alivePlayers);
+		EnumUtils.random(CounterAttack.class).execute(alivePlayers());
 	}
 
 	@Override
@@ -68,7 +68,8 @@ public class HardFight extends WitherFight {
 		Wither wither = (Wither) event.getEntity();
 		if (!shouldRegen) {
 			if (event.getDamager() instanceof Player player) {
-				PlayerUtils.send(player, WitherChallenge.PREFIX + "&cThe wither cannot be damaged while the blaze shield is up! &eKill the blazes to continue the fight!");
+				PlayerUtils.send(player, WitherChallenge.PREFIX + "&cThe wither cannot be damaged while the blaze shield is up! " +
+					"&eKill the blazes to continue the fight!");
 			}
 		}
 		if (!shouldSummonWave) return;

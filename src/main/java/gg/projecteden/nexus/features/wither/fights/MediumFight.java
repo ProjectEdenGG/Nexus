@@ -38,7 +38,7 @@ public class MediumFight extends WitherFight {
 	public void counterAttack(EntityDamageByEntityEvent event) {
 		if (event.getEntity() != this.wither) return;
 		if (!RandomUtils.chanceOf(15)) return;
-		EnumUtils.random(CounterAttack.class).execute(alivePlayers);
+		EnumUtils.random(CounterAttack.class).execute(alivePlayers());
 	}
 
 	@Override

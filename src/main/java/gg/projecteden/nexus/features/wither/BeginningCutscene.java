@@ -3,16 +3,14 @@ package gg.projecteden.nexus.features.wither;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.utils.TimeUtils.Time;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
@@ -32,9 +30,11 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static gg.projecteden.nexus.features.wither.WitherChallenge.currentFight;
 
 public class BeginningCutscene implements Listener {
 
@@ -68,47 +68,41 @@ public class BeginningCutscene implements Listener {
 
 	public CompletableFuture<Location> run() {
 		int waitSeconds = 3;
-		CompletableFuture<Location> completableFuture = new CompletableFuture();
+		CompletableFuture<Location> completableFuture = new CompletableFuture<>();
 
 		hideAllPlayers();
 
-		for (Player player : uuidToPlayers()) {
+		for (Player player : currentFight.alivePlayers()) {
 			player.setGameMode(GameMode.SPECTATOR);
 			player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, Time.SECOND.x(3), 1, true));
 			player.teleport(new Location(Bukkit.getWorld("events"), -150.50, 77.00, -82.50, .00F, 20.00F));
-			player.sendTitle(StringUtils.colorize("&8&k%%%% &4&lWither &8&k%%%%"), WitherChallenge.currentFight.getDifficulty().getTitle(), 15, 25, 15);
+
+			new TitleBuilder()
+				.players(player)
+				.title("&8&k%%%% &4&lWither &8&k%%%%")
+				.subtitle(currentFight.getDifficulty().getTitle())
+				.fade(15).stay(25)
+				.send();
 		}
 
 		Location cageLoc = WitherChallenge.cageLoc.clone();
 		final WitherSkeleton witherSkeleton = cageLoc.getWorld().spawn(cageLoc, WitherSkeleton.class);
 		witherSkeleton.setAI(false);
 
-		Tasks.wait(Time.SECOND.x(waitSeconds += 1), () -> {
-			spawnFire(LIGHTNING_LOCATIONS[0]);
-			spawnFire(LIGHTNING_LOCATIONS[1]);
-		});
-		Tasks.wait(Time.SECOND.x(waitSeconds += 1), () -> {
-			spawnFire(LIGHTNING_LOCATIONS[2]);
-			spawnFire(LIGHTNING_LOCATIONS[3]);
-		});
-		Tasks.wait(Time.SECOND.x(waitSeconds += 1), () -> {
-			spawnFire(LIGHTNING_LOCATIONS[4]);
-			spawnFire(LIGHTNING_LOCATIONS[5]);
-		});
-		Tasks.wait(Time.SECOND.x(waitSeconds += 1), () -> {
-			spawnFire(LIGHTNING_LOCATIONS[6]);
-			spawnFire(LIGHTNING_LOCATIONS[7]);
-		});
-		Tasks.wait(Time.SECOND.x(waitSeconds += 1), () -> {
-			spawnFire(LIGHTNING_LOCATIONS[8]);
-			spawnFire(LIGHTNING_LOCATIONS[9]);
-		});
-		Tasks.wait(Time.SECOND.x(waitSeconds += 1), () -> spawnFire(LIGHTNING_LOCATIONS[10]));
+		AtomicInteger lightningIndex = new AtomicInteger();
+		for (int i = 0; i < 5; i++) {
+			Tasks.wait(Time.SECOND.x(waitSeconds += 1), () -> {
+				strike(LIGHTNING_LOCATIONS[lightningIndex.getAndIncrement()]);
+				strike(LIGHTNING_LOCATIONS[lightningIndex.getAndIncrement()]);
+			});
+		}
+
+		Tasks.wait(Time.SECOND.x(waitSeconds += 1), () -> strike(LIGHTNING_LOCATIONS[10]));
 
 		AtomicReference<Wither> wither = new AtomicReference<>();
 
 		Tasks.wait(Time.SECOND.x(waitSeconds += 2), () -> {
-			spawnFire(LIGHTNING_LOCATIONS[11]);
+			strike(LIGHTNING_LOCATIONS[11]);
 			BlockUtils.getBlocksInRadius(cageLoc, 3).forEach(block -> {
 				FallingBlock fallingBlock = block.getLocation().getWorld().spawnFallingBlock(block.getLocation(), block.getBlockData());
 				fallingBlock.setDropItem(false);
@@ -122,14 +116,15 @@ public class BeginningCutscene implements Listener {
 						face.setType(Material.AIR);
 				block.setType(Material.AIR);
 			});
-			for (Player player : uuidToPlayers())
+			for (Player player : currentFight.alivePlayers())
 				player.playSound(LIGHTNING_LOCATIONS[11], Sound.ENTITY_WITHER_SPAWN, 1, 1);
 
 			witherSkeleton.remove();
 			Wither witherEntity = cageLoc.getWorld().spawn(cageLoc, Wither.class, SpawnReason.CUSTOM);
 			witherEntity.setAI(false);
 			witherEntity.setGravity(false);
-			witherEntity.getBossBar().setVisible(false);
+			if (witherEntity.getBossBar() != null)
+				witherEntity.getBossBar().setVisible(false);
 			wither.set(witherEntity);
 			for (int i = 0; i < 5; i++)
 				cageLoc.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, cageLoc, 1, 1, 1, 1);
@@ -140,44 +135,33 @@ public class BeginningCutscene implements Listener {
 			Nexus.unregisterListener(this);
 			showAllPlayers();
 			wither.get().remove();
-			for (Player player : uuidToPlayers()) {
+			for (Player player : currentFight.alivePlayers()) {
 				player.setGameMode(GameMode.SURVIVAL);
 				player.teleport(new Location(Bukkit.getWorld("events"), -150.50, 69.00, -80.50, .00F, .00F));
 			}
-
 		});
 		Tasks.wait(Time.SECOND.x(waitSeconds) + 2, () -> completableFuture.complete(cageLoc));
 		return completableFuture;
 	}
 
 	public void hideAllPlayers() {
-		for (Player player1 : uuidToPlayers())
-			for (Player player2 : uuidToPlayers())
+		for (Player player1 : currentFight.alivePlayers())
+			for (Player player2 : currentFight.alivePlayers())
 				if (!player1.equals(player2))
 					player1.hidePlayer(Nexus.getInstance(), player2);
 	}
 
 	public void showAllPlayers() {
-		for (Player player1 : uuidToPlayers())
-			for (Player player2 : uuidToPlayers())
+		for (Player player1 : currentFight.alivePlayers())
+			for (Player player2 : currentFight.alivePlayers())
 				if (!player1.equals(player2))
 					player1.showPlayer(Nexus.getInstance(), player2);
 	}
 
-	public List<Player> uuidToPlayers() {
-		List<Player> players = new ArrayList<>();
-		for (UUID uuid : WitherChallenge.currentFight.getParty()) {
-			OfflinePlayer offlinePlayer = PlayerUtils.getPlayer(uuid);
-			if (offlinePlayer.getPlayer() != null)
-				players.add(offlinePlayer.getPlayer());
-		}
-		return players;
-	}
-
-	public void spawnFire(Location location) {
+	public void strike(Location location) {
 		location.getBlock().setType(Material.SOUL_FIRE);
 		location.getWorld().strikeLightningEffect(location);
-		for (Player player : uuidToPlayers()) {
+		for (Player player : currentFight.alivePlayers()) {
 			player.playSound(location, Sound.ENTITY_LIGHTNING_BOLT_IMPACT, SoundCategory.MASTER, 1, 1);
 			player.playSound(location, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, SoundCategory.MASTER, 1, 1);
 		}
@@ -191,7 +175,7 @@ public class BeginningCutscene implements Listener {
 	 */
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent event) {
-		if (!WitherChallenge.currentFight.getParty().contains(event.getPlayer().getUniqueId())) return;
+		if (!currentFight.getParty().contains(event.getPlayer().getUniqueId())) return;
 		event.setCancelled(true);
 	}
 
