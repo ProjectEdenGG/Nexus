@@ -53,6 +53,16 @@ public class CustomModel implements Comparable<CustomModel> {
 		return new NBTItem(item).hasKey(NBT_KEY);
 	}
 
+	public static CustomModel of(ItemStack item) {
+		if (isNullOrAir(item)) return null;
+		return of(item.getType(), getId(item));
+	}
+
+	public static Integer getId(ItemStack item) {
+		if (isNullOrAir(item)) return null;
+		return new NBTItem(item).getInteger(NBT_KEY);
+	}
+
 	public boolean equals(ItemStack itemStack) {
 		if (isNullOrAir(itemStack))
 			return false;

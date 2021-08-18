@@ -24,7 +24,6 @@ import org.bukkit.inventory.ShapelessRecipe;
 import java.util.ArrayList;
 import java.util.List;
 
-import static gg.projecteden.nexus.utils.ItemUtils.isFuzzyMatch;
 import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
@@ -73,7 +72,7 @@ public class InfiniteWaterBucket extends FunctionalRecipe {
 	@EventHandler
 	public void onCraft(CraftItemEvent event) {
 		ItemStack result = event.getInventory().getResult();
-		if (!isFuzzyMatch(item, result))
+		if (!isInfiniteWaterBucket(result))
 			return;
 
 		Tasks.wait(1, () -> {
@@ -108,12 +107,7 @@ public class InfiniteWaterBucket extends FunctionalRecipe {
 		Player player = event.getPlayer();
 		PlayerInventory inventory = player.getInventory();
 		ItemStack tool = inventory.getItem(event.getHand());
-		if (isNullOrAir(tool))
-			return;
-
-		ItemStack waterBucket = tool.clone();
-
-		if (!isFuzzyMatch(item, waterBucket))
+		if (!isInfiniteWaterBucket(tool))
 			return;
 
 		Tasks.wait(1, () -> restoreInfiniteWaterBucket(player, event.getHand()));
@@ -131,10 +125,14 @@ public class InfiniteWaterBucket extends FunctionalRecipe {
 			return;
 
 		ItemStack tool = player.getInventory().getItem(hand);
-		if (!isFuzzyMatch(item, tool))
+		if (!isInfiniteWaterBucket(tool))
 			return;
 
 		Tasks.wait(1, () -> restoreInfiniteWaterBucket(player, hand));
+	}
+
+	private static boolean isInfiniteWaterBucket(ItemStack item) {
+		return getCustomModel().equals(CustomModel.of(item));
 	}
 
 }
