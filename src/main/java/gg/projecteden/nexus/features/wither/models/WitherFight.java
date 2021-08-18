@@ -418,7 +418,6 @@ public abstract class WitherFight implements Listener {
 		if (event.getEntityType() != EntityType.WITHER)
 			return;
 
-
 		Wither wither = (Wither) event.getEntity();
 		if (wither != this.wither) {
 			event.setDroppedExp(0);

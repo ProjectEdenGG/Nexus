@@ -50,7 +50,7 @@ public class WitherChallenge extends Feature implements Listener {
 	public static final Location cageLoc = new Location(Bukkit.getWorld("events"), -151.50, 76.00, -69.50, 180F, .00F);
 	public static WitherFight currentFight;
 	public static List<UUID> queue = new ArrayList<>();
-	public static boolean maintenance = true;
+	public static boolean maintenance = false;
 
 	public static void reset() {
 		reset(true);
