@@ -400,7 +400,9 @@ public class Shop implements PlayerOwnedObject {
 		@Override
 		public int compareTo(@NotNull Product product) {
 			if (item.getType().name().equals(product.getItem().getType().name())) {
-				if (price instanceof Number && product.getPrice() instanceof Number)
+				if (exchangeType != product.getExchangeType())
+					return exchangeType.compareTo(product.getExchangeType());
+				else if (price instanceof Number && product.getPrice() instanceof Number)
 					if (exchangeType == ExchangeType.BUY)
 						return ((Double) product.getPrice()).compareTo((Double) price);
 					else

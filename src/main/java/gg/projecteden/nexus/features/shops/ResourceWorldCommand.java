@@ -472,6 +472,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 		Warp warp = WarpType.NORMAL.get(worldName);
 		Nexus.getMultiverseCore().getMVWorldManager().getMVWorld(worldName).setSpawnLocation(warp.getLocation());
 		getFilidNPC().spawn(new Location(Bukkit.getWorld(worldName), .5, 151, -36.5, 0F, 0F));
+		new ResourceMarketLoggerService().deleteAll();
 
 		PlayerUtils.runCommandAsConsole("wb " + worldName + " set " + RADIUS + " 0 0");
 		PlayerUtils.runCommandAsConsole("bluemap purge " + worldName);
