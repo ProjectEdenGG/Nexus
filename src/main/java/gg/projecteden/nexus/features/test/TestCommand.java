@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.test;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.store.perks.NPCListener;
+import gg.projecteden.nexus.features.wither.fights.CorruptedFight.CorruptedCounterAttacks;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Async;
@@ -72,6 +73,11 @@ public class TestCommand extends CustomCommand implements Listener {
 	@Override
 	public void _shutdown() {
 		shutdownBossBars();
+	}
+
+	@Path("scrambleInventory")
+	void scrambleInventory() {
+		CorruptedCounterAttacks.SCRAMBLE_INVENTORY.execute(List.of(player()));
 	}
 
 	@Path("inventoryContents")

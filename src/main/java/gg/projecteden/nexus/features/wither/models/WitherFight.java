@@ -486,11 +486,13 @@ public abstract class WitherFight implements Listener {
 		if (!(event.getEntity() instanceof WitherSkeleton))
 			return;
 
-		if (!(event.getDamager() instanceof Player) && !(event.getDamager() instanceof Arrow))
+		if (!(event.getDamager() instanceof Player || event.getDamager() instanceof Arrow))
 			return;
 
 		if (!isInRegion(event.getEntity().getLocation()))
 			return;
+
+		event.setCancelled(true);
 	}
 
 	@EventHandler
