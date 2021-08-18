@@ -401,7 +401,10 @@ public class Shop implements PlayerOwnedObject {
 		public int compareTo(@NotNull Product product) {
 			if (item.getType().name().equals(product.getItem().getType().name())) {
 				if (price instanceof Number && product.getPrice() instanceof Number)
-					return ((Double) price).compareTo((Double) product.getPrice());
+					if (exchangeType == ExchangeType.BUY)
+						return ((Double) product.getPrice()).compareTo((Double) price);
+					else
+						return ((Double) price).compareTo((Double) product.getPrice());
 				else if (price instanceof Number)
 					return ((Double) price).compareTo(Double.MAX_VALUE);
 				else if (product.getPrice() instanceof Number)

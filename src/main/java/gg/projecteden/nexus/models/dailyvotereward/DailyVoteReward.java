@@ -61,8 +61,8 @@ public class DailyVoteReward implements PlayerOwnedObject {
 		private LocalDate end;
 
 		public void incrementStreak() {
-			Nexus.log("[VoteStreak] Increasing streak for " + getNickname());
 			++streak;
+			Nexus.log("[VoteStreak] Increasing streak for " + getNickname() + " to " + streak);
 			earnedToday = true;
 
 			sendMessage(StringUtils.getPrefix("DailyVoteRewards") + "Your streak has &eincreased&3!");
