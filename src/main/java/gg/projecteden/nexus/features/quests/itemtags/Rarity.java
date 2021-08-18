@@ -100,17 +100,17 @@ public enum Rarity {
 		int sum = val_material + val_vanillaEnchants + val_customEnchants;
 		boolean isCraftable = val_customEnchants <= 0 && !hasAboveVanilla;
 
-		Rarity rarity;
-		if (isCraftable)
-			rarity = getRarity(sum, true, ORDINARY, EPIC, condition, debugger);
-		else
-			rarity = getRarity(sum, false, EXOTIC, MYTHIC, condition, debugger);
-
 		if (condition != null && condition != Condition.PRISTINE) {
 			int value = (Condition.values().length * 5) - ((condition.ordinal() + 1) * 5);
 			sum -= value;
 			ItemTags.debug(debugger, "  &3Condition sum: " + number(value * -1));
 		}
+
+		Rarity rarity;
+		if (isCraftable)
+			rarity = getRarity(sum, true, ORDINARY, EPIC, condition, debugger);
+		else
+			rarity = getRarity(sum, false, EXOTIC, MYTHIC, condition, debugger);
 
 		ItemTags.debug(debugger, "  &3Total sum: &a" + sum);
 		ItemTags.debug(debugger, "  &3Craftable: &a" + isCraftable);
