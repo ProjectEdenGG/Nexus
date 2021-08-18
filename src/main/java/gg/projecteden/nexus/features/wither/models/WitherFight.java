@@ -112,12 +112,13 @@ public abstract class WitherFight implements Listener {
 		Nexus.registerListener(this);
 		new BeginningCutscene().run().thenAccept(location -> {
 			JsonBuilder message = new JsonBuilder(WitherChallenge.PREFIX + "The fight has started! &e&lClick here to spectate")
-				                      .command("/wither spectate").hover("&eYou will be teleported to the wither arena");
-			if (WitherCommand.betaMode) {
+				.command("/wither spectate").hover("&eYou will be teleported to the wither arena");
+
+			if (WitherCommand.betaMode)
 				Broadcast.staffIngame().message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
-			} else {
+			else
 				Broadcast.ingame().message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
-			}
+
 			spawnWither(location);
 			new WorldEditUtils("events").set("witherarena-door", BlockTypes.NETHER_BRICKS);
 			new WorldEditUtils("events").set("witherarena-lobby", BlockTypes.NETHERRACK);
@@ -717,7 +718,8 @@ public abstract class WitherFight implements Listener {
 				wither.setHealth(1);
 				wither.setCustomName("Minion");
 				wither.setCustomNameVisible(true);
-				wither.getBossBar().setVisible(false);
+				if (wither.getBossBar() != null)
+					wither.getBossBar().setVisible(false);
 				return wither;
 			}
 		},

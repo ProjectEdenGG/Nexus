@@ -37,7 +37,7 @@ public class WitherCommand extends CustomCommand {
 		super(event);
 	}
 
-	public static boolean betaMode = true;
+	public static boolean betaMode = false;
 
 	@SneakyThrows
 	@Path("challenge")
@@ -177,12 +177,10 @@ public class WitherCommand extends CustomCommand {
 				(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3are" : " &3is") +
 				" challenging the wither to a fight in " + currentFight.getDifficulty().getTitle() + " &3mode";
 
-		if (betaMode) {
+		if (betaMode)
 			Broadcast.staffIngame().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
-		}
-		else {
+		else
 			Broadcast.all().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
-		}
 
 		currentFight.teleportPartyToArena();
 		Tasks.Countdown.builder()
