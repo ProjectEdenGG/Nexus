@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.customenchants.OldCEConverter;
 import gg.projecteden.nexus.features.customenchants.enchants.GlowingEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.MagnetEnchant;
+import gg.projecteden.nexus.features.customenchants.enchants.AutoRepairEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.SoulboundEnchant;
 import lombok.experimental.UtilityClass;
 import org.bukkit.enchantments.Enchantment;
@@ -228,6 +229,8 @@ public class Enchant {
 	 * Gives night vision when applied to helmets
 	 */
 	public static final CustomEnchant GLOWING = CustomEnchants.get(GlowingEnchant.class);
+
+	public static final CustomEnchant AUTOREPAIR = CustomEnchants.get(AutoRepairEnchant.class);
 
 	private static final List<Enchantment> values = new ArrayList<>();
 

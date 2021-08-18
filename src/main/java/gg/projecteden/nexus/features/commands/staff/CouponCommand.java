@@ -310,7 +310,6 @@ public class CouponCommand extends CustomCommand implements Listener {
 		@Override
 		public void init(Player player, InventoryContents contents) {
 			ItemStack coupon = player.getInventory().getItemInMainHand();
-			coupon.setAmount(1);
 			McMMOPlayer mcmmoPlayer = UserManager.getPlayer(player);
 			for (McMMOResetProvider.ResetSkillType skill : McMMOResetProvider.ResetSkillType.values()) {
 				ItemStack item = new ItemBuilder(skill.getMaterial()).name("&e" + StringUtils.camelCase(skill.name()))
@@ -320,7 +319,7 @@ public class CouponCommand extends CustomCommand implements Listener {
 					if (mcMMOLevel >= 100) return;
 					levels = Math.min(100 - mcMMOLevel, levels);
 					PlayerUtils.runCommandAsConsole("addlevels " + player.getName() + " " + skill.name().toLowerCase() + " " + levels);
-					player.getInventory().removeItem(coupon);
+					coupon.setAmount(coupon.getAmount() - 1);
 					player.closeInventory();
 				}));
 			}

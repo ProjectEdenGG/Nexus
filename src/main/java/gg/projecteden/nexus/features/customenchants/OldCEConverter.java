@@ -57,7 +57,8 @@ public class OldCEConverter {
 	@Getter
 	@AllArgsConstructor
 	public enum ConversionEnchant {
-		GLOWING(Enchant.GLOWING);
+		GLOWING(Enchant.GLOWING),
+		AUTOREPAIR(Enchant.AUTOREPAIR);
 
 		CustomEnchant enchant;
 

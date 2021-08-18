@@ -100,8 +100,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 						"a chance to add that enchantment to one item of your choice!") {
 				@Override
 				void onClick(Player player) {
-					PlayerUtils.giveItem(player, new ItemBuilder(Material.PAPER).name("&eMcMMOReset Coupon").lore("&3Coupon for AutoRepair").build());
-					PlayerUtils.send(player, "&ePut in a &c/ticket &eto have a staff member add auto repair to one item you own.");
+					PlayerUtils.giveItem(player, GemCommand.makeGem(Enchant.AUTOREPAIR, 1));
 				}
 		},
 		ARCHERY(3, 7, Material.BOW,

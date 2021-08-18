@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.nexus.Nexus;
 import me.lexikiq.HasPlayer;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -79,44 +80,39 @@ public class EntityUtils {
 		Vector playerLocation = player.getPlayer().getEyeLocation().toVector(); // Point B
 
 		//set the origin's direction to be the direction vector between point A and B.
-		if (percent == null)
+		if (percent == null) {
 			standLocation.setDirection(playerLocation.subtract(standLocation.toVector()));
+		}
 		else {
-//			Nexus.debug("Old Dir: " + standLocation.toVector());
-
-			Vector diff = playerLocation.subtract(standLocation.toVector());
-//			Nexus.debug("diff: " + diff);
-
-			Vector percentage = diff.multiply(percent);
-//			Nexus.debug(percent + "% = " + percentage);
-
-			standLocation.setDirection(percentage);
-//			Nexus.debug("New Dir: " + standLocation.getDirection());
+			Vector standLookVector = stand.getEyeLocation().getDirection().multiply(.3);
+			List<Vector> vecs = new SplinePath(1f, percent, standLookVector, playerLocation).getPath();
+			if (vecs.size() >= 2) {
+				standLocation.setDirection(vecs.get(1));
+			}
 		}
 
-		double yaw = standLocation.getYaw() - standYaw;
+		double yaw = standLocation.getYaw();
 		double pitch = standLocation.getPitch();
 
 		if (yaw < -180)
 			yaw = yaw + 360;
 		else if (yaw >= 180)
 			yaw -= 360;
+//
+//		if (maxYaw != null && yaw > maxYaw)
+//			yaw = maxYaw;
+//		if (minYaw != null && yaw < minYaw)
+//			yaw = minYaw;
+//
+//		if (maxPitch != null && pitch > maxPitch)
+//			pitch = maxPitch;
+//		if (minPitch != null && pitch < minPitch)
+//			pitch = minPitch;
 
-		if (maxYaw != null && yaw > maxYaw)
-			yaw = maxYaw;
-		if (minYaw != null && yaw < minYaw)
-			yaw = minYaw;
-
-		if (maxPitch != null && pitch > maxPitch)
-			pitch = maxPitch;
-		if (minPitch != null && pitch < minPitch)
-			pitch = minPitch;
-
-		double x = Math.toRadians(pitch);
-		double y = Math.toRadians(yaw);
-
-		EulerAngle ea = new EulerAngle(x, y, 0);
-		stand.setHeadPose(ea);
+		Location loc = stand.getLocation().clone();
+		loc.setPitch((float) pitch);
+		loc.setYaw((float) yaw);
+		stand.teleport(loc);
 	}
 
 	public static boolean isUnnaturalSpawn(LivingEntity entity) {
