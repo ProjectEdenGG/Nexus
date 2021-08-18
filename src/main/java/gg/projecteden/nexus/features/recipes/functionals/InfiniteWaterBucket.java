@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.recipes.functionals;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
-import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.features.resourcepack.CustomModel;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -31,18 +31,23 @@ import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 public class InfiniteWaterBucket extends FunctionalRecipe {
 
 	@Getter
-	private static final ItemStack infiniteWaterBucket = new ItemBuilder(Material.WATER_BUCKET).name("Infinite Bucket of Water").build();
+	private static final ItemStack item = getCustomModel().getItem();
+
+	public static CustomModel getCustomModel() {
+		return CustomModel.of(Material.WATER_BUCKET, 2);
+	}
 
 	@Override
 	public ItemStack getResult() {
-		return infiniteWaterBucket;
+		return item;
 	}
 
 	@Override
 	public Recipe getRecipe() {
-		NamespacedKey key = new NamespacedKey(Nexus.getInstance(), stripColor("custom_infinite_bucket_of_water"));
-		ShapelessRecipe recipe = new ShapelessRecipe(key, infiniteWaterBucket);
+		NamespacedKey key = new NamespacedKey(Nexus.getInstance(), stripColor("custom_infinite_water_bucket"));
+		ShapelessRecipe recipe = new ShapelessRecipe(key, item);
 		recipe.addIngredient(2, Material.WATER_BUCKET);
+		recipe.addIngredient(1, Material.GOLD_INGOT);
 		return recipe;
 	}
 
@@ -51,6 +56,7 @@ public class InfiniteWaterBucket extends FunctionalRecipe {
 		return new ArrayList<>() {{
 			add(new ItemStack(Material.WATER_BUCKET));
 			add(new ItemStack(Material.WATER_BUCKET));
+			add(new ItemStack(Material.GOLD_INGOT));
 		}};
 	}
 
@@ -67,22 +73,20 @@ public class InfiniteWaterBucket extends FunctionalRecipe {
 	@EventHandler
 	public void onCraft(CraftItemEvent event) {
 		ItemStack result = event.getInventory().getResult();
-		if (isNullOrAir(result))
+		if (!isFuzzyMatch(item, result))
 			return;
 
-		if (isFuzzyMatch(infiniteWaterBucket, result)) {
-			Tasks.wait(1, () -> {
-				ItemStack[] matrix = event.getInventory().getMatrix();
-				for (ItemStack itemStack : matrix) {
-					if (isNullOrAir(itemStack))
-						continue;
+		Tasks.wait(1, () -> {
+			ItemStack[] matrix = event.getInventory().getMatrix();
+			for (ItemStack itemStack : matrix) {
+				if (isNullOrAir(itemStack))
+					continue;
 
-					if (Material.BUCKET.equals(itemStack.getType()))
-						itemStack.setType(Material.AIR);
-				}
-				event.getInventory().setMatrix(matrix);
-			});
-		}
+				if (Material.BUCKET.equals(itemStack.getType()))
+					itemStack.setType(Material.AIR);
+			}
+			event.getInventory().setMatrix(matrix);
+		});
 	}
 
 	private void restoreInfiniteWaterBucket(Player player, EquipmentSlot hand) {
@@ -93,10 +97,10 @@ public class InfiniteWaterBucket extends FunctionalRecipe {
 			ItemStack missingBucket = new ItemStack(Material.BUCKET);
 			if (inventory.containsAtLeast(missingBucket, 1)) {
 				inventory.removeItem(missingBucket);
-				PlayerUtils.giveItem(player, infiniteWaterBucket.clone());
+				PlayerUtils.giveItem(player, item.clone());
 			}
 		} else
-			inventory.setItem(hand, infiniteWaterBucket.clone());
+			inventory.setItem(hand, item.clone());
 	}
 
 	@EventHandler
@@ -109,9 +113,7 @@ public class InfiniteWaterBucket extends FunctionalRecipe {
 
 		ItemStack waterBucket = tool.clone();
 
-		if (isNullOrAir(waterBucket))
-			return;
-		if (!isFuzzyMatch(infiniteWaterBucket, waterBucket))
+		if (!isFuzzyMatch(item, waterBucket))
 			return;
 
 		Tasks.wait(1, () -> restoreInfiniteWaterBucket(player, event.getHand()));
@@ -129,12 +131,7 @@ public class InfiniteWaterBucket extends FunctionalRecipe {
 			return;
 
 		ItemStack tool = player.getInventory().getItem(hand);
-		if (isNullOrAir(tool))
-			return;
-
-		if (isNullOrAir(tool))
-			return;
-		if (!isFuzzyMatch(infiniteWaterBucket, tool))
+		if (!isFuzzyMatch(item, tool))
 			return;
 
 		Tasks.wait(1, () -> restoreInfiniteWaterBucket(player, hand));
