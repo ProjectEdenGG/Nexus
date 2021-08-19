@@ -5,6 +5,8 @@ import me.lexikiq.HasPlayer;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -12,7 +14,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
-import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,6 +22,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static gg.projecteden.utils.StringUtils.camelCase;
 
 public class EntityUtils {
 
@@ -136,6 +139,18 @@ public class EntityUtils {
 
 	public static Material getSpawnEgg(EntityType type) {
 		return Material.valueOf(type.toString() + "_SPAWN_EGG");
+	}
+
+	public static double setHealth(LivingEntity entity, double health) {
+		final AttributeInstance attribute = entity.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+		if (attribute == null) {
+			Nexus.warn("Could not find max health attribute on " + camelCase(entity.getType()));
+			return entity.getHealth();
+		}
+
+		attribute.setBaseValue(health);
+		entity.setHealth(health);
+		return health;
 	}
 
 }

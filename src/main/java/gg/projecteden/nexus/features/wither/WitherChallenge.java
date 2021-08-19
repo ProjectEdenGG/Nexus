@@ -19,7 +19,9 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.TimeUtils.Time;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -47,10 +49,18 @@ import static gg.projecteden.nexus.utils.WorldGroup.isResourceWorld;
 public class WitherChallenge extends Feature implements Listener {
 
 	public static final String PREFIX = StringUtils.getPrefix("Wither");
-	public static final Location cageLoc = new Location(Bukkit.getWorld("events"), -151.50, 76.00, -69.50, 180F, .00F);
+	public static final Location cageLoc = location(-151.5, 76, -69.5, 180, 0);
 	public static WitherFight currentFight;
 	public static List<UUID> queue = new ArrayList<>();
 	public static boolean maintenance = false;
+
+	static Location location(double x, double y, double z) {
+		return location(x, y, z, 0, 0);
+	}
+
+	static Location location(double x, double y, double z, float yaw, float pitch) {
+		return new Location(Bukkit.getWorld("events"), x, y, z, yaw, pitch);
+	}
 
 	public static void reset() {
 		reset(true);
@@ -62,16 +72,9 @@ public class WitherChallenge extends Feature implements Listener {
 			currentFight.tasks.forEach(Tasks::cancel);
 			if (currentFight.wither != null)
 				currentFight.wither.remove();
+
 			currentFight.scoreboardTeams.values().forEach(Team::unregister);
-
-			for (UUID uuid : new ArrayList<>(currentFight.spectators)) {
-				Player player = PlayerUtils.getPlayer(uuid).getPlayer();
-				if (player != null) {
-					Warps.spawn(player);
-					Tasks.wait(1, () -> player.setGameMode(GameMode.SURVIVAL));
-				}
-			}
-
+			currentFight.sendSpectatorsToSpawn();
 			currentFight = null;
 		}
 		WorldGuardUtils worldGuardUtils = new WorldGuardUtils("events");
@@ -86,7 +89,9 @@ public class WitherChallenge extends Feature implements Listener {
 	}
 
 	public static void processQueue() {
-		if (queue.size() == 0) return;
+		if (queue.size() == 0)
+			return;
+
 		UUID nextPlayer = queue.get(0);
 		if (PlayerUtils.getPlayer(nextPlayer).getPlayer() == null) {
 			queue.remove(nextPlayer);
@@ -100,80 +105,112 @@ public class WitherChallenge extends Feature implements Listener {
 
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
-		if (!new WorldGuardUtils(event.getPlayer().getWorld()).isInRegion(event.getPlayer().getLocation(), "witherarena"))
+		final Player player = event.getPlayer();
+		if (!new WorldGuardUtils(player.getWorld()).isInRegion(player.getLocation(), "witherarena"))
 			return;
 
 		if (currentFight == null) {
-			Warps.spawn(event.getPlayer());
-			HealCommand.healPlayer(event.getPlayer());
+			Warps.spawn(player);
+			HealCommand.healPlayer(player);
 			return;
 		}
 
 		if (currentFight.party == null) {
-			Warps.spawn(event.getPlayer());
-			HealCommand.healPlayer(event.getPlayer());
+			Warps.spawn(player);
+			HealCommand.healPlayer(player);
 			return;
 		}
 
-		if (currentFight.party.contains(event.getPlayer().getUniqueId()))
+		if (currentFight.isInParty(player))
 			return;
-		Warps.spawn(event.getPlayer());
-		HealCommand.healPlayer(event.getPlayer());
+
+		Warps.spawn(player);
+		HealCommand.healPlayer(player);
 	}
 
 	@EventHandler
 	public void onPlayerLogout(PlayerQuitEvent event) {
-		if (currentFight == null) return;
-		if (!currentFight.party.contains(event.getPlayer().getUniqueId())) return;
-		currentFight.broadcastToParty("&e" + Nickname.of(event.getPlayer()) + " &3has logged out. They have one minute to return before they are automatically removed from the party.");
+		if (currentFight == null)
+			return;
+
+		final Player player = event.getPlayer();
+		if (!currentFight.isInParty(player))
+			return;
+
+		currentFight.broadcastToParty("&e" + Nickname.of(player) + " &3has logged out. They have one minute to return before they are automatically removed from the party.");
 		Tasks.wait(Time.MINUTE, () -> {
-			if (currentFight == null) return;
-			if (event.getPlayer().isOnline()) return;
-			currentFight.party.remove(event.getPlayer().getUniqueId());
+			if (currentFight == null)
+				return;
+
+			if (player.isOnline())
+				return;
+
+			currentFight.party.remove(player.getUniqueId());
 			if (currentFight.alivePlayers != null)
-				currentFight.alivePlayers.remove(event.getPlayer().getUniqueId());
-			currentFight.broadcastToParty("&e" + Nickname.of(event.getPlayer()) + " &ehas been removed from the party.");
+				currentFight.alivePlayers.remove(player.getUniqueId());
+			currentFight.broadcastToParty("&e" + Nickname.of(player) + " &ehas been removed from the party.");
 		});
 	}
 
 	@EventHandler
 	public void onTeleportIntoArena(PlayerTeleportEvent event) {
-		if (!new WorldGuardUtils("events").isInRegion(event.getTo(), "witherarena")) return;
-		if (Rank.of(event.getPlayer()).isStaff()) return;
+		if (!new WorldGuardUtils("events").isInRegion(event.getTo(), "witherarena"))
+			return;
+
+		final Player player = event.getPlayer();
+		if (Rank.of(player).isStaff())
+			return;
+
 		if (currentFight == null) {
 			cancelTeleport(event);
 			return;
 		}
 
-		if (!currentFight.getSpectators().contains(event.getPlayer().getUniqueId()) && (currentFight.alivePlayers == null || currentFight.getAlivePlayers().contains(event.getPlayer().getUniqueId()))) {
+		if (!currentFight.isAlive(player) && !currentFight.isSpectating(player))
 			cancelTeleport(event);
-		}
 	}
 
 	@EventHandler
 	public void onTeleportOutOfArena(PlayerTeleportEvent event) {
-		if (!new WorldGuardUtils("events").isInRegion(event.getFrom(), "witherarena")) return;
-		if (new WorldGuardUtils("events").isInRegion(event.getTo(), "witherarena")) return;
-		if (currentFight == null) return;
-		if (currentFight.getSpectators().contains(event.getPlayer().getUniqueId())) {
-			currentFight.getSpectators().remove(event.getPlayer().getUniqueId());
-			event.getPlayer().setGameMode(GameMode.SURVIVAL);
+		if (!new WorldGuardUtils("events").isInRegion(event.getFrom(), "witherarena"))
+			return;
+
+		if (new WorldGuardUtils("events").isInRegion(event.getTo(), "witherarena"))
+			return;
+
+		if (currentFight == null)
+			return;
+
+		final Player player = event.getPlayer();
+		if (currentFight.isSpectating(player)) {
+			currentFight.getSpectators().remove(player.getUniqueId());
+			player.setGameMode(GameMode.SURVIVAL);
 			return;
 		}
-		if (currentFight.alivePlayers == null) return;
-		if (!currentFight.alivePlayers.contains(event.getPlayer().getUniqueId())) return;
-		if (!currentFight.isStarted()) return;
+
+		if (!currentFight.isAlive(player))
+			return;
+
+		if (!currentFight.isStarted())
+			return;
+
 		event.setCancelled(true);
-		PlayerUtils.send(event.getPlayer(), PREFIX + "&cYou cannot teleport out of the wither arena during the fight. " +
+		PlayerUtils.send(player, PREFIX + "&cYou cannot teleport out of the wither arena during the fight. " +
 				"Use &c/wither quit &3to resign from the fight");
 	}
 
 	@EventHandler
 	public void onSpawn(CreatureSpawnEvent event) {
-		if (!event.getEntity().getType().equals(EntityType.WITHER)) return;
+		if (!event.getEntity().getType().equals(EntityType.WITHER))
+			return;
+
 		World world = event.getLocation().getWorld();
-		if (world.getName().equalsIgnoreCase("events") || isResourceWorld(world)) return;
-		if (!event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.BUILD_WITHER)) return;
+		if (world.getName().equalsIgnoreCase("events") || isResourceWorld(world))
+			return;
+
+		if (!event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.BUILD_WITHER))
+			return;
+
 		event.setCancelled(true);
 	}
 
@@ -184,23 +221,26 @@ public class WitherChallenge extends Feature implements Listener {
 	}
 
 	public void cancelTeleport(PlayerTeleportEvent event) {
-		if (event.isCancelled()) return;
+		if (event.isCancelled())
+			return;
+
 		event.setCancelled(true);
 		PlayerUtils.send(event.getPlayer(), PREFIX + "&cYou cannot teleport into the wither arena if you are not an alive member of the current party");
 	}
 
+	@Getter
 	public enum Difficulty {
-		EASY("&a", EasyFight.class, Material.LIME_CONCRETE, "&712.5% chance of star drop"),
-		MEDIUM("&6", MediumFight.class, Material.ORANGE_CONCRETE, "&725% chance of star drop", "&7If no star is dropped,", "&7you will receive 2 Wither Crate Keys"),
-		HARD("&c", HardFight.class, Material.RED_CONCRETE, "&750% chance of star drop", "&7If no star is dropped,", "&7you will receive 3 Wither Crate Keys"),
-		CORRUPTED("&8", CorruptedFight.class, Material.BLACK_CONCRETE, "&7100% chance of star drop", "&7and 2 Wither Crate Keys", " ", "&cFull Netherite Armor Recommended");
+		EASY(ChatColor.GREEN, EasyFight.class, Material.LIME_CONCRETE, "&712.5% chance of star drop"),
+		MEDIUM(ChatColor.GOLD, MediumFight.class, Material.ORANGE_CONCRETE, "&725% chance of star drop", "&7If no star is dropped,", "&7you will receive 2 Wither Crate Keys"),
+		HARD(ChatColor.RED, HardFight.class, Material.RED_CONCRETE, "&750% chance of star drop", "&7If no star is dropped,", "&7you will receive 3 Wither Crate Keys"),
+		CORRUPTED(ChatColor.DARK_GRAY, CorruptedFight.class, Material.BLACK_CONCRETE, "&7100% chance of star drop", "&7and 2 Wither Crate Keys", " ", "&cFull Netherite Armor Recommended");
 
-		String color;
-		Class<? extends WitherFight> witherFightClass;
-		Material menuMaterial;
-		List<String> description;
+		private final ChatColor color;
+		private final Class<? extends WitherFight> witherFightClass;
+		private final Material menuMaterial;
+		private final List<String> description;
 
-		Difficulty(String color, Class<? extends WitherFight> witherFightClass, Material menuMaterial, String... description) {
+		Difficulty(ChatColor color, Class<? extends WitherFight> witherFightClass, Material menuMaterial, String... description) {
 			this.color = color;
 			this.witherFightClass = witherFightClass;
 			this.menuMaterial = menuMaterial;

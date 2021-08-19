@@ -7,7 +7,6 @@ import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.utils.TimeUtils.Time;
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -35,6 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static gg.projecteden.nexus.features.wither.WitherChallenge.currentFight;
+import static gg.projecteden.nexus.features.wither.WitherChallenge.location;
 
 public class BeginningCutscene implements Listener {
 
@@ -46,24 +46,24 @@ public class BeginningCutscene implements Listener {
 	public final List<FallingBlock> fallingBlocks = new ArrayList<>();
 	public static final Location[] LIGHTNING_LOCATIONS = {
 			// Group 1
-			new Location(Bukkit.getWorld("events"), -158.00, 69.00, -82.00, .00F, .00F),
-			new Location(Bukkit.getWorld("events"), -144.00, 69.00, -82.00, .00F, .00F),
+			location(-158, 69, -82),
+			location(-144, 69, -82),
 			// Group 2
-			new Location(Bukkit.getWorld("events"), -164.00, 69.00, -76.00, .00F, .00F),
-			new Location(Bukkit.getWorld("events"), -138.00, 69.00, -76.00, .00F, .00F),
+			location(-164, 69, -76),
+			location(-138, 69, -76),
 			// Group 3
-			new Location(Bukkit.getWorld("events"), -164.00, 69.00, -69.00, .00F, .00F),
-			new Location(Bukkit.getWorld("events"), -138.00, 69.00, -69.00, .00F, .00F),
+			location(-164, 69, -69),
+			location(-138, 69, -69),
 			// Group 4
-			new Location(Bukkit.getWorld("events"), -164.00, 69.00, -62.00, .00F, .00F),
-			new Location(Bukkit.getWorld("events"), -138.00, 69.00, -62.00, .00F, .00F),
+			location(-164, 69, -62),
+			location(-138, 69, -62),
 			// Group 5
-			new Location(Bukkit.getWorld("events"), -158.00, 69.00, -56.00, .00F, .00F),
-			new Location(Bukkit.getWorld("events"), -144.00, 69.00, -56.00, .00F, .00F),
+			location(-158, 69, -56),
+			location(-144, 69, -56),
 			// Final
-			new Location(Bukkit.getWorld("events"), -151.00, 69.00, -55.00, .00F, .00F),
+			location(-151, 69, -55),
 			// Alter
-			new Location(Bukkit.getWorld("events"), -151.00, 71.00, -69.00, .00F, .00F)
+			location(-151, 71, -69F)
 	};
 
 	public CompletableFuture<Location> run() {
@@ -75,7 +75,7 @@ public class BeginningCutscene implements Listener {
 		for (Player player : currentFight.alivePlayers()) {
 			player.setGameMode(GameMode.SPECTATOR);
 			player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, Time.SECOND.x(3), 1, true));
-			player.teleport(new Location(Bukkit.getWorld("events"), -150.50, 77.00, -82.50, .00F, 20.00F));
+			player.teleport(location(-150.5, 77, -82.5, 0, 20));
 
 			new TitleBuilder()
 				.players(player)
@@ -137,7 +137,7 @@ public class BeginningCutscene implements Listener {
 			wither.get().remove();
 			for (Player player : currentFight.alivePlayers()) {
 				player.setGameMode(GameMode.SURVIVAL);
-				player.teleport(new Location(Bukkit.getWorld("events"), -150.50, 69.00, -80.50, .00F, .00F));
+				player.teleport(location(-150.5, 69, -80.5));
 			}
 		});
 		Tasks.wait(Time.SECOND.x(waitSeconds) + 2, () -> completableFuture.complete(cageLoc));
@@ -175,7 +175,9 @@ public class BeginningCutscene implements Listener {
 	 */
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent event) {
-		if (!currentFight.getParty().contains(event.getPlayer().getUniqueId())) return;
+		if (!currentFight.isInParty(event.getPlayer()))
+			return;
+
 		event.setCancelled(true);
 	}
 

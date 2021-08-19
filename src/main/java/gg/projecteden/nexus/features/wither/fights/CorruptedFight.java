@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.wither.fights;
 import gg.projecteden.nexus.features.crates.models.CrateType;
 import gg.projecteden.nexus.features.wither.WitherChallenge;
 import gg.projecteden.nexus.features.wither.models.WitherFight;
+import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Utils;
@@ -11,8 +12,6 @@ import gg.projecteden.utils.EnumUtils;
 import gg.projecteden.utils.TimeUtils.Time;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Silverfish;
@@ -55,9 +54,15 @@ public class CorruptedFight extends WitherFight {
 
 	@EventHandler
 	public void stopWitherHearts(EntityDamageEvent event) {
-		if (!(event.getEntity() instanceof Player player)) return;
-		if (!alivePlayers.contains(player.getUniqueId())) return;
-		if (event.getCause() != EntityDamageEvent.DamageCause.WITHER) return;
+		if (!(event.getEntity() instanceof Player player))
+			return;
+
+		if (!isAlive(player))
+			return;
+
+		if (event.getCause() != EntityDamageEvent.DamageCause.WITHER)
+			return;
+
 		event.setCancelled(true);
 	}
 
@@ -65,14 +70,21 @@ public class CorruptedFight extends WitherFight {
 
 	@EventHandler
 	public void slowRegen(EntityRegainHealthEvent event) {
-		if (!(event.getEntity() instanceof Player player)) return;
-		if (!alivePlayers.contains(player.getUniqueId())) return;
-		if (event.getRegainReason() != EntityRegainHealthEvent.RegainReason.SATIATED) return;
+		if (!(event.getEntity() instanceof Player player))
+			return;
+
+		if (!isAlive(player))
+			return;
+
+		if (event.getRegainReason() != EntityRegainHealthEvent.RegainReason.SATIATED)
+			return;
+
 		int regenAmount = playerRegenAmounts.getOrDefault(player.getUniqueId(), 0);
 		if (regenAmount == 3) {
 			playerRegenAmounts.put(player.getUniqueId(), 0);
 			return;
 		}
+
 		event.setCancelled(true);
 		playerRegenAmounts.put(player.getUniqueId(), regenAmount + 1);
 	}
@@ -81,10 +93,7 @@ public class CorruptedFight extends WitherFight {
 	public void spawnWither(Location location) {
 		Wither wither = location.getWorld().spawn(location, Wither.class, SpawnReason.NATURAL);
 		this.wither = wither;
-		AttributeInstance health = wither.getAttribute(Attribute.GENERIC_MAX_HEALTH);
-		health.setBaseValue(health.getValue() * 3);
-		wither.setHealth(health.getBaseValue());
-		maxHealth = health.getBaseValue();
+		this.maxHealth = EntityUtils.setHealth(wither, wither.getHealth() * 3);
 	}
 
 	@Override
@@ -103,14 +112,20 @@ public class CorruptedFight extends WitherFight {
 
 	@EventHandler
 	public void onWitherRegen(EntityRegainHealthEvent event) {
-		if (event.getEntity() != wither) return;
-		if (shouldRegen) return;
+		if (event.getEntity() != wither)
+			return;
+
+		if (shouldRegen)
+			return;
+
 		event.setCancelled(true);
 	}
 
 	@EventHandler
 	public void counterAttack(EntityDamageByEntityEvent event) {
-		if (event.getEntity() != this.wither) return;
+		if (event.getEntity() != this.wither)
+			return;
+
 		if (RandomUtils.chanceOf(30))
 			if (RandomUtils.chanceOf(35))
 				EnumUtils.random(CounterAttack.class).execute(alivePlayers());
@@ -120,11 +135,15 @@ public class CorruptedFight extends WitherFight {
 
 	@EventHandler
 	public void onDamageWither(EntityDamageByEntityEvent event) {
-		if (event.getEntity() != this.wither) return;
+		if (event.getEntity() != this.wither)
+			return;
+
 		Wither wither = (Wither) event.getEntity();
 		if (!shouldRegen)
 			broadcastToParty("&cThe wither cannot be damaged while the blaze shield is up! &eKill the blazes to continue the fight!");
-		if (!shouldSummonFirstWave && !shouldSummonSecondWave) return;
+		if (!shouldSummonFirstWave && !shouldSummonSecondWave)
+			return;
+
 		if (wither.getHealth() - event.getFinalDamage() < (maxHealth / 3) * 2 && shouldSummonFirstWave) {
 			shouldSummonFirstWave = false;
 			shouldRegen = false;
@@ -153,8 +172,12 @@ public class CorruptedFight extends WitherFight {
 
 	@EventHandler
 	public void doublePlayerDamage(EntityDamageByEntityEvent event) {
-		if ((event.getEntity() instanceof Player)) return;
-		if (!new WorldGuardUtils("events").isInRegion(event.getEntity().getLocation(), "witherarena")) return;
+		if ((event.getEntity() instanceof Player))
+			return;
+
+		if (!new WorldGuardUtils("events").isInRegion(event.getEntity().getLocation(), "witherarena"))
+			return;
+
 		if (event.getDamager() instanceof Projectile projectile) {
 			if (projectile.getShooter() instanceof Wither)
 				event.setDamage(event.getFinalDamage() * 2);
@@ -164,41 +187,38 @@ public class CorruptedFight extends WitherFight {
 	public enum CorruptedCounterAttacks {
 		SCRAMBLE_INVENTORY {
 			@Override
-			public void execute(List<Player> players) {
-				for (Player player : players) {
-					List<ItemStack> contents = new ArrayList<>();
-					for (int i = 0; i < 36; i++)
-						contents.add(player.getInventory().getContents()[i]);
-					contents.add(player.getInventory().getItemInOffHand());
-					Collections.shuffle(contents);
-					for (int i = 0; i < 36; i++)
-						player.getInventory().setItem(i, contents.get(i));
-					player.getInventory().setItemInOffHand(contents.get(contents.size() - 1));
-					subtitle(player, "&8&kbbb &4&lInventory Scrambled &8&kbbb");
-				}
+			public void execute(Player player) {
+				List<ItemStack> contents = new ArrayList<>();
+				for (int i = 0; i < 36; i++)
+					contents.add(player.getInventory().getContents()[i]);
+				contents.add(player.getInventory().getItemInOffHand());
+				Collections.shuffle(contents);
+				for (int i = 0; i < 36; i++)
+					player.getInventory().setItem(i, contents.get(i));
+				player.getInventory().setItemInOffHand(contents.get(contents.size() - 1));
+				subtitle(player, "&8&kbbb &4&lInventory Scrambled &8&kbbb");
 			}
 		},
 		STRIP_ARMOR_PIECE {
 			@Override
-			public void execute(List<Player> players) {
-				for (Player player : players) {
-					List<ItemStack> armor = new ArrayList<>(Arrays.asList(player.getInventory().getArmorContents()));
-					if (Utils.isNullOrEmpty(armor)) continue;
-					ItemStack item = RandomUtils.randomElement(armor);
-					if (PlayerUtils.hasRoomFor(player, item)) {
-						armor.set(armor.indexOf(item), null);
-						player.getInventory().setArmorContents(armor.toArray(ItemStack[]::new));
-						player.getInventory().addItem(item);
-						subtitle(player, "&8&kbbb &4&lArmor Piece Stripped &8&kbbb");
-					}
+			public void execute(Player player) {
+				List<ItemStack> armor = new ArrayList<>(Arrays.asList(player.getInventory().getArmorContents()));
+				if (Utils.isNullOrEmpty(armor))
+					return;
+
+				ItemStack item = RandomUtils.randomElement(armor);
+				if (PlayerUtils.hasRoomFor(player, item)) {
+					armor.set(armor.indexOf(item), null);
+					player.getInventory().setArmorContents(armor.toArray(ItemStack[]::new));
+					player.getInventory().addItem(item);
+					subtitle(player, "&8&kbbb &4&lArmor Piece Stripped &8&kbbb");
 				}
 			}
 		},
 		SMITE {
 			@Override
-			public void execute(List<Player> players) {
-				for (Player player : players)
-					player.getLocation().getWorld().strikeLightning(player.getLocation());
+			public void execute(Player player) {
+				player.getLocation().getWorld().strikeLightning(player.getLocation());
 			}
 		},
 		WITHER_SKELETONS {
@@ -218,9 +238,8 @@ public class CorruptedFight extends WitherFight {
 		},
 		HUNGER {
 			@Override
-			public void execute(List<Player> players) {
-				for (Player player : players)
-					player.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, Time.SECOND.x(10), 3, true));
+			public void execute(Player player) {
+				player.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, Time.SECOND.x(10), 3, true));
 			}
 		},
 		SILVERFISH {
@@ -237,13 +256,17 @@ public class CorruptedFight extends WitherFight {
 		},
 		WEAKNESS {
 			@Override
-			public void execute(List<Player> players) {
-				for (Player player : players)
-					player.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, Time.SECOND.x(10), 1, true));
+			public void execute(Player player) {
+				player.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, Time.SECOND.x(10), 1, true));
 			}
 		};
 
-		public abstract void execute(List<Player> players);
+		public void execute(List<Player> players) {
+			for (Player player : players)
+				execute(player);
+		}
+
+		public void execute(Player player) {}
 	}
 
 }

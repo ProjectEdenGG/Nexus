@@ -105,6 +105,14 @@ public class PlayerUtils {
 		}
 	}
 
+	public static List<Player> getOnlinePlayers(List<UUID> uuids) {
+		return uuids.stream()
+			.map(PlayerUtils::getOnlinePlayer)
+			.filter(OfflinePlayer::isOnline)
+			.map(OfflinePlayer::getPlayer)
+			.toList();
+	}
+
 	public static List<Player> getOnlinePlayers() {
 		return getOnlinePlayers(null, null);
 	}

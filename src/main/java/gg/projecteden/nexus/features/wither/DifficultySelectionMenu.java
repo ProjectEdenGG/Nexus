@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class DifficultySelectionMenu extends MenuUtils implements InventoryProvider {
 
@@ -31,19 +32,17 @@ public class DifficultySelectionMenu extends MenuUtils implements InventoryProvi
 		int row = 1;
 		int column = 1;
 		for (WitherChallenge.Difficulty difficulty : WitherChallenge.Difficulty.values()) {
-			ItemStack item = new ItemBuilder(difficulty.menuMaterial).name(difficulty.getTitle()).lore(difficulty.description).build();
+			ItemStack item = new ItemBuilder(difficulty.getMenuMaterial()).name(difficulty.getTitle()).lore(difficulty.getDescription()).build();
 			contents.set(row, column, ClickableItem.from(item, e -> {
 				WitherFight fight;
 				try {
-					fight = difficulty.witherFightClass.getConstructor().newInstance();
+					fight = difficulty.getWitherFightClass().getConstructor().newInstance();
 				} catch (Exception ex) {
 					ex.printStackTrace();
 					return;
 				}
 				fight.setHost(player.getUniqueId());
-				fight.setParty(new ArrayList<>() {{
-					add(player.getUniqueId());
-				}});
+				fight.setParty(new ArrayList<>(List.of(player.getUniqueId())));
 				WitherChallenge.currentFight = fight;
 				player.closeInventory();
 				WitherChallenge.queue.remove(player.getUniqueId());

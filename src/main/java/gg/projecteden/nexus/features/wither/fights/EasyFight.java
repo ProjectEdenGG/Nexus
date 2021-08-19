@@ -10,6 +10,8 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
+import static gg.projecteden.utils.RandomUtils.chanceOf;
+
 @NoArgsConstructor
 public class EasyFight extends WitherFight {
 
@@ -25,7 +27,7 @@ public class EasyFight extends WitherFight {
 
 	@Override
 	public boolean shouldGiveStar() {
-		return (Math.random() * 101) < 12.5;
+		return chanceOf(12.5);
 	}
 
 	@Override

@@ -11,9 +11,11 @@ import gg.projecteden.nexus.features.commands.staff.HealCommand;
 import gg.projecteden.nexus.features.warps.Warps;
 import gg.projecteden.nexus.features.wither.BeginningCutscene;
 import gg.projecteden.nexus.features.wither.WitherChallenge;
+import gg.projecteden.nexus.features.wither.WitherChallenge.Difficulty;
 import gg.projecteden.nexus.features.wither.WitherCommand;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.BlockUtils;
+import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -32,7 +34,6 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Blaze;
@@ -81,7 +82,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
+import static gg.projecteden.nexus.utils.PlayerUtils.getOnlinePlayers;
 import static gg.projecteden.nexus.utils.Utils.tryCalculate;
 
 @Data
@@ -127,7 +128,7 @@ public abstract class WitherFight implements Listener {
 					return;
 
 				if (wither.getTarget() == null)
-					wither.setTarget(PlayerUtils.getPlayer(RandomUtils.randomElement(alivePlayers)).getPlayer());
+					wither.setTarget(getRandomAlivePlayer());
 				if (wither.hasLineOfSight(wither.getTarget()))
 					return;
 
@@ -152,13 +153,12 @@ public abstract class WitherFight implements Listener {
 			tasks.add(new AntiCamping(this).start());
 
 			Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
-			for (UUID uuid : alivePlayers) {
+			for (Player player : alivePlayers()) {
 				try {
-					Player player = PlayerUtils.getPlayer(uuid).getPlayer();
-					if (player == null) continue;
+					UUID uuid = player.getUniqueId();
 					Team team = scoreboard.registerNewTeam("wither-" + uuid.toString().split("-")[0]);
 					team.addEntry(player.getName());
-					player.getPlayer().setScoreboard(scoreboard);
+					player.setScoreboard(scoreboard);
 					scoreboardTeams.put(uuid, team);
 				} catch (Exception ex) {
 					ex.printStackTrace();
@@ -166,11 +166,8 @@ public abstract class WitherFight implements Listener {
 			}
 
 			tasks.add(Tasks.repeat(0, Time.SECOND.x(5), () -> {
-				for (UUID uuid : alivePlayers) {
-					Player player = PlayerUtils.getPlayer(uuid).getPlayer();
-					if (player == null) continue;
-					scoreboardTeams.get(uuid).setPrefix(colorize(((int) player.getPlayer().getHealth()) + " &c❤ &r"));
-				}
+				for (Player player : alivePlayers())
+					scoreboardTeams.get(player.getUniqueId()).prefix(new JsonBuilder((int) player.getPlayer().getHealth() + " &c❤ &r").build());
 			}));
 
 		});
@@ -178,6 +175,18 @@ public abstract class WitherFight implements Listener {
 
 	public static void subtitle(Player player, String subtitle) {
 		new TitleBuilder().players(player).subtitle(subtitle).fade(10).stay(40).send();
+	}
+
+	public boolean isInParty(Player player) {
+		return party != null && party.contains(player.getUniqueId());
+	}
+
+	public boolean isAlive(Player player) {
+		return alivePlayers != null && alivePlayers.contains(player.getUniqueId());
+	}
+
+	public boolean isSpectating(Player player) {
+		return spectators != null && spectators.contains(player.getUniqueId());
 	}
 
 	public OfflinePlayer getHostOfflinePlayer() {
@@ -188,12 +197,23 @@ public abstract class WitherFight implements Listener {
 		return getHostOfflinePlayer().getPlayer();
 	}
 
+	public Player getRandomAlivePlayer() {
+		return RandomUtils.randomElement(alivePlayers());
+	}
+
 	public List<Player> alivePlayers() {
-		return alivePlayers.stream()
-			.map(PlayerUtils::getOnlinePlayer)
-			.filter(OfflinePlayer::isOnline)
-			.map(OfflinePlayer::getPlayer)
-			.toList();
+		return getOnlinePlayers(alivePlayers);
+	}
+
+	public List<Player> spectators() {
+		return getOnlinePlayers(spectators);
+	}
+
+	public void sendSpectatorsToSpawn() {
+		spectators().forEach(player -> {
+			Warps.spawn(player);
+			player.setGameMode(GameMode.SURVIVAL);
+		});
 	}
 
 	public void broadcastToParty(String message) {
@@ -215,12 +235,14 @@ public abstract class WitherFight implements Listener {
 		if (getDifficulty() == WitherChallenge.Difficulty.CORRUPTED)
 			if (getAlternateDrops() != null)
 				PlayerUtils.giveItemsAndMailExcess(itemReceiver, getAlternateDrops(), null, WorldGroup.SURVIVAL);
+
 		if (shouldGiveStar()) {
 			gotStar = true;
 			PlayerUtils.giveItemsAndMailExcess(itemReceiver, Collections.singleton(new ItemStack(Material.NETHER_STAR)), null, WorldGroup.SURVIVAL);
 			broadcastToParty("&3Congratulations! You have gotten a wither star for this fight!");
 		} else {
-			broadcastToParty("&cUnfortunately, you did not get a star this time. You can try a harder difficulty for a higher chance");
+			broadcastToParty("&cUnfortunately, you did not get a star this time." +
+				(getDifficulty() != Difficulty.CORRUPTED ? " You can try a harder difficulty for a higher chance" : ""));
 			if (getAlternateDrops() != null)
 				PlayerUtils.giveItemsAndMailExcess(itemReceiver, getAlternateDrops(), null, WorldGroup.SURVIVAL);
 		}
@@ -232,7 +254,7 @@ public abstract class WitherFight implements Listener {
 			PigZombie piglin = location.getWorld().spawn(location, PigZombie.class);
 			piglin.setAdult();
 			piglin.setCanPickupItems(false);
-			piglin.setTarget(PlayerUtils.getPlayer(RandomUtils.randomElement(alivePlayers)).getPlayer());
+			piglin.setTarget(getRandomAlivePlayer());
 		}
 	}
 
@@ -261,7 +283,7 @@ public abstract class WitherFight implements Listener {
 			hoglin.setAdult();
 			hoglin.setCanPickupItems(false);
 			hoglin.setImmuneToZombification(true);
-			hoglin.setTarget(PlayerUtils.getPlayer(RandomUtils.randomElement(alivePlayers)).getPlayer());
+			hoglin.setTarget(getRandomAlivePlayer());
 		}
 	}
 
@@ -271,7 +293,7 @@ public abstract class WitherFight implements Listener {
 			PiglinBrute brute = location.getWorld().spawn(location, PiglinBrute.class);
 			brute.setCanPickupItems(false);
 			brute.setImmuneToZombification(true);
-			brute.setTarget(PlayerUtils.getPlayer(RandomUtils.randomElement(alivePlayers)).getPlayer());
+			brute.setTarget(getRandomAlivePlayer());
 		}
 	}
 
@@ -321,10 +343,10 @@ public abstract class WitherFight implements Listener {
 		if (!isInRegion(event.getEntity().getLocation()))
 			return;
 
-		if (event.getTarget() instanceof Player && alivePlayers.contains(event.getTarget().getUniqueId()))
+		if (event.getTarget() instanceof Player player && isAlive(player))
 			return;
 
-		event.setTarget(PlayerUtils.getPlayer(RandomUtils.randomElement(alivePlayers)).getPlayer());
+		event.setTarget(getRandomAlivePlayer());
 	}
 
 	@EventHandler
@@ -390,7 +412,7 @@ public abstract class WitherFight implements Listener {
 			WitherChallenge.reset();
 		} else {
 			WitherChallenge.currentFight.broadcastToParty("&e" + Nickname.of(player) + " &chas " + reason + " and is out of the fight!");
-			wither.setTarget(PlayerUtils.getPlayer(RandomUtils.randomElement(alivePlayers)).getPlayer());
+			wither.setTarget(getRandomAlivePlayer());
 		}
 		alivePlayers.remove(player.getUniqueId());
 		HealCommand.healPlayer(player);
@@ -403,13 +425,13 @@ public abstract class WitherFight implements Listener {
 			return;
 
 		Player player = event.getEntity();
-		if (!alivePlayers.contains(player.getUniqueId()))
+		if (!isAlive(player))
 			return;
 
 		scoreboardTeams.get(player.getUniqueId()).unregister();
 		scoreboardTeams.remove(player.getUniqueId());
 		event.setCancelled(true);
-		event.setDeathMessage(null);
+		event.deathMessage(null);
 		processPlayerQuit(player, "died");
 	}
 
@@ -450,18 +472,8 @@ public abstract class WitherFight implements Listener {
 
 		Tasks.wait(Time.SECOND.x(10), () -> {
 			started = false;
-			WitherChallenge.currentFight.getAlivePlayers().forEach(uuid -> {
-				OfflinePlayer offlinePlayer = PlayerUtils.getPlayer(uuid);
-				if (offlinePlayer.getPlayer() != null)
-					Warps.spawn(offlinePlayer.getPlayer());
-			});
-			WitherChallenge.currentFight.getSpectators().forEach(uuid -> {
-				OfflinePlayer offlinePlayer = PlayerUtils.getPlayer(uuid);
-				if (offlinePlayer.getPlayer() != null) {
-					Warps.spawn(offlinePlayer.getPlayer());
-					offlinePlayer.getPlayer().setGameMode(GameMode.SURVIVAL);
-				}
-			});
+			WitherChallenge.currentFight.alivePlayers().forEach(Warps::spawn);
+			WitherChallenge.currentFight.sendSpectatorsToSpawn();
 			WitherChallenge.reset();
 		});
 	}
@@ -512,7 +524,7 @@ public abstract class WitherFight implements Listener {
 		if (!isInRegion(event.getBlock().getLocation()))
 			return;
 
-		if (!alivePlayers.contains(event.getPlayer().getUniqueId()))
+		if (!isAlive(event.getPlayer()))
 			return;
 
 		playerPlacedBlocks.add(event.getBlock().getLocation());
@@ -523,7 +535,7 @@ public abstract class WitherFight implements Listener {
 		if (!isInRegion(event.getBlock().getLocation()))
 			return;
 
-		if (!alivePlayers.contains(event.getPlayer().getUniqueId()))
+		if (!isAlive(event.getPlayer()))
 			return;
 
 		if (playerPlacedBlocks.contains(event.getBlock().getLocation()))
@@ -642,62 +654,54 @@ public abstract class WitherFight implements Listener {
 	public enum CounterAttack {
 		KNOCKBACK {
 			@Override
-			public void execute(List<Player> players) {
+			public void execute(Player player) {
 				Location witherLocation = WitherChallenge.currentFight.wither.getLocation();
-				for (Player player : players) {
-					Location playerLocation = player.getLocation();
-					int x = (int) (playerLocation.getX() - witherLocation.getX());
-					int z = (int) (playerLocation.getZ() - witherLocation.getZ());
-					player.setVelocity(new Vector(x, .5, z).multiply(1.25));
-				}
+				Location playerLocation = player.getLocation();
+				int x = (int) (playerLocation.getX() - witherLocation.getX());
+				int z = (int) (playerLocation.getZ() - witherLocation.getZ());
+				player.setVelocity(new Vector(x, .5, z).multiply(1.25));
 			}
 		},
 		BLINDNESS {
 			@Override
-			public void execute(List<Player> players) {
-				for (Player player : players)
-					player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, Time.SECOND.x(5), 0, true));
+			public void execute(Player player) {
+				player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, Time.SECOND.x(5), 0, true));
 			}
 		},
 		CONFUSION {
 			@Override
-			public void execute(List<Player> players) {
-				for (Player player : players)
-					player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, Time.SECOND.x(10), 0, true));
+			public void execute(Player player) {
+				player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, Time.SECOND.x(10), 0, true));
 			}
 		},
 		TAKE_POTIONS {
 			@Override
-			public void execute(List<Player> players) {
-				for (Player player : players)
-					for (PotionEffect effect : player.getActivePotionEffects()) {
-						if (effect.getType().equals(PotionEffectType.WITHER))
-							continue;
+			public void execute(Player player) {
+				for (PotionEffect effect : player.getActivePotionEffects()) {
+					if (effect.getType().equals(PotionEffectType.WITHER))
+						continue;
 
-						player.removePotionEffect(effect.getType());
-						subtitle(player, "&8&kbbb &4&lStripped Potion Effects &8&kbbb");
-					}
+					player.removePotionEffect(effect.getType());
+					subtitle(player, "&8&kbbb &4&lStripped Potion Effects &8&kbbb");
+				}
 			}
 		},
 		HUNGER {
 			@Override
-			public void execute(List<Player> players) {
-				for (Player player : players)
-					player.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, Time.SECOND.x(10), 1, true));
+			public void execute(Player player) {
+				player.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, Time.SECOND.x(10), 1, true));
 			}
 		},
 		LEVITATION {
 			@Override
-			public void execute(List<Player> players) {
-				for (Player player : players)
-					player.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, Time.SECOND.x(5), 0, true));
+			public void execute(Player player) {
+				player.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, Time.SECOND.x(5), 0, true));
 			}
 		},
 		WITHER_EFFECT {
 			@Override
-			public void execute(List<Player> players) {
-				for (Player player : players)
-					player.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, Time.SECOND.x(10), 0, true));
+			public void execute(Player player) {
+				player.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, Time.SECOND.x(10), 0, true));
 			}
 		},
 		DUPLICATE {
@@ -713,8 +717,7 @@ public abstract class WitherFight implements Listener {
 
 			public Wither spawnMinion(Location location) {
 				Wither wither = location.getWorld().spawn(location, Wither.class, SpawnReason.CUSTOM);
-				wither.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(1);
-				wither.setHealth(1);
+				EntityUtils.setHealth(wither, 1);
 				wither.setCustomName("Minion");
 				wither.setCustomNameVisible(true);
 				if (wither.getBossBar() != null)
@@ -731,7 +734,12 @@ public abstract class WitherFight implements Listener {
 			}
 		};
 
-		public abstract void execute(List<Player> players);
+		public void execute(List<Player> players) {
+			for (Player player : players)
+				execute(player);
+		}
+
+		public void execute(Player player) {}
 	}
 
 }

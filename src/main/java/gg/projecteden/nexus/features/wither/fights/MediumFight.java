@@ -3,12 +3,10 @@ package gg.projecteden.nexus.features.wither.fights;
 import gg.projecteden.nexus.features.crates.models.CrateType;
 import gg.projecteden.nexus.features.wither.WitherChallenge;
 import gg.projecteden.nexus.features.wither.models.WitherFight;
-import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.utils.EnumUtils;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Wither;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
@@ -17,6 +15,8 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static gg.projecteden.utils.RandomUtils.chanceOf;
 
 @NoArgsConstructor
 public class MediumFight extends WitherFight {
@@ -29,21 +29,23 @@ public class MediumFight extends WitherFight {
 	public void spawnWither(Location location) {
 		Wither wither = location.getWorld().spawn(location, Wither.class, SpawnReason.NATURAL);
 		this.wither = wither;
-		AttributeInstance health = wither.getAttribute(Attribute.GENERIC_MAX_HEALTH);
-		health.setBaseValue(health.getValue() * 2);
-		wither.setHealth(health.getBaseValue());
+		EntityUtils.setHealth(wither, wither.getHealth() * 2);
 	}
 
 	@EventHandler
 	public void counterAttack(EntityDamageByEntityEvent event) {
-		if (event.getEntity() != this.wither) return;
-		if (!RandomUtils.chanceOf(15)) return;
+		if (event.getEntity() != this.wither)
+			return;
+
+		if (!chanceOf(15))
+			return;
+
 		EnumUtils.random(CounterAttack.class).execute(alivePlayers());
 	}
 
 	@Override
 	public boolean shouldGiveStar() {
-		return (Math.random() * 101) < 25;
+		return chanceOf(25);
 	}
 
 	@Override
