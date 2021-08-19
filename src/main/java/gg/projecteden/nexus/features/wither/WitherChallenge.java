@@ -64,10 +64,12 @@ public class WitherChallenge extends Feature implements Listener {
 				currentFight.wither.remove();
 			currentFight.scoreboardTeams.values().forEach(Team::unregister);
 
-			for (UUID uuid : currentFight.spectators) {
+			for (UUID uuid : new ArrayList<>(currentFight.spectators)) {
 				Player player = PlayerUtils.getPlayer(uuid).getPlayer();
-				if (player != null)
+				if (player != null) {
 					Warps.spawn(player);
+					Tasks.wait(1, () -> player.setGameMode(GameMode.SURVIVAL));
+				}
 			}
 
 			currentFight = null;
@@ -143,13 +145,9 @@ public class WitherChallenge extends Feature implements Listener {
 			return;
 		}
 
-		if (currentFight.alivePlayers == null) {
+		if (!currentFight.getSpectators().contains(event.getPlayer().getUniqueId()) && (currentFight.alivePlayers == null || currentFight.getAlivePlayers().contains(event.getPlayer().getUniqueId()))) {
 			cancelTeleport(event);
-			return;
 		}
-
-		if (!currentFight.alivePlayers.contains(event.getPlayer().getUniqueId()))
-			cancelTeleport(event);
 	}
 
 	@EventHandler
