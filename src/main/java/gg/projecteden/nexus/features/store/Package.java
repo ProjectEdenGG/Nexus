@@ -494,7 +494,7 @@ public enum Package {
 	EXTRA_SETHOMES {
 		@Override
 		public void handleApply(HasUniqueId uuid) {
-			new HomeService().get(uuid).addExtraHomes(5);
+			new HomeService().edit(uuid, user -> user.addExtraHomes(5));
 		}
 
 		@Override
