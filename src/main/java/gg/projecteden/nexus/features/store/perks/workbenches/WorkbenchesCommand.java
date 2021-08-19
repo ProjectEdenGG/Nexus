@@ -22,22 +22,18 @@ public class WorkbenchesCommand extends CustomCommand {
 
 	public WorkbenchesCommand(CommandEvent event) {
 		super(event);
-	}
-
-	private void checkWorld() {
-		if (worldGroup() == WorldGroup.EVENTS)
-			permissionError();
+		if (isPlayerCommandEvent())
+			if (worldGroup() == WorldGroup.EVENTS)
+				permissionError();
 	}
 
 	@Path
 	void open() {
-		checkWorld();
 		new WorkbenchesMenu().open(player());
 	}
 
 	@Path("<workbench>")
 	void open(Workbench workbench) {
-		checkWorld();
 		workbench.open(player());
 	}
 

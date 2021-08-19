@@ -17,13 +17,13 @@ public abstract class _WorkbenchCommand extends CustomCommand {
 
 	public _WorkbenchCommand(@NonNull CommandEvent event) {
 		super(event);
+		if (isPlayerCommandEvent())
+			if (worldGroup() == WorldGroup.EVENTS)
+				permissionError();
 	}
 
 	@Path
 	void run() {
-		if (worldGroup() == WorldGroup.EVENTS)
-			permissionError();
-
 		getType().open(player());
 	}
 
