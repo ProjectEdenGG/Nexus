@@ -6,7 +6,6 @@ import gg.projecteden.nexus.features.commands.AutoTorchCommand;
 import gg.projecteden.nexus.features.commands.HatCommand;
 import gg.projecteden.nexus.features.commands.NicknameCommand;
 import gg.projecteden.nexus.features.commands.PlayerTimeCommand;
-import gg.projecteden.nexus.features.commands.WorkbenchCommand;
 import gg.projecteden.nexus.features.commands.staff.admin.PermHelperCommand.NumericPermission;
 import gg.projecteden.nexus.features.particles.WingsCommand;
 import gg.projecteden.nexus.features.store.annotations.Category;
@@ -28,6 +27,7 @@ import gg.projecteden.nexus.features.store.perks.RainbowArmorCommand;
 import gg.projecteden.nexus.features.store.perks.RainbowBeaconCommand;
 import gg.projecteden.nexus.features.store.perks.autosort.commands.AutoSortCommand;
 import gg.projecteden.nexus.features.store.perks.fireworks.FireworkCommand;
+import gg.projecteden.nexus.features.store.perks.workbenches._WorkbenchCommand;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.autotorch.AutoTorchService;
 import gg.projecteden.nexus.models.autotorch.AutoTorchUser;
@@ -444,7 +444,7 @@ public enum Package {
 
 	@Id("4365867")
 	@Category(StoreCategory.INVENTORY)
-	@Permission(WorkbenchCommand.PERMISSION)
+	@Permission(_WorkbenchCommand.PERMISSION)
 	@Display(Material.CRAFTING_TABLE)
 	WORKBENCH,
 

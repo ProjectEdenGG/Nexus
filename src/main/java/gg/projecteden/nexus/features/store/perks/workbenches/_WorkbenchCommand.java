@@ -1,0 +1,50 @@
+package gg.projecteden.nexus.features.store.perks.workbenches;
+
+import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.utils.WorldGroup;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NonNull;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+
+import java.util.function.Consumer;
+
+public abstract class _WorkbenchCommand extends CustomCommand {
+	public static final String PERMISSION = "workbenches";
+
+	public _WorkbenchCommand(@NonNull CommandEvent event) {
+		super(event);
+	}
+
+	@Path
+	void run() {
+		if (worldGroup() == WorldGroup.EVENTS)
+			permissionError();
+
+		getType().open(player());
+	}
+
+	protected abstract Workbench getType();
+
+	@Getter
+	@AllArgsConstructor
+	public enum Workbench {
+		CRAFTING_TABLE(Material.CRAFTING_TABLE, player -> player.openWorkbench(null, true)),
+		STONE_CUTTER(Material.STONECUTTER, player -> player.openStonecutter(null, true)),
+		SMITHING_TABLE(Material.SMITHING_TABLE, player -> player.openSmithingTable(null, true)),
+		GRINDSTONE(Material.GRINDSTONE, player -> player.openGrindstone(null, true)),
+		LOOM(Material.LOOM, player -> player.openLoom(null, true)),
+		CARTOGRAPHY_TABLE(Material.CARTOGRAPHY_TABLE, player -> player.openCartographyTable(null, true));
+
+		private final Material material;
+		private final Consumer<Player> open;
+
+		public void open(Player player) {
+			open.accept(player);
+		}
+	}
+
+}
