@@ -3,6 +3,8 @@ package gg.projecteden.nexus.features.mobheads;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.mobheads.common.MobHead;
+import gg.projecteden.nexus.models.boost.BoostConfig;
+import gg.projecteden.nexus.models.boost.Boostable;
 import gg.projecteden.nexus.models.mobheads.MobHeadUser.MobHeadData;
 import gg.projecteden.nexus.models.mobheads.MobHeadUserService;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -92,10 +94,19 @@ public class MobHeadListener implements Listener {
 			skull = new ItemBuilder(skull).name("&e" + Nickname.of(player2) + "'s Head").skullOwner(player2).build();
 
 		final double looting = getLooting(player);
-		final double finalChance = chance + looting;
+		final double boost = mobHead == MobHeadType.WITHER_SKELETON ? 1 : BoostConfig.multiplierOf(Boostable.MOB_HEADS);
+		final double finalChance = (chance + looting) * boost;
 		final double random = randomDouble(0, 100);
 		final boolean drop = random <= finalChance;
-		Nexus.debug("Player: " + player.getName() + "\n  Type: " + mobHead.name() + "\n  Chance: " + chance + "\n  Looting bonus: " + looting + "\n  Final chance: " + finalChance + "\n  Random: " + random + "\n  Drop: " + drop);
+		Nexus.debug("" +
+			"Player: " + player.getName() +
+			"\n  Type: " + mobHead.name() +
+			"\n  Chance: " + chance +
+			"\n  Looting bonus: " + looting +
+			"\n  Boost: " + boost +
+			"\n  Final chance: " + finalChance +
+			"\n  Random: " + random +
+			"\n  Drop: " + drop);
 
 		if (drop) {
 			player.getWorld().dropItemNaturally(victim.getLocation(), skull);

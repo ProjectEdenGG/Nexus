@@ -233,6 +233,34 @@ public enum Package {
 		}
 	},
 
+	@Id("4640794")
+	@Category(StoreCategory.BOOSTS)
+	MOB_HEADS {
+		public Boostable getType() {
+			return Boostable.valueOf(name());
+		}
+
+		@Override
+		public void handleApply(HasUniqueId uuid) {
+			new BoosterService().edit(uuid, booster -> booster.add(getType(), 1.25, Time.DAY));
+		}
+
+		@Override
+		public @NotNull ItemBuilder getDisplayItem() {
+			return getType().getDisplayItem();
+		}
+
+		@Override
+		public int count(OfflinePlayer player) {
+			return new BoosterService().get(player).count(getType());
+		}
+
+		@Override
+		public boolean has(OfflinePlayer player) {
+			return count(player) > 0;
+		}
+	},
+
 	@Id("4496339")
 	@Category(StoreCategory.BOOSTS)
 	VOTE_POINTS {
