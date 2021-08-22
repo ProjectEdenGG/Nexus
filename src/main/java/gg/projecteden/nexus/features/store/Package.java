@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.commands.AutoTorchCommand;
 import gg.projecteden.nexus.features.commands.HatCommand;
 import gg.projecteden.nexus.features.commands.NicknameCommand;
 import gg.projecteden.nexus.features.commands.PlayerTimeCommand;
+import gg.projecteden.nexus.features.commands.staff.admin.PermHelperCommand;
 import gg.projecteden.nexus.features.commands.staff.admin.PermHelperCommand.NumericPermission;
 import gg.projecteden.nexus.features.particles.WingsCommand;
 import gg.projecteden.nexus.features.store.annotations.Category;
@@ -542,6 +543,11 @@ public enum Package {
 	@World("creative")
 	@Display(Material.WOODEN_AXE)
 	CREATIVE_PLOTS {
+		@Override
+		public void handleApply(HasUniqueId uuid) {
+			PermHelperCommand.add(NumericPermission.PLOTS, uuid.getUniqueId(), 1);
+		}
+
 		@Override
 		public int count(OfflinePlayer player) {
 			return NumericPermission.PLOTS.getLimit(player.getUniqueId());

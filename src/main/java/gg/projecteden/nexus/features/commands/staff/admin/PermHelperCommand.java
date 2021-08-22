@@ -4,6 +4,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.extraplots.ExtraPlotUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.LuckPermsUtils.PermissionChange;
@@ -58,8 +59,14 @@ public class PermHelperCommand extends CustomCommand {
 	@RequiredArgsConstructor
 	public enum NumericPermission {
 		NPCS("citizens.npc.limit."),
-		PLOTS("plots.plot.", "creative"),
 		VAULTS("playervaults.amount."),
+		PLOTS("plots.plot.", "creative") {
+			@Override
+			public void set(UUID uuid, int amount) {
+				super.set(uuid, amount);
+				new ExtraPlotUserService().edit(uuid, user -> user.setTotalPlots(amount));
+			}
+		},
 		;
 
 		@NonNull
