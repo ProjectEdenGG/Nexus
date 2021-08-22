@@ -35,6 +35,7 @@ import java.lang.annotation.Target;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -249,6 +250,11 @@ public class Utils extends gg.projecteden.utils.Utils {
 			}
 		}
 		return output;
+	}
+
+	public static <T> List<T> reverse(List<T> list) {
+		Collections.reverse(list);
+		return list;
 	}
 
 	public static void queue(int delayTicks, QueuedTask task) {

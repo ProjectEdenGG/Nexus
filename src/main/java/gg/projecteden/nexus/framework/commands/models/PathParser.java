@@ -10,6 +10,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgn
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.commands.models.events.CommandTabEvent;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
+import gg.projecteden.nexus.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -26,7 +27,6 @@ import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -47,8 +47,7 @@ class PathParser {
 	public PathParser(@NonNull CommandEvent event) {
 		this.event = event;
 		this.command = event.getCommand();
-		this.methods = command.getPathMethods(event);
-		Collections.reverse(methods);
+		this.methods = Utils.reverse(command.getPathMethods(event));
 	}
 
 	@Data

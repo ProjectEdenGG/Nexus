@@ -36,6 +36,7 @@ import org.jetbrains.annotations.Nullable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -410,20 +411,21 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 			return;
 		Match match = event.getMatch();
 		Minigamer minigamer = event.getMinigamer();
-		if (!minigamer.isAlive() || match.isEnded())
+		if (!minigamer.isAlive() || match.isEnded() || minigamer.getTeam() == null)
 			return;
 		if (minigamer.getTeam().getMinigamers(match).size()-1 < minigamer.getTeam().getMinPlayers())
 			return;
 
 		List<BalanceWrapper> wrappers = getBalanceWrappers(match).stream()
-				.filter(wrapper -> !wrapper.getTeam().equals(minigamer.getTeam()) && // only try to auto-balance to other teams
-						wrapper.percentageDiscrepancy() > 0 &&
-						wrapper.getNeededPlayers() != -1 &&
-						wrapper.extraPlayerPercentDiscrepancy() >= 0).collect(Collectors.toList());
+			.filter(wrapper -> !wrapper.getTeam().equals(minigamer.getTeam()) && // only try to auto-balance to other teams
+					wrapper.percentageDiscrepancy() > 0 &&
+					wrapper.getNeededPlayers() != -1 &&
+					wrapper.extraPlayerPercentDiscrepancy() >= 0)
+			// sort teams by closest to being equal (inverse of natural sort)
+			.sorted(Comparator.reverseOrder())
+			.collect(Collectors.toList());
 		if (wrappers.isEmpty())
 			return;
-		// sort teams by closest to being equal (inverse of natural sort)
-		wrappers.sort(Collections.reverseOrder());
 		// select randomly if multiple teams are equal
 		List<BalanceWrapper> randomWrappers = new ArrayList<>();
 		randomWrappers.add(wrappers.get(0));

@@ -2,6 +2,7 @@ package gg.projecteden.nexus.models.trophy;
 
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
@@ -11,7 +12,6 @@ import org.bukkit.Material;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static gg.projecteden.utils.StringUtils.camelCase;
@@ -94,8 +94,7 @@ public enum Trophy {
 	}
 
 	public static ItemBuilder getDisplayItem(TrophyHolder holder, String event) {
-		List<Trophy> trophies = new ArrayList<>(getTrophies(event));
-		Collections.reverse(trophies);
+		List<Trophy> trophies = Utils.reverse(new ArrayList<>(getTrophies(event)));
 		for (Trophy trophy : trophies)
 			if (holder.hasEarned(trophy))
 				return trophy.getItem();

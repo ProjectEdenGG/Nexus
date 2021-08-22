@@ -9,7 +9,6 @@ import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -28,12 +27,10 @@ public class StaffCommand extends CustomCommand {
 	@Async
 	void staff() {
 		line();
-		List<Rank> ranks = Rank.getStaff();
-		Collections.reverse(ranks);
 
 		AtomicInteger total = new AtomicInteger();
 		Map<Rank, List<Nerd>> map = new LinkedHashMap<>() {{
-			ranks.forEach(rank -> {
+			Rank.STAFF_RANKS.forEach(rank -> {
 				put(rank, rank.getNerds());
 				total.addAndGet(get(rank).size());
 			});

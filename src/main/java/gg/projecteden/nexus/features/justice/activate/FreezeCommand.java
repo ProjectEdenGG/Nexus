@@ -47,8 +47,8 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.spigotmc.event.entity.EntityDismountEvent;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -82,10 +82,8 @@ public class FreezeCommand extends _PunishmentCommand implements Listener {
 	void list(@Arg("1") int page) {
 		List<Freeze> all = new FreezeService().getAll().stream()
 				.filter(Freeze::isFrozen)
-				.sorted(Comparator.comparing(freeze -> Nerd.of(freeze).getLastJoin()))
+				.sorted(Comparator.<Freeze, LocalDateTime>comparing(freeze -> Nerd.of(freeze).getLastJoin()).reversed())
 				.collect(Collectors.toList());
-
-		Collections.reverse(all);
 
 		BiFunction<Freeze, String, JsonBuilder> formatter = (freeze, index) ->
 				json("&3" + index + " &e" + freeze.getNickname() + " &7- "

@@ -45,7 +45,7 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 		if (!folder.exists())
 			folder.mkdir();
 
-		Tasks.async(() -> Rank.getStaff().forEach(rank -> rank.getNerds().forEach(staff -> {
+		Tasks.async(() -> Rank.STAFF_RANKS.forEach(rank -> rank.getNerds().forEach(staff -> {
 			try {
 				String html = "";
 				if (!Strings.isNullOrEmpty(staff.getPreferredName()))

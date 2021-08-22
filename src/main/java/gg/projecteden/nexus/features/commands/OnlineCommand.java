@@ -20,8 +20,6 @@ import gg.projecteden.utils.TimeUtils.Timespan;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,9 +34,6 @@ public class OnlineCommand extends CustomCommand {
 	@Path
 	@Override
 	public void help() {
-		List<Rank> ranks = Arrays.asList(Rank.values());
-		Collections.reverse(ranks);
-
 		long vanished = PlayerUtils.getOnlinePlayers().stream().filter(PlayerUtils::isVanished).count();
 		long online = PlayerUtils.getOnlinePlayers().size() - vanished;
 		boolean canSeeVanished = !isPlayer() || player().hasPermission("pv.see");
@@ -47,7 +42,7 @@ public class OnlineCommand extends CustomCommand {
 		line();
 		send("&3There are &e" + counts + " &3out of maximum &e" + Bukkit.getMaxPlayers() + " &3players online");
 
-		ranks.forEach(rank -> {
+		Rank.REVERSED.forEach(rank -> {
 			List<Nerd> nerds = rank.getOnlineNerds().stream().filter(this::canSee).collect(Collectors.toList());
 			if (nerds.size() == 0) return;
 

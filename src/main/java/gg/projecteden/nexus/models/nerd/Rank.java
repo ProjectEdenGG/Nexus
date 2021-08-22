@@ -10,6 +10,7 @@ import gg.projecteden.nexus.framework.interfaces.IsColoredAndNamed;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.utils.EnumUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,7 +25,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -143,9 +143,11 @@ public enum Rank implements IsColoredAndNamed {
 				.collect(Collectors.toList());
 	}
 
-	public static List<Rank> getStaff() {
-		return Arrays.stream(Rank.values()).filter(Rank::isStaff).filter(Rank::isActive).collect(Collectors.toList());
-	}
+	public static final List<Rank> STAFF_RANKS = Arrays.stream(Rank.values())
+		.filter(Rank::isStaff)
+		.filter(Rank::isActive)
+		.sorted(Comparator.reverseOrder())
+		.collect(Collectors.toList());
 
 	public static List<Nerd> getOnlineStaff() {
 		return PlayerUtils.getOnlinePlayers().stream()
@@ -163,8 +165,7 @@ public enum Rank implements IsColoredAndNamed {
 				.collect(Collectors.toList());
 	}
 
-	private static final List<Rank> REVERSED = Arrays.asList(Rank.values());
-	static { Collections.reverse(REVERSED); }
+	public static final List<Rank> REVERSED = Utils.reverse(Arrays.asList(Rank.values()));
 
 	public static final LoadingCache<UUID, Rank> CACHE = CacheBuilder.newBuilder()
 		.expireAfterWrite(10, TimeUnit.SECONDS)

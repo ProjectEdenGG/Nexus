@@ -33,7 +33,6 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +40,6 @@ import java.util.function.BiFunction;
 
 import static gg.projecteden.nexus.features.resourcepack.CustomModel.ICON;
 import static gg.projecteden.nexus.models.costume.Costume.EXCLUSIVE;
-import static gg.projecteden.nexus.models.costume.Costume.ROOT_FOLDER;
 
 @NoArgsConstructor
 @Aliases("costumes")
@@ -188,10 +186,6 @@ public class CostumeCommand extends CustomCommand implements Listener {
 				builder.lore("", "&3Available Costumes: &e" + available);
 				items.add(ClickableItem.from(builder.build(), e -> newMenu(this, subfolder).open(player)));
 			}
-
-			// TODO Use CostumeType order
-			if (folder.equals(ROOT_FOLDER))
-				Collections.reverse(items);
 
 			if (!items.isEmpty()) {
 				while (items.size() % 9 != 0)

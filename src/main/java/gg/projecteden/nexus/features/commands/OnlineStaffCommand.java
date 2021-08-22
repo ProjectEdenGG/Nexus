@@ -8,7 +8,6 @@ import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.PlayerUtils;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,9 +20,6 @@ public class OnlineStaffCommand extends CustomCommand {
 
 	@Path
 	void onlineStaff() {
-		List<Rank> ranks = Rank.getStaff();
-		Collections.reverse(ranks);
-
 		long vanished = PlayerUtils.getOnlinePlayers().stream().filter(PlayerUtils::isVanished).count();
 		long online = Rank.getOnlineStaff().size() - vanished;
 		boolean canSeeVanished = player().hasPermission("pv.see");
@@ -31,7 +27,7 @@ public class OnlineStaffCommand extends CustomCommand {
 
 		line();
 		send("&3There are &e" + counts + " &3staff members online");
-		ranks.forEach(rank -> {
+		Rank.STAFF_RANKS.forEach(rank -> {
 			List<Nerd> nerds = rank.getOnlineNerds();
 			if (nerds.size() == 0) return;
 
