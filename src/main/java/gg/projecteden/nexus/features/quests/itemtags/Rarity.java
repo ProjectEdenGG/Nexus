@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.quests.itemtags;
 
-import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.StringUtils.Gradient;
 import gg.projecteden.nexus.utils.Utils;
@@ -92,14 +91,14 @@ public enum Rarity {
 
 		if (itemStack.getItemMeta().hasEnchants()) {
 			ItemTags.debug(debugger, "  &3Vanilla Enchants:");
-			Pair<Integer, Boolean> vanillaEnchantsPair = getEnchantsVal(itemStack, debugger);
-			args.setVanillaEnchantsSum(vanillaEnchantsPair.getFirst());
-			args.setAboveVanillaEnchants(vanillaEnchantsPair.getSecond());
+			args.setVanillaEnchantsSum(getEnchantsVal(itemStack, args, debugger));
 			ItemTags.debug(debugger, "    &3Sum: &e" + number(args.getVanillaEnchantsSum()));
 
 			ItemTags.debug(debugger, "  &3Custom Enchants:");
 			args.setCustomEnchantsSum(getCustomEnchantsVal(itemStack, debugger));
 			ItemTags.debug(debugger, "    &3Sum: &e" + number(args.getCustomEnchantsSum()));
+
+			checkEnchantRules(itemStack, args, debugger);
 		}
 
 		if (condition != null && condition != Condition.PRISTINE) {
@@ -180,8 +179,8 @@ public enum Rarity {
 		return result;
 	}
 
-	private static Pair<Integer, Boolean> getEnchantsVal(ItemStack itemStack, Player debugger) {
-		Pair<Integer, Boolean> result = new Pair<>(0, false);
+	private static int getEnchantsVal(ItemStack itemStack, RarityArgs args, Player debugger) {
+		int result = 0;
 
 		ItemMeta meta = itemStack.getItemMeta();
 		if (meta.hasEnchants()) {
@@ -189,19 +188,11 @@ public enum Rarity {
 			Set<Enchantment> enchants = enchantMap.keySet();
 			for (Enchantment enchant : enchants) {
 				int level = enchantMap.get(enchant);
-				Pair<Integer, Boolean> enchantVal = ItemTags.getEnchantVal(enchant, level);
+				int enchantVal = ItemTags.getEnchantVal(enchant, level, args);
+				result += enchantVal;
 
-				Integer val = result.getFirst();
-				if (val != null) {
-					ItemTags.debug(debugger,
-						"    &3- " + StringUtils.camelCase(enchant.getKey().getKey()) + " " + level + ": &e" + number(enchantVal.getFirst()));
-
-					val += enchantVal.getFirst();
-					result = new Pair<>(val, result.getSecond());
-				}
-
-				if (enchantVal.getSecond())
-					result = new Pair<>(result.getFirst(), true);
+				ItemTags.debug(debugger,
+					"    &3- " + StringUtils.camelCase(enchant.getKey().getKey()) + " " + level + ": &e" + number(level));
 			}
 		}
 
@@ -248,6 +239,30 @@ public enum Rarity {
 		}
 
 		return defaultValue;
+	}
+
+	private static void checkEnchantRules(ItemStack itemStack, RarityArgs args, Player debugger) {
+		Set<Enchantment> enchants = itemStack.getItemMeta().getEnchants().keySet();
+
+		for (Enchantment enchant : enchants) {
+			if (!args.isIncompatibleEnchants() && !enchant.canEnchantItem(itemStack)) {
+				args.setIncompatibleEnchants(true);
+				break;
+			}
+		}
+
+		conflicts:
+		for (Enchantment enchant : enchants) {
+			for (Enchantment _enchant : enchants) {
+				if (enchant.equals(_enchant))
+					continue;
+
+				if (enchant.conflictsWith(_enchant)) {
+					args.setConflictingEnchants(true);
+					break conflicts;
+				}
+			}
+		}
 	}
 
 }

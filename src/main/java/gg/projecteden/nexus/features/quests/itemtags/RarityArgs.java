@@ -20,10 +20,13 @@ public class RarityArgs {
 	int vanillaEnchantsSum = 0;
 	boolean aboveVanillaEnchants;
 
+	boolean conflictingEnchants;
+	boolean incompatibleEnchants;
+
 	int customEnchantsSum = 0;
 
 	public boolean isCraftable() {
-		return customEnchantsSum <= 0 && !aboveVanillaEnchants;
+		return customEnchantsSum <= 0 && !aboveVanillaEnchants && !conflictingEnchants && !incompatibleEnchants;
 	}
 
 	public int getTotalSum() {

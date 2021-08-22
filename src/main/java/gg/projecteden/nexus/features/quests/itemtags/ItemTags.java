@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.quests.itemtags;
 
-import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.framework.features.Depends;
@@ -52,17 +51,20 @@ public class ItemTags extends Feature {
 		loadConfigMaps();
 	}
 
-	public static Pair<Integer, Boolean> getEnchantVal(Enchantment enchant, int lvl) {
+	public static int getEnchantVal(Enchantment enchant, int lvl, RarityArgs args) {
 		List<Level> levels = enchantsConfigMap.get(enchant);
 		if (levels == null || levels.size() == 0)
-			return new Pair<>(0, false);
+			return 0;
 
 		int enchantLvl = 0;
 		for (Level level : levels) {
 			try {
 				enchantLvl = Integer.parseInt(level.getName());
+				if (level.isUncraftable() && !args.isAboveVanillaEnchants())
+					args.setAboveVanillaEnchants(true);
+
 				if (enchantLvl == lvl)
-					return new Pair<>(level.getValue(), level.isUncraftable());
+					return level.getValue();
 
 			} catch (Exception ignored) {
 
@@ -71,10 +73,13 @@ public class ItemTags extends Feature {
 
 		// "above"
 		if (lvl > enchantLvl) {
-			return new Pair<>(levels.get(levels.size() - 1).getValue(), true);
+			if (!args.isAboveVanillaEnchants())
+				args.setAboveVanillaEnchants(true);
+
+			return levels.get(levels.size() - 1).getValue();
 		}
 
-		return new Pair<>(0, false);
+		return 0;
 	}
 
 	public static Integer getCustomEnchantVal(String enchant) {
