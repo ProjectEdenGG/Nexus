@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.customenchants.enchants;
 
 import gg.projecteden.nexus.features.customenchants.CustomEnchant;
 import gg.projecteden.nexus.utils.Enchant;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGroup;
@@ -13,13 +12,11 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -107,18 +104,6 @@ public class MagnetEnchant extends CustomEnchant {
 
 			return Math.min(Enchant.MAGNET.getMaxLevel(), maxLevel);
 		});
-	}
-
-	@NotNull
-	private static List<ItemStack> getItems(PlayerInventory inventory) {
-		List<ItemStack> items = new ArrayList<>() {{
-			addAll(Arrays.asList(inventory.getArmorContents()));
-			add(inventory.getItemInMainHand());
-			add(inventory.getItemInOffHand());
-		}};
-
-		items.removeIf(ItemUtils::isNullOrAir);
-		return items;
 	}
 
 }

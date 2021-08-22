@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.customenchants;
 
+import gg.projecteden.nexus.utils.ItemUtils;
 import io.papermc.paper.enchantments.EnchantmentRarity;
 import net.kyori.adventure.text.Component;
 import org.bukkit.NamespacedKey;
@@ -8,9 +9,13 @@ import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.entity.EntityCategory;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 import static gg.projecteden.nexus.utils.StringUtils.toRoman;
@@ -109,6 +114,18 @@ public abstract class CustomEnchant extends Enchantment {
 	@Override
 	public boolean isTreasure() {
 		return false;
+	}
+
+	@NotNull
+	public static List<ItemStack> getItems(PlayerInventory inventory) {
+		List<ItemStack> items = new ArrayList<>() {{
+			addAll(Arrays.asList(inventory.getArmorContents()));
+			add(inventory.getItemInMainHand());
+			add(inventory.getItemInOffHand());
+		}};
+
+		items.removeIf(ItemUtils::isNullOrAir);
+		return items;
 	}
 
 }
