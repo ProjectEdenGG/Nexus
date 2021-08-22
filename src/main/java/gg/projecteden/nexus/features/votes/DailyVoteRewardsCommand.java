@@ -51,6 +51,7 @@ public class DailyVoteRewardsCommand extends CustomCommand {
 	public static void dailyReset() {
 		final DailyVoteRewardService service = new DailyVoteRewardService();
 		for (DailyVoteReward rewards : service.getAll()) {
+			rewards = service.get(rewards);
 			final DailyVoteStreak streak = rewards.getCurrentStreak();
 
 			if (!streak.isEarnedToday()) {
