@@ -6,6 +6,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.nerd.Rank;
 
 @Redirect(from = "/chatinfo", to = "/faq chatinfo")
 public class FAQCommand extends CustomCommand {
@@ -62,10 +63,10 @@ public class FAQCommand extends CustomCommand {
 	@Path("(rank|ranks|rankup)")
 	void rankup() {
 		send(json("&3Here's a simple guide on how to &eprogress &3through the ranks:"));
-		send(json("&e[+] &3You start out as a &7Guest&3."));
-		send(json("&e[+] &3Play for 24 hours to become &fMember&3.").command("/hours").hover("&eClick here &3to view how long you've played"));
-		send(json("&e[+] &3Follow the rules, and you might get promoted to &eTrusted&3."));
-		send(json("&e[+] &3Be a role model to become &6Elite&3."));
+		send(json("&e[+] &3You start out as a " + Rank.GUEST.getColoredName() + "&3."));
+		send(json("&e[+] &3Play for 24 hours to become " + Rank.MEMBER.getColoredName() + "&3.").command("/hours").hover("&eClick here &3to view how long you've played"));
+		send(json("&e[+] &3Follow the rules, and you might get promoted to " + Rank.TRUSTED.getColoredName() + "&3."));
+		send(json("&e[+] &3Be a role model to become " + Rank.ELITE.getColoredName() + "&3."));
 		line();
 		back();
 	}

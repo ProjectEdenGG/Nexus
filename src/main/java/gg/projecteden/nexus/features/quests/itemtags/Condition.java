@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.quests.itemtags;
 
-import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,10 +13,10 @@ import java.text.DecimalFormat;
 
 @AllArgsConstructor
 public enum Condition {
-	BROKEN(ColorType.RED.getChatColor(), 76, 100),
-	RAGGED(ColorType.LIGHT_RED.getChatColor(), 51, 75),
-	WORN(ColorType.CYAN.getChatColor(), 26, 50),
-	PRISTINE(ColorType.LIGHT_BLUE.getChatColor(), 0, 25);
+	BROKEN(ChatColor.of("#c92222"), 76, 100),
+	RAGGED(ChatColor.of("#f06100"), 51, 75),
+	WORN(ChatColor.of("#00aa91"), 26, 50),
+	PRISTINE(ChatColor.of("#00fff7"), 0, 25);
 
 	@Getter
 	private final ChatColor chatColor;

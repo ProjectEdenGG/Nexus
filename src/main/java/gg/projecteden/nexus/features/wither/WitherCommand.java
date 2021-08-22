@@ -19,6 +19,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,9 +81,23 @@ public class WitherCommand extends CustomCommand {
 			add(new ItemStack(Material.BOW));
 			add(new ItemStack(Material.ARROW));
 		}};
+
+		PlayerInventory inventory = player().getInventory();
 		for (ItemStack item : neededItems) {
-			if (!player().getInventory().contains(item.getType(), item.getAmount()))
+			if (item.getType().equals(Material.BOW)) {
+
+				if (!inventory.contains(item.getType(), item.getAmount()) && !inventory.contains(Material.CROSSBOW, item.getAmount()))
+					missingItems.add(item);
+			}
+
+			if (!inventory.contains(item.getType(), item.getAmount())) {
+				// if player has a crossbow instead of a bow
+				if (item.getType().equals(Material.BOW) && inventory.contains(Material.CROSSBOW, item.getAmount()))
+					continue;
+
 				missingItems.add(item);
+			}
+
 		}
 		if (missingItems.size() != 0) {
 			tellNeededItems(missingItems);
