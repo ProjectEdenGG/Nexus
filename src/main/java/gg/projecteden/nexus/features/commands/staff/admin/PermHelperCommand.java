@@ -6,6 +6,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.LuckPermsUtils.PermissionChange;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
@@ -56,7 +57,7 @@ public class PermHelperCommand extends CustomCommand {
 			List<Integer> ints = new ArrayList<>();
 
 			for (int i = 1; i <= MAX; i++)
-				if (LuckPermsUtils.hasPermission(player, permission + i, ImmutableContextSet.of("world", world))) {
+				if (hasPermission(player, i)) {
 					LuckPermsUtils.PermissionChange.unset().permission(permission + i).player(player).world(world).runAsync();
 					ints.add(i);
 				}
@@ -66,10 +67,18 @@ public class PermHelperCommand extends CustomCommand {
 
 		public int getLimit(OfflinePlayer player) {
 			for (int i = MAX; i > 0; i--)
-				if (LuckPermsUtils.hasPermission(player, permission + i, ImmutableContextSet.of("world", world)))
+				if (hasPermission(player, i))
 					return i;
 			return 0;
 		}
+
+		private boolean hasPermission(OfflinePlayer player, int i) {
+			if (StringUtils.isNullOrEmpty(world))
+				return LuckPermsUtils.hasPermission(player, permission + i);
+			else
+				return LuckPermsUtils.hasPermission(player, permission + i, ImmutableContextSet.of("world", world));
+		}
+
 	}
 
 }
