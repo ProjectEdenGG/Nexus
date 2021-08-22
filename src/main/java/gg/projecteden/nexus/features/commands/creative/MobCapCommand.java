@@ -15,9 +15,9 @@ public class MobCapCommand extends CustomCommand {
 
 	@Path("<amount>")
 	void run(@Arg("50") int amount) {
-		runCommand("plot set mob-cap " + amount);
-		runCommand("plot set hostile-cap " + amount);
-		runCommand("plot set animal-cap " + amount);
+		runCommand("plot flag set mob-cap " + amount);
+		runCommand("plot flag set hostile-cap " + amount);
+		runCommand("plot flag set animal-cap " + amount);
 		send("&3Set the mob cap to " + amount);
 	}
 
