@@ -17,8 +17,7 @@ public class MyRankCommand extends CustomCommand {
 
 	@Path("<rank>")
 	void set(Rank rank) {
-		GroupChange.remove().player(player()).groups(Rank.values()).run();
-		GroupChange.add().player(player()).group(rank).run();
+		GroupChange.set().player(player()).group(rank).runAsync();
 		send(PREFIX + "Set your rank to " + rank.getColoredName());
 	}
 

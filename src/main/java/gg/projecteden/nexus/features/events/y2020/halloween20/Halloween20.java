@@ -143,7 +143,7 @@ public class Halloween20 implements Listener {
 		if (user.getFoundButtons().size() != SoundButton.values().length)
 			return;
 
-		PermissionChange.set().player(event.getPlayer()).permission("powder.powder.spookyscaryskeletons").run();
+		PermissionChange.set().player(event.getPlayer()).permission("powder.powder.spookyscaryskeletons").runAsync();
 		user.sendMessage(PREFIX + "You have unlocked the Spooky Scary Skeletons song! &c/songs");
 	}
 

@@ -481,7 +481,7 @@ public class MainIsland implements Listener, BearFairIsland {
 		user.givePoints(500);
 		service.save(user);
 
-		PermissionChange.set().player(player).permission("powder.powder.OrientalDiscoBathtub").run();
+		PermissionChange.set().player(player).permission("powder.powder.OrientalDiscoBathtub").runAsync();
 
 		String prefix = "&8&l[&eBearFair&8&l] &3";
 		BearFair20.send("", player);

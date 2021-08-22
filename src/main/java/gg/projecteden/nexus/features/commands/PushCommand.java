@@ -24,10 +24,10 @@ public class PushCommand extends CustomCommand {
 	@SneakyThrows
 	void push(boolean enable) {
 		if (enable) {
-			PermissionChange.set().player(player()).permission(perm).run();
+			PermissionChange.set().player(player()).permission(perm).runAsync();
 			send("&ePushing will be turned &aon&e shortly.");
 		} else {
-			PermissionChange.set().player(player()).permission(perm).value(false).run();
+			PermissionChange.set().player(player()).permission(perm).value(false).runAsync();
 			send("&ePushing will be turned &coff&e shortly.");
 		}
 	}

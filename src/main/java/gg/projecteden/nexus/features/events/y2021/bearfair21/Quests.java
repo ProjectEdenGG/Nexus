@@ -307,7 +307,7 @@ public class Quests implements Listener {
 
 	public static void givePermission(BearFair21User user, String permission, String message) {
 		if (BearFair21.getConfig().isEnabled(GIVE_REWARDS)) {
-			PermissionChange.set().permission(permission).player(user).run();
+			PermissionChange.set().permission(permission).player(user).runAsync();
 			user.sendMessage(message);
 		}
 	}

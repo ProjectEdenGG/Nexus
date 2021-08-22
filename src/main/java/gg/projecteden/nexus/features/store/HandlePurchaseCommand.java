@@ -82,7 +82,7 @@ public class HandlePurchaseCommand extends CustomCommand {
 							"Enjoy your " + purchase.getPackageName() + " perk!");
 
 				if (StringUtils.isV4Uuid(purchase.getPurchaserUuid())) {
-					PermissionChange.set().uuid(purchase.getPurchaserUuid()).permission("donated").run();
+					PermissionChange.set().uuid(purchase.getPurchaserUuid()).permission("donated").runAsync();
 
 					DiscordUser user = new DiscordUserService().get(purchase.getPurchaserUuid());
 					if (user.getUserId() != null)

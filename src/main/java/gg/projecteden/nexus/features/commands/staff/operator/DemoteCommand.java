@@ -22,8 +22,7 @@ public class DemoteCommand extends CustomCommand {
 		if (rank == previous)
 			error("User is already min rank");
 
-		GroupChange.remove().player(nerd).groups(Rank.values()).run();
-		GroupChange.add().player(nerd).group(rank).run();
+		GroupChange.set().player(nerd).group(rank).runAsync();
 		send(PREFIX + "Demoted " + nerd.getName() + " to " + previous.getColoredName());
 	}
 

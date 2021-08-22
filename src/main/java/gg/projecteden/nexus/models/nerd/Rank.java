@@ -55,6 +55,18 @@ public enum Rank implements IsColoredAndNamed {
 	@Getter
 	private final GlowAPI.Color glowColor;
 
+	public static boolean exists(String key) {
+		try {
+			Nexus.log("Checking if rank " + key + " exists");
+			Rank.valueOf(key.toUpperCase());
+			Nexus.log("  true");
+			return true;
+		} catch (IllegalArgumentException ex) {
+			Nexus.log("  false");
+			return false;
+		}
+	}
+
 	public Color getDiscordColor() {
 		if (lt(TRUSTED))
 			return null;

@@ -46,12 +46,12 @@ public class VanishCommand extends CustomCommand {
 	void toggleInteract() {
 		if (player().hasPermission(interact_permissions.get(0))) {
 			for (String perm : interact_permissions)
-				PermissionChange.unset().uuid(uuid()).permission(perm).run();
+				PermissionChange.unset().uuid(uuid()).permission(perm).runAsync();
 
 			send(PREFIX + "Interaction disabled");
 		} else {
 			for (String perm : interact_permissions)
-				PermissionChange.set().uuid(uuid()).permission(perm).run();
+				PermissionChange.set().uuid(uuid()).permission(perm).runAsync();
 
 			send(PREFIX + "Interaction enabled");
 		}

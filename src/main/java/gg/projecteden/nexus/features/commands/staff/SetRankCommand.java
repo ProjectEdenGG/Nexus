@@ -18,8 +18,7 @@ public class SetRankCommand extends CustomCommand {
 
 	@Path("<player> <rank>")
 	void set(OfflinePlayer player, Rank rank) {
-		GroupChange.remove().player(player).groups(Rank.values()).run();
-		GroupChange.add().player(player).group(rank).run();
+		GroupChange.set().player(player).group(rank).runAsync();
 		send(PREFIX + "Set " + player.getName() + "'s rank to " + rank.getColoredName());
 	}
 

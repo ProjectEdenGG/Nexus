@@ -26,8 +26,7 @@ public class PromoteCommand extends CustomCommand {
 		if (rank == next)
 			error("User is already max rank");
 
-		GroupChange.remove().player(nerd).groups(Rank.values()).run();
-		GroupChange.add().player(nerd).group(rank).run();
+		GroupChange.set().player(nerd).group(rank).runAsync();
 		send(PREFIX + "Promoted " + nerd.getName() + " to " + next.getColoredName());
 
 		if (nerd.isOnline()) {

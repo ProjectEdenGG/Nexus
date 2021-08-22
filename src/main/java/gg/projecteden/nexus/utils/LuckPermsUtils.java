@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.utils;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.models.extraplots.ExtraPlotUserService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.Utils.QueuedTask;
 import lombok.AllArgsConstructor;
@@ -18,6 +19,7 @@ import net.luckperms.api.model.group.GroupManager;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.model.user.UserManager;
 import net.luckperms.api.node.Node;
+import net.luckperms.api.node.types.InheritanceNode;
 import net.luckperms.api.query.QueryMode;
 import net.luckperms.api.query.QueryOptions;
 import net.luckperms.api.util.Tristate;
@@ -25,20 +27,17 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 
-import static gg.projecteden.nexus.utils.PlayerUtils.runCommandAsConsole;
 import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
 
-// TODO: rewrite to respect the CompletableFutures returned by some methods
 public class LuckPermsUtils {
 
 	private static LuckPerms lp() {
@@ -59,7 +58,8 @@ public class LuckPermsUtils {
 	@SneakyThrows
 	public static User getUser(@NotNull UUID player) {
 		User user = lp().getUserManager().getUser(player);
-		if (user == null) user = lp().getUserManager().loadUser(player).get();
+		if (user == null)
+			user = lp().getUserManager().loadUser(player).get();
 		return user;
 	}
 
@@ -68,9 +68,12 @@ public class LuckPermsUtils {
 		return getUser(player.getUniqueId());
 	}
 
-	@Nullable
-	public static Group getGroup(@NotNull String group) {
-		return groupManager().getGroup(group);
+	@NotNull
+	public static Group getGroup(@NotNull String groupName) {
+		final Group group = groupManager().getGroup(groupName);
+		if (group == null)
+			throw new NullPointerException("Could not find group " + groupName);
+		return group;
 	}
 
 	@NotNull
@@ -97,7 +100,7 @@ public class LuckPermsUtils {
 	}
 
 	public static boolean hasGroup(@NotNull UUID player, @NotNull String group) {
-		return hasGroup(player, Objects.requireNonNull(getGroup(group), "Could not find group " + group));
+		return hasGroup(player, getGroup(group));
 	}
 
 	public static boolean hasGroup(@NotNull HasUniqueId player, @NotNull String group) {
@@ -234,11 +237,6 @@ public class LuckPermsUtils {
 				return this;
 			}
 
-			@SneakyThrows
-			public void run() {
-				runAsync().get();
-			}
-
 			@NotNull
 			public CompletableFuture<Void> runAsync() {
 				return userManager().modifyUser(uuid, user -> {
@@ -313,12 +311,33 @@ public class LuckPermsUtils {
 				return this;
 			}
 
-			public void run() {
-				for (String group : groups)
-					runCommandAsConsole("lp user " + uuid.toString() + " parent " + type + " " + group);
-
-				Utils.queue(5, new QueuedTask(uuid, "rank cache refresh", () -> Rank.CACHE.refresh(uuid)));
+			@SneakyThrows
+			public void runAsync() {
+				modifyGroups().thenRunAsync(() -> {
+					Utils.queue(5, new QueuedTask(uuid, "rank cache refresh", () -> Rank.CACHE.refresh(uuid)));
+					new ExtraPlotUserService().get(uuid).update();
+				});
 			}
+
+			private CompletableFuture<Void> modifyGroups() {
+				List<CompletableFuture<Void>> futures = new ArrayList<>();
+				for (String groupName : groups)
+					futures.add(userManager().modifyUser(uuid, user -> {
+						final Group group = getGroup(groupName);
+
+						if (type == GroupChangeType.SET)
+							user.data().clear(node -> Rank.exists(node.getKey().replace("group.", "")));
+
+						Node node = InheritanceNode.builder(group).build();
+						switch (type) {
+							case ADD, SET -> user.data().add(node);
+							case REMOVE -> user.data().remove(node);
+						}
+					}));
+
+				return CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new));
+			}
+
 		}
 	}
 

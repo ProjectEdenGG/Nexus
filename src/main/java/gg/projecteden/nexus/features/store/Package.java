@@ -392,7 +392,7 @@ public enum Package {
 	NPC {
 		@Override
 		public int count(OfflinePlayer player) {
-			return NumericPermission.NPCS.getLimit(player);
+			return NumericPermission.NPCS.getLimit(player.getUniqueId());
 		}
 
 		@Override
@@ -483,7 +483,7 @@ public enum Package {
 	VAULTS {
 		@Override
 		public int count(OfflinePlayer player) {
-			return NumericPermission.VAULTS.getLimit(player);
+			return NumericPermission.VAULTS.getLimit(player.getUniqueId());
 		}
 
 		@Override
@@ -544,7 +544,7 @@ public enum Package {
 	CREATIVE_PLOTS {
 		@Override
 		public int count(OfflinePlayer player) {
-			return NumericPermission.PLOTS.getLimit(player);
+			return NumericPermission.PLOTS.getLimit(player.getUniqueId());
 		}
 
 		@Override
@@ -837,11 +837,11 @@ public enum Package {
 	}
 
 	public void apply(OfflinePlayer player) {
-		getPermissions().forEach(permission -> PermissionChange.set().player(player).permission(permission).run());
+		getPermissions().forEach(permission -> PermissionChange.set().player(player).permission(permission).runAsync());
 
 		String permissionGroup = getPermissionGroup();
 		if (!isNullOrEmpty(permissionGroup))
-			GroupChange.add().player(player).group(permissionGroup).run();
+			GroupChange.add().player(player).group(permissionGroup).runAsync();
 
 		getCommands().stream()
 				.map(command -> command.replaceAll("\\[player]", Objects.requireNonNull(Name.of(player))))
@@ -854,11 +854,11 @@ public enum Package {
 	}
 
 	public void expire(OfflinePlayer player) {
-		getPermissions().forEach(permission -> PermissionChange.unset().player(player).permission(permission).run());
+		getPermissions().forEach(permission -> PermissionChange.unset().player(player).permission(permission).runAsync());
 
 		String permissionGroup = getPermissionGroup();
 		if (!Strings.isNullOrEmpty(permissionGroup))
-			GroupChange.remove().player(player).group(permissionGroup).run();
+			GroupChange.remove().player(player).group(permissionGroup).runAsync();
 
 		handleExpire(player);
 

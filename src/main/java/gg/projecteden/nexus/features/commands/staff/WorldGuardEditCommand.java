@@ -58,7 +58,7 @@ public class WorldGuardEditCommand extends CustomCommand implements Listener {
 	}
 
 	private void on(Player player) {
-		PermissionChange.set().player(player).permission(PERMISSION).run();
+		PermissionChange.set().player(player).permission(PERMISSION).runAsync();
 	}
 
 	private void off(Player player) {
