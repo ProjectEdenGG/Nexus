@@ -44,7 +44,7 @@ public class PrefixCommand extends CustomCommand {
 
 	@Path("reset [player]")
 	@Permission("set.my.prefix")
-	void reset(Nerd nerd) {
+	void reset(@Arg("self") Nerd nerd) {
 		nerd.setPrefix(null);
 		service.save(nerd);
 		send(PREFIX + "Reset " + (isSelf(nerd) ? "your" : nerd.getNickname() + "'s") + " prefix");

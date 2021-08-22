@@ -74,7 +74,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				"The boots of Demeter give you the power to increase agricultural rates around you.") {
 			@Override
 			void onClick(Player player) {
-				PlayerUtils.giveItem(player, new ItemBuilder(Material.GOLDEN_BOOTS).lore("&bBonemeal Boots").build());
+				PlayerUtils.giveItem(player, new ItemBuilder(Material.GOLDEN_BOOTS).lore("&aBonemeal Boots").build());
 			}
 		},
 		FISHING(3, 1, Material.FISHING_ROD,

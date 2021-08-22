@@ -35,6 +35,33 @@ public class ItemTagsCommand extends CustomCommand {
 		ItemTagsUtils.debugItem(tool, player());
 	}
 
+	@Path("update")
+	@Description("Update item tags on held item")
+	void update() {
+		ItemStack tool = getToolRequired();
+
+		ItemStack updated = ItemTagsUtils.updateItem(tool);
+		int heldSlot = inventory().getHeldItemSlot();
+		inventory().setItem(heldSlot, updated);
+	}
+
+	@Path("updateInv")
+	@Description("Update item tags on all items in inventory")
+	void updateInv() {
+		ItemStack[] contents = inventory().getContents();
+		int count = 0;
+		for (ItemStack item : contents) {
+			if (ItemUtils.isNullOrAir(item))
+				continue;
+
+			ItemStack updated = ItemTagsUtils.updateItem(item);
+			item.setItemMeta(updated.getItemMeta());
+			++count;
+		}
+
+		send(PREFIX + count + " items itemtags updated!");
+	}
+
 	@Path("get")
 	@Description("Get item tags on held item")
 	@Permission("group.admin")
@@ -51,35 +78,6 @@ public class ItemTagsCommand extends CustomCommand {
 		if (rarity != null)
 			send(rarity.getTag());
 		send("");
-	}
-
-	@Path("update")
-	@Description("Update item tags on held item")
-	@Permission("group.admin")
-	void update() {
-		ItemStack tool = getToolRequired();
-
-		ItemStack updated = ItemTagsUtils.updateItem(tool);
-		int heldSlot = inventory().getHeldItemSlot();
-		inventory().setItem(heldSlot, updated);
-	}
-
-	@Path("updateInv")
-	@Description("Update item tags on all items in inventory")
-	@Permission("group.admin")
-	void updateInv() {
-		ItemStack[] contents = inventory().getContents();
-		int count = 0;
-		for (ItemStack item : contents) {
-			if (ItemUtils.isNullOrAir(item))
-				continue;
-
-			ItemStack updated = ItemTagsUtils.updateItem(item);
-			item.setItemMeta(updated.getItemMeta());
-			++count;
-		}
-
-		send(PREFIX + count + " items itemtags updated!");
 	}
 
 	@Path("setRarity <rarity>")

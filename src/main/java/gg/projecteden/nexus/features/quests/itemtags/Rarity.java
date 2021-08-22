@@ -1,41 +1,45 @@
 package gg.projecteden.nexus.features.quests.itemtags;
 
 import com.mojang.datafixers.util.Pair;
-import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.StringUtils.Gradient;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.Getter;
 import lombok.NonNull;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public enum Rarity {
 	// @formatter:off
-	ORDINARY(ColorType.LIGHT_GRAY.getChatColor(),	0, 5),
-	COMMON(ColorType.LIGHT_GREEN.getChatColor(),	6, 11),
-	UNCOMMON(ColorType.GREEN.getChatColor(), 		12, 19),
-	RARE(ColorType.PINK.getChatColor(),				20, 29),
-	EPIC(ColorType.YELLOW.getChatColor(),			30, 39),
+	ORDINARY(ChatColor.of("#9e9e9e"),	 0, 5),
+	COMMON(ChatColor.of("#7aff7a"),		 6, 11),
+	UNCOMMON(ChatColor.of("#70ffcd"), 	12, 19),
+	RARE(ChatColor.of("#7a9dff"),		20, 29),
+	EPIC(ChatColor.of("#da55ff"),		30, 39),
 	// Uncraftable
-	EXOTIC(ColorType.PURPLE.getChatColor(),		false, 40, 49),
-	LEGENDARY(ColorType.ORANGE.getChatColor(), 	false, 50, 55),
-	MYTHIC(ColorType.CYAN.getChatColor(), 		false, 56, 60),
+	EXOTIC(List.of(ChatColor.of("#ff55ff"), ChatColor.of("#bf47ff"), ChatColor.of("#9747ff")),	false, 40, 49),
+	LEGENDARY(List.of(ChatColor.of("#bf47ff"), ChatColor.of("#00aaaa")), 						false, 50, 55),
+	MYTHIC(List.of(ChatColor.of("#00aaaa"), ChatColor.of("#00ff91")), 							false, 56, 60),
 
 	// Quest Related
-	ARTIFACT(ColorType.LIGHT_RED.getChatColor()),
+	ARTIFACT(List.of(ChatColor.of("#ff584d"), ChatColor.of("#e39827"))),
 	// Code Related
-	UNIQUE(ColorType.LIGHT_BLUE.getChatColor());
+	UNIQUE(List.of(ChatColor.of("#6effaa"), ChatColor.of("#abff4a"))),
+	;
 	// @formatter:on
 
 	@Getter
-	private final ChatColor chatColor;
+	private final List<ChatColor> chatColors;
 	@Getter
 	private final boolean craftable;
 	@Getter
@@ -44,21 +48,21 @@ public enum Rarity {
 	private final Integer max;
 
 	Rarity(ChatColor chatColor, int min, int max) {
-		this.chatColor = chatColor;
+		this.chatColors = Collections.singletonList(chatColor);
 		this.craftable = true;
 		this.min = min;
 		this.max = max;
 	}
 
-	Rarity(ChatColor chatColor, boolean craftable, int min, int max) {
-		this.chatColor = chatColor;
+	Rarity(List<ChatColor> chatColors, boolean craftable, int min, int max) {
+		this.chatColors = new ArrayList<>(chatColors);
 		this.craftable = craftable;
 		this.min = min;
 		this.max = max;
 	}
 
-	Rarity(ChatColor chatColor) {
-		this.chatColor = chatColor;
+	Rarity(List<ChatColor> chatColors) {
+		this.chatColors = new ArrayList<>(chatColors);
 		this.craftable = false;
 		this.min = null;
 		this.max = null;
@@ -75,56 +79,59 @@ public enum Rarity {
 		if (ItemTagsUtils.isMythicMobsItem(itemStack))
 			return null;
 
-		boolean isArmor = ItemTagsUtils.isArmor(itemStack);
-		String itemType = StringUtils.camelCase(itemStack.getType());
-		ItemTags.debug(debugger, isArmor ? "  &3Armor material: &e" + itemType : "  &3Tool material: &e" + itemType);
+		RarityArgs args = new RarityArgs();
+		args.setCondition(condition);
 
-		int val_material = getMaterialVal(itemStack);
-		ItemTags.debug(debugger, "    &3Sum: &e" + number(val_material));
+		args.setArmor(ItemTagsUtils.isArmor(itemStack));
+		args.setMaterial(itemStack.getType());
+		String itemType = StringUtils.camelCase(args.getMaterial());
+		ItemTags.debug(debugger, args.isArmor() ? "  &3Armor material: &e" + itemType : "  &3Tool material: &e" + itemType);
 
-		int val_vanillaEnchants = 0;
-		int val_customEnchants = 0;
-		boolean hasAboveVanilla = false;
+		args.setMaterialSum(getMaterialVal(args));
+		ItemTags.debug(debugger, "    &3Sum: &e" + number(args.getMaterialSum()));
+
 		if (itemStack.getItemMeta().hasEnchants()) {
 			ItemTags.debug(debugger, "  &3Vanilla Enchants:");
 			Pair<Integer, Boolean> vanillaEnchantsPair = getEnchantsVal(itemStack, debugger);
-			val_vanillaEnchants = vanillaEnchantsPair.getFirst();
-			hasAboveVanilla = vanillaEnchantsPair.getSecond();
-			ItemTags.debug(debugger, "    &3Sum: &e" + number(val_vanillaEnchants));
+			args.setVanillaEnchantsSum(vanillaEnchantsPair.getFirst());
+			args.setAboveVanillaEnchants(vanillaEnchantsPair.getSecond());
+			ItemTags.debug(debugger, "    &3Sum: &e" + number(args.getVanillaEnchantsSum()));
 
 			ItemTags.debug(debugger, "  &3Custom Enchants:");
-			val_customEnchants = getCustomEnchantsVal(itemStack, debugger);
-			ItemTags.debug(debugger, "    &3Sum: &e" + number(val_customEnchants));
+			args.setCustomEnchantsSum(getCustomEnchantsVal(itemStack, debugger));
+			ItemTags.debug(debugger, "    &3Sum: &e" + number(args.getCustomEnchantsSum()));
 		}
 
-		int sum = val_material + val_vanillaEnchants + val_customEnchants;
-		boolean isCraftable = val_customEnchants <= 0 && !hasAboveVanilla;
-
 		if (condition != null && condition != Condition.PRISTINE) {
-			int value = (Condition.values().length * 5) - ((condition.ordinal() + 1) * 5);
-			sum -= value;
-			ItemTags.debug(debugger, "  &3Condition sum: " + number(value * -1));
+			int value = ((Condition.values().length * 5) - ((condition.ordinal() + 1) * 5)) * -1;
+			args.setConditionSum(value);
+			ItemTags.debug(debugger, "  &3Condition sum: " + number(args.getConditionSum()));
 		}
 
 		Rarity rarity;
-		if (isCraftable)
-			rarity = getRarity(sum, true, ORDINARY, EPIC, condition, debugger);
+		if (args.isCraftable())
+			rarity = clampRarity(args, ORDINARY, EPIC);
 		else
-			rarity = getRarity(sum, false, EXOTIC, MYTHIC, condition, debugger);
+			rarity = clampRarity(args, EXOTIC, MYTHIC);
 
-		ItemTags.debug(debugger, "  &3Total sum: &a" + sum);
-		ItemTags.debug(debugger, "  &3Craftable: &a" + isCraftable);
+		rarity = checkUniqueItems(itemStack, args, rarity);
+		args.setRarity(rarity);
 
-		return rarity;
+		ItemTags.debug(debugger, "  &3Total sum: &a" + args.getTotalSum());
+		ItemTags.debug(debugger, "  &3Craftable: &a" + args.isCraftable());
+
+		return args.getRarity();
 	}
 
-	private static Rarity getRarity(int sum, boolean isCraftable, @NonNull Rarity minimum, @NonNull Rarity maximum, Condition condition, Player debugger) {
+	private static Rarity clampRarity(RarityArgs args, @NonNull Rarity minimum, @NonNull Rarity maximum) {
 		Rarity result = null;
+		int argSum = args.getTotalSum();
+
 		for (Rarity _rarity : Rarity.values()) {
 			if (_rarity.getMin() == null || _rarity.getMax() == null)
 				continue;
 
-			if (_rarity.isCraftable() != isCraftable)
+			if (_rarity.isCraftable() != args.isCraftable())
 				continue;
 
 			if (_rarity.getMax() < minimum.getMax())
@@ -133,14 +140,14 @@ public enum Rarity {
 			int min = _rarity.getMin();
 			int max = _rarity.getMax();
 
-			if (sum >= min && sum <= max)
+			if (argSum >= min && argSum <= max)
 				result = _rarity;
 		}
 
 		if (result == null) {
-			if (sum >= maximum.getMax())
+			if (argSum >= maximum.getMax())
 				result = maximum;
-			else if (sum <= maximum.getMin())
+			else if (argSum <= maximum.getMin())
 				result = minimum;
 			else
 				result = ORDINARY;
@@ -150,15 +157,22 @@ public enum Rarity {
 	}
 
 	public String getTag() {
-		return chatColor == null ? "" : chatColor + "[" + StringUtils.camelCase(this.name()) + "]";
+		if (chatColors != null && !chatColors.isEmpty()) {
+			if (chatColors.size() == 1)
+				return chatColors.get(0) + "[" + StringUtils.camelCase(this.name()) + "]";
+			return Gradient.of(chatColors).apply("[" + StringUtils.camelCase(this.name()) + "]");
+		}
+
+		return "[" + StringUtils.camelCase(this.name()) + "]";
 	}
 
-	private static int getMaterialVal(ItemStack itemStack) {
+	private static int getMaterialVal(RarityArgs args) {
 		Integer result;
-		if (ItemTagsUtils.isArmor(itemStack))
-			result = ItemTags.getArmorMaterialVal(itemStack.getType());
+		Material material = args.getMaterial();
+		if (args.isArmor())
+			result = ItemTags.getArmorMaterialVal(material);
 		else
-			result = ItemTags.getToolMaterialVal(itemStack.getType());
+			result = ItemTags.getToolMaterialVal(material);
 
 		if (result == null)
 			return 0;
@@ -222,4 +236,18 @@ public enum Rarity {
 		else
 			return "&e" + value;
 	}
+
+	private static Rarity checkUniqueItems(ItemStack itemStack, RarityArgs args, Rarity defaultValue) {
+		List<String> lore = itemStack.getItemMeta().getLore();
+		if (lore != null && lore.size() != 0) {
+			List<String> lore_stripped = lore.stream().map(StringUtils::stripColor).map(String::toLowerCase).toList();
+
+			// Bonemeal boots
+			if (lore_stripped.contains("bonemeal boots"))
+				return UNIQUE;
+		}
+
+		return defaultValue;
+	}
+
 }
