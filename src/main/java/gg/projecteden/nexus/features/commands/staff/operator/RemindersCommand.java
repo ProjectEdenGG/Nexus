@@ -5,6 +5,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Async;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -64,6 +65,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 		ReminderSheet.readAll();
 	}
 
+	@Async
 	@Path("reload")
 	void reload() {
 		loadFromSheet();
@@ -84,9 +86,11 @@ public class RemindersCommand extends CustomCommand implements Listener {
 		edit(reminder);
 	}
 
+	@Async
 	@Path("save")
 	void save() {
 		saveToSheet();
+		send(PREFIX + "Saved &e" + config.getReminders().size() + " periodic reminders &3and &e" + config.getMotds().size() + " on join reminders");
 	}
 
 	@Path("create <id> <text...>")

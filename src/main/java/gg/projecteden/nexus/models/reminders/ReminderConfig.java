@@ -198,8 +198,10 @@ public class ReminderConfig {
 				valueOf(enabled),
 				valueOf(showPermissions),
 				valueOf(hidePermissions),
-				valueOf(startTime),
-				valueOf(endTime),
+				valueOf(startTime == null ? null : startTime.toLocalDate()),
+				valueOf(startTime == null ? null : startTime.toLocalTime()),
+				valueOf(endTime == null ? null : endTime.toLocalDate()),
+				valueOf(endTime == null ? null : endTime.toLocalTime()),
 				valueOf(condition)
 			);
 		}

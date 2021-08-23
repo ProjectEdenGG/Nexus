@@ -234,7 +234,7 @@
         <dependency>
             <groupId>gg.projecteden</groupId>
             <artifactId>eden-api</artifactId>
-            <version>1.4.9</version>
+            <version>1.4.11</version>
         </dependency>
         <!-- Lombok Project -->
         <dependency>
