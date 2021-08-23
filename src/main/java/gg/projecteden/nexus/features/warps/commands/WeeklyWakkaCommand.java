@@ -53,9 +53,9 @@ public class WeeklyWakkaCommand extends _WarpCommand implements Listener {
 				"Head to the Discord (&e" + EdenSocialMediaSite.DISCORD.getUrl() + "&3) if you have an idea for a feature.").url(EdenSocialMediaSite.DISCORD.getUrl()).hover("&eClick to visit the site!"));
 		add(new JsonBuilder("&3If you see a bug, please report it in the #bugs-support-and-suggestions channel on our Discord server (&e" + EdenSocialMediaSite.DISCORD.getUrl() + "&3).").url(EdenSocialMediaSite.DISCORD.getUrl()).hover("&eClick to visit the site!"));
 		add(new JsonBuilder("&3Tired of logs and stairs placing the wrong way?  Try ")
-				.next("&c/swl ").command("/swl").hover("&eClick to run the command!").group()
+				.next("&c/swl ").suggest("/swl").hover("&eClick to run the command!").group()
 				.next("&3(sideways logs) and ").group()
-				.next("&c/sws").command("/swl").hover("&eClick to run the command!").group()
+				.next("&c/sws").suggest("/sws").hover("&eClick to run the command!").group()
 				.next(" &3(sideways stairs) to \"lock\" your placement direction while you build.").group());
 		add(new JsonBuilder("&3Don't forget that you can set multiple homes which you can warp back to at any time! To add a new one, just use &c/sethome name").suggest("/sethome ").hover("&eClick to run the command!"));
 		add(new JsonBuilder("&3Did you know you can lock or unlock your homes to change if other people can access them? Try it out in the &c/homes edit &3menu!").command("/homes edit").hover("&eClick to run the command!"));
