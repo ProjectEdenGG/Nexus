@@ -108,7 +108,7 @@ public final class GoldRush extends TeamlessMechanic {
 
 		Clipboard schematic = WEUtils.copy(locations.get(0).clone().subtract(0, 2, 0), locations.get(0).clone().subtract(0, mineStackHeight, 0));
 		for (Location location : locations)
-			WEUtils.paster().clipboard(schematic).at(WEUtils.toBlockVector3(location.clone().subtract(0, mineStackHeight, 0))).paste();
+			WEUtils.paster().clipboard(schematic).at(WEUtils.toBlockVector3(location.clone().subtract(0, mineStackHeight, 0))).pasteAsync();
 	}
 
 	public void removeMineStacks(int mineStackHeight, Location loc) {

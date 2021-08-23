@@ -145,15 +145,15 @@ public class RavensNestEstate implements Listener {
 	}
 
 	private void resetMap(Match match) {
-		WEUtils.paster().file(schemFireplace + 1).at(doorFireplace).paste();
-		WEUtils.paster().file(schemBasement + 1).at(doorBasement).paste();
-		WEUtils.paster().file(schemCloset + 1).at(doorCloset).paste();
-		WEUtils.paster().file(schemMaster + 1).at(doorMaster).paste();
-		WEUtils.paster().file(schemMain + 1).at(doorMain).paste();
-		WEUtils.paster().file(schemStudy + 1).at(doorStudy).paste();
-		WEUtils.paster().file(schemSmall + "S_1").at(doorSmall_S).paste();
-		WEUtils.paster().file(schemSmall + "E_1").at(doorSmall_E).paste();
-		WEUtils.paster().file(schemSmall + "W_1").at(doorSmall_W).paste();
+		WEUtils.paster().file(schemFireplace + 1).at(doorFireplace).pasteAsync();
+		WEUtils.paster().file(schemBasement + 1).at(doorBasement).pasteAsync();
+		WEUtils.paster().file(schemCloset + 1).at(doorCloset).pasteAsync();
+		WEUtils.paster().file(schemMaster + 1).at(doorMaster).pasteAsync();
+		WEUtils.paster().file(schemMain + 1).at(doorMain).pasteAsync();
+		WEUtils.paster().file(schemStudy + 1).at(doorStudy).pasteAsync();
+		WEUtils.paster().file(schemSmall + "S_1").at(doorSmall_S).pasteAsync();
+		WEUtils.paster().file(schemSmall + "E_1").at(doorSmall_E).pasteAsync();
+		WEUtils.paster().file(schemSmall + "W_1").at(doorSmall_W).pasteAsync();
 
 		statusFireplace = false;
 		statusBasement = false;
@@ -360,13 +360,13 @@ public class RavensNestEstate implements Listener {
 			// Open
 			for (int frame = 1; frame <= frames; frame++) {
 				int finalFrame = frame;
-				match.getTasks().wait(wait += 3 + extra, () -> WEUtils.paster().file(finalSchematic + finalFrame).at(pasteLoc).paste());
+				match.getTasks().wait(wait += 3 + extra, () -> WEUtils.paster().file(finalSchematic + finalFrame).at(pasteLoc).pasteAsync());
 			}
 		else
 			// Close
 			for (int frame = frames; frame > 0; frame--) {
 				int finalFrame = frame;
-				match.getTasks().wait(wait += 3, () -> WEUtils.paster().file(finalSchematic + finalFrame).at(pasteLoc).paste());
+				match.getTasks().wait(wait += 3, () -> WEUtils.paster().file(finalSchematic + finalFrame).at(pasteLoc).pasteAsync());
 			}
 	}
 }

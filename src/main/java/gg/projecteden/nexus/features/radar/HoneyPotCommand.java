@@ -176,7 +176,7 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 		WorldEditUtils WEUtils = new WorldEditUtils(world);
 		String fileName = region.getId().replace("hp_", "hp/");
 		try {
-			WEUtils.paster().file(fileName).at(getSchemRegen(region, world).getMinimumPoint()).paste();
+			WEUtils.paster().file(fileName).at(getSchemRegen(region, world).getMinimumPoint()).pasteAsync();
 		} catch (InvalidInputException ex) {
 			Nexus.log(ex.getMessage());
 		}

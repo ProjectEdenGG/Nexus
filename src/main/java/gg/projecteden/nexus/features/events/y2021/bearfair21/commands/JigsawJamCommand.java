@@ -324,7 +324,7 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 	}
 
 	private void paste(Location location) {
-		new WorldEditUtils(location).paster().file(SCHEMATIC).at(location).paste();
+		new WorldEditUtils(location).paster().file(SCHEMATIC).at(location).pasteAsync();
 	}
 
 	private boolean validate(JigsawJammer jammer) {

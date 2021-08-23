@@ -74,7 +74,7 @@ public class Sialia implements Listener, APSet {
 			int frame = i;
 			Tasks.wait(Time.TICK.x(2 * i), () -> {
 				String file = folder + "Bulkhead_" + frame;
-				AeveonProject.getWEUtils().paster().file(file).at(door.getMinimumPoint()).paste();
+				AeveonProject.getWEUtils().paster().file(file).at(door.getMinimumPoint()).pasteAsync();
 			});
 		}
 	}
@@ -102,7 +102,7 @@ public class Sialia implements Listener, APSet {
 			int frame = 2 - i;
 			Tasks.wait(Time.TICK.x(2 * i), () -> {
 				String file = folder + "Bulkhead_" + frame;
-				AeveonProject.getWEUtils().paster().file(file).at(door.getMinimumPoint()).paste();
+				AeveonProject.getWEUtils().paster().file(file).at(door.getMinimumPoint()).pasteAsync();
 				if (frame == 0) {
 					openDoors.remove(doorRg);
 				}

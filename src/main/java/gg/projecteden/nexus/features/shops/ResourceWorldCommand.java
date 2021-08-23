@@ -467,7 +467,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 			.file("resource-world-spawn")
 			.at(new Location(Bukkit.getWorld(worldName), 0, 150, 0))
 			.air(false)
-			.paste();
+			.pasteAsync();
 
 		Warp warp = WarpType.NORMAL.get(worldName);
 		Nexus.getMultiverseCore().getMVWorldManager().getMVWorld(worldName).setSpawnLocation(warp.getLocation());

@@ -139,7 +139,7 @@ public class Train {
 			return;
 		}
 
-		paste.paste();
+		paste.pasteAsync();
 		incrementTrain();
 		Tasks.waitAsync(trainFrameTime, () -> animate(pastes));
 	}
