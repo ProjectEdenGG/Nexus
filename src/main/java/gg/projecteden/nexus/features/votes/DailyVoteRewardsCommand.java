@@ -69,7 +69,7 @@ public class DailyVoteRewardsCommand extends CustomCommand {
 	void rewards() {
 		send(PREFIX + "Rewards:");
 		for (VoteStreakReward reward : VoteStreakReward.values())
-			send("&e" + camelCase(reward) + " &7- " + reward.getKeys() + " " + reward.getCrateType() + " Crate Keys");
+			send("&e" + camelCase(reward) + " &7- " + reward.getAmount() + " " + camelCase(reward.getCrateType()) + " Crate Keys");
 	}
 
 	/*
