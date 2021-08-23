@@ -402,6 +402,16 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return this;
 	}
 
+	public List<@Nullable ItemStack> shulkerBoxContents() {
+		BlockStateMeta blockStateMeta = (BlockStateMeta) itemMeta;
+		ShulkerBox box = (ShulkerBox) blockStateMeta.getBlockState();
+		return Arrays.asList(box.getInventory().getContents());
+	}
+
+	public List<@Nullable ItemStack> nonAirShulkerBoxContents() {
+		return shulkerBoxContents().stream().filter(ItemUtils::isNotNullOrAir).collect(Collectors.toList());
+	}
+
 	// Books
 
 	public ItemBuilder bookTitle(String title) {
