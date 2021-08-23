@@ -155,10 +155,13 @@ public class CustomRecipes extends Feature implements Listener {
 					blockMaterial = Material.valueOf(slab.name().replace("BRICK_SLAB", blockName).replace("_SLAB", blockName));
 				} catch (IllegalArgumentException ignore) { }
 			}
-			if (blockMaterial == null) continue;
 
 			if (slab == Material.QUARTZ_SLAB)
 				blockMaterial = Material.QUARTZ_BLOCK;
+			if (slab == Material.DEEPSLATE_TILE_SLAB)
+				blockMaterial = Material.DEEPSLATE_TILES;
+
+			if (blockMaterial == null) continue;
 
 			List<Material> slabsGroup = new ArrayList<>();
 			for (int i = 0; i < 4; i++)
@@ -191,10 +194,14 @@ public class CustomRecipes extends Feature implements Listener {
 		NexusRecipe.shapeless(new ItemStack(Material.ICE, 9), Material.PACKED_ICE).type(RecipeType.MISC).register();
 		NexusRecipe.shapeless(new ItemStack(Material.RED_SANDSTONE_SLAB, 2), Material.CHISELED_RED_SANDSTONE).type(RecipeType.MISC).register();
 		NexusRecipe.shapeless(new ItemStack(Material.CHISELED_SANDSTONE, 2), Material.CHISELED_SANDSTONE).type(RecipeType.MISC).register();
+		NexusRecipe.shapeless(new ItemStack(Material.GLOWSTONE_DUST, 3), Material.GLOWSTONE).type(RecipeType.MISC).register();
+		NexusRecipe.shapeless(new ItemStack(Material.BLAZE_ROD), Material.BLAZE_POWDER, Material.BLAZE_POWDER).type(RecipeType.MISC).register();
+		NexusRecipe.shapeless(new ItemStack(Material.POINTED_DRIPSTONE, 4), Material.DRIPSTONE_BLOCK).type(RecipeType.MISC).register();
+
 		// Invis Item Frame, No .register() to prevent overriding the recipe of the plugin
 		NexusRecipe.surround(new ItemBuilder(Material.ITEM_FRAME).name("Invisible Item Frame").amount(8).glow().build(),
-				new ItemBuilder(Material.LINGERING_POTION).potionEffect(PotionEffectType.INVISIBILITY).name("Lingering Invisibility Potion").build(),
-				new RecipeChoice.MaterialChoice(Material.ITEM_FRAME)).type(RecipeType.FUNCTIONAL);
+			new ItemBuilder(Material.LINGERING_POTION).potionEffect(PotionEffectType.INVISIBILITY).name("Lingering Invisibility Potion").build(),
+			new RecipeChoice.MaterialChoice(Material.ITEM_FRAME)).type(RecipeType.FUNCTIONAL);
 	}
 
 }
