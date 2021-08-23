@@ -16,6 +16,7 @@ import gg.projecteden.nexus.models.home.HomeService;
 import gg.projecteden.nexus.models.lwc.LWCProtectionService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.utils.GoogleUtils;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -221,6 +222,13 @@ public class Nexus extends JavaPlugin {
 	}
 
 	@SneakyThrows
+	public static File getFolder(String path) {
+		File file = Paths.get("plugins/Nexus/" + path).toFile();
+		if (!file.exists()) file.mkdir();
+		return file;
+	}
+
+	@SneakyThrows
 	public static YamlConfiguration getConfig(String path) {
 		return YamlConfiguration.loadConfiguration(getFile(path));
 	}
@@ -263,6 +271,7 @@ public class Nexus extends JavaPlugin {
 		try { features.unregister(Discord.class, Chat.class);			} catch (Throwable ex) { ex.printStackTrace(); }
 		try { Bukkit.getServicesManager().unregisterAll(this);			} catch (Throwable ex) { ex.printStackTrace(); }
 		try { MySQLPersistence.shutdown();								} catch (Throwable ex) { ex.printStackTrace(); }
+		try { GoogleUtils.shutdown();									} catch (Throwable ex) { ex.printStackTrace(); }
 		try { API.shutdown();											} catch (Throwable ex) { ex.printStackTrace(); }
 	}
 	// @formatter:on;

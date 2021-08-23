@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.test;
 
+import com.google.api.services.sheets.v4.model.ValueRange;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.store.perks.NPCListener;
 import gg.projecteden.nexus.features.wither.fights.CorruptedFight.CorruptedCounterAttacks;
@@ -17,6 +18,7 @@ import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.BiomeTag.BiomeClimateType;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.CitizensUtils;
+import gg.projecteden.nexus.utils.GoogleUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -31,6 +33,7 @@ import gg.projecteden.utils.TimeUtils.Timespan.FormatType;
 import gg.projecteden.utils.TimeUtils.Timespan.TimespanBuilder;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.SneakyThrows;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -73,6 +76,19 @@ public class TestCommand extends CustomCommand implements Listener {
 	@Override
 	public void _shutdown() {
 		shutdownBossBars();
+	}
+
+	@Async
+	@SneakyThrows
+	@Path("sheets")
+	void sheets() {
+		final String spreadsheetId = "1JIDrL-ZWE501uIRh5BD8QwwmewvmBKClgwSaTvwGE6E";
+		final String sheetId = "Sheet1";
+		final String range = "A1:C2";
+		final ValueRange valueRange = GoogleUtils.sheet(spreadsheetId, sheetId, range);
+		for (List<Object> row : valueRange.getValues())
+			for (Object column : row)
+				System.out.println(column);
 	}
 
 	@Path("scrambleInventory")

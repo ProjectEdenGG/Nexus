@@ -83,7 +83,12 @@ public class HttpUtils {
 
 	@SneakyThrows
 	public static Response callUrl(String url, Object... objects) {
-		return client.newCall(createRequest(url, objects).build()).execute();
+		final Request.Builder request = createRequest(url, objects);
+		return client.newCall(request.build()).execute();
+	}
+
+	public static void addUserAgent(Builder request) {
+		request.addHeader("User-Agent", "Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/81.0");
 	}
 
 	@SneakyThrows
