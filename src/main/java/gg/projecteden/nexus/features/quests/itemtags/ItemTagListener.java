@@ -19,6 +19,7 @@ import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
+import org.bukkit.event.world.LootGenerateEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -183,5 +184,11 @@ public class ItemTagListener implements Listener {
 //			++ndx;
 //		}
 //	}
+
+	@EventHandler
+	public void onGenerateLoot(LootGenerateEvent event) {
+		for (ItemStack itemStack : event.getLoot())
+			ItemTagsUtils.updateItem(itemStack);
+	}
 
 }
