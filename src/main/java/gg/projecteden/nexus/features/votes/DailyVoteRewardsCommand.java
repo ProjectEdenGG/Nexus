@@ -66,6 +66,45 @@ public class DailyVoteRewardsCommand extends CustomCommand {
 		}
 	}
 
+	/*
+	@Path("actualStreaks [page]")
+	void actualStreaks(@Arg("1") int page) {
+		final VoterService voterService = new VoterService();
+		Map<UUID, Integer> streaks = new HashMap<>();
+		for (DailyVoteReward reward : service.getAll()) {
+			final Voter voter = voterService.get(reward);
+			LocalDate date = LocalDate.now().minusDays(1);
+			int streak = 0;
+			while (voter.getVotes(date).size() >= 5 && date.isAfter(LocalDate.of(2021, 7, 31))) {
+				++streak;
+				date = date.minusDays(1);
+			}
+
+			streaks.put(voter.getUuid(), streak);
+		}
+
+		final BiFunction<UUID, String, JsonBuilder> formatter = (uuid, index) -> {
+			final Integer streak = streaks.get(uuid);
+
+			final DailyVoteStreak fixed = new DailyVoteStreak(uuid);
+			fixed.setStart(LocalDate.now().minusDays(streak));
+			fixed.setStreak(streak);
+			if (voterService.get(uuid).getTodaysVotes().size() >= 5) {
+				fixed.setStreak(streak + 1);
+				fixed.setEarnedToday(true);
+			}
+
+			final DailyVoteReward reward = service.get(uuid);
+			reward.setCurrentStreak(fixed);
+			service.save(reward);
+
+			return json(Nerd.of(uuid).getColoredName() + " &7- " + streak);
+		};
+
+		paginate(Utils.sortByValueReverse(streaks).keySet(), formatter, "/dailyvoterewards actualStreaks", page);
+	}
+	*/
+
 	@Getter
 	@AllArgsConstructor
 	public enum VoteStreakReward {

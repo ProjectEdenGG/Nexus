@@ -45,8 +45,11 @@ public class Voter implements PlayerOwnedObject {
 	}
 
 	public List<Vote> getTodaysVotes() {
-		final LocalDate now = LocalDate.now();
-		return votes.stream().filter(vote -> now.equals(vote.getTimestamp().toLocalDate())).toList();
+		return getVotes(LocalDate.now());
+	}
+
+	public List<Vote> getVotes(LocalDate date) {
+		return votes.stream().filter(vote -> date.equals(vote.getTimestamp().toLocalDate())).toList();
 	}
 
 	public int getCount() {
