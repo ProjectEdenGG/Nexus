@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.quests.itemtags;
 
+import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.StringUtils.Gradient;
 import gg.projecteden.nexus.utils.Utils;
@@ -269,6 +270,10 @@ public enum Rarity {
 				}
 			}
 		}
+	}
+
+	public static void setNBT(NBTItem nbtItem, Rarity rarity) {
+		nbtItem.setString(NBT_KEY, rarity.name());
 	}
 
 }

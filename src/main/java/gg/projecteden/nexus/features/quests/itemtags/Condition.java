@@ -1,5 +1,8 @@
 package gg.projecteden.nexus.features.quests.itemtags;
 
+import de.tr7zw.nbtapi.NBTItem;
+import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,6 +28,7 @@ public enum Condition {
 	@Getter
 	private final int max;
 	private static final DecimalFormat pf = new DecimalFormat("0.00");
+	public static final String NBT_KEY = "ItemTag.CONDITION";
 
 	public static Condition of(ItemStack itemStack) {
 		return of(itemStack, null);
@@ -65,5 +69,8 @@ public enum Condition {
 		return (chatColor == null ? "" : chatColor) + "[" + StringUtils.camelCase(this.name()) + "]";
 	}
 
-
+	public static void setNBT(NBTItem nbtItem, Condition condition) {
+		nbtItem.setString(NBT_KEY, condition.name());
+		ItemUtils.setDurability(nbtItem.getItem(), RandomUtils.randomInt(condition.getMin(), condition.getMax()));
+	}
 }

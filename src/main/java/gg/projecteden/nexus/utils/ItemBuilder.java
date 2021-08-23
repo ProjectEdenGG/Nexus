@@ -4,6 +4,7 @@ import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.customenchants.enchants.SoulboundEnchant;
+import gg.projecteden.nexus.features.quests.itemtags.Condition;
 import gg.projecteden.nexus.features.quests.itemtags.Rarity;
 import gg.projecteden.nexus.features.recipes.functionals.Backpacks;
 import gg.projecteden.nexus.features.resourcepack.CustomModel;
@@ -491,7 +492,19 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	public ItemBuilder rarity(Rarity rarity) {
-		return nbt(nbtItem -> nbtItem.setString(Rarity.NBT_KEY, rarity.name()));
+		return nbt(nbtItem -> Rarity.setNBT(nbtItem, rarity));
+	}
+
+	public Condition condition() {
+		final NBTItem nbtItem = nbtItem();
+		if (!nbtItem.hasKey(Condition.NBT_KEY))
+			return Condition.of(build());
+
+		return Condition.valueOf(nbtItem.getString(Condition.NBT_KEY));
+	}
+
+	public ItemBuilder condition(Condition condition) {
+		return nbt(nbtItem -> Condition.setNBT(nbtItem, condition));
 	}
 
 	@AllArgsConstructor
