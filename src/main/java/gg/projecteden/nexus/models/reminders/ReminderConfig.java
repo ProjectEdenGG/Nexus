@@ -127,7 +127,6 @@ public class ReminderConfig {
 		private List<String> hover = new ArrayList<>();
 		@Builder.Default
 		private boolean enabled = true;
-		private boolean motd;
 		@Builder.Default
 		private Set<String> showPermissions = new HashSet<>();
 		@Builder.Default
@@ -135,6 +134,8 @@ public class ReminderConfig {
 		private LocalDateTime startTime;
 		private LocalDateTime endTime;
 		private Reminder.ReminderCondition condition;
+
+		private boolean motd;
 
 		@Getter
 		private static final String PREFIX = "&8&l[&b⚡&8&l] &7";

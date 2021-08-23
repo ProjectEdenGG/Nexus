@@ -50,8 +50,7 @@ public class DailyVoteRewardsCommand extends CustomCommand {
 
 	public static void dailyReset() {
 		final DailyVoteRewardService service = new DailyVoteRewardService();
-		for (DailyVoteReward rewards : service.getAll()) {
-			rewards = service.get(rewards);
+		for (DailyVoteReward rewards : service.cacheAll()) {
 			final DailyVoteStreak streak = rewards.getCurrentStreak();
 
 			if (!streak.isEarnedToday()) {
@@ -64,6 +63,13 @@ public class DailyVoteRewardsCommand extends CustomCommand {
 
 			service.save(rewards);
 		}
+	}
+
+	@Path("rewards")
+	void rewards() {
+		send(PREFIX + "Rewards:");
+		for (VoteStreakReward reward : VoteStreakReward.values())
+			send("&e" + camelCase(reward) + " &7- " + reward.getKeys() + " " + reward.getCrateType() + " Crate Keys");
 	}
 
 	/*
