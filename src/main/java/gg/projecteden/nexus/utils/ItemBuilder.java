@@ -67,6 +67,7 @@ import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
+@SuppressWarnings({"unused", "UnusedReturnValue", "ResultOfMethodCallIgnored", "CopyConstructorMissesField", "deprecation"})
 public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	private ItemStack itemStack;
 	private ItemMeta itemMeta;
@@ -84,6 +85,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 
 	public ItemBuilder(ItemBuilder itemBuilder) {
 		this(itemBuilder.build());
+		this.doLoreize = itemBuilder.doLoreize;
 	}
 
 	public ItemBuilder(ItemStack itemStack) {
@@ -104,7 +106,8 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	public ItemBuilder color(ColorType colorType) {
-		itemStack.setType(colorType.switchColor(itemStack.getType()));
+		final Material newMaterial = Objects.requireNonNull(colorType.switchColor(itemStack.getType()), "Could not determine color of " + itemStack.getType());
+		itemStack.setType(newMaterial);
 		return this;
 	}
 
@@ -191,7 +194,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	public @NotNull List<Component> componentLore() {
-		return itemMeta.hasLore() ? itemMeta.lore() : new ArrayList<>();
+		return itemMeta.hasLore() ? Objects.requireNonNull(itemMeta.lore()) : new ArrayList<>();
 	}
 
 	public ItemBuilder loreize(boolean doLoreize) {
@@ -341,7 +344,9 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	public ItemBuilder symbolBanner(SymbolBanner.Symbol symbol, DyeColor patternDye) {
 		if (symbol == null)
 			return this;
-		return symbol.get(this, ColorType.of(itemStack.getType()).getDyeColor(), patternDye);
+
+		final ColorType color = Objects.requireNonNull(ColorType.of(itemStack.getType()), "Could not determine color of " + itemStack.getType());
+		return symbol.get(this, color.getDyeColor(), patternDye);
 	}
 
 	// Maps
@@ -658,6 +663,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		itemMeta = itemStack.getItemMeta();
 	}
 
+	@SuppressWarnings("MethodDoesntCallSuperMethod")
 	public ItemBuilder clone() {
 		itemStack.setItemMeta(itemMeta);
 		ItemBuilder builder = new ItemBuilder(itemStack.clone());
