@@ -4,6 +4,7 @@ import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.customenchants.enchants.SoulboundEnchant;
+import gg.projecteden.nexus.features.quests.itemtags.Rarity;
 import gg.projecteden.nexus.features.recipes.functionals.Backpacks;
 import gg.projecteden.nexus.features.resourcepack.CustomModel;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -469,11 +470,28 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	// NBT
 
 	public ItemBuilder nbt(Consumer<NBTItem> consumer) {
-		NBTItem nbtItem = new NBTItem(build());
+		final NBTItem nbtItem = nbtItem();
 		consumer.accept(nbtItem);
 		itemStack = nbtItem.getItem();
 		itemMeta = itemStack.getItemMeta();
 		return this;
+	}
+
+	@NotNull
+	private NBTItem nbtItem() {
+		return new NBTItem(build());
+	}
+
+	public Rarity rarity() {
+		final NBTItem nbtItem = nbtItem();
+		if (!nbtItem.hasKey(Rarity.NBT_KEY))
+			return Rarity.of(build());
+
+		return Rarity.valueOf(nbtItem.getString(Rarity.NBT_KEY));
+	}
+
+	public ItemBuilder rarity(Rarity rarity) {
+		return nbt(nbtItem -> nbtItem.setString(Rarity.NBT_KEY, rarity.name()));
 	}
 
 	@AllArgsConstructor
@@ -519,7 +537,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		}
 
 		public boolean of(ItemBuilder builder, boolean orDefault) {
-			NBTItem item = new NBTItem(builder.build());
+			NBTItem item = builder.nbtItem();
 			if (!item.hasKey(getKey()))
 				return orDefault;
 
@@ -582,7 +600,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	public int customModelData() {
-		NBTItem nbtItem = new NBTItem(build());
+		NBTItem nbtItem = nbtItem();
 		final Integer customModelData = nbtItem.getInteger(CustomModel.NBT_KEY);
 		return customModelData == null ? 0 : customModelData;
 	}

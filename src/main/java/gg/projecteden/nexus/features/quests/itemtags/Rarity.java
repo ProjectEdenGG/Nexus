@@ -46,6 +46,8 @@ public enum Rarity {
 	@Getter
 	private final Integer max;
 
+	public static final String NBT_KEY = "ItemTag.RARITY";
+
 	Rarity(ChatColor chatColor, int min, int max) {
 		this.chatColors = Collections.singletonList(chatColor);
 		this.craftable = true;
@@ -65,6 +67,10 @@ public enum Rarity {
 		this.craftable = false;
 		this.min = null;
 		this.max = null;
+	}
+
+	public static Rarity of(ItemStack itemStack) {
+		return of(itemStack, Condition.of(itemStack), null);
 	}
 
 	public static Rarity of(ItemStack itemStack, Condition condition) {
