@@ -41,13 +41,17 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import static gg.projecteden.nexus.utils.GoogleUtils.ValueInputOption.USER_ENTERED;
 import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
 
-// https://developers.google.com/sheets/api/quickstart/java
+/**
+ * https://developers.google.com/sheets/api/quickstart/java
+ */
 public class GoogleUtils {
 
-	private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
+	private static final String CREDENTIALS_FILE_PATH = "google/credentials.json";
 	private static final String TOKENS_DIRECTORY_PATH = "google/tokens";
+	private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 	private static final List<String> SCOPES = Collections.singletonList(SheetsScopes.SPREADSHEETS);
 
 	private static NetHttpTransport HTTP_TRANSPORT;
@@ -70,10 +74,15 @@ public class GoogleUtils {
 		HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
 	}
 
+	/**
+	 * If you are prompted with a link in console, log in with the hi@projecteden.gg google credentials,
+	 * complete the approval process, then change `localhost` to `projecteden.gg` in the redirect url.
+	 * Make sure the port is open on the firewall
+	 */
 	@SneakyThrows
 	private static void login() {
 		GoogleClientSecrets secrets = GoogleClientSecrets.load(JacksonFactory.getDefaultInstance(),
-			new InputStreamReader(new FileInputStream(Nexus.getFile("google/credentials.json"))));
+			new InputStreamReader(new FileInputStream(Nexus.getFile(CREDENTIALS_FILE_PATH))));
 
 		final int port = 8888 + (Env.values().length - (Nexus.getEnv().ordinal() + 1));
 		receiver = new LocalServerReceiver.Builder().setPort(port).build();
@@ -106,12 +115,29 @@ public class GoogleUtils {
 		return spreadsheets().values().get(spreadsheetId, sheetId + (range == null ? "" : "!" + range)).execute();
 	}
 
+	/**
+	 * https://developers.google.com/sheets/api/reference/rest/v4/ValueInputOption
+	 */
+	public enum ValueInputOption {
+		/**
+		 * The values the user has entered will not be parsed and will be stored as-is.
+		 */
+		RAW,
+
+		/**
+		 * The values will be parsed as if the user typed them into the UI. Numbers will stay
+		 * as numbers, but strings may be converted to numbers, dates, etc. following the same
+		 * rules that are applied when entering text into a cell via the Google Sheets UI.
+		 */
+		USER_ENTERED,
+	}
+
 	@SneakyThrows
 	public static UpdateValuesResponse updateEntireSheet(String spreadsheetId, String sheetId, ValueRange values) {
 		clearSheet(spreadsheetId, sheetId);
 		return spreadsheets().values()
 			.update(spreadsheetId, sheetId, values)
-			.setValueInputOption("USER_ENTERED")
+			.setValueInputOption(USER_ENTERED.name())
 			.execute();
 	}
 
@@ -121,6 +147,8 @@ public class GoogleUtils {
 			.clear(spreadsheetId, sheetId, new ClearValuesRequest())
 			.execute();
 	}
+
+	// Serialization
 
 	@NotNull
 	public static Object valueOf(String string) {
@@ -157,6 +185,8 @@ public class GoogleUtils {
 		return valueOf(enumeration == null ? null : enumeration.name());
 	}
 
+	// Deserialization
+
 	@Nullable
 	public static String asString(Iterator<Object> iterator) {
 		return asString(iterator, null);
@@ -170,7 +200,7 @@ public class GoogleUtils {
 		if (next instanceof String string)
 			return string;
 
-		Nexus.warn("[Reminders] Object is not a string: " + next.getClass().getSimpleName() + " " + next);
+		Nexus.warn("[GoogleUtils] Object is not a string: " + next.getClass().getSimpleName() + ": " + next);
 		return next.toString();
 	}
 
