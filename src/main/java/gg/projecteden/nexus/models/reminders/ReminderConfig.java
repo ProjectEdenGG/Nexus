@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.models.reminders;
 
 import com.google.common.base.Strings;
-import gg.projecteden.mongodb.serializers.LocalDateTimeConverter;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -23,7 +22,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -31,13 +29,18 @@ import org.jetbrains.annotations.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import static gg.projecteden.nexus.utils.GoogleUtils.asBoolean;
+import static gg.projecteden.nexus.utils.GoogleUtils.asLocalDateTime;
+import static gg.projecteden.nexus.utils.GoogleUtils.asString;
+import static gg.projecteden.nexus.utils.GoogleUtils.asStringArrayList;
+import static gg.projecteden.nexus.utils.GoogleUtils.asStringLinkedHashSet;
+import static gg.projecteden.nexus.utils.GoogleUtils.valueOf;
 import static java.util.stream.Collectors.toList;
 
 @Data
@@ -45,19 +48,8 @@ import static java.util.stream.Collectors.toList;
 @NoArgsConstructor
 @AllArgsConstructor
 @SerializableAs("ReminderConfig")
-public class ReminderConfig implements ConfigurationSerializable {
+public class ReminderConfig {
 	private List<Reminder> reminders = new ArrayList<>();
-
-	public ReminderConfig(Map<String, Object> map) {
-		this.reminders = (List<Reminder>) map.getOrDefault("reminders", reminders);
-	}
-
-	@Override
-	public Map<String, Object> serialize() {
-		return new LinkedHashMap<>() {{
-			put("reminders", reminders);
-		}};
-	}
 
 	public Optional<Reminder> findRequestMatch(String id) {
 		return reminders.stream()
@@ -97,7 +89,7 @@ public class ReminderConfig implements ConfigurationSerializable {
 	}
 
 	public void remove(String id) {
-		if (!findRequestMatch(id).isPresent())
+		if (findRequestMatch(id).isEmpty())
 			throw new InvalidInputException("Reminder with id &e" + id + " &cnot found");
 
 		reminders.removeIf(reminder -> reminder.getId().equalsIgnoreCase(id));
@@ -125,7 +117,7 @@ public class ReminderConfig implements ConfigurationSerializable {
 	@NoArgsConstructor
 	@AllArgsConstructor
 	@SerializableAs("Reminder")
-	public static class Reminder implements ConfigurationSerializable {
+	public static class Reminder {
 		private String id;
 		private String text;
 		private String command;
@@ -147,43 +139,68 @@ public class ReminderConfig implements ConfigurationSerializable {
 		@Getter
 		private static final String PREFIX = "&8&l[&b⚡&8&l] &7";
 
-		public Reminder(Map<String, Object> map) {
-			this.id = (String) map.getOrDefault("id", id);
-			this.text = (String) map.getOrDefault("text", text);
-			this.command = (String) map.getOrDefault("command", command);
-			this.suggest = (String) map.getOrDefault("suggest", suggest);
-			this.url = (String) map.getOrDefault("url", url);
-			this.hover = map.get("hover") != null ? (List<String>) map.get("hover") : new ArrayList<>();
-			this.enabled = map.get("enabled") != null ? (boolean) map.get("enabled") : enabled;
-			this.motd = map.get("motd") != null ? (boolean) map.get("motd") : motd;
-			this.showPermissions = map.get("showPermissions") != null ? new HashSet<>((List<String>) map.get("showPermissions")) : new HashSet<>();
-			this.hidePermissions = map.get("hidePermissions") != null ? new HashSet<>((List<String>) map.get("hidePermissions")) : new HashSet<>();
-			this.startTime = map.get("startTime") != null ? new LocalDateTimeConverter().decode(map.getOrDefault("startTime", startTime)) : null;
-			this.endTime = map.get("endTime") != null ? new LocalDateTimeConverter().decode(map.getOrDefault("endTime", endTime)) : null;
+		public static final List<Object> HEADERS = List.of(
+			"id",
+			"text",
+			"command",
+			"suggest",
+			"url",
+			"hover",
+			"enabled",
+			"showPermissions",
+			"hidePermissions",
+			"startTime",
+			"endTime",
+			"condition"
+		);
+
+		private static ReminderCondition asReminderCondition(Iterator<Object> iterator, String id) {
+			String condition = asString(iterator);
 			try {
-				this.condition = map.get("condition") != null ? Reminder.ReminderCondition.valueOf((String) map.get("condition")) : null;
+				return condition != null ? Reminder.ReminderCondition.valueOf(condition) : null;
 			} catch (IllegalArgumentException ex) {
-				Nexus.log("Reminder Condition invalid for " + id + ": " + map.getOrDefault("condition", condition));
+				Nexus.log("Reminder Condition invalid for " + id + ": " + condition);
+				return null;
 			}
 		}
 
-		@Override
-		public Map<String, Object> serialize() {
-			return new LinkedHashMap<>() {{
-				put("id", id);
-				put("text", text);
-				put("command", command);
-				put("suggest", suggest);
-				put("url", url);
-				put("hover", hover);
-				put("enabled", enabled);
-				put("motd", motd);
-				put("showPermissions", new ArrayList<>(showPermissions));
-				put("hidePermissions", new ArrayList<>(hidePermissions));
-				put("startTime", new LocalDateTimeConverter().encode(startTime));
-				put("endTime", new LocalDateTimeConverter().encode(endTime));
-				put("condition", condition != null ? condition.name() : null);
-			}};
+		public static Reminder deserialize(List<Object> row, boolean motd) {
+			final Iterator<Object> iterator = row.iterator();
+			final ReminderBuilder builder = Reminder.builder();
+
+			builder
+				.id(asString(iterator))
+				.text(asString(iterator))
+				.command(asString(iterator))
+				.suggest(asString(iterator))
+				.url(asString(iterator))
+				.hover(asStringArrayList(iterator))
+				.enabled(asBoolean(iterator, true))
+				.showPermissions(asStringLinkedHashSet(iterator))
+				.hidePermissions(asStringLinkedHashSet(iterator))
+				.startTime(asLocalDateTime(iterator))
+				.endTime(asLocalDateTime(iterator))
+				.condition(asReminderCondition(iterator, builder.id))
+				.motd(motd);
+
+			return builder.build();
+		}
+
+		public List<Object> serialize() {
+			return List.of(
+				valueOf(id),
+				valueOf(text),
+				valueOf(command),
+				valueOf(suggest),
+				valueOf(url),
+				valueOf(hover),
+				valueOf(enabled),
+				valueOf(showPermissions),
+				valueOf(hidePermissions),
+				valueOf(startTime),
+				valueOf(endTime),
+				valueOf(condition)
+			);
 		}
 
 		public void send(Player player) {
@@ -253,9 +270,9 @@ public class ReminderConfig implements ConfigurationSerializable {
 			return !motd;
 		}
 
+		// Return true if you want to show the announcement
 		@AllArgsConstructor
 		public enum ReminderCondition {
-			// Return true if you want to show the announcement
 			VOTE(player -> {
 				Voter voter = new VoterService().get(player);
 				return voter.getActiveVotes().size() < VoteSite.getValues().size() - 2;

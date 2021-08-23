@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands.staff.operator;
 
+import com.google.api.services.sheets.v4.model.ValueRange;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -14,24 +15,27 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.models.reminders.ReminderConfig;
 import gg.projecteden.nexus.models.reminders.ReminderConfig.Reminder;
 import gg.projecteden.nexus.models.reminders.ReminderConfig.Reminder.ReminderCondition;
+import gg.projecteden.nexus.utils.GoogleUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
+import gg.projecteden.utils.EnumUtils;
 import gg.projecteden.utils.TimeUtils.Time;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-import java.io.File;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiFunction;
@@ -44,54 +48,51 @@ import static java.util.stream.Collectors.toList;
 @Aliases("reminder")
 @Permission("group.seniorstaff")
 public class RemindersCommand extends CustomCommand implements Listener {
-	static {
-		ConfigurationSerialization.registerClass(ReminderConfig.class, "ReminderConfig");
-		ConfigurationSerialization.registerClass(Reminder.class, "Reminder");
-	}
-
-	private static final File file = Nexus.getFile("reminders.yml");
-	private static YamlConfiguration yaml;
+	private static final String spreadsheetId = "1JIDrL-ZWE501uIRh5BD8QwwmewvmBKClgwSaTvwGE6E";
 	private static ReminderConfig config;
 
 	static {
-		load();
+		loadFromSheet();
 	}
 
 	public RemindersCommand(@NonNull CommandEvent event) {
 		super(event);
 	}
 
-	private void save() {
+	private static void loadFromSheet() {
+		config = new ReminderConfig();
+		ReminderSheet.readAll();
+	}
+
+	@Path("reload")
+	void reload() {
+		loadFromSheet();
+		send(PREFIX + "Loaded &e" + config.getReminders().size() + " periodic reminders &3and &e" + config.getMotds().size() + " on join reminders");
+	}
+
+	private void saveToSheet() {
 		try {
-			yaml.set("config", config);
-			yaml.save(file);
+			ReminderSheet.saveAll();
 		} catch (Exception ex) {
-			Nexus.severe("An error occurred while trying to write reminders configuration file: " + ex.getMessage());
+			Nexus.severe("[Reminders] An error occurred while trying to save to spreadsheet: " + ex.getMessage());
 			ex.printStackTrace();
 		}
 	}
 
 	private void saveAndEdit(Reminder reminder) {
-		save();
+		saveToSheet();
 		edit(reminder);
 	}
 
-	@Path("reload")
-	void reload() {
-		load();
-		send(PREFIX + "Reload complete");
-	}
-
-	private static void load() {
-		yaml = YamlConfiguration.loadConfiguration(file);
-		config = (ReminderConfig) yaml.get("config", new ReminderConfig());
-		if (config == null) config = new ReminderConfig();
+	@Path("save")
+	void save() {
+		saveToSheet();
 	}
 
 	@Path("create <id> <text...>")
 	void create(String id, String text) {
 		config.add(Reminder.builder().id(id).text(text).build());
-		save();
+		saveToSheet();
 		send(PREFIX + "Reminder &e" + id + " &3created");
 	}
 
@@ -99,7 +100,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 	@Path("delete <id>")
 	void delete(Reminder reminder) {
 		config.remove(reminder.getId());
-		save();
+		saveToSheet();
 		send(PREFIX + "Reminder &e" + reminder.getId() + " &cdeleted");
 	}
 
@@ -363,4 +364,53 @@ public class RemindersCommand extends CustomCommand implements Listener {
 		config.showMotd(event.getPlayer());
 	}
 
+	@Getter
+	@AllArgsConstructor
+	public enum ReminderSheet {
+		PERIODIC(false),
+		ON_JOIN(true),
+		;
+
+		private final boolean motd;
+
+		public String getSheetId() {
+			return EnumUtils.prettyName(name());
+		}
+
+		public static void readAll() {
+			for (ReminderSheet sheet : values())
+				sheet.read();
+		}
+
+		public static void saveAll() {
+			for (ReminderSheet sheet : values())
+				sheet.save();
+		}
+
+		public List<Reminder> getReminders() {
+			return config.getAll().stream().filter(reminder -> reminder.isMotd() == motd).toList();
+		}
+
+		public void read() {
+			final ValueRange valueRange = GoogleUtils.sheetValues(spreadsheetId, getSheetId(), "A:Z");
+			final Iterator<List<Object>> iterator = valueRange.getValues().iterator();
+			if (iterator.hasNext())
+				iterator.next(); // Skip headers
+
+			while (iterator.hasNext())
+				config.add(Reminder.deserialize(iterator.next(), motd));
+		}
+
+		public void save() {
+			final List<List<Object>> rows = new ArrayList<>();
+			final ValueRange values = new ValueRange().setValues(rows);
+
+			rows.add(Reminder.HEADERS);
+
+			for (Reminder reminder : getReminders())
+				rows.add(reminder.serialize());
+
+			GoogleUtils.updateEntireSheet(spreadsheetId, getSheetId(), values);
+		}
+	}
 }
