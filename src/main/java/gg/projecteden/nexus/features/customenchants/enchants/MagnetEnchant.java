@@ -97,6 +97,9 @@ public class MagnetEnchant extends CustomEnchant {
 	}
 
 	private static int getMaxLevel(Player player) {
+		if (Enchant.MAGNET == null)
+			return 0;
+
 		return maxLevel.computeIfAbsent(player.getUniqueId(), $ -> {
 			int maxLevel = 0;
 			for (ItemStack item : getItems(player.getInventory()))
