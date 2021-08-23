@@ -47,7 +47,7 @@ import static java.util.stream.Collectors.toList;
 
 @NoArgsConstructor
 @Aliases("reminder")
-@Permission("group.seniorstaff")
+@Permission("group.staff")
 public class RemindersCommand extends CustomCommand implements Listener {
 	private static final String spreadsheetId = "1JIDrL-ZWE501uIRh5BD8QwwmewvmBKClgwSaTvwGE6E";
 	private static ReminderConfig config;
