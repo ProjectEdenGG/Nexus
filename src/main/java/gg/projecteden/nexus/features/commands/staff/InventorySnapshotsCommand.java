@@ -81,7 +81,7 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 			String timestampIso = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(snapshot.getTimestamp());
 			String worldName = snapshot.getLocation().getWorld().getName();
 			String reasonString = snapshot.getReason().getColor() + camelCase(snapshot.getReason());
-			return json("&3" + index + " &e" + timestamp + " &7- &3Reason: &e" + reasonString + "&3, World: &e" + worldName)
+			return json(index + " &e" + timestamp + " &7- &3Reason: &e" + reasonString + "&3, World: &e" + worldName)
 					.hover("&3Time since: &e" + Timespan.of(snapshot.getTimestamp()).format())
 					.hover("&3Location: &e" + getShortLocationString(snapshot.getLocation()))
 					.command("/inventorysnapshots view " + history.getName() + " " + timestampIso);
@@ -122,7 +122,7 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 			String name = getPlayer(snapshot.getUuid()).getName();
 			int distance = nearbyDeaths.get(snapshot).intValue();
 			String timeSince = Timespan.of(snapshot.getTimestamp()).format();
-			return json("&3" + index + " &e" + name + " &7- " + distance + "m / " + timeSince + " ago")
+			return json(index + " &e" + name + " &7- " + distance + "m / " + timeSince + " ago")
 					.hover("&eClick to teleport")
 					.command("/tppos " + getShortLocationString(snapshot.getLocation()));
 		};

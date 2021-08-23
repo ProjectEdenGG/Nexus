@@ -88,7 +88,7 @@ public class HoursCommand extends CustomCommand {
 		send(PREFIX + "Total: " + Timespan.of(totalHours).format() + (page > 1 ? "&e  |  &3Page " + page : ""));
 
 		BiFunction<PageResult, String, JsonBuilder> formatter = (result, index) ->
-				json("&3" + index + " &e" + Nerd.of(result.getUuid()).getColoredName() + " &7- " + Timespan.of(result.getTotal()).format());
+				json(index + " &e" + Nerd.of(result.getUuid()).getColoredName() + " &7- " + Timespan.of(result.getTotal()).format());
 
 		paginate(results, formatter, "/hours top " + args.getInput(), page);
 	}

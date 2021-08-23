@@ -56,7 +56,7 @@ public class EasterCommand extends CustomCommand implements Listener {
 		int sum = all.stream().mapToInt(user -> user.getFound().size()).sum();
 
 		send(PREFIX + "Top egg hunters  &3|  Total: &e" + sum);
-		paginate(all, (user, index) -> json("&3" + index + " &e" + user.getNickname() + " &7- " + user.getFound().size()), "/easter top", page);
+		paginate(all, (user, index) -> json(index + " &e" + user.getNickname() + " &7- " + user.getFound().size()), "/easter top", page);
 	}
 
 	@Path("topLocations [page]")
@@ -70,7 +70,7 @@ public class EasterCommand extends CustomCommand implements Listener {
 
 		send(PREFIX + "Most found eggs");
 		BiFunction<Location, String, JsonBuilder> formatter = (location, index) ->
-				json("&3" + index + " &e" + getCoordinateString(location) + " &7- " + counts.get(location))
+				json(index + " &e" + getCoordinateString(location) + " &7- " + counts.get(location))
 						.command(getTeleportCommand(location))
 						.hover("&eClick to teleport");
 		paginate(Utils.sortByValueReverse(counts).keySet(), formatter, "/easter topLocations", page);

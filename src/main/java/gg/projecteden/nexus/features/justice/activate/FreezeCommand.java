@@ -86,7 +86,7 @@ public class FreezeCommand extends _PunishmentCommand implements Listener {
 				.collect(Collectors.toList());
 
 		BiFunction<Freeze, String, JsonBuilder> formatter = (freeze, index) ->
-				json("&3" + index + " &e" + freeze.getNickname() + " &7- "
+				json(index + " &e" + freeze.getNickname() + " &7- "
 						+ Timespan.of(Nerd.of(freeze).getLastJoin()).format() + " ago");
 
 		paginate(all, formatter, "/freeze list", page);

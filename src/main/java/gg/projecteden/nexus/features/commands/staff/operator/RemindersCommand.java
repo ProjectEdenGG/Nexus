@@ -289,7 +289,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 
 		send(PREFIX + "Reminders");
 		BiFunction<Reminder, String, JsonBuilder> formatter = (reminder, index) ->
-				json("&3" + index + " " + (reminder.isMotd() ? "&6➤" : "&b⚡") + " &e" + reminder.getId() + " &7- " + ellipsis(reminder.getText(), 50))
+				json(index + " " + (reminder.isMotd() ? "&6➤" : "&b⚡") + " &e" + reminder.getId() + " &7- " + ellipsis(reminder.getText(), 50))
 						.hover("&3Type: &e" + (reminder.isMotd() ? "MOTD" : "Reminder"))
 						.hover("&7" + reminder.getText())
 						.command("/reminders edit " + reminder.getId());

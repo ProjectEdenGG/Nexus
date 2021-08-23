@@ -91,7 +91,7 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Ambience types:");
 
 		BiFunction<AmbienceType, String, JsonBuilder> formatter = (type, index) ->
-			json(" &3" + index + " &e" + camelCase(type) + " &7- " + config.get(type).size())
+			json(index + " &e" + camelCase(type) + " &7- " + config.get(type).size())
 				.command("/ambience list " + type.name().toLowerCase())
 				.hover("&eClick to view");
 
@@ -106,7 +106,7 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 
 		send(PREFIX + camelCase(type) + " ambience:");
 		final BiFunction<Ambience, String, JsonBuilder> formatter = (ambience, index) ->
-			json(" &3" + index + " &e" + StringUtils.getLocationString(ambience.getLocation()))
+			json(index + " &e" + StringUtils.getLocationString(ambience.getLocation()))
 				.command(StringUtils.getTeleportCommand(ambience.getLocation()))
 				.hover("&eClick to teleport");
 

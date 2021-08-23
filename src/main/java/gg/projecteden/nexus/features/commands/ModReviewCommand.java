@@ -73,7 +73,7 @@ public class ModReviewCommand extends CustomCommand implements Listener {
 			send(PREFIX + "List of reviewed mods. Click on a mod for more info");
 
 		BiFunction<Mod, String, JsonBuilder> formatter = (mod, index) -> json()
-				.next("&3" + index + " &e" + mod.getName() + " &7- " + mod.getVerdict().getColor() + camelCase(mod.getVerdict()))
+				.next(index + " &e" + mod.getName() + " &7- " + mod.getVerdict().getColor() + camelCase(mod.getVerdict()))
 				.command("/modreview " + mod.getName())
 				.hover("&3Click for more info");
 
@@ -102,7 +102,7 @@ public class ModReviewCommand extends CustomCommand implements Listener {
 			error("No pending review requests");
 
 		BiFunction<ModReviewRequest, String, JsonBuilder> formatter = (request, index) -> {
-			JsonBuilder json = json("&3" + index + " &3" + getPlayer(request.getRequester()).getName() + " &e" + request.getName() +
+			JsonBuilder json = json(index + " &3" + getPlayer(request.getRequester()).getName() + " &e" + request.getName() +
 					(isNullOrEmpty(request.getNotes()) ? "" : " &7- " + request.getNotes()));
 			if (isAdmin())
 				json.suggest("/modreview add " + request.getName() + " ").hover("&3Click to review");

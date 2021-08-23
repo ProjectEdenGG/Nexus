@@ -84,7 +84,7 @@ public class StoreCommand extends CustomCommand {
 	@Path("contributors recent [page]")
 	void contributors_recent(@Arg("1") int page) {
 		BiFunction<Purchase, String, JsonBuilder> formatter = (purchase, index) ->
-			json("&3" + index + " " + Nerd.of(purchase.getPurchaserUuid()).getColoredName() + " &7- " +
+			json(index + " " + Nerd.of(purchase.getPurchaserUuid()).getColoredName() + " &7- " +
 				StringUtils.prettyMoney(purchase.getRealPrice()));
 		paginate(service.getRecent(), formatter, "/store contributors recent", page);
 	}

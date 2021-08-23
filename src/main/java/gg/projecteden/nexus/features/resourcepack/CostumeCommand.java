@@ -105,7 +105,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 	@Path("list [page]")
 	@Permission("group.admin")
 	void list(@Arg("1") int page) {
-		paginate(Costume.values(), (costume, index) -> json("&3" + index + " &e" + costume.getId()), "/costume list", page);
+		paginate(Costume.values(), (costume, index) -> json(index + " &e" + costume.getId()), "/costume list", page);
 	}
 
 	@Path("top [page]")
@@ -119,7 +119,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 		}};
 
 		final BiFunction<Costume, String, JsonBuilder> formatter = (costume, index) ->
-			json("&3" + index + " &e" + costume.getId() + " &7- " + counts.get(costume));
+			json(index + " &e" + costume.getId() + " &7- " + counts.get(costume));
 
 		paginate(Utils.sortByValueReverse(counts).keySet(), formatter, "/costume top", page);
 	}

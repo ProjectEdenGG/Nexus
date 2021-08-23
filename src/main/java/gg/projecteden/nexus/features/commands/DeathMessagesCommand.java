@@ -164,7 +164,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 			error("No custom death messages configured");
 
 		BiFunction<CustomDeathMessage, String, JsonBuilder> formatter = (config, index) -> {
-			final JsonBuilder json = json("&3" + index + " &e" + config.getKey() + " &3(" + config.count() + ") &7- " + config.getOriginal());
+			final JsonBuilder json = json(index + " &e" + config.getKey() + " &3(" + config.count() + ") &7- " + config.getOriginal());
 			int shown = 0;
 			for (String customMessage : config.getCustom()) {
 				if (++shown > 5) {
@@ -188,7 +188,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 
 		send(PREFIX + "Custom messages for key &e" + config.getKey());
 
-		paginate(customMessages, (message, index) -> json("&3" + index + " &7" + message), "/deathmessages list " + config.getKey(), page);
+		paginate(customMessages, (message, index) -> json(index + " &7" + message), "/deathmessages list " + config.getKey(), page);
 	}
 
 	@Path("suggest <key> <message...>")

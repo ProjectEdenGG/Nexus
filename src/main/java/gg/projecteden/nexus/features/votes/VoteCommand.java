@@ -102,7 +102,7 @@ public class VoteCommand extends CustomCommand {
 		send(PREFIX + "Most votes in a day");
 		BiFunction<LocalDate, String, JsonBuilder> formatter = (date, index) -> {
 			String color = date.equals(LocalDate.now()) ? "&6" : "&e";
-			return json("&3" + index + " " + color + TimeUtils.shortishDateFormat(date) + " &7- " + days.get(date));
+			return json(index + " " + color + TimeUtils.shortishDateFormat(date) + " &7- " + days.get(date));
 		};
 
 		paginate(days.keySet(), formatter, "/votes getTopDays", page);

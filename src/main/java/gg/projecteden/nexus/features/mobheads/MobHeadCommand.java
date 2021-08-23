@@ -118,7 +118,7 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 
 	@NotNull
 	private BiFunction<Pair<MobHeadUser, MobHead>, String, JsonBuilder> getTopFormatter(Map<Pair<MobHeadUser, MobHead>, Integer> top) {
-		return (pair, index) -> json("&3" + index + " " + pair.getFirst().getNerd().getColoredName()
+		return (pair, index) -> json(index + " " + pair.getFirst().getNerd().getColoredName()
 			+ " &7- &e" + pair.getSecond().getDisplayName() + " &7- " + top.get(pair));
 	}
 

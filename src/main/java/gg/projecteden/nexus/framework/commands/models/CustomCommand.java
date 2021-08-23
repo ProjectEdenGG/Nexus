@@ -969,12 +969,12 @@ public abstract class CustomCommand extends ICustomCommand {
 		int nextMagnitude = Integer.parseInt("1" + Strings.repeat("0", String.valueOf(nextIndex).length()));
 		int needsLeading0 = nextMagnitude - 10;
 
-		String string = String.valueOf(nextIndex);
+		String string = "&3" + nextIndex;
 		if (nextIndex > 1 && nextIndex == nextMagnitude / 10)
 			return string;
 
 		if (nextIndex > needsLeading0)
-			string = "0" + string;
+			string = "&30" + string;
 		return string;
 	}
 

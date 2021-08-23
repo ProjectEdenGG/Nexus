@@ -97,7 +97,7 @@ public class DailyRewardsCommand extends CustomCommand {
 	@Path("top [page]")
 	void top(@Arg("1") int page) {
 		final BiFunction<DailyRewardUser, String, JsonBuilder> formatter = (user, index) ->
-			json("&3" + index + " &e" + user.getNickname() + " &7- " + user.getCurrentStreak().getStreak());
+			json(index + " &e" + user.getNickname() + " &7- " + user.getCurrentStreak().getStreak());
 
 		final List<DailyRewardUser> sorted = service.getAll().stream()
 			.filter(user -> user.getCurrentStreak().getStreak() > 0)

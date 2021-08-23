@@ -69,7 +69,7 @@ public class DatabaseCommand extends CustomCommand {
 		send(PREFIX + "Stored objects");
 
 		final BiFunction<MongoService<? extends PlayerOwnedObject>, String, JsonBuilder> formatter = (service, index) ->
-			json("&3" + index + " &e" + name(service) + " &7- " + counts.get(service));
+			json(index + " &e" + name(service) + " &7- " + counts.get(service));
 
 		paginate(Utils.sortByValueReverse(counts).keySet(), formatter, "/database count all", page);
 	}

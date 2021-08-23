@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.BiFunction;
 
+import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 import static java.util.stream.Collectors.toList;
 
 @Permission("group.moderator")
@@ -40,7 +41,7 @@ public class HistoryCommand extends _JusticeCommand {
 
 		BiFunction<Punishment, String, JsonBuilder> formatter = (punishment, index) -> {
 			JsonBuilder json = punishment.getType().getHistoryDisplay(punishment);
-			int indexInt = Integer.parseInt(index);
+			int indexInt = Integer.parseInt(stripColor(index));
 			if (indexInt % perPage != 0 && indexInt != player.getPunishments().size())
 				json.newline();
 			return json;

@@ -152,7 +152,7 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 			amount = symbol + amount;
 			newBalance = "&e" + newBalance;
 
-			JsonBuilder jsonBuilder = new JsonBuilder("&3" + index + " &7" + timestamp + "  " + newBalance + "  &7|  " +
+			JsonBuilder jsonBuilder = new JsonBuilder(index + " &7" + timestamp + "  " + newBalance + "  &7|  " +
 					fromPlayer + " &3→ " + toPlayer + "  " + amount + "  " + description)
 					.hover("&3Time since: &e" + Timespan.of(transaction.getTimestamp()).format());
 

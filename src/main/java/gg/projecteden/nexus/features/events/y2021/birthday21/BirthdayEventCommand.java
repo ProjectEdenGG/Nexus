@@ -58,7 +58,7 @@ public class BirthdayEventCommand extends CustomCommand implements Listener {
 		int sum = all.stream().mapToInt(user -> user.getFound().size()).sum();
 
 		send(PREFIX + "Top cake hunters  &3|  Total: &e" + sum);
-		paginate(all, (user, index) -> json("&3" + index + " &e" + user.getNickname() + " &7- " + user.getFound().size()), "/birthdayevent top", page);
+		paginate(all, (user, index) -> json(index + " &e" + user.getNickname() + " &7- " + user.getFound().size()), "/birthdayevent top", page);
 	}
 
 	@Path("topLocations [page]")
@@ -72,7 +72,7 @@ public class BirthdayEventCommand extends CustomCommand implements Listener {
 
 		send(PREFIX + "Most found cakes");
 		BiFunction<Location, String, JsonBuilder> formatter = (location, index) ->
-			json("&3" + index + " &e" + getCoordinateString(location) + " &7- " + counts.get(location))
+			json(index + " &e" + getCoordinateString(location) + " &7- " + counts.get(location))
 				.command(getTeleportCommand(location))
 				.hover("&eClick to teleport");
 		paginate(Utils.sortByValueReverse(counts).keySet(), formatter, "/birthdayevent topLocations", page);

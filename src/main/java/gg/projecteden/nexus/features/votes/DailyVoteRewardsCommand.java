@@ -44,7 +44,7 @@ public class DailyVoteRewardsCommand extends CustomCommand {
 			.collect(Collectors.toList());
 
 		final BiFunction<DailyVoteReward, String, JsonBuilder> formatter = (rewards, index) ->
-			json("&3" + index + " " + Nerd.of(rewards).getColoredName() + " &7- " + rewards.getCurrentStreak().getStreak());
+			json(index + " " + Nerd.of(rewards).getColoredName() + " &7- " + rewards.getCurrentStreak().getStreak());
 		paginate(all, formatter, "/dailyvoterewards top", page);
 	}
 

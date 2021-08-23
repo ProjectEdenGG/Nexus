@@ -258,7 +258,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 				.sorted(Comparator.comparing(Hours::getTotal).reversed())
 				.toList();
 
-		BiFunction<Hours, String, JsonBuilder> formatter = (hours, index) -> json("&3" + index + " &e" + Nerd.of(hours).getColoredName());
+		BiFunction<Hours, String, JsonBuilder> formatter = (hours, index) -> json(index + " &e" + Nerd.of(hours).getColoredName());
 		paginate(players, formatter, "/referral who has rank " + rank.name().toLowerCase() + " from " + subdomain, page);
 	}
 
@@ -272,7 +272,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 				.sorted(Comparator.comparing(Hours::getTotal).reversed())
 				.toList();
 
-		BiFunction<Hours, String, JsonBuilder> formatter = (hours, index) -> json("&3" + index + " &e" + Nerd.of(hours).getColoredName() +
+		BiFunction<Hours, String, JsonBuilder> formatter = (hours, index) -> json(index + " &e" + Nerd.of(hours).getColoredName() +
 				" &7- " + Timespan.of(hours.getTotal()).format());
 		paginate(players, formatter, "/referral who has playtime " + playtime + " from " + subdomain, page);
 	}

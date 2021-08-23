@@ -32,7 +32,7 @@ import net.dv8tion.jda.api.utils.TimeUtil;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.OfflinePlayer;
 
-import java.awt.Color;
+import java.awt.*;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -180,7 +180,7 @@ public class BridgeCommand extends CustomCommand {
 			boolean tied = user != null;
 			String name = role == null ? roleId : user == null ? role.getName() : user.getIngameName();
 			int size = archive.getRoleMap().get(roleId).size();
-			return json("&3" + index + " " + (tied ? "&e" : "&c") + name + " &7- " + size + " messages")
+			return json(index + " " + (tied ? "&e" : "&c") + name + " &7- " + size + " messages")
 					.insert(roleId)
 					.hover("Shift+Click to insert");
 		};
@@ -262,7 +262,7 @@ public class BridgeCommand extends CustomCommand {
 		BiFunction<UUID, String, JsonBuilder> formatter = (uuid, index) -> {
 			OfflinePlayer player = PlayerUtils.getPlayer(uuid);
 			int size = duplicates.get(uuid).size();
-			JsonBuilder json = json("&3" + index + " &e" + Name.of(player) + " &7- " + size + " roles")
+			JsonBuilder json = json(index + " &e" + Name.of(player) + " &7- " + size + " roles")
 					.newline();
 
 			for (String roleId : duplicates.get(uuid))

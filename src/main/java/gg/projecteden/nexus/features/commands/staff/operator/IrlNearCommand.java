@@ -43,7 +43,7 @@ public class IrlNearCommand extends CustomCommand {
 			Distance distance = near.get(uuid);
 			String mi = distance.getMilesFormatted();
 			String km = distance.getKilometersFormatted();
-			return json("&3" + index + " &e" + Nickname.of(uuid) + " &7- " + mi + "mi / " + km + "km");
+			return json(index + " &e" + Nickname.of(uuid) + " &7- " + mi + "mi / " + km + "km");
 		};
 
 		paginate(Utils.sortByValue(near).keySet(), formatter, "/irlnear " + player.getNickname(), page);

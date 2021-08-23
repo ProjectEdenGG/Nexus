@@ -59,7 +59,7 @@ public class EventsCommand extends CustomCommand {
 	@Path("tokens top [page]")
 	public void tokensTop(@Arg("1") int page) {
 		send(PREFIX + "Top Token Earners");
-		paginate(service.getTopTokens(), (user, index) -> json("&3" + index + " &e" + user.getNickname() + " &7- " + user.getTokens()), "/event tokens top", page);
+		paginate(service.getTopTokens(), (user, index) -> json(index + " &e" + user.getNickname() + " &7- " + user.getTokens()), "/event tokens top", page);
 	}
 
 	/* TODO

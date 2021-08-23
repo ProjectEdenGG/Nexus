@@ -95,7 +95,7 @@ public class HomesCommand extends CustomCommand {
 		Map<Home, Double> homes = Utils.sortByValue(unsorted);
 
 		BiFunction<Home, String, JsonBuilder> formatter = (home, index) ->
-				json("&3" + index + " &e" + home.getOwner().getNickname() + " &7- " + home.getName() + " (" + homes.get(home).intValue() + "m)")
+				json(index + " &e" + home.getOwner().getNickname() + " &7- " + home.getName() + " (" + homes.get(home).intValue() + "m)")
 						.command("/home " + home.getOwner().getNickname() + " " + home.getName())
 						.hover("&fClick to teleport");
 		paginate(homes.keySet(), formatter, "/homes near", page);

@@ -165,7 +165,7 @@ public class NPCUtilsCommand extends CustomCommand {
 
 		BiFunction<NPC, String, JsonBuilder> formatter = (npc, index) -> {
 			int id = npc.getId();
-			return json("&3" + index + " ")
+			return json(index + " ")
 					.group()
 					.next(StringUtils.X)
 					.command("/mcmd npc sel " + id + " ;; npc remove")

@@ -343,7 +343,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 		send(PREFIX + "Commands by plugin");
 		paginate(Utils.sortByValueReverse(commands).keySet(), (plugin, index) ->
-				json("&3" + index + " &e" + plugin.getName() + " &7- " + commands.get(plugin)), "/nexus stats commands", page);
+				json(index + " &e" + plugin.getName() + " &7- " + commands.get(plugin)), "/nexus stats commands", page);
 	}
 
 	@Path("stats eventHandlers [page]")
@@ -359,7 +359,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 		send(PREFIX + "Event Handlers");
 		BiFunction<Class<? extends Event>, String, JsonBuilder> formatter = (clazz, index) ->
-				json("&3" + index + " &e" + clazz.getSimpleName() + " &7- " + counts.get(clazz));
+				json(index + " &e" + clazz.getSimpleName() + " &7- " + counts.get(clazz));
 		paginate(sorted.keySet(), formatter, "/nexus stats eventHandlers", page);
 	}
 

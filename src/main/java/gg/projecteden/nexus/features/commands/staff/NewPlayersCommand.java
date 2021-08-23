@@ -41,7 +41,7 @@ public class NewPlayersCommand extends CustomCommand {
 
 		send(PREFIX);
 		BiFunction<Player, String, JsonBuilder> formatter = (player, index) ->
-				json("&3" + index + "  ")
+				json(index + "  ")
 						.group()
 						.next("&6&l[TP]")
 						.command("/mcmd vanish on ;; tp " + player.getName())

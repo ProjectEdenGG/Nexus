@@ -45,7 +45,7 @@ public class TasksCommand extends CustomCommand {
 		final List<BukkitTask> pending = new ArrayList<>(Tasks.getPending());
 		pending.sort(Comparator.comparing(BukkitTask::getTaskId).reversed());
 		send(PREFIX + "Pending tasks: " + pending.size());
-		paginate(pending, (task, index) -> json("&3" + index + " &e#" + task.getTaskId() + " &7- " + task.getOwner().getName()), "/tasks list pending", page);
+		paginate(pending, (task, index) -> json(index + " &e#" + task.getTaskId() + " &7- " + task.getOwner().getName()), "/tasks list pending", page);
 	}
 
 	@Path("list active [page]")
@@ -53,7 +53,7 @@ public class TasksCommand extends CustomCommand {
 		final List<BukkitWorker> active = new ArrayList<>(Tasks.getActive());
 		active.sort(Comparator.comparing(BukkitWorker::getTaskId).reversed());
 		send(PREFIX + "Active tasks: " + active.size());
-		paginate(active, (task, index) -> json("&3" + index + " &e#" + task.getTaskId() + " &7- " + task.getOwner().getName()), "/tasks list active", page);
+		paginate(active, (task, index) -> json(index + " &e#" + task.getTaskId() + " &7- " + task.getOwner().getName()), "/tasks list active", page);
 	}
 
 }
