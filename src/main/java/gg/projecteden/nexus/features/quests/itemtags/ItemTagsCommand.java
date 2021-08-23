@@ -6,7 +6,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.RandomUtils;
 import org.bukkit.inventory.ItemStack;
 
 public class ItemTagsCommand extends CustomCommand {
@@ -96,7 +95,7 @@ public class ItemTagsCommand extends CustomCommand {
 		ItemStack tool = getToolRequired();
 
 		ItemStack updated = ItemTagsUtils.finalizeItem(ItemTagsUtils.addCondition(tool, condition, true));
-		ItemUtils.setDurability(updated, RandomUtils.randomInt(condition.getMin(), condition.getMax()));
+		Condition.setDurability(updated, condition);
 
 		int heldSlot = inventory().getHeldItemSlot();
 		inventory().setItem(heldSlot, updated);

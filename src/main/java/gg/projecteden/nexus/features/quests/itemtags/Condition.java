@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.quests.itemtags;
 
 import de.tr7zw.nbtapi.NBTItem;
-import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
@@ -71,6 +71,10 @@ public enum Condition {
 
 	public static void setNBT(NBTItem nbtItem, Condition condition) {
 		nbtItem.setString(NBT_KEY, condition.name());
-		ItemUtils.setDurability(nbtItem.getItem(), RandomUtils.randomInt(condition.getMin(), condition.getMax()));
+		setDurability(nbtItem.getItem(), condition);
+	}
+
+	public static void setDurability(ItemStack item, Condition condition) {
+		ItemBuilder.setDurability(item, RandomUtils.randomInt(condition.getMin(), condition.getMax()));
 	}
 }

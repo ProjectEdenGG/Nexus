@@ -752,4 +752,17 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return itemStack;
 	}
 
+	public static ItemStack setDurability(ItemStack item, double percentage) {
+		ItemMeta meta = item.getItemMeta();
+		if (meta instanceof Damageable damageable) {
+			double maxDurability = item.getType().getMaxDurability();
+			double damage = (percentage / 100.0) * maxDurability;
+			damageable.setDamage((int) damage);
+
+			item.setItemMeta((ItemMeta) damageable);
+		}
+
+		return item;
+	}
+
 }
