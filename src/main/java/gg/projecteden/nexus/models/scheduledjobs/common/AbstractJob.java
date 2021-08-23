@@ -100,6 +100,10 @@ public abstract class AbstractJob {
 
 	protected abstract CompletableFuture<JobStatus> run();
 
+	public boolean canRetry() {
+		return getClass().getAnnotation(RetryIfInterrupted.class) != null;
+	}
+
 	public enum JobStatus {
 		PENDING,
 		RUNNING,

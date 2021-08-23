@@ -53,7 +53,7 @@ public class KillEntityCommand extends CustomCommand {
 				for (final Entity entity : chunk.getEntities())
 					if (location().distance(entity.getLocation()) <= radius)
 						if (toKill.contains(entity.getType()))
-							if (canKill(entity, force))
+							if (force || canKill(entity))
 								entities.add(entity);
 
 			entities.forEach(Entity::remove);
@@ -69,10 +69,7 @@ public class KillEntityCommand extends CustomCommand {
 			kill.run();
 	}
 
-	private boolean canKill(Entity entity, boolean force) {
-		if (force)
-			return true;
-
+	private boolean canKill(Entity entity) {
 		if (entity instanceof Monster) {
 			if (entity.getCustomName() != null)
 				return false;

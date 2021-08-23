@@ -17,21 +17,21 @@ public class MeasureCommand extends CustomCommand {
 		super(event);
 	}
 
-	static Map<UUID, Location> playerMap = new HashMap<>();
+	private static final Map<UUID, Location> map = new HashMap<>();
 
 	@Path("1")
 	void one() {
-		playerMap.put(uuid(), location());
+		map.put(uuid(), location());
 		send(PREFIX + "First position set");
 	}
 
 	@Path("2")
 	void two() {
-		if (!playerMap.containsKey(uuid()))
+		if (!map.containsKey(uuid()))
 			error("You have not set your first position yet");
 
-		send("&3Distance: &e" + (int) playerMap.get(uuid()).distance(location()));
-		playerMap.remove(uuid());
+		send("&3Distance: &e" + (int) map.get(uuid()).distance(location()));
+		map.remove(uuid());
 	}
 
 }
