@@ -7,6 +7,7 @@ import dev.morphia.annotations.Id;
 import dev.morphia.annotations.PreLoad;
 import gg.projecteden.mongodb.serializers.LocalDateTimeConverter;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.MailCommand;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
@@ -179,6 +180,8 @@ public class Mailer implements PlayerOwnedObject {
 
 			if (getFromMailer().getPendingMail().containsKey(worldGroup) && getFromMailer().getPendingMail().get(worldGroup).equals(this))
 				getFromMailer().getPendingMail().remove(worldGroup);
+			else
+				Nexus.warn("[Mail] Could not remove pending mail from " + Nickname.of(from));
 
 			getOwner().getMail(worldGroup).add(this);
 			sent = LocalDateTime.now();
@@ -245,7 +248,6 @@ public class Mailer implements PlayerOwnedObject {
 		public static Mail fromServer(UUID to, WorldGroup worldGroup, String message, List<ItemStack> items) {
 			return new Mail(to, StringUtils.getUUID0(), worldGroup, message, items);
 		}
-
 
 	}
 

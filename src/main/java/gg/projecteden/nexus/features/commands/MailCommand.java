@@ -166,7 +166,6 @@ public class MailCommand extends CustomCommand implements Listener {
 	}
 
 	public static class MailBoxMenu extends MenuUtils implements InventoryProvider {
-		private final MailerService service = new MailerService();
 		private final Mailer mailer;
 		private final WorldGroup worldGroup;
 
@@ -205,11 +204,7 @@ public class MailCommand extends CustomCommand implements Listener {
 			List<Mail> mails = mailer.getUnreadMail(worldGroup);
 
 			for (Mail mail : mails)
-				items.add(ClickableItem.from(mail.getDisplayItem().build(), e -> {
-					mail.received();
-					service.save(mailer);
-					new OpenMailMenu(mail);
-				}));
+				items.add(ClickableItem.from(mail.getDisplayItem().build(), e -> new OpenMailMenu(mail)));
 
 			addPagination(player, contents, items);
 		}
@@ -217,16 +212,19 @@ public class MailCommand extends CustomCommand implements Listener {
 
 	@Data
 	public static class OpenMailMenu implements TemporaryMenuListener {
-		private final String title;
-		private final Player player;
 		private final Mail mail;
 		private final Mailer mailer;
+		private final Player player;
+		private final String title;
 
 		public OpenMailMenu(Mail mail) {
-			this.title = "From " + Nickname.of(mail.getFrom());
-			this.player = mail.getOwner().getOnlinePlayer();
 			this.mail = mail;
 			this.mailer = mail.getOwner();
+			this.player = mailer.getOnlinePlayer();
+			this.title = "From " + Nickname.of(mail.getFrom());
+
+			mail.received();
+			new MailerService().save(mailer);
 
 			open(6, mail.getAllItems());
 		}

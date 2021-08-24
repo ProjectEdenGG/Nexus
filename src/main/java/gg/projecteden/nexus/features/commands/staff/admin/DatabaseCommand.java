@@ -47,13 +47,13 @@ public class DatabaseCommand extends CustomCommand {
 	}
 
 	@Async
-	@Path("count cache <service>")
+	@Path("countCache <service>")
 	<T extends PlayerOwnedObject> void countCache(MongoService<T> service) {
 		send(PREFIX + "Objects cached in " + name(service) + ": &e" + service.getCache().size());
 	}
 
 	@Async
-	@Path("count all [page]")
+	@Path("countAll [page]")
 	void countAll(@Arg("1") int page) {
 		Map<MongoService<? extends PlayerOwnedObject>, Integer> counts = new HashMap<>() {{
 			for (MongoService<? extends PlayerOwnedObject> service : services.values()) {
@@ -75,7 +75,7 @@ public class DatabaseCommand extends CustomCommand {
 	}
 
 	@Async
-	@Path("count all cache [page]")
+	@Path("countAllCaches [page]")
 	void countAllCaches(@Arg("1") int page) {
 		Map<MongoService<? extends PlayerOwnedObject>, Integer> counts = new HashMap<>() {{
 			for (MongoService<? extends PlayerOwnedObject> service : services.values()) {
@@ -100,6 +100,12 @@ public class DatabaseCommand extends CustomCommand {
 	@Path("debug <service> <uuid>")
 	<T extends PlayerOwnedObject> void debug(MongoService<T> service, UUID uuid) {
 		send(service.asPrettyJson(uuid));
+	}
+
+	@Async
+	@Path("debugCache <service> <uuid>")
+	<T extends PlayerOwnedObject> void debugCache(MongoService<T> service, UUID uuid) {
+		send(service.get(uuid).toPrettyString());
 	}
 
 	@Async
