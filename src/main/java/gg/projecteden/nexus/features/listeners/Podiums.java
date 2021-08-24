@@ -47,9 +47,9 @@ import static java.util.stream.Collectors.toList;
 
 @NoArgsConstructor
 @Environments(Env.PROD)
-public class Leaderboards implements Listener {
+public class Podiums implements Listener {
 
-	public enum Leaderboard {
+	public enum Podium {
 		PLAYTIME_TOTAL(2709, 2708, 2707) {
 			@Override
 			Map<UUID, String> getTop() {
@@ -152,7 +152,7 @@ public class Leaderboards implements Listener {
 
 		private final int[] ids;
 
-		Leaderboard(int... ids) {
+		Podium(int... ids) {
 			this.ids = ids;
 			if (ids.length != 3)
 				Nexus.warn(name() + " did not define 3 NPC ids (" + ids.length + ")");
@@ -166,7 +166,7 @@ public class Leaderboards implements Listener {
 				if (top == null)
 					return;
 
-				if (!new CooldownService().check(StringUtils.getUUID0(), "leaderboards_" + name(), Time.MINUTE.x(5)))
+				if (!new CooldownService().check(StringUtils.getUUID0(), "podiums_" + name(), Time.MINUTE.x(5)))
 					return;
 
 				updateActual();
@@ -178,7 +178,7 @@ public class Leaderboards implements Listener {
 			Map<UUID, String> top = getTop();
 			if (top.size() != 3) {
 				if (this != VOTES || LocalDate.now().getDayOfMonth() != 1) // Ignore votes for the first day of the month
-					Nexus.warn(name() + " leaderboard top query did not return 3 results (" + top.size() + ")");
+					Nexus.warn(name() + " podium query did not return 3 results (" + top.size() + ")");
 				return null;
 			}
 			return top;
@@ -195,7 +195,7 @@ public class Leaderboards implements Listener {
 					Nerd nerd = Nerd.of(entry.getKey());
 					CitizensUtils.updateName(ids[i.get()], colorize("&e" + entry.getValue()));
 					CitizensUtils.updateSkin(ids[i.get()], nerd.getName());
-					runCommandAsConsole("hd setline leaderboards_" + name().toLowerCase() + "_" + i.incrementAndGet() + " 1 " + decolorize(colorize(nerd.getColoredName())));
+					runCommandAsConsole("hd setline podiums_" + name().toLowerCase() + "_" + i.incrementAndGet() + " 1 " + decolorize(colorize(nerd.getColoredName())));
 				});
 			});
 		}
@@ -203,17 +203,17 @@ public class Leaderboards implements Listener {
 
 	static {
 		if (Nexus.getEnv() == Env.PROD)
-			for (Leaderboard value : Leaderboard.values())
+			for (Podium value : Podium.values())
 				Tasks.repeat(10, Time.HOUR, value::update);
 	}
 
 	@EventHandler
 	public void onVote(VotifierEvent event) {
-		Tasks.wait(1, Leaderboard.VOTES::update);
+		Tasks.wait(1, Podium.VOTES::update);
 	}
 
 	@EventHandler
 	public void onMcMMOLevelUp(McMMOPlayerLevelUpEvent event) {
-		Leaderboard.MCMMO.update();
+		Podium.MCMMO.update();
 	}
 }

@@ -1,8 +1,7 @@
 package gg.projecteden.nexus.features.minigames.lobby;
 
 import gg.projecteden.nexus.features.minigames.Minigames;
-import gg.projecteden.nexus.features.minigames.commands.PodiumsCommand;
-import gg.projecteden.nexus.features.minigames.commands.PodiumsCommand.Position;
+import gg.projecteden.nexus.features.minigames.commands.MinigamesCommand.MinigamePodiumPosition;
 import gg.projecteden.nexus.features.minigames.utils.MinigameNight.NextMGN;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -53,7 +52,7 @@ public class ActionBar {
 		while (matcher.find()) {
 			String group = matcher.group();
 			String position = group.substring("{podiums_".length(), group.length() - 1);
-			NPC npc = PodiumsCommand.getNpc(Position.get(position));
+			NPC npc = MinigamePodiumPosition.get(position).getNPC();
 			if (npc != null)
 				message = message.replace(group, ChatColor.DARK_AQUA + npc.getName());
 		}

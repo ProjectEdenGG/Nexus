@@ -37,14 +37,17 @@ import gg.projecteden.nexus.models.minigamersetting.MinigamerSettingService;
 import gg.projecteden.nexus.models.minigamessetting.MinigamesConfig;
 import gg.projecteden.nexus.models.minigamessetting.MinigamesConfigService;
 import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.perkowner.PerkOwner;
 import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
 import gg.projecteden.nexus.models.punishments.Punishment;
 import gg.projecteden.nexus.models.punishments.PunishmentType;
 import gg.projecteden.nexus.models.punishments.Punishments;
 import gg.projecteden.nexus.models.warps.WarpType;
+import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LocationUtils.RelativeLocation;
+import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -52,11 +55,14 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.Env;
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
@@ -515,6 +521,87 @@ public class MinigamesCommand extends CustomCommand {
 			Tasks.wait(5, this::acceptInvite);
 		} else
 			runCommand(inviteCommand);
+	}
+
+	static {
+		Arrays.asList(MinigamePodiumPosition.values()).forEach(position ->
+			Nexus.getInstance().addConfigDefault("minigames.podiums." + position.name().toLowerCase(), 0));
+	}
+
+	@Path("(podium|podiums) <position> <player> <title...>")
+	void update(MinigamePodiumPosition position, OfflinePlayer player, String title) {
+		CitizensUtils.updateName(position.getNPC(), "&l" + Nickname.of(player));
+		CitizensUtils.updateSkin(position.getNPC(), Name.of(player));
+		PlayerUtils.runCommandAsConsole("hd setline podium_" + position + " 1 " + title);
+		send(PREFIX + "Podium updated");
+	}
+
+	@Path("(podium|podiums) (getId|getIds) [position]")
+	void getId(MinigamePodiumPosition position) {
+		if (position == null) {
+			send(PREFIX + "Podium IDs:");
+			Arrays.asList(MinigamePodiumPosition.values()).forEach(_position -> send("&3" + StringUtils.camelCase(_position.name()) +
+				": &e" + _position.getId()));
+		} else
+			send(PREFIX + StringUtils.camelCase(position.name()) + ": &e" + position.getId());
+	}
+
+	@Path("(podium|podiums) setId <position> <id>")
+	void setId(MinigamePodiumPosition position, int id) {
+		position.setId(id);
+		send(PREFIX + StringUtils.camelCase(position.name()) + " podium ID updated to " + id);
+	}
+
+	@Path("(podium|podiums) tp <position>")
+	void tp(MinigamePodiumPosition position) {
+		player().teleportAsync(position.getNPC().getEntity().getLocation(), TeleportCause.COMMAND);
+	}
+
+	@Path("(podium|podiums) (s|summon) <position>")
+	void tphere(MinigamePodiumPosition position) {
+		runCommand("blockcenter");
+		position.getNPC().getEntity().teleportAsync(location());
+	}
+
+	public enum MinigamePodiumPosition {
+		LEFT,
+		RIGHT,
+		MIDDLE;
+
+		public static MinigamePodiumPosition get(String position) {
+			if (position != null)
+				switch (position.toLowerCase()) {
+					case "l": case "left": return LEFT;
+					case "r": case "right": return RIGHT;
+					case "m": case "middle": return MIDDLE;
+				}
+			throw new InvalidInputException("Invalid podium position");
+		}
+
+		public void setId(int id) {
+			Nexus.getInstance().getConfig().set("minigames.podiums." + name().toLowerCase(), id);
+			Nexus.getInstance().saveConfig();
+		}
+
+		private int getId() {
+			return Nexus.getInstance().getConfig().getInt("minigames.podiums." + name().toLowerCase());
+		}
+
+		public NPC getNPC() {
+			return CitizensAPI.getNPCRegistry().getById(getId());
+		}
+	}
+
+	@ConverterFor(MinigamePodiumPosition.class)
+	MinigamePodiumPosition convertToPosition(String value) {
+		return MinigamePodiumPosition.get(value);
+	}
+
+	@TabCompleterFor(MinigamePodiumPosition.class)
+	public List<String> tabCompletePosition(String filter) {
+		List<String> completions = Arrays.stream(MinigamePodiumPosition.values()).map(position -> position.name().toLowerCase()).collect(Collectors.toList());
+		new ArrayList<>(completions).forEach(position -> completions.add(String.valueOf(position.charAt(0))));
+		return completions;
 	}
 
 	@Path("holeinthewall flag <arena> <regionType> <flag> <setting...>")
