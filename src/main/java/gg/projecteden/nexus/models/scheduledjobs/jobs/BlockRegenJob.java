@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.models.scheduledjobs.jobs;
 
 import gg.projecteden.nexus.models.scheduledjobs.common.AbstractJob;
+import gg.projecteden.nexus.models.scheduledjobs.common.RetryIfInterrupted;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,6 +15,7 @@ import java.util.concurrent.CompletableFuture;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@RetryIfInterrupted
 public class BlockRegenJob extends AbstractJob {
 	private Location location;
 	private Material material;

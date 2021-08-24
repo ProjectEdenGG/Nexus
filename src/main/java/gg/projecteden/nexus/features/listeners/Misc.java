@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.commands.SpeedCommand;
 import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.warps.Warps;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.tip.Tip;
@@ -371,14 +372,16 @@ public class Misc implements Listener {
 	@EventHandler
 	public void onConnect(AsyncPlayerPreLoginEvent event) {
 		Nerd nerd = Nerd.of(event.getUniqueId());
-		World world = nerd.getOfflineWorld();
-		if (world == null) return;
+		try {
+			World world = nerd.getOfflineWorld();
+			if (world == null) return;
 
-		if (WorldGroup.isResourceWorld(world)) {
-			nerd = Nerd.of(event.getUniqueId());
-			if (nerd.getLastQuit().isBefore(YearMonth.now().atDay(1).atStartOfDay()))
-				toSpawn.add(event.getUniqueId());
-		}
+			if (WorldGroup.isResourceWorld(world)) {
+				nerd = Nerd.of(event.getUniqueId());
+				if (nerd.getLastQuit().isBefore(YearMonth.now().atDay(1).atStartOfDay()))
+					toSpawn.add(event.getUniqueId());
+			}
+		} catch (InvalidInputException ignore) {}
 	}
 
 	@EventHandler

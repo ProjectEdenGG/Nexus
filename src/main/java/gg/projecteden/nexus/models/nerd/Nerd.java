@@ -197,16 +197,16 @@ public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwned
 		return PlayerUtils.isVanished(getOnlinePlayer());
 	}
 
-	private transient NBTFile NBT_FILE;
+	private transient NBTFile nbtFile;
 
 	public @NotNull NBTFile getNbtFile() {
 		if (isOnline())
 			return loadNbtFile();
 
-		if (NBT_FILE == null)
-			NBT_FILE = loadNbtFile();
+		if (nbtFile == null)
+			nbtFile = loadNbtFile();
 
-		return NBT_FILE;
+		return nbtFile;
 	}
 
 	@NotNull
