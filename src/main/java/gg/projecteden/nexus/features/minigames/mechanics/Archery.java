@@ -217,13 +217,13 @@ public class Archery extends TeamlessMechanic {
 		ArcheryArena arena = match.getArena();
 		Set<ProtectedRegion> targetRegions = arena.getTargetRegions();
 
-		targetRegions.forEach(targetRegion -> {
-			Clipboard schem = match.getWEUtils().copy(match.getWGUtils().convert(targetRegion));
-			Direction direction = matchData.getTargetDirection(targetRegion);
-			String color = matchData.getTargetColor(targetRegion);
-			String key = (direction.name() + "_" + color).toLowerCase();
-			matchData.getTargetSchematics().put(key, schem);
-		});
+		targetRegions.forEach(targetRegion ->
+			match.getWEUtils().copy(match.getWGUtils().convert(targetRegion)).thenAccept(clipboard -> {
+				Direction direction = matchData.getTargetDirection(targetRegion);
+				String color = matchData.getTargetColor(targetRegion);
+				String key = (direction.name() + "_" + color).toLowerCase();
+				matchData.getTargetSchematics().put(key, clipboard);
+			}));
 	}
 
 	public boolean canPlaceTarget(Location location) {

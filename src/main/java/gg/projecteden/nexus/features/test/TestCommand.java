@@ -42,7 +42,6 @@ import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
@@ -140,19 +139,21 @@ public class TestCommand extends CustomCommand implements Listener {
 
 	@Path("movingSchematic <schematic> <seconds> <velocity>")
 	void movingSchematicTest(String schematic, int seconds, double velocity) {
-		List<FallingBlock> fallingBlocks = new WorldEditUtils(player()).paster()
+		new WorldEditUtils(player()).paster()
 			.file(schematic)
 			.at(location().add(-10, 0, 0))
-			.buildEntities();
+			.spawnFallingBlocks()
+			.thenAccept(fallingBlocks -> {
+				send(fallingBlocks.size() + " falling blocks spawned");
+				Tasks.wait(Time.SECOND.x(5), () -> {
+					Tasks.Countdown.builder()
+						.duration(Time.SECOND.x(seconds))
+						.onTick(i -> fallingBlocks.forEach(fallingBlock -> fallingBlock.setVelocity(new Vector(velocity, 0, 0))))
+						.start();
 
-		Tasks.wait(Time.SECOND.x(5), () -> {
-			Tasks.Countdown.builder()
-				.duration(Time.SECOND.x(seconds))
-				.onTick(i -> fallingBlocks.forEach(fallingBlock -> fallingBlock.setVelocity(new Vector(velocity, 0, 0))))
-				.start();
-
-			Tasks.wait(Time.SECOND.x(seconds), () -> fallingBlocks.forEach(Entity::remove));
-		});
+					Tasks.wait(Time.SECOND.x(seconds), () -> fallingBlocks.forEach(Entity::remove));
+				});
+			});
 	}
 
 	public void shutdownBossBars() {

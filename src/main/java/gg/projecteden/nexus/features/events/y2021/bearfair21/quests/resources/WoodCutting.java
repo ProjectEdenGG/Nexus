@@ -91,7 +91,7 @@ public class WoodCutting implements Listener {
 		@Getter
 		private final Map<Integer, Paste> pasters = new ConcurrentHashMap<>();
 		@Getter
-		private final Map<Integer, Queue<Location>> queues = new ConcurrentHashMap<>();
+		private final Map<Integer, CompletableFuture<Queue<Location>>> queues = new ConcurrentHashMap<>();
 		@Getter
 		private final Map<Integer, ProtectedRegion> regions = new ConcurrentHashMap<>();
 
@@ -154,27 +154,31 @@ public class WoodCutting implements Listener {
 			return future;
 		}
 
-		private Queue<Location> getQueue(int id) {
-			queues.computeIfAbsent(id, $ -> {
+		private CompletableFuture<Queue<Location>> getQueue(int id) {
+			return queues.computeIfAbsent(id, $ -> {
+				final CompletableFuture<Queue<Location>> future = new CompletableFuture<>();
+
 				ProtectedRegion region = getRegion(id);
 				if (region == null)
 					return null;
 
 				Location base = BearFair21.getWEUtils().toLocation(region.getMinimumPoint());
 				Queue<Location> queue = createDistanceSortedQueue(base);
-				queue.addAll(getBlocks(id).keySet());
-				return queue;
-			});
+				getBlocks(id).thenAccept(blocks -> {
+					queue.addAll(blocks.keySet());
+					future.complete(queue);
+				});
 
-			return queues.get(id);
+				return future;
+			});
 		}
 
-		private Map<Location, BlockData> getBlocks(int id) {
+		private CompletableFuture<Map<Location, BlockData>> getBlocks(int id) {
 			return getPaster(id).getComputedBlocks();
 		}
 
 		private Paste getPaster(int id) {
-			pasters.computeIfAbsent(id, $ -> {
+			return pasters.computeIfAbsent(id, $ -> {
 				ProtectedRegion region = getRegion(id);
 				if (region == null)
 					return null;
@@ -185,10 +189,8 @@ public class WoodCutting implements Listener {
 						.at(region.getMinimumPoint())
 						.duration(animationTime)
 						.file(schematicName)
-						.computeBlocks();
+						.inspect();
 			});
-
-			return pasters.get(id);
 		}
 
 		public ProtectedRegion getRegion(int id) {
@@ -208,8 +210,8 @@ public class WoodCutting implements Listener {
 				return;
 
 			treeAnimating = true;
-			Tasks.async(() -> {
-				Queue<Location> queue = new PriorityQueue<>(getQueue(id));
+			Tasks.async(() -> getQueue(id).thenAccept(queueCopy -> {
+				Queue<Location> queue = new PriorityQueue<>(queueCopy);
 
 				int wait = 0;
 				int blocksPerTick = Math.max(queue.size() / animationTime, 1);
@@ -229,17 +231,17 @@ public class WoodCutting implements Listener {
 				Tasks.wait(++wait, () -> treeAnimating = false);
 
 				Tasks.Countdown.builder()
-						.duration(randomInt(8, 12) * 4)
-						.onTick(i -> {
-							if (i % 2 == 0)
-								PlayerUtils.giveItems(player, getDrops(ItemUtils.getTool(player)));
-						})
-						.start();
+					.duration(randomInt(8, 12) * 4)
+					.onTick(i -> {
+						if (i % 2 == 0)
+							PlayerUtils.giveItems(player, getDrops(ItemUtils.getTool(player)));
+					})
+					.start();
 
 				Jingle.TREE_FELLER.play(player);
 
 				new BearFair21TreeRegenJob(this, id).schedule(randomInt(3 * 60, 5 * 60));
-			});
+			}));
 		}
 
 	}

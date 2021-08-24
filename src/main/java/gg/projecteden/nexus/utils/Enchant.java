@@ -21,6 +21,7 @@ import java.util.List;
  * If replacing an old CustomEnchantments enchant, please use {@link OldCEConverter.ConversionEnchant}
  */
 @UtilityClass
+@SuppressWarnings("unused")
 public class Enchant {
 
 	/**

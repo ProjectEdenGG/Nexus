@@ -286,14 +286,14 @@ public class LightTheTree implements Listener {
 			.file("pugmas20/tree_light")
 			.duration(Time.SECOND.x(7))
 			.air(false)
-			.computeBlocks();
+			.inspect();
 
 	public static void updateTreeLightBlocks(Player player) {
 		treeLightPaster.buildClientSide(player);
 	}
 
 	public static void updateTreeLightBlocksAir(Player player) {
-		treeLightPaster.getComputedBlocks().forEach((location, blockData) -> air(player, location));
+		treeLightPaster.getComputedBlocks().thenAccept(blocks -> blocks.keySet().forEach(location -> air(player, location)));
 	}
 
 	public static void animateTreeLightBlocks(Player player) {

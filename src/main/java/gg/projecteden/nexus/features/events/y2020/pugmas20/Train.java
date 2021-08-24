@@ -224,7 +224,7 @@ public class Train {
 			return false;
 		}
 
-		paste.buildAsync();
+		paste.build();
 		return true;
 	}
 

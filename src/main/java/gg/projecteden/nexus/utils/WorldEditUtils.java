@@ -334,19 +334,25 @@ public class WorldEditUtils {
 		return pattern;
 	}
 
-	public Clipboard copy(Location min, Location max) {
+	public CompletableFuture<Clipboard> copy(Location min, Location max) {
 		return copy(worldGuardUtils.getRegion(min, max));
 	}
 
-	public Clipboard copy(Region region) {
-		Clipboard clipboard = new BlockArrayClipboard(region);
-		try (EditSession editSession = getEditSession()) {
-			ForwardExtentCopy copy = new ForwardExtentCopy(editSession, region, clipboard, region.getMinimumPoint());
-			Operations.completeLegacy(copy);
-		} catch (WorldEditException ex) {
-			ex.printStackTrace();
-		}
-		return clipboard;
+	public CompletableFuture<Clipboard> copy(Region region) {
+		final CompletableFuture<Clipboard> future = new CompletableFuture<>();
+
+		Tasks.async(() -> {
+			Clipboard clipboard = new BlockArrayClipboard(region);
+			try (EditSession editSession = getEditSession()) {
+				ForwardExtentCopy copy = new ForwardExtentCopy(editSession, region, clipboard, region.getMinimumPoint());
+				Operations.completeLegacy(copy);
+				future.complete(clipboard);
+			} catch (WorldEditException ex) {
+				ex.printStackTrace();
+			}
+		});
+
+		return future;
 	}
 
 	public Paste paster() {
@@ -356,26 +362,27 @@ public class WorldEditUtils {
 	@Data
 	@NoArgsConstructor
 	public class Paste {
-		private Clipboard clipboard;
+		private CompletableFuture<Clipboard> clipboardFuture;
 		private BlockVector3 at;
 		private boolean pasteAir = true;
 		private Transform transform;
 		private Region[] regions = new Region[]{RegionWrapper.GLOBAL()};
 
 		private int ticks;
-		private Map<Location, BlockData> blockDataMap = new HashMap<>();
+		private CompletableFuture<Map<Location, BlockData>> blockDataMap = new CompletableFuture<>();
 
 		public Paste file(String fileName) {
 			return clipboard(getSchematic(fileName));
 		}
 
 		public Paste clipboard(Clipboard clipboard) {
-			this.clipboard = clipboard;
+			this.clipboardFuture = new CompletableFuture<>();
+			this.clipboardFuture.complete(clipboard);
 			return this;
 		}
 
 		public Paste clipboard(Region region) {
-			this.clipboard = copy(region);
+			this.clipboardFuture = copy(region);
 			return this;
 		}
 
@@ -413,71 +420,52 @@ public class WorldEditUtils {
 		}
 
 		public Paste blocks(Map<Location, BlockData> blockDataMap) {
-			this.blockDataMap = blockDataMap;
+			this.blockDataMap = new CompletableFuture<>();
+			this.blockDataMap.complete(blockDataMap);
 			return this;
 		}
 
-		public Paste computeBlocks() {
-			this.blockDataMap = findBlocks();
+		public Paste inspect() {
+			this.blockDataMap = computeBlocks();
 			return this;
 		}
 
-		public Map<Location, BlockData> getComputedBlocks() {
+		public CompletableFuture<Map<Location, BlockData>> getComputedBlocks() {
 			return blockDataMap;
 		}
 
-		public void paste() {
-			try (EditSession editSession = getEditSessionBuilder().allowedRegions(regions).build()) {
-				clipboard.paste(editSession, at, pasteAir, transform);
-			} catch (WorldEditException ex) {
-				ex.printStackTrace();
-			}
-		}
-
 		public void pasteAsync() {
-			Tasks.async(this::paste);
-		}
-
-		public void build() {
-			if (blockDataMap.isEmpty())
-				findBlocks();
-
-			blockDataMap.forEach((location, blockData) -> location.getBlock().setBlockData(blockData));
-		}
-
-		public void buildClientSide(HasPlayer player) {
-			if (blockDataMap.isEmpty())
-				findBlocks();
-
-			Player _player = player.getPlayer();
-			blockDataMap.forEach(_player::sendBlockChange);
-		}
-
-		public void buildAsync() {
 			Tasks.async(() -> {
-				if (blockDataMap.isEmpty())
-					findBlocks();
-
-				Tasks.sync(() -> blockDataMap.forEach((location, blockData) -> location.getBlock().setBlockData(blockData)));
+				try (EditSession editSession = getEditSessionBuilder().allowedRegions(regions).build()) {
+					clipboardFuture.thenAccept(clipboard -> clipboard.paste(editSession, at, pasteAir, transform));
+				} catch (WorldEditException ex) {
+					ex.printStackTrace();
+				}
 			});
 		}
 
+		public void build() {
+			computeBlocks().thenAccept(blocks -> blocks.forEach((location, blockData) -> location.getBlock().setBlockData(blockData)));
+		}
+
+		public void buildClientSide(HasPlayer player) {
+			Player _player = player.getPlayer();
+			computeBlocks().thenAccept(blocks -> blocks.forEach(_player::sendBlockChange));
+		}
+
 		public CompletableFuture<Void> buildQueue() {
-			return buildQueue(location -> () -> location.getBlock().setBlockData(blockDataMap.get(location)));
+			return buildQueue(location -> () -> computeBlocks().thenAccept(blocks -> location.getBlock().setBlockData(blocks.get(location))));
 		}
 
 		public CompletableFuture<Void> buildQueueClientSide(HasPlayer player) {
-			return buildQueue(location -> () -> player.getPlayer().sendBlockChange(location.getBlock().getLocation(), blockDataMap.get(location)));
+			return buildQueue(location -> () -> computeBlocks().thenAccept(blocks -> player.getPlayer().sendBlockChange(location.getBlock().getLocation(), blocks.get(location))));
 		}
 
 		public CompletableFuture<Void> buildQueue(Function<Location, Runnable> action) {
 			CompletableFuture<Void> future = new CompletableFuture<>();
-			Tasks.async(() -> {
-				if (blockDataMap.isEmpty())
-					findBlocks();
-
+			Tasks.async(() -> computeBlocks().thenAccept(blocks -> {
 				Queue<Location> queue = createDistanceSortedQueue(toLocation(at));
-				queue.addAll(blockDataMap.keySet());
+				queue.addAll(blocks.keySet());
 
 				int wait = 0;
 				int blocksPerTick = Math.max(queue.size() / ticks, 1);
@@ -495,18 +483,22 @@ public class WorldEditUtils {
 				}
 
 				Tasks.wait(++wait, () -> future.complete(null));
-			});
+			}));
 
 			return future;
 		}
 
-		public List<FallingBlock> buildEntities() {
-			if (blockDataMap.isEmpty())
-				findBlocks();
+		public CompletableFuture<List<FallingBlock>> spawnFallingBlocks() {
+			final CompletableFuture<List<FallingBlock>> future = new CompletableFuture<>();
 
-			return new ArrayList<>() {{
-				blockDataMap.forEach((location, blockData) -> add(spawnFallingBlock(location, blockData)));
-			}};
+			computeBlocks().thenAccept(blocks -> future.complete(new ArrayList<>() {{
+				blocks.forEach((location, blockData) -> {
+					if (!MaterialTag.ALL_AIR.isTagged(blockData.getMaterial()))
+						add(spawnFallingBlock(location, blockData));
+				});
+			}}));
+
+			return future;
 		}
 
 		private FallingBlock spawnFallingBlock(Location location, BlockData blockData) {
@@ -517,27 +509,31 @@ public class WorldEditUtils {
 			return fallingBlock;
 		}
 
-		public Map<Location, BlockData> findBlocks() {
-			Iterator<BlockVector3> iterator = clipboard.iterator();
+		public CompletableFuture<Map<Location, BlockData>> computeBlocks() {
+			if (!blockDataMap.isDone())
+				clipboardFuture.thenAccept(clipboard -> {
+					Iterator<BlockVector3> iterator = clipboard.iterator();
 
-			BlockVector3 origin = clipboard.getOrigin();
-			int relX = at.getBlockX() - origin.getBlockX();
-			int relY = at.getBlockY() - origin.getBlockY();
-			int relZ = at.getBlockZ() - origin.getBlockZ();
+					BlockVector3 origin = clipboard.getOrigin();
+					int relX = at.getBlockX() - origin.getBlockX();
+					int relY = at.getBlockY() - origin.getBlockY();
+					int relZ = at.getBlockZ() - origin.getBlockZ();
 
-			Map<Location, BlockData> blockDataMap = new HashMap<>();
+					Map<Location, BlockData> blockDataMap = new HashMap<>();
 
-			while (iterator.hasNext()) {
-				BlockVector3 blockVector3 = iterator.next();
-				BaseBlock baseBlock = blockVector3.getFullBlock(clipboard);
-				if (baseBlock.getMaterial().isAir() && !pasteAir)
-					continue;
+					while (iterator.hasNext()) {
+						BlockVector3 blockVector3 = iterator.next();
+						BaseBlock baseBlock = blockVector3.getFullBlock(clipboard);
+						if (baseBlock.getMaterial().isAir() && !pasteAir)
+							continue;
 
-				Location location = toLocation(blockVector3).add(relX, relY, relZ);
-				blockDataMap.put(location, BukkitAdapter.adapt(baseBlock));
-			}
+						Location location = toLocation(blockVector3).add(relX, relY, relZ);
+						blockDataMap.put(location, BukkitAdapter.adapt(baseBlock));
+					}
 
-			this.blockDataMap = blockDataMap;
+					this.blockDataMap.complete(blockDataMap);
+				});
+
 			return blockDataMap;
 		}
 

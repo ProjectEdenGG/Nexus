@@ -1,10 +1,12 @@
 package gg.projecteden.nexus.features.customenchants;
 
-import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.Enchant;
+import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 

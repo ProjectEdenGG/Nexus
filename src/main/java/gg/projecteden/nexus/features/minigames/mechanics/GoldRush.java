@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
-import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
@@ -106,9 +105,10 @@ public final class GoldRush extends TeamlessMechanic {
 		Region region = new CuboidRegion(p1, p2);
 		WEUtils.replace(region, Collections.singleton(BlockTypes.AIR), pattern);
 
-		Clipboard schematic = WEUtils.copy(locations.get(0).clone().subtract(0, 2, 0), locations.get(0).clone().subtract(0, mineStackHeight, 0));
-		for (Location location : locations)
-			WEUtils.paster().clipboard(schematic).at(WEUtils.toBlockVector3(location.clone().subtract(0, mineStackHeight, 0))).pasteAsync();
+		WEUtils.copy(locations.get(0).clone().subtract(0, 2, 0), locations.get(0).clone().subtract(0, mineStackHeight, 0)).thenAccept(clipboard -> {
+			for (Location location : locations)
+				WEUtils.paster().clipboard(clipboard).at(WEUtils.toBlockVector3(location.clone().subtract(0, mineStackHeight, 0))).pasteAsync();
+		});
 	}
 
 	public void removeMineStacks(int mineStackHeight, Location loc) {
