@@ -43,6 +43,8 @@ public class Market {
 		addSellItem(ShopGroup.SURVIVAL, false, Material.BRICKS, 32, 300);
 		addSellItem(ShopGroup.SURVIVAL, false, Material.IRON_ORE, 32, 1200);
 		addSellItem(ShopGroup.SURVIVAL, false, Material.GOLD_ORE, 32, 1800);
+		addSellItem(ShopGroup.SURVIVAL, false, Material.DEEPSLATE_IRON_ORE, 32, 2400);
+		addSellItem(ShopGroup.SURVIVAL, false, Material.DEEPSLATE_GOLD_ORE, 32, 3600);
 		addSellItem(ShopGroup.SURVIVAL, false, Material.GLOWSTONE, 32, 400);
 		addSellItem(ShopGroup.SURVIVAL, false, Material.COAL_BLOCK, 32, 640);
 		addSellItem(ShopGroup.SURVIVAL, false, Material.QUARTZ_BLOCK, 32, 600);
@@ -129,13 +131,17 @@ public class Market {
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.CHISELED_STONE_BRICKS, 64, 25);
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.IRON_ORE, 32, 600);
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.GOLD_ORE, 32, 900);
+		addBuyItem(ShopGroup.SURVIVAL, false, Material.DEEPSLATE_IRON_ORE, 32, 900);
+		addBuyItem(ShopGroup.SURVIVAL, false, Material.DEEPSLATE_GOLD_ORE, 32, 1350);
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.COAL_BLOCK, 32, 120);
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.QUARTZ_BLOCK, 32, 300);
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.SEA_LANTERN, 1, 7.5);
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.REDSTONE_BLOCK, 32, 500);
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.LAPIS_BLOCK, 32, 800);
-		addBuyItem(ShopGroup.SURVIVAL, false, Material.IRON_BLOCK, 8, 65);
-		addBuyItem(ShopGroup.SURVIVAL, false, Material.GOLD_BLOCK, 16, 100);
+		addBuyItem(ShopGroup.SURVIVAL, false, Material.IRON_BLOCK, 8, 35);
+		addBuyItem(ShopGroup.SURVIVAL, false, Material.GOLD_BLOCK, 16, 70);
+		addBuyItem(ShopGroup.SURVIVAL, false, Material.RAW_IRON_BLOCK, 8, 75);
+		addBuyItem(ShopGroup.SURVIVAL, false, Material.RAW_GOLD_BLOCK, 16, 115);
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.EMERALD_BLOCK, 16, 144);
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.DIAMOND_BLOCK, 3, 800);
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.POISONOUS_POTATO, 16, 30);
