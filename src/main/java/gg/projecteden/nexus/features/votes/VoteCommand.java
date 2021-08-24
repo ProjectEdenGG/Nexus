@@ -95,8 +95,8 @@ public class VoteCommand extends CustomCommand {
 
 	@Async
 	@Permission("group.admin")
-	@Path("getTopDays [page]")
-	void getTopDays(@Arg("1") int page) {
+	@Path("getTopDaysThisMonth [page]")
+	void getTopDaysThisMonth(@Arg("1") int page) {
 		Map<LocalDate, Integer> days = service.getVotesByDay();
 
 		send(PREFIX + "Most votes in a day");
@@ -105,13 +105,13 @@ public class VoteCommand extends CustomCommand {
 			return json(index + " " + color + TimeUtils.shortishDateFormat(date) + " &7- " + days.get(date));
 		};
 
-		paginate(days.keySet(), formatter, "/votes getTopDays", page);
+		paginate(Utils.sortByValueReverse(days).keySet(), formatter, "/votes getTopDays", page);
 	}
 
 	@Async
 	@Permission("group.admin")
-	@Path("allCounts")
-	void allCounts() {
+	@Path("onlineCounts")
+	void onlineCounts() {
 		Map<Integer, List<Player>> activeVotes = new HashMap<>();
 		for (Player player : PlayerUtils.getOnlinePlayers()) {
 			Voter voter = service.get(player);

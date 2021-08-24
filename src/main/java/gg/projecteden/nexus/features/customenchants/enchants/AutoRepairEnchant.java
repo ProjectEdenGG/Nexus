@@ -5,7 +5,6 @@ import gg.projecteden.nexus.features.customenchants.CustomEnchant;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils;
 import gg.projecteden.utils.TimeUtils.Time;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -21,7 +20,7 @@ public class AutoRepairEnchant extends CustomEnchant {
 	}
 
 	static {
-		Tasks.repeat(TimeUtils.Time.SECOND.x(3), Time.SECOND.x(1.5), () -> {
+		Tasks.repeat(Time.SECOND.x(3), Time.SECOND.x(1.5), () -> {
 			for (Player player : PlayerUtils.getOnlinePlayers()) {
 				if (AFK.get(player).isAfk()) continue;
 				for (ItemStack item : getItems(player.getInventory())) {
