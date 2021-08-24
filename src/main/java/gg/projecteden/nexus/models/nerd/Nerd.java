@@ -1,8 +1,5 @@
 package gg.projecteden.nexus.models.nerd;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.mongodb.DBObject;
 import de.tr7zw.nbtapi.NBTFile;
 import de.tr7zw.nbtapi.NBTList;
@@ -32,7 +29,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.SneakyThrows;
 import lombok.ToString;
 import me.lexikiq.HasUniqueId;
 import org.bukkit.Bukkit;
@@ -201,7 +197,20 @@ public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwned
 		return PlayerUtils.isVanished(getOnlinePlayer());
 	}
 
-	private final static LoadingCache<UUID, NBTFile> NBT_FILE_CACHE = CacheBuilder.newBuilder().build(CacheLoader.from(uuid -> {
+	private transient NBTFile NBT_FILE;
+
+	public @NotNull NBTFile getNbtFile() {
+		if (isOnline())
+			return loadNbtFile();
+
+		if (NBT_FILE == null)
+			NBT_FILE = loadNbtFile();
+
+		return NBT_FILE;
+	}
+
+	@NotNull
+	private NBTFile loadNbtFile() {
 		try {
 			File file = Paths.get(Bukkit.getServer().getWorlds().get(0).getName() + "/playerdata/" + uuid + ".dat").toFile();
 			if (file.exists())
@@ -210,13 +219,6 @@ public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwned
 		} catch (Exception ex) {
 			throw new InvalidInputException("[Nerd] Error opening " + Name.of(uuid) + "'s data file");
 		}
-	}));
-
-	@SneakyThrows
-	public @NotNull NBTFile getNbtFile() {
-		if (isOnline())
-			NBT_FILE_CACHE.refresh(uuid);
-		return NBT_FILE_CACHE.get(uuid);
 	}
 
 	public World getWorld() {
