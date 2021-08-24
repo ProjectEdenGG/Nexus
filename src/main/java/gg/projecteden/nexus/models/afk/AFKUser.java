@@ -98,8 +98,10 @@ public class AFKUser implements PlayerOwnedObject {
 		sendMessage(AFK.PREFIX + "You have been sent to AFK limbo. Move around to exit");
 	}
 
+	private CompletableFuture<Boolean> teleport;
+
 	public void unlimbo() {
-		if (!isLimbo())
+		if (!isLimbo() || teleport != null)
 			return;
 
 		Nexus.log("[AFK] Returning " + getNickname() + " from limbo");
@@ -109,7 +111,6 @@ public class AFKUser implements PlayerOwnedObject {
 		final Back back = backService.get(player);
 		final Location location = back.getLocations().isEmpty() ? null : back.getLocations().remove(0);
 
-		CompletableFuture<Boolean> teleport;
 		if (location == null) {
 			Nexus.severe("[AFK] Back location for " + getNickname() + " is null");
 			teleport = WarpType.NORMAL.get("spawn").teleportAsync(getOnlinePlayer(), TeleportCause.PLUGIN);
@@ -121,6 +122,7 @@ public class AFKUser implements PlayerOwnedObject {
 		teleport.thenRun(() -> {
 			afk = false;
 			notAfk();
+			teleport = null;
 		});
 	}
 

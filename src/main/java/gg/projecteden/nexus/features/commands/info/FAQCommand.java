@@ -47,7 +47,7 @@ public class FAQCommand extends CustomCommand {
 	void chat() {
 		send(json("&eChannels &3organize the chat so that many conversations can take place at once."));
 		line();
-		send(json("&2[G] &2Global &7- &3The main channel, visible to everyone."));
+		send(json("&2[G] &2Global &7- &3The main channel, visible to everyone"));
 		send(json("&5[D] &5Discord &7- &3Global messages from people on Discord"));
 		send(json("&e[L] &eLocal &7- &3For nearby players").hover("&e" + Chat.getLocalRadius() + " blocks"));
 		send(json("&3[M] &3Minigames &7- &3For the Minigame world"));
@@ -63,10 +63,10 @@ public class FAQCommand extends CustomCommand {
 	@Path("(rank|ranks|rankup)")
 	void rankup() {
 		send(json("&3Here's a simple guide on how to &eprogress &3through the ranks:"));
-		send(json("&e[+] &3You start out as a " + Rank.GUEST.getColoredName() + "&3."));
-		send(json("&e[+] &3Play for 24 hours to become " + Rank.MEMBER.getColoredName() + "&3.").command("/hours").hover("&eClick here &3to view how long you've played"));
-		send(json("&e[+] &3Follow the rules, and you might get promoted to " + Rank.TRUSTED.getColoredName() + "&3."));
-		send(json("&e[+] &3Be a role model to become " + Rank.ELITE.getColoredName() + "&3."));
+		send(json("&e[+] &3You start out as a " + Rank.GUEST.getColoredName()));
+		send(json("&e[+] &3Play for 24 hours to become " + Rank.MEMBER.getColoredName()).command("/hours").hover("&eClick here &3to view how long you've played"));
+		send(json("&e[+] &3Follow the rules, and you might get promoted to " + Rank.TRUSTED.getColoredName()));
+		send(json("&e[+] &3Be a role model to become " + Rank.ELITE.getColoredName()));
 		line();
 		back();
 	}
@@ -80,7 +80,7 @@ public class FAQCommand extends CustomCommand {
 	@Path("mcMMO")
 	void mcMMO() {
 		send(json("&eYes&3, McMMO has been &eheavily nerfed&3, as we are a survival server."));
-		send(json("&3There are still benefits for higher levels, &ehowever &3they will not entirely change the survival gameplay."));
+		send(json("&3There are still benefits for higher levels, &ehowever &3they will not entirely change the survival gameplay"));
 		line();
 		send(json("&3[+] &eClick here &3to open the &ewiki &3on &emcMMO").url(WikiType.SERVER.getBasePath() + "McMMO"));
 		line();
