@@ -16,7 +16,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.models.reminders.ReminderConfig;
 import gg.projecteden.nexus.models.reminders.ReminderConfig.Reminder;
 import gg.projecteden.nexus.models.reminders.ReminderConfig.Reminder.ReminderCondition;
-import gg.projecteden.nexus.utils.GoogleUtils;
+import gg.projecteden.nexus.utils.GoogleUtils.SheetsUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.BiFunction;
 
+import static gg.projecteden.nexus.utils.GoogleUtils.SheetsUtils.EdenSpreadsheet.REMINDERS;
 import static gg.projecteden.nexus.utils.StringUtils.ellipsis;
 import static gg.projecteden.utils.TimeUtils.shortDateTimeFormat;
 import static java.util.stream.Collectors.toList;
@@ -49,7 +50,6 @@ import static java.util.stream.Collectors.toList;
 @Aliases("reminder")
 @Permission("group.staff")
 public class RemindersCommand extends CustomCommand implements Listener {
-	private static final String spreadsheetId = "1JIDrL-ZWE501uIRh5BD8QwwmewvmBKClgwSaTvwGE6E";
 	private static ReminderConfig config;
 
 	static {
@@ -396,7 +396,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 		}
 
 		public void read() {
-			final ValueRange valueRange = GoogleUtils.sheetValues(spreadsheetId, getSheetId(), "A:Z");
+			final ValueRange valueRange = SheetsUtils.sheetValues(REMINDERS, getSheetId(), "A:Z");
 			final Iterator<List<Object>> iterator = valueRange.getValues().iterator();
 			if (iterator.hasNext())
 				iterator.next(); // Skip headers
@@ -414,7 +414,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 			for (Reminder reminder : getReminders())
 				rows.add(reminder.serialize());
 
-			GoogleUtils.updateEntireSheet(spreadsheetId, getSheetId(), values);
+			SheetsUtils.updateEntireSheet(REMINDERS, getSheetId(), values);
 		}
 	}
 }
