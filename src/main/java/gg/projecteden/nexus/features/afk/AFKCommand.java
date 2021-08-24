@@ -59,18 +59,23 @@ public class AFKCommand extends CustomCommand implements Listener {
 	@Path("settings")
 	void settings() {
 		send(PREFIX + "Available settings:");
+		final AFKUser user = AFK.get(player());
 		for (AFKSetting setting : AFKSetting.values()) {
-			final JsonBuilder json = json("&e " + camelCase(setting) + " &7- " + setting.getDescription());
+			final boolean value = user.getSetting(setting);
+			final JsonBuilder json = json((value ? "&a" : "&c") + " " + camelCase(setting))
+				.hover(value ? "&a&lEnabled" : "&c&lDisabled", setting.getMessage().apply(value))
+				.next(" &7- " + setting.getDescription());
+
 			final String extra = setting.getDescriptionExtra();
 			if (!isNullOrEmpty(extra))
-				json.hover("&f" + extra);
+				json.hover("", "&7" + extra);
 			send(json.suggest("/afk settings " + setting.name().toLowerCase() + " "));
 		}
 	}
 
 	@Path("settings <setting> [value]")
 	void settings(AFKSetting setting, Boolean value) {
-		AFKUser user = service.get(player());
+		final AFKUser user = AFK.get(player());
 		if (value == null)
 			value = !user.getSetting(setting);
 
@@ -81,7 +86,7 @@ public class AFKCommand extends CustomCommand implements Listener {
 
 	@EventHandler(ignoreCancelled = true)
 	public void onChat(MinecraftChatEvent event) {
-		AFKUser user = AFK.get(event.getChatter().getOnlinePlayer());
+		final AFKUser user = AFK.get(event.getChatter().getOnlinePlayer());
 		if (user.isAfk())
 			user.notAfk();
 		else
