@@ -44,7 +44,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -54,9 +53,10 @@ import static gg.projecteden.nexus.utils.PlayerUtils.showPlayer;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @Data
-@EqualsAndHashCode(exclude = "match")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Colored {
 	@NotNull
+	@EqualsAndHashCode.Include
 	private UUID uuid;
 	@ToString.Exclude
 	private Match match;
@@ -84,7 +84,7 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 	public @NotNull Player getOnlinePlayer() {
 		final Player player = Bukkit.getPlayer(uuid);
 		if (player == null || !player.isOnline())
-			throw new PlayerNotOnlineException(Bukkit.getOfflinePlayer(uuid));
+			throw new PlayerNotOnlineException(uuid);
 		return player;
 	}
 
@@ -94,6 +94,7 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 	}
 
 	@Override
+	@Deprecated
 	public @NotNull OfflinePlayer getOfflinePlayer() {
 		return getPlayer();
 	}
@@ -513,11 +514,4 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 		return match.getMechanic().usesPerk(perk, this);
 	}
 
-	@Override
-	public boolean equals(@Nullable Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		Minigamer minigamer = (Minigamer) o;
-		return Objects.equals(getPlayer().getUniqueId(), minigamer.getPlayer().getUniqueId());
-	}
 }

@@ -3,7 +3,6 @@ package gg.projecteden.nexus.models.safecracker;
 import gg.projecteden.annotations.Disabled;
 import gg.projecteden.mongodb.annotations.PlayerClass;
 import gg.projecteden.nexus.models.MongoService;
-import org.bukkit.OfflinePlayer;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -22,8 +21,8 @@ public class SafeCrackerPlayerService extends MongoService<SafeCrackerPlayer> {
 		return cache;
 	}
 
-	public LinkedHashMap<OfflinePlayer, Integer> getScores(SafeCrackerEvent.SafeCrackerGame game) {
-		LinkedHashMap<OfflinePlayer, Integer> scores = new LinkedHashMap<>();
+	public LinkedHashMap<UUID, Integer> getScores(SafeCrackerEvent.SafeCrackerGame game) {
+		LinkedHashMap<UUID, Integer> scores = new LinkedHashMap<>();
 		List<SafeCrackerPlayer> temp = new ArrayList<>();
 		List<SafeCrackerPlayer> players = getAll();
 		players.forEach(player -> {
@@ -32,7 +31,7 @@ public class SafeCrackerPlayerService extends MongoService<SafeCrackerPlayer> {
 					temp.add(player);
 		});
 		temp.sort(Comparator.comparing(player -> player.getGames().get(game.getName()).getScore()));
-		temp.forEach(player -> scores.put(player.getOfflinePlayer(), player.getGames().get(game.getName()).getScore()));
+		temp.forEach(player -> scores.put(player.getUuid(), player.getGames().get(game.getName()).getScore()));
 		return scores;
 	}
 

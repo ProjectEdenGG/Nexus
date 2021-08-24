@@ -165,7 +165,7 @@ public class SkinCache implements PlayerOwnedObject {
 	}
 
 	private ItemStack getHeadFromPlayer() {
-		return new ItemBuilder(Material.PLAYER_HEAD).skullOwnerActual(getOfflinePlayer()).build();
+		return new ItemBuilder(Material.PLAYER_HEAD).skullOwner(this).build();
 	}
 
 }

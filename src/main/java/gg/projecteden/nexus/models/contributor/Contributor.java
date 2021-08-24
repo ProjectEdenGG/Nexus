@@ -17,8 +17,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 
 import java.lang.reflect.Modifier;
 import java.text.NumberFormat;
@@ -100,10 +98,6 @@ public class Contributor implements PlayerOwnedObject {
 		private String packageName;
 		private String purchaserName;
 		private UUID purchaserUuid;
-
-		public OfflinePlayer getPurchaserOfflinePlayer() {
-			return Bukkit.getOfflinePlayer(purchaserUuid);
-		}
 
 		public double getRealPrice() {
 			if (Package.CUSTOM_DONATION.getId().equals(packageId))

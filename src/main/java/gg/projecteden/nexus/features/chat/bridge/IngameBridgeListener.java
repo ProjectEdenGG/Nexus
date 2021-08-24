@@ -5,11 +5,11 @@ import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
+import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.nickname.NicknameService;
 import lombok.NoArgsConstructor;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -44,19 +44,18 @@ public class IngameBridgeListener implements Listener {
 			while (matcher.find()) {
 				String group = matcher.group();
 				String search = group.replace("@", "");
-				OfflinePlayer player = Bukkit.getOfflinePlayer(search);
-				DiscordUser mentioned = new DiscordUserService().get(player);
-				if (mentioned.getUserId() != null) {
-					message = message.replace(group, "<@" + mentioned.getUserId() + ">");
-					continue;
-				}
-
-				Nickname fromNickname = new NicknameService().getFromNickname(search);
-				if (fromNickname != null) {
-					mentioned = new DiscordUserService().get(fromNickname);
+				Nerd nerd = new NerdService().findExact(search);
+				if (nerd != null) {
+					DiscordUser mentioned = new DiscordUserService().get(nerd);
 					if (mentioned.getUserId() != null) {
 						message = message.replace(group, "<@" + mentioned.getUserId() + ">");
-						continue;
+					} else {
+						Nickname fromNickname = new NicknameService().getFromNickname(search);
+						if (fromNickname != null) {
+							mentioned = new DiscordUserService().get(fromNickname);
+							if (mentioned.getUserId() != null)
+								message = message.replace(group, "<@" + mentioned.getUserId() + ">");
+						}
 					}
 				}
 			}

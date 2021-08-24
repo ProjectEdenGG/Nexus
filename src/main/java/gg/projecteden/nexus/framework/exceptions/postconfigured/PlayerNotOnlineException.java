@@ -7,12 +7,12 @@ import java.util.UUID;
 
 public class PlayerNotOnlineException extends PostConfiguredException {
 
-	public PlayerNotOnlineException(UUID playerUUID) {
-		super(Name.of(playerUUID) + " is not online");
+	public PlayerNotOnlineException(UUID uuid) {
+		super(Name.of(uuid) + " is not online");
 	}
 
-	public PlayerNotOnlineException(HasUniqueId offlinePlayer) {
-		super(Name.of(offlinePlayer) + " is not online");
+	public PlayerNotOnlineException(HasUniqueId player) {
+		super(Name.of(player) + " is not online");
 	}
 
 }

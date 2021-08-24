@@ -10,16 +10,19 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.safecracker.SafeCrackerEvent;
 import gg.projecteden.nexus.models.safecracker.SafeCrackerEventService;
 import gg.projecteden.nexus.models.safecracker.SafeCrackerPlayer;
 import gg.projecteden.nexus.models.safecracker.SafeCrackerPlayer.Game;
 import gg.projecteden.nexus.models.safecracker.SafeCrackerPlayer.SafeCrackerPlayerNPC;
 import gg.projecteden.nexus.models.safecracker.SafeCrackerPlayerService;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.TimeUtils.Time;
@@ -44,6 +47,8 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.UUID;
+import java.util.function.BiFunction;
 
 @NoArgsConstructor
 @Disabled
@@ -165,15 +170,15 @@ public class SafeCrackerCommand extends CustomCommand implements Listener {
 		SafeCracker.adminQuestionMap.remove(player());
 	}
 
-	@Path("scores")
+	@Path("scores [page]")
 	@Permission("group.staff")
-	void scores() {
+	void scores(@Arg("1") int page) {
 		send(PREFIX + "Scores for current event:");
-		LinkedHashMap<OfflinePlayer, Integer> scores = playerService.getScores(eventService.getActiveEvent());
-		int i = 1;
-		for (OfflinePlayer player : scores.keySet()) {
-			send("&e" + i++ + ". " + player.getName() + ": &3" + scores.get(player));
-		}
+		LinkedHashMap<UUID, Integer> scores = playerService.getScores(eventService.getActiveEvent());
+		final BiFunction<UUID, String, JsonBuilder> formatter = (uuid, index) ->
+			json(index + Nickname.of(uuid) + ": &3" + scores.get(uuid));
+
+		paginate(Utils.sortByValueReverse(scores).keySet(), formatter, "/safecracker scores", page);
 	}
 
 	@EventHandler

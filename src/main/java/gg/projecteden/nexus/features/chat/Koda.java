@@ -14,6 +14,7 @@ import gg.projecteden.nexus.models.chat.PublicChannel;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -23,13 +24,12 @@ import lombok.Data;
 import lombok.Getter;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -58,11 +58,9 @@ public class Koda {
 	@Getter @NotNull
 	private static final String discordFormat = "<@role" + Role.KODA.getId() + "> **>** ";
 	@Getter @NotNull
-	private static final OfflinePlayer player = Bukkit.getOfflinePlayer(name);
+	private static final UUID uuid = Dev.KODA.getUuid();
 	@Getter @NotNull
-	private static final UUID uuid = player.getUniqueId();
-	@Getter @NotNull
-	private static final Chatter chatter = new ChatterService().get(player);
+	private static final Chatter chatter = new ChatterService().get(uuid);
 
 	public static void reply(@NotNull String message) {
 		Tasks.wait(10, () -> say(message));

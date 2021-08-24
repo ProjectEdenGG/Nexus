@@ -5,7 +5,6 @@ import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import me.lexikiq.HasUniqueId;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
 
@@ -13,20 +12,16 @@ import java.util.UUID;
 
 public class PlayerManager {
 
-	public static Minigamer get(UUID player) {
-		for (Match match : MatchManager.getAll()) {
-			for (Minigamer minigamer : match.getMinigamers()) {
-				if (minigamer.getUniqueId().equals(player)) {
+	public static Minigamer get(UUID uuid) {
+		for (Match match : MatchManager.getAll())
+			for (Minigamer minigamer : match.getMinigamers())
+				if (minigamer.getUniqueId().equals(uuid))
 					return minigamer;
-				}
-			}
-		}
 
-		OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(player);
-		Player onlinePlayer = offlinePlayer.getPlayer();
+		Player onlinePlayer = Bukkit.getPlayer(uuid);
 		if (onlinePlayer == null)
-			throw new PlayerNotOnlineException(offlinePlayer);
-		return new Minigamer(player);
+			throw new PlayerNotOnlineException(uuid);
+		return new Minigamer(uuid);
 	}
 
 	@Contract("null -> null; !null -> !null")

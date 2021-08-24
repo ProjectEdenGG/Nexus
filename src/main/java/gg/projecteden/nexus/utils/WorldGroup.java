@@ -6,6 +6,7 @@ import me.lexikiq.OptionalLocation;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -61,8 +62,8 @@ public enum WorldGroup {
 		return getWorlds().stream().map(PlayerUtils::getOnlinePlayers).flatMap(Collection::stream).toList();
 	}
 
-	public static WorldGroup of(OptionalLocation location) {
-		return location.getLocation() == null ? UNKNOWN : of(location.getLocation().getWorld());
+	public static WorldGroup of(@Nullable OptionalLocation location) {
+		return location == null || location.getLocation() == null ? UNKNOWN : of(location.getLocation().getWorld());
 	}
 
 	public static WorldGroup of(World world) {

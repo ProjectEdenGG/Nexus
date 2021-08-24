@@ -16,8 +16,6 @@ import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.utils.LuckPermsUtils.PermissionChange;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -92,8 +90,7 @@ public class HandlePurchaseCommand extends CustomCommand {
 				}
 			}
 
-			OfflinePlayer player = Bukkit.getOfflinePlayer(purchase.getUuid());
-			packageType.apply(player);
+			packageType.apply(purchase.getUuid());
 
 			discordMessage += "\nPurchase successfully processed.";
 		}

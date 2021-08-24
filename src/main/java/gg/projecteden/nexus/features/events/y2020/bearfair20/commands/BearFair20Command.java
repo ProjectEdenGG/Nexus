@@ -31,7 +31,7 @@ public class BearFair20Command extends _WarpCommand implements Listener {
 		if (!BearFair20.allowWarp)
 			error("Warp is disabled");
 
-//		BearFairUser user = service.get(player());
+//		BearFair20User user = service.get(player());
 //		if (user.isFirstVisit())
 //			error("To unlock the warp, you must first travel to Bear Fair aboard the space yacht at spawn");
 
@@ -61,7 +61,7 @@ public class BearFair20Command extends _WarpCommand implements Listener {
 //		// HALLOWEEN
 //		PlayerUtils.giveItems(player(), Arrays.asList(atticKey, basketItem));
 //	}
-
+//
 //	@Path("quests npc <text>")
 //	void questsSwitchQuest(String string) {
 //		if (!BearFair20.enableQuests) return;
@@ -90,10 +90,10 @@ public class BearFair20Command extends _WarpCommand implements Listener {
 //				break;
 //		}
 //	}
-
+//
 //	@Path("quests stats [player]")
 //	public void questStats(@Arg("self") Player player) {
-//		BearFairUser user = service.get(player);
+//		BearFair20User user = service.get(player);
 //
 //		int treasureChests = user.getEasterEggsLocs().size();
 //		String questStatus = "&cIncomplete";
@@ -125,115 +125,115 @@ public class BearFair20Command extends _WarpCommand implements Listener {
 //		send(status_sdu + " &7- &eANZAC Biscuit");
 //		send("");
 //	}
-
-	// Point Commands
-
+//
+//	// Point Commands
+//
 //	@Path("points [player]")
-//	public void points(@Arg("self") BearFairUser user) {
-//		if (player().equals(user.getOfflinePlayer()))
+//	public void points(@Arg("self") BearFair20User user) {
+//		if (isSelf(user))
 //			send(PREFIX + "&3Total: &e" + user.getTotalPoints());
 //		else
-//			send(PREFIX + "&3" + user.getOfflinePlayer().getName() + "'s Total: &e" + user.getTotalPoints());
+//			send(PREFIX + "&3" + user.getNickname() + "'s Total: &e" + user.getTotalPoints());
 //	}
-
+//
 //	@Path("points daily [player]")
-//	public void pointsDaily(@Arg("self") BearFairUser user) {
-//		if (player().equals(user.getOfflinePlayer()))
+//	public void pointsDaily(@Arg("self") BearFair20User user) {
+//		if (isSelf(user))
 //			send(PREFIX + "&3Daily Points:");
 //		else
-//			send(PREFIX + "&3" + user.getOfflinePlayer().getName() + "'s Daily Points:");
+//			send(PREFIX + "&3" + user.getName() + "'s Daily Points:");
 //
-//		for (BFPointSource pointSource : BFPointSource.values()) {
+//		for (BF20PointSource pointSource : BF20PointSource.values()) {
 //			Map<LocalDate, Integer> dailyMap = user.getPointsReceivedToday().get(pointSource);
 //			int points = 0;
 //			if (dailyMap != null)
 //				points = dailyMap.getOrDefault(LocalDate.now(), 0);
 //
-//			int dailyMax = BearFairUser.DAILY_SOURCE_MAX;
+//			int dailyMax = BearFair20User.DAILY_SOURCE_MAX;
 //			String sourceColor = points == dailyMax ? "&a" : "&3";
 //			String sourceName = StringUtils.camelCase(pointSource.name());
 //			send(" " + sourceColor + sourceName + " &7- &e" + points + "&3/&e" + dailyMax);
 //		}
 //	}
-
+//
 //	@Path("points pay <player> <points>")
-//	public void pointsPay(BearFairUser toUser, int points) {
-//		BearFairUser fromUser = service.get(player());
-//		if (toUser.getOfflinePlayer().equals(fromUser.getOfflinePlayer()))
+//	public void pointsPay(BearFair20User toUser, int points) {
+//		BearFair20User fromUser = service.get(player());
+//		if (isSelf(toUser))
 //			error("You cannot pay yourself");
 //
 //		fromUser.takePoints(points);
 //		toUser.givePoints(points);
 //
-//		fromUser.send(PREFIX + "&e" + points + " BFP &3has been sent to &e" + toUser.getOfflinePlayer().getName());
-//		if (toUser.getOfflinePlayer().isOnline())
-//			toUser.send(PREFIX + "&e" + points + " BFP &3has been received from &e" + fromUser.getOfflinePlayer().getName());
+//		fromUser.sendMessage(PREFIX + "&e" + points + " BFP &3has been sent to &e" + toUser.getNickname());
+//		if (toUser.isOnline())
+//			toUser.sendMessage(PREFIX + "&e" + points + " BFP &3has been received from &e" + fromUser.getNickname());
 //
 //		service.save(fromUser);
 //		service.save(toUser);
 //	}
-
+//
 //	@Path("points give <player> <points>")
 //	@Permission("group.admin")
-//	public void pointsGive(BearFairUser user, int points) {
+//	public void pointsGive(BearFair20User user, int points) {
 //		user.givePoints(points);
 //		service.save(user);
-//		send(PREFIX + "&e" + points + plural(" point", points) + " &3given to &e" + user.getOfflinePlayer().getName());
+//		send(PREFIX + "&e" + points + plural(" point", points) + " &3given to &e" + user.getNickname());
 //	}
-
+//
 //	@Path("points take <player> <points>")
 //	@Permission("group.admin")
-//	public void pointsTake(BearFairUser user, int points) {
+//	public void pointsTake(BearFair20User user, int points) {
 //		user.takePoints(points);
 //		service.save(user);
-//		send(PREFIX + "&e" + points + plural(" point", points) + " &3taken from &e" + user.getOfflinePlayer().getName());
+//		send(PREFIX + "&e" + points + plural(" point", points) + " &3taken from &e" + user.getNickname());
 //	}
-
+//
 //	@Path("points set <player> <points>")
 //	@Permission("group.admin")
-//	public void pointsSet(BearFairUser user, int points) {
+//	public void pointsSet(BearFair20User user, int points) {
 //		user.setTotalPoints(points);
 //		service.save(user);
-//		send(PREFIX + "&3set &e" + user.getOfflinePlayer().getName() + "&3 to &e" + points + plural(" point", points));
+//		send(PREFIX + "&3set &e" + user.getNickname() + "&3 to &e" + points + plural(" point", points));
 //	}
-
+//
 //	@Path("points reset <player>")
 //	@Permission("group.admin")
-//	public void pointsReset(BearFairUser user) {
+//	public void pointsReset(BearFair20User user) {
 //		user.setTotalPoints(0);
 //		user.getPointsReceivedToday().clear();
 //		service.save(user);
 //	}
-
+//
 //	@Path("points top [page]")
 //	public void pointsTop(@Arg("1") int page) {
-//		List<BearFairUser> results = service.getTopPoints(page);
+//		List<BearFair20User> results = service.getTopPoints(page);
 //		if (results.size() == 0)
 //			error("&cNo results on page " + page);
 //
 //		send("");
 //		send(PREFIX + (page > 1 ? "&3Page " + page : ""));
 //		int i = (page - 1) * 10 + 1;
-//		for (BearFairUser user : results)
-//			send("&3" + i++ + " &e" + user.getOfflinePlayer().getName() + " &7- " + user.getTotalPoints());
+//		for (BearFair20User user : results)
+//			send("&3" + i++ + " &e" + user.getNickname() + " &7- " + user.getTotalPoints());
 //	}
-
-	// Admin Commands
-
+//
+//	// Admin Commands
+//
 //	@Path("quests info")
 //	@Permission("group.admin")
 //	public void topTreasureChests() {
-//		List<BearFairUser> all = service.getAll();
-//		int started = (int) all.stream().filter(BearFairUser::isQuest_Main_Start).count();
-//		int finished = (int) all.stream().filter(BearFairUser::isQuest_Main_Finish).count();
+//		List<BearFair20User> all = service.getAll();
+//		int started = (int) all.stream().filter(BearFair20User::isQuest_Main_Start).count();
+//		int finished = (int) all.stream().filter(BearFair20User::isQuest_Main_Finish).count();
 //
 //		send("");
 //		send(PREFIX + "&3Players Started/Finished: " + started + "\\" + finished);
 //		send(PREFIX + "&3Found EasterEggs:");
 //		all.stream()
 //				.filter(user -> user.getEasterEggsLocs().size() > 0)
-//				.sorted(Comparator.comparing((BearFairUser user) -> user.getEasterEggsLocs().size()).reversed())
-//				.forEach(user -> send("&3" + user.getOfflinePlayer().getName() + " &7- &e" + user.getEasterEggsLocs().size()));
+//				.sorted(Comparator.comparing((BearFair20User user) -> user.getEasterEggsLocs().size()).reversed())
+//				.forEach(user -> send("&3" + user.getNickname() + " &7- &e" + user.getEasterEggsLocs().size()));
 //		send("");
 //	}
 
@@ -301,7 +301,7 @@ public class BearFair20Command extends _WarpCommand implements Listener {
 //	@Path("clearData [player]")
 //	@Permission("group.admin")
 //	void clearData(@Arg("self") Player player) {
-//		BearFairUser user = service.get(player);
+//		BearFair20User user = service.get(player);
 //		service.delete(user);
 //	}
 
@@ -372,7 +372,7 @@ public class BearFair20Command extends _WarpCommand implements Listener {
 //		}
 //		//
 //
-//		BearFairUser user = service.get(player);
+//		BearFair20User user = service.get(player);
 //		AtomicInteger userPoints = new AtomicInteger(user.getTotalPoints());
 //
 //		MenuUtils.ConfirmationMenu.builder()

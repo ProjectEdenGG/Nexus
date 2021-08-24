@@ -15,10 +15,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import me.lexikiq.HasOfflinePlayer;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -66,8 +65,8 @@ public class NameBanConfig implements PlayerOwnedObject {
 				.line().next("&cplease change it in order to join.").asComponent();
 	}
 
-	public static Component getBanMessage(HasOfflinePlayer player) {
-		return getBanMessage(Name.of(player));
+	public static Component getBanMessage(UUID uuid) {
+		return getBanMessage(Name.of(uuid));
 	}
 
 	public void ban(UUID uuid, String name) {
@@ -81,9 +80,9 @@ public class NameBanConfig implements PlayerOwnedObject {
 		addToBanList(uuid, name);
 		warn(executor, uuid, name);
 
-		OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
-		if (player.getPlayer() != null)
-			player.getPlayer().kick(getBanMessage(player));
+		Player player = Bukkit.getPlayer(uuid);
+		if (player != null)
+			player.kick(getBanMessage(uuid));
 	}
 
 	private void addToBanList(UUID uuid, String name) {

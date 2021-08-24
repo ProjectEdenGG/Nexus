@@ -25,7 +25,6 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import gg.projecteden.utils.TimeUtils.Timespan.TimespanBuilder;
 import lombok.NonNull;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.Set;
@@ -61,10 +60,8 @@ public class WhoIsCommand extends CustomCommand {
 		String lastJoinQuitLabel = null;
 		String lastJoinQuitDate = null;
 		String lastJoinQuitDiff = null;
-		OfflinePlayer offlinePlayer = nerd.getOfflinePlayer();
-		Player player = offlinePlayer.getPlayer();
 
-		if (offlinePlayer.isOnline()) {
+		if (nerd.isOnline()) {
 			if (nerd.getLastQuit() != null) {
 				lastJoinQuitLabel = "Last Quit";
 				lastJoinQuitDate = shortDateTimeFormat(nerd.getLastQuit());
@@ -110,17 +107,19 @@ public class WhoIsCommand extends CustomCommand {
 		}
 
 		try {
-			json.newline().next("&3Location: &e" + getLocationString(nerd.getLocation())).hover("&eClick to TP").command("/tp " + offlinePlayer.getName()).group();
+			json.newline().next("&3Location: &e" + getLocationString(nerd.getLocation())).hover("&eClick to TP").command("/tp " + nerd.getName()).group();
 		} catch (InvalidInputException ex) {
 			json.newline().next("&3Location: &c" + ex.getMessage()).group();
 		}
 
 		json.newline().next("&3Balances:");
 		for (ShopGroup shopGroup : ShopGroup.values())
-			if (new BankerService().getBalance(offlinePlayer, shopGroup) != 500)
-				json.newline().next("  &3" + camelCase(shopGroup) + ": &e" + new BankerService().getBalanceFormatted(offlinePlayer, shopGroup)).group();
+			if (new BankerService().getBalance(nerd, shopGroup) != 500)
+				json.newline().next("  &3" + camelCase(shopGroup) + ": &e" + new BankerService().getBalanceFormatted(nerd, shopGroup)).group();
 
-		if (player != null) {
+		if (nerd.isOnline()) {
+			Player player = nerd.getOnlinePlayer();
+
 			json.newline().next("&3Minecraft Version: &e" + PlayerUtils.getPlayerVersion(player));
 
 			json.newline().next("&3Client Brand Name: &e" + player.getClientBrandName()).group();
@@ -138,7 +137,7 @@ public class WhoIsCommand extends CustomCommand {
 				json.newline().next("&3Chat Visibility: &e" + camelCase(chatVisibility));
 		}
 
-		json.newline().next("&3OP: &e" + offlinePlayer.isOp()).group();
+		json.newline().next("&3OP: &e" + nerd.getOfflinePlayer().isOp()).group();
 
 		send(json);
 	}

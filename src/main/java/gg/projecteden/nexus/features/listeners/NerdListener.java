@@ -49,6 +49,7 @@ public class NerdListener implements Listener {
 
 		nerd.setLastQuit(LocalDateTime.now());
 		nerd.getPastNames().add(Name.of(event.getPlayer()));
+		nerd.setLocation(event.getPlayer().getLocation());
 
 		service.save(nerd);
 	}

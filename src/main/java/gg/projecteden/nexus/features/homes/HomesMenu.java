@@ -13,9 +13,7 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.Set;
 import java.util.UUID;
@@ -90,13 +88,9 @@ public class HomesMenu {
 								itemStack = new ItemStack(material);
 							} else {
 								try {
-									OfflinePlayer offlinePlayer = PlayerUtils.getPlayer(input);
-									if (offlinePlayer != null) {
-										itemStack = new ItemBuilder(Material.PLAYER_HEAD).build();
-										SkullMeta meta = (SkullMeta) itemStack.getItemMeta();
-										meta.setOwningPlayer(offlinePlayer);
-										itemStack.setItemMeta(meta);
-									}
+									itemStack = new ItemBuilder(Material.PLAYER_HEAD)
+										.skullOwner(PlayerUtils.getPlayer(input))
+										.build();
 								} catch (PlayerNotFoundException ignore) {}
 							}
 						}

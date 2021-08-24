@@ -6,6 +6,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.models.MongoService;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.utils.Utils;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,6 +43,13 @@ public class NerdService extends MongoService<Nerd> {
 		return new ArrayList<>(sorted).stream()
 				.map(Nerd::of)
 				.collect(toList());
+	}
+
+	@Nullable
+	public Nerd findExact(String name) {
+		Query<Nerd> query = database.createQuery(Nerd.class);
+		query.and(query.criteria("name").equalIgnoreCase(name));
+		return query.find().tryNext();
 	}
 
 	public List<Nerd> getNerdsWithBirthdays() {

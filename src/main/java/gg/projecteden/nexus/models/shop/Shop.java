@@ -136,7 +136,7 @@ public class Shop implements PlayerOwnedObject {
 
 	public void removeProduct(Product product) {
 		products.remove(product);
-		ShopUtils.giveItems(getOfflinePlayer(), product.getItemStacks());
+		ShopUtils.giveItems(uuid, product.getItemStacks());
 	}
 
 	public enum ShopGroup {
@@ -532,7 +532,7 @@ public class Shop implements PlayerOwnedObject {
 
 			product.setStock(product.getStock() - product.getItem().getAmount());
 			transaction(customer);
-			giveItems(customer, product.getItem());
+			giveItems(customer.getUniqueId(), product.getItem());
 		}
 
 		@Override
@@ -624,7 +624,7 @@ public class Shop implements PlayerOwnedObject {
 			product.setStock(product.getStock() - product.getItem().getAmount());
 			customer.getInventory().removeItem(price);
 			product.getShop().addHolding(price);
-			giveItems(customer, product.getItem());
+			giveItems(customer.getUniqueId(), product.getItem());
 		}
 
 		@Override

@@ -40,7 +40,6 @@ import io.papermc.paper.event.player.PlayerTradeEvent;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.StructureType;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
@@ -119,12 +118,12 @@ public final class Bingo extends TeamlessVanillaMechanic {
 
 	@Override
 	public void onJoin(@NotNull MatchJoinEvent event) {
-		removeBedSpawnLocation(event.getMinigamer().getOfflinePlayer());
+		removeBedSpawnLocation(event.getMinigamer().getPlayer());
 	}
 
 	@Override
 	public void onQuit(@NotNull MinigamerQuitEvent event) {
-		removeBedSpawnLocation(event.getMinigamer().getOfflinePlayer());
+		removeBedSpawnLocation(event.getMinigamer().getPlayer());
 	}
 
 	@Override
@@ -133,8 +132,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 			removeBedSpawnLocation(player);
 	}
 
-	private void removeBedSpawnLocation(OfflinePlayer offlinePlayer) {
-		final Player player = offlinePlayer.getPlayer();
+	private void removeBedSpawnLocation(Player player) {
 		if (player == null)
 			return;
 

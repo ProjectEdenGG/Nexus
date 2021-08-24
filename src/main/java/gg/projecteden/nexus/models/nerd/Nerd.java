@@ -1,5 +1,8 @@
 package gg.projecteden.nexus.models.nerd;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.mongodb.DBObject;
 import de.tr7zw.nbtapi.NBTFile;
 import de.tr7zw.nbtapi.NBTList;
@@ -39,7 +42,7 @@ import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.Color;
+import java.awt.*;
 import java.io.File;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
@@ -60,6 +63,8 @@ import static gg.projecteden.nexus.utils.StringUtils.colorize;
 @AllArgsConstructor
 @Converters({UUIDConverter.class, LocalDateConverter.class, LocalDateTimeConverter.class})
 public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwnedObject, IsColoredAndNicknamed, Colored {
+
+	private Location location;
 
 	// Set to null after they have moved
 	private Location loginLocation;
@@ -196,26 +201,33 @@ public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwned
 		return PlayerUtils.isVanished(getOnlinePlayer());
 	}
 
+	private final static LoadingCache<UUID, NBTFile> NBT_FILE_CACHE = CacheBuilder.newBuilder().build(CacheLoader.from(uuid -> {
+		try {
+			File file = Paths.get(Bukkit.getServer().getWorlds().get(0).getName() + "/playerdata/" + uuid + ".dat").toFile();
+			if (file.exists())
+				return new NBTFile(file);
+			throw new InvalidInputException("[Nerd]" + Name.of(uuid) + "'s data file does not exist");
+		} catch (Exception ex) {
+			throw new InvalidInputException("[Nerd] Error opening " + Name.of(uuid) + "'s data file");
+		}
+	}));
+
 	@SneakyThrows
-	public NBTFile getDataFile() {
-		File file = Paths.get(Bukkit.getServer().getWorlds().get(0).getName() + "/playerdata/" + getUuid() + ".dat").toFile();
-		if (file.exists())
-			return new NBTFile(file);
-		return null;
+	public @NotNull NBTFile getNbtFile() {
+		if (isOnline())
+			NBT_FILE_CACHE.refresh(uuid);
+		return NBT_FILE_CACHE.get(uuid);
 	}
 
 	public World getWorld() {
-		if (isOnline())
-			return getLocation().getWorld();
-		else
-			return getDimension();
+		return getLocation().getWorld();
 	}
 
-	public World getDimension() {
-		NBTFile dataFile = getDataFile();
-		if (dataFile == null)
-			return null;
+	public World getOfflineWorld() {
+		if (isOnline())
+			return getOnlinePlayer().getWorld();
 
+		NBTFile dataFile = getNbtFile();
 		String dimension = dataFile.getString("Dimension").replace("minecraft:", "");
 		if (isNullOrEmpty(dimension))
 			dimension = dataFile.getString("SpawnWorld").replace("minecraft:", "");
@@ -230,25 +242,27 @@ public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwned
 		return WorldGroup.of(getLocation());
 	}
 
-	public Location getLocation() {
+	public @NotNull Location getLocation() {
 		if (isOnline())
 			return getOnlinePlayer().getPlayer().getLocation();
 
-		try {
-			NBTFile file = getDataFile();
-			if (file == null)
-				throw new InvalidInputException("Data file does not exist");
+		if (location != null)
+			return location;
 
-			World world = getDimension();
+		try {
+			NBTFile file = getNbtFile();
+			World world = getOfflineWorld();
 			if (world == null)
-				throw new InvalidInputException("Player is not in a valid world");
+				throw new InvalidInputException("[Nerd]" + name + " is not in a valid world");
 
 			NBTList<Double> pos = file.getDoubleList("Pos");
 			NBTList<Float> rotation = file.getFloatList("Rotation");
 
-			return new Location(world, pos.get(0), pos.get(1), pos.get(2), rotation.get(0), rotation.get(1));
+			location = new Location(world, pos.get(0), pos.get(1), pos.get(2), rotation.get(0), rotation.get(1));
+			new NerdService().save(this);
+			return location;
 		} catch (Exception ex) {
-			throw new InvalidInputException("Could not get location of offline player: " + ex.getMessage());
+			throw new InvalidInputException("Could not get location of offline player " + name + ": " + ex.getMessage());
 		}
 	}
 

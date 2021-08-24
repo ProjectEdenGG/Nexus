@@ -51,7 +51,6 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.Time;
 import gg.projecteden.utils.Utils;
 import lombok.SneakyThrows;
-import me.lexikiq.HasUniqueId;
 import net.luckperms.api.context.ImmutableContextSet;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -63,6 +62,7 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -130,7 +130,7 @@ public enum Package {
 		}
 
 		@Override
-		public void handleApply(HasUniqueId uuid) {
+		public void handleApply(UUID uuid) {
 			new BoosterService().edit(uuid, booster -> booster.add(getType(), 2, Time.DAY));
 		}
 
@@ -158,7 +158,7 @@ public enum Package {
 		}
 
 		@Override
-		public void handleApply(HasUniqueId uuid) {
+		public void handleApply(UUID uuid) {
 			new BoosterService().edit(uuid, booster -> booster.add(getType(), 1.5, Time.DAY));
 		}
 
@@ -186,7 +186,7 @@ public enum Package {
 		}
 
 		@Override
-		public void handleApply(HasUniqueId uuid) {
+		public void handleApply(UUID uuid) {
 			new BoosterService().edit(uuid, booster -> booster.add(getType(), 1.5, Time.DAY));
 		}
 
@@ -214,7 +214,7 @@ public enum Package {
 		}
 
 		@Override
-		public void handleApply(HasUniqueId uuid) {
+		public void handleApply(UUID uuid) {
 			new BoosterService().edit(uuid, booster -> booster.add(getType(), 2.5, Time.DAY));
 		}
 
@@ -242,7 +242,7 @@ public enum Package {
 		}
 
 		@Override
-		public void handleApply(HasUniqueId uuid) {
+		public void handleApply(UUID uuid) {
 			new BoosterService().edit(uuid, booster -> booster.add(getType(), 1.25, Time.DAY));
 		}
 
@@ -270,7 +270,7 @@ public enum Package {
 		}
 
 		@Override
-		public void handleApply(HasUniqueId uuid) {
+		public void handleApply(UUID uuid) {
 			new BoosterService().edit(uuid, booster -> booster.add(getType(), 1.5, Time.DAY));
 		}
 
@@ -298,7 +298,7 @@ public enum Package {
 		}
 
 		@Override
-		public void handleApply(HasUniqueId uuid) {
+		public void handleApply(UUID uuid) {
 			new BoosterService().edit(uuid, booster -> booster.add(getType(), 2, Time.DAY));
 		}
 
@@ -326,7 +326,7 @@ public enum Package {
 		}
 
 		@Override
-		public void handleApply(HasUniqueId uuid) {
+		public void handleApply(UUID uuid) {
 			new BoosterService().edit(uuid, booster -> booster.add(getType(), 2, Time.DAY));
 		}
 
@@ -351,7 +351,7 @@ public enum Package {
 	@Display(value = Material.STONE_BUTTON, customModelData = 208)
 	COSTUMES_VOUCHER {
 		@Override
-		public void handleApply(HasUniqueId uuid) {
+		public void handleApply(UUID uuid) {
 			new CostumeUserService().edit(uuid, user -> user.addVouchers(1));
 		}
 
@@ -367,7 +367,7 @@ public enum Package {
 	@Display(value = Material.STONE_BUTTON, customModelData = 208)
 	COSTUMES_5_VOUCHERS {
 		@Override
-		public void handleApply(HasUniqueId uuid) {
+		public void handleApply(UUID uuid) {
 			new CostumeUserService().edit(uuid, user -> user.addVouchers(5));
 		}
 
@@ -457,7 +457,7 @@ public enum Package {
 	@Display(Material.TORCH)
 	AUTO_TORCH {
 		@Override
-		public void handleApply(HasUniqueId uuid) {
+		public void handleApply(UUID uuid) {
 			AutoTorchService service = new AutoTorchService();
 			AutoTorchUser user = service.get(uuid);
 			user.setEnabled(true);
@@ -522,7 +522,7 @@ public enum Package {
 	@Display(Material.CYAN_BED)
 	EXTRA_SETHOMES {
 		@Override
-		public void handleApply(HasUniqueId uuid) {
+		public void handleApply(UUID uuid) {
 			new HomeService().edit(uuid, user -> user.addExtraHomes(5));
 		}
 
@@ -544,8 +544,8 @@ public enum Package {
 	@Display(Material.WOODEN_AXE)
 	CREATIVE_PLOTS {
 		@Override
-		public void handleApply(HasUniqueId uuid) {
-			PermHelperCommand.add(NumericPermission.PLOTS, uuid.getUniqueId(), 1);
+		public void handleApply(UUID uuid) {
+			PermHelperCommand.add(NumericPermission.PLOTS, uuid, 1);
 		}
 
 		@Override
@@ -734,9 +734,9 @@ public enum Package {
 
 	;
 
-	public void handleApply(HasUniqueId uuid) {}
+	public void handleApply(UUID uuid) {}
 
-	public void handleExpire(HasUniqueId uuid) {}
+	public void handleExpire(UUID uuid) {}
 
 	public int count(OfflinePlayer player) {
 		return has(player) ? 1 : 0;
@@ -842,35 +842,35 @@ public enum Package {
 		return null;
 	}
 
-	public void apply(OfflinePlayer player) {
-		getPermissions().forEach(permission -> PermissionChange.set().player(player).permission(permission).runAsync());
+	public void apply(UUID uuid) {
+		getPermissions().forEach(permission -> PermissionChange.set().uuid(uuid).permission(permission).runAsync());
 
 		String permissionGroup = getPermissionGroup();
 		if (!isNullOrEmpty(permissionGroup))
-			GroupChange.add().player(player).group(permissionGroup).runAsync();
+			GroupChange.add().uuid(uuid).group(permissionGroup).runAsync();
 
 		getCommands().stream()
-				.map(command -> command.replaceAll("\\[player]", Objects.requireNonNull(Name.of(player))))
+				.map(command -> command.replaceAll("\\[player]", Objects.requireNonNull(Name.of(uuid))))
 				.forEach(PlayerUtils::runCommandAsConsole);
 
-		handleApply(player);
+		handleApply(uuid);
 
 		if (getExpirationDays() > 0)
-			new PackageExpireJob(player.getUniqueId(), getId()).schedule(now().plusDays(getExpirationDays()));
+			new PackageExpireJob(uuid, getId()).schedule(now().plusDays(getExpirationDays()));
 	}
 
-	public void expire(OfflinePlayer player) {
-		getPermissions().forEach(permission -> PermissionChange.unset().player(player).permission(permission).runAsync());
+	public void expire(UUID uuid) {
+		getPermissions().forEach(permission -> PermissionChange.unset().uuid(uuid).permission(permission).runAsync());
 
 		String permissionGroup = getPermissionGroup();
 		if (!Strings.isNullOrEmpty(permissionGroup))
-			GroupChange.remove().player(player).group(permissionGroup).runAsync();
+			GroupChange.remove().uuid(uuid).group(permissionGroup).runAsync();
 
-		handleExpire(player);
+		handleExpire(uuid);
 
 		getExpirationCommands().stream()
 				.map(StringUtils::trimFirst)
-				.map(command -> command.replaceAll("\\[player]", Objects.requireNonNull(Name.of(player))))
+				.map(command -> command.replaceAll("\\[player]", Objects.requireNonNull(Name.of(uuid))))
 				.forEach(command -> Tasks.sync(() -> PlayerUtils.runCommandAsConsole(command)));
 	}
 

@@ -35,7 +35,6 @@ import lombok.NonNull;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.Rotation;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
@@ -107,14 +106,13 @@ public class JigsawJam20Command extends CustomCommand implements Listener {
 	@Async
 	@Confirm
 	@Path("quit [player]")
-	void delete(@Arg(value = "self", permission = "group.staff") OfflinePlayer player) {
-		service.delete(service.get(player));
+	void delete(@Arg(value = "self", permission = "group.staff") JigsawJammer jammer) {
+		service.delete(jammer);
 		send(PREFIX + "Quit game. Ask a staff member to reset the board.");
 	}
 
 	@Path("time [player]")
-	void time(@Arg("self") OfflinePlayer player) {
-		jammer = service.get(player);
+	void time(@Arg("self") JigsawJammer jammer) {
 		if (!jammer.isPlaying())
 			error("You have not started a game");
 

@@ -3,7 +3,6 @@ package gg.projecteden.nexus.models.scheduledjobs.jobs;
 import gg.projecteden.nexus.features.store.Package;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.scheduledjobs.common.AbstractJob;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -26,7 +25,7 @@ public class PackageExpireJob extends AbstractJob {
 		if (packageType == null)
 			throw new InvalidInputException("Package " + packageId + " does not exist");
 
-		packageType.expire(PlayerUtils.getPlayer(uuid));
+		packageType.expire(uuid);
 		return completed();
 	}
 

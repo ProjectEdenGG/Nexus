@@ -65,7 +65,7 @@ public class EventsCommand extends CustomCommand {
 	/* TODO
 	@Path("tokens daily [player]")
 	public void tokensDaily(@Arg("self") EventUser user) {
-		if (player().equals(user.getOfflinePlayer()))
+		if (isSelf(user))
 			send(PREFIX + "&3Daily tokens:");
 		else
 			send(PREFIX + "&3" + user.getOfflinePlayer().getName() + "'s Daily tokens:");

@@ -56,7 +56,7 @@ public class NerdCommand extends CustomCommand {
 	@Path("getDataFile [player]")
 	@Permission("group.admin")
 	void getDataFile(@Arg("self") Nerd nerd) {
-		send(json().next(paste(nerd.getDataFile().asNBTString())));
+		send(json().next(paste(nerd.getNbtFile().asNBTString())));
 	}
 
 	@ConverterFor(Nerd.class)

@@ -46,6 +46,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.BiFunction;
 
 import static gg.projecteden.utils.StringUtils.prettyMoney;
@@ -239,16 +240,16 @@ public class StoreCommand extends CustomCommand {
 
 	@Path("apply <package> [player]")
 	@Permission("group.admin")
-	void apply(Package packageType, @Arg("self") OfflinePlayer player) {
-		packageType.apply(player);
-		send(PREFIX + "Applied package " + camelCase(packageType) + " to " + Nickname.of(player));
+	void apply(Package packageType, @Arg("self") UUID uuid) {
+		packageType.apply(uuid);
+		send(PREFIX + "Applied package " + camelCase(packageType) + " to " + Nickname.of(uuid));
 	}
 
 	@Path("(expire|remove) <package> [player]")
 	@Permission("group.admin")
-	void expire(Package packageType, @Arg("self") OfflinePlayer player) {
-		packageType.expire(player);
-		send(PREFIX + "Removed package " + camelCase(packageType) + " from " + Nickname.of(player));
+	void expire(Package packageType, @Arg("self") UUID uuid) {
+		packageType.expire(uuid);
+		send(PREFIX + "Removed package " + camelCase(packageType) + " from " + Nickname.of(uuid));
 	}
 
 	@Path("gallery")

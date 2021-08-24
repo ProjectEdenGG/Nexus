@@ -65,7 +65,7 @@ public class Name {
 		if (player != null)
 			return of(player);
 		else
-			return of(playerLike.getOfflinePlayer());
+			return of(playerLike.getUniqueId());
 	}
 
 	public @NotNull String put(@NotNull UUID uuid, @NotNull String name) {

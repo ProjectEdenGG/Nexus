@@ -22,14 +22,12 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 import java.util.function.Function;
 
-import static gg.projecteden.nexus.utils.PlayerUtils.getPlayer;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
 import static gg.projecteden.utils.TimeUtils.shortDateTimeFormat;
@@ -89,7 +87,7 @@ public enum PunishmentType implements IsColoredAndNamed {
 		public void action(Punishment punishment) {
 			BAN.action(punishment);
 			for (UUID alt : Punishments.of(punishment).getAlts())
-				kick(getPlayer(alt), punishment);
+				kick(Bukkit.getPlayer(alt), punishment);
 		}
 
 		@Override
@@ -168,17 +166,16 @@ public enum PunishmentType implements IsColoredAndNamed {
 
 	void kick(Punishment punishment) {
 		if (punishment.isOnline()) {
-			kick(punishment.getOfflinePlayer(), punishment);
+			kick(punishment.getPlayer(), punishment);
 			punishment.received();
 		}
 	}
 
-	void kick(OfflinePlayer player, Punishment punishment) {
+	void kick(Player player, Punishment punishment) {
 		Runnable task = () -> {
-			Player oPlayer = player.getPlayer();
-			if (oPlayer != null) {
-				oPlayer.leaveVehicle();
-				oPlayer.kick(punishment.getDisconnectMessage());
+			if (player != null && player.isOnline()) {
+				player.leaveVehicle();
+				player.kick(punishment.getDisconnectMessage());
 			}
 		};
 

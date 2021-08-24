@@ -229,8 +229,8 @@ public class NexusCommand extends CustomCommand implements Listener {
 		if (!ReloadCondition.canReload())
 			return;
 
-		OfflinePlayer player = Bukkit.getOfflinePlayer(reloader);
-		if (!player.isOnline())
+		OfflinePlayer player = Bukkit.getPlayer(reloader);
+		if (player == null)
 			return;
 
 		PlayerUtils.runCommand(player.getPlayer(), "nexus reload");
@@ -392,7 +392,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 		if (!MaterialTag.ALL_AIR.isTagged(air.getType()))
 			error("You must be looking at the ground");
 
-		NBTFile dataFile = nerd.getDataFile();
+		NBTFile dataFile = nerd.getNbtFile();
 		NBTCompound rootVehicle = dataFile.getCompound("RootVehicle");
 		if (rootVehicle == null)
 			error("RootVehicle compound is null");
