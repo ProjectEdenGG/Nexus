@@ -91,6 +91,8 @@ public class GeoIPCommand extends CustomCommand implements Listener {
 
 		new GeoIPService().getAll().forEach(geoIp -> {
 			String key = geoIp.getCountryCode();
+			if (key == null)
+				return;
 
 			if (!countriesMap.containsKey(key))
 				countriesMap.put(key, geoIp.getCountryName());
