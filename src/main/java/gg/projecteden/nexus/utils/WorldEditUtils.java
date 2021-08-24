@@ -369,7 +369,7 @@ public class WorldEditUtils {
 		private Region[] regions = new Region[]{RegionWrapper.GLOBAL()};
 
 		private int ticks;
-		private CompletableFuture<Map<Location, BlockData>> blockDataMap = new CompletableFuture<>();
+		private CompletableFuture<Map<Location, BlockData>> computedBlocks;
 
 		public Paste file(String fileName) {
 			return clipboard(getSchematic(fileName));
@@ -420,18 +420,14 @@ public class WorldEditUtils {
 		}
 
 		public Paste blocks(Map<Location, BlockData> blockDataMap) {
-			this.blockDataMap = new CompletableFuture<>();
-			this.blockDataMap.complete(blockDataMap);
+			this.computedBlocks = new CompletableFuture<>();
+			this.computedBlocks.complete(blockDataMap);
 			return this;
 		}
 
 		public Paste inspect() {
-			this.blockDataMap = computeBlocks();
+			this.computedBlocks = computeBlocks();
 			return this;
-		}
-
-		public CompletableFuture<Map<Location, BlockData>> getComputedBlocks() {
-			return blockDataMap;
 		}
 
 		public void pasteAsync() {
@@ -510,7 +506,8 @@ public class WorldEditUtils {
 		}
 
 		public CompletableFuture<Map<Location, BlockData>> computeBlocks() {
-			if (!blockDataMap.isDone())
+			if (computedBlocks == null) {
+				computedBlocks = new CompletableFuture<>();
 				clipboardFuture.thenAccept(clipboard -> {
 					Iterator<BlockVector3> iterator = clipboard.iterator();
 
@@ -519,7 +516,7 @@ public class WorldEditUtils {
 					int relY = at.getBlockY() - origin.getBlockY();
 					int relZ = at.getBlockZ() - origin.getBlockZ();
 
-					Map<Location, BlockData> blockDataMap = new HashMap<>();
+					Map<Location, BlockData> data = new HashMap<>();
 
 					while (iterator.hasNext()) {
 						BlockVector3 blockVector3 = iterator.next();
@@ -528,13 +525,14 @@ public class WorldEditUtils {
 							continue;
 
 						Location location = toLocation(blockVector3).add(relX, relY, relZ);
-						blockDataMap.put(location, BukkitAdapter.adapt(baseBlock));
+						data.put(location, BukkitAdapter.adapt(baseBlock));
 					}
 
-					this.blockDataMap.complete(blockDataMap);
+					computedBlocks.complete(data);
 				});
+			}
 
-			return blockDataMap;
+			return computedBlocks;
 		}
 
 	}
