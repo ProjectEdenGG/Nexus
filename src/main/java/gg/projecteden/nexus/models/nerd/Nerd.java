@@ -59,7 +59,7 @@ import static gg.projecteden.nexus.utils.StringUtils.colorize;
 @AllArgsConstructor
 @Converters({UUIDConverter.class, LocalDateConverter.class, LocalDateTimeConverter.class})
 public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwnedObject, IsColoredAndNicknamed, Colored {
-
+	@ToString.Exclude
 	private Location location;
 
 	// Set to null after they have moved
