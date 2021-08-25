@@ -20,6 +20,7 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.utils.TimeUtils.Time;
 import lombok.Data;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.kyori.adventure.audience.MessageType;
@@ -27,6 +28,7 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.Damageable;
@@ -47,7 +49,9 @@ import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 public class ShowItemCommand extends CustomCommand {
 
 	@Data
+	@RequiredArgsConstructor
 	private class ItemData {
+		private @NonNull ItemStack item;
 		private Map<Enchantment, Integer> enchantsMap = new HashMap<>();
 		private List<String> loreList = new ArrayList<>();
 	}
@@ -104,7 +108,7 @@ public class ShowItemCommand extends CustomCommand {
 			- Book title
 		*/
 		if (channel.getDiscordTextChannel() != null) {
-			ItemData data = new ItemData();
+			ItemData data = new ItemData(item);
 			setupEnchantsAndLore(item, data);
 			String enchants = getEnchantsDiscord(data);
 
@@ -152,13 +156,14 @@ public class ShowItemCommand extends CustomCommand {
 
 	private String getEnchantsDiscord(ItemData data) {
 		StringBuilder string = new StringBuilder();
-		for (Map.Entry<Enchantment, Integer> entry : data.getEnchantsMap().entrySet()) {
-			String enchant = StringUtils.camelCase(entry.getKey().getKey().getKey());
-			String level = StringUtils.toRoman(entry.getValue());
-			String enchantLevel = enchant + " " + level;
+		if (!data.getItem().hasItemFlag(ItemFlag.HIDE_ENCHANTS))
+			for (Map.Entry<Enchantment, Integer> entry : data.getEnchantsMap().entrySet()) {
+				String enchant = StringUtils.camelCase(entry.getKey().getKey().getKey());
+				String level = StringUtils.toRoman(entry.getValue());
+				String enchantLevel = enchant + " " + level;
 
-			string.append(enchantLevel).append(System.lineSeparator());
-		}
+				string.append(enchantLevel).append(System.lineSeparator());
+			}
 		string.append(getLoreDiscord(data));
 
 		return stripColor(string.toString());
