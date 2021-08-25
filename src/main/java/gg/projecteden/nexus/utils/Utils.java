@@ -257,29 +257,6 @@ public class Utils extends gg.projecteden.utils.Utils {
 		return list;
 	}
 
-	public static void queue(int delayTicks, QueuedTask task) {
-		AtomicInteger taskId = new AtomicInteger(0);
-
-		Runnable resave = () -> {
-			synchronized (task) {
-				if (TASK_QUEUE.containsKey(task))
-					if (TASK_QUEUE.get(task).equals(taskId.get())) {
-						task.task.run();
-						TASK_QUEUE.remove(task);
-					}
-			}
-		};
-
-		if (Bukkit.isPrimaryThread())
-			taskId.set(Tasks.wait(delayTicks, resave));
-		else
-			taskId.set(Tasks.waitAsync(delayTicks, resave));
-
-		TASK_QUEUE.put(task, taskId.get());
-	}
-
-	public static final Map<QueuedTask, Integer> TASK_QUEUE = new ConcurrentHashMap<>();
-
 	@Data
 	@RequiredArgsConstructor
 	@AllArgsConstructor
@@ -291,6 +268,28 @@ public class Utils extends gg.projecteden.utils.Utils {
 		private @NonNull String type;
 		private @NonNull Runnable task;
 		private boolean completeBeforeShutdown;
+
+		public static final Map<QueuedTask, Integer> QUEUE = new ConcurrentHashMap<>();
+
+		public void queue(int delayTicks) {
+			AtomicInteger taskId = new AtomicInteger(0);
+
+			Runnable resave = () -> {
+				synchronized (this) {
+					if (QUEUE.containsKey(this)) {
+						task.run();
+						QUEUE.remove(this);
+					}
+				}
+			};
+
+			if (Bukkit.isPrimaryThread())
+				taskId.set(Tasks.wait(delayTicks, resave));
+			else
+				taskId.set(Tasks.waitAsync(delayTicks, resave));
+
+			QUEUE.put(this, taskId.get());
+		}
 
 	}
 

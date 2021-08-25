@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.models;
 
 import dev.morphia.mapping.MappingException;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.Utils.QueuedTask;
 import gg.projecteden.utils.TimeUtils.Time;
 import lombok.SneakyThrows;
@@ -50,6 +50,7 @@ public abstract class MongoService<T extends PlayerOwnedObject> extends gg.proje
 			if (!isCME(ex))
 				throw ex;
 
+			Nexus.debug("[Mongo] Caught CME saving " + object.getNickname() + "'s " + object.getClass().getSimpleName() + ", retrying");
 			queueSaveSync(Time.SECOND.x(3), object);
 		}
 	}
@@ -59,7 +60,8 @@ public abstract class MongoService<T extends PlayerOwnedObject> extends gg.proje
 	}
 
 	public void queueSaveSync(int delayTicks, T object) {
-		Utils.queue(delayTicks, new QueuedTask(object.getUuid(), "mongo save " + object.getClass().getSimpleName(), () -> saveSync(object), true));
+		final String type = "mongo save " + object.getClass().getSimpleName();
+		new QueuedTask(object.getUuid(), type, () -> saveSync(object), true).queue(delayTicks);
 	}
 
 	public void delete(T object) {

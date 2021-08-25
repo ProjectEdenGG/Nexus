@@ -314,7 +314,7 @@ public class LuckPermsUtils {
 			@SneakyThrows
 			public void runAsync() {
 				modifyGroups().thenRunAsync(() -> {
-					Utils.queue(5, new QueuedTask(uuid, "rank cache refresh", () -> Rank.CACHE.refresh(uuid)));
+					new QueuedTask(uuid, "rank cache refresh", () -> Rank.CACHE.refresh(uuid)).queue(5);
 					new ExtraPlotUserService().get(uuid).update();
 				});
 			}

@@ -100,7 +100,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 	@Override
 	public void _shutdown() {
-		for (QueuedTask task : Utils.TASK_QUEUE.keySet())
+		for (QueuedTask task : QueuedTask.QUEUE.keySet())
 			if (task.isCompleteBeforeShutdown())
 				task.getTask().run();
 	}
