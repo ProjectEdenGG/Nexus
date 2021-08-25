@@ -1,12 +1,11 @@
 package gg.projecteden.nexus.features.placeholderapi;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.afk.AFK;
+import gg.projecteden.nexus.features.listeners.Tab;
 import gg.projecteden.nexus.features.listeners.Tab.NameplateType;
 import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.models.nerd.Nerd;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -62,11 +61,7 @@ public class NexusPlaceholders extends PlaceholderExpansion {
 			if (minigamer.isPlaying())
 				nameplate = minigamer.getColoredName();
 
-			if (AFK.get(player).isAfk())
-				nameplate += " &7[AFK]";
-
-			if (PlayerUtils.isVanished(player))
-				nameplate += " &7[V]";
+			nameplate = Tab.addStateTags(player, nameplate);
 
 			// TODO Should be fixed on Nameplate's side
 			if (NameplateType.hasEquippedNameplate(player.getUniqueId()))

@@ -11,10 +11,12 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.Time;
 import me.lexikiq.HasUniqueId;
 import net.luckperms.api.node.Node;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -32,7 +34,7 @@ public class Tab implements Listener {
 		PlayerUtils.getOnlinePlayers().forEach(Tab::update);
 	}
 
-	public static void update(Player player) {
+	public static void update(@NotNull Player player) {
 		player.setPlayerListHeader(colorize(getHeader(player)));
 		player.setPlayerListFooter(colorize(getFooter(player)));
 		player.setPlayerListName(colorize(getFormat(player)));
@@ -55,28 +57,39 @@ public class Tab implements Listener {
 	}
 
 	public static String getFormat(Player player) {
-		Nerd nerd = Nerd.of(player);
-		String name = nerd.getColoredName();
-		if (AFK.get(player).isAfk())
-			name += " &7&o[AFK]";
-		if (nerd.isVanished())
-			name += " &7&o[V]";
-		return name.trim();
+		String name = Nerd.of(player).getColoredName();
+		return addStateTags(player, name).trim();
 	}
 
-	@EventHandler
-	public void onAFKChange(AFKEvent event) {
-		update();
+	public static String addStateTags(Player player, String name) {
+		if (AFK.get(player).isAfk())
+			name += " &7&o[AFK]";
+		if (Nerd.of(player).isVanished())
+			name += " &7&o[V]";
+		return name;
 	}
 
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
-		update(event.getPlayer());
+		Tab.update(event.getPlayer());
+	}
+
+	@EventHandler
+	public void onAFKChange(AFKEvent event) {
+		stateChange(event.getUser().getPlayer());
 	}
 
 	@EventHandler
 	public void onVanishToggle(PlayerVanishStateChangeEvent event) {
-		update();
+		stateChange(Bukkit.getPlayer(event.getUUID()));
+	}
+
+	private void stateChange(Player player) {
+		if (player == null)
+			return;
+
+		Tab.update(player);
+		NameplateType.update(player);
 	}
 
 	public enum NameplateType {
@@ -130,6 +143,11 @@ public class Tab implements Listener {
 				.filter(Objects::nonNull)
 				.findFirst()
 				.orElse(null);
+		}
+
+		public static void update(Player player) {
+			// TODO Player specific reload
+			PlayerUtils.runCommandAsConsole("nameplates reload");
 		}
 	}
 
