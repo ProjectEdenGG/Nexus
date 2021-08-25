@@ -169,6 +169,16 @@ public class LuckPermsUtils {
 		return getPermission(player, permission, ImmutableContextSet.empty());
 	}
 
+	@NotNull
+	public static Collection<Node> getPermissions(@NotNull HasUniqueId player) {
+		return getPermissions(player.getUniqueId());
+	}
+
+	@NotNull
+	public static Collection<Node> getPermissions(@NotNull UUID uuid) {
+		return getUser(uuid).data().toCollection();
+	}
+
 	@AllArgsConstructor
 	public enum PermissionChangeType {
 		SET(NodeMap::add),

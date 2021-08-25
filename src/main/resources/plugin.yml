@@ -1,6 +1,11 @@
 name: Nexus
 main: gg.projecteden.nexus.Nexus
 version: ${project.version}
+authors:
+  - GriffinCodes
+  - WakkaFlocka
+  - Blast-MC
+  - lexikiq
 api-version: 1.17
 load: POSTWORLD
 depend:
@@ -22,6 +27,7 @@ softdepend:
   - Multiverse-Inventories
   - NBTAPI
   - NoteBlockAPI
+  - PlaceholderAPI
   - PremiumVanish
   - SmartInvs
   - Vault

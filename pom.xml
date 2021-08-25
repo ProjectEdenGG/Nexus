@@ -214,6 +214,10 @@
             <id>viaversion-repo</id>
             <url>https://repo.viaversion.com</url>
         </repository>
+        <repository>
+            <id>placeholderapi-repo</id>
+            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -624,6 +628,13 @@
             <groupId>com.viaversion</groupId>
             <artifactId>viaversion-api</artifactId>
             <version>4.0.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- PlaceholderAPI -->
+        <dependency>
+            <groupId>me.clip</groupId>
+            <artifactId>placeholderapi</artifactId>
+            <version>2.10.10</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
