@@ -26,12 +26,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.isAtPugmas;
 import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
@@ -80,7 +80,7 @@ public class Pugmas20User implements PlayerOwnedObject {
 
 	// Quest - Ornament Vendor
 	private QuestStage ornamentVendorStage = QuestStage.NOT_STARTED;
-	private Map<Ornament, Integer> ornamentTradeCount = new HashMap<>();
+	private Map<Ornament, Integer> ornamentTradeCount = new ConcurrentHashMap<>();
 	@Getter
 	private static final transient int maxOrnamentCount = 6;
 

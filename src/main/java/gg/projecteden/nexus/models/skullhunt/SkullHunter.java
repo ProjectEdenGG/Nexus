@@ -15,10 +15,10 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Data
 @Builder
@@ -31,7 +31,7 @@ public class SkullHunter implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private Map<String, List<Location>> found = new HashMap<>();
+	private Map<String, List<Location>> found = new ConcurrentHashMap<>();
 
 	public void found(String type, Location location) {
 		found.putIfAbsent(type, new ArrayList<>()).add(location);

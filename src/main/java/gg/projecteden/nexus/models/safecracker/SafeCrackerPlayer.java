@@ -16,9 +16,9 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Data
 @Builder
@@ -33,7 +33,7 @@ public class SafeCrackerPlayer implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	@Embedded
-	private Map<String, Game> games = new HashMap<>();
+	private Map<String, Game> games = new ConcurrentHashMap<>();
 
 	public Game getActiveGame() {
 		return games.get(new SafeCrackerEventService().getActiveEvent().getName());
@@ -46,7 +46,7 @@ public class SafeCrackerPlayer implements PlayerOwnedObject {
 	public static class Game {
 		private int score;
 		private LocalDateTime started;
-		private Map<String, SafeCrackerPlayerNPC> npcs = new HashMap<>();
+		private Map<String, SafeCrackerPlayerNPC> npcs = new ConcurrentHashMap<>();
 
 		public boolean isFinished() {
 			return score != 0;

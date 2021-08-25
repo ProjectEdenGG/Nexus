@@ -17,10 +17,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.Year;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Data
@@ -32,7 +32,7 @@ public class Hours implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	protected UUID uuid;
-	protected Map<LocalDate, Integer> times = new HashMap<>();
+	protected Map<LocalDate, Integer> times = new ConcurrentHashMap<>();
 
 	public void increment() {
 		increment(1);

@@ -16,10 +16,11 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.lexikiq.HasUniqueId;
 
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Data
 @Builder
@@ -33,7 +34,7 @@ public class MuteMenuUser implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private Set<MuteMenuItem> muted = new HashSet<>();
-	private HashMap<MuteMenuItem, Integer> volumes = new HashMap<>();
+	private Map<MuteMenuItem, Integer> volumes = new ConcurrentHashMap<>();
 
 	public boolean hasMuted(MuteMenuItem item) {
 		if (volumes.containsKey(item))

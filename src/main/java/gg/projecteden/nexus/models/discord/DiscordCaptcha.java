@@ -20,9 +20,9 @@ import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.entities.User;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static java.time.LocalDateTime.now;
 
@@ -36,8 +36,8 @@ public class DiscordCaptcha implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private Map<String, LocalDateTime> confirmed = new HashMap<>();
-	private Map<String, LocalDateTime> unconfirmed = new HashMap<>();
+	private Map<String, LocalDateTime> confirmed = new ConcurrentHashMap<>();
+	private Map<String, LocalDateTime> unconfirmed = new ConcurrentHashMap<>();
 
 	private static final String taskId = "discord-unconfirmed-kick";
 

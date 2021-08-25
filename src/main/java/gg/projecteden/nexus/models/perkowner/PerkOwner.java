@@ -24,11 +24,11 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.utils.StringUtils.plural;
@@ -41,20 +41,20 @@ import static gg.projecteden.nexus.utils.StringUtils.plural;
 @RequiredArgsConstructor
 @Converters(UUIDConverter.class)
 public class PerkOwner implements PlayerOwnedObject {
-	private static final int MAX_DAILY_TOKENS = 20;
-	public static int getMaxDailyTokens() {
-		return (int) Math.round(MAX_DAILY_TOKENS * BoostConfig.multiplierOf(Boostable.MINIGAME_DAILY_TOKENS));
-	}
-
 	@Id
 	@NonNull
 	protected UUID uuid;
-	private Map<PerkType, Boolean> purchasedPerks = new HashMap<>();
+	private Map<PerkType, Boolean> purchasedPerks = new ConcurrentHashMap<>();
 	private int tokens = 0;
 	private int dailyTokens = 0;
 	private LocalDate tokenDate = LocalDate.now();
 	private LocalDate randomGiftDate = LocalDate.of(1970, 1, 1);
 	private HideParticle hideParticle = HideParticle.NONE;
+
+	private static final int MAX_DAILY_TOKENS = 20;
+	public static int getMaxDailyTokens() {
+		return (int) Math.round(MAX_DAILY_TOKENS * BoostConfig.multiplierOf(Boostable.MINIGAME_DAILY_TOKENS));
+	}
 
 	public Set<PerkType> getEnabledPerks() {
 		Set<PerkType> perks = new HashSet<>();

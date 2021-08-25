@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -36,7 +37,7 @@ public class ScoreboardUser implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private Map<ScoreboardLine, Boolean> lines = new HashMap<>();
+	private Map<ScoreboardLine, Boolean> lines = new ConcurrentHashMap<>();
 	private boolean active = true;
 
 	private transient EdenScoreboard scoreboard;

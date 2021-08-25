@@ -20,12 +20,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Data
 @Builder
@@ -38,7 +38,7 @@ public class NameBanConfig implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private Map<UUID, List<String>> bannedNames = new HashMap<>();
+	private Map<UUID, List<String>> bannedNames = new ConcurrentHashMap<>();
 	private Set<String> bannedWords = new HashSet<>();
 
 	public boolean playerIsBanned(UUID uuid, String name) {

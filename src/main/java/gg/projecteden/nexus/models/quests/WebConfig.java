@@ -21,13 +21,13 @@ import lombok.ToString;
 import org.bukkit.Location;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Data
 @Builder
@@ -133,7 +133,7 @@ public class WebConfig implements PlayerOwnedObject {
 		Location location;
 		Integer radius = null;
 		@ToString.Exclude
-		Map<UUID, Double> neighbors = new HashMap<>();
+		Map<UUID, Double> neighbors = new ConcurrentHashMap<>();
 
 		public Node(Location location) {
 			this.uuid = UUID.randomUUID();

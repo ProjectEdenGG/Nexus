@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static gg.projecteden.nexus.utils.PlayerUtils.runCommand;
 import static gg.projecteden.nexus.utils.PlayerUtils.runCommandAsConsole;
@@ -71,7 +72,7 @@ public class InteractionCommandConfig implements PlayerOwnedObject {
 	public static class InteractionCommand {
 		@NonNull
 		private Location location;
-		private final Map<Integer, String> commands = new HashMap<>();
+		private final Map<Integer, String> commands = new ConcurrentHashMap<>();
 
 		public String getTrimmedCommand(String command) {
 			if (isOp(command) || isConsole(command))

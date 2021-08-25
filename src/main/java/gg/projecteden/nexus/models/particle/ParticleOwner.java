@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Data
@@ -39,12 +40,12 @@ public class ParticleOwner implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	@Getter(AccessLevel.PRIVATE)
-	private Map<ParticleType, Map<ParticleSetting, Object>> settings = new HashMap<>();
+	private Map<ParticleType, Map<ParticleSetting, Object>> settings = new ConcurrentHashMap<>();
 	@Getter
 	private Set<ParticleType> activeParticles = new HashSet<>();
 
 	public Map<ParticleSetting, Object> getSettings(ParticleType particleType) {
-		Map<ParticleSetting, Object> map = settings.computeIfAbsent(particleType, $ -> new HashMap<>());
+		Map<ParticleSetting, Object> map = settings.computeIfAbsent(particleType, $ -> new ConcurrentHashMap<>());
 
 		if (!Utils.isNullOrEmpty(map))
 			deserialize(map);

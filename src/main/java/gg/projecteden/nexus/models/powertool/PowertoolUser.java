@@ -15,9 +15,9 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static gg.projecteden.nexus.utils.PlayerUtils.runCommand;
 
@@ -33,7 +33,7 @@ public class PowertoolUser implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private boolean enabled = true;
-	private Map<Material, String> powertools = new HashMap<>();
+	private Map<Material, String> powertools = new ConcurrentHashMap<>();
 
 	public void use(Material material) {
 		Player player = getPlayer();

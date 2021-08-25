@@ -17,10 +17,10 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Data
 @Builder
@@ -40,7 +40,7 @@ public class SerializeTest implements PlayerOwnedObject {
 	private List<ItemStack> itemStacks;
 
 	@Embedded
-	private Map<String, String> initializedMap = new HashMap<>();
+	private Map<String, String> initializedMap = new ConcurrentHashMap<>();
 	@Embedded
 	private Map<String, String> uninitializedMap;
 

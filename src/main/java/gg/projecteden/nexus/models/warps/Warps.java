@@ -19,11 +19,11 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static gg.projecteden.utils.StringUtils.camelCase;
 
@@ -38,7 +38,7 @@ public class Warps implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private Map<WarpType, List<Warp>> warps = new HashMap<>();
+	private Map<WarpType, List<Warp>> warps = new ConcurrentHashMap<>();
 
 	public List<Warp> getAll(WarpType type) {
 		return warps.get(type);

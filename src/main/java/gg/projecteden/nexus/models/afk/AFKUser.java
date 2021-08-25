@@ -34,10 +34,10 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
@@ -60,7 +60,7 @@ public class AFKUser implements PlayerOwnedObject {
 	private Location location;
 	private boolean forceAfk;
 
-	private Map<AFKSetting, Boolean> settings = new HashMap<>();
+	private Map<AFKSetting, Boolean> settings = new ConcurrentHashMap<>();
 
 	private void save() {
 		new AFKUserService().save(this);

@@ -18,10 +18,10 @@ import org.bukkit.plugin.Plugin;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static gg.projecteden.utils.TimeUtils.shortDateTimeFormat;
 
@@ -108,8 +108,8 @@ public class Changelog implements PlayerOwnedObject {
 		private LocalDateTime timestamp;
 		private String minecraftVersion;
 		private String paperVersion;
-		private Map<String, String> pluginVersions = new HashMap<>();
-		private Map<String, String> pluginNotes = new HashMap<>();
+		private Map<String, String> pluginVersions = new ConcurrentHashMap<>();
+		private Map<String, String> pluginNotes = new ConcurrentHashMap<>();
 		private List<Commit> commits = new ArrayList<>();
 
 		public ChangelogEntry(int id) {

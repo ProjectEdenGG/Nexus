@@ -17,11 +17,11 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Data
@@ -35,7 +35,7 @@ public class ScheduledJobs implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private Map<JobStatus, Set<AbstractJob>> jobs = new HashMap<>();
+	private Map<JobStatus, Set<AbstractJob>> jobs = new ConcurrentHashMap<>();
 
 	public Set<AbstractJob> get(JobStatus status) {
 		return jobs.computeIfAbsent(status, $ -> new HashSet<>());

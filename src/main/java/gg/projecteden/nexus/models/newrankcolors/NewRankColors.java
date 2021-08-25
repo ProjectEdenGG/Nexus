@@ -14,9 +14,9 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Data
 @Builder
@@ -29,6 +29,6 @@ public class NewRankColors implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private Map<Rank, String> colors = new HashMap<>();
+	private Map<Rank, String> colors = new ConcurrentHashMap<>();
 
 }

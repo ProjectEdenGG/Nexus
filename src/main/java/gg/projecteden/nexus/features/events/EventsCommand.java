@@ -128,7 +128,7 @@ public class EventsCommand extends CustomCommand {
 	@Permission("group.admin")
 	public void tokensReset(EventUser user) {
 		user.setTokens(0);
-		user.getTokensReceivedToday().clear();
+		user.getTokensReceivedByDate().clear();
 		service.save(user);
 	}
 

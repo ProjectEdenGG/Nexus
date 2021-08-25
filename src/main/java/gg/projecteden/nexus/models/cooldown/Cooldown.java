@@ -16,9 +16,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 @Data
@@ -32,7 +32,7 @@ public class Cooldown implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	@NonNull
-	private Map<String, LocalDateTime> cooldowns = new HashMap<>();
+	private Map<String, LocalDateTime> cooldowns = new ConcurrentHashMap<>();
 
 	// I tried to find the actual valid characters but I don't understand BSON's spec so I gave up -lexi
 	private static final Pattern VALID_TYPE = Pattern.compile("^[\\w:#-]+$", Pattern.CASE_INSENSITIVE);

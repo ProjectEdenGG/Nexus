@@ -101,7 +101,7 @@ public class BearFair21StatsCommand extends CustomCommand {
 		Map<BF21PointSource, Integer> sourceMap = new HashMap<>();
 		for (EventUser user : users) {
 			for (BF21PointSource source : BF21PointSource.values()) {
-				int userTokens = user.getTokensRecieved(source.getId(), day.getLocalDate());
+				int userTokens = user.getTokensReceived(source.getId(), day.getLocalDate());
 				int maxSourceTokens = BearFair21.getTokenMax(source);
 				int count = sourceMap.getOrDefault(source, 0);
 				if (userTokens == maxSourceTokens) {

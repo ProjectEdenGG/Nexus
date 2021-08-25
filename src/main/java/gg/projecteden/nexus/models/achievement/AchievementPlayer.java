@@ -6,11 +6,11 @@ import gg.projecteden.nexus.models.PlayerOwnedObject;
 import lombok.Data;
 import lombok.NonNull;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Data
 @Entity(value = "achievement_player", noClassnameStored = true)
@@ -19,7 +19,7 @@ public class AchievementPlayer implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private Set<Achievement> achievements = new HashSet<>();
-	private Map<Achievement, Object> achievementProgress = new HashMap<>();
+	private Map<Achievement, Object> achievementProgress = new ConcurrentHashMap<>();
 
 	public void addAchievement(Achievement achievement) {
 		achievements.add(achievement);

@@ -27,9 +27,9 @@ import lombok.Setter;
 import me.lexikiq.HasUniqueId;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static gg.projecteden.nexus.models.banker.BankerService.rounded;
 import static gg.projecteden.nexus.utils.StringUtils.prettyMoney;
@@ -45,7 +45,7 @@ public class Banker implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private Map<ShopGroup, BigDecimal> balances = new HashMap<>();
+	private Map<ShopGroup, BigDecimal> balances = new ConcurrentHashMap<>();
 
 	@Deprecated
 	@Getter(AccessLevel.PRIVATE)

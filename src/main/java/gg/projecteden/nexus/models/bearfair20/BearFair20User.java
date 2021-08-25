@@ -19,10 +19,10 @@ import org.bukkit.Location;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static gg.projecteden.nexus.utils.StringUtils.plural;
 
@@ -38,7 +38,7 @@ public class BearFair20User implements PlayerOwnedObject {
 	// Points
 	public transient static final int DAILY_SOURCE_POINTS = 5;
 	public transient static final int DAILY_SOURCE_MAX = 5;
-	private Map<BF20PointSource, Map<LocalDate, Integer>> pointsReceivedToday = new HashMap<>();
+	private Map<BF20PointSource, Map<LocalDate, Integer>> pointsReceivedToday = new ConcurrentHashMap<>();
 	private int totalPoints;
 	// First Visit
 	private boolean firstVisit = true;
@@ -103,7 +103,7 @@ public class BearFair20User implements PlayerOwnedObject {
 	}
 
 	public void giveDailyPoints(BF20PointSource source) {
-		pointsReceivedToday.putIfAbsent(source, new HashMap<>() {{
+		pointsReceivedToday.putIfAbsent(source, new ConcurrentHashMap<>() {{
 			put(LocalDate.now(), 0);
 		}});
 

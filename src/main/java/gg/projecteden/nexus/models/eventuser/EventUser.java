@@ -1,8 +1,10 @@
 package gg.projecteden.nexus.models.eventuser;
 
+import com.mongodb.DBObject;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import dev.morphia.annotations.PreLoad;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.events.Events;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
@@ -15,9 +17,9 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static gg.projecteden.nexus.utils.StringUtils.plural;
 
@@ -34,14 +36,26 @@ public class EventUser implements PlayerOwnedObject {
 	private UUID uuid;
 	private int tokens;
 
-	private Map<String, Map<LocalDate, Integer>> tokensReceivedToday = new HashMap<>();
-
-	public int getTokensReceivedToday(String id) {
-		return getTokensRecieved(id, LocalDate.now());
+	@PreLoad
+	void fix(DBObject dbObject) {
+		if (dbObject.containsField("tokensReceivedToday")) {
+			dbObject.put("tokensReceivedByDate", dbObject.get("tokensReceivedToday"));
+			dbObject.removeField("tokensReceivedToday");
+		}
 	}
 
-	public int getTokensRecieved(String id, LocalDate date) {
-		return tokensReceivedToday.getOrDefault(id, new HashMap<>()).getOrDefault(date, 0);
+	private Map<String, Map<LocalDate, Integer>> tokensReceivedByDate = new ConcurrentHashMap<>();
+
+	private Map<LocalDate, Integer> getTokensReceived(String id) {
+		return this.tokensReceivedByDate.computeIfAbsent(id, $ -> new ConcurrentHashMap<>());
+	}
+
+	public int getTokensReceivedToday(String id) {
+		return getTokensReceived(id, LocalDate.now());
+	}
+
+	public int getTokensReceived(String id, LocalDate date) {
+		return getTokensReceived(id).getOrDefault(date, 0);
 	}
 
 	public int getDailyTokensLeft(String id, int amount, Map<String, Integer> maxes) {
@@ -57,9 +71,9 @@ public class EventUser implements PlayerOwnedObject {
 
 		tokens += amount;
 
-		Map<LocalDate, Integer> today = this.tokensReceivedToday.getOrDefault(id, new HashMap<>());
+		Map<LocalDate, Integer> today = getTokensReceived(id);
 		today.put(LocalDate.now(), getTokensReceivedToday(id) + amount);
-		this.tokensReceivedToday.put(id, today);
+		this.tokensReceivedByDate.put(id, today);
 	}
 
 	public void giveTokens(int tokens) {

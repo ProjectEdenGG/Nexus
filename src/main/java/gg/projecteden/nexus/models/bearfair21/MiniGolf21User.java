@@ -25,12 +25,12 @@ import org.inventivetalent.glow.GlowAPI;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Data
 @Entity(value = "bearfair21_minigolf_user", noClassnameStored = true)
@@ -52,7 +52,7 @@ public class MiniGolf21User implements PlayerOwnedObject {
 	//
 	private Set<MiniGolfHole> holeInOne = new HashSet<>();
 	private Set<MiniGolfHole> completed = new HashSet<>();
-	private Map<MiniGolfHole, Integer> score = new HashMap<>();
+	private Map<MiniGolfHole, Integer> score = new ConcurrentHashMap<>();
 	private MiniGolfHole currentHole = null;
 	private int currentStrokes = 0;
 	//

@@ -238,8 +238,8 @@ public class AccountTransferCommand extends CustomCommand {
 		@Override
 		public void transfer(EventUser previous, EventUser current) {
 			current.setTokens(previous.getTokens());
-			previous.getTokensReceivedToday().forEach((string, map) -> current.getTokensReceivedToday().put(string, map));
-			previous.getTokensReceivedToday().clear();
+			previous.getTokensReceivedByDate().forEach((string, map) -> current.getTokensReceivedByDate().put(string, map));
+			previous.getTokensReceivedByDate().clear();
 		}
 	}
 
