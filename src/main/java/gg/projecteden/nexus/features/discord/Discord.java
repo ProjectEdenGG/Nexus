@@ -163,6 +163,8 @@ public class Discord extends Feature {
 	}
 
 	private static void send(MessageBuilder message, Consumer<Message> onSuccess, Consumer<Throwable> onError, Bot bot, TextChannel... targets) {
+		if (bot == Bot.RELAY)
+			message.denyMentions(Message.MentionType.EVERYONE, Message.MentionType.HERE);
 		if (targets == null || targets.length == 0)
 			targets = new TextChannel[]{ TextChannel.BRIDGE };
 		for (TextChannel target : targets) {
