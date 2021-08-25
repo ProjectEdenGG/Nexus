@@ -27,6 +27,7 @@ import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
@@ -60,6 +61,7 @@ import static gg.projecteden.nexus.utils.StringUtils.colorize;
 @Converters({UUIDConverter.class, LocalDateConverter.class, LocalDateTimeConverter.class})
 public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwnedObject, IsColoredAndNicknamed, Colored {
 	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private Location location;
 
 	// Set to null after they have moved
@@ -198,6 +200,7 @@ public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwned
 	}
 
 	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private transient NBTFile nbtFile;
 
 	public @NotNull NBTFile getNbtFile() {

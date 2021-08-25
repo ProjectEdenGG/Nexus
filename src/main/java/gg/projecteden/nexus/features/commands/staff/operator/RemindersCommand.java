@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands.staff.operator;
 
 import com.google.api.services.sheets.v4.model.ValueRange;
+import gg.projecteden.exceptions.EdenException;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -401,8 +402,17 @@ public class RemindersCommand extends CustomCommand implements Listener {
 			if (iterator.hasNext())
 				iterator.next(); // Skip headers
 
-			while (iterator.hasNext())
-				config.add(Reminder.deserialize(iterator.next(), motd));
+			while (iterator.hasNext()) {
+				final List<Object> row = iterator.next();
+				try {
+					config.add(Reminder.deserialize(row, motd));
+				} catch (Exception ex) {
+					Nexus.log("Error adding reminder: " + ex.getMessage());
+					Nexus.log(row.toString());
+					if (!(ex instanceof EdenException))
+						ex.printStackTrace();
+				}
+			}
 		}
 
 		public void save() {
