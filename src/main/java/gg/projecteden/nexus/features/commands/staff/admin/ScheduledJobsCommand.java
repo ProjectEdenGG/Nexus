@@ -32,13 +32,13 @@ import java.util.stream.Stream;
 
 import static gg.projecteden.nexus.models.scheduledjobs.common.AbstractJob.getNextExecutionTime;
 
-@Aliases("job")
+@Aliases("scheduledjob")
 @Permission("group.admin")
-public class JobsCommand extends CustomCommand {
+public class ScheduledJobsCommand extends CustomCommand {
 	private static final ScheduledJobsService service = new ScheduledJobsService();
 	private static final ScheduledJobs jobs = service.get0();
 
-	public JobsCommand(@NonNull CommandEvent event) {
+	public ScheduledJobsCommand(@NonNull CommandEvent event) {
 		super(event);
 	}
 
@@ -71,7 +71,11 @@ public class JobsCommand extends CustomCommand {
 
 	private static void processor() {
 		Tasks.repeat(0, Time.SECOND, () -> {
-			for (AbstractJob job : jobs.getReady())
+			final Set<AbstractJob> ready = jobs.getReady();
+			if (ready.isEmpty())
+				return;
+
+			for (AbstractJob job : ready)
 				job.process();
 
 			service.save(jobs);
