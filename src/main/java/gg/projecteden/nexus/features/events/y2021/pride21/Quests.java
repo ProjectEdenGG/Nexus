@@ -84,13 +84,13 @@ public class Quests implements Listener {
 			new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BIT).receiver(event).pitch(2F).play();
 			user.getDecorationsCollected().add(decoration);
 			service.save(user);
-			int tokens = 5;
-			if (user.decorationsFound() == 3 || user.isComplete())
-				tokens += 10;
-			EventUserService eventService = new EventUserService();
-			EventUser eventUser = eventService.get(user);
-			eventUser.giveTokens(tokens);
-			eventService.save(eventUser);
+//			int tokens = 5;
+//			if (user.decorationsFound() == 3 || user.isComplete())
+//				tokens += 10;
+//			EventUserService eventService = new EventUserService();
+//			EventUser eventUser = eventService.get(user);
+//			eventUser.giveTokens(tokens);
+//			eventService.save(eventUser);
 			if (user.isComplete())
 				json.next("You've found the last bag! You should take them back to the &eParade Manager&3.");
 			else
@@ -121,7 +121,7 @@ public class Quests implements Listener {
 			Tasks.waitAsync(waitTicks, () -> {
 				player.resetPlayerTime();
 				viewFloat(player, true);
-				if (!user.isBonusTokenRewardClaimed()) {
+				if (false && !user.isBonusTokenRewardClaimed()) {
 					Trophy.PRIDE_2021.give(player);
 
 					user.setBonusTokenRewardClaimed(true);
