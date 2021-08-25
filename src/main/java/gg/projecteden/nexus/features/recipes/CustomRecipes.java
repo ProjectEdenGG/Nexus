@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.framework.features.Depends;
 import gg.projecteden.nexus.framework.features.Feature;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils.ItemStackComparator;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -16,6 +17,7 @@ import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -25,12 +27,15 @@ import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
+import org.bukkit.inventory.RecipeChoice.MaterialChoice;
 import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 @Depends(ResourcePack.class)
 public class CustomRecipes extends Feature implements Listener {
@@ -53,10 +58,10 @@ public class CustomRecipes extends Feature implements Listener {
 					if (!Utils.canEnable(clazz))
 						return null;
 
-					return clazz.newInstance();
-				} catch (InstantiationException | IllegalAccessException e) {
+					return clazz.getConstructor().newInstance();
+				} catch (Exception ex) {
 					Nexus.log("Error while enabling functional recipe " + clazz.getSimpleName());
-					e.printStackTrace();
+					ex.printStackTrace();
 					return null;
 				}
 			})
@@ -120,32 +125,39 @@ public class CustomRecipes extends Feature implements Listener {
 			event.setCancelled(true);
 	}
 
-	public void registerDyes() {
-		String[] colors = {"WHITE", "BLACK", "BLUE", "BROWN", "CYAN", "GREEN", "GRAY", "LIGHT_BLUE", "LIGHT_GRAY",
-				"LIME", "MAGENTA", "ORANGE", "PINK", "PURPLE", "RED", "YELLOW"};
+	@NotNull
+	private MaterialChoice choiceOf(MaterialTag tag) {
+		return new MaterialChoice(tag.toArray());
+	}
 
-		RecipeChoice.MaterialChoice concretePowder = new RecipeChoice.MaterialChoice(MaterialTag.CONCRETE_POWDERS.toArray());
-		RecipeChoice.MaterialChoice stainedGlass = new RecipeChoice.MaterialChoice(MaterialTag.STAINED_GLASS.toArray());
-		RecipeChoice.MaterialChoice stainedGlassPane = new RecipeChoice.MaterialChoice(MaterialTag.STAINED_GLASS_PANES.toArray());
-		RecipeChoice.MaterialChoice terracotta = new RecipeChoice.MaterialChoice(MaterialTag.COLORED_TERRACOTTAS.toArray());
-		RecipeChoice.MaterialChoice beds = new RecipeChoice.MaterialChoice(MaterialTag.BEDS.toArray());
-		RecipeChoice.MaterialChoice banners = new RecipeChoice.MaterialChoice(MaterialTag.ITEMS_BANNERS.getValues().toArray(new Material[0]));
-		for (String color : colors) {
-			NexusRecipe.surround(new ItemStack(Material.valueOf(color + "_CONCRETE_POWDER"), 8), Material.valueOf(color + "_DYE"), concretePowder)
-					.type(RecipeType.DYES).register();
-			NexusRecipe.surround(new ItemStack(Material.valueOf(color + "_STAINED_GLASS"), 8), Material.valueOf(color + "_DYE"), stainedGlass)
-					.type(RecipeType.DYES).register();
-			NexusRecipe.surround(new ItemStack(Material.valueOf(color + "_STAINED_GLASS_PANE"), 8), Material.valueOf(color + "_DYE"), stainedGlassPane)
-					.type(RecipeType.DYES).register();
-			NexusRecipe.surround(new ItemStack(Material.valueOf(color + "_TERRACOTTA"), 8), Material.valueOf(color + "_DYE"), terracotta)
-					.type(RecipeType.DYES).register();
-			NexusRecipe.shapeless(new ItemStack(Material.valueOf(color + "_BED")), Material.valueOf(color + "_DYE"), beds).type(RecipeType.BEDS).register();
-			NexusRecipe.shapeless(new ItemStack(Material.valueOf(color + "_BANNER")), Material.valueOf(color + "_DYE"), banners).type(RecipeType.DYES).register();
+	public void registerDyes() {
+		final List<MaterialTag> surround = List.of(
+			MaterialTag.CONCRETE_POWDERS,
+			MaterialTag.STAINED_GLASS,
+			MaterialTag.STAINED_GLASS_PANES,
+			MaterialTag.COLORED_TERRACOTTAS
+		);
+
+		final List<MaterialTag> shapeless = List.of(
+			MaterialTag.BEDS,
+			MaterialTag.BANNERS
+		);
+
+		for (ColorType color : ColorType.getDyes()) {
+			final Material dye = color.switchColor(Material.WHITE_DYE);
+
+			Consumer<NexusRecipe> register = recipe -> recipe.type(RecipeType.DYES).register();
+
+			surround.forEach(tag ->
+				register.accept(NexusRecipe.surround(new ItemStack(color.switchColor(tag.first()), 8), dye, choiceOf(tag))));
+
+			shapeless.forEach(tag ->
+				register.accept(NexusRecipe.shapeless(new ItemStack(color.switchColor(tag.first())), dye, choiceOf(tag))));
 		}
 	}
 
 	public void registerSlabs() {
-		Material[] slabs = MaterialTag.SLABS.getValues().toArray(new Material[0]);
+		Material[] slabs = new MaterialTag(Tag.SLABS).toArray();
 
 		String[] blockNames = { "BRICKS", "_PLANKS", "_BLOCK", "" };
 		for (Material slab : slabs) {
@@ -188,7 +200,7 @@ public class CustomRecipes extends Feature implements Listener {
 	}
 
 	public void misc() {
-		NexusRecipe.surround(new ItemStack(Material.WHITE_WOOL, 8), Material.WATER_BUCKET, new RecipeChoice.MaterialChoice(MaterialTag.WOOL.toArray())).type(RecipeType.WOOL).register();
+		NexusRecipe.surround(new ItemStack(Material.WHITE_WOOL, 8), Material.WATER_BUCKET, choiceOf(MaterialTag.WOOL)).type(RecipeType.WOOL).register();
 		NexusRecipe.shapeless(new ItemStack(Material.NETHER_WART, 9), Material.NETHER_WART_BLOCK).type(RecipeType.MISC).register();
 		NexusRecipe.shapeless(new ItemStack(Material.PACKED_ICE, 9), Material.BLUE_ICE).type(RecipeType.MISC).register();
 		NexusRecipe.shapeless(new ItemStack(Material.ICE, 9), Material.PACKED_ICE).type(RecipeType.MISC).register();

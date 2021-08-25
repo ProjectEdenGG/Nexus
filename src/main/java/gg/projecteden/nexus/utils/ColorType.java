@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.framework.interfaces.IsColored;
 import lombok.AllArgsConstructor;
@@ -16,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -243,21 +245,21 @@ public enum ColorType implements IsColored {
 		return of(Arrays.stream(DyeColor.values()).filter(dyeColor -> material.name().startsWith(dyeColor.name())).findFirst().orElse(null));
 	}
 
-	@Nullable
+	@NotNull
 	public Material switchColor(@NotNull Material material) {
 		return switchColor(material, this);
 	}
 
-	@Nullable
+	@NotNull
 	public static Material switchColor(@NotNull Material material, @NotNull ColorType colorType) {
 		return switchColor(material, colorType.getSimilarDyeColor());
 	}
 
-	@Nullable
+	@NotNull
 	public static Material switchColor(@NotNull Material material, @NotNull DyeColor dyeColor) {
 		ColorType colorType = of(material);
 		if (colorType == null)
-			return null;
+			throw new InvalidInputException("Could not determine color of " + material);
 		return Material.valueOf(material.name().replace(colorType.getSimilarDyeColor().name(), dyeColor.name()));
 	}
 
@@ -436,6 +438,10 @@ public enum ColorType implements IsColored {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+	}
+
+	public static List<ColorType> getDyes() {
+		return Arrays.stream(values()).filter(colorType -> colorType.getDyeColor() != null).toList();
 	}
 
 	@SneakyThrows

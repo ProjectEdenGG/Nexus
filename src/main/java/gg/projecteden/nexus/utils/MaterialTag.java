@@ -467,6 +467,10 @@ public class MaterialTag implements Tag<Material> {
 		return materials;
 	}
 
+	public Material first() {
+		return materials.iterator().next();
+	}
+
 	public Material[] toArray() {
 		return new ArrayList<>(materials).toArray(Material[]::new);
 	}
