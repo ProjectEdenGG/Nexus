@@ -197,6 +197,7 @@ public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwned
 		return PlayerUtils.isVanished(getOnlinePlayer());
 	}
 
+	@ToString.Exclude
 	private transient NBTFile nbtFile;
 
 	public @NotNull NBTFile getNbtFile() {
