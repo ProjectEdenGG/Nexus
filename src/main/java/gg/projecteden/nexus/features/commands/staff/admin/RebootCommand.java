@@ -25,6 +25,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
@@ -59,9 +60,11 @@ public class RebootCommand extends CustomCommand implements Listener {
 
 		conditions.forEach(ReloadCondition::run);
 
-		new TitleBuilder().allPlayers().title("&cRebooting server").subtitle("&cCome back in ~60 seconds").send();
-		Koda.say("Rebooting server, come back in 60 seconds");
 		rebooting = true;
+
+		Koda.say("Rebooting server, come back in 60 seconds");
+		title();
+
 		Tasks.wait(Time.SECOND.x(10), () -> {
 			rebooting = false;
 			conditions.forEach(ReloadCondition::run);
@@ -69,6 +72,26 @@ public class RebootCommand extends CustomCommand implements Listener {
 				player.kickPlayer(colorize("&6&lRebooting server!\n&eCome back in about 60 seconds\n&f\n&7" + TimeUtils.shortDateTimeFormat(LocalDateTime.now()) + " EST"));
 			BashCommand.execute("mark2 send -n " + (Nexus.getEnv() == Env.PROD ? "smp" : "test") + " ~restart");
 		});
+	}
+
+	private static void title() {
+		final TitleBuilder titleBuilder = new TitleBuilder()
+			.allPlayers()
+			.title("&cRebooting server")
+			.subtitle("&cCome back in ~60 seconds");
+
+		titleBuilder.send();
+
+		titleBuilder.fade(0);
+		AtomicInteger titleTaskId = new AtomicInteger();
+		titleTaskId.set(Tasks.repeat(0, 5, () -> {
+			if (!rebooting) {
+				Tasks.cancel(titleTaskId.get());
+				return;
+			}
+
+			titleBuilder.send();
+		}));
 	}
 
 	static {
