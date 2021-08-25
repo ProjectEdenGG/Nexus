@@ -8,15 +8,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import me.lexikiq.HasUniqueId;
-import org.bukkit.Bukkit;
 import org.bukkit.Rotation;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -37,11 +31,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -255,42 +246,6 @@ public class Utils extends gg.projecteden.utils.Utils {
 	public static <T> List<T> reverse(List<T> list) {
 		Collections.reverse(list);
 		return list;
-	}
-
-	@Data
-	@RequiredArgsConstructor
-	@AllArgsConstructor
-	@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-	public static class QueuedTask {
-		@EqualsAndHashCode.Include
-		private @NonNull UUID uuid;
-		@EqualsAndHashCode.Include
-		private @NonNull String type;
-		private @NonNull Runnable task;
-		private boolean completeBeforeShutdown;
-
-		public static final Map<QueuedTask, Integer> QUEUE = new ConcurrentHashMap<>();
-
-		public void queue(int delayTicks) {
-			AtomicInteger taskId = new AtomicInteger(0);
-
-			Runnable resave = () -> {
-				synchronized (this) {
-					if (QUEUE.containsKey(this)) {
-						task.run();
-						QUEUE.remove(this);
-					}
-				}
-			};
-
-			if (Bukkit.isPrimaryThread())
-				taskId.set(Tasks.wait(delayTicks, resave));
-			else
-				taskId.set(Tasks.waitAsync(delayTicks, resave));
-
-			QUEUE.put(this, taskId.get());
-		}
-
 	}
 
 	public static <T> T tryCalculate(int times, Supplier<T> to) {

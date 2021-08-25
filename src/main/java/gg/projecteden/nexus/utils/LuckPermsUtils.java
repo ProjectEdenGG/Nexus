@@ -3,7 +3,7 @@ package gg.projecteden.nexus.utils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.models.extraplots.ExtraPlotUserService;
 import gg.projecteden.nexus.models.nerd.Rank;
-import gg.projecteden.nexus.utils.Utils.QueuedTask;
+import gg.projecteden.nexus.utils.Tasks.QueuedTask;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -324,7 +324,12 @@ public class LuckPermsUtils {
 			@SneakyThrows
 			public void runAsync() {
 				modifyGroups().thenRunAsync(() -> {
-					new QueuedTask(uuid, "rank cache refresh", () -> Rank.CACHE.refresh(uuid)).queue(5);
+					QueuedTask.builder()
+						.uuid(uuid)
+						.type("rank cache refresh")
+						.task(() -> Rank.CACHE.refresh(uuid))
+						.queue(5);
+
 					new ExtraPlotUserService().get(uuid).update();
 				});
 			}

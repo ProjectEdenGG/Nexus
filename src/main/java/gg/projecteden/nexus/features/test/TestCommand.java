@@ -24,6 +24,7 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.StringUtils.ProgressBarStyle;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.ExpBarCountdown;
+import gg.projecteden.nexus.utils.Tasks.QueuedTask;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.utils.TimeUtils.Time;
@@ -72,6 +73,17 @@ public class TestCommand extends CustomCommand implements Listener {
 	@Override
 	public void _shutdown() {
 		shutdownBossBars();
+	}
+
+	@Path("queuedTask")
+	void queuedTask() {
+		QueuedTask.builder()
+			.uuid(uuid())
+			.type("test")
+			.task(() -> send(PREFIX + "Task completed"))
+			.queue(Time.SECOND);
+
+		send(PREFIX + "Queued task");
 	}
 
 	@Path("scrambleInventory")

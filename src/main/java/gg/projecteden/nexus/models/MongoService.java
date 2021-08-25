@@ -4,7 +4,7 @@ import dev.morphia.mapping.MappingException;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.Utils.QueuedTask;
+import gg.projecteden.nexus.utils.Tasks.QueuedTask;
 import gg.projecteden.utils.TimeUtils.Time;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
@@ -60,8 +60,12 @@ public abstract class MongoService<T extends PlayerOwnedObject> extends gg.proje
 	}
 
 	public void queueSaveSync(int delayTicks, T object) {
-		final String type = "mongo save " + object.getClass().getSimpleName();
-		new QueuedTask(object.getUuid(), type, () -> saveSync(object), true).queue(delayTicks);
+		QueuedTask.builder()
+			.uuid(object.getUuid())
+			.type("mongo save " + object.getClass().getSimpleName())
+			.task(() -> saveSync(object))
+			.completeBeforeShutdown(true)
+			.queue(delayTicks);
 	}
 
 	public void delete(T object) {

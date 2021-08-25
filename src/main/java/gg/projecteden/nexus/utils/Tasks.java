@@ -2,10 +2,15 @@ package gg.projecteden.nexus.utils;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.utils.TimeUtils.Time;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NonNull;
 import me.lexikiq.HasPlayer;
 import me.lexikiq.OptionalPlayer;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -16,6 +21,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
@@ -245,6 +254,62 @@ public class Tasks {
 					})
 					.start());
 		}
+	}
+
+	@Data
+	@AllArgsConstructor
+	@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+	public static class QueuedTask {
+		@EqualsAndHashCode.Include
+		private @NonNull UUID uuid;
+		@EqualsAndHashCode.Include
+		private @NonNull String type;
+		private @NonNull Runnable task;
+		private boolean completeBeforeShutdown;
+
+		private AtomicInteger taskId;
+
+		@Builder(buildMethodName = "_build")
+		public QueuedTask(@NonNull UUID uuid, @NonNull String type, @NonNull Runnable task, boolean completeBeforeShutdown) {
+			this(uuid, type, task, completeBeforeShutdown, new AtomicInteger(-1));
+		}
+
+		public static class QueuedTaskBuilder {
+
+			public void queue(Time delay) {
+				queue(delay.get());
+			}
+
+			public void queue(int delayTicks) {
+				_build().queue(delayTicks);
+			}
+
+		}
+
+		public static final Map<QueuedTask, Integer> QUEUE = new ConcurrentHashMap<>();
+
+		public void queue(int delayTicks) {
+			Runnable resave = () -> {
+				synchronized (this) {
+					if (!QUEUE.containsKey(this))
+						return;
+
+					if (taskId.get() != QUEUE.get(this))
+						return;
+
+					QUEUE.remove(this);
+					task.run();
+				}
+			};
+
+			if (Bukkit.isPrimaryThread())
+				taskId.set(Tasks.wait(delayTicks, resave));
+			else
+				taskId.set(Tasks.waitAsync(delayTicks, resave));
+
+			QUEUE.put(this, taskId.get());
+		}
+
 	}
 
 }
