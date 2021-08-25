@@ -1,10 +1,9 @@
 package gg.projecteden.nexus.utils;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.models.extraplots.ExtraPlotUserService;
 import gg.projecteden.nexus.models.nerd.Rank;
-import gg.projecteden.nexus.utils.Tasks.QueuedTask;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -26,6 +25,8 @@ import net.luckperms.api.util.Tristate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -184,7 +185,7 @@ public class LuckPermsUtils {
 		SET(NodeMap::add),
 		UNSET(NodeMap::remove);
 
-		private final BiConsumer<NodeMap, Node> function;
+		private final BiConsumer<NodeMap, Node> consumer;
 	}
 
 	@AllArgsConstructor
@@ -255,17 +256,21 @@ public class LuckPermsUtils {
 					if (world != null)
 						node.context(ImmutableContextSet.of("world", world.getName()));
 
-					type.function.accept(user.data(), node.build());
+					type.consumer.accept(user.data(), node.build());
 				});
 			}
 
 		}
 	}
 
+	@AllArgsConstructor
 	private enum GroupChangeType {
-		SET,
-		ADD,
-		REMOVE
+		SET(NodeMap::add),
+		ADD(NodeMap::add),
+		REMOVE(NodeMap::remove),
+		;
+
+		private final BiConsumer<NodeMap, Node> consumer;
 	}
 
 	@AllArgsConstructor
@@ -322,15 +327,16 @@ public class LuckPermsUtils {
 			}
 
 			@SneakyThrows
-			public void runAsync() {
-				modifyGroups().thenRunAsync(() -> {
-					QueuedTask.builder()
-						.uuid(uuid)
-						.type("rank cache refresh")
-						.task(() -> Rank.CACHE.refresh(uuid))
-						.queue(5);
+			public CompletableFuture<Void> runAsync() {
+				final Rank oldRank = Rank.of(uuid);
+				return modifyGroups().thenRunAsync(() -> {
+					Rank.CACHE.refresh(uuid);
 
-					new ExtraPlotUserService().get(uuid).update();
+					final Rank newRank = Rank.of(uuid);
+					if (oldRank == newRank)
+						return;
+
+					new PlayerRankChangeEvent(uuid, oldRank, newRank).callEvent();
 				});
 			}
 
@@ -344,15 +350,36 @@ public class LuckPermsUtils {
 							user.data().clear(node -> Rank.exists(node.getKey().replace("group.", "")));
 
 						Node node = InheritanceNode.builder(group).build();
-						switch (type) {
-							case ADD, SET -> user.data().add(node);
-							case REMOVE -> user.data().remove(node);
-						}
+						type.consumer.accept(user.data(), node);
 					}));
 
 				return CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new));
 			}
 
+		}
+
+		@Getter
+		public static class PlayerRankChangeEvent extends Event {
+			private static final HandlerList handlers = new HandlerList();
+			private final UUID uuid;
+			private final Rank oldRank;
+			private final Rank newRank;
+
+			public PlayerRankChangeEvent(@NotNull UUID uuid, Rank oldRank, Rank newRank) {
+				super(true);
+				this.uuid = uuid;
+				this.oldRank = oldRank;
+				this.newRank = newRank;
+			}
+
+			public static HandlerList getHandlerList() {
+				return handlers;
+			}
+
+			@Override
+			public HandlerList getHandlers() {
+				return handlers;
+			}
 		}
 	}
 

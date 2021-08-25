@@ -22,17 +22,20 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.contributor.Contributor;
 import gg.projecteden.nexus.models.contributor.Contributor.Purchase;
 import gg.projecteden.nexus.models.contributor.ContributorService;
+import gg.projecteden.nexus.models.extraplots.ExtraPlotUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange.PlayerRankChangeEvent;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import net.buycraft.plugin.data.Coupon;
 import net.buycraft.plugin.data.Coupon.Discount;
@@ -41,6 +44,8 @@ import net.buycraft.plugin.data.Coupon.Expire;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -51,8 +56,9 @@ import java.util.function.BiFunction;
 
 import static gg.projecteden.utils.StringUtils.prettyMoney;
 
+@NoArgsConstructor
 @Aliases({"donate", "buy"})
-public class StoreCommand extends CustomCommand {
+public class StoreCommand extends CustomCommand implements Listener {
 	public static final String URL = "https://store." + Nexus.DOMAIN;
 	private static final String PLUS = "&3[+] &e";
 
@@ -276,6 +282,11 @@ public class StoreCommand extends CustomCommand {
 			send(" 2: " + display.getDisplay2().getId());
 			send(" 3: " + display.getDisplay3().getId());
 		}
+	}
+
+	@EventHandler
+	public void onPlayerRankChange(PlayerRankChangeEvent event) {
+		new ExtraPlotUserService().get(event.getUuid()).update();
 	}
 
 }

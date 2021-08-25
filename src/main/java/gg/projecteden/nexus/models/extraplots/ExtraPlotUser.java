@@ -40,8 +40,9 @@ public class ExtraPlotUser implements PlayerOwnedObject {
 	}
 
 	public int getBasePlots() {
+		final Rank rank = Rank.of(uuid);
 		for (PlotRanks value : PlotRanks.REVERSED)
-			if (Rank.of(uuid).gte(value.getRank()))
+			if (rank.gte(value.getRank()))
 				return value.getPlots();
 		return 0;
 	}

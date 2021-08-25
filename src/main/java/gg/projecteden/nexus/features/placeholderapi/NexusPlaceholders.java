@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.placeholderapi;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.listeners.Tab;
-import gg.projecteden.nexus.features.listeners.Tab.NameplateType;
+import gg.projecteden.nexus.features.listeners.Tab.NameplateUtils;
 import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -56,7 +56,8 @@ public class NexusPlaceholders extends PlaceholderExpansion {
 	private enum NexusPlaceholder {
 		NAMEPLATE(player -> {
 			final Minigamer minigamer = PlayerManager.get(player);
-			String nameplate = Nerd.of(player).getChatFormat();
+			// TODO When hex is supported .getChatFormat()
+			String nameplate = Nerd.of(player).getNameplateFormat();
 
 			if (minigamer.isPlaying())
 				nameplate = minigamer.getColoredName();
@@ -64,8 +65,9 @@ public class NexusPlaceholders extends PlaceholderExpansion {
 			nameplate = Tab.addStateTags(player, nameplate);
 
 			// TODO Should be fixed on Nameplate's side
-			if (NameplateType.hasEquippedNameplate(player.getUniqueId()))
-				nameplate += " ";
+			if (NameplateUtils.NameplateType.hasEquippedNameplate(player.getUniqueId()))
+				if (nameplate.contains("[") && nameplate.contains("]"))
+					nameplate += " ";
 
 			return nameplate;
 		}),

@@ -276,7 +276,13 @@ public class PlayerUtils {
 	public static void runCommand(CommandSender sender, String commandNoSlash) {
 //		if (sender instanceof Player)
 //			Utils.callEvent(new PlayerCommandPreprocessEvent((Player) sender, "/" + command));
-		Bukkit.dispatchCommand(sender, commandNoSlash);
+
+		Runnable command = () -> Bukkit.dispatchCommand(sender, commandNoSlash);
+
+		if (Bukkit.isPrimaryThread())
+			command.run();
+		else
+			Tasks.sync(command);
 	}
 
 	public static void runCommandAsOp(CommandSender sender, String commandNoSlash) {

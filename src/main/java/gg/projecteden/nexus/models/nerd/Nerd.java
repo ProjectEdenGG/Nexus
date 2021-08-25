@@ -179,17 +179,39 @@ public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwned
 			return Koda.getColoredName();
 
 		Rank rank = getRank();
+		String prefix1 = this.prefix;
+		if (isNullOrEmpty(prefix1))
+			prefix1 = rank.getPrefix();
 
+		if (!isNullOrEmpty(prefix1))
+			prefix1 = "&8&l[&f" + prefix1 + "&8&l]";
+
+		String prefix = prefix1;
+
+		if (LuckPermsUtils.hasPermission(uuid, "donated") && checkmark)
+			prefix = CHECK + " " + prefix;
+		return colorize((prefix.trim() + " " + (getRank().getChatColor() + Nickname.of(this)).trim())).trim();
+	}
+
+	@ToString.Include
+	public String getNameplateFormat() {
+		if (isKoda())
+			return Koda.getColoredName();
+
+		Rank rank = getRank();
 		String prefix = this.prefix;
 		if (isNullOrEmpty(prefix))
-			prefix = rank.getPrefix();
+			if (rank.hasPrefix())
+				prefix = rank.getSimilarChatColor() + rank.getName();
+			else
+				prefix = "";
 
 		if (!isNullOrEmpty(prefix))
 			prefix = "&8&l[&f" + prefix + "&8&l]";
 
 		if (LuckPermsUtils.hasPermission(uuid, "donated") && checkmark)
 			prefix = CHECK + " " + prefix;
-		return colorize((prefix.trim() + " " + (rank.getChatColor() + Nickname.of(this)).trim())).trim();
+		return colorize((prefix.trim() + " " + (getRank().getSimilarChatColor() + Nickname.of(this)).trim())).trim();
 	}
 
 	@ToString.Include

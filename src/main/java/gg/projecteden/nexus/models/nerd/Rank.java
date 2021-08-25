@@ -34,35 +34,36 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public enum Rank implements IsColoredAndNamed {
-	GUEST(ChatColor.of("#aaaaaa"), GlowAPI.Color.GRAY),
-	MEMBER(ChatColor.of("#ffffff"), GlowAPI.Color.WHITE),
-	TRUSTED(ChatColor.of("#ff7069"), GlowAPI.Color.RED),
-	ELITE(ChatColor.of("#f5a138"), GlowAPI.Color.GOLD),
-	VETERAN(ChatColor.of("#ffff44"), GlowAPI.Color.YELLOW),
-	NOBLE(ChatColor.of("#9de23d"), GlowAPI.Color.YELLOW),
-	BUILDER(ChatColor.of("#02883e"), GlowAPI.Color.DARK_GREEN),
-	ARCHITECT(ChatColor.of("#02c93e"), GlowAPI.Color.GREEN),
-	MINIGAME_MODERATOR(ChatColor.of("#4cc9f0"), GlowAPI.Color.AQUA),
-	MODERATOR(ChatColor.of("#4cc9f0"), GlowAPI.Color.AQUA),
-	OPERATOR(ChatColor.of("#07a8a8"), GlowAPI.Color.DARK_AQUA),
-	ADMIN(ChatColor.of("#3080ff"), GlowAPI.Color.BLUE),
-	OWNER(ChatColor.of("#915bf5"), GlowAPI.Color.DARK_PURPLE),
+	GUEST(ChatColor.of("#aaaaaa"), ChatColor.GRAY),
+	MEMBER(ChatColor.of("#ffffff"), ChatColor.WHITE),
+	TRUSTED(ChatColor.of("#ff7069"), ChatColor.RED),
+	ELITE(ChatColor.of("#f5a138"), ChatColor.GOLD),
+	VETERAN(ChatColor.of("#ffff44"), ChatColor.YELLOW),
+	NOBLE(ChatColor.of("#9de23d"), ChatColor.YELLOW),
+	BUILDER(ChatColor.of("#02883e"), ChatColor.DARK_GREEN),
+	ARCHITECT(ChatColor.of("#02c93e"), ChatColor.GREEN),
+	MINIGAME_MODERATOR(ChatColor.of("#4cc9f0"), ChatColor.AQUA),
+	MODERATOR(ChatColor.of("#4cc9f0"), ChatColor.AQUA),
+	OPERATOR(ChatColor.of("#07a8a8"), ChatColor.DARK_AQUA),
+	ADMIN(ChatColor.of("#3080ff"), ChatColor.BLUE),
+	OWNER(ChatColor.of("#915bf5"), ChatColor.DARK_PURPLE),
 	;
 
 	@Getter
 	@NotNull
 	private final ChatColor chatColor;
 	@Getter
-	private final GlowAPI.Color glowColor;
+	private final ChatColor similarChatColor;
+
+	public GlowAPI.Color getGlowColor() {
+		return GlowAPI.Color.valueOf(similarChatColor.getName().toUpperCase());
+	}
 
 	public static boolean exists(String key) {
 		try {
-			Nexus.log("Checking if rank " + key + " exists");
 			Rank.valueOf(key.toUpperCase());
-			Nexus.log("  true");
 			return true;
 		} catch (IllegalArgumentException ex) {
-			Nexus.log("  false");
 			return false;
 		}
 	}
