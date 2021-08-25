@@ -40,6 +40,7 @@ import static gg.projecteden.nexus.utils.GoogleUtils.SheetsUtils.asLocalDateTime
 import static gg.projecteden.nexus.utils.GoogleUtils.SheetsUtils.asString;
 import static gg.projecteden.nexus.utils.GoogleUtils.SheetsUtils.asStringArrayList;
 import static gg.projecteden.nexus.utils.GoogleUtils.SheetsUtils.asStringLinkedHashSet;
+import static gg.projecteden.nexus.utils.GoogleUtils.SheetsUtils.asTrimmedString;
 import static gg.projecteden.nexus.utils.GoogleUtils.SheetsUtils.valueOf;
 import static java.util.stream.Collectors.toList;
 
@@ -156,7 +157,7 @@ public class ReminderConfig {
 		);
 
 		private static ReminderCondition asReminderCondition(Iterator<Object> iterator, String id) {
-			String condition = asString(iterator);
+			String condition = asTrimmedString(iterator);
 			try {
 				return condition != null ? Reminder.ReminderCondition.valueOf(condition) : null;
 			} catch (IllegalArgumentException ex) {
@@ -170,11 +171,11 @@ public class ReminderConfig {
 			final ReminderBuilder builder = Reminder.builder();
 
 			builder
-				.id(asString(iterator))
-				.text(asString(iterator))
-				.command(asString(iterator))
+				.id(asTrimmedString(iterator))
+				.text(asTrimmedString(iterator))
+				.command(asTrimmedString(iterator))
 				.suggest(asString(iterator))
-				.url(asString(iterator))
+				.url(asTrimmedString(iterator))
 				.hover(asStringArrayList(iterator))
 				.enabled(asBoolean(iterator, true))
 				.showPermissions(asStringLinkedHashSet(iterator))

@@ -229,6 +229,14 @@ public class GoogleUtils {
 			return next.toString();
 		}
 
+		@Nullable
+		public static String asTrimmedString(Iterator<Object> iterator) {
+			String string = asString(iterator, null);
+			if (string != null)
+				string = string.trim();
+			return string;
+		}
+
 		@NotNull
 		public static List<String> asStringArrayList(Iterator<Object> iterator) {
 			return asStringArrayList(iterator, new ArrayList<>());
@@ -236,7 +244,14 @@ public class GoogleUtils {
 
 		@NotNull
 		public static List<String> asStringArrayList(Iterator<Object> iterator, List<String> defaultValue) {
-			return iterator.hasNext() ? Arrays.asList(((String) iterator.next()).split("\n")) : defaultValue;
+			if (!iterator.hasNext())
+				return defaultValue;
+
+			final String string = asTrimmedString(iterator);
+			if (string == null)
+				return defaultValue;
+
+			return Arrays.asList(string.split("\n"));
 		}
 
 		@NotNull
@@ -246,7 +261,14 @@ public class GoogleUtils {
 
 		@NotNull
 		public static Set<String> asStringLinkedHashSet(Iterator<Object> iterator, Set<String> defaultValue) {
-			return iterator.hasNext() ? new LinkedHashSet<>(Arrays.asList(((String) iterator.next()).split("\n"))) : defaultValue;
+			if (!iterator.hasNext())
+				return defaultValue;
+
+			final String string = asTrimmedString(iterator);
+			if (string == null)
+				return defaultValue;
+
+			return new LinkedHashSet<>(Arrays.asList(string.split("\n")));
 		}
 
 		public static boolean asBoolean(Iterator<Object> iterator) {
@@ -254,7 +276,7 @@ public class GoogleUtils {
 		}
 
 		public static boolean asBoolean(Iterator<Object> iterator, boolean defaultValue) {
-			return iterator.hasNext() ? Boolean.parseBoolean((String) iterator.next()) : defaultValue;
+			return iterator.hasNext() ? Boolean.parseBoolean(asTrimmedString(iterator)) : defaultValue;
 		}
 
 		@Nullable
@@ -264,7 +286,7 @@ public class GoogleUtils {
 
 		@Nullable
 		public static LocalDateTime asLocalDateTime(Iterator<Object> iterator, LocalDateTime defaultValue) {
-			final String value = asString(iterator);
+			final String value = asTrimmedString(iterator);
 			final LocalDate date = asLocalDate(value, null);
 			if (date == null)
 				return defaultValue;
@@ -280,7 +302,7 @@ public class GoogleUtils {
 
 		@Nullable
 		public static LocalDate asLocalDate(Iterator<Object> iterator, LocalDate defaultValue) {
-			return asLocalDate(asString(iterator), defaultValue);
+			return asLocalDate(asTrimmedString(iterator), defaultValue);
 		}
 
 		@Nullable
@@ -303,7 +325,7 @@ public class GoogleUtils {
 
 		@Nullable
 		public static LocalTime asLocalTime(Iterator<Object> iterator, LocalTime defaultValue) {
-			return asLocalTime(asString(iterator), defaultValue);
+			return asLocalTime(asTrimmedString(iterator), defaultValue);
 		}
 
 		@Nullable
