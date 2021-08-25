@@ -33,10 +33,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.utils.StringUtils.asOxfordList;
@@ -53,8 +53,8 @@ public class Mailer implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private Map<WorldGroup, List<Mail>> mail = new HashMap<>();
-	private Map<WorldGroup, Mail> pendingMail = new HashMap<>();
+	private Map<WorldGroup, List<Mail>> mail = new ConcurrentHashMap<>();
+	private Map<WorldGroup, Mail> pendingMail = new ConcurrentHashMap<>();
 
 	@PreLoad
 	void preLoad(DBObject dbObject) {

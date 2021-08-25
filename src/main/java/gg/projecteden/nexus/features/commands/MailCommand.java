@@ -60,7 +60,7 @@ public class MailCommand extends CustomCommand implements Listener {
 	@Path("send <player> [message...]")
 	void send(Mailer to, String message) {
 		if (from.hasPending())
-			send(PREFIX + "&cYou already have a pending message to " + from.getPending().getNickname());
+			send(PREFIX + "&cYou already have pending mail to " + from.getPending().getNickname());
 		else
 			from.addPending(new Mail(to.getUuid(), uuid(), worldGroup(), message));
 
@@ -161,6 +161,7 @@ public class MailCommand extends CustomCommand implements Listener {
 		@Override
 		public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
 			mail.setItems(contents);
+			new MailerService().save(mail.getFromMailer());
 			player.chat("/mail menu");
 		}
 	}

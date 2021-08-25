@@ -20,6 +20,7 @@ public abstract class MongoService<T extends PlayerOwnedObject> extends gg.proje
 		loadServices("gg.projecteden.nexus.models");
 	}
 
+	@Override
 	public void save(T object) {
 		if (Bukkit.isPrimaryThread())
 			Tasks.async(() -> super.save(object));
