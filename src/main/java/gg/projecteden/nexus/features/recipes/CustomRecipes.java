@@ -209,6 +209,7 @@ public class CustomRecipes extends Feature implements Listener {
 		NexusRecipe.shapeless(new ItemStack(Material.GLOWSTONE_DUST, 3), Material.GLOWSTONE).type(RecipeType.MISC).register();
 		NexusRecipe.shapeless(new ItemStack(Material.BLAZE_ROD), Material.BLAZE_POWDER, Material.BLAZE_POWDER).type(RecipeType.MISC).register();
 		NexusRecipe.shapeless(new ItemStack(Material.POINTED_DRIPSTONE, 4), Material.DRIPSTONE_BLOCK).type(RecipeType.MISC).register();
+		NexusRecipe.shapeless(new ItemStack(Material.HONEYCOMB, 4), Material.HONEYCOMB_BLOCK).type(RecipeType.MISC).register();
 
 		// Invis Item Frame, No .register() to prevent overriding the recipe of the plugin
 		NexusRecipe.surround(new ItemBuilder(Material.ITEM_FRAME).name("Invisible Item Frame").amount(8).glow().build(),
