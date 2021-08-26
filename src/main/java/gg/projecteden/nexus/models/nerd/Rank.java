@@ -18,7 +18,7 @@ import net.md_5.bungee.api.ChatColor;
 import org.inventivetalent.glow.GlowAPI;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -123,12 +123,7 @@ public enum Rank implements IsColoredAndNamed {
 
 	@SneakyThrows
 	public CompletableFuture<List<Nerd>> getNerds() {
-		CompletableFuture<List<Nerd>> users = new CompletableFuture<>();
-
-		LuckPermsUtils.getUsersInGroup(this).thenAccept(uuids ->
-			users.complete(Nerd.of(uuids)));
-
-		return users;
+		return LuckPermsUtils.getUsersInGroup(this).thenApply(Nerd::of);
 	}
 
 	public List<Nerd> getOnlineNerds() {
