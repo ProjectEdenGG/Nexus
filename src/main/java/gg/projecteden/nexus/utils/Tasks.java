@@ -291,7 +291,7 @@ public class Tasks {
 		public void queue(int delayTicks) {
 			Runnable resave = () -> {
 				synchronized (this) {
-					if (!QUEUE.containsKey(this))
+					if (QUEUE.get(this) == null)
 						return;
 
 					if (taskId.get() != QUEUE.get(this))
