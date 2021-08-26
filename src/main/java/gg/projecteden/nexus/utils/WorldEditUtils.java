@@ -30,6 +30,7 @@ import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.utils.TimeUtils.Time;
 import lombok.Data;
@@ -58,12 +59,16 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static gg.projecteden.nexus.utils.BlockUtils.createDistanceSortedQueue;
+import static gg.projecteden.nexus.utils.StringUtils.getFlooredCoordinateString;
+import static gg.projecteden.utils.StringUtils.left;
 
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
 public class WorldEditUtils {
@@ -440,8 +445,29 @@ public class WorldEditUtils {
 			});
 		}
 
+		public static String id(UUID uuid, AtomicInteger i) {
+			return left(uuid.toString(), 8) + " " + i.getAndIncrement() + " " + (Bukkit.isPrimaryThread() ? " sync" : "async");
+		}
+
 		public void build() {
-			computeBlocks().thenAccept(blocks -> blocks.forEach((location, blockData) -> location.getBlock().setBlockData(blockData)));
+			build(StringUtils.getUUID0(), new AtomicInteger(0));
+		}
+
+		public CompletableFuture<Void> build(UUID uuid, AtomicInteger i) {
+			final CompletableFuture<Void> future = new CompletableFuture<>();
+
+			computeBlocks(uuid, i).thenAccept(blocks ->
+				Tasks.sync(() -> {
+					Nexus.debug(id(uuid, i) + " Building " + blocks.size() + " blocks");
+					blocks.forEach((location, blockData) -> {
+						Nexus.debug(id(uuid, i) + "   Setting " + blockData.getMaterial() + " at " + getFlooredCoordinateString(location));
+						location.getBlock().setBlockData(blockData);
+					});
+					Nexus.debug(id(uuid, i) + " Finished building " + blocks.size() + " blocks");
+					future.complete(null);
+				}));
+
+			return future;
 		}
 
 		public void buildClientSide(HasPlayer player) {
@@ -450,36 +476,39 @@ public class WorldEditUtils {
 		}
 
 		public CompletableFuture<Void> buildQueue() {
-			return buildQueue(location -> () -> computeBlocks().thenAccept(blocks -> location.getBlock().setBlockData(blocks.get(location))));
+			return buildQueue(location -> () -> computeBlocks().thenAccept(blocks ->
+				location.getBlock().setBlockData(blocks.get(location))));
 		}
 
 		public CompletableFuture<Void> buildQueueClientSide(HasPlayer player) {
-			return buildQueue(location -> () -> computeBlocks().thenAccept(blocks -> player.getPlayer().sendBlockChange(location.getBlock().getLocation(), blocks.get(location))));
+			return buildQueue(location -> () -> computeBlocks().thenAccept(blocks ->
+				player.getPlayer().sendBlockChange(location.getBlock().getLocation(), blocks.get(location))));
 		}
 
-		public CompletableFuture<Void> buildQueue(Function<Location, Runnable> action) {
+		private CompletableFuture<Void> buildQueue(Function<Location, Runnable> action) {
 			CompletableFuture<Void> future = new CompletableFuture<>();
-			Tasks.async(() -> computeBlocks().thenAccept(blocks -> {
-				Queue<Location> queue = createDistanceSortedQueue(toLocation(at));
-				queue.addAll(blocks.keySet());
+			Tasks.async(() ->
+				computeBlocks().thenAccept(blocks -> {
+					Queue<Location> queue = createDistanceSortedQueue(toLocation(at));
+					queue.addAll(blocks.keySet());
 
-				int wait = 0;
-				int blocksPerTick = Math.max(queue.size() / ticks, 1);
-				int delay = Math.max(ticks / queue.size(), 1);
+					int wait = 0;
+					int blocksPerTick = Math.max(queue.size() / ticks, 1);
+					int delay = Math.max(ticks / queue.size(), 1);
 
-				queueLoop:
-				while (true) {
-					wait += delay;
-					for (int i = 0; i < blocksPerTick; i++) {
-						Location poll = queue.poll();
-						if (poll == null)
-							break queueLoop;
-						Tasks.wait(wait, action.apply(poll));
+					queueLoop:
+					while (true) {
+						wait += delay;
+						for (int i = 0; i < blocksPerTick; i++) {
+							Location poll = queue.poll();
+							if (poll == null)
+								break queueLoop;
+							Tasks.wait(wait, action.apply(poll));
+						}
 					}
-				}
 
-				Tasks.wait(++wait, () -> future.complete(null));
-			}));
+					Tasks.wait(++wait, () -> future.complete(null));
+				}));
 
 			return future;
 		}
@@ -487,12 +516,13 @@ public class WorldEditUtils {
 		public CompletableFuture<List<FallingBlock>> spawnFallingBlocks() {
 			final CompletableFuture<List<FallingBlock>> future = new CompletableFuture<>();
 
-			computeBlocks().thenAccept(blocks -> future.complete(new ArrayList<>() {{
-				blocks.forEach((location, blockData) -> {
-					if (!MaterialTag.ALL_AIR.isTagged(blockData.getMaterial()))
-						add(spawnFallingBlock(location, blockData));
-				});
-			}}));
+			computeBlocks().thenAccept(blocks ->
+				future.complete(new ArrayList<>() {{
+					blocks.forEach((location, blockData) -> {
+						if (!MaterialTag.ALL_AIR.isTagged(blockData.getMaterial()))
+							add(spawnFallingBlock(location, blockData));
+					});
+				}}));
 
 			return future;
 		}
@@ -506,9 +536,15 @@ public class WorldEditUtils {
 		}
 
 		public CompletableFuture<Map<Location, BlockData>> computeBlocks() {
+			return computeBlocks(StringUtils.getUUID0(), new AtomicInteger(0));
+		}
+
+		public CompletableFuture<Map<Location, BlockData>> computeBlocks(UUID uuid, AtomicInteger i) {
 			if (computedBlocks == null) {
+				Nexus.debug(id(uuid, i) + " Computing blocks");
 				computedBlocks = new CompletableFuture<>();
-				clipboardFuture.thenAccept(clipboard -> {
+				clipboardFuture.thenAcceptAsync(clipboard -> {
+					Nexus.debug(id(uuid, i) + " Clipboard completed");
 					Iterator<BlockVector3> iterator = clipboard.iterator();
 
 					BlockVector3 origin = clipboard.getOrigin();
@@ -525,9 +561,13 @@ public class WorldEditUtils {
 							continue;
 
 						Location location = toLocation(blockVector3).add(relX, relY, relZ);
-						data.put(location, BukkitAdapter.adapt(baseBlock));
+						final BlockData block = BukkitAdapter.adapt(baseBlock);
+
+						Nexus.debug(id(uuid, i) + "   Found " + block.getMaterial() + "  at " + getFlooredCoordinateString(toLocation(blockVector3)) + " (" + baseBlock.getAsString() + ")");
+						data.put(location, block);
 					}
 
+					Nexus.debug(id(uuid, i) + " Finished computing " + data.size() + " blocks");
 					computedBlocks.complete(data);
 				});
 			}

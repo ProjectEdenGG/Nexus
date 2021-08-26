@@ -5,6 +5,7 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.arenas.PixelPaintersArena;
@@ -18,7 +19,6 @@ import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.Countdown;
 import gg.projecteden.nexus.utils.Tasks.Countdown.CountdownBuilder;
 import gg.projecteden.utils.TimeUtils.Time;
@@ -40,8 +40,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static gg.projecteden.nexus.utils.StringUtils.plural;
+import static gg.projecteden.nexus.utils.WorldEditUtils.Paste.id;
 
 // TODO:
 //  - Only paste the designs on active islands
@@ -133,18 +137,29 @@ public class PixelPainters extends TeamlessMechanic {
 			BlockVector3 copyMaxV;
 			BlockVector3 pasteMinV;
 
+			List<CompletableFuture<Void>> futures = new ArrayList<>();
 			for (int i = 0; i < 9; i++) {
 				copyMinV = copySliceMin.subtract(0, 0, i);
 				copyMaxV = designMax.subtract(0, 0, i);
 				pasteMinV = pasteMin.add(0, i, 0);
 				Region copyRg = new CuboidRegion(match.getWGUtils().getWorldEditWorld(), copyMinV, copyMaxV);
 				BlockVector3 finalPasteMinV = pasteMinV;
-				Tasks.sync(() -> match.getWEUtils().paster().clipboard(copyRg).at(finalPasteMinV).pasteAsync());
+
+				final UUID uuid = UUID.randomUUID();
+				final AtomicInteger j = new AtomicInteger(1000);
+				Nexus.debug(id(uuid, j) + " Rotating lobby design");
+				futures.add(match.getWEUtils().paster().clipboard(copyRg).at(finalPasteMinV).build(uuid, new AtomicInteger(1000)));
 			}
 
-			// Paste Design
-			Region pasteRegion = arena.getLobbyAnimationRegion();
-			match.getWEUtils().paster().clipboard(arena.getLobbyDesignRegion()).at(pasteRegion.getMinimumPoint()).pasteAsync();
+			CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).thenRun(() -> {
+				// Paste Design
+				Region pasteRegion = arena.getLobbyAnimationRegion();
+
+				final UUID uuid = UUID.randomUUID();
+				final AtomicInteger i = new AtomicInteger(1000);
+				Nexus.debug(id(uuid, i) + " Pasting lobby design");
+				match.getWEUtils().paster().clipboard(arena.getLobbyDesignRegion()).at(pasteRegion.getMinimumPoint()).build(uuid, new AtomicInteger(1000));
+			});
 		});
 		matchData.setAnimateLobbyId(taskId);
 	}
@@ -484,7 +499,10 @@ public class PixelPainters extends TeamlessMechanic {
 			copyMaxV = designMax.subtract(0, 0, i);
 			pasteMinV = pasteMin.add(0, i, 0);
 			Region copyRg = new CuboidRegion(match.getWGUtils().getWorldEditWorld(), copyMinV, copyMaxV);
-			match.getWEUtils().paster().clipboard(copyRg).at(pasteMinV).pasteAsync();
+			final UUID uuid = UUID.randomUUID();
+			final AtomicInteger j = new AtomicInteger(1000);
+			Nexus.debug(id(uuid, j) + " Setting up next design");
+			match.getWEUtils().paster().clipboard(copyRg).at(pasteMinV).build(uuid, new AtomicInteger(1000));
 		}
 	}
 
@@ -493,7 +511,10 @@ public class PixelPainters extends TeamlessMechanic {
 		Set<ProtectedRegion> wallRegions = arena.getRegionsLike("wall_[\\d]+");
 		wallRegions.forEach(wallRegion -> {
 			Region region = match.getWGUtils().convert(wallRegion);
-			match.getWEUtils().paster().clipboard(arena.getNextDesignRegion()).at(region.getMinimumPoint()).pasteAsync();
+			final UUID uuid = UUID.randomUUID();
+			final AtomicInteger i = new AtomicInteger(1000);
+			Nexus.debug(id(uuid, i) + " Pasting new design");
+			match.getWEUtils().paster().clipboard(arena.getNextDesignRegion()).at(region.getMinimumPoint()).build(uuid, new AtomicInteger(1000));
 		});
 	}
 
@@ -515,7 +536,10 @@ public class PixelPainters extends TeamlessMechanic {
 		Set<ProtectedRegion> wallRegions = arena.getRegionsLike("wall_[\\d]+");
 		wallRegions.forEach(wallRegion -> {
 			Region region = match.getWGUtils().convert(wallRegion);
-			match.getWEUtils().paster().clipboard(arena.getLogoRegion()).at(region.getMinimumPoint()).pasteAsync();
+			final UUID uuid = UUID.randomUUID();
+			final AtomicInteger i = new AtomicInteger(1000);
+			Nexus.debug(id(uuid, i) + " Pasting logo");
+			match.getWEUtils().paster().clipboard(arena.getLogoRegion()).at(region.getMinimumPoint()).build(uuid, new AtomicInteger(1000));
 		});
 	}
 
