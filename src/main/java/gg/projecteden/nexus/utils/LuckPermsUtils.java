@@ -2,6 +2,7 @@ package gg.projecteden.nexus.utils;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
@@ -18,6 +19,7 @@ import net.luckperms.api.model.group.GroupManager;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.model.user.UserManager;
 import net.luckperms.api.node.Node;
+import net.luckperms.api.node.matcher.NodeMatcher;
 import net.luckperms.api.node.types.InheritanceNode;
 import net.luckperms.api.query.QueryMode;
 import net.luckperms.api.query.QueryOptions;
@@ -67,6 +69,11 @@ public class LuckPermsUtils {
 	@NotNull
 	public static User getUser(@NotNull HasUniqueId player) {
 		return getUser(player.getUniqueId());
+	}
+
+	@NotNull
+	public static Group getGroup(@NotNull Rank rank) {
+		return getGroup(rank.name());
 	}
 
 	@NotNull
@@ -178,6 +185,19 @@ public class LuckPermsUtils {
 	@NotNull
 	public static Collection<Node> getPermissions(@NotNull UUID uuid) {
 		return getUser(uuid).data().toCollection();
+	}
+
+	public static CompletableFuture<List<UUID>> getUsersInGroup(Rank rank) {
+		var matcher = NodeMatcher.key(InheritanceNode.builder(getGroup(rank)).build());
+		var search = Nexus.getLuckPerms().getUserManager().searchAll(matcher);
+
+		CompletableFuture<List<UUID>> future = new CompletableFuture<>();
+
+		search.thenAccept(map -> future.complete(map.keySet().stream()
+			.filter(Dev.KODA::isNot)
+			.toList()));
+
+		return future;
 	}
 
 	@AllArgsConstructor

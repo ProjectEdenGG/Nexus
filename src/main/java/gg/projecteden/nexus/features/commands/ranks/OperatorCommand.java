@@ -30,11 +30,12 @@ public class OperatorCommand extends CustomCommand {
 	@Async
 	@Path("list")
 	void list() {
-		line();
-		send("&3All current " + Rank.OPERATOR.getChatColor() + "Operators &3and the date they were promoted:");
-		Rank.OPERATOR.getNerds().forEach(nerd ->
-				send(nerd.getColoredName() + " &7-&e " + shortDateFormat(nerd.getPromotionDate())));
-		line();
-		RanksCommand.ranksReturn(player());
+		Rank.OPERATOR.getNerds().thenAccept(nerds -> {
+			line();
+			send("&3All current " + Rank.OPERATOR.getChatColor() + "Operators &3and the date they were promoted:");
+			nerds.forEach(nerd -> send(nerd.getColoredName() + " &7-&e " + shortDateFormat(nerd.getPromotionDate())));
+			line();
+			RanksCommand.ranksReturn(player());
+		});
 	}
 }

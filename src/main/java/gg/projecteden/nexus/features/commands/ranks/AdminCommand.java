@@ -30,11 +30,12 @@ public class AdminCommand extends CustomCommand {
 	@Async
 	@Path("list")
 	void list() {
-		line();
-		send("&3All current " + Rank.ADMIN.getChatColor() + "Admins &3and the date they were promoted:");
-		Rank.ADMIN.getNerds().forEach(nerd ->
-				send(nerd.getColoredName() + " &7-&e " + shortDateFormat(nerd.getPromotionDate())));
-		line();
-		RanksCommand.ranksReturn(player());
+		Rank.ADMIN.getNerds().thenAccept(nerds -> {
+			line();
+			send("&3All current " + Rank.ADMIN.getChatColor() + "Admins &3and the date they were promoted:");
+			nerds.forEach(nerd -> send(nerd.getColoredName() + " &7-&e " + shortDateFormat(nerd.getPromotionDate())));
+			line();
+			RanksCommand.ranksReturn(player());
+		});
 	}
 }

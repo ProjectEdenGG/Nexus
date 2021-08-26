@@ -35,11 +35,13 @@ public class BuilderCommand extends CustomCommand {
 	@Async
 	@Path("list")
 	void list() {
-		line();
-		send("&3All current " + Rank.BUILDER.getChatColor() + "Builders &3and the date they were promoted:");
-		Rank.BUILDER.getNerds().forEach(nerd ->
+		Rank.BUILDER.getNerds().thenAccept(nerds -> {
+			line();
+			send("&3All current " + Rank.BUILDER.getChatColor() + "Builders &3and the date they were promoted:");
+			nerds.forEach(nerd ->
 				send(nerd.getColoredName() + " &7-&e " + shortDateFormat(nerd.getPromotionDate())));
-		line();
-		RanksCommand.ranksReturn(player());
+			line();
+			RanksCommand.ranksReturn(player());
+		});
 	}
 }

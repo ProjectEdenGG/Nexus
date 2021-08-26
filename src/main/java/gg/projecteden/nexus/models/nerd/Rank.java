@@ -3,8 +3,6 @@ package gg.projecteden.nexus.models.nerd;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.framework.interfaces.IsColoredAndNamed;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
@@ -16,9 +14,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import me.lexikiq.HasUniqueId;
-import net.luckperms.api.model.group.Group;
-import net.luckperms.api.node.matcher.NodeMatcher;
-import net.luckperms.api.node.types.InheritanceNode;
 import net.md_5.bungee.api.ChatColor;
 import org.inventivetalent.glow.GlowAPI;
 import org.jetbrains.annotations.NotNull;
@@ -28,6 +23,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -126,14 +122,13 @@ public enum Rank implements IsColoredAndNamed {
 	}
 
 	@SneakyThrows
-	public List<Nerd> getNerds() {
-		Group group = Nexus.getLuckPerms().getGroupManager().getGroup(name());
+	public CompletableFuture<List<Nerd>> getNerds() {
+		CompletableFuture<List<Nerd>> users = new CompletableFuture<>();
 
-		if (group == null)
-			throw new InvalidInputException("&cGroup " + name() +  " does not exist!");
+		LuckPermsUtils.getUsersInGroup(this).thenAccept(uuids ->
+			users.complete(Nerd.of(uuids)));
 
-		var matcher = NodeMatcher.key(InheritanceNode.builder(group).build());
-		return Nerd.of(Nexus.getLuckPerms().getUserManager().searchAll(matcher).get().keySet());
+		return users;
 	}
 
 	public List<Nerd> getOnlineNerds() {

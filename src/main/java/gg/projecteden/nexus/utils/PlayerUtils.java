@@ -103,6 +103,10 @@ public class PlayerUtils {
 		public boolean isNot(HasUniqueId player) {
 			return !is(player);
 		}
+
+		public boolean isNot(UUID player) {
+			return !is(player);
+		}
 	}
 
 	public static List<Player> getOnlinePlayers(List<UUID> uuids) {
