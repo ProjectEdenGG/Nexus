@@ -8,8 +8,8 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,17 +31,17 @@ public class StaffCommand extends CustomCommand {
 		AtomicInteger total = new AtomicInteger();
 		Map<Rank, List<Nerd>> map = new LinkedHashMap<>() {{
 			Rank.STAFF_RANKS.forEach(rank -> {
-				put(rank, rank.getNerds());
+				put(rank, rank.getNerds().stream().filter(Dev.KODA::isNot).toList());
 				total.addAndGet(get(rank).size());
 			});
 		}};
 
 		send(PREFIX + "Total: &e" + total);
 		line();
-		map.forEach((rank, nerds) -> send(rank.getColoredName() + " &f(" + nerds.size() + "):&e " + nerds.stream()
-				.sorted(Comparator.comparing(Nerd::getName, String.CASE_INSENSITIVE_ORDER))
+		map.forEach((rank, nerds) ->
+			send(rank.getColoredName() + " &f(" + nerds.size() + "):&e " + nerds.stream()
 				.map(Nickname::of)
-				.filter(name -> !name.equals("KodaBear"))
+				.sorted()
 				.collect(Collectors.joining("&f, &e"))));
 		line();
 		send(json("&3View online staff with &c/onlinestaff").command("/onlinestaff"));
