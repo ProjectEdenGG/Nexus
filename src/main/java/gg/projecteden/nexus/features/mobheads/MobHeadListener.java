@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.mobheads;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.mobheads.common.MobHead;
+import gg.projecteden.nexus.framework.persistence.serializer.mongodb.MobHeadConverter;
 import gg.projecteden.nexus.models.boost.BoostConfig;
 import gg.projecteden.nexus.models.boost.Boostable;
 import gg.projecteden.nexus.models.mobheads.MobHeadUser.MobHeadData;
@@ -100,7 +101,7 @@ public class MobHeadListener implements Listener {
 		final boolean drop = random <= finalChance;
 		Nexus.debug("" +
 			"Player: " + player.getName() +
-			"\n  Type: " + mobHead.name() +
+			"\n  Type: " + MobHeadConverter.encode(mobHead) +
 			"\n  Chance: " + chance +
 			"\n  Looting bonus: " + looting +
 			"\n  Boost: " + boost +
