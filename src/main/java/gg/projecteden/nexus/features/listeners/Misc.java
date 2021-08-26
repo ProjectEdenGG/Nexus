@@ -58,6 +58,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -697,7 +698,7 @@ public class Misc implements Listener {
 					ARM2_Z.getBlock().setType(Material.AIR);
 
 					Location location = event.getBlock().getLocation().add(0, -1, 0).toCenterLocation();
-					final IronGolem golem = location.getWorld().spawn(location, IronGolem.class);
+					final IronGolem golem = location.getWorld().spawn(location, IronGolem.class, SpawnReason.BUILD_IRONGOLEM);
 					if (golem.isValid())
 						new IronGolemBuildEvent(player, golem).callEvent();
 				}
@@ -711,7 +712,7 @@ public class Misc implements Listener {
 			return;
 
 		Player player = event.getPlayer();
-		if (event.getBlock().getType().equals(Material.CARVED_PUMPKIN)) {
+		if (List.of(Material.CARVED_PUMPKIN, Material.JACK_O_LANTERN).contains(event.getBlock().getType())) {
 			Location HEAD = event.getBlock().getLocation();
 
 			Location TORSO = new Location(HEAD.getWorld(), HEAD.getX(), HEAD.getY() - 1, HEAD.getZ());
@@ -724,7 +725,7 @@ public class Misc implements Listener {
 				LEGS.getBlock().setType(Material.AIR);
 
 				Location location = event.getBlock().getLocation().add(0, -1, 0).toCenterLocation();
-				final Snowman golem = location.getWorld().spawn(location, Snowman.class);
+				final Snowman golem = location.getWorld().spawn(location, Snowman.class, SpawnReason.BUILD_IRONGOLEM);
 				if (golem.isValid())
 					new SnowGolemBuildEvent(player, golem).callEvent();
 			}
