@@ -7,7 +7,7 @@ import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.features.discord.HandledBy;
 import gg.projecteden.nexus.features.justice.Justice;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.punishments.Punishments;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -38,7 +38,7 @@ public class HistoryDiscordCommand extends Command {
 				if (Punishments.of(player).hasHistory())
 					event.reply("<" + Justice.URL + "/history/" + Name.of(player) + ">");
 				else
-					event.reply("No history found for " + Nerd.of(player).getNickname());
+					event.reply("No history found for " + Nickname.of(player));
 			} catch (Exception ex) {
 				event.reply(stripColor(ex.getMessage()));
 				if (!(ex instanceof EdenException))

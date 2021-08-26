@@ -32,7 +32,7 @@ public class HistoryCommand extends _JusticeCommand {
 	@Path("<player> [page]")
 	void run(Punishments player, @Arg("1") int page) {
 		if (player.getPunishments().isEmpty())
-			error("No history found");
+			error("No history found for " + player.getNickname());
 
 		send("");
 		send(PREFIX + "History of &e" + player.getNickname());
