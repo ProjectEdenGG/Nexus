@@ -24,7 +24,7 @@ public class PunishmentsCommand extends _JusticeCommand {
 		send("    &cMax of 3 days&3, then permanent");
 		line();
 		send("&eBan evasions");
-		send("    &cMatch original ban&3, add a little to both if it was malicious");
+		send("    &cPermanently ban alt&3, add time to main account if it was malicious");
 		line();
 		send("&eOther assholery");
 		send("    &3Generally &c1 day&3, max of 3 days for first ban");
