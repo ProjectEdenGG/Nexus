@@ -199,7 +199,7 @@ public enum Rarity {
 				result += enchantVal;
 
 				ItemTags.debug(debugger,
-					"    &3- " + StringUtils.camelCase(enchant.getKey().getKey()) + " " + level + ": &e" + number(level));
+					"    &3- " + StringUtils.camelCase(enchant.getKey().getKey()) + " " + level + ": &e" + number(enchantVal));
 			}
 		}
 
