@@ -2,11 +2,16 @@ package gg.projecteden.nexus.features.crates;
 
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.Enchant;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Utils;
 import lombok.NoArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -20,7 +25,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import java.util.Arrays;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor
@@ -45,11 +49,14 @@ public class GemCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onClickOfGem(PlayerInteractEvent event) {
-		if (!Utils.ActionGroup.RIGHT_CLICK.applies(event)) return;
-		if (event.getHand() != EquipmentSlot.HAND) return;
+		if (!Utils.ActionGroup.RIGHT_CLICK.applies(event))
+			return;
+		if (event.getHand() != EquipmentSlot.HAND)
+			return;
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK)
 			if (MaterialTag.CONTAINERS.isTagged(event.getClickedBlock().getType()))
 				return;
+
 		Player player = event.getPlayer();
 		PlayerInventory inventory = player.getInventory();
 		if (isGem(inventory.getItemInMainHand())) {
@@ -60,7 +67,7 @@ public class GemCommand extends CustomCommand implements Listener {
 			ItemStack gem = inventory.getItemInOffHand();
 			ItemStack tool = inventory.getItemInMainHand();
 			addGemEnchantToTool(player, inventory, gem, tool);
-		} else return;
+		}
 	}
 
 	public void addGemEnchantToTool(Player player, PlayerInventory inventory, ItemStack gem, ItemStack tool) {
