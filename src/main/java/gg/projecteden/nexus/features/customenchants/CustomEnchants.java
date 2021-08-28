@@ -39,7 +39,7 @@ public class CustomEnchants extends Feature implements Listener {
 	private static final Map<Class<? extends CustomEnchant>, CustomEnchant> enchants = new HashMap<>();
 
 	public static CustomEnchant get(Class<? extends CustomEnchant> clazz) {
-		return enchants.get(clazz);
+		return enchants.computeIfAbsent(clazz, $ -> CustomEnchantsRegistration.register(clazz));
 	}
 
 	public static Collection<CustomEnchant> getEnchants() {
@@ -53,7 +53,7 @@ public class CustomEnchants extends Feature implements Listener {
 	@Override
 	public void onStart() {
 		register();
-		new OldCEConverter();
+		OldCEConverter.load();
 	}
 
 	@Override

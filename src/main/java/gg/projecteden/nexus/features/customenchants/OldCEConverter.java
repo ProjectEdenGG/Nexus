@@ -16,7 +16,7 @@ import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 public class OldCEConverter {
 
-	static {
+	static void load() {
 		Tasks.repeat(100, 100, () -> {
 			for (Player player : PlayerUtils.getOnlinePlayers()) {
 				for (ItemStack item : player.getInventory()) {

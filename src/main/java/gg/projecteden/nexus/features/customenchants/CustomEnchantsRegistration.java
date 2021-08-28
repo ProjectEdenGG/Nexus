@@ -41,10 +41,11 @@ public class CustomEnchantsRegistration {
 	}
 
 	@SneakyThrows
-	static void register(Class<? extends CustomEnchant> clazz) {
+	static CustomEnchant register(Class<? extends CustomEnchant> clazz) {
 		CustomEnchant enchant = clazz.getConstructor(NamespacedKey.class).newInstance(CustomEnchants.getKey(clazz));
 		Enchantment.registerEnchantment(enchant);
 		CustomEnchants.getEnchantsMap().put(clazz, enchant);
+		return enchant;
 	}
 
 	@NotNull

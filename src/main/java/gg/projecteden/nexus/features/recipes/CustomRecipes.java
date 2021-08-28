@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.recipes;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
@@ -37,7 +38,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-@Depends(ResourcePack.class)
+@Depends({ResourcePack.class, CustomEnchants.class})
 public class CustomRecipes extends Feature implements Listener {
 
 	@Getter
