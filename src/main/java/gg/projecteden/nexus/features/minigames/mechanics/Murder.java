@@ -179,7 +179,7 @@ public class Murder extends TeamMechanic {
 		else
 			builder.content("The ")
 					.next("innocents", NamedTextColor.BLUE)
-					.next(" have won");
+					.next(" have won ");
 
 		Minigames.broadcast(builder.next(match.getArena()).build());
 	}
