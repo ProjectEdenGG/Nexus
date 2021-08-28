@@ -19,7 +19,8 @@ public enum RecipeType {
 	WOOL(Material.WHITE_WOOL),
 	STONE_BRICK(Material.STONE_BRICKS),
 	MISC(Material.BLUE_ICE),
-	FUNCTIONAL(Material.CHEST);
+	FUNCTIONAL(Material.CHEST),
+	ARMOR(Material.DIAMOND_CHESTPLATE);
 
 	@Getter
 	public ItemStack item;

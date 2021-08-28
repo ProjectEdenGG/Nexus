@@ -11,6 +11,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redi
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.utils.TimeUtils.Time;
@@ -300,6 +301,12 @@ public class WitherCommand extends CustomCommand {
 	void maintenance() {
 		maintenance = !maintenance;
 		send(PREFIX + "Wither arena maintenance mode " + (maintenance ? "&aenabled" : "&cdisabled"));
+	}
+
+	@Path("getFragment")
+	@Permission("group.admin")
+	void fragment() {
+		PlayerUtils.giveItem(player(), WitherChallenge.getWitherFragment());
 	}
 
 }

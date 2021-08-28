@@ -12,12 +12,7 @@ import gg.projecteden.nexus.features.wither.models.WitherFight;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.utils.TimeUtils.Time;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,6 +31,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.Team;
 
 import java.util.ArrayList;
@@ -61,6 +57,13 @@ public class WitherChallenge extends Feature implements Listener {
 	static Location location(double x, double y, double z, float yaw, float pitch) {
 		return new Location(Bukkit.getWorld("events"), x, y, z, yaw, pitch);
 	}
+
+	@Getter
+	private static final ItemStack witherFragment = new ItemBuilder(Material.GHAST_TEAR)
+		.name("&eWither Fragment")
+		.lore("&7Can be used to craft", "&7Wither Skeleton Skulls")
+		.customModelData(1)
+		.build();
 
 	public static void reset() {
 		reset(true);

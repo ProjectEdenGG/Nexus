@@ -68,7 +68,7 @@ public class CustomRecipes extends Feature implements Listener {
 			.filter(obj -> Objects.nonNull(obj) && obj.getResult() != null)
 			.sorted((recipe1, recipe2) -> new ItemStackComparator().compare(recipe1.getResult(), recipe2.getResult()))
 			.forEach(recipe -> {
-				recipe.setType(RecipeType.FUNCTIONAL);
+				recipe.setType(recipe.getRecipeType());
 				recipe.register();
 				recipes.add(recipe);
 			});

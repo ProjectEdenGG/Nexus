@@ -50,4 +50,9 @@ public abstract class FunctionalRecipe extends NexusRecipe implements Listener {
 	 */
 	@Override
 	public abstract RecipeChoice.MaterialChoice getMaterialChoice();
+
+	public RecipeType getRecipeType() {
+		return RecipeType.FUNCTIONAL;
+	}
+
 }

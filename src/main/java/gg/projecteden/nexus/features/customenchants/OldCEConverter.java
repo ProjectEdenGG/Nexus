@@ -32,6 +32,7 @@ public class OldCEConverter {
 		for (String line : new ArrayList<>(item.getItemMeta().getLore())) {
 			String ogLine = line;
 			for (ConversionEnchant enchant : ConversionEnchant.values()) {
+				if (enchant.getEnchant() == null) continue;
 				if (item.getItemMeta().hasEnchant(enchant.getEnchant())) return;;
 				line = stripColor(line);
 				if (line.matches(String.format("(?i)^%s.*", enchant.getCEName()))) {

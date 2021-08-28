@@ -135,6 +135,9 @@ public class MobHeadListener implements Listener {
 		if (!MaterialTag.SKULLS.isTagged(itemStack.getType()))
 			return;
 
+		if (item.getItemStack().getItemMeta().getLore() != null && !item.getItemStack().getItemMeta().getLore().isEmpty())
+			return;
+
 		UUID skullOwner = ItemUtils.getSkullOwner(itemStack);
 		if (skullOwner != null) {
 			for (ItemStack mobHead : MobHeadType.getAllSkulls()) {

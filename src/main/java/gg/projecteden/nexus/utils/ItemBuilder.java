@@ -27,6 +27,8 @@ import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
@@ -516,6 +518,11 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 			return Condition.of(build());
 
 		return Condition.valueOf(nbtItem.getString(Condition.NBT_KEY));
+	}
+
+	public ItemBuilder attribute(Attribute attribute, AttributeModifier value) {
+		itemMeta.addAttributeModifier(attribute, value);
+		return this;
 	}
 
 	public ItemBuilder condition(Condition condition) {

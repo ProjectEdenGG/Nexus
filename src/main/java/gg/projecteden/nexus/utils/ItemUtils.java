@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.utils;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.quests.itemtags.Condition;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import me.lexikiq.HasPlayer;
 import org.bukkit.Material;
@@ -57,7 +58,17 @@ public class ItemUtils {
 		if (!itemMeta1.getDisplayName().equals(itemMeta2.getDisplayName()))
 			return false;
 
-		if (!Objects.equals(itemMeta1.getLore(), itemMeta2.getLore()))
+		List<String> lore1 = itemMeta1.getLore();
+		List<String> lore2 = itemMeta2.getLore();
+		List<String> conditionTags = Arrays.stream(Condition.values()).map(condition -> stripColor(condition.getTag())).toList();
+		if(lore1 != null) {
+			lore1 = lore1.stream().filter(line -> !conditionTags.contains(stripColor(line))).toList();
+		}
+		if(lore2 != null) {
+			lore2 = lore2.stream().filter(line -> !conditionTags.contains(stripColor(line))).toList();
+		}
+
+		if (!Objects.equals(lore1, lore2))
 			return false;
 
 		if (itemMeta1.hasCustomModelData() && itemMeta2.hasCustomModelData())

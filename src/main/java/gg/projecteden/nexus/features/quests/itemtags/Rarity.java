@@ -13,11 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public enum Rarity {
 	// @formatter:off
@@ -236,15 +232,10 @@ public enum Rarity {
 	}
 
 	private static Rarity checkUniqueItems(ItemStack itemStack, RarityArgs args, Rarity defaultValue) {
-		List<String> lore = itemStack.getItemMeta().getLore();
-		if (lore != null && lore.size() != 0) {
-			List<String> lore_stripped = lore.stream().map(StringUtils::stripColor).map(String::toLowerCase).toList();
-
-			// Bonemeal boots
-			if (lore_stripped.contains("bonemeal boots"))
-				return UNIQUE;
+		NBTItem nbtItem = new NBTItem(itemStack);
+		if (nbtItem.hasKey(Rarity.NBT_KEY)) {
+			return Rarity.valueOf(nbtItem.getString(Rarity.NBT_KEY).toUpperCase());
 		}
-
 		return defaultValue;
 	}
 
@@ -274,6 +265,7 @@ public enum Rarity {
 
 	public static void setNBT(NBTItem nbtItem, Rarity rarity) {
 		nbtItem.setString(NBT_KEY, rarity.name());
+		ItemTagsUtils.addRarity(nbtItem.getItem(), rarity);
 	}
 
 }

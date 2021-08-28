@@ -71,6 +71,7 @@ public enum Condition {
 
 	public static void setNBT(NBTItem nbtItem, Condition condition) {
 		nbtItem.setString(NBT_KEY, condition.name());
+		ItemTagsUtils.addCondition(nbtItem.getItem(), condition);
 		setDurability(nbtItem.getItem(), condition);
 	}
 

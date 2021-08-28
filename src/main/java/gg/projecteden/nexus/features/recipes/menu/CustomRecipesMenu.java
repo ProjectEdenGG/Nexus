@@ -76,20 +76,20 @@ public class CustomRecipesMenu {
 						if (type == RecipeType.MAIN) continue;
 						contents.set(row, column, ClickableItem.from(type.getItem(), e -> CustomRecipesMenu.open(type, player)));
 						if (column == 7) {
-							column = 4;
+							column = 3;
 							row++;
-						} else column++;
+						} else column += (row == 1 ? 1 : 2);
 					}
 				}
 				default -> {
-					if (type == RecipeType.FUNCTIONAL && recipe == null) break;
+					if ((type == RecipeType.FUNCTIONAL || type == RecipeType.ARMOR) && recipe == null) break;
 					contents.fill(ClickableItem.empty(new ItemBuilder(Material.WHITE_STAINED_GLASS_PANE).name(" ").build()));
 					for (int i : inputSlots)
 						contents.set(i, ClickableItem.NONE);
 					addBackItem(contents, e -> CustomRecipesMenu.open(RecipeType.MAIN, player));
 				}
 			}
-			if (type == RecipeType.FUNCTIONAL) {
+			if (type == RecipeType.FUNCTIONAL || type == RecipeType.ARMOR) {
 				if (recipe == null) {
 					Pagination page = contents.pagination();
 					addBackItem(contents, e -> CustomRecipesMenu.open(RecipeType.MAIN, player));
@@ -115,7 +115,7 @@ public class CustomRecipesMenu {
 						contents.set(0, 6, ClickableItem.from(new ItemBuilder(Material.ARROW).name("Next -->").build(), e ->
 								CustomRecipesMenu.getMenu(type).open(player, page.next().getPage())));
 				} else {
-					addBackItem(contents, e -> CustomRecipesMenu.open(RecipeType.FUNCTIONAL, player));
+					addBackItem(contents, e -> CustomRecipesMenu.open(type, player));
 					addRecipeToMenu(contents, recipe);
 				}
 			}
@@ -126,7 +126,7 @@ public class CustomRecipesMenu {
 
 		@Override
 		public void update(Player player, InventoryContents contents) {
-			if (type == RecipeType.MAIN || type == RecipeType.FUNCTIONAL) return;
+			if (type == RecipeType.MAIN || type == RecipeType.FUNCTIONAL || type == RecipeType.ARMOR) return;
 
 			ticks++;
 			if (ticks == 20) ticks = 0;
