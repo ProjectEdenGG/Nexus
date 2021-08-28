@@ -10,6 +10,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
@@ -149,6 +150,13 @@ public class NexusRecipe {
 
 	public void register() {
 		CustomRecipes.register(getRecipe());
+	}
+
+	public boolean hasPermission(Player player) {
+		final String permission = getPermission();
+		if (permission != null)
+			return player.hasPermission(permission);
+		return true;
 	}
 
 	private static String getItemName(ItemStack result) {

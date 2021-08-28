@@ -132,15 +132,19 @@ public class CustomRecipesMenu {
 			if (ticks == 20) ticks = 0;
 			if (ticks != 1) return;
 			index++;
-			List<NexusRecipe> recipes = type.getRecipes().stream().filter(nexusRecipe -> {
-				if (nexusRecipe.getPermission() != null)
-					return player.hasPermission(nexusRecipe.getPermission());
-				return true;
-			}).collect(Collectors.toList());
+			List<NexusRecipe> recipes = type.getRecipes().stream()
+				.filter(nexusRecipe -> nexusRecipe.hasPermission(player))
+				.toList();
+
+			if (recipes.isEmpty())
+				return;
+
 			if (index >= recipes.size()) index = 0;
 			NexusRecipe recipe = recipes.get(index);
+
 			for (int i : inputSlots)
 				contents.set(i, ClickableItem.NONE);
+
 			addRecipeToMenu(contents, recipe);
 		}
 

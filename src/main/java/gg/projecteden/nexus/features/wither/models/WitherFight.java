@@ -27,6 +27,7 @@ import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.TimeUtils.Time;
 import lombok.Data;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -84,6 +85,7 @@ import java.util.UUID;
 
 import static gg.projecteden.nexus.utils.PlayerUtils.getOnlinePlayers;
 import static gg.projecteden.nexus.utils.Utils.tryCalculate;
+import static gg.projecteden.utils.StringUtils.plural;
 
 @Data
 public abstract class WitherFight implements Listener {
@@ -166,8 +168,13 @@ public abstract class WitherFight implements Listener {
 			}
 
 			tasks.add(Tasks.repeat(0, Time.SECOND.x(5), () -> {
-				for (Player player : alivePlayers())
-					scoreboardTeams.get(player.getUniqueId()).prefix(new JsonBuilder((int) player.getPlayer().getHealth() + " &c❤ &r").build());
+				for (Player player : alivePlayers()) {
+					final UUID uuid = player.getUniqueId();
+					if (scoreboardTeams.containsKey(uuid)) {
+						final Component prefix = new JsonBuilder((int) player.getPlayer().getHealth() + " &c❤ &r").build();
+						scoreboardTeams.get(uuid).prefix(prefix);
+					}
+				}
 			}));
 
 		});
@@ -441,7 +448,7 @@ public abstract class WitherFight implements Listener {
 			return;
 
 		Wither wither = (Wither) event.getEntity();
-		if (wither != this.wither) {
+		if (!wither.equals(this.wither)) {
 			event.setDroppedExp(0);
 			event.getDrops().clear();
 			return;
@@ -453,9 +460,8 @@ public abstract class WitherFight implements Listener {
 		int partySize = party.size();
 
 		String message = "&e" + Nickname.of(getHostOfflinePlayer()) +
-			(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3have" : " &3has") +
-			" successfully beaten the Wither in " +
-			getDifficulty().getTitle() + " &3mode " + (gotStar ? "and got the star" : "but did not get the star");
+			(partySize > 1 ? " and " + (partySize - 1) + plural(" other", partySize - 1) + " &3have" : " &3has") +
+			" successfully beaten the Wither in " + getDifficulty().getTitle() + " &3mode " + (gotStar ? "and got" : "but did not get") + "  the star";
 
 		if (WitherCommand.betaMode)
 			Broadcast.staff().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
