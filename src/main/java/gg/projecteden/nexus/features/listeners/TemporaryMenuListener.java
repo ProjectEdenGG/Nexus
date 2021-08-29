@@ -29,9 +29,10 @@ public interface TemporaryMenuListener extends TemporaryListener {
 	}
 
 	default void open(int rows, List<ItemStack> contents) {
-		Inventory inv = Bukkit.createInventory(null, rows * 9, colorize(getTitle()));
+		final int slots = rows * 9;
+		Inventory inv = Bukkit.createInventory(null, slots, colorize(getTitle()));
 		if (!Utils.isNullOrEmpty(contents))
-			inv.setContents(contents.toArray(ItemStack[]::new));
+			inv.setContents(contents.subList(0, slots).toArray(ItemStack[]::new));
 
 		Nexus.registerTemporaryListener(this);
 		getPlayer().openInventory(inv);

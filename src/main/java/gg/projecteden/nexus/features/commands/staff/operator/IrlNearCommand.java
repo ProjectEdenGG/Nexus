@@ -6,6 +6,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Async;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.geoip.GeoIP;
 import gg.projecteden.nexus.models.geoip.GeoIP.Distance;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
@@ -36,7 +37,9 @@ public class IrlNearCommand extends CustomCommand {
 		Map<UUID, Distance> near = new HashMap<>() {{
 			for (GeoIP geoip : new GeoIPService().getAll())
 				if (new HoursService().get(geoip).getTotal() > Time.MINUTE.x(30) / 20)
-					put(geoip.getUuid(), new Distance(player, geoip));
+					try {
+						put(geoip.getUuid(), new Distance(player, geoip));
+					} catch (InvalidInputException ignore) {}
 		}};
 
 		BiFunction<UUID, String, JsonBuilder> formatter = (uuid, index) -> {
