@@ -34,7 +34,7 @@ public class MediumFight extends WitherFight {
 
 	@EventHandler
 	public void counterAttack(EntityDamageByEntityEvent event) {
-		if (event.getEntity() != this.wither)
+		if (!event.getEntity().equals(wither))
 			return;
 
 		if (!chanceOf(15))

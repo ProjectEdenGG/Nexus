@@ -111,19 +111,8 @@ public class CorruptedFight extends WitherFight {
 	}
 
 	@EventHandler
-	public void onWitherRegen(EntityRegainHealthEvent event) {
-		if (event.getEntity() != wither)
-			return;
-
-		if (shouldRegen)
-			return;
-
-		event.setCancelled(true);
-	}
-
-	@EventHandler
 	public void counterAttack(EntityDamageByEntityEvent event) {
-		if (event.getEntity() != this.wither)
+		if (!event.getEntity().equals(wither))
 			return;
 
 		if (RandomUtils.chanceOf(30))
@@ -135,7 +124,7 @@ public class CorruptedFight extends WitherFight {
 
 	@EventHandler
 	public void onDamageWither(EntityDamageByEntityEvent event) {
-		if (event.getEntity() != this.wither)
+		if (!event.getEntity().equals(wither))
 			return;
 
 		Wither wither = (Wither) event.getEntity();

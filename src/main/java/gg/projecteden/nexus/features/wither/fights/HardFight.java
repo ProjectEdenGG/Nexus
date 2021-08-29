@@ -40,7 +40,7 @@ public class HardFight extends WitherFight {
 
 	@EventHandler
 	public void counterAttack(EntityDamageByEntityEvent event) {
-		if (event.getEntity() != this.wither)
+		if (!event.getEntity().equals(wither))
 			return;
 
 		if (!chanceOf(10))
@@ -65,7 +65,7 @@ public class HardFight extends WitherFight {
 
 	@EventHandler
 	public void onDamageWither(EntityDamageByEntityEvent event) {
-		if (event.getEntity() != this.wither)
+		if (!event.getEntity().equals(wither))
 			return;
 
 		Wither wither = (Wither) event.getEntity();

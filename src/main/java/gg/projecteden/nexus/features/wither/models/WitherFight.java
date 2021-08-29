@@ -389,13 +389,10 @@ public abstract class WitherFight implements Listener {
 
 	@EventHandler
 	public void onWitherRegen(EntityRegainHealthEvent event) {
-		if (event.getEntity() != wither)
+		if (!event.getEntity().equals(wither))
 			return;
 
 		if (shouldRegen)
-			return;
-
-		if (event.getEntity() != wither)
 			return;
 
 		event.setCancelled(true);
