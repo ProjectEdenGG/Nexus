@@ -183,6 +183,10 @@ public class AFKUser implements PlayerOwnedObject {
 		return !isTimeAfk();
 	}
 
+	public boolean hasBeenAfkFor(int ticks) {
+		return time != null && time.isBefore(LocalDateTime.now().minusSeconds(ticks / 20));
+	}
+
 	public void setLocation() {
 		Player player = getPlayer();
 		if (player != null)

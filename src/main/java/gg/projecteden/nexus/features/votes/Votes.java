@@ -145,9 +145,9 @@ public class Votes extends Feature implements Listener {
 			left = GOAL - sum;
 
 		if (new CooldownService().check(uuid, "vote-announcement", Time.HOUR)) {
-			String message = " &3for the server and received &b" + basePoints + plural(" &3vote point", basePoints) + " per site! ";
+			String message = " &3for the server and received &b" + basePoints + plural(" &3vote point", basePoints) + " per site!";
 			if (left > 0)
-				message += "&e" + left + " &3more votes needed to hit the goal";
+				message += " &e" + left + " &3more votes needed to hit the goal";
 
 			Broadcast.ingame().message("&a[✔] &3" + name + " &bvoted" + message).send();
 			Broadcast.discord().message(":white_check_mark: **" + name + " voted**" + message).send();

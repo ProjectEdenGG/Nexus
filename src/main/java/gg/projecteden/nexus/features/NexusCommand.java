@@ -6,6 +6,7 @@ import de.tr7zw.nbtapi.NBTFile;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.SmartInvsPlugin;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.crates.models.CrateType;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.customenchants.OldCEConverter;
@@ -164,9 +165,19 @@ public class NexusCommand extends CustomCommand implements Listener {
 				throw new InvalidInputException("There are " + matchCount + " active matches");
 		}),
 		SMARTINVS(() -> {
-			long invCount = PlayerUtils.getOnlinePlayers().stream().filter(player -> SmartInvsPlugin.manager().getInventory(player).isPresent()).count();
-			if (invCount > 0)
-				throw new InvalidInputException(new JsonBuilder("There are " + invCount + " SmartInvs menus open").command("/nexus smartInvs").hover("&eClick to view"));
+			long count = PlayerUtils.getOnlinePlayers().stream().filter(player -> {
+				boolean open = SmartInvsPlugin.manager().getInventory(player).isPresent();
+
+				if (open && AFK.get(player).hasBeenAfkFor(Time.MINUTE.x(15))) {
+					player.closeInventory();
+					open = false;
+				}
+
+				return open;
+			}).count();
+
+			if (count > 0)
+				throw new InvalidInputException(new JsonBuilder("There are " + count + " SmartInvs menus open").command("/nexus smartInvs").hover("&eClick to view"));
 		}),
 		TEMP_LISTENERS(() -> {
 			if (!Nexus.getTemporaryListeners().isEmpty())

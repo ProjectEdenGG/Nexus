@@ -224,10 +224,10 @@ public class MailCommand extends CustomCommand implements Listener {
 			this.player = mailer.getOnlinePlayer();
 			this.title = "From " + Nickname.of(mail.getFrom());
 
+			open(6, mail.getAllItems());
+
 			mail.received();
 			new MailerService().save(mailer);
-
-			open(6, mail.getAllItems());
 		}
 
 		@Override
