@@ -12,7 +12,7 @@ import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import gg.projecteden.utils.TimeUtils.Timespan.FormatType;
 import lombok.NoArgsConstructor;
@@ -46,7 +46,7 @@ public class LockdownCommand extends CustomCommand implements Listener {
 	}
 
 	static {
-		Tasks.repeat(Time.SECOND, Time.SECOND, () -> {
+		Tasks.repeat(TickTime.SECOND, TickTime.SECOND, () -> {
 			if (!lockdown || LockdownCommand.end == null)
 				return;
 

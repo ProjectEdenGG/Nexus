@@ -16,7 +16,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.Env;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Material;
@@ -156,7 +156,7 @@ public class BearFair21MapCommand extends CustomCommand implements Listener {
 	}
 
 	private void waitAndFixMap(Player player) {
-		Tasks.wait(Time.SECOND.x(1), () -> {
+		Tasks.wait(TickTime.SECOND.x(1), () -> {
 			if (player.isOnline())
 				if (!isNotAtBearFair(player))
 					fixMap(player);

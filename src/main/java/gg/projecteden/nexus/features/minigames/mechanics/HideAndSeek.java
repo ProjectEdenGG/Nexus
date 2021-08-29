@@ -23,7 +23,7 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.MiscDisguise;
@@ -62,7 +62,7 @@ import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.nexus.utils.StringUtils.plural;
 
 public class HideAndSeek extends Infection {
-	private static final int SOLIDIFY_PLAYER_AT = Time.SECOND.x(5);
+	private static final int SOLIDIFY_PLAYER_AT = TickTime.SECOND.x(5);
 
 	@Override
 	public @NotNull String getName() {
@@ -165,7 +165,7 @@ public class HideAndSeek extends Infection {
 				}
 
 				// check how long they've been still
-				if (immobileTicks < Time.SECOND.x(2)) {
+				if (immobileTicks < TickTime.SECOND.x(2)) {
 					sendBarWithTimer(minigamer, new JsonBuilder("&bYou are currently partially disguised as a ").next(blockName));
 				} else if (immobileTicks < SOLIDIFY_PLAYER_AT) {
 					// countdown until solidification

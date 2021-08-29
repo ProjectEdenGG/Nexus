@@ -7,7 +7,7 @@ import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.SoundUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
@@ -20,7 +20,7 @@ import java.util.Map;
 import static gg.projecteden.nexus.features.quests.AmbientSounds.AmbientSoundType.UNDERGROUND;
 
 public class AmbientSounds extends Feature {
-	int startDelay = Time.SECOND.x(5);
+	int startDelay = TickTime.SECOND.x(5);
 	//
 	private final static Map<Player, Integer> undergroundTaskMap = new HashMap<>();
 	private final static Sound undergroundLoop = Sound.AMBIENT_CRIMSON_FOREST_LOOP;
@@ -35,7 +35,7 @@ public class AmbientSounds extends Feature {
 	@Override
 	public void onStart() {
 		// Random sounds
-		Tasks.repeat(startDelay, Time.SECOND.x(15), () -> {
+		Tasks.repeat(startDelay, TickTime.SECOND.x(15), () -> {
 			if (RandomUtils.chanceOf(50)) {
 				Sound sound = RandomUtils.randomElement(undergroundSounds);
 				Map<Player, Integer> tempMap = new HashMap<>(undergroundTaskMap);
@@ -45,7 +45,7 @@ public class AmbientSounds extends Feature {
 		});
 
 		// Looping Sound Management
-		Tasks.repeat(startDelay, Time.SECOND.x(1), () -> {
+		Tasks.repeat(startDelay, TickTime.SECOND.x(1), () -> {
 			for (Player player : PlayerUtils.getOnlinePlayers()) {
 
 				boolean inArea;
@@ -66,7 +66,7 @@ public class AmbientSounds extends Feature {
 
 	private void startLoop(Player player, AmbientSoundType type) {
 		if (type.equals(UNDERGROUND)) {
-			int taskId = Tasks.repeat(0, Time.SECOND.x(37), () -> new SoundBuilder(undergroundLoop).receiver(player).category(SoundCategory.AMBIENT).volume(5).play());
+			int taskId = Tasks.repeat(0, TickTime.SECOND.x(37), () -> new SoundBuilder(undergroundLoop).receiver(player).category(SoundCategory.AMBIENT).volume(5).play());
 
 			undergroundTaskMap.put(player, taskId);
 		}

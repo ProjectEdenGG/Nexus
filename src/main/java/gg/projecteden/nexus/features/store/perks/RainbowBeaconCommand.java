@@ -8,7 +8,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.rainbowbeacon.RainbowBeacon;
 import gg.projecteden.nexus.models.rainbowbeacon.RainbowBeaconService;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -166,7 +166,7 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 	public static void startTask(RainbowBeacon rainbowBeacon) {
 		Location location = rainbowBeacon.getLocation();
 		AtomicInteger i = new AtomicInteger(0);
-		rainbowBeacon.setTaskId(Tasks.repeat(0, Time.SECOND, () -> {
+		rainbowBeacon.setTaskId(Tasks.repeat(0, TickTime.SECOND, () -> {
 			if (location == null)
 				return;
 			if (!location.isChunkLoaded())

@@ -33,7 +33,7 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -264,7 +264,7 @@ public class Battleship extends TeamMechanic {
 			minigamer.getPlayer().setGameMode(GameMode.ADVENTURE);
 		});
 
-		Tasks.wait(Time.SECOND, () -> match.getWEUtils().fixLight(match.getArena().getRegion("board")));
+		Tasks.wait(TickTime.SECOND, () -> match.getWEUtils().fixLight(match.getArena().getRegion("board")));
 
 		Region floor = match.getArena().getRegion("floor");
 		match.getArena().getWEUtils().replace(floor, Sets.newHashSet(BlockTypes.BLUE_CONCRETE, BlockTypes.YELLOW_WOOL), Collections.singleton(BlockTypes.WATER));
@@ -567,7 +567,7 @@ public class Battleship extends TeamMechanic {
 		BattleshipMatchData matchData = match.getMatchData();
 		matchData.end();
 		match.broadcast(matchData.getWinnerTeam().getColoredName() + " &3won!");
-		Tasks.wait(Time.SECOND.x(10), () -> super.end(match));
+		Tasks.wait(TickTime.SECOND.x(10), () -> super.end(match));
 	}
 
 }

@@ -10,7 +10,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -84,7 +84,7 @@ public class AnvilDrop extends TeamlessMechanic {
 	public void dropAnvils(Match match) {
 		AnvilDropArena arena = match.getArena();
 		List<Location> dropLocs = getLocations(match.getWEUtils().getBlocks(arena.getRegion("dropzone")));
-		match.getTasks().repeat(Time.SECOND.x(3), 5, () -> RandomUtils.randomElement(dropLocs).getBlock().setType(Material.ANVIL));
+		match.getTasks().repeat(TickTime.SECOND.x(3), 5, () -> RandomUtils.randomElement(dropLocs).getBlock().setType(Material.ANVIL));
 	}
 
 	@EventHandler

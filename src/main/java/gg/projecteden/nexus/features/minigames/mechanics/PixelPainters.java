@@ -21,7 +21,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks.Countdown;
 import gg.projecteden.nexus.utils.Tasks.Countdown.CountdownBuilder;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.apache.commons.lang.Validate;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -106,7 +106,7 @@ public class PixelPainters extends TeamlessMechanic {
 		PixelPaintersArena arena = match.getArena();
 		matchData.setLobbyDesign(0);
 		countDesigns(match);
-		int taskId = match.getTasks().repeatAsync(0, Time.SECOND.x(2), () -> {
+		int taskId = match.getTasks().repeatAsync(0, TickTime.SECOND.x(2), () -> {
 			if (match.isEnded() || match.isStarted())
 				return;
 

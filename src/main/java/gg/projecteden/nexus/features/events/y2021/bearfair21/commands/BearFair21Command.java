@@ -35,7 +35,7 @@ import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.StringUtils.ProgressBarStyle;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import gg.projecteden.utils.Utils;
 import lombok.AllArgsConstructor;
@@ -198,7 +198,7 @@ public class BearFair21Command extends CustomCommand {
 			return;
 
 		new SoundBuilder(Sound.ENTITY_ZOMBIE_VILLAGER_CONVERTED).location(loc).volume(4).pitch(0.1).play();
-		Tasks.wait(Time.SECOND.x(2), () ->
+		Tasks.wait(TickTime.SECOND.x(2), () ->
 			new SoundBuilder(Sound.ENTITY_ZOMBIE_VILLAGER_CONVERTED).location(loc).volume(4).pitch(0.1).play());
 	}
 

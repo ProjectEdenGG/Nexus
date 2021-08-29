@@ -20,7 +20,7 @@ import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.Bukkit;
@@ -61,8 +61,8 @@ public class Halloween20 implements Listener {
 
 	public static void start(Player player) {
 		player.teleportAsync(new Location(Bukkit.getWorld("safepvp"), 297.50, 161.00, -2034.50, .00F, .00F));
-		player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, Time.SECOND.x(3), 1));
-		player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, Time.SECOND.x(14), 1));
+		player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, TickTime.SECOND.x(3), 1));
+		player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, TickTime.SECOND.x(14), 1));
 		player.playSound(player.getLocation(), Sound.BLOCK_PORTAL_TRAVEL, 1f, 1f);
 	}
 
@@ -78,7 +78,7 @@ public class Halloween20 implements Listener {
 	public void onNPCClick(NPCRightClickEvent event) {
 		QuestNPC npc = QuestNPC.getByID(event.getNPC().getId());
 		if (npc == null) return;
-		if (!new CooldownService().check(event.getClicker(), "Halloween20_NPC", Time.SECOND.x(2)))
+		if (!new CooldownService().check(event.getClicker(), "Halloween20_NPC", TickTime.SECOND.x(2)))
 			return;
 		npc.sendScript(event.getClicker());
 	}
@@ -110,11 +110,11 @@ public class Halloween20 implements Listener {
 		if (user.getCombinationStage() != QuestStage.Combination.NOT_STARTED) return;
 		Gate gate = new Gate(event.getPlayer());
 		gate.open();
-		Tasks.wait(Time.SECOND.x(4), gate::teleportIn);
-		Tasks.wait(Time.SECOND.x(5), gate::close);
-		Tasks.wait(Time.SECOND.x(8), () -> PlayerUtils.send(event.getPlayer(), "&7&oYou enter the land of the dead, and the large gate shuts behind you. You try to open it, but it appears to be locked."));
-		Tasks.wait(Time.SECOND.x(14), () -> QuestNPC.DIEGO.sendScript(event.getPlayer()));
-		Tasks.wait(Time.SECOND.x(15) + 300, () -> sendInstructions(event.getPlayer()));
+		Tasks.wait(TickTime.SECOND.x(4), gate::teleportIn);
+		Tasks.wait(TickTime.SECOND.x(5), gate::close);
+		Tasks.wait(TickTime.SECOND.x(8), () -> PlayerUtils.send(event.getPlayer(), "&7&oYou enter the land of the dead, and the large gate shuts behind you. You try to open it, but it appears to be locked."));
+		Tasks.wait(TickTime.SECOND.x(14), () -> QuestNPC.DIEGO.sendScript(event.getPlayer()));
+		Tasks.wait(TickTime.SECOND.x(15) + 300, () -> sendInstructions(event.getPlayer()));
 	}
 
 
@@ -130,7 +130,7 @@ public class Halloween20 implements Listener {
 		Halloween20Service service = new Halloween20Service();
 		Halloween20User user = service.get(event.getPlayer());
 		if (user.getFoundButtons().contains(button)) {
-			if (new CooldownService().check(event.getPlayer(), "halloween20-button-alreadyfound", Time.SECOND.x(10)))
+			if (new CooldownService().check(event.getPlayer(), "halloween20-button-alreadyfound", TickTime.SECOND.x(10)))
 				user.sendMessage(PREFIX + "You've already found this button!");
 			return;
 		}

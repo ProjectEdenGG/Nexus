@@ -13,7 +13,7 @@ import gg.projecteden.nexus.features.minigames.models.matchdata.MonsterMazeMatch
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import gg.projecteden.nexus.features.minigames.utils.PowerUpUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -86,13 +86,13 @@ public class MonsterMaze extends TeamlessMechanic {
 
 		match.getMinigamers().forEach(this::preventJump);
 
-		match.getTasks().wait(Time.SECOND.x(5), () -> {
+		match.getTasks().wait(TickTime.SECOND.x(5), () -> {
 			for (Mob monster : matchData.getMonsters()) {
 				monster.setAI(true);
 				updatePath(monster, goals);
 			}
 
-			match.getTasks().repeat(Time.SECOND.x(7), 30, () -> {
+			match.getTasks().repeat(TickTime.SECOND.x(7), 30, () -> {
 				for (Mob monster : matchData.getMonsters())
 					if (!monster.getPathfinder().hasPath())
 						updatePath(monster, goals);

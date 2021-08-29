@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.radar;
 
-import com.google.common.collect.Comparators;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -11,7 +10,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGroup;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
@@ -36,7 +35,6 @@ import org.bukkit.inventory.PlayerInventory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -94,7 +92,7 @@ public class CreativeFilterCommand extends CustomCommand implements Listener {
 	}
 
 	static {
-		Tasks.repeat(Time.TICK, Time.TICK.x(2), () -> {
+		Tasks.repeat(TickTime.TICK, TickTime.TICK.x(2), () -> {
 			for (World world : WorldGroup.CREATIVE.getWorlds()) {
 				for (Player player : PlayerUtils.getOnlinePlayers(world)) {
 					final PlayerInventory inventory = player.getInventory();
@@ -174,7 +172,7 @@ public class CreativeFilterCommand extends CustomCommand implements Listener {
 
 		Material type = event.getBlock().getType();
 		if (disallowedPlacement.contains(type)) {
-			if (new CooldownService().check(player, player.getUniqueId() + "-" + type.name(), Time.MINUTE))
+			if (new CooldownService().check(player, player.getUniqueId() + "-" + type.name(), TickTime.MINUTE))
 				player.sendMessage("You must be Member rank to place " + StringUtils.camelCase(type));
 			event.setCancelled(true);
 		}

@@ -8,7 +8,7 @@ import gg.projecteden.nexus.features.events.aeveonproject.sets.APSetType;
 import gg.projecteden.nexus.features.events.annotations.Region;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Axis;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -63,7 +63,7 @@ public class SialiaCrashing implements Listener, APSet {
 		blockData = orientable;
 		BlockData finalBlockData = blockData;
 
-		Tasks.repeat(0, Time.TICK.x(10), () -> {
+		Tasks.repeat(0, TickTime.TICK.x(10), () -> {
 			if (!APSetType.SIALIA_CRASHING.get().isActive())
 				return;
 
@@ -74,7 +74,7 @@ public class SialiaCrashing implements Listener, APSet {
 					for (Location loc : locs) {
 						loc.getBlock().setType(seaLantern);
 
-						Tasks.wait(Time.TICK.x(wait), () -> {
+						Tasks.wait(TickTime.TICK.x(wait), () -> {
 							loc.getBlock().setType(boneBlock);
 
 							if (light10.contains(loc) || light11.contains(loc))

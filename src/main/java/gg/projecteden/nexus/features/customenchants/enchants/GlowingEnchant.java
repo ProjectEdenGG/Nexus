@@ -19,11 +19,11 @@ public class GlowingEnchant extends CustomEnchant {
 	}
 
 	static {
-		Tasks.repeat(TimeUtils.Time.SECOND.x(5), TimeUtils.Time.SECOND.x(5), () -> {
+		Tasks.repeat(TimeUtils.TickTime.SECOND.x(5), TimeUtils.TickTime.SECOND.x(5), () -> {
 			for (Player player : PlayerUtils.getOnlinePlayers()) {
 				if (player.getInventory().getHelmet() != null) {
 					if (player.getInventory().getHelmet().getItemMeta().hasEnchant(Enchant.GLOWING)) {
-						player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, TimeUtils.Time.SECOND.x(30), 1, true, false));
+						player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, TimeUtils.TickTime.SECOND.x(30), 1, true, false));
 					}
 				}
 			}

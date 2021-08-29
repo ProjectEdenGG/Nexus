@@ -63,9 +63,9 @@ public abstract class TeamlessVanillaMechanic extends TeamlessMechanic implement
 	public void spreadPlayers(@NotNull Match match) {
 		for (Minigamer minigamer : match.getMinigamers()) {
 			Player player = minigamer.getPlayer();
-			player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, TimeUtils.Time.SECOND.x(20), 10, false, false));
-			player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, TimeUtils.Time.SECOND.x(5), 10, false, false));
-			player.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, TimeUtils.Time.SECOND.x(5), 255, false, false));
+			player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, TimeUtils.TickTime.SECOND.x(20), 10, false, false));
+			player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, TimeUtils.TickTime.SECOND.x(5), 10, false, false));
+			player.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, TimeUtils.TickTime.SECOND.x(5), 255, false, false));
 			player.setVelocity(new Vector(0, 0, 0));
 			player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 1000000, 254, false, false));
 			Tasks.async(() -> randomTeleport(match, minigamer));

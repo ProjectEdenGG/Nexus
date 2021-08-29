@@ -9,7 +9,7 @@ import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -257,7 +257,7 @@ public enum QuestNPC {
 							"Try looking around here or in the city above."
 					);
 				case STARTED:
-					Tasks.wait(Time.SECOND.x(10), () -> Halloween20.sendInstructions(player));
+					Tasks.wait(TickTime.SECOND.x(10), () -> Halloween20.sendInstructions(player));
 					return Arrays.asList(
 							"Have you found any clues to try to open that gate?",
 							"wait 60",

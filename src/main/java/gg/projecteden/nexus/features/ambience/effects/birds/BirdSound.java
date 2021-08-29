@@ -6,7 +6,7 @@ import gg.projecteden.nexus.utils.BiomeTag;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.bukkit.Location;
@@ -65,7 +65,7 @@ public enum BirdSound {
 		@Override
 		public void get(Map<Integer, SoundBuilder> tasks) {
 			tasks.put(0, sound(1));
-			tasks.put(Time.SECOND.x(randomInt(4, 6)), sound(1));
+			tasks.put(TickTime.SECOND.x(randomInt(4, 6)), sound(1));
 		}
 	},
 	@Birdhouse
@@ -137,7 +137,7 @@ public enum BirdSound {
 		@Override
 		public void get(Map<Integer, SoundBuilder> tasks) {
 			tasks.put(0, sound(1));
-			tasks.put(Time.SECOND.x(randomDouble(1.5, 2.5)), sound(1));
+			tasks.put(TickTime.SECOND.x(randomDouble(1.5, 2.5)), sound(1));
 		}
 	},
 	@Biomes(BiomeTag.JUNGLE)

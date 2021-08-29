@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.events.aeveonproject.sets.sialiaCrashing;
 import gg.projecteden.nexus.features.events.aeveonproject.AeveonProject;
 import gg.projecteden.nexus.features.events.aeveonproject.sets.APSetType;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -24,7 +24,7 @@ public class Sounds {
 	public Sounds() {
 
 		// Engine Sound
-		Tasks.repeatAsync(0, Time.TICK.x(30), () -> {
+		Tasks.repeatAsync(0, TickTime.TICK.x(30), () -> {
 			if (!APSetType.SIALIA_CRASHING.get().isActive())
 				return;
 
@@ -41,7 +41,7 @@ public class Sounds {
 		});
 
 		// Ship Sound
-		Tasks.repeatAsync(0, Time.SECOND.x(5), () -> {
+		Tasks.repeatAsync(0, TickTime.SECOND.x(5), () -> {
 			if (!APSetType.SIALIA_CRASHING.get().isActive())
 				return;
 
@@ -52,13 +52,13 @@ public class Sounds {
 						continue;
 
 					player.playSound(engineLoc, shipSound, SoundCategory.AMBIENT, 50F, 1F);
-					Tasks.wait(Time.SECOND.x(2), () -> player.playSound(engineLoc, shipSound, SoundCategory.AMBIENT, 50F, 1F));
+					Tasks.wait(TickTime.SECOND.x(2), () -> player.playSound(engineLoc, shipSound, SoundCategory.AMBIENT, 50F, 1F));
 				}
 			});
 		});
 
 		// Alarm Sound
-		Tasks.repeatAsync(0, Time.TICK.x(50), () -> {
+		Tasks.repeatAsync(0, TickTime.TICK.x(50), () -> {
 			if (!APSetType.SIALIA_CRASHING.get().isActive())
 				return;
 
@@ -74,7 +74,7 @@ public class Sounds {
 		});
 
 		//Vent Sounds
-		Tasks.repeatAsync(0, Time.TICK.x(5), () -> {
+		Tasks.repeatAsync(0, TickTime.TICK.x(5), () -> {
 			if (!APSetType.SIALIA_CRASHING.get().isActive())
 				return;
 

@@ -5,7 +5,7 @@ import gg.projecteden.nexus.features.ambience.effects.particles.common.ParticleE
 import gg.projecteden.nexus.features.particles.effects.DotEffect;
 import gg.projecteden.nexus.models.ambience.AmbienceUser;
 import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -22,7 +22,7 @@ public class FallingLeaves extends ParticleEffect {
 	private double y;
 	private double z;
 
-	public static final int LIFE = Time.SECOND.x(6);
+	public static final int LIFE = TickTime.SECOND.x(6);
 
 	public FallingLeaves(AmbienceUser user, Block block, double chance) {
 		super(user, ParticleEffectType.FALLING_LEAVES, Particle.BLOCK_CRACK, LIFE, chance);
@@ -52,7 +52,7 @@ public class FallingLeaves extends ParticleEffect {
 				.clientSide(true)
 				.color(Color.RED)
 				.speed(.1)
-				.ticks(Time.SECOND.get())
+				.ticks(TickTime.SECOND.get())
 				.start();
 	}
 

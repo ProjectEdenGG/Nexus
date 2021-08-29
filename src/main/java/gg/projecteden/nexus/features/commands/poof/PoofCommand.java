@@ -17,7 +17,7 @@ import gg.projecteden.nexus.models.trust.TrustService;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGroup;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -42,7 +42,7 @@ public class PoofCommand extends CustomCommand {
 	}
 
 	static {
-		Tasks.repeatAsync(Time.SECOND.x(5), Time.MINUTE, () -> {
+		Tasks.repeatAsync(TickTime.SECOND.x(5), TickTime.MINUTE, () -> {
 			PoofService poofService = new PoofService();
 			poofService.getActivePoofs().forEach((poof -> {
 				if (poof.getTimeSent().isBefore(LocalDateTime.now().minusMinutes(10))) {

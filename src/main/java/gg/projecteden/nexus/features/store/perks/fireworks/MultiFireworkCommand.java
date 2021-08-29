@@ -9,11 +9,11 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.FireworkLauncher;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 
 @Aliases("multifw")
 @Permission("firework.launch")
-@Cooldown(value = @Part(value = Time.SECOND, x = 10), bypass = "group.staff")
+@Cooldown(value = @Part(value = TickTime.SECOND, x = 10), bypass = "group.staff")
 public class MultiFireworkCommand extends CustomCommand {
 
 	public MultiFireworkCommand(CommandEvent event) {
@@ -23,7 +23,7 @@ public class MultiFireworkCommand extends CustomCommand {
 	@Path
 	void firework() {
 		Tasks.Countdown.builder()
-				.duration(Time.SECOND.x(20))
+				.duration(TickTime.SECOND.x(20))
 				.onSecond(i -> {
 					if (i % 2 == 0)
 						FireworkLauncher.random(location()).launch();

@@ -12,7 +12,7 @@ import gg.projecteden.nexus.utils.CitizensUtils.NPCFinder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NonNull;
 import net.citizensnpcs.Citizens;
 import net.citizensnpcs.api.CitizensAPI;
@@ -37,7 +37,7 @@ public class NPCUtilsCommand extends CustomCommand {
 	}
 
 	static {
-		Tasks.wait(Time.SECOND, () -> {
+		Tasks.wait(TickTime.SECOND, () -> {
 			try {
 				Citizens plugin = (Citizens) Bukkit.getPluginManager().getPlugin("Citizens");
 				if (plugin == null)

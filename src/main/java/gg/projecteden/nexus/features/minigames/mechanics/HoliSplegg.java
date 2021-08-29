@@ -12,7 +12,7 @@ import gg.projecteden.nexus.features.minigames.models.matchdata.HoliSpleggMatchD
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -60,7 +60,7 @@ public final class HoliSplegg extends TeamlessMechanic {
 		HoliSpleggMatchData matchData = event.getMatch().getMatchData();
 		matchData.setArmorStand(summonArmorStand(event.getMatch()));
 
-		event.getMatch().getTasks().repeat(Time.SECOND, Time.SECOND, () -> {
+		event.getMatch().getTasks().repeat(TickTime.SECOND, TickTime.SECOND, () -> {
 			matchData.setTime(matchData.getTime() + 1);
 			if (matchData.getArmorStand().isInWater())
 				event.getMatch().end();

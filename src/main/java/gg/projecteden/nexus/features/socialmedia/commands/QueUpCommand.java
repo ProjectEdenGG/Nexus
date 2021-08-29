@@ -14,7 +14,7 @@ import gg.projecteden.nexus.models.queup.QueUpService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.Env;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NonNull;
 
 @Disabled
@@ -52,7 +52,7 @@ public class QueUpCommand extends CustomCommand {
 	static {
 		if (false) // TODO QueUp
 		if (Nexus.getEnv() == Env.PROD)
-			Tasks.repeatAsync(Time.SECOND, Time.SECOND.x(15), () -> {
+			Tasks.repeatAsync(TickTime.SECOND, TickTime.SECOND.x(15), () -> {
 				if (!enabled)
 					return;
 

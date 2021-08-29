@@ -24,7 +24,7 @@ import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import joptsimple.internal.Strings;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -53,7 +53,7 @@ import java.util.Map;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @Permission("group.admin")
-@Cooldown(@Part(value = Time.SECOND))
+@Cooldown(@Part(value = TickTime.SECOND))
 public class ConvertShopCommand extends CustomCommand {
 
 	public ConvertShopCommand(CommandEvent event) {

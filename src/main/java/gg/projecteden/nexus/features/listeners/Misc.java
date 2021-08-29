@@ -27,7 +27,7 @@ import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldGroup;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -181,7 +181,7 @@ public class Misc implements Listener {
 		if (event.getItem().getType() != Material.GLOW_BERRIES)
 			return;
 
-		player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, Time.MINUTE.x(1.5), 1));
+		player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, TickTime.MINUTE.x(1.5), 1));
 	}
 
 	@EventHandler
@@ -315,11 +315,11 @@ public class Misc implements Listener {
 	}
 
 	private static final String CHAT_DISABLED_WARNING = "&4&lWARNING: &4You have chat disabled! If this is by mistake, please turn it on in your settings.";
-	private static final int WARNING_LENGTH_TICKS = Time.MINUTE.x(1);
+	private static final int WARNING_LENGTH_TICKS = TickTime.MINUTE.x(1);
 
 	@EventHandler
 	public void onJoinWithChatDisabled(PlayerJoinEvent event) {
-		Tasks.wait(Time.SECOND.x(3), () -> {
+		Tasks.wait(TickTime.SECOND.x(3), () -> {
 			Player player = event.getPlayer();
 			ChatVisibility setting = player.getClientOption(ClientOption.CHAT_VISIBILITY);
 			if (Arrays.asList(ChatVisibility.SYSTEM, ChatVisibility.HIDDEN).contains(setting)) {

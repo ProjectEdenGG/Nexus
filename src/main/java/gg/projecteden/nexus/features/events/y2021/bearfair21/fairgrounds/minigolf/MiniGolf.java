@@ -24,7 +24,7 @@ import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.Env;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.Utils;
 import lombok.Getter;
 import org.bukkit.Color;
@@ -132,7 +132,7 @@ public class MiniGolf {
 			armorStand.setSilent(true);
 
 			AtomicInteger index = new AtomicInteger();
-			Tasks.repeat(0, Time.SECOND.x(2), () -> {
+			Tasks.repeat(0, TickTime.SECOND.x(2), () -> {
 				if (BearFair21.getWGUtils().getPlayersInRegion(gameRegion + "_play_top").size() <= 0)
 					return;
 
@@ -155,7 +155,7 @@ public class MiniGolf {
 
 		if (!Utils.isNullOrEmpty(particles)) {
 			AtomicInteger index = new AtomicInteger(0);
-			Tasks.repeat(0, Time.SECOND.x(2), () -> {
+			Tasks.repeat(0, TickTime.SECOND.x(2), () -> {
 				if (BearFair21.getWGUtils().getPlayersInRegion(gameRegion + "_play_top").size() <= 0)
 					return;
 
@@ -167,7 +167,7 @@ public class MiniGolf {
 						particleBuilder.color(Color.RED);
 
 					particleBuilder.spawn();
-					Tasks.wait(Time.SECOND, particleBuilder::spawn);
+					Tasks.wait(TickTime.SECOND, particleBuilder::spawn);
 				}
 
 				index.getAndIncrement();
@@ -184,14 +184,14 @@ public class MiniGolf {
 		// Hole 13
 		String hole13 = MiniGolfHole.THIRTEEN.getRegionId() + "_activate";
 		Location hole13Loc = new Location(BearFair21.getWorld(), 101, 119, -28);
-		Tasks.repeat(Time.SECOND.x(5), Time.SECOND.x(2), () -> {
+		Tasks.repeat(TickTime.SECOND.x(5), TickTime.SECOND.x(2), () -> {
 			if (BearFair21.getWGUtils().getPlayersInRegion(hole13).size() > 0)
 				hole13Loc.getBlock().setType(Material.REDSTONE_BLOCK);
 		});
 
 		// Hole 17
 		Location hole17Loc = new Location(BearFair21.getWorld(), 107, 117, -9);
-		Tasks.repeat(Time.SECOND.x(5), Time.TICK.x(38), () -> {
+		Tasks.repeat(TickTime.SECOND.x(5), TickTime.TICK.x(38), () -> {
 			if (BearFair21.getWGUtils().getPlayersInRegion(gameRegion + "_play_top").size() > 0)
 				hole17Loc.getBlock().setType(Material.REDSTONE_BLOCK);
 		});
@@ -202,7 +202,7 @@ public class MiniGolf {
 
 	private void playerTasks() {
 		// Kit
-		Tasks.repeat(Time.SECOND.x(5), Time.SECOND.x(2), () -> {
+		Tasks.repeat(TickTime.SECOND.x(5), TickTime.SECOND.x(2), () -> {
 			for (Player player : PlayerUtils.getOnlinePlayers()) {
 				MiniGolf21User user = service.get(player);
 				int regions = BearFair21.getWGUtils().getRegionsLikeAt(gameRegion + "_play_.*", player.getLocation()).size();
@@ -215,7 +215,7 @@ public class MiniGolf {
 		});
 
 		// Power
-		Tasks.repeat(Time.SECOND.x(5), Time.TICK, () -> {
+		Tasks.repeat(TickTime.SECOND.x(5), TickTime.TICK, () -> {
 			for (MiniGolf21User user : new HashSet<>(service.getUsers())) {
 				if (!user.isOnline())
 					continue;
@@ -258,7 +258,7 @@ public class MiniGolf {
 		AtomicInteger i = new AtomicInteger(1);
 		AtomicReference<MiniGolfColor> color = new AtomicReference<>(MiniGolfColor.RED);
 
-		Tasks.repeat(Time.SECOND.x(5), Time.TICK, () -> {
+		Tasks.repeat(TickTime.SECOND.x(5), TickTime.TICK, () -> {
 			boolean updateRainbow = false;
 			i.getAndIncrement();
 			if (i.getAndIncrement() % 20 == 0) {
@@ -349,16 +349,16 @@ public class MiniGolf {
 						user.removeBall();
 
 						// Spawn firework
-						Tasks.wait(Time.TICK, () -> new FireworkLauncher(loc)
+						Tasks.wait(TickTime.TICK, () -> new FireworkLauncher(loc)
 							.power(0)
-							.detonateAfter(Time.TICK.x(2))
+							.detonateAfter(TickTime.TICK.x(2))
 							.type(Type.BURST)
 							.colors(user.getFireworkColor())
 							.fadeColors(Collections.singletonList(Color.WHITE))
 							.launch());
 
 						// Send message
-						int wait = Time.SECOND.x(2);
+						int wait = TickTime.SECOND.x(2);
 						if (BearFair21.getDailyTokensLeft(user.getPlayer(), BF21PointSource.MINIGOLF, 5) > 0)
 							wait = 0;
 

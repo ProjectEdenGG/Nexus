@@ -9,7 +9,7 @@ import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.EnumUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -228,7 +228,7 @@ public class CorruptedFight extends WitherFight {
 		HUNGER {
 			@Override
 			public void execute(Player player) {
-				player.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, Time.SECOND.x(10), 3, true));
+				player.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, TickTime.SECOND.x(10), 3, true));
 			}
 		},
 		SILVERFISH {
@@ -246,7 +246,7 @@ public class CorruptedFight extends WitherFight {
 		WEAKNESS {
 			@Override
 			public void execute(Player player) {
-				player.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, Time.SECOND.x(10), 1, true));
+				player.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, TickTime.SECOND.x(10), 1, true));
 			}
 		};
 

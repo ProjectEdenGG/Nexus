@@ -10,7 +10,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.RandomUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.Utils;
 import lombok.Data;
 import lombok.Getter;
@@ -52,7 +52,7 @@ public class StoreGalleryNPCs {
 		loadDisplays();
 
 		// Update costumes
-		Tasks.repeat(Time.TICK.x(10), Time.SECOND.x(10), () -> {
+		Tasks.repeat(TickTime.TICK.x(10), TickTime.SECOND.x(10), () -> {
 			for (DisplaySet displaySet : displays) {
 				Display display = displaySet.getNext();
 				if (display == null)
@@ -205,7 +205,7 @@ public class StoreGalleryNPCs {
 
 			CitizensUtils.updateSkin(id, this.skinName);
 
-			Tasks.wait(Time.SECOND, () -> {
+			Tasks.wait(TickTime.SECOND, () -> {
 				final HumanEntity entity = getHumanEntity();
 				if (entity != null)
 					items.forEach((slot, item) -> entity.getInventory().setItem(slot, item));

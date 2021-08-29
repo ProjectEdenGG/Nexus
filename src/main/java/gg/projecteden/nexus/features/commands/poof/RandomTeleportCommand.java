@@ -14,7 +14,7 @@ import gg.projecteden.nexus.models.lwc.LWCProtectionService;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.Env;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -40,7 +40,7 @@ public class RandomTeleportCommand extends CustomCommand {
 
 	@Path
 	@Async
-	@Cooldown(value = @Part(value = Time.SECOND, x = 30), bypass = "group.admin")
+	@Cooldown(value = @Part(value = TickTime.SECOND, x = 30), bypass = "group.admin")
 	void rtp() {
 		final World world = world().getName().equalsIgnoreCase("world") ? Objects.requireNonNull(Bukkit.getWorld("survival")) : world();
 

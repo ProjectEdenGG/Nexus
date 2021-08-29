@@ -14,7 +14,7 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import gg.projecteden.utils.TimeUtils.Timespan.FormatType;
 import lombok.AllArgsConstructor;
@@ -46,7 +46,7 @@ public enum PunishmentType implements IsColoredAndNamed {
 		private void checkEstablishedPlayer(Punishment punishment) {
 			Tasks.waitAsync(10, () -> {
 				Hours hours = new HoursService().get(punishment.getUuid());
-				if (hours.getTotal() >= Time.HOUR.get() / 20) {
+				if (hours.getTotal() >= TickTime.HOUR.get() / 20) {
 					Nerd punisher = Nerd.of(punishment.getPunisher());
 					DiscordUser discordUser = new DiscordUserService().get(punisher);
 					if (!isNullOrEmpty(discordUser.getUserId()))
@@ -209,7 +209,7 @@ public enum PunishmentType implements IsColoredAndNamed {
 			json.newline().next("&7   Duration &f" + (seconds > 0 ? Timespan.of(seconds).format() : "forever"));
 
 			if (seconds > 0 && punishment.isActive())
-				json.newline().next("&7   Time left &f" + punishment.getTimeLeft());
+				json.newline().next("&7   TickTime left &f" + punishment.getTimeLeft());
 		}
 
 		if (!automaticallyReceived && punishment.isActive())

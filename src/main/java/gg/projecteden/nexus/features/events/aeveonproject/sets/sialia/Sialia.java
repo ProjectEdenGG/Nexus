@@ -12,7 +12,7 @@ import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegion
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -43,7 +43,7 @@ public class Sialia implements Listener, APSet {
 		new Particles();
 		new Sounds();
 
-		Tasks.repeat(0, Time.TICK.x(5), () -> {
+		Tasks.repeat(0, TickTime.TICK.x(5), () -> {
 			List<Player> nearbyPlayers = new ArrayList<>(getWGUtils().getPlayersInRegion(APSetType.SIALIA.get().getRegion()));
 			if (nearbyPlayers.size() > 0)
 				nearbyPlayer = nearbyPlayers.get(0);
@@ -72,7 +72,7 @@ public class Sialia implements Listener, APSet {
 		getWorld().playSound(loc, Sound.BLOCK_PISTON_EXTEND, SoundCategory.MASTER, 0.5F, 0.7F);
 		for (int i = 0; i <= 2; i++) {
 			int frame = i;
-			Tasks.wait(Time.TICK.x(2 * i), () -> {
+			Tasks.wait(TickTime.TICK.x(2 * i), () -> {
 				String file = folder + "Bulkhead_" + frame;
 				AeveonProject.getWEUtils().paster().file(file).at(door.getMinimumPoint()).pasteAsync();
 			});
@@ -100,7 +100,7 @@ public class Sialia implements Listener, APSet {
 		getWorld().playSound(loc, Sound.BLOCK_PISTON_CONTRACT, SoundCategory.MASTER, 0.5F, 0.7F);
 		for (int i = 2; i >= 0; i--) {
 			int frame = 2 - i;
-			Tasks.wait(Time.TICK.x(2 * i), () -> {
+			Tasks.wait(TickTime.TICK.x(2 * i), () -> {
 				String file = folder + "Bulkhead_" + frame;
 				AeveonProject.getWEUtils().paster().file(file).at(door.getMinimumPoint()).pasteAsync();
 				if (frame == 0) {

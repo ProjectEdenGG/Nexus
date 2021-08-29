@@ -26,7 +26,7 @@ import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.Env;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.md_5.bungee.api.ChatColor;
@@ -61,7 +61,7 @@ public class InvisibleArmorCommand extends CustomCommand {
 	}
 
 	static {
-		Tasks.repeat(Time.SECOND, Time.SECOND.x(5), InvisibleArmorCommand::sendPackets);
+		Tasks.repeat(TickTime.SECOND, TickTime.SECOND.x(5), InvisibleArmorCommand::sendPackets);
 	}
 
 	@Path("reset")

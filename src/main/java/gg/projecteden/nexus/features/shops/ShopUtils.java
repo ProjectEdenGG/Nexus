@@ -5,7 +5,7 @@ import gg.projecteden.nexus.models.shop.Shop;
 import gg.projecteden.nexus.models.shop.ShopService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Collections;
@@ -26,7 +26,7 @@ public class ShopUtils {
 			List<ItemStack> excess = PlayerUtils.giveItemsAndGetExcess(shop.getOnlinePlayer(), items);
 			shop.addHolding(excess);
 			if (!excess.isEmpty())
-				if (new CooldownService().check(uuid, "shop-excess-items", Time.SECOND.x(2)))
+				if (new CooldownService().check(uuid, "shop-excess-items", TickTime.SECOND.x(2)))
 					PlayerUtils.send(uuid, new JsonBuilder(Shops.PREFIX + "Excess items added to item collection menu, click to view").command("/shops collect"));
 		} else
 			shop.addHolding(items);

@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.framework.commands.models.annotations;
 
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Repeatable;
@@ -19,7 +19,7 @@ public @interface Cooldown {
 	@Retention(RetentionPolicy.RUNTIME)
 	@Repeatable(value = Cooldown.class)
 	@interface Part {
-		Time value();
+		TickTime value();
 		int x() default 1;
 
 	}

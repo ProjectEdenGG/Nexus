@@ -18,7 +18,7 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -196,7 +196,7 @@ public class AFKUser implements PlayerOwnedObject {
 	public void forceAfk(Runnable action) {
 		setForceAfk(true);
 		action.run();
-		Tasks.wait(Time.SECOND.x(10), () -> {
+		Tasks.wait(TickTime.SECOND.x(10), () -> {
 			setLocation();
 			setForceAfk(false);
 		});

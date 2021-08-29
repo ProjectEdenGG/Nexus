@@ -4,7 +4,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -61,7 +61,7 @@ public class ArmorStandStalker {
 	}};
 
 	public ArmorStandStalker() {
-		Tasks.repeat(Time.SECOND.x(5), Time.TICK.x(2), () -> {
+		Tasks.repeat(TickTime.SECOND.x(5), TickTime.TICK.x(2), () -> {
 			for (Stalker stalker : stalkers) {
 				final Entity entity = stalker.getWorld().getEntity(stalker.getUuid());
 				if (entity == null || !entity.isValid())

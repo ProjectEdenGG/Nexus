@@ -5,7 +5,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.models.MongoService;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import org.bukkit.OfflinePlayer;
 
@@ -33,7 +33,7 @@ public class CooldownService extends MongoService<Cooldown> {
 	 * @param time how long the cooldown should last
 	 * @return true if player is not on cooldown
 	 */
-	public boolean check(OfflinePlayer player, String type, Time time) {
+	public boolean check(OfflinePlayer player, String type, TickTime time) {
 		return check(player.getUniqueId(), type, time);
 	}
 
@@ -46,7 +46,7 @@ public class CooldownService extends MongoService<Cooldown> {
 	 * @param time how long the cooldown should last
 	 * @return true if player is not on cooldown
 	 */
-	public boolean check(UUID uuid, String type, Time time) {
+	public boolean check(UUID uuid, String type, TickTime time) {
 		return check(uuid, type, time.get());
 	}
 
@@ -130,7 +130,7 @@ public class CooldownService extends MongoService<Cooldown> {
 	}
 
 	static {
-		Tasks.repeatAsync(Time.MINUTE, Time.HOUR, () -> new CooldownService().janitor());
+		Tasks.repeatAsync(TickTime.MINUTE, TickTime.HOUR, () -> new CooldownService().janitor());
 	}
 
 	public int janitor() {

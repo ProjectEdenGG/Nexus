@@ -13,7 +13,7 @@ import gg.projecteden.nexus.models.socialmedia.TwitterData;
 import gg.projecteden.nexus.models.socialmedia.TwitterService;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.Env;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import twitter4j.Query;
@@ -40,7 +40,7 @@ public class TwitterCommand extends CustomCommand {
 
 	static {
 		if (Nexus.getEnv() == Env.PROD)
-			Tasks.repeatAsync(Time.MINUTE, Time.MINUTE.x(5), TwitterCommand::lookForNewTweets0);
+			Tasks.repeatAsync(TickTime.MINUTE, TickTime.MINUTE.x(5), TwitterCommand::lookForNewTweets0);
 	}
 
 	private static void lookForNewTweets0() {

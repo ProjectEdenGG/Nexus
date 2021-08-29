@@ -111,7 +111,7 @@ public class Quests implements Listener {
 		if (event.getNPC().getId() != PARADE_MANAGER.getNpcId()) return;
 
 		CooldownService cooldownService = new CooldownService();
-		if (!cooldownService.check(player, "Pride21_NPCInteract", TimeUtils.Time.SECOND.x(5)))
+		if (!cooldownService.check(player, "Pride21_NPCInteract", TimeUtils.TickTime.SECOND.x(5)))
 			return;
 
 		int waitTicks = Talker.sendScript(player, PARADE_MANAGER);
@@ -160,7 +160,7 @@ public class Quests implements Listener {
 		if ((fromPride && !toPride) || (toPride && service.get(player).isBonusTokenRewardClaimed()))
 			event.getPlayer().resetPlayerTime();
 		else if (toPride) {
-			Tasks.wait(TimeUtils.Time.SECOND, () -> event.getPlayer().setPlayerTime(DescParseTickFormat.parseAlias("dawn"), false));
+			Tasks.wait(TimeUtils.TickTime.SECOND, () -> event.getPlayer().setPlayerTime(DescParseTickFormat.parseAlias("dawn"), false));
 			viewFloat(player, false);
 		}
 	}

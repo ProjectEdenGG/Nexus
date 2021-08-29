@@ -7,7 +7,7 @@ import gg.projecteden.nexus.models.setting.Setting;
 import gg.projecteden.nexus.models.setting.SettingService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
@@ -25,7 +25,7 @@ public class Pride20Listener implements Listener {
 		Player player = event.getClicker();
 
 		CooldownService cooldownService = new CooldownService();
-		if (!cooldownService.check(player, "prideDyeBomb", Time.MINUTE.x(1)))
+		if (!cooldownService.check(player, "prideDyeBomb", TickTime.MINUTE.x(1)))
 			return;
 
 		PlayerUtils.send(player, "&3Vendor > &eSadly all my balloons have uh... floated away, but I can give you this to play with");
@@ -42,7 +42,7 @@ public class Pride20Listener implements Listener {
 		if (setting.getBoolean()) {
 
 			CooldownService cooldownService = new CooldownService();
-			if (!cooldownService.check(player, "pride20Cat", Time.SECOND.x(10)))
+			if (!cooldownService.check(player, "pride20Cat", TickTime.SECOND.x(10)))
 				return;
 
 			player.playSound(player.getLocation(), Sound.ENTITY_CAT_PURREOW, 5f, .08f);
@@ -68,7 +68,7 @@ public class Pride20Listener implements Listener {
 	public void onRegionEnter(PlayerEnteredRegionEvent event) {
 		if (!event.getRegion().getId().equalsIgnoreCase("pride20")) return;
 		CooldownService cooldownService = new CooldownService();
-		if (!cooldownService.check(event.getPlayer(), "pride20enter", Time.MINUTE.x(5)))
+		if (!cooldownService.check(event.getPlayer(), "pride20enter", TickTime.MINUTE.x(5)))
 			return;
 		PlayerUtils.send(event.getPlayer(), "&eWelcome to the Pride Parade!" +
 				" &3Have a look at all the colorful floats and roam around the city. If you'd like to join the parade, " +

@@ -199,7 +199,7 @@ public class SabotageMatchData extends MatchData {
 	}
 
 	public void putKillCooldown(HasUniqueId player) {
-		killCooldowns.put(player.getUniqueId(), TimeUtils.Time.SECOND.x(getArena().getKillCooldown()));
+		killCooldowns.put(player.getUniqueId(), TimeUtils.TickTime.SECOND.x(getArena().getKillCooldown()));
 	}
 
 	public int canButtonIn() {
@@ -400,7 +400,7 @@ public class SabotageMatchData extends MatchData {
 				putKillCooldown(minigamer);
 			minigamer.getPlayer().removePotionEffect(PotionEffectType.NIGHT_VISION);
 		});
-		endMeetingTask = match.getTasks().wait(TimeUtils.Time.SECOND.x(Sabotage.MEETING_LENGTH + Sabotage.VOTING_DELAY), this::endMeeting);
+		endMeetingTask = match.getTasks().wait(TimeUtils.TickTime.SECOND.x(Sabotage.MEETING_LENGTH + Sabotage.VOTING_DELAY), this::endMeeting);
 	}
 
 	public void endMeeting() {
@@ -418,7 +418,7 @@ public class SabotageMatchData extends MatchData {
 			votingScreen.open(minigamer);
 			minigamer.getPlayer().getInventory().remove(Sabotage.VOTING_ITEM.get());
 		});
-		match.getTasks().wait(TimeUtils.Time.SECOND.x(Sabotage.POST_MEETING_DELAY), () -> {
+		match.getTasks().wait(TimeUtils.TickTime.SECOND.x(Sabotage.POST_MEETING_DELAY), () -> {
 			match.getMinigamers().forEach(minigamer -> votingScreen.close(minigamer));
 			Minigamer ejected = null;
 			int votes = getVotesFor(null).size();
@@ -468,7 +468,7 @@ public class SabotageMatchData extends MatchData {
 		SabotageTaskPartData data = sabotage.getParts()[0].createTaskPartData();
 		int duration = data.getDuration();
 		if (duration > 0)
-			sabotageTaskId = match.getTasks().wait(TimeUtils.Time.SECOND.x(duration), () -> {
+			sabotageTaskId = match.getTasks().wait(TimeUtils.TickTime.SECOND.x(duration), () -> {
 				SabotageTeam.IMPOSTOR.players(match).forEach(Minigamer::scored);
 				match.end();
 			});

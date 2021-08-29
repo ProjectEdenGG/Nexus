@@ -14,7 +14,7 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.WorldGuardFlagUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import joptsimple.internal.Strings;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -163,7 +163,7 @@ public class WorldGuardFlags implements Listener {
 	}
 
 	static {
-		Tasks.repeat(Time.SECOND, Time.SECOND, () ->
+		Tasks.repeat(TickTime.SECOND, TickTime.SECOND, () ->
 				Minigames.getActiveMinigamers().forEach(minigamer -> {
 					if (minigamer.getPlayer().isInWater())
 						if (WorldGuardFlagUtils.query(minigamer.getPlayer().getLocation(), MINIGAMES_WATER_DAMAGE) == State.ALLOW)

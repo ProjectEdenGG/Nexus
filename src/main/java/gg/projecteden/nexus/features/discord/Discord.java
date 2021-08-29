@@ -10,7 +10,7 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.Env;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -42,8 +42,8 @@ public class Discord extends Feature {
 		if (Nexus.getEnv() != Env.PROD)
 			return;
 
-		Tasks.repeatAsync(0, Time.MINUTE, this::connect);
-		Tasks.waitAsync(Time.SECOND.x(2), this::connect);
+		Tasks.repeatAsync(0, TickTime.MINUTE, this::connect);
+		Tasks.waitAsync(TickTime.SECOND.x(2), this::connect);
 		Nexus.getCron().schedule("*/6 * * * *", Discord::updateTopics);
 	}
 

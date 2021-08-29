@@ -12,7 +12,7 @@ import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.ChatterService;
 import gg.projecteden.nexus.models.chat.PublicChannel;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -55,7 +55,7 @@ public class StatusBar implements PlayerOwnedObject {
 
 		bossBar = Bukkit.createBossBar(getText(), BarColor.BLUE, BarStyle.SEGMENTED_6);
 		bossBar.addPlayer(getOnlinePlayer());
-		taskId = Tasks.repeat(0, Time.SECOND, () -> {
+		taskId = Tasks.repeat(0, TickTime.SECOND, () -> {
 			if (!isOnline())
 				stop();
 			else if (bossBar != null) {

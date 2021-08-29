@@ -8,7 +8,7 @@ import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -71,7 +71,7 @@ public class NearestBlockCommand extends CustomCommand {
 					StringUtils.sendJsonLocation(PREFIX + "&3&l[Click to Teleport]", block.getLocation(), player());
 
 					Tasks.GlowTask.builder()
-							.duration(Time.SECOND.x(10))
+							.duration(TickTime.SECOND.x(10))
 							.entity(fallingBlock)
 							.color(GlowAPI.Color.RED)
 							.viewers(Collections.singletonList(player()))

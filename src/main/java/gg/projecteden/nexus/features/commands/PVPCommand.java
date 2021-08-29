@@ -13,7 +13,7 @@ import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGroup;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import io.papermc.paper.event.player.PlayerBedFailEnterEvent;
 import lombok.NoArgsConstructor;
 import me.lexikiq.HasPlayer;
@@ -58,7 +58,7 @@ public class PVPCommand extends CustomCommand implements Listener {
 	public PVP pvp;
 
 	static {
-		Tasks.repeatAsync(5, Time.SECOND.x(2), () -> {
+		Tasks.repeatAsync(5, TickTime.SECOND.x(2), () -> {
 			PVPService service = new PVPService();
 			for (Player player : PlayerUtils.getOnlinePlayers()) {
 				PVP pvp = service.get(player);

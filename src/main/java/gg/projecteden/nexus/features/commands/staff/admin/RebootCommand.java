@@ -13,7 +13,7 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.utils.Env;
 import gg.projecteden.utils.TimeUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -65,7 +65,7 @@ public class RebootCommand extends CustomCommand implements Listener {
 		Koda.say("Rebooting server, come back in 60 seconds");
 		title();
 
-		Tasks.wait(Time.SECOND.x(10), () -> {
+		Tasks.wait(TickTime.SECOND.x(10), () -> {
 			rebooting = false;
 			conditions.forEach(ReloadCondition::run);
 			for (Player player : PlayerUtils.getOnlinePlayers())
@@ -95,7 +95,7 @@ public class RebootCommand extends CustomCommand implements Listener {
 	}
 
 	static {
-		Tasks.repeat(Time.SECOND.x(5), Time.SECOND.x(5), () -> {
+		Tasks.repeat(TickTime.SECOND.x(5), TickTime.SECOND.x(5), () -> {
 			try {
 				RebootCommand.reboot();
 			} catch (Exception ex) {

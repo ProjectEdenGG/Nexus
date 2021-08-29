@@ -4,7 +4,7 @@ import gg.projecteden.nexus.features.ambience.effects.particles.common.ParticleE
 import gg.projecteden.nexus.features.ambience.effects.particles.common.ParticleEffectType;
 import gg.projecteden.nexus.features.particles.effects.DotEffect;
 import gg.projecteden.nexus.models.ambience.AmbienceUser;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -19,7 +19,7 @@ public class Fireflies extends ParticleEffect {
 	private double z;
 	private static final int RANGE = 5;
 
-	public static final int LIFE = Time.SECOND.x(10);
+	public static final int LIFE = TickTime.SECOND.x(10);
 
 	public Fireflies(AmbienceUser user, Block block, double chance) {
 		super(user, ParticleEffectType.FIREFLIES, Particle.END_ROD, LIFE, chance);
@@ -51,7 +51,7 @@ public class Fireflies extends ParticleEffect {
 				.clientSide(true)
 				.color(Color.YELLOW)
 				.speed(.1)
-				.ticks(Time.SECOND.get())
+				.ticks(TickTime.SECOND.get())
 				.start();
 	}
 

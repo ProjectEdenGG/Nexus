@@ -24,7 +24,7 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import lombok.Setter;
 import me.lexikiq.HasUniqueId;
@@ -138,7 +138,7 @@ public class Pugmas20 implements Listener {
 		Pugmas20UserService service = new Pugmas20UserService();
 		Particle particle = Particle.VILLAGER_HAPPY;
 
-		Tasks.repeatAsync(0, Time.SECOND.x(2), () -> {
+		Tasks.repeatAsync(0, TickTime.SECOND.x(2), () -> {
 			for (Player player : getWGUtils().getPlayersInRegion(region)) {
 				Pugmas20User user = service.get(player);
 				for (Integer npcId : user.getNextStepNPCs()) {
@@ -249,7 +249,7 @@ public class Pugmas20 implements Listener {
 	public void onNPCClick(NPCRightClickEvent event) {
 		Player player = event.getClicker();
 		if (!isAtPugmas(player)) return;
-		if (!new CooldownService().check(event.getClicker(), "Pugmas20_NPC", Time.SECOND.x(10))) return;
+		if (!new CooldownService().check(event.getClicker(), "Pugmas20_NPC", TickTime.SECOND.x(10))) return;
 
 		int id = event.getNPC().getId();
 		QuestNPC.startScript(player, id);
@@ -267,7 +267,7 @@ public class Pugmas20 implements Listener {
 		}
 
 		if (isAtPugmas(event.getTo()) && !isAtPugmas(event.getFrom())) {
-			Tasks.wait(Time.SECOND, () -> {
+			Tasks.wait(TickTime.SECOND, () -> {
 				if (isAtPugmas(event.getPlayer())) {
 					Pugmas20User user = service.get(event.getPlayer());
 					user.applyInventory();
@@ -292,7 +292,7 @@ public class Pugmas20 implements Listener {
 			LocationUtils.lookAt(player, blockLoc);
 
 			Tasks.GlowTask.builder()
-					.duration(Time.SECOND.x(10))
+					.duration(TickTime.SECOND.x(10))
 					.entity(fallingBlock)
 					.color(GlowAPI.Color.RED)
 					.viewers(Collections.singletonList(player))
@@ -324,7 +324,7 @@ public class Pugmas20 implements Listener {
 		if (!isAtPugmas(player))
 			return;
 
-		if (!new CooldownService().check(player, "pugmas20-elf-punch", Time.SECOND.x(3)))
+		if (!new CooldownService().check(player, "pugmas20-elf-punch", TickTime.SECOND.x(3)))
 			return;
 
 		String message = RandomUtils.randomElement("Ow!", "Stop that!", "Rude!");

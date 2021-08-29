@@ -23,7 +23,7 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -159,7 +159,7 @@ public class Archery extends TeamlessMechanic {
 		saveTargetSchems(match);
 		Map<String, Clipboard> targetSchems = matchData.getTargetSchematics();
 
-		match.getTasks().repeat(Time.SECOND.x(5), Time.SECOND.x(7), () -> {
+		match.getTasks().repeat(TickTime.SECOND.x(5), TickTime.SECOND.x(7), () -> {
 			AtomicInteger wait = new AtomicInteger(0);
 			AtomicInteger count = new AtomicInteger(0);
 

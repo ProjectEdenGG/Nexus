@@ -7,7 +7,7 @@ import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils.Paste;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.bukkit.Bukkit;
@@ -43,7 +43,7 @@ public class Train {
 	private static final int trainFrameTime = 0;
 	private static final int crossingFrameTime = 4;
 	private static final int crossingThreshold = 30;
-	//private static final int stationStopTime = Time.SECOND.x(15);
+	//private static final int stationStopTime = TickTime.SECOND.x(15);
 	// Don't change anything below this
 	//
 	@Getter
@@ -94,7 +94,7 @@ public class Train {
 	private static final String animationPath = "Animations/Pugmas20/Train";
 
 	public Train() {
-//		Tasks.repeat(Time.SECOND.x(30), Time.MINUTE.x(5), () -> {
+//		Tasks.repeat(TickTime.SECOND.x(30), TickTime.MINUTE.x(5), () -> {
 //			if (Pugmas20.WGUtils.getPlayersInRegion("pugmas20").size() == 0)
 //				return;
 //
@@ -274,7 +274,7 @@ public class Train {
 	}
 
 	private static void lightsTask() {
-		Tasks.repeatAsync(0, Time.TICK.x(20), () -> {
+		Tasks.repeatAsync(0, TickTime.TICK.x(20), () -> {
 			if (!animating)
 				return;
 
@@ -341,7 +341,7 @@ public class Train {
 	}
 
 	private static void soundsTask() {
-		Tasks.repeatAsync(0, Time.SECOND.x(2), () -> {
+		Tasks.repeatAsync(0, TickTime.SECOND.x(2), () -> {
 			if (!animating)
 				return;
 

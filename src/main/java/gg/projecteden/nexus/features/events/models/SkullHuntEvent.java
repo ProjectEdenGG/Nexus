@@ -13,7 +13,7 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Data;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -92,8 +92,8 @@ public abstract class SkullHuntEvent implements Listener {
 		Nexus.registerListener(this);
 
 		// Skull Particles Task
-		Tasks.wait(Time.TICK, () ->
-				Tasks.repeat(0, Time.SECOND.x(3), () -> {
+		Tasks.wait(TickTime.TICK, () ->
+				Tasks.repeat(0, TickTime.SECOND.x(3), () -> {
 					if (foundAlreadyParticle == null && notFoundParticle == null)
 						return;
 

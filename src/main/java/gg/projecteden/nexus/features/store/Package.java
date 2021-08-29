@@ -48,7 +48,7 @@ import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.Utils;
 import lombok.SneakyThrows;
 import net.luckperms.api.context.ImmutableContextSet;
@@ -131,7 +131,7 @@ public enum Package {
 
 		@Override
 		public void handleApply(UUID uuid) {
-			new BoosterService().edit(uuid, booster -> booster.add(getType(), 2, Time.DAY));
+			new BoosterService().edit(uuid, booster -> booster.add(getType(), 2, TickTime.DAY));
 		}
 
 		@Override
@@ -159,7 +159,7 @@ public enum Package {
 
 		@Override
 		public void handleApply(UUID uuid) {
-			new BoosterService().edit(uuid, booster -> booster.add(getType(), 1.5, Time.DAY));
+			new BoosterService().edit(uuid, booster -> booster.add(getType(), 1.5, TickTime.DAY));
 		}
 
 		@Override
@@ -187,7 +187,7 @@ public enum Package {
 
 		@Override
 		public void handleApply(UUID uuid) {
-			new BoosterService().edit(uuid, booster -> booster.add(getType(), 1.5, Time.DAY));
+			new BoosterService().edit(uuid, booster -> booster.add(getType(), 1.5, TickTime.DAY));
 		}
 
 		@Override
@@ -215,7 +215,7 @@ public enum Package {
 
 		@Override
 		public void handleApply(UUID uuid) {
-			new BoosterService().edit(uuid, booster -> booster.add(getType(), 2.5, Time.DAY));
+			new BoosterService().edit(uuid, booster -> booster.add(getType(), 2.5, TickTime.DAY));
 		}
 
 		@Override
@@ -243,7 +243,7 @@ public enum Package {
 
 		@Override
 		public void handleApply(UUID uuid) {
-			new BoosterService().edit(uuid, booster -> booster.add(getType(), 1.25, Time.DAY));
+			new BoosterService().edit(uuid, booster -> booster.add(getType(), 1.25, TickTime.DAY));
 		}
 
 		@Override
@@ -271,7 +271,7 @@ public enum Package {
 
 		@Override
 		public void handleApply(UUID uuid) {
-			new BoosterService().edit(uuid, booster -> booster.add(getType(), 1.5, Time.DAY));
+			new BoosterService().edit(uuid, booster -> booster.add(getType(), 1.5, TickTime.DAY));
 		}
 
 		@Override
@@ -299,7 +299,7 @@ public enum Package {
 
 		@Override
 		public void handleApply(UUID uuid) {
-			new BoosterService().edit(uuid, booster -> booster.add(getType(), 2, Time.DAY));
+			new BoosterService().edit(uuid, booster -> booster.add(getType(), 2, TickTime.DAY));
 		}
 
 		@Override
@@ -327,7 +327,7 @@ public enum Package {
 
 		@Override
 		public void handleApply(UUID uuid) {
-			new BoosterService().edit(uuid, booster -> booster.add(getType(), 2, Time.DAY));
+			new BoosterService().edit(uuid, booster -> booster.add(getType(), 2, TickTime.DAY));
 		}
 
 		@Override

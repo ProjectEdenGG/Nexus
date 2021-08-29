@@ -17,7 +17,7 @@ import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.utils.EnumUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bukkit.FireworkEffect.Type;
@@ -122,7 +122,7 @@ public abstract class IMastermindMatchData extends MatchData {
 	}
 
 	protected void validate(Minigamer minigamer, Region wallRegion, Region guessRegion, Region resultsSignRegion) {
-		if (!new CooldownService().check(minigamer.getPlayer(), "minigames-mastermind-guess", Time.SECOND.x(3)))
+		if (!new CooldownService().check(minigamer.getPlayer(), "minigames-mastermind-guess", TickTime.SECOND.x(3)))
 			return;
 
 		WorldEditUtils WEUtils = minigamer.getMatch().getWEUtils();
@@ -216,7 +216,7 @@ public abstract class IMastermindMatchData extends MatchData {
 			for (int i = 0; i < 3; i++) {
 				Location location = arena.getWGUtils().getRandomBlock(region).getLocation();
 
-				int delay = RandomUtils.randomInt(Time.SECOND.get() / 2, Time.SECOND.get());
+				int delay = RandomUtils.randomInt(TickTime.SECOND.get() / 2, TickTime.SECOND.get());
 				Tasks.wait(delay * i, () -> {
 					Type type = RandomUtils.randomElement(EnumUtils.valuesExcept(Type.class, Type.CREEPER, Type.BALL));
 					FireworkLauncher.random(location)

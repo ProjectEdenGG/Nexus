@@ -11,7 +11,7 @@ import gg.projecteden.nexus.models.aeveonproject.AeveonProjectService;
 import gg.projecteden.nexus.models.aeveonproject.AeveonProjectUser;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -47,7 +47,7 @@ public class ClientsideBlocks implements Listener {
 	}
 
 	private void updateTask() {
-		Tasks.repeat(0, Time.SECOND.x(2), () -> {
+		Tasks.repeat(0, TickTime.SECOND.x(2), () -> {
 			if (getPlayersInAPWorld() == 0)
 				return;
 

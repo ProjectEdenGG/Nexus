@@ -6,7 +6,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown.Part;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.WorldGroup;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.GameMode;
 
 public class SuicideCommand extends CustomCommand {
@@ -16,7 +16,7 @@ public class SuicideCommand extends CustomCommand {
 	}
 
 	@Path
-	@Cooldown(@Part(Time.MINUTE))
+	@Cooldown(@Part(TickTime.MINUTE))
 	void suicide() {
 		if (!WorldGroup.of(player()).equals(WorldGroup.SURVIVAL))
 			error("You can only do this command in the survival world.");

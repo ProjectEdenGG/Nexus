@@ -14,7 +14,7 @@ import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.audience.MessageType;
@@ -84,7 +84,7 @@ public class ChatManager {
 					if ("Tuniab".equals(chatter.getName())) {
 						String id = "chat-" + publicChannel.getName().toLowerCase();
 						CooldownService service = new CooldownService();
-						if (!service.check(chatter.getUuid(), id, Time.SECOND.x(5)))
+						if (!service.check(chatter.getUuid(), id, TickTime.SECOND.x(5)))
 							throw new InvalidInputException("You are talking too fast! (&e" + service.getDiff(chatter.getUuid(), id) + " left&c)");
 					}
 				}

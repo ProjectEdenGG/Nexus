@@ -18,7 +18,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
@@ -186,7 +186,7 @@ public class SummerDownUnderIsland implements Listener, BearFairIsland {
 
 				if (player.getInventory().contains(greatNortherns) && step == 3) {
 					player.getInventory().remove(greatNortherns);
-					Tasks.wait(Time.SECOND.x(7), () -> {
+					Tasks.wait(TickTime.SECOND.x(7), () -> {
 						chime(player);
 						PlayerUtils.giveItem(player, peanuts);
 					});
@@ -224,7 +224,7 @@ public class SummerDownUnderIsland implements Listener, BearFairIsland {
 					return Collections.singletonList("I've already given you all my Golden Syrup, g'day!");
 
 				nextStep(player); // 5
-				Tasks.wait(Time.SECOND.x(6), () -> {
+				Tasks.wait(TickTime.SECOND.x(6), () -> {
 					PlayerUtils.giveItem(player, goldenSyrup);
 					chime(player);
 				});
@@ -280,10 +280,10 @@ public class SummerDownUnderIsland implements Listener, BearFairIsland {
 					if (fool)
 						wait = 8;
 
-					Tasks.wait(Time.SECOND.x(wait), () -> {
+					Tasks.wait(TickTime.SECOND.x(wait), () -> {
 						finalGold.setAmount(finalGold.getAmount() - 1);
 						removeAnzacIngredients(player);
-						Tasks.wait(Time.SECOND.x(5), () -> {
+						Tasks.wait(TickTime.SECOND.x(5), () -> {
 							PlayerUtils.giveItem(player, anzacBiscuit);
 							chime(player);
 						});
@@ -354,7 +354,7 @@ public class SummerDownUnderIsland implements Listener, BearFairIsland {
 					return Collections.singletonList("Take the bowl and get to work in the water.");
 
 				nextStep(player); // 8
-				Tasks.wait(Time.SECOND.x(5), () -> {
+				Tasks.wait(TickTime.SECOND.x(5), () -> {
 					PlayerUtils.giveItem(player, sifter);
 					chime(player);
 				});
@@ -540,7 +540,7 @@ public class SummerDownUnderIsland implements Listener, BearFairIsland {
 		// Player is sifting
 		Player player = event.getPlayer();
 		CooldownService cooldownService = new CooldownService();
-		if (!cooldownService.check(player, "BF20_SDU_Sifting", Time.SECOND.x(2)))
+		if (!cooldownService.check(player, "BF20_SDU_Sifting", TickTime.SECOND.x(2)))
 			return;
 
 		Location loc = player.getLocation();

@@ -30,7 +30,7 @@ import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import gg.projecteden.utils.TimeUtils.Timespan.FormatType;
 import lombok.AllArgsConstructor;
@@ -75,7 +75,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 					boost.expire();
 			}
 		});
-		Tasks.repeatAsync(Time.MINUTE, Time.MINUTE, () -> {
+		Tasks.repeatAsync(TickTime.MINUTE, TickTime.MINUTE, () -> {
 			BoostConfig config = BoostConfig.get();
 			if (config.getBoosts().isEmpty())
 				return;
@@ -251,7 +251,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void onJoin(PlayerJoinEvent event) {
-		Tasks.wait(Time.SECOND.x(2), () -> {
+		Tasks.wait(TickTime.SECOND.x(2), () -> {
 			if (!event.getPlayer().isOnline())
 				return;
 

@@ -27,7 +27,7 @@ import gg.projecteden.nexus.utils.Tasks.ExpBarCountdown;
 import gg.projecteden.nexus.utils.Tasks.QueuedTask;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan.FormatType;
 import gg.projecteden.utils.TimeUtils.Timespan.TimespanBuilder;
 import lombok.NoArgsConstructor;
@@ -81,7 +81,7 @@ public class TestCommand extends CustomCommand implements Listener {
 			.uuid(uuid())
 			.type("test")
 			.task(() -> send(PREFIX + "Task completed"))
-			.queue(Time.SECOND);
+			.queue(TickTime.SECOND);
 
 		send(PREFIX + "Queued task");
 	}
@@ -157,13 +157,13 @@ public class TestCommand extends CustomCommand implements Listener {
 			.spawnFallingBlocks()
 			.thenAccept(fallingBlocks -> {
 				send(fallingBlocks.size() + " falling blocks spawned");
-				Tasks.wait(Time.SECOND.x(5), () -> {
+				Tasks.wait(TickTime.SECOND.x(5), () -> {
 					Tasks.Countdown.builder()
-						.duration(Time.SECOND.x(seconds))
+						.duration(TickTime.SECOND.x(seconds))
 						.onTick(i -> fallingBlocks.forEach(fallingBlock -> fallingBlock.setVelocity(new Vector(velocity, 0, 0))))
 						.start();
 
-					Tasks.wait(Time.SECOND.x(seconds), () -> fallingBlocks.forEach(Entity::remove));
+					Tasks.wait(TickTime.SECOND.x(seconds), () -> fallingBlocks.forEach(Entity::remove));
 				});
 			});
 	}
@@ -250,8 +250,8 @@ public class TestCommand extends CustomCommand implements Listener {
 	@Description("A command with a 5.75s cooldown")
 	@Path("cooldown")
 	@Cooldown({
-		@Part(value = Time.SECOND, x = 5),
-		@Part(value = Time.TICK, x = 15)
+		@Part(value = TickTime.SECOND, x = 5),
+		@Part(value = TickTime.TICK, x = 15)
 	})
 	void cooldown() {
 		send("Hello!");
@@ -267,7 +267,7 @@ public class TestCommand extends CustomCommand implements Listener {
 	void cooldownForceCME(int iterations) {
 		CooldownService service = new CooldownService();
 		for (int i = 0; i < iterations; i++)
-			service.check(uuid(), UUID.randomUUID().toString(), Time.SECOND);
+			service.check(uuid(), UUID.randomUUID().toString(), TickTime.SECOND);
 	}
 
 	@Path("argPerm [one] [two] [three] [four] [five]")

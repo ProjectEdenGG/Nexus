@@ -14,7 +14,7 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGroup;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.SneakyThrows;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -213,7 +213,7 @@ public class WitherCommand extends CustomCommand {
 
 		currentFight.teleportPartyToArena();
 		Tasks.Countdown.builder()
-			.duration(Time.SECOND.x(10))
+			.duration(TickTime.SECOND.x(10))
 			.onSecond(i -> {
 				if (currentFight != null) {
 					if (i == 10)

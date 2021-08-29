@@ -26,7 +26,7 @@ public class AntiCamping {
 	private final Map<UUID, Integer> secondsCamping = new HashMap<>();
 
 	public int start() {
-		return Tasks.repeat(TimeUtils.Time.SECOND, TimeUtils.Time.SECOND, () -> {
+		return Tasks.repeat(TimeUtils.TickTime.SECOND, TimeUtils.TickTime.SECOND, () -> {
 			if (currentFight.shouldRegen)
 				return;
 

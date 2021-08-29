@@ -26,7 +26,7 @@ import gg.projecteden.nexus.models.rule.HasReadRulesService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import lombok.Data;
 import lombok.Getter;
@@ -330,7 +330,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
-		Tasks.waitAsync(Time.MINUTE, () -> {
+		Tasks.waitAsync(TickTime.MINUTE, () -> {
 			Referral referral = new ReferralService().get(event.getPlayer());
 			if (referral.getOrigin() == null) {
 				Nerd nerd = Nerd.of(event.getPlayer());
@@ -339,7 +339,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 						if (!event.getPlayer().isOnline())
 							return;
 
-						if (new CooldownService().check(event.getPlayer(), "referralAsk", Time.MINUTE.x(5))) {
+						if (new CooldownService().check(event.getPlayer(), "referralAsk", TickTime.MINUTE.x(5))) {
 							send(event.getPlayer(), json().newline()
 									.next("&e&lHey there! &3Could you quickly tell us where you found this server? &eClick here!")
 									.command("/referral")

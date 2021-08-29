@@ -12,7 +12,7 @@ import gg.projecteden.nexus.models.boost.BoostConfig.DiscordHandler;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -57,7 +57,7 @@ public class Booster implements PlayerOwnedObject {
 		private LocalDateTime activated;
 		private boolean cancelled;
 
-		public Boost(@NonNull UUID uuid, Boostable type, double multiplier, Time duration) {
+		public Boost(@NonNull UUID uuid, Boostable type, double multiplier, TickTime duration) {
 			this(uuid, type, multiplier, duration.get() / 20);
 		}
 
@@ -201,7 +201,7 @@ public class Booster implements PlayerOwnedObject {
 		return boost;
 	}
 
-	public Boost add(Boostable type, double multiplier, Time duration) {
+	public Boost add(Boostable type, double multiplier, TickTime duration) {
 		Boost boost = new Boost(uuid, type, multiplier, duration);
 		add(boost);
 		return boost;

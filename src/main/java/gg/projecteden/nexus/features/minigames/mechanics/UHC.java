@@ -98,9 +98,9 @@ public class UHC extends TeamlessVanillaMechanic {
 		final Match match = event.getMatch();
 		match.<UHCMatchData>getMatchData().setStartTime(LocalDateTime.now());
 		WORLD_BORDER_DATA.forEach(worldBorder -> {
-			match.getTasks().wait(TimeUtils.Time.SECOND.x(worldBorder.delay.minus(worldBorder.warning).getSeconds()),
+			match.getTasks().wait(TimeUtils.TickTime.SECOND.x(worldBorder.delay.minus(worldBorder.warning).getSeconds()),
 				() -> announce(match, new JsonBuilder("&cThe border will begin shrinking in &e" + worldBorder.warning.toMinutes() + " minutes")));
-			match.getTasks().wait(TimeUtils.Time.SECOND.x(worldBorder.delay.getSeconds()), () -> {
+			match.getTasks().wait(TimeUtils.TickTime.SECOND.x(worldBorder.delay.getSeconds()), () -> {
 				getWorld().getWorldBorder().setSize(worldBorder.diameter, worldBorder.shrink.getSeconds());
 				getWorld().setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
 				announce(match, new JsonBuilder("&cThe border is now shrinking to &e" + worldBorder.getDiameterString()));

@@ -16,7 +16,7 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -270,7 +270,7 @@ public class PugmasIsland implements Listener, BearFairIsland {
 	}
 
 	private void effectTasks() {
-		Tasks.repeat(0, Time.SECOND.x(3), () -> PlayerUtils.getOnlinePlayers().stream()
+		Tasks.repeat(0, TickTime.SECOND.x(3), () -> PlayerUtils.getOnlinePlayers().stream()
 				.filter(player -> getWGUtils().getRegionsLikeAt(getRegion(), player.getLocation()).size() > 0)
 				.forEach(player -> {
 					BearFair20UserService service = new BearFair20UserService();
@@ -451,7 +451,7 @@ public class PugmasIsland implements Listener, BearFairIsland {
 				player.getInventory().remove(content);
 		}
 
-		Tasks.wait(Time.SECOND.x(9), () -> {
+		Tasks.wait(TickTime.SECOND.x(9), () -> {
 			chime(player);
 			PlayerUtils.giveItem(player, presentItem);
 		});

@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.minigames.perks.gadgets;
 
 import gg.projecteden.nexus.features.minigames.models.perks.common.GadgetPerk;
 import gg.projecteden.nexus.features.particles.ParticleUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -43,6 +43,6 @@ public class SpringGadget implements GadgetPerk {
 
 	@Override
 	public int getCooldown() {
-		return Time.SECOND.x(1.5);
+		return TickTime.SECOND.x(1.5);
 	}
 }

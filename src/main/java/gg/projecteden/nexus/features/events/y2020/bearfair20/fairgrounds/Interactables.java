@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.events.y2020.bearfair20.fairgrounds;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -56,7 +56,7 @@ public class Interactables {
 			wait.getAndAdd(7);
 		}
 
-		wait.getAndAdd(Time.SECOND.x(1));
+		wait.getAndAdd(TickTime.SECOND.x(1));
 
 		Tasks.wait(wait.get(), () -> {
 			for (Location light : lights) {

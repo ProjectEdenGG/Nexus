@@ -21,7 +21,7 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Timer;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.Utils;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -195,7 +195,7 @@ public class BearFair21 implements Listener {
 	}
 
 	static {
-		Tasks.repeat(Time.SECOND, Time.SECOND, () -> {
+		Tasks.repeat(TickTime.SECOND, TickTime.SECOND, () -> {
 			if (!config.isEnabled(WARP))
 				return;
 
@@ -356,7 +356,7 @@ public class BearFair21 implements Listener {
 		Player player = event.getPlayer();
 		BearFair21User user = userService.get(player);
 
-		Tasks.wait(Time.SECOND.x(2), () -> {
+		Tasks.wait(TickTime.SECOND.x(2), () -> {
 			player.addPotionEffects(Collections.singletonList
 				(new PotionEffect(PotionEffectType.BLINDNESS, 80, 250, false, false, false)));
 			player.teleportAsync(spawnTransition);
@@ -364,7 +364,7 @@ public class BearFair21 implements Listener {
 			send("&e&o*You immediately fall asleep in your bed*", player);
 			send("", player);
 
-			Tasks.wait(Time.SECOND.x(4), () -> {
+			Tasks.wait(TickTime.SECOND.x(4), () -> {
 				boolean firstVisit = user.isFirstVisit();
 				user.setFirstVisit(false);
 				userService.save(user);
@@ -375,7 +375,7 @@ public class BearFair21 implements Listener {
 				if (firstVisit) {
 //					user.getOnlinePlayer().getInventory().setContents(new ItemStack[0]);
 
-					Tasks.wait(Time.SECOND.x(3), () -> {
+					Tasks.wait(TickTime.SECOND.x(3), () -> {
 						send("&8&l[&c&l!!!&8&l] &3You can now warp here using: &e/bearfair21", player);
 						Quests.sound_obtainItem(player);
 					});

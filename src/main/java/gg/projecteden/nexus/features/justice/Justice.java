@@ -32,7 +32,7 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
@@ -74,7 +74,7 @@ public class Justice extends Feature implements Listener {
 	private boolean isNewPlayer(Nerd nerd) {
 		if (nerd.getRank().gt(Rank.GUEST))
 			return false;
-		if (new HoursService().get(nerd).getTotal() >= Time.HOUR.get() / 20)
+		if (new HoursService().get(nerd).getTotal() >= TickTime.HOUR.get() / 20)
 			return false;
 
 		return true;
@@ -201,12 +201,12 @@ public class Justice extends Feature implements Listener {
 	// Warning
 	@EventHandler
 	public void warning_onJoin(PlayerJoinEvent event) {
-		Tasks.wait(Time.SECOND.x(5), () -> Punishments.of(event.getPlayer()).tryShowWarns());
+		Tasks.wait(TickTime.SECOND.x(5), () -> Punishments.of(event.getPlayer()).tryShowWarns());
 	}
 
 	@EventHandler
 	public void warning_onNotAFK(NotAFKEvent event) {
-		Tasks.wait(Time.SECOND.x(2), () -> {
+		Tasks.wait(TickTime.SECOND.x(2), () -> {
 			if (event.getUser().isOnline())
 				Punishments.of(event.getUser().getOnlinePlayer()).tryShowWarns();
 		});
@@ -216,7 +216,7 @@ public class Justice extends Feature implements Listener {
 	@EventHandler
 	public void watchlist_onJoin(PlayerJoinEvent event) {
 		final Player player = event.getPlayer();
-		Tasks.waitAsync(Time.SECOND, () -> {
+		Tasks.waitAsync(TickTime.SECOND, () -> {
 			if (!player.isOnline())
 				return;
 
@@ -240,7 +240,7 @@ public class Justice extends Feature implements Listener {
 	@EventHandler
 	public void alts_onJoin(PlayerJoinEvent event) {
 		final Player player = event.getPlayer();
-		Tasks.waitAsync(Time.SECOND, () -> {
+		Tasks.waitAsync(TickTime.SECOND, () -> {
 			if (!player.isOnline())
 				return;
 

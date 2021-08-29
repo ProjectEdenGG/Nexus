@@ -7,7 +7,7 @@ import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -98,7 +98,7 @@ public class ReflectionGameUtils {
 
 		BearFair21.giveDailyTokens(ReflectionGame.getButtonPresser(), BF21PointSource.REFLECTION, 5);
 
-		Tasks.wait(Time.SECOND.x(3), () -> {
+		Tasks.wait(TickTime.SECOND.x(3), () -> {
 			randomizeBanners();
 			newObjective();
 			broadcastObjective();

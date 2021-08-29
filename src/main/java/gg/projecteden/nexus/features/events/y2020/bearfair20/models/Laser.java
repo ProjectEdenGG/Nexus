@@ -5,7 +5,7 @@ import gg.projecteden.nexus.utils.FireworkLauncher;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -60,7 +60,7 @@ public class Laser {
 				})
 				.onTick(i -> {
 					if (!active) stopLaser(curLoc.get());
-					if (i % Time.SECOND.x(5) == 0)
+					if (i % TickTime.SECOND.x(5) == 0)
 						curLoc.get().getWorld().playSound(curLoc.get(), Sound.BLOCK_BEACON_AMBIENT, 1F, 1F);
 					DotEffect.builder().player(player).location(curLoc.get()).speed(0.1).ticks(10).color(laserColor).start();
 

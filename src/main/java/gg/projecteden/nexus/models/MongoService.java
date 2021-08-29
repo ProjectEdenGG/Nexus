@@ -5,7 +5,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.QueuedTask;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -51,7 +51,7 @@ public abstract class MongoService<T extends PlayerOwnedObject> extends gg.proje
 				throw ex;
 
 			Nexus.debug("[Mongo] Caught CME saving " + object.getNickname() + "'s " + object.getClass().getSimpleName() + ", retrying");
-			queueSaveSync(Time.SECOND.x(3), object);
+			queueSaveSync(TickTime.SECOND.x(3), object);
 		}
 	}
 

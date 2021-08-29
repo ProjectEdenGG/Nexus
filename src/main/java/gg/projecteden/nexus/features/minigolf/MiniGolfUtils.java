@@ -4,7 +4,7 @@ import gg.projecteden.nexus.features.minigolf.models.GolfBall;
 import gg.projecteden.nexus.features.minigolf.models.MiniGolfUser;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Sound;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
@@ -48,7 +48,7 @@ public class MiniGolfUtils {
 		if (!user.isOnline())
 			return;
 
-		ActionBarUtils.sendActionBar(user.getPlayer(), message, Time.SECOND.x(3));
+		ActionBarUtils.sendActionBar(user.getPlayer(), message, TickTime.SECOND.x(3));
 	}
 
 	public static String getScore(int strokes, int par) {

@@ -9,7 +9,7 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Color;
@@ -185,7 +185,7 @@ public class ReflectionGame {
 	}
 
 	private static void laserSound() {
-		soundTaskId = Tasks.repeat(0, Time.SECOND.x(5), () -> {
+		soundTaskId = Tasks.repeat(0, TickTime.SECOND.x(5), () -> {
 			Collection<Player> players = BearFair21.getWGUtils().getPlayersInRegion(gameRg);
 			for (Player player : players)
 				new SoundBuilder(Sound.BLOCK_BEACON_AMBIENT).receiver(player).location(laserSoundLoc).play();
@@ -201,7 +201,7 @@ public class ReflectionGame {
 			player.stopSound(Sound.BLOCK_BEACON_AMBIENT);
 
 		new SoundBuilder(Sound.BLOCK_BEACON_DEACTIVATE).location(center).play();
-		Tasks.wait(Time.SECOND.x(2), () -> active = false);
+		Tasks.wait(TickTime.SECOND.x(2), () -> active = false);
 	}
 
 	private static BlockFace getReflection(BlockFace from, BlockFace bannerFace) {

@@ -21,7 +21,7 @@ import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import me.lexikiq.OptionalPlayer;
@@ -326,7 +326,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		match.getScoreboard().update();
 
 		onTurnStart(match, team);
-		tasks.register(MatchTaskType.TURN, tasks.wait(arena.getTurnTime() * Time.SECOND.get(), () -> nextTurn(match)));
+		tasks.register(MatchTaskType.TURN, tasks.wait(arena.getTurnTime() * TickTime.SECOND.get(), () -> nextTurn(match)));
 	}
 
 	@Override

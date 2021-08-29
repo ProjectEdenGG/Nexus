@@ -6,7 +6,7 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -74,7 +74,7 @@ public class BeginningCutscene implements Listener {
 
 		for (Player player : currentFight.alivePlayers()) {
 			player.setGameMode(GameMode.SPECTATOR);
-			player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, Time.SECOND.x(3), 1, true));
+			player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, TickTime.SECOND.x(3), 1, true));
 			player.teleport(location(-150.5, 77, -82.5, 0, 20));
 
 			new TitleBuilder()
@@ -91,17 +91,17 @@ public class BeginningCutscene implements Listener {
 
 		AtomicInteger lightningIndex = new AtomicInteger();
 		for (int i = 0; i < 5; i++) {
-			Tasks.wait(Time.SECOND.x(waitSeconds += 1), () -> {
+			Tasks.wait(TickTime.SECOND.x(waitSeconds += 1), () -> {
 				strike(LIGHTNING_LOCATIONS[lightningIndex.getAndIncrement()]);
 				strike(LIGHTNING_LOCATIONS[lightningIndex.getAndIncrement()]);
 			});
 		}
 
-		Tasks.wait(Time.SECOND.x(waitSeconds += 1), () -> strike(LIGHTNING_LOCATIONS[10]));
+		Tasks.wait(TickTime.SECOND.x(waitSeconds += 1), () -> strike(LIGHTNING_LOCATIONS[10]));
 
 		AtomicReference<Wither> wither = new AtomicReference<>();
 
-		Tasks.wait(Time.SECOND.x(waitSeconds += 2), () -> {
+		Tasks.wait(TickTime.SECOND.x(waitSeconds += 2), () -> {
 			strike(LIGHTNING_LOCATIONS[11]);
 			BlockUtils.getBlocksInRadius(cageLoc, 3).forEach(block -> {
 				FallingBlock fallingBlock = block.getLocation().getWorld().spawnFallingBlock(block.getLocation(), block.getBlockData());
@@ -130,7 +130,7 @@ public class BeginningCutscene implements Listener {
 				cageLoc.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, cageLoc, 1, 1, 1, 1);
 		});
 
-		Tasks.wait(Time.SECOND.x(waitSeconds += 2), () -> {
+		Tasks.wait(TickTime.SECOND.x(waitSeconds += 2), () -> {
 			fallingBlocks.forEach(Entity::remove);
 			Nexus.unregisterListener(this);
 			showAllPlayers();
@@ -140,7 +140,7 @@ public class BeginningCutscene implements Listener {
 				player.teleport(location(-150.5, 69, -80.5));
 			}
 		});
-		Tasks.wait(Time.SECOND.x(waitSeconds) + 2, () -> completableFuture.complete(cageLoc));
+		Tasks.wait(TickTime.SECOND.x(waitSeconds) + 2, () -> completableFuture.complete(cageLoc));
 		return completableFuture;
 	}
 

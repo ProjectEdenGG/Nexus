@@ -25,7 +25,7 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.Countdown;
 import gg.projecteden.nexus.utils.Tasks.Countdown.CountdownBuilder;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -52,8 +52,8 @@ import static java.util.stream.Collectors.toSet;
 public class PixelDrop extends TeamlessMechanic {
 	private static final String PREFIX = StringUtils.getPrefix("PixelDrop");
 	private static final int MAX_ROUNDS = 10;
-	private static final int TIME_BETWEEN_ROUNDS = Time.SECOND.x(8);
-	private static final int ROUND_COUNTDOWN = Time.SECOND.x(45);
+	private static final int TIME_BETWEEN_ROUNDS = TickTime.SECOND.x(8);
+	private static final int ROUND_COUNTDOWN = TickTime.SECOND.x(45);
 
 	@Override
 	public @NotNull String getName() {

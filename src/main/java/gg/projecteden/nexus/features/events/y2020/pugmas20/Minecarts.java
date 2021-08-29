@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.events.y2020.pugmas20;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.EnumUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -28,7 +28,7 @@ public class Minecarts {
 	private static final List<Entity> minecarts = new ArrayList<>();
 
 	public Minecarts() {
-		Tasks.repeat(Time.SECOND.x(5), Time.SECOND.x(30), () -> {
+		Tasks.repeat(TickTime.SECOND.x(5), TickTime.SECOND.x(30), () -> {
 			// Empty
 			Location loc = spawnLoc_empty;
 			Entity minecart = loc.getWorld().spawnEntity(loc, EntityType.MINECART);
@@ -53,7 +53,7 @@ public class Minecarts {
 
 		});
 
-		Tasks.repeat(Time.SECOND.x(5), Time.TICK.x(10), () -> {
+		Tasks.repeat(TickTime.SECOND.x(5), TickTime.TICK.x(10), () -> {
 			for (Entity minecart : new ArrayList<>(minecarts)) {
 				if (minecart == null || minecart.isDead()) {
 					minecarts.remove(minecart);

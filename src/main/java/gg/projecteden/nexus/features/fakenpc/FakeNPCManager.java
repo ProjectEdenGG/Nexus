@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.fakenpc;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import net.minecraft.server.level.EntityPlayer;
 import net.minecraft.world.entity.decoration.EntityArmorStand;
@@ -28,7 +28,7 @@ public class FakeNPCManager {
 	private static final Map<UUID, FakeNPC> selected = new HashMap<>();
 
 	public FakeNPCManager() {
-		Tasks.repeat(0, Time.SECOND.x(1), () -> {
+		Tasks.repeat(0, TickTime.SECOND.x(1), () -> {
 			Collection<? extends Player> players = PlayerUtils.getOnlinePlayers();
 			fakeNpcs.forEach(fakeNPC -> {
 				if (fakeNPC.isVisible()) {

@@ -16,7 +16,7 @@ import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
@@ -43,7 +43,7 @@ public class WelcomeCommand extends CustomCommand {
 	}
 
 	static {
-		Tasks.repeat(Time.MINUTE, Time.MINUTE, () -> {
+		Tasks.repeat(TickTime.MINUTE, TickTime.MINUTE, () -> {
 			if (PlayerUtils.getOnlinePlayers().stream().filter(player ->
 					Rank.of(player).isMod() &&
 					Dev.KODA.isNot(player) &&
@@ -51,12 +51,12 @@ public class WelcomeCommand extends CustomCommand {
 			).count() < 4)
 				return;
 
-			if (!new CooldownService().check(StringUtils.getUUID0(), "bumpReminder", Time.DAY))
+			if (!new CooldownService().check(StringUtils.getUUID0(), "bumpReminder", TickTime.DAY))
 				return;
 
 			String url = "https://docs.google.com/document/d/1MVFG2ipdpCY42cUzZyVsIbjVlPRCiN0gmYL89sJNRTw/edit?usp=sharing";
 			Broadcast.staffIngame().message("").send();
-			Broadcast.staffIngame().message("&eHi Staff. &3It looks like there's a few of you online. Time to &ebump the server!").send();
+			Broadcast.staffIngame().message("&eHi Staff. &3It looks like there's a few of you online. TickTime to &ebump the server!").send();
 			Broadcast.staffIngame().message(new JsonBuilder("&eClick me").url(url).group().next(" &3for the instructions")).send();
 			Broadcast.staffIngame().message("").send();
 		});
@@ -71,7 +71,7 @@ public class WelcomeCommand extends CustomCommand {
 				error("Prevented accidental welcome");
 		}
 
-		if (new CooldownService().check(StringUtils.getUUID0(), "welc", Time.SECOND.x(20))) {
+		if (new CooldownService().check(StringUtils.getUUID0(), "welc", TickTime.SECOND.x(20))) {
 			String message = getMessage();
 			if (player == null)
 				message = message.replaceAll(" \\[player]", "");

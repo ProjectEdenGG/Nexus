@@ -14,7 +14,7 @@ import gg.projecteden.nexus.models.socialmedia.TwitterData;
 import gg.projecteden.nexus.models.socialmedia.TwitterData.PendingTweet;
 import gg.projecteden.nexus.models.socialmedia.TwitterService;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -106,7 +106,7 @@ public class TwitterDiscordCommand extends Command {
 	}
 
 	static {
-		Tasks.repeat(Time.MINUTE, Time.MINUTE, () -> new TwitterService().get0().getPendingTweets().forEach(PendingTweet::handle));
+		Tasks.repeat(TickTime.MINUTE, TickTime.MINUTE, () -> new TwitterService().get0().getPendingTweets().forEach(PendingTweet::handle));
 	}
 
 }

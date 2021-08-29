@@ -19,7 +19,7 @@ import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -403,7 +403,7 @@ public class MinigameNightIsland implements Listener, BearFairIsland {
 		Location finalLoc = loc;
 		World world = loc.getWorld();
 
-		Tasks.wait(Time.SECOND.x(5), () -> {
+		Tasks.wait(TickTime.SECOND.x(5), () -> {
 			armorStand.setItem(EquipmentSlot.HAND, air);
 			PlayerUtils.giveItem(player, getArcadePiece(piece));
 			Tasks.wait(10, () -> activeSolder = false);
@@ -422,7 +422,7 @@ public class MinigameNightIsland implements Listener, BearFairIsland {
 	}
 
 	private void soundTasks() {
-		Tasks.repeat(0, Time.SECOND.x(5), () -> PlayerUtils.getOnlinePlayers().stream()
+		Tasks.repeat(0, TickTime.SECOND.x(5), () -> PlayerUtils.getOnlinePlayers().stream()
 				.filter(player -> getWGUtils().getRegionsLikeAt(getRegion(), player.getLocation()).size() > 0)
 				.forEach(MinigameNightIsland::playArcadeEffects));
 	}
@@ -437,8 +437,8 @@ public class MinigameNightIsland implements Listener, BearFairIsland {
 		if (!completedQuest && step <= 1) {
 			// Sounds
 			player.playSound(arcadeSoundLoc, Sound.BLOCK_CAMPFIRE_CRACKLE, 1F, 1F);
-			Tasks.wait(Time.SECOND.x(1) + 10, () -> player.playSound(arcadeSoundLoc, Sound.BLOCK_CAMPFIRE_CRACKLE, 1F, 1F));
-			Tasks.wait(Time.SECOND.x(3), () -> player.playSound(arcadeSoundLoc, Sound.BLOCK_CAMPFIRE_CRACKLE, 1F, 1F));
+			Tasks.wait(TickTime.SECOND.x(1) + 10, () -> player.playSound(arcadeSoundLoc, Sound.BLOCK_CAMPFIRE_CRACKLE, 1F, 1F));
+			Tasks.wait(TickTime.SECOND.x(3), () -> player.playSound(arcadeSoundLoc, Sound.BLOCK_CAMPFIRE_CRACKLE, 1F, 1F));
 
 			ran = RandomUtils.randomInt(0, 40);
 			Tasks.wait(ran, () -> player.playSound(arcadeSoundLoc, Sound.ITEM_CROSSBOW_LOADING_MIDDLE, 1F, 2F));

@@ -11,7 +11,7 @@ import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -130,7 +130,7 @@ public class MiniGolfUtils {
 		if (!user.isOnline())
 			return;
 
-		ActionBarUtils.sendActionBar(user.getOnlinePlayer(), message, Time.SECOND.x(3));
+		ActionBarUtils.sendActionBar(user.getOnlinePlayer(), message, TickTime.SECOND.x(3));
 	}
 
 	public static void error(MiniGolf21User user, String message) {

@@ -63,9 +63,9 @@ public abstract class TeamVanillaMechanic extends TeamMechanic implements Vanill
 	@Override
 	public void spreadPlayers(@NotNull Match match) {
 		match.getMinigamers().forEach(minigamer -> {
-			minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, TimeUtils.Time.SECOND.x(20), 10, false, false));
-			minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, TimeUtils.Time.SECOND.x(5), 10, false, false));
-			minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, TimeUtils.Time.SECOND.x(5), 255, false, false));
+			minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, TimeUtils.TickTime.SECOND.x(20), 10, false, false));
+			minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, TimeUtils.TickTime.SECOND.x(5), 10, false, false));
+			minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, TimeUtils.TickTime.SECOND.x(5), 255, false, false));
 			minigamer.getPlayer().setVelocity(new Vector(0, 0, 0));
 		});
 		match.getAliveTeams().forEach(team -> Tasks.async(() -> randomTeleport(match, team)));

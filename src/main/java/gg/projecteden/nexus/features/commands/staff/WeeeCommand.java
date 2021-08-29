@@ -7,7 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -26,7 +26,7 @@ public class WeeeCommand extends CustomCommand {
 		List<Vector> vectors = Arrays.asList(new Vector(3, 0, 1), new Vector(-3, 0, 1), new Vector(1, 0, 3), new Vector(1, 0, -3), new Vector(0, 2.5, 0));
 
 		Tasks.Countdown.builder()
-				.duration(Time.SECOND.x(10))
+				.duration(TickTime.SECOND.x(10))
 				.doZero(true)
 				.onTick(i -> {
 					if (i % 5 == 0)

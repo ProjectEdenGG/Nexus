@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.utils;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -32,7 +32,7 @@ public class Tasks {
 	private static final BukkitScheduler scheduler = Nexus.getInstance().getServer().getScheduler();
 	private static final Nexus instance = Nexus.getInstance();
 
-	public static int wait(Time delay, Runnable runnable) {
+	public static int wait(TickTime delay, Runnable runnable) {
 		return wait(delay.get(), runnable);
 	}
 
@@ -43,15 +43,15 @@ public class Tasks {
 		return -1;
 	}
 
-	public static int repeat(Time startDelay, long interval, Runnable runnable) {
+	public static int repeat(TickTime startDelay, long interval, Runnable runnable) {
 		return repeat(startDelay.get(), interval, runnable);
 	}
 
-	public static int repeat(long startDelay, Time interval, Runnable runnable) {
+	public static int repeat(long startDelay, TickTime interval, Runnable runnable) {
 		return repeat(startDelay, interval.get(), runnable);
 	}
 
-	public static int repeat(Time startDelay, Time interval, Runnable runnable) {
+	public static int repeat(TickTime startDelay, TickTime interval, Runnable runnable) {
 		return repeat(startDelay.get(), interval.get(), runnable);
 	}
 
@@ -76,7 +76,7 @@ public class Tasks {
 		return -1;
 	}
 
-	public static int waitAsync(Time delay, Runnable runnable) {
+	public static int waitAsync(TickTime delay, Runnable runnable) {
 		return waitAsync(delay.get(), runnable);
 	}
 
@@ -87,15 +87,15 @@ public class Tasks {
 		return -1;
 	}
 
-	public static int repeatAsync(long startDelay, Time interval, Runnable runnable) {
+	public static int repeatAsync(long startDelay, TickTime interval, Runnable runnable) {
 		return repeatAsync(startDelay, interval.get(), runnable);
 	}
 
-	public static int repeatAsync(Time startDelay, long interval, Runnable runnable) {
+	public static int repeatAsync(TickTime startDelay, long interval, Runnable runnable) {
 		return repeatAsync(startDelay.get(), interval, runnable);
 	}
 
-	public static int repeatAsync(Time startDelay, Time interval, Runnable runnable) {
+	public static int repeatAsync(TickTime startDelay, TickTime interval, Runnable runnable) {
 		return repeatAsync(startDelay.get(), interval.get(), runnable);
 	}
 
@@ -276,7 +276,7 @@ public class Tasks {
 
 		public static class QueuedTaskBuilder {
 
-			public void queue(Time delay) {
+			public void queue(TickTime delay) {
 				queue(delay.get());
 			}
 

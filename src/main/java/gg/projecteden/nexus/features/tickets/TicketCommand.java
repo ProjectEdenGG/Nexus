@@ -16,7 +16,7 @@ import gg.projecteden.nexus.models.ticket.TicketsService;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 
 import java.util.Arrays;
 import java.util.List;
@@ -40,7 +40,7 @@ public class TicketCommand extends CustomCommand {
 		send("&3Please be &epatient&3, as staff can be very busy!");
 	}
 
-	@Cooldown(@Part(Time.MINUTE))
+	@Cooldown(@Part(TickTime.MINUTE))
 	@Path("<description...>")
 	void ticket(String description) {
 		if (Arrays.asList("help", "info", "pls", "plz", "please").contains(description))

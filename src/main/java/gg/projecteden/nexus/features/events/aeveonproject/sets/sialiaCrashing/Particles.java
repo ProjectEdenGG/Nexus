@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.events.aeveonproject.sets.sialiaCrashing;
 import com.destroystokyo.paper.ParticleBuilder;
 import gg.projecteden.nexus.features.events.aeveonproject.sets.APSetType;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 
@@ -77,14 +77,14 @@ public class Particles {
 	private final List<Location> explosions = Arrays.asList(explosion1, explosion2);
 
 	public Particles() {
-		Tasks.repeatAsync(0, Time.TICK.x(6), () -> {
+		Tasks.repeatAsync(0, TickTime.TICK.x(6), () -> {
 			if (!APSetType.SIALIA_CRASHING.get().isActive())
 				return;
 
 			new ParticleBuilder(Particle.DRIP_LAVA).location(ventExit).count(1).offset(0.15, 0, 0.15).extra(0.1).spawn();
 		});
 
-		Tasks.repeatAsync(0, Time.TICK.x(2), () -> {
+		Tasks.repeatAsync(0, TickTime.TICK.x(2), () -> {
 			if (!APSetType.SIALIA_CRASHING.get().isActive())
 				return;
 
@@ -130,7 +130,7 @@ public class Particles {
 			new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(pipe11).count(0).offset(-3, 0, 0).extra(0.3).spawn();
 			new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(pipe11_poof).count(1).offset(0.2, 0, 0.2).extra(0.2).spawn();
 
-			Tasks.waitAsync(Time.TICK.x(1), () -> {
+			Tasks.waitAsync(TickTime.TICK.x(1), () -> {
 				new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(pipe1).count(0).offset(3, -3, 0).extra(0.3).spawn();
 				new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(pipe2).count(0).offset(-3, -3, 0).extra(0.3).spawn();
 				new ParticleBuilder(Particle.EXPLOSION_NORMAL).location(pipe3).count(0).offset(3, -3, 0).extra(0.3).spawn();

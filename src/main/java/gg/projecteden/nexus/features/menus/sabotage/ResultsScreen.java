@@ -73,7 +73,7 @@ public class ResultsScreen extends AbstractVoteScreen {
 			contents.add(getResultHead(new ItemBuilder(Material.BARRIER).name("&eSkipped"), skippers));
 
 		AtomicInteger taskId = new AtomicInteger(-1);
-		taskId.set(matchData.getMatch().getTasks().repeat(0, TimeUtils.Time.SECOND, () -> {
+		taskId.set(matchData.getMatch().getTasks().repeat(0, TimeUtils.TickTime.SECOND, () -> {
 			int sec = 1 + (int) Duration.between(LocalDateTime.now(), matchData.getMeetingEnded().plusSeconds(Sabotage.POST_MEETING_DELAY)).getSeconds();
 			setClock(contents, "Game resumes", sec);
 			if (sec == 1)

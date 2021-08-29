@@ -617,7 +617,7 @@ public class CompletableTask<T> {
 	 * @param unit unit of time
 	 * @return the new CompletableTask
 	 */
-	public final CompletableTask<T> delay(long amount, TimeUtils.Time unit) {
+	public final CompletableTask<T> delay(long amount, TimeUtils.TickTime unit) {
 		return delay(unit.duration(amount));
 	}
 

@@ -14,7 +14,7 @@ import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.models.warps.Warps.Warp;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
@@ -171,7 +171,7 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 		String message = event.getMessage().replace("/plot setup buildcontest", "");
 		buildContest.setId(Integer.parseInt(message));
 		save();
-		Tasks.wait(Time.SECOND.x(3), () -> runCommand(event.getPlayer(), "buildcontest setup steps"));
+		Tasks.wait(TickTime.SECOND.x(3), () -> runCommand(event.getPlayer(), "buildcontest setup steps"));
 	}
 
 }

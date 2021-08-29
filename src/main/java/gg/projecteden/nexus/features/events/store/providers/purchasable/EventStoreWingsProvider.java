@@ -9,7 +9,7 @@ import gg.projecteden.nexus.models.particle.ParticleService;
 import gg.projecteden.nexus.models.particle.ParticleType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.entity.Player;
@@ -53,7 +53,7 @@ public class EventStoreWingsProvider extends EventStoreMenu {
 					else {
 						player.closeInventory();
 						style.preview(player);
-						Tasks.wait(Time.SECOND.x(15), () -> particleOwner.cancel(ParticleType.WINGS));
+						Tasks.wait(TickTime.SECOND.x(15), () -> particleOwner.cancel(ParticleType.WINGS));
 					}
 				} catch (Exception ex) {
 					handleException(player, STORE_PREFIX, ex);

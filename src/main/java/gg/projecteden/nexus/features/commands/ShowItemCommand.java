@@ -17,7 +17,7 @@ import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -61,7 +61,7 @@ public class ShowItemCommand extends CustomCommand {
 	}
 
 	@Path("<hand|offhand|helmet|chestplate|leggings|boots> [message...]")
-	@Cooldown(value = @Part(Time.MINUTE), bypass = "group.admin")
+	@Cooldown(value = @Part(TickTime.MINUTE), bypass = "group.admin")
 	void run(String slot, String message) {
 		Player player = player();
 		ItemStack item = getItem(player, slot);

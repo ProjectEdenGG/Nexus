@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.minigames.perks.gadgets;
 
 import gg.projecteden.nexus.features.events.DyeBombCommand;
 import gg.projecteden.nexus.features.minigames.models.perks.common.GadgetPerk;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -45,7 +45,7 @@ public class DyeBombGadget implements GadgetPerk {
 
 	@Override
 	public int getCooldown() {
-		return Time.SECOND.x(2);
+		return TickTime.SECOND.x(2);
 	}
 
 	@Override

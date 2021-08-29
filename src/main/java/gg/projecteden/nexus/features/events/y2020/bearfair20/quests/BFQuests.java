@@ -19,7 +19,7 @@ import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
@@ -302,7 +302,7 @@ public class BFQuests implements Listener {
 		Player player = event.getClicker();
 		if (isAtBearFair(player)) {
 			CooldownService cooldownService = new CooldownService();
-			if (!cooldownService.check(player, "BF_NPCInteract", Time.SECOND.x(2)))
+			if (!cooldownService.check(player, "BF_NPCInteract", TickTime.SECOND.x(2)))
 				return;
 
 			int id = event.getNPC().getId();

@@ -5,7 +5,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.models.particle.ParticleService;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Builder;
 import lombok.Getter;
 import org.bukkit.Color;
@@ -39,7 +39,7 @@ public class StormEffect {
 
 		if (density == 0) density = 60;
 		if (pulseDelay < 1) pulseDelay = 1;
-		if (ticks == 0) ticks = Time.SECOND.x(5);
+		if (ticks == 0) ticks = TickTime.SECOND.x(5);
 		if (rainParticle == null) rainParticle = RainPartile.RAIN;
 		if (radius <= 0) radius = 1.5;
 

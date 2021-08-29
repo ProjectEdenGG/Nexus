@@ -13,7 +13,7 @@ import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -160,7 +160,7 @@ public class PuttListener implements Listener {
 							ball.setVelocity(dir);
 							new SoundBuilder(Sound.BLOCK_METAL_HIT).location(entityLoc).volume(0.75).pitch(1.25).play();
 
-							ActionBarUtils.sendActionBar(player, "&6Power: " + getPowerDisplay(power), Time.SECOND.x(3));
+							ActionBarUtils.sendActionBar(player, "&6Power: " + getPowerDisplay(power), TickTime.SECOND.x(3));
 							user.setSnowball(ball);
 						} else if (ball.isValid()) {
 							// Give golf ball

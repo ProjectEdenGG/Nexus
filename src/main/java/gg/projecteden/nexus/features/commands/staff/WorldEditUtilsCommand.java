@@ -9,7 +9,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -63,7 +63,7 @@ public class WorldEditUtilsCommand extends CustomCommand {
 		worldEditUtils.paster()
 			.file(schematic)
 			.at(location().add(-10, 0, 0))
-			.duration(Time.SECOND.x(seconds))
+			.duration(TickTime.SECOND.x(seconds))
 			.buildQueue();
 	}
 

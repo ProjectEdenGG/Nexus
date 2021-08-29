@@ -40,7 +40,7 @@ import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.utils.RandomUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import me.lexikiq.HasPlayer;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
@@ -113,7 +113,7 @@ public class Quests implements Listener {
 			BearFair21NPC.QUEEN_BEE.getId()
 		);
 
-		Tasks.repeat(0, Time.SECOND.x(2), () -> {
+		Tasks.repeat(0, TickTime.SECOND.x(2), () -> {
 			Set<Player> players = BearFair21.getPlayers();
 			for (Player player : players) {
 				BearFair21User user = userService.get(player);
@@ -387,7 +387,7 @@ public class Quests implements Listener {
 //			wait = 0;
 
 		CooldownService cooldownService = new CooldownService();
-		if (!cooldownService.check(player, "BF21_NPCInteract", Time.SECOND.x(5)))
+		if (!cooldownService.check(player, "BF21_NPCInteract", TickTime.SECOND.x(5)))
 			return;
 
 		BearFair21Talker.runScript(user, id).thenAccept(openMerchant -> {
@@ -410,7 +410,7 @@ public class Quests implements Listener {
 
 		if (!BearFair21.getConfig().isEnabled(EDIT)) {
 			event.setCancelled(true);
-			if (new CooldownService().check(player, "BF21_cantbreak", Time.MINUTE)) {
+			if (new CooldownService().check(player, "BF21_cantbreak", TickTime.MINUTE)) {
 				send(Errors.CANT_BREAK, player);
 				sound_villagerNo(player);
 			}
@@ -423,7 +423,7 @@ public class Quests implements Listener {
 		if (WoodCutting.breakBlock(event)) return;
 		if (Farming.breakBlock(event)) return;
 
-		if (new CooldownService().check(player, "BF21_cantbreak", Time.MINUTE)) {
+		if (new CooldownService().check(player, "BF21_cantbreak", TickTime.MINUTE)) {
 			send(Errors.CANT_BREAK, player);
 			sound_villagerNo(player);
 		}

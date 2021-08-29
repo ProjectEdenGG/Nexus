@@ -9,7 +9,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.utils.StringUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
@@ -55,7 +55,7 @@ public class Mining implements Listener {
 
 		ItemStack tool = player.getInventory().getItemInMainHand();
 		if (!oreType.canBeMinedBy(tool.getType())) {
-			if (new CooldownService().check(player, "BF21_cantbreak_tool", Time.SECOND.x(15))) {
+			if (new CooldownService().check(player, "BF21_cantbreak_tool", TickTime.SECOND.x(15))) {
 				send(Errors.CANT_BREAK + " with this tool. Needs either: " + oreType.getCanBreak(), player);
 				Quests.sound_villagerNo(player);
 			}

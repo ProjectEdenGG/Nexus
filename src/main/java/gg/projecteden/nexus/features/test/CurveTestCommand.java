@@ -7,7 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
@@ -64,10 +64,10 @@ public class CurveTestCommand extends CustomCommand {
 		start.getBlock().setType(Material.AIR);
 		end.getBlock().setType(Material.AIR);
 
-		DotEffect.builder().player(player()).location(start).speed(0.1).ticks(Time.SECOND.x(10)).color(ColorType.LIGHT_RED.getBukkitColor()).start();
-		DotEffect.builder().player(player()).location(startControl).speed(0.1).ticks(Time.SECOND.x(10)).color(ColorType.PINK.getBukkitColor()).start();
-		DotEffect.builder().player(player()).location(end).speed(0.1).ticks(Time.SECOND.x(10)).color(ColorType.LIGHT_BLUE.getBukkitColor()).start();
-		DotEffect.builder().player(player()).location(endControl).speed(0.1).ticks(Time.SECOND.x(10)).color(ColorType.BLUE.getBukkitColor()).start();
+		DotEffect.builder().player(player()).location(start).speed(0.1).ticks(TickTime.SECOND.x(10)).color(ColorType.LIGHT_RED.getBukkitColor()).start();
+		DotEffect.builder().player(player()).location(startControl).speed(0.1).ticks(TickTime.SECOND.x(10)).color(ColorType.PINK.getBukkitColor()).start();
+		DotEffect.builder().player(player()).location(end).speed(0.1).ticks(TickTime.SECOND.x(10)).color(ColorType.LIGHT_BLUE.getBukkitColor()).start();
+		DotEffect.builder().player(player()).location(endControl).speed(0.1).ticks(TickTime.SECOND.x(10)).color(ColorType.BLUE.getBukkitColor()).start();
 
 		List<Location> curve;
 		if (endControl != null)
@@ -80,7 +80,7 @@ public class CurveTestCommand extends CustomCommand {
 					.player(player())
 					.location(point)
 					.speed(0.1)
-					.ticks(Time.SECOND.x(10))
+					.ticks(TickTime.SECOND.x(10))
 					.color(ColorType.PURPLE.getBukkitColor())
 					.start();
 		}

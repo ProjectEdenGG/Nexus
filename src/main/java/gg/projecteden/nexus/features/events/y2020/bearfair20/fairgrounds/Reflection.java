@@ -15,7 +15,7 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -159,7 +159,7 @@ public class Reflection implements Listener {
 					if (prototypeActive) return;
 					prototypeActive = true;
 					new Laser(event.getPlayer(), skullLoc, skullFace, Color.BLUE, Material.FLETCHING_TABLE);
-					Tasks.wait(Time.SECOND.x(2), () -> prototypeActive = false);
+					Tasks.wait(TickTime.SECOND.x(2), () -> prototypeActive = false);
 
 				} else {
 					startLaser(event.getPlayer(), skullFace);
@@ -270,7 +270,7 @@ public class Reflection implements Listener {
 	}
 
 	private void laserSound() {
-		soundTaskId = Tasks.repeat(0, Time.SECOND.x(5), () -> {
+		soundTaskId = Tasks.repeat(0, TickTime.SECOND.x(5), () -> {
 			Collection<Player> players = getWGUtils().getPlayersInRegion(gameRg);
 			for (Player player : players)
 				player.playSound(laserSoundLoc, Sound.BLOCK_BEACON_AMBIENT, 1F, 1F);
@@ -284,7 +284,7 @@ public class Reflection implements Listener {
 		for (Player player : players)
 			player.stopSound(Sound.BLOCK_BEACON_AMBIENT);
 		BearFair20.getWorld().playSound(center, Sound.BLOCK_BEACON_DEACTIVATE, 1F, 1F);
-		Tasks.wait(Time.SECOND.x(2), () -> active = false);
+		Tasks.wait(TickTime.SECOND.x(2), () -> active = false);
 	}
 
 	private void win(int reflections) {
@@ -301,7 +301,7 @@ public class Reflection implements Listener {
 			new BearFair20UserService().save(user);
 		}
 
-		Tasks.wait(Time.SECOND.x(3), () -> {
+		Tasks.wait(TickTime.SECOND.x(3), () -> {
 			randomizeBanners();
 			newObjective();
 			broadcastObjective();

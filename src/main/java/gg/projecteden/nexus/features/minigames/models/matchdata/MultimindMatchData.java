@@ -66,7 +66,7 @@ public class MultimindMatchData extends IMastermindMatchData {
 //		fireworks("fireworks_" + number);
 		guesses.put(minigamer, maxGuesses + 1);
 		minigamer.tell("You are the Mastermind! You cracked the code in " + Timespan.of(minigamer.getScore()).format());
-//		Tasks.wait(Time.SECOND.x(4), () -> endOfGameChatButtons(minigamer));
+//		Tasks.wait(TickTime.SECOND.x(4), () -> endOfGameChatButtons(minigamer));
 	}
 
 	private void showAnswer(Minigamer minigamer) {

@@ -10,7 +10,7 @@ import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
@@ -37,7 +37,7 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 	}
 
 	static {
-		Tasks.repeat(Time.MINUTE, Time.HOUR.x(6), StaffHallCommand::writeHtml);
+		Tasks.repeat(TickTime.MINUTE, TickTime.HOUR.x(6), StaffHallCommand::writeHtml);
 	}
 
 	private static void writeHtml() {

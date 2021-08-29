@@ -28,7 +28,7 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
@@ -458,7 +458,7 @@ public class MainIsland implements BearFair21Island {
 
 					Quests.removeItemStacks(user, Collections.singletonList(item));
 					script.add(Quests.getThanks());
-					Tasks.wait(Time.SECOND.x(2), () -> Quests.giveKey(user));
+					Tasks.wait(TickTime.SECOND.x(2), () -> Quests.giveKey(user));
 
 					user.getNextStepNPCs().remove(this.getNpcId());
 					user.setQuestStage_BeeKeeper(QuestStage.COMPLETE);
@@ -605,7 +605,7 @@ public class MainIsland implements BearFair21Island {
 							script.add("wait 40");
 							script.add("I'm gonna work on hanging these around the village, could you now gather me 16 cyan & 16 yellow balloons? Last I heard, you could get some from Skye, the Aeronaut.");
 
-							ClientsideContentManager.addCategory(user, ContentCategory.BANNER, Time.SECOND.x(10));
+							ClientsideContentManager.addCategory(user, ContentCategory.BANNER, TickTime.SECOND.x(10));
 							user.setQuestStage_Main(QuestStage.STEP_ONE);
 							user.getNextStepNPCs().add(AERONAUT.getNpcId());
 							userService.save(user);
@@ -624,7 +624,7 @@ public class MainIsland implements BearFair21Island {
 							script.add("wait 40");
 							script.add("It'll take me some time to tie these up around the village. Could you gather me 32 White Wool and 8 of each red, green, and blue dyes in the meantime?");
 
-							ClientsideContentManager.addCategory(user, ContentCategory.BALLOON, Time.SECOND.x(10));
+							ClientsideContentManager.addCategory(user, ContentCategory.BALLOON, TickTime.SECOND.x(10));
 							user.setQuestStage_Main(QuestStage.STEP_THREE);
 							user.getNextStepNPCs().remove(AERONAUT.getNpcId());
 							userService.save(user);
@@ -646,7 +646,7 @@ public class MainIsland implements BearFair21Island {
 							script.add("wait 40");
 							script.add("While I'm busy hanging these around the island, could you follow up with Maple the Pastry Chef about my cake order?");
 
-							ClientsideContentManager.addCategory(user, ContentCategory.FESTOON, Time.SECOND.x(10));
+							ClientsideContentManager.addCategory(user, ContentCategory.FESTOON, TickTime.SECOND.x(10));
 							user.setQuestStage_Main(QuestStage.STEP_FOUR);
 							user.getNextStepNPCs().add(PASTRY_CHEF.getNpcId());
 							userService.save(user);
@@ -667,7 +667,7 @@ public class MainIsland implements BearFair21Island {
 							script.add("I had these invitations custom made, could you go around the island and give one to each of the townspeople, while I finish up here?");
 							Tasks.wait(140, () -> Quests.giveItem(user, invitation.clone().amount(invitees.size()).build()));
 
-							ClientsideContentManager.addCategory(user, ContentCategory.FOOD, Time.SECOND.x(10));
+							ClientsideContentManager.addCategory(user, ContentCategory.FOOD, TickTime.SECOND.x(10));
 							user.setQuestStage_Main(QuestStage.STEP_FIVE);
 							user.getNextStepNPCs().remove(PASTRY_CHEF.getNpcId());
 							userService.save(user);
@@ -1008,7 +1008,7 @@ public class MainIsland implements BearFair21Island {
 					Quests.removeItems(user, required);
 					Quests.pay(user, Merchants.goldBlock.clone().amount(2).build());
 					Quests.pay(user, Merchants.goldIngot.clone().amount(4).build());
-					ClientsideContentManager.addCategory(user, ContentCategory.SAWMILL, Time.SECOND.x(10));
+					ClientsideContentManager.addCategory(user, ContentCategory.SAWMILL, TickTime.SECOND.x(10));
 
 					user.setQuestStage_Lumberjack(QuestStage.COMPLETE);
 					user.getNextStepNPCs().remove(this.getNpcId());

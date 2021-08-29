@@ -5,7 +5,7 @@ import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.models.afk.events.NotAFKEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -27,7 +27,7 @@ public class StaffAlerts implements Listener {
 	public StaffAlerts() {
 		Nexus.registerListener(this);
 
-		Tasks.repeat(0, Time.SECOND.x(30), () -> {
+		Tasks.repeat(0, TickTime.SECOND.x(30), () -> {
 			Set<Player> trackedPlayers = tracking.keySet();
 			for (Player tracked : trackedPlayers) {
 				LocalDateTime then = tracking.get(tracked);

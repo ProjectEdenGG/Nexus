@@ -31,7 +31,7 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.Countdown.CountdownBuilder;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import gg.projecteden.utils.TimeUtils.Timespan.FormatType;
 import gg.projecteden.utils.TimeUtils.Timespan.TimespanBuilder;
@@ -529,7 +529,7 @@ public class Match implements ForwardingAudience {
 		void start() {
 			if (time > 0) {
 				match.getTasks().wait(1, () -> broadcastTimeLeft(time + 1));
-				taskId = match.getTasks().repeat(0, Time.SECOND, () -> {
+				taskId = match.getTasks().repeat(0, TickTime.SECOND, () -> {
 					if (--time > 0) {
 						if (broadcasts.contains(time)) {
 							broadcastTimeLeft();
@@ -548,7 +548,7 @@ public class Match implements ForwardingAudience {
 					}
 				});
 			} else {
-				taskId = match.getTasks().repeat(0, Time.SECOND, () -> {
+				taskId = match.getTasks().repeat(0, TickTime.SECOND, () -> {
 					MatchTimerTickEvent event = new MatchTimerTickEvent(match, ++time);
 					event.callEvent();
 				});
@@ -619,7 +619,7 @@ public class Match implements ForwardingAudience {
 			return taskTypeMap.containsKey(taskType);
 		}
 
-		public int wait(Time delay, Runnable runnable) {
+		public int wait(TickTime delay, Runnable runnable) {
 			return wait(delay.get(), runnable);
 		}
 
@@ -630,7 +630,7 @@ public class Match implements ForwardingAudience {
 			return taskId;
 		}
 
-		public int waitAsync(Time delay, Runnable runnable) {
+		public int waitAsync(TickTime delay, Runnable runnable) {
 			return waitAsync(delay.get(), runnable);
 		}
 
@@ -641,15 +641,15 @@ public class Match implements ForwardingAudience {
 			return taskId;
 		}
 
-		public int repeat(Time startDelay, long interval, Runnable runnable) {
+		public int repeat(TickTime startDelay, long interval, Runnable runnable) {
 			return repeat(startDelay.get(), interval, runnable);
 		}
 
-		public int repeat(long startDelay, Time interval, Runnable runnable) {
+		public int repeat(long startDelay, TickTime interval, Runnable runnable) {
 			return repeat(startDelay, interval.get(), runnable);
 		}
 
-		public int repeat(Time startDelay, Time interval, Runnable runnable) {
+		public int repeat(TickTime startDelay, TickTime interval, Runnable runnable) {
 			return repeat(startDelay.get(), interval.get(), runnable);
 		}
 
@@ -659,15 +659,15 @@ public class Match implements ForwardingAudience {
 			return taskId;
 		}
 
-		public int repeatAsync(Time startDelay, long interval, Runnable runnable) {
+		public int repeatAsync(TickTime startDelay, long interval, Runnable runnable) {
 			return repeatAsync(startDelay.get(), interval, runnable);
 		}
 
-		public int repeatAsync(long startDelay, Time interval, Runnable runnable) {
+		public int repeatAsync(long startDelay, TickTime interval, Runnable runnable) {
 			return repeatAsync(startDelay, interval.get(), runnable);
 		}
 
-		public int repeatAsync(Time startDelay, Time interval, Runnable runnable) {
+		public int repeatAsync(TickTime startDelay, TickTime interval, Runnable runnable) {
 			return repeatAsync(startDelay.get(), interval.get(), runnable);
 		}
 

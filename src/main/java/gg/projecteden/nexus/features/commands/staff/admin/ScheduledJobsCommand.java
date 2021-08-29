@@ -15,7 +15,7 @@ import gg.projecteden.nexus.models.scheduledjobs.common.AbstractJob;
 import gg.projecteden.nexus.models.scheduledjobs.common.AbstractJob.JobStatus;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Data;
 import lombok.NonNull;
 
@@ -70,7 +70,7 @@ public class ScheduledJobsCommand extends CustomCommand {
 	}
 
 	private static void processor() {
-		Tasks.repeat(0, Time.SECOND, () -> {
+		Tasks.repeat(0, TickTime.SECOND, () -> {
 			final Set<AbstractJob> ready = jobs.getReady();
 			if (ready.isEmpty())
 				return;
@@ -84,7 +84,7 @@ public class ScheduledJobsCommand extends CustomCommand {
 
 	private static void rescheduler() {
 		final Set<Class<? extends AbstractJob>> subclasses = AbstractJob.getSubclasses();
-		Tasks.repeatAsync(0, Time.MINUTE, () -> subclasses.forEach(clazz -> {
+		Tasks.repeatAsync(0, TickTime.MINUTE, () -> subclasses.forEach(clazz -> {
 			final LocalDateTime timestamp = getNextExecutionTime(clazz);
 			if (timestamp == null)
 				return;

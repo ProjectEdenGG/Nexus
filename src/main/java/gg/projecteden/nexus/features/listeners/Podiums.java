@@ -22,7 +22,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.Env;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import lombok.NoArgsConstructor;
 import org.bukkit.event.EventHandler;
@@ -166,7 +166,7 @@ public class Podiums implements Listener {
 				if (top == null)
 					return;
 
-				if (!new CooldownService().check(StringUtils.getUUID0(), "podiums_" + name(), Time.MINUTE.x(5)))
+				if (!new CooldownService().check(StringUtils.getUUID0(), "podiums_" + name(), TickTime.MINUTE.x(5)))
 					return;
 
 				updateActual();
@@ -204,7 +204,7 @@ public class Podiums implements Listener {
 	static {
 		if (Nexus.getEnv() == Env.PROD)
 			for (Podium value : Podium.values())
-				Tasks.repeat(10, Time.HOUR, value::update);
+				Tasks.repeat(10, TickTime.HOUR, value::update);
 	}
 
 	@EventHandler

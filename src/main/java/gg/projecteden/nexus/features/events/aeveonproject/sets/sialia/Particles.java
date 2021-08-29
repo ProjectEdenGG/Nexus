@@ -5,7 +5,7 @@ import gg.projecteden.nexus.features.events.aeveonproject.sets.APSetType;
 import gg.projecteden.nexus.features.particles.effects.LineEffect;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -28,7 +28,7 @@ public class Particles {
 	private final Location gravLift_3 = APLoc(-1287.0, 84.0, -1189.0);
 
 	public Particles() {
-		Tasks.repeatAsync(0, Time.TICK.x(2), () -> {
+		Tasks.repeatAsync(0, TickTime.TICK.x(2), () -> {
 			if (!APSetType.SIALIA.get().isActive() || Sialia.nearbyPlayer == null)
 				return;
 

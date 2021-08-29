@@ -5,7 +5,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -26,7 +26,7 @@ public class GravLift implements Listener {
 	public GravLift() {
 		Nexus.registerListener(this);
 
-		Tasks.repeat(0, Time.TICK.x(5), () -> {
+		Tasks.repeat(0, TickTime.TICK.x(5), () -> {
 			List<Player> inGravLiftCopy = new ArrayList<>(inGravlift);
 			for (Player player : inGravLiftCopy) {
 				Set<ProtectedRegion> regions = getWGUtils().getRegionsAt(player.getLocation());

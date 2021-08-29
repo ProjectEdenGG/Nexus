@@ -9,7 +9,7 @@ import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -61,7 +61,7 @@ public class Effects implements Listener {
 		if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
 		if (clicked == null) return;
 		if (!isInWorld(clicked)) return;
-		if (!(new CooldownService().check(player, "AeveonProject_Sit", Time.SECOND.x(2)))) return;
+		if (!(new CooldownService().check(player, "AeveonProject_Sit", TickTime.SECOND.x(2)))) return;
 
 		if (clicked.getType().equals(Material.NETHER_BRICK_STAIRS)) {
 			PlayerUtils.runCommandAsOp(player, "sit");

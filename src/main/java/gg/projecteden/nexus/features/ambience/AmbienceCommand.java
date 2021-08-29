@@ -18,7 +18,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Location;
@@ -124,7 +124,7 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 	}
 
 	static {
-		Tasks.repeat(Time.MINUTE, Time.SECOND.x(RandomUtils.randomInt(45, 90)), AmbienceCommand::playAll);
+		Tasks.repeat(TickTime.MINUTE, TickTime.SECOND.x(RandomUtils.randomInt(45, 90)), AmbienceCommand::playAll);
 	}
 
 	static void playAll() {

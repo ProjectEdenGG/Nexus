@@ -14,7 +14,7 @@ import gg.projecteden.nexus.models.dailyreward.DailyRewardUser;
 import gg.projecteden.nexus.models.dailyreward.DailyRewardUserService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.WorldGroup;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 
 import java.util.Comparator;
 import java.util.List;
@@ -81,7 +81,7 @@ public class DailyRewardsCommand extends CustomCommand {
 	@Path("reset [player]")
 	void reset(@Arg(value = "self", permission = "group.admin") DailyRewardUser user) {
 		try {
-			if (!new CooldownService().check(player(), resetCooldownType, Time.DAY))
+			if (!new CooldownService().check(player(), resetCooldownType, TickTime.DAY))
 				throw new CommandCooldownException(player(), resetCooldownType);
 
 			user.endStreak();

@@ -14,7 +14,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import org.bukkit.entity.Player;
 
@@ -38,7 +38,7 @@ public class NewPlayersDiscordCommand extends Command {
 				HashMap<Player, Integer> players = new HashMap<>() {{
 					for (Player player : PlayerUtils.getOnlinePlayers()) {
 						Hours hours = new HoursService().get(player);
-						if (hours.getTotal() < (Time.HOUR.get() / 20))
+						if (hours.getTotal() < (TickTime.HOUR.get() / 20))
 							put(player, hours.getTotal());
 					}
 				}};

@@ -12,7 +12,7 @@ import gg.projecteden.nexus.models.halloween20.Halloween20User;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -83,12 +83,12 @@ public class PicturePuzzleProvider extends MenuUtils implements InventoryProvide
 
 		contents.fill(ClickableItem.empty(new ItemBuilder(Material.YELLOW_WOOL).name(" ").build()));
 
-		Tasks.wait(Time.SECOND, () -> {
+		Tasks.wait(TickTime.SECOND, () -> {
 			for (int i : correct)
 				contents.set(i, ClickableItem.empty(new ItemBuilder(Material.LIME_WOOL).name(" ").build()));
 		});
 
-		Tasks.wait(Time.SECOND.x(5), () -> {
+		Tasks.wait(TickTime.SECOND.x(5), () -> {
 			int row = 0;
 			int column = 0;
 			while (row < 7) {

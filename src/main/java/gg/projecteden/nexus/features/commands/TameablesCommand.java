@@ -14,7 +14,7 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks.GlowTask;
 import gg.projecteden.nexus.utils.WorldGroup;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -130,7 +130,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 				.entity(entity)
 				.color(Color.RED)
 				.viewers(Collections.singletonList(player()))
-				.duration(Time.SECOND.x(10))
+				.duration(TickTime.SECOND.x(10))
 				.start());
 		send(PREFIX + "Highlighted &e" + entities.size() + " " + (entityType == null ? "animals" : camelCase(entityType) + "s") + " &3in loaded chunks");
 	}

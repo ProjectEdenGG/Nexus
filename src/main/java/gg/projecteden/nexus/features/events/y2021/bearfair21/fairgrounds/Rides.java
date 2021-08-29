@@ -4,7 +4,7 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,7 +32,7 @@ public class Rides {
 		}
 
 		// Dynamic enable task
-		Tasks.repeat(0, Time.SECOND.x(2), () -> {
+		Tasks.repeat(0, TickTime.SECOND.x(2), () -> {
 			for (Ride ride : Ride.values()) {
 				boolean oldStatus = rideMap.getOrDefault(ride, false);
 				boolean curStatus = ride.getCurrentStatus();
@@ -66,7 +66,7 @@ public class Rides {
 		}};
 
 		List<Location> locations = new ArrayList<>();
-		Tasks.repeat(Time.SECOND.x(5), Time.TICK.x(2), () -> {
+		Tasks.repeat(TickTime.SECOND.x(5), TickTime.TICK.x(2), () -> {
 			for (String light_region : towerLights.keySet()) {
 				Location location = towerLights.get(light_region);
 				if (WGUtils.getPlayersInRegion(light_region).size() > 0) {

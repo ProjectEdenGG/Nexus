@@ -13,7 +13,7 @@ import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.Utils;
 import lombok.Getter;
 import net.citizensnpcs.api.npc.NPC;
@@ -84,7 +84,7 @@ public class ClientsideContentManager implements Listener {
 	}
 
 	private void blockTask() {
-		Tasks.repeat(0, Time.TICK.x(10), () -> {
+		Tasks.repeat(0, TickTime.TICK.x(10), () -> {
 			Set<Player> players = BearFair21.getPlayers();
 			for (Content content : contentService.getList()) {
 				if (!content.isBlock()) continue;
@@ -103,7 +103,7 @@ public class ClientsideContentManager implements Listener {
 	}
 
 	private void schematicTask() {
-		Tasks.repeat(0, Time.SECOND.x(2), () -> {
+		Tasks.repeat(0, TickTime.SECOND.x(2), () -> {
 			Set<Player> players = BearFair21.getPlayers();
 			for (Content content : contentService.getList()) {
 				if (!content.isSchematic()) continue;
@@ -122,7 +122,7 @@ public class ClientsideContentManager implements Listener {
 	}
 
 	private void npcTask() {
-		Tasks.repeat(0, Time.SECOND.x(1), () -> {
+		Tasks.repeat(0, TickTime.SECOND.x(1), () -> {
 			Set<Player> players = BearFair21.getPlayers();
 			for (Player player : players) {
 				for (BearFair21NPC bearFair21NPC : BearFair21NPC.values()) {

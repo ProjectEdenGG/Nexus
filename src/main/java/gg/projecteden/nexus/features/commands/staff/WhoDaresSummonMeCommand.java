@@ -5,7 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.World;
 import org.bukkit.entity.Bat;
 
@@ -32,7 +32,7 @@ public class WhoDaresSummonMeCommand extends CustomCommand {
 		for (int i = 0; i < 10; i++) {
 			bats.add(world.spawn(location(), Bat.class));
 		}
-		Tasks.wait(Time.SECOND.x(5), () -> bats.forEach(Bat::remove));
+		Tasks.wait(TickTime.SECOND.x(5), () -> bats.forEach(Bat::remove));
 	}
 
 

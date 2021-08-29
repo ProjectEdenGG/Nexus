@@ -12,7 +12,7 @@ import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -119,7 +119,7 @@ public class ArcadeMachineMenu extends MenuUtils implements InventoryProvider, L
 
 	public void complete(Player player) {
 		player.playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1.0f, 1.0f);
-		Tasks.wait(Time.SECOND.x(5), () -> close(player, items));
+		Tasks.wait(TickTime.SECOND.x(5), () -> close(player, items));
 
 		MinigameNightIsland.nextStep(player); // 2
 	}

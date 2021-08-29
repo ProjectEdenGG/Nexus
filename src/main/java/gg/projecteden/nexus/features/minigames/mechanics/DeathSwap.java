@@ -11,7 +11,7 @@ import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.entity.Mob;
@@ -49,7 +49,7 @@ public final class DeathSwap extends TeamlessVanillaMechanic {
 	public void onStart(@NotNull MatchStartEvent event) {
 		super.onStart(event);
 
-		event.getMatch().getTasks().wait(Time.MINUTE.x(4), () -> delay(event.getMatch()));
+		event.getMatch().getTasks().wait(TickTime.MINUTE.x(4), () -> delay(event.getMatch()));
 	}
 
 	@Override
@@ -115,7 +115,7 @@ public final class DeathSwap extends TeamlessVanillaMechanic {
 		}
 
 		match.getTasks().countdown(Tasks.Countdown.builder()
-				.duration(Time.SECOND.x(RandomUtils.randomInt(60, 120)))
+				.duration(TickTime.SECOND.x(RandomUtils.randomInt(60, 120)))
 				.onSecond(i -> {
 					if (i < 4)
 						match.broadcast("Swapping in " + i + "...");

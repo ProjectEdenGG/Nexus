@@ -25,7 +25,7 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import lombok.NoArgsConstructor;
 import net.wesjd.anvilgui.AnvilGUI;
@@ -211,7 +211,7 @@ public class SafeCrackerCommand extends CustomCommand implements Listener {
 				int score = (int) Math.abs(Duration.between(LocalDateTime.now(), safeCrackerPlayer.getGames().get(eventService.getActiveEvent().getName()).getStarted()).getSeconds() - 1);
 				safeCrackerPlayer.getGames().get(game.getName()).setScore(score);
 				playerService.save(safeCrackerPlayer);
-				Tasks.wait(Time.SECOND.x(10), () -> safeCrackerPlayer.sendMessage(SafeCracker.PREFIX + "You correctly solved the riddle. You finished with a score of &e" + safeCrackerPlayer.getGames().get(game.getName()).getScore()));
+				Tasks.wait(TickTime.SECOND.x(10), () -> safeCrackerPlayer.sendMessage(SafeCracker.PREFIX + "You correctly solved the riddle. You finished with a score of &e" + safeCrackerPlayer.getGames().get(game.getName()).getScore()));
 				Discord.staffLog("```[SafeCracker] " + player.getName() + " - " + Timespan.of(safeCrackerPlayer.getGames().get(eventService.getActiveEvent().getName()).getStarted(), LocalDateTime.now()).format() + "```");
 				player.closeInventory();
 				complete(player);
@@ -226,7 +226,7 @@ public class SafeCrackerCommand extends CustomCommand implements Listener {
 
 	public void complete(Player player) {
 		player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, .5f, .01f);
-		player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, Time.SECOND.x(1), 1, false, false));
+		player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, TickTime.SECOND.x(1), 1, false, false));
 		player.teleport(new Location(Bukkit.getWorld("safepvp"), -985.5, 110, -1616.5));
 		send(player, "&7&kasdl &eThe safe draws you inside. It is larger on the inside than it appears. &7&kasdl");
 	}

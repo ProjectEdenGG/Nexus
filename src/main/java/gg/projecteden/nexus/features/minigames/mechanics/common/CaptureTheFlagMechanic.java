@@ -14,7 +14,7 @@ import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegion
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.TitleBuilder;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -130,7 +130,7 @@ public abstract class CaptureTheFlagMechanic extends TeamMechanic {
 		minigamers.forEach(enemy -> {
 			new SoundBuilder(sound).receiver(enemy.getPlayer()).category(SoundCategory.PLAYERS).volume(volume).pitch(1.2).play();
 			new SoundBuilder(Sound.ENTITY_ENDER_DRAGON_FLAP).receiver(enemy.getPlayer()).category(SoundCategory.PLAYERS).volume(0.9).play();
-			new TitleBuilder().players(enemy).subtitle(message).fadeIn(7).stay(Time.SECOND.x(3)).fadeOut(7).send();
+			new TitleBuilder().players(enemy).subtitle(message).fadeIn(7).stay(TickTime.SECOND.x(3)).fadeOut(7).send();
 		});
 	}
 

@@ -25,7 +25,7 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.utils.EnumUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -336,12 +336,12 @@ public class RemindersCommand extends CustomCommand implements Listener {
 
 	@Path("setInterval <seconds>")
 	void setInterval(int seconds) {
-		interval = Time.SECOND.x(seconds);
+		interval = TickTime.SECOND.x(seconds);
 		startTask();
 		send(PREFIX + "Interval set to " + seconds + " seconds (will reset when plugin reloads)");
 	}
 
-	private static int interval = Time.MINUTE.x(5);
+	private static int interval = TickTime.MINUTE.x(5);
 	private static int taskId = -1;
 
 	public static void startTask() {

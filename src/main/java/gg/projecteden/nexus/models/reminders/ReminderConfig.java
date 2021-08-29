@@ -16,7 +16,7 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -99,7 +99,7 @@ public class ReminderConfig {
 	public void showMotd(Player player) {
 		player.sendMessage("§3 §6 §3 §6 §3 §6 §e  §3 §6 §3 §6 §3 §6 §d"); // disable voxelmap radar
 
-		Tasks.waitAsync(Time.SECOND, () -> {
+		Tasks.waitAsync(TickTime.SECOND, () -> {
 			if (!player.isOnline())
 				return;
 

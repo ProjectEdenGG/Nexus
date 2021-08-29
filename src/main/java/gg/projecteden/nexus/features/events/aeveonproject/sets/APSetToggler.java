@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.events.aeveonproject.sets;
 
 import com.google.common.base.Strings;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 
 import static gg.projecteden.nexus.features.events.aeveonproject.AeveonProject.getWGUtils;
 
@@ -13,7 +13,7 @@ public class APSetToggler {
 	}
 
 	private void SetToggleTask() {
-		Tasks.repeatAsync(0, Time.SECOND.x(1), () -> {
+		Tasks.repeatAsync(0, TickTime.SECOND.x(1), () -> {
 			for (APSetType setType : APSetType.values()) {
 				APSet set = setType.get();
 				String region = set.getRegion();

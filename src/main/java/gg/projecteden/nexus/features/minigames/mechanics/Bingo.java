@@ -34,7 +34,7 @@ import gg.projecteden.nexus.utils.MaterialUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.Utils.MinMaxResult;
 import io.papermc.paper.event.player.PlayerTradeEvent;
 import lombok.Getter;
@@ -106,7 +106,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 
 	@Override
 	public void onDeath(@NotNull Minigamer victim) {
-		victim.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, Time.SECOND.x(3), 10, false, false));
+		victim.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, TickTime.SECOND.x(3), 10, false, false));
 		new TitleBuilder().players(victim).title("&cYou died!").stay(150).send();
 
 		final Location bed = victim.getPlayer().getBedSpawnLocation();
@@ -319,7 +319,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 	}
 
 	static {
-		Tasks.repeat(Time.SECOND.x(10), Time.SECOND.x(5), () -> {
+		Tasks.repeat(TickTime.SECOND.x(10), TickTime.SECOND.x(5), () -> {
 			for (Minigamer minigamer : getActiveBingoMinigamers()) {
 				final Match match = minigamer.getMatch();
 				final BingoMatchData matchData = match.getMatchData();
@@ -343,7 +343,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 	}
 
 	static {
-		Tasks.repeat(Time.SECOND.x(10), Time.SECOND.x(15), () -> {
+		Tasks.repeat(TickTime.SECOND.x(10), TickTime.SECOND.x(15), () -> {
 			for (Minigamer minigamer : getActiveBingoMinigamers()) {
 				final Match match = minigamer.getMatch();
 				final BingoMatchData matchData = match.getMatchData();
@@ -398,7 +398,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 	}
 
 	static {
-		Tasks.repeat(Time.SECOND.x(10), Time.SECOND.x(3), () -> {
+		Tasks.repeat(TickTime.SECOND.x(10), TickTime.SECOND.x(3), () -> {
 			for (Minigamer minigamer : getActiveBingoMinigamers()) {
 				final Match match = minigamer.getMatch();
 				final BingoMatchData matchData = match.getMatchData();

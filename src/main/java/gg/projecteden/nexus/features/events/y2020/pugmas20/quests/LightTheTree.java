@@ -16,7 +16,7 @@ import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.Countdown;
 import gg.projecteden.nexus.utils.WorldEditUtils.Paste;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import gg.projecteden.utils.TimeUtils.Timespan.FormatType;
 import gg.projecteden.utils.TimeUtils.Timespan.TimespanBuilder;
@@ -56,7 +56,7 @@ public class LightTheTree implements Listener {
 	public static final ItemStack lighter = Pugmas20.questItem(Material.FLINT_AND_STEEL).name("Ceremonial Lighter").glow().build();
 	public static final ItemStack steel_ingot = Pugmas20.questItem(Material.IRON_INGOT).name("Steel Ingot").glow().build();
 
-	private static final int timerTicks = Time.MINUTE.x(2);
+	private static final int timerTicks = TickTime.MINUTE.x(2);
 	private static final int torches = 9;
 	private static final int treeTorches = 7;
 	@Getter
@@ -188,7 +188,7 @@ public class LightTheTree implements Listener {
 			int wait = 0;
 			for (int i = 1; i <= treeTorches; i++) {
 				Location location = getLocation("treetorch", i);
-				Tasks.wait(wait += Time.SECOND.get(), () -> {
+				Tasks.wait(wait += TickTime.SECOND.get(), () -> {
 					fire(player, location);
 					new SoundBuilder(Sound.ENTITY_BLAZE_SHOOT).receiver(player).volume(0.5F).pitch(0.1F).play();
 				});
@@ -205,7 +205,7 @@ public class LightTheTree implements Listener {
 				// TODO PUGMAS Better wording
 				user.sendMessage(PREFIX + "You lit the tree!");
 
-				Tasks.wait(Time.SECOND, () -> {
+				Tasks.wait(TickTime.SECOND, () -> {
 					EventUserService eventUserService = new EventUserService();
 					EventUser eventUser = eventUserService.get(player);
 					eventUser.giveTokens(300);
@@ -229,7 +229,7 @@ public class LightTheTree implements Listener {
 	}
 
 	static {
-		Tasks.repeatAsync(Time.SECOND, Time.SECOND.x(2), () -> {
+		Tasks.repeatAsync(TickTime.SECOND, TickTime.SECOND.x(2), () -> {
 			Pugmas20UserService service = new Pugmas20UserService();
 
 			for (Player player : PlayerUtils.getOnlinePlayers()) {
@@ -284,7 +284,7 @@ public class LightTheTree implements Listener {
 	private final static Paste treeLightPaster = Pugmas20.getWEUtils().paster()
 			.at(Pugmas20.location(936, 61, 483))
 			.file("pugmas20/tree_light")
-			.duration(Time.SECOND.x(7))
+			.duration(TickTime.SECOND.x(7))
 			.air(false)
 			.inspect();
 

@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.minigames.models;
 
 import gg.projecteden.nexus.features.minigames.models.Match.MatchTasks.MatchTaskType;
 import gg.projecteden.nexus.features.minigames.models.events.matches.lobbies.LobbyTimerTickEvent;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -72,7 +72,7 @@ public class Lobby implements ConfigurationSerializable {
 		}
 
 		private void start() {
-			taskId = match.getTasks().repeat(0, Time.SECOND, () -> {
+			taskId = match.getTasks().repeat(0, TickTime.SECOND, () -> {
 				if (match.isStarted()) {
 					stop();
 					return;

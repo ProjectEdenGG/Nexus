@@ -43,7 +43,7 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -106,7 +106,7 @@ public class MinigameNightIsland implements BearFair21Island {
 
 		ParticleBuilder particles = new ParticleBuilder(Particle.REDSTONE).color(Color.RED).count(15).offset(0.3, 0.3, 0.3);
 		Location gravWellLoc = BearFair21.getWGUtils().toLocation(BearFair21.getWGUtils().getProtectedRegion(gravwellRegion).getMinimumPoint());
-		Tasks.repeat(0, Time.SECOND.x(5), () -> {
+		Tasks.repeat(0, TickTime.SECOND.x(5), () -> {
 			for (Player player : BearFair21.getPlayers()) {
 				final BearFair21User user = userService.get(player);
 				for (Location soundLoc : user.getMgn_beaconsActivated()) {
@@ -295,7 +295,7 @@ public class MinigameNightIsland implements BearFair21Island {
 
 								user.setQuestStage_MGN(QuestStage.COMPLETE);
 								userService.save(user);
-								Tasks.wait(Time.SECOND.x(5), () -> new SoundBuilder("minecraft:custom.dk_jungle_64").receiver(user.getOnlinePlayer()).volume(.25).play());
+								Tasks.wait(TickTime.SECOND.x(5), () -> new SoundBuilder("minecraft:custom.dk_jungle_64").receiver(user.getOnlinePlayer()).volume(.25).play());
 							});
 						}
 					}
@@ -341,7 +341,7 @@ public class MinigameNightIsland implements BearFair21Island {
 						user.setQuestStage_MGN(QuestStage.STEP_TWO);
 						user.getNextStepNPCs().remove(getNpcId());
 						userService.save(user);
-						Tasks.wait(Time.SECOND.x(5), () -> startPhoneRinging(user.getOnlinePlayer()));
+						Tasks.wait(TickTime.SECOND.x(5), () -> startPhoneRinging(user.getOnlinePlayer()));
 					});
 				}
 
@@ -384,7 +384,7 @@ public class MinigameNightIsland implements BearFair21Island {
 						user.getOnlinePlayer().getInventory().removeItem(FixableDevice.LAPTOP.getFixed());
 						user.setQuestStage_MGN(QuestStage.STEP_FIVE);
 						userService.save(user);
-						Tasks.wait(Time.SECOND.x(5), () -> startPhoneRinging(user.getOnlinePlayer()));
+						Tasks.wait(TickTime.SECOND.x(5), () -> startPhoneRinging(user.getOnlinePlayer()));
 					});
 				}
 
@@ -478,14 +478,14 @@ public class MinigameNightIsland implements BearFair21Island {
 		if (assemblingSpeaker) {
 			double wait = 0;
 			for (AxelSpeakerPart part : AxelSpeakerPart.values()) {
-				Tasks.wait(Time.SECOND.x(wait), () -> {
+				Tasks.wait(TickTime.SECOND.x(wait), () -> {
 					final ItemStack displayItem = part.getDisplayItem();
 					PlayerUtils.removeItem(player, displayItem);
 					solderItem(armorStand, player, displayItem, null);
 				});
 				wait += 5.6;
 			}
-			Tasks.wait(Time.SECOND.x(wait), () -> {
+			Tasks.wait(TickTime.SECOND.x(wait), () -> {
 				for (AxelSpeakerPart part : AxelSpeakerPart.values())
 					PlayerUtils.removeItem(player, part.getDisplayItem());
 				Quests.giveItem(player, speaker.get().build());
@@ -527,7 +527,7 @@ public class MinigameNightIsland implements BearFair21Island {
 		for (int i = 0; i < 10; i++)
 			Tasks.wait(i * 5, () -> world.spawnParticle(Particle.LAVA, finalLoc, 5, 0, 0, 0));
 
-		Tasks.wait(Time.SECOND.x(5), () -> {
+		Tasks.wait(TickTime.SECOND.x(5), () -> {
 			armorStand.setItem(EquipmentSlot.HAND, air);
 			if (fixed != null)
 				Quests.giveItem(player, fixed);
@@ -846,15 +846,15 @@ public class MinigameNightIsland implements BearFair21Island {
 	}
 
 	public static void startPhoneRinging(Player player) {
-		if (new CooldownService().check(player, "bf21-phone", Time.SECOND.x(15)))
+		if (new CooldownService().check(player, "bf21-phone", TickTime.SECOND.x(15)))
 			for (int i = 0; i < 5; i++)
-				addTaskId(player, Tasks.wait(Time.SECOND.x(i * 2), () -> ringingSound.accept(player)));
+				addTaskId(player, Tasks.wait(TickTime.SECOND.x(i * 2), () -> ringingSound.accept(player)));
 	}
 
 	public static void startOutgoingPhoneCall(Player player, Runnable pickup) {
 		ringingSound.accept(player);
-		Tasks.wait(Time.SECOND.x(2), () -> ringingSound.accept(player));
-		Tasks.wait(Time.SECOND.x(4), pickup);
+		Tasks.wait(TickTime.SECOND.x(2), () -> ringingSound.accept(player));
+		Tasks.wait(TickTime.SECOND.x(4), pickup);
 	}
 
 	public static void stopPhoneRinging(Player player) {
@@ -1010,7 +1010,7 @@ public class MinigameNightIsland implements BearFair21Island {
 						return;
 				}
 
-				Tasks.wait(Time.SECOND, () -> {
+				Tasks.wait(TickTime.SECOND, () -> {
 					player.closeInventory();
 					userService.edit(player, user -> user.setMgn_unscrambledWiring(true));
 					Quests.sound_obtainItem(player);
@@ -1103,7 +1103,7 @@ public class MinigameNightIsland implements BearFair21Island {
 									return;
 						}
 
-						Tasks.wait(Time.SECOND, () -> {
+						Tasks.wait(TickTime.SECOND, () -> {
 							player.closeInventory();
 							userService.edit(player, user -> user.setMgn_setupRouter(true));
 							Quests.sound_obtainItem(player);
@@ -1257,7 +1257,7 @@ public class MinigameNightIsland implements BearFair21Island {
 					final Predicate<BearFair21User> finalizePredicate = item.getDevice().getFinalizePredicate();
 					final Consumer<BearFair21User> onFinalize = item.getDevice().getOnFinalize();
 
-					Runnable finalize = () -> Tasks.wait(Time.SECOND, () -> {
+					Runnable finalize = () -> Tasks.wait(TickTime.SECOND, () -> {
 						player.closeInventory();
 						inv.removeItem(item.getDevice().getBroken());
 						Quests.giveItem(player, item.getDevice().getFixed());

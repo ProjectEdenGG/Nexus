@@ -13,7 +13,7 @@ import gg.projecteden.nexus.models.hours.Hours;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.Env;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -44,7 +44,7 @@ public class GeoIPCommand extends CustomCommand implements Listener {
 
 	static {
 		if (Nexus.getEnv() == Env.PROD)
-			Tasks.repeatAsync(Time.MINUTE, Time.HOUR, GeoIPCommand::writeFiles);
+			Tasks.repeatAsync(TickTime.MINUTE, TickTime.HOUR, GeoIPCommand::writeFiles);
 	}
 
 	@Async

@@ -13,7 +13,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGroup;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.inventivetalent.glow.GlowAPI;
@@ -88,7 +88,7 @@ public class WhereIsCommand extends CustomCommand {
 	}
 
 	static {
-		Tasks.repeatAsync(Time.SECOND, Time.SECOND.x(3), () -> PlayerUtils.getOnlinePlayers().forEach(WhereIsCommand::process));
+		Tasks.repeatAsync(TickTime.SECOND, TickTime.SECOND.x(3), () -> PlayerUtils.getOnlinePlayers().forEach(WhereIsCommand::process));
 	}
 
 	private static void process(Player viewer) {

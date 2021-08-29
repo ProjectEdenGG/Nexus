@@ -8,7 +8,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -61,7 +61,7 @@ public class Farming implements Listener {
 				// Single Block
 			} else if (cropSingleBlock.contains(material)) {
 				if (!(block.getRelative(0, -1, 0).getType().equals(Material.COARSE_DIRT))) {
-					if (new CooldownService().check(player, "BF21_decorOnly", Time.MINUTE)) {
+					if (new CooldownService().check(player, "BF21_decorOnly", TickTime.MINUTE)) {
 						send(Errors.DECOR_ONLY, player);
 						Quests.sound_villagerNo(player);
 					}
@@ -73,7 +73,7 @@ public class Farming implements Listener {
 				// Multi Block
 			} else if (cropMultiBlock.contains(material)) {
 				if (!(block.getRelative(0, -1, 0).getType().equals(material))) {
-					if (new CooldownService().check(player, "BF21_bottomBlock", Time.MINUTE)) {
+					if (new CooldownService().check(player, "BF21_bottomBlock", TickTime.MINUTE)) {
 						send(Errors.BOTTOM_BLOCK, player);
 						Quests.sound_villagerNo(player);
 					}
@@ -103,7 +103,7 @@ public class Farming implements Listener {
 		}
 
 		if (ageable.getAge() != ageable.getMaximumAge()) {
-			if (new CooldownService().check(player, "BF21_notFullyGrown", Time.MINUTE)) {
+			if (new CooldownService().check(player, "BF21_notFullyGrown", TickTime.MINUTE)) {
 				send(Errors.NOT_FULLY_GROWN, player);
 				Quests.sound_villagerNo(player);
 			}

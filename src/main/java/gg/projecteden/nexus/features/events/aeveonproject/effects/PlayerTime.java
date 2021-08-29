@@ -4,7 +4,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.aeveonproject.APUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,7 +17,7 @@ public class PlayerTime implements Listener {
 	public PlayerTime() {
 		Nexus.registerListener(this);
 
-		Tasks.repeat(0, Time.TICK.x(10), () -> {
+		Tasks.repeat(0, TickTime.TICK.x(10), () -> {
 			for (Player player : PlayerUtils.getOnlinePlayers()) {
 				if (!APUtils.isInWorld(player)) continue;
 

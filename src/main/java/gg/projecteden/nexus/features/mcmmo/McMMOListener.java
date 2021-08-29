@@ -13,7 +13,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGroup;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -54,7 +54,7 @@ public class McMMOListener implements Listener {
 	}
 
 	void scheduler() {
-		Tasks.repeat(0, Time.SECOND.x(1), () -> {
+		Tasks.repeat(0, TickTime.SECOND.x(1), () -> {
 			PlayerUtils.getOnlinePlayers().forEach(player -> {
 				if (!canBootBonemeal(player))
 					return;

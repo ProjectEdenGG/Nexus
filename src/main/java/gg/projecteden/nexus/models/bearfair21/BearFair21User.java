@@ -11,7 +11,7 @@ import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationCon
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -125,7 +125,7 @@ public class BearFair21User implements PlayerOwnedObject {
 		if (this.recycledItems >= JunkWeight.MIN.getAmount() && questStage_Recycle != QuestStage.COMPLETE) {
 			questStage_Recycle = QuestStage.COMPLETE;
 			getNextStepNPCs().remove(FISHERMAN2.getId());
-			Tasks.wait(Time.SECOND.x(2), () -> Quests.giveKey(this));
+			Tasks.wait(TickTime.SECOND.x(2), () -> Quests.giveKey(this));
 		}
 
 		this.junkWeight = junkWeight.update(this.recycledItems);

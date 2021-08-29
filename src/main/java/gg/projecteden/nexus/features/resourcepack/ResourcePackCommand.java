@@ -22,7 +22,7 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldGroup;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import me.lexikiq.HasPlayer;
@@ -187,11 +187,11 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
-		Tasks.wait(Time.SECOND.x(2), () -> {
+		Tasks.wait(TickTime.SECOND.x(2), () -> {
 			resourcePack(player);
 
 			// Try Again if failed
-			Tasks.wait(Time.SECOND.x(5), () -> {
+			Tasks.wait(TickTime.SECOND.x(5), () -> {
 				if (Status.FAILED_DOWNLOAD == player.getResourcePackStatus())
 					resourcePack(player);
 			});

@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.events.y2020.halloween20.quest;
 
 import gg.projecteden.nexus.features.events.y2020.halloween20.Halloween20;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -21,7 +21,7 @@ public class Gate {
 
 	public void open() {
 		AtomicInteger xOff = new AtomicInteger(0);
-		taskId = Tasks.repeat(0, Time.SECOND, () -> {
+		taskId = Tasks.repeat(0, TickTime.SECOND, () -> {
 			for (int y = 0; y < 5; y++) {
 				Location original = new Location(Halloween20.getWorld(), 307 - xOff.get(), 59 + y, -1992);
 				player.sendBlockChange(original, Material.AIR.createBlockData());
@@ -37,7 +37,7 @@ public class Gate {
 
 	public void close() {
 		AtomicInteger xOff = new AtomicInteger(0);
-		taskId = Tasks.repeat(0, Time.SECOND, () -> {
+		taskId = Tasks.repeat(0, TickTime.SECOND, () -> {
 			for (int y = 0; y < 6; y++) {
 				Location original = new Location(Halloween20.getWorld(), 298 + xOff.get(), 59 + y, -1992);
 				//player.sendBlockChange(original, Material.AIR.createBlockData());

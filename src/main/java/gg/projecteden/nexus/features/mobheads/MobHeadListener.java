@@ -16,7 +16,7 @@ import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGroup;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Ageable;
@@ -68,7 +68,7 @@ public class MobHeadListener implements Listener {
 
 		final UUID uuid = victim.getUniqueId();
 		handledEntities.add(uuid);
-		Tasks.wait(Time.TICK.x(3), () -> handledEntities.remove(uuid));
+		Tasks.wait(TickTime.TICK.x(3), () -> handledEntities.remove(uuid));
 
 		if (victim.getType() == EntityType.WITHER_SKELETON)
 			event.getDrops().removeIf(item -> item.getType() == Material.WITHER_SKELETON_SKULL);

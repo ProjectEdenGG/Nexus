@@ -18,7 +18,7 @@ import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -83,7 +83,7 @@ public class CombinationLockProvider extends MenuUtils implements InventoryProvi
 				contents.set(4, groups[i][j], ClickableItem.empty(new ItemBuilder(mat).name(" ").build()));
 			}
 		}
-		Tasks.wait(Time.SECOND.x(5), () -> {
+		Tasks.wait(TickTime.SECOND.x(5), () -> {
 			if (correct[0] && correct[1] && correct[2])
 				complete(player);
 			else {
@@ -101,19 +101,19 @@ public class CombinationLockProvider extends MenuUtils implements InventoryProvi
 		Gate gate = new Gate(player);
 		if (user.getCombinationStage() == QuestStage.Combination.COMPLETE) {
 			gate.open();
-			Tasks.wait(Time.SECOND.x(4), gate::teleportOut);
+			Tasks.wait(TickTime.SECOND.x(4), gate::teleportOut);
 			return;
 		}
 		gate.teleportIn();
 		player.playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1f, 1f);
 		PlayerUtils.send(player, "&7&oThe gate opens before you. You can now leave the land of the dead.");
-		Tasks.wait(Time.SECOND.x(1), gate::open);
-		Tasks.wait(Time.SECOND.x(4), gate::teleportOut);
+		Tasks.wait(TickTime.SECOND.x(1), gate::open);
+		Tasks.wait(TickTime.SECOND.x(4), gate::teleportOut);
 		user.setCombinationStage(QuestStage.Combination.COMPLETE);
 		service.save(user);
-		Tasks.wait(Time.SECOND.x(6), () -> {
+		Tasks.wait(TickTime.SECOND.x(6), () -> {
 			PlayerUtils.send(player, Halloween20.PREFIX + "To return to the land of the dead to continue exploring, simply use &c/halloween20 &3to be teleported inside of the gate.");
-			Tasks.wait(Time.SECOND.x(5), () -> {
+			Tasks.wait(TickTime.SECOND.x(5), () -> {
 				new BankerService().deposit(player, 10000, ShopGroup.SURVIVAL, TransactionCause.EVENT);
 				PlayerUtils.send(player, "&a$10,000 has been added to your account.");
 				//new MysteryChest(player).give(2, RewardChestType.MYSTERY);

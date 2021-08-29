@@ -30,7 +30,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import org.bukkit.Location;
@@ -301,7 +301,7 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 			HoneyPotGriefer griefer = grieferService.get(player);
 			double triggered = Math.max(griefer.getTriggered() + amount, 0);
 
-			if (amount > 0 && new CooldownService().check(player, "hp_" + name, Time.MINUTE.x(10))) {
+			if (amount > 0 && new CooldownService().check(player, "hp_" + name, TickTime.MINUTE.x(10))) {
 				final JsonBuilder message = json("&7&l[&cRadar&7&l] &a" + player.getName() + " &fhas triggered a Honey Pot &e(HP: " + name + ")")
 						.next(" &e[Click to Teleport]")
 						.command("mcmd vanish on ;; tp " + player.getName())
@@ -322,7 +322,7 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 				honeyPotBans.get(region.getId()).addBan();
 				bansService.save(honeyPotBans);
 
-				Tasks.wait(Time.SECOND, () -> fix(region, player.getWorld()));
+				Tasks.wait(TickTime.SECOND, () -> fix(region, player.getWorld()));
 				triggered = 0;
 				PlayerUtils.runCommandAsConsole("ban " + player.getName() + " 10h You have been automatically banned " +
 						"by a grief trap. Griefing is not allowed! (HP: " + name + ")");
@@ -341,7 +341,7 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 		if (!event.getRegion().getId().contains("hp_")) return;
 		HoneyPotGriefer griefer = grieferService.get(event.getPlayer());
 		if (griefer.getTriggered() <= 0) return;
-		Tasks.wait(Time.SECOND.x(30), () -> {
+		Tasks.wait(TickTime.SECOND.x(30), () -> {
 			if (event.getPlayer().isOnline())
 				removeHoneyPotItems(event.getPlayer());
 			fix(event.getRegion(), event.getPlayer().getWorld());

@@ -25,7 +25,7 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.Countdown;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.utils.RandomUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import net.citizensnpcs.api.npc.NPC;
 import net.minecraft.world.entity.EntityTypes;
@@ -449,7 +449,7 @@ public class PugmasIsland implements BearFair21Island {
 		}
 
 		Countdown countdown = Countdown.builder()
-			.duration(Time.MINUTE.x(4))
+			.duration(TickTime.MINUTE.x(4))
 			.onSecond(i -> {
 				if (user.isOnline()) {
 					ActionBarUtils.sendActionBar(user.getPlayer(),

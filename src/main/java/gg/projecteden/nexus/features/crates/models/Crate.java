@@ -15,7 +15,7 @@ import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Data;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -115,7 +115,7 @@ public abstract class Crate implements Listener {
 			playFinalParticle(finalLocation);
 			spawnItem(finalLocation, loot.getDisplayItem());
 		});
-		Tasks.wait(Time.SECOND.x(7), () -> {
+		Tasks.wait(TickTime.SECOND.x(7), () -> {
 			giveItems();
 			reset();
 		});
@@ -139,7 +139,7 @@ public abstract class Crate implements Listener {
 						playAnimation(location).thenAccept(finalLocation -> {
 							try {
 								AtomicInteger wait = new AtomicInteger(0);
-								Tasks.wait(Time.SECOND.x(wait.getAndAdd(1)), () -> {
+								Tasks.wait(TickTime.SECOND.x(wait.getAndAdd(1)), () -> {
 									try {
 										playFinalSound(location);
 										playFinalParticle(finalLocation);
@@ -153,7 +153,7 @@ public abstract class Crate implements Listener {
 								List<Integer> tasks = new ArrayList<>();
 								for (int i = 0; i < amount - 1; i++) {
 									int j = i;
-									tasks.add(Tasks.wait(Time.SECOND.x(wait.getAndAdd(1)), () -> {
+									tasks.add(Tasks.wait(TickTime.SECOND.x(wait.getAndAdd(1)), () -> {
 										try {
 											giveItems();
 											removeItem();
@@ -167,7 +167,7 @@ public abstract class Crate implements Listener {
 											playFinalParticle(finalLocation);
 											spawnItem(finalLocation, loot.getDisplayItem());
 											if (j == amount - 2)
-												Tasks.wait(Time.SECOND.x(3), () -> {
+												Tasks.wait(TickTime.SECOND.x(3), () -> {
 													giveItems();
 													reset();
 												});
@@ -245,7 +245,7 @@ public abstract class Crate implements Listener {
 			}
 		});
 
-		Tasks.wait(Time.SECOND.x(3), () -> {
+		Tasks.wait(TickTime.SECOND.x(3), () -> {
 			finalLocation.complete(locationReference.get());
 			Tasks.cancel(taskId);
 		});

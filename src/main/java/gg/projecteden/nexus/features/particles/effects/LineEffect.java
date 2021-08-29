@@ -5,7 +5,7 @@ import gg.projecteden.nexus.features.particles.ParticleUtils;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.particle.ParticleService;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Builder;
 import lombok.Getter;
 import org.bukkit.Color;
@@ -52,7 +52,7 @@ public class LineEffect {
 		if (pulseDelay < 1) pulseDelay = 1;
 		if (speed <= 0) speed = 0.1;
 		if (count <= 0) count = 1;
-		if (ticks == 0) ticks = Time.SECOND.x(5);
+		if (ticks == 0) ticks = TickTime.SECOND.x(5);
 		if (maxLength > maxLineLength) maxLength = maxLineLength;
 		if (particle == null) particle = Particle.REDSTONE;
 

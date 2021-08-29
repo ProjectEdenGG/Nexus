@@ -5,7 +5,7 @@ import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallSinkEven
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.FireworkLauncher;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Material;
@@ -41,9 +41,9 @@ public class HoleBlock extends ModifierBlock {
 		golfBall.remove();
 
 		// Spawn firework
-		Tasks.wait(Time.TICK, () -> new FireworkLauncher(snowball.getLocation())
+		Tasks.wait(TickTime.TICK, () -> new FireworkLauncher(snowball.getLocation())
 			.power(0)
-			.detonateAfter(Time.TICK.x(2))
+			.detonateAfter(TickTime.TICK.x(2))
 			.type(Type.BURST)
 			.colors(Collections.singletonList(ColorType.RED.getBukkitColor()))
 			.fadeColors(Collections.singletonList(Color.WHITE))

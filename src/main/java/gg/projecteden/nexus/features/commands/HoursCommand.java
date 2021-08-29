@@ -24,7 +24,7 @@ import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import gg.projecteden.utils.TimeUtils.Timespan.TimespanBuilder;
 import org.bukkit.entity.Player;
@@ -46,7 +46,7 @@ public class HoursCommand extends CustomCommand {
 		super(event);
 	}
 
-	private static final int DAY = Time.DAY.get() / 20;
+	private static final int DAY = TickTime.DAY.get() / 20;
 
 	@Async
 	@Path("[player]")
@@ -125,7 +125,7 @@ public class HoursCommand extends CustomCommand {
 	private static final int INTERVAL = 5;
 
 	static {
-		Tasks.repeatAsync(10, Time.SECOND.x(INTERVAL), () -> {
+		Tasks.repeatAsync(10, TickTime.SECOND.x(INTERVAL), () -> {
 			for (Player player : PlayerUtils.getOnlinePlayers()) {
 				try {
 					if (AFK.get(player).isAfk()) continue;

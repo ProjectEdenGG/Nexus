@@ -14,7 +14,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -133,7 +133,7 @@ public class AmbienceConfig implements PlayerOwnedObject {
 			BIRDHOUSE(AmbienceLocationType.ITEM_FRAME, Material.OAK_WOOD, Set.of(1, 2, 3, 4, 5, 6, 7, 8, 9)) {
 				@Override
 				void play(Location location) {
-					Tasks.wait(Time.SECOND.x(randomInt(0, 45)), () -> BirdSound.randomBirdhouse().play(location));
+					Tasks.wait(TickTime.SECOND.x(randomInt(0, 45)), () -> BirdSound.randomBirdhouse().play(location));
 				}
 			},
 			;

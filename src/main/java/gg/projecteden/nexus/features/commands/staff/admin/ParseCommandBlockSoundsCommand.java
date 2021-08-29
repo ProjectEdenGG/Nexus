@@ -7,7 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.LocationUtils.CardinalDirection;
 import gg.projecteden.utils.EnumUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Location;
@@ -124,7 +124,7 @@ public class ParseCommandBlockSoundsCommand extends CustomCommand implements Lis
 				.player(player())
 				.location(getCenteredLocation(block.getLocation().add(0, 1, 0)).add(0, .5, 0))
 				.speed(0.1)
-				.ticks(Time.SECOND.x(5))
+				.ticks(TickTime.SECOND.x(5))
 				.color(EnumUtils.random(ColorType.class).getBukkitColor())
 				.start();
 	}

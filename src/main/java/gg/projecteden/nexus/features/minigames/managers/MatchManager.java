@@ -6,7 +6,7 @@ import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ public class MatchManager {
 	private static final List<Match> matches = new ArrayList<>();
 
 	static {
-		Tasks.repeat(Time.SECOND.x(5), 10, MatchManager::janitor);
+		Tasks.repeat(TickTime.SECOND.x(5), 10, MatchManager::janitor);
 	}
 
 	public static Match find(Arena arena) {

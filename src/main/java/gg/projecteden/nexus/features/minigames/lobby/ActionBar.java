@@ -5,7 +5,7 @@ import gg.projecteden.nexus.features.minigames.commands.MinigamesCommand.Minigam
 import gg.projecteden.nexus.features.minigames.utils.MinigameNight.NextMGN;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import net.citizensnpcs.api.npc.NPC;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
@@ -20,7 +20,7 @@ import static gg.projecteden.nexus.utils.CitizensUtils.isNPC;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 public class ActionBar {
-	private static final int DELAY = Time.SECOND.x(5);
+	private static final int DELAY = TickTime.SECOND.x(5);
 
 	private List<String> messages = new ArrayList<>() {{
 		add("&3You are currently in the &eMinigame Lobby&3!");

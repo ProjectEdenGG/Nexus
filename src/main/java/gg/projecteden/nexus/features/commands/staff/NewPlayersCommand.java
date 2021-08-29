@@ -10,7 +10,7 @@ import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
@@ -30,7 +30,7 @@ public class NewPlayersCommand extends CustomCommand {
 		HashMap<Player, Integer> players = new HashMap<>();
 		for (Player player : PlayerUtils.getOnlinePlayers()) {
 			Hours hours = new HoursService().get(player.getUniqueId());
-			if (hours.getTotal() < (Time.HOUR.get() / 20))
+			if (hours.getTotal() < (TickTime.HOUR.get() / 20))
 				players.put(player, hours.getTotal());
 		}
 

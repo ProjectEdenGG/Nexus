@@ -10,7 +10,7 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.team
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -49,7 +49,7 @@ public class FallingBlocks extends TeamlessMechanic {
 		final WorldGuardUtils worldGuardUtils = match.getWGUtils();
 		final ProtectedRegion ceiling = match.getArena().getProtectedRegion("ceiling");
 		final int y = (int) worldGuardUtils.toLocation(ceiling.getMinimumPoint()).getY();
-		match.getTasks().repeat(0, Time.TICK.x(3), () -> {
+		match.getTasks().repeat(0, TickTime.TICK.x(3), () -> {
 			for (Minigamer minigamer : match.getAliveMinigamers()) {
 				final Location location = minigamer.getLocation();
 				location.setY(y);

@@ -14,7 +14,7 @@ import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils.Paste;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.Utils.MinMaxResult;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -95,7 +95,7 @@ public class WoodCutting implements Listener {
 		@Getter
 		private final Map<Integer, ProtectedRegion> regions = new ConcurrentHashMap<>();
 
-		private static final int animationTime = Time.SECOND.x(3);
+		private static final int animationTime = TickTime.SECOND.x(3);
 
 		BearFair21TreeType(Material logs, Material... others) {
 			this.logs = logs;
@@ -206,7 +206,7 @@ public class WoodCutting implements Listener {
 		}
 
 		public void feller(Player player, int id) {
-			if (!new CooldownService().check(StringUtils.getUUID0(), getRegion(id).getId(), Time.SECOND.x(3)))
+			if (!new CooldownService().check(StringUtils.getUUID0(), getRegion(id).getId(), TickTime.SECOND.x(3)))
 				return;
 
 			treeAnimating = true;

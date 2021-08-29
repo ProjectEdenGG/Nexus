@@ -30,7 +30,7 @@ import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldGroup;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import lombok.Builder;
 import lombok.Data;
@@ -76,7 +76,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 	}
 
 	static {
-		Tasks.repeatAsync(Time.SECOND.x(10), Time.MINUTE, () -> {
+		Tasks.repeatAsync(TickTime.SECOND.x(10), TickTime.MINUTE, () -> {
 			DeathMessagesService service = new DeathMessagesService();
 			for (DeathMessages deathMessages : service.getExpired()) {
 				deathMessages.setBehavior(Behavior.SHOWN);

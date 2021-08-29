@@ -5,7 +5,7 @@ import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGroup;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
@@ -31,7 +31,7 @@ public class MagnetEnchant extends CustomEnchant {
 	private static final int RADIUS_MULTIPLIER = 5;
 
 	static {
-		Tasks.repeat(Time.TICK.x(10), Time.TICK, () -> {
+		Tasks.repeat(TickTime.TICK.x(10), TickTime.TICK, () -> {
 			for (Player player : PlayerUtils.getOnlinePlayers()) {
 				if (WorldGroup.of(player) != WorldGroup.SURVIVAL)
 					continue;
@@ -85,7 +85,7 @@ public class MagnetEnchant extends CustomEnchant {
 	private static final Map<UUID, Integer> maxLevel = new HashMap<>();
 
 	static {
-		Tasks.repeat(Time.SECOND, Time.SECOND.x(2), () -> {
+		Tasks.repeat(TickTime.SECOND, TickTime.SECOND.x(2), () -> {
 			hasRoomFor.clear();
 			maxLevel.clear();
 		});

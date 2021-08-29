@@ -11,7 +11,7 @@ import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Data;
 import lombok.NonNull;
 import org.bukkit.Location;
@@ -107,7 +107,7 @@ public class Flag {
 			sign.setLine(line, lines[line]);
 
 		sign.update();
-		taskId = match.getTasks().wait(Time.SECOND.x(60), () -> {
+		taskId = match.getTasks().wait(TickTime.SECOND.x(60), () -> {
 			respawn();
 			if (match.getMechanic() instanceof CaptureTheFlag)
 				match.broadcast(team.getColoredName() + "&3's flag has respawned");

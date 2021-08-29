@@ -17,7 +17,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Data;
 import me.lexikiq.HasUniqueId;
 import org.bukkit.GameMode;
@@ -107,7 +107,7 @@ public class TickPerks implements Listener {
 		}));
 
 		// clear legacy loadout perk owners and send real packets
-		Tasks.repeat(5, Time.SECOND.x(1), () -> new HashSet<>(loadoutUsers).forEach(perkOwner -> {
+		Tasks.repeat(5, TickTime.SECOND.x(1), () -> new HashSet<>(loadoutUsers).forEach(perkOwner -> {
 			perkOwner = service.get(perkOwner.getUuid()); // update loadout perks...? not sure if necessary
 			OfflinePlayer _player = PlayerUtils.getPlayer(perkOwner.getUuid());
 			Minigamer minigamer = _player.getPlayer() != null ? PlayerManager.get(_player.getPlayer()) : null;

@@ -10,7 +10,7 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NonNull;
@@ -40,7 +40,7 @@ public class AntiCampingTask {
 	private final @NotNull Map<Minigamer, Location> recentLocations = new HashMap<>();
 
 	public void start() {
-		taskId = match.getTasks().repeat(Time.SECOND, Time.SECOND, () -> {
+		taskId = match.getTasks().repeat(TickTime.SECOND, TickTime.SECOND, () -> {
 			for (Minigamer minigamer : match.getAliveMinigamers()) {
 				if (match.isEnded()) {
 					stop();

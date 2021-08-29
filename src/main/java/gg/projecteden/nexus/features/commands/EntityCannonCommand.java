@@ -6,7 +6,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NonNull;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -36,7 +36,7 @@ public class EntityCannonCommand extends CustomCommand {
 
 		entity.setVelocity(player().getEyeLocation().getDirection().multiply(2));
 
-		Tasks.wait(Time.SECOND, () -> {
+		Tasks.wait(TickTime.SECOND, () -> {
 			final Location loc = entity.getLocation();
 			entity.remove();
 			loc.getWorld().createExplosion(loc, 0F);

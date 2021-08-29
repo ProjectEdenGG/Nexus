@@ -24,7 +24,7 @@ import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -43,7 +43,7 @@ import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -78,8 +78,8 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 	@MonotonicNonNull
 	private Location lastLocation = null;
 	// 1/2 = half a heart, /2s = half a heart every 2 sec, /4.5 = half a heart at max multiplier every 2s
-	private static final double HEALTH_PER_TICK = (1d/2d)/ Time.SECOND.x(2);
-	private static final int IMMOBILE_SECONDS = Time.SECOND.x(3);
+	private static final double HEALTH_PER_TICK = (1d/2d)/ TickTime.SECOND.x(2);
+	private static final int IMMOBILE_SECONDS = TickTime.SECOND.x(3);
 
 	public @NotNull Player getOnlinePlayer() {
 		final Player player = Bukkit.getPlayer(uuid);
@@ -307,7 +307,7 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 			((TeamMechanic) match.getMechanic()).joinTeamChannel(this);
 			if (team.getObjective() != null && !team.getObjective().isEmpty()) {
 				sendMessage("&6Team Objective: &e" + team.getObjective());
-				new TitleBuilder().players(this).title("&6Team Objective").subtitle("&e" + team.getObjective()).fadeIn(10).stay(Time.SECOND.x(4)).fadeOut(20).send();
+				new TitleBuilder().players(this).title("&6Team Objective").subtitle("&e" + team.getObjective()).fadeIn(10).stay(TickTime.SECOND.x(4)).fadeOut(20).send();
 			}
 		}
 
@@ -421,7 +421,7 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 
 		multiplier *= sneakMultiplier;
 
-		if (lastStruckTicks <= Time.SECOND.x(2))
+		if (lastStruckTicks <= TickTime.SECOND.x(2))
 			multiplier *= 1d/3d;
 
 		// this skips making the hearts do the little regeneration bobbing but idk how to fix that

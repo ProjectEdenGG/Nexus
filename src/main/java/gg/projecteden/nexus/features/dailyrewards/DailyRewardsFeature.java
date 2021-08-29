@@ -10,7 +10,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionType;
@@ -21,7 +21,18 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.bukkit.Material.*;
-import static org.bukkit.enchantments.Enchantment.*;
+import static org.bukkit.enchantments.Enchantment.ARROW_DAMAGE;
+import static org.bukkit.enchantments.Enchantment.ARROW_INFINITE;
+import static org.bukkit.enchantments.Enchantment.ARROW_KNOCKBACK;
+import static org.bukkit.enchantments.Enchantment.DAMAGE_ALL;
+import static org.bukkit.enchantments.Enchantment.DIG_SPEED;
+import static org.bukkit.enchantments.Enchantment.DURABILITY;
+import static org.bukkit.enchantments.Enchantment.FIRE_ASPECT;
+import static org.bukkit.enchantments.Enchantment.KNOCKBACK;
+import static org.bukkit.enchantments.Enchantment.LUCK;
+import static org.bukkit.enchantments.Enchantment.LURE;
+import static org.bukkit.enchantments.Enchantment.MENDING;
+import static org.bukkit.enchantments.Enchantment.SILK_TOUCH;
 
 public class DailyRewardsFeature extends Feature {
 	private static final List<Reward> rewards1 = setupDailyRewards(1);
@@ -37,13 +48,13 @@ public class DailyRewardsFeature extends Feature {
 	private static LocalDateTime lastTaskTime;
 
 	private void scheduler() {
-		Tasks.repeatAsync(Time.SECOND, Time.SECOND.x(6), () -> {
+		Tasks.repeatAsync(TickTime.SECOND, TickTime.SECOND.x(6), () -> {
 			lastTaskTime = LocalDateTime.now();
 
 			DailyRewardUserService service = new DailyRewardUserService();
 			for (Player player : PlayerUtils.getOnlinePlayers()) {
 				try {
-					if (new HoursService().get(player.getUniqueId()).getDaily() < Time.MINUTE.x(15) / 20)
+					if (new HoursService().get(player.getUniqueId()).getDaily() < TickTime.MINUTE.x(15) / 20)
 						continue;
 
 					DailyRewardUser user = service.get(player);
@@ -59,10 +70,10 @@ public class DailyRewardsFeature extends Feature {
 				}
 			}
 
-			Tasks.waitAsync(Time.SECOND.x(3), () -> {
+			Tasks.waitAsync(TickTime.SECOND.x(3), () -> {
 				for (DailyRewardUser user : service.getAllNotEarnedToday()) {
 					try {
-						if (new HoursService().get(user.getUniqueId()).getDaily() < Time.MINUTE.x(15) / 20)
+						if (new HoursService().get(user.getUniqueId()).getDaily() < TickTime.MINUTE.x(15) / 20)
 							continue;
 
 						Tasks.sync(() -> {

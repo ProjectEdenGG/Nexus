@@ -18,7 +18,7 @@ import gg.projecteden.nexus.models.radio.RadioUserService;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -71,7 +71,7 @@ public class RadioFeature extends Feature {
 		}
 
 		// Radio Particles Task
-		Tasks.repeat(0, Time.SECOND.x(2), () -> {
+		Tasks.repeat(0, TickTime.SECOND.x(2), () -> {
 			RadioConfigService configService = new RadioConfigService();
 			RadioConfig config = configService.get0();
 			for (Radio radio : config.getRadios()) {
@@ -88,7 +88,7 @@ public class RadioFeature extends Feature {
 		});
 
 		// Radius Radio User Task
-		Tasks.repeat(0, Time.SECOND.x(2), () -> {
+		Tasks.repeat(0, TickTime.SECOND.x(2), () -> {
 			RadioUserService service = new RadioUserService();
 			for (Radio radio : getRadios()) {
 				if (!(radio.getSongPlayer() instanceof PositionSongPlayer))

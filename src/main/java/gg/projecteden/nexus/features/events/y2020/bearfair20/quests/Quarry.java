@@ -6,7 +6,7 @@ import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -66,7 +66,7 @@ public class Quarry implements Listener {
 	}
 
 	private void regenTasks() {
-		Tasks.repeat(0, Time.SECOND.x(10), () -> {
+		Tasks.repeat(0, TickTime.SECOND.x(10), () -> {
 			Set<Location> locations = new HashSet<>(dioriteRegenMap.keySet());
 			for (Location loc : locations) {
 				Block air = loc.getBlock();
@@ -122,7 +122,7 @@ public class Quarry implements Listener {
 		}
 
 		Diorite diorite = new Diorite(block.getType(), block.getBlockData());
-		Tasks.wait(Time.SECOND.x(3), () -> dioriteRegenMap.put(block.getLocation(), diorite));
+		Tasks.wait(TickTime.SECOND.x(3), () -> dioriteRegenMap.put(block.getLocation(), diorite));
 	}
 
 

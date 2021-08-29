@@ -14,7 +14,7 @@ import gg.projecteden.nexus.models.punishments.Punishment.PunishmentBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -224,7 +224,7 @@ public class Punishments implements PlayerOwnedObject {
 		List<Punishment> warnings = showWarns();
 
 		// Try to be more sure they actually saw the warning
-		Tasks.wait(Time.SECOND.x(5), () -> {
+		Tasks.wait(TickTime.SECOND.x(5), () -> {
 			if (!isOnline())
 				return;
 

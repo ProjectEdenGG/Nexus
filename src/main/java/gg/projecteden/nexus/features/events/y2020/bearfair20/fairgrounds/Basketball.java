@@ -14,7 +14,7 @@ import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -271,7 +271,7 @@ public class Basketball implements Listener {
 	public void onRegionEnter(PlayerEnteredRegionEvent event) {
 		if (!event.getRegion().getId().equalsIgnoreCase(courtRg)) return;
 		Player player = event.getPlayer();
-		if (new CooldownService().check(player, "basketball-doublejump-tip", Time.SECOND.x(30)))
+		if (new CooldownService().check(player, "basketball-doublejump-tip", TickTime.SECOND.x(30)))
 			send("&aDouble Jump enabled!", player);
 		if (!regionContainsBasketball(player))
 			giveBasketball(player);

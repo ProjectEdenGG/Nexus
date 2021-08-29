@@ -18,7 +18,7 @@ import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Tasks.Countdown;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -76,7 +76,7 @@ public class HoleInTheWall extends TeamlessMechanic {
 	public static final int TICK_DECREASE_EVERY_X_WALLS = 10;
 	public static final int BASE_EMPTY_BLOCKS = 4;
 	public static final int EXTRA_EMPTY_BLOCK_EVERY_X_WALLS = 3;
-	public static final int SKIP_BUTTON_COOLDOWN_IN_TICKS = Time.SECOND.x(3);
+	public static final int SKIP_BUTTON_COOLDOWN_IN_TICKS = TickTime.SECOND.x(3);
 
 	@Override
 	public void onInitialize(@NotNull MatchInitializeEvent event) {
@@ -113,7 +113,7 @@ public class HoleInTheWall extends TeamlessMechanic {
 		});
 
 		match.getTasks().countdown(Countdown.builder()
-				.duration(Time.SECOND.x(5))
+				.duration(TickTime.SECOND.x(5))
 				.onSecond(i -> match.broadcast("&7Starting in &e" + i + "..."))
 				.onComplete(() -> {
 					match.broadcast("Go!");
@@ -159,7 +159,7 @@ public class HoleInTheWall extends TeamlessMechanic {
 					.filter(track -> track.getMinigamer() != null)
 					.forEach(Track::end);
 
-			match.getTasks().wait(Time.SECOND.x(5), match::end);
+			match.getTasks().wait(TickTime.SECOND.x(5), match::end);
 		}
 	}
 
@@ -230,7 +230,7 @@ public class HoleInTheWall extends TeamlessMechanic {
 						if (track != null) {
 							UUID uuid = minigamer.getPlayer().getUniqueId();
 							String type = "HoleInTheWall-Skip";
-							if (new CooldownService().check(uuid, type, Time.SECOND.x(3)))
+							if (new CooldownService().check(uuid, type, TickTime.SECOND.x(3)))
 								track.skip();
 							else
 								minigamer.tell("You must wait &e" + new CooldownService().getDiff(uuid, type));

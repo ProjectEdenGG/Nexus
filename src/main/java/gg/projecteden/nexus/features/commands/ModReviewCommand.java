@@ -23,7 +23,7 @@ import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.event.EventHandler;
@@ -83,7 +83,7 @@ public class ModReviewCommand extends CustomCommand implements Listener {
 			send(PREFIX + "&3If your mod is not on this list, request it to be reviewed with &c/modreview request <name> [notes...]");
 	}
 
-	@Cooldown(@Part(value = Time.SECOND, x = 30))
+	@Cooldown(@Part(value = TickTime.SECOND, x = 30))
 	@Path("request <name> [notes...]")
 	@Description("Request a mod to be reviewed by the staff team")
 	void request(String name, String notes) {

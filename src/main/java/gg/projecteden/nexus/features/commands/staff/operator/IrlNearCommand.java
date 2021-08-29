@@ -15,7 +15,7 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NonNull;
 
 import java.util.HashMap;
@@ -36,7 +36,7 @@ public class IrlNearCommand extends CustomCommand {
 	void run(@Arg("self") GeoIP player, @Arg("1") int page) {
 		Map<UUID, Distance> near = new HashMap<>() {{
 			for (GeoIP geoip : new GeoIPService().getAll())
-				if (new HoursService().get(geoip).getTotal() > Time.MINUTE.x(30) / 20)
+				if (new HoursService().get(geoip).getTotal() > TickTime.MINUTE.x(30) / 20)
 					try {
 						put(geoip.getUuid(), new Distance(player, geoip));
 					} catch (InvalidInputException ignore) {}

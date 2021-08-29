@@ -12,7 +12,7 @@ import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallMoveEven
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.Env;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -68,7 +68,7 @@ public class MiniGolf extends Feature {
 	}
 
 	private void miniGolfTask() {
-		Tasks.repeat(0, Time.TICK, () -> {
+		Tasks.repeat(0, TickTime.TICK, () -> {
 			if (golfBalls.isEmpty())
 				return;
 

@@ -10,7 +10,7 @@ import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -62,16 +62,16 @@ public class Tip implements PlayerOwnedObject {
 	}
 
 	public enum TipType {
-		CONCRETE(1, Time.HOUR, player -> player.hasPermission("group.nonstaff")),
-		LWC_CHEST(1, Time.MINUTE.x(15), player -> Rank.of(player) == Rank.GUEST),
-		LWC_FURNACE(1, Time.MINUTE.x(15), player -> Rank.of(player) == Rank.GUEST),
+		CONCRETE(1, TickTime.HOUR, player -> player.hasPermission("group.nonstaff")),
+		LWC_CHEST(1, TickTime.MINUTE.x(15), player -> Rank.of(player) == Rank.GUEST),
+		LWC_FURNACE(1, TickTime.MINUTE.x(15), player -> Rank.of(player) == Rank.GUEST),
 		RESOURCE_WORLD_STORAGE(15),
-		SPAM_ATTACK(50, Time.MINUTE.x(5)),
-		AUTOSORT_SORT_INVENTORY(1, Time.WEEK, player -> player.hasPermission("store.autosort")),
-		AUTOSORT_SORT_CHESTS(1, Time.WEEK, player -> player.hasPermission("store.autosort")),
-		AUTOSORT_REFILL(1, Time.WEEK, player -> player.hasPermission("store.autosort")),
-		AUTOSORT_DEPOSIT_ALL(1, Time.WEEK, player -> player.hasPermission("store.autosort")),
-		AUTOSORT_DEPOSIT_QUICK(1, Time.WEEK, player -> player.hasPermission("store.autosort"));
+		SPAM_ATTACK(50, TickTime.MINUTE.x(5)),
+		AUTOSORT_SORT_INVENTORY(1, TickTime.WEEK, player -> player.hasPermission("store.autosort")),
+		AUTOSORT_SORT_CHESTS(1, TickTime.WEEK, player -> player.hasPermission("store.autosort")),
+		AUTOSORT_REFILL(1, TickTime.WEEK, player -> player.hasPermission("store.autosort")),
+		AUTOSORT_DEPOSIT_ALL(1, TickTime.WEEK, player -> player.hasPermission("store.autosort")),
+		AUTOSORT_DEPOSIT_QUICK(1, TickTime.WEEK, player -> player.hasPermission("store.autosort"));
 
 		@Getter
 		private final int retryChance;
@@ -89,7 +89,7 @@ public class Tip implements PlayerOwnedObject {
 			this.cooldown = cooldown;
 		}
 
-		TipType(int retryChance, Time cooldown, Predicate<Player> predicate) {
+		TipType(int retryChance, TickTime cooldown, Predicate<Player> predicate) {
 			this(retryChance, cooldown.get(), predicate);
 		}
 

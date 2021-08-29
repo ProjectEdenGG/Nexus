@@ -12,14 +12,14 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 
 @Description("Boop")
-@Cooldown(value = @Part(value = Time.SECOND, x = 5), bypass = "group.admin")
+@Cooldown(value = @Part(value = TickTime.SECOND, x = 5), bypass = "group.admin")
 public class BoopCommand extends CustomCommand {
 
 	public BoopCommand(CommandEvent event) {

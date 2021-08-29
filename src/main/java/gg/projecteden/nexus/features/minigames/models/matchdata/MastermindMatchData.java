@@ -7,7 +7,7 @@ import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.annotations.MatchDataFor;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import lombok.Data;
 
@@ -52,7 +52,7 @@ public class MastermindMatchData extends IMastermindMatchData {
 		fireworks("fireworks");
 		guesses.put(minigamer, maxGuesses + 1);
 		minigamer.tell("You are the Mastermind! You cracked the code in " + Timespan.of(minigamer.getScore()).format());
-		Tasks.wait(Time.SECOND.x(4), () -> endOfGameChatButtons(minigamer));
+		Tasks.wait(TickTime.SECOND.x(4), () -> endOfGameChatButtons(minigamer));
 	}
 
 	private void showAnswer(Minigamer minigamer) {

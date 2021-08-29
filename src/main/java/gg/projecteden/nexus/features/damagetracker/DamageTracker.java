@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.damagetracker;
 
 import gg.projecteden.nexus.features.damagetracker.models.DamageEvent;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.entity.LivingEntity;
 
 import java.time.LocalDateTime;
@@ -19,7 +19,7 @@ public class DamageTracker {
 
 	public DamageTracker() {
 		new DamageTrackerListener();
-		Tasks.repeat(Time.MINUTE, Time.MINUTE, this::janitor);
+		Tasks.repeat(TickTime.MINUTE, TickTime.MINUTE, this::janitor);
 	}
 
 	public static void log(DamageEvent event) {

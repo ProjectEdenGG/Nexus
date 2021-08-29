@@ -328,7 +328,7 @@ public class BearFair20Command extends _WarpCommand implements Listener {
 //		World world = loc.getWorld();
 //		if (world == null) return;
 //		world.playSound(loc, Sound.ENTITY_ZOMBIE_VILLAGER_CONVERTED, 4F, 0.1F);
-//		Tasks.wait(Time.SECOND.x(2), () -> world.playSound(loc, Sound.ENTITY_ZOMBIE_VILLAGER_CONVERTED, 4F, 0.1F));
+//		Tasks.wait(TickTime.SECOND.x(2), () -> world.playSound(loc, Sound.ENTITY_ZOMBIE_VILLAGER_CONVERTED, 4F, 0.1F));
 //	}
 
 //	@Path("moveCollector")

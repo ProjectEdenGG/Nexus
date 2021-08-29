@@ -16,7 +16,7 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -40,7 +40,7 @@ public class AFKCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("[autoreply...]")
-	@Cooldown(@Part(value = Time.SECOND, x = 5))
+	@Cooldown(@Part(value = TickTime.SECOND, x = 5))
 	void afk(String autoreply) {
 		AFKUser user = AFK.get(player());
 
@@ -182,7 +182,7 @@ public class AFKCommand extends CustomCommand implements Listener {
 	}
 
 	static {
-		Tasks.repeat(Time.MINUTE.x(5), Time.MINUTE, () -> {
+		Tasks.repeat(TickTime.MINUTE.x(5), TickTime.MINUTE, () -> {
 			for (World world : WorldGroup.SURVIVAL.getWorlds()) {
 				if (world.getEnvironment() != Environment.NORMAL)
 					continue;

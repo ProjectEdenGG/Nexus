@@ -17,7 +17,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -229,7 +229,7 @@ public class HalloweenIsland implements Listener, BearFairIsland {
 	}
 
 	private void startSoundsTask(Player player) {
-		int taskId = Tasks.repeat(0, Time.SECOND.x(350), () -> {
+		int taskId = Tasks.repeat(0, TickTime.SECOND.x(350), () -> {
 			player.stopSound(Sound.MUSIC_DISC_13);
 			player.playSound(halloweenMusicLoc, Sound.MUSIC_DISC_13, SoundCategory.AMBIENT, 7F, 0.1F);
 		});

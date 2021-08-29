@@ -5,7 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -23,7 +23,7 @@ public class UnlimitedElytraCommand extends CustomCommand {
 	public UnlimitedElytraCommand(CommandEvent event) {
 		super(event);
 
-		Tasks.repeatAsync(0, Time.TICK.x(2), () -> {
+		Tasks.repeatAsync(0, TickTime.TICK.x(2), () -> {
 			if (flyingPlayers.size() == 0)
 				return;
 

@@ -8,13 +8,13 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.FireworkLauncher;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 
 import static gg.projecteden.nexus.features.store.perks.fireworks.FireworkCommand.PERMISSION;
 
 @Aliases("fw")
 @Permission(PERMISSION)
-@Cooldown(value = @Part(Time.SECOND), bypass = "group.staff")
+@Cooldown(value = @Part(TickTime.SECOND), bypass = "group.staff")
 public class FireworkCommand extends CustomCommand {
 	public static final String PERMISSION = "firework.launch";
 

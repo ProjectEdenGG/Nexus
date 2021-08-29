@@ -10,7 +10,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -224,6 +224,6 @@ public class Connect4Command extends CustomCommand {
 
 	private void triggerCommandBlock(Location location) {
 		location.getBlock().setType(Material.REDSTONE_BLOCK);
-		Tasks.wait(Time.SECOND.x(1), () -> location.getBlock().setType(Material.AIR));
+		Tasks.wait(TickTime.SECOND.x(1), () -> location.getBlock().setType(Material.AIR));
 	}
 }

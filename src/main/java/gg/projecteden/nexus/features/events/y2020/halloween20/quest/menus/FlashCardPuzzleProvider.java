@@ -12,7 +12,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -53,14 +53,14 @@ public class FlashCardPuzzleProvider extends MenuUtils implements InventoryProvi
 		}
 
 		Collections.shuffle(usedCards);
-		Tasks.wait(Time.SECOND.x(5), () -> {
+		Tasks.wait(TickTime.SECOND.x(5), () -> {
 			int i = 1;
 			AtomicInteger index = new AtomicInteger(0);
 			for (Material mat : usedCards)
 				contents.set(1, i++, ClickableItem.from(new ItemBuilder(mat).name(" ").build(), e -> {
 					if (e.getItem().getType() != correctOrder.get(index.getAndIncrement())) {
 						contents.fill(ClickableItem.empty(new ItemBuilder(Material.RED_WOOL).name("&cIncorrect").build()));
-						Tasks.wait(Time.SECOND.x(2), () -> Halloween20Menus.openFlashCardPuzzle(player, number));
+						Tasks.wait(TickTime.SECOND.x(2), () -> Halloween20Menus.openFlashCardPuzzle(player, number));
 					} else {
 						addGlowing(e.getItem());
 						if (index.get() == 5)

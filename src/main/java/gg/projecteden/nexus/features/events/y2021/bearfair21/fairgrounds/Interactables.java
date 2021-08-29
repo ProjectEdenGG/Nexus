@@ -4,7 +4,7 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -56,7 +56,7 @@ public class Interactables {
 			wait.getAndAdd(4);
 		}
 
-		wait.getAndAdd(Time.SECOND.x(1));
+		wait.getAndAdd(TickTime.SECOND.x(1));
 
 		Tasks.wait(wait.get(), () -> {
 			for (Location light : lights) {

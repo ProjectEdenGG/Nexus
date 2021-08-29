@@ -8,7 +8,7 @@ import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import me.lexikiq.HasUniqueId;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -26,7 +26,7 @@ public class AFK extends Feature {
 
 	@Override
 	public void onStart() {
-		Tasks.repeat(Time.SECOND.x(5), Time.SECOND.x(3), () -> {
+		Tasks.repeat(TickTime.SECOND.x(5), TickTime.SECOND.x(3), () -> {
 			List<Player> onlinePlayers = Collections.unmodifiableList(PlayerUtils.getOnlinePlayers());
 			afkCheck(onlinePlayers);
 			limboCheck(onlinePlayers);

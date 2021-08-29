@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.events.aeveonproject.sets.vespyr;
 
 import gg.projecteden.nexus.features.events.aeveonproject.sets.APSetType;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -23,7 +23,7 @@ public class Sounds {
 	public Sounds() {
 
 		// Wind sound
-		Tasks.repeatAsync(0, Time.SECOND.x(4), () -> {
+		Tasks.repeatAsync(0, TickTime.SECOND.x(4), () -> {
 			if (!APSetType.VESPYR.get().isActive())
 				return;
 

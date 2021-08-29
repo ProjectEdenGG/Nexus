@@ -9,7 +9,7 @@ import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange.PlayerRankChangeEvent;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import me.lexikiq.HasUniqueId;
 import net.luckperms.api.node.Node;
 import org.bukkit.Bukkit;
@@ -28,7 +28,7 @@ import static gg.projecteden.nexus.utils.StringUtils.colorize;
 public class Tab implements Listener {
 
 	static {
-		Tasks.repeatAsync(Time.TICK, Time.SECOND.x(5), Tab::update);
+		Tasks.repeatAsync(TickTime.TICK, TickTime.SECOND.x(5), Tab::update);
 	}
 
 	public static void update() {

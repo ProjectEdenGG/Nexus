@@ -27,7 +27,7 @@ public class Pride21 implements Listener {
 	public Pride21() {
 		new Quests();
 		Nexus.registerListener(this);
-		Tasks.repeat(5, TimeUtils.Time.SECOND, () -> {
+		Tasks.repeat(5, TimeUtils.TickTime.SECOND, () -> {
 			getWGUtils().getPlayersInRegion(REGION).forEach(player -> {
 				if (!service.get(player).isBonusTokenRewardClaimed())
 					Quests.viewFloat(player, false);

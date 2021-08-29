@@ -9,7 +9,7 @@ import gg.projecteden.nexus.models.clientsideentities.ClientSideEntitiesConfigSe
 import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -34,7 +34,7 @@ public class ClientSideEntitiesCommand extends CustomCommand {
 	public static final Set<EntityType> types = Set.of(EntityType.ITEM_FRAME, EntityType.ARMOR_STAND, EntityType.PAINTING);
 
 	static {
-		Tasks.repeat(Time.SECOND.x(5), Time.SECOND.x(5), () -> {
+		Tasks.repeat(TickTime.SECOND.x(5), TickTime.SECOND.x(5), () -> {
 			if (!ENABLED)
 				return;
 

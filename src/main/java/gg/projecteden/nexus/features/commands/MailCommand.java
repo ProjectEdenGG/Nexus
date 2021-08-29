@@ -25,7 +25,7 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldGroup;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -251,7 +251,7 @@ public class MailCommand extends CustomCommand implements Listener {
 		if (Utils.isNullOrEmpty(mails))
 			return;
 
-		if (!new CooldownService().check(player, "youhavemail", Time.MINUTE.x(5)))
+		if (!new CooldownService().check(player, "youhavemail", TickTime.MINUTE.x(5)))
 			return;
 
 		mailer.sendNotification();

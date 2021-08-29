@@ -27,7 +27,7 @@ import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
@@ -65,7 +65,7 @@ public class Votes extends Feature implements Listener {
 	}
 
 	private void scheduler() {
-		Tasks.repeatAsync(Time.SECOND.x(5), Time.SECOND.x(10), () -> {
+		Tasks.repeatAsync(TickTime.SECOND.x(5), TickTime.SECOND.x(10), () -> {
 			// Don't try to process votes if discord is offline, reminders will break
 			if (Discord.getGuild() == null)
 				return;
@@ -99,7 +99,7 @@ public class Votes extends Feature implements Listener {
 		if (!vote.getVoter().isReminders())
 			return;
 
-		if (!new CooldownService().check(vote.getUuid(), "vote-reminder", Time.MINUTE.x(10)))
+		if (!new CooldownService().check(vote.getUuid(), "vote-reminder", TickTime.MINUTE.x(10)))
 			return;
 
 		User user = Bot.KODA.jda().retrieveUserById(discordUser.getUserId()).complete();
@@ -144,7 +144,7 @@ public class Votes extends Feature implements Listener {
 		if (GOAL > sum)
 			left = GOAL - sum;
 
-		if (new CooldownService().check(uuid, "vote-announcement", Time.HOUR)) {
+		if (new CooldownService().check(uuid, "vote-announcement", TickTime.HOUR)) {
 			String message = " &3for the server and received &b" + basePoints + plural(" &3vote point", basePoints) + " per site!";
 			if (left > 0)
 				message += " &e" + left + " &3more votes needed to hit the goal";

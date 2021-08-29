@@ -7,7 +7,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGroup;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -34,7 +34,7 @@ public class EasterEggs implements Listener {
 		if (!player.getName().equals("Porkeroni"))
 			return;
 
-		if (!new CooldownService().check(player, "pork-pig-easter-egg", Time.SECOND.x(5)))
+		if (!new CooldownService().check(player, "pork-pig-easter-egg", TickTime.SECOND.x(5)))
 			return;
 
 		PlayerUtils.send(player, "&d&lPIG > &fFucking traitor.");

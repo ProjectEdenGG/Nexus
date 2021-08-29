@@ -9,7 +9,7 @@ import gg.projecteden.nexus.models.particle.ParticleType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.EnumUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.entity.Player;
@@ -53,7 +53,7 @@ public class EventStoreParticlesProvider extends EventStoreMenu {
 					else {
 						player.closeInventory();
 						type.run(player);
-						Tasks.wait(Time.SECOND.x(15), () -> particleOwner.cancel(type));
+						Tasks.wait(TickTime.SECOND.x(15), () -> particleOwner.cancel(type));
 					}
 				} catch (Exception ex) {
 					handleException(player, STORE_PREFIX, ex);

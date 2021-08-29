@@ -18,7 +18,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -345,7 +345,7 @@ public enum QuestNPC {
 					for (ItemStack ornament : ornaments)
 						player.getInventory().removeItem(ornament);
 
-					Tasks.wait(Time.SECOND, () -> {
+					Tasks.wait(TickTime.SECOND, () -> {
 						eventUser.giveTokens(300);
 						eventUserService.save(eventUser);
 					});

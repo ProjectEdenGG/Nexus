@@ -18,7 +18,7 @@ import gg.projecteden.nexus.models.setting.Setting;
 import gg.projecteden.nexus.models.setting.SettingService;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import net.dv8tion.jda.api.Permission;
 import org.apache.commons.lang.RandomStringUtils;
 import org.bukkit.OfflinePlayer;
@@ -95,7 +95,7 @@ public class DiscordDiscordCommand extends Command {
 						discordUser.setUserId(id);
 						service.save(discordUser);
 						event.reactSuccess();
-						Tasks.wait(Time.SECOND.x(5), () -> event.getMessage().delete().queue());
+						Tasks.wait(TickTime.SECOND.x(5), () -> event.getMessage().delete().queue());
 						Discord.addRole(id, DiscordId.Role.VERIFIED);
 						Discord.staffLog("**" + discordUser.getNickname() + "** Discord account force linked to **" + discordUser.getNameAndDiscrim() + "** by " + author.getNickname() + " via Discord");
 					}

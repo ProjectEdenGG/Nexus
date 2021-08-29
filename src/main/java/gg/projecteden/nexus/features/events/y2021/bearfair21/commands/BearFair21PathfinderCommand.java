@@ -24,7 +24,7 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -120,7 +120,7 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 		pathfinder.moveTo(random.getPathLocation());
 		send("pathfinding to: " + StringUtils.getShortLocationString(random.getPathLocation()));
 
-		BlockUtils.glow(location.getBlock(), Time.SECOND.x(10), player());
+		BlockUtils.glow(location.getBlock(), TickTime.SECOND.x(10), player());
 	}
 
 	@Path("entity stop")
@@ -141,7 +141,7 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 		Set<Node> nodes = web.getNodes();
 		Node endNode = RandomUtils.randomElement(nodes);
 
-		int ticks = Time.SECOND.x(5);
+		int ticks = TickTime.SECOND.x(5);
 		wait = 0;
 
 		startNode.getPathLocation().getBlock().setType(Material.RED_CONCRETE);

@@ -10,7 +10,7 @@ import gg.projecteden.nexus.models.particle.ParticleType;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Builder;
 import lombok.Getter;
 import org.bukkit.Color;
@@ -60,7 +60,7 @@ public class WingsEffect {
 		final int wingAngle = 125;
 		Particle wingParticle = Particle.REDSTONE;
 
-		if (ticks == 0) ticks = Time.SECOND.x(5);
+		if (ticks == 0) ticks = TickTime.SECOND.x(5);
 		if (pulseDelay < 1) pulseDelay = 2;
 
 		if (color1 == null)
@@ -997,7 +997,7 @@ public class WingsEffect {
 			wingSettings.put(ParticleSetting.WINGS_RAINBOW_THREE, false);
 
 			Tasks.wait(5, () -> ParticleType.WINGS.run(player));
-			Tasks.wait(Time.SECOND.x(15), () -> {
+			Tasks.wait(TickTime.SECOND.x(15), () -> {
 				owner.cancel(ParticleType.WINGS);
 				wingSettings.put(ParticleSetting.WINGS_STYLE, cur_Style);
 				wingSettings.put(ParticleSetting.WINGS_COLOR_ONE, cur_Color1);

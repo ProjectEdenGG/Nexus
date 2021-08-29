@@ -2,26 +2,30 @@ package gg.projecteden.nexus.features.recipes.functionals.armor.wither;
 
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import de.tr7zw.nbtapi.NBTItem;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.SpeedCommand;
-import gg.projecteden.nexus.models.cooldown.Cooldown;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.TimeUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.Location;
 import org.bukkit.Sound;
-import org.bukkit.entity.*;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.entity.WitherSkull;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.entity.ItemDespawnEvent;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.util.Vector;
@@ -82,7 +86,7 @@ public class WitherArmorListener implements Listener {
 		if (!hasFullSet(player)) return;
 		if (!ItemUtils.isNullOrAir(player.getInventory().getItemInMainHand())) return;
 		if (!new WorldGuardUtils(player).getRegionsAt(player.getLocation()).isEmpty()) return;
-		if (!new CooldownService().check(player.getUniqueId(), "wither-armor-attack", TimeUtils.Time.SECOND.x(3))) return;
+		if (!new CooldownService().check(player.getUniqueId(), "wither-armor-attack", TimeUtils.TickTime.SECOND.x(3))) return;
 		shootSkull(player, true);
 		Tasks.wait(5, () -> shootSkull(player, false));
 		Tasks.wait(10, () -> shootSkull(player, false));
@@ -96,7 +100,7 @@ public class WitherArmorListener implements Listener {
 		wc.setVelocity(velocity.multiply(.6));
 		wc.setIsIncendiary(false);
 		wc.setYield(0f);
-		Tasks.wait(TimeUtils.Time.SECOND.x(1.5), wc::remove);
+		Tasks.wait(TimeUtils.TickTime.SECOND.x(1.5), wc::remove);
 	}
 
 	@EventHandler
@@ -144,7 +148,7 @@ public class WitherArmorListener implements Listener {
 
 				player.setVelocity(vector);
 				player.playSound(player.getLocation(), Sound.ENTITY_GHAST_SHOOT, 0.8f, 0.7f);
-				Tasks.wait(TimeUtils.Time.SECOND.x(10), () -> player.setAllowFlight(true));
+				Tasks.wait(TimeUtils.TickTime.SECOND.x(10), () -> player.setAllowFlight(true));
 			}
 		});
 	}

@@ -18,7 +18,7 @@ import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
@@ -29,7 +29,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -147,7 +147,7 @@ public class Koda {
 					continue responses;
 
 			if (trigger.getCooldown() != null && trigger.getCooldown() > 0)
-				if (!new CooldownService().check(StringUtils.getUUID0(), "koda_" + trigger.getName(), Time.SECOND.x(trigger.getCooldown())))
+				if (!new CooldownService().check(StringUtils.getUUID0(), "koda_" + trigger.getName(), TickTime.SECOND.x(trigger.getCooldown())))
 					continue;
 
 			if (!isNullOrEmpty(trigger.getRoutine()))
@@ -162,7 +162,7 @@ public class Koda {
 	}
 
 	public static void respond(ChatEvent event, String response) {
-		Tasks.waitAsync(Time.SECOND, () -> {
+		Tasks.waitAsync(TickTime.SECOND, () -> {
 			final String finalResponse = response.replaceAll("\\[player]", event.getOrigin());
 			PublicChannel channel = (PublicChannel) event.getChannel();
 			event.getRecipients().forEach(recipient -> recipient.sendMessage(channel.getChatterFormat(chatter) + finalResponse));

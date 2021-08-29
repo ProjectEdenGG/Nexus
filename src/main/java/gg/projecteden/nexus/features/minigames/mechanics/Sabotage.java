@@ -214,7 +214,7 @@ public class Sabotage extends TeamMechanic {
 			for (SabotageTeam team : SabotageTeam.values())
 				match.sendMessage(new JsonBuilder(team.players(match).size() + "x ", NamedTextColor.DARK_AQUA).next(team));
 		});
-		match.getTasks().wait(TimeUtils.Time.SECOND.x(1.5), () -> match.getMinigamers().forEach(matchData::initGlow));
+		match.getTasks().wait(TimeUtils.TickTime.SECOND.x(1.5), () -> match.getMinigamers().forEach(matchData::initGlow));
 		match.getTasks().repeatAsync(0, 1, () -> {
 			if (matchData.isMeetingActive()) return;
 			int lightLevel = matchData.lightLevel();
@@ -345,7 +345,7 @@ public class Sabotage extends TeamMechanic {
 		} else
 			builder.next("You have been ejected");
 		final Duration fade = Duration.ofSeconds(1).dividedBy(2);
-		new TitleBuilder().players(minigamer).title(builder).times(fade, TimeUtils.Time.SECOND.duration(4), fade).send();
+		new TitleBuilder().players(minigamer).title(builder).times(fade, TimeUtils.TickTime.SECOND.duration(4), fade).send();
 		minigamer.setAlive(false);
 		minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 1000000, 0, true, false, false));
 		PlayerUtils.showPlayers(minigamer, match.getMinigamers());

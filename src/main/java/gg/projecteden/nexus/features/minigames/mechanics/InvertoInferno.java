@@ -14,7 +14,7 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.team
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -302,7 +302,7 @@ public final class InvertoInferno extends TeamlessMechanic {
 		}
 
 		int start() {
-			return match.getTasks().repeat(0, Time.SECOND.x(5), () -> {
+			return match.getTasks().repeat(0, TickTime.SECOND.x(5), () -> {
 				if (match.isEnded()) {
 					stop();
 					return;

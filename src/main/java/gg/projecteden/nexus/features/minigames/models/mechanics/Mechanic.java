@@ -29,7 +29,7 @@ import gg.projecteden.nexus.utils.Tasks.Countdown;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
@@ -119,7 +119,7 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 
 	public void onInitialize(@NotNull MatchInitializeEvent event) {
 		Match match = event.getMatch();
-		int taskId = match.getTasks().repeat(1, Time.SECOND, () -> {
+		int taskId = match.getTasks().repeat(1, TickTime.SECOND, () -> {
 			if (match.getScoreboard() != null)
 				match.getScoreboard().update();
 
@@ -146,7 +146,7 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		int beginDelay = match.getArena().getBeginDelay();
 		if (beginDelay > 0) {
 			int taskId = match.getTasks().countdown(Countdown.builder()
-					.duration(Time.SECOND.x(beginDelay))
+					.duration(TickTime.SECOND.x(beginDelay))
 					.onSecond(i -> {
 						if (Arrays.asList(60, 30, 15, 5, 4, 3, 2, 1).contains(i))
 							match.broadcast("&7Starting in &e" + plural(i + " second", i) + "...");
@@ -252,7 +252,7 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 			minigamer.tell("Objective: &e" + description);
 		MinigameModifier modifier = Minigames.getModifier();
 		if (modifier.getClass() != NoModifier.class) {
-			new TitleBuilder().players(minigamer).title("&3Modifier: &e" + modifier.getName()).subtitle("&6" + modifier.getDescription()).fadeIn(5).stay(Time.SECOND.x(5)).fadeOut(10).send();
+			new TitleBuilder().players(minigamer).title("&3Modifier: &e" + modifier.getName()).subtitle("&6" + modifier.getDescription()).fadeIn(5).stay(TickTime.SECOND.x(5)).fadeOut(10).send();
 		}
 	}
 

@@ -8,7 +8,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NonNull;
 
 @Permission("group.seniorstaff")
@@ -20,7 +20,7 @@ public class QueueRestartCommand extends CustomCommand {
 	}
 
 	static {
-		Tasks.repeat(Time.SECOND.x(5), Time.SECOND.x(15), () -> {
+		Tasks.repeat(TickTime.SECOND.x(5), TickTime.SECOND.x(15), () -> {
 			if (restart && AFK.getActivePlayers() == 0) {
 				Nexus.log("Restart is queued");
 				Tasks.wait(30 * 20, () -> {

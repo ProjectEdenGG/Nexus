@@ -15,7 +15,7 @@ import gg.projecteden.nexus.utils.Timer;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Data;
 import lombok.Getter;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
@@ -90,7 +90,7 @@ public class BearFair20 implements Listener {
 		if (isAtBearFair(player)) {
 			if (!enableQuests) {
 				CooldownService cooldownService = new CooldownService();
-				if (!cooldownService.check(player, "BF_NPCInteract", Time.SECOND.x(2)))
+				if (!cooldownService.check(player, "BF_NPCInteract", TickTime.SECOND.x(2)))
 					return;
 
 				int id = event.getNPC().getId();
@@ -183,14 +183,14 @@ public class BearFair20 implements Listener {
 //		BearFairService service = new BearFairService();
 //		BearFairUser user = service.get(player);
 //
-//		Tasks.wait(Time.SECOND.x(2), () -> {
+//		Tasks.wait(TickTime.SECOND.x(2), () -> {
 //			player.addPotionEffects(Collections.singletonList
 //					(new PotionEffect(PotionEffectType.BLINDNESS, 80, 250, false, false, false)));
 //			player.teleportAsync(spawnTransition);
 //			send("", player);
 //			send("&e&o*You immediately fall asleep in your bed*", player);
 //			send("", player);
-//			Tasks.wait(Time.SECOND.x(4), () -> {
+//			Tasks.wait(TickTime.SECOND.x(4), () -> {
 //				player.teleport(bearFairYacht);
 //				send("", player);
 //				send("&e&o*You awake to the sounds of birds chirping, you must have slept the whole trip*", player);
@@ -198,7 +198,7 @@ public class BearFair20 implements Listener {
 //				if (user.isFirstVisit()) {
 //					user.setFirstVisit(false);
 //					service.save(user);
-//					Tasks.wait(Time.SECOND.x(3), () -> {
+//					Tasks.wait(TickTime.SECOND.x(3), () -> {
 //						send("&8&l[&c&l!!!&8&l] &3You can now warp here using: &e/bearfair", player);
 //						chime(player);
 //					});

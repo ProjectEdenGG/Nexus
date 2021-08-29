@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.f
 
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -89,7 +89,7 @@ public class RegenCrops {
 
 	private void regenTasks() {
 		// CROPS
-		Tasks.repeat(0, Time.SECOND.x(5), () -> {
+		Tasks.repeat(0, TickTime.SECOND.x(5), () -> {
 			List<Location> locations = new ArrayList<>(cropRegenList);
 			for (Location loc : locations) {
 				Block block = loc.getBlock();
@@ -119,7 +119,7 @@ public class RegenCrops {
 		});
 
 		// BLOCKS
-		Tasks.repeat(0, Time.SECOND.x(10), () -> {
+		Tasks.repeat(0, TickTime.SECOND.x(10), () -> {
 			Set<Location> locations = new HashSet<>(blockRegenMap.keySet());
 			for (Location loc : locations) {
 				Block block = loc.getBlock();
@@ -137,7 +137,7 @@ public class RegenCrops {
 		});
 
 		// MULTIBLOCK
-		Tasks.repeat(0, Time.SECOND.x(10), () -> {
+		Tasks.repeat(0, TickTime.SECOND.x(10), () -> {
 			Set<Location> locations = new HashSet<>(multiRegenMap.keySet());
 			for (Location loc : locations) {
 				Block block = loc.getBlock();

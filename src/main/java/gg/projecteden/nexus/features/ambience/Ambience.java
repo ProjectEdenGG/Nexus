@@ -8,7 +8,7 @@ import gg.projecteden.nexus.models.ambience.AmbienceUserService;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.Env;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import org.bukkit.event.Listener;
 
@@ -37,7 +37,7 @@ public class Ambience extends Feature implements Listener {
 	}
 
 	private void ambienceTask() {
-		Tasks.repeat(0, Time.TICK.x(2), () -> {
+		Tasks.repeat(0, TickTime.TICK.x(2), () -> {
 			for (AmbienceUser user : getUsers()) {
 				user.getVariables().update();
 				user.getSoundPlayer().update();
@@ -45,7 +45,7 @@ public class Ambience extends Feature implements Listener {
 			AmbienceManagers.tick();
 		});
 
-		Tasks.repeat(0, Time.SECOND.x(1), () -> {
+		Tasks.repeat(0, TickTime.SECOND.x(1), () -> {
 			for (AmbienceUser user : getUsers())
 				AmbienceManagers.update(user);
 		});

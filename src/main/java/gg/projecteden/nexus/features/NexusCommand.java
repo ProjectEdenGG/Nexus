@@ -46,7 +46,7 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.QueuedTask;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -135,7 +135,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 				new SoundBuilder(Sound.ENTITY_EVOKER_PREPARE_WOLOLO).receiver(player).play();
 
 		CooldownService cooldownService = new CooldownService();
-		if (!cooldownService.check(StringUtils.getUUID0(), "reload", Time.SECOND.x(15)))
+		if (!cooldownService.check(StringUtils.getUUID0(), "reload", TickTime.SECOND.x(15)))
 			throw new CommandCooldownException(StringUtils.getUUID0(), "reload");
 
 		runCommand("plugman reload Nexus");
@@ -168,7 +168,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 			long count = PlayerUtils.getOnlinePlayers().stream().filter(player -> {
 				boolean open = SmartInvsPlugin.manager().getInventory(player).isPresent();
 
-				if (open && AFK.get(player).hasBeenAfkFor(Time.MINUTE.x(15))) {
+				if (open && AFK.get(player).hasBeenAfkFor(TickTime.MINUTE.x(15))) {
 					player.closeInventory();
 					open = false;
 				}
@@ -230,7 +230,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 	}
 
 	static {
-		Tasks.repeat(Time.SECOND.x(5), Time.SECOND.x(5), NexusCommand::tryReload);
+		Tasks.repeat(TickTime.SECOND.x(5), TickTime.SECOND.x(5), NexusCommand::tryReload);
 	}
 
 	private static void tryReload() {

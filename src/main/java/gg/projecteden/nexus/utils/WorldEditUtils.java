@@ -32,7 +32,7 @@ import com.sk89q.worldedit.world.block.BlockTypes;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -415,7 +415,7 @@ public class WorldEditUtils {
 			return this;
 		}
 
-		public Paste duration(Time time) {
+		public Paste duration(TickTime time) {
 			return duration(time.get());
 		}
 

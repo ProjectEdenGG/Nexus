@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -35,7 +35,7 @@ public class AdventureUtils {
 	private static final PlainTextComponentSerializer PLAIN_SERIALIZER = PlainTextComponentSerializer.builder().flattener(Bukkit.getUnsafe().componentFlattener()).build();
 	private static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.builder().extractUrls().hexColors().flattener(Bukkit.getUnsafe().componentFlattener()).build();
 	private static final LegacyComponentSerializer LEGACY_AMPERSAND_SERIALIZER = LegacyComponentSerializer.builder().extractUrls().hexColors().character('&').flattener(Bukkit.getUnsafe().componentFlattener()).build();
-	public static final Title.Times BASIC_TIMES = Title.Times.of(TimeUtils.Time.SECOND.duration(1, 2), TimeUtils.Time.SECOND.duration(5), TimeUtils.Time.SECOND.duration(1, 2));
+	public static final Title.Times BASIC_TIMES = Title.Times.of(TimeUtils.TickTime.SECOND.duration(1, 2), TimeUtils.TickTime.SECOND.duration(5), TimeUtils.TickTime.SECOND.duration(1, 2));
 
 	public static Component stripColor(ComponentLike componentLike) {
 		Component component = componentLike.asComponent();

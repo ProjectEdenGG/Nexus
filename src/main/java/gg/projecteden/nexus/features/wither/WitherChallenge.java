@@ -12,8 +12,14 @@ import gg.projecteden.nexus.features.wither.models.WitherFight;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.utils.*;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.WorldEditUtils;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.md_5.bungee.api.ChatColor;
@@ -141,7 +147,7 @@ public class WitherChallenge extends Feature implements Listener {
 			return;
 
 		currentFight.broadcastToParty("&e" + Nickname.of(player) + " &3has logged out. They have one minute to return before they are automatically removed from the party.");
-		Tasks.wait(Time.MINUTE, () -> {
+		Tasks.wait(TickTime.MINUTE, () -> {
 			if (currentFight == null)
 				return;
 

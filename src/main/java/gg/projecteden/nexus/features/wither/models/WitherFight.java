@@ -25,7 +25,7 @@ import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Data;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -125,7 +125,7 @@ public abstract class WitherFight implements Listener {
 			spawnWither(location);
 			new WorldEditUtils("events").set("witherarena-door", BlockTypes.NETHER_BRICKS);
 			new WorldEditUtils("events").set("witherarena-lobby", BlockTypes.NETHERRACK);
-			tasks.add(Tasks.repeat(Time.SECOND.x(5), Time.SECOND.x(5), () -> {
+			tasks.add(Tasks.repeat(TickTime.SECOND.x(5), TickTime.SECOND.x(5), () -> {
 				if (!shouldRegen)
 					return;
 
@@ -167,7 +167,7 @@ public abstract class WitherFight implements Listener {
 				}
 			}
 
-			tasks.add(Tasks.repeat(0, Time.SECOND.x(5), () -> {
+			tasks.add(Tasks.repeat(0, TickTime.SECOND.x(5), () -> {
 				for (Player player : alivePlayers()) {
 					final UUID uuid = player.getUniqueId();
 					if (scoreboardTeams.containsKey(uuid)) {
@@ -473,7 +473,7 @@ public abstract class WitherFight implements Listener {
 		for (Player player : alivePlayers())
 			HealCommand.healPlayer(player);
 
-		Tasks.wait(Time.SECOND.x(10), () -> {
+		Tasks.wait(TickTime.SECOND.x(10), () -> {
 			started = false;
 			WitherChallenge.currentFight.alivePlayers().forEach(Warps::spawn);
 			WitherChallenge.currentFight.sendSpectatorsToSpawn();
@@ -668,13 +668,13 @@ public abstract class WitherFight implements Listener {
 		BLINDNESS {
 			@Override
 			public void execute(Player player) {
-				player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, Time.SECOND.x(5), 0, true));
+				player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, TickTime.SECOND.x(5), 0, true));
 			}
 		},
 		CONFUSION {
 			@Override
 			public void execute(Player player) {
-				player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, Time.SECOND.x(10), 0, true));
+				player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, TickTime.SECOND.x(10), 0, true));
 			}
 		},
 		TAKE_POTIONS {
@@ -692,19 +692,19 @@ public abstract class WitherFight implements Listener {
 		HUNGER {
 			@Override
 			public void execute(Player player) {
-				player.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, Time.SECOND.x(10), 1, true));
+				player.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, TickTime.SECOND.x(10), 1, true));
 			}
 		},
 		LEVITATION {
 			@Override
 			public void execute(Player player) {
-				player.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, Time.SECOND.x(5), 0, true));
+				player.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, TickTime.SECOND.x(5), 0, true));
 			}
 		},
 		WITHER_EFFECT {
 			@Override
 			public void execute(Player player) {
-				player.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, Time.SECOND.x(10), 0, true));
+				player.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, TickTime.SECOND.x(10), 0, true));
 			}
 		},
 		DUPLICATE {

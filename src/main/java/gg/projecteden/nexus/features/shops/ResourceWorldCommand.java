@@ -32,7 +32,7 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.utils.Env;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.citizensnpcs.api.CitizensAPI;
@@ -121,7 +121,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 	}
 
 	private void save(World world) {
-		service.queueSave(Time.SECOND.get(), getLogger(world));
+		service.queueSave(TickTime.SECOND.get(), getLogger(world));
 	}
 
 	@Async
@@ -329,7 +329,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 		if (number.signum() != 0) {
 			Tasks.cancel(taskIds.getOrDefault(uuid, -1));
 			ActionBarUtils.sendActionBar(player, "&a+" + prettyMoney(number));
-			final int taskId = Tasks.wait(Time.SECOND.x(3.5), () -> profit.put(uuid, new BigDecimal(0)));
+			final int taskId = Tasks.wait(TickTime.SECOND.x(3.5), () -> profit.put(uuid, new BigDecimal(0)));
 			taskIds.put(uuid, taskId);
 		}
 	}
@@ -476,7 +476,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 
 		PlayerUtils.runCommandAsConsole("wb " + worldName + " set " + RADIUS + " 0 0");
 		PlayerUtils.runCommandAsConsole("bluemap purge " + worldName);
-		Tasks.wait(Time.MINUTE, () -> PlayerUtils.runCommandAsConsole("chunkmaster generate " + worldName + " " + (RADIUS + 200) + " circle"));
+		Tasks.wait(TickTime.MINUTE, () -> PlayerUtils.runCommandAsConsole("chunkmaster generate " + worldName + " " + (RADIUS + 200) + " circle"));
 	}
 
 	private static NPC getFilidNPC() {

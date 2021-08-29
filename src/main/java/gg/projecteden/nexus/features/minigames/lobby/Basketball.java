@@ -14,7 +14,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.bukkit.Particle;
@@ -129,7 +129,7 @@ public class Basketball extends CustomCommand implements Listener {
 
 	private static void janitor() {
 		WorldGuardUtils wgUtils = Minigames.getWorldGuardUtils();
-		Tasks.repeat(0, Time.SECOND.x(20), () -> {
+		Tasks.repeat(0, TickTime.SECOND.x(20), () -> {
 			cleanupBasketballs();
 
 			for (Player player : PlayerUtils.getOnlinePlayers(world)) {

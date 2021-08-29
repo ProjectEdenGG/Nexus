@@ -21,7 +21,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.utils.TimeUtils.Time;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -52,7 +52,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 
 	static {
 		final CostumeUserService service = new CostumeUserService();
-		Tasks.repeat(Time.TICK, Time.TICK, () -> {
+		Tasks.repeat(TickTime.TICK, TickTime.TICK, () -> {
 			for (Player player : PlayerUtils.getOnlinePlayers())
 				service.get(player).sendCostumePacket();
 		});
