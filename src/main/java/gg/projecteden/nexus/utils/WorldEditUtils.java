@@ -12,7 +12,6 @@ import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
-import com.sk89q.worldedit.extent.clipboard.io.BuiltInClipboardFormat;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
 import com.sk89q.worldedit.function.operation.ForwardExtentCopy;
@@ -66,6 +65,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.sk89q.worldedit.extent.clipboard.io.BuiltInClipboardFormat.MCEDIT_SCHEMATIC;
+import static com.sk89q.worldedit.extent.clipboard.io.BuiltInClipboardFormat.SPONGE_SCHEMATIC;
 import static gg.projecteden.nexus.utils.BlockUtils.createDistanceSortedQueue;
 import static gg.projecteden.nexus.utils.StringUtils.getFlooredCoordinateString;
 import static gg.projecteden.utils.StringUtils.left;
@@ -116,9 +117,10 @@ public class WorldEditUtils {
 	}
 
 	private File getSchematicFile(String fileName, boolean lookForExisting) {
-		File file = new File(schematicsDirectory + fileName + "." + BuiltInClipboardFormat.SPONGE_SCHEMATIC.getPrimaryFileExtension());
+		final String fileNoExtension = schematicsDirectory + fileName + ".";
+		File file = new File(fileNoExtension + SPONGE_SCHEMATIC.getPrimaryFileExtension());
 		if (!file.exists() && lookForExisting)
-			file = new File(schematicsDirectory + fileName + "." + BuiltInClipboardFormat.MCEDIT_SCHEMATIC.getPrimaryFileExtension());
+			file = new File(fileNoExtension + MCEDIT_SCHEMATIC.getPrimaryFileExtension());
 		return file;
 	}
 
@@ -588,7 +590,7 @@ public class WorldEditUtils {
 	@SneakyThrows
 	public void save(String fileName, BlockVector3 min, BlockVector3 max) {
 		CuboidRegion region = new CuboidRegion(worldEditWorld, min, max);
-		new BlockArrayClipboard(region).save(getSchematicFile(fileName, false), BuiltInClipboardFormat.SPONGE_SCHEMATIC);
+		new BlockArrayClipboard(region).save(getSchematicFile(fileName, false), SPONGE_SCHEMATIC);
 	}
 
 	public void set(String region, BlockType blockType) {
