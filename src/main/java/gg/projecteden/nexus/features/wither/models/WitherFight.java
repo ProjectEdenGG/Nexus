@@ -461,7 +461,7 @@ public abstract class WitherFight implements Listener {
 
 		String message = "&e" + Nickname.of(getHostOfflinePlayer()) +
 			(partySize > 1 ? " and " + (partySize - 1) + plural(" other", partySize - 1) + " &3have" : " &3has") +
-			" successfully beaten the Wither in " + getDifficulty().getTitle() + " &3mode " + (gotStar ? "and got" : "but did not get") + "  the star";
+			" successfully beaten the Wither in " + getDifficulty().getTitle() + " &3mode " + (gotStar ? "and got" : "but did not get") + " the star";
 
 		if (WitherCommand.betaMode)
 			Broadcast.staff().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
