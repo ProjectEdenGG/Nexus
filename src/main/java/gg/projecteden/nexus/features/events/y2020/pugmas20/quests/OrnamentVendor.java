@@ -266,9 +266,7 @@ public class OrnamentVendor implements Listener {
 
 		public CompletableFuture<Void> build(int id) {
 			Pugmas20.setTreeAnimating(true);
-			final CompletableFuture<Void> future = getPaster(id).buildQueue();
-			future.thenRun(() -> Pugmas20.setTreeAnimating(false));
-			return future;
+			return getPaster(id).buildQueue().thenRun(() -> Pugmas20.setTreeAnimating(false));
 		}
 
 		private CompletableFuture<Queue<Location>> getQueue(int id) {

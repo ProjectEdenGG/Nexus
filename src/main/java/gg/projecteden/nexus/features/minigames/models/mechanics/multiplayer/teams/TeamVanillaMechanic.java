@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEve
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.VanillaMechanic;
+import gg.projecteden.nexus.utils.CompletableFutures;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils;
 import org.bukkit.GameMode;
@@ -72,7 +73,6 @@ public abstract class TeamVanillaMechanic extends TeamMechanic implements Vanill
 
 	@Override
 	public @NotNull CompletableFuture<Void> onRandomTeleport(@NotNull Match match, @NotNull Team team, @NotNull Location location) {
-		CompletableFuture<?>[] results = team.getMinigamers(match).stream().map(minigamer -> minigamer.teleportAsync(location)).toArray(CompletableFuture[]::new);
-		return CompletableFuture.allOf(results);
+		return CompletableFutures.joinAll(team.getMinigamers(match).stream().map(minigamer -> minigamer.teleportAsync(location)));
 	}
 }

@@ -390,8 +390,8 @@ public class Quests implements Listener {
 		if (!cooldownService.check(player, "BF21_NPCInteract", Time.SECOND.x(5)))
 			return;
 
-		BearFair21Talker.runScript(user, id).thenAccept(bool -> {
-			if (bool)
+		BearFair21Talker.runScript(user, id).thenAccept(openMerchant -> {
+			if (openMerchant)
 				Merchants.openMerchant(player, id);
 		});
 

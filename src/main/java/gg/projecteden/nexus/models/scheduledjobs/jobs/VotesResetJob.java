@@ -17,9 +17,7 @@ public class VotesResetJob extends AbstractJob {
 
 	@Override
 	protected CompletableFuture<JobStatus> run() {
-		var future = completable();
-		EndOfMonth.run().thenRun(() -> future.complete(JobStatus.COMPLETED));
-		return future;
+		return EndOfMonth.run().thenCompose($ -> completed());
 	}
 
 }

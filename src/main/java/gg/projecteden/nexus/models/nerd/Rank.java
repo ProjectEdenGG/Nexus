@@ -5,6 +5,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.framework.interfaces.IsColoredAndNamed;
+import gg.projecteden.nexus.utils.CompletableFutures;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -21,7 +22,9 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.Color;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -139,6 +142,13 @@ public enum Rank implements IsColoredAndNamed {
 		.filter(Rank::isActive)
 		.sorted(Comparator.reverseOrder())
 		.collect(Collectors.toList());
+
+	@NotNull
+	public static CompletableFuture<Map<Rank, List<Nerd>>> getStaffNerds() {
+		return CompletableFutures.allOf(new LinkedHashMap<Rank, CompletableFuture<List<Nerd>>>() {{
+			STAFF_RANKS.forEach(rank -> put(rank, rank.getNerds()));
+		}});
+	}
 
 	public static List<Nerd> getOnlineStaff() {
 		return PlayerUtils.getOnlinePlayers().stream()

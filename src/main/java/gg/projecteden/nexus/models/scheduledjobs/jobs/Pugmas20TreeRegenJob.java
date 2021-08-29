@@ -21,9 +21,7 @@ public class Pugmas20TreeRegenJob extends AbstractJob {
 
 	@Override
 	protected CompletableFuture<JobStatus> run() {
-		var future = completable();
-		treeType.build(treeId).thenRun(() -> future.complete(JobStatus.COMPLETED));
-		return future;
+		return treeType.build(treeId).thenCompose($ -> completed());
 	}
 
 }

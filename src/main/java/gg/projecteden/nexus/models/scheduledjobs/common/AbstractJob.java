@@ -87,10 +87,9 @@ public abstract class AbstractJob {
 		}
 	}
 
+	@NotNull
 	protected CompletableFuture<JobStatus> completed() {
-		var future = completable();
-		future.complete(JobStatus.COMPLETED);
-		return future;
+		return CompletableFuture.completedFuture(JobStatus.COMPLETED);
 	}
 
 	@NotNull

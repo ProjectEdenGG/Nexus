@@ -373,7 +373,7 @@ public class LuckPermsUtils {
 						type.consumer.accept(user.data(), node);
 					}));
 
-				return CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new));
+				return CompletableFutures.joinAll(futures);
 			}
 
 		}

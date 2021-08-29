@@ -24,10 +24,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 import static gg.projecteden.utils.TimeUtils.shortDateFormat;
@@ -49,38 +45,29 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 		if (!folder.exists())
 			folder.mkdir();
 
-		Map<Rank, CompletableFuture<List<Nerd>>> map = new LinkedHashMap<>() {{
-			Rank.STAFF_RANKS.forEach(rank -> put(rank, rank.getNerds()));
-		}};
+		Rank.getStaffNerds().thenAccept(ranks -> {
+			for (Rank rank : ranks.keySet()) {
+				for (Nerd staff : ranks.get(rank))
+					try {
+						String html = "";
+						if (!Strings.isNullOrEmpty(staff.getPreferredName()))
+							html += "<span style=\"font-weight: bold;\">Preferred name:</span> " + staff.getPreferredName() + "<br/>";
+						if (staff.getBirthday() != null)
+							html += "<span style=\"font-weight: bold;\">Birthday:</span> " + shortDateFormat(staff.getBirthday())
+								+ " (" + staff.getBirthday().until(LocalDate.now()).getYears() + " years)<br/>";
+						if (staff.getPromotionDate() != null)
+							html += "<span style=\"font-weight: bold;\">Promotion date:</span> " + shortDateFormat(staff.getPromotionDate()) + "<br/>";
+						html += "<br/>";
+						if (!Strings.isNullOrEmpty(staff.getAbout()))
+							html += "<span style=\"font-weight: bold;\">About me:</span> " + staff.getAbout();
 
-		CompletableFuture.allOf(map.values().toArray(CompletableFuture[]::new)).thenRun(() -> {
-			for (Rank rank : map.keySet()) {
-				try {
-					for (Nerd staff : map.get(rank).get()) {
-						try {
-							String html = "";
-							if (!Strings.isNullOrEmpty(staff.getPreferredName()))
-								html += "<span style=\"font-weight: bold;\">Preferred name:</span> " + staff.getPreferredName() + "<br/>";
-							if (staff.getBirthday() != null)
-								html += "<span style=\"font-weight: bold;\">Birthday:</span> " + shortDateFormat(staff.getBirthday())
-									+ " (" + staff.getBirthday().until(LocalDate.now()).getYears() + " years)<br/>";
-							if (staff.getPromotionDate() != null)
-								html += "<span style=\"font-weight: bold;\">Promotion date:</span> " + shortDateFormat(staff.getPromotionDate()) + "<br/>";
-							html += "<br/>";
-							if (!Strings.isNullOrEmpty(staff.getAbout()))
-								html += "<span style=\"font-weight: bold;\">About me:</span> " + staff.getAbout();
-
-							File file = Paths.get("plugins/website/meetthestaff/" + staff.getUuid() + ".html").toFile();
-							if (!file.exists())
-								file.createNewFile();
-							Files.write(file.toPath(), html.getBytes(), StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
-						} catch (Exception ex) {
-							ex.printStackTrace();
-						}
+						File file = Paths.get("plugins/website/meetthestaff/" + staff.getUuid() + ".html").toFile();
+						if (!file.exists())
+							file.createNewFile();
+						Files.write(file.toPath(), html.getBytes(), StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
+					} catch (Exception ex) {
+						ex.printStackTrace();
 					}
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
 			}
 		});
 	}

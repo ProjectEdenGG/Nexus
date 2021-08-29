@@ -10,10 +10,7 @@ import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -30,16 +27,12 @@ public class StaffCommand extends CustomCommand {
 		line();
 
 		AtomicInteger total = new AtomicInteger();
-		Map<Rank, CompletableFuture<List<Nerd>>> map = new LinkedHashMap<>() {{
-			Rank.STAFF_RANKS.forEach(rank -> put(rank, rank.getNerds()));
-		}};
-
-		CompletableFuture.allOf(map.values().toArray(CompletableFuture[]::new)).thenRun(() -> {
+		Rank.getStaffNerds().thenAccept(ranks -> {
 			try {
 				List<String> messages = new ArrayList<>();
 
-				for (Rank rank : map.keySet()) {
-					final List<Nerd> nerds = map.get(rank).get();
+				for (Rank rank : ranks.keySet()) {
+					final List<Nerd> nerds = ranks.get(rank);
 					total.addAndGet(nerds.size());
 					messages.add(rank.getColoredName() + " &f(" + nerds.size() + "):&e " + nerds.stream()
 						.map(Nickname::of)
