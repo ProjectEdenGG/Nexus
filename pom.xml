@@ -238,7 +238,7 @@
         <dependency>
             <groupId>gg.projecteden</groupId>
             <artifactId>eden-api</artifactId>
-            <version>1.5.0</version>
+            <version>1.5.1</version>
         </dependency>
         <!-- Lombok Project -->
         <dependency>
@@ -285,12 +285,6 @@
             <groupId>it.sauronsoftware.cron4j</groupId>
             <artifactId>cron4j</artifactId>
             <version>2.2.5</version>
-        </dependency>
-        <!-- cron-utils -->
-        <dependency>
-            <groupId>com.cronutils</groupId>
-            <artifactId>cron-utils</artifactId>
-            <version>9.1.5</version>
         </dependency>
         <!-- Helper -->
         <dependency>

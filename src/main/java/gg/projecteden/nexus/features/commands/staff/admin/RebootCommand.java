@@ -11,6 +11,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
+import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.utils.Env;
 import gg.projecteden.utils.TimeUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -70,7 +71,7 @@ public class RebootCommand extends CustomCommand implements Listener {
 			conditions.forEach(ReloadCondition::run);
 			for (Player player : PlayerUtils.getOnlinePlayers())
 				player.kickPlayer(colorize("&6&lRebooting server!\n&eCome back in about 60 seconds\n&f\n&7" + TimeUtils.shortDateTimeFormat(LocalDateTime.now()) + " EST"));
-			BashCommand.execute("mark2 send -n " + (Nexus.getEnv() == Env.PROD ? "smp" : "test") + " ~restart");
+			Utils.bash("mark2 send -n " + (Nexus.getEnv() == Env.PROD ? "smp" : "test") + " ~restart");
 		});
 	}
 

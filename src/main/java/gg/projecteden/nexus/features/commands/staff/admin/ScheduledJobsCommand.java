@@ -1,6 +1,10 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
-import gg.projecteden.nexus.Nexus;
+import gg.projecteden.models.scheduledjobs.ScheduledJobs;
+import gg.projecteden.models.scheduledjobs.ScheduledJobsRunner;
+import gg.projecteden.models.scheduledjobs.ScheduledJobsService;
+import gg.projecteden.models.scheduledjobs.common.AbstractJob;
+import gg.projecteden.models.scheduledjobs.common.AbstractJob.JobStatus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
@@ -9,28 +13,19 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.models.scheduledjobs.ScheduledJobs;
-import gg.projecteden.nexus.models.scheduledjobs.ScheduledJobsService;
-import gg.projecteden.nexus.models.scheduledjobs.common.AbstractJob;
-import gg.projecteden.nexus.models.scheduledjobs.common.AbstractJob.JobStatus;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Data;
 import lombok.NonNull;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Parameter;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static gg.projecteden.nexus.models.scheduledjobs.common.AbstractJob.getNextExecutionTime;
 
 @Aliases("scheduledjob")
 @Permission("group.admin")
@@ -43,63 +38,7 @@ public class ScheduledJobsCommand extends CustomCommand {
 	}
 
 	static {
-		checkInterrupted();
-		processor();
-		rescheduler();
-	}
-
-	private static void checkInterrupted() {
-		try {
-			final List<AbstractJob> interrupted = new ArrayList<>(jobs.get(JobStatus.RUNNING));
-			if (!interrupted.isEmpty()) {
-				for (AbstractJob job : interrupted) {
-					if (job.canRetry()) {
-						job.setStatus(JobStatus.PENDING);
-						Nexus.warn("[Jobs] Found interrupted job, retrying: " + job);
-					} else {
-						job.setStatus(JobStatus.INTERRUPTED);
-						Nexus.severe("[Jobs] Found interrupted job: " + job);
-					}
-				}
-
-				service.save(jobs);
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-	}
-
-	private static void processor() {
-		Tasks.repeat(0, TickTime.SECOND, () -> {
-			final Set<AbstractJob> ready = jobs.getReady();
-			if (ready.isEmpty())
-				return;
-
-			for (AbstractJob job : ready)
-				job.process();
-
-			service.save(jobs);
-		});
-	}
-
-	private static void rescheduler() {
-		final Set<Class<? extends AbstractJob>> subclasses = AbstractJob.getSubclasses();
-		Tasks.repeatAsync(0, TickTime.MINUTE, () -> subclasses.forEach(clazz -> {
-			final LocalDateTime timestamp = getNextExecutionTime(clazz);
-			if (timestamp == null)
-				return;
-
-			for (AbstractJob job : jobs.get(JobStatus.PENDING, clazz))
-				if (job.getTimestamp().equals(timestamp))
-					return;
-
-			try {
-				clazz.getConstructor().newInstance().schedule(timestamp);
-			} catch (Exception ex) {
-				Nexus.severe("Error rescheduling " + clazz.getSimpleName());
-				ex.printStackTrace();
-			}
-		}));
+		ScheduledJobsRunner.start();
 	}
 
 	@Data

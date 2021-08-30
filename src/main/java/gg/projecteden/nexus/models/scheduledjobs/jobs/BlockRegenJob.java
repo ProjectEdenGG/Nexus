@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.models.scheduledjobs.jobs;
 
-import gg.projecteden.nexus.models.scheduledjobs.common.AbstractJob;
-import gg.projecteden.nexus.models.scheduledjobs.common.RetryIfInterrupted;
+import gg.projecteden.models.scheduledjobs.common.AbstractJob;
+import gg.projecteden.models.scheduledjobs.common.RetryIfInterrupted;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
