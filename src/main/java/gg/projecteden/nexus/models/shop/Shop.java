@@ -490,6 +490,10 @@ public class Shop implements PlayerOwnedObject {
 		List<String> getLore();
 		List<String> getOwnLore();
 
+		default String stockColor() {
+			return canFulfillPurchase() ? "&e" : "&c";
+		}
+
 		default void checkStock() {
 			if (!getProduct().isMarket()) {
 				if (getProduct().getCalculatedStock() <= 0)
@@ -576,7 +580,7 @@ public class Shop implements PlayerOwnedObject {
 			else
 				return Arrays.asList(
 					desc,
-					"&7Stock: " + (stock > 0 ? "&e" : "&c") + stock,
+					"&7Stock: " + stockColor() + stock,
 					"&7Owner: &e" + Nickname.of(product.getShop())
 				);
 		}
@@ -586,7 +590,7 @@ public class Shop implements PlayerOwnedObject {
 			int stock = (int) product.getStock();
 			return Arrays.asList(
 				"&7Selling &e" + product.getItem().getAmount() + " &7for &a" + prettyPrice(),
-				"&7Stock: " + (stock > 0 ? "&e" : "&c") + stock
+				"&7Stock: " + stockColor() + stock
 			);
 		}
 	}
@@ -659,7 +663,7 @@ public class Shop implements PlayerOwnedObject {
 			else
 				return Arrays.asList(
 					desc,
-					"&7Stock: " + (stock > 0 ? "&e" : "&c") + stock,
+					"&7Stock: " + stockColor() + stock,
 					"&7Owner: &e" + Nickname.of(product.getShop())
 				);
 		}
@@ -669,7 +673,7 @@ public class Shop implements PlayerOwnedObject {
 			int stock = (int) product.getStock();
 			return Arrays.asList(
 				"&7Selling &e" + product.getItem().getAmount() + " &7for &a" + prettyPrice(),
-				"&7Stock: " + (stock > 0 ? "&e" : "&c") + stock
+				"&7Stock: " + stockColor() + stock
 			);
 		}
 	}
@@ -762,7 +766,7 @@ public class Shop implements PlayerOwnedObject {
 			else
 				return Arrays.asList(
 					desc,
-					"&7Stock: &e" + prettyMoney(product.getCalculatedStock(), false),
+					"&7Stock: " + stockColor() + prettyMoney(product.getCalculatedStock(), false),
 					"&7Owner: &e" + Nickname.of(product.getShop())
 				);
 		}
@@ -771,7 +775,7 @@ public class Shop implements PlayerOwnedObject {
 		public List<String> getOwnLore() {
 			return Arrays.asList(
 				"&7Buying &e" + product.getItem().getAmount() + " &7for &a" + prettyPrice(),
-				"&7Stock: &e" + prettyMoney(product.getCalculatedStock(), false)
+				"&7Stock: " + stockColor() + prettyMoney(product.getCalculatedStock(), false)
 			);
 		}
 
