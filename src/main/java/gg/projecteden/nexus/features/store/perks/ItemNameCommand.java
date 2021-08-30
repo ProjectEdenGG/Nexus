@@ -24,6 +24,7 @@ import java.util.List;
 import static gg.projecteden.nexus.features.store.perks.ItemNameCommand.PERMISSION;
 import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.applyFormattingToAll;
+import static gg.projecteden.nexus.utils.StringUtils.decolorize;
 
 @Aliases("nameitem")
 @Permission(PERMISSION)
@@ -115,6 +116,15 @@ public class ItemNameCommand extends CustomCommand {
 			Broadcast.staff().prefix("Censor").message(message).send();
 			error("Inappropriate input");
 		}
+	}
+
+	@Path("copy")
+	void copy() {
+		final ItemStack tool = getToolRequired();
+		if (!tool.getItemMeta().hasDisplayName())
+			error("This item does not have a custom name");
+		final String displayName = tool.getItemMeta().getDisplayName();
+		send(json(PREFIX + displayName).hover("&fClick to copy").copy(decolorize(displayName)));
 	}
 
 }
