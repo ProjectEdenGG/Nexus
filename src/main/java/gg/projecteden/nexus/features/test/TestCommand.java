@@ -1,11 +1,11 @@
 package gg.projecteden.nexus.features.test;
 
+import gg.projecteden.annotations.Async;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.store.perks.NPCListener;
 import gg.projecteden.nexus.features.wither.fights.CorruptedFight.CorruptedCounterAttacks;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Async;
 import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
 import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown.Part;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;

@@ -1,10 +1,10 @@
 package gg.projecteden.nexus.features.commands.worldedit;
 
 import com.sk89q.worldedit.regions.Region;
+import gg.projecteden.annotations.Async;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Async;
 import gg.projecteden.nexus.framework.commands.models.annotations.DoubleSlash;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;

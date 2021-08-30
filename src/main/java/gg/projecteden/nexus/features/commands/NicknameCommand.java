@@ -1,12 +1,12 @@
 package gg.projecteden.nexus.features.commands;
 
+import gg.projecteden.annotations.Async;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.features.discord.ReactionVoter;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Async;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;

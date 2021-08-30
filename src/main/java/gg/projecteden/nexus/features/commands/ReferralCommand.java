@@ -1,11 +1,11 @@
 package gg.projecteden.nexus.features.commands;
 
 import com.google.common.base.Strings;
+import gg.projecteden.annotations.Async;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.BookBuilder.WrittenBookMenu;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Async;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;

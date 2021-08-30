@@ -1,10 +1,10 @@
 package gg.projecteden.nexus.features.commands.poof;
 
 import com.sk89q.worldedit.bukkit.paperlib.PaperLib;
+import gg.projecteden.annotations.Async;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Async;
 import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
 import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown.Part;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;

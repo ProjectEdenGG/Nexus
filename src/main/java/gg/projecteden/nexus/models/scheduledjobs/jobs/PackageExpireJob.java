@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.models.scheduledjobs.jobs;
 
+import gg.projecteden.annotations.Async;
 import gg.projecteden.models.scheduledjobs.common.AbstractJob;
 import gg.projecteden.models.scheduledjobs.common.RetryIfInterrupted;
 import gg.projecteden.nexus.features.store.Package;
@@ -17,6 +18,7 @@ import java.util.concurrent.CompletableFuture;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @RetryIfInterrupted
+@Async
 public class PackageExpireJob extends AbstractJob {
 	private UUID uuid;
 	private String packageId;

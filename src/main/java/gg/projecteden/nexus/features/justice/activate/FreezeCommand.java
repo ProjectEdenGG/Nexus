@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.justice.activate;
 
+import gg.projecteden.annotations.Async;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.chat.commands.ChannelCommand;
 import gg.projecteden.nexus.features.chat.commands.MessageCommand;
@@ -8,7 +9,6 @@ import gg.projecteden.nexus.features.commands.info.RulesCommand;
 import gg.projecteden.nexus.features.justice.misc._PunishmentCommand;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Async;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;

@@ -71,15 +71,18 @@ public class Nexus extends JavaPlugin {
 	@Getter
 	private Features features;
 	private static Nexus instance;
+	@Getter
+	private static Thread thread;
 	public static final LocalDateTime EPOCH = LocalDateTime.now();
 	@Getter
 	private final static HeadDatabaseAPI headAPI = new HeadDatabaseAPI();
 	public static final String DOMAIN = "projecteden.gg";
 
 	public Nexus() {
-		if (instance == null)
+		if (instance == null) {
 			instance = this;
-		else
+			thread = Thread.currentThread();
+		} else
 			Bukkit.getServer().getLogger().info("Nexus could not be initialized: Instance is not null, but is: " + instance.getClass().getName());
 
 		new API();

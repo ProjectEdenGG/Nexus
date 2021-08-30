@@ -1,10 +1,10 @@
 package gg.projecteden.nexus.features.discord;
 
+import gg.projecteden.annotations.Async;
 import gg.projecteden.nexus.features.discord.DiscordId.VoiceChannel;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Async;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;

@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.models.scheduledjobs.jobs;
 
+import gg.projecteden.annotations.Async;
 import gg.projecteden.models.scheduledjobs.common.AbstractJob;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Discord;
@@ -18,6 +19,7 @@ import java.util.concurrent.CompletableFuture;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@Async
 public class DiscordCaptchaKickJob extends AbstractJob {
 	private String memberId;
 

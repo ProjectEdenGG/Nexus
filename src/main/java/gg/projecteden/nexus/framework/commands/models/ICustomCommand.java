@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.framework.commands.models;
 
+import gg.projecteden.annotations.Async;
 import gg.projecteden.annotations.Disabled;
 import gg.projecteden.annotations.Environments;
 import gg.projecteden.interfaces.PlayerOwnedObject;
@@ -8,7 +9,6 @@ import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Async;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
 import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown.Part;

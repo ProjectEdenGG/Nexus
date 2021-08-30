@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.aeveonproject.commands;
 
+import gg.projecteden.annotations.Async;
 import gg.projecteden.nexus.features.events.aeveonproject.APUtils;
 import gg.projecteden.nexus.features.events.aeveonproject.menus.ShipColorMenu;
 import gg.projecteden.nexus.features.events.aeveonproject.sets.APSet;
@@ -7,7 +8,6 @@ import gg.projecteden.nexus.features.events.aeveonproject.sets.APSetType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Async;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
