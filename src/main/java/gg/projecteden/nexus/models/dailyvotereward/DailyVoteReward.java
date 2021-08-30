@@ -67,9 +67,12 @@ public class DailyVoteReward implements PlayerOwnedObject {
 
 			sendMessage(StringUtils.getPrefix("DailyVoteRewards") + "Your streak has &eincreased&3!");
 
-			for (VoteStreakReward reward : VoteStreakReward.values())
-				if (reward.getDay() == streak % 30)
-					Mail.fromServer(uuid, WorldGroup.SURVIVAL, "Vote Streak Reward (Day #" + streak + ")", reward.getKeys()).send();
+			if (streak % 30 == 0)
+				Mail.fromServer(uuid, WorldGroup.SURVIVAL, "Vote Streak Reward (Day #" + streak + ")", VoteStreakReward.DAY_30.getKeys()).send();
+			else
+				for (VoteStreakReward reward : VoteStreakReward.values())
+					if (reward.getDay() == streak % 30)
+						Mail.fromServer(uuid, WorldGroup.SURVIVAL, "Vote Streak Reward (Day #" + streak + ")", reward.getKeys()).send();
 		}
 
 		public void end() {
