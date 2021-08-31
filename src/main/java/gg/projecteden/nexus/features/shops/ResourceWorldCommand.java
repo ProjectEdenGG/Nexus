@@ -87,13 +87,6 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 			logger = getLogger(world());
 	}
 
-	static {
-		World survival = Bukkit.getWorld("survival");
-		World resource = Bukkit.getWorld("resource");
-		if (survival != null && resource != null)
-			resource.setMonsterSpawnLimit((int) (survival.getMonsterSpawnLimit() * 1.5));
-	}
-
 	@Path
 	void warp() {
 		runCommand("warp resource");

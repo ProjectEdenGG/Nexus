@@ -23,6 +23,13 @@ public class SpawnLimitsCommand extends CustomCommand {
 		super(event);
 	}
 
+	static {
+		World survival = Bukkit.getWorld("survival");
+		World resource = Bukkit.getWorld("resource");
+		if (survival != null && resource != null)
+			resource.setMonsterSpawnLimit((int) (survival.getMonsterSpawnLimit() * 1.5));
+	}
+
 	@Getter
 	@AllArgsConstructor
 	private enum SpawnLimitType {
@@ -67,11 +74,23 @@ public class SpawnLimitsCommand extends CustomCommand {
 	}
 
 	@Path("reset <type> [world]")
-	void set(SpawnLimitType type, @Arg("current") World world) {
+	void reset(SpawnLimitType type, @Arg("current") World world) {
 		final int before = type.getter.apply(world);
 		final int value = type.getDefaultValue();
 		type.setter.accept(world, value);
 		send(PREFIX + camelCase(type) + " spawn limit reset to " + value + getDiff(before, value));
+	}
+
+	@Path("reset allWorlds [type]")
+	void reset_all(SpawnLimitType type) {
+		for (World world : Bukkit.getWorlds())
+			if (type == null)
+				for (SpawnLimitType value : SpawnLimitType.values())
+					value.setter.accept(world, value.getDefaultValue());
+			else
+				type.setter.accept(world, type.getDefaultValue());
+
+		send(PREFIX + "All " + (type == null ? "" : camelCase(type) + " ") + "spawn limits reset");
 	}
 
 	@NotNull

@@ -185,6 +185,7 @@ public class Mailer implements PlayerOwnedObject {
 
 			getOwner().getMail(worldGroup).add(this);
 			sent = LocalDateTime.now();
+			new MailerService().save(getOwner());
 		}
 
 		public boolean hasMessage() {
