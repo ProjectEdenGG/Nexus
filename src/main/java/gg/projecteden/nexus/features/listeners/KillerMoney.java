@@ -1,22 +1,16 @@
-package gg.projecteden.nexus.features.commands;
+package gg.projecteden.nexus.features.listeners;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.boost.BoostConfig;
 import gg.projecteden.nexus.models.boost.Boostable;
-import gg.projecteden.nexus.models.killermoney.KillerMoney;
-import gg.projecteden.nexus.models.killermoney.KillerMoneyService;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.WorldGroup;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.bukkit.GameMode;
+import org.bukkit.World.Environment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -24,75 +18,57 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.jetbrains.annotations.NotNull;
 
-import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.List;
 
-@Aliases("km")
 @NoArgsConstructor
-public class KillerMoneyCommand extends CustomCommand implements Listener {
-	private static final NumberFormat formatter = NumberFormat.getCurrencyInstance();
-	private final KillerMoneyService service = new KillerMoneyService();
-	private KillerMoney km;
+public class KillerMoney implements Listener {
 
-	public KillerMoneyCommand(@NotNull CommandEvent event) {
-		super(event);
-		if (isPlayer())
-			km = service.get(player());
-	}
+	private static final List<SpawnReason> UNNATURAL_SPAWN_REASONS = List.of(
+		SpawnReason.SPAWNER,
+		SpawnReason.SPAWNER_EGG,
+		SpawnReason.NETHER_PORTAL
+	);
 
-	@Description("Toggle KillerMoney's chat notification")
-	@Path("[enable]")
-	void mute(Boolean enable) {
-		if (enable == null)
-			enable = km.isMuted();
-
-		km.setMuted(!enable);
-		service.save(km);
-
-		send(PREFIX + "Notifications have been &e" + (km.isMuted() ? "muted" : "unmuted"));
-	}
+	private static final List<DamageCause> DEATH_CAUSE_BLACKLIST = List.of(
+		DamageCause.CRAMMING,
+		DamageCause.SUFFOCATION
+	);
 
 	@EventHandler
 	public void onEntityKill(EntityDeathEvent event) {
-		KillerMoneyService kmService = new KillerMoneyService();
 		Player player = event.getEntity().getKiller();
-		if (player == null) return;
+		if (player == null)
+			return;
 
-		KillerMoney km = kmService.get(player);
-
-		if (!player.getGameMode().equals(GameMode.SURVIVAL))
+		if (!GameMode.SURVIVAL.equals(player.getGameMode()))
 			return;
 
 		if (player.getWorld().getName().contains("events"))
 			return;
 
-		if (Arrays.asList(SpawnReason.SPAWNER, SpawnReason.SPAWNER_EGG, SpawnReason.NETHER_PORTAL).contains(event.getEntity().getEntitySpawnReason()))
+		if (UNNATURAL_SPAWN_REASONS.contains(event.getEntity().getEntitySpawnReason()))
 			return;
+
 		if (event.getEntity().getLastDamageCause() != null)
-			if (Arrays.asList(DamageCause.CRAMMING, DamageCause.SUFFOCATION).contains(event.getEntity().getLastDamageCause().getCause()))
+			if (DEATH_CAUSE_BLACKLIST.contains(event.getEntity().getLastDamageCause().getCause()))
 				return;
 
-		MobMoney mob;
-		try {
-			mob = MobMoney.valueOf(event.getEntityType().name());
-		} catch (IllegalArgumentException ignore) {
+		if (event.getEntityType() == EntityType.ENDERMAN && player.getWorld().getEnvironment() == Environment.THE_END)
 			return;
-		}
 
-		if (!mob.getActiveWorlds().contains(WorldGroup.of(player.getWorld()))) return;
+		MobMoney mob = MobMoney.of(event.getEntityType().name());
+		if (mob == null)
+			return;
 
-		// TODO make this enum config driven
-		if (event.getEntityType() == EntityType.ENDERMAN && player.getWorld().getName().contains("the_end")) return;
+		if (!mob.getAllowedWorldGroups().contains(WorldGroup.of(player)))
+			return;
 
 		double boost = BoostConfig.multiplierOf(Boostable.KILLER_MONEY);
 		double money = mob.getRandomMoney() * boost;
+
 		new BankerService().deposit(player, money, ShopGroup.of(player), TransactionCause.KILLER_MONEY);
-		if (!km.isMuted())
-			send(player, "&3You killed a " + mob.name().toLowerCase().replace("_", " ") +
-					"&3 and received &e" + formatter.format(money));
 	}
 
 	@Getter
@@ -131,22 +107,28 @@ public class KillerMoneyCommand extends CustomCommand implements Listener {
 		ZOMBIE_HORSE(.5, 2.0, WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK),
 		ZOMBIE_VILLAGER(.5, 2.0, WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK);
 
+		private final double min;
+		private final double max;
+		private final List<WorldGroup> allowedWorldGroups;
 
-		double min;
-		double max;
-		List<WorldGroup> activeWorlds;
-
-		MobMoney(double min, double max, WorldGroup... activeWorlds) {
+		MobMoney(double min, double max, WorldGroup... allowedWorldGroups) {
 			this.min = min;
 			this.max = max;
-			this.activeWorlds = Arrays.asList(activeWorlds);
+			this.allowedWorldGroups = Arrays.asList(allowedWorldGroups);
 		}
 
 		double getRandomMoney() {
 			return RandomUtils.randomDouble(min, max);
 		}
 
-	}
+		public static MobMoney of(String name) {
+			try {
+				return MobMoney.valueOf(name);
+			} catch (IllegalArgumentException ignore) {
+				return null;
+			}
+		}
 
+	}
 
 }

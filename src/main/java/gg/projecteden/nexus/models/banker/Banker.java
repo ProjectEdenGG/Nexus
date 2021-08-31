@@ -13,8 +13,11 @@ import gg.projecteden.nexus.framework.exceptions.preconfigured.NegativeBalanceEx
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
+import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -138,6 +141,7 @@ public class Banker implements PlayerOwnedObject {
 			throw new NegativeBalanceException();
 
 		BigDecimal newBalance = rounded(balance);
+		BigDecimal difference = newBalance.subtract(getBalance(shopGroup));
 
 		if (new BalanceChangeEvent(uuid, getBalance(shopGroup), newBalance, shopGroup).callEvent()) {
 			TransactionsService transactionsService = new TransactionsService();
@@ -145,6 +149,29 @@ public class Banker implements PlayerOwnedObject {
 			transactions.getTransactions().add(transaction);
 			transactionsService.queueSave(5, transactions);
 			balances.put(shopGroup, newBalance);
+
+			updateActionBar(difference);
+		}
+	}
+
+	private transient BigDecimal profit = new BigDecimal(0);
+	private transient int taskId = 0;
+
+	private void updateActionBar(BigDecimal change) {
+		try {
+			if (profit == null)
+				profit = new BigDecimal(0);
+
+			profit = profit.add(change);
+
+			if (profit.signum() != 0) {
+				Tasks.cancel(taskId);
+				final String message = (profit.signum() > 0 ? "&a+" : "&c-") + prettyMoney(profit);
+				ActionBarUtils.sendActionBar(getOnlinePlayer(), message);
+				taskId = Tasks.wait(TickTime.SECOND.x(3.5), () -> profit = new BigDecimal(0));
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 	}
 

@@ -24,7 +24,6 @@ import gg.projecteden.nexus.models.tip.Tip.TipType;
 import gg.projecteden.nexus.models.tip.TipService;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.models.warps.Warps.Warp;
-import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -61,20 +60,15 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.math.BigDecimal;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static gg.projecteden.nexus.features.shops.Market.RESOURCE_WORLD_PRODUCTS;
 import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
 import static gg.projecteden.nexus.utils.WorldGroup.isResourceWorld;
-import static gg.projecteden.utils.StringUtils.prettyMoney;
 
 @NoArgsConstructor
 public class ResourceWorldCommand extends CustomCommand implements Listener {
@@ -312,21 +306,6 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 		return trySell(player, drop);
 	}
 
-	private static final Map<UUID, BigDecimal> profit = new HashMap<>();
-	private static final Map<UUID, Integer> taskIds = new HashMap<>();
-
-	private void actionBar(Player player) {
-		final UUID uuid = player.getUniqueId();
-		final BigDecimal number = profit.get(uuid);
-
-		if (number.signum() != 0) {
-			Tasks.cancel(taskIds.getOrDefault(uuid, -1));
-			ActionBarUtils.sendActionBar(player, "&a+" + prettyMoney(number));
-			final int taskId = Tasks.wait(TickTime.SECOND.x(3.5), () -> profit.put(uuid, new BigDecimal(0)));
-			taskIds.put(uuid, taskId);
-		}
-	}
-
 	private boolean trySell(Player player, ItemStack item) {
 		final Optional<Product> product = getMatchingProduct(item);
 		if (product.isEmpty())
@@ -335,15 +314,9 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 		if (!(product.get().getExchange() instanceof BuyExchange exchange))
 			throw new InvalidInputException("Cannot process resource market exchange: " + camelCase(product.get().getExchangeType()));
 
-		process(player, item, exchange);
-		actionBar(player);
+		exchange.processResourceMarket(player, item);
 
 		return true;
-	}
-
-	private void process(Player player, ItemStack item, BuyExchange exchange) {
-		BigDecimal current = profit.getOrDefault(player.getUniqueId(), new BigDecimal(0));
-		profit.put(player.getUniqueId(), current.add(exchange.processResourceMarket(player, item)));
 	}
 
 	private Optional<Product> getMatchingProduct(ItemStack item) {
