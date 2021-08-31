@@ -5,13 +5,13 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import gg.projecteden.exceptions.EdenException;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Bot;
-import gg.projecteden.nexus.features.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.features.discord.HandledBy;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.nickname.Nickname.NicknameHistoryEntry;
 import gg.projecteden.nexus.models.nickname.NicknameService;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.utils.DiscordId.TextChannel;
 
 import java.util.Arrays;
 

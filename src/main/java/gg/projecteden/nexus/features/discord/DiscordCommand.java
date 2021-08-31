@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.discord;
 
 import gg.projecteden.annotations.Async;
-import gg.projecteden.nexus.features.discord.DiscordId.VoiceChannel;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -21,6 +20,8 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.setting.Setting;
 import gg.projecteden.nexus.models.setting.SettingService;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.utils.DiscordId;
+import gg.projecteden.utils.DiscordId.VoiceChannel;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -38,8 +39,8 @@ import static gg.projecteden.nexus.features.minigames.models.mechanics.multiplay
 import static gg.projecteden.utils.TimeUtils.shortDateTimeFormat;
 
 public class DiscordCommand extends CustomCommand {
-	DiscordUserService service = new DiscordUserService();
-	DiscordUser user;
+	private final DiscordUserService service = new DiscordUserService();
+	private DiscordUser user;
 
 	public DiscordCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -91,7 +92,7 @@ public class DiscordCommand extends CustomCommand {
 	@Permission("group.seniorstaff")
 	void updateRoles() {
 		int errors = 0;
-		Role verified = DiscordId.Role.VERIFIED.get();
+		Role verified = DiscordId.Role.VERIFIED.get(Bot.KODA.jda());
 		for (DiscordUser discordUser : new DiscordUserService().getAll()) {
 			if (!isNullOrEmpty(discordUser.getUserId())) {
 				try {
@@ -236,7 +237,7 @@ public class DiscordCommand extends CustomCommand {
 		if (member == null)
 			error("Could not find you in a voice channel");
 
-		guild.moveVoiceMember(member, channel.get()).queue();
+		guild.moveVoiceMember(member, channel.get(Bot.KODA.jda())).queue();
 	}
 
 	@Path("boosts")

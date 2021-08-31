@@ -4,8 +4,6 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import gg.projecteden.exceptions.EdenException;
 import gg.projecteden.nexus.features.discord.Bot;
-import gg.projecteden.nexus.features.discord.DiscordId.Role;
-import gg.projecteden.nexus.features.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.features.discord.HandledBy;
 import gg.projecteden.nexus.features.tickets.TicketFeature;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -18,6 +16,8 @@ import gg.projecteden.nexus.models.ticket.TicketsService;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
+import gg.projecteden.utils.DiscordId.Role;
+import gg.projecteden.utils.DiscordId.TextChannel;
 import org.bukkit.OfflinePlayer;
 
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;

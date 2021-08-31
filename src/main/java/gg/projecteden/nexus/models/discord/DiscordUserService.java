@@ -2,9 +2,10 @@ package gg.projecteden.nexus.models.discord;
 
 import dev.morphia.query.Query;
 import gg.projecteden.mongodb.annotations.PlayerClass;
-import gg.projecteden.nexus.features.discord.DiscordId.Role;
+import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.MongoService;
+import gg.projecteden.utils.DiscordId.Role;
 
 import java.util.Map;
 import java.util.UUID;
@@ -21,7 +22,7 @@ public class DiscordUserService extends MongoService<DiscordUser> {
 	public DiscordUser checkVerified(String userId) {
 		DiscordUser user = getFromUserId(userId);
 
-		if (user == null || user.getUserId() == null || user.getUuid() == null || !user.getMember().getRoles().contains(Role.VERIFIED.get()))
+		if (user == null || user.getUserId() == null || user.getUuid() == null || !user.getMember().getRoles().contains(Role.VERIFIED.get(Bot.KODA.jda())))
 			throw new InvalidInputException("You must link your Discord and Minecraft accounts before using this command");
 
 		return user;

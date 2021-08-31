@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.annotations.Async;
 import gg.projecteden.nexus.features.discord.Discord;
-import gg.projecteden.nexus.features.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.features.discord.ReactionVoter;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -16,6 +15,7 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.nickname.Nickname.NicknameHistoryEntry;
 import gg.projecteden.nexus.models.nickname.NicknameService;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.utils.DiscordId.TextChannel;
 import lombok.NoArgsConstructor;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;

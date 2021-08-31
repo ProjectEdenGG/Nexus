@@ -195,10 +195,6 @@
             <url>https://repo.dmulloy2.net/nexus/repository/public/</url>
         </repository>
         <repository>
-            <id>jda-repo</id>
-            <url>https://m2.dv8tion.net/releases</url>
-        </repository>
-        <repository>
             <id>md_5-repo</id>
             <url>https://repo.md-5.net/content/groups/public/</url>
         </repository>
@@ -238,7 +234,7 @@
         <dependency>
             <groupId>gg.projecteden</groupId>
             <artifactId>eden-api</artifactId>
-            <version>1.5.3</version>
+            <version>1.5.4</version>
         </dependency>
         <!-- Lombok Project -->
         <dependency>
@@ -293,30 +289,12 @@
             <version>5.6.5</version>
             <scope>provided</scope>
         </dependency>
-        <!-- JDA -->
-        <dependency>
-            <groupId>net.dv8tion</groupId>
-            <artifactId>JDA</artifactId>
-            <version>4.2.1_255</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>club.minnced</groupId>
-                    <artifactId>opus-java</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
         <!-- JDA-Utilities -->
         <dependency>
             <groupId>com.github.JDA-Applications.JDA-Utilities</groupId>
             <artifactId>jda-utilities-command</artifactId>
             <version>804d58a5ed</version>
             <scope>compile</scope>
-        </dependency>
-        <!-- Emoji Parser -->
-        <dependency>
-            <groupId>com.vdurmont</groupId>
-            <artifactId>emoji-java</artifactId>
-            <version>5.1.1</version>
         </dependency>
         <!-- Twitter4J -->
         <dependency>

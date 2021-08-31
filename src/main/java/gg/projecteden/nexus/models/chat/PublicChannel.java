@@ -2,10 +2,10 @@ package gg.projecteden.nexus.models.chat;
 
 import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
-import gg.projecteden.nexus.features.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.utils.DiscordId.TextChannel;
 import lombok.Builder;
 import lombok.Data;
 import net.md_5.bungee.api.ChatColor;

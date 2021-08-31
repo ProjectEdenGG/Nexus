@@ -2,8 +2,6 @@ package gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.tea
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Discord;
-import gg.projecteden.nexus.features.discord.DiscordId;
-import gg.projecteden.nexus.features.discord.DiscordId.VoiceChannelCategory;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
@@ -21,6 +19,8 @@ import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.utils.DiscordId;
+import gg.projecteden.utils.DiscordId.VoiceChannelCategory;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

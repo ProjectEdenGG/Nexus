@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.chat.events;
 
+import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.ChatterService;
@@ -68,7 +69,7 @@ public class DiscordChatEvent extends ChatEvent {
 	}
 
 	public TextChannel getDiscordTextChannel() {
-		return channel.getDiscordTextChannel().get();
+		return channel.getDiscordTextChannel().get(Bot.RELAY.jda());
 	}
 
 	@Override

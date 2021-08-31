@@ -5,11 +5,11 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import gg.projecteden.exceptions.EdenException;
 import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.features.discord.Discord;
-import gg.projecteden.nexus.features.discord.DiscordId;
-import gg.projecteden.nexus.features.discord.DiscordId.Role;
 import gg.projecteden.nexus.features.discord.HandledBy;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.utils.DiscordId;
+import gg.projecteden.utils.DiscordId.Role;
 
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;

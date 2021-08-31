@@ -5,12 +5,13 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.LocalDateTimeConverter;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
-import gg.projecteden.nexus.features.discord.DiscordId.Role;
-import gg.projecteden.nexus.features.discord.DiscordId.TextChannel;
+import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.features.discord.ReactionVoter;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.HttpUtils;
+import gg.projecteden.utils.DiscordId.Role;
+import gg.projecteden.utils.DiscordId.TextChannel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -114,7 +115,7 @@ public class TwitterData implements PlayerOwnedObject {
 		}
 
 		public void tweet() {
-			TextChannel.STAFF_SOCIAL_MEDIA.get().retrieveMessageById(messageId).queue(message -> {
+			TextChannel.STAFF_SOCIAL_MEDIA.get(Bot.KODA.jda()).retrieveMessageById(messageId).queue(message -> {
 				try {
 					StatusUpdate statusUpdate = new StatusUpdate(message.getContentDisplay()
 							.replaceFirst("/twitter tweet ", "")

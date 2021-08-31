@@ -8,10 +8,10 @@ import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.features.discord.Discord;
-import gg.projecteden.nexus.features.discord.DiscordId;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.utils.DiscordId;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -121,7 +121,7 @@ public class DiscordUser implements PlayerOwnedObject {
 			return;
 
 		for (Pronoun pronoun : Pronoun.values()) {
-			final Role role = DiscordId.Role.valueOf("PRONOUN_" + pronoun.name()).get();
+			final Role role = DiscordId.Role.valueOf("PRONOUN_" + pronoun.name()).get(Bot.KODA.jda());
 
 			if (pronouns.contains(pronoun)) {
 				if (!member.getRoles().contains(role))

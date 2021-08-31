@@ -5,8 +5,6 @@ import gg.projecteden.annotations.Async;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.features.discord.Discord;
-import gg.projecteden.nexus.features.discord.DiscordId;
-import gg.projecteden.nexus.features.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
@@ -21,6 +19,8 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Utils;
+import gg.projecteden.utils.DiscordId;
+import gg.projecteden.utils.DiscordId.TextChannel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -145,7 +145,7 @@ public class BridgeCommand extends CustomCommand {
 		private final TextChannel textChannel;
 
 		protected net.dv8tion.jda.api.entities.TextChannel getTextChannel(Bot bot) {
-			return getTextChannel().get(bot);
+			return getTextChannel().get(bot.jda());
 		}
 	}
 
