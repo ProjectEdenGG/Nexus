@@ -17,6 +17,7 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.trust.Trust;
 import gg.projecteden.nexus.models.trust.Trust.Type;
 import gg.projecteden.nexus.models.trust.TrustService;
+import gg.projecteden.nexus.utils.Name;
 import lombok.NonNull;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -65,7 +66,7 @@ public class TrustCommand extends CustomCommand {
 	void home(Home home, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		players.forEach(home::allow);
 		new HomeService().save(home.getOwner());
-		send(PREFIX + "Trusted &e" + names(players, "&3, &e") + " &3to home &e" + home.getName());
+		send(PREFIX + "Trusted &e" + nicknames(players, "&3, &e") + " &3to home &e" + home.getName());
 	}
 
 	@Description("Allow specified player(s) to all locks")
@@ -125,12 +126,17 @@ public class TrustCommand extends CustomCommand {
 			players.forEach(player -> trust.get(type).add(player.getUniqueId()));
 		service.save(trust);
 		String typeNames = Arrays.stream(types).map(Type::camelCase).collect(Collectors.joining("&3, &e"));
-		send(PREFIX + "Trusted &e" + names(players, "&3, &e") + " &3to &e" + typeNames);
+		send(PREFIX + "Trusted &e" + nicknames(players, "&3, &e") + " &3to &e" + typeNames);
+	}
+
+	@NotNull
+	private String nicknames(List<OfflinePlayer> players, String separator) {
+		return players.stream().map(Nickname::of).collect(Collectors.joining(separator));
 	}
 
 	@NotNull
 	private String names(List<OfflinePlayer> players, String separator) {
-		return players.stream().map(Nickname::of).collect(Collectors.joining(separator));
+		return players.stream().map(Name::of).collect(Collectors.joining(separator));
 	}
 
 }
