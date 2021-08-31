@@ -47,12 +47,12 @@ public class KillerMoneyCommand extends CustomCommand implements Listener {
 	@Path("[enable]")
 	void mute(Boolean enable) {
 		if (enable == null)
-			enable = !km.isMuted();
+			enable = km.isMuted();
 
-		km.setMuted(enable);
+		km.setMuted(!enable);
 		service.save(km);
 
-		send(PREFIX + "Notifications have been &e" + ((km.isMuted()) ? "muted" : "unmuted"));
+		send(PREFIX + "Notifications have been &e" + (km.isMuted() ? "muted" : "unmuted"));
 	}
 
 	@EventHandler
