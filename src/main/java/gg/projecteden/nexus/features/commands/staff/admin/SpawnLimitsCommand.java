@@ -5,45 +5,38 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.spawnlimits.SpawnLimits;
+import gg.projecteden.nexus.models.spawnlimits.SpawnLimits.SpawnLimitType;
+import gg.projecteden.nexus.models.spawnlimits.SpawnLimitsService;
 import gg.projecteden.nexus.utils.StringUtils;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.BiConsumer;
-import java.util.function.Function;
+import static gg.projecteden.nexus.utils.StringUtils.getWorldDisplayName;
 
 @Permission("group.admin")
 public class SpawnLimitsCommand extends CustomCommand {
+	private final SpawnLimitsService service = new SpawnLimitsService();
+	private final SpawnLimits limits = service.get0();
 
 	public SpawnLimitsCommand(@NonNull CommandEvent event) {
 		super(event);
 	}
 
 	static {
+		final SpawnLimitsService service = new SpawnLimitsService();
+		final SpawnLimits limits = service.get0();
+
+		limits.getSettings().forEach((world, settings) ->
+			settings.forEach((type, value) ->
+				type.set(world, value)));
+
 		World survival = Bukkit.getWorld("survival");
 		World resource = Bukkit.getWorld("resource");
 		if (survival != null && resource != null)
 			resource.setMonsterSpawnLimit((int) (survival.getMonsterSpawnLimit() * 1.5));
-	}
-
-	@Getter
-	@AllArgsConstructor
-	private enum SpawnLimitType {
-		AMBIENT(Bukkit.getAmbientSpawnLimit(), World::getAmbientSpawnLimit, World::setAmbientSpawnLimit),
-		ANIMALS(Bukkit.getAnimalSpawnLimit(), World::getAnimalSpawnLimit, World::setAnimalSpawnLimit),
-		MONSTERS(Bukkit.getMonsterSpawnLimit(), World::getMonsterSpawnLimit, World::setMonsterSpawnLimit),
-		WATER_AMBIENT(Bukkit.getWaterAmbientSpawnLimit(), World::getWaterAmbientSpawnLimit, World::setWaterAmbientSpawnLimit),
-		WATER_ANIMALS(Bukkit.getWaterAnimalSpawnLimit(), World::getWaterAnimalSpawnLimit, World::setWaterAnimalSpawnLimit),
-		;
-
-		private final int defaultValue;
-		private final Function<World, Integer> getter;
-		private final BiConsumer<World, Integer> setter;
-
 	}
 
 	@Path("defaults")
@@ -55,10 +48,10 @@ public class SpawnLimitsCommand extends CustomCommand {
 
 	@Path("of [world]")
 	void values(@Arg("current") World world) {
-		send(PREFIX + "&3" + StringUtils.getWorldDisplayName(world));
+		send(PREFIX + "&3" + getWorldDisplayName(world));
 
 		for (SpawnLimitType type : SpawnLimitType.values()) {
-			final int value = type.getter.apply(world);
+			final int value = type.get(world);
 			final int defaultValue = type.getDefaultValue();
 			String diff = getDiff(defaultValue, value);
 
@@ -68,29 +61,63 @@ public class SpawnLimitsCommand extends CustomCommand {
 
 	@Path("set <type> <value> [world]")
 	void set(SpawnLimitType type, int value, @Arg("current") World world) {
-		final int before = type.getter.apply(world);
-		type.setter.accept(world, value);
-		send(PREFIX + camelCase(type) + " spawn limit set to " + value + getDiff(before, value));
+		final int before = type.get(world);
+		type.set(world, value);
+		send(PREFIX + getWorldDisplayName(world.getName()) + " " + camelCase(type) + " spawn limit set to " + value + getDiff(before, value));
+	}
+
+	@Path("multiply <type> <multiplier> <fromWorld> <toWorld>")
+	void multiply(SpawnLimitType type, double multiplier, World fromWorld, World toWorld) {
+		set(type, (int) (type.get(fromWorld) * multiplier), toWorld);
+	}
+
+	@Path("copy <type> <fromWorld> <toWorld>")
+	void copy(SpawnLimitType type, World fromWorld, World toWorld) {
+		set(type, type.get(fromWorld), toWorld);
 	}
 
 	@Path("reset <type> [world]")
 	void reset(SpawnLimitType type, @Arg("current") World world) {
-		final int before = type.getter.apply(world);
+		final int before = type.get(world);
 		final int value = type.getDefaultValue();
-		type.setter.accept(world, value);
-		send(PREFIX + camelCase(type) + " spawn limit reset to " + value + getDiff(before, value));
+		type.set(world, value);
+		send(PREFIX + getWorldDisplayName(world.getName()) + " " + camelCase(type) + " spawn limit reset to " + value + getDiff(before, value));
+	}
+
+	@Path("reset allTypes [world]")
+	void reset_allTypes(@Arg("current") World world) {
+		for (SpawnLimitType value : SpawnLimitType.values())
+			value.set(world, value.getDefaultValue());
+
+		send(PREFIX + "All " + getWorldDisplayName(world) + " spawn limits reset to default");
 	}
 
 	@Path("reset allWorlds [type]")
-	void reset_all(SpawnLimitType type) {
+	void reset_allWorlds(SpawnLimitType type) {
 		for (World world : Bukkit.getWorlds())
 			if (type == null)
 				for (SpawnLimitType value : SpawnLimitType.values())
-					value.setter.accept(world, value.getDefaultValue());
+					value.set(world, value.getDefaultValue());
 			else
-				type.setter.accept(world, type.getDefaultValue());
+				type.set(world, type.getDefaultValue());
 
-		send(PREFIX + "All " + (type == null ? "" : camelCase(type) + " ") + "spawn limits reset");
+		send(PREFIX + "All " + (type == null ? "" : camelCase(type) + " ") + "spawn limits reset to default");
+	}
+
+	@Path("save")
+	void save() {
+		for (World world : Bukkit.getWorlds()) {
+			var limits = this.limits.get(world);
+			for (SpawnLimitType type : SpawnLimitType.values())
+				if (type.isDefaultFor(world))
+					limits.remove(type);
+				else
+					limits.put(type, type.get(world));
+		}
+
+		service.save(limits);
+		send(PREFIX + "Saved");
+		send(service.asPrettyJson(StringUtils.getUUID0()));
 	}
 
 	@NotNull
