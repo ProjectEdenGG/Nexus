@@ -159,6 +159,9 @@ public class Banker implements PlayerOwnedObject {
 
 	private void updateActionBar(BigDecimal change) {
 		try {
+			if (!isOnline())
+				return;
+
 			if (profit == null)
 				profit = new BigDecimal(0);
 

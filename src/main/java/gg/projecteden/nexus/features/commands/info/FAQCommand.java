@@ -114,9 +114,9 @@ public class FAQCommand extends CustomCommand {
 		line();
 		send("&3There are three different types of protection. &eClick one &3for more information");
 		line();
-		send(json("&3[+] &eLand").command("/faq protect_land"));
-		send(json("&3[+] &eChests, furnaces, doors, etc").command("/faq protect_lwc"));
-		send(json("&3[+] &eHomes").command("/faq protect_homes"));
+		send(json("&3[+] &eLand").command("/faq protectLand"));
+		send(json("&3[+] &eChests, furnaces, doors, etc").command("/faq protectLWC"));
+		send(json("&3[+] &eHomes").command("/faq protectHomes"));
 		line();
 		back();
 	}
