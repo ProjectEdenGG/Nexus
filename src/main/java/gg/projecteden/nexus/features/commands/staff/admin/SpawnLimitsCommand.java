@@ -26,17 +26,25 @@ public class SpawnLimitsCommand extends CustomCommand {
 	}
 
 	static {
-		final SpawnLimitsService service = new SpawnLimitsService();
-		final SpawnLimits limits = service.get0();
+		try {
+			for (World world : Bukkit.getWorlds())
+				for (SpawnLimitType type : SpawnLimitType.values())
+					type.set(world, type.getDefaultValue());
 
-		limits.getSettings().forEach((world, settings) ->
-			settings.forEach((type, value) ->
-				type.set(world, value)));
+			final SpawnLimitsService service = new SpawnLimitsService();
+			final SpawnLimits limits = service.get0();
 
-		World survival = Bukkit.getWorld("survival");
-		World resource = Bukkit.getWorld("resource");
-		if (survival != null && resource != null)
-			resource.setMonsterSpawnLimit((int) (survival.getMonsterSpawnLimit() * 1.5));
+			limits.getSettings().forEach((world, settings) ->
+				settings.forEach((type, value) ->
+					type.set(world, value)));
+
+			World survival = Bukkit.getWorld("survival");
+			World resource = Bukkit.getWorld("resource");
+			if (survival != null && resource != null)
+				resource.setMonsterSpawnLimit((int) (survival.getMonsterSpawnLimit() * 1.5));
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	@Path("defaults")
@@ -67,7 +75,7 @@ public class SpawnLimitsCommand extends CustomCommand {
 	}
 
 	@Path("multiply <type> <multiplier> <fromWorld> <toWorld>")
-	void multiply(SpawnLimitType type, double multiplier, World fromWorld, World toWorld) {
+	void multiply(SpawnLimitType type, double multiplier, @Arg("current") World fromWorld, @Arg("current") World toWorld) {
 		set(type, (int) (type.get(fromWorld) * multiplier), toWorld);
 	}
 
@@ -82,6 +90,15 @@ public class SpawnLimitsCommand extends CustomCommand {
 		final int value = type.getDefaultValue();
 		type.set(world, value);
 		send(PREFIX + getWorldDisplayName(world.getName()) + " " + camelCase(type) + " spawn limit reset to " + value + getDiff(before, value));
+	}
+
+	@Path("reset all")
+	void reset_all() {
+		for (World world : Bukkit.getWorlds())
+			for (SpawnLimitType type : SpawnLimitType.values())
+				type.set(world, type.getDefaultValue());
+
+		send(PREFIX + "All spawn limits reset to default");
 	}
 
 	@Path("reset allTypes [world]")

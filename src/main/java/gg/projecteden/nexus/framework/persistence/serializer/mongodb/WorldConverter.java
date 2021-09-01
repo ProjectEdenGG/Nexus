@@ -6,17 +6,18 @@ import dev.morphia.mapping.MappedField;
 import dev.morphia.mapping.Mapper;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
 
 public class WorldConverter extends TypeConverter implements SimpleValueConverter {
 
 	public WorldConverter(Mapper mapper) {
-		super(World.class);
+		super(World.class, CraftWorld.class);
 	}
 
 	@Override
 	public Object encode(Object value, MappedField optionalExtraInfo) {
-		if (value == null) return null;
-		return ((World) value).getName();
+		if (!(value instanceof World world)) return null;
+		return world.getName();
 	}
 
 	@Override
