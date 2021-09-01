@@ -56,7 +56,7 @@ public class DailyRewardsCommand extends CustomCommand {
 	@Path("today [player]")
 	void today(@Arg("self") DailyRewardUser user) {
 		boolean earnedToday = user.getCurrentStreak().isEarnedToday();
-		send(PREFIX + (isSelf(user) ? "You have" : user.getNickname() + " has") + (earnedToday ? "&e" : "&cnot ") + "earned &3today's reward");
+		send(PREFIX + (isSelf(user) ? "You have " : user.getNickname() + " has ") + (earnedToday ? "&e" : "&cnot ") + "earned &3today's reward");
 	}
 
 	@Path("unclaim <player> <day>")
