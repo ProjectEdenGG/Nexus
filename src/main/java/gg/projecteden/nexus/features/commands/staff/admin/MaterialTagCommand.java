@@ -22,7 +22,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
@@ -39,7 +38,7 @@ public class MaterialTagCommand extends CustomCommand {
 
 	@Path("find <material>")
 	void materialTag(Material material) {
-		send(PREFIX + "Applicable tags: " + String.join(", ", MaterialTag.getApplicable(material).keySet()));
+		send(PREFIX + "Applicable tags: &e" + String.join("&3, &e", MaterialTag.getApplicable(material).keySet()));
 	}
 
 	@ConverterFor(Tag.class)
@@ -52,9 +51,9 @@ public class MaterialTagCommand extends CustomCommand {
 	@TabCompleterFor(Tag.class)
 	List<String> tabCompleteMaterialTag(String filter) {
 		return MaterialTag.getTags().keySet().stream()
-				.filter(tagName -> tagName.toLowerCase().startsWith(filter.toLowerCase()))
-				.map(String::toLowerCase)
-				.collect(Collectors.toList());
+			.map(String::toLowerCase)
+			.filter(s -> s.startsWith(filter.toLowerCase()))
+			.toList();
 	}
 
 	public static class MaterialTagMaterialsMenu extends MenuUtils implements InventoryProvider {
