@@ -79,48 +79,46 @@ public class Nameplates extends Feature implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void on(PlayerJoinEvent event) {
+		System.out.println("on PlayerJoinEvent(" + event.getPlayer().getName() + ")");
 		Player player = event.getPlayer();
 		if (manageTeams)
 			team.addEntry(player.getName());
 
-		Tasks.waitAsync(10, () -> {
-			fakeEntityManager.spawnFakeEntityForSelf(player);
-			fakeEntityManager.updateFakeEntityAroundPlayer(player);
-		});
+		Tasks.waitAsync(10, () -> fakeEntityManager.updateFakeEntityAroundPlayer(player));
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void on(PlayerQuitEvent event) {
+		System.out.println("on PlayerQuitEvent(" + event.getPlayer().getName() + ")");
 		Player player = event.getPlayer();
 		fakeEntityManager.removeFakeEntityAroundPlayer(player);
-		fakeEntityManager.removeFromCache(player);
+		fakeEntityManager.removeManagerOf(player);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void on(PlayerKickEvent event) {
+		System.out.println("on PlayerKickEvent(" + event.getPlayer().getName() + ")");
 		Player player = event.getPlayer();
 		fakeEntityManager.removeFakeEntityAroundPlayer(player);
-		fakeEntityManager.removeFromCache(player);
+		fakeEntityManager.removeManagerOf(player);
+	}
+
+	private void update(Player player) {
+		fakeEntityManager.removeFakeEntityAroundPlayer(player);
+		Tasks.waitAsync(10, () ->
+			fakeEntityManager.updateFakeEntityAroundPlayer(player));
 	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void on(PlayerTeleportEvent event) {
-		Player player = event.getPlayer();
-		fakeEntityManager.removeFakeEntityAroundPlayer(player);
-		Tasks.waitAsync(10, () -> {
-			fakeEntityManager.spawnFakeEntityForSelf(player);
-			fakeEntityManager.updateFakeEntityAroundPlayer(player);
-		});
+		System.out.println("on PlayerTeleportEvent(" + event.getPlayer().getName() + ")");
+		update(event.getPlayer());
 	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void on(PlayerGameModeChangeEvent event) {
-		Player player = event.getPlayer();
-		fakeEntityManager.removeFakeEntityAroundPlayer(player);
-		Tasks.waitAsync(10, () -> {
-			fakeEntityManager.spawnFakeEntityForSelf(player);
-			fakeEntityManager.updateFakeEntityAroundPlayer(player);
-		});
+		System.out.println("on PlayerGameModeChangeEvent(" + event.getPlayer().getName() + ")");
+		update(event.getPlayer());
 	}
 
 }

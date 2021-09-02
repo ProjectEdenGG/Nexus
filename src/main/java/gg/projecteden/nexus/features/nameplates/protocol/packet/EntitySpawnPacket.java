@@ -2,19 +2,22 @@ package gg.projecteden.nexus.features.nameplates.protocol.packet;
 
 import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.events.PacketContainer;
+import gg.projecteden.nexus.features.nameplates.protocol.packet.common.NameplatePacket;
+import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class EntitySpawnPacket {
+public class EntitySpawnPacket extends NameplatePacket {
 	public static int ENTITY_ID_COUNTER = 32333;
-	private final PacketContainer packet;
+
+	@Getter
 	private final int entityId;
 
 	public EntitySpawnPacket(int var1) {
-		this.packet = new PacketContainer(Server.SPAWN_ENTITY);
+		super(new PacketContainer(Server.SPAWN_ENTITY));
 		this.packet.getModifier().writeDefaults();
 		this.packet.getEntityTypeModifier().write(0, EntityType.AREA_EFFECT_CLOUD);
 		this.packet.getUUIDs().write(0, UUID.randomUUID());
@@ -26,12 +29,5 @@ public class EntitySpawnPacket {
 		this.packet.getDoubles().write(0, var1.getX()).write(1, var1.getY()).write(2, var1.getZ());
 	}
 
-	public PacketContainer getPacket() {
-		return this.packet;
-	}
-
-	public int getEntityId() {
-		return this.entityId;
-	}
 }
 

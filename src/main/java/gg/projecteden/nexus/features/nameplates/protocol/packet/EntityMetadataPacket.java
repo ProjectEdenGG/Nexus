@@ -6,18 +6,18 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
+import gg.projecteden.nexus.features.nameplates.protocol.packet.common.NameplatePacket;
 
 import java.util.Optional;
 
-public class EntityMetadataPacket {
-	private final PacketContainer packet;
+public class EntityMetadataPacket extends NameplatePacket {
 	private final WrappedDataWatcher watcher;
 	private final WrappedDataWatcherObject entityNameObject = new WrappedDataWatcherObject(2, Registry.getChatComponentSerializer(true));
 	private final WrappedDataWatcherObject displayNameObject = new WrappedDataWatcherObject(3, Registry.get(Boolean.class));
 	private final WrappedDataWatcherObject radiusObject = new WrappedDataWatcherObject(8, Registry.get(Float.class));
 
 	public EntityMetadataPacket(int entityId) {
-		this.packet = new PacketContainer(Server.ENTITY_METADATA);
+		super(new PacketContainer(Server.ENTITY_METADATA));
 		this.packet.getModifier().writeDefaults();
 		this.packet.getIntegers().write(0, entityId);
 		this.watcher = new WrappedDataWatcher();
@@ -48,7 +48,4 @@ public class EntityMetadataPacket {
 		this.updateCollection();
 	}
 
-	public PacketContainer getPacket() {
-		return this.packet;
-	}
 }
