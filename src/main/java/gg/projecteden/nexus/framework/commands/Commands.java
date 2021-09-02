@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.framework.commands;
 
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.ICustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
@@ -10,7 +11,6 @@ import gg.projecteden.nexus.utils.Timer;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.Getter;
 import org.bukkit.plugin.Plugin;
-import org.objenesis.ObjenesisStd;
 import org.reflections.Reflections;
 
 import java.lang.reflect.Method;
@@ -81,7 +81,7 @@ public class Commands {
 		for (Class<? extends CustomCommand> clazz : customCommands)
 			try {
 				if (Utils.canEnable(clazz))
-					register(new ObjenesisStd().newInstance(clazz));
+					register(Nexus.singletonOf(clazz));
 			} catch (Throwable ex) {
 				plugin.getLogger().info("Error while registering command " + prettyName(clazz));
 				ex.printStackTrace();
@@ -101,7 +101,9 @@ public class Commands {
 				for (String alias : customCommand.getAllAliases()) {
 					mapUtils.register(alias, customCommand);
 
-					if (customCommand.getClass().getAnnotation(DoubleSlash.class) != null) alias = "/" + alias;
+					if (customCommand.getClass().getAnnotation(DoubleSlash.class) != null)
+						alias = "/" + alias;
+
 					commands.put(alias.toLowerCase(), customCommand);
 				}
 			} catch (Exception ex) {
@@ -125,7 +127,7 @@ public class Commands {
 
 	public void unregister(Class<? extends CustomCommand>... customCommands) {
 		for (Class<? extends CustomCommand> clazz : customCommands)
-			unregister(new ObjenesisStd().newInstance(clazz));
+			unregister(Nexus.singletonOf(clazz));
 	}
 
 	public void unregisterExcept(Class<? extends CustomCommand>... customCommands) {

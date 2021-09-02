@@ -45,9 +45,11 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.objenesis.ObjenesisStd;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -57,8 +59,10 @@ import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import static gg.projecteden.utils.TimeUtils.shortDateTimeFormat;
 import static gg.projecteden.utils.TimeUtils.shortTimeFormat;
@@ -77,6 +81,18 @@ public class Nexus extends JavaPlugin {
 	@Getter
 	private final static HeadDatabaseAPI headAPI = new HeadDatabaseAPI();
 	public static final String DOMAIN = "projecteden.gg";
+
+	public static Map<Class<?>, Object> singletons = new HashMap<>();
+
+	public static <T> T singletonOf(Class<T> clazz) {
+		return (T) singletons.computeIfAbsent(clazz, $ -> {
+			try {
+				return clazz.getConstructor().newInstance();
+			} catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException ex) {
+				return new ObjenesisStd().newInstance(clazz);
+			}
+		});
+	}
 
 	public Nexus() {
 		if (instance == null) {

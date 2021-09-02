@@ -315,7 +315,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 	@Path("stats")
 	void stats() {
-		send("Features: " + Features.getFeatures().size());
+		send("Features: " + Features.getRegistered().size());
 		send("Commands: " + new HashSet<>(Commands.getCommands().values()).size());
 		send("Listeners: " + Nexus.getListeners().size());
 		send("Temporary Listeners: " + Nexus.getTemporaryListeners().size());

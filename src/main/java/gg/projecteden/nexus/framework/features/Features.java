@@ -1,12 +1,12 @@
 package gg.projecteden.nexus.framework.features;
 
 import gg.projecteden.annotations.Disabled;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.utils.Timer;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.Getter;
 import org.bukkit.plugin.Plugin;
-import org.objenesis.ObjenesisStd;
 import org.reflections.Reflections;
 
 import java.lang.reflect.Modifier;
@@ -22,7 +22,7 @@ public class Features {
 	private final Plugin plugin;
 	private final Set<Class<? extends Feature>> featureSet;
 	@Getter
-	private final static Map<Class<? extends Feature>, Feature> features = new HashMap<>();
+	private final static Map<Class<? extends Feature>, Feature> registered = new HashMap<>();
 
 	public Features(Plugin plugin, String path) {
 		this.plugin = plugin;
@@ -30,7 +30,7 @@ public class Features {
 	}
 
 	public static <T extends Feature> T get(Class<T> clazz) {
-		return (T) Optional.of(features.get(clazz)).orElseThrow(() -> new NexusException("Feature " + prettyName(clazz) + " not found"));
+		return (T) Optional.of(registered.get(clazz)).orElseThrow(() -> new NexusException("Feature " + prettyName(clazz) + " not found"));
 	}
 
 	public static String prettyName(Feature feature) {
@@ -41,6 +41,10 @@ public class Features {
 		return clazz.getSimpleName().replaceAll("Feature$", "");
 	}
 
+	public static boolean isRegistered(Class<? extends Feature> clazz) {
+		return registered.containsKey(clazz);
+	}
+
 	public void registerAll() {
 		featureSet.forEach(this::register);
 	}
@@ -48,8 +52,11 @@ public class Features {
 	public void register(Class<? extends Feature>... features) {
 		for (Class<? extends Feature> clazz : features)
 			try {
+				if (isRegistered(clazz))
+					continue;
+
 				if (Utils.canEnable(clazz))
-					register(new ObjenesisStd().newInstance(clazz));
+					register(Nexus.singletonOf(clazz));
 			} catch (Throwable ex) {
 				plugin.getLogger().info("Error while registering feature " + prettyName(clazz));
 				ex.printStackTrace();
@@ -64,19 +71,23 @@ public class Features {
 	}
 
 	public void register(Feature feature) {
-		if (features.containsKey(feature.getClass()))
-			// Already registered
+		final Class<? extends Feature> clazz = feature.getClass();
+
+		if (isRegistered(clazz))
 			return;
 
-		final Depends depends = feature.getClass().getAnnotation(Depends.class);
+		final Depends depends = clazz.getAnnotation(Depends.class);
 		if (depends != null)
 			register(depends.value());
+
+		if (isRegistered(clazz))
+			return;
 
 		new Timer("  Register feature " + feature.getName(), () -> {
 			try {
 				feature.onStart();
 				Utils.tryRegisterListener(feature);
-				features.put(feature.getClass(), feature);
+				registered.put(clazz, feature);
 			} catch (Exception ex) {
 				plugin.getLogger().info("Error while registering feature " + feature.getName());
 				ex.printStackTrace();
@@ -92,8 +103,8 @@ public class Features {
 
 	public void unregister(Class<? extends Feature>... features) {
 		for (Class<? extends Feature> clazz : features)
-			if (Features.features.containsKey(clazz))
-				unregister(Features.features.get(clazz));
+			if (isRegistered(clazz))
+				unregister(Features.registered.get(clazz));
 			else if (clazz.getAnnotation(Disabled.class) == null)
 				plugin.getLogger().severe("Cannot unregister feature " + prettyName(clazz) + " because it was never registered");
 	}
@@ -113,7 +124,7 @@ public class Features {
 				plugin.getLogger().info("Error while unregistering feature " + feature.getName());
 				ex.printStackTrace();
 			}
-			features.remove(feature.getClass());
+			registered.remove(feature.getClass());
 		});
 	}
 

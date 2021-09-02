@@ -19,7 +19,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.InventoryView;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.objenesis.ObjenesisStd;
 import org.reflections.Reflections;
 
 import java.lang.annotation.ElementType;
@@ -52,7 +51,7 @@ public class Utils extends gg.projecteden.utils.Utils {
 
 	public static void tryRegisterListener(Class<?> clazz) {
 		if (canEnable(clazz))
-			tryRegisterListener(new ObjenesisStd().newInstance(clazz));
+			tryRegisterListener(Nexus.singletonOf(clazz));
 	}
 
 	public static void tryRegisterListener(Object object) {
@@ -64,7 +63,7 @@ public class Utils extends gg.projecteden.utils.Utils {
 			boolean hasNoArgsConstructor = Stream.of(clazz.getConstructors()).anyMatch(c -> c.getParameterCount() == 0);
 			if (object instanceof Listener listener) {
 				if (hasNoArgsConstructor)
-					Nexus.registerListener(listener.getClass().newInstance());
+					Nexus.registerListener(listener);
 				else
 					Nexus.warn("Cannot register listener on " + clazz.getSimpleName() + ", needs @NoArgsConstructor");
 			} else if (new ArrayList<>(getAllMethods(clazz, withAnnotation(EventHandler.class))).size() > 0)
