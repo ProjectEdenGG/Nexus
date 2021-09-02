@@ -4,7 +4,6 @@ import gg.projecteden.nexus.features.chat.events.MinecraftChatEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
-import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown.Part;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.afk.AFKUser;
@@ -40,7 +39,7 @@ public class AFKCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("[autoreply...]")
-	@Cooldown(@Part(value = TickTime.SECOND, x = 5))
+	@Cooldown(value = TickTime.SECOND, x = 5)
 	void afk(String autoreply) {
 		AFKUser user = AFK.get(player());
 

@@ -11,7 +11,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
-import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown.Part;
 import gg.projecteden.nexus.framework.commands.models.annotations.Fallback;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
@@ -541,9 +540,7 @@ public abstract class ICustomCommand {
 				bypass = true;
 
 			if (!bypass) {
-				int ticks = 0;
-				for (Part part : cooldown.value())
-					ticks += part.value().get() * part.x();
+				int ticks = cooldown.value().x(cooldown.x());
 
 				CooldownService service = new CooldownService();
 				UUID uuid = cooldown.global() ? StringUtils.getUUID0() : ((Player) command.getEvent().getSender()).getUniqueId();

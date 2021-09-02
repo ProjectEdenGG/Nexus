@@ -6,7 +6,6 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
-import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown.Part;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.lwc.LWCProtection;
@@ -40,7 +39,7 @@ public class RandomTeleportCommand extends CustomCommand {
 
 	@Path
 	@Async
-	@Cooldown(value = @Part(value = TickTime.SECOND, x = 30), bypass = "group.admin")
+	@Cooldown(value = TickTime.SECOND, x = 30, bypass = "group.admin")
 	void rtp() {
 		final World world = world().getName().equalsIgnoreCase("world") ? Objects.requireNonNull(Bukkit.getWorld("survival")) : world();
 

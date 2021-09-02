@@ -7,7 +7,6 @@ import gg.projecteden.nexus.features.wither.fights.CorruptedFight.CorruptedCount
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
-import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown.Part;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
@@ -249,10 +248,7 @@ public class TestCommand extends CustomCommand implements Listener {
 
 	@Description("A command with a 5.75s cooldown")
 	@Path("cooldown")
-	@Cooldown({
-		@Part(value = TickTime.SECOND, x = 5),
-		@Part(value = TickTime.TICK, x = 15)
-	})
+	@Cooldown(value = TickTime.SECOND, x = 5.75)
 	void cooldown() {
 		send("Hello!");
 	}

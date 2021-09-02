@@ -5,7 +5,6 @@ import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
-import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown.Part;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -40,7 +39,7 @@ public class TicketCommand extends CustomCommand {
 		send("&3Please be &epatient&3, as staff can be very busy!");
 	}
 
-	@Cooldown(@Part(TickTime.MINUTE))
+	@Cooldown(TickTime.MINUTE)
 	@Path("<description...>")
 	void ticket(String description) {
 		if (Arrays.asList("help", "info", "pls", "plz", "please").contains(description))

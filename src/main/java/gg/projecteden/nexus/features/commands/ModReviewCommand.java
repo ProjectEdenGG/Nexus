@@ -7,7 +7,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
-import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown.Part;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
@@ -83,7 +82,7 @@ public class ModReviewCommand extends CustomCommand implements Listener {
 			send(PREFIX + "&3If your mod is not on this list, request it to be reviewed with &c/modreview request <name> [notes...]");
 	}
 
-	@Cooldown(@Part(value = TickTime.SECOND, x = 30))
+	@Cooldown(value = TickTime.SECOND, x = 30)
 	@Path("request <name> [notes...]")
 	@Description("Request a mod to be reviewed by the staff team")
 	void request(String name, String notes) {

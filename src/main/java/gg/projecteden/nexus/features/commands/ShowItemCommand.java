@@ -6,7 +6,6 @@ import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
-import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown.Part;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -61,7 +60,7 @@ public class ShowItemCommand extends CustomCommand {
 	}
 
 	@Path("<hand|offhand|helmet|chestplate|leggings|boots> [message...]")
-	@Cooldown(value = @Part(TickTime.MINUTE), bypass = "group.admin")
+	@Cooldown(value = TickTime.MINUTE, bypass = "group.admin")
 	void run(String slot, String message) {
 		Player player = player();
 		ItemStack item = getItem(player, slot);

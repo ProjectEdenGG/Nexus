@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.commands.staff;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
-import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown.Part;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -18,7 +17,7 @@ public class GriefProtectionInfoCommand extends CustomCommand {
 	}
 
 	@Path
-	@Cooldown(global = true, value = @Part(value = TickTime.SECOND, x = 30))
+	@Cooldown(global = true, value = TickTime.SECOND, x = 30)
 	void info() {
 		String message = "Grief is not allowed, and staff will repair any grief you find.";
 		runCommand("ch qm g " + message);

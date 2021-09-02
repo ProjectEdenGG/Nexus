@@ -12,8 +12,6 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.warps.WarpType;
 
 @Redirect(from = "/survival", to = "/warp survival")
-@Redirect(from = "/plaza", to = "/warp plaza")
-@Redirect(from = "/mall", to = "/warp mall")
 @Redirect(from = {"/shub", "/shophub"}, to = "/warp shub")
 @Redirect(from = "/creative", to = "/warp creative")
 @Redirect(from = "/skyblock", to = "/warp skyblock")

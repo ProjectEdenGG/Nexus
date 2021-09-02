@@ -10,7 +10,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
-import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown.Part;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.DescriptionExtra;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
@@ -128,9 +127,7 @@ public class CommandsConfig implements PlayerOwnedObject {
 			Cooldown cooldown = clazz.getAnnotation(Cooldown.class);
 			this.cooldown = 0;
 			if (cooldown != null) {
-				for (Part part : cooldown.value())
-					this.cooldown += part.value().get() * part.x();
-
+				this.cooldown = cooldown.value().x(cooldown.x());
 				this.cooldownGlobal = cooldown.global();
 				this.cooldownBypass = cooldown.bypass();
 			}
@@ -180,9 +177,7 @@ public class CommandsConfig implements PlayerOwnedObject {
 				Cooldown cooldown = method.getAnnotation(Cooldown.class);
 				this.cooldown = 0;
 				if (cooldown != null) {
-					for (Part part : cooldown.value())
-						this.cooldown += part.value().get() * part.x();
-
+					this.cooldown = cooldown.value().x(cooldown.x());
 					this.cooldownGlobal = cooldown.global();
 					this.cooldownBypass = cooldown.bypass();
 				}

@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.commands;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
-import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown.Part;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
@@ -19,7 +18,7 @@ import org.bukkit.entity.Player;
 import java.util.List;
 
 @Description("Boop")
-@Cooldown(value = @Part(value = TickTime.SECOND, x = 5), bypass = "group.admin")
+@Cooldown(value = TickTime.SECOND, x = 5, bypass = "group.admin")
 public class BoopCommand extends CustomCommand {
 
 	public BoopCommand(CommandEvent event) {

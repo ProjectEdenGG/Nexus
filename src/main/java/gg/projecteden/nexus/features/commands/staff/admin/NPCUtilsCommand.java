@@ -54,7 +54,7 @@ public class NPCUtilsCommand extends CustomCommand {
 
 	@Async
 	@Path("list [page] [--owner] [--world] [--radius] [--spawned]")
-	void getByOwner(@Arg("1") int page, @Switch OfflinePlayer owner, @Switch World world, @Switch Integer radius, @Switch Boolean spawned) {
+	void list(@Arg("1") int page, @Switch OfflinePlayer owner, @Switch World world, @Switch Integer radius, @Switch Boolean spawned) {
 		List<NPC> npcs = NPCFinder.builder()
 				.owner(owner)
 				.world(world)
