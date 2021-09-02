@@ -39,7 +39,7 @@ import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
+import java.awt.Color;
 import java.io.File;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
@@ -191,27 +191,6 @@ public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwned
 		if (LuckPermsUtils.hasPermission(uuid, "donated") && checkmark)
 			prefix = CHECK + " " + prefix;
 		return colorize((prefix.trim() + " " + (getRank().getChatColor() + Nickname.of(this)).trim())).trim();
-	}
-
-	@ToString.Include
-	public String getNameplateFormat() {
-		if (isKoda())
-			return Koda.getColoredName();
-
-		Rank rank = getRank();
-		String prefix = this.prefix;
-		if (isNullOrEmpty(prefix))
-			if (rank.hasPrefix())
-				prefix = rank.getSimilarChatColor() + rank.getName();
-			else
-				prefix = "";
-
-		if (!isNullOrEmpty(prefix))
-			prefix = "&8&l[&f" + prefix + "&8&l]";
-
-		if (LuckPermsUtils.hasPermission(uuid, "donated") && checkmark)
-			prefix = CHECK + " " + prefix;
-		return colorize((prefix.trim() + " " + (getRank().getSimilarChatColor() + Nickname.of(this)).trim())).trim();
 	}
 
 	@ToString.Include
