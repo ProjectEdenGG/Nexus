@@ -34,14 +34,12 @@ public class FakeEntityManager extends Feature {
 
 	@Override
 	public void onStart() {
-		System.out.println("FakeEntityManager#onStart");
 		plugin.getServer().getOnlinePlayers().forEach(this::addPlayer);
 		plugin.getServer().getOnlinePlayers().forEach(this::spawnFakeEntityAroundPlayer);
 	}
 
 	@Override
 	public void onStop() {
-		System.out.println("FakeEntityManager#onStop");
 		plugin.getServer().getOnlinePlayers().forEach(this::removeFakeEntityAroundPlayer);
 	}
 

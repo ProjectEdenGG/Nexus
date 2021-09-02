@@ -25,7 +25,6 @@ public class ProtocolManager extends Feature {
 
 	@Override
 	public void onStart() {
-		System.out.println("ProtocolManager#onStart");
 		this.spawnPacketListener = new PlayerSpawnPacketListener();
 		this.scoreboardPacketListener = new ScoreboardTeamPacketListener();
 		this.protocolManager.addPacketListener(this.spawnPacketListener);
@@ -34,7 +33,6 @@ public class ProtocolManager extends Feature {
 
 	@Override
 	public void onStop() {
-		System.out.println("ProtocolManager#onStop");
 		this.protocolManager.removePacketListener(this.spawnPacketListener);
 		this.protocolManager.removePacketListener(this.scoreboardPacketListener);
 	}

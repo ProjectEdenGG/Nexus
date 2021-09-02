@@ -27,7 +27,6 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.scoreboard.Team.Option;
 import org.bukkit.scoreboard.Team.OptionStatus;
-import org.jetbrains.annotations.NotNull;
 
 @Getter
 @Environments({Env.DEV, Env.TEST})
@@ -64,6 +63,18 @@ public class Nameplates extends Feature implements Listener {
 
 	public static Nameplates get() {
 		return Features.get(Nameplates.class);
+	}
+
+	public static String of(Player player, Player viewer) {
+		final Minigamer minigamer = PlayerManager.get(player);
+		String nameplate = Nerd.of(player).getChatFormat();
+
+		if (minigamer.isPlaying())
+			nameplate = minigamer.getColoredName();
+
+		nameplate = Tab.addStateTags(player, nameplate);
+
+		return new JsonBuilder(nameplate).serialize();
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
@@ -106,29 +117,4 @@ public class Nameplates extends Feature implements Listener {
 		Tasks.waitAsync(10, () -> fakeEntityManager.spawnFakeEntityForSelf(player));
 	}
 
-	public static String of(Player player, Player viewer) {
-		final Minigamer minigamer = PlayerManager.get(player);
-		String nameplate = Nerd.of(player).getChatFormat();
-
-		if (minigamer.isPlaying())
-			nameplate = minigamer.getColoredName();
-
-		nameplate = Tab.addStateTags(player, nameplate);
-
-		return new JsonBuilder(nameplate).serialize();
-	}
-
-	public static String jsonFormatSimple(@NotNull String text) {
-		return "{\"text\":\"" + text + "\",\"font\":\"minecraft:default\"}";
-	}
-
-	public static String jsonArray(@NotNull String... texts) {
-		StringBuilder builder = new StringBuilder("[");
-
-		for (String text : texts)
-			builder.append(text).append(",");
-
-		builder.deleteCharAt(builder.length() - 1).append("]");
-		return builder.toString();
-	}
 }
