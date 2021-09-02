@@ -14,27 +14,24 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.utils.Env;
 import kotlin.Pair;
 import lombok.NoArgsConstructor;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 @NoArgsConstructor
 @Depends({Nameplates.class, ProtocolManager.class})
 @Environments({Env.DEV, Env.TEST})
 public class FakeEntityManager extends Feature {
 	private final Nexus plugin = Nexus.getInstance();
-	private final Map<UUID, Pair<EntitySpawnPacket, EntityMetadataPacket>> playerMap = new HashMap<>();
+	private final Map<UUID, Pair<EntitySpawnPacket, EntityMetadataPacket>> players = new HashMap<>();
 	private final NameplateUserService service = new NameplateUserService();
 
 	@Override
 	public void onStart() {
-		plugin.getServer().getOnlinePlayers().forEach(this::addPlayer);
 		plugin.getServer().getOnlinePlayers().forEach(this::spawnFakeEntityAroundPlayer);
 	}
 
@@ -43,132 +40,100 @@ public class FakeEntityManager extends Feature {
 		plugin.getServer().getOnlinePlayers().forEach(this::removeFakeEntityAroundPlayer);
 	}
 
-	private boolean isManaging(@NotNull Player player) {
-		return isManaging(player.getUniqueId());
-	}
-
-	private boolean isManaging(@NotNull UUID uuid) {
-		return playerMap.containsKey(uuid);
-	}
-
-	public void addPlayer(@NotNull UUID uuid, @NotNull Location location) {
-		if (isManaging(uuid)) {
-			playerMap.get(uuid).getFirst().writeLocation(location);
-		} else {
+	@NotNull
+	public Pair<EntitySpawnPacket, EntityMetadataPacket> getPackets(@NotNull UUID uuid) {
+		return players.computeIfAbsent(uuid, $ -> {
 			EntitySpawnPacket entitySpawnPacket = new EntitySpawnPacket(EntitySpawnPacket.ENTITY_ID_COUNTER++);
 			EntityMetadataPacket entityMetadataPacket = new EntityMetadataPacket(entitySpawnPacket.getEntityId());
-			entitySpawnPacket.writeLocation(location);
-			playerMap.put(uuid, new Pair<>(entitySpawnPacket, entityMetadataPacket));
-		}
-
+			return new Pair<>(entitySpawnPacket, entityMetadataPacket);
+		});
 	}
 
-	public void addPlayer(@NotNull Player player) {
-		addPlayer(player.getUniqueId(), player.getLocation());
-	}
-
-	@NotNull
-	public Optional<Pair<EntitySpawnPacket, EntityMetadataPacket>> getPlayer(@NotNull UUID uuid) {
-		return Optional.ofNullable(playerMap.getOrDefault(uuid, null));
-	}
-
-	public void spawnFakeEntityForSelf(@NotNull Player player) {
-		if (service.get(player).isViewOwnNameplate())
-			spawnFakeEntity(player, player);
+	public void spawnFakeEntityForSelf(@NotNull Player holder) {
+		if (service.get(holder).isViewOwnNameplate())
+			spawnFakeEntity(holder, holder);
 	}
 
 	public void spawnFakeEntity(@NotNull Player holder, @NotNull Player viewer) {
-		if (!isManaging(holder))
-			return;
-
+		/*
 		if (!PlayerUtils.canSee(viewer, holder))
 			return;
 
 		if (holder.getGameMode() == GameMode.SPECTATOR && viewer.getGameMode() != GameMode.SPECTATOR)
 			return;
+		*/
 
-		getPlayer(holder.getUniqueId()).ifPresent(packets -> {
-			String nameplate = Nameplates.of(holder, viewer);
+		String nameplate = Nameplates.of(holder, viewer);
 
-			final EntitySpawnPacket spawnPacket = packets.getFirst();
-			final EntityMetadataPacket metadataPacket = packets.getSecond();
+		final var packets = getPackets(holder.getUniqueId());
+		final EntitySpawnPacket spawnPacket = packets.getFirst();
+		final EntityMetadataPacket metadataPacket = packets.getSecond();
 
-			spawnPacket.writeLocation(holder.getLocation());
-			metadataPacket.setNameJson(nameplate);
+		spawnPacket.writeLocation(holder.getLocation());
+		metadataPacket.setNameJson(nameplate);
 
-			MountPacket mountPacket = new MountPacket(holder.getEntityId(), spawnPacket.getEntityId());
-			Nameplates.get().getProtocolManager().sendServerPacket(viewer, spawnPacket.getPacket());
-			Nameplates.get().getProtocolManager().sendServerPacket(viewer, metadataPacket.getPacket());
-			Nameplates.get().getProtocolManager().sendServerPacket(viewer, mountPacket.getPacket());
-		});
+		MountPacket mountPacket = new MountPacket(holder.getEntityId(), spawnPacket.getEntityId());
+		Nameplates.get().getProtocolManager().sendServerPacket(viewer, spawnPacket.getPacket());
+		Nameplates.get().getProtocolManager().sendServerPacket(viewer, metadataPacket.getPacket());
+		Nameplates.get().getProtocolManager().sendServerPacket(viewer, mountPacket.getPacket());
 	}
 
-	public void spawnFakeEntityAroundPlayer(@NotNull Player player) {
-		PlayerUtils.getOnlinePlayers(player, player.getWorld()).stream()
-			.filter(_player -> player.getLocation().distanceSquared(_player.getLocation()) <= 250.0D)
-			.filter(_player -> service.get(player).isViewOwnNameplate() || _player != player)
-			.forEach(_player -> spawnFakeEntity(player, _player));
-	}
-
-	public void spawnFakeEntitiesToPlayer(@NotNull Player player) {
-		PlayerUtils.getOnlinePlayers(player, player.getWorld()).stream()
-			.filter(_player -> player.getLocation().distanceSquared(_player.getLocation()) <= 250.0D)
-			.filter(_player -> service.get(player).isViewOwnNameplate() || _player != player)
-			.forEach(_player -> spawnFakeEntity(player, _player));
+	public void spawnFakeEntityAroundPlayer(@NotNull Player holder) {
+		getNearbyPlayers(holder)
+			.filter(viewer -> viewer != holder || service.get(holder).isViewOwnNameplate())
+			.forEach(viewer -> spawnFakeEntity(holder, viewer));
 	}
 
 	public void updateFakeEntity(@NotNull Player holder, @NotNull Player viewer) {
-		if (!isManaging(holder))
-			return;
+		String nameplate = Nameplates.of(holder, viewer);
 
-		getPlayer(holder.getUniqueId()).ifPresent(packets -> {
-			String nameplate = Nameplates.of(holder, viewer);
+		final var packets = getPackets(holder.getUniqueId());
+		final EntitySpawnPacket spawnPacket = packets.getFirst();
+		final EntityMetadataPacket metadataPacket = packets.getSecond();
 
-			final EntitySpawnPacket spawnPacket = packets.getFirst();
-			final EntityMetadataPacket metadataPacket = packets.getSecond();
+		metadataPacket.setNameJson(nameplate);
 
-			metadataPacket.setNameJson(nameplate);
-
-			MountPacket mountPacket = new MountPacket(holder.getEntityId(), spawnPacket.getEntityId());
-			Nameplates.get().getProtocolManager().sendServerPacket(viewer, metadataPacket.getPacket());
-			Nameplates.get().getProtocolManager().sendServerPacket(viewer, mountPacket.getPacket());
-		});
+		MountPacket mountPacket = new MountPacket(holder.getEntityId(), spawnPacket.getEntityId());
+		Nameplates.get().getProtocolManager().sendServerPacket(viewer, metadataPacket.getPacket());
+		Nameplates.get().getProtocolManager().sendServerPacket(viewer, mountPacket.getPacket());
 	}
 
-	public void updateFakeEntityAroundPlayer(@NotNull Player player) {
-		PlayerUtils.getOnlinePlayers(player, player.getWorld()).parallelStream()
-			.filter(_player -> player.getLocation().distanceSquared(_player.getLocation()) <= 250.0D)
-			.forEach(_player -> updateFakeEntity(player, _player));
+	public void updateFakeEntityAroundPlayer(@NotNull Player holder) {
+		getNearbyPlayers(holder)
+			.forEach(viewer -> updateFakeEntity(holder, viewer));
 	}
 
-	public void updateFakeEntityForSelf(@NotNull Player player) {
-		if (service.get(player).isViewOwnNameplate())
-			spawnFakeEntityForSelf(player);
+	public void updateFakeEntityForSelf(@NotNull Player holder) {
+		if (service.get(holder).isViewOwnNameplate())
+			spawnFakeEntityForSelf(holder);
 		else
-			removeFakeEntityForSelf(player);
+			removeFakeEntityForSelf(holder);
 	}
 
 	public void removeFakeEntity(@NotNull Player holder, @NotNull Player viewer) {
-		if (!isManaging(holder))
-			return;
-
-		getPlayer(holder.getUniqueId()).ifPresent(packets -> {
-			EntityDestroyPacket packet = new EntityDestroyPacket(packets.getFirst().getEntityId());
-			Nameplates.get().getProtocolManager().sendServerPacket(viewer, packet.getPacket());
-		});
+		final var packets = getPackets(holder.getUniqueId());
+		final EntitySpawnPacket spawnPacket = packets.getFirst();
+		EntityDestroyPacket packet = new EntityDestroyPacket(spawnPacket.getEntityId());
+		Nameplates.get().getProtocolManager().sendServerPacket(viewer, packet.getPacket());
 	}
 
-	public void removeFakeEntityAroundPlayer(@NotNull Player player) {
-		player.getWorld().getPlayers().parallelStream().forEach(viewer ->
-			removeFakeEntity(player, viewer));
+	public void removeFakeEntityAroundPlayer(@NotNull Player holder) {
+		for (Player viewer : holder.getWorld().getPlayers())
+			removeFakeEntity(holder, viewer);
 	}
 
-	public void removeFakeEntityForSelf(Player player) {
-		removeFakeEntity(player, player);
+	public void removeFakeEntityForSelf(Player holder) {
+		removeFakeEntity(holder, holder);
 	}
 
-	public void removeFromCache(@NotNull Player player) {
-		playerMap.remove(player.getUniqueId());
+	public void removeFromCache(@NotNull Player holder) {
+		players.remove(holder.getUniqueId());
+	}
+
+	@NotNull
+	private Stream<Player> getNearbyPlayers(@NotNull Player holder) {
+		return PlayerUtils.getOnlinePlayers(holder, holder.getWorld()).stream()
+			.filter(_player -> holder.getLocation().distanceSquared(_player.getLocation()) <= 250);
 	}
 
 }

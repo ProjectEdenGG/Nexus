@@ -83,17 +83,10 @@ public class Nameplates extends Feature implements Listener {
 		if (manageTeams)
 			team.addEntry(player.getName());
 
-		fakeEntityManager.addPlayer(player);
 		Tasks.waitAsync(10, () -> {
 			fakeEntityManager.spawnFakeEntityForSelf(player);
 			fakeEntityManager.updateFakeEntityAroundPlayer(player);
 		});
-	}
-
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void on(PlayerKickEvent event) {
-		Player player = event.getPlayer();
-		fakeEntityManager.removeFakeEntityAroundPlayer(player);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
@@ -103,18 +96,31 @@ public class Nameplates extends Feature implements Listener {
 		fakeEntityManager.removeFromCache(player);
 	}
 
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void on(PlayerKickEvent event) {
+		Player player = event.getPlayer();
+		fakeEntityManager.removeFakeEntityAroundPlayer(player);
+		fakeEntityManager.removeFromCache(player);
+	}
+
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void on(PlayerTeleportEvent event) {
 		Player player = event.getPlayer();
 		fakeEntityManager.removeFakeEntityAroundPlayer(player);
-		Tasks.waitAsync(10, () -> fakeEntityManager.spawnFakeEntityForSelf(player));
+		Tasks.waitAsync(10, () -> {
+			fakeEntityManager.spawnFakeEntityForSelf(player);
+			fakeEntityManager.updateFakeEntityAroundPlayer(player);
+		});
 	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void on(PlayerGameModeChangeEvent event) {
 		Player player = event.getPlayer();
 		fakeEntityManager.removeFakeEntityAroundPlayer(player);
-		Tasks.waitAsync(10, () -> fakeEntityManager.spawnFakeEntityForSelf(player));
+		Tasks.waitAsync(10, () -> {
+			fakeEntityManager.spawnFakeEntityForSelf(player);
+			fakeEntityManager.updateFakeEntityAroundPlayer(player);
+		});
 	}
 
 }
