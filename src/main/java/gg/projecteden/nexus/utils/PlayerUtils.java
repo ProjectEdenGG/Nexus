@@ -215,6 +215,11 @@ public class PlayerUtils {
 			if (Nickname.of(player).equalsIgnoreCase((partialName)))
 				return player;
 
+		NicknameService nicknameService = new NicknameService();
+		Nickname fromNickname = nicknameService.getFromNickname(partialName);
+		if (fromNickname != null)
+			return fromNickname.getOfflinePlayer();
+
 		for (Player player : PlayerUtils.getOnlinePlayers())
 			if (player.getName().toLowerCase().startsWith(partialName))
 				return player;
@@ -230,11 +235,6 @@ public class PlayerUtils {
 				return player;
 
 		NerdService nerdService = new NerdService();
-		NicknameService nicknameService = new NicknameService();
-
-		Nickname fromNickname = nicknameService.getFromNickname(partialName);
-		if (fromNickname != null)
-			return fromNickname.getOfflinePlayer();
 
 		Nerd fromAlias = nerdService.getFromAlias(partialName);
 		if (fromAlias != null)
