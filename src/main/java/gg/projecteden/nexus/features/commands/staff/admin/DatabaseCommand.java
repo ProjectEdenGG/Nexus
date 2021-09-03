@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
 import com.mongodb.MongoNamespace;
+import gg.projecteden.EdenAPI;
 import gg.projecteden.annotations.Async;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -218,6 +219,9 @@ public class DatabaseCommand extends CustomCommand {
 		if ("0".equals(value))
 			return StringUtils.getUUID0();
 
+		if ("app".equalsIgnoreCase(value))
+			return EdenAPI.get().getAppUuid();
+
 		if (isUuid(value))
 			return UUID.fromString(value);
 
@@ -226,7 +230,10 @@ public class DatabaseCommand extends CustomCommand {
 
 	@TabCompleterFor(UUID.class)
 	List<String> tabCompleteUUID(String filter) {
-		return tabCompleteOfflinePlayer(filter);
+		final List<String> completions = tabCompleteOfflinePlayer(filter);
+		completions.add("0");
+		completions.add("app");
+		return completions;
 	}
 
 }

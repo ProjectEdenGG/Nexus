@@ -31,7 +31,7 @@ import java.util.stream.Stream;
 @Permission("group.admin")
 public class ScheduledJobsCommand extends CustomCommand {
 	private static final ScheduledJobsService service = new ScheduledJobsService();
-	private static final ScheduledJobs jobs = service.get0();
+	private static final ScheduledJobs jobs = service.getApp();
 
 	public ScheduledJobsCommand(@NonNull CommandEvent event) {
 		super(event);
