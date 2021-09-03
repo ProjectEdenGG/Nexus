@@ -488,7 +488,8 @@
             <groupId>org.inventivetalent</groupId>
             <artifactId>glowapi</artifactId>
             <version>1.4.10-SNAPSHOT</version>
-            <scope>provided</scope>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/GlowAPI.jar</systemPath>
         </dependency>
         <!-- AnvilGUI -->
         <dependency>
