@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands.staff.operator;
 
 import com.google.api.services.sheets.v4.model.ValueRange;
 import gg.projecteden.annotations.Async;
+import gg.projecteden.annotations.Disabled;
 import gg.projecteden.exceptions.EdenException;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -47,6 +48,7 @@ import static gg.projecteden.nexus.utils.StringUtils.ellipsis;
 import static gg.projecteden.utils.TimeUtils.shortDateTimeFormat;
 import static java.util.stream.Collectors.toList;
 
+@Disabled
 @NoArgsConstructor
 @Aliases("reminder")
 @Permission("group.staff")
