@@ -41,7 +41,7 @@ public class Warps implements PlayerOwnedObject {
 	private Map<WarpType, List<Warp>> warps = new ConcurrentHashMap<>();
 
 	public List<Warp> getAll(WarpType type) {
-		return warps.get(type);
+		return warps.getOrDefault(type, new ArrayList<>());
 	}
 
 	public Warp get(WarpType type, String name) {
