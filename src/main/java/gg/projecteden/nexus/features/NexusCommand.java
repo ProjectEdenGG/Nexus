@@ -131,7 +131,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 		}
 
 		for (Player player : PlayerUtils.getOnlinePlayers())
-			if (Dev.WAKKA.is(player) || Dev.BLAST.is(player))
+			if (Dev.WAKKA.is(player) || Dev.BLAST.is(player) || Dev.LUI.is(player))
 				new SoundBuilder(Sound.ENTITY_EVOKER_PREPARE_WOLOLO).receiver(player).play();
 
 		CooldownService cooldownService = new CooldownService();

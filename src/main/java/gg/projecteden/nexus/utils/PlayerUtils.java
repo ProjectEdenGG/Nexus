@@ -76,6 +76,7 @@ public class PlayerUtils {
 		BLAST("a4274d94-10f2-4663-af3b-a842c7ec729c"),
 		LEXI("d1de9ca8-78f6-4aae-87a1-8c112f675f12"),
 		FILID("88f9f7f6-7703-49bf-ad83-a4dec7e8022c"),
+		LUI("fd5d72f3-d599-49d4-9e7b-6e6d7f2ac5b9"),
 		KODA("56cb00fd-4738-47bc-be08-cb7c4f9a5a94"),
 		SPIKE("e089a260-7aeb-488f-a641-ab5867ab5ccd");
 
