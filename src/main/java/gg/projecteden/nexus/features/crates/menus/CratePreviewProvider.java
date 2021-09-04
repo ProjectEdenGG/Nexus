@@ -13,6 +13,7 @@ import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.models.voter.Voter;
 import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import lombok.AllArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -21,15 +22,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+@AllArgsConstructor
 public class CratePreviewProvider extends MenuUtils implements InventoryProvider {
-
-	CrateType type;
-	CrateLoot loot;
-
-	public CratePreviewProvider(CrateType type, CrateLoot loot) {
-		this.type = type;
-		this.loot = loot;
-	}
+	private final CrateType type;
+	private final CrateLoot loot;
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
@@ -60,20 +56,25 @@ public class CratePreviewProvider extends MenuUtils implements InventoryProvider
 			List<CrateLoot> crateLoots = Crates.getLootByType(type);
 			DecimalFormat format = new DecimalFormat("#0.00");
 			AtomicDouble weightSum = new AtomicDouble(0);
-			for (CrateLoot loot : crateLoots)
-				weightSum.getAndAdd(loot.getWeight());
-			crateLoots.stream().sorted(Comparator.comparingDouble(CrateLoot::getWeight).reversed())
-					.forEachOrdered(crateLoot -> {
-						if (!crateLoot.isActive())
-							return;
 
-						ItemBuilder builder = new ItemBuilder(crateLoot.getDisplayItem())
-								.name("&e" + crateLoot.getTitle())
-								.amount(1)
-								.lore("&3Chance: &e" + format.format(((crateLoot.getWeight() / weightSum.get()) * 100)) + "%")
-								.lore("&7&oClick for more");
-						items.add(ClickableItem.from(builder.build(), e -> type.previewDrops(crateLoot).open(player)));
-					});
+			for (CrateLoot loot : crateLoots)
+				if (loot.isActive())
+					weightSum.getAndAdd(loot.getWeight());
+
+			crateLoots.stream()
+				.sorted(Comparator.comparingDouble(CrateLoot::getWeight).reversed())
+				.forEachOrdered(crateLoot -> {
+					if (!crateLoot.isActive())
+						return;
+
+					ItemBuilder builder = new ItemBuilder(crateLoot.getDisplayItem())
+						.name("&e" + crateLoot.getTitle())
+						.amount(1)
+						.lore("&3Chance: &e" + format.format(((crateLoot.getWeight() / weightSum.get()) * 100)) + "%")
+						.lore("&7&oClick for more");
+					items.add(ClickableItem.from(builder.build(), e ->
+						type.previewDrops(crateLoot).open(player)));
+				});
 		} else {
 			loot.getItems().forEach(itemStack -> items.add(ClickableItem.empty(itemStack)));
 			addBackItem(contents, e -> type.previewDrops(null).open(player));
