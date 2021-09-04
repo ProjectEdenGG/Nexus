@@ -64,6 +64,9 @@ public class CratePreviewProvider extends MenuUtils implements InventoryProvider
 				weightSum.getAndAdd(loot.getWeight());
 			crateLoots.stream().sorted(Comparator.comparingDouble(CrateLoot::getWeight).reversed())
 					.forEachOrdered(crateLoot -> {
+						if (!crateLoot.isActive())
+							return;
+
 						ItemBuilder builder = new ItemBuilder(crateLoot.getDisplayItem())
 								.name("&e" + crateLoot.getTitle())
 								.amount(1)
