@@ -89,7 +89,7 @@ public class JoinQuit extends Feature implements Listener {
 				RoleManager.update(user);
 
 				final String discord = discordize(finalMessage.replaceAll("\\[player]", "**" + Nickname.of(player) + "**"));
-				Discord.send(":arrow_right: " + discord, TextChannel.BRIDGE);
+				Discord.send("<:blue_arrow_right:883811353641517126> " + discord, TextChannel.BRIDGE);
 			});
 		}
 	}
