@@ -551,8 +551,9 @@
         <dependency>
             <groupId>com.github.LeonMangler</groupId>
             <artifactId>SuperVanish</artifactId>
-            <version>6.2.0</version>
-            <scope>provided</scope>
+            <version>6.2.6</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/SuperVanish-6.2.6.jar</systemPath>
         </dependency>
         <!-- LibsDisguises -->
         <dependency>
