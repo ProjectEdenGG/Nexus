@@ -60,11 +60,11 @@ public class BearFair20 implements Listener {
 
 	public BearFair20() {
 		Nexus.registerListener(this);
-		new Timer("    Fairgrounds", Fairgrounds::new);
-		new Timer("    Islands", IslandType::values);
+		new Timer("      BF20.Fairgrounds", Fairgrounds::new);
+		new Timer("      BF20.Islands", IslandType::values);
 		if (enableQuests) {
-			new Timer("    BFQuests", BFQuests::new);
-			new Timer("    EasterEggs", EasterEggs::new);
+			new Timer("      BF20.BFQuests", BFQuests::new);
+			new Timer("      BF20.EasterEggs", EasterEggs::new);
 		}
 	}
 

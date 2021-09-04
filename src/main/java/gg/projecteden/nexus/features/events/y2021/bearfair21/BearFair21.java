@@ -80,10 +80,10 @@ public class BearFair21 implements Listener {
 	public BearFair21() {
 		Nexus.registerListener(this);
 
-		new Timer("    Restrictions", BearFair21Restrictions::new);
-		new Timer("    Fairgrounds", Fairgrounds::new);
-		new Timer("    Islands", IslandType::values);
-		new Timer("    Quests", Quests::new);
+		new Timer("      BF21.Restrictions", BearFair21Restrictions::new);
+		new Timer("      BF21.Fairgrounds", Fairgrounds::new);
+		new Timer("      BF21.Islands", IslandType::values);
+		new Timer("      BF21.Quests", Quests::new);
 
 		addTokenMax(BF21PointSource.ARCHERY, 25);
 		addTokenMax(BF21PointSource.MINIGOLF, 25);

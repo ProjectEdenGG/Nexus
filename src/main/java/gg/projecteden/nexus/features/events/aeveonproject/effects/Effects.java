@@ -26,6 +26,7 @@ import java.util.List;
 import static gg.projecteden.nexus.features.events.aeveonproject.APUtils.isInWorld;
 
 public class Effects implements Listener {
+
 	public Effects() {
 		Nexus.registerListener(this);
 

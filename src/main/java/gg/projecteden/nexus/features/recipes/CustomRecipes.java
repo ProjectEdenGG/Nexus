@@ -47,32 +47,34 @@ public class CustomRecipes extends Feature implements Listener {
 	@Override
 	public void onStart() {
 		Nexus.registerListener(this);
-		registerDyes();
-		registerSlabs();
-		registerQuartz();
-		registerStoneBricks();
-		misc();
+		Tasks.async(() -> ResourcePack.getLoader().thenRun(() -> {
+			registerDyes();
+			registerSlabs();
+			registerQuartz();
+			registerStoneBricks();
+			misc();
 
-		new Reflections(getClass().getPackage().getName()).getSubTypesOf(FunctionalRecipe.class).stream()
-			.map(clazz -> {
-				try {
-					if (!Utils.canEnable(clazz))
+			new Reflections(getClass().getPackage().getName()).getSubTypesOf(FunctionalRecipe.class).stream()
+				.map(clazz -> {
+					try {
+						if (!Utils.canEnable(clazz))
+							return null;
+
+						return clazz.getConstructor().newInstance();
+					} catch (Exception ex) {
+						Nexus.log("Error while enabling functional recipe " + clazz.getSimpleName());
+						ex.printStackTrace();
 						return null;
-
-					return clazz.getConstructor().newInstance();
-				} catch (Exception ex) {
-					Nexus.log("Error while enabling functional recipe " + clazz.getSimpleName());
-					ex.printStackTrace();
-					return null;
-				}
-			})
-			.filter(obj -> Objects.nonNull(obj) && obj.getResult() != null)
-			.sorted((recipe1, recipe2) -> new ItemStackComparator().compare(recipe1.getResult(), recipe2.getResult()))
-			.forEach(recipe -> {
-				recipe.setType(recipe.getRecipeType());
-				recipe.register();
-				recipes.add(recipe);
-			});
+					}
+				})
+				.filter(obj -> Objects.nonNull(obj) && obj.getResult() != null)
+				.sorted((recipe1, recipe2) -> new ItemStackComparator().compare(recipe1.getResult(), recipe2.getResult()))
+				.forEach(recipe -> {
+					recipe.setType(recipe.getRecipeType());
+					recipe.register();
+					recipes.add(recipe);
+				});
+		}));
 	}
 
 	public static void register(Recipe recipe) {

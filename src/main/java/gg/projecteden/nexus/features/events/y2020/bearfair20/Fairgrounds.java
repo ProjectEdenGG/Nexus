@@ -38,12 +38,12 @@ public class Fairgrounds implements Listener {
 
 	public Fairgrounds() {
 		Nexus.registerListener(this);
-		new Timer("      PugDunk", PugDunk::new);
-		new Timer("      Archery", Archery::new);
-		new Timer("      Frogger", Frogger::new);
-		new Timer("      Basketball", Basketball::new);
-		new Timer("      Reflection", Reflection::new);
-		new Timer("      Interactables", Interactables::new);
+		new Timer("        BF20.Fairgrounds.PugDunk", PugDunk::new);
+		new Timer("        BF20.Fairgrounds.Archery", Archery::new);
+		new Timer("        BF20.Fairgrounds.Frogger", Frogger::new);
+		new Timer("        BF20.Fairgrounds.Basketball", Basketball::new);
+		new Timer("        BF20.Fairgrounds.Reflection", Reflection::new);
+		new Timer("        BF20.Fairgrounds.Interactables", Interactables::new);
 	}
 
 	public static void giveKit(BearFairKit kit, Player player) {

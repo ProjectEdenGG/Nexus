@@ -5,6 +5,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.Env;
@@ -40,20 +41,22 @@ public class SocialMedia extends Feature implements Listener {
 
 	@Override
 	public void onStart() {
-		try {
-			FileConfiguration config = Nexus.getInstance().getConfig();
-			ConfigurationBuilder twitterConfig = new ConfigurationBuilder();
+		Tasks.async(() -> {
+			try {
+				FileConfiguration config = Nexus.getInstance().getConfig();
+				ConfigurationBuilder twitterConfig = new ConfigurationBuilder();
 
-			twitterConfig.setDebugEnabled(true)
-					.setOAuthConsumerKey(config.getString("tokens.twitter.consumerKey"))
-					.setOAuthConsumerSecret(config.getString("tokens.twitter.consumerSecret"))
-					.setOAuthAccessToken(config.getString("tokens.twitter.accessToken"))
-					.setOAuthAccessTokenSecret(config.getString("tokens.twitter.accessTokenSecret"));
+				twitterConfig.setDebugEnabled(true)
+						.setOAuthConsumerKey(config.getString("tokens.twitter.consumerKey"))
+						.setOAuthConsumerSecret(config.getString("tokens.twitter.consumerSecret"))
+						.setOAuthAccessToken(config.getString("tokens.twitter.accessToken"))
+						.setOAuthAccessTokenSecret(config.getString("tokens.twitter.accessTokenSecret"));
 
-			twitter = new TwitterFactory(twitterConfig.build()).getInstance();
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+				twitter = new TwitterFactory(twitterConfig.build()).getInstance();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		});
 	}
 
 	public static String getUrl(Status status) {

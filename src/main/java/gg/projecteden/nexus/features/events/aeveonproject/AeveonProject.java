@@ -20,12 +20,10 @@ public class AeveonProject implements Listener {
 
 	public AeveonProject() {
 		Nexus.registerListener(this);
-		new Timer("    Sets", () -> {
-			APSetType.values();
-			new APSetToggler();
-		});
-		new Timer("    Effects", Effects::new);
-		new Timer("    Regions", APRegions::new);
+		new Timer("    AP.Sets", APSetType::init);
+		new Timer("    AP.SetToggler", APSetToggler::new);
+		new Timer("    AP.Effects", Effects::new);
+		new Timer("    AP.Regions", APRegions::new);
 	}
 
 	public static World getWorld() {

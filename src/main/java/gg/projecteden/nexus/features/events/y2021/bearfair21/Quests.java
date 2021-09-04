@@ -38,6 +38,7 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Timer;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.utils.RandomUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -80,25 +81,24 @@ public class Quests implements Listener {
 	BearFair21UserService userService = new BearFair21UserService();
 
 	public Quests() {
-		Nexus.registerListener(this);
-		//
-		new Fishing();
-		new Farming();
-		new WoodCutting();
-		new Mining();
-		//
-		new SellCrates();
-		new Recycler();
-		new ClientsideContentManager();
-		new RadioHeads();
-		new Beehive();
-		new TreasureChests();
-		//
-		nextStepNPCTask();
+		new Timer("        BF21.Quests.registerListener", () -> Nexus.registerListener(this));
+		new Timer("        BF21.Quests.Fishing", Fishing::new);
+		new Timer("        BF21.Quests.Farming", Farming::new);
+		new Timer("        BF21.Quests.WoodCutting", WoodCutting::new);
+		new Timer("        BF21.Quests.Mining", Mining::new);
 
-		Collector.startup();
-		ClientsideContentManager.startup();
-		PugmasIsland.startup();
+		new Timer("        BF21.Quests.SellCrates", SellCrates::new);
+		new Timer("        BF21.Quests.Recycler", Recycler::new);
+		new Timer("        BF21.Quests.ClientsideContentManager", ClientsideContentManager::new);
+		new Timer("        BF21.Quests.RadioHeads", RadioHeads::new);
+		new Timer("        BF21.Quests.Beehive", Beehive::new);
+		new Timer("        BF21.Quests.TreasureChests", TreasureChests::new);
+
+		new Timer("        BF21.Quests.nextStepNPCTask", this::nextStepNPCTask);
+
+		new Timer("        BF21.Quests.Collector", Collector::startup);
+		new Timer("        BF21.Quests.ClientsideContentManager", ClientsideContentManager::startup);
+		new Timer("        BF21.Quests.PugmasIsland", PugmasIsland::startup);
 	}
 
 	public static void shutdown() {

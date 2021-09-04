@@ -54,22 +54,24 @@ public class Chat extends Feature {
 
 	@Override
 	public void onStart() {
-		new Timer("    addChannels", this::addChannels);
-		new Timer("    ChatListener", () -> Nexus.registerListener(new ChatListener()));
-		new Timer("    IngameBridgeListener", () -> Nexus.registerListener(new IngameBridgeListener()));
-		new Timer("    AlertsListener", () -> Nexus.registerListener(new AlertsListener()));
-		new Timer("    Translator", () -> Nexus.registerListener(new Translator()));
-		new Timer("    updateChannels", this::updateChannels);
+		new Timer("    Chat.addChannels", this::addChannels);
+		new Timer("    Chat.ChatListener", () -> Nexus.registerListener(new ChatListener()));
+		new Timer("    Chat.IngameBridgeListener", () -> Nexus.registerListener(new IngameBridgeListener()));
+		new Timer("    Chat.AlertsListener", () -> Nexus.registerListener(new AlertsListener()));
+		new Timer("    Chat.Translator", () -> Nexus.registerListener(new Translator()));
+		new Timer("    Chat.updateChannels", this::updateChannels);
 	}
 
 	@Override
 	public void onStop() {
-		new HashMap<>(new ChatterService().getCache()).forEach((uuid, chatter) -> new ChatterService().saveSync(chatter));
+		final ChatterService service = new ChatterService();
+		new HashMap<>(service.getCache()).forEach((uuid, chatter) -> service.saveSync(chatter));
 	}
 
 	private void updateChannels() {
+		final ChatterService service = new ChatterService();
 		PlayerUtils.getOnlinePlayers().stream()
-				.map(player -> new ChatterService().get(player))
+				.map(service::get)
 				.forEach(Chatter::updateChannels);
 	}
 

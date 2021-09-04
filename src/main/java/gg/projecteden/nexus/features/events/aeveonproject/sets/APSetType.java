@@ -16,6 +16,10 @@ public enum APSetType {
 	SIALIA_WRECKAGE(new SialiaWreckage()),
 	VESPYR(new Vespyr());
 
+	public static void init() {
+		// static init
+	}
+
 	private final APSet APSet;
 
 	APSetType(APSet APSet) {

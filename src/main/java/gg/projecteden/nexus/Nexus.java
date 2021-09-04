@@ -346,11 +346,11 @@ public class Nexus extends JavaPlugin {
 
 	@Getter
 	// http://www.sauronsoftware.it/projects/cron4j/manual.php
-	private static Scheduler cron = new Scheduler();
+	private static final Scheduler cron = new Scheduler();
 
 	private void databases() {
-		new Timer("  MySQL", LWCProtectionService::new);
-		new Timer("  MongoDB", HomeService::new);
+		new Timer(" MySQL", LWCProtectionService::new);
+		new Timer(" MongoDB", HomeService::new);
 	}
 
 	private void hooks() {
