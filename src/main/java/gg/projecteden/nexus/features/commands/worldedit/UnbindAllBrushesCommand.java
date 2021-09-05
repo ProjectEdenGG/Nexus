@@ -13,9 +13,9 @@ import lombok.NonNull;
 
 @DoubleSlash
 @Redirect(from = "//brush none all", to = "//unbindallbrushes")
-public class UnbindAllBrushes extends CustomCommand {
+public class UnbindAllBrushesCommand extends CustomCommand {
 
-	public UnbindAllBrushes(@NonNull CommandEvent event) {
+	public UnbindAllBrushesCommand(@NonNull CommandEvent event) {
 		super(event);
 	}
 

@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.minigames;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.lobby.ActionBar;
-import gg.projecteden.nexus.features.minigames.lobby.Basketball;
 import gg.projecteden.nexus.features.minigames.lobby.Parkour;
 import gg.projecteden.nexus.features.minigames.lobby.TickPerks;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
@@ -74,7 +73,6 @@ public class Minigames extends Feature {
 			registerListeners();
 
 			new ActionBar();
-			new Basketball();
 			new Parkour();
 			new TickPerks();
 		});

@@ -39,7 +39,7 @@ import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @NoArgsConstructor
 @Permission("group.staff")
-public class Basketball extends CustomCommand implements Listener {
+public class BasketballCommand extends CustomCommand implements Listener {
 	@Getter
 	static ItemStack basketball = (ItemStack) Nexus.getInstance().getConfig().get("minigames.lobby.basketball.item");
 	static Map<UUID, ItemStack> basketballs = new HashMap<>();
@@ -50,7 +50,7 @@ public class Basketball extends CustomCommand implements Listener {
 		janitor();
 	}
 
-	public Basketball(CommandEvent event) {
+	public BasketballCommand(CommandEvent event) {
 		super(event);
 	}
 
@@ -63,13 +63,13 @@ public class Basketball extends CustomCommand implements Listener {
 		basketball.setItemMeta(meta);
 		Nexus.getInstance().getConfig().set("minigames.lobby.basketball.item", basketball);
 		Nexus.getInstance().saveConfig();
-		Basketball.basketball = basketball;
+		BasketballCommand.basketball = basketball;
 		send(PREFIX + "Basketball saved");
 	}
 
 	@Path("give [player]")
 	void give(@Arg("self") Player player) {
-		Basketball.giveBasketball(player);
+		BasketballCommand.giveBasketball(player);
 	}
 
 	public static ItemStack getBasketball(Player player) {
