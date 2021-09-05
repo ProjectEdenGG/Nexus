@@ -162,7 +162,7 @@ public class FreezeCommand extends _PunishmentCommand implements Listener {
 
 	@EventHandler
 	public void onPlayerTeleport(PlayerTeleportEvent event) {
-		if (event.getTo().getLocation().equals(location())) return;
+		if (event.getTo().getLocation().equals(get(event.getPlayer()).getLocation())) return;
 		if (!isFrozen(event.getPlayer())) return;
 		event.setCancelled(true);
 	}
