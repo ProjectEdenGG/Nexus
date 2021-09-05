@@ -4,12 +4,10 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.LuckPermsUtils.PermissionChange;
-import lombok.Getter;
 import lombok.SneakyThrows;
 
 public class PushCommand extends CustomCommand {
-	@Getter
-	private static final String PERMISSION = "stoppushing.allow";
+	public static final String PERMISSION = "stoppushing.allow";
 
 	public PushCommand(CommandEvent event) {
 		super(event);

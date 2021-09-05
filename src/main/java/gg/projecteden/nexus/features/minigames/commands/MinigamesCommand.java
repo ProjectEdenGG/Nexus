@@ -540,8 +540,8 @@ public class MinigamesCommand extends CustomCommand {
 	void getId(MinigamePodiumPosition position) {
 		if (position == null) {
 			send(PREFIX + "Podium IDs:");
-			Arrays.asList(MinigamePodiumPosition.values()).forEach(_position -> send("&3" + StringUtils.camelCase(_position.name()) +
-				": &e" + _position.getId()));
+			Arrays.asList(MinigamePodiumPosition.values()).forEach(_position ->
+				send("&3" + StringUtils.camelCase(_position.name()) + ": &e" + _position.getId()));
 		} else
 			send(PREFIX + StringUtils.camelCase(position.name()) + ": &e" + position.getId());
 	}
