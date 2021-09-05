@@ -84,7 +84,7 @@ public class Votes extends Feature implements Listener {
 
 	private static MessageEmbed createEmbed(String username) {
 		EmbedBuilder builder = new EmbedBuilder().setTitle(EdenSocialMediaSite.WEBSITE.getUrl() + "/vote").setDescription("");
-		for (VoteSite value : VoteSite.getValues())
+		for (VoteSite value : VoteSite.getActiveSites())
 			builder.appendDescription(System.lineSeparator() + "**" + value.name().toUpperCase() + "**: [Click to vote!](" + value.getUrl(username) + ")");
 		return builder.build();
 	}
@@ -120,13 +120,9 @@ public class Votes extends Feature implements Listener {
 
 		Nexus.log("[Votes] Vote received from " + event.getVote().getServiceName() + ": " + username + " (" + name + " | " + uuid + ")");
 
-		// MCBIZ is sending votes with a timestamp of an hour ago ??
 		LocalDateTime timestamp = epochSecond(event.getVote().getTimeStamp());
-		if (site == VoteSite.MCBIZ) {
-			long minutes = timestamp.until(LocalDateTime.now(), ChronoUnit.MINUTES);
-			if (minutes > 55 && minutes < 65)
-				timestamp = timestamp.plusHours(1);
-		}
+		if (site == VoteSite.MCBIZ)
+			timestamp = fixTimestamp(timestamp);
 
 		if (site == null)
 			return;
@@ -180,6 +176,15 @@ public class Votes extends Feature implements Listener {
 		Tasks.async(Votes::write);
 	}
 
+	// MCBIZ is sending votes with a timestamp of an hour ago ??
+	@NotNull
+	private LocalDateTime fixTimestamp(LocalDateTime timestamp) {
+		long minutes = timestamp.until(LocalDateTime.now(), ChronoUnit.MINUTES);
+		if (minutes > 55 && minutes < 65)
+			timestamp = timestamp.plusHours(1);
+		return timestamp;
+	}
+
 	private static final int basePoints = 1;
 	private static final Map<Integer, Integer> extras = new HashMap<>() {{
 		put(1500, 50);
@@ -209,11 +214,26 @@ public class Votes extends Feature implements Listener {
 		Tasks.async(() -> {
 			List<TopVoter> topVoters = new VoterService().getTopVoters(LocalDateTime.now().getMonth());
 
+			votes_sites();
 			votes_monthly_top(topVoters);
 			votes_monthly(topVoters);
 			votes();
 			votes_monthly_total(topVoters);
 			votes_voted();
+		});
+	}
+
+	private static void votes_sites() {
+		IOUtils.fileWrite("plugins/website/votes_sites.html", (writer, outputs) -> {
+			for (VoteSite voteSite : VoteSite.getActiveSites()) {
+				outputs.add(String.format("""
+					<div class="btn-group">
+						<a href="%s" target="_blank" role="button" <?php echo getVoteButtonHtml($%s == 1); ?></a>
+						<button class="btn btn-default active votebtn"><strong>%s</strong></button>
+					</div>
+					<br/><br/>
+				""", voteSite.getPhpUrl(), voteSite.name().toLowerCase(), voteSite.getName()));
+			}
 		});
 	}
 
@@ -226,16 +246,14 @@ public class Votes extends Feature implements Listener {
 				if (++index > 3)
 					break;
 
-				String html = String.format("""
+				outputs.add(String.format("""
 					<div class="col-sm-4">
 						<h3 %s>#%d</h3>
 						<img class="center" style="border-radius: 12px; width: 75%%" src="https://crafatar.com/avatars/%s?overlay">
 						<h3 %s>%s</h3>
 						<h4 %s>%d</p>
 					</div>
-				""", center, index, topVoter.getVoter().getUuid(), center, topVoter.getNickname(), center, topVoter.getCount());
-
-				outputs.add(html);
+				""", center, index, topVoter.getVoter().getUuid(), center, topVoter.getNickname(), center, topVoter.getCount()));
 			}
 		});
 	}
@@ -249,15 +267,13 @@ public class Votes extends Feature implements Listener {
 				if (index >= 54)
 					break;
 
-				String html = String.format("""
-						<tr>
-							<th>%d</th>
-							<th>%s</th>
-							<th>%d</th>
-						</tr>
-					""", index, topVoter.getNickname(), topVoter.getCount());
-
-				outputs.add(html);
+				outputs.add(String.format("""
+					<tr>
+						<th>%d</th>
+						<th>%s</th>
+						<th>%d</th>
+					</tr>
+				""", index, topVoter.getNickname(), topVoter.getCount()));
 			}
 		});
 	}
@@ -271,15 +287,13 @@ public class Votes extends Feature implements Listener {
 				if (++index > 50)
 					break;
 
-				String html = String.format("""
+				outputs.add(String.format("""
 					<tr>
 						<th>%d</th>
 						<th>%s</th>
 						<th>%d</th>
 					</tr>
-				""", index, topVoter.getNickname(), topVoter.getCount());
-
-				outputs.add(html);
+				""", index, topVoter.getNickname(), topVoter.getCount()));
 			}
 		});
 	}
