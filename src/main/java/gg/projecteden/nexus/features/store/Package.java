@@ -843,7 +843,7 @@ public enum Package {
 	}
 
 	public void apply(UUID uuid) {
-		getPermissions().forEach(permission -> PermissionChange.set().uuid(uuid).permission(permission).runAsync());
+		PermissionChange.set().uuid(uuid).permissions(getPermissions()).runAsync();
 
 		String permissionGroup = getPermissionGroup();
 		if (!isNullOrEmpty(permissionGroup))
@@ -860,7 +860,7 @@ public enum Package {
 	}
 
 	public void expire(UUID uuid) {
-		getPermissions().forEach(permission -> PermissionChange.unset().uuid(uuid).permission(permission).runAsync());
+		PermissionChange.unset().uuid(uuid).permissions(getPermissions()).runAsync();
 
 		String permissionGroup = getPermissionGroup();
 		if (!Strings.isNullOrEmpty(permissionGroup))
