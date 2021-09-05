@@ -25,6 +25,7 @@ import gg.projecteden.nexus.models.deathmessages.DeathMessagesService;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.AdventureUtils;
+import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -136,7 +137,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 	}
 
 	public static File getFile() {
-		return Nexus.getFile(getFileName());
+		return IOUtils.getPluginFile(getFileName());
 	}
 
 	@NotNull

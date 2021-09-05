@@ -15,6 +15,7 @@ import gg.projecteden.nexus.models.radio.RadioConfig.RadioType;
 import gg.projecteden.nexus.models.radio.RadioConfigService;
 import gg.projecteden.nexus.models.radio.RadioUser;
 import gg.projecteden.nexus.models.radio.RadioUserService;
+import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -44,7 +45,7 @@ import static gg.projecteden.nexus.utils.Utils.isNullOrEmpty;
 public class RadioFeature extends Feature {
 
 	public static final String PREFIX = StringUtils.getPrefix("Radio");
-	private static final File songsDirectory = Nexus.getFile("songs");
+	private static final File songsDirectory = IOUtils.getPluginFile("songs");
 	private static final RadioUserService userService = new RadioUserService();
 
 	@Getter

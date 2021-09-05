@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.crates.models.CrateType;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CrateOpeningException;
 import gg.projecteden.nexus.framework.features.Feature;
+import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -39,7 +40,7 @@ import java.util.stream.Collectors;
 public class Crates extends Feature implements Listener {
 
 	public static final String PREFIX = StringUtils.getPrefix("Crates");
-	public static File file = Nexus.getFile("crates.yml");
+	public static File file = IOUtils.getPluginFile("crates.yml");
 	public static YamlConfiguration config;
 
 	public static List<CrateLoot> lootCache = new ArrayList<>();
@@ -51,7 +52,7 @@ public class Crates extends Feature implements Listener {
 	@Override
 	public void onStart() {
 		ConfigurationSerialization.registerClass(CrateLoot.class);
-		config = Nexus.getConfig("crates.yml");
+		config = IOUtils.getConfig("crates.yml");
 		spawnAllHolograms();
 		loadCache();
 		Nexus.registerListener(new CrateEditMenu.CrateEditProvider());

@@ -1,0 +1,105 @@
+package gg.projecteden.nexus.utils;
+
+import gg.projecteden.nexus.Nexus;
+import lombok.SneakyThrows;
+import org.bukkit.configuration.file.YamlConfiguration;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BiConsumer;
+
+import static gg.projecteden.utils.TimeUtils.shortDateTimeFormat;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.time.LocalDateTime.now;
+
+public class IOUtils {
+	private final static String PLUGIN_ROOT = "plugins/" + Nexus.class.getSimpleName() + "/";
+	private final static String LOGS_ROOT = PLUGIN_ROOT + "logs/";
+
+	public static void fileAppend(String file, String message) {
+		write(LOGS_ROOT + file + ".log", List.of(StandardOpenOption.APPEND), writer ->
+			writer.append(String.format("%n[%s] %s", shortDateTimeFormat(now()), message)));
+	}
+
+	public static void csvAppend(String file, String message) {
+		write(LOGS_ROOT + file + ".csv", List.of(StandardOpenOption.APPEND), writer ->
+			writer.append(String.format("%n%s", message)));
+	}
+
+	// Overwrites existing content
+	public static void fileWrite(String file, BiConsumer<BufferedWriter, List<String>> consumer) {
+		write(file, List.of(), writer -> {
+			final List<String> outputs = new ArrayList<>();
+			consumer.accept(writer, outputs);
+			writer.write(String.join(System.lineSeparator(), outputs));
+		});
+	}
+
+	private static void write(String fileName, List<StandardOpenOption> openOptions, UncheckedConsumer<BufferedWriter> consumer) {
+		Tasks.async(() -> {
+			synchronized (Nexus.getInstance()) {
+				try {
+					final Path path = Paths.get(fileName);
+					final File file = path.toFile();
+					if (!file.exists())
+						file.createNewFile();
+
+					final StandardOpenOption[] options = openOptions.toArray(StandardOpenOption[]::new);
+					try (BufferedWriter writer = Files.newBufferedWriter(path, UTF_8, options)) {
+						consumer.accept(writer);
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		});
+	}
+
+	@SneakyThrows
+	public static File getPluginFile(String path) {
+		return getFile(PLUGIN_ROOT + path);
+	}
+
+	@SneakyThrows
+	public static File getPluginFolder(String path) {
+		return getFolder(PLUGIN_ROOT + path);
+	}
+
+	@SneakyThrows
+	public static File getLogsFile(String path) {
+		return getFile(LOGS_ROOT + path);
+	}
+
+	@SneakyThrows
+	public static File getLogsFolder(String path) {
+		return getFolder(LOGS_ROOT + path);
+	}
+
+	@SneakyThrows
+	public static File getFile(String path) {
+		File file = Paths.get(path).toFile();
+		if (!file.exists()) file.createNewFile();
+		return file;
+	}
+
+	@SneakyThrows
+	public static File getFolder(String path) {
+		File file = Paths.get(path).toFile();
+		if (!file.exists()) file.mkdir();
+		return file;
+	}
+
+	@SneakyThrows
+	public static YamlConfiguration getConfig(String path) {
+		return YamlConfiguration.loadConfiguration(getPluginFile(path));
+	}
+
+}

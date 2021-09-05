@@ -96,13 +96,13 @@ public class GoogleUtils {
 	@SneakyThrows
 	private static void login() {
 		GoogleClientSecrets secrets = GoogleClientSecrets.load(JacksonFactory.getDefaultInstance(),
-			new InputStreamReader(new FileInputStream(Nexus.getFile(CREDENTIALS_FILE_PATH))));
+			new InputStreamReader(new FileInputStream(IOUtils.getPluginFile(CREDENTIALS_FILE_PATH))));
 
 		final int port = 8888 + (Env.values().length - (Nexus.getEnv().ordinal() + 1));
 		receiver = new LocalServerReceiver.Builder().setPort(port).build();
 		USER = new AuthorizationCodeInstalledApp(
 			new GoogleAuthorizationCodeFlow.Builder(HTTP_TRANSPORT, JSON_FACTORY, secrets, SCOPES)
-				.setDataStoreFactory(new FileDataStoreFactory(Nexus.getFolder(TOKENS_DIRECTORY_PATH)))
+				.setDataStoreFactory(new FileDataStoreFactory(IOUtils.getPluginFolder(TOKENS_DIRECTORY_PATH)))
 				.setAccessType("offline")
 				.build(),
 			receiver
@@ -126,7 +126,7 @@ public class GoogleUtils {
 
 		@NotNull
 		private static YamlConfiguration getConfig() {
-			return Nexus.getConfig(SHEETS_CONFIG_FILE_PATH);
+			return IOUtils.getConfig(SHEETS_CONFIG_FILE_PATH);
 		}
 
 		public static void shutdown() {

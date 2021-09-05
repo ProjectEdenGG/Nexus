@@ -17,6 +17,7 @@ import gg.projecteden.nexus.models.shop.Shop.Product;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.models.shop.ShopService;
 import gg.projecteden.nexus.utils.BlockUtils;
+import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Name;
@@ -362,7 +363,7 @@ public class ConvertShopCommand extends CustomCommand {
 		static {
 			String line;
 			try {
-				BufferedReader br = new BufferedReader(new FileReader(Nexus.getFile("items.csv")));
+				BufferedReader br = new BufferedReader(new FileReader(IOUtils.getPluginFile("items.csv")));
 				while ((line = br.readLine()) != null) {
 					try {
 						String[] split = line.split(",");

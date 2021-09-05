@@ -12,6 +12,7 @@ import gg.projecteden.nexus.models.chat.PublicChannel;
 import gg.projecteden.nexus.models.punishments.Punishment;
 import gg.projecteden.nexus.models.punishments.PunishmentType;
 import gg.projecteden.nexus.models.punishments.Punishments;
+import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Builder;
@@ -42,7 +43,7 @@ public class Censor {
 
 	public static void reloadConfig() {
 		censorItems.clear();
-		ConfigurationSection config = Nexus.getConfig("censor.yml").getConfigurationSection("censor");
+		ConfigurationSection config = IOUtils.getConfig("censor.yml").getConfigurationSection("censor");
 		if (config != null) {
 			for (String key : config.getKeys(false)) {
 				ConfigurationSection section = config.getConfigurationSection(key);
@@ -152,7 +153,7 @@ public class Censor {
 			else if (event.getChannel() instanceof PrivateChannel privateChannel)
 				channelNick = "[" + String.join(", ", privateChannel.getOthersNames(event.getChatter())) + "] ";
 
-			Nexus.fileLog("swears", channelNick + event.getChatter().getName() + ": " + event.getOriginalMessage());
+			IOUtils.fileAppend("swears", channelNick + event.getChatter().getName() + ": " + event.getOriginalMessage());
 			if (bad >= 3) {
 				event.getChatter().sendMessage("&cPlease watch your language!");
 				Broadcast.staff().prefix("Censor").message("&c" + event.getChatter().getName() + " cursed too much: " + event.getMessage()).send();

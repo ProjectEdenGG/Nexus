@@ -4,6 +4,7 @@ import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
+import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
@@ -37,7 +38,7 @@ public class ResourcePack extends Feature implements Listener {
 	@Getter
 	static String hash = Utils.createSha1(URL);
 	@Getter
-	static File file = Nexus.getFile(fileName);
+	static File file = IOUtils.getPluginFile(fileName);
 
 	@Getter
 	@Setter

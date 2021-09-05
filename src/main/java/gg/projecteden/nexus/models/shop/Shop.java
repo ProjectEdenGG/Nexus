@@ -7,7 +7,6 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.PostLoad;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.shops.ShopUtils;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
@@ -17,6 +16,7 @@ import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -287,7 +287,7 @@ public class Shop implements PlayerOwnedObject {
 					columns.add("");
 				}
 
-				Nexus.csvLog("exchange", String.join(",", columns));
+				IOUtils.csvAppend("exchange", String.join(",", columns));
 			}
 		}
 
