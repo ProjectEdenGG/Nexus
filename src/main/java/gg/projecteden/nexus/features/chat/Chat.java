@@ -18,6 +18,7 @@ import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Timer;
 import gg.projecteden.utils.DiscordId.TextChannel;
 import gg.projecteden.utils.Utils;
@@ -69,10 +70,12 @@ public class Chat extends Feature {
 	}
 
 	private void updateChannels() {
-		final ChatterService service = new ChatterService();
-		PlayerUtils.getOnlinePlayers().stream()
+		Tasks.async(() -> {
+			final ChatterService service = new ChatterService();
+			PlayerUtils.getOnlinePlayers().stream()
 				.map(service::get)
 				.forEach(Chatter::updateChannels);
+		});
 	}
 
 	private void addChannels() {

@@ -13,7 +13,6 @@ import gg.projecteden.nexus.framework.persistence.MySQLPersistence;
 import gg.projecteden.nexus.models.geoip.GeoIP;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
 import gg.projecteden.nexus.models.home.HomeService;
-import gg.projecteden.nexus.models.lwc.LWCProtectionService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.GoogleUtils;
@@ -275,7 +274,7 @@ public class Nexus extends JavaPlugin {
 	private static final Scheduler cron = new Scheduler();
 
 	private void databases() {
-		new Timer(" MySQL", LWCProtectionService::new);
+//		new Timer(" MySQL", LWCProtectionService::new);
 		new Timer(" MongoDB", HomeService::new);
 	}
 

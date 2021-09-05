@@ -156,6 +156,7 @@ public class ItemInfoCommand extends CustomCommand {
 	}
 
 	@Path("enchanted")
+	@Permission("group.staff")
 	void enchanted() {
 		new EnchantedItemsMenu().open(player());
 	}

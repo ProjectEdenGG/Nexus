@@ -89,7 +89,6 @@ public class Quests implements Listener {
 
 		new Timer("        BF21.Quests.SellCrates", SellCrates::new);
 		new Timer("        BF21.Quests.Recycler", Recycler::new);
-		new Timer("        BF21.Quests.ClientsideContentManager", ClientsideContentManager::new);
 		new Timer("        BF21.Quests.RadioHeads", RadioHeads::new);
 		new Timer("        BF21.Quests.Beehive", Beehive::new);
 		new Timer("        BF21.Quests.TreasureChests", TreasureChests::new);
@@ -97,7 +96,7 @@ public class Quests implements Listener {
 		new Timer("        BF21.Quests.nextStepNPCTask", this::nextStepNPCTask);
 
 		new Timer("        BF21.Quests.Collector", Collector::startup);
-		new Timer("        BF21.Quests.ClientsideContentManager", ClientsideContentManager::startup);
+		new Timer("        BF21.Quests.ClientsideContentManager", ClientsideContentManager::new);
 		new Timer("        BF21.Quests.PugmasIsland", PugmasIsland::startup);
 	}
 

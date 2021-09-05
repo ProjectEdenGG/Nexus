@@ -46,12 +46,14 @@ public class ClientsideContentManager implements Listener {
 	private static final HashMap<UUID, List<Entity>> playerEntities = new HashMap<>();
 	private static final List<NPCNameTag> playerNPCNameTags = new ArrayList<>();
 
-
 	public ClientsideContentManager() {
-		Nexus.registerListener(this);
-		blockTask();
-		schematicTask();
-		npcTask();
+		Tasks.async(() -> {
+			Nexus.registerListener(this);
+			blockTask();
+			schematicTask();
+			npcTask();
+			startup();
+		});
 	}
 
 	public static void startup() {

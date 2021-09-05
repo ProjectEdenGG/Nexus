@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.crates;
 import gg.projecteden.annotations.Environments;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.admin.RebootCommand;
-import gg.projecteden.nexus.features.crates.menus.CrateEditMenu;
+import gg.projecteden.nexus.features.crates.menus.CrateEditMenu.CrateEditProvider;
 import gg.projecteden.nexus.features.crates.models.CrateLoot;
 import gg.projecteden.nexus.features.crates.models.CrateType;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
@@ -13,6 +13,7 @@ import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.utils.EnumUtils;
 import gg.projecteden.utils.Env;
@@ -51,11 +52,17 @@ public class Crates extends Feature implements Listener {
 
 	@Override
 	public void onStart() {
-		ConfigurationSerialization.registerClass(CrateLoot.class);
-		config = IOUtils.getConfig("crates.yml");
-		spawnAllHolograms();
-		loadCache();
-		Nexus.registerListener(new CrateEditMenu.CrateEditProvider());
+		Tasks.async(() -> {
+			ConfigurationSerialization.registerClass(CrateLoot.class);
+			config = IOUtils.getConfig("crates.yml");
+			loadCache();
+
+			Tasks.sync(() -> {
+				spawnAllHolograms();
+				Nexus.registerListener(new CrateEditProvider());
+			});
+		});
+
 	}
 
 	@Override

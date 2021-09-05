@@ -47,12 +47,16 @@ public class Archery implements Listener {
 		targetTask();
 	}
 
+	private static List<Location> targetSpawnLocations;
+
 	private void targetTask() {
-		List<Location> spawnLocs = getTargetLocs();
 		Tasks.repeat(0, 10, () -> {
 			if (enabled) {
+				if (targetSpawnLocations == null)
+					targetSpawnLocations = getTargetLocations();
+
 				if (activeTargets < 10) {
-					Location loc = RandomUtils.randomElement(spawnLocs);
+					Location loc = RandomUtils.randomElement(targetSpawnLocations);
 					if (canPlaceTarget(loc, true)) {
 						placeTarget(loc);
 						++activeTargets;
@@ -105,8 +109,8 @@ public class Archery implements Listener {
 		BearFair21.giveDailyTokens(player, BF21PointSource.ARCHERY, 1);
 	}
 
-	private List<Location> getTargetLocs() {
-		List<Block> blocks = getWEUtils().getBlocks((CuboidRegion) getWGUtils().getRegion(targetRegion));
+	private List<Location> getTargetLocations() {
+		List<Block> blocks = getWEUtils().getBlocks(getWGUtils().getRegion(targetRegion));
 		List<Location> locs = new ArrayList<>();
 		for (Block block : blocks) {
 			Location loc = block.getLocation();

@@ -64,8 +64,6 @@ public class Frogger implements Listener {
 
 	public Frogger() {
 		Nexus.registerListener(this);
-		loadLogSpawns();
-		loadCarSpawns();
 	}
 
 	private void loadLogSpawns() {
@@ -77,7 +75,7 @@ public class Frogger implements Listener {
 	}
 
 	private void loadSpawns(String logsRg, Map<Location, Material> logSpawnMap) {
-		List<Block> blocks = getWEUtils().getBlocks((CuboidRegion) getWGUtils().getRegion(logsRg));
+		List<Block> blocks = getWEUtils().getBlocks(getWGUtils().getRegion(logsRg));
 		for (Block block : blocks)
 			if (block.getType().equals(Material.DIAMOND_BLOCK) || block.getType().equals(Material.EMERALD_BLOCK))
 				logSpawnMap.put(block.getLocation(), block.getType());
@@ -89,6 +87,10 @@ public class Frogger implements Listener {
 		taskId.set(Tasks.wait(0, () -> {
 			clearLogs();
 			int lastLogLen = 3;
+
+			if (logSpawnMap.isEmpty())
+				loadLogSpawns();
+
 			for (Location spawnLoc : logSpawnMap.keySet()) {
 				BlockFace blockFace = (spawnLoc.getBlock().getType().equals(Material.DIAMOND_BLOCK)) ? BlockFace.WEST : BlockFace.EAST;
 				for (int i = 0; i < 4; i++) {
@@ -106,6 +108,10 @@ public class Frogger implements Listener {
 
 			// Car Animations
 			clearCars();
+
+			if (carSpawnMap.isEmpty())
+				loadCarSpawns();
+
 			for (Location spawnLoc : carSpawnMap.keySet()) {
 				Location loc = spawnLoc.getBlock().getRelative(0, 2, 0).getLocation();
 				BlockFace blockFace = (spawnLoc.getBlock().getType().equals(Material.DIAMOND_BLOCK)) ? BlockFace.WEST : BlockFace.EAST;

@@ -39,7 +39,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -47,28 +46,40 @@ import java.util.UUID;
 @Region("pugmas")
 @NPCClass(PugmasNPCs.class)
 public class PugmasIsland implements BearFair21Island {
-	private static final ClientsideContentService contentService = new ClientsideContentService();
-	private static final ClientsideContent contentList = contentService.get0();
-	private static final BearFair21UserService userService = new BearFair21UserService();
-	private static final List<Location> contentIndex = Arrays.asList(loc(-45, 143, -325), loc(-49, 139, -300),
-			loc(-76, 138, -305), loc(-101, 139, -290), loc(-111, 142, -321), loc(-104, 154, -350),
-			loc(-72, 157, -364), loc(-78, 152, -346), loc(-79, 134, -322), loc(-59, 145, -343),
-			loc(-40, 153, -353), loc(-59, 166, -374), loc(-78, 174, -384), loc(-106, 174, -381),
-			loc(-67, 139, -308)
-	);
-	private static final Location endLocation = new Location(BearFair21.getWorld(), -72.5, 138, -306.5, -26, 0);
-	private static final List<String> scaredVillager = Arrays.asList("Is he s-still here?", "Be careful.", "*shaking*", "I-I bet the M-mayor has e-everything under cont-t-trol...",
-			"That Grinch doesn't have any other way to spend his time? Ugh!", "He's so mean!", "Maybe the Mayor could use your help...",
-			"The Grinch stole everything! ...Again!", "I can't believe it!");
-	private static final List<String> thankfulVillager = Arrays.asList("Woo!", "Thank you <player>!", "Thank you so much!",
-			"I'm never letting my bike out of my sight ever again!", "I knew you could do it!", "Come back any time!", "Nice!",
-			"My new phone barely has a scratch on it thanks to you!", "Yay! My socks are back!",
-			"I'm so happy the Grinch didn't know I got my puppy for Christmas...");
-	private static final List<UUID> usingGrinch = new ArrayList<>();
-	private static final String grinchCaveRegion = "bearfair21_pugmas_grinchcave";
+	private static ClientsideContentService contentService;
+	private static ClientsideContent contentList;
+	private static BearFair21UserService userService;
+	private static List<Location> contentIndex;
+	private static Location endLocation;
+	private static List<String> scaredVillager;
+	private static List<String> thankfulVillager;
+	private static List<UUID> usingGrinch;
+	private static String grinchCaveRegion;
 
 	public PugmasIsland() {
-		Nexus.registerListener(this);
+		Tasks.async(() -> {
+			contentService = new ClientsideContentService();
+			contentList = contentService.get0();
+			userService = new BearFair21UserService();
+			contentIndex = List.of(loc(-45, 143, -325), loc(-49, 139, -300),
+				loc(-76, 138, -305), loc(-101, 139, -290), loc(-111, 142, -321), loc(-104, 154, -350),
+				loc(-72, 157, -364), loc(-78, 152, -346), loc(-79, 134, -322), loc(-59, 145, -343),
+				loc(-40, 153, -353), loc(-59, 166, -374), loc(-78, 174, -384), loc(-106, 174, -381),
+				loc(-67, 139, -308)
+			);
+			endLocation = new Location(BearFair21.getWorld(), -72.5, 138, -306.5, -26, 0);
+			scaredVillager = List.of("Is he s-still here?", "Be careful.", "*shaking*", "I-I bet the M-mayor has e-everything under cont-t-trol...",
+				"That Grinch doesn't have any other way to spend his time? Ugh!", "He's so mean!", "Maybe the Mayor could use your help...",
+				"The Grinch stole everything! ...Again!", "I can't believe it!");
+			thankfulVillager = List.of("Woo!", "Thank you <player>!", "Thank you so much!",
+				"I'm never letting my bike out of my sight ever again!", "I knew you could do it!", "Come back any time!", "Nice!",
+				"My new phone barely has a scratch on it thanks to you!", "Yay! My socks are back!",
+				"I'm so happy the Grinch didn't know I got my puppy for Christmas...");
+			usingGrinch = new ArrayList<>();
+			grinchCaveRegion = "bearfair21_pugmas_grinchcave";
+
+			Nexus.registerListener(this);
+		});
 	}
 
 	public static void startup() {

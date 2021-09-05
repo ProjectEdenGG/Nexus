@@ -106,7 +106,7 @@ public class MinigameNightIsland implements BearFair21Island {
 
 		ParticleBuilder particles = new ParticleBuilder(Particle.REDSTONE).color(Color.RED).count(15).offset(0.3, 0.3, 0.3);
 		Location gravWellLoc = BearFair21.getWGUtils().toLocation(BearFair21.getWGUtils().getProtectedRegion(gravwellRegion).getMinimumPoint());
-		Tasks.repeat(0, TickTime.SECOND.x(5), () -> {
+		Tasks.repeat(TickTime.SECOND, TickTime.SECOND.x(5), () -> {
 			for (Player player : BearFair21.getPlayers()) {
 				final BearFair21User user = userService.get(player);
 				for (Location soundLoc : user.getMgn_beaconsActivated()) {
