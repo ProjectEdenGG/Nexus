@@ -45,7 +45,6 @@ import static gg.projecteden.nexus.utils.GoogleUtils.SheetsUtils.valueOf;
 import static java.util.stream.Collectors.toList;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @SerializableAs("ReminderConfig")

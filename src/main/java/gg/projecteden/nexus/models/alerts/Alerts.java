@@ -8,7 +8,6 @@ import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -21,7 +20,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Data
-@Builder
 @Entity(value = "alerts", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

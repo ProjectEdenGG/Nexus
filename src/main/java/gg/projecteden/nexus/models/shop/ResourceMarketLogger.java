@@ -9,7 +9,6 @@ import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationCon
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.utils.Utils;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -25,7 +24,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 
 @Data
-@Builder
 @Entity("resource_market_logger")
 @NoArgsConstructor
 @AllArgsConstructor

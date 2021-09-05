@@ -8,7 +8,6 @@ import gg.projecteden.nexus.features.chat.Emotes;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.RandomUtils;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -23,7 +22,6 @@ import java.util.UUID;
 import static java.util.stream.Collectors.toList;
 
 @Data
-@Builder
 @Entity(value = "emote_user", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

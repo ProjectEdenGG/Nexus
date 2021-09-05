@@ -7,7 +7,6 @@ import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -22,7 +21,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import static gg.projecteden.nexus.utils.PlayerUtils.runCommand;
 
 @Data
-@Builder
 @Entity(value = "powertool", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

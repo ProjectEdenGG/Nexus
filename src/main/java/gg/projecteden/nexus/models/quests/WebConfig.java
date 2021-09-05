@@ -9,7 +9,6 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -30,7 +29,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Data
-@Builder
 @Entity(value = "quests_web", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

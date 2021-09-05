@@ -11,7 +11,6 @@ import gg.projecteden.nexus.models.punishments.Punishment;
 import gg.projecteden.nexus.models.punishments.PunishmentType;
 import gg.projecteden.nexus.models.punishments.Punishments;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -26,7 +25,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Data
-@Builder
 @Entity(value = "freeze", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

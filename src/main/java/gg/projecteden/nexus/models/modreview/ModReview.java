@@ -8,7 +8,6 @@ import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,7 +24,6 @@ import java.util.Set;
 import java.util.UUID;
 
 @Data
-@Builder
 @Entity(value = "mod_review", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

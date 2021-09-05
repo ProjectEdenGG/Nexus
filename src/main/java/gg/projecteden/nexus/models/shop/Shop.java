@@ -25,7 +25,6 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.utils.EnumUtils.IteratableEnum;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -67,7 +66,6 @@ import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 import static gg.projecteden.utils.StringUtils.camelCase;
 
 @Data
-@Builder
 @Entity(value = "shop", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

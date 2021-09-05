@@ -8,7 +8,6 @@ import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -19,7 +18,6 @@ import org.bukkit.inventory.PlayerInventory;
 import java.util.UUID;
 
 @Data
-@Builder
 @Entity(value = "invisible_armor", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

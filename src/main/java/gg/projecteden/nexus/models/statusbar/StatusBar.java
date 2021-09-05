@@ -14,7 +14,6 @@ import gg.projecteden.nexus.models.chat.PublicChannel;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -29,7 +28,6 @@ import java.util.UUID;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @Data
-@Builder
 @Entity(value = "status_bar", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

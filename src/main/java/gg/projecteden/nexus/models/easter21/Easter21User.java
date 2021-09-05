@@ -15,7 +15,6 @@ import gg.projecteden.nexus.models.voter.Voter;
 import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -28,7 +27,6 @@ import java.util.Set;
 import java.util.UUID;
 
 @Data
-@Builder
 @Entity(value = "easter21", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

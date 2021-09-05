@@ -14,7 +14,6 @@ import gg.projecteden.nexus.models.tip.TipService;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -45,7 +44,6 @@ import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
 
 @Data
-@Builder
 @Entity(value = "auto_sort", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

@@ -11,7 +11,6 @@ import gg.projecteden.utils.EnumUtils;
 import gg.projecteden.utils.Utils;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,7 +28,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Data
-@Builder
 @Entity(value = "particle_owner", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

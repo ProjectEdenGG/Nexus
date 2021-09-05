@@ -12,7 +12,6 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.MathUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -31,7 +30,6 @@ import java.util.function.Consumer;
 import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
 
 @Data
-@Builder
 @Entity(value = "rainbow_armor", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

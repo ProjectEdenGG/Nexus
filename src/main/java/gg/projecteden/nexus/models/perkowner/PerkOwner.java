@@ -17,7 +17,6 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundUtils;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -34,7 +33,6 @@ import java.util.stream.Collectors;
 import static gg.projecteden.nexus.utils.StringUtils.plural;
 
 @Data
-@Builder
 @Entity(value = "perk_owner", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

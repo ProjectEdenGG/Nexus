@@ -9,7 +9,6 @@ import gg.projecteden.nexus.utils.ActionBarUtils.ActionBar;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.LocationUtils;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
@@ -21,7 +20,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -36,7 +35,6 @@ import static gg.projecteden.nexus.features.minigames.menus.teams.TeamColorMenu.
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @Data
-@Builder
 @AllArgsConstructor
 @SerializableAs("Team")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)

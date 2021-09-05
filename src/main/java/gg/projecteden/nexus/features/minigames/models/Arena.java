@@ -13,7 +13,6 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -44,7 +43,6 @@ import static gg.projecteden.nexus.utils.SerializationUtils.YML.deserializeMater
 import static gg.projecteden.nexus.utils.SerializationUtils.YML.serializeMaterialSet;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @SerializableAs("Arena")

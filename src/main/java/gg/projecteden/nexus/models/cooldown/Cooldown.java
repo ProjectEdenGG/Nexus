@@ -7,7 +7,6 @@ import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -22,7 +21,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 @Data
-@Builder
 @Entity(value = "cooldown", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

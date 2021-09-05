@@ -8,7 +8,6 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -28,7 +27,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import static gg.projecteden.utils.StringUtils.camelCase;
 
 @Data
-@Builder
 @Entity(value = "warps", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

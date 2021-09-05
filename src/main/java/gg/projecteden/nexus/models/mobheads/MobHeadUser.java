@@ -9,7 +9,6 @@ import gg.projecteden.nexus.features.mobheads.common.MobHead;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.MobHeadConverter;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -23,7 +22,6 @@ import java.util.Map;
 import java.util.UUID;
 
 @Data
-@Builder
 @Entity(value = "mob_head_user", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor
