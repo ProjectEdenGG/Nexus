@@ -37,6 +37,7 @@ public class Freeze implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private boolean frozen;
+	private Location location;
 
 	private static final boolean armorStandsDisabled = true;
 
@@ -72,6 +73,7 @@ public class Freeze implements PlayerOwnedObject {
 
 	private void execute() {
 		frozen = true;
+		location = getPlayer().getLocation();
 		new FreezeService().save(this);
 
 		mount();
@@ -95,7 +97,7 @@ public class Freeze implements PlayerOwnedObject {
 		if (armorStandsDisabled) {
 			SpeedCommand.setSpeed(player, 0, false);
 			SpeedCommand.setSpeed(player, 0, true);
-			player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 9999999, 200, true, true, false));
+			player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 9999999, 200, true, false, false));
 		} else {
 			if (player.getVehicle() != null)
 				player.getVehicle().removePassenger(player);
@@ -111,7 +113,7 @@ public class Freeze implements PlayerOwnedObject {
 		}
 	}
 
-	private void unmount() {
+	public void unmount() {
 		Player player = getOnlinePlayer();
 
 		if (armorStandsDisabled) {
@@ -120,6 +122,23 @@ public class Freeze implements PlayerOwnedObject {
 		} else
 			if (player.getVehicle() != null && player.getVehicle() instanceof ArmorStand)
 				player.getVehicle().remove();
+	}
+
+	// There may be a better way of doing this, but I'm unsure.
+	public boolean isInArea() {
+		final int xOffset = 3;
+		final int yOffset = 2;
+
+		if (getPlayer().getLocation().getX() > location.getX() + xOffset)
+			return false;
+		else if (getPlayer().getLocation().getX() < location.getX() - xOffset)
+			return false;
+		else if (getPlayer().getLocation().getY() > location.getY() + yOffset)
+			return false;
+		else if (getPlayer().getLocation().getY() < location.getY() - yOffset)
+			return false;
+		else
+			return true;
 	}
 
 }
