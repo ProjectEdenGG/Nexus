@@ -291,10 +291,8 @@ public class Tasks {
 		public void queue(int delayTicks) {
 			Runnable resave = () -> {
 				synchronized (this) {
-					if (QUEUE.get(this) == null)
-						return;
-
-					if (taskId.get() != QUEUE.get(this))
+					final Integer expectedTaskId = QUEUE.get(this);
+					if (expectedTaskId == null || expectedTaskId != taskId.get())
 						return;
 
 					QUEUE.remove(this);
