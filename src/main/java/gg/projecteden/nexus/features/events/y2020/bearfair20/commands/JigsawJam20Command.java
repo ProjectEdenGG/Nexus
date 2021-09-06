@@ -5,7 +5,6 @@ import gg.projecteden.annotations.Disabled;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.discord.Discord;
-import gg.projecteden.nexus.features.particles.effects.DotEffect;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
@@ -32,7 +31,6 @@ import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Rotation;
@@ -373,8 +371,6 @@ public class JigsawJam20Command extends CustomCommand implements Listener {
 								MapRotation mapRotation = MapRotation.getRotation(itemFrame.getRotation());
 								if (order.get(index) == mapId && rotation.get(index) == mapRotation)
 									++correct;
-								else
-									DotEffect.builder().player(player).location(entity.getLocation().getBlock().getLocation()).ticks(5 * 20).color(Color.RED).start();
 							}
 					}
 

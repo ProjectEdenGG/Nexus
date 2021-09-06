@@ -105,7 +105,7 @@ public class DotEffect {
 			.color(color)
 			.clientSide(true)
 			.speed(.1)
-			.ticks(TickTime.SECOND.get())
+			.ticks(TickTime.SECOND.x(3))
 			.start();
 	}
 }

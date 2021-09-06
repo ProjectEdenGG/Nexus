@@ -45,14 +45,7 @@ public class Fireflies extends ParticleEffect {
 		player.spawnParticle(particle, xRange, yRange, zRange, 0, xVel, yVel, zVel, 1);
 
 		if (user.isDebug())
-			DotEffect.builder()
-				.player(player)
-				.location(new Location(player.getWorld(), xRange, yRange, zRange))
-				.clientSide(true)
-				.color(Color.YELLOW)
-				.speed(.1)
-				.ticks(TickTime.SECOND.get())
-				.start();
+			DotEffect.debug(player, new Location(player.getWorld(), xRange, yRange, zRange), Color.YELLOW);
 	}
 
 }
