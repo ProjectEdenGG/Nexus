@@ -61,12 +61,9 @@ public class FreezeCommand extends _PunishmentCommand implements Listener {
 	static {
 		FreezeService freezeService = new FreezeService();
 		Tasks.repeatAsync(0, TimeUtils.TickTime.TICK.x(10), () -> {
-			for (Freeze freeze : freezeService.getOnline()) {
-				if (freeze.isFrozen() && !freeze.isInArea()) {
-						Tasks.sync(() -> freeze.getPlayer().teleportAsync(freeze.getLocation()));
-					}
-				}
-			}
+			for (Freeze freeze : freezeService.getOnline())
+				if (freeze.isFrozen() && !freeze.isInArea())
+					Tasks.sync(() -> freeze.getPlayer().teleportAsync(freeze.getLocation()));
 		});
 	}
 
