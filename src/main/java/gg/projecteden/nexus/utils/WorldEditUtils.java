@@ -3,6 +3,7 @@ package gg.projecteden.nexus.utils;
 import com.fastasyncworldedit.core.extent.processor.lighting.RelightMode;
 import com.fastasyncworldedit.core.regions.RegionWrapper;
 import com.fastasyncworldedit.core.util.EditSessionBuilder;
+import com.fastasyncworldedit.core.wrappers.WorldWrapper;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.LocalSession;
 import com.sk89q.worldedit.WorldEditException;
@@ -61,6 +62,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -104,12 +106,15 @@ public class WorldEditUtils {
 	public WorldEditUtils(@NonNull org.bukkit.World world) {
 		this.world = world;
 		this.bukkitWorld = new BukkitWorld(world);
-		this.worldEditWorld = bukkitWorld;
+		this.worldEditWorld = WorldWrapper.wrap(bukkitWorld);
 		this.worldGuardUtils = new WorldGuardUtils(world);
 	}
 
 	public EditSessionBuilder getEditSessionBuilder() {
-		return new EditSessionBuilder(worldEditWorld).allowedRegionsEverywhere().relightMode(RelightMode.ALL);
+		return new EditSessionBuilder(worldEditWorld)
+			.allowedRegionsEverywhere()
+			.relightMode(RelightMode.ALL)
+			.fastmode(true);
 	}
 
 	public EditSession getEditSession() {
@@ -329,35 +334,36 @@ public class WorldEditUtils {
 	}
 
 	public CompletableFuture<Clipboard> copy(Region region, Paster paster) {
-		final CompletableFuture<Clipboard> future = new CompletableFuture<>();
+		return CompletableFuture.supplyAsync(() -> {
+			Consumer<String> debug = message -> { if (paster != null) paster.debug(message); };
+			debug.accept("Copying");
 
-		Clipboard clipboard = new BlockArrayClipboard(region);
-		try (EditSession editSession = getEditSession()) {
-			ForwardExtentCopy copy = new ForwardExtentCopy(editSession, region, clipboard, region.getMinimumPoint());
+			Clipboard clipboard = new BlockArrayClipboard(region);
+			try (EditSession editSession = getEditSession()) {
+				ForwardExtentCopy copy = new ForwardExtentCopy(editSession, region, clipboard, region.getMinimumPoint());
 
-			if (paster != null) {
-				copy.setCopyingEntities(paster.entities);
-				copy.setCopyingBiomes(paster.biomes);
+				if (paster != null) {
+					copy.setCopyingEntities(paster.entities);
+					copy.setCopyingBiomes(paster.biomes);
+				}
+
+				debug.accept("Completing copy");
+				Operations.completeBlindly(copy); // deadlocking
+				debug.accept("Done copying");
 			}
 
-			final Runnable runnable = () -> {
-				Operations.completeLegacy(copy);
-				future.complete(clipboard);
-			};
-
-			if (copy.isCopyingEntities())
-				Tasks.sync(runnable);
-			else
-				runnable.run();
-		} catch (WorldEditException ex) {
-			ex.printStackTrace();
-		}
-
-		return future;
+			return clipboard;
+		});
 	}
 
 	public Paster paster() {
-		return new Paster();
+		return paster(null);
+	}
+
+	public Paster paster(String message) {
+		final Paster paster = new Paster();
+		paster.debug(message);
+		return paster;
 	}
 
 	@Data
@@ -371,6 +377,16 @@ public class WorldEditUtils {
 		private boolean biomes = false;
 		private Transform transform;
 		private Region[] regionMask = new Region[]{RegionWrapper.GLOBAL()};
+
+		private final UUID uuid = UUID.randomUUID();
+		private final AtomicInteger i = new AtomicInteger(1000);
+
+		public void debug(String message) {
+			if (message != null) {
+				final String id = left(uuid.toString(), 8) + " " + i.getAndIncrement() + " " + (Bukkit.isPrimaryThread() ? " sync" : "async") + " ";
+				Nexus.debug(id + message);
+			}
+		}
 
 		private int ticks;
 		private CompletableFuture<Map<Location, BlockData>> computedBlocks;
@@ -432,6 +448,14 @@ public class WorldEditUtils {
 			return this;
 		}
 
+		/**
+		 * Duration during which to build the clipboard
+		 *
+		 * @see Paster#buildQueue
+		 * @see Paster#buildQueueClientSide
+		 * @param time duration
+		 * @return this
+		 */
 		public Paster duration(TickTime time) {
 			return duration(time.get());
 		}
@@ -446,61 +470,82 @@ public class WorldEditUtils {
 			return this;
 		}
 
+		/**
+		 * Get the clipboard's completable future
+		 * @return future
+		 */
 		private CompletableFuture<Clipboard> getClipboard() {
 			if (clipboardFuture == null && clipboardRegion != null)
 				clipboardFuture = copy(clipboardRegion, this);
 			return clipboardFuture;
 		}
 
-		public void pasteAsync() {
-			getClipboard().thenAccept(clipboard ->
-				Tasks.async(() -> {
-					try (EditSession editSession = getEditSessionBuilder().allowedRegions(regionMask).build()) {
-						if (transform == null)
-							clipboard.paste(editSession, at, air, entities, biomes);
-						else
-							clipboard.paste(editSession, at, air, transform);
-					} catch (WorldEditException ex) {
-						ex.printStackTrace();
-					}
-				}));
+		/**
+		 * Pastes the clipboard using FAWE
+		 * @return future
+		 */
+		public CompletableFuture<Void> pasteAsync() {
+			return getClipboard().thenComposeAsync(clipboard -> {
+				debug("Pasting");
+				try (EditSession editSession = getEditSessionBuilder().allowedRegions(regionMask).build()) {
+					debug("Extent: " + editSession.getExtent().getClass().getSimpleName());
+					if (transform == null)
+						clipboard.paste(editSession, at, air, entities, biomes);
+					else
+						clipboard.paste(editSession, at, air, transform);
+					debug("Done pasting");
+				} catch (WorldEditException ex) {
+					ex.printStackTrace();
+				}
+
+				return null;
+			});
 		}
 
-		public static String id(UUID uuid, AtomicInteger i) {
-			return left(uuid.toString(), 8) + " " + i.getAndIncrement() + " " + (Bukkit.isPrimaryThread() ? " sync" : "async");
-		}
-
-		public void build() {
-			build(StringUtils.getUUID0(), new AtomicInteger(0));
-		}
-
-		public CompletableFuture<Void> build(UUID uuid, AtomicInteger i) {
+		/**
+		 * Builds the clipboard using the bukkit API
+		 * @return future
+		 */
+		public CompletableFuture<Void> build() {
 			final CompletableFuture<Void> future = new CompletableFuture<>();
 
-			computeBlocks(uuid, i).thenAccept(blocks ->
+			computeBlocks().thenAccept(blocks ->
 				Tasks.sync(() -> {
-					Nexus.debug(id(uuid, i) + " Building " + blocks.size() + " blocks");
+					debug("Building " + blocks.size() + " blocks");
 					blocks.forEach((location, blockData) -> {
-						Nexus.debug(id(uuid, i) + "   Setting " + blockData.getMaterial() + " at " + getFlooredCoordinateString(location));
+						debug("  Setting " + blockData.getMaterial() + " at " + getFlooredCoordinateString(location));
 						location.getBlock().setBlockData(blockData);
 					});
-					Nexus.debug(id(uuid, i) + " Finished building " + blocks.size() + " blocks");
+					debug("Finished building " + blocks.size() + " blocks");
 					future.complete(null);
 				}));
 
 			return future;
 		}
 
+		/**
+		 * Builds the clipboard for a certain player
+		 * @param player player
+		 */
 		public void buildClientSide(HasPlayer player) {
 			Player _player = player.getPlayer();
 			computeBlocks().thenAccept(blocks -> blocks.forEach(_player::sendBlockChange));
 		}
 
+		/**
+		 * Builds the clipboard over the specified duration
+		 * @return future
+		 */
 		public CompletableFuture<Void> buildQueue() {
 			return buildQueue(location -> () -> computeBlocks().thenAccept(blocks ->
 				location.getBlock().setBlockData(blocks.get(location))));
 		}
 
+		/**
+		 * Builds the clipboard for a certain player over the specified duration
+		 * @param player player
+		 * @return future
+		 */
 		public CompletableFuture<Void> buildQueueClientSide(HasPlayer player) {
 			return buildQueue(location -> () -> computeBlocks().thenAccept(blocks ->
 				player.getPlayer().sendBlockChange(location.getBlock().getLocation(), blocks.get(location))));
@@ -557,15 +602,11 @@ public class WorldEditUtils {
 		}
 
 		public CompletableFuture<Map<Location, BlockData>> computeBlocks() {
-			return computeBlocks(StringUtils.getUUID0(), new AtomicInteger(0));
-		}
-
-		public CompletableFuture<Map<Location, BlockData>> computeBlocks(UUID uuid, AtomicInteger i) {
 			if (computedBlocks == null) {
-				Nexus.debug(id(uuid, i) + " Computing blocks");
+				debug("Computing blocks");
 				computedBlocks = new CompletableFuture<>();
 				getClipboard().thenAcceptAsync(clipboard -> {
-					Nexus.debug(id(uuid, i) + " Clipboard completed");
+					debug("Clipboard completed");
 					Iterator<BlockVector3> iterator = clipboard.iterator();
 
 					BlockVector3 origin = clipboard.getOrigin();
@@ -584,11 +625,11 @@ public class WorldEditUtils {
 						Location location = toLocation(blockVector3).add(relX, relY, relZ);
 						final BlockData block = BukkitAdapter.adapt(baseBlock);
 
-						Nexus.debug(id(uuid, i) + "   Found " + block.getMaterial() + "  at " + getFlooredCoordinateString(toLocation(blockVector3)) + " (" + baseBlock.getAsString() + ")");
+						debug("  Found " + block.getMaterial() + "  at " + getFlooredCoordinateString(toLocation(blockVector3)) + " (" + baseBlock.getAsString() + ")");
 						data.put(location, block);
 					}
 
-					Nexus.debug(id(uuid, i) + " Finished computing " + data.size() + " blocks");
+					debug("Finished computing " + data.size() + " blocks");
 					computedBlocks.complete(data);
 				});
 			}

@@ -10,12 +10,14 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.BiomeTag.BiomeClimateType;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.CitizensUtils;
+import gg.projecteden.nexus.utils.CompletableFutures;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -26,6 +28,7 @@ import gg.projecteden.nexus.utils.Tasks.ExpBarCountdown;
 import gg.projecteden.nexus.utils.Tasks.QueuedTask;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
+import gg.projecteden.nexus.utils.WorldEditUtils.Paster;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan.FormatType;
 import gg.projecteden.utils.TimeUtils.Timespan.TimespanBuilder;
@@ -50,10 +53,12 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 import org.inventivetalent.glow.GlowAPI;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 import static gg.projecteden.nexus.utils.BlockUtils.getBlocksInRadius;
@@ -72,6 +77,37 @@ public class TestCommand extends CustomCommand implements Listener {
 	@Override
 	public void _shutdown() {
 		shutdownBossBars();
+	}
+
+	@Path("clipboard [--build] [--async] [--entities]")
+	void clipboard(
+		@Switch @Arg("false") boolean build,
+		@Switch @Arg("false") boolean async,
+		@Switch @Arg("false") boolean entities
+	) {
+		final WorldEditUtils utils = new WorldEditUtils(world());
+		List<CompletableFuture<Void>> futures = new ArrayList<>();
+
+		Runnable task = () -> {
+			final Paster paster = utils.paster().clipboard(player()).at(location()).entities(entities);
+
+			if (build) {
+				send("Building " + (async ? "async" : "sync"));
+				for (int i = 0; i < 5; i++)
+					futures.add(paster.build());
+			} else {
+				send("Pasting " + (async ? "async" : "sync"));
+				for (int i = 0; i < 5; i++)
+					futures.add(paster.pasteAsync());
+			}
+
+			CompletableFutures.allOf(futures).thenRun(() -> send("done"));
+		};
+
+		if (async)
+			Tasks.async(task);
+		else
+			task.run();
 	}
 
 	@Path("queuedTask")
@@ -296,7 +332,7 @@ public class TestCommand extends CustomCommand implements Listener {
 
 	@Path("allowedRegionsTest")
 	void allowedRegionsTest() {
-		new WorldEditUtils(player()).paster().file("allowedRegionsTest").at(location()).regions("allowedRegionsTest").pasteAsync();
+		new WorldEditUtils(player()).paster().file("allowedRegionsTest").at(location()).regionMask("allowedRegionsTest").pasteAsync();
 		send("Pasted schematic allowedRegionsTest");
 	}
 

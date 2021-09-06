@@ -307,10 +307,8 @@ public class Tasks {
 
 			synchronized (QUEUE) {
 				final Integer taskId = QUEUE.get(this);
-				if (taskId != null) {
+				if (taskId != null)
 					Tasks.cancel(taskId);
-					Nexus.debug("Cancelling existing task for " + uuid + "-" + type);
-				}
 
 				QUEUE.put(this, this.taskId.get());
 			}

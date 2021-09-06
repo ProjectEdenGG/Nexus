@@ -5,7 +5,6 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.arenas.PixelPaintersArena;
@@ -41,12 +40,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static gg.projecteden.nexus.utils.StringUtils.plural;
-import static gg.projecteden.nexus.utils.WorldEditUtils.Paster.id;
 
 // TODO:
 //  - Only paste the designs on active islands
@@ -146,20 +142,14 @@ public class PixelPainters extends TeamlessMechanic {
 				Region copyRg = new CuboidRegion(match.getWGUtils().getWorldEditWorld(), copyMinV, copyMaxV);
 				BlockVector3 finalPasteMinV = pasteMinV;
 
-				final UUID uuid = UUID.randomUUID();
-				final AtomicInteger j = new AtomicInteger(1000);
-				Nexus.debug(id(uuid, j) + " Rotating lobby design");
-				futures.add(match.getWEUtils().paster().clipboard(copyRg).at(finalPasteMinV).build(uuid, new AtomicInteger(1000)));
+				futures.add(match.getWEUtils().paster("Rotating lobby design").clipboard(copyRg).at(finalPasteMinV).pasteAsync());
 			}
 
 			CompletableFutures.allOf(futures).thenRun(() -> {
 				// Paste Design
 				Region pasteRegion = arena.getLobbyAnimationRegion();
 
-				final UUID uuid = UUID.randomUUID();
-				final AtomicInteger i = new AtomicInteger(1000);
-				Nexus.debug(id(uuid, i) + " Pasting lobby design");
-				match.getWEUtils().paster().clipboard(arena.getLobbyDesignRegion()).at(pasteRegion.getMinimumPoint()).build(uuid, new AtomicInteger(1000));
+				match.getWEUtils().paster("Pasting lobby design").clipboard(arena.getLobbyDesignRegion()).at(pasteRegion.getMinimumPoint()).pasteAsync();
 			});
 		});
 		matchData.setAnimateLobbyId(taskId);
@@ -500,10 +490,7 @@ public class PixelPainters extends TeamlessMechanic {
 			copyMaxV = designMax.subtract(0, 0, i);
 			pasteMinV = pasteMin.add(0, i, 0);
 			Region copyRg = new CuboidRegion(match.getWGUtils().getWorldEditWorld(), copyMinV, copyMaxV);
-			final UUID uuid = UUID.randomUUID();
-			final AtomicInteger j = new AtomicInteger(1000);
-			Nexus.debug(id(uuid, j) + " Setting up next design");
-			match.getWEUtils().paster().clipboard(copyRg).at(pasteMinV).build(uuid, new AtomicInteger(1000));
+			match.getWEUtils().paster("Setting up next design").clipboard(copyRg).at(pasteMinV).pasteAsync();
 		}
 	}
 
@@ -512,10 +499,7 @@ public class PixelPainters extends TeamlessMechanic {
 		Set<ProtectedRegion> wallRegions = arena.getRegionsLike("wall_[\\d]+");
 		wallRegions.forEach(wallRegion -> {
 			Region region = match.getWGUtils().convert(wallRegion);
-			final UUID uuid = UUID.randomUUID();
-			final AtomicInteger i = new AtomicInteger(1000);
-			Nexus.debug(id(uuid, i) + " Pasting new design");
-			match.getWEUtils().paster().clipboard(arena.getNextDesignRegion()).at(region.getMinimumPoint()).build(uuid, new AtomicInteger(1000));
+			match.getWEUtils().paster("Pasting new design").clipboard(arena.getNextDesignRegion()).at(region.getMinimumPoint()).pasteAsync();
 		});
 	}
 
@@ -537,10 +521,7 @@ public class PixelPainters extends TeamlessMechanic {
 		Set<ProtectedRegion> wallRegions = arena.getRegionsLike("wall_[\\d]+");
 		wallRegions.forEach(wallRegion -> {
 			Region region = match.getWGUtils().convert(wallRegion);
-			final UUID uuid = UUID.randomUUID();
-			final AtomicInteger i = new AtomicInteger(1000);
-			Nexus.debug(id(uuid, i) + " Pasting logo");
-			match.getWEUtils().paster().clipboard(arena.getLogoRegion()).at(region.getMinimumPoint()).build(uuid, new AtomicInteger(1000));
+			match.getWEUtils().paster("Pasting logo").clipboard(arena.getLogoRegion()).at(region.getMinimumPoint()).pasteAsync();
 		});
 	}
 
