@@ -66,9 +66,9 @@ public class Minigames extends Feature {
 
 	@Override
 	public void onStart() {
+		registerSerializables();
+		registerMatchDatas();
 		Tasks.async(() -> {
-			registerSerializables();
-			registerMatchDatas();
 			ArenaManager.read();
 			registerListeners();
 
