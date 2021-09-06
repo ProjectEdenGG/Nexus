@@ -67,6 +67,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -985,13 +986,27 @@ public abstract class CustomCommand extends ICustomCommand {
 			send(PREFIX + "Aliases: " + String.join("&e, &3", aliases));
 
 		List<JsonBuilder> lines = new ArrayList<>();
-		getPathMethods(event).forEach(method -> {
+		final List<Method> methods = getPathMethods(event)
+			.stream()
+			.filter(method -> {
+				Path path = method.getAnnotation(Path.class);
+				HideFromHelp hide = method.getAnnotation(HideFromHelp.class);
+
+				if (hide != null)
+					return false;
+
+				if ("help".equals(path.value()) || "?".equals(path.value()))
+					return false;
+
+				return true;
+			}).toList();
+
+		methods.forEach(method -> {
 			Path path = method.getAnnotation(Path.class);
 			Description desc = method.getAnnotation(Description.class);
-			HideFromHelp hide = method.getAnnotation(HideFromHelp.class);
 
-			if (hide != null) return;
-			if ("help".equals(path.value()) || "?".equals(path.value())) return;
+			if (methods.size() == 1 && desc == null)
+				desc = this.getClass().getAnnotation(Description.class);
 
 			String usage = "/" + getAliasUsed().toLowerCase() + " " + (isNullOrEmpty(path.value()) ? "" : path.value());
 			String description = (desc == null ? "" : " &7- " + desc.value());
