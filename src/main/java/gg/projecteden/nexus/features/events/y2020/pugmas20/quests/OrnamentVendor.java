@@ -16,7 +16,7 @@ import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.nexus.utils.WorldEditUtils.Paste;
+import gg.projecteden.nexus.utils.WorldEditUtils.Paster;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.Utils.MinMaxResult;
 import lombok.Getter;
@@ -215,7 +215,7 @@ public class OrnamentVendor implements Listener {
 		private final List<Material> others;
 
 		@Getter
-		private final Map<Integer, Paste> pasters = new HashMap<>();
+		private final Map<Integer, Paster> pasters = new HashMap<>();
 		@Getter
 		private final Map<Integer, CompletableFuture<Queue<Location>>> queues = new HashMap<>();
 		@Getter
@@ -292,7 +292,7 @@ public class OrnamentVendor implements Listener {
 			return getPaster(id).getComputedBlocks();
 		}
 
-		private Paste getPaster(int id) {
+		private Paster getPaster(int id) {
 			return pasters.computeIfAbsent(id, $ -> {
 				ProtectedRegion region = getRegion(id);
 				if (region == null)

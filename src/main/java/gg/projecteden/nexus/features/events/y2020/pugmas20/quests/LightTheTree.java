@@ -15,7 +15,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.Countdown;
-import gg.projecteden.nexus.utils.WorldEditUtils.Paste;
+import gg.projecteden.nexus.utils.WorldEditUtils.Paster;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import gg.projecteden.utils.TimeUtils.Timespan.FormatType;
@@ -281,7 +281,7 @@ public class LightTheTree implements Listener {
 			method.accept(player, getLocation("treetorch", i));
 	}
 
-	private final static Paste treeLightPaster = Pugmas20.getWEUtils().paster()
+	private final static Paster TREE_LIGHT_PASTER = Pugmas20.getWEUtils().paster()
 			.at(Pugmas20.location(936, 61, 483))
 			.file("pugmas20/tree_light")
 			.duration(TickTime.SECOND.x(7))
@@ -289,15 +289,15 @@ public class LightTheTree implements Listener {
 			.inspect();
 
 	public static void updateTreeLightBlocks(Player player) {
-		treeLightPaster.buildClientSide(player);
+		TREE_LIGHT_PASTER.buildClientSide(player);
 	}
 
 	public static void updateTreeLightBlocksAir(Player player) {
-		treeLightPaster.getComputedBlocks().thenAccept(blocks -> blocks.keySet().forEach(location -> air(player, location)));
+		TREE_LIGHT_PASTER.getComputedBlocks().thenAccept(blocks -> blocks.keySet().forEach(location -> air(player, location)));
 	}
 
 	public static void animateTreeLightBlocks(Player player) {
-		treeLightPaster.buildQueueClientSide(player);
+		TREE_LIGHT_PASTER.buildQueueClientSide(player);
 	}
 
 	@EventHandler

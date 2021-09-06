@@ -193,7 +193,7 @@ public class WorldEditUtils {
 
 		abstract BlockVector3[] getVectors();
 
-		public BlockVector3[] applyChanges(int amount) {
+		public BlockVector3[] apply(int amount) {
 			return Stream.of(getVectors())
 					.map(vector -> vector.multiply(amount))
 					.toArray(BlockVector3[]::new);
@@ -210,8 +210,8 @@ public class WorldEditUtils {
 		if (amount <= 0) return;
 		LocalSession session = plugin.getSession(player.getPlayer());
 		Region region = session.getSelection(worldEditWorld);
-		int oldSize = region.getArea();
-		BlockVector3[] directions = directionType.applyChanges(amount);
+		long oldSize = region.getVolume();
+		BlockVector3[] directions = directionType.apply(amount);
 
 		if (changeType == SelectionChangeType.EXPAND)
 			region.expand(directions);
@@ -220,9 +220,8 @@ public class WorldEditUtils {
 
 		getPlayer(player).setSelection(region);
 		session.getRegionSelector(worldEditWorld).learnChanges();
-		int newSize = region.getArea();
+		long newSize = region.getVolume();
 		session.getRegionSelector(worldEditWorld).explainRegionAdjust(getPlayer(player), session);
-//		actor.printInfo(TranslatableComponent.of("worldedit.expand.expanded.vert", new Component[]{TextComponent.of(changeSize)}));
 	}
 
 	/**
@@ -282,38 +281,18 @@ public class WorldEditUtils {
 	}
 
 	public List<Block> getBlocks(ProtectedRegion region) {
-		return getBlocks((CuboidRegion) worldGuardUtils.convert(region), new ArrayList<>());
+		return getBlocks(worldGuardUtils.convert(region), new ArrayList<>());
 	}
 
 	public List<Block> getBlocks(Region region) {
-		return getBlocks((CuboidRegion) region, new ArrayList<>());
-	}
-
-	public List<Block> getBlocks(CuboidRegion region) {
-		return getBlocks(region, new ArrayList<>());
-	}
-
-	public List<Block> getBlocks(ProtectedRegion region, Material material) {
-		return getBlocks((CuboidRegion) worldGuardUtils.convert(region), material);
+		return getBlocks(region, Collections.emptyList());
 	}
 
 	public List<Block> getBlocks(Region region, Material material) {
-		return getBlocks((CuboidRegion) region, material);
-	}
-
-	public List<Block> getBlocks(CuboidRegion region, Material material) {
 		return getBlocks(region, Collections.singletonList(material));
 	}
 
-	public List<Block> getBlocks(ProtectedRegion region, List<Material> materials) {
-		return getBlocks((CuboidRegion) worldGuardUtils.convert(region), materials);
-	}
-
 	public List<Block> getBlocks(Region region, List<Material> materials) {
-		return getBlocks((CuboidRegion) region, materials);
-	}
-
-	public List<Block> getBlocks(CuboidRegion region, List<Material> materials) {
 		List<Block> blockList = new ArrayList<>();
 		for (int x = region.getMinimumPoint().getBlockX(); x <= region.getMaximumPoint().getBlockX(); x++)
 			for (int y = region.getMinimumPoint().getBlockY(); y <= region.getMaximumPoint().getBlockY(); y++)
@@ -342,109 +321,149 @@ public class WorldEditUtils {
 	}
 
 	public CompletableFuture<Clipboard> copy(Location min, Location max) {
-		return copy(worldGuardUtils.getRegion(min, max));
+		return copy(worldGuardUtils.getRegion(min, max), null);
 	}
 
 	public CompletableFuture<Clipboard> copy(Region region) {
+		return copy(region, null);
+	}
+
+	public CompletableFuture<Clipboard> copy(Region region, Paster paster) {
 		final CompletableFuture<Clipboard> future = new CompletableFuture<>();
 
-		Tasks.async(() -> {
-			Clipboard clipboard = new BlockArrayClipboard(region);
-			try (EditSession editSession = getEditSession()) {
-				ForwardExtentCopy copy = new ForwardExtentCopy(editSession, region, clipboard, region.getMinimumPoint());
+		Clipboard clipboard = new BlockArrayClipboard(region);
+		try (EditSession editSession = getEditSession()) {
+			ForwardExtentCopy copy = new ForwardExtentCopy(editSession, region, clipboard, region.getMinimumPoint());
+
+			if (paster != null) {
+				copy.setCopyingEntities(paster.entities);
+				copy.setCopyingBiomes(paster.biomes);
+			}
+
+			final Runnable runnable = () -> {
 				Operations.completeLegacy(copy);
 				future.complete(clipboard);
-			} catch (WorldEditException ex) {
-				ex.printStackTrace();
-			}
-		});
+			};
+
+			if (copy.isCopyingEntities())
+				Tasks.sync(runnable);
+			else
+				runnable.run();
+		} catch (WorldEditException ex) {
+			ex.printStackTrace();
+		}
 
 		return future;
 	}
 
-	public Paste paster() {
-		return new Paste();
+	public Paster paster() {
+		return new Paster();
 	}
 
 	@Data
 	@NoArgsConstructor
-	public class Paste {
+	public class Paster {
 		private CompletableFuture<Clipboard> clipboardFuture;
+		private Region clipboardRegion;
 		private BlockVector3 at;
-		private boolean pasteAir = true;
+		private boolean air = true;
+		private boolean entities = false;
+		private boolean biomes = false;
 		private Transform transform;
-		private Region[] regions = new Region[]{RegionWrapper.GLOBAL()};
+		private Region[] regionMask = new Region[]{RegionWrapper.GLOBAL()};
 
 		private int ticks;
 		private CompletableFuture<Map<Location, BlockData>> computedBlocks;
 
-		public Paste file(String fileName) {
+		public Paster file(String fileName) {
 			return clipboard(getSchematic(fileName));
 		}
 
-		public Paste clipboard(Clipboard clipboard) {
-			this.clipboardFuture = new CompletableFuture<>();
-			this.clipboardFuture.complete(clipboard);
+		public Paster clipboard(Player player) {
+			return clipboard(getPlayerSelection(player));
+		}
+
+		public Paster clipboard(Clipboard clipboard) {
+			this.clipboardFuture = CompletableFuture.completedFuture(clipboard);
 			return this;
 		}
 
-		public Paste clipboard(Region region) {
-			this.clipboardFuture = copy(region);
+		public Paster clipboard(Region region) {
+			this.clipboardRegion = region;
 			return this;
 		}
 
-		public Paste regions(String... regions) {
-			this.regions = Arrays.stream(regions).map(worldGuardUtils::getRegion).toArray(Region[]::new);
+		public Paster regionMask(String... regions) {
+			this.regionMask = Arrays.stream(regions).map(worldGuardUtils::getRegion).toArray(Region[]::new);
 			return this;
 		}
 
-		public Paste at(Location location) {
+		public Paster regionMask(Region... regions) {
+			this.regionMask = regions;
+			return this;
+		}
+
+		public Paster at(Location location) {
 			return at(toBlockVector3(location));
 		}
 
-		public Paste at(BlockVector3 vector) {
+		public Paster at(BlockVector3 vector) {
 			this.at = vector;
 			return this;
 		}
 
-		public Paste air(boolean pasteAir) {
-			this.pasteAir = pasteAir;
+		public Paster air(boolean air) {
+			this.air = air;
 			return this;
 		}
 
-		public Paste transform(Transform transform) {
+		public Paster entities(boolean entities) {
+			this.entities = entities;
+			return this;
+		}
+
+		public Paster biomes(boolean biomes) {
+			this.biomes = biomes;
+			return this;
+		}
+
+		public Paster transform(Transform transform) {
 			this.transform = transform;
 			return this;
 		}
 
-		public Paste duration(TickTime time) {
+		public Paster duration(TickTime time) {
 			return duration(time.get());
 		}
 
-		public Paste duration(int ticks) {
+		public Paster duration(int ticks) {
 			this.ticks = ticks;
 			return this;
 		}
 
-		public Paste blocks(Map<Location, BlockData> blockDataMap) {
-			this.computedBlocks = new CompletableFuture<>();
-			this.computedBlocks.complete(blockDataMap);
+		public Paster inspect() {
+			computeBlocks();
 			return this;
 		}
 
-		public Paste inspect() {
-			this.computedBlocks = computeBlocks();
-			return this;
+		private CompletableFuture<Clipboard> getClipboard() {
+			if (clipboardFuture == null && clipboardRegion != null)
+				clipboardFuture = copy(clipboardRegion, this);
+			return clipboardFuture;
 		}
 
 		public void pasteAsync() {
-			Tasks.async(() -> {
-				try (EditSession editSession = getEditSessionBuilder().allowedRegions(regions).build()) {
-					clipboardFuture.thenAccept(clipboard -> clipboard.paste(editSession, at, pasteAir, transform));
-				} catch (WorldEditException ex) {
-					ex.printStackTrace();
-				}
-			});
+			getClipboard().thenAccept(clipboard ->
+				Tasks.async(() -> {
+					try (EditSession editSession = getEditSessionBuilder().allowedRegions(regionMask).build()) {
+						if (transform == null)
+							clipboard.paste(editSession, at, air, entities, biomes);
+						else
+							clipboard.paste(editSession, at, air, transform);
+					} catch (WorldEditException ex) {
+						ex.printStackTrace();
+					}
+				}));
 		}
 
 		public static String id(UUID uuid, AtomicInteger i) {
@@ -545,7 +564,7 @@ public class WorldEditUtils {
 			if (computedBlocks == null) {
 				Nexus.debug(id(uuid, i) + " Computing blocks");
 				computedBlocks = new CompletableFuture<>();
-				clipboardFuture.thenAcceptAsync(clipboard -> {
+				getClipboard().thenAcceptAsync(clipboard -> {
 					Nexus.debug(id(uuid, i) + " Clipboard completed");
 					Iterator<BlockVector3> iterator = clipboard.iterator();
 
@@ -559,7 +578,7 @@ public class WorldEditUtils {
 					while (iterator.hasNext()) {
 						BlockVector3 blockVector3 = iterator.next();
 						BaseBlock baseBlock = blockVector3.getFullBlock(clipboard);
-						if (baseBlock.getMaterial().isAir() && !pasteAir)
+						if (baseBlock.getMaterial().isAir() && !air)
 							continue;
 
 						Location location = toLocation(blockVector3).add(relX, relY, relZ);
@@ -622,12 +641,12 @@ public class WorldEditUtils {
 	}
 
 	public Region expandAll(Region region, int amount) {
-		region.expand(SelectionChangeDirectionType.ALL.applyChanges(amount));
+		region.expand(SelectionChangeDirectionType.ALL.apply(amount));
 		return region;
 	}
 
 	public Region contractAll(Region region, int amount) {
-		region.contract(SelectionChangeDirectionType.ALL.applyChanges(amount));
+		region.contract(SelectionChangeDirectionType.ALL.apply(amount));
 		return region;
 	}
 
@@ -635,15 +654,15 @@ public class WorldEditUtils {
 	public void fixFlat(LocalSession session, Region region) {
 		region.expand(Direction.UP.toBlockVector().multiply(500));
 		region.expand(Direction.DOWN.toBlockVector().multiply(500));
-		set(region, BlockTypes.AIR);
+		set(region, Objects.requireNonNull(BlockTypes.AIR));
 		region.expand(Direction.DOWN.toBlockVector().multiply(500));
 		region.contract(Direction.DOWN.toBlockVector().multiply(500));
 		session.getRegionSelector(region.getWorld()).learnChanges();
-		set(region, BlockTypes.BEDROCK);
+		set(region, Objects.requireNonNull(BlockTypes.BEDROCK));
 		region.expand(Direction.UP.toBlockVector().multiply(3));
 		region.contract(Direction.UP.toBlockVector().multiply(1));
 		session.getRegionSelector(region.getWorld()).learnChanges();
-		set(region, BlockTypes.GRASS_BLOCK);
+		set(region, Objects.requireNonNull(BlockTypes.GRASS_BLOCK));
 	}
 
 }

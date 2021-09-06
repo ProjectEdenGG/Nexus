@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds;
 
-import com.sk89q.worldedit.regions.CuboidRegion;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.BF21PointSource;
@@ -166,7 +165,7 @@ public class Archery implements Listener {
 
 	private void clearTargets() {
 		activeTargets = 0;
-		List<Block> blocks = getWEUtils().getBlocks((CuboidRegion) getWGUtils().getRegion(targetRegion));
+		List<Block> blocks = getWEUtils().getBlocks(getWGUtils().getRegion(targetRegion));
 		for (Block block : blocks) {
 			if (block.getType().equals(Material.TARGET))
 				removeTarget(block);

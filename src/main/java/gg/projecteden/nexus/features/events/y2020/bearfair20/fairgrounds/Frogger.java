@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.events.y2020.bearfair20.fairgrounds;
 
-import com.sk89q.worldedit.regions.CuboidRegion;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
@@ -70,7 +69,7 @@ public class Frogger implements Listener {
 	}
 
 	private void loadLogSpawns() {
-		List<Block> blocks = WEUtils.getBlocks((CuboidRegion) getWGUtils().getRegion(logsRg));
+		List<Block> blocks = WEUtils.getBlocks(getWGUtils().getRegion(logsRg));
 		for (Block block : blocks) {
 			if (block.getType().equals(Material.DIAMOND_BLOCK) || block.getType().equals(Material.EMERALD_BLOCK)) {
 				logSpawnMap.put(block.getLocation(), block.getType());
@@ -79,7 +78,7 @@ public class Frogger implements Listener {
 	}
 
 	private void loadCarSpawns() {
-		List<Block> blocks = WEUtils.getBlocks((CuboidRegion) getWGUtils().getRegion(carsRg));
+		List<Block> blocks = WEUtils.getBlocks(getWGUtils().getRegion(carsRg));
 		for (Block block : blocks) {
 			if (block.getType().equals(Material.DIAMOND_BLOCK) || block.getType().equals(Material.EMERALD_BLOCK)) {
 				carSpawnMap.put(block.getLocation(), block.getType());
@@ -274,7 +273,7 @@ public class Frogger implements Listener {
 	}
 
 	private void clearLogs() {
-		List<Block> blocks = WEUtils.getBlocks((CuboidRegion) getWGUtils().getRegion(logsRg));
+		List<Block> blocks = WEUtils.getBlocks(getWGUtils().getRegion(logsRg));
 		for (Block block : blocks) {
 			if (block.getType().equals(logMaterial))
 				block.setType(riverMaterial);
@@ -282,7 +281,7 @@ public class Frogger implements Listener {
 	}
 
 	private void clearCars() {
-		List<Block> blocks = WEUtils.getBlocks((CuboidRegion) getWGUtils().getRegion(roadRg));
+		List<Block> blocks = WEUtils.getBlocks(getWGUtils().getRegion(roadRg));
 		for (Block block : blocks) {
 			if (!block.getType().equals(Material.AIR))
 				block.setType(Material.AIR);

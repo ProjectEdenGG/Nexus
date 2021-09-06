@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.events.y2020.bearfair20.fairgrounds;
 
-import com.sk89q.worldedit.regions.CuboidRegion;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
@@ -106,7 +105,7 @@ public class Archery implements Listener {
 	}
 
 	private List<Location> getTargetLocs() {
-		List<Block> blocks = BearFair20.getWEUtils().getBlocks((CuboidRegion) getWGUtils().getRegion(targetsRg));
+		List<Block> blocks = BearFair20.getWEUtils().getBlocks(getWGUtils().getRegion(targetsRg));
 		List<Location> locs = new ArrayList<>();
 		for (Block block : blocks) {
 			Location loc = block.getLocation();
@@ -171,7 +170,7 @@ public class Archery implements Listener {
 
 	private void clearTargets() {
 		currentTargets = 0;
-		List<Block> blocks = getWEUtils().getBlocks((CuboidRegion) getWGUtils().getRegion(targetsRg));
+		List<Block> blocks = getWEUtils().getBlocks(getWGUtils().getRegion(targetsRg));
 		for (Block block : blocks) {
 			if (block.getType().equals(Material.WHITE_CONCRETE))
 				removeTarget(block);

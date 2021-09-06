@@ -6,7 +6,7 @@ import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldEditUtils.Paste;
+import gg.projecteden.nexus.utils.WorldEditUtils.Paster;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -118,30 +118,30 @@ public class Train {
 		crossing1_closed = false;
 		crossing2_closed = false;
 
-		Queue<Paste> pastes = new LinkedList<>();
+		Queue<Paster> pasters = new LinkedList<>();
 
 		for (int i = 1; i <= 109; i++)
-			pastes.add(getWEUtils().paster().file(animationPath + "/Enter/TrainEnter_" + i).at(trainEnter));
+			pasters.add(getWEUtils().paster().file(animationPath + "/Enter/TrainEnter_" + i).at(trainEnter));
 
 		for (int i = 1; i <= 95; i++)
-			pastes.add(getWEUtils().paster().file(animationPath + "/Train").at(trainStart.getBlock().getRelative(i, 0, 0).getLocation()));
+			pasters.add(getWEUtils().paster().file(animationPath + "/Train").at(trainStart.getBlock().getRelative(i, 0, 0).getLocation()));
 
 		for (int i = 1; i <= 110; i++)
-			pastes.add(getWEUtils().paster().file(animationPath + "/Exit/TrainExit_" + i).at(trainExit));
+			pasters.add(getWEUtils().paster().file(animationPath + "/Exit/TrainExit_" + i).at(trainExit));
 
-		Tasks.async(() -> animate(pastes));
+		Tasks.async(() -> animate(pasters));
 	}
 
-	private static void animate(Queue<Paste> pastes) {
-		Paste paste = pastes.poll();
-		if (paste == null) {
+	private static void animate(Queue<Paster> pasters) {
+		Paster paster = pasters.poll();
+		if (paster == null) {
 			Tasks.waitAsync(trainFrameTime, Train::resetTrain);
 			return;
 		}
 
-		paste.pasteAsync();
+		paster.pasteAsync();
 		incrementTrain();
-		Tasks.waitAsync(trainFrameTime, () -> animate(pastes));
+		Tasks.waitAsync(trainFrameTime, () -> animate(pasters));
 	}
 
 	private static void resetTrain() {
@@ -209,27 +209,27 @@ public class Train {
 		return loc;
 	}
 
-	private static void animateCrossings(Queue<Paste> pastes, Runnable onComplete) {
-		if (!animateCrossing(pastes, onComplete)) return;
-		if (!animateCrossing(pastes, onComplete)) return;
+	private static void animateCrossings(Queue<Paster> pasters, Runnable onComplete) {
+		if (!animateCrossing(pasters, onComplete)) return;
+		if (!animateCrossing(pasters, onComplete)) return;
 
-		Tasks.waitAsync(crossingFrameTime, () -> animateCrossings(pastes, onComplete));
+		Tasks.waitAsync(crossingFrameTime, () -> animateCrossings(pasters, onComplete));
 	}
 
-	private static boolean animateCrossing(Queue<Paste> pastes, Runnable onComplete) {
-		Paste paste = pastes.poll();
-		if (paste == null) {
+	private static boolean animateCrossing(Queue<Paster> pasters, Runnable onComplete) {
+		Paster paster = pasters.poll();
+		if (paster == null) {
 			if (onComplete != null)
 				onComplete.run();
 			return false;
 		}
 
-		paste.build();
+		paster.build();
 		return true;
 	}
 
 	private static void animateCrossing(int crossing, boolean open) {
-		Queue<Paste> pastes = new LinkedList<>();
+		Queue<Paster> pasters = new LinkedList<>();
 		Runnable onComplete = null;
 
 		if (crossing == 1) {
@@ -238,16 +238,16 @@ public class Train {
 				onComplete = () -> animateLights1 = false;
 
 				for (int i = 1; i <= 7; i++) {
-					pastes.add(getWEUtils().paster().file(animationPath + "/Crossing/North_Opening_" + i).at(crossingNW));
-					pastes.add(getWEUtils().paster().file(animationPath + "/Crossing/South_Opening_" + i).at(crossingSW));
+					pasters.add(getWEUtils().paster().file(animationPath + "/Crossing/North_Opening_" + i).at(crossingNW));
+					pasters.add(getWEUtils().paster().file(animationPath + "/Crossing/South_Opening_" + i).at(crossingSW));
 				}
 			} else {
 				crossing1_closed = true;
 				animateLights1 = true;
 
 				for (int i = 1; i <= 7; i++) {
-					pastes.add(getWEUtils().paster().file(animationPath + "/Crossing/North_Closing_" + i).at(crossingNW));
-					pastes.add(getWEUtils().paster().file(animationPath + "/Crossing/South_Closing_" + i).at(crossingSW));
+					pasters.add(getWEUtils().paster().file(animationPath + "/Crossing/North_Closing_" + i).at(crossingNW));
+					pasters.add(getWEUtils().paster().file(animationPath + "/Crossing/South_Closing_" + i).at(crossingSW));
 				}
 			}
 		} else if (crossing == 2) {
@@ -256,21 +256,21 @@ public class Train {
 				onComplete = () -> animateLights2 = false;
 
 				for (int i = 1; i <= 7; i++) {
-					pastes.add(getWEUtils().paster().file(animationPath + "/Crossing/North_Opening_" + i).at(crossingNE));
-					pastes.add(getWEUtils().paster().file(animationPath + "/Crossing/South_Opening_" + i).at(crossingSE));
+					pasters.add(getWEUtils().paster().file(animationPath + "/Crossing/North_Opening_" + i).at(crossingNE));
+					pasters.add(getWEUtils().paster().file(animationPath + "/Crossing/South_Opening_" + i).at(crossingSE));
 				}
 			} else {
 				crossing2_closed = true;
 				animateLights2 = true;
 
 				for (int i = 1; i <= 7; i++) {
-					pastes.add(getWEUtils().paster().file(animationPath + "/Crossing/North_Closing_" + i).at(crossingNE));
-					pastes.add(getWEUtils().paster().file(animationPath + "/Crossing/South_Closing_" + i).at(crossingSE));
+					pasters.add(getWEUtils().paster().file(animationPath + "/Crossing/North_Closing_" + i).at(crossingNE));
+					pasters.add(getWEUtils().paster().file(animationPath + "/Crossing/South_Closing_" + i).at(crossingSE));
 				}
 			}
 		}
 
-		animateCrossings(pastes, onComplete);
+		animateCrossings(pasters, onComplete);
 	}
 
 	private static void lightsTask() {

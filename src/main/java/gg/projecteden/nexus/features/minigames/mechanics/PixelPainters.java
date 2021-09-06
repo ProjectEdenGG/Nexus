@@ -46,7 +46,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static gg.projecteden.nexus.utils.StringUtils.plural;
-import static gg.projecteden.nexus.utils.WorldEditUtils.Paste.id;
+import static gg.projecteden.nexus.utils.WorldEditUtils.Paster.id;
 
 // TODO:
 //  - Only paste the designs on active islands
@@ -159,7 +159,7 @@ public class PixelPainters extends TeamlessMechanic {
 				final UUID uuid = UUID.randomUUID();
 				final AtomicInteger i = new AtomicInteger(1000);
 				Nexus.debug(id(uuid, i) + " Pasting lobby design");
-				match.getWEUtils().paster().clipboard(arena.getLobbyDesignRegion()).at(pasteRegion.getMinimumPoint()).pasteAsync();
+				match.getWEUtils().paster().clipboard(arena.getLobbyDesignRegion()).at(pasteRegion.getMinimumPoint()).build(uuid, new AtomicInteger(1000));
 			});
 		});
 		matchData.setAnimateLobbyId(taskId);
@@ -503,7 +503,7 @@ public class PixelPainters extends TeamlessMechanic {
 			final UUID uuid = UUID.randomUUID();
 			final AtomicInteger j = new AtomicInteger(1000);
 			Nexus.debug(id(uuid, j) + " Setting up next design");
-			match.getWEUtils().paster().clipboard(copyRg).at(pasteMinV).pasteAsync();
+			match.getWEUtils().paster().clipboard(copyRg).at(pasteMinV).build(uuid, new AtomicInteger(1000));
 		}
 	}
 
@@ -515,13 +515,13 @@ public class PixelPainters extends TeamlessMechanic {
 			final UUID uuid = UUID.randomUUID();
 			final AtomicInteger i = new AtomicInteger(1000);
 			Nexus.debug(id(uuid, i) + " Pasting new design");
-			match.getWEUtils().paster().clipboard(arena.getNextDesignRegion()).at(region.getMinimumPoint()).pasteAsync();
+			match.getWEUtils().paster().clipboard(arena.getNextDesignRegion()).at(region.getMinimumPoint()).build(uuid, new AtomicInteger(1000));
 		});
 	}
 
 	public void giveBlocks(Match match) {
 		PixelPaintersArena arena = match.getArena();
-		List<Block> blocks = match.getWEUtils().getBlocks((CuboidRegion) arena.getNextDesignRegion());
+		List<Block> blocks = match.getWEUtils().getBlocks(arena.getNextDesignRegion());
 
 		List<ItemStack> items = new ArrayList<>();
 		for (Block block : blocks)
@@ -540,7 +540,7 @@ public class PixelPainters extends TeamlessMechanic {
 			final UUID uuid = UUID.randomUUID();
 			final AtomicInteger i = new AtomicInteger(1000);
 			Nexus.debug(id(uuid, i) + " Pasting logo");
-			match.getWEUtils().paster().clipboard(arena.getLogoRegion()).at(region.getMinimumPoint()).pasteAsync();
+			match.getWEUtils().paster().clipboard(arena.getLogoRegion()).at(region.getMinimumPoint()).build(uuid, new AtomicInteger(1000));
 		});
 	}
 

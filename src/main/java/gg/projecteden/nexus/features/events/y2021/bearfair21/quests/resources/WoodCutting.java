@@ -13,7 +13,7 @@ import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldEditUtils.Paste;
+import gg.projecteden.nexus.utils.WorldEditUtils.Paster;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.Utils.MinMaxResult;
 import lombok.AllArgsConstructor;
@@ -89,7 +89,7 @@ public class WoodCutting implements Listener {
 		private final List<Material> others;
 
 		@Getter
-		private final Map<Integer, Paste> pasters = new ConcurrentHashMap<>();
+		private final Map<Integer, Paster> pasters = new ConcurrentHashMap<>();
 		@Getter
 		private final Map<Integer, CompletableFuture<Queue<Location>>> queues = new ConcurrentHashMap<>();
 		@Getter
@@ -177,7 +177,7 @@ public class WoodCutting implements Listener {
 			return getPaster(id).getComputedBlocks();
 		}
 
-		private Paste getPaster(int id) {
+		private Paster getPaster(int id) {
 			return pasters.computeIfAbsent(id, $ -> {
 				ProtectedRegion region = getRegion(id);
 				if (region == null)
