@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.utils;
 
-import gg.projecteden.nexus.utils.ProbablyBetterThanCoreEdit.Clipboard.ClipboardBuilder;
+import gg.projecteden.nexus.utils.FakeWorldEdit.Clipboard.ClipboardBuilder;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
@@ -19,15 +19,15 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 @RequiredArgsConstructor
-public class ProbablyBetterThanCoreEdit {
+public class FakeWorldEdit {
 	@NonNull
 	private final World world;
 
-	public ProbablyBetterThanCoreEdit(@NonNull HasLocation entity) {
+	public FakeWorldEdit(@NonNull HasLocation entity) {
 		this(entity.getLocation().getWorld());
 	}
 
-	public ProbablyBetterThanCoreEdit(@NonNull String world) {
+	public FakeWorldEdit(@NonNull String world) {
 		this(Objects.requireNonNull(Bukkit.getWorld(world)));
 	}
 

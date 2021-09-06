@@ -325,6 +325,14 @@ public class WorldEditUtils {
 		return pattern;
 	}
 
+	public Region region(Location min, Location max) {
+		return region(toBlockVector3(min), toBlockVector3(max));
+	}
+
+	public Region region(BlockVector3 min, BlockVector3 max) {
+		return new CuboidRegion(worldEditWorld, min, max);
+	}
+
 	public CompletableFuture<Clipboard> copy(Location min, Location max) {
 		return copy(worldGuardUtils.getRegion(min, max), null);
 	}
@@ -401,6 +409,16 @@ public class WorldEditUtils {
 
 		public Paster clipboard(Clipboard clipboard) {
 			this.clipboardFuture = CompletableFuture.completedFuture(clipboard);
+			return this;
+		}
+
+		public Paster clipboard(Location min, Location max) {
+			this.clipboardRegion = region(min, max);
+			return this;
+		}
+
+		public Paster clipboard(BlockVector3 min, BlockVector3 max) {
+			this.clipboardRegion = region(min, max);
 			return this;
 		}
 

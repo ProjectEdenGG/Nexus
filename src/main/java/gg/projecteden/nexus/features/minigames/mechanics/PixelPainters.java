@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
 import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.math.transform.AffineTransform;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.block.BlockTypes;
@@ -15,10 +16,9 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MinigamerQu
 import gg.projecteden.nexus.features.minigames.models.matchdata.PixelPaintersMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import gg.projecteden.nexus.utils.ActionBarUtils;
-import gg.projecteden.nexus.utils.CompletableFutures;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.Countdown;
 import gg.projecteden.nexus.utils.Tasks.Countdown.CountdownBuilder;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -40,7 +40,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static gg.projecteden.nexus.utils.StringUtils.plural;
 
@@ -51,6 +51,7 @@ public class PixelPainters extends TeamlessMechanic {
 	private static final int MAX_ROUNDS = 5;
 	private static final int TIME_BETWEEN_ROUNDS = 8 * 20;
 	private static final int ROUND_COUNTDOWN = 45 * 20;
+	private static final AffineTransform ROTATION = new AffineTransform().rotateY(270).rotateX(-90).rotateZ(90);
 
 	@Override
 	public @NotNull String getName() {
@@ -97,7 +98,6 @@ public class PixelPainters extends TeamlessMechanic {
 			matchData.setAnimateLobby(false);
 	}
 
-	// designsRegion Max is south east corner, designsRegion Min is north west corner
 	public void startLobbyAnimation(Match match) {
 		PixelPaintersMatchData matchData = match.getMatchData();
 		PixelPaintersArena arena = match.getArena();
@@ -107,50 +107,11 @@ public class PixelPainters extends TeamlessMechanic {
 			if (match.isEnded() || match.isStarted())
 				return;
 
-			// Build Next Design
-			Region designsRegion = arena.getDesignRegion();
-
-			int designCount = matchData.getDesignCount();
-			int design = RandomUtils.randomInt(1, designCount);
-			for (int i = 0; i < designCount; i++) {
-				design = RandomUtils.randomInt(1, designCount);
-				if (matchData.getLobbyDesign() != design)
-					break;
-			}
-			matchData.setLobbyDesign(design);
-
-			// Get minimum point from current chosen design
-			BlockVector3 designMin = designsRegion.getMinimumPoint().subtract(0, 1, 0).add(0, design, 0);
-
-			// Get maximum point from: 255 - MinPoint
-			int diff = designsRegion.getMaximumPoint().getBlockY() - designMin.getBlockY();
-
-			BlockVector3 designMax = designsRegion.getMaximumPoint().subtract(0, diff, 0);
-
-			BlockVector3 copySliceMin = designMin.add(0, 0, 8);
-			BlockVector3 pasteMin = arena.getLobbyDesignRegion().getMinimumPoint();
-
-			BlockVector3 copyMinV;
-			BlockVector3 copyMaxV;
-			BlockVector3 pasteMinV;
-
-			List<CompletableFuture<Void>> futures = new ArrayList<>();
-			for (int i = 0; i < 9; i++) {
-				copyMinV = copySliceMin.subtract(0, 0, i);
-				copyMaxV = designMax.subtract(0, 0, i);
-				pasteMinV = pasteMin.add(0, i, 0);
-				Region copyRg = new CuboidRegion(match.worldguard().getWorldEditWorld(), copyMinV, copyMaxV);
-				BlockVector3 finalPasteMinV = pasteMinV;
-
-				futures.add(match.worldedit().paster("Rotating lobby design").clipboard(copyRg).at(finalPasteMinV).pasteAsync());
-			}
-
-			CompletableFutures.allOf(futures).thenRun(() -> {
-				// Paste Design
-				Region pasteRegion = arena.getLobbyAnimationRegion();
-
-				match.worldedit().paster("Pasting lobby design").clipboard(arena.getLobbyDesignRegion()).at(pasteRegion.getMinimumPoint()).pasteAsync();
-			});
+			match.worldedit().paster("Pasting lobby design")
+				.clipboard(matchData.getRandomLobbyDesign())
+				.at(arena.getLobbyAnimationRegion().getMinimumPoint())
+				.transform(ROTATION)
+				.pasteAsync();
 		});
 		matchData.setAnimateLobbyId(taskId);
 	}
@@ -260,19 +221,19 @@ public class PixelPainters extends TeamlessMechanic {
 				pasteLogo(match);
 				clearFloors(match);
 				match.getTasks().countdown(Countdown.builder()
-						.duration(TIME_BETWEEN_ROUNDS)
-						.onSecond(i -> minigamers.stream().map(Minigamer::getPlayer).forEach(player -> {
-							if (match.isEnded())
-								return;
+					.duration(TIME_BETWEEN_ROUNDS)
+					.onSecond(i -> minigamers.stream().map(Minigamer::getPlayer).forEach(player -> {
+						if (match.isEnded())
+							return;
 
-							matchData.setTimeLeft(i);
-							match.getScoreboard().update();
+						matchData.setTimeLeft(i);
+						match.getScoreboard().update();
 
-							ActionBarUtils.sendActionBar(player, "&cNext round starts in...&c&l " + plural(i + " second", i));
-							if (i <= 3)
-								player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.5F);
-						}))
-						.onComplete(() -> newRound(match)));
+						ActionBarUtils.sendActionBar(player, "&cNext round starts in...&c&l " + plural(i + " second", i));
+						if (i <= 3)
+							player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.5F);
+					}))
+					.onComplete(() -> newRound(match)));
 			});
 		}
 	}
@@ -280,7 +241,7 @@ public class PixelPainters extends TeamlessMechanic {
 	public void countDesigns(Match match) {
 		PixelPaintersArena arena = match.getArena();
 		PixelPaintersMatchData matchData = match.getMatchData();
-		Location min = arena.worldedit().toLocation(arena.getDesignRegion().getMinimumPoint());
+		Location min = arena.worldedit().toLocation(arena.getDesignsRegion().getMinimumPoint());
 		int highest = min.getWorld().getHighestBlockYAt(min);
 		matchData.setDesignCount(highest - 4);
 	}
@@ -406,20 +367,20 @@ public class PixelPainters extends TeamlessMechanic {
 
 		List<Minigamer> minigamers = match.getMinigamers();
 		minigamers.stream().map(Minigamer::getPlayer).forEach(player ->
-				player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.5F));
+			player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.5F));
 
 		CountdownBuilder countdown = Countdown.builder()
-				.duration(ROUND_COUNTDOWN)
-				.onSecond(i -> minigamers.stream().map(Minigamer::getPlayer).forEach(player -> {
-					if (match.isEnded()) return;
-					matchData.setTimeLeft(i);
-					match.getScoreboard().update();
+			.duration(ROUND_COUNTDOWN)
+			.onSecond(i -> minigamers.stream().map(Minigamer::getPlayer).forEach(player -> {
+				if (match.isEnded()) return;
+				matchData.setTimeLeft(i);
+				match.getScoreboard().update();
 
-					ActionBarUtils.sendActionBar(player, "&cRound ends in...&c&l " + plural(i + " second", i));
-					if (i <= 3)
-						player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.5F);
-				}))
-				.onComplete(() -> endOfRound(match));
+				ActionBarUtils.sendActionBar(player, "&cRound ends in...&c&l " + plural(i + " second", i));
+				if (i <= 3)
+					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.5F);
+			}))
+			.onComplete(() -> endOfRound(match));
 
 		matchData.setRoundCountdownId(match.getTasks().countdown(countdown));
 	}
@@ -435,7 +396,7 @@ public class PixelPainters extends TeamlessMechanic {
 	public int checkDesign(CuboidRegion floorRegion, Match match) {
 		int incorrect = 0;
 		PixelPaintersMatchData matchData = match.getMatchData();
-		CuboidRegion designRegion = matchData.getDesignRegion();
+		Region designRegion = matchData.getDesignRegion();
 
 		BlockVector3 floorMax = floorRegion.getMaximumPoint();
 		BlockVector3 designMax = designRegion.getMaximumPoint();
@@ -453,54 +414,24 @@ public class PixelPainters extends TeamlessMechanic {
 		return incorrect;
 	}
 
-	// designsRegion Max is south east corner, designsRegion Min is north west corner
 	public void setupNextDesign(Match match) {
 		PixelPaintersArena arena = match.getArena();
-		Region designsRegion = arena.getDesignRegion();
 		PixelPaintersMatchData matchData = match.getMatchData();
 
-		int designCount = matchData.getDesignCount();
-		int design = RandomUtils.randomInt(1, designCount);
-		for (int i = 0; i < designCount; i++) {
-			design = RandomUtils.randomInt(1, designCount);
-			if (!matchData.getDesignsPlayed().contains(design))
-				break;
-		}
-		matchData.getDesignsPlayed().add(design);
-
-		// Get minimum point from current chosen design
-		BlockVector3 designMin = designsRegion.getMinimumPoint().subtract(0, 1, 0).add(0, design, 0);
-
-		// Get maximum point from: 255 - MinPoint
-		int diff = designsRegion.getMaximumPoint().getBlockY() - designMin.getBlockY();
-
-		BlockVector3 designMax = designsRegion.getMaximumPoint().subtract(0, diff, 0);
-		CuboidRegion designRegion = new CuboidRegion(designMin, designMax);
-		matchData.setDesignRegion(designRegion);
-
-		BlockVector3 copySliceMin = designMin.add(0, 0, 8);
-		BlockVector3 pasteMin = arena.getNextDesignRegion().getMinimumPoint();
-
-		BlockVector3 copyMinV;
-		BlockVector3 copyMaxV;
-		BlockVector3 pasteMinV;
-
-		for (int i = 0; i < 9; i++) {
-			copyMinV = copySliceMin.subtract(0, 0, i);
-			copyMaxV = designMax.subtract(0, 0, i);
-			pasteMinV = pasteMin.add(0, i, 0);
-			Region copyRg = new CuboidRegion(match.worldguard().getWorldEditWorld(), copyMinV, copyMaxV);
-			match.worldedit().paster("Setting up next design").clipboard(copyRg).at(pasteMinV).pasteAsync();
-		}
+		match.worldedit().paster("Setting up next design")
+			.clipboard(matchData.getRandomGameDesign())
+			.at(arena.getNextDesignRegion().getMinimumPoint())
+			.transform(ROTATION)
+			.pasteAsync();
 	}
 
 	public void pasteNewDesign(Match match) {
 		PixelPaintersArena arena = match.getArena();
-		Set<ProtectedRegion> wallRegions = arena.getRegionsLike("wall_[\\d]+");
-		wallRegions.forEach(wallRegion -> {
-			Region region = match.worldguard().convert(wallRegion);
-			match.worldedit().paster("Pasting new design").clipboard(arena.getNextDesignRegion()).at(region.getMinimumPoint()).pasteAsync();
-		});
+		for (int i = 1; i <= match.getMinigamers().size(); i++)
+			match.worldedit().paster("Pasting new design " + i)
+				.clipboard(arena.getNextDesignRegion())
+				.at(arena.getRegion("wall_" + i).getMinimumPoint())
+				.pasteAsync();
 	}
 
 	public void giveBlocks(Match match) {
@@ -515,14 +446,17 @@ public class PixelPainters extends TeamlessMechanic {
 		minigamers.forEach(minigamer -> PlayerUtils.giveItems(minigamer.getPlayer(), items));
 	}
 
+	// Paste Logo on all island walls
 	public void pasteLogo(Match match) {
 		PixelPaintersArena arena = match.getArena();
-		// Paste Logo on all island walls
 		Set<ProtectedRegion> wallRegions = arena.getRegionsLike("wall_[\\d]+");
-		wallRegions.forEach(wallRegion -> {
-			Region region = match.worldguard().convert(wallRegion);
-			match.worldedit().paster("Pasting logo").clipboard(arena.getLogoRegion()).at(region.getMinimumPoint()).pasteAsync();
-		});
+		AtomicInteger wait = new AtomicInteger();
+		wallRegions.forEach(wallRegion ->
+			Tasks.wait(wait.getAndAdd(2), () ->
+				match.worldedit().paster("Pasting logo")
+					.clipboard(arena.getLogoRegion())
+					.at(match.worldguard().convert(wallRegion).getMinimumPoint())
+					.pasteAsync()));
 	}
 
 	public void clearFloors(Match match) {
