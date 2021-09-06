@@ -73,7 +73,8 @@ public class Freeze implements PlayerOwnedObject {
 
 	private void execute() {
 		frozen = true;
-		location = getPlayer().getLocation();
+		if (isOnline())
+			location = getOnlinePlayer().getLocation();
 		new FreezeService().save(this);
 
 		mount();
