@@ -93,4 +93,19 @@ public class DotEffect {
 				ticksElapsed.incrementAndGet();
 		});
 	}
+
+	public static void debug(Player player, Location location) {
+		debug(player, location, Color.RED);
+	}
+
+	public static void debug(Player player, Location location, Color color) {
+		DotEffect.builder()
+			.player(player)
+			.location(location)
+			.color(color)
+			.clientSide(true)
+			.speed(.1)
+			.ticks(TickTime.SECOND.get())
+			.start();
+	}
 }
