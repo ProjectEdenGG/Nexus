@@ -134,7 +134,7 @@ public class Freeze implements PlayerOwnedObject {
 			new FreezeService().save(this);
 		}
 
-		return getOnlinePlayer().getLocation().distance(location) > MAX_DISTANCE;
+		return getOnlinePlayer().getLocation().distance(location) < MAX_DISTANCE;
 	}
 
 }
