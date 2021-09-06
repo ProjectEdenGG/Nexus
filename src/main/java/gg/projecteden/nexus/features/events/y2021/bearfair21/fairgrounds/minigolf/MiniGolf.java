@@ -133,7 +133,7 @@ public class MiniGolf {
 
 			AtomicInteger index = new AtomicInteger();
 			Tasks.repeat(0, TickTime.SECOND.x(2), () -> {
-				if (BearFair21.getWGUtils().getPlayersInRegion(gameRegion + "_play_top").size() <= 0)
+				if (BearFair21.worldguard().getPlayersInRegion(gameRegion + "_play_top").size() <= 0)
 					return;
 
 				ItemStack golfBall = golfBalls.get(index.get());
@@ -156,7 +156,7 @@ public class MiniGolf {
 		if (!Utils.isNullOrEmpty(particles)) {
 			AtomicInteger index = new AtomicInteger(0);
 			Tasks.repeat(0, TickTime.SECOND.x(2), () -> {
-				if (BearFair21.getWGUtils().getPlayersInRegion(gameRegion + "_play_top").size() <= 0)
+				if (BearFair21.worldguard().getPlayersInRegion(gameRegion + "_play_top").size() <= 0)
 					return;
 
 				Particle particle = particles.get(index.get());
@@ -185,14 +185,14 @@ public class MiniGolf {
 		String hole13 = MiniGolfHole.THIRTEEN.getRegionId() + "_activate";
 		Location hole13Loc = new Location(BearFair21.getWorld(), 101, 119, -28);
 		Tasks.repeat(TickTime.SECOND.x(5), TickTime.SECOND.x(2), () -> {
-			if (BearFair21.getWGUtils().getPlayersInRegion(hole13).size() > 0)
+			if (BearFair21.worldguard().getPlayersInRegion(hole13).size() > 0)
 				hole13Loc.getBlock().setType(Material.REDSTONE_BLOCK);
 		});
 
 		// Hole 17
 		Location hole17Loc = new Location(BearFair21.getWorld(), 107, 117, -9);
 		Tasks.repeat(TickTime.SECOND.x(5), TickTime.TICK.x(38), () -> {
-			if (BearFair21.getWGUtils().getPlayersInRegion(gameRegion + "_play_top").size() > 0)
+			if (BearFair21.worldguard().getPlayersInRegion(gameRegion + "_play_top").size() > 0)
 				hole17Loc.getBlock().setType(Material.REDSTONE_BLOCK);
 		});
 	}
@@ -205,7 +205,7 @@ public class MiniGolf {
 		Tasks.repeat(TickTime.SECOND.x(5), TickTime.SECOND.x(2), () -> {
 			for (Player player : PlayerUtils.getOnlinePlayers()) {
 				MiniGolf21User user = service.get(player);
-				int regions = BearFair21.getWGUtils().getRegionsLikeAt(gameRegion + "_play_.*", player.getLocation()).size();
+				int regions = BearFair21.worldguard().getRegionsLikeAt(gameRegion + "_play_.*", player.getLocation()).size();
 
 				if (user.isPlaying() && regions == 0)
 					PlayerUtils.runCommand(player, "minigolf quit");

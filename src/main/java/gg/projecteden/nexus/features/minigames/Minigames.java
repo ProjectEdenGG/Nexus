@@ -82,13 +82,13 @@ public class Minigames extends Feature {
 		return Bukkit.getWorld("gameworld");
 	}
 
-	@Deprecated // Use Match#getWGUtils or Arena#getWGUtils
-	public static WorldGuardUtils getWorldGuardUtils() {
+	@Deprecated // Use Match#worldguard or Arena#worldguard
+	public static WorldGuardUtils worldguard() {
 		return new WorldGuardUtils(getWorld());
 	}
 
-	@Deprecated // Use Match#getWEUtils or Arena#getWEUtils
-	public static WorldEditUtils getWorldEditUtils() {
+	@Deprecated // Use Match#worldedit or Arena#worldedit
+	public static WorldEditUtils worldedit() {
 		return new WorldEditUtils(getWorld());
 	}
 
@@ -97,7 +97,7 @@ public class Minigames extends Feature {
 	}
 
 	public static ProtectedRegion getLobbyRegion() {
-		return getWorldGuardUtils().getProtectedRegion("minigamelobby");
+		return worldguard().getProtectedRegion("minigamelobby");
 	}
 
 	@Override

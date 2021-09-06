@@ -104,7 +104,7 @@ public class HoleInTheWall extends TeamlessMechanic {
 		HoleInTheWallMatchData matchData = event.getMatch().getMatchData();
 
 		matchData.getTracks().forEach(track -> {
-			Optional<Minigamer> minigamer = arena.getWGUtils().getPlayersInRegion(track.getRegion()).stream()
+			Optional<Minigamer> minigamer = arena.worldguard().getPlayersInRegion(track.getRegion()).stream()
 					.map(PlayerManager::get)
 					.filter(_minigamer -> _minigamer.isPlaying(match))
 					.findFirst();

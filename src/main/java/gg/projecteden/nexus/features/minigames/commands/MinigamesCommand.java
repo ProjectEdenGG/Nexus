@@ -444,11 +444,11 @@ public class MinigamesCommand extends CustomCommand {
 		if (!canUse)
 			permissionError();
 
-		WorldGuardUtils WGUtils = new WorldGuardUtils(player());
-		if (!WGUtils.isInRegion(location(), "minigamelobby"))
+		WorldGuardUtils worldguard = new WorldGuardUtils(player());
+		if (!worldguard.isInRegion(location(), "minigamelobby"))
 			error("You must be in the Minigame Lobby to use this command");
 
-		if (WGUtils.isInRegion(location(), "screenshot")) {
+		if (worldguard.isInRegion(location(), "screenshot")) {
 			inviteCommand = "warp screenshot";
 			inviteMessage = "take a screenshot";
 		} else {

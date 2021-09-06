@@ -114,7 +114,7 @@ public class ClientsideContentManager implements Listener {
 					if (!isNear(player, content.getLocation(), 75)) continue;
 					if (!canSee(player, content)) continue;
 
-					BearFair21.getWEUtils().paster()
+					BearFair21.worldedit().paster()
 						.file(content.getSchematic())
 						.at(content.getLocation())
 						.buildClientSide(player);

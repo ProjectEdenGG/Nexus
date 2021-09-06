@@ -121,23 +121,23 @@ public class BasketballCommand extends CustomCommand implements Listener {
 
 	private static void cleanupBasketballs() {
 		getLobbyEntities().forEach(entity -> {
-			if (!Minigames.getWorldGuardUtils().isInRegion(entity.getLocation(), region))
+			if (!Minigames.worldguard().isInRegion(entity.getLocation(), region))
 				if (isBasketball(entity))
 					entity.remove();
 		});
 	}
 
 	private static void janitor() {
-		WorldGuardUtils wgUtils = Minigames.getWorldGuardUtils();
+		WorldGuardUtils worldguard = Minigames.worldguard();
 		Tasks.repeat(0, TickTime.SECOND.x(20), () -> {
 			cleanupBasketballs();
 
 			for (Player player : PlayerUtils.getOnlinePlayers(world)) {
-				if (wgUtils.isInRegion(player.getLocation(), region)) {
+				if (worldguard.isInRegion(player.getLocation(), region)) {
 					if (!hasBasketball(player)) {
 						boolean found = false;
 						for (Entity entity : getLobbyEntities())
-							if (wgUtils.isInRegion(entity.getLocation(), region)) {
+							if (worldguard.isInRegion(entity.getLocation(), region)) {
 								found = true;
 								break;
 							}
@@ -157,7 +157,7 @@ public class BasketballCommand extends CustomCommand implements Listener {
 		private int iteration;
 		private Player player;
 		private Item entity;
-		private WorldGuardUtils wgUtils = Minigames.getWorldGuardUtils();
+		private WorldGuardUtils worldguard = Minigames.worldguard();
 
 		BasketballThrowWatcher(Player player, Item item) {
 			this.player = player;
@@ -169,18 +169,18 @@ public class BasketballCommand extends CustomCommand implements Listener {
 			taskId = Tasks.repeat(0, 1, () -> {
 				++iteration;
 
-				if (!wgUtils.isInRegion(entity.getLocation(), region)) {
+				if (!worldguard.isInRegion(entity.getLocation(), region)) {
 					entity.remove();
 					giveBasketball(player);
 					stop();
-				} else if (wgUtils.isInRegion(entity.getLocation(), region + "_hoop")) {
+				} else if (worldguard.isInRegion(entity.getLocation(), region + "_hoop")) {
 					entity.remove();
 					giveBasketball(player);
 					PlayerUtils.send(player, "&eTouchdown!!");
-					wgUtils.getPlayersInRegion(region).forEach(loopPlayer ->
+					worldguard.getPlayersInRegion(region).forEach(loopPlayer ->
 							loopPlayer.spawnParticle(Particle.LAVA, entity.getLocation(), 50, 2, 2, 2, .01));
 					stop();
-				} else if (wgUtils.isInRegion(entity.getLocation(), region + "_backboard")) {
+				} else if (worldguard.isInRegion(entity.getLocation(), region + "_backboard")) {
 					entity.remove();
 					giveBasketball(player);
 					PlayerUtils.send(player, "&eSo close...");
@@ -188,7 +188,7 @@ public class BasketballCommand extends CustomCommand implements Listener {
 				}
 
 				if (iteration == 60) {
-					if (wgUtils.isInRegion(entity.getLocation(), region + "_stuck")) {
+					if (worldguard.isInRegion(entity.getLocation(), region + "_stuck")) {
 						entity.remove();
 						giveBasketball(player);
 					}
@@ -209,7 +209,7 @@ public class BasketballCommand extends CustomCommand implements Listener {
 		if (player.getWorld() != world) return;
 		if (!isBasketball(event.getItem().getItemStack())) return;
 
-		if (!Minigames.getWorldGuardUtils().isInRegion(player.getLocation(), region))
+		if (!Minigames.worldguard().isInRegion(player.getLocation(), region))
 			event.setCancelled(true);
 		else if (!ownsBasketball(player, event.getItem().getItemStack()))
 			event.setCancelled(true);

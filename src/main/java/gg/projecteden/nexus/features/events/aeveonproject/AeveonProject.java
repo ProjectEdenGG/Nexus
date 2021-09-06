@@ -30,11 +30,11 @@ public class AeveonProject implements Listener {
 		return Bukkit.getWorld("Aeveon_Project");
 	}
 
-	public static WorldGuardUtils getWGUtils() {
+	public static WorldGuardUtils worldguard() {
 		return new WorldGuardUtils(getWorld());
 	}
 
-	public static WorldEditUtils getWEUtils() {
+	public static WorldEditUtils worldedit() {
 		return new WorldEditUtils(getWorld());
 	}
 

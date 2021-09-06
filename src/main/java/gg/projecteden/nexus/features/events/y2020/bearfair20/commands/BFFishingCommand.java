@@ -128,7 +128,7 @@ public class BFFishingCommand extends CustomCommand {
 	}
 
 	private String getIslandRegion(Location location) {
-		Set<ProtectedRegion> protectedRegions = BearFair20.getWGUtils().getRegionsAt(location);
+		Set<ProtectedRegion> protectedRegions = BearFair20.worldguard().getRegionsAt(location);
 		for (ProtectedRegion protectedRegion : protectedRegions) {
 			if (protectedRegion.getId().contains(BearFair20.getRegion() + "_")) {
 				String id = protectedRegion.getId();

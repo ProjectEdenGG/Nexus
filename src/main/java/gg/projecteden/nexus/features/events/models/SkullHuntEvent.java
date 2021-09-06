@@ -138,9 +138,9 @@ public abstract class SkullHuntEvent implements Listener {
 	}
 
 	private boolean isInActionRegion(Player player) {
-		WorldGuardUtils WGUtils = new WorldGuardUtils(player);
+		WorldGuardUtils worldguard = new WorldGuardUtils(player);
 		for (ProtectedRegion activeRegion : activeRegions) {
-			if (WGUtils.isInRegion(player.getLocation(), activeRegion))
+			if (worldguard.isInRegion(player.getLocation(), activeRegion))
 				return true;
 		}
 

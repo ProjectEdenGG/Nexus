@@ -26,8 +26,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import static gg.projecteden.nexus.features.events.aeveonproject.AeveonProject.ROOT;
-import static gg.projecteden.nexus.features.events.aeveonproject.AeveonProject.getWGUtils;
 import static gg.projecteden.nexus.features.events.aeveonproject.AeveonProject.getWorld;
+import static gg.projecteden.nexus.features.events.aeveonproject.AeveonProject.worldguard;
 
 @Region("sialia")
 public class Sialia implements Listener, APSet {
@@ -44,7 +44,7 @@ public class Sialia implements Listener, APSet {
 		new Sounds();
 
 		Tasks.repeat(0, TickTime.TICK.x(5), () -> {
-			List<Player> nearbyPlayers = new ArrayList<>(getWGUtils().getPlayersInRegion(APSetType.SIALIA.get().getRegion()));
+			List<Player> nearbyPlayers = new ArrayList<>(worldguard().getPlayersInRegion(APSetType.SIALIA.get().getRegion()));
 			if (nearbyPlayers.size() > 0)
 				nearbyPlayer = nearbyPlayers.get(0);
 		});
@@ -64,17 +64,17 @@ public class Sialia implements Listener, APSet {
 		if (openDoors.contains(doorRg)) return;
 
 		openDoors.add(doorRg);
-		WorldGuardUtils WGUtils = getWGUtils();
-		ProtectedRegion door = WGUtils.getProtectedRegion(doorRg);
+		WorldGuardUtils worldguard = worldguard();
+		ProtectedRegion door = worldguard.getProtectedRegion(doorRg);
 
 		String folder = ROOT + "Bulkhead/";
-		Location loc = WGUtils.toLocation(door.getMinimumPoint());
+		Location loc = worldguard.toLocation(door.getMinimumPoint());
 		getWorld().playSound(loc, Sound.BLOCK_PISTON_EXTEND, SoundCategory.MASTER, 0.5F, 0.7F);
 		for (int i = 0; i <= 2; i++) {
 			int frame = i;
 			Tasks.wait(TickTime.TICK.x(2 * i), () -> {
 				String file = folder + "Bulkhead_" + frame;
-				AeveonProject.getWEUtils().paster().file(file).at(door.getMinimumPoint()).pasteAsync();
+				AeveonProject.worldedit().paster().file(file).at(door.getMinimumPoint()).pasteAsync();
 			});
 		}
 	}
@@ -90,19 +90,19 @@ public class Sialia implements Listener, APSet {
 		ProtectedRegion sensorRg = event.getRegion();
 		String doorRg = sensorRg.getId().replaceAll("_sensor", "");
 		if (!openDoors.contains(doorRg)) return;
-		WorldGuardUtils WGUtils = getWGUtils();
-		if (WGUtils.getPlayersInRegion(sensorRg).size() != 0) return;
+		WorldGuardUtils worldguard = worldguard();
+		if (worldguard.getPlayersInRegion(sensorRg).size() != 0) return;
 
-		ProtectedRegion door = WGUtils.getProtectedRegion(doorRg);
+		ProtectedRegion door = worldguard.getProtectedRegion(doorRg);
 		String folder = ROOT + "Bulkhead/";
 
-		Location loc = WGUtils.toLocation(door.getMinimumPoint());
+		Location loc = worldguard.toLocation(door.getMinimumPoint());
 		getWorld().playSound(loc, Sound.BLOCK_PISTON_CONTRACT, SoundCategory.MASTER, 0.5F, 0.7F);
 		for (int i = 2; i >= 0; i--) {
 			int frame = 2 - i;
 			Tasks.wait(TickTime.TICK.x(2 * i), () -> {
 				String file = folder + "Bulkhead_" + frame;
-				AeveonProject.getWEUtils().paster().file(file).at(door.getMinimumPoint()).pasteAsync();
+				AeveonProject.worldedit().paster().file(file).at(door.getMinimumPoint()).pasteAsync();
 				if (frame == 0) {
 					openDoors.remove(doorRg);
 				}

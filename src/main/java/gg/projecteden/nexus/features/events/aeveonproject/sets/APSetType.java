@@ -31,8 +31,8 @@ public enum APSetType {
 	}
 
 	public static APSet getFromLocation(Location location) {
-		WorldGuardUtils WGUtils = new WorldGuardUtils(location);
-		java.util.Set<String> regions = WGUtils.getRegionNamesAt(location);
+		WorldGuardUtils worldguard = new WorldGuardUtils(location);
+		java.util.Set<String> regions = worldguard.getRegionNamesAt(location);
 		for (APSetType set : values()) {
 			if (regions.contains(set.get().getRegion()))
 				return set.get();

@@ -21,9 +21,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.getWEUtils;
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.getWGUtils;
 import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.send;
+import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.worldedit;
+import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.worldguard;
 
 public class ReflectionGameUtils {
 
@@ -82,7 +82,7 @@ public class ReflectionGameUtils {
 	}
 
 	public static void broadcastObjective() {
-		Collection<Player> players = getWGUtils().getPlayersInRegion(ReflectionGame.getGameRg());
+		Collection<Player> players = worldguard().getPlayersInRegion(ReflectionGame.getGameRg());
 		for (Player player : players) {
 			send(ReflectionGame.getPrefix() + ReflectionGame.getMessage(), player);
 		}
@@ -92,7 +92,7 @@ public class ReflectionGameUtils {
 		new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).location(ReflectionGame.getCenter()).volume(2.0).play();
 
 		String type = ReflectionGame.getLamp().getChatColor() + StringUtils.camelCase(ReflectionGame.getLamp().getType());
-		Collection<Player> players = getWGUtils().getPlayersInRegion(ReflectionGame.getGameRg());
+		Collection<Player> players = worldguard().getPlayersInRegion(ReflectionGame.getGameRg());
 		for (Player player : players)
 			send(ReflectionGame.getPrefix() + type + " &fwas hit in " + count + " reflections!", player);
 
@@ -106,8 +106,8 @@ public class ReflectionGameUtils {
 	}
 
 	private static void randomizeBanners() {
-		ProtectedRegion region = getWGUtils().getProtectedRegion(ReflectionGame.getPowderRg());
-		List<Block> blocks = getWEUtils().getBlocks(region);
+		ProtectedRegion region = worldguard().getProtectedRegion(ReflectionGame.getPowderRg());
+		List<Block> blocks = worldedit().getBlocks(region);
 		for (Block block : blocks) {
 			if (!block.getType().equals(Material.IRON_BLOCK))
 				continue;

@@ -32,10 +32,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.getWEUtils;
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.getWGUtils;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.giveDailyPoints;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.isInRegion;
+import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.worldedit;
+import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.worldguard;
 
 public class Archery implements Listener {
 	private static String gameRg = BearFair20.getRegion() + "_archery";
@@ -75,7 +75,7 @@ public class Archery implements Listener {
 	public void onRegionExit(PlayerLeftRegionEvent event) {
 		if (!event.getRegion().getId().equalsIgnoreCase(gameRg)) return;
 		if (!archeryBool) return;
-		int size = getWGUtils().getPlayersInRegion(gameRg).size();
+		int size = worldguard().getPlayersInRegion(gameRg).size();
 		if (size == 0) {
 			archeryBool = false;
 			clearTargets();
@@ -105,7 +105,7 @@ public class Archery implements Listener {
 	}
 
 	private List<Location> getTargetLocs() {
-		List<Block> blocks = BearFair20.getWEUtils().getBlocks(getWGUtils().getRegion(targetsRg));
+		List<Block> blocks = BearFair20.worldedit().getBlocks(worldguard().getRegion(targetsRg));
 		List<Location> locs = new ArrayList<>();
 		for (Block block : blocks) {
 			Location loc = block.getLocation();
@@ -170,7 +170,7 @@ public class Archery implements Listener {
 
 	private void clearTargets() {
 		currentTargets = 0;
-		List<Block> blocks = getWEUtils().getBlocks(getWGUtils().getRegion(targetsRg));
+		List<Block> blocks = worldedit().getBlocks(worldguard().getRegion(targetsRg));
 		for (Block block : blocks) {
 			if (block.getType().equals(Material.WHITE_CONCRETE))
 				removeTarget(block);

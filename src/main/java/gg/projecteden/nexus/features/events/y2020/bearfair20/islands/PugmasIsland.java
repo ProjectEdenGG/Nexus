@@ -34,7 +34,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.getWGUtils;
+import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.worldguard;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.chime;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.itemLore;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
@@ -271,7 +271,7 @@ public class PugmasIsland implements Listener, BearFairIsland {
 
 	private void effectTasks() {
 		Tasks.repeat(0, TickTime.SECOND.x(3), () -> PlayerUtils.getOnlinePlayers().stream()
-				.filter(player -> getWGUtils().getRegionsLikeAt(getRegion(), player.getLocation()).size() > 0)
+				.filter(player -> worldguard().getRegionsLikeAt(getRegion(), player.getLocation()).size() > 0)
 				.forEach(player -> {
 					BearFair20UserService service = new BearFair20UserService();
 					BearFair20User user = service.get(player);
@@ -317,8 +317,8 @@ public class PugmasIsland implements Listener, BearFairIsland {
 		Block clicked = event.getClickedBlock();
 		if (BlockUtils.isNullOrAir(clicked)) return;
 
-		ProtectedRegion region = getWGUtils().getProtectedRegion(getRegion());
-		if (!getWGUtils().getRegionsAt(clicked.getLocation()).contains(region)) return;
+		ProtectedRegion region = worldguard().getProtectedRegion(getRegion());
+		if (!worldguard().getRegionsAt(clicked.getLocation()).contains(region)) return;
 
 		if (!BearFair20.enableQuests) return;
 		if (!clicked.getType().equals(Material.PLAYER_HEAD)) return;
@@ -382,8 +382,8 @@ public class PugmasIsland implements Listener, BearFairIsland {
 	}
 
 	private boolean isTreePresent(Location location) {
-		ProtectedRegion treeRg = getWGUtils().getProtectedRegion(presents_treeRg);
-		return getWGUtils().getRegionsAt(location).contains(treeRg);
+		ProtectedRegion treeRg = worldguard().getProtectedRegion(presents_treeRg);
+		return worldguard().getRegionsAt(location).contains(treeRg);
 	}
 
 	private boolean isFoundPresent(Location location, Player player) {

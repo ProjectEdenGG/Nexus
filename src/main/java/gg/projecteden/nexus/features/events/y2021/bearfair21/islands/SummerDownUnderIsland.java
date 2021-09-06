@@ -112,10 +112,10 @@ public class SummerDownUnderIsland implements BearFair21Island {
 	public SummerDownUnderIsland() {
 		Nexus.registerListener(this);
 		Tasks.repeat(2, 5, () ->
-			BearFair21.getWGUtils().getEntitiesInRegionByClass("bearfair21_elytra", Player.class).stream()
+			BearFair21.worldguard().getEntitiesInRegionByClass("bearfair21_elytra", Player.class).stream()
 				.filter(player -> player.isOnGround()
-					&& !BearFair21.getWGUtils().isInRegion(player, "bearfair21_elytra_start")
-					&& !BearFair21.getWGUtils().isInRegion(player, "bearfair21_elytra_finish"))
+					&& !BearFair21.worldguard().isInRegion(player, "bearfair21_elytra_start")
+					&& !BearFair21.worldguard().isInRegion(player, "bearfair21_elytra_finish"))
 				.forEach(this::teleportToElytraCourse));
 	}
 
@@ -195,7 +195,7 @@ public class SummerDownUnderIsland implements BearFair21Island {
 		BearFair21UserService service = new BearFair21UserService();
 		BearFair21User user = service.get(event.getPlayer());
 		QuestStage stage = user.getQuestStage_SDU();
-		boolean isMiloItem = BearFair21.getWGUtils().isInRegion(frame.getLocation(), "bearfair21_summerdownunder_milo");
+		boolean isMiloItem = BearFair21.worldguard().isInRegion(frame.getLocation(), "bearfair21_summerdownunder_milo");
 		boolean hasItem = event.getPlayer().getInventory().containsAtLeast(item, 1);
 		if (FEATHER.build().isSimilar(item) && (stage == QuestStage.STEP_FIVE || (stage == QuestStage.STEP_FOUR && isMiloItem))) {
 			Location loc = LocationUtils.getCenteredRotationlessLocation(frame.getLocation());

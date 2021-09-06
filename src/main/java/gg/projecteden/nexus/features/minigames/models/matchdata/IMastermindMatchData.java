@@ -125,20 +125,20 @@ public abstract class IMastermindMatchData extends MatchData {
 		if (!new CooldownService().check(minigamer.getPlayer(), "minigames-mastermind-guess", TickTime.SECOND.x(3)))
 			return;
 
-		WorldEditUtils WEUtils = minigamer.getMatch().getWEUtils();
-		for (Block block : WEUtils.getBlocks(guessRegion)) {
+		WorldEditUtils worldedit = minigamer.getMatch().worldedit();
+		for (Block block : worldedit.getBlocks(guessRegion)) {
 			if (block.getType() == Material.AIR)
 				throw new MinigameException("You must fill in every block before guessing");
 			if (!getMaterials(minigamer).contains(block.getType()))
 				throw new MinigameException("Unknown block in guess area");
 		}
 
-		Location wallOrigin = WEUtils.toLocation(wallRegion.getMinimumPoint());
+		Location wallOrigin = worldedit.toLocation(wallRegion.getMinimumPoint());
 		wallOrigin.setY(wallOrigin.getY() + (getGuess(minigamer) - 1) * 2);
 		BlockFace direction = getDirection(wallOrigin.getBlock());
 
-		WEUtils.paster().clipboard(guessRegion).at(wallOrigin).build();
-		WEUtils.getBlocks(guessRegion).forEach(block -> block.setType(Material.AIR));
+		worldedit.paster().clipboard(guessRegion).at(wallOrigin).build();
+		worldedit.getBlocks(guessRegion).forEach(block -> block.setType(Material.AIR));
 
 		List<MastermindColor> guess = new ArrayList<>();
 		List<MastermindColor> answer = new ArrayList<>(this.answer);
@@ -176,7 +176,7 @@ public abstract class IMastermindMatchData extends MatchData {
 		for (int i = 0; i < incorrect; i++)
 			validateOrigin.getRelative(direction, relative++).setType(validateIncorrect);
 
-		Block resultsSignBlock = WEUtils.toLocation(resultsSignRegion.getMinimumPoint()).getBlock();
+		Block resultsSignBlock = worldedit.toLocation(resultsSignRegion.getMinimumPoint()).getBlock();
 		if (MaterialTag.SIGNS.isTagged(resultsSignBlock.getType()) && resultsSignBlock.getState() instanceof Sign resultsSign) {
 			resultsSign.setLine(1, colorize("&aCorrect: &f" + correct));
 			resultsSign.setLine(2, colorize("&eWrong spot: &f" + exists));
@@ -195,7 +195,7 @@ public abstract class IMastermindMatchData extends MatchData {
 	}
 
 	protected void showAnswer(Minigamer minigamer, Region wallRegion) {
-		Location wallOrigin = WEUtils.toLocation(wallRegion.getMinimumPoint());
+		Location wallOrigin = worldedit().toLocation(wallRegion.getMinimumPoint());
 		wallOrigin.setY(wallOrigin.getY() + maxGuesses * 2);
 		BlockFace direction = getDirection(wallOrigin.getBlock());
 
@@ -214,7 +214,7 @@ public abstract class IMastermindMatchData extends MatchData {
 	protected void fireworks(String regionName) {
 		arena.getRegionsLike(regionName).forEach(region -> {
 			for (int i = 0; i < 3; i++) {
-				Location location = arena.getWGUtils().getRandomBlock(region).getLocation();
+				Location location = arena.worldguard().getRandomBlock(region).getLocation();
 
 				int delay = RandomUtils.randomInt(TickTime.SECOND.get() / 2, TickTime.SECOND.get());
 				Tasks.wait(delay * i, () -> {
@@ -230,7 +230,7 @@ public abstract class IMastermindMatchData extends MatchData {
 
 	public void resetResultsSign() {
 		for (ProtectedRegion resultsSignRegion : arena.getRegionsLike("results_sign")) {
-			Block resultsSignBlock = WEUtils.toLocation(resultsSignRegion.getMinimumPoint()).getBlock();
+			Block resultsSignBlock = worldedit().toLocation(resultsSignRegion.getMinimumPoint()).getBlock();
 			if (!(MaterialTag.SIGNS.isTagged(resultsSignBlock.getType()) && resultsSignBlock.getState() instanceof Sign resultsSign))
 				Nexus.warn("Mastermind results sign region not configured correctly");
 			else {

@@ -100,11 +100,11 @@ public class Pugmas20 implements Listener {
 		return Bukkit.getWorld("safepvp");
 	}
 
-	public static WorldGuardUtils getWGUtils() {
+	public static WorldGuardUtils worldguard() {
 		return new WorldGuardUtils(getWorld());
 	}
 
-	public static WorldEditUtils getWEUtils() {
+	public static WorldEditUtils worldedit() {
 		return new WorldEditUtils(getWorld());
 	}
 
@@ -139,7 +139,7 @@ public class Pugmas20 implements Listener {
 		Particle particle = Particle.VILLAGER_HAPPY;
 
 		Tasks.repeatAsync(0, TickTime.SECOND.x(2), () -> {
-			for (Player player : getWGUtils().getPlayersInRegion(region)) {
+			for (Player player : worldguard().getPlayersInRegion(region)) {
 				Pugmas20User user = service.get(player);
 				for (Integer npcId : user.getNextStepNPCs()) {
 					NPC npc = CitizensUtils.getNPC(npcId);
@@ -234,7 +234,7 @@ public class Pugmas20 implements Listener {
 	}
 
 	public static boolean isAtPugmas(Location location) {
-		return isInPugmasWorld(location) && getWGUtils().isInRegion(location, region);
+		return isInPugmasWorld(location) && worldguard().isInRegion(location, region);
 	}
 
 	public static boolean isAtPugmas(Player player, String name) {
@@ -242,7 +242,7 @@ public class Pugmas20 implements Listener {
 	}
 
 	public static boolean isAtPugmas(Location location, String name) {
-		return isInPugmasWorld(location) && !getWGUtils().getRegionsLikeAt(getRegion() + "_" + name + "(_[\\d]+)?", location).isEmpty();
+		return isInPugmasWorld(location) && !worldguard().getRegionsLikeAt(getRegion() + "_" + name + "(_[\\d]+)?", location).isEmpty();
 	}
 
 	@EventHandler

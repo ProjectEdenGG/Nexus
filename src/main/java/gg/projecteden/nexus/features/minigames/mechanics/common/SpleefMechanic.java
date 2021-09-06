@@ -35,7 +35,7 @@ public abstract class SpleefMechanic extends TeamlessMechanic {
 		if (!match.isBegun())
 			return false;
 
-		for (ProtectedRegion region : match.getWGUtils().getRegionsAt(location.clone().add(0, .1, 0))) {
+		for (ProtectedRegion region : match.worldguard().getRegionsAt(location.clone().add(0, .1, 0))) {
 			if (!match.getArena().ownsRegion(region.getId(), "floor")) continue;
 
 			Material type = location.getBlock().getType();

@@ -69,12 +69,12 @@ public class MonsterMaze extends TeamlessMechanic {
 
 		List<Location> goals = new ArrayList<>();
 		for (BlockVector3 vector : match.getArena().getRegion("floor")) {
-			Location location = match.getWGUtils().toLocation(vector);
+			Location location = match.worldguard().toLocation(vector);
 			if (location.getBlock().getType() == goalMaterial)
 				goals.add(location.add(0, 1, 0));
 		}
 
-		List<Block> spawnpoints = match.getWGUtils().getRandomBlocks(floor, floorMaterial, MONSTERS);
+		List<Block> spawnpoints = match.worldguard().getRandomBlocks(floor, floorMaterial, MONSTERS);
 		spawnpoints.stream().map(block -> block.getLocation().add(.5, 1, .5)).forEach(spawnpoint -> {
 			Mob monster = match.spawn(spawnpoint, Zombie.class);
 			monster.setAI(false);
@@ -109,7 +109,7 @@ public class MonsterMaze extends TeamlessMechanic {
 					}
 			});
 
-			List<Block> powerupLocations = match.getWGUtils().getRandomBlocks(floor, floorMaterial, POWERUPS);
+			List<Block> powerupLocations = match.worldguard().getRandomBlocks(floor, floorMaterial, POWERUPS);
 			match.broadcast("Power ups have spawned!");
 			for (Block block : powerupLocations)
 				new PowerUpUtils(match, Arrays.asList(JUMPS)).spawn(block.getLocation().add(0, 1, 0), true);

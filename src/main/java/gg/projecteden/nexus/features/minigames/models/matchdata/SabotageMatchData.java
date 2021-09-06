@@ -129,7 +129,7 @@ public class SabotageMatchData extends MatchData {
 
 	private Set<ArmorStandTask> armorStandTasksInit() {
 		Set<ArmorStandTask> set = new HashSet<>();
-		getArena().getWGUtils().getEntitiesInRegionByClass(getArena().getProtectedRegion(), ArmorStand.class).forEach(armorStand -> {
+		getArena().worldguard().getEntitiesInRegionByClass(getArena().getProtectedRegion(), ArmorStand.class).forEach(armorStand -> {
 			if (armorStand.getEquipment() == null) return;
 			ItemStack item = armorStand.getEquipment().getHelmet();
 			if (ItemUtils.isNullOrAir(item)) return;

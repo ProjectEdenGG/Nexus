@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static gg.projecteden.nexus.features.events.aeveonproject.AeveonProject.getWGUtils;
+import static gg.projecteden.nexus.features.events.aeveonproject.AeveonProject.worldguard;
 
 public class Sounds {
 	private final List<Material> ignoreMaterials = Arrays.asList(Material.SNOW, Material.SNOW_BLOCK, Material.ICE, Material.PACKED_ICE,
@@ -29,7 +29,7 @@ public class Sounds {
 
 			Tasks.sync(() -> {
 
-				Collection<Player> players = getWGUtils().getPlayersInRegion(APSetType.VESPYR.get().getRegion());
+				Collection<Player> players = worldguard().getPlayersInRegion(APSetType.VESPYR.get().getRegion());
 				for (Player player : players) {
 					if (player.getInventory().getHelmet() != null && player.getInventory().getHelmet().getType().equals(Material.LEATHER_HELMET))
 						continue;

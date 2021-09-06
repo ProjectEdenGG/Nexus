@@ -69,15 +69,15 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 	private final HoneyPotBansService bansService = new HoneyPotBansService();
 	private final HoneyPotBans honeyPotBans = bansService.get0();
 
-	private WorldGuardUtils WGUtils;
-	private WorldEditUtils WEUtils;
+	private WorldGuardUtils worldguard;
+	private WorldEditUtils worldedit;
 	private RegionManager regionManager;
 
 	public HoneyPotCommand(CommandEvent event) {
 		super(event);
-		WGUtils = new WorldGuardUtils(player());
-		WEUtils = new WorldEditUtils(player());
-		regionManager = WGUtils.getManager();
+		worldguard = new WorldGuardUtils(player());
+		worldedit = new WorldEditUtils(player());
+		regionManager = worldguard.getManager();
 	}
 
 	@Path("check <player>")
@@ -97,7 +97,7 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 
 	@Path("fix <honeyPot>")
 	void repair(String honeyPot) {
-		ProtectedRegion region = WGUtils.getProtectedRegion("hp_" + honeyPot);
+		ProtectedRegion region = worldguard.getProtectedRegion("hp_" + honeyPot);
 		if (region == null)
 			error("That honey pot does not exist");
 
@@ -112,7 +112,7 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 		if (honeyPot.startsWith("hp_"))
 			honeyPot = honeyPot.substring(2);
 
-		Region selection = WEUtils.getPlayerSelection(player());
+		Region selection = worldedit.getPlayerSelection(player());
 		ProtectedRegion region = new ProtectedCuboidRegion("hp_" + honeyPot, selection.getMinimumPoint(), selection.getMaximumPoint());
 		region.setFlag(Flags.PASSTHROUGH, StateFlag.State.ALLOW);
 		regionManager.addRegion(region);
@@ -124,7 +124,7 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 		regionManager.addRegion(schemRegion);
 
 //		TODO when API saving works again
-//		WEUtils.save("hp/" + honeyPot, selection);
+//		worldedit.save("hp/" + honeyPot, selection);
 		runCommand("nexus schem save hp/" + honeyPot);
 
 		regionManager.save();
@@ -143,7 +143,7 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 
 	@Path("list [page]")
 	void list(@Arg("1") int page) {
-		List<ProtectedRegion> regions = new ArrayList<>(WGUtils.getRegionsLike("hp_.*"));
+		List<ProtectedRegion> regions = new ArrayList<>(worldguard.getRegionsLike("hp_.*"));
 
 		if (regions.isEmpty())
 			error("There are no Honey Pots in your world.");
@@ -160,11 +160,11 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 
 	@Path("(teleport|tp) <honeypot>")
 	void teleport(String honeyPot) {
-		Region region = WGUtils.getRegion("hp_" + honeyPot);
+		Region region = worldguard.getRegion("hp_" + honeyPot);
 		if (region == null)
 			error("That is not a valid Honey Pot");
 
-		player().teleportAsync(WEUtils.toLocation(region.getCenter()));
+		player().teleportAsync(worldedit.toLocation(region.getCenter()));
 		send(PREFIX + "You have been teleported to Honey Pot:&e " + honeyPot);
 	}
 
@@ -173,10 +173,10 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 	}
 
 	public static void fix(ProtectedRegion region, World world) {
-		WorldEditUtils WEUtils = new WorldEditUtils(world);
+		WorldEditUtils worldedit = new WorldEditUtils(world);
 		String fileName = region.getId().replace("hp_", "hp/");
 		try {
-			WEUtils.paster().file(fileName).at(getSchemRegen(region, world).getMinimumPoint()).pasteAsync();
+			worldedit.paster().file(fileName).at(getSchemRegen(region, world).getMinimumPoint()).pasteAsync();
 		} catch (InvalidInputException ex) {
 			Nexus.log(ex.getMessage());
 		}
@@ -253,8 +253,8 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 		if (!(event.getEntity() instanceof Animals)) return;
 
 		Location location = event.getEntity().getLocation();
-		WorldGuardUtils WGUtils = new WorldGuardUtils(location);
-		Set<ProtectedRegion> regions = WGUtils.getRegionsAt(location);
+		WorldGuardUtils worldguard = new WorldGuardUtils(location);
+		Set<ProtectedRegion> regions = worldguard.getRegionsAt(location);
 		for (ProtectedRegion region : regions) {
 			if (!region.getId().contains("hp_"))
 				continue;
@@ -291,8 +291,8 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 	}
 
 	public boolean incrementPlayer(Player player, Location location, double amount) {
-		WorldGuardUtils WGUtils = new WorldGuardUtils(location);
-		Set<ProtectedRegion> regions = WGUtils.getRegionsAt(location);
+		WorldGuardUtils worldguard = new WorldGuardUtils(location);
+		Set<ProtectedRegion> regions = worldguard.getRegionsAt(location);
 		for (ProtectedRegion region : regions) {
 			if (!region.getId().contains("hp_"))
 				continue;

@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.nexus.features.events.aeveonproject.AeveonProject.getWGUtils;
+import static gg.projecteden.nexus.features.events.aeveonproject.AeveonProject.worldguard;
 
 public class APUtils {
 
@@ -24,14 +24,14 @@ public class APUtils {
 
 	public static Collection<Player> getPlayersInSet(APSet set) {
 		try {
-			return getWGUtils().getPlayersInRegion(set.getRegion());
+			return worldguard().getPlayersInRegion(set.getRegion());
 		} catch (Exception ignored) {
 			return null;
 		}
 	}
 
 	public static boolean isInSpace(Player player) {
-		Set<ProtectedRegion> regions = getWGUtils().getRegionsAt(player.getLocation());
+		Set<ProtectedRegion> regions = worldguard().getRegionsAt(player.getLocation());
 		Set<ProtectedRegion> spaceRegions = regions.stream()
 				.filter(region -> region.getId().contains("space") || region.getId().contains("night"))
 				.collect(Collectors.toSet());
@@ -40,7 +40,7 @@ public class APUtils {
 	}
 
 	public static boolean isInRegion(Player player, String protectedRegion) {
-		return isInRegion(player, getWGUtils().getProtectedRegion(protectedRegion));
+		return isInRegion(player, worldguard().getProtectedRegion(protectedRegion));
 	}
 
 	public static boolean isInRegion(Player player, ProtectedRegion protectedRegion) {
@@ -48,7 +48,7 @@ public class APUtils {
 	}
 
 	public static boolean isInRegion(Block block, String protectedRegion) {
-		return isInRegion(block, getWGUtils().getProtectedRegion(protectedRegion));
+		return isInRegion(block, worldguard().getProtectedRegion(protectedRegion));
 	}
 
 	public static boolean isInRegion(Block block, ProtectedRegion protectedRegion) {
@@ -56,11 +56,11 @@ public class APUtils {
 	}
 
 	public static boolean isInRegion(Location location, String protectedRegion) {
-		return isInRegion(location, getWGUtils().getProtectedRegion(protectedRegion));
+		return isInRegion(location, worldguard().getProtectedRegion(protectedRegion));
 	}
 
 	public static boolean isInRegion(Location location, ProtectedRegion protectedRegion) {
-		Set<ProtectedRegion> regions = getWGUtils().getRegionsAt(location);
+		Set<ProtectedRegion> regions = worldguard().getRegionsAt(location);
 		for (ProtectedRegion region : regions) {
 			if (region.equals(protectedRegion))
 				return true;

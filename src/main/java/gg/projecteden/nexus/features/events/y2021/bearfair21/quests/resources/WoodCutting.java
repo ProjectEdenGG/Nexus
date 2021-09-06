@@ -59,10 +59,10 @@ public class WoodCutting implements Listener {
 		if (treeType == null)
 			return false;
 
-		Set<ProtectedRegion> regions = BearFair21.getWGUtils().getRegionsLike(tree_region + "_" + treeType.name() + "_[\\d]+");
+		Set<ProtectedRegion> regions = BearFair21.worldguard().getRegionsLike(tree_region + "_" + treeType.name() + "_[\\d]+");
 
 		MinMaxResult<ProtectedRegion> result = getMin(regions, region ->
-				event.getBlock().getLocation().distance(BearFair21.getWGUtils().toLocation(region.getMinimumPoint())));
+				event.getBlock().getLocation().distance(BearFair21.worldguard().toLocation(region.getMinimumPoint())));
 
 		ProtectedRegion region = result.getObject();
 		double distance = result.getValue().doubleValue();
@@ -162,7 +162,7 @@ public class WoodCutting implements Listener {
 				if (region == null)
 					return null;
 
-				Location base = BearFair21.getWEUtils().toLocation(region.getMinimumPoint());
+				Location base = BearFair21.worldedit().toLocation(region.getMinimumPoint());
 				Queue<Location> queue = createDistanceSortedQueue(base);
 				getBlocks(id).thenAccept(blocks -> {
 					queue.addAll(blocks.keySet());
@@ -184,7 +184,7 @@ public class WoodCutting implements Listener {
 					return null;
 
 				String schematicName = region.getId().replaceAll("_", "/");
-				return BearFair21.getWEUtils().paster()
+				return BearFair21.worldedit().paster()
 						.air(false)
 						.at(region.getMinimumPoint())
 						.duration(animationTime)
@@ -196,7 +196,7 @@ public class WoodCutting implements Listener {
 		public ProtectedRegion getRegion(int id) {
 			regions.computeIfAbsent(id, $ -> {
 				try {
-					return BearFair21.getWGUtils().getProtectedRegion(tree_region + "_" + name().toLowerCase() + "_" + id);
+					return BearFair21.worldguard().getProtectedRegion(tree_region + "_" + name().toLowerCase() + "_" + id);
 				} catch (InvalidInputException ex) {
 					return null;
 				}

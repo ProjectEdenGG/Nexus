@@ -28,19 +28,19 @@ public class Pride21 implements Listener {
 		new Quests();
 		Nexus.registerListener(this);
 		Tasks.repeat(5, TimeUtils.TickTime.SECOND, () -> {
-			getWGUtils().getPlayersInRegion(REGION).forEach(player -> {
+			worldguard().getPlayersInRegion(REGION).forEach(player -> {
 				if (!service.get(player).isBonusTokenRewardClaimed())
 					Quests.viewFloat(player, false);
 			});
 		});
 	}
 
-	public static WorldGuardUtils getWGUtils() {
+	public static WorldGuardUtils worldguard() {
 		return new WorldGuardUtils("events");
 	}
 
 	public static boolean isInRegion(Location location) {
-		return getWGUtils().isInRegion(location, REGION);
+		return worldguard().isInRegion(location, REGION);
 	}
 
 	public static boolean isInRegion(Player player) {

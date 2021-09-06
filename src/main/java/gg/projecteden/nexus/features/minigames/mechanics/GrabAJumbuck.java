@@ -99,7 +99,7 @@ public class GrabAJumbuck extends TeamlessMechanic {
 	}
 
 	public Location getRandomSheepSpawnLocation(Match match) {
-		Block block = match.getWGUtils().getRandomBlock(match.getArena().getProtectedRegion("sheep"));
+		Block block = match.worldguard().getRandomBlock(match.getArena().getProtectedRegion("sheep"));
 		if (block == null)
 			return getRandomSheepSpawnLocation(match);
 		block = Minigames.getWorld().getHighestBlockAt((int) block.getLocation().getX(), (int) block.getLocation().getZ()).getLocation().clone().subtract(0, 1, 0).getBlock();

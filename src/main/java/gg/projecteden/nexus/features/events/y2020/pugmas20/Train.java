@@ -29,8 +29,8 @@ import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.getWEUtils;
 import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.location;
+import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.worldedit;
 
 /*
 -890, -2186
@@ -95,7 +95,7 @@ public class Train {
 
 	public Train() {
 //		Tasks.repeat(TickTime.SECOND.x(30), TickTime.MINUTE.x(5), () -> {
-//			if (Pugmas20.WGUtils.getPlayersInRegion("pugmas20").size() == 0)
+//			if (Pugmas20.worldguard().getPlayersInRegion("pugmas20").size() == 0)
 //				return;
 //
 //			if (RandomUtils.chanceOf(50))
@@ -121,13 +121,13 @@ public class Train {
 		Queue<Paster> pasters = new LinkedList<>();
 
 		for (int i = 1; i <= 109; i++)
-			pasters.add(getWEUtils().paster().file(animationPath + "/Enter/TrainEnter_" + i).at(trainEnter));
+			pasters.add(worldedit().paster().file(animationPath + "/Enter/TrainEnter_" + i).at(trainEnter));
 
 		for (int i = 1; i <= 95; i++)
-			pasters.add(getWEUtils().paster().file(animationPath + "/Train").at(trainStart.getBlock().getRelative(i, 0, 0).getLocation()));
+			pasters.add(worldedit().paster().file(animationPath + "/Train").at(trainStart.getBlock().getRelative(i, 0, 0).getLocation()));
 
 		for (int i = 1; i <= 110; i++)
-			pasters.add(getWEUtils().paster().file(animationPath + "/Exit/TrainExit_" + i).at(trainExit));
+			pasters.add(worldedit().paster().file(animationPath + "/Exit/TrainExit_" + i).at(trainExit));
 
 		Tasks.async(() -> animate(pasters));
 	}
@@ -238,16 +238,16 @@ public class Train {
 				onComplete = () -> animateLights1 = false;
 
 				for (int i = 1; i <= 7; i++) {
-					pasters.add(getWEUtils().paster().file(animationPath + "/Crossing/North_Opening_" + i).at(crossingNW));
-					pasters.add(getWEUtils().paster().file(animationPath + "/Crossing/South_Opening_" + i).at(crossingSW));
+					pasters.add(worldedit().paster().file(animationPath + "/Crossing/North_Opening_" + i).at(crossingNW));
+					pasters.add(worldedit().paster().file(animationPath + "/Crossing/South_Opening_" + i).at(crossingSW));
 				}
 			} else {
 				crossing1_closed = true;
 				animateLights1 = true;
 
 				for (int i = 1; i <= 7; i++) {
-					pasters.add(getWEUtils().paster().file(animationPath + "/Crossing/North_Closing_" + i).at(crossingNW));
-					pasters.add(getWEUtils().paster().file(animationPath + "/Crossing/South_Closing_" + i).at(crossingSW));
+					pasters.add(worldedit().paster().file(animationPath + "/Crossing/North_Closing_" + i).at(crossingNW));
+					pasters.add(worldedit().paster().file(animationPath + "/Crossing/South_Closing_" + i).at(crossingSW));
 				}
 			}
 		} else if (crossing == 2) {
@@ -256,16 +256,16 @@ public class Train {
 				onComplete = () -> animateLights2 = false;
 
 				for (int i = 1; i <= 7; i++) {
-					pasters.add(getWEUtils().paster().file(animationPath + "/Crossing/North_Opening_" + i).at(crossingNE));
-					pasters.add(getWEUtils().paster().file(animationPath + "/Crossing/South_Opening_" + i).at(crossingSE));
+					pasters.add(worldedit().paster().file(animationPath + "/Crossing/North_Opening_" + i).at(crossingNE));
+					pasters.add(worldedit().paster().file(animationPath + "/Crossing/South_Opening_" + i).at(crossingSE));
 				}
 			} else {
 				crossing2_closed = true;
 				animateLights2 = true;
 
 				for (int i = 1; i <= 7; i++) {
-					pasters.add(getWEUtils().paster().file(animationPath + "/Crossing/North_Closing_" + i).at(crossingNE));
-					pasters.add(getWEUtils().paster().file(animationPath + "/Crossing/South_Closing_" + i).at(crossingSE));
+					pasters.add(worldedit().paster().file(animationPath + "/Crossing/North_Closing_" + i).at(crossingNE));
+					pasters.add(worldedit().paster().file(animationPath + "/Crossing/South_Closing_" + i).at(crossingSE));
 				}
 			}
 		}
@@ -349,7 +349,7 @@ public class Train {
 			Location front = origin.getLocation();
 			Location middle = origin.getRelative(-(trainLength / 2), 0, 0).getLocation();
 			Location back = origin.getRelative(-trainLength, 0, 0).getLocation();
-			Collection<Player> players = Pugmas20.getWGUtils().getPlayersInRegion("pugmas20_trainsound");
+			Collection<Player> players = Pugmas20.worldguard().getPlayersInRegion("pugmas20_trainsound");
 
 			if (stopped) {
 				playStationSound(front, players);

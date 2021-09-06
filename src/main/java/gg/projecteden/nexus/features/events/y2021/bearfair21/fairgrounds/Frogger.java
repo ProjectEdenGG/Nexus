@@ -30,10 +30,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.getWEUtils;
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.getWGUtils;
 import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.isInRegion;
 import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.send;
+import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.worldedit;
+import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.worldguard;
 
 public class Frogger implements Listener {
 
@@ -74,7 +74,7 @@ public class Frogger implements Listener {
 	}
 
 	private void loadSpawns(String logsRg, Map<Location, Material> logSpawnMap) {
-		List<Block> blocks = getWEUtils().getBlocks(getWGUtils().getRegion(logsRg));
+		List<Block> blocks = worldedit().getBlocks(worldguard().getRegion(logsRg));
 		for (Block block : blocks)
 			if (block.getType().equals(Material.DIAMOND_BLOCK) || block.getType().equals(Material.EMERALD_BLOCK))
 				logSpawnMap.put(block.getLocation(), block.getType());
@@ -290,7 +290,7 @@ public class Frogger implements Listener {
 	}
 
 	private void clearLogs() {
-		List<Block> blocks = getWEUtils().getBlocks(getWGUtils().getRegion(logsRg));
+		List<Block> blocks = worldedit().getBlocks(worldguard().getRegion(logsRg));
 		for (Block block : blocks) {
 			if (block.getType().equals(logMaterial))
 				block.setType(riverMaterial);
@@ -298,7 +298,7 @@ public class Frogger implements Listener {
 	}
 
 	private void clearCars() {
-		List<Block> blocks = getWEUtils().getBlocks(getWGUtils().getRegion(roadRg));
+		List<Block> blocks = worldedit().getBlocks(worldguard().getRegion(roadRg));
 		for (Block block : blocks) {
 			if (!block.getType().equals(Material.AIR))
 				block.setType(Material.AIR);
@@ -351,7 +351,7 @@ public class Frogger implements Listener {
 	public void onRegionExit(PlayerLeftRegionEvent event) {
 		String regionId = event.getRegion().getId();
 		if (regionId.equalsIgnoreCase(gameRg)) {
-			int size = getWGUtils().getPlayersInRegion(gameRg).size();
+			int size = worldguard().getPlayersInRegion(gameRg).size();
 			if (size == 0) {
 				enabled = false;
 				stopAnimations();

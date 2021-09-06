@@ -200,7 +200,7 @@ public class PixelDrop extends TeamlessMechanic {
 		// Builds the map
 		for (int x = 0; x < 15; x++) {
 			for (int z = 0; z < 15; z++) {
-				Block block = match.getWGUtils().toLocation(designMin.add(x, 0, z)).getBlock();
+				Block block = match.worldguard().toLocation(designMin.add(x, 0, z)).getBlock();
 				if (block.getType().equals(Material.BARRIER)) continue;
 				String key = x + "_" + z;
 				matchData.getDesignMap().put(key, block);
@@ -245,7 +245,7 @@ public class PixelDrop extends TeamlessMechanic {
 
 	public void drop(Match match, Block block, int x, int z) {
 		PixelDropArena arena = match.getArena();
-		Location pasteMin = match.getWGUtils().toLocation(arena.getDropRegion().getMinimumPoint());
+		Location pasteMin = match.worldguard().toLocation(arena.getDropRegion().getMinimumPoint());
 		Location blockCenter = LocationUtils.getBlockCenter(new Location(block.getWorld(), x, pasteMin.getY(), z));
 		Location loc = pasteMin.add(blockCenter.getX(), 0, blockCenter.getZ());
 

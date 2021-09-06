@@ -107,16 +107,16 @@ public class BearFair21 implements Listener {
 		return new Location(getWorld(), x, y, z, yaw, pitch);
 	}
 
-	public static WorldGuardUtils getWGUtils() {
+	public static WorldGuardUtils worldguard() {
 		return new WorldGuardUtils(getWorld());
 	}
 
-	public static WorldEditUtils getWEUtils() {
+	public static WorldEditUtils worldedit() {
 		return new WorldEditUtils(getWorld());
 	}
 
 	public static ProtectedRegion getProtectedRegion() {
-		return getWGUtils().getProtectedRegion(region);
+		return worldguard().getProtectedRegion(region);
 	}
 
 	public static boolean isNotAtBearFair(Block block) {
@@ -173,11 +173,11 @@ public class BearFair21 implements Listener {
 	}
 
 	public static boolean isInRegion(Location location, String region) {
-		return !isNotAtBearFair(location) && getWGUtils().isInRegion(location, region);
+		return !isNotAtBearFair(location) && worldguard().isInRegion(location, region);
 	}
 
 	public static boolean isInRegionRegex(Location location, String regex) {
-		return !isNotAtBearFair(location) && getWGUtils().getRegionsLikeAt(regex, location).size() > 0;
+		return !isNotAtBearFair(location) && worldguard().getRegionsLikeAt(regex, location).size() > 0;
 	}
 
 	public static void send(String message, Player to) {

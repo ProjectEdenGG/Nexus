@@ -26,9 +26,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.getWGUtils;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.giveDailyPoints;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.isInRegion;
+import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.worldguard;
 
 public class PugDunk implements Listener {
 
@@ -72,7 +72,7 @@ public class PugDunk implements Listener {
 
 	public static void start() {
 		if (!enabled) {
-			if (getWGUtils().getPlayersInRegion(gameRg).size() > 0) {
+			if (worldguard().getPlayersInRegion(gameRg).size() > 0) {
 				enabled = true;
 			} else {
 				enabled = false;
@@ -84,7 +84,7 @@ public class PugDunk implements Listener {
 	private void buttonTask() {
 		Tasks.repeat(0, 5, () -> {
 			if (enabled) {
-				if (getWGUtils().getPlayersInRegion(gameRg).size() == 0)
+				if (worldguard().getPlayersInRegion(gameRg).size() == 0)
 					setPugDunkBool(false);
 				else {
 					if (RandomUtils.chanceOf(25)) {
@@ -137,7 +137,7 @@ public class PugDunk implements Listener {
 	public void onRegionLeave(PlayerLeftRegionEvent event) {
 		String regionId = event.getRegion().getId();
 		if (regionId.equalsIgnoreCase(gameRg)) {
-			int size = getWGUtils().getPlayersInRegion(gameRg).size();
+			int size = worldguard().getPlayersInRegion(gameRg).size();
 			if (size == 0)
 				setPugDunkBool(false);
 		}

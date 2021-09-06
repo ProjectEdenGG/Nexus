@@ -85,7 +85,7 @@ public class Beehive implements Listener {
 		Block block = event.getClickedBlock();
 		if (BlockUtils.isNullOrAir(block)) return;
 
-		if (BearFair21.getWGUtils().isInRegion(block.getLocation(), queenRg)) {
+		if (BearFair21.worldguard().isInRegion(block.getLocation(), queenRg)) {
 			BearFair21User user = userService.get(event.getPlayer());
 			BearFair21Talker.runScript(user, MainNPCs.QUEEN_BEE);
 		}

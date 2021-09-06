@@ -44,9 +44,9 @@ public class AdventChest {
 		}
 
 		public static District of(Location location) {
-			WorldGuardUtils WGUtils = new WorldGuardUtils(location);
+			WorldGuardUtils worldguard = new WorldGuardUtils(location);
 			District district = null;
-			for (ProtectedRegion region : WGUtils.getRegionsAt(location))
+			for (ProtectedRegion region : worldguard.getRegionsAt(location))
 				if (region.getId().contains(District.region))
 					district = District.valueOf(region.getId().replace(District.region, "").toUpperCase());
 

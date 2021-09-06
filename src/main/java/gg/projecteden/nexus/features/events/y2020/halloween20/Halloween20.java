@@ -51,11 +51,11 @@ public class Halloween20 implements Listener {
 		return Bukkit.getWorld("safepvp");
 	}
 
-	public static WorldGuardUtils getWGUtils() {
+	public static WorldGuardUtils worldguard() {
 		return new WorldGuardUtils(getWorld());
 	}
 
-	public static WorldEditUtils getWEUtils() {
+	public static WorldEditUtils worldedit() {
 		return new WorldEditUtils(getWorld());
 	}
 
@@ -87,7 +87,7 @@ public class Halloween20 implements Listener {
 	@EventHandler
 	public void onInteract(PlayerInteractEvent event) {
 		if (!Utils.ActionGroup.CLICK_BLOCK.applies(event)) return;
-		if (!getWGUtils().getPlayersInRegion(region).contains(event.getPlayer())) return;
+		if (!worldguard().getPlayersInRegion(region).contains(event.getPlayer())) return;
 		if (event.getHand() != EquipmentSlot.HAND) return;
 		ComboLockNumber number = ComboLockNumber.getByLocation(event.getClickedBlock().getLocation());
 		if (number == null) return;
@@ -99,7 +99,7 @@ public class Halloween20 implements Listener {
 	@EventHandler
 	public void onComboLockInteract(PlayerInteractEvent event) {
 		if (!Utils.ActionGroup.CLICK_BLOCK.applies(event)) return;
-		if (getWGUtils().isInRegion(event.getClickedBlock().getLocation(), region + "_combolock"))
+		if (worldguard().isInRegion(event.getClickedBlock().getLocation(), region + "_combolock"))
 			Halloween20Menus.openComboLock(event.getPlayer());
 	}
 

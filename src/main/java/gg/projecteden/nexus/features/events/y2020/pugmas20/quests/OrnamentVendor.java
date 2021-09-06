@@ -177,9 +177,9 @@ public class OrnamentVendor implements Listener {
 		if (treeType == null)
 			return;
 
-		Set<ProtectedRegion> regions = Pugmas20.getWGUtils().getRegionsLike("pugmas20_trees_" + treeType.name() + "_[\\d]+");
+		Set<ProtectedRegion> regions = Pugmas20.worldguard().getRegionsLike("pugmas20_trees_" + treeType.name() + "_[\\d]+");
 
-		MinMaxResult<ProtectedRegion> result = getMin(regions, region -> event.getBlock().getLocation().distance(Pugmas20.getWGUtils().toLocation(region.getMinimumPoint())));
+		MinMaxResult<ProtectedRegion> result = getMin(regions, region -> event.getBlock().getLocation().distance(Pugmas20.worldguard().toLocation(region.getMinimumPoint())));
 
 		ProtectedRegion region = result.getObject();
 		double distance = result.getValue().doubleValue();
@@ -277,7 +277,7 @@ public class OrnamentVendor implements Listener {
 				if (region == null)
 					return null;
 
-				Location base = Pugmas20.getWEUtils().toLocation(region.getMinimumPoint());
+				Location base = Pugmas20.worldedit().toLocation(region.getMinimumPoint());
 				Queue<Location> queue = createDistanceSortedQueue(base);
 				getBlocks(id).thenAccept(blocks -> {
 					queue.addAll(blocks.keySet());
@@ -299,7 +299,7 @@ public class OrnamentVendor implements Listener {
 					return null;
 
 				String schematicName = region.getId().replaceAll("_", "/");
-				return Pugmas20.getWEUtils().paster()
+				return Pugmas20.worldedit().paster()
 						.air(false)
 						.at(region.getMinimumPoint())
 						.duration(animationTime)
@@ -312,7 +312,7 @@ public class OrnamentVendor implements Listener {
 			regions.computeIfAbsent(id, $ -> {
 				try {
 					String regionName = "pugmas20_trees_" + name().toLowerCase() + "_" + id;
-					return Pugmas20.getWGUtils().getProtectedRegion(regionName);
+					return Pugmas20.worldguard().getProtectedRegion(regionName);
 				} catch (InvalidInputException ex) {
 					return null;
 				}

@@ -64,8 +64,8 @@ public class InteractListener implements Listener {
 			GolfBall golfBall = new GolfBall(user.getUuid());
 
 			// Verify region
-			WorldGuardUtils WGUtils = new WorldGuardUtils(block);
-			Set<ProtectedRegion> regions = WGUtils.getRegionsLikeAt(MiniGolf.holeRegionRegex, block.getLocation());
+			WorldGuardUtils worldguard = new WorldGuardUtils(block);
+			Set<ProtectedRegion> regions = worldguard.getRegionsLikeAt(MiniGolf.holeRegionRegex, block.getLocation());
 			ProtectedRegion region = regions.stream().findFirst().orElse(null);
 			if (region == null) {
 				user.debug("hole region not found");

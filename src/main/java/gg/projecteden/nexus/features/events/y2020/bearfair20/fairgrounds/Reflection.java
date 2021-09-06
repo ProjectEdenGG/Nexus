@@ -40,10 +40,10 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.getWGUtils;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.giveDailyPoints;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.isAtBearFair;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.send;
+import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.worldguard;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static org.bukkit.block.BlockFace.EAST;
 import static org.bukkit.block.BlockFace.NORTH;
@@ -56,7 +56,7 @@ import static org.bukkit.block.BlockFace.WEST;
 
 public class Reflection implements Listener {
 
-	private WorldEditUtils WEUtils = new WorldEditUtils(BearFair20.getWorld());
+	private WorldEditUtils worldedit = new WorldEditUtils(BearFair20.getWorld());
 	private String gameRg = BearFair20.getRegion() + "_reflection";
 	private String powderRg = gameRg + "_powder";
 	private BF20PointSource SOURCE = BF20PointSource.REFLECTION;
@@ -86,8 +86,8 @@ public class Reflection implements Listener {
 	}
 
 	private void setLamps() {
-		ProtectedRegion region = getWGUtils().getProtectedRegion(powderRg);
-		List<Block> blocks = WEUtils.getBlocks(region);
+		ProtectedRegion region = worldguard().getProtectedRegion(powderRg);
+		List<Block> blocks = worldedit.getBlocks(region);
 		for (Block block : blocks) {
 			if (block.getType().equals(Material.YELLOW_CONCRETE_POWDER)) {
 				Location loc = block.getRelative(0, 3, 0).getLocation();
@@ -107,8 +107,8 @@ public class Reflection implements Listener {
 	}
 
 	private void randomizeBanners() {
-		ProtectedRegion region = getWGUtils().getProtectedRegion(powderRg);
-		List<Block> blocks = WEUtils.getBlocks(region);
+		ProtectedRegion region = worldguard().getProtectedRegion(powderRg);
+		List<Block> blocks = worldedit.getBlocks(region);
 		for (Block block : blocks) {
 			if (!MaterialTag.CONCRETE_POWDERS.isTagged(block.getType())) continue;
 
@@ -271,7 +271,7 @@ public class Reflection implements Listener {
 
 	private void laserSound() {
 		soundTaskId = Tasks.repeat(0, TickTime.SECOND.x(5), () -> {
-			Collection<Player> players = getWGUtils().getPlayersInRegion(gameRg);
+			Collection<Player> players = worldguard().getPlayersInRegion(gameRg);
 			for (Player player : players)
 				player.playSound(laserSoundLoc, Sound.BLOCK_BEACON_AMBIENT, 1F, 1F);
 		});
@@ -280,7 +280,7 @@ public class Reflection implements Listener {
 	private void endLaser() {
 		Tasks.cancel(laserTaskId);
 		Tasks.cancel(soundTaskId);
-		Collection<Player> players = getWGUtils().getPlayersInRegion(gameRg);
+		Collection<Player> players = worldguard().getPlayersInRegion(gameRg);
 		for (Player player : players)
 			player.stopSound(Sound.BLOCK_BEACON_AMBIENT);
 		BearFair20.getWorld().playSound(center, Sound.BLOCK_BEACON_DEACTIVATE, 1F, 1F);
@@ -291,7 +291,7 @@ public class Reflection implements Listener {
 		BearFair20.getWorld().playSound(center, Sound.BLOCK_NOTE_BLOCK_BELL, 1F, 1F);
 
 		String color = objColor.getChatColor() + camelCase(objColor.getName());
-		Collection<Player> players = getWGUtils().getPlayersInRegion(gameRg);
+		Collection<Player> players = worldguard().getPlayersInRegion(gameRg);
 		for (Player player : players)
 			send(prefix + color + " " + objMob + " &fwas hit in " + reflections + " reflections!", player);
 
@@ -350,7 +350,7 @@ public class Reflection implements Listener {
 	}
 
 	private void broadcastObjective() {
-		Collection<Player> players = getWGUtils().getPlayersInRegion(gameRg);
+		Collection<Player> players = worldguard().getPlayersInRegion(gameRg);
 		for (Player player : players) {
 			send(prefix + objMsg, player);
 		}

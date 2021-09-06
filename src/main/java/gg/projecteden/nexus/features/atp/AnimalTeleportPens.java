@@ -25,20 +25,20 @@ import static gg.projecteden.nexus.utils.StringUtils.colorize;
 public class AnimalTeleportPens {
 	private final String PREFIX = StringUtils.getPrefix("ATP");
 	private Player player;
-	private WorldGuardUtils WGUtils;
+	private WorldGuardUtils worldguard;
 
 	public AnimalTeleportPens(Player player) {
 		this.player = player;
-		this.WGUtils = new WorldGuardUtils(player);
+		this.worldguard = new WorldGuardUtils(player);
 	}
 
 	public boolean multiplePlayers() {
-		return WGUtils.getPlayersInRegion(getRegion(player)).size() > 1;
+		return worldguard.getPlayersInRegion(getRegion(player)).size() > 1;
 	}
 
 	public List<Entity> getEntities() {
 		List<Entity> finalEntities = new ArrayList<>();
-		for (Entity entity : WGUtils.getEntitiesInRegion(getRegion(player))) {
+		for (Entity entity : worldguard.getEntitiesInRegion(getRegion(player))) {
 			if (isNPC(entity))
 				continue;
 
@@ -71,7 +71,7 @@ public class AnimalTeleportPens {
 	}
 
 	public ProtectedRegion getRegion(Player player) {
-		return WGUtils.getRegionsLikeAt("atp_.*", player.getLocation()).stream().findFirst().orElse(null);
+		return worldguard.getRegionsLikeAt("atp_.*", player.getLocation()).stream().findFirst().orElse(null);
 	}
 
 	public void confirm(Player player, Location toLoc) {

@@ -37,8 +37,8 @@ public class SchematicBrushCommand extends CustomCommand implements Listener {
 	public void schemBrush(String schematic) {
 		ItemStack tool = ItemUtils.getToolRequired(player());
 
-		WorldEditUtils WEUtils = new WorldEditUtils(player());
-		Clipboard clipboard = WEUtils.getSchematic(schematic);
+		WorldEditUtils worldedit = new WorldEditUtils(player());
+		Clipboard clipboard = worldedit.getSchematic(schematic);
 		if (clipboard == null)
 			error("Schematic " + schematic + " does not exist");
 
@@ -63,8 +63,8 @@ public class SchematicBrushCommand extends CustomCommand implements Listener {
 		if (Utils.isNullOrEmpty(lore)) return;
 
 		String schematic = StringUtils.stripColor(meta.getLore().get(0));
-		WorldEditUtils WEUtils = new WorldEditUtils(player);
-		Clipboard clipboard = WEUtils.getSchematic(schematic);
+		WorldEditUtils worldedit = new WorldEditUtils(player);
+		Clipboard clipboard = worldedit.getSchematic(schematic);
 		if (clipboard == null) return;
 
 		// So the player can undo if they want
