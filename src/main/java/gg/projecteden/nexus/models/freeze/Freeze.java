@@ -128,6 +128,11 @@ public class Freeze implements PlayerOwnedObject {
 	private static final int MAX_DISTANCE = 3;
 
 	public boolean isInArea() {
+		if (location == null) {
+			location = getOnlinePlayer().getLocation();
+			new FreezeService().save(this);
+		}
+
 		return getOnlinePlayer().getLocation().distance(location) > MAX_DISTANCE;
 	}
 
