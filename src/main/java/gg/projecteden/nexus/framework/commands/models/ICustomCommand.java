@@ -205,11 +205,9 @@ public abstract class ICustomCommand {
 				if (matcher.find()) {
 					found = true;
 					String group = matcher.group();
-					String value = defaultValue;
+					String value = isBoolean(parameter) ? "true" : defaultValue;
 					if (group.contains("="))
 						value = group.split("=", 2)[1];
-					if (value == null && isBoolean(parameter))
-						value = "true";
 
 					objects[i] = convert(value, null, parameter.getType(), parameter, parameter.getName(), event, false);
 
