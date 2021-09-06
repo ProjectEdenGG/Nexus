@@ -65,6 +65,7 @@ public class Freeze implements PlayerOwnedObject {
 			throw new InvalidInputException(getNickname() + " is not frozen");
 
 		frozen = false;
+		location = null;
 		new FreezeService().save(this);
 
 		if (isOnline())
