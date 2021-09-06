@@ -7,6 +7,8 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.ProbablyBetterThanCoreEdit;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -29,6 +31,17 @@ public class WorldEditUtilsCommand extends CustomCommand {
 		super(event);
 		if (isPlayerCommandEvent())
 			worldEditUtils = new WorldEditUtils(player());
+	}
+
+	@Path("test")
+	void test() {
+		new ProbablyBetterThanCoreEdit(world())
+			.clipboard()
+			.min(location())
+			.max(location().add(2, 2, 2))
+			.filter(MaterialTag.ALL_AIR::isNotTagged)
+			.copy()
+			.paste(location().add(9, 9, 9));
 	}
 
 	@Confirm
