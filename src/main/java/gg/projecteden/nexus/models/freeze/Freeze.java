@@ -124,21 +124,10 @@ public class Freeze implements PlayerOwnedObject {
 				player.getVehicle().remove();
 	}
 
-	// There may be a better way of doing this, but I'm unsure.
-	public boolean isInArea() {
-		final int xOffset = 3;
-		final int yOffset = 2;
+	private static final int MAX_DISTANCE = 3;
 
-		if (getPlayer().getLocation().getX() > location.getX() + xOffset)
-			return false;
-		else if (getPlayer().getLocation().getX() < location.getX() - xOffset)
-			return false;
-		else if (getPlayer().getLocation().getY() > location.getY() + yOffset)
-			return false;
-		else if (getPlayer().getLocation().getY() < location.getY() - yOffset)
-			return false;
-		else
-			return true;
+	public boolean isInArea() {
+		return getOnlinePlayer().getLocation().distance(location) > MAX_DISTANCE;
 	}
 
 }
