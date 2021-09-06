@@ -289,23 +289,31 @@ public class Tasks {
 		public static final Map<QueuedTask, Integer> QUEUE = new ConcurrentHashMap<>();
 
 		public void queue(int delayTicks) {
-			Runnable resave = () -> {
-				synchronized (this) {
+			Runnable task = () -> {
+				synchronized (QUEUE) {
 					final Integer expectedTaskId = QUEUE.get(this);
-					if (expectedTaskId == null || expectedTaskId != taskId.get())
+					if (expectedTaskId == null || !expectedTaskId.equals(taskId.get()))
 						return;
 
 					QUEUE.remove(this);
-					task.run();
+					this.task.run();
 				}
 			};
 
 			if (Bukkit.isPrimaryThread())
-				taskId.set(Tasks.wait(delayTicks, resave));
+				taskId.set(Tasks.wait(delayTicks, task));
 			else
-				taskId.set(Tasks.waitAsync(delayTicks, resave));
+				taskId.set(Tasks.waitAsync(delayTicks, task));
 
-			QUEUE.put(this, taskId.get());
+			synchronized (QUEUE) {
+				final Integer taskId = QUEUE.get(this);
+				if (taskId != null) {
+					Tasks.cancel(taskId);
+					Nexus.debug("Cancelling existing task for " + uuid + "-" + type);
+				}
+
+				QUEUE.put(this, this.taskId.get());
+			}
 		}
 
 	}
