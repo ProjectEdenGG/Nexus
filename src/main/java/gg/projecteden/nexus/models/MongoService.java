@@ -52,9 +52,11 @@ public abstract class MongoService<T extends PlayerOwnedObject> extends gg.proje
 				throw ex;
 
 			final String CME = "[Mongo] Caught CME saving " + object.getNickname() + "'s " + object.getClass().getSimpleName() + ", retrying";
-			if (object instanceof Mailer)
+			if (object instanceof Mailer) {
 				Nexus.log(CME);
-			else
+				if (Nexus.isDebug())
+					ex.printStackTrace();
+			} else
 				Nexus.debug(CME);
 			queueSaveSync(TickTime.SECOND.x(3), object);
 		}

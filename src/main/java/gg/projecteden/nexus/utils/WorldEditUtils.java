@@ -343,24 +343,26 @@ public class WorldEditUtils {
 
 	public CompletableFuture<Clipboard> copy(Region region, Paster paster) {
 		return CompletableFuture.supplyAsync(() -> {
-			Consumer<String> debug = message -> { if (paster != null) paster.debug(message); };
-			debug.accept("Copying");
+			synchronized (Nexus.getInstance()) {
+				Consumer<String> debug = message -> { if (paster != null) paster.debug(message); };
+				debug.accept("Copying");
 
-			Clipboard clipboard = new BlockArrayClipboard(region);
-			try (EditSession editSession = getEditSession()) {
-				ForwardExtentCopy copy = new ForwardExtentCopy(editSession, region, clipboard, region.getMinimumPoint());
+				Clipboard clipboard = new BlockArrayClipboard(region);
+				try (EditSession editSession = getEditSession()) {
+					ForwardExtentCopy copy = new ForwardExtentCopy(editSession, region, clipboard, region.getMinimumPoint());
 
-				if (paster != null) {
-					copy.setCopyingEntities(paster.entities);
-					copy.setCopyingBiomes(paster.biomes);
+					if (paster != null) {
+						copy.setCopyingEntities(paster.entities);
+						copy.setCopyingBiomes(paster.biomes);
+					}
+
+					debug.accept("Completing copy");
+					Operations.completeBlindly(copy); // deadlocking
+					debug.accept("Done copying");
 				}
 
-				debug.accept("Completing copy");
-				Operations.completeBlindly(copy); // deadlocking
-				debug.accept("Done copying");
+				return clipboard;
 			}
-
-			return clipboard;
 		});
 	}
 
