@@ -13,7 +13,6 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigol
 import gg.projecteden.nexus.features.particles.ParticleUtils;
 import gg.projecteden.nexus.models.bearfair21.MiniGolf21User;
 import gg.projecteden.nexus.models.bearfair21.MiniGolf21UserService;
-import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.FireworkLauncher;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -121,12 +120,12 @@ public class MiniGolf {
 	private void extrasTasks() {
 		// Golf Ball Color
 		Location golfBallLoc = new Location(BearFair21.getWorld(), 111, 138, -27);
-		ArmorStand armorStand = EntityUtils.getNearestEntityType(golfBallLoc, ArmorStand.class, 1.5);
+		ArmorStand armorStand = golfBallLoc.getNearbyEntitiesByType(ArmorStand.class, 1.5).iterator().next();
 
 		List<ItemStack> golfBalls = Arrays.stream(MiniGolfColor.values())
-				.filter(Objects::nonNull)
-				.map(miniGolfColor -> (MiniGolf.getGolfBall().clone().customModelData(miniGolfColor.getCustomModelData()).build()))
-				.toList();
+			.filter(Objects::nonNull)
+			.map(miniGolfColor -> (MiniGolf.getGolfBall().clone().customModelData(miniGolfColor.getCustomModelData()).build()))
+			.toList();
 
 		if (armorStand != null && !Utils.isNullOrEmpty(golfBalls)) {
 			armorStand.setSilent(true);

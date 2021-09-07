@@ -295,6 +295,10 @@ public class PacketUtils {
 		return entityNameFake(player, bukkitEntity, 0.3, customNames);
 	}
 
+	public static EntityArmorStand entityNameFake(@NonNull HasPlayer player, org.bukkit.entity.Entity bukkitEntity, double distance, String customName) {
+		return entityNameFake(player, bukkitEntity, distance, customName, 0);
+	}
+
 	public static List<EntityArmorStand> entityNameFake(@NonNull HasPlayer player, org.bukkit.entity.Entity bukkitEntity, double distance, String... customNames) {
 		int index = 0;
 		List<EntityArmorStand> armorStands = new ArrayList<>();
@@ -319,7 +323,9 @@ public class PacketUtils {
 		EntityPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
 		EntityArmorStand armorStand = new EntityArmorStand(EntityTypes.c, nmsPlayer.getWorld());
 		Location loc = bukkitEntity.getLocation();
-		double y = (loc.getY() + 1.8) + (distance * index);
+		double y = loc.getY() + (distance * index);
+		if (bukkitEntity instanceof Player)
+			y += 1.8;
 
 		armorStand.setLocation(loc.getX(), y, loc.getZ(), 0, 0);
 		armorStand.setMarker(true);

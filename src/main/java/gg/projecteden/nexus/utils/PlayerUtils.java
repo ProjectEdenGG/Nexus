@@ -30,6 +30,7 @@ import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -131,7 +132,9 @@ public class PlayerUtils {
 	}
 
 	public static List<Player> getOnlinePlayers(Player player, World world) {
-		Stream<Player> stream = Bukkit.getOnlinePlayers().stream().filter(_player -> !CitizensUtils.isNPC(_player)).map(Player::getPlayer);
+		Stream<Player> stream = Bukkit.getOnlinePlayers().stream()
+			.filter(_player -> !CitizensUtils.isNPC(_player)).map(Player::getPlayer)
+			.filter(_player -> !GameMode.SPECTATOR.equals(_player.getGameMode()));
 
 		if (player != null)
 			stream = stream.filter(_player -> canSee(player, _player));
@@ -267,15 +270,23 @@ public class PlayerUtils {
 	}
 
 	public static MinMaxResult<Player> getNearestPlayer(Location location) {
-		return getMin(PlayerUtils.getOnlinePlayers(location.getWorld()), player -> player.getLocation().distance(location));
+		return getNearestPlayer(location, -1);
+	}
+
+	public static MinMaxResult<Player> getNearestPlayer(Location location, Integer radius) {
+		List<Player> players = PlayerUtils.getOnlinePlayers(location.getWorld());
+		if (radius < 0)
+			players = players.stream().filter(player -> player.getLocation().distance(location) <= radius).collect(Collectors.toList());
+
+		return getMin(players, player -> player.getLocation().distance(location));
 	}
 
 	public static MinMaxResult<Player> getNearestPlayer(HasPlayer original) {
 		Player _original = original.getPlayer();
-		return getMin(PlayerUtils.getOnlinePlayers(_original.getWorld()), player -> {
-			if (isSelf(_original, player)) return null;
-			return player.getLocation().distance(_original.getLocation());
-		});
+		List<Player> players = getOnlinePlayers(_original.getWorld()).stream()
+			.filter(player -> !isSelf(_original, player)).collect(Collectors.toList());
+
+		return getMin(players, player -> player.getLocation().distance(_original.getLocation()));
 	}
 
 	public static void runCommand(CommandSender sender, String commandNoSlash) {
