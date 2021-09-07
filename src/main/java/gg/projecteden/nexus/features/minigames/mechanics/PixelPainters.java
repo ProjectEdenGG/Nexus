@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.arenas.PixelPaintersArena;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MinigamerQuitEvent;
@@ -114,6 +115,12 @@ public class PixelPainters extends TeamlessMechanic {
 				.pasteAsync();
 		});
 		matchData.setAnimateLobbyId(taskId);
+	}
+
+	@Override
+	public void onInitialize(@NotNull MatchInitializeEvent event) {
+		pasteLogo(event.getMatch());
+		super.onInitialize(event);
 	}
 
 	@Override
@@ -398,16 +405,16 @@ public class PixelPainters extends TeamlessMechanic {
 		PixelPaintersMatchData matchData = match.getMatchData();
 		Region designRegion = matchData.getDesignRegion();
 
-		BlockVector3 floorMax = floorRegion.getMaximumPoint();
-		BlockVector3 designMax = designRegion.getMaximumPoint();
+		BlockVector3 floorMin = floorRegion.getMinimumPoint();
+		BlockVector3 designMin = designRegion.getMinimumPoint();
 		for (int z = 0; z < 9; z++) {
 			for (int x = 0; x < 9; x++) {
-				BlockVector3 floorV = floorMax.subtract(x, 0, z);
-				BlockVector3 designV = designMax.subtract(x, 0, z);
+				BlockVector3 floorV = floorMin.add(x, 0, z);
+				BlockVector3 designV = designMin.add(x, 0, 8 - z);
 
-				Block floorBlock = match.worldedit().toLocation(floorV).getBlock();
-				Block designBlock = match.worldedit().toLocation(designV).getBlock();
-				if (!floorBlock.getType().equals(designBlock.getType()))
+				Material floor = match.worldedit().toLocation(floorV).getBlock().getType();
+				Material design = match.worldedit().toLocation(designV).getBlock().getType();
+				if (!floor.equals(design))
 					++incorrect;
 			}
 		}
