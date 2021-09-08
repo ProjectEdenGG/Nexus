@@ -27,7 +27,6 @@ import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Data;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -71,16 +70,12 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import static gg.projecteden.nexus.utils.PlayerUtils.getOnlinePlayers;
@@ -101,7 +96,6 @@ public abstract class WitherFight implements Listener {
 	public List<Blaze> blazes = new ArrayList<>();
 	public boolean gotStar = false;
 	public List<Integer> tasks = new ArrayList<>();
-	public Map<UUID, Team> scoreboardTeams = new HashMap<>();
 
 	public abstract WitherChallenge.Difficulty getDifficulty();
 
@@ -153,30 +147,6 @@ public abstract class WitherFight implements Listener {
 			}));
 
 			tasks.add(new AntiCamping(this).start());
-
-			Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
-			for (Player player : alivePlayers()) {
-				try {
-					UUID uuid = player.getUniqueId();
-					Team team = scoreboard.registerNewTeam("wither-" + uuid.toString().split("-")[0]);
-					team.addEntry(player.getName());
-					player.setScoreboard(scoreboard);
-					scoreboardTeams.put(uuid, team);
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-			}
-
-			tasks.add(Tasks.repeat(0, TickTime.SECOND.x(5), () -> {
-				for (Player player : alivePlayers()) {
-					final UUID uuid = player.getUniqueId();
-					if (scoreboardTeams.containsKey(uuid)) {
-						final Component prefix = new JsonBuilder((int) player.getPlayer().getHealth() + " &c❤ &r").build();
-						scoreboardTeams.get(uuid).prefix(prefix);
-					}
-				}
-			}));
-
 		});
 	}
 
@@ -432,8 +402,6 @@ public abstract class WitherFight implements Listener {
 		if (!isAlive(player))
 			return;
 
-		scoreboardTeams.get(player.getUniqueId()).unregister();
-		scoreboardTeams.remove(player.getUniqueId());
 		event.setCancelled(true);
 		event.deathMessage(null);
 		processPlayerQuit(player, "died");

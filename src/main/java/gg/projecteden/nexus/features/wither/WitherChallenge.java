@@ -38,7 +38,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scoreboard.Team;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -82,7 +81,6 @@ public class WitherChallenge extends Feature implements Listener {
 			if (currentFight.wither != null)
 				currentFight.wither.remove();
 
-			currentFight.scoreboardTeams.values().forEach(Team::unregister);
 			currentFight.sendSpectatorsToSpawn();
 			currentFight = null;
 		}
