@@ -3,12 +3,13 @@ package gg.projecteden.nexus.features.discord;
 import gg.projecteden.exceptions.EdenException;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
+import gg.projecteden.nexus.models.emblem.BadgeUser.Badge;
+import gg.projecteden.nexus.models.emblem.BadgeUserService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.setting.Setting;
 import gg.projecteden.nexus.models.setting.SettingService;
 import gg.projecteden.nexus.utils.HttpUtils;
 import gg.projecteden.nexus.utils.IOUtils;
-import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.DiscordId.Role;
 import gg.projecteden.utils.DiscordId.TextChannel;
@@ -68,7 +69,7 @@ public class DiscordListener extends ListenerAdapter {
 						if (user.getRank() == Rank.VETERAN)
 							Discord.addRole(event.getUser().getId(), Role.VETERAN);
 
-						if (LuckPermsUtils.hasPermission(user, "donated"))
+						if (new BadgeUserService().get(user).owns(Badge.SUPPORTER))
 							Discord.addRole(event.getUser().getId(), Role.SUPPORTER);
 					}
 				});

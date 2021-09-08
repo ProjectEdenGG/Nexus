@@ -32,19 +32,26 @@ public class BadgeCommand extends CustomCommand {
 			badgeUser = service.get(player());
 	}
 
+	@Path("off [user]")
+	void off(@Arg(value = "self", permission = "group.staff") BadgeUser user) {
+		user.setActive(null);
+		service.save(user);
+		send(PREFIX + (isSelf(user) ? "Badge" : user.getNickname() + "'s badge") + " &cdisabled");
+	}
+
 	@Path("<badge> [user]")
-	void set(Badge badge, @Arg("self") BadgeUser user) {
+	void set(Badge badge, @Arg(value = "self", permission = "group.staff") BadgeUser user) {
 		user.setActive(badge);
 		service.save(user);
-		send(PREFIX + "Set &e" + user.getNickname() + "&3's active badge to &e" + camelCase(badge));
+		send(PREFIX + "Set " + (isSelf(user) ? "your" : "&e" + user.getNickname() + "&3's") + " active badge to &e" + camelCase(badge));
 	}
 
 	@Permission("group.admin")
 	@Path("give <badge> [user]")
 	void give(Badge badge, @Arg("self") BadgeUser user) {
-		user.getOwned().add(badge);
+		user.give(badge);
 		service.save(user);
-		send(PREFIX + "Gave &e" + user.getNickname() + " &3the &e" + camelCase(badge) + " &3emblem");
+		send(PREFIX + "Gave " + (isSelf(user) ? "yourself" : "&e" + user.getNickname()) + " &3the &e" + camelCase(badge) + " &3emblem");
 	}
 
 	@Async
@@ -63,7 +70,7 @@ public class BadgeCommand extends CustomCommand {
 				continue;
 
 			final BadgeUser user = service.get(nerd);
-			user.getOwned().add(Badge.SUPPORTER);
+			user.give(Badge.SUPPORTER);
 			++owned;
 			if (nerd.isCheckmark()) {
 				user.setActive(Badge.SUPPORTER);
@@ -85,9 +92,9 @@ public class BadgeCommand extends CustomCommand {
 			return badge;
 
 		if (context == null)
-			context = badgeUser;
+			context = service.get(player());
 
-		if (context.getOwned().contains(badge))
+		if (context.owns(badge))
 			error("You do not own that badge!");
 
 		return badge;
@@ -99,11 +106,11 @@ public class BadgeCommand extends CustomCommand {
 			return tabCompleteEnum(filter, Badge.class);
 
 		if (context == null)
-			context = badgeUser;
+			context = service.get(player());
 
-		BadgeUser finalContext = context;
+		BadgeUser user = context;
 		return Arrays.stream(Badge.values())
-			.filter(value -> finalContext.getOwned().contains(value))
+			.filter(user::owns)
 			.filter(value -> value.name().toLowerCase().startsWith(filter.toLowerCase()))
 			.map(defaultTabCompleteEnumFormatter())
 			.collect(Collectors.toList());

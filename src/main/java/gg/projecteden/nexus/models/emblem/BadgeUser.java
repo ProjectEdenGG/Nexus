@@ -62,6 +62,14 @@ public class BadgeUser implements PlayerOwnedObject {
 		return active != null;
 	}
 
+	public boolean owns(Badge badge) {
+		return owned.contains(badge);
+	}
+
+	public void give(Badge badge) {
+		owned.add(badge);
+	}
+
 	@Getter
 	@AllArgsConstructor
 	public enum Badge {

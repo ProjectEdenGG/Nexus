@@ -11,7 +11,8 @@ import gg.projecteden.nexus.models.contributor.Contributor.Purchase;
 import gg.projecteden.nexus.models.contributor.ContributorService;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
-import gg.projecteden.nexus.utils.LuckPermsUtils.PermissionChange;
+import gg.projecteden.nexus.models.emblem.BadgeUser.Badge;
+import gg.projecteden.nexus.models.emblem.BadgeUserService;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.utils.DiscordId.Role;
 import gg.projecteden.utils.DiscordId.TextChannel;
@@ -80,7 +81,7 @@ public class HandlePurchaseCommand extends CustomCommand {
 							"Enjoy your " + purchase.getPackageName() + " perk!");
 
 				if (StringUtils.isV4Uuid(purchase.getPurchaserUuid())) {
-					PermissionChange.set().uuid(purchase.getPurchaserUuid()).permission("donated").runAsync();
+					new BadgeUserService().edit(purchase.getPurchaserUuid(), badgeUser -> badgeUser.give(Badge.SUPPORTER));
 
 					DiscordUser user = new DiscordUserService().get(purchase.getPurchaserUuid());
 					if (user.getUserId() != null)
