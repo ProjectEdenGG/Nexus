@@ -277,7 +277,7 @@ public class WitherCommand extends CustomCommand {
 
 		currentFight.getSpectators().add(player().getUniqueId());
 		player().teleportAsync(WitherChallenge.cageLoc).thenRun(() ->
-			player().setGameMode(GameMode.SPECTATOR));
+			Tasks.wait(3, () -> player().setGameMode(GameMode.SPECTATOR)));
 	}
 
 	@Path("reset")
