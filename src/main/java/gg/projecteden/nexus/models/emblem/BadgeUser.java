@@ -5,8 +5,12 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
+import gg.projecteden.nexus.features.socialmedia.SocialMedia.SocialMediaSite;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.chat.Chatter;
+import gg.projecteden.nexus.models.socialmedia.SocialMediaUser;
+import gg.projecteden.nexus.models.socialmedia.SocialMediaUser.Connection;
+import gg.projecteden.nexus.models.socialmedia.SocialMediaUserService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -61,8 +65,17 @@ public class BadgeUser implements PlayerOwnedObject {
 	@Getter
 	@AllArgsConstructor
 	public enum Badge {
+		BOT("\uE002", "&bʙᴏᴛ"),
 		SUPPORTER("\uD83D\uDC96", "&c❤"),
-		TWITCH("\uE001", "&4▶", (nerd, json) -> json.hover("twitch.tv/" + nerd.getNickname())),
+		TWITCH("\uE001", "&4▶", (nerd, json) -> {
+			final SocialMediaUser user = new SocialMediaUserService().get(nerd);
+			final Connection twitch = user.getConnection(SocialMediaSite.TWITCH);
+			if (twitch != null) {
+				final String url = twitch.getUrl();
+				json.hover(url).url(url);
+			}
+		}),
+
 		;
 
 		Badge(String emoji, String alt) {
