@@ -1,12 +1,10 @@
 package gg.projecteden.nexus.features.listeners;
 
 import gg.projecteden.nexus.features.afk.AFK;
-import gg.projecteden.nexus.features.store.perks.joinquit.VanishEvent;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import me.lexikiq.HasPlayer;
 import org.apache.commons.lang.math.NumberRange;
 import org.bukkit.GameMode;
 import org.bukkit.GameRule;
@@ -16,115 +14,93 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBedLeaveEvent;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerGameModeChangeEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Sleep implements Listener {
 	private static final String PREFIX = StringUtils.getPrefix("Sleep");
-	public boolean handling = false;
-	public long lastCalculatedSleeping = 0;
-	public long lastCalculatedNeeded = 0;
-	public final long speed = 150;
+	private static final long SPEED = 150;
 
-	public void calculate(World world) {
-		if (!(world.getTime() >= 12541 && world.getTime() <= 23458))
-			return;
+	private enum State { SLEEPING, SKIPPING }
+	private static final Map<World, State> sleepingWorlds = new HashMap<>();
 
-		Boolean gameRuleValue = world.getGameRuleValue(GameRule.DO_DAYLIGHT_CYCLE);
-		if (gameRuleValue != null && !gameRuleValue)
-			return;
+	static {
+		Tasks.repeatAsync(0, 1, () -> {
+			// TODO fix console error in line 31
+			for (World world : sleepingWorlds.keySet()) {
+				long sleeping = world.getPlayers().stream().filter(player -> player.isSleeping() && canSleep(player)).count();
+				long active = world.getPlayers().stream().filter(Sleep::canSleep).count();
+				int needed = (int) Math.ceil(active / 2d);
 
-		List<Player> players = world.getPlayers();
-		long sleeping = players.stream().filter(player -> player.isSleeping() && this.canSleep(player)).count();
-		long active = players.stream().filter(this::canSleep).count();
-
-		if (sleeping == 0) {
-			lastCalculatedSleeping = sleeping;
-			return;
-		}
-
-		int needed = (int) Math.ceil(active / 2d);
-
-		if (sleeping != lastCalculatedSleeping || needed != lastCalculatedNeeded)
-			for (Player player : players)
-				Tasks.wait(2, () -> ActionBarUtils.sendActionBar(player, "Sleepers needed to skip night: &e" + sleeping + "&3/&e" + needed));
-
-		lastCalculatedSleeping = sleeping;
-		lastCalculatedNeeded = needed;
-
-		if (sleeping >= needed) {
-			handling = true;
-			world.setStorm(false);
-			world.setThundering(false);
-
-			players.forEach(player -> PlayerUtils.send(player, PREFIX + "The night was skipped because 50% of players slept!"));
-
-			int wait = 0;
-			while (true) {
-				long newTime = world.getTime() + (++wait * speed);
-				if (!new NumberRange(12541L, (24000L - speed)).containsNumber(newTime))
-					break;
-
-				Tasks.wait(wait, () -> world.setTime(newTime));
+				if (sleeping >= needed && sleepingWorlds.get(world) != State.SKIPPING)
+					skipNight(world);
+				else if (sleepingWorlds.get(world) == State.SLEEPING)
+					world.getPlayers().forEach(player -> ActionBarUtils.sendActionBar(player,
+						"Sleepers needed to skip night: &e" + sleeping + "&3/&e" + needed));
 			}
-
-			Tasks.wait(wait, () -> {
-				world.setTime(0);
-				if (world.hasStorm())
-					world.setStorm(false);
-				if (world.isThundering())
-					world.setThundering(false);
-
-				handling = false;
-				lastCalculatedSleeping = 0;
-				lastCalculatedNeeded = 0;
-			});
-		}
+		});
 	}
 
-	protected boolean canSleep(Player player) {
+	private static boolean canSleep(Player player) {
 		return !PlayerUtils.isVanished(player) && !AFK.get(player).isTimeAfk() && player.getGameMode() == GameMode.SURVIVAL;
 	}
 
-	protected void handle(World world) {
-		if (!handling)
-			Tasks.wait(1, () -> calculate(world));
-	}
+	private static void skipNight(World world) {
+		sleepingWorlds.put(world, State.SKIPPING);
+		world.getPlayers().forEach(
+			player -> PlayerUtils.send(player, PREFIX + "The night was skipped because 50% of players slept!"));
 
-	protected void handle(HasPlayer player) {
-		handle(player.getPlayer().getWorld());
+		world.setStorm(false);
+		world.setThundering(false);
+
+		int emptyActionbarTaskId = Tasks.repeatAsync(0, 1, () ->
+			world.getPlayers().forEach(player -> ActionBarUtils.sendActionBar(player, " ")
+		));
+		int wait = 0;
+		while (true) {
+			long newTime = world.getTime() + (++wait * SPEED);
+			if (!new NumberRange(12541L, (24000L - SPEED)).containsNumber(newTime))
+				break;
+
+			Tasks.wait(wait, () -> world.setTime(newTime));
+		}
+
+		Tasks.wait(wait, () -> {
+			world.setTime(0);
+			if (world.hasStorm())
+				world.setStorm(false);
+			if (world.isThundering())
+				world.setThundering(false);
+			Tasks.cancel(emptyActionbarTaskId);
+			sleepingWorlds.remove(world);
+		});
 	}
 
 	@EventHandler
 	public void onBedEnter(PlayerBedEnterEvent event) {
-		handle(event);
+		World world = event.getPlayer().getWorld();
+
+		// Is it day time?
+		if (!(world.getTime() >= 12541 && world.getTime() <= 23458))
+			return;
+
+		// Is doDaylightCycle true?
+		Boolean gameRuleValue = world.getGameRuleValue(GameRule.DO_DAYLIGHT_CYCLE);
+		if (gameRuleValue != null && !gameRuleValue)
+			return;
+
+		if (!sleepingWorlds.containsKey(world) && sleepingWorlds.get(world) != State.SKIPPING)
+			sleepingWorlds.put(world, State.SLEEPING);
 	}
 
 	@EventHandler
 	public void onBedLeave(PlayerBedLeaveEvent event) {
-		handle(event);
-	}
-
-	@EventHandler
-	public void onPlayerQuit(PlayerQuitEvent event) {
-		handle(event);
-	}
-
-	@EventHandler
-	public void onPlayerVanish(VanishEvent event) {
-		handle(event);
-	}
-
-	@EventHandler
-	public void onPlayerChangeWorlds(PlayerChangedWorldEvent event) {
-		handle(event);
-	}
-
-	@EventHandler
-	public void onGameModeChange(PlayerGameModeChangeEvent event) {
-		handle(event);
+		Tasks.wait(1, () -> {
+			World world = event.getPlayer().getWorld();
+			long sleeping = world.getPlayers().stream().filter(player -> player.isSleeping() && canSleep(player)).count();
+			if (sleepingWorlds.containsKey(world) && sleeping == 0)
+				sleepingWorlds.remove(world);
+		});
 	}
 }
