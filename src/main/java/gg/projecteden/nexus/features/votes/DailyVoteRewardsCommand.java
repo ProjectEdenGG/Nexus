@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
-@Aliases("dailyvotereward")
+@Aliases({"dailyvotereward", "dvr"})
 public class DailyVoteRewardsCommand extends CustomCommand {
 	private final DailyVoteRewardService service = new DailyVoteRewardService();
 
