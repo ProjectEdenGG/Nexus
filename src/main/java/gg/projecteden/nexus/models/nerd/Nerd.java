@@ -19,6 +19,7 @@ import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.emblem.BadgeUserService;
+import gg.projecteden.nexus.models.freeze.FreezeService;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
@@ -178,7 +179,7 @@ public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwned
 	}
 
 	public JsonBuilder getChatFormat(Chatter viewer) {
-		String prefix = getFullPrefix();
+		String prefix = getFullPrefix(viewer);
 
 		final ChatColor rankColor = isKoda() ? Koda.getChatColor() : getRank().getChatColor();
 		final JsonBuilder badge = new BadgeUserService().get(this).getBadgeJson(viewer);
@@ -186,7 +187,7 @@ public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwned
 		return badge.next(prefix).next(rankColor + getNickname());
 	}
 
-	private String getFullPrefix() {
+	private String getFullPrefix(Chatter viewer) {
 		if (isKoda())
 			return "";
 
@@ -194,6 +195,10 @@ public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwned
 
 		if (isNullOrEmpty(prefix))
 			prefix = getRank().getPrefix();
+
+		if (viewer != null)
+			if (getRank().isMod() && new FreezeService().get(viewer).isFrozen())
+				prefix = getRank().getPrefix();
 
 		if (!isNullOrEmpty(prefix))
 			prefix = "&8&l[&f" + prefix + "&8&l] ";
