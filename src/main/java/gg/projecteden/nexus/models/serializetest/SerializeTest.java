@@ -9,7 +9,6 @@ import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackCo
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -23,7 +22,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Data
-@Builder
 @Entity(value = "serialize_test", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

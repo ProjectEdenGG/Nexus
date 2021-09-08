@@ -6,7 +6,6 @@ import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -16,7 +15,6 @@ import lombok.experimental.Accessors;
 import java.util.UUID;
 
 @Data
-@Builder
 @Entity(value = "jigsaw_jam", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

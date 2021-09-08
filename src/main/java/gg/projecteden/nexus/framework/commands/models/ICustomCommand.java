@@ -205,11 +205,9 @@ public abstract class ICustomCommand {
 				if (matcher.find()) {
 					found = true;
 					String group = matcher.group();
-					String value = defaultValue;
+					String value = isBoolean(parameter) ? "true" : defaultValue;
 					if (group.contains("="))
 						value = group.split("=", 2)[1];
-					if (value == null && isBoolean(parameter))
-						value = "true";
 
 					objects[i] = convert(value, null, parameter.getType(), parameter, parameter.getName(), event, false);
 
@@ -555,7 +553,7 @@ public abstract class ICustomCommand {
 	protected abstract PlayerOwnedObject convertToPlayerOwnedObject(String value, Class<? extends PlayerOwnedObject> type);
 
 	@SneakyThrows
-	protected Enum<?> convertToEnum(String value, Class<? extends Enum<?>> clazz) {
+	protected <T extends Enum<?>> T convertToEnum(String value, Class<? extends T> clazz) {
 		if (value == null) throw new InvocationTargetException(new MissingArgumentException());
 		return Arrays.stream(clazz.getEnumConstants())
 				.filter(constant -> constant.name().equalsIgnoreCase(value))
@@ -564,11 +562,16 @@ public abstract class ICustomCommand {
 	}
 
 	protected List<String> tabCompleteEnum(String filter, Class<? extends Enum<?>> clazz) {
-		return tabCompleteEnum(filter, clazz, value -> value.name().toLowerCase().replaceAll(" ", "_"));
+		return tabCompleteEnum(filter, clazz, defaultTabCompleteEnumFormatter());
+	}
+
+	protected <T extends Enum<?>> Function<T, String> defaultTabCompleteEnumFormatter() {
+		return value -> value.name().toLowerCase().replaceAll(" ", "_");
 	}
 
 	protected <T extends Enum<?>> List<String> tabCompleteEnum(String filter, Class<? extends T> clazz, Function<T, String> formatter) {
-		return Arrays.stream(clazz.getEnumConstants()).map(formatter)
+		return Arrays.stream(clazz.getEnumConstants())
+			.map(formatter)
 			.filter(value -> value.toLowerCase().startsWith(filter.toLowerCase()))
 			.collect(Collectors.toList());
 	}

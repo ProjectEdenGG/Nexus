@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.store.perks.joinquit;
 
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.chat.bridge.RoleManager;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
@@ -13,6 +12,7 @@ import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.AdventureUtils;
+import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
@@ -53,7 +53,7 @@ public class JoinQuit extends Feature implements Listener {
 
 	@SneakyThrows
 	public static void reloadConfig() {
-		YamlConfiguration config = Nexus.getConfig("jq.yml");
+		YamlConfiguration config = IOUtils.getConfig("jq.yml");
 		if (config.isConfigurationSection("messages")) {
 			joinMessages = config.getConfigurationSection("messages").getStringList("join");
 			quitMessages = config.getConfigurationSection("messages").getStringList("quit");
@@ -89,7 +89,7 @@ public class JoinQuit extends Feature implements Listener {
 				RoleManager.update(user);
 
 				final String discord = discordize(finalMessage.replaceAll("\\[player]", "**" + Nickname.of(player) + "**"));
-				Discord.send(":arrow_right: " + discord, TextChannel.BRIDGE);
+				Discord.send("<:blue_arrow_right:883811353641517126> " + discord, TextChannel.BRIDGE);
 			});
 		}
 	}

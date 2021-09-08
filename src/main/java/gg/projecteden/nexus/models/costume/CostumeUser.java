@@ -12,7 +12,6 @@ import gg.projecteden.nexus.models.costume.Costume.CostumeType;
 import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.WorldGroup;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -28,7 +27,6 @@ import java.util.Set;
 import java.util.UUID;
 
 @Data
-@Builder
 @Entity(value = "costume_user", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

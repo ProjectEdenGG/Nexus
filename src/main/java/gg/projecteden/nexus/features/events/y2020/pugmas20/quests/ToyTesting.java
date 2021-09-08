@@ -125,12 +125,12 @@ public class ToyTesting implements Listener {
 		if (!MaterialTag.BUTTONS.isTagged(block.getType())) return;
 
 		Player player = event.getPlayer();
-		WorldGuardUtils WGUtils = new WorldGuardUtils(player);
+		WorldGuardUtils worldguard = new WorldGuardUtils(player);
 		List<Player> players = Collections.singletonList(player);
 
-		if (WGUtils.isInRegion(player, "connect4"))
+		if (worldguard.isInRegion(player, "connect4"))
 			setPlayedGame(players, Toy.CONNECT_4);
-		else if (WGUtils.isInRegion(player, "tictactoe"))
+		else if (worldguard.isInRegion(player, "tictactoe"))
 			setPlayedGame(players, Toy.TIC_TAC_TOE);
 	}
 

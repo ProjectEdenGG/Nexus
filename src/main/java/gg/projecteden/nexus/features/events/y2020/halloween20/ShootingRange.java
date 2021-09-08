@@ -32,8 +32,7 @@ import java.util.UUID;
 import static gg.projecteden.nexus.features.events.y2020.halloween20.Halloween20.PREFIX;
 
 public class ShootingRange implements Listener {
-    //WorldEditUtils WEUtils = new WorldEditUtils(Halloween20.getWorld());
-    private static final WorldGuardUtils WGUtils = new WorldGuardUtils(Halloween20.getWorld());
+    private static final WorldGuardUtils worldguard = new WorldGuardUtils(Halloween20.getWorld());
     @Getter
     private static final String gameRg = Halloween20.getRegion() + "_archery";
     //private static String targetsRg = gameRg + "_targets";
@@ -160,7 +159,7 @@ public class ShootingRange implements Listener {
     }
 
     private boolean isInRegion(Player player){
-        return player.getLocation().getWorld().equals(Halloween20.getWorld()) && WGUtils.isInRegion(player.getLocation(), gameRg);
+        return player.getLocation().getWorld().equals(Halloween20.getWorld()) && worldguard.isInRegion(player.getLocation(), gameRg);
     }
 
     private boolean isHalloweenItem(ItemStack item){

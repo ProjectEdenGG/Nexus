@@ -45,7 +45,6 @@ import static gg.projecteden.nexus.utils.GoogleUtils.SheetsUtils.valueOf;
 import static java.util.stream.Collectors.toList;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @SerializableAs("ReminderConfig")
@@ -279,7 +278,7 @@ public class ReminderConfig {
 		public enum ReminderCondition {
 			VOTE(player -> {
 				Voter voter = new VoterService().get(player);
-				return voter.getActiveVotes().size() < VoteSite.getValues().size() - 2;
+				return voter.getActiveVotes().size() < VoteSite.getActiveSites().size() - 2;
 			}),
 			DISCORD_LINK(player -> {
 				DiscordUser user = new DiscordUserService().get(player);

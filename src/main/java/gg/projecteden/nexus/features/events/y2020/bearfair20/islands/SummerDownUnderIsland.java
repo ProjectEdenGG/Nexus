@@ -38,7 +38,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.getWGUtils;
+import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.worldguard;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.chime;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.itemLore;
 
@@ -484,8 +484,8 @@ public class SummerDownUnderIsland implements Listener, BearFairIsland {
 	public void onClickBarrel(PlayerInteractEvent event) {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
-		ProtectedRegion region = getWGUtils().getProtectedRegion(getRegion());
-		if (!getWGUtils().getRegionsAt(event.getPlayer().getLocation()).contains(region)) return;
+		ProtectedRegion region = worldguard().getProtectedRegion(getRegion());
+		if (!worldguard().getRegionsAt(event.getPlayer().getLocation()).contains(region)) return;
 
 		if (!BearFair20.enableQuests) return;
 		Block clicked = event.getClickedBlock();
@@ -513,8 +513,8 @@ public class SummerDownUnderIsland implements Listener, BearFairIsland {
 	public void onSift(PlayerInteractEvent event) {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
-		ProtectedRegion region = getWGUtils().getProtectedRegion(getRegion());
-		if (!getWGUtils().getRegionsAt(event.getPlayer().getLocation()).contains(region)) return;
+		ProtectedRegion region = worldguard().getProtectedRegion(getRegion());
+		if (!worldguard().getRegionsAt(event.getPlayer().getLocation()).contains(region)) return;
 
 		if (!BearFair20.enableQuests) return;
 

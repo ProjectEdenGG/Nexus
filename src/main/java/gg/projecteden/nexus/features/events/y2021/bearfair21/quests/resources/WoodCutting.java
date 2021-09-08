@@ -13,7 +13,7 @@ import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldEditUtils.Paste;
+import gg.projecteden.nexus.utils.WorldEditUtils.Paster;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.Utils.MinMaxResult;
 import lombok.AllArgsConstructor;
@@ -59,10 +59,10 @@ public class WoodCutting implements Listener {
 		if (treeType == null)
 			return false;
 
-		Set<ProtectedRegion> regions = BearFair21.getWGUtils().getRegionsLike(tree_region + "_" + treeType.name() + "_[\\d]+");
+		Set<ProtectedRegion> regions = BearFair21.worldguard().getRegionsLike(tree_region + "_" + treeType.name() + "_[\\d]+");
 
 		MinMaxResult<ProtectedRegion> result = getMin(regions, region ->
-				event.getBlock().getLocation().distance(BearFair21.getWGUtils().toLocation(region.getMinimumPoint())));
+				event.getBlock().getLocation().distance(BearFair21.worldguard().toLocation(region.getMinimumPoint())));
 
 		ProtectedRegion region = result.getObject();
 		double distance = result.getValue().doubleValue();
@@ -89,7 +89,7 @@ public class WoodCutting implements Listener {
 		private final List<Material> others;
 
 		@Getter
-		private final Map<Integer, Paste> pasters = new ConcurrentHashMap<>();
+		private final Map<Integer, Paster> pasters = new ConcurrentHashMap<>();
 		@Getter
 		private final Map<Integer, CompletableFuture<Queue<Location>>> queues = new ConcurrentHashMap<>();
 		@Getter
@@ -162,7 +162,7 @@ public class WoodCutting implements Listener {
 				if (region == null)
 					return null;
 
-				Location base = BearFair21.getWEUtils().toLocation(region.getMinimumPoint());
+				Location base = BearFair21.worldedit().toLocation(region.getMinimumPoint());
 				Queue<Location> queue = createDistanceSortedQueue(base);
 				getBlocks(id).thenAccept(blocks -> {
 					queue.addAll(blocks.keySet());
@@ -177,14 +177,14 @@ public class WoodCutting implements Listener {
 			return getPaster(id).getComputedBlocks();
 		}
 
-		private Paste getPaster(int id) {
+		private Paster getPaster(int id) {
 			return pasters.computeIfAbsent(id, $ -> {
 				ProtectedRegion region = getRegion(id);
 				if (region == null)
 					return null;
 
 				String schematicName = region.getId().replaceAll("_", "/");
-				return BearFair21.getWEUtils().paster()
+				return BearFair21.worldedit().paster()
 						.air(false)
 						.at(region.getMinimumPoint())
 						.duration(animationTime)
@@ -196,7 +196,7 @@ public class WoodCutting implements Listener {
 		public ProtectedRegion getRegion(int id) {
 			regions.computeIfAbsent(id, $ -> {
 				try {
-					return BearFair21.getWGUtils().getProtectedRegion(tree_region + "_" + name().toLowerCase() + "_" + id);
+					return BearFair21.worldguard().getProtectedRegion(tree_region + "_" + name().toLowerCase() + "_" + id);
 				} catch (InvalidInputException ex) {
 					return null;
 				}

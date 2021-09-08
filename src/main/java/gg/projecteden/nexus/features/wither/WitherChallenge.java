@@ -38,7 +38,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scoreboard.Team;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,7 +53,7 @@ public class WitherChallenge extends Feature implements Listener {
 	public static final Location cageLoc = location(-151.5, 76, -69.5, 180, 0);
 	public static WitherFight currentFight;
 	public static List<UUID> queue = new ArrayList<>();
-	public static boolean maintenance = true;
+	public static boolean maintenance = false;
 
 	static Location location(double x, double y, double z) {
 		return location(x, y, z, 0, 0);
@@ -82,7 +81,6 @@ public class WitherChallenge extends Feature implements Listener {
 			if (currentFight.wither != null)
 				currentFight.wither.remove();
 
-			currentFight.scoreboardTeams.values().forEach(Team::unregister);
 			currentFight.sendSpectatorsToSpawn();
 			currentFight = null;
 		}
@@ -240,8 +238,8 @@ public class WitherChallenge extends Feature implements Listener {
 	@Getter
 	public enum Difficulty {
 		EASY(ChatColor.GREEN, EasyFight.class, Material.LIME_CONCRETE, "&712.5% chance of star drop"),
-		MEDIUM(ChatColor.GOLD, MediumFight.class, Material.ORANGE_CONCRETE, "&725% chance of star drop", "&7If no star is dropped,", "&7you will receive 2 Wither Crate Keys"),
-		HARD(ChatColor.RED, HardFight.class, Material.RED_CONCRETE, "&750% chance of star drop", "&7If no star is dropped,", "&7you will receive 3 Wither Crate Keys"),
+		MEDIUM(ChatColor.GOLD, MediumFight.class, Material.ORANGE_CONCRETE, "&725% chance of star drop", "&7If no star is dropped,", "&7you will receive 1 Wither Crate Key"),
+		HARD(ChatColor.RED, HardFight.class, Material.RED_CONCRETE, "&750% chance of star drop", "&7If no star is dropped,", "&7you will receive 2 Wither Crate Keys"),
 		CORRUPTED(ChatColor.DARK_GRAY, CorruptedFight.class, Material.BLACK_CONCRETE, "&7100% chance of star drop", "&7and 2 Wither Crate Keys", " ", "&cFull Netherite Armor Recommended");
 
 		private final ChatColor color;

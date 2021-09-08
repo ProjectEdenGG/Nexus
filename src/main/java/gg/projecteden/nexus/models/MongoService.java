@@ -2,6 +2,7 @@ package gg.projecteden.nexus.models;
 
 import dev.morphia.mapping.MappingException;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.models.mail.Mailer;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.QueuedTask;
@@ -50,7 +51,13 @@ public abstract class MongoService<T extends PlayerOwnedObject> extends gg.proje
 			if (!isCME(ex))
 				throw ex;
 
-			Nexus.debug("[Mongo] Caught CME saving " + object.getNickname() + "'s " + object.getClass().getSimpleName() + ", retrying");
+			final String CME = "[Mongo] Caught CME saving " + object.getNickname() + "'s " + object.getClass().getSimpleName() + ", retrying";
+			if (object instanceof Mailer) {
+				Nexus.log(CME);
+				if (Nexus.isDebug())
+					ex.printStackTrace();
+			} else
+				Nexus.debug(CME);
 			queueSaveSync(TickTime.SECOND.x(3), object);
 		}
 	}

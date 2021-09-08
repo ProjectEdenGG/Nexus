@@ -28,7 +28,7 @@ public class BattleshipArena extends Arena {
 	}
 
 	public Team getTeam(Location location) {
-		for (ProtectedRegion region : getWGUtils().getRegionsAt(location))
+		for (ProtectedRegion region : worldguard().getRegionsAt(location))
 			if (ownsRegion(region.getId(), "team"))
 				for (Team team : getTeams())
 					if (region.getId().split("_")[3].equalsIgnoreCase(team.getName().replaceAll(" ", "").toLowerCase()))

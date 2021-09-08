@@ -8,7 +8,6 @@ import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -23,7 +22,6 @@ import java.util.UUID;
 import static gg.projecteden.nexus.utils.ItemUtils.isFuzzyMatch;
 
 @Data
-@Builder
 @Entity(value = "coupon", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

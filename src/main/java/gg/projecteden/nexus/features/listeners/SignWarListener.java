@@ -23,9 +23,9 @@ public class SignWarListener implements Listener {
 
 		Sign sign = (Sign) event.getClickedBlock().getState();
 		String number = stripColor(sign.getLine(2));
-		if (!Utils.isInt(number)) return;
+		if (!Utils.isLong(number)) return;
 
-		int value = Integer.parseInt(number);
+		long value = Long.parseLong(number);
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK)
 			++value;
 		else
@@ -49,7 +49,7 @@ public class SignWarListener implements Listener {
 		return false;
 	}
 
-	private String getColor(int value) {
+	private String getColor(long value) {
 		ColorType color = ColorType.BLACK;
 		if (value > 0)
 			color = ColorType.GREEN;

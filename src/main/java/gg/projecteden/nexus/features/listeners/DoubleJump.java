@@ -25,8 +25,8 @@ public class DoubleJump implements Listener {
 			// Bear Fair Specific
 			/*
 			Location loc = player.getLocation();
-			ProtectedRegion region = getWGUtils().getProtectedRegion(Basketball.courtRg);
-			if (!getWGUtils().getRegionsAt(loc).contains(region)) return;
+			ProtectedRegion region = worldguard().getProtectedRegion(Basketball.courtRg);
+			if (!worldguard().getRegionsAt(loc).contains(region)) return;
 			event.setCancelled(true);
 			player.setFlying(false);
 			player.setAllowFlight(false);
@@ -48,8 +48,8 @@ public class DoubleJump implements Listener {
 				// Only enable fly if you're still in the double jump region
 				/*
 				Location loc = player.getLocation();
-				ProtectedRegion region = getWGUtils().getProtectedRegion(Basketball.courtRg);
-				if (getWGUtils().getRegionsAt(loc).contains(region))
+				ProtectedRegion region = worldguard().getProtectedRegion(Basketball.courtRg);
+				if (worldguard().getRegionsAt(loc).contains(region))
 					player.setAllowFlight(true);
 				*/
 				//

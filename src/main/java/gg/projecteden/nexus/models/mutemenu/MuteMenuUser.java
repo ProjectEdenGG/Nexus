@@ -9,7 +9,6 @@ import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.M
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.chat.ChatterService;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -23,7 +22,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Data
-@Builder
 @Entity(value = "mute_menu_user", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

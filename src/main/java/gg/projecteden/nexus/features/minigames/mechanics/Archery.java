@@ -201,7 +201,7 @@ public class Archery extends TeamlessMechanic {
 						if (canPlaceTarget(targetLoc)) {
 							String key = (direction.name() + "_" + color).toLowerCase();
 							Clipboard schem = targetSchems.get(key);
-							match.getWEUtils().paster().clipboard(schem).at(targetLoc).pasteAsync();
+							match.worldedit().paster().clipboard(schem).at(targetLoc).pasteAsync();
 							break;
 						}
 					}
@@ -218,7 +218,7 @@ public class Archery extends TeamlessMechanic {
 		Set<ProtectedRegion> targetRegions = arena.getTargetRegions();
 
 		targetRegions.forEach(targetRegion ->
-			match.getWEUtils().copy(match.getWGUtils().convert(targetRegion)).thenAccept(clipboard -> {
+			match.worldedit().copy(match.worldguard().convert(targetRegion)).thenAccept(clipboard -> {
 				Direction direction = matchData.getTargetDirection(targetRegion);
 				String color = matchData.getTargetColor(targetRegion);
 				String key = (direction.name() + "_" + color).toLowerCase();
@@ -240,8 +240,8 @@ public class Archery extends TeamlessMechanic {
 		for (int i = 1; i <= 10; i++) {
 			Set<ProtectedRegion> rangeRegions = arena.getRegionsLike("range_[\\d]+_.*");
 			rangeRegions.forEach(region -> {
-				CuboidRegion expandedRegion = (CuboidRegion) match.getWEUtils().expandAll(match.getWGUtils().convert(region), 2);
-				List<Block> blocks = match.getWEUtils().getBlocks(expandedRegion);
+				CuboidRegion expandedRegion = (CuboidRegion) match.worldedit().expandAll(match.worldguard().convert(region), 2);
+				List<Block> blocks = match.worldedit().getBlocks(expandedRegion);
 				blocks.forEach(block -> {
 					if (block.getType().equals(Material.WHITE_CONCRETE))
 						removeTarget(block);

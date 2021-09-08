@@ -58,7 +58,7 @@ public class HardFight extends WitherFight {
 	public List<ItemStack> getAlternateDrops() {
 		return new ArrayList<>() {{
 			ItemStack key = CrateType.BOSS.getKey();
-			key.setAmount(3);
+			key.setAmount(2);
 			add(key);
 		}};
 	}

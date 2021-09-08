@@ -51,21 +51,6 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M5</version>
-                <configuration>
-                    <argLine>
-                        --add-opens java.base/java.lang=ALL-UNNAMED
-                        --add-opens java.base/java.lang.invoke=ALL-UNNAMED
-                        --add-opens java.base/java.lang.reflect=ALL-UNNAMED
-                        --add-opens java.base/java.net=ALL-UNNAMED
-                        --add-opens java.base/java.util=ALL-UNNAMED
-                        --add-opens java.base/java.time=ALL-UNNAMED
-                    </argLine>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-toolchains-plugin</artifactId>
                 <version>1.1</version>
                 <executions>
@@ -234,7 +219,7 @@
         <dependency>
             <groupId>gg.projecteden</groupId>
             <artifactId>eden-api</artifactId>
-            <version>1.5.4</version>
+            <version>1.5.7</version>
         </dependency>
         <!-- Lombok Project -->
         <dependency>
@@ -488,7 +473,8 @@
             <groupId>org.inventivetalent</groupId>
             <artifactId>glowapi</artifactId>
             <version>1.4.10-SNAPSHOT</version>
-            <scope>provided</scope>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/GlowAPI.jar</systemPath>
         </dependency>
         <!-- AnvilGUI -->
         <dependency>
@@ -565,8 +551,9 @@
         <dependency>
             <groupId>com.github.LeonMangler</groupId>
             <artifactId>SuperVanish</artifactId>
-            <version>6.2.0</version>
-            <scope>provided</scope>
+            <version>6.2.6</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/SuperVanish-6.2.6.jar</systemPath>
         </dependency>
         <!-- LibsDisguises -->
         <dependency>

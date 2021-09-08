@@ -8,7 +8,6 @@ import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationCon
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,7 +23,6 @@ import java.util.UUID;
 import static gg.projecteden.nexus.utils.StringUtils.pretty;
 
 @Data
-@Builder
 @Entity(value = "curiosity", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

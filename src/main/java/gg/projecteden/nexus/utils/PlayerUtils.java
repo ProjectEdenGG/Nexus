@@ -30,6 +30,7 @@ import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -76,6 +77,7 @@ public class PlayerUtils {
 		BLAST("a4274d94-10f2-4663-af3b-a842c7ec729c"),
 		LEXI("d1de9ca8-78f6-4aae-87a1-8c112f675f12"),
 		FILID("88f9f7f6-7703-49bf-ad83-a4dec7e8022c"),
+		LUI("fd5d72f3-d599-49d4-9e7b-6e6d7f2ac5b9"),
 		KODA("56cb00fd-4738-47bc-be08-cb7c4f9a5a94"),
 		SPIKE("e089a260-7aeb-488f-a641-ab5867ab5ccd");
 
@@ -130,7 +132,8 @@ public class PlayerUtils {
 	}
 
 	public static List<Player> getOnlinePlayers(Player player, World world) {
-		Stream<Player> stream = Bukkit.getOnlinePlayers().stream().filter(_player -> !CitizensUtils.isNPC(_player)).map(Player::getPlayer);
+		Stream<Player> stream = Bukkit.getOnlinePlayers().stream()
+			.filter(_player -> !CitizensUtils.isNPC(_player)).map(Player::getPlayer);
 
 		if (player != null)
 			stream = stream.filter(_player -> canSee(player, _player));
@@ -215,6 +218,11 @@ public class PlayerUtils {
 			if (Nickname.of(player).equalsIgnoreCase((partialName)))
 				return player;
 
+		NicknameService nicknameService = new NicknameService();
+		Nickname fromNickname = nicknameService.getFromNickname(partialName);
+		if (fromNickname != null)
+			return fromNickname.getOfflinePlayer();
+
 		for (Player player : PlayerUtils.getOnlinePlayers())
 			if (player.getName().toLowerCase().startsWith(partialName))
 				return player;
@@ -230,11 +238,6 @@ public class PlayerUtils {
 				return player;
 
 		NerdService nerdService = new NerdService();
-		NicknameService nicknameService = new NicknameService();
-
-		Nickname fromNickname = nicknameService.getFromNickname(partialName);
-		if (fromNickname != null)
-			return fromNickname.getOfflinePlayer();
 
 		Nerd fromAlias = nerdService.getFromAlias(partialName);
 		if (fromAlias != null)
@@ -266,15 +269,26 @@ public class PlayerUtils {
 	}
 
 	public static MinMaxResult<Player> getNearestPlayer(Location location) {
-		return getMin(PlayerUtils.getOnlinePlayers(location.getWorld()), player -> player.getLocation().distance(location));
+		return getMin(getOnlinePlayers(location.getWorld()), player -> player.getLocation().distance(location));
+	}
+
+	public static MinMaxResult<Player> getNearestVisiblePlayer(Location location, Integer radius) {
+		List<Player> players = getOnlinePlayers(location.getWorld()).stream()
+			.filter(_player -> !GameMode.SPECTATOR.equals(_player.getGameMode()))
+			.collect(Collectors.toList());
+
+		if (radius < 0)
+			players = players.stream().filter(player -> player.getLocation().distance(location) <= radius).collect(Collectors.toList());
+
+		return getMin(players, player -> player.getLocation().distance(location));
 	}
 
 	public static MinMaxResult<Player> getNearestPlayer(HasPlayer original) {
 		Player _original = original.getPlayer();
-		return getMin(PlayerUtils.getOnlinePlayers(_original.getWorld()), player -> {
-			if (isSelf(_original, player)) return null;
-			return player.getLocation().distance(_original.getLocation());
-		});
+		List<Player> players = getOnlinePlayers(_original.getWorld()).stream()
+			.filter(player -> !isSelf(_original, player)).collect(Collectors.toList());
+
+		return getMin(players, player -> player.getLocation().distance(_original.getLocation()));
 	}
 
 	public static void runCommand(CommandSender sender, String commandNoSlash) {

@@ -12,7 +12,6 @@ import gg.projecteden.nexus.models.mail.Mailer.Mail;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.WorldGroup;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -24,7 +23,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Data
-@Builder
 @Entity(value = "daily_vote_reward", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

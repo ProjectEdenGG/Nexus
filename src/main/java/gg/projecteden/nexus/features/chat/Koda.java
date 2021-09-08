@@ -11,6 +11,7 @@ import gg.projecteden.nexus.models.chat.ChatterService;
 import gg.projecteden.nexus.models.chat.PublicChannel;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -108,7 +109,7 @@ public class Koda {
 
 	public static void reloadConfig() {
 		triggers.clear();
-		ConfigurationSection config = Nexus.getConfig("koda.yml").getConfigurationSection("triggers");
+		ConfigurationSection config = IOUtils.getConfig("koda.yml").getConfigurationSection("triggers");
 		if (config != null) {
 			for (String key : config.getKeys(false)) {
 				ConfigurationSection section = config.getConfigurationSection(key);
@@ -165,7 +166,7 @@ public class Koda {
 		Tasks.waitAsync(TickTime.SECOND, () -> {
 			final String finalResponse = response.replaceAll("\\[player]", event.getOrigin());
 			PublicChannel channel = (PublicChannel) event.getChannel();
-			event.getRecipients().forEach(recipient -> recipient.sendMessage(channel.getChatterFormat(chatter) + finalResponse));
+			event.getRecipients().forEach(recipient -> recipient.sendMessage(channel.getChatterFormat(chatter, recipient).next(finalResponse)));
 			Broadcast.discord().channel(channel).message(discordFormat + finalResponse).send();
 		});
 	}

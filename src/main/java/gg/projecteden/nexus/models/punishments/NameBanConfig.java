@@ -10,7 +10,6 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -28,7 +27,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Data
-@Builder
 @Entity(value = "nameban_config", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

@@ -9,7 +9,6 @@ import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.WorldGroup;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,7 +24,6 @@ import java.util.UUID;
 import static gg.projecteden.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.WARP;
 
 @Data
-@Builder
 @Entity(value = "godmode", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

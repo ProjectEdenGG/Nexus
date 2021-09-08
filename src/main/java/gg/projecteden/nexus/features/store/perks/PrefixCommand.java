@@ -37,9 +37,7 @@ public class PrefixCommand extends CustomCommand {
 	@Path("checkmark")
 	@Permission("donated")
 	void checkmark() {
-		nerd.setCheckmark(!nerd.isCheckmark());
-		service.save(nerd);
-		send(PREFIX + "Check mark " + (nerd.isCheckmark() ? "enabled" : "disabled"));
+		error("Moved to /badge supporter");
 	}
 
 	@Path("reset [player]")

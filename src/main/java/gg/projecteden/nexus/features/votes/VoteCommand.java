@@ -59,7 +59,7 @@ public class VoteCommand extends CustomCommand {
 				"&eVote Point Store, &3and the top voters of each month receive a special reward!"));
 		line();
 		JsonBuilder builder = json("&3 Links");
-		for (VoteSite site : VoteSite.getValues())
+		for (VoteSite site : VoteSite.getActiveSites())
 			builder.next(" &3|| &e").next("&e" + site.name()).url(site.getUrl(Nerd.of(player()).getName())).group();
 		send(builder);
 		line();
@@ -82,7 +82,7 @@ public class VoteCommand extends CustomCommand {
 	void time(@Arg(value = "self", permission = "group.staff") OfflinePlayer player) {
 		voter = service.get(player);
 		line();
-		for (VoteSite site : VoteSite.getValues()) {
+		for (VoteSite site : VoteSite.getActiveSites()) {
 			Optional<Vote> first = voter.getActiveVotes().stream().filter(_vote -> _vote.getSite() == site).findFirst();
 			if (first.isPresent()) {
 				LocalDateTime expirationTime = first.get().getTimestamp().plusHours(site.getExpirationHours());

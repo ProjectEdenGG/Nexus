@@ -1,14 +1,21 @@
 package gg.projecteden.nexus.features.commands.staff;
 
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
+import com.sk89q.worldedit.math.transform.AffineTransform;
 import com.sk89q.worldedit.regions.Region;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.utils.CompletableFutures;
+import gg.projecteden.nexus.utils.FakeWorldEdit;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
+import gg.projecteden.nexus.utils.WorldEditUtils.Paster;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
@@ -17,9 +24,12 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @Permission("group.staff")
 public class WorldEditUtilsCommand extends CustomCommand {
@@ -29,6 +39,58 @@ public class WorldEditUtilsCommand extends CustomCommand {
 		super(event);
 		if (isPlayerCommandEvent())
 			worldEditUtils = new WorldEditUtils(player());
+	}
+
+	@Path("rotate [y] [x] [z]")
+	void rotate(int y, int x, int z) {
+		final WorldEditUtils worldedit = new WorldEditUtils(player());
+		worldedit.paster("Testing rotate")
+			.clipboard(worldedit.getPlayerSelection(player()))
+			.at(location())
+			.transform(new AffineTransform().rotateY(y).rotateX(x).rotateZ(z))
+			.pasteAsync();
+	}
+
+	@Path("clipboard [--build] [--async] [--entities]")
+	void clipboard(
+		@Switch @Arg("false") boolean build,
+		@Switch @Arg("false") boolean async,
+		@Switch @Arg("false") boolean entities
+	) {
+		final WorldEditUtils utils = new WorldEditUtils(world());
+		List<CompletableFuture<Void>> futures = new ArrayList<>();
+
+		Runnable task = () -> {
+			final Paster paster = utils.paster("Testing clipboard").clipboard(player()).at(location()).entities(entities);
+
+			if (build) {
+				send("Building " + (async ? "async" : "sync"));
+				for (int i = 0; i < 5; i++)
+					futures.add(paster.build());
+			} else {
+				send("Pasting " + (async ? "async" : "sync"));
+				for (int i = 0; i < 5; i++)
+					futures.add(paster.pasteAsync());
+			}
+
+			CompletableFutures.allOf(futures).thenRun(() -> send("done"));
+		};
+
+		if (async)
+			Tasks.async(task);
+		else
+			task.run();
+	}
+
+	@Path("fake")
+	void fake() {
+		new FakeWorldEdit(world())
+			.clipboard()
+			.min(location())
+			.max(location().add(2, 2, 2))
+			.filter(MaterialTag.ALL_AIR::isNotTagged)
+			.copy()
+			.paste(location().add(9, 9, 9));
 	}
 
 	@Confirm

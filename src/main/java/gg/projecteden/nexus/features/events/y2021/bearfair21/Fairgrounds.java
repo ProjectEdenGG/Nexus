@@ -44,13 +44,13 @@ public class Fairgrounds implements Listener {
 
 	public Fairgrounds() {
 		Nexus.registerListener(this);
-		new Timer("      Interactables", Interactables::new);
-		new Timer("      Rides", Rides::new);
-		new Timer("      Minigolf", MiniGolf::new);
-		new Timer("      Archery", Archery::new);
-		new Timer("      Frogger", Frogger::new);
-		new Timer("      Seeker", Seeker::new);
-		new Timer("      Reflection", ReflectionGame::new);
+		new Timer("        BF21.Fairgrounds.Interactables", Interactables::new);
+		new Timer("        BF21.Fairgrounds.Rides", Rides::new);
+		new Timer("        BF21.Fairgrounds.Minigolf", MiniGolf::new);
+		new Timer("        BF21.Fairgrounds.Archery", Archery::new);
+		new Timer("        BF21.Fairgrounds.Frogger", Frogger::new);
+		new Timer("        BF21.Fairgrounds.Seeker", Seeker::new);
+		new Timer("        BF21.Fairgrounds.Reflection", ReflectionGame::new);
 	}
 
 	public enum BearFair21Kit {

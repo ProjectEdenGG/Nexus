@@ -13,7 +13,6 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.utils.DiscordId;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -34,7 +33,6 @@ import static gg.projecteden.nexus.features.discord.Discord.discordize;
 import static gg.projecteden.nexus.features.discord.Discord.getGuild;
 
 @Data
-@Builder
 @Entity(value = "discord_user", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

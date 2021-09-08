@@ -13,7 +13,6 @@ import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -38,7 +37,6 @@ import static gg.projecteden.nexus.utils.ItemUtils.isInventoryEmpty;
 import static gg.projecteden.utils.TimeUtils.shortDateTimeFormat;
 
 @Data
-@Builder
 @Entity(value = "inventory_history", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

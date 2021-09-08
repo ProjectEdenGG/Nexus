@@ -8,6 +8,7 @@ import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.FakePlayerInteractEvent;
 import gg.projecteden.nexus.utils.SerializationUtils.JSON;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
@@ -216,6 +217,10 @@ public class Backpacks extends FunctionalRecipe {
 			return;
 
 		event.setCancelled(true);
+
+		if (event instanceof FakePlayerInteractEvent)
+			return;
+
 		openBackpack(event.getPlayer(), event.getItem());
 	}
 

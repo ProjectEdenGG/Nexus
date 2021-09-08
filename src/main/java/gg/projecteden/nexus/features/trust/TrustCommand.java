@@ -28,12 +28,13 @@ import java.util.stream.Collectors;
 
 @Aliases({"trusts", "allow"})
 public class TrustCommand extends CustomCommand {
-	Trust trust;
-	TrustService service = new TrustService();
+	private final TrustService service = new TrustService();
+	private Trust trust;
 
 	public TrustCommand(@NonNull CommandEvent event) {
 		super(event);
-		trust = service.get(player());
+		if (isPlayerCommandEvent())
+			trust = service.get(player());
 	}
 
 	@Description("Open the trust menu")

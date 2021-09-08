@@ -83,7 +83,7 @@ public class AnvilDrop extends TeamlessMechanic {
 
 	public void dropAnvils(Match match) {
 		AnvilDropArena arena = match.getArena();
-		List<Location> dropLocs = getLocations(match.getWEUtils().getBlocks(arena.getRegion("dropzone")));
+		List<Location> dropLocs = getLocations(match.worldedit().getBlocks(arena.getRegion("dropzone")));
 		match.getTasks().repeat(TickTime.SECOND.x(3), 5, () -> RandomUtils.randomElement(dropLocs).getBlock().setType(Material.ANVIL));
 	}
 

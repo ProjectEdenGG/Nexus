@@ -22,19 +22,19 @@ public class VoteHoloCommand extends CustomCommand {
 		if (!isPerkAllowedAt(location()))
 			error("Holograms cannot be created here");
 
-		runCommandAsOp("hd create voteholo_" + uuid().toString() + " " + text);
+		runCommandAsOp("hd create voteholo_" + uuid() + " " + text);
 		send(PREFIX + "Created. Edit with &c/voteholo edit <text...>");
 	}
 
 	@Path("edit <text...>")
 	void edit(String text) {
-		runCommandAsConsole("hd setline voteholo_" + uuid().toString() + " 1 " + text);
+		runCommandAsConsole("hd setline voteholo_" + uuid() + " 1 " + text);
 		send(PREFIX + "Edited");
 	}
 
 	@Path("delete")
 	void delete() {
-		runCommandAsConsole("hd delete voteholo_" + uuid().toString());
+		runCommandAsConsole("hd delete voteholo_" + uuid());
 		send(PREFIX + "Deleted");
 	}
 
@@ -43,6 +43,6 @@ public class VoteHoloCommand extends CustomCommand {
 		if (!isPerkAllowedAt(location()))
 			error("Holograms cannot be teleported here");
 
-		runCommandAsOp("hd movehere voteholo_" + uuid().toString());
+		runCommandAsOp("hd movehere voteholo_" + uuid());
 	}
 }

@@ -168,7 +168,7 @@ public class AntiCampingTask {
 		Location location = minigamer.getPlayer().getLocation();
 		ProtectedRegion floor = null;
 		for (int i = 0; i < 3; i++) {
-			Set<ProtectedRegion> regionsAt = minigamer.getMatch().getArena().getWGUtils().getRegionsAt(location);
+			Set<ProtectedRegion> regionsAt = minigamer.getMatch().getArena().worldguard().getRegionsAt(location);
 			for (ProtectedRegion region : regionsAt) {
 				if (region.getId().matches(floorRegex)) {
 					floor = region;

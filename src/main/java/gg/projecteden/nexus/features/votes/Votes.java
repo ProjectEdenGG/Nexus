@@ -23,6 +23,7 @@ import gg.projecteden.nexus.models.voter.VoteSite;
 import gg.projecteden.nexus.models.voter.Voter;
 import gg.projecteden.nexus.models.voter.Voter.Vote;
 import gg.projecteden.nexus.models.voter.VoterService;
+import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -39,10 +40,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -86,7 +84,7 @@ public class Votes extends Feature implements Listener {
 
 	private static MessageEmbed createEmbed(String username) {
 		EmbedBuilder builder = new EmbedBuilder().setTitle(EdenSocialMediaSite.WEBSITE.getUrl() + "/vote").setDescription("");
-		for (VoteSite value : VoteSite.getValues())
+		for (VoteSite value : VoteSite.getActiveSites())
 			builder.appendDescription(System.lineSeparator() + "**" + value.name().toUpperCase() + "**: [Click to vote!](" + value.getUrl(username) + ")");
 		return builder.build();
 	}
@@ -122,13 +120,9 @@ public class Votes extends Feature implements Listener {
 
 		Nexus.log("[Votes] Vote received from " + event.getVote().getServiceName() + ": " + username + " (" + name + " | " + uuid + ")");
 
-		// MCBIZ is sending votes with a timestamp of an hour ago ??
 		LocalDateTime timestamp = epochSecond(event.getVote().getTimeStamp());
-		if (site == VoteSite.MCBIZ) {
-			long minutes = timestamp.until(LocalDateTime.now(), ChronoUnit.MINUTES);
-			if (minutes > 55 && minutes < 65)
-				timestamp = timestamp.plusHours(1);
-		}
+		if (site == VoteSite.MCBIZ)
+			timestamp = fixTimestamp(timestamp);
 
 		if (site == null)
 			return;
@@ -182,6 +176,15 @@ public class Votes extends Feature implements Listener {
 		Tasks.async(Votes::write);
 	}
 
+	// MCBIZ is sending votes with a timestamp of an hour ago ??
+	@NotNull
+	private LocalDateTime fixTimestamp(LocalDateTime timestamp) {
+		long minutes = timestamp.until(LocalDateTime.now(), ChronoUnit.MINUTES);
+		if (minutes > 55 && minutes < 65)
+			timestamp = timestamp.plusHours(1);
+		return timestamp;
+	}
+
 	private static final int basePoints = 1;
 	private static final Map<Integer, Integer> extras = new HashMap<>() {{
 		put(1500, 50);
@@ -211,95 +214,114 @@ public class Votes extends Feature implements Listener {
 		Tasks.async(() -> {
 			List<TopVoter> topVoters = new VoterService().getTopVoters(LocalDateTime.now().getMonth());
 
-			try (BufferedWriter writer = Files.newBufferedWriter(Paths.get("plugins/website/votes_monthly_top.html"), StandardCharsets.UTF_8)) {
-				int index = 0;
-				for (TopVoter topVoter : topVoters) {
-					if (++index <= 3) {
-						String name = "Unknown";
-						try { name = topVoter.getVoter().getNickname(); } catch (PlayerNotFoundException ignore) {}
+			votes_sites();
+			votes_monthly_top(topVoters);
+			votes_monthly(topVoters);
+			votes();
+			votes_monthly_total(topVoters);
+			votes_voted();
+		});
+	}
 
-						writer.write("<div class=\"col-sm-4\">" + System.lineSeparator());
-						writer.write("  <h3 style=\"text-align: center;\">#" + index + "</h3>" + System.lineSeparator());
-						writer.write("  <img class=\"center\" style=\"border-radius: 12px; width: 75%%\" src=\"https://crafatar.com/avatars/" + topVoter.getVoter().getUuid() + "?overlay\">" + System.lineSeparator());
-						writer.write("  <h3 style=\"text-align: center;\">" + name + "</h3>" + System.lineSeparator());
-						writer.write("  <h4 style=\"text-align: center;\">" + topVoter.getCount() + "</p>" + System.lineSeparator());
-						writer.write("</div>" + System.lineSeparator());
-					} else
-						break;
-				}
-			} catch(Exception ex) {
-				ex.printStackTrace();
-			}
-
-			try (BufferedWriter writer = Files.newBufferedWriter(Paths.get("plugins/website/votes_monthly.html"), StandardCharsets.UTF_8)) {
-				int index = 0;
-				for (TopVoter topVoter : topVoters) {
-					if (++index > 3) {
-						if (index < 54) {
-							String name = "Unknown";
-							try { name = topVoter.getVoter().getNickname(); } catch (PlayerNotFoundException ignore) {}
-
-							writer.write("  <tr>" + System.lineSeparator());
-							writer.write("    <th>" + index + "</th>" + System.lineSeparator());
-							writer.write("    <th>" + name + "</th>" + System.lineSeparator());
-							writer.write("    <th>" + topVoter.getCount() + "</th>" + System.lineSeparator());
-							writer.write("  </tr>" + System.lineSeparator());
-						} else
-							break;
-					}
-				}
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-
-
-			try (BufferedWriter writer = Files.newBufferedWriter(Paths.get("plugins/website/votes.html"), StandardCharsets.UTF_8)) {
-				List<TopVoter> allTimeTopVoters = new VoterService().getTopVoters();
-
-				int index = 0;
-				for (TopVoter topVoter : allTimeTopVoters) {
-					if (++index <= 50) {
-						String name = "Unknown";
-						try { name = topVoter.getVoter().getNickname(); } catch (PlayerNotFoundException ignore) {}
-
-						writer.write("  <tr>" + System.lineSeparator());
-						writer.write("	<th>" + index + "</th>" + System.lineSeparator());
-						writer.write("	<th>" + name + "</th>" + System.lineSeparator());
-						writer.write("	<th>" + topVoter.getCount() + "</th>" + System.lineSeparator());
-						writer.write("  </tr>" + System.lineSeparator());
-					} else
-						break;
-				}
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-
-			int sum = topVoters.stream().mapToInt(topVoter -> Long.valueOf(topVoter.getCount()).intValue()).sum();
-			try {
-				Files.write(Paths.get("plugins/website/votes_monthly_total.html"), String.valueOf(sum).getBytes());
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-
-			try {
-				List<Vote> activeVotes = new VoterService().getActiveVotes();
-				File file = Paths.get("plugins/website/votes_voted.yml").toFile();
-				if (!file.exists()) file.createNewFile();
-				YamlConfiguration config = new YamlConfiguration();
-				activeVotes.forEach(vote -> {
-					OfflinePlayer player = PlayerUtils.getPlayer(vote.getUuid());
-					String name = Name.of(player);
-					if (name == null) return;
-					if (!config.isConfigurationSection(name))
-						config.createSection(name);
-					config.getConfigurationSection(name).set(vote.getSite().name().toLowerCase(), true);
-				});
-				config.save(file);
-			} catch (PlayerNotFoundException ignore) {
-			} catch (Exception ex) {
-				ex.printStackTrace();
+	private static void votes_sites() {
+		IOUtils.fileWrite("plugins/website/votes_sites.html", (writer, outputs) -> {
+			for (VoteSite voteSite : VoteSite.getActiveSites()) {
+				outputs.add(String.format("""
+					<div class="btn-group">
+						<a href="%s" target="_blank" role="button" <?php echo getVoteButtonHtml($%s == 1); ?></a>
+						<button class="btn btn-default active votebtn"><strong>%s</strong></button>
+					</div>
+					<br/><br/>
+				""", voteSite.getPhpUrl(), voteSite.name().toLowerCase(), voteSite.getName()));
 			}
 		});
+	}
+
+	private static void votes_monthly_top(List<TopVoter> topVoters) {
+		final String center = "style=\"text-align: center;\"";
+
+		IOUtils.fileWrite("plugins/website/votes_monthly_top.html", (writer, outputs) -> {
+			int index = 0;
+			for (TopVoter topVoter : topVoters) {
+				if (++index > 3)
+					break;
+
+				outputs.add(String.format("""
+					<div class="col-sm-4">
+						<h3 %s>#%d</h3>
+						<img class="center" style="border-radius: 12px; width: 75%%" src="https://crafatar.com/avatars/%s?overlay">
+						<h3 %s>%s</h3>
+						<h4 %s>%d</p>
+					</div>
+				""", center, index, topVoter.getVoter().getUuid(), center, topVoter.getNickname(), center, topVoter.getCount()));
+			}
+		});
+	}
+
+	private static void votes_monthly(List<TopVoter> topVoters) {
+		IOUtils.fileWrite("plugins/website/votes_monthly.html", (writer, outputs) -> {
+			int index = 0;
+			for (TopVoter topVoter : topVoters) {
+				if (++index <= 3)
+					continue;
+				if (index >= 54)
+					break;
+
+				outputs.add(String.format("""
+					<tr>
+						<th>%d</th>
+						<th>%s</th>
+						<th>%d</th>
+					</tr>
+				""", index, topVoter.getNickname(), topVoter.getCount()));
+			}
+		});
+	}
+
+	private static void votes() {
+		IOUtils.fileWrite("plugins/website/votes.html", (writer, outputs) -> {
+			List<TopVoter> allTimeTopVoters = new VoterService().getTopVoters();
+
+			int index = 0;
+			for (TopVoter topVoter : allTimeTopVoters) {
+				if (++index > 50)
+					break;
+
+				outputs.add(String.format("""
+					<tr>
+						<th>%d</th>
+						<th>%s</th>
+						<th>%d</th>
+					</tr>
+				""", index, topVoter.getNickname(), topVoter.getCount()));
+			}
+		});
+	}
+
+	private static void votes_monthly_total(List<TopVoter> topVoters) {
+		int sum = topVoters.stream().mapToInt(topVoter -> Long.valueOf(topVoter.getCount()).intValue()).sum();
+		IOUtils.fileWrite("plugins/website/votes_monthly_total.html", (writer, outputs) -> outputs.add(String.valueOf(sum)));
+	}
+
+	private static void votes_voted() {
+		try {
+			List<Vote> activeVotes = new VoterService().getActiveVotes();
+			File file = Paths.get("plugins/website/votes_voted.yml").toFile();
+			if (!file.exists()) file.createNewFile();
+			YamlConfiguration config = new YamlConfiguration();
+			activeVotes.forEach(vote -> {
+				OfflinePlayer player = PlayerUtils.getPlayer(vote.getUuid());
+				String name = Name.of(player);
+				if (name == null) return;
+				if (!config.isConfigurationSection(name))
+					config.createSection(name);
+				config.getConfigurationSection(name).set(vote.getSite().name().toLowerCase(), true);
+			});
+			config.save(file);
+		} catch (PlayerNotFoundException ignore) {
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 }

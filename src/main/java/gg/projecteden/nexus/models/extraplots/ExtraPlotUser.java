@@ -10,7 +10,6 @@ import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +21,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Data
-@Builder
 @Entity(value = "extra_plot_user", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

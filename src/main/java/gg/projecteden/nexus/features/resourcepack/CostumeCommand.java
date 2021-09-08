@@ -51,10 +51,12 @@ public class CostumeCommand extends CustomCommand implements Listener {
 	}
 
 	static {
-		final CostumeUserService service = new CostumeUserService();
-		Tasks.repeat(TickTime.TICK, TickTime.TICK, () -> {
-			for (Player player : PlayerUtils.getOnlinePlayers())
-				service.get(player).sendCostumePacket();
+		ResourcePack.getLoader().thenRun(() -> {
+			final CostumeUserService service = new CostumeUserService();
+			Tasks.repeat(TickTime.TICK, TickTime.TICK, () -> {
+				for (Player player : PlayerUtils.getOnlinePlayers())
+					service.get(player).sendCostumePacket();
+			});
 		});
 	}
 

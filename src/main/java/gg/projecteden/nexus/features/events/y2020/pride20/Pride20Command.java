@@ -44,20 +44,20 @@ public class Pride20Command extends CustomCommand {
 		if (setting.getBoolean())
 			error("You have already joined the parade");
 
-		WorldGuardUtils wgUtils = new WorldGuardUtils(Bukkit.getWorld("safepvp"));
-		ProtectedRegion region = wgUtils.getProtectedRegion("pride20_parade");
+		WorldGuardUtils worldguard = new WorldGuardUtils(Bukkit.getWorld("safepvp"));
+		ProtectedRegion region = worldguard.getProtectedRegion("pride20_parade");
 		Location npcLoc;
-		if (!wgUtils.getPlayersInRegion("pride20_parade").contains(player)) {
+		if (!worldguard.getPlayersInRegion("pride20_parade").contains(player)) {
 			Location random;
 			int attempts = 0;
 			do {
-				random = Bukkit.getWorld("safepvp").getHighestBlockAt(wgUtils.getRandomBlock(region).getLocation()).getLocation();
+				random = Bukkit.getWorld("safepvp").getHighestBlockAt(worldguard.getRandomBlock(region).getLocation()).getLocation();
 				attempts++;
 				if (attempts >= 300) {
 					error("There was an error while trying to join the parade, please try again");
 					break;
 				}
-			} while (!region.contains(wgUtils.toBlockVector3(random)) || citizenAtBlock(random) || !random.getBlock().getType().isSolid() || !isHighestBlock(random));
+			} while (!region.contains(worldguard.toBlockVector3(random)) || citizenAtBlock(random) || !random.getBlock().getType().isSolid() || !isHighestBlock(random));
 			npcLoc = random;
 		} else {
 			npcLoc = player.getPlayer().getLocation();
@@ -84,8 +84,8 @@ public class Pride20Command extends CustomCommand {
 		if (!setting.getBoolean())
 			error(playerText + " not joined the parade");
 
-		WorldGuardUtils wgUtils = new WorldGuardUtils(Bukkit.getWorld("safepvp"));
-		for (Entity entity : wgUtils.getEntitiesInRegion("pride20_parade")) {
+		WorldGuardUtils worldguard = new WorldGuardUtils(Bukkit.getWorld("safepvp"));
+		for (Entity entity : worldguard.getEntitiesInRegion("pride20_parade")) {
 			if (!entity.hasMetadata("NPC")) continue;
 			if (entity.getName().equalsIgnoreCase(player.getName()))
 				CitizensAPI.getNPCRegistry().getNPC(entity).destroy();

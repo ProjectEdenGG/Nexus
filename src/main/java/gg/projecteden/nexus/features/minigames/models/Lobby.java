@@ -4,7 +4,6 @@ import gg.projecteden.nexus.features.minigames.models.Match.MatchTasks.MatchTask
 import gg.projecteden.nexus.features.minigames.models.events.matches.lobbies.LobbyTimerTickEvent;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -20,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 
 @Data
-@Builder
 @AllArgsConstructor
 @SerializableAs("Lobby")
 public class Lobby implements ConfigurationSerializable {

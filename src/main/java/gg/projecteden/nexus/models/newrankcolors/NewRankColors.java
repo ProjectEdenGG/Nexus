@@ -8,7 +8,6 @@ import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationCon
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.nerd.Rank;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -19,7 +18,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Data
-@Builder
 @Entity(value = "new_rank_colors", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

@@ -2,7 +2,6 @@ package gg.projecteden.nexus.utils;
 
 import gg.projecteden.nexus.Nexus;
 import me.lexikiq.HasPlayer;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -12,7 +11,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
-import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -46,30 +44,6 @@ public class EntityUtils {
 
 	public static List<EntityType> getExtraHostileMobs() {
 		return Arrays.asList(EntityType.PHANTOM, EntityType.GHAST, EntityType.MAGMA_CUBE, EntityType.SLIME, EntityType.SHULKER, EntityType.ENDER_DRAGON);
-	}
-
-	public static <T extends Entity> T getNearestEntityType(Location location, Class<T> type, double radius) {
-		if (location == null || location.getWorld() == null)
-			return null;
-
-		List<T> entities = location.getNearbyEntities(radius, radius, radius).stream()
-			.filter(_entity -> type.isAssignableFrom(_entity.getClass()))
-			.filter(_entity -> {
-				if (_entity instanceof Player player) {
-					if (CitizensUtils.isNPC(_entity))
-						return false;
-					if (PlayerUtils.isVanished(player))
-						return false;
-					if (GameMode.SPECTATOR.equals(player.getGameMode()))
-						return false;
-				}
-
-				return true;
-			})
-			.map(_entity -> (T) _entity)
-			.collect(Collectors.toList());
-
-		return Utils.getMin(entities, entity -> entity.getLocation().distance(location)).getObject();
 	}
 
 	public static void makeArmorStandLookAtPlayer(ArmorStand stand, HasPlayer player, Double minYaw, Double maxYaw, Double minPitch, Double maxPitch) {

@@ -31,7 +31,6 @@ import java.util.Set;
 import java.util.UUID;
 
 @Data
-@Builder
 @Entity(value = "radio", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

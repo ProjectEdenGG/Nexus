@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.kits;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.utils.IOUtils;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -37,12 +38,12 @@ public class KitManager {
 	}
 
 	public static void reloadConfig() {
-		config = Nexus.getConfig(fileName);
+		config = IOUtils.getConfig(fileName);
 	}
 
 	@SneakyThrows
 	public static void saveConfig() {
-		config.save(Nexus.getFile(fileName));
+		config.save(IOUtils.getPluginFile(fileName));
 	}
 
 	public static Set<String> getConfigSections() {

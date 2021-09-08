@@ -49,14 +49,14 @@ public class Discord extends Feature {
 	}
 
 	public void connect() {
-		for (Bot bot : Bot.values())
-			if (bot.jda() == null && bot.getToken().length() > 0)
-				try {
-					bot.connect();
-				} catch (Exception ex) {
-					Nexus.severe("An error occurred while trying to connect to Discord");
-					ex.printStackTrace();
-				}
+		for (Bot bot : Bot.values()) {
+			try {
+				bot.connect();
+			} catch (Exception ex) {
+				Nexus.severe("An error occurred while trying to connect to Discord");
+				ex.printStackTrace();
+			}
+		}
 	}
 
 	@Override

@@ -129,7 +129,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 		SECONDS(3, 2, Material.CLOCK) {
 			@Override
 			public String getTitle() {
-				return "Game TickTime (Seconds)";
+				return "Game Time (Seconds)";
 			}
 		},
 		BEGIN_DELAY(3, 3, Material.REPEATER),

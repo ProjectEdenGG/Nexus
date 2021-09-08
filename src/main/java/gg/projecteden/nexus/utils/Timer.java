@@ -4,7 +4,7 @@ import gg.projecteden.nexus.Nexus;
 import lombok.Getter;
 
 public class Timer {
-	private static final int IGNORE = 2000;
+	private static final int IGNORE = 1000;
 
 	@Getter
 	private final long duration;

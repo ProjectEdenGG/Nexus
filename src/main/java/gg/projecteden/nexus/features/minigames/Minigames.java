@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.minigames;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.lobby.ActionBar;
-import gg.projecteden.nexus.features.minigames.lobby.Basketball;
 import gg.projecteden.nexus.features.minigames.lobby.Parkour;
 import gg.projecteden.nexus.features.minigames.lobby.TickPerks;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
@@ -22,6 +21,7 @@ import gg.projecteden.nexus.models.minigamessetting.MinigamesConfigService;
 import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGroup;
@@ -68,26 +68,27 @@ public class Minigames extends Feature {
 	public void onStart() {
 		registerSerializables();
 		registerMatchDatas();
-		ArenaManager.read();
-		registerListeners();
+		Tasks.async(() -> {
+			ArenaManager.read();
+			registerListeners();
 
-		new ActionBar();
-		new Basketball();
-		new Parkour();
-		new TickPerks();
+			new ActionBar();
+			new Parkour();
+			new TickPerks();
+		});
 	}
 
 	public static World getWorld() {
 		return Bukkit.getWorld("gameworld");
 	}
 
-	@Deprecated // Use Match#getWGUtils or Arena#getWGUtils
-	public static WorldGuardUtils getWorldGuardUtils() {
+	@Deprecated // Use Match#worldguard or Arena#worldguard
+	public static WorldGuardUtils worldguard() {
 		return new WorldGuardUtils(getWorld());
 	}
 
-	@Deprecated // Use Match#getWEUtils or Arena#getWEUtils
-	public static WorldEditUtils getWorldEditUtils() {
+	@Deprecated // Use Match#worldedit or Arena#worldedit
+	public static WorldEditUtils worldedit() {
 		return new WorldEditUtils(getWorld());
 	}
 
@@ -96,7 +97,7 @@ public class Minigames extends Feature {
 	}
 
 	public static ProtectedRegion getLobbyRegion() {
-		return getWorldGuardUtils().getProtectedRegion("minigamelobby");
+		return worldguard().getProtectedRegion("minigamelobby");
 	}
 
 	@Override
@@ -163,11 +164,13 @@ public class Minigames extends Feature {
 			Set<Class<? extends MatchData>> matchDataTypes = new Reflections(path + ".models.matchdata")
 					.getSubTypesOf(MatchData.class);
 
-			for (Class<?> matchDataType : matchDataTypes)
-				if (matchDataType.getAnnotation(MatchDataFor.class) != null)
-					for (MechanicType mechanicType : MechanicType.values())
-						for (Class<? extends Mechanic> superclass : mechanicType.get().getSuperclasses())
-							for (Class<? extends Mechanic> applicableMechanic : matchDataType.getAnnotation(MatchDataFor.class).value())
+			for (Class<?> matchDataType : matchDataTypes) {
+				if (matchDataType.getAnnotation(MatchDataFor.class) == null)
+					continue;
+
+				for (MechanicType mechanicType : MechanicType.values())
+					for (Class<? extends Mechanic> superclass : mechanicType.get().getSuperclasses())
+						for (Class<? extends Mechanic> applicableMechanic : matchDataType.getAnnotation(MatchDataFor.class).value())
 							if (applicableMechanic.equals(superclass))
 								try {
 									Constructor<?> constructor = matchDataType.getConstructor(Match.class);
@@ -176,6 +179,7 @@ public class Minigames extends Feature {
 								} catch (NoSuchMethodException ex) {
 									Nexus.warn("MatchData " + matchDataType.getSimpleName() + " has no Match constructor");
 								}
+			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

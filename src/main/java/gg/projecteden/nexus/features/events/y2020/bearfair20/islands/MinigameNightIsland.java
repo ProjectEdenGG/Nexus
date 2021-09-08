@@ -45,7 +45,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.getWGUtils;
+import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.worldguard;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.chime;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.itemLore;
 
@@ -206,8 +206,8 @@ public class MinigameNightIsland implements Listener, BearFairIsland {
 		Block clicked = event.getClickedBlock();
 		if (BlockUtils.isNullOrAir(clicked)) return;
 
-		ProtectedRegion region = getWGUtils().getProtectedRegion(arcadeRg);
-		if (!getWGUtils().getRegionsAt(clicked.getLocation()).contains(region)) return;
+		ProtectedRegion region = worldguard().getProtectedRegion(arcadeRg);
+		if (!worldguard().getRegionsAt(clicked.getLocation()).contains(region)) return;
 
 		if (!BearFair20.enableQuests) return;
 		event.setCancelled(true);
@@ -224,8 +224,8 @@ public class MinigameNightIsland implements Listener, BearFairIsland {
 	public void onInteract(PlayerInteractEvent event) {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
-		ProtectedRegion region = getWGUtils().getProtectedRegion(BearFair20.getRegion());
-		if (!getWGUtils().getRegionsAt(event.getPlayer().getLocation()).contains(region)) return;
+		ProtectedRegion region = worldguard().getProtectedRegion(BearFair20.getRegion());
+		if (!worldguard().getRegionsAt(event.getPlayer().getLocation()).contains(region)) return;
 
 		if (!BearFair20.enableQuests) return;
 		ItemStack tool = ItemUtils.getTool(event.getPlayer());
@@ -246,8 +246,8 @@ public class MinigameNightIsland implements Listener, BearFairIsland {
 
 		Player player = event.getPlayer();
 
-		ProtectedRegion region = getWGUtils().getProtectedRegion(BearFair20.getRegion());
-		if (!getWGUtils().getRegionsAt(player.getLocation()).contains(region)) return;
+		ProtectedRegion region = worldguard().getProtectedRegion(BearFair20.getRegion());
+		if (!worldguard().getRegionsAt(player.getLocation()).contains(region)) return;
 
 		if (!BearFair20.enableQuests) return;
 		Entity clicked = event.getRightClicked();
@@ -307,8 +307,8 @@ public class MinigameNightIsland implements Listener, BearFairIsland {
 		Block clicked = event.getClickedBlock();
 		if (BlockUtils.isNullOrAir(clicked)) return;
 
-		ProtectedRegion region = getWGUtils().getProtectedRegion(solderRg);
-		if (!getWGUtils().getRegionsAt(clicked.getLocation()).contains(region)) return;
+		ProtectedRegion region = worldguard().getProtectedRegion(solderRg);
+		if (!worldguard().getRegionsAt(clicked.getLocation()).contains(region)) return;
 
 		if (!BearFair20.enableQuests) return;
 
@@ -331,7 +331,7 @@ public class MinigameNightIsland implements Listener, BearFairIsland {
 
 		ArmorStand armorStand = null;
 		for (Entity nearbyEntity : player.getNearbyEntities(7, 7, 7)) {
-			if (nearbyEntity instanceof ArmorStand && getWGUtils().getRegionsAt(nearbyEntity.getLocation()).contains(region)) {
+			if (nearbyEntity instanceof ArmorStand && worldguard().getRegionsAt(nearbyEntity.getLocation()).contains(region)) {
 				armorStand = (ArmorStand) nearbyEntity;
 				break;
 			}
@@ -423,7 +423,7 @@ public class MinigameNightIsland implements Listener, BearFairIsland {
 
 	private void soundTasks() {
 		Tasks.repeat(0, TickTime.SECOND.x(5), () -> PlayerUtils.getOnlinePlayers().stream()
-				.filter(player -> getWGUtils().getRegionsLikeAt(getRegion(), player.getLocation()).size() > 0)
+				.filter(player -> worldguard().getRegionsLikeAt(getRegion(), player.getLocation()).size() > 0)
 				.forEach(MinigameNightIsland::playArcadeEffects));
 	}
 

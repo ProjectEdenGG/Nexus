@@ -89,9 +89,9 @@ public class AmbientSounds extends Feature {
 	}
 
 	private boolean isApplicable(Player player, AmbientSoundType type) {
-		WorldGuardUtils WGUtils = new WorldGuardUtils(player);
+		WorldGuardUtils worldguard = new WorldGuardUtils(player);
 		if (type.equals(UNDERGROUND)) {
-			return !WGUtils.getRegionsLikeAt(".*_underground", player.getLocation()).isEmpty();
+			return !worldguard.getRegionsLikeAt(".*_underground", player.getLocation()).isEmpty();
 		}
 
 		return false;

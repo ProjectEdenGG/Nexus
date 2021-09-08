@@ -16,7 +16,7 @@ import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.nexus.utils.WorldEditUtils.Paste;
+import gg.projecteden.nexus.utils.WorldEditUtils.Paster;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.Utils.MinMaxResult;
 import lombok.Getter;
@@ -177,9 +177,9 @@ public class OrnamentVendor implements Listener {
 		if (treeType == null)
 			return;
 
-		Set<ProtectedRegion> regions = Pugmas20.getWGUtils().getRegionsLike("pugmas20_trees_" + treeType.name() + "_[\\d]+");
+		Set<ProtectedRegion> regions = Pugmas20.worldguard().getRegionsLike("pugmas20_trees_" + treeType.name() + "_[\\d]+");
 
-		MinMaxResult<ProtectedRegion> result = getMin(regions, region -> event.getBlock().getLocation().distance(Pugmas20.getWGUtils().toLocation(region.getMinimumPoint())));
+		MinMaxResult<ProtectedRegion> result = getMin(regions, region -> event.getBlock().getLocation().distance(Pugmas20.worldguard().toLocation(region.getMinimumPoint())));
 
 		ProtectedRegion region = result.getObject();
 		double distance = result.getValue().doubleValue();
@@ -215,7 +215,7 @@ public class OrnamentVendor implements Listener {
 		private final List<Material> others;
 
 		@Getter
-		private final Map<Integer, Paste> pasters = new HashMap<>();
+		private final Map<Integer, Paster> pasters = new HashMap<>();
 		@Getter
 		private final Map<Integer, CompletableFuture<Queue<Location>>> queues = new HashMap<>();
 		@Getter
@@ -277,7 +277,7 @@ public class OrnamentVendor implements Listener {
 				if (region == null)
 					return null;
 
-				Location base = Pugmas20.getWEUtils().toLocation(region.getMinimumPoint());
+				Location base = Pugmas20.worldedit().toLocation(region.getMinimumPoint());
 				Queue<Location> queue = createDistanceSortedQueue(base);
 				getBlocks(id).thenAccept(blocks -> {
 					queue.addAll(blocks.keySet());
@@ -292,14 +292,14 @@ public class OrnamentVendor implements Listener {
 			return getPaster(id).getComputedBlocks();
 		}
 
-		private Paste getPaster(int id) {
+		private Paster getPaster(int id) {
 			return pasters.computeIfAbsent(id, $ -> {
 				ProtectedRegion region = getRegion(id);
 				if (region == null)
 					return null;
 
 				String schematicName = region.getId().replaceAll("_", "/");
-				return Pugmas20.getWEUtils().paster()
+				return Pugmas20.worldedit().paster()
 						.air(false)
 						.at(region.getMinimumPoint())
 						.duration(animationTime)
@@ -312,7 +312,7 @@ public class OrnamentVendor implements Listener {
 			regions.computeIfAbsent(id, $ -> {
 				try {
 					String regionName = "pugmas20_trees_" + name().toLowerCase() + "_" + id;
-					return Pugmas20.getWGUtils().getProtectedRegion(regionName);
+					return Pugmas20.worldguard().getProtectedRegion(regionName);
 				} catch (InvalidInputException ex) {
 					return null;
 				}

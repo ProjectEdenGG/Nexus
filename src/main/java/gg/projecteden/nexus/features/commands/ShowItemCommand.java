@@ -14,7 +14,6 @@ import gg.projecteden.nexus.models.chat.ChatterService;
 import gg.projecteden.nexus.models.chat.PublicChannel;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
-import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Data;
@@ -88,14 +87,21 @@ public class ShowItemCommand extends CustomCommand {
 
 		// Ingame
 		ChatColor color = channel.getMessageColor();
-		JsonBuilder json = json()
-			.next(channel.getChatterFormat(chatter))
-			.group()
-			.next((isNullOrEmpty(message) ? "" : message + " "))
-			.next(color + "&l[" + itemName + color + (amount > 1 ? " x" + amount : "") + "&l]")
-			.hover(item);
 
-		Broadcast.ingame().channel(channel).sender(chatter).message(json).messageType(MessageType.CHAT).send();
+		String finalMessage = message;
+		String finalItemName = itemName;
+
+		Broadcast.ingame()
+			.channel(channel)
+			.sender(chatter)
+			.message(viewer -> json()
+				.next(channel.getChatterFormat(chatter, viewer == null ? null : new ChatterService().get(viewer)))
+				.group()
+				.next((isNullOrEmpty(finalMessage) ? "" : finalMessage + " "))
+				.next(color + "&l[" + finalItemName + color + (amount > 1 ? " x" + amount : "") + "&l]")
+				.hover(item))
+			.messageType(MessageType.CHAT)
+			.send();
 
 		/*
 			Discord

@@ -8,7 +8,6 @@ import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationCon
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.WorldGroup;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -18,7 +17,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Data
-@Builder
 @Entity(value = "infinite_lava", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

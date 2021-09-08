@@ -205,8 +205,9 @@ public abstract class Crate implements Listener {
 
 	public void pickCrateLoot() {
 		Map<CrateLoot, Double> original = new HashMap<>();
-		Crates.getLootByType(getCrateType()).stream().filter(CrateLoot::isActive)
-				.forEach(crateLoot -> original.put(crateLoot, crateLoot.getWeight()));
+		Crates.getLootByType(getCrateType()).stream()
+			.filter(CrateLoot::isActive)
+			.forEach(crateLoot -> original.put(crateLoot, crateLoot.getWeight()));
 
 		if (original.size() == 0)
 			throw new CrateOpeningException("&3Coming soon...");

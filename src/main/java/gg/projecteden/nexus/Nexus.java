@@ -13,13 +13,11 @@ import gg.projecteden.nexus.framework.persistence.MySQLPersistence;
 import gg.projecteden.nexus.models.geoip.GeoIP;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
 import gg.projecteden.nexus.models.home.HomeService;
-import gg.projecteden.nexus.models.lwc.LWCProtectionService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.GoogleUtils;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Timer;
 import gg.projecteden.nexus.utils.WorldGuardFlagUtils;
 import gg.projecteden.utils.EnumUtils;
@@ -27,7 +25,6 @@ import gg.projecteden.utils.Env;
 import it.sauronsoftware.cron4j.Scheduler;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import me.arcaniax.hdb.api.HeadDatabaseAPI;
 import net.buycraft.plugin.bukkit.BuycraftPluginBase;
 import net.citizensnpcs.Citizens;
@@ -38,7 +35,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -47,15 +43,8 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.objenesis.ObjenesisStd;
 
-import java.io.BufferedWriter;
-import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -64,7 +53,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import static gg.projecteden.utils.TimeUtils.shortDateTimeFormat;
 import static gg.projecteden.utils.TimeUtils.shortTimeFormat;
 import static org.reflections.ReflectionUtils.getMethods;
 import static org.reflections.ReflectionUtils.withAnnotation;
@@ -189,69 +177,6 @@ public class Nexus extends JavaPlugin {
 		getInstance().getCommand(command).setTabCompleter(tabCompleter);
 	}
 
-	public static void fileLog(String file, String message) {
-		Tasks.async(() -> fileLogActual(file, message));
-	}
-
-	public static void fileLogSync(String file, String message) {
-		Tasks.sync(() -> fileLogActual(file, message));
-	}
-
-	public static void fileLogActual(String file, String message) {
-		synchronized (Nexus.getInstance()) {
-			try {
-				Path path = Paths.get("plugins/Nexus/logs/" + file + ".log");
-				if (!path.toFile().exists())
-					path.toFile().createNewFile();
-				try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.APPEND)) {
-					writer.append(System.lineSeparator()).append("[").append(shortDateTimeFormat(LocalDateTime.now())).append("] ").append(message);
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		}
-	}
-
-	public static void csvLog(String file, String message) {
-		Tasks.async(() -> {
-			synchronized (Nexus.getInstance()) {
-				try {
-					Path path = Paths.get("plugins/Nexus/logs/" + file + ".csv");
-					if (!path.toFile().exists())
-						path.toFile().createNewFile();
-					try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.APPEND)) {
-						writer.append(System.lineSeparator()).append(message);
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-			}
-		});
-	}
-
-	@SneakyThrows
-	public static File getFile(String path) {
-		File file = Paths.get("plugins/Nexus/" + path).toFile();
-		if (!file.exists()) file.createNewFile();
-		return file;
-	}
-
-	@SneakyThrows
-	public static File getFolder(String path) {
-		File file = Paths.get("plugins/Nexus/" + path).toFile();
-		if (!file.exists()) file.mkdir();
-		return file;
-	}
-
-	@SneakyThrows
-	public static YamlConfiguration getConfig(String path) {
-		return YamlConfiguration.loadConfiguration(getFile(path));
-	}
-
 	@Override
 	public void onLoad() {
 		WorldGuardFlagUtils.Flags.register();
@@ -346,11 +271,11 @@ public class Nexus extends JavaPlugin {
 
 	@Getter
 	// http://www.sauronsoftware.it/projects/cron4j/manual.php
-	private static Scheduler cron = new Scheduler();
+	private static final Scheduler cron = new Scheduler();
 
 	private void databases() {
-		new Timer("  MySQL", LWCProtectionService::new);
-		new Timer("  MongoDB", HomeService::new);
+//		new Timer(" MySQL", LWCProtectionService::new);
+		new Timer(" MongoDB", HomeService::new);
 	}
 
 	private void hooks() {

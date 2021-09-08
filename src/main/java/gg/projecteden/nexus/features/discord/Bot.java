@@ -19,11 +19,13 @@ import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
+import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
 
 import java.util.EnumSet;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static gg.projecteden.utils.StringUtils.camelCase;
 
 public enum Bot {
 
@@ -64,25 +66,36 @@ public enum Bot {
 
 	@SneakyThrows
 	void connect() {
-		if (this.jda == null && !isNullOrEmpty(getToken())) {
-			final JDA jda = build()
-					.enableIntents(EnumSet.allOf(GatewayIntent.class))
-					.setMemberCachePolicy(MemberCachePolicy.ALL)
-					.build()
-					.awaitReady();
-
-			if (jda == null) {
-				Nexus.log("Could not connect " + name() + " to Discord");
-				return;
-			}
-
-			Tasks.sync(() -> {
-				if (this.jda == null)
-					this.jda = jda;
-				else
-					jda.shutdown();
-			});
+		if (this.jda != null) {
+			debug("JDA already defined, aborting connection");
+			return;
 		}
+
+		if (isNullOrEmpty(getToken())) {
+			log("Token empty, aborting connection");
+			return;
+		}
+
+		final JDA jda = build()
+			.enableIntents(EnumSet.allOf(GatewayIntent.class))
+			.setMemberCachePolicy(MemberCachePolicy.ALL)
+			.build()
+			.awaitReady();
+
+		if (jda == null) {
+			log("Could not connect " + name() + " to Discord");
+			return;
+		}
+
+		Tasks.sync(() -> {
+			if (this.jda == null) {
+				log("Connected to Discord");
+				this.jda = jda;
+			} else {
+				log("Discarding extra Discord connection");
+				jda.shutdown();
+			}
+		});
 	}
 
 	void shutdown() {
@@ -98,6 +111,18 @@ public enum Bot {
 	}
 
 	public abstract String getId();
+
+	private void log(String message) {
+		Nexus.log(prefix() + message);
+	}
+	private void debug(String message) {
+		Nexus.debug(prefix() + message);
+	}
+
+	@NotNull
+	private String prefix() {
+		return "[Discord] [" + camelCase(this) + "] ";
+	}
 
 	@SneakyThrows
 	protected CommandClientBuilder getCommands() {

@@ -13,7 +13,7 @@ import java.util.Map;
 @ToString(callSuper = true)
 @SerializableAs("PixelPaintersArena")
 public class PixelPaintersArena extends Arena {
-	private Region designRegion = getRegion("designs");
+	private Region designsRegion = getRegion("designs");
 	private Region nextDesignRegion = getRegion("nextdesign");
 	private Region lobbyDesignRegion = getRegion("lobbynextdesign");
 	private Region logoRegion = getRegion("logo");

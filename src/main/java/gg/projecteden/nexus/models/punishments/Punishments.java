@@ -16,7 +16,6 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -42,7 +41,6 @@ import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static java.util.stream.Collectors.toList;
 
 @Data
-@Builder
 @Entity(value = "punishments", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

@@ -444,11 +444,11 @@ public class MinigamesCommand extends CustomCommand {
 		if (!canUse)
 			permissionError();
 
-		WorldGuardUtils WGUtils = new WorldGuardUtils(player());
-		if (!WGUtils.isInRegion(location(), "minigamelobby"))
+		WorldGuardUtils worldguard = new WorldGuardUtils(player());
+		if (!worldguard.isInRegion(location(), "minigamelobby"))
 			error("You must be in the Minigame Lobby to use this command");
 
-		if (WGUtils.isInRegion(location(), "screenshot")) {
+		if (worldguard.isInRegion(location(), "screenshot")) {
 			inviteCommand = "warp screenshot";
 			inviteMessage = "take a screenshot";
 		} else {
@@ -540,8 +540,8 @@ public class MinigamesCommand extends CustomCommand {
 	void getId(MinigamePodiumPosition position) {
 		if (position == null) {
 			send(PREFIX + "Podium IDs:");
-			Arrays.asList(MinigamePodiumPosition.values()).forEach(_position -> send("&3" + StringUtils.camelCase(_position.name()) +
-				": &e" + _position.getId()));
+			Arrays.asList(MinigamePodiumPosition.values()).forEach(_position ->
+				send("&3" + StringUtils.camelCase(_position.name()) + ": &e" + _position.getId()));
 		} else
 			send(PREFIX + StringUtils.camelCase(position.name()) + ": &e" + position.getId());
 	}

@@ -14,7 +14,6 @@ import org.bukkit.plugin.Plugin;
 import org.reflections.Reflections;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -117,8 +116,7 @@ public class Commands {
 	public void unregisterAll() {
 		for (Class<? extends CustomCommand> clazz : commandSet)
 			try {
-				if (!Modifier.isAbstract(clazz.getModifiers()))
-					unregister(clazz);
+				unregister(clazz);
 			} catch (Throwable ex) {
 				plugin.getLogger().info("Error while unregistering command " + prettyName(clazz));
 				ex.printStackTrace();
@@ -127,7 +125,8 @@ public class Commands {
 
 	public void unregister(Class<? extends CustomCommand>... customCommands) {
 		for (Class<? extends CustomCommand> clazz : customCommands)
-			unregister(Nexus.singletonOf(clazz));
+			if (Utils.canEnable(clazz))
+				unregister(Nexus.singletonOf(clazz));
 	}
 
 	public void unregisterExcept(Class<? extends CustomCommand>... customCommands) {

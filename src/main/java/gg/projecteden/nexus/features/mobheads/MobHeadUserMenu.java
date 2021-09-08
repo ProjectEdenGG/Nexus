@@ -102,7 +102,7 @@ public class MobHeadUserMenu extends MenuUtils implements InventoryProvider {
 	}
 
 	private void formatHeadsFilter(Player player, InventoryContents contents) {
-		final ItemBuilder item = getFilterItem(Material.ZOMBIE_HEAD, headsFilter);
+		final ItemBuilder item = getFilterItem(Material.HOPPER, headsFilter);
 		contents.set(5, 5, ClickableItem.from(item.build(), e -> {
 			headsFilter = headsFilter.nextWithLoop();
 			open(player, contents.pagination().getPage());

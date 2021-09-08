@@ -1,7 +1,10 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
 import com.mongodb.MongoNamespace;
+import gg.projecteden.EdenAPI;
 import gg.projecteden.annotations.Async;
+import gg.projecteden.interfaces.PlayerOwnedObject;
+import gg.projecteden.mongodb.MongoService;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -12,17 +15,19 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.models.MongoService;
-import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.utils.Utils;
 import lombok.NonNull;
+import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -144,12 +149,14 @@ public class DatabaseCommand extends CustomCommand {
 		send(PREFIX + "Saved &e" + Nickname.of(uuid) + " &3to &e" + name(service));
 	}
 
+	/*
 	@Async
 	@Path("queueSave <service> <uuid> <delay>")
 	<T extends PlayerOwnedObject> void queueSave(MongoService<T> service, UUID uuid, int delay) {
 		service.queueSave(delay, service.get(uuid));
 		send(PREFIX + "Queued save of &e" + Nickname.of(uuid) + " to &3" + name(service));
 	}
+	*/
 
 	@Async
 	@Path("saveCache <service> <threads>")
@@ -174,6 +181,22 @@ public class DatabaseCommand extends CustomCommand {
 		send(PREFIX + "Deleted all objects from &e" + name(service));
 	}
 
+	@Async
+	@Confirm
+	@SneakyThrows
+	@Path("copy <service> <from> <to>")
+	<T extends PlayerOwnedObject> void copy(MongoService<T> service, UUID from, UUID to) {
+		final T old = service.get(from);
+		final Field field = old.getClass().getDeclaredField("uuid");
+		field.setAccessible(true);
+		field.set(old, to);
+		service.getCache().remove(to);
+		service.save(old);
+		service.cache(old);
+		service.getCache().remove(from);
+		send(PREFIX + "Copied data from &e" + Nickname.of(from) + " &3to &e" + Nickname.of(to) + " &3in &e" + name(service));
+	}
+
 	@NotNull
 	private <T extends PlayerOwnedObject> String name(MongoService<T> service) {
 		return service.getClass().getSimpleName();
@@ -183,15 +206,18 @@ public class DatabaseCommand extends CustomCommand {
 	public static final Map<String, MongoService<? extends PlayerOwnedObject>> services = new HashMap<>();
 
 	static {
-		final String packageName = Nexus.class.getPackage().getName() + ".models";
-		Reflections reflections = new Reflections(packageName);
-		for (Class<? extends MongoService> service : reflections.getSubTypesOf(MongoService.class)) {
+		Reflections reflections = new Reflections(EdenAPI.class.getPackage().getName());
+		for (var service : reflections.getSubTypesOf(MongoService.class)) {
+			if (Modifier.isAbstract(service.getModifiers()))
+				continue;
+
+			final String className = service.getSimpleName();
 			try {
-				final String className = service.getSimpleName();
 				services.put(className, service.newInstance());
 				caseMap.put(className.toLowerCase(), className);
-			} catch (InstantiationException | IllegalAccessException e) {
-				e.printStackTrace();
+			} catch (InstantiationException | IllegalAccessException ex) {
+				Nexus.warn("Error caching service " + className);
+				ex.printStackTrace();
 			}
 		}
 	}
@@ -218,6 +244,9 @@ public class DatabaseCommand extends CustomCommand {
 		if ("0".equals(value))
 			return StringUtils.getUUID0();
 
+		if ("app".equalsIgnoreCase(value))
+			return EdenAPI.get().getAppUuid();
+
 		if (isUuid(value))
 			return UUID.fromString(value);
 
@@ -226,7 +255,15 @@ public class DatabaseCommand extends CustomCommand {
 
 	@TabCompleterFor(UUID.class)
 	List<String> tabCompleteUUID(String filter) {
-		return tabCompleteOfflinePlayer(filter);
+		final List<String> completions = new ArrayList<>();
+		if (!filter.equalsIgnoreCase("0") && !filter.equalsIgnoreCase("app"))
+			completions.addAll(tabCompleteOfflinePlayer(filter));
+
+		for (String shorthand : List.of("0", "app"))
+			if (shorthand.startsWith(filter))
+				completions.add(shorthand);
+
+		return completions;
 	}
 
 }

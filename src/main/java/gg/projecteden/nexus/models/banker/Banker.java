@@ -20,7 +20,6 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -38,7 +37,6 @@ import static gg.projecteden.nexus.models.banker.BankerService.rounded;
 import static gg.projecteden.nexus.utils.StringUtils.prettyMoney;
 
 @Data
-@Builder
 @Entity(value = "banker", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

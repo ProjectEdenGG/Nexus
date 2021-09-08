@@ -1,10 +1,9 @@
 package gg.projecteden.nexus.features.events.aeveonproject.sets;
 
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
 public class APRegions {
-
-	public APRegions() {
-
-	}
 
 	// Lobby
 	private static final String lobby = APSetType.LOBBY.get().getRegion();

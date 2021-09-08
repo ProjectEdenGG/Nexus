@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.models.voter;
 
+import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
 import gg.projecteden.nexus.models.voter.Voter.Vote;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,6 +20,14 @@ public class TopVoter {
 
 	public int getCount() {
 		return votes.size();
+	}
+
+	public String getNickname() {
+		try {
+			return getVoter().getNickname();
+		} catch (PlayerNotFoundException ignore) {}
+
+		return "Unknown";
 	}
 
 }

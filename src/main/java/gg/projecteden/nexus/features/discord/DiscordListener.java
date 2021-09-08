@@ -1,14 +1,15 @@
 package gg.projecteden.nexus.features.discord;
 
 import gg.projecteden.exceptions.EdenException;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
+import gg.projecteden.nexus.models.emblem.BadgeUser.Badge;
+import gg.projecteden.nexus.models.emblem.BadgeUserService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.setting.Setting;
 import gg.projecteden.nexus.models.setting.SettingService;
 import gg.projecteden.nexus.utils.HttpUtils;
-import gg.projecteden.nexus.utils.LuckPermsUtils;
+import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.DiscordId.Role;
 import gg.projecteden.utils.DiscordId.TextChannel;
@@ -36,7 +37,7 @@ public class DiscordListener extends ListenerAdapter {
 			String name = Discord.getName(event.getMember());
 			String channel = event.getChannelJoined().getName();
 
-			Nexus.fileLog("discord", name + " joined " + channel);
+			IOUtils.fileAppend("discord", name + " joined " + channel);
 		});
 	}
 
@@ -46,7 +47,7 @@ public class DiscordListener extends ListenerAdapter {
 			String name = Discord.getName(event.getMember());
 			String channel = event.getChannelLeft().getName();
 
-			Nexus.fileLog("discord", name + " left " + channel);
+			IOUtils.fileAppend("discord", name + " left " + channel);
 		});
 	}
 
@@ -68,7 +69,7 @@ public class DiscordListener extends ListenerAdapter {
 						if (user.getRank() == Rank.VETERAN)
 							Discord.addRole(event.getUser().getId(), Role.VETERAN);
 
-						if (LuckPermsUtils.hasPermission(user, "donated"))
+						if (new BadgeUserService().get(user).owns(Badge.SUPPORTER))
 							Discord.addRole(event.getUser().getId(), Role.SUPPORTER);
 					}
 				});
@@ -96,7 +97,7 @@ public class DiscordListener extends ListenerAdapter {
 			for (Message.Attachment attachment : event.getMessage().getAttachments())
 				message += " " + attachment.getUrl();
 
-			Nexus.fileLog("discord", "[#" + channel + "] " + name + ": " + message.trim());
+			IOUtils.fileAppend("discord", "[#" + channel + "] " + name + ": " + message.trim());
 
 			if (TextChannel.BOTS.getId().equals(event.getChannel().getId())) {
 				if (message.toLowerCase().startsWith(".pug")) {

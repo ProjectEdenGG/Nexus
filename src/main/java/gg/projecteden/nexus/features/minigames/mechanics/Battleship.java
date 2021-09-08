@@ -225,7 +225,7 @@ public class Battleship extends TeamMechanic {
 		for (Team team : match.getArena().getTeams())
 			hideShips(match, team);
 
-		match.getWEUtils().fixLight(match.getArena().getRegion("board"));
+		match.worldedit().fixLight(match.getArena().getRegion("board"));
 	}
 
 	@Override
@@ -264,10 +264,10 @@ public class Battleship extends TeamMechanic {
 			minigamer.getPlayer().setGameMode(GameMode.ADVENTURE);
 		});
 
-		Tasks.wait(TickTime.SECOND, () -> match.getWEUtils().fixLight(match.getArena().getRegion("board")));
+		Tasks.wait(TickTime.SECOND, () -> match.worldedit().fixLight(match.getArena().getRegion("board")));
 
 		Region floor = match.getArena().getRegion("floor");
-		match.getArena().getWEUtils().replace(floor, Sets.newHashSet(BlockTypes.BLUE_CONCRETE, BlockTypes.YELLOW_WOOL), Collections.singleton(BlockTypes.WATER));
+		match.getArena().worldedit().replace(floor, Sets.newHashSet(BlockTypes.BLUE_CONCRETE, BlockTypes.YELLOW_WOOL), Collections.singleton(BlockTypes.WATER));
 	}
 
 	public void hideShips(Match match, Team team) {
@@ -277,7 +277,7 @@ public class Battleship extends TeamMechanic {
 
 		Region region = match.getArena().getRegion("hideships_" + team.getName().toLowerCase());
 		for (BlockVector3 vector : region) {
-			Location location = match.getWEUtils().toLocation(vector);
+			Location location = match.worldedit().toLocation(vector);
 			for (Minigamer minigamer : otherTeamMembers) {
 				minigamer.getPlayer().sendBlockChange(location, Bukkit.createBlockData(Material.STONE));
 				minigamer.getPlayer().sendBlockChange(location.add(0, 10, 0), Bukkit.createBlockData(Material.STONE));

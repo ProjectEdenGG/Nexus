@@ -25,10 +25,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.getWGUtils;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.isAtBearFair;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.isBFItem;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.send;
+import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.worldguard;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.itemLore;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.toolError;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Loot.cod;
@@ -148,7 +148,7 @@ public class Fishing implements Listener {
 		String regionCheck = weightedLoot.getRegionCheck();
 		String playerRegion = null;
 		if (regionCheck != null) {
-			Set<ProtectedRegion> regions = getWGUtils().getRegionsAt(player.getLocation());
+			Set<ProtectedRegion> regions = worldguard().getRegionsAt(player.getLocation());
 			for (ProtectedRegion region : regions) {
 				if (region.getId().equalsIgnoreCase(regionCheck)) {
 					playerRegion = region.getId();

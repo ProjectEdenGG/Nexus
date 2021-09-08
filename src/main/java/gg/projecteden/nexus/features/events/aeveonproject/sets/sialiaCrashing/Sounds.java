@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
 import java.util.Collection;
 
 import static gg.projecteden.nexus.features.events.aeveonproject.APUtils.APLoc;
-import static gg.projecteden.nexus.features.events.aeveonproject.AeveonProject.getWGUtils;
+import static gg.projecteden.nexus.features.events.aeveonproject.AeveonProject.worldguard;
 
 public class Sounds {
 	private static final Location engineLoc = APLoc(-823, 86, -1062);
@@ -30,7 +30,7 @@ public class Sounds {
 
 			Tasks.sync(() -> {
 
-				Collection<Player> players = getWGUtils().getPlayersInRegion(APSetType.SIALIA_CRASHING.get().getRegion());
+				Collection<Player> players = worldguard().getPlayersInRegion(APSetType.SIALIA_CRASHING.get().getRegion());
 				for (Player player : players) {
 					if (player.getInventory().getHelmet() != null && player.getInventory().getHelmet().getType().equals(Material.LEATHER_HELMET))
 						continue;
@@ -46,7 +46,7 @@ public class Sounds {
 				return;
 
 			Tasks.sync(() -> {
-				Collection<Player> players = getWGUtils().getPlayersInRegion(APSetType.SIALIA_CRASHING.get().getRegion());
+				Collection<Player> players = worldguard().getPlayersInRegion(APSetType.SIALIA_CRASHING.get().getRegion());
 				for (Player player : players) {
 					if (player.getInventory().getHelmet() != null && player.getInventory().getHelmet().getType().equals(Material.LEATHER_HELMET))
 						continue;
@@ -63,7 +63,7 @@ public class Sounds {
 				return;
 
 			Tasks.sync(() -> {
-				Collection<Player> players = getWGUtils().getPlayersInRegion(APSetType.SIALIA_CRASHING.get().getRegion());
+				Collection<Player> players = worldguard().getPlayersInRegion(APSetType.SIALIA_CRASHING.get().getRegion());
 				for (Player player : players) {
 					if (player.getInventory().getHelmet() != null && player.getInventory().getHelmet().getType().equals(Material.LEATHER_HELMET))
 						continue;

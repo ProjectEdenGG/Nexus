@@ -128,7 +128,7 @@ public class PixelDropMatchData extends MatchData {
 			// Builds the map
 			for (int x = 0; x < 15; x++) {
 				for (int z = 0; z < 15; z++) {
-					Block block = WGUtils.toLocation(designMin.add(x, 0, z)).getBlock();
+					Block block = worldguard().toLocation(designMin.add(x, 0, z)).getBlock();
 					String key = x + "_" + z;
 					lobbyDesignMap.put(key, block);
 					lobbyKeys.add(key);
@@ -150,7 +150,7 @@ public class PixelDropMatchData extends MatchData {
 					int z = Integer.parseInt(xz[1]);
 
 					Block block = lobbyDesignMap.get(x + "_" + z);
-					Location loc = WGUtils.toLocation(pasteMin.add(x, 0, z));
+					Location loc = worldguard().toLocation(pasteMin.add(x, 0, z));
 					loc.getBlock().setType(block.getType());
 				}
 			});
@@ -168,7 +168,7 @@ public class PixelDropMatchData extends MatchData {
 	public void countDesigns(Match match) {
 		PixelDropArena arena = match.getArena();
 		PixelDropMatchData matchData = match.getMatchData();
-		Location min = arena.getWEUtils().toLocation(arena.getDesignRegion().getMinimumPoint());
+		Location min = arena.worldedit().toLocation(arena.getDesignRegion().getMinimumPoint());
 		int highest = min.getWorld().getHighestBlockYAt(min);
 		matchData.setDesignCount(highest - 4);
 	}
@@ -181,7 +181,7 @@ public class PixelDropMatchData extends MatchData {
 		int designCount = matchData.getDesignCount();
 
 		for (int i = 0; i < designCount; i++) {
-			Location signLoc = WGUtils.toLocation(minPoint).add(0, i, 0);
+			Location signLoc = worldguard().toLocation(minPoint).add(0, i, 0);
 			String word = getWord(signLoc);
 			designWords.add(word);
 		}
@@ -253,7 +253,7 @@ public class PixelDropMatchData extends MatchData {
 
 	public void clearFloor(Match match) {
 		PixelDropArena arena = match.getArena();
-		List<Block> blocks = new ArrayList<>(WEUtils.getBlocks(arena.getBoardRegion()));
+		List<Block> blocks = new ArrayList<>(worldedit().getBlocks(arena.getBoardRegion()));
 
 		AtomicInteger taskId = new AtomicInteger();
 		taskId.set(match.getTasks().repeat(0, 2, () -> {

@@ -42,10 +42,10 @@ public class RegenRegions implements Listener {
 		if (!(event.getPlayer().getGameMode().equals(GameMode.SURVIVAL))) return;
 		Block eventBlock = event.getBlock();
 		Location loc = eventBlock.getLocation();
-		WorldGuardUtils WGUtils = new WorldGuardUtils(loc);
+		WorldGuardUtils worldguard = new WorldGuardUtils(loc);
 		String key = "_regen_";
 
-		for (ProtectedRegion region : WGUtils.getRegionsAt(loc)) {
+		for (ProtectedRegion region : worldguard.getRegionsAt(loc)) {
 			String regionName = region.getId();
 			if (regionName.contains(key)) {
 				int ndx = regionName.indexOf('_');

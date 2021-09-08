@@ -70,7 +70,7 @@ public class ArcheryMatchData extends MatchData {
 		colorRegions.forEach(colorRegion -> {
 			powderLocations.put(colorRegion, new ArrayList<>());
 
-			WEUtils.getBlocks(WGUtils.convert(colorRegion)).forEach(block -> {
+			worldedit().getBlocks(worldguard().convert(colorRegion)).forEach(block -> {
 				if (MaterialTag.CONCRETE_POWDERS.isTagged(block.getType()))
 					powderLocations.get(colorRegion).add(block.getLocation());
 			});
@@ -133,7 +133,7 @@ public class ArcheryMatchData extends MatchData {
 		// Get active regions
 		List<Minigamer> minigamers = match.getMinigamers();
 		minigamers.forEach(minigamer -> {
-			Set<ProtectedRegion> regionsAt = WGUtils.getRegionsAt(minigamer.getPlayer().getLocation());
+			Set<ProtectedRegion> regionsAt = worldguard().getRegionsAt(minigamer.getPlayer().getLocation());
 			regionsAt.forEach(region -> {
 				if (rangeRegions.contains(region))
 					activeRegions.add(region);

@@ -17,8 +17,6 @@ public class MatchData {
 	@ToString.Exclude
 	protected Match match;
 	protected Arena arena;
-	protected WorldGuardUtils WGUtils;
-	protected WorldEditUtils WEUtils;
 
 	protected Team winnerTeam;
 	protected Minigamer winnerPlayer;
@@ -35,8 +33,14 @@ public class MatchData {
 	public MatchData(Match match) {
 		this.match = match;
 		this.arena = match.getArena();
-		WGUtils = match.getArena().getWGUtils();
-		WEUtils = match.getArena().getWEUtils();
+	}
+
+	public WorldEditUtils worldedit() {
+		return match.worldedit();
+	}
+
+	public WorldGuardUtils worldguard() {
+		return match.worldguard();
 	}
 
 }

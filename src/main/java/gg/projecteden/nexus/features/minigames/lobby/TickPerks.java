@@ -216,7 +216,7 @@ public class TickPerks implements Listener {
 	}
 
 	public boolean isInRegion(Player player) {
-		return Minigames.getWorldGuardUtils().isInRegion(player.getLocation(), Minigames.getLobbyRegion());
+		return Minigames.worldguard().isInRegion(player.getLocation(), Minigames.getLobbyRegion());
 	}
 
 	@Data

@@ -13,7 +13,6 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigol
 import gg.projecteden.nexus.features.particles.ParticleUtils;
 import gg.projecteden.nexus.models.bearfair21.MiniGolf21User;
 import gg.projecteden.nexus.models.bearfair21.MiniGolf21UserService;
-import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.FireworkLauncher;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -50,6 +49,7 @@ import org.bukkit.util.Vector;
 import org.inventivetalent.glow.GlowAPI;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -121,60 +121,66 @@ public class MiniGolf {
 	private void extrasTasks() {
 		// Golf Ball Color
 		Location golfBallLoc = new Location(BearFair21.getWorld(), 111, 138, -27);
-		ArmorStand armorStand = EntityUtils.getNearestEntityType(golfBallLoc, ArmorStand.class, 1.5);
+		BearFair21.getWorld().getChunkAtAsync(golfBallLoc).thenRun(() -> {
+			final Collection<ArmorStand> armorStands = golfBallLoc.getNearbyEntitiesByType(ArmorStand.class, 1.5);
+			if (armorStands.isEmpty())
+				return;
 
-		List<ItemStack> golfBalls = Arrays.stream(MiniGolfColor.values())
+			ArmorStand armorStand = armorStands.iterator().next();
+
+			List<ItemStack> golfBalls = Arrays.stream(MiniGolfColor.values())
 				.filter(Objects::nonNull)
 				.map(miniGolfColor -> (MiniGolf.getGolfBall().clone().customModelData(miniGolfColor.getCustomModelData()).build()))
 				.toList();
 
-		if (armorStand != null && !Utils.isNullOrEmpty(golfBalls)) {
-			armorStand.setSilent(true);
+			if (armorStand != null && !Utils.isNullOrEmpty(golfBalls)) {
+				armorStand.setSilent(true);
 
-			AtomicInteger index = new AtomicInteger();
-			Tasks.repeat(0, TickTime.SECOND.x(2), () -> {
-				if (BearFair21.getWGUtils().getPlayersInRegion(gameRegion + "_play_top").size() <= 0)
-					return;
+				AtomicInteger index = new AtomicInteger();
+				Tasks.repeat(0, TickTime.SECOND.x(2), () -> {
+					if (BearFair21.worldguard().getPlayersInRegion(gameRegion + "_play_top").size() <= 0)
+						return;
 
-				ItemStack golfBall = golfBalls.get(index.get());
-				if (!ItemUtils.isNullOrAir(golfBall))
-					armorStand.setItem(EquipmentSlot.HAND, golfBall);
+					ItemStack golfBall = golfBalls.get(index.get());
+					if (!ItemUtils.isNullOrAir(golfBall))
+						armorStand.setItem(EquipmentSlot.HAND, golfBall);
 
-				index.getAndIncrement();
-				if (index.get() >= golfBalls.size())
-					index.set(0);
-			});
-		}
+					index.getAndIncrement();
+					if (index.get() >= golfBalls.size())
+						index.set(0);
+				});
+			}
 
-		// Particles
-		Location particleLoc = new Location(BearFair21.getWorld(), 114, 139, -27).toCenterLocation();
-		List<Particle> particles = Arrays.stream(MiniGolfParticle.values())
+			// Particles
+			Location particleLoc = new Location(BearFair21.getWorld(), 114, 139, -27).toCenterLocation();
+			List<Particle> particles = Arrays.stream(MiniGolfParticle.values())
 				.map(MiniGolfParticle::getParticle)
 				.filter(Objects::nonNull)
 				.toList();
 
-		if (!Utils.isNullOrEmpty(particles)) {
-			AtomicInteger index = new AtomicInteger(0);
-			Tasks.repeat(0, TickTime.SECOND.x(2), () -> {
-				if (BearFair21.getWGUtils().getPlayersInRegion(gameRegion + "_play_top").size() <= 0)
-					return;
+			if (!Utils.isNullOrEmpty(particles)) {
+				AtomicInteger index = new AtomicInteger(0);
+				Tasks.repeat(0, TickTime.SECOND.x(2), () -> {
+					if (BearFair21.worldguard().getPlayersInRegion(gameRegion + "_play_top").size() <= 0)
+						return;
 
-				Particle particle = particles.get(index.get());
-				if (particle != null) {
-					ParticleBuilder particleBuilder = new ParticleBuilder(particle).location(particleLoc)
+					Particle particle = particles.get(index.get());
+					if (particle != null) {
+						ParticleBuilder particleBuilder = new ParticleBuilder(particle).location(particleLoc)
 							.count(50).extra(0.01).offset(0.2, 0.2, 0.2);
-					if (particle.equals(Particle.REDSTONE))
-						particleBuilder.color(Color.RED);
+						if (particle.equals(Particle.REDSTONE))
+							particleBuilder.color(Color.RED);
 
-					particleBuilder.spawn();
-					Tasks.wait(TickTime.SECOND, particleBuilder::spawn);
-				}
+						particleBuilder.spawn();
+						Tasks.wait(TickTime.SECOND, particleBuilder::spawn);
+					}
 
-				index.getAndIncrement();
-				if (index.get() >= particles.size())
-					index.set(0);
-			});
-		}
+					index.getAndIncrement();
+					if (index.get() >= particles.size())
+						index.set(0);
+				});
+			}
+		});
 	}
 
 	private void redstoneTask() {
@@ -185,14 +191,14 @@ public class MiniGolf {
 		String hole13 = MiniGolfHole.THIRTEEN.getRegionId() + "_activate";
 		Location hole13Loc = new Location(BearFair21.getWorld(), 101, 119, -28);
 		Tasks.repeat(TickTime.SECOND.x(5), TickTime.SECOND.x(2), () -> {
-			if (BearFair21.getWGUtils().getPlayersInRegion(hole13).size() > 0)
+			if (BearFair21.worldguard().getPlayersInRegion(hole13).size() > 0)
 				hole13Loc.getBlock().setType(Material.REDSTONE_BLOCK);
 		});
 
 		// Hole 17
 		Location hole17Loc = new Location(BearFair21.getWorld(), 107, 117, -9);
 		Tasks.repeat(TickTime.SECOND.x(5), TickTime.TICK.x(38), () -> {
-			if (BearFair21.getWGUtils().getPlayersInRegion(gameRegion + "_play_top").size() > 0)
+			if (BearFair21.worldguard().getPlayersInRegion(gameRegion + "_play_top").size() > 0)
 				hole17Loc.getBlock().setType(Material.REDSTONE_BLOCK);
 		});
 	}
@@ -205,7 +211,7 @@ public class MiniGolf {
 		Tasks.repeat(TickTime.SECOND.x(5), TickTime.SECOND.x(2), () -> {
 			for (Player player : PlayerUtils.getOnlinePlayers()) {
 				MiniGolf21User user = service.get(player);
-				int regions = BearFair21.getWGUtils().getRegionsLikeAt(gameRegion + "_play_.*", player.getLocation()).size();
+				int regions = BearFair21.worldguard().getRegionsLikeAt(gameRegion + "_play_.*", player.getLocation()).size();
 
 				if (user.isPlaying() && regions == 0)
 					PlayerUtils.runCommand(player, "minigolf quit");

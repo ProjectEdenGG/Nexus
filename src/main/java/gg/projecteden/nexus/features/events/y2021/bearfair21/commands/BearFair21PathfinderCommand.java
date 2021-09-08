@@ -89,11 +89,11 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 		BearFair21WebConfig config = service.get0();
 		Web web = new Web("beehive");
 
-		WorldGuardUtils WGUtils = new WorldGuardUtils(player());
-		Region region = WGUtils.getRegion("pathfinder_beehive");
+		WorldGuardUtils worldguard = new WorldGuardUtils(player());
+		Region region = worldguard.getRegion("pathfinder_beehive");
 
-		WorldEditUtils WEUtils = new WorldEditUtils(player());
-		for (Block block : WEUtils.getBlocks(region)) {
+		WorldEditUtils worldedit = new WorldEditUtils(player());
+		for (Block block : worldedit.getBlocks(region)) {
 			if (block.getType().equals(Material.BLACK_CONCRETE)) {
 				Node node = new Node(block.getLocation());
 				web.getNodes().add(node);
@@ -240,8 +240,8 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 		if (end)
 			return;
 
-		WorldGuardUtils WGUtils = new WorldGuardUtils(player);
-		if (!WGUtils.isInRegion(player, "pathfinder_beehive"))
+		WorldGuardUtils worldguard = new WorldGuardUtils(player);
+		if (!worldguard.isInRegion(player, "pathfinder_beehive"))
 			return;
 
 		BearFair21WebConfigService service = new BearFair21WebConfigService();
@@ -315,8 +315,8 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 		if (end)
 			return;
 
-		WorldGuardUtils WGUtils = new WorldGuardUtils(player);
-		if (!WGUtils.isInRegion(player, "pathfinder_beehive"))
+		WorldGuardUtils worldguard = new WorldGuardUtils(player);
+		if (!worldguard.isInRegion(player, "pathfinder_beehive"))
 			return;
 
 		BearFair21WebConfigService service = new BearFair21WebConfigService();

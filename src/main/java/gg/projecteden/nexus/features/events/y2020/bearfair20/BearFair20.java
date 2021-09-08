@@ -60,11 +60,11 @@ public class BearFair20 implements Listener {
 
 	public BearFair20() {
 		Nexus.registerListener(this);
-		new Timer("    Fairgrounds", Fairgrounds::new);
-		new Timer("    Islands", IslandType::values);
+		new Timer("      BF20.Fairgrounds", Fairgrounds::new);
+		new Timer("      BF20.Islands", IslandType::values);
 		if (enableQuests) {
-			new Timer("    BFQuests", BFQuests::new);
-			new Timer("    EasterEggs", EasterEggs::new);
+			new Timer("      BF20.BFQuests", BFQuests::new);
+			new Timer("      BF20.EasterEggs", EasterEggs::new);
 		}
 	}
 
@@ -72,16 +72,16 @@ public class BearFair20 implements Listener {
 		return Bukkit.getWorld("safepvp");
 	}
 
-	public static WorldGuardUtils getWGUtils() {
+	public static WorldGuardUtils worldguard() {
 		return new WorldGuardUtils(getWorld());
 	}
 
-	public static WorldEditUtils getWEUtils() {
+	public static WorldEditUtils worldedit() {
 		return new WorldEditUtils(getWorld());
 	}
 
 	public static ProtectedRegion getProtectedRegion() {
-		return getWGUtils().getProtectedRegion(region);
+		return worldguard().getProtectedRegion(region);
 	}
 
 	@EventHandler
@@ -238,7 +238,7 @@ public class BearFair20 implements Listener {
 	}
 
 	public static boolean isInRegion(Location location, String region) {
-		return location.getWorld().equals(BearFair20.getWorld()) && getWGUtils().isInRegion(location, region);
+		return location.getWorld().equals(BearFair20.getWorld()) && worldguard().isInRegion(location, region);
 	}
 
 	public static boolean isBFItem(ItemStack item) {

@@ -13,7 +13,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.commands.models.events.CommandRunEvent;
-import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.freeze.Freeze;
 import gg.projecteden.nexus.models.freeze.FreezeService;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -23,6 +22,7 @@ import gg.projecteden.nexus.models.punishments.PunishmentType;
 import gg.projecteden.nexus.models.punishments.Punishments;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.utils.TimeUtils;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import lombok.NoArgsConstructor;
 import org.bukkit.OfflinePlayer;
@@ -57,6 +57,15 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @Permission("group.moderator")
 public class FreezeCommand extends _PunishmentCommand implements Listener {
+
+	static {
+		FreezeService freezeService = new FreezeService();
+		Tasks.repeatAsync(0, TimeUtils.TickTime.TICK.x(10), () -> {
+			for (Freeze freeze : freezeService.getOnline())
+				if (freeze.isFrozen() && !freeze.isInArea())
+					Tasks.sync(() -> freeze.getPlayer().teleportAsync(freeze.getLocation()));
+		});
+	}
 
 	public FreezeCommand(CommandEvent event) {
 		super(event);
@@ -133,14 +142,14 @@ public class FreezeCommand extends _PunishmentCommand implements Listener {
 
 			if (!isFrozen(event.getPlayer())) {
 				PotionEffect jumpEffect = event.getPlayer().getPotionEffect(PotionEffectType.JUMP);
-				if (jumpEffect != null && jumpEffect.getAmplifier() >= 127)
-					try {
-						new FreezeService().get(event.getPlayer()).unfreeze();
-					} catch (InvalidInputException ignore) {}
+				if (jumpEffect != null && event.getPlayer().getWalkSpeed() == 0)
+					if (get(event.getPlayer()).isInArea())
+						get(event.getPlayer()).unmount();
 				return;
 			}
 
 			get(event.getPlayer()).mount();
+			get(event.getPlayer()).sendMessage(getPrefix() + "&3You are currently frozen!");
 
 			String message = "&e" + Nickname.of(event.getPlayer()) + " &3has logged in while frozen.";
 			Broadcast.staff().prefix("Freeze").message(message).send();
@@ -149,6 +158,7 @@ public class FreezeCommand extends _PunishmentCommand implements Listener {
 
 	@EventHandler
 	public void onPlayerTeleport(PlayerTeleportEvent event) {
+		if (event.getTo().getLocation().equals(get(event.getPlayer()).getLocation())) return;
 		if (!isFrozen(event.getPlayer())) return;
 		event.setCancelled(true);
 	}

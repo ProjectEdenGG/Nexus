@@ -16,7 +16,6 @@ import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,7 +40,6 @@ import static gg.projecteden.nexus.utils.StringUtils.getShortLocationString;
 import static gg.projecteden.utils.StringUtils.camelCase;
 
 @Data
-@Builder
 @Entity(value = "ambience_config", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

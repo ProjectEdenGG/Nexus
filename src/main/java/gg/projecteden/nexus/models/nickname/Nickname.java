@@ -3,6 +3,7 @@ package gg.projecteden.nexus.models.nickname;
 import com.vdurmont.emoji.EmojiManager;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
+import gg.projecteden.EdenAPI;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -85,6 +86,8 @@ public class Nickname extends gg.projecteden.models.nickname.Nickname implements
 	}
 
 	public @NotNull String getNickname() {
+		if (StringUtils.isAppUuid(uuid))
+			return EdenAPI.get().getAppName();
 		if (StringUtils.isUUID0(uuid))
 			return "Console";
 		if (isNullOrEmpty(nickname))

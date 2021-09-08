@@ -11,7 +11,6 @@ import gg.projecteden.nexus.models.punishments.Punishment;
 import gg.projecteden.nexus.models.punishments.PunishmentType;
 import gg.projecteden.nexus.models.punishments.Punishments;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -26,7 +25,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Data
-@Builder
 @Entity(value = "freeze", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor
@@ -37,6 +35,7 @@ public class Freeze implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private boolean frozen;
+	private Location location;
 
 	private static final boolean armorStandsDisabled = true;
 
@@ -64,6 +63,7 @@ public class Freeze implements PlayerOwnedObject {
 			throw new InvalidInputException(getNickname() + " is not frozen");
 
 		frozen = false;
+		location = null;
 		new FreezeService().save(this);
 
 		if (isOnline())
@@ -72,6 +72,8 @@ public class Freeze implements PlayerOwnedObject {
 
 	private void execute() {
 		frozen = true;
+		if (isOnline())
+			location = getOnlinePlayer().getLocation();
 		new FreezeService().save(this);
 
 		mount();
@@ -95,7 +97,7 @@ public class Freeze implements PlayerOwnedObject {
 		if (armorStandsDisabled) {
 			SpeedCommand.setSpeed(player, 0, false);
 			SpeedCommand.setSpeed(player, 0, true);
-			player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 9999999, 200, true, true, false));
+			player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 9999999, 200, true, false, false));
 		} else {
 			if (player.getVehicle() != null)
 				player.getVehicle().removePassenger(player);
@@ -111,7 +113,7 @@ public class Freeze implements PlayerOwnedObject {
 		}
 	}
 
-	private void unmount() {
+	public void unmount() {
 		Player player = getOnlinePlayer();
 
 		if (armorStandsDisabled) {
@@ -120,6 +122,17 @@ public class Freeze implements PlayerOwnedObject {
 		} else
 			if (player.getVehicle() != null && player.getVehicle() instanceof ArmorStand)
 				player.getVehicle().remove();
+	}
+
+	private static final int MAX_DISTANCE = 3;
+
+	public boolean isInArea() {
+		if (location == null) {
+			location = getOnlinePlayer().getLocation();
+			new FreezeService().save(this);
+		}
+
+		return getOnlinePlayer().getLocation().distance(location) < MAX_DISTANCE;
 	}
 
 }

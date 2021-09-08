@@ -24,6 +24,11 @@ public class API extends EdenAPI {
 	}
 
 	@Override
+	public String getAppName() {
+		return Nexus.class.getSimpleName();
+	}
+
+	@Override
 	public Env getEnv() {
 		return Nexus.getEnv();
 	}

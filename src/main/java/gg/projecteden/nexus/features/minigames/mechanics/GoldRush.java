@@ -98,25 +98,25 @@ public final class GoldRush extends TeamlessMechanic {
 			put(BlockTypes.OAK_LOG, 10.0);
 		}};
 
-		WorldEditUtils WEUtils = new WorldEditUtils(locations.get(0));
+		WorldEditUtils worldedit = new WorldEditUtils(locations.get(0));
 
-		BlockVector3 p1 = WEUtils.toBlockVector3(locations.get(0).clone().subtract(0, 2, 0));
-		BlockVector3 p2 = WEUtils.toBlockVector3(locations.get(0).clone().subtract(0, mineStackHeight, 0));
+		BlockVector3 p1 = worldedit.toBlockVector3(locations.get(0).clone().subtract(0, 2, 0));
+		BlockVector3 p2 = worldedit.toBlockVector3(locations.get(0).clone().subtract(0, mineStackHeight, 0));
 		Region region = new CuboidRegion(p1, p2);
-		WEUtils.replace(region, Collections.singleton(BlockTypes.AIR), pattern);
+		worldedit.replace(region, Collections.singleton(BlockTypes.AIR), pattern);
 
-		WEUtils.copy(locations.get(0).clone().subtract(0, 2, 0), locations.get(0).clone().subtract(0, mineStackHeight, 0)).thenAccept(clipboard -> {
+		worldedit.copy(locations.get(0).clone().subtract(0, 2, 0), locations.get(0).clone().subtract(0, mineStackHeight, 0)).thenAccept(clipboard -> {
 			for (Location location : locations)
-				WEUtils.paster().clipboard(clipboard).at(WEUtils.toBlockVector3(location.clone().subtract(0, mineStackHeight, 0))).pasteAsync();
+				worldedit.paster().clipboard(clipboard).at(worldedit.toBlockVector3(location.clone().subtract(0, mineStackHeight, 0))).pasteAsync();
 		});
 	}
 
 	public void removeMineStacks(int mineStackHeight, Location loc) {
-		WorldEditUtils WEUtils = new WorldEditUtils(loc);
-		BlockVector3 p1 = WEUtils.toBlockVector3(loc.clone().subtract(0, 2, 0));
-		BlockVector3 p2 = WEUtils.toBlockVector3(loc.clone().subtract(0, mineStackHeight, 0));
+		WorldEditUtils worldedit = new WorldEditUtils(loc);
+		BlockVector3 p1 = worldedit.toBlockVector3(loc.clone().subtract(0, 2, 0));
+		BlockVector3 p2 = worldedit.toBlockVector3(loc.clone().subtract(0, mineStackHeight, 0));
 		Region region = new CuboidRegion(p1, p2);
-		WEUtils.set(region, BlockTypes.AIR);
+		worldedit.set(region, BlockTypes.AIR);
 	}
 
 	@EventHandler

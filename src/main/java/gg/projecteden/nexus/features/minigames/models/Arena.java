@@ -13,7 +13,6 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -44,7 +43,6 @@ import static gg.projecteden.nexus.utils.SerializationUtils.YML.deserializeMater
 import static gg.projecteden.nexus.utils.SerializationUtils.YML.serializeMaterialSet;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @SerializableAs("Arena")
@@ -168,11 +166,11 @@ public class Arena implements ConfigurationSerializable, Named, ComponentLike {
 		return location.getWorld();
 	}
 
-	public @NotNull final WorldGuardUtils getWGUtils() {
+	public @NotNull final WorldGuardUtils worldguard() {
 		return new WorldGuardUtils(getWorld());
 	}
 
-	public @NotNull final WorldEditUtils getWEUtils() {
+	public @NotNull final WorldEditUtils worldedit() {
 		return new WorldEditUtils(getWorld());
 	}
 
@@ -188,9 +186,9 @@ public class Arena implements ConfigurationSerializable, Named, ComponentLike {
 	private void regenerate(@NotNull String type) {
 		String regex = getRegionTypeRegex(type);
 
-		getWGUtils().getRegionsLike(regex).forEach(region -> {
+		worldguard().getRegionsLike(regex).forEach(region -> {
 			String file = getSchematicName(region.getId().replaceFirst(getRegionBaseName().toLowerCase() + "_", ""));
-			getWEUtils().paster().file(file.toLowerCase()).at(region.getMinimumPoint()).pasteAsync();
+			worldedit().paster().file(file.toLowerCase()).at(region.getMinimumPoint()).pasteAsync();
 		});
 	}
 
@@ -232,11 +230,11 @@ public class Arena implements ConfigurationSerializable, Named, ComponentLike {
 	}
 
 	public Region getRegion() {
-		return getWGUtils().getRegion(getRegionBaseName());
+		return worldguard().getRegion(getRegionBaseName());
 	}
 
 	public Region getRegion(@NotNull String type) {
-		return getWGUtils().getRegion(getRegionBaseName() + "_" + type);
+		return worldguard().getRegion(getRegionBaseName() + "_" + type);
 	}
 
 	public static int getRegionNumber(@NotNull ProtectedRegion region) {
@@ -245,19 +243,19 @@ public class Arena implements ConfigurationSerializable, Named, ComponentLike {
 	}
 
 	public @NotNull Set<ProtectedRegion> getRegionsLike(@NotNull String regex) {
-		return getWGUtils().getRegionsLike(getRegionBaseName() + "_" + regex + NUMBER_MODIFIER);
+		return worldguard().getRegionsLike(getRegionBaseName() + "_" + regex + NUMBER_MODIFIER);
 	}
 
 	public @NotNull Set<ProtectedRegion> getRegionsLikeAt(@NotNull String regex, @NotNull Location location) {
-		return getWGUtils().getRegionsLikeAt(getRegionBaseName() + "_" + regex + NUMBER_MODIFIER, location);
+		return worldguard().getRegionsLikeAt(getRegionBaseName() + "_" + regex + NUMBER_MODIFIER, location);
 	}
 
 	public @NotNull ProtectedRegion getProtectedRegion() {
-		return getWGUtils().getProtectedRegion(getRegionBaseName());
+		return worldguard().getProtectedRegion(getRegionBaseName());
 	}
 
 	public @NotNull ProtectedRegion getProtectedRegion(@NotNull String type) {
-		return getWGUtils().getProtectedRegion(getRegionBaseName() + "_" + type);
+		return worldguard().getProtectedRegion(getRegionBaseName() + "_" + type);
 	}
 
 	public boolean isInRegion(@NotNull Block block, @NotNull String type) {

@@ -2,10 +2,9 @@ package gg.projecteden.nexus.features.events.aeveonproject;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.aeveonproject.effects.Effects;
-import gg.projecteden.nexus.features.events.aeveonproject.sets.APRegions;
 import gg.projecteden.nexus.features.events.aeveonproject.sets.APSetToggler;
 import gg.projecteden.nexus.features.events.aeveonproject.sets.APSetType;
-import gg.projecteden.nexus.utils.Timer;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.Data;
@@ -20,23 +19,22 @@ public class AeveonProject implements Listener {
 
 	public AeveonProject() {
 		Nexus.registerListener(this);
-		new Timer("    Sets", () -> {
-			APSetType.values();
+		Tasks.async(() -> {
+			APSetType.init();
 			new APSetToggler();
+			new Effects();
 		});
-		new Timer("    Effects", Effects::new);
-		new Timer("    Regions", APRegions::new);
 	}
 
 	public static World getWorld() {
 		return Bukkit.getWorld("Aeveon_Project");
 	}
 
-	public static WorldGuardUtils getWGUtils() {
+	public static WorldGuardUtils worldguard() {
 		return new WorldGuardUtils(getWorld());
 	}
 
-	public static WorldEditUtils getWEUtils() {
+	public static WorldEditUtils worldedit() {
 		return new WorldEditUtils(getWorld());
 	}
 
