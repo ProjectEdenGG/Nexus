@@ -27,7 +27,6 @@ public class Sleep implements Listener {
 
 	static {
 		Tasks.repeatAsync(0, 1, () -> {
-			// TODO fix console error in line 31
 			for (World world : sleepingWorlds.keySet()) {
 				long sleeping = world.getPlayers().stream().filter(player -> player.isSleeping() && canSleep(player)).count();
 				long active = world.getPlayers().stream().filter(Sleep::canSleep).count();
