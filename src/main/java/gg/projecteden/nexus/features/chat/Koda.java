@@ -166,7 +166,7 @@ public class Koda {
 		Tasks.waitAsync(TickTime.SECOND, () -> {
 			final String finalResponse = response.replaceAll("\\[player]", event.getOrigin());
 			PublicChannel channel = (PublicChannel) event.getChannel();
-			event.getRecipients().forEach(recipient -> recipient.sendMessage(channel.getChatterFormat(chatter, recipient) + finalResponse));
+			event.getRecipients().forEach(recipient -> recipient.sendMessage(channel.getChatterFormat(chatter, recipient).next(finalResponse)));
 			Broadcast.discord().channel(channel).message(discordFormat + finalResponse).send();
 		});
 	}

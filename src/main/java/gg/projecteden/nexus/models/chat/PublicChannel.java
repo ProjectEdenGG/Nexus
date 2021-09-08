@@ -74,7 +74,6 @@ public class PublicChannel implements Channel {
 			json.hover("&3Pronouns: " + nerd.getPronouns().stream().map(pronoun -> "&e" + pronoun + "&3").collect(Collectors.joining(", ")));
 
 		return json;
-
 	}
 
 	public Set<Chatter> getRecipients(Chatter chatter) {

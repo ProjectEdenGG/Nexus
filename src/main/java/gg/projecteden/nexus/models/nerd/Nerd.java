@@ -35,6 +35,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import me.lexikiq.HasUniqueId;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -177,20 +178,27 @@ public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwned
 	}
 
 	public JsonBuilder getChatFormat(Chatter viewer) {
-		if (isKoda())
-			return new JsonBuilder(Koda.getColoredName());
+		String prefix = getFullPrefix();
 
-		Rank rank = getRank();
+		final ChatColor rankColor = isKoda() ? Koda.getChatColor() : getRank().getChatColor();
+		final JsonBuilder badge = new BadgeUserService().get(this).getBadgeJson(viewer);
+
+		return badge.next(prefix).next(rankColor + getNickname());
+	}
+
+	private String getFullPrefix() {
+		if (isKoda())
+			return "";
+
 		String prefix = this.prefix;
+
 		if (isNullOrEmpty(prefix))
-			prefix = rank.getPrefix();
+			prefix = getRank().getPrefix();
 
 		if (!isNullOrEmpty(prefix))
 			prefix = "&8&l[&f" + prefix + "&8&l] ";
 
-		final JsonBuilder badge = new BadgeUserService().get(this).getBadgeJson(viewer);
-
-		return badge.next(prefix).next(getRank().getChatColor() + Nickname.of(this));
+		return prefix;
 	}
 
 	@ToString.Include

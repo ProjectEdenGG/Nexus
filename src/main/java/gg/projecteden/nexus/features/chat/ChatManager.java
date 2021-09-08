@@ -112,9 +112,10 @@ public class ChatManager {
 			if (event.isFiltered())
 				if (Rank.of(recipient.getOnlinePlayer()).isStaff())
 					json.next(" &c&l*")
+						.hover("")
 						.hover("&cChat message was filtered")
 						.hover("&cClick to see original message")
-						.command("/echo &3Original message: " + decolorize(AdventureUtils.asPlainText(json) + event.getOriginalMessage()));
+						.command("/echo &3Original message: " + decolorize(AdventureUtils.asLegacyText(json) + event.getOriginalMessage()));
 
 			recipient.sendMessage(event, json, MessageType.CHAT);
 		});
