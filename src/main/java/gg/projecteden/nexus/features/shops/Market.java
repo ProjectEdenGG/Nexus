@@ -135,7 +135,7 @@ public class Market {
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.DEEPSLATE_GOLD_ORE, 32, 1350);
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.COAL_BLOCK, 32, 120);
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.QUARTZ_BLOCK, 32, 300);
-		addBuyItem(ShopGroup.SURVIVAL, false, Material.SEA_LANTERN, 1, 7.5);
+		addBuyItem(ShopGroup.SURVIVAL, false, Material.SEA_LANTERN, 3, 7.5);
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.REDSTONE_BLOCK, 32, 500);
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.LAPIS_BLOCK, 32, 800);
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.IRON_BLOCK, 8, 35);
