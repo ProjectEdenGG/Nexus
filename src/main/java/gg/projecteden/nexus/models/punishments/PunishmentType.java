@@ -209,7 +209,7 @@ public enum PunishmentType implements IsColoredAndNamed {
 			json.newline().next("&7   Duration &f" + (seconds > 0 ? Timespan.of(seconds).format() : "forever"));
 
 			if (seconds > 0 && punishment.isActive())
-				json.newline().next("&7   TickTime left &f" + punishment.getTimeLeft());
+				json.newline().next("&7   Time left &f" + punishment.getTimeLeft());
 		}
 
 		if (!automaticallyReceived && punishment.isActive())
