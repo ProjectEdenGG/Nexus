@@ -54,8 +54,8 @@ public class Sleep implements Listener {
 		world.setThundering(false);
 
 		int emptyActionbarTaskId = Tasks.repeatAsync(0, 1, () ->
-			world.getPlayers().forEach(player -> ActionBarUtils.sendActionBar(player, " ")
-		));
+			world.getPlayers().forEach(player -> ActionBarUtils.sendActionBar(player, " ")));
+		
 		int wait = 0;
 		while (true) {
 			long newTime = world.getTime() + (++wait * SPEED);
