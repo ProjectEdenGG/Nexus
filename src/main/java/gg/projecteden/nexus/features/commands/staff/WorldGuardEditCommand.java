@@ -62,7 +62,6 @@ public class WorldGuardEditCommand extends CustomCommand implements Listener {
 	}
 
 	private void off(Player player) {
-		PermissionChange.unset().player(player).permission(PERMISSION).world(player.getLocation()).runAsync();
 		PermissionChange.unset().player(player).permission(PERMISSION).runAsync();
 	}
 

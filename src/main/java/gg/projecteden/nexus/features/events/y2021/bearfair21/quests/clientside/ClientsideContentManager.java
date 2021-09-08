@@ -46,12 +46,14 @@ public class ClientsideContentManager implements Listener {
 	private static final HashMap<UUID, List<Entity>> playerEntities = new HashMap<>();
 	private static final List<NPCNameTag> playerNPCNameTags = new ArrayList<>();
 
-
 	public ClientsideContentManager() {
-		Nexus.registerListener(this);
-		blockTask();
-		schematicTask();
-		npcTask();
+		Tasks.async(() -> {
+			Nexus.registerListener(this);
+			blockTask();
+			schematicTask();
+			npcTask();
+			startup();
+		});
 	}
 
 	public static void startup() {
@@ -112,7 +114,7 @@ public class ClientsideContentManager implements Listener {
 					if (!isNear(player, content.getLocation(), 75)) continue;
 					if (!canSee(player, content)) continue;
 
-					BearFair21.getWEUtils().paster()
+					BearFair21.worldedit().paster()
 						.file(content.getSchematic())
 						.at(content.getLocation())
 						.buildClientSide(player);

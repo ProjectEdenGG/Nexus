@@ -4,7 +4,7 @@ import com.google.common.base.Strings;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
 
-import static gg.projecteden.nexus.features.events.aeveonproject.AeveonProject.getWGUtils;
+import static gg.projecteden.nexus.features.events.aeveonproject.AeveonProject.worldguard;
 
 public class APSetToggler {
 
@@ -20,7 +20,7 @@ public class APSetToggler {
 
 				if (!Strings.isNullOrEmpty(region)) {
 					Tasks.sync(() -> {
-						int players = getWGUtils().getPlayersInRegion(region).size();
+						int players = worldguard().getPlayersInRegion(region).size();
 
 						if (set.isActive() && players == 0)
 							set.setActive(false);

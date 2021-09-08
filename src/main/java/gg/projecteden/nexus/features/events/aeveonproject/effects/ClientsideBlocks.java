@@ -32,8 +32,8 @@ import static gg.projecteden.nexus.features.events.aeveonproject.APUtils.getPlay
 import static gg.projecteden.nexus.features.events.aeveonproject.APUtils.getPlayersInSet;
 import static gg.projecteden.nexus.features.events.aeveonproject.APUtils.getShipColorRegion;
 import static gg.projecteden.nexus.features.events.aeveonproject.APUtils.isInWorld;
-import static gg.projecteden.nexus.features.events.aeveonproject.AeveonProject.getWEUtils;
-import static gg.projecteden.nexus.features.events.aeveonproject.AeveonProject.getWGUtils;
+import static gg.projecteden.nexus.features.events.aeveonproject.AeveonProject.worldedit;
+import static gg.projecteden.nexus.features.events.aeveonproject.AeveonProject.worldguard;
 
 public class ClientsideBlocks implements Listener {
 	private static final AeveonProjectService service = new AeveonProjectService();
@@ -62,8 +62,8 @@ public class ClientsideBlocks implements Listener {
 					continue;
 
 				for (String updateRegion : updateRegions) {
-					Region region = getWGUtils().getRegion(updateRegion);
-					Location rgCenter = getWEUtils().toLocation(region.getCenter());
+					Region region = worldguard().getRegion(updateRegion);
+					Location rgCenter = worldedit().toLocation(region.getCenter());
 					double rgBoundary = Math.max(Math.min(Math.max(region.getWidth(), region.getLength()), maxBoundary), minBoundary);
 
 					for (Player player : setPlayers) {
@@ -158,7 +158,7 @@ public class ClientsideBlocks implements Listener {
 				}
 			}
 
-			List<Block> blocks = getWEUtils().getBlocks(getWGUtils().getRegion(getShipColorRegion(region)));
+			List<Block> blocks = worldedit().getBlocks(worldguard().getRegion(getShipColorRegion(region)));
 
 			for (Block block : blocks) {
 				if (block.getType().equals(Material.WHITE_CONCRETE))
@@ -185,7 +185,7 @@ public class ClientsideBlocks implements Listener {
 
 		// Any Docking Ports Region
 		if (region.contains("dockingport") || region.contains("vent_door")) {
-			List<Block> blocks = getWEUtils().getBlocks(getWGUtils().getRegion(region));
+			List<Block> blocks = worldedit().getBlocks(worldguard().getRegion(region));
 			for (Block block : blocks) {
 				if (block.getType().equals(Material.WATER))
 					player.sendBlockChange(block.getLocation(), Material.AIR.createBlockData());

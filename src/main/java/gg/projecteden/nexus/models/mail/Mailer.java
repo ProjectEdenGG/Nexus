@@ -20,7 +20,6 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.utils.Utils;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -43,7 +42,6 @@ import static gg.projecteden.utils.StringUtils.asOxfordList;
 import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
 
 @Data
-@Builder
 @Entity(value = "mailer", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor
@@ -114,7 +112,6 @@ public class Mailer implements PlayerOwnedObject {
 	}
 
 	@Data
-	@Builder
 	@NoArgsConstructor
 	@AllArgsConstructor
 	@RequiredArgsConstructor

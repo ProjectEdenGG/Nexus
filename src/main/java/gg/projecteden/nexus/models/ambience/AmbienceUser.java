@@ -8,7 +8,6 @@ import gg.projecteden.nexus.features.ambience.effects.sounds.common.SoundPlayer;
 import gg.projecteden.nexus.features.ambience.managers.common.AmbienceManagers;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -19,7 +18,6 @@ import java.util.Map;
 import java.util.UUID;
 
 @Data
-@Builder
 @Entity(value = "ambience_user", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

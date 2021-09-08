@@ -258,8 +258,11 @@ public class DatabaseCommand extends CustomCommand {
 		final List<String> completions = new ArrayList<>();
 		if (!filter.equalsIgnoreCase("0") && !filter.equalsIgnoreCase("app"))
 			completions.addAll(tabCompleteOfflinePlayer(filter));
-		completions.add("0");
-		completions.add("app");
+
+		for (String shorthand : List.of("0", "app"))
+			if (shorthand.startsWith(filter))
+				completions.add(shorthand);
+
 		return completions;
 	}
 

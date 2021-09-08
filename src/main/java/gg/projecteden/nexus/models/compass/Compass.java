@@ -9,7 +9,6 @@ import gg.projecteden.nexus.models.statusbar.StatusBar;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -22,7 +21,6 @@ import org.bukkit.boss.BossBar;
 import java.util.UUID;
 
 @Data
-@Builder
 @Entity(value = "compass", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

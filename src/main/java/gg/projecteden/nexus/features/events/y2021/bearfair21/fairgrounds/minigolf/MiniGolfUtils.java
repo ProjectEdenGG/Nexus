@@ -27,7 +27,7 @@ import java.util.UUID;
 
 public class MiniGolfUtils {
 	public static boolean isInMiniGolf(Location location) {
-		return BearFair21.getWGUtils().getRegionsLikeAt(MiniGolf.getGameRegion() + ".*", location).size() > 0;
+		return BearFair21.worldguard().getRegionsLikeAt(MiniGolf.getGameRegion() + ".*", location).size() > 0;
 	}
 
 	public static String getStrokeString(MiniGolf21User user) {
@@ -66,7 +66,7 @@ public class MiniGolfUtils {
 
 
 	public static MiniGolfHole getHole(Location location) {
-		Set<ProtectedRegion> regions = BearFair21.getWGUtils().getRegionsLikeAt(MiniGolf.getRegionHole() + ".*", location);
+		Set<ProtectedRegion> regions = BearFair21.worldguard().getRegionsLikeAt(MiniGolf.getRegionHole() + ".*", location);
 		ProtectedRegion region = regions.stream().findFirst().orElse(null);
 		if (region != null) {
 			for (MiniGolfHole minigolfHole : MiniGolfHole.values()) {

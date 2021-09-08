@@ -7,7 +7,6 @@ import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.WorldConverter;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,7 +22,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 @Data
-@Builder
 @Entity(value = "spawn_limits", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

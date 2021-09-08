@@ -46,7 +46,7 @@ public class FallingBlocks extends TeamlessMechanic {
 	@Override
 	public void onBegin(@NotNull MatchBeginEvent event) {
 		final Match match = event.getMatch();
-		final WorldGuardUtils worldGuardUtils = match.getWGUtils();
+		final WorldGuardUtils worldGuardUtils = match.worldguard();
 		final ProtectedRegion ceiling = match.getArena().getProtectedRegion("ceiling");
 		final int y = (int) worldGuardUtils.toLocation(ceiling.getMinimumPoint()).getY();
 		match.getTasks().repeat(0, TickTime.TICK.x(3), () -> {
@@ -72,7 +72,7 @@ public class FallingBlocks extends TeamlessMechanic {
 		if (match == null)
 			return;
 
-		for (ProtectedRegion region : match.getWGUtils().getRegionsAt(location)) {
+		for (ProtectedRegion region : match.worldguard().getRegionsAt(location)) {
 			if (!match.getArena().ownsRegion(region))
 				continue;
 

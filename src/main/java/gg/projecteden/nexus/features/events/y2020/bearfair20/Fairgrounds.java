@@ -30,7 +30,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.getWGUtils;
+import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.worldguard;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.itemLore;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
@@ -38,12 +38,12 @@ public class Fairgrounds implements Listener {
 
 	public Fairgrounds() {
 		Nexus.registerListener(this);
-		new Timer("      PugDunk", PugDunk::new);
-		new Timer("      Archery", Archery::new);
-		new Timer("      Frogger", Frogger::new);
-		new Timer("      Basketball", Basketball::new);
-		new Timer("      Reflection", Reflection::new);
-		new Timer("      Interactables", Interactables::new);
+		new Timer("        BF20.Fairgrounds.PugDunk", PugDunk::new);
+		new Timer("        BF20.Fairgrounds.Archery", Archery::new);
+		new Timer("        BF20.Fairgrounds.Frogger", Frogger::new);
+		new Timer("        BF20.Fairgrounds.Basketball", Basketball::new);
+		new Timer("        BF20.Fairgrounds.Reflection", Reflection::new);
+		new Timer("        BF20.Fairgrounds.Interactables", Interactables::new);
 	}
 
 	public static void giveKit(BearFairKit kit, Player player) {
@@ -158,8 +158,8 @@ public class Fairgrounds implements Listener {
 
 	@EventHandler
 	public void onDrop(PlayerDropItemEvent event) {
-		ProtectedRegion region = getWGUtils().getProtectedRegion(BearFair20.getRegion());
-		if (getWGUtils().getRegionsAt(event.getPlayer().getLocation()).contains(region)) {
+		ProtectedRegion region = worldguard().getProtectedRegion(BearFair20.getRegion());
+		if (worldguard().getRegionsAt(event.getPlayer().getLocation()).contains(region)) {
 			ItemStack dropped = event.getItemDrop().getItemStack();
 			String droppedName = StringUtils.stripColor(dropped.getItemMeta().getDisplayName());
 			for (BearFairKit kit : BearFairKit.values()) {

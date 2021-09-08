@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.chat.ChatManager;
 import gg.projecteden.nexus.features.chat.events.DiscordChatEvent;
 import gg.projecteden.nexus.features.discord.Discord;
+import gg.projecteden.nexus.models.chat.ChatterService;
 import gg.projecteden.nexus.models.chat.PublicChannel;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
@@ -53,13 +54,8 @@ public class DiscordBridgeListener extends ListenerAdapter {
 			content = discordChatEvent.getMessage();
 
 			DiscordUser user = new DiscordUserService().getFromUserId(event.getAuthor().getId());
-			JsonBuilder builder = new JsonBuilder(channel.get().getDiscordColor() + "[D] ");
 
-			if (user != null)
-				builder.next(Nerd.of(user.getUuid()).getChatFormat());
-			else
-				builder.next("&f" + Discord.getName(event.getMember(), event.getAuthor()));
-
+			JsonBuilder builder = new JsonBuilder();
 			builder.next(" " + channel.get().getDiscordColor() + "&l>&f");
 
 			if (content.length() > 0)
@@ -71,7 +67,16 @@ public class DiscordBridgeListener extends ListenerAdapter {
 						.url(attachment.getUrl());
 
 			Identity identity = user == null ? Identity.nil() : user.identity();
-			Broadcast.ingame().channel(channel.get()).sender(identity).message(builder).messageType(MessageType.CHAT).send();
+
+			Broadcast.ingame().channel(channel.get()).sender(identity).message(viewer -> {
+				JsonBuilder json = new JsonBuilder(channel.get().getDiscordColor() + "[D] ");
+				if (user != null)
+					json.next(Nerd.of(user.getUuid()).getChatFormat(viewer == null ? null : new ChatterService().get(viewer)));
+				else
+					json.next("&f" + Discord.getName(event.getMember(), event.getAuthor()));
+
+				return json.next(builder);
+			}).messageType(MessageType.CHAT).send();
 		});
 	}
 

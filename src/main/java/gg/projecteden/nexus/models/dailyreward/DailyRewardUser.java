@@ -10,7 +10,6 @@ import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Name;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -26,7 +25,6 @@ import java.util.UUID;
 import static gg.projecteden.nexus.utils.StringUtils.getPrefix;
 
 @Data
-@Builder
 @Entity(value = "daily_reward_user", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

@@ -121,7 +121,7 @@ public enum ScoreboardLine {
 	PUSHING {
 		@Override
 		public String render(Player player) {
-			return "&3Pushing: &e" + player.hasPermission(PushCommand.getPerm());
+			return "&3Pushing: &e" + player.hasPermission(PushCommand.PERMISSION);
 		}
 	},
 

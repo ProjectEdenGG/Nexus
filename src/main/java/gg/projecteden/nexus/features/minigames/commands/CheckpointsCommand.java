@@ -24,8 +24,8 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 public class CheckpointsCommand extends CustomCommand {
 	CheckpointArena arena;
 	String regionBase;
-	WorldEditUtils weUtils;
-	WorldGuardUtils wgUtils;
+	WorldEditUtils worldedit;
+	WorldGuardUtils worldguard;
 
 	public CheckpointsCommand(CommandEvent event) {
 		super(event);
@@ -51,8 +51,8 @@ public class CheckpointsCommand extends CustomCommand {
 
 		regionBase = arena.getRegionBaseName() + "_checkpoint_";
 
-		weUtils = new WorldEditUtils(player());
-		wgUtils = new WorldGuardUtils(player());
+		worldedit = new WorldEditUtils(player());
+		worldguard = new WorldGuardUtils(player());
 	}
 
 	@Path
@@ -67,12 +67,12 @@ public class CheckpointsCommand extends CustomCommand {
 	@SneakyThrows
 	@Path("(set|add|create) <number>")
 	void set(@Arg(min = 1) int number) {
-		Region selection = weUtils.getPlayerSelection(player());
-		selection.expand(weUtils.toBlockVector3(Direction.UP.toVector().multiply(4)));
+		Region selection = worldedit.getPlayerSelection(player());
+		selection.expand(worldedit.toBlockVector3(Direction.UP.toVector().multiply(4)));
 		String id = regionBase + number;
-		ProtectedRegion region = wgUtils.convert(id, selection);
-		wgUtils.getManager().addRegion(region);
-		wgUtils.getManager().saveChanges();
+		ProtectedRegion region = worldguard.convert(id, selection);
+		worldguard.getManager().addRegion(region);
+		worldguard.getManager().saveChanges();
 
 		arena.setCheckpoint(number, location());
 
@@ -81,7 +81,7 @@ public class CheckpointsCommand extends CustomCommand {
 
 	@Path("(remove|delete) <number>")
 	void remove(int number) {
-		wgUtils.getManager().removeRegion(regionBase + number);
+		worldguard.getManager().removeRegion(regionBase + number);
 		arena.removeCheckpoint(number);
 		send(PREFIX + "Removed checkpoint &e#" + number + " &3in &e" + arena.getDisplayName());
 	}

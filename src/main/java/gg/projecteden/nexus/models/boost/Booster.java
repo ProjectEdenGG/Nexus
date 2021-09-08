@@ -15,7 +15,6 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -31,7 +30,6 @@ import java.util.UUID;
 import static gg.projecteden.utils.StringUtils.camelCase;
 
 @Data
-@Builder
 @Entity(value = "booster", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

@@ -5,7 +5,6 @@ import dev.dbassett.skullcreator.SkullCreator;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.Timer;
 import kotlin.Pair;
 import lombok.Getter;
 import org.bukkit.entity.Player;
@@ -666,7 +665,7 @@ public enum EmojiHat {
 	EmojiHat(String menuTexture, List<Pair<String, Long>> frames) {
 		this.menuTexture = menuTexture;
 		this.frameTextures = frames;
-		Tasks.async(() -> new Timer("    EmojiHat." + name(), this::load));
+		Tasks.async(this::load);
 	}
 
 	private void load() {

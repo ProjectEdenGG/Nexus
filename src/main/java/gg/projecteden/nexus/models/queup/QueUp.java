@@ -10,7 +10,6 @@ import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.queup.QueUp.API.ActiveSong;
 import gg.projecteden.nexus.utils.HttpUtils;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -23,7 +22,6 @@ import static gg.projecteden.nexus.utils.HttpUtils.unescapeHtml;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @Data
-@Builder
 @Entity(value = "queup", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

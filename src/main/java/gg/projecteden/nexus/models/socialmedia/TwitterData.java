@@ -13,7 +13,6 @@ import gg.projecteden.nexus.utils.HttpUtils;
 import gg.projecteden.utils.DiscordId.Role;
 import gg.projecteden.utils.DiscordId.TextChannel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -38,7 +37,6 @@ import java.util.Set;
 import java.util.UUID;
 
 @Data
-@Builder
 @Entity(value = "twitter_data", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

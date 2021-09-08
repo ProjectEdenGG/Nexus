@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Set;
 
 import static gg.projecteden.nexus.features.events.aeveonproject.APUtils.isInWorld;
-import static gg.projecteden.nexus.features.events.aeveonproject.AeveonProject.getWGUtils;
+import static gg.projecteden.nexus.features.events.aeveonproject.AeveonProject.worldguard;
 
 public class GravLift implements Listener {
 
@@ -29,7 +29,7 @@ public class GravLift implements Listener {
 		Tasks.repeat(0, TickTime.TICK.x(5), () -> {
 			List<Player> inGravLiftCopy = new ArrayList<>(inGravlift);
 			for (Player player : inGravLiftCopy) {
-				Set<ProtectedRegion> regions = getWGUtils().getRegionsAt(player.getLocation());
+				Set<ProtectedRegion> regions = worldguard().getRegionsAt(player.getLocation());
 				// Make sure they are in the region still
 				boolean verify = false;
 				for (ProtectedRegion region : regions) {

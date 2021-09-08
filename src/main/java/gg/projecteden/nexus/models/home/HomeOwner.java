@@ -12,7 +12,6 @@ import gg.projecteden.nexus.models.trust.Trust;
 import gg.projecteden.nexus.models.trust.Trust.Type;
 import gg.projecteden.nexus.models.trust.TrustService;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -27,7 +26,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Data
-@Builder
 @Entity(value = "homes", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

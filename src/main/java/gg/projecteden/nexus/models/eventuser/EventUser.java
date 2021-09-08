@@ -10,7 +10,6 @@ import gg.projecteden.nexus.features.events.Events;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -24,7 +23,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import static gg.projecteden.nexus.utils.StringUtils.plural;
 
 @Data
-@Builder
 @Entity(value = "event_user", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

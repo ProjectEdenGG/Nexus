@@ -1,10 +1,10 @@
 package gg.projecteden.nexus.features.quests.itemtags;
 
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.framework.features.Depends;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.Enchant;
+import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
@@ -47,7 +47,7 @@ public class ItemTags extends Feature {
 	}
 
 	public static void reloadConfig() {
-		config = Nexus.getConfig(fileName);
+		config = IOUtils.getConfig(fileName);
 		loadConfigMaps();
 	}
 

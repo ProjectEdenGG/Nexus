@@ -35,8 +35,8 @@ import static gg.projecteden.nexus.utils.LocationUtils.getCenteredLocation;
 
 @Disabled
 public class RavensNestEstate implements Listener {
-	protected WorldGuardUtils WGUtils = Minigames.getWorldGuardUtils();
-	protected WorldEditUtils WEUtils = Minigames.getWorldEditUtils();
+	protected WorldGuardUtils worldguard = Minigames.worldguard();
+	protected WorldEditUtils worldedit = Minigames.worldedit();
 
 	// Sounds & Their Locations
 	private Location musicLocation = new Location(Minigames.getWorld(), 3075, 60, 1282);
@@ -122,7 +122,7 @@ public class RavensNestEstate implements Listener {
 	public void onMatchDeath(MinigamerDeathEvent event) {
 		Match match = event.getMatch();
 		if (!isPlayingThis(event.getMinigamer())) return;
-		Set<ProtectedRegion> regions = WGUtils.getRegionsAt(event.getMinigamer().getPlayer().getLocation());
+		Set<ProtectedRegion> regions = worldguard.getRegionsAt(event.getMinigamer().getPlayer().getLocation());
 		for (ProtectedRegion region : regions) {
 			if (region.getId().equalsIgnoreCase(match.getArena().getProtectedRegion("deathzone").getId())) {
 				event.setDeathMessage(event.getMinigamer().getNickname() + " drowned in blood.");
@@ -145,15 +145,15 @@ public class RavensNestEstate implements Listener {
 	}
 
 	private void resetMap(Match match) {
-		WEUtils.paster().file(schemFireplace + 1).at(doorFireplace).pasteAsync();
-		WEUtils.paster().file(schemBasement + 1).at(doorBasement).pasteAsync();
-		WEUtils.paster().file(schemCloset + 1).at(doorCloset).pasteAsync();
-		WEUtils.paster().file(schemMaster + 1).at(doorMaster).pasteAsync();
-		WEUtils.paster().file(schemMain + 1).at(doorMain).pasteAsync();
-		WEUtils.paster().file(schemStudy + 1).at(doorStudy).pasteAsync();
-		WEUtils.paster().file(schemSmall + "S_1").at(doorSmall_S).pasteAsync();
-		WEUtils.paster().file(schemSmall + "E_1").at(doorSmall_E).pasteAsync();
-		WEUtils.paster().file(schemSmall + "W_1").at(doorSmall_W).pasteAsync();
+		worldedit.paster().file(schemFireplace + 1).at(doorFireplace).pasteAsync();
+		worldedit.paster().file(schemBasement + 1).at(doorBasement).pasteAsync();
+		worldedit.paster().file(schemCloset + 1).at(doorCloset).pasteAsync();
+		worldedit.paster().file(schemMaster + 1).at(doorMaster).pasteAsync();
+		worldedit.paster().file(schemMain + 1).at(doorMain).pasteAsync();
+		worldedit.paster().file(schemStudy + 1).at(doorStudy).pasteAsync();
+		worldedit.paster().file(schemSmall + "S_1").at(doorSmall_S).pasteAsync();
+		worldedit.paster().file(schemSmall + "E_1").at(doorSmall_E).pasteAsync();
+		worldedit.paster().file(schemSmall + "W_1").at(doorSmall_W).pasteAsync();
 
 		statusFireplace = false;
 		statusBasement = false;
@@ -274,7 +274,7 @@ public class RavensNestEstate implements Listener {
 	}
 
 	private String findDoor(Location location, Match match) {
-		Set<ProtectedRegion> regions = WGUtils.getRegionsAt(location);
+		Set<ProtectedRegion> regions = worldguard.getRegionsAt(location);
 		String key = match.getArena().getRegionBaseName() + "_door_";
 		for (ProtectedRegion region : regions) {
 			String regionName = region.getId();
@@ -360,13 +360,13 @@ public class RavensNestEstate implements Listener {
 			// Open
 			for (int frame = 1; frame <= frames; frame++) {
 				int finalFrame = frame;
-				match.getTasks().wait(wait += 3 + extra, () -> WEUtils.paster().file(finalSchematic + finalFrame).at(pasteLoc).pasteAsync());
+				match.getTasks().wait(wait += 3 + extra, () -> worldedit.paster().file(finalSchematic + finalFrame).at(pasteLoc).pasteAsync());
 			}
 		else
 			// Close
 			for (int frame = frames; frame > 0; frame--) {
 				int finalFrame = frame;
-				match.getTasks().wait(wait += 3, () -> WEUtils.paster().file(finalSchematic + finalFrame).at(pasteLoc).pasteAsync());
+				match.getTasks().wait(wait += 3, () -> worldedit.paster().file(finalSchematic + finalFrame).at(pasteLoc).pasteAsync());
 			}
 	}
 }

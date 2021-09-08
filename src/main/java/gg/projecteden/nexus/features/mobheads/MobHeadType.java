@@ -238,10 +238,10 @@ public enum MobHeadType implements MobHead {
 		if (world == null)
 			return;
 
-		WorldGuardUtils WGUtils = new WorldGuardUtils(world);
-		WorldEditUtils WEUtils = new WorldEditUtils(world);
+		WorldGuardUtils worldguard = new WorldGuardUtils(world);
+		WorldEditUtils worldedit = new WorldEditUtils(world);
 
-		for (Block block : WEUtils.getBlocks(WGUtils.getRegion("mobheads"))) {
+		for (Block block : worldedit.getBlocks(worldguard.getRegion("mobheads"))) {
 			try {
 				if (!MaterialTag.SIGNS.isTagged(block.getType()))
 					continue;
@@ -281,7 +281,7 @@ public enum MobHeadType implements MobHead {
 
 		Reflections reflections = new Reflections(MobHeadType.class.getPackage().getName());
 		for (Class<? extends MobHeadVariant> variant : reflections.getSubTypesOf(MobHeadVariant.class)) {
-			for (Block block : WEUtils.getBlocks(WGUtils.getRegion("mobheads_variant_" + variant.getSimpleName().replace("Variant", "").toLowerCase()))) {
+			for (Block block : worldedit.getBlocks(worldguard.getRegion("mobheads_variant_" + variant.getSimpleName().replace("Variant", "").toLowerCase()))) {
 				try {
 					if (!MaterialTag.SIGNS.isTagged(block.getType()))
 						continue;

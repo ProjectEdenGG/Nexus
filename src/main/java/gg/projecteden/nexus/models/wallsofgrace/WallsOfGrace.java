@@ -9,7 +9,6 @@ import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationCon
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,7 +19,6 @@ import org.bukkit.Location;
 import java.util.UUID;
 
 @Data
-@Builder
 @Entity(value = "walls_of_grace", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

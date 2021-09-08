@@ -112,7 +112,7 @@ public class StoreGalleryNPCs {
 		}
 	}
 
-	private static WorldGuardUtils getWGUtils() {
+	private static WorldGuardUtils worldguard() {
 		World world = Bukkit.getWorld("server");
 		if (world != null)
 			return new WorldGuardUtils(world);
@@ -120,13 +120,13 @@ public class StoreGalleryNPCs {
 	}
 
 	private void loadDisplays() {
-		WorldGuardUtils WGUtils = getWGUtils();
-		if (WGUtils == null)
+		WorldGuardUtils worldguard = worldguard();
+		if (worldguard == null)
 			return;
 
-		for (ProtectedRegion region : WGUtils.getRegionsLike(regionRegex)) {
+		for (ProtectedRegion region : worldguard.getRegionsLike(regionRegex)) {
 			AtomicInteger ndx = new AtomicInteger(1);
-			Collection<NPC> npcs = WGUtils.getNPCsInRegion(region);
+			Collection<NPC> npcs = worldguard.getNPCsInRegion(region);
 
 			if (npcs.isEmpty()) {
 				Nexus.warn("Could not find any gallery NPCs in region " + region.getId());

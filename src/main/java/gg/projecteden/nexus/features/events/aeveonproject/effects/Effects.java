@@ -6,7 +6,6 @@ import gg.projecteden.nexus.features.events.aeveonproject.sets.lobby.Lobby;
 import gg.projecteden.nexus.features.events.aeveonproject.sets.sialia.Sialia;
 import gg.projecteden.nexus.features.events.aeveonproject.sets.sialiaCrashing.SialiaCrashing;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -26,6 +25,7 @@ import java.util.List;
 import static gg.projecteden.nexus.features.events.aeveonproject.APUtils.isInWorld;
 
 public class Effects implements Listener {
+
 	public Effects() {
 		Nexus.registerListener(this);
 
@@ -44,8 +44,8 @@ public class Effects implements Listener {
 				if (!shipRobot.isChunkLoaded())
 					return;
 
-				Player nearestPlayer = EntityUtils.getNearestEntityType(shipRobot, Player.class, 7);
-				ArmorStand armorStand = EntityUtils.getNearestEntityType(shipRobot, ArmorStand.class, 1);
+				Player nearestPlayer = PlayerUtils.getNearestVisiblePlayer(shipRobot, 7).getObject();
+				ArmorStand armorStand = shipRobot.getNearbyEntitiesByType(ArmorStand.class, 1).iterator().next();
 				if (nearestPlayer != null && armorStand != null) {
 					APUtils.makeArmorStandLookAtPlayer(armorStand, nearestPlayer);
 				}

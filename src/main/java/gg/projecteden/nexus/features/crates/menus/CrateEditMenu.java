@@ -47,9 +47,8 @@ public class CrateEditMenu {
 	@NoArgsConstructor
 	@AllArgsConstructor
 	public static class CrateEditProvider extends MenuUtils implements InventoryProvider, Listener {
-
-		CrateType filter;
-		CrateLoot editing;
+		private CrateType filter;
+		private CrateLoot editing;
 
 		@Override
 		public void init(Player player, InventoryContents contents) {

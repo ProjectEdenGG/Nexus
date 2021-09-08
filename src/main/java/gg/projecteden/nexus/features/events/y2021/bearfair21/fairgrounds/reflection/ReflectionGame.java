@@ -186,7 +186,7 @@ public class ReflectionGame {
 
 	private static void laserSound() {
 		soundTaskId = Tasks.repeat(0, TickTime.SECOND.x(5), () -> {
-			Collection<Player> players = BearFair21.getWGUtils().getPlayersInRegion(gameRg);
+			Collection<Player> players = BearFair21.worldguard().getPlayersInRegion(gameRg);
 			for (Player player : players)
 				new SoundBuilder(Sound.BLOCK_BEACON_AMBIENT).receiver(player).location(laserSoundLoc).play();
 		});
@@ -196,7 +196,7 @@ public class ReflectionGame {
 		Tasks.cancel(laserTaskId);
 		Tasks.cancel(soundTaskId);
 
-		Collection<Player> players = BearFair21.getWGUtils().getPlayersInRegion(gameRg);
+		Collection<Player> players = BearFair21.worldguard().getPlayersInRegion(gameRg);
 		for (Player player : players)
 			player.stopSound(Sound.BLOCK_BEACON_AMBIENT);
 

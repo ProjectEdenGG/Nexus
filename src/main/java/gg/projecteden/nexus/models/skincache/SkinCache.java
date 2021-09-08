@@ -16,7 +16,6 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -40,7 +39,6 @@ import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
 import static gg.projecteden.utils.StringUtils.uuidUnformat;
 
 @Data
-@Builder
 @Entity(value = "skin_cache", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

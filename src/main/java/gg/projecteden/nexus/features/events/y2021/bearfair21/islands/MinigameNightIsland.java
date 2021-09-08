@@ -88,7 +88,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.getWGUtils;
+import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.worldguard;
 import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
 import static gg.projecteden.nexus.utils.ItemUtils.isSameHead;
 import static gg.projecteden.nexus.utils.ItemUtils.isTypeAndNameEqual;
@@ -105,8 +105,8 @@ public class MinigameNightIsland implements BearFair21Island {
 		Nexus.registerListener(this);
 
 		ParticleBuilder particles = new ParticleBuilder(Particle.REDSTONE).color(Color.RED).count(15).offset(0.3, 0.3, 0.3);
-		Location gravWellLoc = BearFair21.getWGUtils().toLocation(BearFair21.getWGUtils().getProtectedRegion(gravwellRegion).getMinimumPoint());
-		Tasks.repeat(0, TickTime.SECOND.x(5), () -> {
+		Location gravWellLoc = BearFair21.worldguard().toLocation(BearFair21.worldguard().getProtectedRegion(gravwellRegion).getMinimumPoint());
+		Tasks.repeat(TickTime.SECOND, TickTime.SECOND.x(5), () -> {
 			for (Player player : BearFair21.getPlayers()) {
 				final BearFair21User user = userService.get(player);
 				for (Location soundLoc : user.getMgn_beaconsActivated()) {
@@ -434,15 +434,15 @@ public class MinigameNightIsland implements BearFair21Island {
 		if (!BearFair21.canDoBearFairQuest(event.getPlayer())) return;
 		Block clicked = event.getClickedBlock();
 		if (BlockUtils.isNullOrAir(clicked)) return;
-		ProtectedRegion region = getWGUtils().getProtectedRegion(solderRegion);
-		if (!getWGUtils().isInRegion(clicked.getLocation(), region)) return;
+		ProtectedRegion region = worldguard().getProtectedRegion(solderRegion);
+		if (!worldguard().isInRegion(clicked.getLocation(), region)) return;
 
 		event.setCancelled(true);
 		if (activeSolder) return;
 
 		ArmorStand armorStand = null;
 		for (Entity nearbyEntity : event.getPlayer().getNearbyEntities(7, 7, 7)) {
-			if (nearbyEntity instanceof ArmorStand && getWGUtils().getRegionsAt(nearbyEntity.getLocation()).contains(region)) {
+			if (nearbyEntity instanceof ArmorStand && worldguard().getRegionsAt(nearbyEntity.getLocation()).contains(region)) {
 				armorStand = (ArmorStand) nearbyEntity;
 				break;
 			}
@@ -459,8 +459,8 @@ public class MinigameNightIsland implements BearFair21Island {
 		if (!BearFair21.canDoBearFairQuest(player)) return;
 		Entity clicked = event.getRightClicked();
 		if (!(clicked instanceof ArmorStand armorStand)) return;
-		ProtectedRegion region = getWGUtils().getProtectedRegion(solderRegion);
-		if (!getWGUtils().isInRegion(clicked.getLocation(), region)) return;
+		ProtectedRegion region = worldguard().getProtectedRegion(solderRegion);
+		if (!worldguard().isInRegion(clicked.getLocation(), region)) return;
 
 		event.setCancelled(true);
 		if (activeSolder) return;
@@ -566,7 +566,7 @@ public class MinigameNightIsland implements BearFair21Island {
 		if (EquipmentSlot.HAND != event.getHand()) return;
 		Block clicked = event.getClickedBlock();
 		if (BlockUtils.isNullOrAir(clicked) || clicked.getType() != Material.BARRIER) return;
-		if (!getWGUtils().isInRegion(clicked.getLocation(), mailboxRegion)) return;
+		if (!worldguard().isInRegion(clicked.getLocation(), mailboxRegion)) return;
 		final BearFair21User user = userService.get(event.getPlayer());
 		if (user.getQuestStage_MGN() != QuestStage.STEP_TWO) return;
 
@@ -622,7 +622,7 @@ public class MinigameNightIsland implements BearFair21Island {
 		final Block block = event.getBlock();
 		if (!BearFair21.canDoBearFairQuest(player)) return;
 		if (block.getType() != Material.LODESTONE) return;
-		if (!getWGUtils().isInRegion(block.getLocation(), gravwellRegion)) return;
+		if (!worldguard().isInRegion(block.getLocation(), gravwellRegion)) return;
 		event.setCancelled(true);
 
 		final BearFair21User user = userService.get(player);
@@ -758,7 +758,7 @@ public class MinigameNightIsland implements BearFair21Island {
 		if (WorldGuardEditCommand.canWorldGuardEdit(player)) return;
 		final Block block = event.getClickedBlock();
 		if (BlockUtils.isNullOrAir(block)) return;
-		if (!getWGUtils().isInRegion(block.getLocation(), trunkRegion)) return;
+		if (!worldguard().isInRegion(block.getLocation(), trunkRegion)) return;
 		final BearFair21User user = new BearFair21UserService().get(event.getPlayer());
 		if (user.getQuestStage_MGN() != QuestStage.STEP_EIGHT) return;
 		if (user.isMgn_openedTrunk()) return;
@@ -815,7 +815,7 @@ public class MinigameNightIsland implements BearFair21Island {
 
 	@NotNull
 	private static Location getPhoneLocation() {
-		return BearFair21.getWGUtils().toLocation(BearFair21.getWGUtils().getProtectedRegion("bearfair21_minigamenight_phone").getMinimumPoint());
+		return BearFair21.worldguard().toLocation(BearFair21.worldguard().getProtectedRegion("bearfair21_minigamenight_phone").getMinimumPoint());
 	}
 
 	private static ParticleBuilder getPhoneParticles() {
@@ -869,7 +869,7 @@ public class MinigameNightIsland implements BearFair21Island {
 		final Player player = event.getPlayer();
 		if (WorldGuardEditCommand.canWorldGuardEdit(player)) return;
 		if (entity.getType() != EntityType.ITEM_FRAME) return;
-		if (!getWGUtils().isInRegion(entity.getLocation(), phoneRegion)) return;
+		if (!worldguard().isInRegion(entity.getLocation(), phoneRegion)) return;
 		event.setCancelled(true);
 
 		final BearFair21User user = new BearFair21UserService().get(event.getPlayer());
@@ -1135,18 +1135,18 @@ public class MinigameNightIsland implements BearFair21Island {
 		final BearFair21User user = new BearFair21UserService().get(player);
 		if (user.getQuestStage_MGN() != QuestStage.STEP_FIVE) return;
 
-		final WorldGuardUtils WGUtils = getWGUtils();
-		if (WGUtils.isInRegion(entity.getLocation(), fiberCableRegion)) {
+		final WorldGuardUtils worldguard = worldguard();
+		if (worldguard.isInRegion(entity.getLocation(), fiberCableRegion)) {
 			if (!user.isMgn_connectWiring()) {
 				ClientsideContentManager.addCategory(user, ContentCategory.CABLE);
 				user.setMgn_connectWiring(true);
 				Quests.sound_obtainItem(player);
 				userService.save(user);
 			}
-		} else if (WGUtils.isInRegion(entity.getLocation(), scrambledCablesRegion)) {
+		} else if (worldguard.isInRegion(entity.getLocation(), scrambledCablesRegion)) {
 			if (!user.isMgn_unscrambledWiring())
 				new ScrambledCablesMenu().open(player);
-		} else if (WGUtils.isInRegion(entity.getLocation(), routerRegion))
+		} else if (worldguard.isInRegion(entity.getLocation(), routerRegion))
 			if (!user.isMgn_setupRouter())
 				new RouterMenu().open(player);
 	}

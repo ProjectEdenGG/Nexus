@@ -7,12 +7,12 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.models.socialmedia.SocialMediaService;
+import gg.projecteden.nexus.models.socialmedia.SocialMediaUserService;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.NonNull;
 
 public class SocialMediaCommand extends CustomCommand {
-	private final SocialMediaService service = new SocialMediaService();
+	private final SocialMediaUserService service = new SocialMediaUserService();
 
 	public SocialMediaCommand(@NonNull CommandEvent event) {
 		super(event);

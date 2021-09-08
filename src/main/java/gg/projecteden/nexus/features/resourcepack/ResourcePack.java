@@ -4,12 +4,15 @@ import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
+import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
+import me.lexikiq.OptionalPlayerLike;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -25,6 +28,7 @@ import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.FileSystems;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @NoArgsConstructor
 public class ResourcePack extends Feature implements Listener {
@@ -35,7 +39,7 @@ public class ResourcePack extends Feature implements Listener {
 	@Getter
 	static String hash = Utils.createSha1(URL);
 	@Getter
-	static File file = Nexus.getFile(fileName);
+	static File file = IOUtils.getPluginFile(fileName);
 
 	@Getter
 	@Setter
@@ -56,11 +60,17 @@ public class ResourcePack extends Feature implements Listener {
 	static final String subdirectory = "/assets/minecraft/models/item";
 	@Getter
 	private static FileSystem zipFile;
+	@Getter
+	private static final CompletableFuture<Void> loader = new CompletableFuture<>();
+
 
 	@Override
 	public void onStart() {
-		openZip();
-		CustomModelMenu.load();
+		Tasks.async(() -> {
+			openZip();
+			CustomModelMenu.load();
+			loader.complete(null);
+		});
 	}
 
 	@Override
@@ -98,5 +108,12 @@ public class ResourcePack extends Feature implements Listener {
 
 	public static boolean isEnabledFor(Player player) {
 		return player.getResourcePackStatus() == Status.SUCCESSFULLY_LOADED || new LocalResourcePackUserService().get(player).isEnabled();
+	}
+
+	public static boolean isEnabledFor(OptionalPlayerLike player) {
+		if (!player.isOnline() || player.getPlayer() == null)
+			return false;
+
+		return isEnabledFor(player.getPlayer());
 	}
 }

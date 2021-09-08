@@ -21,6 +21,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFo
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
+import gg.projecteden.nexus.models.costume.CostumeUserService;
 import gg.projecteden.nexus.models.coupon.CouponService;
 import gg.projecteden.nexus.models.coupon.Coupons;
 import gg.projecteden.nexus.models.coupon.Coupons.Coupon;
@@ -145,6 +146,20 @@ public class CouponCommand extends CustomCommand implements Listener {
 			void use(PlayerInteractEvent event) {
 				event.getPlayer().giveExpLevels(75);
 			}
+		},
+		COSTUME(true) {
+			@Override
+			void use(PlayerInteractEvent event) {
+				new CostumeUserService().edit(event.getPlayer(), user -> user.addVouchers(1));
+				PlayerUtils.runCommand(event.getPlayer(), "costumes store");
+			}
+		},
+		COSTUMES_5(true) {
+			@Override
+			void use(PlayerInteractEvent event) {
+				new CostumeUserService().edit(event.getPlayer(), user -> user.addVouchers(5));
+				PlayerUtils.runCommand(event.getPlayer(), "costumes store");
+			}
 		};
 
 		private final boolean autoremove;
@@ -245,7 +260,7 @@ public class CouponCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Giving coupon &e" + coupon.getId() + " &3(" + coupon.getUses() + " uses)");
 	}
 
-	@Path("get (eco|vps|mcmmo|event_tokens) <amount>")
+	@Path("get (type) <amount>")
 	void generic(Integer amount) {
 		String type = arg(2);
 		ItemStack coupon = getGenericCoupon(type, amount);

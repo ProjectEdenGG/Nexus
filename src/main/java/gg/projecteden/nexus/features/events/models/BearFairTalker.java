@@ -29,9 +29,9 @@ public class BearFairTalker extends Talker {
 
 
 	private static BearFairIsland getIslandType(Player player) {
-		WorldGuardUtils WGUtils = new WorldGuardUtils(player);
+		WorldGuardUtils worldguard = new WorldGuardUtils(player);
 		Location location = player.getLocation();
-		Set<ProtectedRegion> regions = WGUtils.getRegionsLikeAt("bearfair.*", location);
+		Set<ProtectedRegion> regions = worldguard.getRegionsLikeAt("bearfair.*", location);
 		for (ProtectedRegion region : regions) {
 			if (region.getId().equals(BearFair20.getRegion()))
 				return gg.projecteden.nexus.features.events.y2020.bearfair20.islands.IslandType.getFromLocation(location);

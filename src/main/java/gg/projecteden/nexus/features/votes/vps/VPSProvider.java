@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.votes.vps;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.votes.vps.VPSMenu.VPSPage;
 import gg.projecteden.nexus.features.votes.vps.VPSMenu.VPSPage.VPSSlot;
@@ -12,6 +11,7 @@ import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.models.voter.Voter;
 import gg.projecteden.nexus.models.voter.VoterService;
+import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import org.bukkit.Material;
@@ -113,7 +113,7 @@ public class VPSProvider extends MenuUtils implements InventoryProvider {
 				String.valueOf(vpsSlot.getPrice())
 		));
 
-		Nexus.csvLog("vps", String.join(",", columns));
+		IOUtils.csvAppend("vps", String.join(",", columns));
 	}
 
 }

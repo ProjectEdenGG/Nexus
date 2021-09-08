@@ -10,7 +10,6 @@ import gg.projecteden.nexus.features.events.models.QuestProgress;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.QuestConverter;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -22,7 +21,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Data
-@Builder
 @Entity(value = "test_quest_user", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

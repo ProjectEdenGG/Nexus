@@ -9,7 +9,6 @@ import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackCo
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.MaterialTag;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -25,7 +24,6 @@ import java.util.UUID;
 import static gg.projecteden.nexus.utils.ItemUtils.combine;
 
 @Data
-@Builder
 @Entity(value = "dumpster", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

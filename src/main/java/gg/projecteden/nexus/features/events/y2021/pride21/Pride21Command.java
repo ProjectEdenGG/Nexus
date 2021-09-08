@@ -39,8 +39,8 @@ public class Pride21Command extends CustomCommand {
 		if (world == null)
 			error("Could not load the event world, please report to a dev <3");
 
-		WorldGuardUtils wgUtils = new WorldGuardUtils(world);
-		if (!wgUtils.isInRegion(player, "pride21_parade"))
+		WorldGuardUtils worldguard = new WorldGuardUtils(world);
+		if (!worldguard.isInRegion(player, "pride21_parade"))
 			error("You must be standing in the Pride parade to use this command");
 
 		Location npcLoc = LocationUtils.getCenteredLocation(player.getLocation());
@@ -63,8 +63,8 @@ public class Pride21Command extends CustomCommand {
 		if (world == null)
 			error("Could not load the event world, please report to a dev <3");
 
-		WorldGuardUtils wgUtils = new WorldGuardUtils(world);
-		for (NPC npc : NPCFinder.builder().owner(player).world(world).region(wgUtils.getProtectedRegion("pride21_parade")).build().get())
+		WorldGuardUtils worldguard = new WorldGuardUtils(world);
+		for (NPC npc : NPCFinder.builder().owner(player).world(world).region(worldguard.getProtectedRegion("pride21_parade")).build().get())
 			npc.destroy();
 
 		setting.setBoolean(false);

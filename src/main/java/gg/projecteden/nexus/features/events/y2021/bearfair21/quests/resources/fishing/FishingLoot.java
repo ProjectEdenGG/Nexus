@@ -150,7 +150,7 @@ public enum FishingLoot {
 		if (this.getRegion() == null)
 			return true;
 
-		return BearFair21.getWGUtils().isInRegion(location, BearFair21.getRegion() + "_" + this.getRegion());
+		return BearFair21.worldguard().isInRegion(location, BearFair21.getRegion() + "_" + this.getRegion());
 	}
 
 	private boolean yValueApplies(Player player) {

@@ -8,7 +8,6 @@ import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -26,7 +25,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import static gg.projecteden.utils.TimeUtils.shortDateTimeFormat;
 
 @Data
-@Builder
 @Entity(value = "changelog", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

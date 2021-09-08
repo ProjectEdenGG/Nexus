@@ -46,14 +46,7 @@ public class FallingLeaves extends ParticleEffect {
 		player.spawnParticle(particle, xRange, yRange, zRange, 0, 0, 0, 0, 1, Bukkit.createBlockData(material));
 
 		if (user.isDebug())
-			DotEffect.builder()
-				.player(player)
-				.location(new Location(player.getWorld(), xRange, yRange, zRange))
-				.clientSide(true)
-				.color(Color.RED)
-				.speed(.1)
-				.ticks(TickTime.SECOND.get())
-				.start();
+			DotEffect.debug(player, new Location(player.getWorld(), xRange, yRange, zRange), Color.RED);
 	}
 
 }

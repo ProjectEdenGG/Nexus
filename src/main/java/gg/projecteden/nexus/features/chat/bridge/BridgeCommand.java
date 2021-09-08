@@ -15,6 +15,7 @@ import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -157,7 +158,7 @@ public class BridgeCommand extends CustomCommand {
 			error("Archive is already loaded. &3Use &c/bridge archive reload &3to reload");
 
 		loadedChannel = channel;
-		String data = "{\"roleMap\":" + FileUtils.readFileToString(Nexus.getFile("role-archives/" + channel.getTextChannel().getId() + ".json")) + "}";
+		String data = "{\"roleMap\":" + FileUtils.readFileToString(IOUtils.getPluginFile("role-archives/" + channel.getTextChannel().getId() + ".json")) + "}";
 		archive = new Gson().fromJson(data, BridgeArchive.class);
 		send(PREFIX + "Loaded " + archive.getRoleMap().size() + " roles from the archive");
 	}

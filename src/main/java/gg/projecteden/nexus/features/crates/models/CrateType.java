@@ -27,12 +27,12 @@ import org.bukkit.inventory.ItemStack;
 @Getter
 public enum CrateType {
 	ALL(null, null),
-	VOTE(new VoteCrate(), new Location(Bukkit.getWorld("survival"), 8.00, 15.00, 11.00, .00F, .00F)),
-	MYSTERY(new MysteryCrate(), new Location(Bukkit.getWorld("survival"), 11.00, 15.00, 8.00, .00F, .00F)),
-	WEEKLY_WAKKA(new WeeklyWakkaCrate(), new Location(Bukkit.getWorld("survival"), 15.00, 15.00, -8.00, .00F, .00F)),
+	VOTE(new VoteCrate(), new Location(Bukkit.getWorld("survival"), 8, 15, 11)),
+	MYSTERY(new MysteryCrate(), new Location(Bukkit.getWorld("survival"), 11, 15, 8)),
+	WEEKLY_WAKKA(new WeeklyWakkaCrate(), new Location(Bukkit.getWorld("survival"), 15, 15, -8)),
 	FEB_VOTE_REWARD(new FebVoteRewardCrate(), null),
-	BOSS(new BossCrate(), new Location(Bukkit.getWorld("survival"), -9.00, 15.00, 12.00, .00F, .00F)),
-	BEAR_FAIR_21(new BearFair21Crate(), new Location(Bukkit.getWorld("survival"), -12.00, 15.00, 9.00, .00F, .00F));
+	BOSS(new BossCrate(), new Location(Bukkit.getWorld("survival"), -9, 15, 12)),
+	BEAR_FAIR_21(new BearFair21Crate(), new Location(Bukkit.getWorld("survival"), -12, 15, 9));
 
 	Crate crateClass;
 	Location location;

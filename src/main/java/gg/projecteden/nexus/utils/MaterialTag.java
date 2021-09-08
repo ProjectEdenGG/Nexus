@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -486,6 +487,26 @@ public class MaterialTag implements Tag<Material> {
 
 	public boolean isTagged(@NotNull Block block) {
 		return isTagged(block.getType());
+	}
+
+	public boolean isTagged(@NotNull BlockData block) {
+		return isTagged(block.getMaterial());
+	}
+
+	public boolean isNotTagged(@NotNull Material material) {
+		return !isTagged(material);
+	}
+
+	public boolean isNotTagged(@Nullable ItemStack item) {
+		return !isTagged(item);
+	}
+
+	public boolean isNotTagged(@NotNull Block block) {
+		return !isTagged(block);
+	}
+
+	public boolean isNotTagged(@NotNull BlockData block) {
+		return !isTagged(block);
 	}
 
 	@Override

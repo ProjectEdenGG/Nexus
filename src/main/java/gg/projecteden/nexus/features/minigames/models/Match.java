@@ -141,12 +141,12 @@ public class Match implements ForwardingAudience {
 		return arena.getWorld();
 	}
 
-	public WorldGuardUtils getWGUtils() {
-		return arena.getWGUtils();
+	public WorldGuardUtils worldguard() {
+		return arena.worldguard();
 	}
 
-	public WorldEditUtils getWEUtils() {
-		return arena.getWEUtils();
+	public WorldEditUtils worldedit() {
+		return arena.worldedit();
 	}
 
 	public boolean join(Minigamer minigamer) {
@@ -369,7 +369,7 @@ public class Match implements ForwardingAudience {
 		}
 
 		getWorld().getEntities().forEach(entity -> {
-			if (getArena().getRegion().contains(getWEUtils().toBlockVector3(entity.getLocation())))
+			if (getArena().getRegion().contains(worldedit().toBlockVector3(entity.getLocation())))
 				if (deletableTypes.contains(entity.getType()))
 					entity.remove();
 		});

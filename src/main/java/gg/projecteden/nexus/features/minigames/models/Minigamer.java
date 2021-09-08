@@ -281,19 +281,21 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 		final Location up = location.clone().add(0, .5, 0);
 		final Vector still = new Vector(0, 0, 0);
 
-		return location.getWorld().getChunkAtAsyncUrgently(up).thenRun(() -> {
-			getPlayer().setVelocity(still);
-			canTeleport = true;
-
-			getPlayer().teleportAsync(up, match == null ? TeleportCause.COMMAND : TeleportCause.PLUGIN);
-
-			canTeleport = false;
-			getPlayer().setVelocity(still);
-			if (withSlowness) {
-				match.getTasks().wait(1, () -> getPlayer().setVelocity(still));
-				match.getTasks().wait(2, () -> getPlayer().setVelocity(still));
-			}
-		});
+		return location.getWorld().getChunkAtAsyncUrgently(up)
+			.thenRun(() -> {
+				getPlayer().setVelocity(still);
+				canTeleport = true;
+			}).thenCompose($ -> {
+				final TeleportCause cause = match == null ? TeleportCause.COMMAND : TeleportCause.PLUGIN;
+				return getPlayer().teleportAsync(up, cause);
+			}).thenRun(() -> {
+				canTeleport = false;
+				getPlayer().setVelocity(still);
+				if (withSlowness) {
+					match.getTasks().wait(1, () -> getPlayer().setVelocity(still));
+					match.getTasks().wait(2, () -> getPlayer().setVelocity(still));
+				}
+			});
 	}
 
 	public void setTeam(@Nullable Team team) {

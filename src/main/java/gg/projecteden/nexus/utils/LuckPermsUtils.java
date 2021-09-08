@@ -224,7 +224,7 @@ public class LuckPermsUtils {
 			@NonNull
 			private final PermissionChangeType type;
 			private UUID uuid;
-			private String permission;
+			private final List<String> permissions = new ArrayList<>();
 			private boolean value = true;
 			private World world;
 
@@ -243,7 +243,12 @@ public class LuckPermsUtils {
 			}
 
 			public PermissionChangeBuilder permission(String permission) {
-				this.permission = permission;
+				this.permissions.add(permission);
+				return this;
+			}
+
+			public PermissionChangeBuilder permissions(List<String> permissions) {
+				this.permissions.addAll(permissions);
 				return this;
 			}
 
@@ -271,12 +276,14 @@ public class LuckPermsUtils {
 			@NotNull
 			public CompletableFuture<Void> runAsync() {
 				return userManager().modifyUser(uuid, user -> {
-					var node = Node.builder(permission).negated(!value);
+					for (String permission : permissions) {
+						var node = Node.builder(permission).negated(!value);
 
-					if (world != null)
-						node.context(ImmutableContextSet.of("world", world.getName()));
+						if (world != null)
+							node.context(ImmutableContextSet.of("world", world.getName()));
 
-					type.consumer.accept(user.data(), node.build());
+						type.consumer.accept(user.data(), node.build());
+					}
 				});
 			}
 

@@ -15,6 +15,7 @@ import gg.projecteden.nexus.models.radio.RadioConfig.RadioType;
 import gg.projecteden.nexus.models.radio.RadioConfigService;
 import gg.projecteden.nexus.models.radio.RadioUser;
 import gg.projecteden.nexus.models.radio.RadioUserService;
+import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -44,7 +45,7 @@ import static gg.projecteden.nexus.utils.Utils.isNullOrEmpty;
 public class RadioFeature extends Feature {
 
 	public static final String PREFIX = StringUtils.getPrefix("Radio");
-	private static final File songsDirectory = Nexus.getFile("songs");
+	private static final File songsDirectory = IOUtils.getPluginFile("songs");
 	private static final RadioUserService userService = new RadioUserService();
 
 	@Getter
@@ -55,65 +56,67 @@ public class RadioFeature extends Feature {
 		allSongs = new ArrayList<>();
 		new Listeners();
 
-		File[] songs = songsDirectory.listFiles();
-		if (songs != null) {
-			for (File file : songs)
-				allSongs.add(new RadioSong(file.getName(), file));
-		}
-
-		setupRadios();
-
-		// Rejoin radios
-		for (Player player : PlayerUtils.getOnlinePlayers()) {
-			RadioUser user = userService.get(player);
-			if (user.getLastServerRadio() != null)
-				RadioUtils.addPlayer(player, user.getLastServerRadio());
-		}
-
-		// Radio Particles Task
-		Tasks.repeat(0, TickTime.SECOND.x(2), () -> {
-			RadioConfigService configService = new RadioConfigService();
-			RadioConfig config = configService.get0();
-			for (Radio radio : config.getRadios()) {
-				if (!radio.getType().equals(RadioType.RADIUS)) continue;
-				if (!radio.isEnabled()) continue;
-				if (!radio.isParticles()) continue;
-				if (radio.getLocation() == null) continue;
-				new ParticleBuilder(Particle.NOTE)
-						.count(7)
-						.offset(0.25, 0.25, 0.25)
-						.location(radio.getLocation().add(0, 1, 0))
-						.spawn();
+		Tasks.async(() -> {
+			File[] songs = songsDirectory.listFiles();
+			if (songs != null) {
+				for (File file : songs)
+					allSongs.add(new RadioSong(file.getName(), file));
 			}
-		});
 
-		// Radius Radio User Task
-		Tasks.repeat(0, TickTime.SECOND.x(2), () -> {
-			RadioUserService service = new RadioUserService();
-			for (Radio radio : getRadios()) {
-				if (!(radio.getSongPlayer() instanceof PositionSongPlayer))
-					continue;
+			setupRadios();
 
-				for (Player player : PlayerUtils.getOnlinePlayers()) {
-					RadioUser user = service.get(player);
+			// Rejoin radios
+			for (Player player : PlayerUtils.getOnlinePlayers()) {
+				RadioUser user = userService.get(player);
+				if (user.getLastServerRadio() != null)
+					RadioUtils.addPlayer(player, user.getLastServerRadio());
+			}
 
-					if (user.isMute()) continue;
-					if (user.getLeftRadiusRadios().contains(radio.getId())) continue;
+			// Radio Particles Task
+			Tasks.repeat(0, TickTime.SECOND.x(2), () -> {
+				RadioConfigService configService = new RadioConfigService();
+				RadioConfig config = configService.get0();
+				for (Radio radio : config.getRadios()) {
+					if (!radio.getType().equals(RadioType.RADIUS)) continue;
+					if (!radio.isEnabled()) continue;
+					if (!radio.isParticles()) continue;
+					if (radio.getLocation() == null) continue;
+					new ParticleBuilder(Particle.NOTE)
+							.count(7)
+							.offset(0.25, 0.25, 0.25)
+							.location(radio.getLocation().add(0, 1, 0))
+							.spawn();
+				}
+			});
 
-					boolean isInRange = isInRangeOfRadiusRadio(player, radio);
-					boolean isListening = isListening(player, radio);
+			// Radius Radio User Task
+			Tasks.repeat(0, TickTime.SECOND.x(2), () -> {
+				RadioUserService service = new RadioUserService();
+				for (Radio radio : getRadios()) {
+					if (!(radio.getSongPlayer() instanceof PositionSongPlayer))
+						continue;
 
-					if (isInRange && !isListening) {
-						if (user.getServerRadio() != null)
-							removePlayer(player, user.getServerRadio());
-						addPlayer(player, radio);
-					} else if (!isInRange && isListening) {
-						removePlayer(player, radio);
-						if (user.getLastServerRadio() != null)
-							addPlayer(player, user.getLastServerRadio());
+					for (Player player : PlayerUtils.getOnlinePlayers()) {
+						RadioUser user = service.get(player);
+
+						if (user.isMute()) continue;
+						if (user.getLeftRadiusRadios().contains(radio.getId())) continue;
+
+						boolean isInRange = isInRangeOfRadiusRadio(player, radio);
+						boolean isListening = isListening(player, radio);
+
+						if (isInRange && !isListening) {
+							if (user.getServerRadio() != null)
+								removePlayer(player, user.getServerRadio());
+							addPlayer(player, radio);
+						} else if (!isInRange && isListening) {
+							removePlayer(player, radio);
+							if (user.getLastServerRadio() != null)
+								addPlayer(player, user.getLastServerRadio());
+						}
 					}
 				}
-			}
+			});
 		});
 	}
 

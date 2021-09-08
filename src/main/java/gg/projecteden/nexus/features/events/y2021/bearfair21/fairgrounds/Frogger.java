@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds;
 
-import com.sk89q.worldedit.regions.CuboidRegion;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.BF21PointSource;
@@ -31,10 +30,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.getWEUtils;
-import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.getWGUtils;
 import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.isInRegion;
 import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.send;
+import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.worldedit;
+import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.worldguard;
 
 public class Frogger implements Listener {
 
@@ -64,8 +63,6 @@ public class Frogger implements Listener {
 
 	public Frogger() {
 		Nexus.registerListener(this);
-		loadLogSpawns();
-		loadCarSpawns();
 	}
 
 	private void loadLogSpawns() {
@@ -77,7 +74,7 @@ public class Frogger implements Listener {
 	}
 
 	private void loadSpawns(String logsRg, Map<Location, Material> logSpawnMap) {
-		List<Block> blocks = getWEUtils().getBlocks((CuboidRegion) getWGUtils().getRegion(logsRg));
+		List<Block> blocks = worldedit().getBlocks(worldguard().getRegion(logsRg));
 		for (Block block : blocks)
 			if (block.getType().equals(Material.DIAMOND_BLOCK) || block.getType().equals(Material.EMERALD_BLOCK))
 				logSpawnMap.put(block.getLocation(), block.getType());
@@ -89,6 +86,10 @@ public class Frogger implements Listener {
 		taskId.set(Tasks.wait(0, () -> {
 			clearLogs();
 			int lastLogLen = 3;
+
+			if (logSpawnMap.isEmpty())
+				loadLogSpawns();
+
 			for (Location spawnLoc : logSpawnMap.keySet()) {
 				BlockFace blockFace = (spawnLoc.getBlock().getType().equals(Material.DIAMOND_BLOCK)) ? BlockFace.WEST : BlockFace.EAST;
 				for (int i = 0; i < 4; i++) {
@@ -106,6 +107,10 @@ public class Frogger implements Listener {
 
 			// Car Animations
 			clearCars();
+
+			if (carSpawnMap.isEmpty())
+				loadCarSpawns();
+
 			for (Location spawnLoc : carSpawnMap.keySet()) {
 				Location loc = spawnLoc.getBlock().getRelative(0, 2, 0).getLocation();
 				BlockFace blockFace = (spawnLoc.getBlock().getType().equals(Material.DIAMOND_BLOCK)) ? BlockFace.WEST : BlockFace.EAST;
@@ -285,7 +290,7 @@ public class Frogger implements Listener {
 	}
 
 	private void clearLogs() {
-		List<Block> blocks = getWEUtils().getBlocks((CuboidRegion) getWGUtils().getRegion(logsRg));
+		List<Block> blocks = worldedit().getBlocks(worldguard().getRegion(logsRg));
 		for (Block block : blocks) {
 			if (block.getType().equals(logMaterial))
 				block.setType(riverMaterial);
@@ -293,7 +298,7 @@ public class Frogger implements Listener {
 	}
 
 	private void clearCars() {
-		List<Block> blocks = getWEUtils().getBlocks((CuboidRegion) getWGUtils().getRegion(roadRg));
+		List<Block> blocks = worldedit().getBlocks(worldguard().getRegion(roadRg));
 		for (Block block : blocks) {
 			if (!block.getType().equals(Material.AIR))
 				block.setType(Material.AIR);
@@ -346,7 +351,7 @@ public class Frogger implements Listener {
 	public void onRegionExit(PlayerLeftRegionEvent event) {
 		String regionId = event.getRegion().getId();
 		if (regionId.equalsIgnoreCase(gameRg)) {
-			int size = getWGUtils().getPlayersInRegion(gameRg).size();
+			int size = worldguard().getPlayersInRegion(gameRg).size();
 			if (size == 0) {
 				enabled = false;
 				stopAnimations();

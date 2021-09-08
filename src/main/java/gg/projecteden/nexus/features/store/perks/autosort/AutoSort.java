@@ -8,6 +8,7 @@ import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.utils.Utils;
 import org.bukkit.Material;
@@ -42,7 +43,7 @@ public class AutoSort extends Feature {
 
 	@Override
 	public void onStart() {
-		registerListeners(getClass().getPackage().getName() + ".features");
+		Tasks.async(() -> registerListeners(getClass().getPackage().getName() + ".features"));
 	}
 
 	public static boolean isWorldDisabled(World world) {

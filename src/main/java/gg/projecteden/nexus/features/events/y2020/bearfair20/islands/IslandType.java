@@ -24,8 +24,8 @@ public enum IslandType {
 	}
 
 	public static BearFairIsland getFromLocation(Location location) {
-		WorldGuardUtils WGUtils = new WorldGuardUtils(location);
-		Set<String> regions = WGUtils.getRegionNamesAt(location);
+		WorldGuardUtils worldguard = new WorldGuardUtils(location);
+		Set<String> regions = worldguard.getRegionNamesAt(location);
 		for (IslandType island : values()) {
 			if (regions.contains(island.get().getRegion()))
 				return island.get();

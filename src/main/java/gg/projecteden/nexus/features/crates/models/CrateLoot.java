@@ -100,7 +100,11 @@ public class CrateLoot implements ConfigurationSerializable {
 	}
 
 	public double getWeight() {
-		double multiplier = items.size() == 1 && items.get(0).isSimilar(CrateType.MYSTERY.getKey()) ? BoostConfig.multiplierOf(Boostable.MYSTERY_CRATE_KEY) : 1;
+		double multiplier = 1;
+
+		if (items.size() == 1 && items.get(0).isSimilar(CrateType.MYSTERY.getKey()))
+			multiplier = BoostConfig.multiplierOf(Boostable.MYSTERY_CRATE_KEY);
+
 		return weight * multiplier;
 	}
 }

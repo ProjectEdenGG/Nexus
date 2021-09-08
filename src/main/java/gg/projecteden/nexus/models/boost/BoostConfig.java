@@ -11,7 +11,6 @@ import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.boost.Booster.Boost;
 import gg.projecteden.utils.DiscordId;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -32,7 +31,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import static gg.projecteden.utils.StringUtils.camelCase;
 
 @Data
-@Builder
 @Entity(value = "boost_config", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

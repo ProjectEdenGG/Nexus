@@ -215,7 +215,7 @@ public class BattleshipMatchData extends MatchData {
 			this.a0_ships = arena.getRegion("a0_ships_" + team.getName());
 			this.a0_pegs = arena.getRegion("a0_pegs_" + team.getName());
 
-			Location a0 = arena.getWEUtils().toLocation(a0_ships.getCenter());
+			Location a0 = arena.worldedit().toLocation(a0_ships.getCenter());
 			BlockUtils.getBlocksInRadius(a0, 5).forEach(block -> {
 				if (block.getType() != Material.YELLOW_WOOL) return;
 
@@ -270,7 +270,7 @@ public class BattleshipMatchData extends MatchData {
 
 		public Coordinate getCoordinate(Location location) {
 			Region region = arena.getRegion("a0_ships_" + team.getName());
-			Location a0 = WEUtils.toLocation(region.getCenter());
+			Location a0 = worldedit().toLocation(region.getCenter());
 			int over = (int) Math.round(Math.abs(location.getX() - a0.getX()) / 4);
 			String letter = LETTERS.substring(over, over + 1);
 			int number = (int) Math.round(Math.abs(location.getZ() - a0.getZ()) / 4);
@@ -325,7 +325,7 @@ public class BattleshipMatchData extends MatchData {
 
 			public Location getKitLocation() {
 				Region region = arena.getRegion("a0_ships_" + team.getName());
-				Location a0 = WEUtils.toLocation(region.getCenter());
+				Location a0 = worldedit().toLocation(region.getCenter());
 
 				int over = LETTERS.indexOf(letter) * 4;
 				int down = number * 4;
@@ -339,7 +339,7 @@ public class BattleshipMatchData extends MatchData {
 
 			public Location getPegLocation() {
 				Region region = arena.getRegion("a0_pegs_" + team.getName());
-				Location a0 = WEUtils.toLocation(region.getCenter());
+				Location a0 = worldedit().toLocation(region.getCenter());
 
 				int over = LETTERS.indexOf(letter) * 4;
 				int down = number * 4;

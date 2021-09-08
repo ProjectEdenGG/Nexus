@@ -9,6 +9,7 @@ import gg.projecteden.nexus.models.documentation.CommandsConfig.CommandConfig;
 import gg.projecteden.nexus.models.documentation.CommandsConfig.CommandConfig.CommandPath;
 import gg.projecteden.nexus.models.documentation.CommandsConfig.CommandConfig.CommandPath.CommandPathArgument;
 import gg.projecteden.nexus.models.documentation.CommandsConfigService;
+import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Bukkit;
 
@@ -67,9 +68,9 @@ public class DocumentCommands {
 				"path_arg_switchShorthand"
 		);
 
-		Nexus.getFile("logs/commands.csv").delete();
+		IOUtils.getLogsFile("commands.csv").delete();
 
-		Nexus.csvLog("commands", "\"" + String.join("\",\"", headers) + "\"");
+		IOUtils.csvAppend("commands", "\"" + String.join("\",\"", headers) + "\"");
 
 		for (CommandConfig command : commandsConfig.getCommands()) {
 			List<String> columns = new ArrayList<>();
@@ -122,7 +123,7 @@ public class DocumentCommands {
 						columns.add("");
 				}
 
-				Nexus.csvLog("commands", "\"" + String.join("\",\"", columns) + "\"");
+				IOUtils.csvAppend("commands", "\"" + String.join("\",\"", columns) + "\"");
 			}
 		}
 

@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.utils;
 
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import lombok.SneakyThrows;
 import okhttp3.OkHttpClient;
@@ -66,11 +65,11 @@ public class HttpUtils {
 	}
 
 	public static File saveFile(String url, String destination) {
-		return saveFile(callUrl(url).body(), Nexus.getFile(destination));
+		return saveFile(callUrl(url).body(), IOUtils.getPluginFile(destination));
 	}
 
 	public static File saveFile(ResponseBody body, String destination) {
-		return saveFile(body, Nexus.getFile(destination));
+		return saveFile(body, IOUtils.getPluginFile(destination));
 	}
 
 	@SneakyThrows

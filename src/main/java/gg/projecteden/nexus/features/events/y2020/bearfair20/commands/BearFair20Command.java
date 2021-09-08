@@ -66,9 +66,9 @@ public class BearFair20Command extends _WarpCommand implements Listener {
 //	void questsSwitchQuest(String string) {
 //		if (!BearFair20.enableQuests) return;
 //
-//		ProtectedRegion pugmasRegion = getWGUtils().getProtectedRegion(IslandType.PUGMAS.get().getRegion());
-//		ProtectedRegion mainRegion = getWGUtils().getProtectedRegion(IslandType.MAIN.get().getRegion());
-//		if (!getWGUtils().getRegionsAt(location()).contains(pugmasRegion) && !getWGUtils().getRegionsAt(location()).contains(mainRegion))
+//		ProtectedRegion pugmasRegion = worldguard().getProtectedRegion(IslandType.PUGMAS.get().getRegion());
+//		ProtectedRegion mainRegion = worldguard().getProtectedRegion(IslandType.MAIN.get().getRegion());
+//		if (!worldguard().getRegionsAt(location()).contains(pugmasRegion) && !worldguard().getRegionsAt(location()).contains(mainRegion))
 //			return;
 //		switch (string) {
 //			// Main
@@ -444,9 +444,9 @@ public class BearFair20Command extends _WarpCommand implements Listener {
 //	private static void reloadMaps() {
 //		try {
 //			maps.clear();
-//			WorldEditUtils WEUtils = getWEUtils();
+//			WorldEditUtils worldedit = worldedit();
 //
-//			for (Block block : WEUtils.getBlocks(WEUtils.getWorldGuardUtils().getRegion("maps"))) {
+//			for (Block block : worldedit.getBlocks(WEUtils.getWorldGuardUtils().getRegion("maps"))) {
 //				try {
 //					if (!MaterialTag.SIGNS.isTagged(block.getType())) continue;
 //

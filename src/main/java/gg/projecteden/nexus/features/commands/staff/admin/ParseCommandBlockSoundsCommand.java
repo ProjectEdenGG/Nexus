@@ -7,7 +7,6 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.LocationUtils.CardinalDirection;
 import gg.projecteden.utils.EnumUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Location;
@@ -25,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static gg.projecteden.nexus.utils.LocationUtils.getCenteredLocation;
 import static gg.projecteden.nexus.utils.Utils.sortByKey;
 
 @NoArgsConstructor
@@ -72,11 +70,11 @@ public class ParseCommandBlockSoundsCommand extends CustomCommand implements Lis
 		send(json(PREFIX + "Click to copy").copy(message));
 	}
 
-	int wait = 0;
-	int SAFETY = 0;
+	private int wait = 0;
+	private int SAFETY = 0;
 
-	Map<Integer, List<String>> sounds = new HashMap<>();
-	Map<Location, Integer> treeWait = new HashMap<>();
+	private final Map<Integer, List<String>> sounds = new HashMap<>();
+	private final Map<Location, Integer> treeWait = new HashMap<>();
 
 	void look(Block start, BlockFace ignore) {
 		for (BlockFace direction : CardinalDirection.blockFaces()) {
@@ -120,13 +118,11 @@ public class ParseCommandBlockSoundsCommand extends CustomCommand implements Lis
 	}
 
 	void found(Block block) {
-		DotEffect.builder()
-				.player(player())
-				.location(getCenteredLocation(block.getLocation().add(0, 1, 0)).add(0, .5, 0))
-				.speed(0.1)
-				.ticks(TickTime.SECOND.x(5))
-				.color(EnumUtils.random(ColorType.class).getBukkitColor())
-				.start();
+		DotEffect.debug(
+			player(),
+			block.getRelative(BlockFace.UP).getLocation().toCenterLocation(),
+			EnumUtils.random(ColorType.class).getBukkitColor()
+		);
 	}
 
 }

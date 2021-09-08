@@ -53,10 +53,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.getWGUtils;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.isAtBearFair;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.isBFItem;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.send;
+import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.worldguard;
 
 public class BFQuests implements Listener {
 	public static String itemLore = "BearFair20 Item";
@@ -193,8 +193,8 @@ public class BFQuests implements Listener {
 		Block clicked = event.getClickedBlock();
 		if (BlockUtils.isNullOrAir(clicked)) return;
 
-		ProtectedRegion beehiveRg = getWGUtils().getProtectedRegion(Beehive.beehiveRg);
-		if (getWGUtils().getRegionsAt(clicked.getLocation()).contains(beehiveRg)) {
+		ProtectedRegion beehiveRg = worldguard().getProtectedRegion(Beehive.beehiveRg);
+		if (worldguard().getRegionsAt(clicked.getLocation()).contains(beehiveRg)) {
 			event.setCancelled(true);
 			return;
 		}
@@ -217,8 +217,8 @@ public class BFQuests implements Listener {
 		Block clicked = event.getClickedBlock();
 		if (BlockUtils.isNullOrAir(clicked)) return;
 
-		ProtectedRegion beehiveRg = getWGUtils().getProtectedRegion(Beehive.beehiveRg);
-		if (getWGUtils().getRegionsAt(clicked.getLocation()).contains(beehiveRg)) {
+		ProtectedRegion beehiveRg = worldguard().getProtectedRegion(Beehive.beehiveRg);
+		if (worldguard().getRegionsAt(clicked.getLocation()).contains(beehiveRg)) {
 			event.setCancelled(true);
 			return;
 		}
@@ -346,7 +346,7 @@ public class BFQuests implements Listener {
 	@EventHandler
 	public void onMcMMOXpGainEvent(McMMOPlayerXpGainEvent event) {
 		Location loc = event.getPlayer().getLocation();
-		if (!getWGUtils().getRegionsAt(loc).contains(BearFair20.getProtectedRegion())) return;
+		if (!worldguard().getRegionsAt(loc).contains(BearFair20.getProtectedRegion())) return;
 		event.setRawXpGained(0F);
 		event.setCancelled(true);
 	}

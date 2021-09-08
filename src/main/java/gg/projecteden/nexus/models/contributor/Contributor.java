@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Data
-@Builder
 @Entity(value = "contributor", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor

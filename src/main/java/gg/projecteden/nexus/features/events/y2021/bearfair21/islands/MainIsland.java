@@ -1120,7 +1120,7 @@ public class MainIsland implements BearFair21Island {
 		BearFair21User user = userService.get(event.getPlayer());
 		if (user.getQuestStage_BeeKeeper() != QuestStage.STEP_ONE) return;
 
-		if (BearFair21.getWGUtils().isInRegion(block.getLocation(), "bearfair21_main_beehive_nursery")) {
+		if (BearFair21.worldguard().isInRegion(block.getLocation(), "bearfair21_main_beehive_nursery")) {
 			Quests.giveItem(event.getPlayer(), queenLarvae.get().clone().build());
 			user.setQuestStage_BeeKeeper(QuestStage.STEPS_DONE);
 			user.getNextStepNPCs().add(BEEKEEPER.getId());

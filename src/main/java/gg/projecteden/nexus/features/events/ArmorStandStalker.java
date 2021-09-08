@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.events;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
 import gg.projecteden.nexus.utils.EntityUtils;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
@@ -72,7 +73,7 @@ public class ArmorStandStalker {
 
 				Location location = entity.getLocation();
 
-				Player nearestPlayer = EntityUtils.getNearestEntityType(location, Player.class, stalker.getRadius());
+				Player nearestPlayer = PlayerUtils.getNearestVisiblePlayer(location, stalker.getRadius()).getObject();
 				if (nearestPlayer != null)
 					lookAt(armorStand, stalker, nearestPlayer);
 			}

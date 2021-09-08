@@ -5,7 +5,6 @@ import gg.projecteden.nexus.models.minigamersetting.MinigamerSetting;
 import gg.projecteden.nexus.models.minigamersetting.MinigamerSettingService;
 import gg.projecteden.nexus.utils.SerializationUtils;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bukkit.Material;
@@ -23,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-@Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

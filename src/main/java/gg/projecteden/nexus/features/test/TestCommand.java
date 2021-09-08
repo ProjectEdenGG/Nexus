@@ -2,6 +2,10 @@ package gg.projecteden.nexus.features.test;
 
 import gg.projecteden.annotations.Async;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.minigames.Minigames;
+import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
+import gg.projecteden.nexus.features.minigames.managers.MatchManager;
+import gg.projecteden.nexus.features.minigames.models.matchdata.PixelPaintersMatchData;
 import gg.projecteden.nexus.features.store.perks.NPCListener;
 import gg.projecteden.nexus.features.wither.fights.CorruptedFight.CorruptedCounterAttacks;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -72,6 +76,16 @@ public class TestCommand extends CustomCommand implements Listener {
 	@Override
 	public void _shutdown() {
 		shutdownBossBars();
+	}
+
+	@Path("sel designRegion")
+	void sel_designRegion() {
+		if (world() != Minigames.getWorld())
+			error("Must be in minigames world");
+
+		final WorldEditUtils worldedit = new WorldEditUtils(world());
+		final PixelPaintersMatchData matchData = MatchManager.get(ArenaManager.get("PixelPainters")).getMatchData();
+		worldedit.setSelection(player(), matchData.getDesignRegion());
 	}
 
 	@Path("queuedTask")
@@ -296,7 +310,7 @@ public class TestCommand extends CustomCommand implements Listener {
 
 	@Path("allowedRegionsTest")
 	void allowedRegionsTest() {
-		new WorldEditUtils(player()).paster().file("allowedRegionsTest").at(location()).regions("allowedRegionsTest").pasteAsync();
+		new WorldEditUtils(player()).paster().file("allowedRegionsTest").at(location()).regionMask("allowedRegionsTest").pasteAsync();
 		send("Pasted schematic allowedRegionsTest");
 	}
 

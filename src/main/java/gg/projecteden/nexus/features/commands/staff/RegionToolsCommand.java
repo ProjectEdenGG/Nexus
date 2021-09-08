@@ -9,23 +9,23 @@ import lombok.NonNull;
 
 @Permission("group.staff")
 public class RegionToolsCommand extends CustomCommand {
-	private final WorldGuardUtils wgUtils;
+	private final WorldGuardUtils worldguard;
 
 	public RegionToolsCommand(@NonNull CommandEvent event) {
 		super(event);
-		wgUtils = new WorldGuardUtils(player());
+		worldguard = new WorldGuardUtils(player());
 	}
 
 	@Path("getRegionsAt")
 	void getRegionsAt() {
 		send(PREFIX + "Found regions:");
-		wgUtils.getRegionsAt(location()).forEach(region -> send(region.getId()));
+		worldguard.getRegionsAt(location()).forEach(region -> send(region.getId()));
 	}
 
 	@Path("getRegionsLikeAt <filter>")
 	void getRegionsLikeAt(String filter) {
 		send(PREFIX + "Found regions:");
-		wgUtils.getRegionsLikeAt(filter, location()).forEach(region -> send(region.getId()));
+		worldguard.getRegionsLikeAt(filter, location()).forEach(region -> send(region.getId()));
 	}
 
 }

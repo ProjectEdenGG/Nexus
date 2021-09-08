@@ -54,7 +54,7 @@ public class Rides {
 	}
 
 	private static void dropTowerTask() {
-		WorldGuardUtils WGUtils = BearFair21.getWGUtils();
+		WorldGuardUtils worldguard = BearFair21.worldguard();
 		String rg = BearFair21.getRegion();
 
 		// Drop Tower
@@ -69,7 +69,7 @@ public class Rides {
 		Tasks.repeat(TickTime.SECOND.x(5), TickTime.TICK.x(2), () -> {
 			for (String light_region : towerLights.keySet()) {
 				Location location = towerLights.get(light_region);
-				if (WGUtils.getPlayersInRegion(light_region).size() > 0) {
+				if (worldguard.getPlayersInRegion(light_region).size() > 0) {
 					locations.add(location);
 					location.getBlock().setType(Material.REDSTONE_BLOCK);
 				} else if (locations.contains(location)) {

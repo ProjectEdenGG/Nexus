@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.safecracker;
 
 import gg.projecteden.annotations.Disabled;
 import gg.projecteden.nexus.features.discord.Discord;
-import gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.safecracker.menus.SafeCrackerInventories;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -24,7 +23,6 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import lombok.NoArgsConstructor;
@@ -183,11 +181,9 @@ public class SafeCrackerCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onSignClick(PlayerInteractEvent event) {
-		WorldGuardUtils wgUtils = BearFair20.getWGUtils();
 		if (!ActionGroup.CLICK_BLOCK.applies(event)) return;
 		if (event.getClickedBlock() == null || !MaterialTag.SIGNS.isTagged(event.getClickedBlock().getType())) return;
 		if (event.getHand() == null || !event.getHand().equals(EquipmentSlot.HAND)) return;
-		//if (!wgUtils.isInRegion(event.getClickedBlock().getLocation(), BearFair20.getRegion())) return;
 		Sign sign = (Sign) event.getClickedBlock().getState();
 		if (!sign.getLine(1).equals(StringUtils.colorize("&e[SafeCracker]"))) return;
 

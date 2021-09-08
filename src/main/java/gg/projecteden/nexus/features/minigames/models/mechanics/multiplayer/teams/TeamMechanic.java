@@ -345,10 +345,14 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 	@Override
 	public int getMultiplier(@NotNull Match match, @NotNull Minigamer minigamer) {
 		int winningScore = match.getWinningScore();
+		if (winningScore <= 0)
+			return 0;
+
 		Team team = minigamer.getTeam();
 		// ignore losing teams
-		if (team.getScore(match) < winningScore || winningScore <= 0)
+		if (team != null && team.getScore(match) < winningScore)
 			return 0;
+
 		return super.getMultiplier(match, minigamer);
 	}
 
