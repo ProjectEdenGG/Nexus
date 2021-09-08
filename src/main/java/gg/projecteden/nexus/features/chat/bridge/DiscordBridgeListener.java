@@ -63,8 +63,8 @@ public class DiscordBridgeListener extends ListenerAdapter {
 
 			for (Message.Attachment attachment : event.getMessage().getAttachments())
 				builder.group()
-						.next(" &f&l[View Attachment]")
-						.url(attachment.getUrl());
+					.next(" &f&l[View Attachment]")
+					.url(attachment.getUrl());
 
 			Identity identity = user == null ? Identity.nil() : user.identity();
 

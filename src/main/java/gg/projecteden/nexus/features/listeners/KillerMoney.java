@@ -48,6 +48,10 @@ public class KillerMoney implements Listener {
 		if (player.getWorld().getName().contains("events"))
 			return;
 
+		// the annotation is a lie
+		if (event.getEntity().getEntitySpawnReason() == null)
+			return;
+
 		if (UNNATURAL_SPAWN_REASONS.contains(event.getEntity().getEntitySpawnReason()))
 			return;
 
