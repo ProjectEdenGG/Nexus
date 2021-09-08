@@ -49,6 +49,7 @@ import org.bukkit.util.Vector;
 import org.inventivetalent.glow.GlowAPI;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -120,60 +121,66 @@ public class MiniGolf {
 	private void extrasTasks() {
 		// Golf Ball Color
 		Location golfBallLoc = new Location(BearFair21.getWorld(), 111, 138, -27);
-		ArmorStand armorStand = golfBallLoc.getNearbyEntitiesByType(ArmorStand.class, 1.5).iterator().next();
+		BearFair21.getWorld().getChunkAtAsync(golfBallLoc).thenRun(() -> {
+			final Collection<ArmorStand> armorStands = golfBallLoc.getNearbyEntitiesByType(ArmorStand.class, 1.5);
+			if (armorStands.isEmpty())
+				return;
 
-		List<ItemStack> golfBalls = Arrays.stream(MiniGolfColor.values())
-			.filter(Objects::nonNull)
-			.map(miniGolfColor -> (MiniGolf.getGolfBall().clone().customModelData(miniGolfColor.getCustomModelData()).build()))
-			.toList();
+			ArmorStand armorStand = armorStands.iterator().next();
 
-		if (armorStand != null && !Utils.isNullOrEmpty(golfBalls)) {
-			armorStand.setSilent(true);
+			List<ItemStack> golfBalls = Arrays.stream(MiniGolfColor.values())
+				.filter(Objects::nonNull)
+				.map(miniGolfColor -> (MiniGolf.getGolfBall().clone().customModelData(miniGolfColor.getCustomModelData()).build()))
+				.toList();
 
-			AtomicInteger index = new AtomicInteger();
-			Tasks.repeat(0, TickTime.SECOND.x(2), () -> {
-				if (BearFair21.worldguard().getPlayersInRegion(gameRegion + "_play_top").size() <= 0)
-					return;
+			if (armorStand != null && !Utils.isNullOrEmpty(golfBalls)) {
+				armorStand.setSilent(true);
 
-				ItemStack golfBall = golfBalls.get(index.get());
-				if (!ItemUtils.isNullOrAir(golfBall))
-					armorStand.setItem(EquipmentSlot.HAND, golfBall);
+				AtomicInteger index = new AtomicInteger();
+				Tasks.repeat(0, TickTime.SECOND.x(2), () -> {
+					if (BearFair21.worldguard().getPlayersInRegion(gameRegion + "_play_top").size() <= 0)
+						return;
 
-				index.getAndIncrement();
-				if (index.get() >= golfBalls.size())
-					index.set(0);
-			});
-		}
+					ItemStack golfBall = golfBalls.get(index.get());
+					if (!ItemUtils.isNullOrAir(golfBall))
+						armorStand.setItem(EquipmentSlot.HAND, golfBall);
 
-		// Particles
-		Location particleLoc = new Location(BearFair21.getWorld(), 114, 139, -27).toCenterLocation();
-		List<Particle> particles = Arrays.stream(MiniGolfParticle.values())
+					index.getAndIncrement();
+					if (index.get() >= golfBalls.size())
+						index.set(0);
+				});
+			}
+
+			// Particles
+			Location particleLoc = new Location(BearFair21.getWorld(), 114, 139, -27).toCenterLocation();
+			List<Particle> particles = Arrays.stream(MiniGolfParticle.values())
 				.map(MiniGolfParticle::getParticle)
 				.filter(Objects::nonNull)
 				.toList();
 
-		if (!Utils.isNullOrEmpty(particles)) {
-			AtomicInteger index = new AtomicInteger(0);
-			Tasks.repeat(0, TickTime.SECOND.x(2), () -> {
-				if (BearFair21.worldguard().getPlayersInRegion(gameRegion + "_play_top").size() <= 0)
-					return;
+			if (!Utils.isNullOrEmpty(particles)) {
+				AtomicInteger index = new AtomicInteger(0);
+				Tasks.repeat(0, TickTime.SECOND.x(2), () -> {
+					if (BearFair21.worldguard().getPlayersInRegion(gameRegion + "_play_top").size() <= 0)
+						return;
 
-				Particle particle = particles.get(index.get());
-				if (particle != null) {
-					ParticleBuilder particleBuilder = new ParticleBuilder(particle).location(particleLoc)
+					Particle particle = particles.get(index.get());
+					if (particle != null) {
+						ParticleBuilder particleBuilder = new ParticleBuilder(particle).location(particleLoc)
 							.count(50).extra(0.01).offset(0.2, 0.2, 0.2);
-					if (particle.equals(Particle.REDSTONE))
-						particleBuilder.color(Color.RED);
+						if (particle.equals(Particle.REDSTONE))
+							particleBuilder.color(Color.RED);
 
-					particleBuilder.spawn();
-					Tasks.wait(TickTime.SECOND, particleBuilder::spawn);
-				}
+						particleBuilder.spawn();
+						Tasks.wait(TickTime.SECOND, particleBuilder::spawn);
+					}
 
-				index.getAndIncrement();
-				if (index.get() >= particles.size())
-					index.set(0);
-			});
-		}
+					index.getAndIncrement();
+					if (index.get() >= particles.size())
+						index.set(0);
+				});
+			}
+		});
 	}
 
 	private void redstoneTask() {
