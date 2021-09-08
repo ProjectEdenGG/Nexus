@@ -56,7 +56,7 @@ public class WelcomeCommand extends CustomCommand {
 
 			String url = "https://docs.google.com/document/d/1MVFG2ipdpCY42cUzZyVsIbjVlPRCiN0gmYL89sJNRTw/edit?usp=sharing";
 			Broadcast.staffIngame().message("").send();
-			Broadcast.staffIngame().message("&eHi Staff. &3It looks like there's a few of you online. TickTime to &ebump the server!").send();
+			Broadcast.staffIngame().message("&eHi Staff. &3It looks like there's a few of you online. Time to &ebump the server!").send();
 			Broadcast.staffIngame().message(new JsonBuilder("&eClick me").url(url).group().next(" &3for the instructions")).send();
 			Broadcast.staffIngame().message("").send();
 		});
