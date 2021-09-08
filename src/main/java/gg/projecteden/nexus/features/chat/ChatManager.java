@@ -9,9 +9,9 @@ import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.PrivateChannel;
 import gg.projecteden.nexus.models.chat.PublicChannel;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.utils.PlayerUtils.canSee;
 import static gg.projecteden.nexus.utils.StringUtils.decolorize;
@@ -105,39 +104,24 @@ public class ChatManager {
 	public static void process(PublicChatEvent event) {
 		event.checkWasSeen();
 
-		String chatterFormat = event.getChannel().getChatterFormat(event.getChatter());
-		JsonBuilder json = new JsonBuilder(chatterFormat);
-
-		Nerd nerd = Nerd.of(event.getChatter());
-
-		List<String> hoverLines = new ArrayList<>();
-		hoverLines.add("&3Rank: " + nerd.getRank().getColoredName());
-		if (nerd.hasNickname())
-			hoverLines.add("&3Real name: &e" + nerd.getName());
-		if (!nerd.getPronouns().isEmpty())
-			hoverLines.add("&3Pronouns: " + nerd.getPronouns().stream().map(pronoun -> "&e" + pronoun + "&3").collect(Collectors.joining(", ")));
-
-		if (!hoverLines.isEmpty()) {
-			String hover = String.join("\n", hoverLines);
-			json.hover(hover);
-		}
-
-		json.group().color(event.getChannel().getMessageColor()).next(event.getMessage());
-
-		JsonBuilder staff = new JsonBuilder(json);
-
-		if (event.isFiltered())
-			staff.next(" &c&l*")
-					.hover("&cChat message was filtered")
-					.hover("&cClick to see original message")
-					.command("/echo &3Original message: " + decolorize(chatterFormat + event.getOriginalMessage()));
-
 		event.getRecipients().forEach(recipient -> {
-			if (Rank.of(recipient.getOnlinePlayer()).isStaff())
-				recipient.sendMessage(event, staff, MessageType.CHAT);
-			else
-				recipient.sendMessage(event, json, MessageType.CHAT);
+			JsonBuilder json = event.getChannel().getChatterFormat(event.getChatter(), recipient)
+				.color(event.getChannel().getMessageColor())
+				.next(event.getMessage());
+
+			if (event.isFiltered())
+				if (Rank.of(recipient.getOnlinePlayer()).isStaff())
+					json.next(" &c&l*")
+						.hover("&cChat message was filtered")
+						.hover("&cClick to see original message")
+						.command("/echo &3Original message: " + decolorize(AdventureUtils.asPlainText(json) + event.getOriginalMessage()));
+
+			recipient.sendMessage(event, json, MessageType.CHAT);
 		});
+
+		JsonBuilder json = event.getChannel().getChatterFormat(event.getChatter(), null)
+			.color(event.getChannel().getMessageColor())
+			.next(event.getMessage());
 
 		Bukkit.getConsoleSender().sendMessage(stripColor(json.toString()));
 	}

@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.utils.DiscordId.TextChannel;
 import lombok.Builder;
@@ -50,8 +51,30 @@ public class PublicChannel implements Channel {
 		return "Now chatting in " + color + name;
 	}
 
-	public String getChatterFormat(Chatter chatter) {
-		return color + "[" + nickname.toUpperCase() + "] " + Nerd.of(chatter).getChatFormat() + " " + color + ChatColor.BOLD + "> " + getMessageColor();
+	public JsonBuilder getChatterFormat(Chatter chatter, Chatter viewer) {
+		final Nerd nerd = Nerd.of(chatter);
+
+		final JsonBuilder json = new JsonBuilder(color + "[" + nickname.toUpperCase() + "]")
+			.hover(color + name + " &fChannel");
+
+		if (viewer.getActiveChannel().equals(this))
+			json.hover("&fUse &c/ch " + nickname.toLowerCase() + " &fto", "&fswitch to this channel");
+
+		json
+			.group()
+			.next(" ")
+			.group()
+			.next(nerd.getChatFormat(viewer))
+			.next(" " + color + ChatColor.BOLD + "> " + getMessageColor())
+			.hover("&3Rank: " + nerd.getRank().getColoredName());
+
+		if (nerd.hasNickname())
+			json.hover("&3Real name: &e" + nerd.getName());
+		if (!nerd.getPronouns().isEmpty())
+			json.hover("&3Pronouns: " + nerd.getPronouns().stream().map(pronoun -> "&e" + pronoun + "&3").collect(Collectors.joining(", ")));
+
+		return json;
+
 	}
 
 	public Set<Chatter> getRecipients(Chatter chatter) {

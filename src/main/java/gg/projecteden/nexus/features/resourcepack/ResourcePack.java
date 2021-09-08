@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
+import me.lexikiq.OptionalPlayerLike;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -107,5 +108,12 @@ public class ResourcePack extends Feature implements Listener {
 
 	public static boolean isEnabledFor(Player player) {
 		return player.getResourcePackStatus() == Status.SUCCESSFULLY_LOADED || new LocalResourcePackUserService().get(player).isEnabled();
+	}
+
+	public static boolean isEnabledFor(OptionalPlayerLike player) {
+		if (!player.isOnline() || player.getPlayer() == null)
+			return false;
+
+		return isEnabledFor(player.getPlayer());
 	}
 }

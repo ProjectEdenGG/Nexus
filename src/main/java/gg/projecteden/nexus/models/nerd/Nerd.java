@@ -16,8 +16,11 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.framework.interfaces.IsColoredAndNicknamed;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
+import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
+import gg.projecteden.nexus.models.emblem.BadgeUserService;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -39,7 +42,7 @@ import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
+import java.awt.Color;
 import java.io.File;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
@@ -173,24 +176,21 @@ public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwned
 		return Dev.KODA.is(this);
 	}
 
-	@ToString.Include
-	public String getChatFormat() {
+	public JsonBuilder getChatFormat(Chatter viewer) {
 		if (isKoda())
-			return Koda.getColoredName();
+			return new JsonBuilder(Koda.getColoredName());
 
 		Rank rank = getRank();
-		String prefix1 = this.prefix;
-		if (isNullOrEmpty(prefix1))
-			prefix1 = rank.getPrefix();
+		String prefix = this.prefix;
+		if (isNullOrEmpty(prefix))
+			prefix = rank.getPrefix();
 
-		if (!isNullOrEmpty(prefix1))
-			prefix1 = "&8&l[&f" + prefix1 + "&8&l]";
+		if (!isNullOrEmpty(prefix))
+			prefix = "&8&l[&f" + prefix + "&8&l] ";
 
-		String prefix = prefix1;
+		final JsonBuilder badge = new BadgeUserService().get(this).getBadgeJson(viewer);
 
-		if (LuckPermsUtils.hasPermission(uuid, "donated") && checkmark)
-			prefix = CHECK + " " + prefix;
-		return colorize((prefix.trim() + " " + (getRank().getChatColor() + Nickname.of(this)).trim())).trim();
+		return badge.next(prefix).next(getRank().getChatColor() + Nickname.of(this));
 	}
 
 	@ToString.Include
