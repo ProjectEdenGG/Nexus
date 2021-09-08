@@ -57,8 +57,8 @@ public class PublicChannel implements Channel {
 		final JsonBuilder json = new JsonBuilder(color + "[" + nickname.toUpperCase() + "]")
 			.hover(color + name + " &fChannel");
 
-		if (viewer.getActiveChannel().equals(this))
-			json.hover("&fUse &c/ch " + nickname.toLowerCase() + " &fto", "&fswitch to this channel");
+		if (viewer != null && !this.equals(viewer.getActiveChannel()))
+			json.hover("&fUse &c/ch " + nickname.toLowerCase() + " &fto switch", "&fto this channel");
 
 		json
 			.group()
