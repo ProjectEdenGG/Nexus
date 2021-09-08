@@ -84,7 +84,7 @@ public class Sleep implements Listener {
 		if (!(world.getTime() >= 12541 && world.getTime() <= 23458))
 			return;
 
-		// Is doDaylightCycle true?
+		// Is doDaylightCycle false?
 		Boolean gameRuleValue = world.getGameRuleValue(GameRule.DO_DAYLIGHT_CYCLE);
 		if (gameRuleValue != null && !gameRuleValue)
 			return;
