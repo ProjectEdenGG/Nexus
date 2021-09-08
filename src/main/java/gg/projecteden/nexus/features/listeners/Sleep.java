@@ -80,17 +80,25 @@ public class Sleep implements Listener {
 	public void onBedEnter(PlayerBedEnterEvent event) {
 		World world = event.getPlayer().getWorld();
 
-		// Is it day time?
-		if (!(world.getTime() >= 12541 && world.getTime() <= 23458))
+		if (!event.getBedEnterResult().equals(PlayerBedEnterEvent.BedEnterResult.OK))
 			return;
 
-		// Is doDaylightCycle false?
-		Boolean gameRuleValue = world.getGameRuleValue(GameRule.DO_DAYLIGHT_CYCLE);
-		if (gameRuleValue != null && !gameRuleValue)
+		if (isDayTime(world))
+			return;
+		if (!isDaylightCycleEnabled(world))
 			return;
 
 		if (!sleepingWorlds.containsKey(world) && sleepingWorlds.get(world) != State.SKIPPING)
 			sleepingWorlds.put(world, State.SLEEPING);
+	}
+
+	private boolean isDayTime(World world) {
+		return !(world.getTime() >= 12541 && world.getTime() <= 23458);
+	}
+
+	private boolean isDaylightCycleEnabled(World world) {
+		Boolean gameRuleValue = world.getGameRuleValue(GameRule.DO_DAYLIGHT_CYCLE);
+		return gameRuleValue != null && gameRuleValue;
 	}
 
 	@EventHandler
