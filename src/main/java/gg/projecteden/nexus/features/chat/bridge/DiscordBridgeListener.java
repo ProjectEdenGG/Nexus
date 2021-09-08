@@ -69,7 +69,14 @@ public class DiscordBridgeListener extends ListenerAdapter {
 			Identity identity = user == null ? Identity.nil() : user.identity();
 
 			Broadcast.ingame().channel(channel.get()).sender(identity).message(viewer -> {
-				JsonBuilder json = new JsonBuilder(channel.get().getDiscordColor() + "[D] ");
+				JsonBuilder json = new JsonBuilder(channel.get().getDiscordColor() + "[D]")
+					.hover("&5&lDiscord &fChannel")
+					.hover("&fMessages sent in &c#bridge &fon our")
+					.hover("&c/discord &fare shown in this channel")
+					.group()
+					.next(" ")
+					.group();
+
 				if (user != null)
 					json.next(Nerd.of(user.getUuid()).getChatFormat(viewer == null ? null : new ChatterService().get(viewer)));
 				else
