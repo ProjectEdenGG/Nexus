@@ -51,12 +51,18 @@ public class WitherCommand extends CustomCommand {
 		if (worldGroup() != WorldGroup.SURVIVAL)
 			error("You cannot fight the wither in " + camelCase(worldGroup()));
 
-		if (maintenance && !Rank.of(player()).isStaff())
+		if (maintenance && !isStaff())
 			error("The wither arena is currently under maintenance, please wait");
 
 		if (!checkHasItems())
 			return;
 
+		if (currentFight != null)
+			error("The wither is already being fought, please try again later");
+
+		new DifficultySelectionMenu().open(player());
+
+		/*
 		int index = queue.indexOf(uuid());
 
 		if (index > 0)
@@ -72,6 +78,7 @@ public class WitherCommand extends CustomCommand {
 		else
 			send(PREFIX + "You have been added to the queue. You are #" + queue.size() + " in line. " +
 					"You will be prompted when it is your time to challenge the wither. Please keep the necessary items on you to spawn the Wither");
+		 */
 	}
 
 	public boolean checkHasItems() {
