@@ -51,7 +51,7 @@ public class BadgeUser implements PlayerOwnedObject {
 		final JsonBuilder json = new JsonBuilder("&f" + emoji).hover("&f" + camelCase(active.name()) + " Badge");
 		active.customize(this, json);
 
-		return json.group().next(" ");
+		return json.group().next(" ").group();
 	}
 
 	public boolean hasBadge() {
