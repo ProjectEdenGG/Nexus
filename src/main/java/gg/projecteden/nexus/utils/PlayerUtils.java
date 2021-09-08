@@ -133,8 +133,7 @@ public class PlayerUtils {
 
 	public static List<Player> getOnlinePlayers(Player player, World world) {
 		Stream<Player> stream = Bukkit.getOnlinePlayers().stream()
-			.filter(_player -> !CitizensUtils.isNPC(_player)).map(Player::getPlayer)
-			.filter(_player -> !GameMode.SPECTATOR.equals(_player.getGameMode()));
+			.filter(_player -> !CitizensUtils.isNPC(_player)).map(Player::getPlayer);
 
 		if (player != null)
 			stream = stream.filter(_player -> canSee(player, _player));
@@ -270,11 +269,14 @@ public class PlayerUtils {
 	}
 
 	public static MinMaxResult<Player> getNearestPlayer(Location location) {
-		return getNearestPlayer(location, -1);
+		return getMin(getOnlinePlayers(location.getWorld()), player -> player.getLocation().distance(location));
 	}
 
-	public static MinMaxResult<Player> getNearestPlayer(Location location, Integer radius) {
-		List<Player> players = PlayerUtils.getOnlinePlayers(location.getWorld());
+	public static MinMaxResult<Player> getNearestVisiblePlayer(Location location, Integer radius) {
+		List<Player> players = getOnlinePlayers(location.getWorld()).stream()
+			.filter(_player -> !GameMode.SPECTATOR.equals(_player.getGameMode()))
+			.collect(Collectors.toList());
+
 		if (radius < 0)
 			players = players.stream().filter(player -> player.getLocation().distance(location) <= radius).collect(Collectors.toList());
 

@@ -73,7 +73,7 @@ public class ArmorStandStalker {
 
 				Location location = entity.getLocation();
 
-				Player nearestPlayer = PlayerUtils.getNearestPlayer(location, stalker.getRadius()).getObject();
+				Player nearestPlayer = PlayerUtils.getNearestVisiblePlayer(location, stalker.getRadius()).getObject();
 				if (nearestPlayer != null)
 					lookAt(armorStand, stalker, nearestPlayer);
 			}

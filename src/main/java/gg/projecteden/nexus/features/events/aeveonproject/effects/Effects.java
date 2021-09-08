@@ -44,7 +44,7 @@ public class Effects implements Listener {
 				if (!shipRobot.isChunkLoaded())
 					return;
 
-				Player nearestPlayer = PlayerUtils.getNearestPlayer(shipRobot, 7).getObject();
+				Player nearestPlayer = PlayerUtils.getNearestVisiblePlayer(shipRobot, 7).getObject();
 				ArmorStand armorStand = shipRobot.getNearbyEntitiesByType(ArmorStand.class, 1).iterator().next();
 				if (nearestPlayer != null && armorStand != null) {
 					APUtils.makeArmorStandLookAtPlayer(armorStand, nearestPlayer);
