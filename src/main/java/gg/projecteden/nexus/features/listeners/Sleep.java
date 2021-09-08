@@ -28,7 +28,7 @@ public class Sleep implements Listener {
 	static {
 		Tasks.repeatAsync(0, 1, () -> {
 			for (World world : sleepingWorlds.keySet()) {
-				long sleeping = world.getPlayers().stream().filter(player -> player.isSleeping() && canSleep(player)).count();
+				long sleeping = getAmountSleeping(world);
 				long active = world.getPlayers().stream().filter(Sleep::canSleep).count();
 				int needed = (int) Math.ceil(active / 2d);
 
@@ -97,9 +97,12 @@ public class Sleep implements Listener {
 	public void onBedLeave(PlayerBedLeaveEvent event) {
 		Tasks.wait(1, () -> {
 			World world = event.getPlayer().getWorld();
-			long sleeping = world.getPlayers().stream().filter(player -> player.isSleeping() && canSleep(player)).count();
-			if (sleepingWorlds.containsKey(world) && sleeping == 0)
+			if (sleepingWorlds.containsKey(world) && getAmountSleeping(world) == 0)
 				sleepingWorlds.remove(world);
 		});
+	}
+
+	private static long getAmountSleeping(World world) {
+		return world.getPlayers().stream().filter(player -> player.isSleeping() && canSleep(player)).count();
 	}
 }
