@@ -4,6 +4,7 @@ import com.destroystokyo.paper.event.inventory.PrepareResultEvent;
 import com.gmail.nossr50.events.skills.repair.McMMOPlayerRepairCheckEvent;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.utils.WorldGroup;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Hanging;
@@ -23,6 +24,9 @@ import org.bukkit.event.world.LootGenerateEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 import static gg.projecteden.nexus.features.quests.itemtags.ItemTagsUtils.updateItem;
 import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
@@ -31,6 +35,36 @@ public class ItemTagListener implements Listener {
 
 	public ItemTagListener() {
 		Nexus.registerListener(this);
+	}
+
+	private static final Map<UUID, Integer> cooldown = new HashMap<>();
+
+	private boolean cooldown(Player player) {
+		final UUID uuid = player.getUniqueId();
+		final int lastUpdate = cooldown.getOrDefault(uuid, 0);
+		final int currentTick = Bukkit.getCurrentTick();
+		if (currentTick - lastUpdate < 10)
+			return false;
+
+		cooldown.put(uuid, currentTick);
+		return true;
+	}
+
+	@EventHandler
+	public void onItemDamage(PlayerItemDamageEvent event) {
+		ItemStack result = event.getItem();
+		if (isNullOrAir(result))
+			return;
+
+		if (WorldGroup.of(event.getPlayer()) != WorldGroup.SURVIVAL)
+			return;
+
+		if (!cooldown(event.getPlayer()))
+			return;
+
+		ItemStack updated = updateItem(result);
+
+		event.getItem().setItemMeta(updated.getItemMeta());
 	}
 
 	@EventHandler
@@ -54,30 +88,19 @@ public class ItemTagListener implements Listener {
 		if (!(event.getView().getPlayer() instanceof Player player))
 			return;
 
+		ItemStack result = event.getInventory().getResult();
+		if (isNullOrAir(result))
+			return;
+
 		if (WorldGroup.of(player) != WorldGroup.SURVIVAL)
 			return;
 
-		ItemStack result = event.getInventory().getResult();
-		if (isNullOrAir(result)) return;
-		if (!ItemTagsUtils.isArmor(result) && !ItemTagsUtils.isTool(result)) return;
+		if (!ItemTagsUtils.isArmor(result) && !ItemTagsUtils.isTool(result))
+			return;
 
 		ItemStack updated = updateItem(result);
 
 		event.getInventory().setResult(updated);
-	}
-
-	@EventHandler
-	public void onItemDamage(PlayerItemDamageEvent event) {
-		ItemStack result = event.getItem();
-		if (isNullOrAir(result))
-			return;
-
-		if (WorldGroup.of(event.getPlayer()) != WorldGroup.SURVIVAL)
-			return;
-
-		ItemStack updated = updateItem(result);
-
-		event.getItem().setItemMeta(updated.getItemMeta());
 	}
 
 	// Includes Anvil, Grindstone, and Smithing Table
@@ -86,11 +109,12 @@ public class ItemTagListener implements Listener {
 		if (!(event.getView().getPlayer() instanceof Player player))
 			return;
 
-		if (WorldGroup.of(player) != WorldGroup.SURVIVAL)
+		ItemStack result = event.getResult();
+		if (isNullOrAir(result))
 			return;
 
-		ItemStack result = event.getResult();
-		if (isNullOrAir(result)) return;
+		if (WorldGroup.of(player) != WorldGroup.SURVIVAL)
+			return;
 
 		ItemStack updated = updateItem(result);
 
@@ -102,12 +126,13 @@ public class ItemTagListener implements Listener {
 		if (!event.getEntityType().equals(EntityType.ITEM_FRAME))
 			return;
 
-		if (WorldGroup.of(event.getEntity()) != WorldGroup.SURVIVAL)
-			return;
-
 		ItemFrame itemFrame = (ItemFrame) event.getEntity();
 		ItemStack item = itemFrame.getItem();
-		if (isNullOrAir(item)) return;
+		if (isNullOrAir(item))
+			return;
+
+		if (WorldGroup.of(event.getEntity()) != WorldGroup.SURVIVAL)
+			return;
 
 		ItemStack updated = updateItem(item);
 
