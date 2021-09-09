@@ -16,6 +16,7 @@ import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBedLeaveEvent;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Sleep implements Listener {
@@ -26,10 +27,10 @@ public class Sleep implements Listener {
 	private static final Map<World, State> sleepingWorlds = new HashMap<>();
 
 	static {
-		Tasks.repeatAsync(0, 1, () -> {
+		Tasks.repeat(0, 1, () -> {
 			for (World world : sleepingWorlds.keySet()) {
-				long sleeping = getAmountSleeping(world);
-				long active = world.getPlayers().stream().filter(Sleep::canSleep).count();
+				long sleeping = getSleeping(world).size();
+				long active = getCanSleep(world).size();
 				int needed = (int) Math.ceil(active / 2d);
 
 				if (sleeping >= needed && sleepingWorlds.get(world) != State.SKIPPING)
@@ -47,14 +48,13 @@ public class Sleep implements Listener {
 
 	private static void skipNight(World world) {
 		sleepingWorlds.put(world, State.SKIPPING);
-		world.getPlayers().forEach(
-			player -> PlayerUtils.send(player, PREFIX + "The night was skipped because 50% of players slept!"));
 
 		world.setStorm(false);
 		world.setThundering(false);
 
-		int emptyActionbarTaskId = Tasks.repeatAsync(0, 1, () ->
-			world.getPlayers().forEach(player -> ActionBarUtils.sendActionBar(player, " ")));
+		int taskId = Tasks.repeat(0, 1, () ->
+			PlayerUtils.getOnlinePlayers(world).forEach(player ->
+				ActionBarUtils.sendActionBar(player, "The night was skipped because 50% of players slept")));
 		
 		int wait = 0;
 		while (true) {
@@ -71,7 +71,7 @@ public class Sleep implements Listener {
 				world.setStorm(false);
 			if (world.isThundering())
 				world.setThundering(false);
-			Tasks.cancel(emptyActionbarTaskId);
+			Tasks.cancel(taskId);
 			sleepingWorlds.remove(world);
 		});
 	}
@@ -105,12 +105,16 @@ public class Sleep implements Listener {
 	public void onBedLeave(PlayerBedLeaveEvent event) {
 		Tasks.wait(1, () -> {
 			World world = event.getPlayer().getWorld();
-			if (sleepingWorlds.containsKey(world) && getAmountSleeping(world) == 0)
+			if (sleepingWorlds.containsKey(world) && getSleeping(world).size() == 0)
 				sleepingWorlds.remove(world);
 		});
 	}
 
-	private static long getAmountSleeping(World world) {
-		return world.getPlayers().stream().filter(player -> player.isSleeping() && canSleep(player)).count();
+	private static List<Player> getCanSleep(World world) {
+		return PlayerUtils.getOnlinePlayers(world).stream().filter(Sleep::canSleep).toList();
+	}
+
+	private static List<Player> getSleeping(World world) {
+		return getCanSleep(world).stream().filter(Player::isSleeping).toList();
 	}
 }
