@@ -7,6 +7,7 @@ import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
+import gg.projecteden.nexus.features.commands.PushCommand;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.afk.events.NotAFKEvent;
 import gg.projecteden.nexus.models.afk.events.NowAFKEvent;
@@ -30,6 +31,8 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -89,6 +92,8 @@ public class AFKUser implements PlayerOwnedObject {
 		forceAfk = true;
 		WarpType.STAFF.get("limbo").teleportAsync(player).thenRun(() -> {
 			update();
+			PushCommand.set(uuid, false);
+			player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 9999999, 1, false, false, false));
 			forceAfk = false;
 			save();
 		});
@@ -119,6 +124,7 @@ public class AFKUser implements PlayerOwnedObject {
 
 		teleport.thenRun(() -> {
 			afk = false;
+			player.removePotionEffect(PotionEffectType.INVISIBILITY);
 			notAfk();
 			teleport = null;
 		});

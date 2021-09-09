@@ -4,7 +4,10 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.LuckPermsUtils.PermissionChange;
-import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class PushCommand extends CustomCommand {
 	public static final String PERMISSION = "stoppushing.allow";
@@ -13,20 +16,19 @@ public class PushCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("[enable]")
-	void toggle(Boolean enable) {
-		if (enable == null) enable = !player().hasPermission(PERMISSION);
-		push(enable);
+	public static @NotNull CompletableFuture<Void> set(UUID uuid, boolean enabled) {
+		return PermissionChange.set().uuid(uuid).permission(PERMISSION).value(enabled).runAsync();
 	}
 
-	@SneakyThrows
-	void push(boolean enable) {
+	@Path("[enable]")
+	void toggle(Boolean enable) {
+		if (enable == null)
+			enable = !player().hasPermission(PERMISSION);
+
 		if (enable)
-			PermissionChange.set().player(player()).permission(PERMISSION).runAsync().thenRun(() ->
-				send("&ePushing will be turned &aon&e shortly."));
+			set(uuid(), true).thenRun(() -> send("&ePushing will be turned &aon&e shortly."));
 		else
-			PermissionChange.set().player(player()).permission(PERMISSION).value(false).runAsync().thenRun(() ->
-				send("&ePushing will be turned &coff&e shortly."));
+			set(uuid(), false).thenRun(() -> send("&ePushing will be turned &coff&e shortly."));
 	}
 
 }
