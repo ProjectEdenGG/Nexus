@@ -275,9 +275,10 @@ public class PlayerUtils {
 	public static MinMaxResult<Player> getNearestVisiblePlayer(Location location, Integer radius) {
 		List<Player> players = getOnlinePlayers(location.getWorld()).stream()
 			.filter(_player -> !GameMode.SPECTATOR.equals(_player.getGameMode()))
+			.filter(_player -> !isVanished(_player))
 			.collect(Collectors.toList());
 
-		if (radius < 0)
+		if (radius > 0)
 			players = players.stream().filter(player -> player.getLocation().distance(location) <= radius).collect(Collectors.toList());
 
 		return getMin(players, player -> player.getLocation().distance(location));

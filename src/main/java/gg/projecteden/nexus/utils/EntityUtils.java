@@ -12,6 +12,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
@@ -47,25 +48,52 @@ public class EntityUtils {
 	}
 
 	public static void makeArmorStandLookAtPlayer(ArmorStand stand, HasPlayer player, Double minYaw, Double maxYaw, Double minPitch, Double maxPitch) {
-		makeArmorStandLookAtPlayer(stand, player, minYaw, maxYaw, minPitch, maxPitch, null);
-	}
-
-	public static void makeArmorStandLookAtPlayer(ArmorStand stand, HasPlayer player, Double minYaw, Double maxYaw, Double minPitch, Double maxPitch, Double percent) {
 		Location standLocation = stand.getEyeLocation(); // Point A
 		double standYaw = standLocation.getYaw();
 
 		Vector playerLocation = player.getPlayer().getEyeLocation().toVector(); // Point B
 
 		//set the origin's direction to be the direction vector between point A and B.
+		standLocation.setDirection(playerLocation.subtract(standLocation.toVector()));
+
+		double yaw = standLocation.getYaw() - standYaw;
+		double pitch = standLocation.getPitch();
+
+		if (yaw < -180)
+			yaw = yaw + 360;
+		else if (yaw >= 180)
+			yaw -= 360;
+
+		if (maxYaw != null && yaw > maxYaw)
+			yaw = maxYaw;
+		if (minYaw != null && yaw < minYaw)
+			yaw = minYaw;
+
+		if (maxPitch != null && pitch > maxPitch)
+			pitch = maxPitch;
+		if (minPitch != null && pitch < minPitch)
+			pitch = minPitch;
+
+		double x = Math.toRadians(pitch);
+		double y = Math.toRadians(yaw);
+
+		EulerAngle ea = new EulerAngle(x, y, 0);
+		stand.setHeadPose(ea);
+	}
+
+	public static void makeArmorStandLookAtPlayer(ArmorStand stand, HasPlayer player, Double minYaw, Double maxYaw, Double minPitch, Double maxPitch, Double percent) {
 		if (percent == null) {
-			standLocation.setDirection(playerLocation.subtract(standLocation.toVector()));
+			makeArmorStandLookAtPlayer(stand, player, minYaw, maxYaw, minPitch, maxPitch);
+			return;
 		}
-		else {
-			Vector standLookVector = stand.getEyeLocation().getDirection().multiply(.3);
-			List<Vector> vecs = new SplinePath(1f, percent, standLookVector, playerLocation).getPath();
-			if (vecs.size() >= 2) {
-				standLocation.setDirection(vecs.get(1));
-			}
+
+		Location standLocation = stand.getEyeLocation(); // Point A
+		Vector playerLocation = player.getPlayer().getEyeLocation().toVector(); // Point B
+
+		Vector standLookVector = stand.getEyeLocation().getDirection().multiply(.3);
+		List<Vector> vecs = new SplinePath(1f, percent, standLookVector, playerLocation).getPath();
+		if (vecs.size() >= 2) {
+			standLocation.setDirection(vecs.get(1));
 		}
 
 		double yaw = standLocation.getYaw();
@@ -75,16 +103,6 @@ public class EntityUtils {
 			yaw = yaw + 360;
 		else if (yaw >= 180)
 			yaw -= 360;
-//
-//		if (maxYaw != null && yaw > maxYaw)
-//			yaw = maxYaw;
-//		if (minYaw != null && yaw < minYaw)
-//			yaw = minYaw;
-//
-//		if (maxPitch != null && pitch > maxPitch)
-//			pitch = maxPitch;
-//		if (minPitch != null && pitch < minPitch)
-//			pitch = minPitch;
 
 		Location loc = stand.getLocation().clone();
 		loc.setPitch((float) pitch);
