@@ -13,7 +13,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public enum Rarity {
 	// @formatter:off
@@ -42,28 +46,25 @@ public enum Rarity {
 	private final Integer min;
 	@Getter
 	private final Integer max;
+	@Getter
+	private final String tag;
 
 	public static final String NBT_KEY = "ItemTag.RARITY";
 
-	Rarity(ChatColor chatColor, int min, int max) {
-		this.chatColors = Collections.singletonList(chatColor);
-		this.craftable = true;
-		this.min = min;
-		this.max = max;
+	Rarity(ChatColor chatColor, Integer min, Integer max) {
+		this(Collections.singletonList(chatColor), true, min, max);
 	}
 
-	Rarity(List<ChatColor> chatColors, boolean craftable, int min, int max) {
+	Rarity(List<ChatColor> chatColors, boolean craftable, Integer min, Integer max) {
 		this.chatColors = new ArrayList<>(chatColors);
 		this.craftable = craftable;
 		this.min = min;
 		this.max = max;
+		this.tag = rawGetTag();
 	}
 
 	Rarity(List<ChatColor> chatColors) {
-		this.chatColors = new ArrayList<>(chatColors);
-		this.craftable = false;
-		this.min = null;
-		this.max = null;
+		this(chatColors, false, null, null);
 	}
 
 	public static Rarity of(ItemStack itemStack) {
@@ -158,7 +159,7 @@ public enum Rarity {
 		return result;
 	}
 
-	public String getTag() {
+	private String rawGetTag() {
 		if (chatColors != null && !chatColors.isEmpty()) {
 			if (chatColors.size() == 1)
 				return chatColors.get(0) + "[" + StringUtils.camelCase(this.name()) + "]";

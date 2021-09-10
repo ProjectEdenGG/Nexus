@@ -128,7 +128,6 @@ public class ItemTagsUtils {
 	public static void clearTags(ItemStack itemStack) {
 		clearCondition(itemStack);
 		clearRarity(itemStack);
-
 	}
 
 	public static void clearRarity(ItemStack itemStack) {
@@ -148,17 +147,10 @@ public class ItemTagsUtils {
 	}
 
 	private static void clearTags(List<String> lore, List<String> tags) {
-		for (String tag : tags) {
-			int ndx = 0;
-			for (String line : new ArrayList<>(lore)) {
-				String _tag = stripColor(tag);
-				String _line = stripColor(line);
-
-				if (_tag.equalsIgnoreCase(_line))
-					lore.remove(ndx);
-				++ndx;
-			}
-		}
+		List<String> loreStrip = new ArrayList<>(lore.size());
+		for (String tag : tags)
+			loreStrip.add(stripColor(tag));
+		lore.removeIf(tag -> loreStrip.contains(stripColor(tag)));
 	}
 
 	public static ItemStack addRarity(ItemStack itemStack, Rarity rarity) {
@@ -220,6 +212,9 @@ public class ItemTagsUtils {
 	}
 
 	public static boolean isMythicMobsItem(ItemStack itemStack) {
+		if (true)
+			return false; // TODO: remove if mythic mobs is added
+
 		NBTItem nbtItem = new NBTItem(itemStack);
 		String nbtString;
 		if (nbtItem.hasNBTData()) {

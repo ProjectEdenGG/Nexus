@@ -27,8 +27,18 @@ public enum Condition {
 	private final int min;
 	@Getter
 	private final int max;
+	@Getter
+	private final String tag;
+
 	private static final DecimalFormat pf = new DecimalFormat("0.00");
 	public static final String NBT_KEY = "ItemTag.CONDITION";
+
+	Condition(ChatColor chatColor, int min, int max) {
+		this.chatColor = chatColor;
+		this.min = min;
+		this.max = max;
+		this.tag = (chatColor == null ? "" : chatColor) + "[" + StringUtils.camelCase(this.name()) + "]";
+	}
 
 	public static Condition of(ItemStack itemStack) {
 		return of(itemStack, null);
@@ -63,10 +73,6 @@ public enum Condition {
 		}
 
 		return null;
-	}
-
-	public String getTag() {
-		return (chatColor == null ? "" : chatColor) + "[" + StringUtils.camelCase(this.name()) + "]";
 	}
 
 	public static void setNBT(NBTItem nbtItem, Condition condition) {

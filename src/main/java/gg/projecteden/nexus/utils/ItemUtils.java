@@ -217,7 +217,7 @@ public class ItemUtils {
 	 */
 	@Contract("null -> true; !null -> _")
 	public static boolean isNullOrAir(ItemStack itemStack) {
-		return itemStack == null || MaterialTag.ALL_AIR.isTagged(itemStack.getType());
+		return itemStack == null || itemStack.getType().isEmpty();
 	}
 
 	/**
@@ -227,7 +227,7 @@ public class ItemUtils {
 	 */
 	@Contract("null -> true; !null -> _")
 	public static boolean isNullOrAir(Material material) {
-		return material == null || MaterialTag.ALL_AIR.isTagged(material);
+		return material == null || material.isEmpty();
 	}
 
 	public static boolean isInventoryEmpty(Inventory inventory) {
