@@ -90,8 +90,13 @@ public class PlayerUtils {
 			this.uuid = UUID.fromString(uuid);
 		}
 
-		public void send(String message) {
+		public void send(Object message) {
 			PlayerUtils.send(this, message);
+		}
+
+		public void debug(Object message) {
+			if (Nexus.isDebug())
+				PlayerUtils.send(this, message);
 		}
 
 		public boolean is(HasUniqueId player) {
