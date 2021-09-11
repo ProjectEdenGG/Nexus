@@ -92,13 +92,13 @@ public class DailyRewardsFeature extends Feature {
 		final DailyRewardUserService service = new DailyRewardUserService();
 		for (DailyRewardUser user : service.getCache().values()) {
 			final DailyStreak streak = user.getCurrentStreak();
-			if (!streak.isEarnedToday())
+			if (!streak.isEarnedToday()) {
 				user.endStreak();
-
-			streak.setEarnedToday(false);
-			if (user.isOnline())
-				streak.increaseStreak();
-
+			} else {
+				streak.setEarnedToday(false);
+				if (user.isOnline())
+					streak.increaseStreak();
+			}
 			service.save(user);
 		}
 	}
