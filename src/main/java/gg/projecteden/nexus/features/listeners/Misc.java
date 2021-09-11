@@ -53,6 +53,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Snowman;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -145,7 +146,7 @@ public class Misc implements Listener {
 		MaterialTag.ALL_BOOTS, EquipmentSlot.FEET
 	);
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		if (!ActionGroup.RIGHT_CLICK.applies(event))
 			return;
@@ -167,6 +168,7 @@ public class Misc implements Listener {
 				final ItemStack existing = ItemUtils.clone(inventory.getItem(slot));
 				inventory.setItem(slot, ItemUtils.clone(item));
 				inventory.setItem(EquipmentSlot.HAND, existing);
+				event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f);
 				return;
 			}
 		}

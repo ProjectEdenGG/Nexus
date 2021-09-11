@@ -61,10 +61,12 @@ public class GemCommand extends CustomCommand implements Listener {
 			ItemStack gem = inventory.getItemInMainHand();
 			ItemStack tool = inventory.getItemInOffHand();
 			addGemEnchantToTool(player, gem, tool);
+			event.setCancelled(true);
 		} else if (isGem(inventory.getItemInOffHand())) {
 			ItemStack gem = inventory.getItemInOffHand();
 			ItemStack tool = inventory.getItemInMainHand();
 			addGemEnchantToTool(player, gem, tool);
+			event.setCancelled(true);
 		}
 	}
 
