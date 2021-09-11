@@ -35,6 +35,7 @@ public class ItemTagsCommand extends CustomCommand {
 	}
 
 	@Path("update")
+	@Permission("group.admin")
 	@Description("Update item tags on held item")
 	void update() {
 		ItemStack tool = getToolRequired();
@@ -45,6 +46,7 @@ public class ItemTagsCommand extends CustomCommand {
 	}
 
 	@Path("updateInv")
+	@Permission("group.admin")
 	@Description("Update item tags on all items in inventory")
 	void updateInv() {
 		ItemStack[] contents = inventory().getContents();
