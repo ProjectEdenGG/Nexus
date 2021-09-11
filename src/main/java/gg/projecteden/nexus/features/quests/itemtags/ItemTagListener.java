@@ -3,7 +3,10 @@ package gg.projecteden.nexus.features.quests.itemtags;
 import com.destroystokyo.paper.event.inventory.PrepareResultEvent;
 import com.gmail.nossr50.events.skills.repair.McMMOPlayerRepairCheckEvent;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.utils.TimeUtils.TickTime;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Hanging;
@@ -23,6 +26,9 @@ import org.bukkit.event.world.LootGenerateEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 import static gg.projecteden.nexus.features.quests.itemtags.ItemTagsUtils.updateItem;
 import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
@@ -33,6 +39,24 @@ public class ItemTagListener implements Listener {
 		Nexus.registerListener(this);
 	}
 
+	private static final Map<UUID, Integer> cooldown = new HashMap<>();
+
+	private boolean cooldown(Player player) {
+		final UUID uuid = player.getUniqueId();
+
+		final int currentTick = Bukkit.getCurrentTick();
+		final int lastUpdate = cooldown.getOrDefault(uuid, 0);
+		if (currentTick - lastUpdate < TickTime.SECOND.get())
+			return false;
+
+		cooldown.put(uuid, currentTick);
+		return true;
+	}
+
+	static {
+		Tasks.repeat(TickTime.MINUTE, TickTime.MINUTE, cooldown::clear);
+	}
+
 	@EventHandler
 	public void onItemDamage(PlayerItemDamageEvent event) {
 		ItemStack result = event.getItem();
@@ -40,6 +64,9 @@ public class ItemTagListener implements Listener {
 			return;
 
 		if (WorldGroup.of(event.getPlayer()) != WorldGroup.SURVIVAL)
+			return;
+
+		if (!cooldown(event.getPlayer()))
 			return;
 
 		updateItem(result);
