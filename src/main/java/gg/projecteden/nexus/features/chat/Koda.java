@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.chat;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
+import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
 import gg.projecteden.nexus.features.chat.events.ChatEvent;
 import gg.projecteden.nexus.features.commands.AgeCommand.ServerAge;
 import gg.projecteden.nexus.features.discord.Discord;
@@ -12,6 +13,7 @@ import gg.projecteden.nexus.models.chat.PublicChannel;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.IOUtils;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -23,6 +25,7 @@ import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
+import net.kyori.adventure.audience.MessageType;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -30,7 +33,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -81,7 +84,16 @@ public class Koda {
 	}
 
 	public static void sayIngame(@NotNull String message) {
-		Broadcast.ingame().sender(chatter).message(globalFormat + message).send();
+		PublicChannel channel = StaticChannel.GLOBAL.getChannel();
+		Broadcast.ingame()
+			.channel(channel)
+			.sender(chatter)
+			.messageFunction(viewer -> new JsonBuilder("")
+				.next(channel.getChatterFormat(chatter, viewer == null ? null : new ChatterService().get(viewer)))
+				.group()
+				.next(message))
+			.messageType(MessageType.CHAT)
+			.send();
 	}
 
 	public static void sayDiscord(@NotNull String message) {
