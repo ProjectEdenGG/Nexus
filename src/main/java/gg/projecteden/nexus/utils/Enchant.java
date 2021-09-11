@@ -3,10 +3,7 @@ package gg.projecteden.nexus.utils;
 import gg.projecteden.nexus.features.customenchants.CustomEnchant;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.customenchants.OldCEConverter;
-import gg.projecteden.nexus.features.customenchants.enchants.AutoRepairEnchant;
-import gg.projecteden.nexus.features.customenchants.enchants.GlowingEnchant;
-import gg.projecteden.nexus.features.customenchants.enchants.MagnetEnchant;
-import gg.projecteden.nexus.features.customenchants.enchants.SoulboundEnchant;
+import gg.projecteden.nexus.features.customenchants.enchants.*;
 import lombok.experimental.UtilityClass;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentWrapper;
@@ -235,6 +232,8 @@ public class Enchant {
 	 * Passively repairs items
 	 */
 	public static final CustomEnchant AUTOREPAIR = CustomEnchants.get(AutoRepairEnchant.class);
+
+	public static final CustomEnchant THUNDERINGBLOW = CustomEnchants.get(ThunderingBlowEnchant.class);
 
 	private static final List<Enchantment> values = new ArrayList<>();
 
