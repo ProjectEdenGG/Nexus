@@ -45,6 +45,7 @@ import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Bee;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.Golem;
 import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.ItemFrame;
@@ -286,6 +287,12 @@ public class Misc implements Listener {
 	public void onPlayerDamageByPlayer(PlayerDamageByPlayerEvent event) {
 		if (event.getPlayer().getUniqueId().equals(event.getAttacker().getUniqueId()))
 			event.getOriginalEvent().setCancelled(true);
+	}
+
+	@EventHandler
+	public void onFireworkDamage(EntityDamageByEntityEvent event) {
+		if (event.getDamager() instanceof Firework firework && firework.hasMetadata("noDamage"))
+			event.setCancelled(true);
 	}
 
 	@EventHandler

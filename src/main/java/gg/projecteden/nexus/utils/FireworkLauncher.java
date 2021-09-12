@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.nexus.Nexus;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -9,6 +10,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,6 +28,8 @@ public class FireworkLauncher {
 	private FireworkEffect.Type type;
 	private Integer power;
 	private Integer detonateAfter;
+	private Boolean silent;
+	private Boolean noDamage;
 
 	public FireworkLauncher(Location location) {
 		this.location = location;
@@ -35,6 +39,11 @@ public class FireworkLauncher {
 		Firework firework = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK);
 		FireworkEffect.Builder builder = FireworkEffect.builder();
 		FireworkMeta meta = firework.getFireworkMeta();
+
+		if (noDamage)
+			firework.setMetadata("noDamage", new FixedMetadataValue(Nexus.getInstance(), true));
+		if (silent != null)
+			firework.setSilent(silent);
 
 		if (type != null)
 			builder.with(type);
