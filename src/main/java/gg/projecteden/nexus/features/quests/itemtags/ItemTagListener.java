@@ -7,6 +7,7 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Hanging;
@@ -39,17 +40,19 @@ public class ItemTagListener implements Listener {
 		Nexus.registerListener(this);
 	}
 
-	private static final Map<UUID, Integer> cooldown = new HashMap<>();
+	private static final Map<UUID, Map<Material, Integer>> cooldown = new HashMap<>();
 
-	private boolean cooldown(Player player) {
+	private boolean cooldown(Player player, Material material) {
 		final UUID uuid = player.getUniqueId();
+		final Map<Material, Integer> cooldowns = cooldown.getOrDefault(uuid, new HashMap<>());
 
 		final int currentTick = Bukkit.getCurrentTick();
-		final int lastUpdate = cooldown.getOrDefault(uuid, 0);
+		final int lastUpdate = cooldowns.getOrDefault(material, 0);
 		if (currentTick - lastUpdate < TickTime.SECOND.get())
 			return false;
 
-		cooldown.put(uuid, currentTick);
+		cooldowns.put(material, lastUpdate);
+		cooldown.put(uuid, cooldowns);
 		return true;
 	}
 
@@ -66,7 +69,7 @@ public class ItemTagListener implements Listener {
 		if (WorldGroup.of(event.getPlayer()) != WorldGroup.SURVIVAL)
 			return;
 
-		if (!cooldown(event.getPlayer()))
+		if (!cooldown(event.getPlayer(), result.getType()))
 			return;
 
 		updateItem(result);
