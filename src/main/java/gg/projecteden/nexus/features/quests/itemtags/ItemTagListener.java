@@ -44,7 +44,7 @@ public class ItemTagListener implements Listener {
 
 	private boolean cooldown(Player player, Material material) {
 		final UUID uuid = player.getUniqueId();
-		final Map<Material, Integer> cooldowns = cooldown.getOrDefault(uuid, new HashMap<>());
+		final Map<Material, Integer> cooldowns = cooldown.computeIfAbsent(uuid, () -> new HashMap<>());
 
 		final int currentTick = Bukkit.getCurrentTick();
 		final int lastUpdate = cooldowns.getOrDefault(material, 0);
@@ -52,7 +52,6 @@ public class ItemTagListener implements Listener {
 			return false;
 
 		cooldowns.put(material, lastUpdate);
-		cooldown.put(uuid, cooldowns);
 		return true;
 	}
 
