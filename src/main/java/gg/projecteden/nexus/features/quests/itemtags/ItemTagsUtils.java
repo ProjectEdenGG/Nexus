@@ -7,16 +7,20 @@ import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 public class ItemTagsUtils {
 
-	public static void debugItem(ItemStack itemStack, Player debugger) {
+	public static void debugItem(@NotNull ItemStack itemStack, @NotNull Player debugger) {
 		ItemTags.debug(debugger, StringUtils.getPrefix("ItemTags") + " Item debug:");
 		ItemTags.debug(debugger, "&3&lCondition:");
 		Condition condition = Condition.of(itemStack, debugger);
@@ -48,68 +52,71 @@ public class ItemTagsUtils {
 		ItemTags.debug(debugger, "");
 	}
 
-	public static ItemStack updateItem(ItemStack itemStack) {
+	public static void updateItem(@NotNull ItemStack itemStack) {
 		Condition condition = Condition.of(itemStack);
 		Rarity rarity = Rarity.of(itemStack, condition);
 		if (condition == null && rarity == null)
-			return itemStack;
+			return;
+
+		List<String> origLore = itemStack.getLore();
+		final List<String> lore;
+		if (origLore == null)
+			lore = new ArrayList<>();
+		else
+			lore = origLore;
 
 		// Clear Tags
-		clearTags(itemStack);
+		clearTags(lore);
 
 		// Add Tag: Condition
-		itemStack = addCondition(itemStack, condition);
+		addTag(lore, condition);
 
 		// Add Tag: Rarity
-		itemStack = addRarity(itemStack, rarity);
+		addTag(lore, rarity);
 
-		return finalizeItem(itemStack);
+		// finalizeItem is not required here as we already know the tags are ordered correctly
+
+		if ((origLore == null || origLore.isEmpty()) && lore.isEmpty())
+			return;
+
+		boolean updated = false;
+		if (origLore != null) {
+			for (String line : lore) {
+				if (!origLore.contains(line)) {
+					updated = true;
+					break;
+				}
+			}
+		} else
+			updated = true;
+
+		if (!updated)
+			return;
+
+		itemStack.setLore(lore);
 	}
 
 	// Grabs all tags and reorders them in the correct order
-	public static ItemStack finalizeItem(ItemStack itemStack) {
+	public static void finalizeItem(@NotNull List<String> lore) {
 		String conditionTag = null;
 		String rarityTag = null;
 
-		List<String> lore = getLore(itemStack);
+		if (!lore.isEmpty()) {
+			Iterator<String> iter = lore.iterator();
 
+			while (iter.hasNext()) {
+				String line = iter.next();
+				String lineStrip = stripColor(line);
 
-		if (lore != null && lore.size() > 0) {
-			// Find condition tag
-			int ndx = 0;
-			for (String line : new ArrayList<>(lore)) {
-				if (conditionTag == null) {
-					for (Condition condition : Condition.values()) {
-						String tag = stripColor(condition.getTag());
-						String _line = stripColor(line);
+				if (conditionTag == null && Condition.ALL_TAGS_STRIPPED.contains(lineStrip)) {
+					conditionTag = line;
+					iter.remove();
+				} else if (rarityTag == null && Rarity.ALL_TAGS_STRIPPED.contains(lineStrip)) {
+					rarityTag = line;
+					iter.remove();
+				}
 
-						if (tag.equalsIgnoreCase(_line)) {
-							conditionTag = line;
-							lore.remove(ndx);
-							break;
-						}
-					}
-					++ndx;
-				} else
-					break;
-			}
-
-			// Find rarity tag
-			ndx = 0;
-			for (String line : new ArrayList<>(lore)) {
-				if (rarityTag == null) {
-					for (Rarity rarity : Rarity.values()) {
-						String tag = stripColor(rarity.getTag());
-						String _line = stripColor(line);
-
-						if (tag.equalsIgnoreCase(_line)) {
-							rarityTag = line;
-							lore.remove(ndx);
-							break;
-						}
-					}
-					++ndx;
-				} else
+				if (conditionTag != null && rarityTag != null)
 					break;
 			}
 
@@ -119,86 +126,71 @@ public class ItemTagsUtils {
 
 			if (rarityTag != null)
 				lore.add(rarityTag);
-
-			setLore(itemStack, lore);
-		}
-		return itemStack;
-	}
-
-	public static void clearTags(ItemStack itemStack) {
-		clearCondition(itemStack);
-		clearRarity(itemStack);
-	}
-
-	public static void clearRarity(ItemStack itemStack) {
-		List<String> lore = getLore(itemStack);
-		if (lore != null && lore.size() > 0) {
-			clearTags(lore, Arrays.stream(Rarity.values()).map(Rarity::getTag).toList());
-			setLore(itemStack, lore);
 		}
 	}
 
-	public static void clearCondition(ItemStack itemStack) {
-		List<String> lore = getLore(itemStack);
-		if (lore != null && lore.size() > 0) {
-			clearTags(lore, Arrays.stream(Condition.values()).map(Condition::getTag).toList());
-			setLore(itemStack, lore);
+	public static void clearTags(@NotNull List<String> lore) {
+		clearCondition(lore);
+		clearRarity(lore);
+	}
+
+	public static void clearRarity(@NotNull List<String> lore) {
+		if (!lore.isEmpty()) {
+			clearTags(lore, Rarity.ALL_TAGS);
 		}
 	}
 
-	private static void clearTags(List<String> lore, List<String> tags) {
+	public static void clearCondition(@NotNull List<String> lore) {
+		if (!lore.isEmpty()) {
+			clearTags(lore, Condition.ALL_TAGS);
+		}
+	}
+
+	private static void clearTags(@NotNull List<String> lore, @NotNull Collection<String> tags) {
 		List<String> loreStrip = new ArrayList<>(lore.size());
 		for (String tag : tags)
 			loreStrip.add(stripColor(tag));
 		lore.removeIf(tag -> loreStrip.contains(stripColor(tag)));
 	}
 
-	public static ItemStack addRarity(ItemStack itemStack, Rarity rarity) {
-		return addRarity(itemStack, rarity, false);
+	public static void addTag(@NotNull List<String> lore, @Nullable ITag tag) {
+		if (tag != null)
+			lore.add(tag.getTag());
 	}
 
-	public static ItemStack addRarity(ItemStack itemStack, Rarity rarity, boolean clear) {
-		if (clear)
-			clearRarity(itemStack);
-
-		if (rarity != null)
-			setTag(itemStack, rarity.getTag());
-
-		return itemStack;
+	public static void updateRarity(@NotNull ItemStack item, @NotNull Rarity rarity) {
+		updateTag(item, rarity, ItemTagsUtils::clearRarity);
 	}
 
-	public static ItemStack addCondition(ItemStack itemStack, Condition condition) {
-		return addCondition(itemStack, condition, false);
+	public static void updateCondition(@NotNull ItemStack item, @NotNull Condition condition) {
+		updateTag(item, condition, ItemTagsUtils::clearCondition);
 	}
 
-	public static ItemStack addCondition(ItemStack itemStack, Condition condition, boolean clear) {
-		if (clear)
-			clearCondition(itemStack);
+	public static void updateTag(@NotNull ItemStack item, @NotNull ITag tag, @NotNull Consumer<List<String>> clear) {
+		List<String> lore = item.getLore();
+		boolean newLore = lore == null;
 
-		if (condition != null)
-			setTag(itemStack, condition.getTag());
-
-		return itemStack;
-	}
-
-	private static void setTag(ItemStack itemStack, String tag) {
-		List<String> lore = getLore(itemStack);
-
-		if (lore == null)
+		if (newLore)
 			lore = new ArrayList<>();
+		else
+			clear.accept(lore);
 
-		lore.add(tag);
-		setLore(itemStack, lore);
+		addTag(lore, tag);
+
+		if (!newLore)
+			finalizeItem(lore);
+
+		item.setLore(lore);
 	}
 
-	public static boolean isArmor(ItemStack itemStack) {
+	public static boolean isArmor(@NotNull ItemStack itemStack) {
 		if (itemStack.getType().equals(Material.ELYTRA))
 			return true;
 
 		return MaterialTag.ARMOR.isTagged(itemStack);
 	}
 
-	public static boolean isTool(ItemStack itemStack) {
+	public static boolean isTool(@NotNull ItemStack itemStack) {
 		Material type = itemStack.getType();
 		List<Material> uniqueTools = List.of(Material.SHIELD);
 
@@ -211,7 +203,7 @@ public class ItemTagsUtils {
 		return MaterialTag.WEAPONS.isTagged(itemStack) || MaterialTag.TOOLS.isTagged(itemStack);
 	}
 
-	public static boolean isMythicMobsItem(ItemStack itemStack) {
+	public static boolean isMythicMobsItem(@NotNull ItemStack itemStack) {
 		if (true)
 			return false; // TODO: remove if mythic mobs is added
 
@@ -223,16 +215,6 @@ public class ItemTagsUtils {
 		}
 
 		return false;
-	}
-
-	@SuppressWarnings("deprecation")
-	private static List<String> getLore(ItemStack itemStack) {
-		return itemStack.getLore();
-	}
-
-	@SuppressWarnings("deprecation")
-	private static void setLore(ItemStack itemStack, List<String> lore) {
-		itemStack.setLore(lore);
 	}
 }
 

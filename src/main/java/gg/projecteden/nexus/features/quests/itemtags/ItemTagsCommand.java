@@ -40,9 +40,7 @@ public class ItemTagsCommand extends CustomCommand {
 	void update() {
 		ItemStack tool = getToolRequired();
 
-		ItemStack updated = ItemTagsUtils.updateItem(tool);
-		int heldSlot = inventory().getHeldItemSlot();
-		inventory().setItem(heldSlot, updated);
+		ItemTagsUtils.updateItem(tool);
 	}
 
 	@Path("updateInv")
@@ -55,8 +53,7 @@ public class ItemTagsCommand extends CustomCommand {
 			if (ItemUtils.isNullOrAir(item))
 				continue;
 
-			ItemStack updated = ItemTagsUtils.updateItem(item);
-			item.setItemMeta(updated.getItemMeta());
+			ItemTagsUtils.updateItem(item);
 			++count;
 		}
 
@@ -85,22 +82,14 @@ public class ItemTagsCommand extends CustomCommand {
 	@Permission("group.admin")
 	void setRarity(Rarity rarity) {
 		ItemStack tool = getToolRequired();
-
-		ItemStack updated = ItemTagsUtils.finalizeItem(ItemTagsUtils.addRarity(tool, rarity, true));
-		int heldSlot = inventory().getHeldItemSlot();
-		inventory().setItem(heldSlot, updated);
+		ItemTagsUtils.updateRarity(tool, rarity);
 	}
 
 	@Path("setCondition <condition>")
 	@Permission("group.admin")
 	void setCondition(Condition condition) {
 		ItemStack tool = getToolRequired();
-
-		ItemStack updated = ItemTagsUtils.finalizeItem(ItemTagsUtils.addCondition(tool, condition, true));
-		Condition.setDurability(updated, condition);
-
-		int heldSlot = inventory().getHeldItemSlot();
-		inventory().setItem(heldSlot, updated);
+		ItemTagsUtils.updateCondition(tool, condition);
 	}
 
 	@Path("reload")

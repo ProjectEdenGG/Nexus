@@ -13,9 +13,12 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.text.DecimalFormat;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 @AllArgsConstructor
-public enum Condition {
+public enum Condition implements ITag {
 	BROKEN(ChatColor.of("#c92222"), 76, 100),
 	RAGGED(ChatColor.of("#f06100"), 51, 75),
 	WORN(ChatColor.of("#00aa91"), 26, 50),
@@ -77,11 +80,24 @@ public enum Condition {
 
 	public static void setNBT(NBTItem nbtItem, Condition condition) {
 		nbtItem.setString(NBT_KEY, condition.name());
-		ItemTagsUtils.addCondition(nbtItem.getItem(), condition);
-		setDurability(nbtItem.getItem(), condition);
+		ItemTagsUtils.updateCondition(nbtItem.getItem(), condition);
 	}
 
 	public static void setDurability(ItemStack item, Condition condition) {
 		ItemBuilder.setDurability(item, RandomUtils.randomInt(condition.getMin(), condition.getMax()));
+	}
+
+	public static final Set<String> ALL_TAGS;
+	public static final Set<String> ALL_TAGS_STRIPPED;
+	static {
+		Set<String> tags = new HashSet<>();
+		for (Condition condition : Condition.values())
+			tags.add(condition.getTag());
+		ALL_TAGS = Collections.unmodifiableSet(tags);
+
+		Set<String> stripped = new HashSet<>();
+		for (String tag : tags)
+			stripped.add(StringUtils.stripColor(tag));
+		ALL_TAGS_STRIPPED = Collections.unmodifiableSet(stripped);
 	}
 }

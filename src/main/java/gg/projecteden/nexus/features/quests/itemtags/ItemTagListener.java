@@ -26,7 +26,6 @@ import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.event.world.LootGenerateEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -135,9 +134,10 @@ public class ItemTagListener implements Listener {
 		if (WorldGroup.of(event.getEntity()) != WorldGroup.SURVIVAL)
 			return;
 
-		ItemStack updated = updateItem(item);
+		updateItem(item);
 
-		itemFrame.setItem(updated);
+		// frame returns a bukkit copy so we must set the item
+		itemFrame.setItem(item);
 	}
 
 	@EventHandler
@@ -156,9 +156,10 @@ public class ItemTagListener implements Listener {
 		ItemStack item = itemFrame.getItem();
 		if (isNullOrAir(item)) return;
 
-		ItemStack updated = updateItem(item);
+		updateItem(item);
 
-		itemFrame.setItem(updated);
+		// frame returns a bukkit copy so we must set the item
+		itemFrame.setItem(item);
 	}
 
 	@EventHandler
@@ -166,12 +167,8 @@ public class ItemTagListener implements Listener {
 		if (WorldGroup.of(event.getEntity()) != WorldGroup.SURVIVAL)
 			return;
 
-		int ndx = 0;
-		for (ItemStack drop : new ArrayList<>(event.getDrops())) {
-			ItemStack updated = updateItem(drop);
-			event.getDrops().set(ndx, updated);
-			++ndx;
-		}
+		for (ItemStack item : event.getDrops())
+			updateItem(item);
 	}
 
 	@EventHandler

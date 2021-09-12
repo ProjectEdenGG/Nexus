@@ -15,11 +15,12 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public enum Rarity {
+public enum Rarity implements ITag {
 	// @formatter:off
 	ORDINARY(ChatColor.of("#9e9e9e"),	 0, 5),
 	COMMON(ChatColor.of("#7aff7a"),		 6, 11),
@@ -93,7 +94,7 @@ public enum Rarity {
 		args.setMaterialSum(getMaterialVal(args));
 		ItemTags.debug(debugger, "    &3Sum: &e" + number(args.getMaterialSum()));
 
-		if (itemStack.getItemMeta().hasEnchants()) {
+		if (itemStack.hasItemMeta() && itemStack.getItemMeta().hasEnchants()) {
 			ItemTags.debug(debugger, "  &3Vanilla Enchants:");
 			args.setVanillaEnchantsSum(getEnchantsVal(itemStack, args, debugger));
 			ItemTags.debug(debugger, "    &3Sum: &e" + number(args.getVanillaEnchantsSum()));
@@ -266,7 +267,22 @@ public enum Rarity {
 
 	public static void setNBT(NBTItem nbtItem, Rarity rarity) {
 		nbtItem.setString(NBT_KEY, rarity.name());
-		ItemTagsUtils.addRarity(nbtItem.getItem(), rarity);
+		ItemTagsUtils.updateRarity(nbtItem.getItem(), rarity);
+	}
+
+	public static final Set<String> ALL_TAGS;
+	public static final Set<String> ALL_TAGS_STRIPPED;
+
+	static {
+		Set<String> tags = new HashSet<>(Rarity.values().length);
+		for (Rarity rarity : Rarity.values())
+			tags.add(rarity.getTag());
+		ALL_TAGS = Collections.unmodifiableSet(tags);
+
+		Set<String> stripped = new HashSet<>(tags.size());
+		for (String tag : tags)
+			stripped.add(StringUtils.stripColor(tag));
+		ALL_TAGS_STRIPPED = Collections.unmodifiableSet(stripped);
 	}
 
 }
