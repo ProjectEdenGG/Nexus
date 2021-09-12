@@ -8,6 +8,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.punishments.Punishment;
+import gg.projecteden.nexus.models.punishments.PunishmentType;
 import gg.projecteden.nexus.models.punishments.Punishments;
 import gg.projecteden.nexus.models.punishments.PunishmentsService;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -51,6 +52,7 @@ public class HistoryCommand extends _JusticeCommand {
 
 		List<Punishment> sorted = player.getPunishments().stream()
 				.sorted(Comparator.comparing(Punishment::getTimestamp).reversed())
+				.filter(punishment -> !isSelf(player) || punishment.getType() != PunishmentType.WATCHLIST)
 				.collect(toList());
 
 		paginate(sorted, formatter, "/history " + player.getName(), page, perPage);
