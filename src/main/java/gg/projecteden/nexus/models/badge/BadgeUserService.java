@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.models.emblem;
+package gg.projecteden.nexus.models.badge;
 
 import gg.projecteden.mongodb.annotations.PlayerClass;
 import gg.projecteden.nexus.models.MongoService;

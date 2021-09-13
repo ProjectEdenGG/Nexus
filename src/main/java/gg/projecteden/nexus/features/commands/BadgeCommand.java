@@ -9,9 +9,9 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.models.emblem.BadgeUser;
-import gg.projecteden.nexus.models.emblem.BadgeUser.Badge;
-import gg.projecteden.nexus.models.emblem.BadgeUserService;
+import gg.projecteden.nexus.models.badge.BadgeUser;
+import gg.projecteden.nexus.models.badge.BadgeUser.Badge;
+import gg.projecteden.nexus.models.badge.BadgeUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
@@ -51,7 +51,7 @@ public class BadgeCommand extends CustomCommand {
 	void give(Badge badge, @Arg("self") BadgeUser user) {
 		user.give(badge);
 		service.save(user);
-		send(PREFIX + "Gave " + (isSelf(user) ? "yourself" : "&e" + user.getNickname()) + " &3the &e" + camelCase(badge) + " &3emblem");
+		send(PREFIX + "Gave " + (isSelf(user) ? "yourself" : "&e" + user.getNickname()) + " &3the &e" + camelCase(badge) + " &3badge");
 	}
 
 	@Async

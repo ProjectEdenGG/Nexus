@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.models.emblem;
+package gg.projecteden.nexus.models.badge;
 
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
