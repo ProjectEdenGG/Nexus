@@ -5,10 +5,13 @@ import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.google.common.util.concurrent.AtomicDouble;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.chat.Chat;
+import gg.projecteden.nexus.features.commands.MuteMenuCommand;
 import gg.projecteden.nexus.features.crates.Crates;
 import gg.projecteden.nexus.features.crates.models.events.CrateSpawnItemEvent;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CrateOpeningException;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -64,7 +67,7 @@ public abstract class Crate implements Listener {
 
 	public Location getHologramLocation() {
 		Location loc = getCrateType().getCenteredLocation().clone().add(0, 1, 0);
-		for (String string : getCrateHologramLines())
+		for (String ignored : getCrateHologramLines())
 			loc.add(0, 5 / 16d, 0);
 		return loc;
 	}
@@ -335,5 +338,16 @@ public abstract class Crate implements Listener {
 		inUse = false;
 		showHologram();
 		removeItem();
+	}
+
+	public void broadcastLoot(Player player, CrateLoot loot) {
+		String crateType = StringUtils.camelCase(getCrateType()) + " Crate";
+		String message = "&e" + Nickname.of(player) + " &3has received a &e" + loot.getTitle() + " &3from the &e" + crateType;
+
+		Chat.Broadcast.all()
+			.prefix("Crates")
+			.message(message)
+			.muteMenuItem(MuteMenuCommand.MuteMenuProvider.MuteMenuItem.CRATES)
+			.send();
 	}
 }
