@@ -5,7 +5,7 @@ import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
-import gg.projecteden.nexus.features.chat.Chat.Broadcast;
+import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.SocialMediaSite;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import lombok.AllArgsConstructor;
@@ -41,7 +41,7 @@ public class SocialMediaUser implements PlayerOwnedObject {
 	public void addConnection(SocialMediaSite site, String username) {
 		final Connection connection = new Connection(uuid, site, username);
 		connections.put(site, connection);
-		Broadcast.log().message(getDiscordPrefix("SocialMedia") + getNickname() + " linked their " +
+		Discord.staffLog(getDiscordPrefix("SocialMedia") + getNickname() + " linked their " +
 			camelCase(site) + " account to " + connection.getDiscordUrl());
 	}
 
