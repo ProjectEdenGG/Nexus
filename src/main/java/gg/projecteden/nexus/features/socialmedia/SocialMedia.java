@@ -67,7 +67,7 @@ public class SocialMedia extends Feature implements Listener {
 		TWITTER("Twitter", ChatColor.of("#1da1f2"), "", "https://twitter.com", "https://twitter.com/%s"),
 		INSTAGRAM("Instagram", ChatColor.of("#e1306c"), "", "https://instgram.com", "https://instgram.com/%s"),
 		SNAPCHAT("Snapchat", ChatColor.of("#fffc00"), "", "https://snapchat.com", "https://snapchat.com/add/%s"),
-		YOUTUBE("YouTube", ChatColor.of("#ff0000"), "", "https://youtube.com", "%s"),
+		YOUTUBE("YouTube", ChatColor.of("#ff0000"), "", "https://youtube.com", "https://youtube.com/channel/%s"),
 		TWITCH("Twitch", ChatColor.of("#6441a5"), "", "https://twitch.tv", "https://twitch.tv/%s"),
 		TIKTOK("TikTok", ChatColor.of("#69C9D0"), "", "https://tiktok.com", "https://tiktok.com/@%s"),
 		DISCORD("Discord", ChatColor.of("#7289da"), "", "https://discord.com", "%s"),
