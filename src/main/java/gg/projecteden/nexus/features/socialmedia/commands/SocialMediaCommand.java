@@ -83,9 +83,17 @@ public class SocialMediaCommand extends CustomCommand {
 		if (site == SocialMediaSite.YOUTUBE && (username.length() != 24 || !username.startsWith("UC")))
 			error("You must provide your 24 character YouTube channel id");
 
-		service.get(player).addConnection(site, username);
+		player.addConnection(site, username);
 		service.save(player);
 		send(PREFIX + "Linked to &e" + player.getConnection(site).getUrl());
+	}
+
+	@Path("unlink <site> [player]")
+	void unlink(SocialMediaSite site, @Arg(value = "self", permission = "group.staff") SocialMediaUser player) {
+		player.removeConnection(site);
+		service.save(player);
+		send(PREFIX + "Unlinked from &e" + camelCase(site));
+
 	}
 
 }

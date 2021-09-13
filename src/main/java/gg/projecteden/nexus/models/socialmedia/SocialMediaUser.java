@@ -45,6 +45,10 @@ public class SocialMediaUser implements PlayerOwnedObject {
 			camelCase(site) + " account to " + connection.getDiscordUrl());
 	}
 
+	public void removeConnection(SocialMediaSite site) {
+		connections.remove(site);
+	}
+
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
