@@ -84,6 +84,13 @@ public class PlayerUtils {
 		@Getter
 		private final UUID uuid;
 
+		public static Dev of(UUID uuid) {
+			for (Dev dev : values())
+				if (dev.getUuid().equals(uuid))
+					return dev;
+			return null;
+		}
+
 		public @NotNull UUID getUniqueId() {return uuid;}
 
 		Dev(String uuid) {
