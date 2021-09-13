@@ -64,22 +64,25 @@ public class SocialMedia extends Feature implements Listener {
 	}
 
 	public enum SocialMediaSite {
-		TWITTER("Twitter", ChatColor.of("#1da1f2"), "https://twitter.com", "https://twitter.com/{{USERNAME}}"),
-		INSTAGRAM("Instagram", ChatColor.of("#e1306c"), "https://instgram.com", "https://instgram.com/{{USERNAME}}"),
-		SNAPCHAT("Snapchat", ChatColor.of("#fffc00"), "https://snapchat.com", "https://snapchat.com/add/{{USERNAME}}"),
-		YOUTUBE("YouTube", ChatColor.of("#ff0000"), "https://youtube.com", "{{USERNAME}}"),
-		TWITCH("Twitch", ChatColor.of("#6441a5"), "https://twitch.tv", "https://twitch.tv/{{USERNAME}}"),
-		DISCORD("Discord", ChatColor.of("#7289da"), "https://discord.com", "{{USERNAME}}"),
-		STEAM("Steam", ChatColor.of("#356d92"), "https://store.steampowered.com", "https://steamcommunity.com/id/{{USERNAME}}"),
-		REDDIT("Reddit", ChatColor.of("#ff5700"), "https://reddit.com", "https://reddit.com/u/{{USERNAME}}"),
-		GITHUB("GitHub", ChatColor.of("#ffffff"), "https://github.com", "https://github.com/{{USERNAME}}"),
-//		QUEUP("QueUp", ChatColor.of("#d42f8a"), "https://queup.net", "https://queup.net/user/{{USERNAME}}"), // TODO QueUp
+		TWITTER("Twitter", ChatColor.of("#1da1f2"), "", "https://twitter.com", "https://twitter.com/%s"),
+		INSTAGRAM("Instagram", ChatColor.of("#e1306c"), "", "https://instgram.com", "https://instgram.com/%s"),
+		SNAPCHAT("Snapchat", ChatColor.of("#fffc00"), "", "https://snapchat.com", "https://snapchat.com/add/%s"),
+		YOUTUBE("YouTube", ChatColor.of("#ff0000"), "", "https://youtube.com", "%s"),
+		TWITCH("Twitch", ChatColor.of("#6441a5"), "", "https://twitch.tv", "https://twitch.tv/%s"),
+		TIKTOK("TikTok", ChatColor.of("#69C9D0"), "", "https://tiktok.com", "https://tiktok.com/@%s"),
+		DISCORD("Discord", ChatColor.of("#7289da"), "", "https://discord.com", "%s"),
+		STEAM("Steam", ChatColor.of("#356d92"), "", "https://store.steampowered.com", "https://steamcommunity.com/id/%s"),
+		REDDIT("Reddit", ChatColor.of("#ff5700"), "", "https://reddit.com", "https://reddit.com/u/%s"),
+		GITHUB("GitHub", ChatColor.of("#777777"), "", "https://github.com", "https://github.com/%s"),
+//		QUEUP("QueUp", ChatColor.of("#d42f8a"), "https://queup.net", "https://queup.net/user/%s"), // TODO QueUp
 		;
 
 		@Getter
 		private final String name;
 		@Getter
 		private final ChatColor color;
+		@Getter
+		private final String emoji;
 		@Getter
 		private final String url;
 		@Getter
@@ -88,9 +91,10 @@ public class SocialMedia extends Feature implements Listener {
 		@Setter
 		private ItemStack head = new ItemStack(Material.PLAYER_HEAD);
 
-		SocialMediaSite(String name, ChatColor color, String url, String profileUrl) {
+		SocialMediaSite(String name, ChatColor color, String emoji, String url, String profileUrl) {
 			this.name = name;
 			this.color = color;
+			this.emoji = emoji;
 			this.url = url;
 			this.profileUrl = profileUrl;
 		}

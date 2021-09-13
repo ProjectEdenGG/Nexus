@@ -77,7 +77,7 @@ public class BadgeCommand extends CustomCommand {
 				++active;
 			}
 
-			if (++i % 250 == 0)
+			if (++i % 25 == 0)
 				send(PREFIX + "Converted &e" + i + "&3/&e" + nerds.size());
 		}
 

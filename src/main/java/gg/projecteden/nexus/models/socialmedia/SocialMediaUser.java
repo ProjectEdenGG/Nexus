@@ -5,6 +5,7 @@ import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.SocialMediaSite;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import lombok.AllArgsConstructor;
@@ -13,9 +14,12 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
+
+import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.utils.StringUtils.getDiscordPrefix;
 
 @Data
 @Entity(value = "social_media_user", noClassnameStored = true)
@@ -28,10 +32,17 @@ public class SocialMediaUser implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	@Embedded
-	private List<Connection> connections = new ArrayList<>();
+	private Map<SocialMediaSite, Connection> connections = new HashMap<>();
 
 	public Connection getConnection(SocialMediaSite site) {
-		return connections.stream().filter(connection -> connection.getSite() == site).findFirst().orElse(null);
+		return connections.get(site);
+	}
+
+	public void addConnection(SocialMediaSite site, String username) {
+		final Connection connection = new Connection(uuid, site, username);
+		connections.put(site, connection);
+		Broadcast.log().message(getDiscordPrefix("SocialMedia") + getNickname() + " linked their " +
+			camelCase(site) + " account to " + connection.getDiscordUrl());
 	}
 
 	@Data
@@ -44,7 +55,15 @@ public class SocialMediaUser implements PlayerOwnedObject {
 		private String username;
 
 		public String getUrl() {
-			return site.getProfileUrl().replace("{{USERNAME}}", username);
+			return String.format(site.getProfileUrl(), username);
+		}
+		public String getDiscordUrl() {
+			final String format = String.format(site.getProfileUrl(), username);
+
+			if (site.getProfileUrl().equals("%s"))
+				return format;
+
+			return "<" + format + ">";
 		}
 	}
 

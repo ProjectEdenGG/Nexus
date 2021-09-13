@@ -1,13 +1,18 @@
 package gg.projecteden.nexus.features.socialmedia.commands;
 
+import gg.projecteden.nexus.features.menus.BookBuilder.WrittenBookMenu;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.SocialMediaSite;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.socialmedia.SocialMediaUser;
+import gg.projecteden.nexus.models.socialmedia.SocialMediaUser.Connection;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUserService;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.NonNull;
 
@@ -36,6 +41,51 @@ public class SocialMediaCommand extends CustomCommand {
 	@Permission("group.admin")
 	void getItem(SocialMediaSite site) {
 		PlayerUtils.giveItem(player(), site.getHead());
+	}
+
+	@Path("[player]")
+	void menu(@Arg("self") SocialMediaUser user) {
+		if (user.getConnections().isEmpty())
+			error((isSelf(user) ? "You have" : user.getNickname() + " has") + " not linked any social media accounts");
+
+		final JsonBuilder page = new JsonBuilder("&3&lSocial Media").newline().newline();
+
+		for (SocialMediaSite site : SocialMediaSite.values()) {
+			final Connection connection = user.getConnection(site);
+			if (connection == null)
+				continue;
+
+			page.next("&f" + site.getEmoji() + " " + site.getLabel())
+				.hover(connection.getUrl());
+
+			if (site.getProfileUrl().equals("%s"))
+				page.copy("&e" + connection.getUrl())
+					.hover("&f")
+					.hover("&eClick to copy");
+			else
+				page.url("&e" + connection.getUrl())
+					.hover("&f")
+					.hover("&eClick to open");
+
+			page.group().newline();
+		}
+
+		new WrittenBookMenu().addPage(page).open(player());
+	}
+
+	@Path("link <site> <username> [player]")
+	void link(SocialMediaSite site, String username, @Arg(value = "self", permission = "group.staff") SocialMediaUser player) {
+		username = username
+			.replace(site.getProfileUrl().replaceFirst("%s", ""), "")
+			.replace(site.getUrl(), "")
+			.replace(site.getUrl().replace("https://", "https://www."), "");
+
+		if (site == SocialMediaSite.YOUTUBE && (username.length() != 24 || !username.startsWith("UC")))
+			error("You must provide your 24 character YouTube channel id");
+
+		service.get(player).addConnection(site, username);
+		service.save(player);
+		send(PREFIX + "Linked to &e" + player.getConnection(site).getUrl());
 	}
 
 }
