@@ -80,9 +80,9 @@ public class BadgeUser implements PlayerOwnedObject {
 			final Connection twitch = user.getConnection(SocialMediaSite.TWITCH);
 			if (twitch != null) {
 				final String url = twitch.getUrl();
-				json.hover(url).url(url);
+				json.hover("", "&e" + url).url(url);
 				if (user.isMature())
-					json.hover("&4Warning: &c18+ only");
+					json.hover("", "&4Warning: &c18+ only");
 			}
 		}),
 
