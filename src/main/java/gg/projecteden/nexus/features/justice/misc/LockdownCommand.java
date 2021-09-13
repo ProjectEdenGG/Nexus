@@ -47,10 +47,10 @@ public class LockdownCommand extends CustomCommand implements Listener {
 
 	static {
 		Tasks.repeat(TickTime.SECOND, TickTime.SECOND, () -> {
-			if (!lockdown || LockdownCommand.end == null)
+			if (!lockdown || end == null)
 				return;
 
-			if (LockdownCommand.end.isBefore(LocalDateTime.now()))
+			if (end.isBefore(LocalDateTime.now()))
 				PlayerUtils.runCommandAsConsole("lockdown end");
 		});
 	}
@@ -58,16 +58,16 @@ public class LockdownCommand extends CustomCommand implements Listener {
 	@Path("start <time/reason...>")
 	void start(String input) {
 		if (lockdown) {
-			send(PREFIX + "Overriding previous lockdown: &c" + LockdownCommand.reason);
+			send(PREFIX + "Overriding previous lockdown: &c" + reason);
 			reason = null;
 			end = null;
 		}
 
 		lockdown = true;
 		Timespan timespan = Timespan.find(input);
-		LockdownCommand.reason = timespan.getRest();
+		reason = timespan.getRest();
 		if (timespan.getOriginal() > 0)
-			LockdownCommand.end = timespan.fromNow();
+			end = timespan.fromNow();
 
 		String message = "&c" + name() + " initiated lockdown for &e" + (timespan.isNull() ? "" : timespan.format(FormatType.LONG) + "&c for &e") + timespan.getRest();
 		broadcast(message);

@@ -7,6 +7,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
+import gg.projecteden.nexus.features.commands.staff.CheatsCommand;
 import gg.projecteden.nexus.features.commands.staff.HealCommand;
 import gg.projecteden.nexus.features.warps.Warps;
 import gg.projecteden.nexus.features.wither.BeginningCutscene;
@@ -204,7 +205,8 @@ public abstract class WitherFight implements Listener {
 		started = true;
 		alivePlayers = party;
 		for (Player player : alivePlayers())
-			player.teleport(new Location(Bukkit.getWorld("events"), -150.50, 69.00, -114.50, .00F, .00F));
+			player.teleportAsync(new Location(Bukkit.getWorld("events"), -150.5, 69, -114.5))
+				.thenRun(() -> CheatsCommand.off(player));
 	}
 
 	public void giveItems() {
