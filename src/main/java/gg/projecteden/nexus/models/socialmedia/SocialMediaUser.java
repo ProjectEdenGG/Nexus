@@ -33,6 +33,7 @@ public class SocialMediaUser implements PlayerOwnedObject {
 	private UUID uuid;
 	@Embedded
 	private Map<SocialMediaSite, Connection> connections = new HashMap<>();
+	private boolean mature;
 
 	public Connection getConnection(SocialMediaSite site) {
 		return connections.get(site);

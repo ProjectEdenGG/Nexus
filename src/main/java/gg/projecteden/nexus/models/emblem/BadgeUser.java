@@ -81,6 +81,8 @@ public class BadgeUser implements PlayerOwnedObject {
 			if (twitch != null) {
 				final String url = twitch.getUrl();
 				json.hover(url).url(url);
+				if (user.isMature())
+					json.hover("&4Warning: &c18+ only");
 			}
 		}),
 

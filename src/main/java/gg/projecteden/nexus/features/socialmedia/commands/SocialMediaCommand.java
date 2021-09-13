@@ -1,13 +1,16 @@
 package gg.projecteden.nexus.features.socialmedia.commands;
 
 import gg.projecteden.nexus.features.menus.BookBuilder.WrittenBookMenu;
+import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.SocialMediaSite;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUser;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUser.Connection;
@@ -93,7 +96,24 @@ public class SocialMediaCommand extends CustomCommand {
 		player.removeConnection(site);
 		service.save(player);
 		send(PREFIX + "Unlinked from &e" + camelCase(site));
+	}
 
+	@TabCompleteIgnore
+	@Path("mature [player]")
+	@Description("Mark social media accounts as 18+ only")
+	void mature(@Arg(value = "self", permission = "group.staff") SocialMediaUser player) {
+		if (player.isMature() && !isStaff())
+			error("Only staff can remove 18+ status");
+
+		ConfirmationMenu.builder()
+			.title("&4" + (player.isMature() ? "Unmark" : "Mark") + " accounts as 18+ only?")
+			.onConfirm(e -> {
+				player.setMature(!player.isMature());
+				service.save(player);
+				send(PREFIX + "&e" + (player.isMature() ? "Marked" : "Unmarked") + " &3" +
+					(isSelf(player) ? "your" : player.getNickname() + "'s") + " social media accounts as &c18+ only");
+			})
+			.open(player());
 	}
 
 }
