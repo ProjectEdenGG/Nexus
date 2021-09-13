@@ -27,6 +27,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BannerMeta;
 
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
@@ -36,6 +38,34 @@ public class BannerCommand extends CustomCommand implements Listener {
 
 	public BannerCommand(@NonNull CommandEvent event) {
 		super(event);
+	}
+
+	@Path("copy")
+	void copy() {
+		final ItemStack mainHand = inventory().getItemInMainHand();
+		final ItemStack offHand = inventory().getItemInOffHand();
+
+		if (!MaterialTag.BANNERS.isTagged(mainHand) || !MaterialTag.BANNERS.isTagged(offHand))
+			error("You must be holding each banner in your hand");
+
+		ItemStack from;
+		ItemStack to;
+
+		BannerMeta mainHandMeta = (BannerMeta) mainHand.getItemMeta();
+
+		if (!mainHandMeta.getPatterns().isEmpty()) {
+			from = mainHand;
+			to = offHand;
+		} else {
+			from = offHand;
+			to = mainHand;
+		}
+
+		if (!((BannerMeta) to.getItemMeta()).getPatterns().isEmpty())
+			error("Cannot copy to a banner that already has patterns");
+
+		to.setItemMeta(from.getItemMeta().clone());
+		send(PREFIX + "Copied banner");
 	}
 
 	@Permission("nexus.banners")
