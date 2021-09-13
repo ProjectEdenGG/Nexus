@@ -94,7 +94,7 @@ public class BadgeCommand extends CustomCommand {
 		if (context == null)
 			context = service.get(player());
 
-		if (context.owns(badge))
+		if (!context.owns(badge))
 			error("You do not own that badge!");
 
 		return badge;
