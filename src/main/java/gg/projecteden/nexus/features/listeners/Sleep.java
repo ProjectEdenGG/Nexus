@@ -35,11 +35,13 @@ public class Sleep implements Listener {
 
 				if (sleeping >= needed && sleepingWorlds.get(world) != State.SKIPPING)
 					skipNight(world);
-				else if (sleepingWorlds.get(world) == State.SLEEPING)
+				else if (sleepingWorlds.get(world) == State.SLEEPING) {}
 					world.getPlayers().forEach(player -> ActionBarUtils.sendActionBar(player,
 						"Sleepers needed to skip night: &e" + sleeping + "&3/&e" + needed));
 			}
 		});
+
+
 	}
 
 	private static boolean canSleep(Player player) {
@@ -82,10 +84,11 @@ public class Sleep implements Listener {
 
 		if (!event.getBedEnterResult().equals(PlayerBedEnterEvent.BedEnterResult.OK))
 			return;
-
 		if (isDayTime(world))
 			return;
 		if (!isDaylightCycleEnabled(world))
+			return;
+		if (!canSleep(event.getPlayer()))
 			return;
 
 		if (!sleepingWorlds.containsKey(world) && sleepingWorlds.get(world) != State.SKIPPING)
