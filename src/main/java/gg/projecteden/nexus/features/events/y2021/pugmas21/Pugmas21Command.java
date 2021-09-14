@@ -48,35 +48,41 @@ public class Pugmas21Command extends CustomCommand {
 
 	@Path("train [--speed] [--seconds]")
 	void train(@Arg(".25") @Switch double speed, @Arg("60") @Switch int seconds) {
-		final double SEPARATOR = 7.5;
-		final Location startLocation = location().clone();
-		final Location spawnLocation = startLocation.clone();
+		final Location location = location();
 		final BlockFace forwards = player().getFacing();
 		final BlockFace backwards = forwards.getOppositeFace();
 
 		final List<ArmorStand> armorStands = new ArrayList<>();
 
 		for (int i = 1; i <= 18; i++) {
-			armorStands.add(trainArmorStand(Math.min(i, 2), spawnLocation));
-			spawnLocation.add(backwards.getDirection().multiply(SEPARATOR));
+			armorStands.add(trainArmorStand(Math.min(i, 2), location));
+			location.add(backwards.getDirection().multiply(7.5));
 		}
 
-		for (int i = 0; i < TickTime.SECOND.x(seconds); i++) {
-			int iteration = i;
-			Tasks.wait(TickTime.TICK.x(iteration), () -> {
-				int armorStandIndex = 0;
-				for (ArmorStand armorStand : armorStands) {
-					armorStand.teleport(startLocation.clone()
-						.add(backwards.getDirection().multiply(SEPARATOR * armorStandIndex++))
-						.add(forwards.getDirection().multiply(iteration * speed)));
-				}
-			});
-		}
+		final int repeat = Tasks.repeat(1, 1, () -> {
+			for (ArmorStand armorStand : armorStands)
+				armorStand.teleport(armorStand.getLocation().add(forwards.getDirection().multiply(speed)));
+
+			validateDistances(armorStands);
+		});
 
 		Tasks.wait(TickTime.SECOND.x(seconds), () -> {
+			Tasks.cancel(repeat);
 			for (ArmorStand armorStand : armorStands)
 				armorStand.remove();
 		});
+	}
+
+	private void validateDistances(List<ArmorStand> armorStands) {
+		ArmorStand lastArmorStand = null;
+		for (ArmorStand armorStand : armorStands) {
+			if (lastArmorStand != null) {
+				final double distance = lastArmorStand.getLocation().distance(armorStand.getLocation());
+				if (distance <= 7.49 || distance >= 7.51)
+					send("Distance: " + distance);
+			}
+			lastArmorStand = armorStand;
+		}
 	}
 
 }
