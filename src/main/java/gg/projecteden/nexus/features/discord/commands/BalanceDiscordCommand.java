@@ -37,7 +37,7 @@ public class BalanceDiscordCommand extends Command {
 				if (args.length > 0 && !isNullOrEmpty(args[0]))
 					player = PlayerUtils.getPlayer(args[0]);
 				if (args.length > 1 && !isNullOrEmpty(args[1]))
-					shopGroup = ShopGroup.valueOf(args[1]);
+					shopGroup = ShopGroup.valueOf(args[1].toUpperCase());
 
 				String formatted = new BankerService().getBalanceFormatted(player, shopGroup);
 				boolean isSelf = user.getUuid().equals(player.getUniqueId());
