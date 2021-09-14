@@ -17,8 +17,8 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.util.EulerAngle;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Pugmas21Command extends CustomCommand {
 
@@ -48,27 +48,31 @@ public class Pugmas21Command extends CustomCommand {
 
 	@Path("train [--speed] [--seconds]")
 	void train(@Arg(".25") @Switch double speed, @Arg("60") @Switch int seconds) {
+		final double SEPARATOR = 7.5;
 		final Location start = location().clone();
 		final Location armorStandLocation = start.clone();
 		final BlockFace forwards = player().getFacing();
 		final BlockFace backwards = forwards.getOppositeFace();
 
-		final Map<ArmorStand, Location> armorStands = new HashMap<>();
+		final List<ArmorStand> armorStands = new ArrayList<>();
 
 		for (int i = 1; i <= 18; i++) {
-			armorStands.put(trainArmorStand(Math.min(i, 2), armorStandLocation), armorStandLocation.clone());
-			armorStandLocation.add(backwards.getDirection().multiply(7.5));
+			armorStands.add(trainArmorStand(Math.min(i, 2), armorStandLocation));
+			armorStandLocation.add(backwards.getDirection().multiply(SEPARATOR));
 		}
 
 		for (int i = 0; i < TickTime.SECOND.x(seconds); i++) {
-			final int iteration = i;
-			Tasks.wait(TickTime.TICK.x(iteration), () ->
-				armorStands.forEach((armorStand, spawnLocation) ->
-					armorStand.teleport(spawnLocation.clone().add(forwards.getDirection().multiply(iteration * speed)))));
+			Tasks.wait(TickTime.TICK.x(i), () -> {
+				Location location = armorStands.iterator().next().getLocation();
+				for (ArmorStand armorStand : armorStands) {
+					armorStand.teleport(location.clone().add(forwards.getDirection().multiply(speed)));
+					location.add(backwards.getDirection().multiply(SEPARATOR));
+				}
+			});
 		}
 
 		Tasks.wait(TickTime.SECOND.x(seconds), () -> {
-			for (ArmorStand armorStand : armorStands.keySet())
+			for (ArmorStand armorStand : armorStands)
 				armorStand.remove();
 		});
 	}
