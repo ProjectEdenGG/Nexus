@@ -85,4 +85,9 @@ public class Pugmas21Command extends CustomCommand {
 		}
 	}
 
+	@Path("npcs interact <npc>")
+	void npcs_interact(Pugmas21InteractableNPC npc) {
+		npc.interact(player());
+	}
+
 }
