@@ -17,8 +17,8 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.util.EulerAngle;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Pugmas21Command extends CustomCommand {
 
@@ -46,27 +46,29 @@ public class Pugmas21Command extends CustomCommand {
 		trainArmorStand(model, location());
 	}
 
-	@Path("train [--speed]")
-	void train(@Arg(".25") @Switch double speed) {
-		final Location location = location();
+	@Path("train [--speed] [--seconds]")
+	void train(@Arg(".25") @Switch double speed, @Arg("60") @Switch int seconds) {
+		final Location start = location().clone();
+		final Location armorStandLocation = start.clone();
 		final BlockFace forwards = player().getFacing();
 		final BlockFace backwards = forwards.getOppositeFace();
 
-		final List<ArmorStand> armorStands = new ArrayList<>();
+		final Map<ArmorStand, Location> armorStands = new HashMap<>();
 
 		for (int i = 1; i <= 18; i++) {
-			armorStands.add(trainArmorStand(i, location));
-			location.add(backwards.getDirection().multiply(7.5));
+			armorStands.put(trainArmorStand(Math.min(i, 2), armorStandLocation), armorStandLocation.clone());
+			armorStandLocation.add(backwards.getDirection().multiply(7.5));
 		}
 
-		final int repeat = Tasks.repeat(1, 1, () -> {
-			for (ArmorStand armorStand : armorStands)
-				armorStand.teleport(armorStand.getLocation().add(forwards.getDirection().multiply(speed)));
-		});
+		for (int i = 0; i < TickTime.SECOND.x(seconds); i++) {
+			final int iteration = i;
+			Tasks.wait(TickTime.TICK.x(iteration), () ->
+				armorStands.forEach((armorStand, spawnLocation) ->
+					armorStand.teleport(spawnLocation.clone().add(forwards.getDirection().multiply(iteration * speed)))));
+		}
 
-		Tasks.wait(TickTime.SECOND.x(15), () -> {
-			Tasks.cancel(repeat);
-			for (ArmorStand armorStand : armorStands)
+		Tasks.wait(TickTime.SECOND.x(seconds), () -> {
+			for (ArmorStand armorStand : armorStands.keySet())
 				armorStand.remove();
 		});
 	}
