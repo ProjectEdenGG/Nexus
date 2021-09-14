@@ -24,7 +24,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
 
 @Data
 @Entity(value = "badge_user", noClassnameStored = true)
@@ -39,23 +39,20 @@ public class BadgeUser implements PlayerOwnedObject {
 	private Badge active;
 	private Set<Badge> owned = new HashSet<>();
 
-	public String getBadge() {
-		if (!hasBadge())
-			return "";
-
-		return "&f" + active.getEmoji() + " ";
-	}
-
 	public JsonBuilder getBadgeJson(Chatter viewer) {
+		final JsonBuilder json = new JsonBuilder();
 		if (!hasBadge())
-			return new JsonBuilder();
+			return json;
 
 		final String emoji = viewer != null && ResourcePack.isEnabledFor(viewer) ? active.getEmoji() : active.getAlt();
 
-		final JsonBuilder json = new JsonBuilder("&f" + emoji).hover("&f" + camelCase(active.name()) + " Badge");
+		if (isNullOrEmpty(emoji))
+			return json;
+
+		json.next("&f" + emoji).hover("&f" + active.getName() + " Badge");
 		active.customize(this, json);
 
-		return json.group().next(" ").group();
+		return json.next(" ").group();
 	}
 
 	public boolean hasBadge() {
@@ -73,25 +70,44 @@ public class BadgeUser implements PlayerOwnedObject {
 	@Getter
 	@AllArgsConstructor
 	public enum Badge {
-		BOT("\uE002", "&bʙᴏᴛ"),
-		SUPPORTER("\uD83D\uDC96", "&c❤"),
-		TWITCH("\uE001", "&4▶", (nerd, json) -> {
-			final SocialMediaUser user = new SocialMediaUserService().get(nerd);
-			final Connection twitch = user.getConnection(SocialMediaSite.TWITCH);
-			if (twitch != null) {
-				final String url = twitch.getUrl();
-				json.hover("", "&e" + url).url(url);
-				if (user.isMature())
-					json.hover("", "&4Warning: &c18+ only");
-			}
-		}),
-
+		BOT("Bot", "\uE002", "&bʙᴏᴛ"),
+		SUPPORTER("Supporter", "\uD83D\uDC96", "&c❤"),
+		TWITTER(SocialMediaSite.TWITTER),
+		INSTAGRAM(SocialMediaSite.INSTAGRAM),
+		SNAPCHAT(SocialMediaSite.SNAPCHAT),
+		YOUTUBE(SocialMediaSite.YOUTUBE),
+		TWITCH(SocialMediaSite.TWITCH),
+		TIKTOK(SocialMediaSite.TIKTOK),
+		DISCORD(SocialMediaSite.DISCORD),
+		STEAM(SocialMediaSite.STEAM),
+		REDDIT(SocialMediaSite.REDDIT),
+		GITHUB(SocialMediaSite.GITHUB),
 		;
 
-		Badge(String emoji, String alt) {
-			this(emoji, alt, null);
+		Badge(SocialMediaSite site) {
+			this(site.getName(), site.getEmoji(), "&4▶", (nerd, json) -> {
+				final SocialMediaUser user = new SocialMediaUserService().get(nerd);
+				final Connection connection = user.getConnection(site);
+				if (connection != null) {
+					final String url = connection.getUrl();
+					if (site.getProfileUrl().equals("%s"))
+						json.copy(url).hover("", "&e" + url, "", "&eClick to copy");
+					else
+						json.url(url).hover("", "&e" + url, "", "&eClick to open");
+
+					if (user.isMature())
+						json.hover("", "&4Warning: &c18+ only");
+				} else {
+					json.hover("", "&cNo account linked");
+				}
+			});
 		}
 
+		Badge(String name, String emoji, String alt) {
+			this(name, emoji, alt, null);
+		}
+
+		private final String name;
 		private final String emoji;
 		private final String alt;
 		private final BiConsumer<BadgeUser, JsonBuilder> consumer;
@@ -102,6 +118,7 @@ public class BadgeUser implements PlayerOwnedObject {
 
 			consumer.accept(nerd, json);
 		}
+
 	}
 
 }
