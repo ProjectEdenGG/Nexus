@@ -62,11 +62,11 @@ public class SocialMediaCommand extends CustomCommand {
 				.hover(connection.getUrl());
 
 			if (site.getProfileUrl().equals("%s"))
-				page.copy("&e" + connection.getUrl())
+				page.copy(connection.getUrl())
 					.hover("&f")
 					.hover("&eClick to copy");
 			else
-				page.url("&e" + connection.getUrl())
+				page.url(connection.getUrl())
 					.hover("&f")
 					.hover("&eClick to open");
 

@@ -122,6 +122,7 @@ public class AFKUser implements PlayerOwnedObject {
 			backService.save(back);
 		}
 
+		player.removePotionEffect(PotionEffectType.INVISIBILITY);
 		teleport.thenRun(() -> {
 			afk = false;
 			player.removePotionEffect(PotionEffectType.INVISIBILITY);
