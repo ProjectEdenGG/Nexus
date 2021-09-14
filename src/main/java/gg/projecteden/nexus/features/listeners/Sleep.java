@@ -35,7 +35,7 @@ public class Sleep implements Listener {
 
 				if (sleeping >= needed && sleepingWorlds.get(world) != State.SKIPPING)
 					skipNight(world);
-				else if (sleepingWorlds.get(world) == State.SLEEPING) {}
+				else if (sleepingWorlds.get(world) == State.SLEEPING)
 					world.getPlayers().forEach(player -> ActionBarUtils.sendActionBar(player,
 						"Sleepers needed to skip night: &e" + sleeping + "&3/&e" + needed));
 			}
