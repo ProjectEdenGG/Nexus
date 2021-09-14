@@ -19,6 +19,7 @@ import org.bukkit.util.EulerAngle;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Pugmas21Command extends CustomCommand {
 
@@ -46,8 +47,15 @@ public class Pugmas21Command extends CustomCommand {
 		trainArmorStand(model, location());
 	}
 
-	@Path("train [--speed] [--seconds]")
-	void train(@Arg(".25") @Switch double speed, @Arg("60") @Switch int seconds) {
+	private static final int MODELS_COMPLETED = 2;
+	private static final double SEPARATOR = 7.5;
+
+	@Path("train [--speed] [--seconds] [--respawn]")
+	void train(
+		@Arg(".25") @Switch double speed,
+		@Arg("60") @Switch int seconds,
+		@Arg("true") @Switch boolean respawn
+	) {
 		final Location location = location();
 		final BlockFace forwards = player().getFacing();
 		final BlockFace backwards = forwards.getOppositeFace();
@@ -55,11 +63,16 @@ public class Pugmas21Command extends CustomCommand {
 		final List<ArmorStand> armorStands = new ArrayList<>();
 
 		for (int i = 1; i <= 18; i++) {
-			armorStands.add(trainArmorStand(Math.min(i, 2), location));
-			location.add(backwards.getDirection().multiply(7.5));
+			armorStands.add(trainArmorStand(Math.min(i, MODELS_COMPLETED), location));
+			location.add(backwards.getDirection().multiply(SEPARATOR));
 		}
 
+		AtomicInteger iteration = new AtomicInteger();
 		final int repeat = Tasks.repeat(1, 1, () -> {
+			if (iteration.incrementAndGet() % TickTime.SECOND.x(10) == 0)
+				if (respawn)
+					respawnArmorStand(armorStands);
+
 			for (ArmorStand armorStand : armorStands)
 				armorStand.teleport(armorStand.getLocation().add(forwards.getDirection().multiply(speed)));
 
@@ -71,6 +84,16 @@ public class Pugmas21Command extends CustomCommand {
 			for (ArmorStand armorStand : armorStands)
 				armorStand.remove();
 		});
+	}
+
+	private void respawnArmorStand(List<ArmorStand> armorStands) {
+		send("Respawning armor stands");
+		int armorStandIndex = 0;
+		for (ArmorStand armorStand : new ArrayList<>(armorStands)) {
+			armorStands.add(trainArmorStand(Math.min(++armorStandIndex, MODELS_COMPLETED), armorStand.getLocation()));
+			armorStand.remove();
+			armorStands.remove(armorStand);
+		}
 	}
 
 	private void validateDistances(List<ArmorStand> armorStands) {
