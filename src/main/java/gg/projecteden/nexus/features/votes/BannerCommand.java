@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.votes;
 
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -91,16 +90,6 @@ public class BannerCommand extends CustomCommand implements Listener {
 					PlayerUtils.giveItem(player(), banner.build());
 			}
 		}
-	}
-
-	@Path("textures")
-	void textures() {
-		send(json()
-				.group().next("&3We have created a custom texture pack that only contains the default banner textures. ")
-				.group().next("&eDownload &3this texture pack").url("http://dl." + Nexus.DOMAIN + "/tp/Default-Banners.zip").hover("&eClick for a download link.")
-				.group().next(" and ")
-				.group().next("&eplace it at the top of your texture pack list (image)").url("http://i." + Nexus.DOMAIN + "/textures.png").hover("&eClick to show an example")
-				.group().next(" &3to make all the banners appear as they would in the default texture pack. It will not override any other textures."));
 	}
 
 	@Path("custom")
