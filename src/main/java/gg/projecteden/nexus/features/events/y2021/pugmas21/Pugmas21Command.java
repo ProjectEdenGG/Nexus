@@ -49,24 +49,26 @@ public class Pugmas21Command extends CustomCommand {
 	@Path("train [--speed] [--seconds]")
 	void train(@Arg(".25") @Switch double speed, @Arg("60") @Switch int seconds) {
 		final double SEPARATOR = 7.5;
-		final Location start = location().clone();
-		final Location armorStandLocation = start.clone();
+		final Location startLocation = location().clone();
+		final Location spawnLocation = startLocation.clone();
 		final BlockFace forwards = player().getFacing();
 		final BlockFace backwards = forwards.getOppositeFace();
 
 		final List<ArmorStand> armorStands = new ArrayList<>();
 
 		for (int i = 1; i <= 18; i++) {
-			armorStands.add(trainArmorStand(Math.min(i, 2), armorStandLocation));
-			armorStandLocation.add(backwards.getDirection().multiply(SEPARATOR));
+			armorStands.add(trainArmorStand(Math.min(i, 2), spawnLocation));
+			spawnLocation.add(backwards.getDirection().multiply(SEPARATOR));
 		}
 
 		for (int i = 0; i < TickTime.SECOND.x(seconds); i++) {
-			Tasks.wait(TickTime.TICK.x(i), () -> {
-				Location location = armorStands.iterator().next().getLocation();
+			int iteration = i;
+			Tasks.wait(TickTime.TICK.x(iteration), () -> {
+				int armorStandIndex = 0;
 				for (ArmorStand armorStand : armorStands) {
-					armorStand.teleport(location.clone().add(forwards.getDirection().multiply(speed)));
-					location.add(backwards.getDirection().multiply(SEPARATOR));
+					armorStand.teleport(startLocation.clone()
+						.add(backwards.getDirection().multiply(SEPARATOR * armorStandIndex++))
+						.add(forwards.getDirection().multiply(iteration * speed)));
 				}
 			});
 		}
