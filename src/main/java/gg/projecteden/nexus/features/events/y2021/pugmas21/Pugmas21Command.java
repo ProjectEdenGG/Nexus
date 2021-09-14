@@ -28,7 +28,8 @@ public class Pugmas21Command extends CustomCommand {
 	}
 
 	private ArmorStand trainArmorStand(int model, Location location) {
-		ArmorStand armorStand = location().getWorld().spawn(location, ArmorStand.class);
+		final ItemBuilder item = new ItemBuilder(Material.MINECART).customModelData(Math.min(model, MODELS_COMPLETED));
+		final ArmorStand armorStand = location().getWorld().spawn(location, ArmorStand.class);
 		armorStand.setRightArmPose(EulerAngle.ZERO);
 		armorStand.setLeftArmPose(EulerAngle.ZERO);
 		armorStand.setHeadPose(EulerAngle.ZERO);
@@ -37,7 +38,7 @@ public class Pugmas21Command extends CustomCommand {
 		armorStand.setBasePlate(false);
 		armorStand.setArms(true);
 		armorStand.setDisabledSlots(EquipmentSlot.values());
-		armorStand.setItem(EquipmentSlot.HEAD, new ItemBuilder(Material.MINECART).customModelData(model).build());
+		armorStand.setItem(EquipmentSlot.HEAD, item.build());
 		return armorStand;
 	}
 
@@ -63,7 +64,7 @@ public class Pugmas21Command extends CustomCommand {
 		final List<ArmorStand> armorStands = new ArrayList<>();
 
 		for (int i = 1; i <= 18; i++) {
-			armorStands.add(trainArmorStand(Math.min(i, MODELS_COMPLETED), location));
+			armorStands.add(trainArmorStand(i, location));
 			location.add(backwards.getDirection().multiply(SEPARATOR));
 		}
 
@@ -71,7 +72,7 @@ public class Pugmas21Command extends CustomCommand {
 		final int repeat = Tasks.repeat(1, 1, () -> {
 			if (iteration.incrementAndGet() % TickTime.SECOND.x(10) == 0)
 				if (respawn)
-					respawnArmorStand(armorStands);
+					respawnArmorStands(armorStands);
 
 			for (ArmorStand armorStand : armorStands)
 				armorStand.teleport(armorStand.getLocation().add(forwards.getDirection().multiply(speed)));
@@ -86,11 +87,11 @@ public class Pugmas21Command extends CustomCommand {
 		});
 	}
 
-	private void respawnArmorStand(List<ArmorStand> armorStands) {
+	private void respawnArmorStands(List<ArmorStand> armorStands) {
 		send("Respawning armor stands");
 		int armorStandIndex = 0;
 		for (ArmorStand armorStand : new ArrayList<>(armorStands)) {
-			armorStands.add(trainArmorStand(Math.min(++armorStandIndex, MODELS_COMPLETED), armorStand.getLocation()));
+			armorStands.add(trainArmorStand(++armorStandIndex, armorStand.getLocation()));
 			armorStand.remove();
 			armorStands.remove(armorStand);
 		}
