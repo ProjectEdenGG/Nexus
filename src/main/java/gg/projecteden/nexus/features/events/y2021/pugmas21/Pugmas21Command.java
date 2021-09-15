@@ -27,7 +27,7 @@ public class Pugmas21Command extends CustomCommand {
 		super(event);
 	}
 
-	private static final int MODELS_COMPLETED = 5;
+	private static final int MODELS_COMPLETED = 7;
 
 	private ArmorStand trainArmorStand(int model, Location location, boolean correctModel) {
 		final ItemBuilder item = new ItemBuilder(Material.MINECART).customModelData(!correctModel && model > MODELS_COMPLETED ? 2 : model);
