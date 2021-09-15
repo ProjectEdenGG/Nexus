@@ -795,7 +795,7 @@ public abstract class CustomCommand extends ICustomCommand {
 				.collect(toList());
 	}
 
-	@TabCompleterFor({Boolean.class})
+	@TabCompleterFor(Boolean.class)
 	List<String> tabCompleteBoolean(String filter) {
 		return Stream.of("true", "false")
 				.filter(bool -> bool.toLowerCase().startsWith(filter.toLowerCase()))
