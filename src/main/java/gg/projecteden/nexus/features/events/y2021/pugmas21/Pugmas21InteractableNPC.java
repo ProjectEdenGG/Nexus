@@ -29,9 +29,9 @@ public enum Pugmas21InteractableNPC implements InteractableNPC {
 	)
 	;
 
-	protected final String name;
-	protected final int npcId;
-	protected final Dialogue dialogue;
+	private final String name;
+	private final int npcId;
+	private final Dialogue dialogue;
 
 	Pugmas21InteractableNPC(String name, int npcId, Consumer<Dialogue> dialogue) {
 		this.name = name;

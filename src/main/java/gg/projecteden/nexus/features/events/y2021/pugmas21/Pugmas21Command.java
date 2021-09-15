@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.events.y2021.pugmas21;
 
-import com.sk89q.worldedit.math.BlockVector2;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -9,8 +8,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import lombok.NonNull;
-
-import java.util.Set;
 
 public class Pugmas21Command extends CustomCommand {
 
@@ -59,16 +56,6 @@ public class Pugmas21Command extends CustomCommand {
 	@Path("npcs interact <npc>")
 	void npcs_interact(Pugmas21InteractableNPC npc) {
 		npc.interact(player());
-	}
-
-	@Path("chunks load [state]")
-	void chunks_load(boolean state) {
-		final Set<BlockVector2> chunks = worldedit().getPlayerSelection(player()).getChunks();
-		for (BlockVector2 vector : chunks)
-			world().getChunkAtAsync(vector.getX(), vector.getZ()).thenAccept(chunk ->
-				chunk.setForceLoaded(state));
-
-		send(PREFIX + "Set " + chunks.size() + " chunks to " + (state ? "" : "not ") + "be force loaded");
 	}
 
 }
