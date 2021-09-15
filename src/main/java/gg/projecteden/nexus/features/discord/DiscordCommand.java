@@ -26,7 +26,6 @@ import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import org.bukkit.OfflinePlayer;
@@ -51,14 +50,8 @@ public class DiscordCommand extends CustomCommand {
 	@Path
 	@Async
 	void run() {
-		Guild guild = Discord.getGuild();
-		if (guild == null)
-			error("Discord bot is not connected");
-		TextChannel textChannel = guild.getTextChannelById(DiscordId.TextChannel.GENERAL.getId());
-		if (textChannel == null)
-			error("General channel not found");
-
-		send(json().next("&e" + textChannel.createInvite().complete().getUrl()));
+		String url = EdenSocialMediaSite.DISCORD.getUrl();
+		send(json().next("&e" + url).url(url));
 	}
 
 	@Async

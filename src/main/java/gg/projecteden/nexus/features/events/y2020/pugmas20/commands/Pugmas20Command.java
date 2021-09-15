@@ -19,7 +19,6 @@ import gg.projecteden.nexus.features.events.y2020.pugmas20.quests.TheMines;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.quests.TheMines.OreType;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.quests.ToyTesting;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
@@ -56,7 +55,6 @@ import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.isSec
 import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.showWaypoint;
 import static gg.projecteden.nexus.features.events.y2020.pugmas20.models.QuestNPC.getUnplayedToysList;
 
-@Aliases("pugmas")
 @NoArgsConstructor
 //@Redirect(from = "/advent", to = "/pugmas advent")
 //@Redirect(from = "/district", to = "/pugmas district")

@@ -2,11 +2,13 @@ package gg.projecteden.nexus.features.discord;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.afk.AFK;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.DiscordId;
 import gg.projecteden.utils.DiscordId.TextChannel;
@@ -23,6 +25,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
@@ -270,6 +273,28 @@ public class Discord extends Feature {
 		GuildChannel channel = Discord.getGuild().getGuildChannelById(TextChannel.STAFF_BRIDGE.getId());
 		if (channel != null)
 			channel.getManager().setTopic(staffBridgeTopic).queue();
+	}
+
+	@NotNull
+	public static String getInvite() {
+		Guild guild = getGuild();
+		if (guild == null)
+			throw new InvalidInputException("Discord bot is not connected");
+
+		String url = getGuild().getVanityUrl();
+
+		if (StringUtils.isNullOrEmpty(url)) {
+			net.dv8tion.jda.api.entities.TextChannel textChannel = guild.getTextChannelById(TextChannel.GENERAL.getId());
+			if (textChannel == null)
+				throw new InvalidInputException("General channel not found");
+
+			url = textChannel.createInvite().complete().getUrl();
+		}
+
+		if (StringUtils.isNullOrEmpty(url))
+			throw new InvalidInputException("Could not generate invite link");
+
+		return url;
 	}
 
 }

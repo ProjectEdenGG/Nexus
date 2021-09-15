@@ -502,8 +502,9 @@ public abstract class CustomCommand extends ICustomCommand {
 		return isOfflinePlayer(player) && Rank.of(player).isAdmin();
 	}
 
+	@Contract("null -> true")
 	protected boolean isNullOrEmpty(String string) {
-		return Strings.isNullOrEmpty(string);
+		return StringUtils.isNullOrEmpty(string);
 	}
 
 	protected void runCommand(String commandNoSlash) {

@@ -143,10 +143,7 @@ public class SocialMedia extends Feature implements Listener {
 			@Override
 			@NotNull
 			public String getUrl() {
-				String url = "https://discord." + Nexus.DOMAIN;
-				if (Discord.getGuild() != null && Discord.getGuild().getBoostTier().getKey() == 3)
-					url = "https://discord.gg/ProjectEdenGG";
-				return url;
+				return Discord.getInvite();
 			}
 		},
 		YOUTUBE("https://youtube." + Nexus.DOMAIN),
