@@ -79,7 +79,7 @@ public class Train {
 		return armorStands.iterator().next().getLocation().add(smokeBack).add(smokeUp);
 	}
 
-	private void spawnArmorStands() {
+	public void spawnArmorStands() {
 		for (int i = 1; i <= TOTAL_MODELS; i++) {
 			armorStands.add(armorStand(i, location));
 			location.add(backwards.getDirection().multiply(SEPARATOR));

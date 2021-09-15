@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.events.y2021.pugmas21;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
@@ -14,19 +15,32 @@ public class Pugmas21Command extends CustomCommand {
 		super(event);
 	}
 
-	@Path("train armorStand <model>")
+	@Path("train spawn <model>")
 	@Permission("group.admin")
+	@Description("Spawn a train armor stand")
 	void train(int model) {
 		Train.armorStand(model, location());
 	}
 
+	@Path("train spawn all")
+	@Permission("group.admin")
+	@Description("Spawn all train armor stands")
+	void train() {
+		Train.builder()
+			.location(location())
+			.direction(player().getFacing())
+			.build()
+			.spawnArmorStands();
+	}
+
 	@Path("train start")
+	@Description("Start a moving train")
 	void train(
 		@Arg(".3") @Switch double speed,
 		@Arg("60") @Switch int seconds,
-		@Arg("false") @Switch boolean keep,
 		@Arg("4") @Switch double smokeBack,
-		@Arg("5.3") @Switch double smokeUp
+		@Arg("5.3") @Switch double smokeUp,
+		@Arg("false") @Switch boolean test
 	) {
 		Train.builder()
 			.location(location())
