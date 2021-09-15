@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.y2021.pugmas21;
 
+import gg.projecteden.nexus.features.commands.ArmorStandEditorCommand;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -14,7 +15,6 @@ import org.bukkit.craftbukkit.v1_17_R1.entity.CraftArmorStand;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -87,18 +87,8 @@ public class Train {
 	}
 
 	public static ArmorStand armorStand(int model, Location location) {
-		final ItemBuilder item = new ItemBuilder(Material.MINECART).customModelData(model);
-		final ArmorStand armorStand = location.getWorld().spawn(location, ArmorStand.class);
-		armorStand.setRightArmPose(EulerAngle.ZERO);
-		armorStand.setLeftArmPose(EulerAngle.ZERO);
-		armorStand.setHeadPose(EulerAngle.ZERO);
-		armorStand.setInvulnerable(true);
-		armorStand.setGravity(false);
-		armorStand.setBasePlate(false);
-		armorStand.setArms(true);
-		armorStand.setDisabledSlots(EquipmentSlot.values());
-		armorStand.setItem(EquipmentSlot.HEAD, item.build());
-		return armorStand;
+		return ArmorStandEditorCommand.summon(location, armorStand ->
+			armorStand.setItem(EquipmentSlot.HEAD, new ItemBuilder(Material.MINECART).customModelData(model).build()));
 	}
 
 	public static class Smoke {
