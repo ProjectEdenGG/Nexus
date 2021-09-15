@@ -25,7 +25,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.eventuser.EventUser;
@@ -59,17 +58,17 @@ import static gg.projecteden.nexus.features.events.y2020.pugmas20.models.QuestNP
 
 @Aliases("pugmas")
 @NoArgsConstructor
-@Redirect(from = "/advent", to = "/pugmas advent")
-@Redirect(from = "/district", to = "/pugmas district")
-@Redirect(from = "/waypoint", to = "/pugmas waypoint")
-public class PugmasCommand extends CustomCommand implements Listener {
+//@Redirect(from = "/advent", to = "/pugmas advent")
+//@Redirect(from = "/district", to = "/pugmas district")
+//@Redirect(from = "/waypoint", to = "/pugmas waypoint")
+public class Pugmas20Command extends CustomCommand implements Listener {
 	private final String timeLeft = Timespan.of(Pugmas20.openingDay).format();
 	private final Pugmas20UserService pugmasService = new Pugmas20UserService();
 	private Pugmas20User pugmasUser;
 	private final EventUserService eventUserService = new EventUserService();
 	private EventUser eventUser;
 
-	public PugmasCommand(CommandEvent event) {
+	public Pugmas20Command(CommandEvent event) {
 		super(event);
 		PREFIX = Pugmas20.PREFIX;
 		if (isPlayer()) {
@@ -238,19 +237,26 @@ public class PugmasCommand extends CustomCommand implements Listener {
 		return tokensLeft * perToken;
 	}
 
+	static {
+		AdventMenu.loadHeads();
+	}
+
 	@Path("advent")
 	@Description("Open the Advent menu")
 	void advent() {
+
 		LocalDate now = LocalDate.now();
 
-		if (isBeforePugmas(now))
-			error("Soon™ (" + timeLeft + ")");
+		if (!isAdmin()) {
+			if (isBeforePugmas(now))
+				error("Soon™ (" + timeLeft + ")");
 
-		if (isPastPugmas(now))
-			error("Next year!");
+			if (isPastPugmas(now))
+				error("Next year!");
 
-		if (isSecondChance(now))
-			now = now.withYear(2020).withMonth(12).withDayOfMonth(25);
+			if (isSecondChance(now))
+				now = now.withYear(2020).withMonth(12).withDayOfMonth(25);
+		}
 
 		AdventMenu.openAdvent(player(), now);
 	}
