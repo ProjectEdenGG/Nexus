@@ -38,16 +38,20 @@ public class CostumeUser implements PlayerOwnedObject {
 	private UUID uuid;
 	private int vouchers;
 
-	private Costume activeCostume;
-	private Set<Costume> ownedCostumes = new HashSet<>();
+	private String activeCostume;
+	private Set<String> ownedCostumes = new HashSet<>();
 
 	private static final List<WorldGroup> DISABLED_WORLDS = List.of(WorldGroup.MINIGAMES);
 	private static final List<GameMode> DISABLED_GAMEMODES = List.of(GameMode.SPECTATOR);
 
-	public void setActiveCostume(Costume activeCostume) {
+	public void setActiveCostumeId(String activeCostume) {
 		this.activeCostume = activeCostume;
 		if (activeCostume == null)
 			sendResetPackets();
+	}
+
+	public void setActiveCostume(Costume activeCostume) {
+		setActiveCostumeId(activeCostume == null ? null : activeCostume.getId());
 	}
 
 	public boolean owns(CustomModel model) {
@@ -55,14 +59,18 @@ public class CostumeUser implements PlayerOwnedObject {
 	}
 
 	public boolean owns(Costume costume) {
-		return ownedCostumes.contains(costume);
+		return ownedCostumes.contains(costume.getId());
 	}
 
 	public void sendCostumePacket() {
 		if (!shouldSendPacket())
 			return;
 
-		sendPacket(activeCostume.getItem(), activeCostume.getType().getSlot());
+		final Costume costume = Costume.of(activeCostume);
+		if (costume == null)
+			return;
+
+		sendPacket(costume.getItem(), costume.getType().getSlot());
 	}
 
 	public void sendResetPackets() {

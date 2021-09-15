@@ -12,6 +12,8 @@ import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NonNull;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftArmorStand;
 import org.bukkit.entity.ArmorStand;
@@ -58,7 +60,9 @@ public class Pugmas21Command extends CustomCommand {
 		@Arg("60") @Switch int seconds,
 		@Arg("true") @Switch boolean respawn,
 		@Arg("true") @Switch boolean hasImpulse,
-		@Arg("false") @Switch boolean keep
+		@Arg("false") @Switch boolean keep,
+		@Arg("4") @Switch double smoke_back,
+		@Arg("5.3") @Switch double smoke_up
 	) {
 		player().teleport(location().toCenterLocation());
 		final Location location = location();
@@ -76,6 +80,10 @@ public class Pugmas21Command extends CustomCommand {
 			return;
 
 		final int repeat = Tasks.repeat(1, 1, () -> {
+			smoke(armorStands.iterator().next().getLocation()
+				.add(backwards.getDirection().multiply(smoke_back))
+				.add(BlockFace.UP.getDirection().multiply(smoke_up)));
+
 			for (ArmorStand armorStand : armorStands) {
 				((CraftArmorStand) armorStand).getHandle().af = hasImpulse; // force packet
 				armorStand.teleport(armorStand.getLocation().add(forwards.getDirection().multiply(speed)));
@@ -87,6 +95,20 @@ public class Pugmas21Command extends CustomCommand {
 			for (ArmorStand armorStand : armorStands)
 				armorStand.remove();
 		});
+	}
+
+	private void smoke(Location smoke) {
+		final World world = smoke.getWorld();
+		Particle particle = Particle.CAMPFIRE_COSY_SMOKE;
+
+		double x = 0;
+		double y = 3;
+		double z = 0;
+		double speed = 0.01;
+		int count = 0;
+
+		world.spawnParticle(particle, smoke, count, x, y, z, speed);
+		world.spawnParticle(particle, smoke, count, x, y, z, speed);
 	}
 
 	@Path("npcs interact <npc>")

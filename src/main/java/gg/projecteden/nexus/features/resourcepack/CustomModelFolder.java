@@ -82,7 +82,7 @@ public class CustomModelFolder {
 					models.add(new CustomModel(this, override, group.getMaterial()));
 
 		models.sort(CustomModel::compareTo);
-		ResourcePack.getModels().addAll(models);
+		models.forEach(model -> ResourcePack.getModels().put(model.getId(), model));
 	}
 
 }
