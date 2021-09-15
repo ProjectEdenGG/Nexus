@@ -32,7 +32,9 @@ import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -228,6 +230,14 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	protected PlayerInventory inventory() {
 		return player().getInventory();
+	}
+
+	protected WorldEditUtils worldedit() {
+		return new WorldEditUtils(world());
+	}
+
+	protected WorldGuardUtils worldguard() {
+		return new WorldGuardUtils(world());
 	}
 
 	public void giveItem(ItemStack item) {

@@ -5,48 +5,39 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import lombok.Getter;
 
+import java.util.function.Consumer;
+
 import static gg.projecteden.nexus.utils.PlayerUtils.runCommandAsConsole;
 import static org.bukkit.Sound.BLOCK_NOTE_BLOCK_BELL;
 
 @Getter
 public enum Pugmas21InteractableNPC implements InteractableNPC {
-	JOE("Joe", 1234) {
-		@Override
-		public void dialogue() {
-			dialogue
-				.npc("You're a nerd")
-				.player("No you!")
-				.thenRun(player -> {
-					new SoundBuilder(BLOCK_NOTE_BLOCK_BELL).receiver(player).play();
-					PlayerUtils.send(player, "boop");
-				})
-				.wait(50)
-				.thenRun(player -> runCommandAsConsole("slap " + player.getName()))
-				.npc("testing 123");
-		}
-	},
-	BOBBY("Bobby", 4321) {
-		@Override
-		public void dialogue() {
-			dialogue
-				.npc("You're still a nerd")
-				.player("No you!");
-		}
-	},
+	JOE("Joe", 1234, dialogue -> dialogue
+		.npc("You're a nerd")
+		.player("No you!")
+		.thenRun(player -> {
+			new SoundBuilder(BLOCK_NOTE_BLOCK_BELL).receiver(player).play();
+			PlayerUtils.send(player, "boop");
+		})
+		.wait(50)
+		.thenRun(player -> runCommandAsConsole("slap " + player.getName()))
+		.npc("testing 123")
+	),
+	BOBBY("Bobby", 4321, dialogue -> dialogue
+		.npc("You're still a nerd")
+		.player("No you!")
+	)
 	;
 
 	protected final String name;
 	protected final int npcId;
-	protected Dialogue dialogue;
+	protected final Dialogue dialogue;
 
-	Pugmas21InteractableNPC(String name, int npcId) {
+	Pugmas21InteractableNPC(String name, int npcId, Consumer<Dialogue> dialogue) {
 		this.name = name;
 		this.npcId = npcId;
 		this.dialogue = Dialogue.from(this);
-		dialogue();
+		dialogue.accept(this.dialogue);
 	}
 
-	void dialogue() {
-		this.dialogue = null;
-	}
 }
