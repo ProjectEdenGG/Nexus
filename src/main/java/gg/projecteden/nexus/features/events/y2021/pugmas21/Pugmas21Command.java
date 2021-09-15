@@ -13,13 +13,13 @@ import lombok.NonNull;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftArmorStand;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.util.EulerAngle;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class Pugmas21Command extends CustomCommand {
 
@@ -27,8 +27,10 @@ public class Pugmas21Command extends CustomCommand {
 		super(event);
 	}
 
-	private ArmorStand trainArmorStand(int model, Location location) {
-		final ItemBuilder item = new ItemBuilder(Material.MINECART).customModelData(Math.min(model, MODELS_COMPLETED));
+	private static final int MODELS_COMPLETED = 3;
+
+	private ArmorStand trainArmorStand(int model, Location location, boolean correctModel) {
+		final ItemBuilder item = new ItemBuilder(Material.MINECART).customModelData(!correctModel && model > MODELS_COMPLETED ? 2 : model);
 		final ArmorStand armorStand = location().getWorld().spawn(location, ArmorStand.class);
 		armorStand.setRightArmPose(EulerAngle.ZERO);
 		armorStand.setLeftArmPose(EulerAngle.ZERO);
@@ -45,18 +47,20 @@ public class Pugmas21Command extends CustomCommand {
 	@Path("armorstand <model>")
 	@Permission("group.admin")
 	void train(int model) {
-		trainArmorStand(model, location());
+		trainArmorStand(model, location(), true);
 	}
 
-	private static final int MODELS_COMPLETED = 2;
 	private static final double SEPARATOR = 7.5;
 
-	@Path("train [--speed] [--seconds] [--respawn]")
+	@Path("train [--speed] [--seconds] [--respawn] [--ticks] [--hasImpulse] [--keep]")
 	void train(
 		@Arg(".25") @Switch double speed,
 		@Arg("60") @Switch int seconds,
-		@Arg("true") @Switch boolean respawn
+		@Arg("true") @Switch boolean respawn,
+		@Arg("true") @Switch boolean hasImpulse,
+		@Arg("false") @Switch boolean keep
 	) {
+		player().teleport(location().toCenterLocation());
 		final Location location = location();
 		final BlockFace forwards = player().getFacing();
 		final BlockFace backwards = forwards.getOppositeFace();
@@ -64,20 +68,18 @@ public class Pugmas21Command extends CustomCommand {
 		final List<ArmorStand> armorStands = new ArrayList<>();
 
 		for (int i = 1; i <= 18; i++) {
-			armorStands.add(trainArmorStand(i, location));
+			armorStands.add(trainArmorStand(i, location, keep));
 			location.add(backwards.getDirection().multiply(SEPARATOR));
 		}
 
-		AtomicInteger iteration = new AtomicInteger();
+		if (keep)
+			return;
+
 		final int repeat = Tasks.repeat(1, 1, () -> {
-			if (iteration.incrementAndGet() % TickTime.SECOND.x(10) == 0)
-				if (respawn)
-					respawnArmorStands(armorStands);
-
-			for (ArmorStand armorStand : armorStands)
+			for (ArmorStand armorStand : armorStands) {
+				((CraftArmorStand) armorStand).getHandle().af = hasImpulse; // force packet
 				armorStand.teleport(armorStand.getLocation().add(forwards.getDirection().multiply(speed)));
-
-			validateDistances(armorStands);
+			}
 		});
 
 		Tasks.wait(TickTime.SECOND.x(seconds), () -> {
@@ -85,28 +87,6 @@ public class Pugmas21Command extends CustomCommand {
 			for (ArmorStand armorStand : armorStands)
 				armorStand.remove();
 		});
-	}
-
-	private void respawnArmorStands(List<ArmorStand> armorStands) {
-		send("Respawning armor stands");
-		int armorStandIndex = 0;
-		for (ArmorStand armorStand : new ArrayList<>(armorStands)) {
-			armorStands.add(trainArmorStand(++armorStandIndex, armorStand.getLocation()));
-			armorStand.remove();
-			armorStands.remove(armorStand);
-		}
-	}
-
-	private void validateDistances(List<ArmorStand> armorStands) {
-		ArmorStand lastArmorStand = null;
-		for (ArmorStand armorStand : armorStands) {
-			if (lastArmorStand != null) {
-				final double distance = lastArmorStand.getLocation().distance(armorStand.getLocation());
-				if (distance <= 7.49 || distance >= 7.51)
-					send("Distance: " + distance);
-			}
-			lastArmorStand = armorStand;
-		}
 	}
 
 	@Path("npcs interact <npc>")
