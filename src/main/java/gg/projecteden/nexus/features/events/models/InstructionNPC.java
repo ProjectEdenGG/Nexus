@@ -116,7 +116,14 @@ public interface InstructionNPC {
 						}
 
 						final var next = iterator.next();
-						next.getFirst().accept(player);
+
+						if (next == null)  {
+							taskId.set(-1);
+							return;
+						}
+
+						if (next.getFirst() != null)
+							next.getFirst().accept(player);
 
 						taskId.set(Tasks.wait(next.getSecond(), get()));
 					});
