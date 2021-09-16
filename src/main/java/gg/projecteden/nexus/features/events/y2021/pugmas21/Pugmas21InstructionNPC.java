@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.events.y2021.pugmas21;
 
-import gg.projecteden.nexus.features.events.models.InstructionNPC;
+import gg.projecteden.nexus.features.events.models.instructions.InstructionNPC;
+import gg.projecteden.nexus.features.events.models.instructions.Instructions;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import lombok.Getter;
