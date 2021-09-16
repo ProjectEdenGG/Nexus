@@ -13,6 +13,7 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigol
 import gg.projecteden.nexus.features.particles.ParticleUtils;
 import gg.projecteden.nexus.models.bearfair21.MiniGolf21User;
 import gg.projecteden.nexus.models.bearfair21.MiniGolf21UserService;
+import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.FireworkLauncher;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -289,6 +290,8 @@ public class MiniGolf {
 					user.removeBall();
 					continue;
 				}
+
+				EntityUtils.forcePacket(ball);
 
 				// Check block underneath
 				Location loc = ball.getLocation();

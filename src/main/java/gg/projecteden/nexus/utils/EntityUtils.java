@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -25,6 +26,10 @@ import java.util.stream.Collectors;
 import static gg.projecteden.utils.StringUtils.camelCase;
 
 public class EntityUtils {
+
+	public static void forcePacket(Entity entity) {
+		((CraftEntity) entity).getHandle().af = true; // hasImpulse = true
+	}
 
 	@NotNull
 	public static LinkedHashMap<Entity, Long> getNearbyEntities(Location location, double radius) {

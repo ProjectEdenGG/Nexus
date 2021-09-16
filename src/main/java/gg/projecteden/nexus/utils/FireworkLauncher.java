@@ -40,8 +40,8 @@ public class FireworkLauncher {
 		FireworkEffect.Builder builder = FireworkEffect.builder();
 		FireworkMeta meta = firework.getFireworkMeta();
 
-		if (noDamage)
-			firework.setMetadata("noDamage", new FixedMetadataValue(Nexus.getInstance(), true));
+		if (noDamage != null)
+			firework.setMetadata("noDamage", new FixedMetadataValue(Nexus.getInstance(), noDamage));
 		if (silent != null)
 			firework.setSilent(silent);
 
