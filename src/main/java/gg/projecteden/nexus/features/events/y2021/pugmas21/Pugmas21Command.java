@@ -7,12 +7,18 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.pugmas21.Pugmas21User;
+import gg.projecteden.nexus.models.pugmas21.Pugmas21UserService;
 import lombok.NonNull;
 
 public class Pugmas21Command extends CustomCommand {
+	private final Pugmas21UserService service = new Pugmas21UserService();
+	private Pugmas21User user;
 
 	public Pugmas21Command(@NonNull CommandEvent event) {
 		super(event);
+		if (isPlayerCommandEvent())
+			user = service.get(player());
 	}
 
 	@Path("train spawn <model>")
@@ -54,8 +60,8 @@ public class Pugmas21Command extends CustomCommand {
 	}
 
 	@Path("npcs interact <npc>")
-	void npcs_interact(Pugmas21InteractableNPC npc) {
-		npc.interact(player());
+	void npcs_interact(Pugmas21InstructionNPC npc) {
+		npc.execute(player());
 	}
 
 }

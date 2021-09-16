@@ -12,7 +12,6 @@ import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.Light;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftArmorStand;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.EquipmentSlot;
@@ -21,6 +20,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static gg.projecteden.nexus.utils.EntityUtils.forcePacket;
 
 public class Train {
 	private final Location location;
@@ -90,10 +91,6 @@ public class Train {
 	private void move(ArmorStand armorStand) {
 		forcePacket(armorStand);
 		armorStand.teleport(armorStand.getLocation().add(forwards.getDirection().multiply(speed)));
-	}
-
-	private void forcePacket(ArmorStand armorStand) {
-		((CraftArmorStand) armorStand).getHandle().af = true; // hasImpulse
 	}
 
 	private Location getSmokeLocation() {
