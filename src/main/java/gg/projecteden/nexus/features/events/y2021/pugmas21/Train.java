@@ -11,11 +11,13 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.type.Light;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftArmorStand;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +65,26 @@ public class Train {
 		for (ArmorStand armorStand : armorStands)
 			move(armorStand);
 
+		smoke();
+		light();
+	}
+
+	private void smoke() {
 		new Smoke(getSmokeLocation());
+	}
+
+	private void light() {
+		final Location lightBlock = front().add(BlockFace.UP.getDirection());
+		if (lightBlock.getBlock().getType() == Material.AIR) {
+			lightBlock.getBlock().setType(Material.LIGHT);
+			Light light = (Light) lightBlock.getBlock().getBlockData();
+			light.setLevel(light.getMaximumLevel());
+			lightBlock.getBlock().setBlockData(light);
+		}
+
+		final Location backOneBlock = lightBlock.add(backwards.getDirection());
+		if (backOneBlock.getBlock().getType() == Material.LIGHT)
+			backOneBlock.getBlock().setType(Material.AIR);
 	}
 
 	private void move(ArmorStand armorStand) {
@@ -76,7 +97,11 @@ public class Train {
 	}
 
 	private Location getSmokeLocation() {
-		return armorStands.iterator().next().getLocation().add(smokeBack).add(smokeUp);
+		return front().add(smokeBack).add(smokeUp);
+	}
+
+	private @NotNull Location front() {
+		return armorStands.iterator().next().getLocation();
 	}
 
 	public void spawnArmorStands() {
