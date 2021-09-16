@@ -39,9 +39,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static gg.projecteden.nexus.utils.BlockUtils.isNullOrAir;
 import static gg.projecteden.nexus.utils.PlayerUtils.getAdvancement;
@@ -229,13 +230,12 @@ public class Restrictions implements Listener {
 		if (!command.split(" ")[0].replace("worldedit:", "").startsWith("//"))
 			return;
 
-		if (command.split(" ", 2).length < 2)
-			return;
-
-		List<Material> used = new ArrayList<>();
+		Set<Material> used = new HashSet<>();
 		disallowedInWorldEdit.forEach(material -> {
-			if (command.split(" ", 2)[1].contains(material.name().toLowerCase()))
-				used.add(material);
+			for (String arg : command.split(" "))
+				for (String input : arg.split(","))
+					if (input.equals(material.name().toLowerCase()))
+						used.add(material);
 		});
 
 		if (!used.isEmpty()) {
@@ -246,7 +246,7 @@ public class Restrictions implements Listener {
 		}
 	}
 
-	private static final List<Material> disallowedInWorldEdit = Arrays.asList(
+	private static final Set<Material> disallowedInWorldEdit = Set.of(
 			Material.ACACIA_BUTTON,
 			Material.ACACIA_PRESSURE_PLATE,
 			Material.ACACIA_SAPLING,
@@ -308,7 +308,7 @@ public class Restrictions implements Listener {
 			Material.END_PORTAL,
 			Material.FERN,
 			Material.FLOWER_POT,
-//			Material.GRASS,
+			Material.GRASS,
 			Material.GRAVEL,
 			Material.GRAY_BANNER,
 			Material.GRAY_CARPET,
@@ -384,7 +384,7 @@ public class Restrictions implements Listener {
 			Material.RED_CARPET,
 			Material.RED_CONCRETE_POWDER,
 			Material.RED_MUSHROOM,
-//			Material.RED_SAND,
+			Material.RED_SAND,
 			Material.RED_TULIP,
 			Material.RED_WALL_BANNER,
 			Material.REDSTONE,
@@ -392,7 +392,7 @@ public class Restrictions implements Listener {
 			Material.REDSTONE_TORCH,
 			Material.REPEATER,
 			Material.ROSE_BUSH,
-//			Material.SAND,
+			Material.SAND,
 			Material.SEA_PICKLE,
 			Material.SEAGRASS,
 			Material.SNOW,
