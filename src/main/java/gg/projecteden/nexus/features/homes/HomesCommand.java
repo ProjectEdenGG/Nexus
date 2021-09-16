@@ -27,12 +27,12 @@ import java.util.stream.Collectors;
 import static gg.projecteden.nexus.utils.Utils.getMin;
 
 public class HomesCommand extends CustomCommand {
-	HomeService service = new HomeService();
-	HomeOwner homeOwner;
+	private final HomeService service = new HomeService();
+	private HomeOwner homeOwner;
 
 	public HomesCommand(CommandEvent event) {
 		super(event);
-		if (isPlayer())
+		if (isPlayerCommandEvent())
 			homeOwner = service.get(player());
 	}
 
