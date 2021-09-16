@@ -8,8 +8,11 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
@@ -18,25 +21,25 @@ import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUser;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
 import gg.projecteden.nexus.utils.HttpUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import me.lexikiq.HasPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.features.resourcepack.ResourcePack.URL;
@@ -93,31 +96,52 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	public static @NotNull String statusOf(HasPlayer player) {
-		LocalResourcePackUser user = service.get(player.getPlayer());
-		if (user.isEnabled())
-			return "Manual";
-		else
-			return StringUtils.camelCase(player.getPlayer().getResourcePackStatus());
+	@EventHandler
+	public void onPlayerQuit(PlayerQuitEvent event) {
+		new LocalResourcePackUserService().edit(event.getPlayer(), LocalResourcePackUser::forgetVersions);
+	}
+
+	@EventHandler
+	public void onAsyncPlayerPreLogin(AsyncPlayerPreLoginEvent event) {
+		new LocalResourcePackUserService().edit(event.getUniqueId(), LocalResourcePackUser::forgetVersions);
+	}
+
+	@HideFromHelp
+	@TabCompleteIgnore
+	@Path("versions [--saturn] [--titan]")
+	void saturn(@Switch String saturn, @Switch String titan) {
+		new LocalResourcePackUserService().edit(player(), user -> {
+			user.setSaturnVersion(saturn);
+			user.setTitanVersion(titan);
+		});
 	}
 
 	@Permission("group.staff")
 	@Path("getStatus [player]")
-	void getStatus(@Arg("self") Player player) {
-		send(PREFIX + "Resource pack status for " + Nickname.of(player) + ": &e" + statusOf(player));
+	void getStatus(@Arg("self") LocalResourcePackUser user) {
+		send(PREFIX + "Status of &e" + user.getNickname());
+		send("&6 Saturn &7- " + user.getSaturnStatus());
+		send("&6 Titan &7- " + user.getTitanStatus());
 	}
 
 	@Permission("group.staff")
 	@Path("getStatuses")
 	void getStatuses() {
-		send(PREFIX + "Statuses: ");
-		new HashMap<String, List<String>>() {{
-			for (Player player : PlayerUtils.getOnlinePlayers()) {
-				String status = statusOf(player);
-				List<String> names = getOrDefault(status, new ArrayList<>());
-				names.add(Nickname.of(player));
-				put(status, names);
-			}
+		final List<Player> players = PlayerUtils.getOnlinePlayers();
+
+		send(PREFIX + "&eStatuses");
+		line();
+		send("&6Saturn");
+		new HashMap<String, Set<String>>() {{
+			for (Player player : players)
+				computeIfAbsent(service.get(player).getSaturnStatus(), $ -> new HashSet<>()).add(Nickname.of(player));
+		}}.forEach((status, names) -> send("&e" + status + "&3: " + String.join(", ", names)));
+
+		line();
+		send("&6Titan");
+		new HashMap<String, Set<String>>() {{
+			for (Player player : players)
+				computeIfAbsent(service.get(player).getTitanStatus(), $ -> new HashSet<>()).add(Nickname.of(player));
 		}}.forEach((status, names) -> send("&e" + status + "&3: " + String.join(", ", names)));
 	}
 
