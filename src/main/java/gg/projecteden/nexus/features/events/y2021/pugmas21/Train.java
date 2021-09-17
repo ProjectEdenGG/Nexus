@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.events.y2021.pugmas21;
 
 import gg.projecteden.nexus.features.commands.ArmorStandEditorCommand;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Builder;
@@ -20,8 +19,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 import static gg.projecteden.nexus.utils.EntityUtils.forcePacket;
+import static gg.projecteden.nexus.utils.RandomUtils.randomDouble;
 
 public class Train {
 	private final Location location;
@@ -40,7 +41,7 @@ public class Train {
 
 	@Builder
 	public Train(Location location, BlockFace direction, double speed, int seconds, double smokeBack, double smokeUp) {
-		this.location = LocationUtils.getCenteredLocation(location);
+		this.location = location.toCenterLocation();
 		this.forwards = direction;
 		this.backwards = direction.getOppositeFace();
 		this.speed = speed;
@@ -123,8 +124,11 @@ public class Train {
 
 		public Smoke(Location location) {
 			final World world = location.getWorld();
-			world.spawnParticle(particle, location, count, x, y, z, speed);
-			world.spawnParticle(particle, location, count, x, y, z, speed);
+			final Supplier<Double> random = () -> randomDouble(-.25, .25);
+			final Supplier<Location> offset = () -> location.clone().add(random.get(), random.get(), random.get());
+
+			world.spawnParticle(particle, offset.get(), count, x, y, z, speed);
+			world.spawnParticle(particle, offset.get(), count, x, y, z, speed);
 		}
 	}
 
