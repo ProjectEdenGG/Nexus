@@ -84,9 +84,7 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 		if (enabled && Status.DECLINED != player().getResourcePackStatus())
 			error("You must decline the resource pack in order to run this command");
 
-		LocalResourcePackUser user = service.get(player());
-		user.setEnabled(enabled);
-		service.save(user);
+		service.edit(player(), user -> user.setEnabled(enabled));
 		if (enabled)
 			send(PREFIX + "The server will now trust that you have the resource pack installed");
 		else {

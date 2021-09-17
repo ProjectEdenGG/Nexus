@@ -16,5 +16,4 @@ public interface InstructionNPC {
 		getInstructions().execute(player);
 	}
 
-
 }
