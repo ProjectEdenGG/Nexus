@@ -24,7 +24,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
@@ -84,14 +83,6 @@ public class InvisibleArmorCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onTeleport(PlayerTeleportEvent event) {
 		new InvisibleArmorService().get(event.getPlayer()).sendPackets();
-	}
-
-	@EventHandler
-	public void onPlayerDamage(EntityDamageEvent event) {
-		if (!(event.getEntity() instanceof Player player))
-			return;
-
-		Tasks.wait(1, new InvisibleArmorService().get(player)::sendResetPackets);
 	}
 
 	static {
