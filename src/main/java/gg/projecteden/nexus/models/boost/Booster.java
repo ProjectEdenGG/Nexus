@@ -111,14 +111,14 @@ public class Booster implements PlayerOwnedObject {
 			activated = LocalDateTime.now();
 			type.onActivate();
 			DiscordHandler.deleteHistoryAndSendMessage();
-			broadcast(getNickname() + " has &aactivated &3a &e" + getMultiplierFormatted() + " " + camelCase(type) + " boost &3for &e" + getTimeLeft() + "&3!");
+			broadcast("&e" + getNickname() + " &3has &aactivated &3a &e" + getMultiplierFormatted() + " " + camelCase(type) + " boost &3for &e" + getTimeLeft() + "&3!");
 			save();
 		}
 
 		public void expire() {
 			config().removeBoost(this);
 			type.onExpire();
-			broadcast(getNickname() + "'s &e" + getMultiplierFormatted() + " " + camelCase(type) + " boost &3has &cexpired");
+			broadcast("&e" + getNickname() + "'s &e" + getMultiplierFormatted() + " " + camelCase(type) + " boost &3has &cexpired");
 			DiscordHandler.editMessage();
 			// TODO Auto start next in queue?
 			save();
@@ -127,7 +127,7 @@ public class Booster implements PlayerOwnedObject {
 		public void cancel() {
 			config().removeBoost(this);
 			cancelled = true;
-			broadcast(getNickname() + "'s &e" + getMultiplierFormatted() + " " + camelCase(type) + " boost &3has been &ccancelled");
+			broadcast("&e" + getNickname() + "'s &e" + getMultiplierFormatted() + " " + camelCase(type) + " boost &3has been &ccancelled");
 			DiscordHandler.editMessage();
 			save();
 		}
