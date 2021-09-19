@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.resourcepack;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import gg.projecteden.nexus.features.resourcepack.CustomModel.CustomModelMeta;
+import gg.projecteden.nexus.utils.AudioUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Data;
 import lombok.SneakyThrows;
@@ -13,7 +14,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Data
 class CustomModelGroup {
@@ -85,13 +88,28 @@ class CustomModelGroup {
 		try {
 			for (Path root : ResourcePack.getZipFile().getRootDirectories()) {
 				Files.walk(root).forEach(path -> {
-					if (path.toUri().toString().contains(ResourcePack.getSubdirectory()))
-						addCustomModel(path);
+					try {
+						if (path.toUri().toString().contains(ResourcePack.getSubdirectory()))
+							addCustomModel(path);
+						if (path.toUri().toString().contains(".ogg"))
+							addSoundFile(path);
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
 				});
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+	}
+
+	// milliseconds
+	private static final Map<String, Integer> soundDuration = new HashMap<>();
+
+	@SneakyThrows
+	private static void addSoundFile(Path path) {
+		final int duration = (int) AudioUtils.getVorbisDuration(Files.readAllBytes(path));
+		soundDuration.put(path.getFileName().toString().replace(".ogg", ""), duration);
 	}
 
 }

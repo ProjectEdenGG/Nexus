@@ -64,7 +64,6 @@ public class ResourcePack extends Feature implements Listener {
 	@Getter
 	private static final CompletableFuture<Void> loader = new CompletableFuture<>();
 
-
 	@Override
 	public void onStart() {
 		Tasks.async(() -> {
