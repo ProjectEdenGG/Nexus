@@ -133,8 +133,8 @@ public class PlayerUtils {
 		private World world;
 		private Location origin;
 		private Double radius;
-		private final List<UUID> include = new ArrayList<>();
-		private final List<UUID> exclude = new ArrayList<>();
+		private List<UUID> include;
+		private List<UUID> exclude;
 
 		public static OnlinePlayers builder() {
 			return new OnlinePlayers();
@@ -142,15 +142,6 @@ public class PlayerUtils {
 
 		public static List<Player> getAll() {
 			return builder().get();
-		}
-
-		public OnlinePlayers includePlayers(List<HasUniqueId> players) {
-			return include(players.stream().map(HasUniqueId::getUniqueId).toList());
-		}
-
-		public OnlinePlayers include(List<UUID> uuids) {
-			this.include.addAll(uuids);
-			return this;
 		}
 
 		public OnlinePlayers viewer(HasUniqueId player) {
@@ -174,6 +165,17 @@ public class PlayerUtils {
 			return this;
 		}
 
+		public OnlinePlayers includePlayers(List<HasUniqueId> players) {
+			return include(players.stream().map(HasUniqueId::getUniqueId).toList());
+		}
+
+		public OnlinePlayers include(List<UUID> uuids) {
+			if (this.include == null)
+				this.include = new ArrayList<>();
+			this.include.addAll(uuids);
+			return this;
+		}
+
 		public OnlinePlayers excludeSelf() {
 			this.exclude.add(viewer);
 			return this;
@@ -192,16 +194,21 @@ public class PlayerUtils {
 		}
 
 		public OnlinePlayers exclude(List<UUID> uuids) {
+			if (this.exclude == null)
+				this.exclude = new ArrayList<>();
 			this.exclude.addAll(uuids);
 			return this;
 		}
 
 		public List<Player> get() {
 			final Supplier<List<UUID>> online = () -> Bukkit.getOnlinePlayers().stream().map(Player::getUniqueId).collect(toList());
-			final List<UUID> uuids = include.isEmpty() ? online.get() : include;
+			final List<UUID> uuids = include == null ? online.get() : include;
+
+			if (uuids.isEmpty())
+				return Collections.emptyList();
 
 			Stream<Player> stream = uuids.stream()
-				.filter(uuid -> !exclude.contains(uuid))
+				.filter(uuid -> exclude != null && !exclude.contains(uuid))
 				.map(Bukkit::getOfflinePlayer)
 				.filter(OfflinePlayer::isOnline)
 				.map(OfflinePlayer::getPlayer)
