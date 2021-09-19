@@ -143,7 +143,7 @@ public class CustomRecipes extends Feature implements Listener {
 
 		final List<MaterialTag> shapeless = List.of(
 			MaterialTag.BEDS,
-			MaterialTag.BANNERS
+			MaterialTag.STANDING_BANNERS
 		);
 
 		for (ColorType color : ColorType.getDyes()) {

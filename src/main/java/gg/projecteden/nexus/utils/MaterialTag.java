@@ -33,7 +33,7 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag DYES = new MaterialTag("_DYE", MatchMode.SUFFIX);
 	public static final MaterialTag BEDS = new MaterialTag("_BED", MatchMode.SUFFIX);
 	public static final MaterialTag ALL_BANNERS = new MaterialTag(Tag.BANNERS);
-	public static final MaterialTag BANNERS = new MaterialTag("_BANNER", MatchMode.SUFFIX);
+	public static final MaterialTag STANDING_BANNERS = new MaterialTag(ALL_BANNERS).exclude("_WALL", MatchMode.CONTAINS);
 	public static final MaterialTag WALL_BANNERS = new MaterialTag("_WALL_BANNER", MatchMode.SUFFIX);
 	public static final MaterialTag STAINED_GLASS = new MaterialTag("_STAINED_GLASS", MatchMode.SUFFIX);
 	public static final MaterialTag STAINED_GLASS_PANES = new MaterialTag("_STAINED_GLASS_PANE", MatchMode.SUFFIX);
@@ -237,7 +237,7 @@ public class MaterialTag implements Tag<Material> {
 
 	public static final MaterialTag BLOCKS = new MaterialTag(Material::isSolid)
 		.exclude(CACTUS, BAMBOO, DRAGON_EGG, TURTLE_EGG, CONDUIT, CAKE)
-		.exclude(SIGNS, BANNERS, ALL_CORALS)
+		.exclude(SIGNS, ALL_BANNERS, ALL_CORALS)
 		.append(CORAL_BLOCKS);
 
 	public static final MaterialTag SKULLS = new MaterialTag("_SKULL", MatchMode.SUFFIX).append("_HEAD", MatchMode.SUFFIX).exclude(PISTON_HEAD);
@@ -256,7 +256,7 @@ public class MaterialTag implements Tag<Material> {
 
 	public static final MaterialTag NEEDS_SUPPORT = new MaterialTag(Material.GRAVEL, VINE, LILY_PAD, TURTLE_EGG,
 		REPEATER, COMPARATOR, ITEM_FRAME, BELL, Material.SNOW, SCAFFOLDING, TRIPWIRE_HOOK, LADDER, LEVER, SOUL_LANTERN)
-		.append(SAPLINGS, DOORS, SIGNS, RAILS, BANNERS, CONCRETE_POWDERS, SAND, CORALS, CARPETS,
+		.append(SAPLINGS, DOORS, SIGNS, RAILS, ALL_BANNERS, CONCRETE_POWDERS, SAND, CORALS, CARPETS,
 			PRESSURE_PLATES, BUTTONS, FLOWER_POTS, ANVIL, PLANTS, TORCHES);
 
 	public static final MaterialTag WEARABLE = new MaterialTag(ARMOR, SKULLS).append(CARVED_PUMPKIN).exclude("_WALL_", MatchMode.CONTAINS);

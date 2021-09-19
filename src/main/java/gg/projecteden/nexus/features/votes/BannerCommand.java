@@ -44,7 +44,7 @@ public class BannerCommand extends CustomCommand implements Listener {
 		final ItemStack mainHand = inventory().getItemInMainHand();
 		final ItemStack offHand = inventory().getItemInOffHand();
 
-		if (!MaterialTag.BANNERS.isTagged(mainHand) || !MaterialTag.BANNERS.isTagged(offHand))
+		if (!MaterialTag.STANDING_BANNERS.isTagged(mainHand) || !MaterialTag.STANDING_BANNERS.isTagged(offHand))
 			error("You must be holding each banner in your hand");
 
 		ItemStack from;
@@ -121,7 +121,7 @@ public class BannerCommand extends CustomCommand implements Listener {
 
 		Block banner = event.getClickedBlock().getLocation().add(0, -1, 0).getBlock();
 
-		if (!MaterialTag.BANNERS.isTagged(banner.getType()))
+		if (!MaterialTag.STANDING_BANNERS.isTagged(banner.getType()))
 			return;
 
 		ConfirmationMenu.builder()
