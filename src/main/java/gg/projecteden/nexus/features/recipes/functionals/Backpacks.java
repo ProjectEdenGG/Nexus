@@ -216,10 +216,10 @@ public class Backpacks extends FunctionalRecipe {
 		if (!isBackpack(event.getItem()))
 			return;
 
-		event.setCancelled(true);
-
 		if (event instanceof FakePlayerInteractEvent)
 			return;
+
+		event.setCancelled(true);
 
 		openBackpack(event.getPlayer(), event.getItem());
 	}
