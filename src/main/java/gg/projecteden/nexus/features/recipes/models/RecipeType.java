@@ -18,7 +18,12 @@ public enum RecipeType {
 	MAIN(null),
 	SLABS(Material.OAK_SLAB),
 	QUARTZ(Material.QUARTZ),
-	BEDS(Material.CYAN_BED),
+	BEDS_BANNERS(Material.CYAN_BED) {
+		@Override
+		public ItemStack getItem() {
+			return new ItemBuilder(Material.CYAN_BED).name("&eBeds/Banners").build();
+		}
+	},
 	DYES(Material.YELLOW_DYE),
 	WOOL(Material.WHITE_WOOL),
 	STONE_BRICK(Material.STONE_BRICKS),
