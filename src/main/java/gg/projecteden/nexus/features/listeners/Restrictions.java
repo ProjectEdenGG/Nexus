@@ -9,6 +9,7 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
@@ -109,7 +110,8 @@ public class Restrictions implements Listener {
 			return;
 
 		PlayerUtils.send(player, "&cInappropriate sign content");
-		String message = "&cSign content by " + Nickname.of(player) + " was censored: &e" + String.join(", ", lines);
+		String location = "(" + StringUtils.getShortLocationString(event.getBlock().getLocation()) + ")";
+		String message = "&cSign content by " + Nickname.of(player) + " was censored: &e" + String.join(", ", lines) + " " + location;
 		Broadcast.staff().prefix("Censor").message(message).send();
 	}
 

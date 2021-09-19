@@ -8,9 +8,11 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.BlockFace;
@@ -152,7 +154,7 @@ public abstract class Windchimes extends FunctionalRecipe {
 			if (!Nerd.of(player).getRank().isAdmin()) return;
 
 			event.setCancelled(true);
-			player.sendMessage("\nTODO: make windchime sound");
+			playSound(player, itemFrame.getLocation());
 		}
 
 		@EventHandler
@@ -169,8 +171,12 @@ public abstract class Windchimes extends FunctionalRecipe {
 			if (!Nerd.of(player).getRank().isAdmin()) return;
 
 			event.setCancelled(true);
-			player.sendMessage("\nTODO: make windchime sound");
+			playSound(player, itemFrame.getLocation());
 		}
+	}
+
+	private static void playSound(Player player, Location location) {
+		player.sendMessage("\nTODO: make windchime sound at " + StringUtils.getShortLocationString(location));
 	}
 
 }
