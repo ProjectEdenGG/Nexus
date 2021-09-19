@@ -518,6 +518,11 @@ public class PlayerUtils {
 		boolean[] fullSlot = new boolean[36];
 		ItemStack[] inv = player.getInventory().getContents();
 		for (ItemStack item : items) {
+			if (isNullOrAir(item)) {
+				openSlots++;
+				continue;
+			}
+
 			int maxStack = item.getMaxStackSize();
 			int needed = item.getAmount();
 			for (int i = 0; i < 36; i++) {
