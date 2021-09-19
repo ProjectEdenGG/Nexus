@@ -17,6 +17,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -41,6 +42,14 @@ public abstract class Windchimes extends FunctionalRecipe {
 		GOLD(Material.GOLD_INGOT),
 		COPPER(Material.COPPER_INGOT),
 		AMETHYST(Material.AMETHYST_SHARD),
+		LAPIS(Material.LAPIS_LAZULI),
+		NETHERITE(Material.NETHERITE_INGOT),
+		DIAMOND(Material.DIAMOND),
+		REDSTONE(Material.REDSTONE),
+		EMERALD(Material.EMERALD),
+		QUARTZ(Material.QUARTZ),
+		COAL(Material.COAL),
+		ICE(Material.ICE),
 		;
 
 		private final Material ingot;
@@ -104,42 +113,49 @@ public abstract class Windchimes extends FunctionalRecipe {
 			return false;
 
 		return true;
-
 	}
 
-	@EventHandler
-	public void onClickWindchime(PlayerInteractEvent event) {
-		Player player = event.getPlayer();
+	private static class WindchimesListener implements Listener {
 
-		if (player.isSneaking()) return;
-		if (!EquipmentSlot.HAND.equals(event.getHand())) return;
-		if (!ActionGroup.RIGHT_CLICK.applies(event)) return;
+		static {
+			System.out.println("registering windchimes listener");
+			Nexus.registerListener(new WindchimesListener());
+		}
 
-		ItemFrame itemFrame = PlayerUtils.getTargetItemFrame(player, 4, Map.of(BlockFace.UP, 1));
-		if (itemFrame == null || ItemUtils.isNullOrAir(itemFrame.getItem())) return;
-		if (!isWindchime(itemFrame.getItem())) return;
+		@EventHandler
+		public void onClickWindchime(PlayerInteractEvent event) {
+			Player player = event.getPlayer();
 
-		if (!Nerd.of(player).getRank().isAdmin()) return;
+			if (player.isSneaking()) return;
+			if (!EquipmentSlot.HAND.equals(event.getHand())) return;
+			if (!ActionGroup.RIGHT_CLICK.applies(event)) return;
 
-		event.setCancelled(true);
-		player.sendMessage("\nTODO: make windchime sound");
-	}
+			ItemFrame itemFrame = PlayerUtils.getTargetItemFrame(player, 4, Map.of(BlockFace.UP, 1));
+			if (itemFrame == null || ItemUtils.isNullOrAir(itemFrame.getItem())) return;
+			if (!isWindchime(itemFrame.getItem())) return;
 
-	@EventHandler
-	public void onInteractItemFrame(PlayerInteractEntityEvent event) {
-		Player player = event.getPlayer();
+			if (!Nerd.of(player).getRank().isAdmin()) return;
 
-		if (player.isSneaking()) return;
-		if (!EquipmentSlot.HAND.equals(event.getHand())) return;
+			event.setCancelled(true);
+			player.sendMessage("\nTODO: make windchime sound");
+		}
 
-		Entity clicked = event.getRightClicked();
-		if (!(clicked instanceof ItemFrame itemFrame)) return;
-		if (!isWindchime(itemFrame.getItem())) return;
+		@EventHandler
+		public void onInteractItemFrame(PlayerInteractEntityEvent event) {
+			Player player = event.getPlayer();
 
-		if (!Nerd.of(player).getRank().isAdmin()) return;
+			if (player.isSneaking()) return;
+			if (!EquipmentSlot.HAND.equals(event.getHand())) return;
 
-		event.setCancelled(true);
-		player.sendMessage("\nTODO: make windchime sound");
+			Entity clicked = event.getRightClicked();
+			if (!(clicked instanceof ItemFrame itemFrame)) return;
+			if (!isWindchime(itemFrame.getItem())) return;
+
+			if (!Nerd.of(player).getRank().isAdmin()) return;
+
+			event.setCancelled(true);
+			player.sendMessage("\nTODO: make windchime sound");
+		}
 	}
 
 }
