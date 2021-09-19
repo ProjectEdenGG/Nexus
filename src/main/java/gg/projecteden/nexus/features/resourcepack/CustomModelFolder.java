@@ -78,12 +78,10 @@ public class CustomModelFolder {
 		return null;
 	}
 
-	private final String MODEL_REGEX = "projecteden" + path + "/" + ResourcePack.getFileRegex();
-
 	private void findModels() {
 		for (CustomModelGroup group : ResourcePack.getModelGroups())
 			for (Override override : group.getOverrides())
-				if (override.getModel().matches(MODEL_REGEX))
+				if (override.getModel().matches("projecteden" + path + "/" + ResourcePack.getFileRegex()))
 					models.add(new CustomModel(this, override, group.getMaterial()));
 
 		models.sort(CustomModel::compareTo);
