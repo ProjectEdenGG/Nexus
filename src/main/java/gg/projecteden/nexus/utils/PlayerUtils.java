@@ -369,7 +369,7 @@ public class PlayerUtils {
 			List<Block> offsetBlockList = new ArrayList<>();
 			for (Block block : blocks) {
 				for (BlockFace blockFace : offsets.keySet()) {
-					for (int i = 0; i < offsets.get(blockFace); i++)
+					for (int i = 1; i < offsets.get(blockFace); i++)
 						offsetBlockList.add(block.getRelative(blockFace, i));
 				}
 			}
