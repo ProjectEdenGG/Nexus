@@ -1,11 +1,11 @@
 package gg.projecteden.nexus.features.minigames.perks.loadouts.teamed.pirate;
 
-import com.comphenix.protocol.wrappers.EnumWrappers;
 import gg.projecteden.nexus.features.minigames.models.perks.common.TeamHatPerk;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -50,7 +50,7 @@ public interface IPirateHat extends TeamHatPerk {
 	}
 
 	@Override
-	default @NotNull Map<EnumWrappers.ItemSlot, ItemStack> getLoadout() {
+	default @NotNull Map<EquipmentSlot, ItemStack> getLoadout() {
 		return getLoadout(ChatColor.BLACK);
 	}
 
