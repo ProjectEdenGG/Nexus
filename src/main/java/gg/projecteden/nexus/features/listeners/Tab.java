@@ -8,6 +8,7 @@ import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange.PlayerRankChangeEvent;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import me.lexikiq.HasUniqueId;
@@ -32,7 +33,7 @@ public class Tab implements Listener {
 	}
 
 	public static void update() {
-		PlayerUtils.getOnlinePlayers().forEach(Tab::update);
+		OnlinePlayers.getAll().forEach(Tab::update);
 	}
 
 	public static void update(@NotNull Player player) {

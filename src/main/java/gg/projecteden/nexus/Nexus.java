@@ -18,6 +18,7 @@ import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.GoogleUtils;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Timer;
 import gg.projecteden.nexus.utils.WorldGuardFlagUtils;
 import gg.projecteden.utils.EnumUtils;
@@ -187,7 +188,7 @@ public class Nexus extends JavaPlugin {
 		Locale.setDefault(Locale.US);
 
 		new Timer("Enable", () -> {
-			new Timer(" Cache Usernames", () -> PlayerUtils.getOnlinePlayers().forEach(Name::of));
+			new Timer(" Cache Usernames", () -> OnlinePlayers.getAll().forEach(Name::of));
 			new Timer(" Config", this::setupConfig);
 			new Timer(" Databases", this::databases);
 			new Timer(" Hooks", this::hooks);

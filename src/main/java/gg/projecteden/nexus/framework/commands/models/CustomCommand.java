@@ -30,6 +30,7 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
@@ -746,8 +747,10 @@ public abstract class CustomCommand extends ICustomCommand {
 		if (isCommandBlock() || isAdmin()) {
 			if ("@p".equals(value))
 				return PlayerUtils.getNearestPlayer(location()).getObject();
-			if ("@r".equals(value))
-				return RandomUtils.randomElement(PlayerUtils.getOnlinePlayers(isPlayer() ? player() : null));
+			if ("@r".equals(value)) {
+				Player player = isPlayer() ? player() : null;
+				return RandomUtils.randomElement(OnlinePlayers.builder().viewer(player).get());
+			}
 			if ("@s".equals(value))
 				return player();
 		}
@@ -767,7 +770,7 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	@TabCompleterFor({Player.class, OfflinePlayer.class})
 	public List<String> tabCompletePlayer(String filter) {
-		return PlayerUtils.getOnlinePlayers().stream()
+		return OnlinePlayers.getAll().stream()
 				.filter(player -> PlayerUtils.canSee(player(), player))
 				.map(Nickname::of)
 				.filter(name -> name.toLowerCase().startsWith(filter.replaceFirst("[pP]:", "").toLowerCase()))

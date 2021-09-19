@@ -20,7 +20,7 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUser;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
 import gg.projecteden.nexus.utils.HttpUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldGroup;
@@ -125,7 +125,7 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	@Permission("group.staff")
 	@Path("getStatuses")
 	void getStatuses() {
-		final List<Player> players = PlayerUtils.getOnlinePlayers();
+		final List<Player> players = OnlinePlayers.getAll();
 
 		send(PREFIX + "&eStatuses");
 		line();

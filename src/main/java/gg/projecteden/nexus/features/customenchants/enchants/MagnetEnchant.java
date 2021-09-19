@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.customenchants.enchants;
 import gg.projecteden.nexus.features.customenchants.CustomEnchant;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -32,7 +33,7 @@ public class MagnetEnchant extends CustomEnchant {
 
 	static {
 		Tasks.repeat(TickTime.TICK.x(10), TickTime.TICK, () -> {
-			for (Player player : PlayerUtils.getOnlinePlayers()) {
+			for (Player player : OnlinePlayers.getAll()) {
 				if (WorldGroup.of(player) != WorldGroup.SURVIVAL)
 					continue;
 

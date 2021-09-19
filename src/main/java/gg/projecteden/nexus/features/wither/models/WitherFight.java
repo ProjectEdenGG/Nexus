@@ -20,6 +20,7 @@ import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
@@ -79,7 +80,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static gg.projecteden.nexus.utils.PlayerUtils.getOnlinePlayers;
 import static gg.projecteden.nexus.utils.Utils.tryCalculate;
 import static gg.projecteden.utils.StringUtils.plural;
 
@@ -180,11 +180,11 @@ public abstract class WitherFight implements Listener {
 	}
 
 	public List<Player> alivePlayers() {
-		return getOnlinePlayers(alivePlayers);
+		return OnlinePlayers.builder().include(alivePlayers).get();
 	}
 
 	public List<Player> spectators() {
-		return getOnlinePlayers(spectators);
+		return OnlinePlayers.builder().include(spectators).get();
 	}
 
 	public void sendSpectatorsToSpawn() {

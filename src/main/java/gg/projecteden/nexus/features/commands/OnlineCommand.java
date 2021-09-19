@@ -15,6 +15,7 @@ import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import org.bukkit.Bukkit;
@@ -34,8 +35,8 @@ public class OnlineCommand extends CustomCommand {
 	@Path
 	@Override
 	public void help() {
-		long vanished = PlayerUtils.getOnlinePlayers().stream().filter(PlayerUtils::isVanished).count();
-		long online = PlayerUtils.getOnlinePlayers().size() - vanished;
+		long vanished = OnlinePlayers.getAll().stream().filter(PlayerUtils::isVanished).count();
+		long online = OnlinePlayers.getAll().size() - vanished;
 		boolean canSeeVanished = !isPlayer() || player().hasPermission("pv.see");
 		String counts = online + ((canSeeVanished && vanished > 0) ? " &3+ &e" + vanished : "");
 

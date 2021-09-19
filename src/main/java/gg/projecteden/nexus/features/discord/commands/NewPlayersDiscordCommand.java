@@ -9,7 +9,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.models.hours.Hours;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
@@ -36,7 +36,7 @@ public class NewPlayersDiscordCommand extends Command {
 		Tasks.async(() -> {
 			try {
 				HashMap<Player, Integer> players = new HashMap<>() {{
-					for (Player player : PlayerUtils.getOnlinePlayers()) {
+					for (Player player : OnlinePlayers.getAll()) {
 						Hours hours = new HoursService().get(player);
 						if (hours.getTotal() < (TickTime.HOUR.get() / 20))
 							put(player, hours.getTotal());

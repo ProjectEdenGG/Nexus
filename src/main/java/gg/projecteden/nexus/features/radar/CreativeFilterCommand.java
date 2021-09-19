@@ -6,7 +6,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.CompletableTask;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGroup;
@@ -94,7 +94,7 @@ public class CreativeFilterCommand extends CustomCommand implements Listener {
 	static {
 		Tasks.repeat(TickTime.TICK, TickTime.TICK.x(2), () -> {
 			for (World world : WorldGroup.CREATIVE.getWorlds()) {
-				for (Player player : PlayerUtils.getOnlinePlayers(world)) {
+				for (Player player : OnlinePlayers.builder().world(world).get()) {
 					final PlayerInventory inventory = player.getInventory();
 
 					for (int i = 0; i < inventory.getSize(); i++) {

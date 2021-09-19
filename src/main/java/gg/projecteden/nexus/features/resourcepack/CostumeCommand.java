@@ -17,7 +17,7 @@ import gg.projecteden.nexus.models.costume.CostumeUserService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
@@ -54,7 +54,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 		ResourcePack.getLoader().thenRun(() -> {
 			final CostumeUserService service = new CostumeUserService();
 			Tasks.repeat(TickTime.TICK, TickTime.TICK, () -> {
-				for (Player player : PlayerUtils.getOnlinePlayers())
+				for (Player player : OnlinePlayers.getAll())
 					service.get(player).sendCostumePacket();
 			});
 		});

@@ -9,7 +9,7 @@ import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.whereis.WhereIs;
 import gg.projecteden.nexus.models.whereis.WhereIsService;
 import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGroup;
@@ -80,7 +80,7 @@ public class WhereIsCommand extends CustomCommand {
 		service.save(whereIs);
 
 		if (!enable)
-			PlayerUtils.getOnlinePlayers().forEach(_player -> unglow(_player, player()));
+			OnlinePlayers.getAll().forEach(_player -> unglow(_player, player()));
 		else
 			process(player());
 
@@ -88,7 +88,7 @@ public class WhereIsCommand extends CustomCommand {
 	}
 
 	static {
-		Tasks.repeatAsync(TickTime.SECOND, TickTime.SECOND.x(3), () -> PlayerUtils.getOnlinePlayers().forEach(WhereIsCommand::process));
+		Tasks.repeatAsync(TickTime.SECOND, TickTime.SECOND.x(3), () -> OnlinePlayers.getAll().forEach(WhereIsCommand::process));
 	}
 
 	private static void process(Player viewer) {
@@ -113,7 +113,7 @@ public class WhereIsCommand extends CustomCommand {
 		if (threshold == null)
 			threshold = 30;
 
-		for (Player glower : PlayerUtils.getOnlinePlayers()) {
+		for (Player glower : OnlinePlayers.getAll()) {
 			if (!viewer.getWorld().equals(glower.getWorld()))
 				continue;
 
@@ -135,7 +135,7 @@ public class WhereIsCommand extends CustomCommand {
 	}
 
 	private static void unglow(Player viewer) {
-		PlayerUtils.getOnlinePlayers().forEach(glower -> unglow(glower, viewer));
+		OnlinePlayers.getAll().forEach(glower -> unglow(glower, viewer));
 	}
 
 	private static void unglow(Player glower, Player viewer) {

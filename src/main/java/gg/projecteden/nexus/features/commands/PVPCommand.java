@@ -10,7 +10,7 @@ import gg.projecteden.nexus.models.godmode.GodmodeService;
 import gg.projecteden.nexus.models.pvp.PVP;
 import gg.projecteden.nexus.models.pvp.PVPService;
 import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -60,7 +60,7 @@ public class PVPCommand extends CustomCommand implements Listener {
 	static {
 		Tasks.repeatAsync(5, TickTime.SECOND.x(2), () -> {
 			PVPService service = new PVPService();
-			for (Player player : PlayerUtils.getOnlinePlayers()) {
+			for (Player player : OnlinePlayers.getAll()) {
 				PVP pvp = service.get(player);
 				if (pvp.isEnabled())
 					player.sendActionBar(colorize("&cPVP is enabled"));

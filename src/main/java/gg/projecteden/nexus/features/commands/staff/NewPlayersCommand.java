@@ -8,7 +8,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.hours.Hours;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
@@ -28,7 +28,7 @@ public class NewPlayersCommand extends CustomCommand {
 	@Path("[page]")
 	void run(@Arg("1") int page) {
 		HashMap<Player, Integer> players = new HashMap<>();
-		for (Player player : PlayerUtils.getOnlinePlayers()) {
+		for (Player player : OnlinePlayers.getAll()) {
 			Hours hours = new HoursService().get(player.getUniqueId());
 			if (hours.getTotal() < (TickTime.HOUR.get() / 20))
 				players.put(player, hours.getTotal());

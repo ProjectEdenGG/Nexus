@@ -6,7 +6,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEv
 import gg.projecteden.nexus.models.achievement.Achievement;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -62,7 +62,7 @@ public class SocialListener implements Listener {
 	}
 
 	private static void check() {
-		for (Player player : PlayerUtils.getOnlinePlayers()) {
+		for (Player player : OnlinePlayers.getAll()) {
 			checkJoinDate(player);
 			checkHours(player);
 			checkRank(player);

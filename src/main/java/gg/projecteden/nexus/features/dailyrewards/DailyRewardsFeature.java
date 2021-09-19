@@ -8,7 +8,7 @@ import gg.projecteden.nexus.models.dailyreward.Reward;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
@@ -52,7 +52,7 @@ public class DailyRewardsFeature extends Feature {
 			lastTaskTime = LocalDateTime.now();
 
 			DailyRewardUserService service = new DailyRewardUserService();
-			for (Player player : PlayerUtils.getOnlinePlayers()) {
+			for (Player player : OnlinePlayers.getAll()) {
 				try {
 					if (new HoursService().get(player.getUniqueId()).getDaily() < TickTime.MINUTE.x(15) / 20)
 						continue;

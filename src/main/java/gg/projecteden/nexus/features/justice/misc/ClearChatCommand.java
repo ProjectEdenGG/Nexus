@@ -6,7 +6,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 
@@ -20,7 +20,7 @@ public class ClearChatCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		for (Player player : PlayerUtils.getOnlinePlayers())
+		for (Player player : OnlinePlayers.getAll())
 			if (!isStaff(player))
 				line(player, 40);
 

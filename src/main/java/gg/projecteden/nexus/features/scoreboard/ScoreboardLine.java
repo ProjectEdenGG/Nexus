@@ -19,7 +19,7 @@ import gg.projecteden.nexus.models.ticket.Tickets;
 import gg.projecteden.nexus.models.ticket.TicketsService;
 import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import gg.projecteden.utils.TimeUtils.Timespan.TimespanBuilder;
@@ -48,7 +48,7 @@ public enum ScoreboardLine {
 	ONLINE {
 		@Override
 		public String render(Player player) {
-			return "&3Online Nerds: &e" + PlayerUtils.getOnlinePlayers(player).size();
+			return "&3Online Nerds: &e" + OnlinePlayers.builder().viewer(player).get().size();
 		}
 	},
 

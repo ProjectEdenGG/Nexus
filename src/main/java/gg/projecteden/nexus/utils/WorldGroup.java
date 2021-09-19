@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import lombok.Getter;
 import me.lexikiq.HasLocation;
 import me.lexikiq.OptionalLocation;
@@ -64,7 +65,7 @@ public enum WorldGroup {
 	}
 
 	public List<Player> getPlayers() {
-		return getWorlds().stream().map(PlayerUtils::getOnlinePlayers).flatMap(Collection::stream).toList();
+		return getWorlds().stream().map(world -> OnlinePlayers.builder().world(world).get()).flatMap(Collection::stream).toList();
 	}
 
 	public static WorldGroup of(@Nullable Entity entity) {

@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.customenchants;
 
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -22,7 +22,7 @@ public class OldCEConverter {
 	static void load() {
 		Tasks.sync(new AtomicReference<Runnable>() {{
 			set(() -> {
-				final Iterator<Player> iterator = PlayerUtils.getOnlinePlayers().iterator();
+				final Iterator<Player> iterator = OnlinePlayers.getAll().iterator();
 
 				int wait = 0;
 				Tasks.wait(TickTime.SECOND.x(++wait), () -> {

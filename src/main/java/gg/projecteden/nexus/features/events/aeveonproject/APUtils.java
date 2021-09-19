@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.events.aeveonproject;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.features.events.aeveonproject.sets.APSet;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
@@ -19,7 +19,7 @@ import static gg.projecteden.nexus.features.events.aeveonproject.AeveonProject.w
 public class APUtils {
 
 	public static int getPlayersInAPWorld() {
-		return (int) PlayerUtils.getOnlinePlayers().stream().filter(APUtils::isInWorld).count();
+		return (int) OnlinePlayers.getAll().stream().filter(APUtils::isInWorld).count();
 	}
 
 	public static Collection<Player> getPlayersInSet(APSet set) {

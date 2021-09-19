@@ -60,6 +60,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -67,6 +68,7 @@ import static gg.projecteden.nexus.utils.ItemUtils.fixMaxStackSize;
 import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
 import static gg.projecteden.nexus.utils.Utils.getMin;
 import static gg.projecteden.utils.StringUtils.isUuid;
+import static java.util.stream.Collectors.toList;
 
 @UtilityClass
 public class PlayerUtils {
@@ -123,36 +125,71 @@ public class PlayerUtils {
 		}
 	}
 
-	public static List<Player> getOnlinePlayers(List<UUID> uuids) {
-		return uuids.stream()
-			.map(PlayerUtils::getOnlinePlayer)
-			.filter(OfflinePlayer::isOnline)
-			.map(OfflinePlayer::getPlayer)
-			.toList();
-	}
+	public static class OnlinePlayers {
+		private UUID viewer;
+		private World world;
+		private final List<UUID> include = new ArrayList<>();
+		private final List<UUID> exclude = new ArrayList<>();
 
-	public static List<Player> getOnlinePlayers() {
-		return getOnlinePlayers(null, null);
-	}
+		public static OnlinePlayers builder() {
+			return new OnlinePlayers();
+		}
 
-	public static List<Player> getOnlinePlayers(Player player) {
-		return getOnlinePlayers(player, null);
-	}
+		public static List<Player> getAll() {
+			return builder().get();
+		}
 
-	public static List<Player> getOnlinePlayers(World world) {
-		return getOnlinePlayers(null, world);
-	}
+		public OnlinePlayers includePlayers(List<HasUniqueId> players) {
+			return include(players.stream().map(HasUniqueId::getUniqueId).toList());
+		}
 
-	public static List<Player> getOnlinePlayers(Player player, World world) {
-		Stream<Player> stream = Bukkit.getOnlinePlayers().stream()
-			.filter(_player -> !CitizensUtils.isNPC(_player)).map(Player::getPlayer);
+		public OnlinePlayers include(List<UUID> uuids) {
+			this.include.addAll(uuids);
+			return this;
+		}
 
-		if (player != null)
-			stream = stream.filter(_player -> canSee(player, _player));
-		if (world != null)
-			stream = stream.filter(_player -> _player.getWorld().equals(world));
+		public OnlinePlayers viewer(HasUniqueId player) {
+			this.viewer = player.getUniqueId();
+			return this;
+		}
 
-		return stream.toList();
+		public OnlinePlayers world(World world) {
+			this.world = world;
+			return this;
+		}
+
+		public OnlinePlayers excludeSelf() {
+			this.exclude.add(viewer);
+			return this;
+		}
+
+		public OnlinePlayers excludePlayers(List<HasUniqueId> players) {
+			return exclude(players.stream().map(HasUniqueId::getUniqueId).toList());
+		}
+
+		public OnlinePlayers exclude(List<UUID> uuids) {
+			this.exclude.addAll(uuids);
+			return this;
+		}
+
+		public List<Player> get() {
+			final Supplier<List<UUID>> online = () -> Bukkit.getOnlinePlayers().stream().map(Player::getUniqueId).collect(toList());
+			final List<UUID> uuids = include.isEmpty() ? online.get() : include;
+
+			Stream<Player> stream = uuids.stream()
+				.filter(uuid -> !exclude.contains(uuid))
+				.map(Bukkit::getOfflinePlayer)
+				.filter(OfflinePlayer::isOnline)
+				.map(OfflinePlayer::getPlayer)
+				.filter(player -> !CitizensUtils.isNPC(player));
+
+			if (viewer != null)
+				stream = stream.filter(_player -> canSee(Bukkit.getPlayer(viewer), _player));
+			if (world != null)
+				stream = stream.filter(_player -> _player.getWorld().equals(world));
+
+			return stream.toList();
+		}
 	}
 
 	public static boolean isVanished(OptionalPlayer player) {
@@ -189,9 +226,9 @@ public class PlayerUtils {
 	}
 
 	public static List<String> getOnlineUuids() {
-		return PlayerUtils.getOnlinePlayers().stream()
+		return OnlinePlayers.getAll().stream()
 				.map(player -> player.getUniqueId().toString())
-				.collect(Collectors.toList());
+				.collect(toList());
 	}
 
 	public static @NotNull OfflinePlayer getPlayer(UUID uuid) {
@@ -223,10 +260,10 @@ public class PlayerUtils {
 		if (isUuid(partialName))
 			return getPlayer(UUID.fromString(partialName));
 
-		for (Player player : PlayerUtils.getOnlinePlayers())
+		for (Player player : OnlinePlayers.getAll())
 			if (player.getName().equalsIgnoreCase(partialName))
 				return player;
-		for (Player player : PlayerUtils.getOnlinePlayers())
+		for (Player player : OnlinePlayers.getAll())
 			if (Nickname.of(player).equalsIgnoreCase((partialName)))
 				return player;
 
@@ -235,17 +272,17 @@ public class PlayerUtils {
 		if (fromNickname != null)
 			return fromNickname.getOfflinePlayer();
 
-		for (Player player : PlayerUtils.getOnlinePlayers())
+		for (Player player : OnlinePlayers.getAll())
 			if (player.getName().toLowerCase().startsWith(partialName))
 				return player;
-		for (Player player : PlayerUtils.getOnlinePlayers())
+		for (Player player : OnlinePlayers.getAll())
 			if (Nickname.of(player).toLowerCase().startsWith((partialName)))
 				return player;
 
-		for (Player player : PlayerUtils.getOnlinePlayers())
+		for (Player player : OnlinePlayers.getAll())
 			if (player.getName().toLowerCase().contains((partialName)))
 				return player;
-		for (Player player : PlayerUtils.getOnlinePlayers())
+		for (Player player : OnlinePlayers.getAll())
 			if (Nickname.of(player).toLowerCase().contains((partialName)))
 				return player;
 
@@ -281,25 +318,25 @@ public class PlayerUtils {
 	}
 
 	public static MinMaxResult<Player> getNearestPlayer(Location location) {
-		return getMin(getOnlinePlayers(location.getWorld()), player -> player.getLocation().distance(location));
+		return getMin(OnlinePlayers.builder().world(location.getWorld()).get(), player -> player.getLocation().distance(location));
 	}
 
 	public static MinMaxResult<Player> getNearestVisiblePlayer(Location location, Integer radius) {
-		List<Player> players = getOnlinePlayers(location.getWorld()).stream()
+		List<Player> players = OnlinePlayers.builder().world(location.getWorld()).get().stream()
 			.filter(_player -> !GameMode.SPECTATOR.equals(_player.getGameMode()))
 			.filter(_player -> !isVanished(_player))
-			.collect(Collectors.toList());
+			.collect(toList());
 
 		if (radius > 0)
-			players = players.stream().filter(player -> player.getLocation().distance(location) <= radius).collect(Collectors.toList());
+			players = players.stream().filter(player -> player.getLocation().distance(location) <= radius).collect(toList());
 
 		return getMin(players, player -> player.getLocation().distance(location));
 	}
 
 	public static MinMaxResult<Player> getNearestPlayer(HasPlayer original) {
 		Player _original = original.getPlayer();
-		List<Player> players = getOnlinePlayers(_original.getWorld()).stream()
-			.filter(player -> !isSelf(_original, player)).collect(Collectors.toList());
+		List<Player> players = OnlinePlayers.builder().world(_original.getWorld()).get().stream()
+			.filter(player -> !isSelf(_original, player)).collect(toList());
 
 		return getMin(players, player -> player.getLocation().distance(_original.getLocation()));
 	}
@@ -677,7 +714,7 @@ public class PlayerUtils {
 	 * @return list of players
 	 */
 	public static @NonNull List<Player> getPlayers(List<? extends @NonNull HasPlayer> hasPlayers) {
-		return hasPlayers.stream().map(HasPlayer::getPlayer).collect(Collectors.toList());
+		return hasPlayers.stream().map(HasPlayer::getPlayer).collect(toList());
 	}
 
 	/**
@@ -686,7 +723,7 @@ public class PlayerUtils {
 	 * @return list of non-null players
 	 */
 	public static @NonNull List<@NonNull Player> getNonNullPlayers(List<? extends @NonNull OptionalPlayer> hasPlayers) {
-		return hasPlayers.stream().map(OptionalPlayer::getPlayer).filter(Objects::nonNull).collect(Collectors.toList());
+		return hasPlayers.stream().map(OptionalPlayer::getPlayer).filter(Objects::nonNull).collect(toList());
 	}
 
 	// https://wiki.vg/Protocol_version_numbers

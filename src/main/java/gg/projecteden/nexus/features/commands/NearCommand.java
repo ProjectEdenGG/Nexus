@@ -10,6 +10,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 
@@ -31,7 +32,7 @@ public class NearCommand extends CustomCommand {
 			error("This command cannot be used during Minigames");
 
 		UUID uuid = player.getUniqueId();
-		List<Player> nearby = PlayerUtils.getOnlinePlayers(player.getWorld()).stream()
+		List<Player> nearby = OnlinePlayers.builder().world(player.getWorld()).get().stream()
 				.filter(_player -> !uuid.equals(_player.getUniqueId())
 						 && getDistance(player, _player) <= Chat.getLocalRadius()
 						 && (!isPlayer() || PlayerUtils.canSee(player(), _player)))

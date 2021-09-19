@@ -12,6 +12,7 @@ import gg.projecteden.nexus.models.pugmas20.Pugmas20UserService;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.Countdown;
@@ -232,7 +233,7 @@ public class LightTheTree implements Listener {
 		Tasks.repeatAsync(TickTime.SECOND, TickTime.SECOND.x(2), () -> {
 			Pugmas20UserService service = new Pugmas20UserService();
 
-			for (Player player : PlayerUtils.getOnlinePlayers()) {
+			for (Player player : OnlinePlayers.getAll()) {
 				if (!isAtPugmas(player))
 					continue;
 

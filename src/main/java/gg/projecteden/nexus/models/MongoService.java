@@ -3,7 +3,7 @@ package gg.projecteden.nexus.models;
 import dev.morphia.mapping.MappingException;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.models.mail.Mailer;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.QueuedTask;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -91,7 +91,7 @@ public abstract class MongoService<T extends PlayerOwnedObject> extends gg.proje
 
 	public List<T> getOnline() {
 		List<T> online = new ArrayList<>();
-		for (Player player : PlayerUtils.getOnlinePlayers())
+		for (Player player : OnlinePlayers.getAll())
 			online.add(get(player));
 		return online;
 	}

@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.listeners;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import org.apache.commons.lang.math.NumberRange;
@@ -54,9 +55,8 @@ public class Sleep implements Listener {
 		world.setStorm(false);
 		world.setThundering(false);
 
-		int taskId = Tasks.repeat(0, 1, () ->
-			PlayerUtils.getOnlinePlayers(world).forEach(player ->
-				ActionBarUtils.sendActionBar(player, "The night was skipped because 50% of players slept")));
+		int taskId = Tasks.repeat(0, 1, () -> OnlinePlayers.builder().world(world).get().forEach(player ->
+			ActionBarUtils.sendActionBar(player, "The night was skipped because 50% of players slept")));
 		
 		int wait = 0;
 		while (true) {
@@ -114,7 +114,7 @@ public class Sleep implements Listener {
 	}
 
 	private static List<Player> getCanSleep(World world) {
-		return PlayerUtils.getOnlinePlayers(world).stream().filter(Sleep::canSleep).toList();
+		return OnlinePlayers.builder().world(world).get().stream().filter(Sleep::canSleep).toList();
 	}
 
 	private static List<Player> getSleeping(World world) {

@@ -7,7 +7,7 @@ import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.framework.interfaces.IsColoredAndNamed;
 import gg.projecteden.nexus.utils.CompletableFutures;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.utils.EnumUtils;
@@ -130,7 +130,7 @@ public enum Rank implements IsColoredAndNamed {
 	}
 
 	public List<Nerd> getOnlineNerds() {
-		return PlayerUtils.getOnlinePlayers().stream()
+		return OnlinePlayers.getAll().stream()
 				.filter(player -> Rank.of(player) == this)
 				.map(Nerd::of)
 				.sorted(Comparator.comparing(Nerd::getNickname))
@@ -151,7 +151,7 @@ public enum Rank implements IsColoredAndNamed {
 	}
 
 	public static List<Nerd> getOnlineStaff() {
-		return PlayerUtils.getOnlinePlayers().stream()
+		return OnlinePlayers.getAll().stream()
 				.filter(player -> Rank.of(player).isStaff() && Rank.of(player).isActive())
 				.map(Nerd::of)
 				.sorted(Comparator.comparing(Nerd::getNickname))
@@ -159,7 +159,7 @@ public enum Rank implements IsColoredAndNamed {
 	}
 
 	public static List<Nerd> getOnlineMods() {
-		return PlayerUtils.getOnlinePlayers().stream()
+		return OnlinePlayers.getAll().stream()
 				.filter(player -> Rank.of(player).isMod() && Rank.of(player).isActive())
 				.map(Nerd::of)
 				.sorted(Comparator.comparing(Nerd::getNickname))

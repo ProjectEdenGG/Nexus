@@ -7,6 +7,7 @@ import gg.projecteden.nexus.models.costume.Costume.CostumeType;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.RandomUtils;
@@ -94,7 +95,7 @@ public class StoreGalleryNPCs {
 	}
 
 	public static void updateSkins() {
-		List<String> modelNames = PlayerUtils.getOnlinePlayers().stream()
+		List<String> modelNames = OnlinePlayers.getAll().stream()
 			.filter(player -> !PlayerUtils.isVanished(player)).map(HumanEntity::getName)
 			.toList();
 

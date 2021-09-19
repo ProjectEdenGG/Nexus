@@ -30,6 +30,7 @@ import gg.projecteden.nexus.models.punishments.Punishments;
 import gg.projecteden.nexus.models.punishments.PunishmentsService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -228,7 +229,7 @@ public class Justice extends Feature implements Listener {
 			};
 
 			if (Rank.of(player).isMod())
-				for (Player onlinePlayer : PlayerUtils.getOnlinePlayers())
+				for (Player onlinePlayer : OnlinePlayers.getAll())
 					Punishments.of(onlinePlayer).getActiveWatchlist().ifPresent(watchlist ->
 							PlayerUtils.send(player, new JsonBuilder(PREFIX).next(notification.apply(watchlist))));
 

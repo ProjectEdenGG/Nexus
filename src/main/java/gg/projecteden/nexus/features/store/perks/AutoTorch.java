@@ -7,6 +7,7 @@ import gg.projecteden.nexus.models.autotorch.AutoTorchUser;
 import gg.projecteden.nexus.utils.CompletableTask;
 import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGroup;
@@ -30,7 +31,7 @@ public class AutoTorch extends Feature {
 	@Override
 	public void onStart() {
 		taskId = Tasks.repeatAsync(5, 5, () -> {
-			PlayerUtils.getOnlinePlayers().forEach(player -> {
+			OnlinePlayers.getAll().forEach(player -> {
 				GameModeWrapper gameMode = GameModeWrapper.of(player);
 				// basic checks to ensure player can use the command and is in survival + the survival world.
 				// also checks world guard to avoid spam in player's chat of "hey! you can't do that here"

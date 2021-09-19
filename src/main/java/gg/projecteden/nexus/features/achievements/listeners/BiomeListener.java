@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.achievements.listeners;
 
 import gg.projecteden.nexus.models.achievement.Achievement;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import org.bukkit.Location;
@@ -20,7 +20,7 @@ public class BiomeListener implements Listener {
 	}
 
 	public static void check() {
-		for (Player player : PlayerUtils.getOnlinePlayers()) {
+		for (Player player : OnlinePlayers.getAll()) {
 			checkBiome(player);
 			checkWorld(player);
 		}

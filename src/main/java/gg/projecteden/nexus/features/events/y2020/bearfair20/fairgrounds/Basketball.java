@@ -12,7 +12,7 @@ import gg.projecteden.nexus.models.bearfair20.BearFair20User.BF20PointSource;
 import gg.projecteden.nexus.models.bearfair20.BearFair20UserService;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
@@ -166,7 +166,7 @@ public class Basketball implements Listener {
 		Tasks.repeat(0, 20 * 20, () -> {
 			cleanupBasketballs();
 
-			List<Player> players = PlayerUtils.getOnlinePlayers(world);
+			List<Player> players = OnlinePlayers.builder().world(world).get();
 
 			players.forEach(player -> {
 				if (worldguard().isInRegion(player.getLocation(), courtRg)) {

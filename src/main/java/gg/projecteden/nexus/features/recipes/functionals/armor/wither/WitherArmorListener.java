@@ -6,7 +6,7 @@ import gg.projecteden.nexus.features.commands.SpeedCommand;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
@@ -35,7 +35,7 @@ import java.util.Arrays;
 public class WitherArmorListener implements Listener {
 
 	public WitherArmorListener() {
-		for (Player player : PlayerUtils.getOnlinePlayers()) {
+		for (Player player : OnlinePlayers.getAll()) {
 			if (hasFullSet(player)) {
 				player.setAllowFlight(true);
 			}

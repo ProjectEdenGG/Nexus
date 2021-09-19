@@ -15,6 +15,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
@@ -270,7 +271,7 @@ public class PugmasIsland implements Listener, BearFairIsland {
 	}
 
 	private void effectTasks() {
-		Tasks.repeat(0, TickTime.SECOND.x(3), () -> PlayerUtils.getOnlinePlayers().stream()
+		Tasks.repeat(0, TickTime.SECOND.x(3), () -> OnlinePlayers.getAll().stream()
 				.filter(player -> worldguard().getRegionsLikeAt(getRegion(), player.getLocation()).size() > 0)
 				.forEach(player -> {
 					BearFair20UserService service = new BearFair20UserService();

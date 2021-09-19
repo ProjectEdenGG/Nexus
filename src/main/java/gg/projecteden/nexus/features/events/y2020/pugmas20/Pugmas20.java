@@ -18,6 +18,7 @@ import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -295,7 +296,7 @@ public class Pugmas20 implements Listener {
 					.viewers(Collections.singletonList(player))
 					.onComplete(() -> {
 						fallingBlock.remove();
-						for (Player _player : PlayerUtils.getOnlinePlayers(blockWorld))
+						for (Player _player : OnlinePlayers.builder().world(blockWorld).get())
 							_player.sendBlockChange(chestLoc, chest.getBlockData());
 					})
 					.start();

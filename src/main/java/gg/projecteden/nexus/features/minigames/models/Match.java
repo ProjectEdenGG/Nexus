@@ -25,7 +25,7 @@ import gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreb
 import gg.projecteden.nexus.features.minigames.modifiers.NoModifier;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.BossBarBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.Countdown.CountdownBuilder;
@@ -364,7 +364,7 @@ public class Match implements ForwardingAudience {
 			AtomicInteger taskId = new AtomicInteger(-1);
 			taskId.set(tasks.wait(1, () -> {
 				List<Player> teamMembers = team.getMinigamers(this).stream().map(Minigamer::getPlayer).collect(Collectors.toList());
-				List<Player> otherPlayers = new ArrayList<>(PlayerUtils.getOnlinePlayers());
+				List<Player> otherPlayers = new ArrayList<>(OnlinePlayers.getAll());
 				otherPlayers.removeAll(teamMembers);
 				GlowAPI.setGlowing(teamMembers, team.getColorType().getGlowColor(), teamMembers);
 				GlowAPI.setGlowing(otherPlayers, GlowAPI.Color.NONE, teamMembers);

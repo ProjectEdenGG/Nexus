@@ -5,7 +5,7 @@ import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.afk.AFKUser;
 import gg.projecteden.nexus.models.afk.AFKUserService;
 import gg.projecteden.nexus.models.nerd.Rank;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -27,7 +27,7 @@ public class AFK extends Feature {
 	@Override
 	public void onStart() {
 		Tasks.repeat(TickTime.SECOND.x(5), TickTime.SECOND.x(3), () -> {
-			List<Player> onlinePlayers = Collections.unmodifiableList(PlayerUtils.getOnlinePlayers());
+			List<Player> onlinePlayers = Collections.unmodifiableList(OnlinePlayers.getAll());
 			afkCheck(onlinePlayers);
 			limboCheck(onlinePlayers);
 		});
@@ -88,7 +88,7 @@ public class AFK extends Feature {
 	@Override
 	public void onStop() {
 		final AFKUserService service = new AFKUserService();
-		for (Player player : PlayerUtils.getOnlinePlayers())
+		for (Player player : OnlinePlayers.getAll())
 			service.saveSync(service.get(player));
 	}
 
@@ -112,7 +112,7 @@ public class AFK extends Feature {
 	}
 
 	public static int getActivePlayers() {
-		return (int) PlayerUtils.getOnlinePlayers().stream().filter(player -> !get(player).isAfk()).count();
+		return (int) OnlinePlayers.getAll().stream().filter(player -> !get(player).isAfk()).count();
 	}
 
 	public static int getActiveStaff() {

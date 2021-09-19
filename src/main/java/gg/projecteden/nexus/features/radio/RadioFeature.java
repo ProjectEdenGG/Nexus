@@ -16,7 +16,7 @@ import gg.projecteden.nexus.models.radio.RadioConfigService;
 import gg.projecteden.nexus.models.radio.RadioUser;
 import gg.projecteden.nexus.models.radio.RadioUserService;
 import gg.projecteden.nexus.utils.IOUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -66,7 +66,7 @@ public class RadioFeature extends Feature {
 			setupRadios();
 
 			// Rejoin radios
-			for (Player player : PlayerUtils.getOnlinePlayers()) {
+			for (Player player : OnlinePlayers.getAll()) {
 				RadioUser user = userService.get(player);
 				if (user.getLastServerRadio() != null)
 					RadioUtils.addPlayer(player, user.getLastServerRadio());
@@ -96,7 +96,7 @@ public class RadioFeature extends Feature {
 					if (!(radio.getSongPlayer() instanceof PositionSongPlayer))
 						continue;
 
-					for (Player player : PlayerUtils.getOnlinePlayers()) {
+					for (Player player : OnlinePlayers.getAll()) {
 						RadioUser user = service.get(player);
 
 						if (user.isMute()) continue;

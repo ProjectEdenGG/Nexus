@@ -16,7 +16,7 @@ import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Timer;
@@ -71,7 +71,7 @@ public class Chat extends Feature {
 	private void updateChannels() {
 		Tasks.async(() -> {
 			final ChatterService service = new ChatterService();
-			PlayerUtils.getOnlinePlayers().stream()
+			OnlinePlayers.getAll().stream()
 				.map(service::get)
 				.forEach(Chatter::updateChannels);
 		});
@@ -250,7 +250,7 @@ public class Chat extends Feature {
 				void execute(Broadcast broadcast) {
 					final ComponentLike component = broadcast.getMessage(this, null);
 					Bukkit.getConsoleSender().sendMessage(AdventureUtils.stripColor(component));
-					List<Player> players = PlayerUtils.getOnlinePlayers();
+					List<Player> players = OnlinePlayers.getAll();
 
 					if (broadcast.channel != null && broadcast.sender != Identity.nil()) {
 						final Chatter sender = new ChatterService().get(broadcast.sender.uuid());

@@ -11,8 +11,8 @@ import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -44,7 +44,7 @@ public class WelcomeCommand extends CustomCommand {
 
 	static {
 		Tasks.repeat(TickTime.MINUTE, TickTime.MINUTE, () -> {
-			if (PlayerUtils.getOnlinePlayers().stream().filter(player ->
+			if (OnlinePlayers.getAll().stream().filter(player ->
 					Rank.of(player).isMod() &&
 					Dev.KODA.isNot(player) &&
 					AFK.get(player).isNotAfk()

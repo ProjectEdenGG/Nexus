@@ -17,7 +17,7 @@ import gg.projecteden.nexus.models.scoreboard.ScoreboardService;
 import gg.projecteden.nexus.models.scoreboard.ScoreboardUser;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Name;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.OfflinePlayer;
@@ -36,7 +36,7 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 	private ScoreboardUser user;
 
 	static {
-		PlayerUtils.getOnlinePlayers().forEach(player -> {
+		OnlinePlayers.getAll().forEach(player -> {
 			ScoreboardUser user = new ScoreboardService().get(player);
 			if (user.isActive())
 				user.on();
@@ -115,7 +115,7 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 	@Permission("group.staff")
 	@Path("list")
 	void list() {
-		String collect = PlayerUtils.getOnlinePlayers().stream()
+		String collect = OnlinePlayers.getAll().stream()
 				.map(player -> new ScoreboardService().get(player))
 				.filter(ScoreboardUser::isActive)
 				.map(Name::of)

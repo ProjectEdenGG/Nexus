@@ -49,6 +49,7 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LocationUtils.RelativeLocation;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -134,7 +135,7 @@ public class MinigamesCommand extends CustomCommand {
 		if (Nexus.getEnv() == Env.PROD)
 			error("Cannot use this command on production server");
 
-		for (Player player : PlayerUtils.getOnlinePlayers())
+		for (Player player : OnlinePlayers.getAll())
 			PlayerManager.get(player).join(arena);
 	}
 
@@ -508,7 +509,7 @@ public class MinigamesCommand extends CustomCommand {
 	@Path("inviteAll")
 	void inviteAll() {
 		updateInvite();
-		sendInvite(PlayerUtils.getOnlinePlayers());
+		sendInvite(OnlinePlayers.getAll());
 	}
 
 	@Path("accept")

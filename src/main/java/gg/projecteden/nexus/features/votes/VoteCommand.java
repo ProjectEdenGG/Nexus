@@ -16,7 +16,7 @@ import gg.projecteden.nexus.models.voter.Voter;
 import gg.projecteden.nexus.models.voter.Voter.Vote;
 import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.utils.TimeUtils;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import gg.projecteden.utils.Utils;
@@ -113,7 +113,7 @@ public class VoteCommand extends CustomCommand {
 	@Path("onlineCounts")
 	void onlineCounts() {
 		Map<Integer, List<Player>> activeVotes = new HashMap<>();
-		for (Player player : PlayerUtils.getOnlinePlayers()) {
+		for (Player player : OnlinePlayers.getAll()) {
 			Voter voter = service.get(player);
 			int count = voter.getActiveVotes().size();
 

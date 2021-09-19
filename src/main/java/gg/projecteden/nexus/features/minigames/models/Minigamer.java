@@ -18,7 +18,7 @@ import gg.projecteden.nexus.framework.interfaces.IsColoredAndNicknamed;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.Name;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.Utils;
@@ -447,12 +447,12 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 
 	private void hideAll() {
 		if (respawning)
-			PlayerUtils.getOnlinePlayers().forEach(_player -> {
+			OnlinePlayers.getAll().forEach(_player -> {
 				hidePlayer(_player).from(this);
 				hidePlayer(this).from(_player);
 			});
 		else if (!isAlive)
-			PlayerUtils.getOnlinePlayers().forEach(_player -> {
+			OnlinePlayers.getAll().forEach(_player -> {
 				showPlayer(_player).to(this);
 
 				Minigamer minigamer = PlayerManager.get(_player);
@@ -464,7 +464,7 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 	}
 
 	public void unhideAll() {
-		PlayerUtils.getOnlinePlayers().forEach(_player -> {
+		OnlinePlayers.getAll().forEach(_player -> {
 			showPlayer(getPlayer()).to(_player);
 			showPlayer(_player).to(getPlayer());
 		});

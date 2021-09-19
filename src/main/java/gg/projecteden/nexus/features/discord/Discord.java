@@ -8,6 +8,7 @@ import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.DiscordId;
@@ -216,7 +217,7 @@ public class Discord extends Feature {
 	}
 
 	private static String getBridgeTopic() {
-		List<Player> players = PlayerUtils.getOnlinePlayers().stream()
+		List<Player> players = OnlinePlayers.getAll().stream()
 				.filter(player -> !PlayerUtils.isVanished(player))
 				.sorted(Comparator.comparing(player -> Nickname.of(player).toLowerCase()))
 				.collect(Collectors.toList());
@@ -250,7 +251,7 @@ public class Discord extends Feature {
 	}
 
 	private static String getStaffBridgeTopic() {
-		List<Player> players = PlayerUtils.getOnlinePlayers().stream()
+		List<Player> players = OnlinePlayers.getAll().stream()
 				.filter(player -> Rank.of(player).isStaff())
 				.sorted(Comparator.comparing(Nickname::of))
 				.collect(Collectors.toList());

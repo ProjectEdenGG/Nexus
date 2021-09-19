@@ -17,6 +17,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.CitizensUtils.NPCFinder;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.utils.RegexUtils;
 import lombok.Data;
 import me.lexikiq.HasPlayer;
@@ -209,7 +210,7 @@ public final class WorldGuardUtils {
 	}
 
 	public @NotNull Collection<Player> getPlayersInRegion(@NotNull ProtectedRegion region) {
-		return PlayerUtils.getOnlinePlayers(world).stream().filter(player -> isInRegion(player.getLocation(), region) && !CitizensUtils.isNPC(player)).collect(Collectors.toList());
+		return OnlinePlayers.builder().world(world).get().stream().filter(player -> isInRegion(player.getLocation(), region) && !CitizensUtils.isNPC(player)).collect(Collectors.toList());
 	}
 
 	public @NotNull Collection<NPC> getNPCsInRegion(@NotNull String region) {

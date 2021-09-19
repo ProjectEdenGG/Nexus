@@ -7,7 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.PacketUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.EnumUtils;
 import gg.projecteden.utils.Env;
@@ -63,7 +63,7 @@ public class ItemFrameNameCommand extends CustomCommand {
 
 	static {
 		Tasks.repeat(TickTime.SECOND, TickTime.TICK.x(2), () -> {
-			for (Player player : PlayerUtils.getOnlinePlayers()) {
+			for (Player player : OnlinePlayers.getAll()) {
 				if (enabledList.contains(player))
 					itemFrameName(player);
 			}

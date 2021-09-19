@@ -7,6 +7,7 @@ import gg.projecteden.nexus.models.skullhunt.SkullHunter;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -100,7 +101,7 @@ public abstract class SkullHuntEvent implements Listener {
 					if (Utils.isNullOrEmpty(skullLocations))
 						return;
 
-					PlayerUtils.getOnlinePlayers().forEach(player -> {
+					OnlinePlayers.getAll().forEach(player -> {
 						if (!activeWorlds.contains(player.getWorld()))
 							return;
 

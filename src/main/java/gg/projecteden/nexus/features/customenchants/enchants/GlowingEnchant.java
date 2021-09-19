@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.customenchants.enchants;
 
 import gg.projecteden.nexus.features.customenchants.CustomEnchant;
 import gg.projecteden.nexus.utils.Enchant;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils;
 import org.bukkit.NamespacedKey;
@@ -20,7 +20,7 @@ public class GlowingEnchant extends CustomEnchant {
 
 	static {
 		Tasks.repeat(TimeUtils.TickTime.SECOND.x(5), TimeUtils.TickTime.SECOND.x(5), () -> {
-			for (Player player : PlayerUtils.getOnlinePlayers()) {
+			for (Player player : OnlinePlayers.getAll()) {
 				if (player.getInventory().getHelmet() != null) {
 					if (player.getInventory().getHelmet().getItemMeta().hasEnchant(Enchant.GLOWING)) {
 						player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, TimeUtils.TickTime.SECOND.x(30), 1, true, false));

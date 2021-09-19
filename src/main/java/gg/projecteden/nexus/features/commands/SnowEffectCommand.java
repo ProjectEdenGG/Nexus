@@ -6,7 +6,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.snoweffect.SnowEffect;
 import gg.projecteden.nexus.models.snoweffect.SnowEffectService;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardFlagUtils;
 import gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags;
@@ -40,7 +40,7 @@ public class SnowEffectCommand extends CustomCommand implements Listener {
 						.forEach(snowEffect -> playSnowEffect(snowEffect.getOnlinePlayer()));
 			});
 
-			PlayerUtils.getOnlinePlayers().stream()
+			OnlinePlayers.getAll().stream()
 					.filter(player -> WorldGuardFlagUtils.test(player, Flags.SNOW_EFFECT))
 					.forEach(SnowEffectCommand::playSnowEffect);
 		});

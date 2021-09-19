@@ -20,6 +20,7 @@ import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.minigamessetting.MinigamesConfigService;
 import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
@@ -111,7 +112,7 @@ public class Minigames extends Feature {
 	}
 
 	public static List<Player> getPlayers() {
-		return PlayerUtils.getOnlinePlayers().stream()
+		return OnlinePlayers.getAll().stream()
 			.filter(player -> isMinigameWorld(player.getWorld()))
 			.collect(Collectors.toList());
 	}

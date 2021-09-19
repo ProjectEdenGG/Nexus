@@ -17,6 +17,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -422,7 +423,7 @@ public class MinigameNightIsland implements Listener, BearFairIsland {
 	}
 
 	private void soundTasks() {
-		Tasks.repeat(0, TickTime.SECOND.x(5), () -> PlayerUtils.getOnlinePlayers().stream()
+		Tasks.repeat(0, TickTime.SECOND.x(5), () -> OnlinePlayers.getAll().stream()
 				.filter(player -> worldguard().getRegionsLikeAt(getRegion(), player.getLocation()).size() > 0)
 				.forEach(MinigameNightIsland::playArcadeEffects));
 	}

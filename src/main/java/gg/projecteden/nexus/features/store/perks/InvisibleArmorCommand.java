@@ -164,7 +164,7 @@ public class InvisibleArmorCommand extends CustomCommand {
 
 	private static void sendPackets() {
 		AtomicInteger wait = new AtomicInteger(0);
-		PlayerUtils.getOnlinePlayers().forEach(player -> Tasks.wait(wait.getAndIncrement(), () -> {
+		OnlinePlayers.getAll().forEach(player -> Tasks.wait(wait.getAndIncrement(), () -> {
 			InvisibleArmorService service = new InvisibleArmorService();
 			InvisibleArmor invisibleArmor = service.get(player);
 

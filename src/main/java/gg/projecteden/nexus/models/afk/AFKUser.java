@@ -17,6 +17,7 @@ import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -246,7 +247,7 @@ public class AFKUser implements PlayerOwnedObject {
 			return;
 
 		Component broadcast = new JsonBuilder("&7* &e" + getNickname() + " &7is " + (afk ? "now" : "no longer") + " AFK").build();
-		PlayerUtils.getOnlinePlayers().forEach(_player -> {
+		OnlinePlayers.getAll().forEach(_player -> {
 			final Player player = getPlayer();
 			if (!PlayerUtils.canSee(_player, player))
 				return;

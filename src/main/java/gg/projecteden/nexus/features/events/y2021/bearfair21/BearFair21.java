@@ -17,6 +17,7 @@ import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.godmode.GodmodeService;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Timer;
 import gg.projecteden.nexus.utils.WorldEditUtils;
@@ -213,7 +214,7 @@ public class BearFair21 implements Listener {
 	}
 
 	public static Set<Player> getPlayers() {
-		return new HashSet<>(PlayerUtils.getOnlinePlayers(getWorld()));
+		return new HashSet<>(OnlinePlayers.builder().world(getWorld()).get());
 	}
 
 	// point stuff

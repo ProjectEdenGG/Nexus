@@ -22,6 +22,7 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -126,7 +127,7 @@ public class HoursCommand extends CustomCommand {
 
 	static {
 		Tasks.repeatAsync(10, TickTime.SECOND.x(INTERVAL), () -> {
-			for (Player player : PlayerUtils.getOnlinePlayers()) {
+			for (Player player : OnlinePlayers.getAll()) {
 				try {
 					if (AFK.get(player).isAfk()) continue;
 

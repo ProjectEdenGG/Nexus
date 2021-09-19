@@ -8,6 +8,7 @@ import gg.projecteden.nexus.models.chat.PublicChannel;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.dv8tion.jda.api.entities.Member;
@@ -74,7 +75,7 @@ public class DiscordChatEvent extends ChatEvent {
 
 	@Override
 	public Set<Chatter> getRecipients() {
-		return PlayerUtils.getOnlinePlayers().stream()
+		return OnlinePlayers.getAll().stream()
 						.filter(player -> player.hasPermission(permission))
 						.map(player -> new ChatterService().get(player))
 						.collect(Collectors.toSet());

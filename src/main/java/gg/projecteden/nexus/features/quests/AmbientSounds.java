@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.quests;
 
 import gg.projecteden.nexus.framework.features.Feature;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.SoundUtils;
@@ -46,7 +46,7 @@ public class AmbientSounds extends Feature {
 
 		// Looping Sound Management
 		Tasks.repeat(startDelay, TickTime.SECOND.x(1), () -> {
-			for (Player player : PlayerUtils.getOnlinePlayers()) {
+			for (Player player : OnlinePlayers.getAll()) {
 
 				boolean inArea;
 				boolean onList;

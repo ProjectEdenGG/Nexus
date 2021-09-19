@@ -5,7 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.statusbar.StatusBar;
 import gg.projecteden.nexus.models.statusbar.StatusBarService;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.event.EventHandler;
@@ -51,7 +51,7 @@ public class StatusBarCommand extends CustomCommand implements Listener {
 
 	static {
 		StatusBarService service = new StatusBarService();
-		PlayerUtils.getOnlinePlayers().forEach(player -> {
+		OnlinePlayers.getAll().forEach(player -> {
 			StatusBar compass = service.get(player);
 			compass.start();
 		});
