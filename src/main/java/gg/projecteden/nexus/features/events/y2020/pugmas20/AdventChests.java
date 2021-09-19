@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.events.y2020.pugmas20;
 
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.models.AdventChest;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.models.AdventChest.District;
@@ -64,7 +63,7 @@ public class AdventChests implements Listener {
 	private static final String alreadyFound = PREFIX + "Already opened this chest!";
 
 	public AdventChests() {
-		Nexus.registerListener(this);
+//		Nexus.registerListener(this);
 
 		AdventMenu.origin.getRelative(0, 0, 1).getDrops().stream()
 				.findFirst().ifPresent(skull -> adventLootHead = new ItemBuilder(skull));

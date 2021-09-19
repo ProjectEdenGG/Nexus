@@ -4,7 +4,6 @@ import com.destroystokyo.paper.ParticleBuilder;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.models.AdventChest;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.models.Merchants;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.models.QuestNPC;
@@ -87,8 +86,6 @@ public class Pugmas20 implements Listener {
 	public Pugmas20() {
 		Nexus.registerListener(this);
 
-		AdventMenu.loadHeads();
-		new AdventChests();
 		new Quests();
 		new Train();
 //		new Minecarts();
