@@ -44,7 +44,8 @@ public class InvisibleArmorCommand extends CustomCommand implements Listener {
 
 	public InvisibleArmorCommand(@NonNull CommandEvent event) {
 		super(event);
-		invisibleArmor = new InvisibleArmorService().get(event.getPlayer());
+		if (isPlayerCommandEvent())
+			invisibleArmor = service.get(event.getPlayer());
 	}
 
 	@Path("reset")
@@ -87,7 +88,10 @@ public class InvisibleArmorCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onPlayerDamage(EntityDamageEvent event) {
-		Tasks.wait(1, InvisibleArmorCommand::sendPackets);
+		if (!(event.getEntity() instanceof Player player))
+			return;
+
+		Tasks.wait(1, new InvisibleArmorService().get(player)::sendResetPackets);
 	}
 
 	static {
