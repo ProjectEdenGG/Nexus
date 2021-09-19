@@ -7,6 +7,7 @@ import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
+import gg.projecteden.nexus.models.costume.CostumeUserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
@@ -126,6 +127,9 @@ public class InvisibleArmor implements PlayerOwnedObject {
 		final OnlinePlayers players = getPacketTargets();
 		if (!isHiddenFromSelf(slot))
 			players.exclude(player);
+
+		if (slot == EquipmentSlot.HEAD && new CostumeUserService().get(this).getActiveCostume() != null)
+			return;
 
 		PacketUtils.sendFakeItem(player, players.get(), new ItemStack(Material.AIR), slot);
 	}
