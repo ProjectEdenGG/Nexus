@@ -28,16 +28,19 @@ import org.bukkit.inventory.RecipeChoice.MaterialChoice;
 import org.bukkit.inventory.ShapedRecipe;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static gg.projecteden.utils.StringUtils.camelCase;
+import static java.util.stream.Collectors.toSet;
 
 public abstract class Windchimes extends FunctionalRecipe {
 
 	@Getter
 	@AllArgsConstructor
-	protected enum WindchimeType {
+	public enum WindchimeType {
 		IRON(Material.IRON_INGOT),
 		GOLD(Material.GOLD_INGOT),
 		COPPER(Material.COPPER_INGOT),
@@ -53,6 +56,12 @@ public abstract class Windchimes extends FunctionalRecipe {
 		;
 
 		private final Material ingot;
+
+		public static Set<Integer> ids() {
+			return Arrays.stream(WindchimeType.values())
+				.map(windchimeType -> windchimeType.ordinal() + 1)
+				.collect(toSet());
+		}
 	}
 
 	@Getter
