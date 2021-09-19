@@ -80,8 +80,8 @@ public enum Rarity implements ITag {
 		if (!ItemTagsUtils.isArmor(itemStack) && !ItemTagsUtils.isTool(itemStack))
 			return null;
 
-		if (ItemTagsUtils.isMythicMobsItem(itemStack))
-			return null;
+//		if (ItemTagsUtils.isMythicMobsItem(itemStack))
+//			return null;
 
 		RarityArgs args = new RarityArgs();
 		args.setCondition(condition);
@@ -94,7 +94,7 @@ public enum Rarity implements ITag {
 		args.setMaterialSum(getMaterialVal(args));
 		ItemTags.debug(debugger, "    &3Sum: &e" + number(args.getMaterialSum()));
 
-		if (itemStack.hasItemMeta() && itemStack.getItemMeta().hasEnchants()) {
+		if (itemStack.hasItemMeta()) {
 			ItemTags.debug(debugger, "  &3Vanilla Enchants:");
 			args.setVanillaEnchantsSum(getEnchantsVal(itemStack, args, debugger));
 			ItemTags.debug(debugger, "    &3Sum: &e" + number(args.getVanillaEnchantsSum()));

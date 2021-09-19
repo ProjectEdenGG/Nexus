@@ -53,17 +53,24 @@ public class ItemTagsUtils {
 	}
 
 	public static void updateItem(@NotNull ItemStack itemStack) {
-		Condition condition = Condition.of(itemStack);
-		Rarity rarity = Rarity.of(itemStack, condition);
-		if (condition == null && rarity == null)
+		updateItem(itemStack, null);
+	}
+
+	public static void updateItem(@NotNull ItemStack itemStack, Player debugger) {
+		ItemTags.debug(debugger, "");
+		Condition condition = Condition.of(itemStack, debugger);
+		Rarity rarity = Rarity.of(itemStack, condition, debugger);
+		if (condition == null && rarity == null) {
+			ItemTags.debug(debugger, "condition & rarity are null");
 			return;
+		}
 
 		List<String> origLore = itemStack.getLore();
 		final List<String> lore;
 		if (origLore == null)
 			lore = new ArrayList<>();
 		else
-			lore = origLore;
+			lore = new ArrayList<>(origLore);
 
 		// Clear Tags
 		clearTags(lore);
@@ -74,10 +81,13 @@ public class ItemTagsUtils {
 		// Add Tag: Rarity
 		addTag(lore, rarity);
 
-		// finalizeItem is not required here as we already know the tags are ordered correctly
-
-		if ((origLore == null || origLore.isEmpty()) && lore.isEmpty())
+		if ((origLore == null || origLore.isEmpty()) && lore.isEmpty()) {
+			ItemTags.debug(debugger, "lore: is empty or null");
 			return;
+		}
+
+		ItemTags.debug(debugger, "old lore: " + origLore);
+		ItemTags.debug(debugger, "new lore: " + lore);
 
 		boolean updated = false;
 		if (origLore != null) {
@@ -90,13 +100,15 @@ public class ItemTagsUtils {
 		} else
 			updated = true;
 
-		if (!updated)
+		if (!updated) {
+			ItemTags.debug(debugger, "not updating");
 			return;
+		}
 
 		itemStack.setLore(lore);
 	}
 
-	// Grabs all tags and reorders them in the correct order
+	// Grabs all tags and orders them
 	public static void finalizeItem(@NotNull List<String> lore) {
 		String conditionTag = null;
 		String rarityTag = null;

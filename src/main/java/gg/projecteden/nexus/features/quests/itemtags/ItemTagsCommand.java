@@ -1,11 +1,13 @@
 package gg.projecteden.nexus.features.quests.itemtags;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemUtils;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class ItemTagsCommand extends CustomCommand {
@@ -34,13 +36,14 @@ public class ItemTagsCommand extends CustomCommand {
 		ItemTagsUtils.debugItem(tool, player());
 	}
 
-	@Path("update")
+	@Path("update [debug]")
 	@Permission("group.admin")
 	@Description("Update item tags on held item")
-	void update() {
+	void update(@Arg("false") Boolean bool) {
 		ItemStack tool = getToolRequired();
 
-		ItemTagsUtils.updateItem(tool);
+		Player debugger = bool ? player() : null;
+		ItemTagsUtils.updateItem(tool, debugger);
 	}
 
 	@Path("updateInv")
