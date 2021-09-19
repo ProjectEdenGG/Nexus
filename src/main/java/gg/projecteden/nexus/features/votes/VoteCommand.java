@@ -27,6 +27,7 @@ import org.bukkit.entity.Player;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,7 @@ import java.util.stream.Collectors;
 import static gg.projecteden.nexus.features.votes.Votes.GOAL;
 import static gg.projecteden.nexus.utils.StringUtils.ProgressBarStyle.NONE;
 import static gg.projecteden.nexus.utils.StringUtils.progressBar;
+import static gg.projecteden.utils.TimeUtils.shortishDateTimeFormat;
 
 @Aliases("votes")
 public class VoteCommand extends CustomCommand {
@@ -91,6 +93,22 @@ public class VoteCommand extends CustomCommand {
 				send(json("&e" + site.name() + " &7- &3Click here to vote").url(site.getUrl(Nerd.of(player()).getName())));
 			}
 		}
+	}
+
+	@Path("history [player] [page]")
+	void history(@Arg(value = "self", permission = "group.staff") Voter voter, @Arg("1") int page) {
+		if (voter.getVotes().isEmpty())
+			error(voter.getNickname() + " has not voted");
+
+		send(PREFIX + (isSelf(voter) ? "Your" : voter.getNickname() + "'s") + " vote history");
+
+		voter.getVotes().sort(Comparator.comparing(Vote::getTimestamp).reversed());
+
+		final BiFunction<Vote, String, JsonBuilder> formatter = (vote, index) ->
+			json("&3" + index + "&7" + shortishDateTimeFormat(vote.getTimestamp()) + " - &e" + vote.getSite().name())
+				.hover("&3" + Timespan.of(vote.getTimestamp()).format() + " ago");
+
+		paginate(voter.getVotes(), formatter, "/vote history " + voter.getName(), page);
 	}
 
 	@Async
