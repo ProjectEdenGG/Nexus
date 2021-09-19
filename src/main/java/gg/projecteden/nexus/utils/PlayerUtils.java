@@ -177,8 +177,7 @@ public class PlayerUtils {
 		}
 
 		public OnlinePlayers excludeSelf() {
-			this.exclude.add(viewer);
-			return this;
+			return exclude(viewer);
 		}
 
 		public OnlinePlayers excludePlayers(List<HasUniqueId> players) {
@@ -208,7 +207,7 @@ public class PlayerUtils {
 				return Collections.emptyList();
 
 			Stream<Player> stream = uuids.stream()
-				.filter(uuid -> exclude != null && !exclude.contains(uuid))
+				.filter(uuid -> exclude == null || !exclude.contains(uuid))
 				.map(Bukkit::getOfflinePlayer)
 				.filter(OfflinePlayer::isOnline)
 				.map(OfflinePlayer::getPlayer)
