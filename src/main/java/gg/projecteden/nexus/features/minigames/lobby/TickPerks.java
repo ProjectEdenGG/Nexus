@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.minigames.lobby;
 
-import com.comphenix.protocol.wrappers.EnumWrappers;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
@@ -124,11 +123,11 @@ public class TickPerks implements Listener {
 					if (item == null)
 						item = new ItemStack(Material.AIR);
 
-					EnumWrappers.ItemSlot slot = switch (i) {
-						case 3 -> EnumWrappers.ItemSlot.HEAD;
-						case 2 -> EnumWrappers.ItemSlot.CHEST;
-						case 1 -> EnumWrappers.ItemSlot.LEGS;
-						case 0 -> EnumWrappers.ItemSlot.FEET;
+					EquipmentSlot slot = switch (i) {
+						case 3 -> EquipmentSlot.HEAD;
+						case 2 -> EquipmentSlot.CHEST;
+						case 1 -> EquipmentSlot.LEGS;
+						case 0 -> EquipmentSlot.FEET;
 						default -> throw new IllegalStateException("Unexpected value: " + i);
 					};
 					LoadoutPerk.sendPackets(player, player.getWorld().getPlayers(), item, slot);

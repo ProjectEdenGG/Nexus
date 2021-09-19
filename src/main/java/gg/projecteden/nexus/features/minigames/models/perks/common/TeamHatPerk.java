@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.features.minigames.models.perks.common;
 
-import com.comphenix.protocol.wrappers.EnumWrappers;
 import gg.projecteden.nexus.features.minigames.models.perks.PerkCategory;
 import gg.projecteden.nexus.utils.ColorType;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,12 +20,12 @@ public interface TeamHatPerk extends TeamLoadoutPerk, HatPerk {
 		return PerkCategory.TEAM_HAT;
 	}
 
-	default Map<ChatColor, Map<EnumWrappers.ItemSlot, ItemStack>> getColorLoadouts() {
-		Map<ChatColor, Map<EnumWrappers.ItemSlot, ItemStack>> loadout = new HashMap<>();
+	default Map<ChatColor, Map<EquipmentSlot, ItemStack>> getColorLoadouts() {
+		Map<ChatColor, Map<EquipmentSlot, ItemStack>> loadout = new HashMap<>();
 		Arrays.stream(ColorType.values()).forEach(colorType -> {
 			try {
 				loadout.put(colorType.getChatColor(), Map.of(
-					EnumWrappers.ItemSlot.HEAD, getColorItem(colorType)
+					EquipmentSlot.HEAD, getColorItem(colorType)
 				));
 			} catch (IllegalArgumentException ignored){}
 		});
@@ -62,7 +62,7 @@ public interface TeamHatPerk extends TeamLoadoutPerk, HatPerk {
 	}
 
 	@Override
-	default @NotNull Map<EnumWrappers.ItemSlot, ItemStack> getLoadout() {
+	default @NotNull Map<EquipmentSlot, ItemStack> getLoadout() {
 		return TeamLoadoutPerk.super.getLoadout();
 	}
 }
