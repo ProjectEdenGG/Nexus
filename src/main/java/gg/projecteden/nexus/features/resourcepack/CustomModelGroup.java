@@ -32,7 +32,7 @@ class CustomModelGroup {
 		}
 
 		public String getFolderPath() {
-			String path = model.replaceFirst("item", "");
+			String path = model.replaceFirst("projecteden", "");
 			List<String> folders = new ArrayList<>(Arrays.asList(path.split("/")));
 			folders.remove(folders.size() - 1); // remove file name
 			return String.join("/", folders);
@@ -44,7 +44,7 @@ class CustomModelGroup {
 
 		@SneakyThrows
 		public CustomModelMeta getMeta() {
-			String metaUri = ResourcePack.getSubdirectory() + model.replaceFirst("item", "") + ".meta";
+			String metaUri = ResourcePack.getSubdirectory() + model.replaceFirst("projecteden", "") + ".meta";
 			Path metaPath = ResourcePack.getZipFile().getPath(metaUri);
 			if (Files.exists(metaPath))
 				return new Gson().fromJson(String.join("", Files.readAllLines(metaPath)), CustomModelMeta.class);
@@ -52,8 +52,10 @@ class CustomModelGroup {
 		}
 	}
 
+	private static final String MODEL_REGEX = ".*" + ResourcePack.getSubdirectory() + "/" + ResourcePack.getFileRegex() + "\\.json";
+
 	private static void addCustomModel(Path path) {
-		if (!path.toUri().toString().matches(".*" + ResourcePack.getSubdirectory() + "/" + ResourcePack.getFileRegex() + "\\.json"))
+		if (!path.toUri().toString().matches(MODEL_REGEX))
 			return;
 
 		CustomModelGroup group = read(path);
