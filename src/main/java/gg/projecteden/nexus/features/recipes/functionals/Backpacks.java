@@ -114,7 +114,7 @@ public class Backpacks extends FunctionalRecipe {
 	}
 
 	public void openBackpack(Player player, ItemStack backpack) {
-		new SoundBuilder(Sound.BLOCK_CHEST_OPEN).location(player).volume(.3f).play();
+		new SoundBuilder(Sound.BLOCK_CHEST_OPEN).receiver(player).volume(.3f).play();
 		new BackpackMenu(player, backpack);
 	}
 
