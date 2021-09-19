@@ -105,7 +105,7 @@ public class VoteCommand extends CustomCommand {
 		voter.getVotes().sort(Comparator.comparing(Vote::getTimestamp).reversed());
 
 		final BiFunction<Vote, String, JsonBuilder> formatter = (vote, index) ->
-			json("&3" + index + "&7" + shortishDateTimeFormat(vote.getTimestamp()) + " - &e" + vote.getSite().name())
+			json("&3" + index + " &7" + shortishDateTimeFormat(vote.getTimestamp()) + " - &e" + vote.getSite().name())
 				.hover("&3" + Timespan.of(vote.getTimestamp()).format() + " ago");
 
 		paginate(voter.getVotes(), formatter, "/vote history " + voter.getName(), page);
