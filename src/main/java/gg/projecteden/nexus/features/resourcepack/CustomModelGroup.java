@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import gg.projecteden.nexus.features.resourcepack.CustomModel.CustomModelMeta;
 import gg.projecteden.nexus.utils.AudioUtils;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Utils;
 import lombok.Data;
 import lombok.SneakyThrows;
 import org.bukkit.Material;
@@ -14,9 +15,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import static gg.projecteden.nexus.utils.SoundBuilder.SOUND_DURATIONS;
 
 @Data
 class CustomModelGroup {
@@ -89,10 +90,13 @@ class CustomModelGroup {
 			for (Path root : ResourcePack.getZipFile().getRootDirectories()) {
 				Files.walk(root).forEach(path -> {
 					try {
-						if (path.toUri().toString().contains(ResourcePack.getSubdirectory()))
+						final String uri = path.toUri().toString();
+						if (uri.contains(ResourcePack.getSubdirectory()))
 							addCustomModel(path);
-						if (path.toUri().toString().contains(".ogg"))
-							addSoundFile(path);
+						if (uri.endsWith("minecraft/sounds.json"))
+							ResourcePack.setSoundsFile(Utils.getGson().fromJson("{\"sounds\":" + String.join("", Files.readAllLines(path)) + "}", SoundsFile.class));
+						if (uri.contains(".ogg"))
+							addAudioFile(path);
 					} catch (Exception ex) {
 						ex.printStackTrace();
 					}
@@ -103,13 +107,24 @@ class CustomModelGroup {
 		}
 	}
 
-	// milliseconds
-	private static final Map<String, Integer> soundDuration = new HashMap<>();
+	private static void addAudioFile(Path path) {
+		final String filePath = path.toUri().toString().split("sounds/", 2)[1].replace(".ogg", "");
+		ResourcePack.getSoundsFile().getSounds().forEach((sound, group) -> {
+			if (!sound.contains(":"))
+				sound = "minecraft:" + sound;
 
-	@SneakyThrows
-	private static void addSoundFile(Path path) {
-		final int duration = (int) AudioUtils.getVorbisDuration(Files.readAllBytes(path));
-		soundDuration.put(path.getFileName().toString().replace(".ogg", ""), duration);
+			for (String file : group.getSounds()) {
+				try {
+					if (!file.equals(filePath))
+						continue;
+
+					SOUND_DURATIONS.put(sound, (int) AudioUtils.getVorbisDuration(Files.readAllBytes(path)));
+					return;
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		});
 	}
 
 }

@@ -121,18 +121,20 @@ public class AmbienceConfig implements PlayerOwnedObject {
 		public enum AmbienceType {
 			METAL_WINDCHIMES(AmbienceLocationType.ITEM_FRAME, Material.AMETHYST_SHARD, WindchimeType.ids()) {
 				@Override
-				void play(Location location) {
+				public void play(Location location) {
 					new SoundBuilder("minecraft:custom.ambient.windchimes.metal_" + randomInt(1, 5))
 						.category(SoundCategory.AMBIENT)
 						.location(location)
 						.volume(1.5)
 						.pitch(RandomUtils.randomDouble(0.1, 2.0))
+						.singleton()
+						.cooldownContext(getShortLocationString(location))
 						.play();
 				}
 			},
 			BIRDHOUSE(AmbienceLocationType.ITEM_FRAME, Material.OAK_WOOD, BirdhouseType.ids()) {
 				@Override
-				void play(Location location) {
+				public void play(Location location) {
 					Tasks.wait(TickTime.SECOND.x(randomInt(0, 45)), () -> BirdSound.randomBirdhouse().play(location));
 				}
 			},
@@ -142,7 +144,7 @@ public class AmbienceConfig implements PlayerOwnedObject {
 			private final Material material;
 			private final Set<Integer> customModelDatas;
 
-			abstract void play(Location location);
+			abstract public void play(Location location);
 
 			public boolean equals(ItemStack itemStack) {
 				if (itemStack.getType() != material)

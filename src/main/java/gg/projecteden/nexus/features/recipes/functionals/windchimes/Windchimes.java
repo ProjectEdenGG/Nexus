@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.recipes.functionals.windchimes;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
+import gg.projecteden.nexus.models.ambience.AmbienceConfig.Ambience.AmbienceType;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -130,12 +131,11 @@ public abstract class Windchimes extends FunctionalRecipe {
 		return true;
 	}
 
-	private static class WindchimesListener implements Listener {
+	static {
+		Nexus.registerListener(new WindchimesListener());
+	}
 
-		static {
-			System.out.println("registering windchimes listener");
-			Nexus.registerListener(new WindchimesListener());
-		}
+	private static class WindchimesListener implements Listener {
 
 		@EventHandler
 		public void onClickWindchime(PlayerInteractEvent event) {
@@ -152,7 +152,7 @@ public abstract class Windchimes extends FunctionalRecipe {
 			if (!Nerd.of(player).getRank().isAdmin()) return;
 
 			event.setCancelled(true);
-			player.sendMessage("\nTODO: make windchime sound");
+			AmbienceType.METAL_WINDCHIMES.play(itemFrame.getLocation());
 		}
 
 		@EventHandler
@@ -169,7 +169,7 @@ public abstract class Windchimes extends FunctionalRecipe {
 			if (!Nerd.of(player).getRank().isAdmin()) return;
 
 			event.setCancelled(true);
-			player.sendMessage("\nTODO: make windchime sound");
+			AmbienceType.METAL_WINDCHIMES.play(itemFrame.getLocation());
 		}
 	}
 

@@ -3,16 +3,23 @@ package gg.projecteden.nexus.utils;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import me.lexikiq.HasPlayer;
+import me.lexikiq.HasUniqueId;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -24,6 +31,74 @@ public class SoundBuilder implements Cloneable {
 	private float volume = 1.0F;
 	private float pitch = 1.0F;
 	private int delay = 0;
+
+	private boolean singleton;
+	private String cooldownContext;
+	private LocalDateTime cooldownExpiration;
+
+	public static final List<SoundCooldown<?>> COOLDOWNS = new ArrayList<>();
+
+	// milliseconds
+	public static final Map<String, Integer> SOUND_DURATIONS = new HashMap<>();
+
+	@Data
+	public static abstract class SoundCooldown<T> {
+		private String sound;
+		private String context;
+		private LocalDateTime expiration;
+
+		public T sound(Sound sound) {
+			this.sound = sound.key().asString();
+			return (T) this;
+		}
+
+		public T sound(String sound) {
+			this.sound = sound;
+			return (T) this;
+		}
+
+		public T context(String context) {
+			this.context = context;
+			return (T) this;
+		}
+
+		public T expiration(LocalDateTime expiration) {
+			this.expiration = expiration;
+			return (T) this;
+		}
+
+		public boolean isExpired() {
+			return expiration.isBefore(LocalDateTime.now());
+		}
+
+		public void create() {
+			COOLDOWNS.add(this);
+		}
+
+	}
+
+	@Data
+	@ToString(callSuper = true)
+	public static class PlayerSoundCooldown extends SoundCooldown<PlayerSoundCooldown> {
+		private UUID uuid;
+
+		public PlayerSoundCooldown player(HasUniqueId player) {
+			this.uuid = player.getUniqueId();
+			return this;
+		}
+
+	}
+
+	@Data
+	@ToString(callSuper = true)
+	public static class LocationSoundCooldown extends SoundCooldown<LocationSoundCooldown> {
+		private Location location;
+
+		public LocationSoundCooldown location(Location location) {
+			this.location = location;
+			return this;
+		}
+	}
 
 	public SoundBuilder(Sound sound) {
 		this.sound = sound.key().asString();
@@ -97,24 +172,79 @@ public class SoundBuilder implements Cloneable {
 		return this;
 	}
 
+	public SoundBuilder singleton() {
+		return singleton(true);
+	}
+
+	public SoundBuilder singleton(boolean singleton) {
+		this.singleton = singleton;
+		return this;
+	}
+
+	public SoundBuilder cooldownContext(String context) {
+		this.cooldownContext = context;
+		return this;
+	}
+
+	public SoundBuilder cooldownExpiration(LocalDateTime expiration) {
+		this.cooldownExpiration = expiration;
+		return this;
+	}
+
 	public SoundBuilder clone() {
-		SoundBuilder soundBuilder = new SoundBuilder(this.sound);
-		soundBuilder.receivers(new ArrayList<>(this.receivers));
-		soundBuilder.location(this.location.clone());
-		soundBuilder.category(this.category);
-		soundBuilder.pitch(this.pitch);
-		soundBuilder.volume(this.volume);
-		soundBuilder.delay(this.delay);
-		return soundBuilder;
+		return new SoundBuilder(this.sound)
+			.receivers(new ArrayList<>(this.receivers))
+			.location(this.location.clone())
+			.category(this.category)
+			.pitch(this.pitch)
+			.volume(this.volume)
+			.delay(this.delay)
+			.cooldownContext(cooldownContext)
+			.cooldownExpiration(cooldownExpiration);
 	}
 
 	public void play() {
 		if (sound == null)
 			throw new InvalidInputException("SoundBuilder: Sound cannot be null!");
 
+		if (!sound.contains(":"))
+			sound = "minecraft:" + sound;
+
+		System.out.println(this);
+
 		if (Utils.isNullOrEmpty(receivers) && location != null)
 			// play sound in world
-			Tasks.wait(delay, () -> location.getWorld().playSound(location, sound, category, volume, pitch));
+			Tasks.wait(delay, () -> {
+				if (singleton) {
+					for (SoundCooldown<?> soundCooldown : cooldowns()) {
+						if (!(soundCooldown instanceof LocationSoundCooldown cooldown))
+							continue;
+
+						if (!cooldown.getLocation().toBlockLocation().equals(location))
+							continue;
+
+						if (cooldown.getContext() == null) {
+							if (cooldownContext != null)
+								continue;
+						} else
+						if (!cooldown.getContext().equals(cooldownContext))
+							continue;
+
+						return;
+					}
+
+					LocalDateTime expiration = expiration();
+					if (expiration != null)
+						new LocationSoundCooldown()
+							.sound(sound)
+							.location(location)
+							.context(cooldownContext)
+							.expiration(expiration)
+							.create();
+				}
+
+				location.getWorld().playSound(location, sound, category, volume, pitch);
+			});
 
 		else {
 			// Play sound to receivers
@@ -123,14 +253,53 @@ public class SoundBuilder implements Cloneable {
 					continue;
 
 				Tasks.wait(delay, () -> {
-					Location origin = location;
-					if (origin == null)
-						origin = receiver.getPlayer().getLocation();
+					if (singleton) {
+						for (SoundCooldown<?> soundCooldown : cooldowns()) {
+							if (!(soundCooldown instanceof PlayerSoundCooldown cooldown))
+								continue;
 
-					Location finalOrigin = origin;
-					receiver.getPlayer().playSound(finalOrigin, sound, category, volume, pitch);
+							if (!cooldown.getUuid().equals(receiver.getPlayer().getUniqueId()))
+								continue;
+
+							if (cooldown.getContext() == null) {
+								if (cooldownContext != null)
+									continue;
+							} else if (!cooldown.getContext().equals(cooldownContext))
+								continue;
+
+							return;
+						}
+
+						LocalDateTime expiration = expiration();
+						if (expiration != null)
+							new PlayerSoundCooldown()
+								.sound(sound)
+								.player(receiver.getPlayer())
+								.context(cooldownContext)
+								.expiration(expiration)
+								.create();
+					}
+
+					Location origin = location == null ? receiver.getPlayer().getLocation() : location;
+					receiver.getPlayer().playSound(origin, sound, category, volume, pitch);
 				});
 			}
 		}
 	}
+
+	private LocalDateTime expiration() {
+		if (cooldownExpiration != null)
+			return cooldownExpiration;
+
+		if (!SOUND_DURATIONS.containsKey(sound))
+			return null;
+
+		return LocalDateTime.now().plus((long) (SOUND_DURATIONS.get(sound) * pitch), ChronoUnit.MILLIS);
+	}
+
+	public static List<SoundCooldown<?>> cooldowns() {
+		COOLDOWNS.removeIf(SoundCooldown::isExpired);
+		return COOLDOWNS;
+	}
+
 }

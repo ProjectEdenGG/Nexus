@@ -23,6 +23,8 @@ import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.SoundBuilder.SoundCooldown;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.StringUtils.ProgressBarStyle;
 import gg.projecteden.nexus.utils.Tasks;
@@ -448,4 +450,9 @@ public class TestCommand extends CustomCommand implements Listener {
 		send("Biome Climate Type: " + BiomeClimateType.of(location()));
 	}
 
+	@Path("soundbuilder cooldowns")
+	void soundbuilder_cooldowns() {
+		for (SoundCooldown<?> cooldown : SoundBuilder.cooldowns())
+			send(cooldown.toString());
+	}
 }
