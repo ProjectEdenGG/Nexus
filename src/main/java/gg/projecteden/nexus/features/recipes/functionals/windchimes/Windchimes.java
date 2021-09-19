@@ -27,6 +27,7 @@ public abstract class Windchimes extends FunctionalRecipe {
 		IRON(Material.IRON_INGOT),
 		GOLD(Material.GOLD_INGOT),
 		COPPER(Material.COPPER_INGOT),
+		AMETHYST(Material.AMETHYST_SHARD),
 		;
 
 		private final Material ingot;

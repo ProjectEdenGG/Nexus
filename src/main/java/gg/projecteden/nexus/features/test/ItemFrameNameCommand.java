@@ -18,22 +18,14 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.minecraft.world.entity.decoration.EntityArmorStand;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
 
 @Environments(Env.TEST)
 @Permission("group.admin")
@@ -41,6 +33,10 @@ import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
 public class ItemFrameNameCommand extends CustomCommand {
 	private static final List<Player> enabledList = new ArrayList<>();
 	private static final Map<Player, ItemFrameName> playerMap = new HashMap<>();
+	private static final Map<BlockFace, Integer> offsets = new HashMap<>() {{
+		put(BlockFace.UP, 1);
+		put(BlockFace.DOWN, 1);
+	}};
 
 	public ItemFrameNameCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -71,44 +67,29 @@ public class ItemFrameNameCommand extends CustomCommand {
 	}
 
 	private static void itemFrameName(Player player) {
-		List<Block> blocks = player.getLineOfSight(Set.of(Material.BARRIER, Material.AIR), 10)
-			.stream()
-			.sorted(Comparator.comparing(block -> player.getLocation().distance(block.getLocation())))
-			.collect(Collectors.toList());
-		List<Block> underneath = blocks.stream().map(block -> block.getRelative(BlockFace.DOWN)).collect(Collectors.toList());
-		blocks.addAll(underneath);
-
+		ItemFrame itemFrame = PlayerUtils.getTargetItemFrame(player, 10, offsets);
 		ItemFrameName itemFrameName = playerMap.getOrDefault(player, new ItemFrameName());
 
-		for (Block block : blocks) {
-			Collection<ItemFrame> itemFrames = block.getLocation().toCenterLocation().getNearbyEntitiesByType(ItemFrame.class, 0.5);
-			if (itemFrames.isEmpty())
-				continue;
-
-			for (ItemFrame itemFrame : itemFrames) {
-				if (isNullOrAir(itemFrame.getItem()))
-					continue;
-
-				if (itemFrameName.getLocation() != null && itemFrameName.getLocation().equals(itemFrame.getLocation()))
-					return;
-
-				if (itemFrameName.getId() != null)
-					PacketUtils.entityDestroy(player, itemFrameName.getId());
-
-				String name = EnumUtils.random(ColorType.class).getChatColor() + "Item Name Here";
-				double height = RandomUtils.randomDouble(0.0, 0.6);
-				EntityArmorStand armorStand = PacketUtils.entityNameFake(player, itemFrame, height, name, 1);
-
-				itemFrameName.setId(armorStand.getId());
-				itemFrameName.setLocation(itemFrame.getLocation());
-
-				playerMap.put(player, itemFrameName);
-				return;
-			}
+		if (itemFrame == null) {
+			if (itemFrameName.getId() != null)
+				removeName(player);
+			return;
 		}
 
+		if (itemFrameName.getLocation() != null && itemFrameName.getLocation().equals(itemFrame.getLocation()))
+			return;
+
 		if (itemFrameName.getId() != null)
-			removeName(player);
+			PacketUtils.entityDestroy(player, itemFrameName.getId());
+
+		String name = EnumUtils.random(ColorType.class).getChatColor() + "Item Name Here";
+		double height = RandomUtils.randomDouble(0.0, 0.6);
+		EntityArmorStand armorStand = PacketUtils.entityNameFake(player, itemFrame, height, name, 1);
+
+		itemFrameName.setId(armorStand.getId());
+		itemFrameName.setLocation(itemFrame.getLocation());
+
+		playerMap.put(player, itemFrameName);
 	}
 
 	@Data

@@ -39,6 +39,7 @@ import org.bukkit.advancement.Advancement;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -53,6 +54,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -347,6 +349,47 @@ public class PlayerUtils {
 			.filter(player -> !isSelf(_original, player)).collect(toList());
 
 		return getMin(players, player -> player.getLocation().distance(_original.getLocation()));
+	}
+
+	public static ItemFrame getTargetItemFrame(Player player, int maxRadius, @Nullable Map<BlockFace, Integer> offsets) {
+		if (offsets != null) {
+			if (offsets.values().stream().filter(radius -> radius > 8).toList().size() > 0)
+				throw new InvalidInputException("max offset radius size is 8");
+			if (offsets.values().stream().filter(radius -> radius < 0).toList().size() > 0)
+				throw new InvalidInputException("offset radius cannot be negative");
+		}
+
+		final double searchRadius = 0.5;
+		List<Block> blocks = player.getLineOfSight(Set.of(Material.BARRIER, Material.AIR, Material.CAVE_AIR), maxRadius)
+			.stream()
+			.sorted(Comparator.comparing(block -> player.getLocation().distance(block.getLocation())))
+			.collect(Collectors.toList());
+
+		if (offsets != null && !offsets.isEmpty()) {
+			List<Block> offsetBlockList = new ArrayList<>();
+			for (Block block : blocks) {
+				for (BlockFace blockFace : offsets.keySet()) {
+					for (int i = 0; i < offsets.get(blockFace); i++)
+						offsetBlockList.add(block.getRelative(blockFace, i));
+				}
+			}
+			blocks.addAll(offsetBlockList);
+		}
+
+		for (Block block : blocks) {
+			Collection<ItemFrame> itemFrames = block.getLocation().toCenterLocation().getNearbyEntitiesByType(ItemFrame.class, searchRadius);
+			if (itemFrames.isEmpty())
+				continue;
+
+			for (ItemFrame itemFrame : itemFrames) {
+				if (isNullOrAir(itemFrame.getItem()))
+					continue;
+
+				return itemFrame;
+			}
+		}
+
+		return null;
 	}
 
 	public static void runCommand(CommandSender sender, String commandNoSlash) {
