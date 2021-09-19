@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.recipes.functionals.windchimes;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
+import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -112,6 +113,11 @@ public abstract class Windchimes extends FunctionalRecipe {
 	@Override
 	public MaterialChoice getMaterialChoice() {
 		return new RecipeChoice.MaterialChoice(MaterialTag.WOOD_BUTTONS);
+	}
+
+	@Override
+	public RecipeType getRecipeType() {
+		return RecipeType.DECORATION;
 	}
 
 	public static boolean isWindchime(ItemStack item) {

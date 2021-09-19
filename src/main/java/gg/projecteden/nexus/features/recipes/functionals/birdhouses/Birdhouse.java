@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.recipes.functionals.birdhouses;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
+import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -114,6 +115,11 @@ public abstract class Birdhouse extends FunctionalRecipe {
 	@Override
 	public MaterialChoice getMaterialChoice() {
 		return null;
+	}
+
+	@Override
+	public RecipeType getRecipeType() {
+		return RecipeType.DECORATION;
 	}
 
 }
