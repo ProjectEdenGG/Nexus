@@ -198,7 +198,7 @@ public class DailyRewardsFeature extends Feature {
 				/*  63 */ add(new Reward("40 Leather")								.item(LEATHER, 40));
 				/*  64 */ add(new Reward("40 Bread")								.item(BREAD, 40));
 				/*  65 */ add(new Reward("8 Golden Apples")							.item(GOLDEN_APPLE, 8));
-				/*  66 */ add(new Reward("Set of Chainmail Armour")					.item(MaterialTag.ARMOR_CHAINMAIL));
+				/*  66 */ add(new Reward("Set of Chainmail Armor")					.item(MaterialTag.ARMOR_CHAINMAIL));
 				/*  67 */ add(new Reward("64 Spectral Arrows")						.item(SPECTRAL_ARROW, 64));
 				/*  68 */ add(new Reward("Power 5 Book")							.item(new ItemBuilder(ENCHANTED_BOOK).enchant(ARROW_DAMAGE, 5)));
 				/*  69 */ add(new Reward("16 Name Tags")							.item(NAME_TAG, 16));
@@ -219,7 +219,7 @@ public class DailyRewardsFeature extends Feature {
 				/*  84 */ add(new Reward("Coupon for 2 McMMO levels")				.item(new ItemBuilder(PAPER).name("&eCoupon for 2 McMMO levels").lore("&3Daily Reward").build()));
 				/*  85 */ add(new Reward("2 Horse Spawn Eggs")						.item(HORSE_SPAWN_EGG, 2));
 				/*  86 */ add(new Reward("3 Enchanted Golden Apples")				.item(ENCHANTED_GOLDEN_APPLE, 3));
-				/*  87 */ add(new Reward("Iron, Gold, Diamond Horse Armour")		.item(IRON_HORSE_ARMOR).item(GOLDEN_HORSE_ARMOR).item(DIAMOND_HORSE_ARMOR));
+				/*  87 */ add(new Reward("Iron, Gold, Diamond Horse Armor")		.item(IRON_HORSE_ARMOR).item(GOLDEN_HORSE_ARMOR).item(DIAMOND_HORSE_ARMOR));
 				/*  88 */ add(new Reward("64 Golden Carrots")						.item(GOLDEN_CARROT, 64));
 				/*  89 */ add(new Reward("16 End Crystals")							.item(END_CRYSTAL, 16));
 				/*  90 */ add(new Reward("$15,000")									.money(15000));
@@ -347,7 +347,7 @@ public class DailyRewardsFeature extends Feature {
 				/*   6 */ add(new Reward("1 Blast Furnace")							.item(BLAST_FURNACE, 1));
 				/*   7 */ add(new Reward("1 Enchanting Table")						.item(ENCHANTING_TABLE, 1));
 				/*   8 */ add(new Reward("1 Ender Chest")							.item(ENDER_CHEST, 1));
-				/*   9 */ add(new Reward("8 Armour Stands")							.item(ARMOR_STAND, 8));
+				/*   9 */ add(new Reward("8 Armor Stands")							.item(ARMOR_STAND, 8));
 				/*  10 */ add(new Reward("1 Anvil")									.item(ANVIL, 1));
 				/*  11 */ add(new Reward("2 Workbenches")							.item(CRAFTING_TABLE, 2));
 				/*  12 */ add(new Reward("2 Chests")								.item(CHEST, 2));

@@ -167,6 +167,14 @@ public class PlayerUtils {
 			return exclude(players.stream().map(HasUniqueId::getUniqueId).toList());
 		}
 
+		public OnlinePlayers exclude(HasUniqueId player) {
+			return exclude(List.of(player.getUniqueId()));
+		}
+
+		public OnlinePlayers exclude(UUID uuid) {
+			return exclude(List.of(uuid));
+		}
+
 		public OnlinePlayers exclude(List<UUID> uuids) {
 			this.exclude.addAll(uuids);
 			return this;
