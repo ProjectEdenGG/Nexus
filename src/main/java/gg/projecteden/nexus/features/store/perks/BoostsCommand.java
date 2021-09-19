@@ -229,7 +229,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 				}
 
 
-			addPagination(player, contents, items);
+			paginator(player, contents, items);
 		}
 
 	}

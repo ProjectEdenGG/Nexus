@@ -76,6 +76,10 @@ public abstract class MenuUtils {
 		open(player.getPlayer());
 	}
 
+	public final void open(HasPlayer player, Pagination page) {
+		open(player.getPlayer(), page.getPage());
+	}
+
 	public final void open(HasPlayer player, int page) {
 		open(player.getPlayer(), page);
 	}
@@ -215,62 +219,119 @@ public abstract class MenuUtils {
 				contents.set(row, noSpace[i], items[i]);
 	}
 
-	protected void addPagination(Player player, InventoryContents contents, List<ClickableItem> items) {
-		int perPage = 36;
-		Pagination page = contents.pagination();
+	protected void paginator(Player player, InventoryContents contents, List<ClickableItem> items) {
+		paginator().player(player).contents(contents).items(items).build();
+	}
 
-		if (page.getPage() > items.size() / perPage)
-			page.page(items.size() / perPage);
-		int curPage = page.getPage() + 1;
+	public Paginator paginator() {
+		return new Paginator();
+	}
 
-		String[] lore = {"&f", "&7Right click to jump to a page"};
-		boolean hasResourcePack = ResourcePack.isEnabledFor(player);
+	public class Paginator {
+		private Player player;
+		private boolean hasResourcePack;
+		private InventoryContents contents;
+		private List<ClickableItem> items;
+		private int perPage = 36;
+		private SlotPos previousSlot;
+		private SlotPos nextSlot;
 
-		int prevPage = Math.max(curPage - 1, 1);
-		int nextPage = curPage + 1;
-
-		ItemBuilder prev = new ItemBuilder(Material.ARROW).name("&fPrevious Page").lore(lore);
-		ItemBuilder next = new ItemBuilder(Material.ARROW).name("&fNext Page").lore(lore);
-
-		if (hasResourcePack) {
-			prev.customModelData(4000 + prevPage);
-			next.customModelData(4000 + nextPage);
-		} else {
-			prev.amount(prevPage);
-			next.amount(nextPage);
+		public Paginator player(Player player) {
+			this.player = player;
+			this.hasResourcePack = ResourcePack.isEnabledFor(player);
+			return this;
 		}
 
-		addPagination(contents, items, perPage,
-				ClickableItem.from(prev.build(), e -> {
+		public Paginator hasResourcePack(boolean hasResourcePack) {
+			this.hasResourcePack = hasResourcePack;
+			return this;
+		}
+
+		public Paginator contents(InventoryContents contents) {
+			this.contents = contents;
+			return this;
+		}
+
+		public Paginator items(List<ClickableItem> items) {
+			this.items = items;
+			return this;
+		}
+
+		public Paginator perPage(int perPage) {
+			this.perPage = perPage;
+			return this;
+		}
+
+		public Paginator previousSlot(int row, int column) {
+			return previousSlot(SlotPos.of(row, column));
+		}
+
+		public Paginator previousSlot(SlotPos slot) {
+			this.previousSlot = slot;
+			return this;
+		}
+
+		public Paginator nextSlot(int row, int column) {
+			return nextSlot(SlotPos.of(row, column));
+		}
+
+		public Paginator nextSlot(SlotPos slot) {
+			this.nextSlot = slot;
+			return this;
+		}
+
+		public void build() {
+			if (previousSlot == null)
+				previousSlot = SlotPos.of(contents.inventory().getRows() - 1, 0);
+			if (nextSlot == null)
+				nextSlot = SlotPos.of(contents.inventory().getRows() - 1, 8);
+
+			Pagination page = contents.pagination();
+
+			if (page.getPage() > items.size() / perPage)
+				page.page(items.size() / perPage);
+			int currentPage = page.getPage() + 1;
+
+			int previousPage = Math.max(currentPage - 1, 1);
+			int nextPage = currentPage + 1;
+
+			String[] lore = {"&f", "&7Right click to jump to a page"};
+			ItemBuilder previous = new ItemBuilder(Material.ARROW).name("&fPrevious Page").lore(lore);
+			ItemBuilder next = new ItemBuilder(Material.ARROW).name("&fNext Page").lore(lore);
+
+			if (hasResourcePack) {
+				previous.customModelData(4000 + previousPage);
+				next.customModelData(4000 + nextPage);
+			} else {
+				previous.amount(previousPage);
+				next.amount(nextPage);
+			}
+
+			page.setItemsPerPage(perPage);
+			page.setItems(items.toArray(ClickableItem[]::new));
+			page.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 1, 0));
+			if (page.getPage() > items.size() / perPage)
+				page.page(items.size() / perPage);
+
+			if (!page.isFirst())
+				contents.set(previousSlot, ClickableItem.from(previous.build(), e -> {
 					if (isRightClick(e))
 						jumpToPage(player, page.getPage());
 					else
 						open(player, page.previous().getPage());
-				}),
-				ClickableItem.from(next.build(), e -> {
+				}));
+
+			if (!page.isLast())
+				contents.set(nextSlot, ClickableItem.from(next.build(), e -> {
 					if (isRightClick(e))
 						jumpToPage(player, page.getPage());
 					else
 						open(player, page.next().getPage());
 				}));
-	}
+		}
 
-	protected void addPagination(InventoryContents contents, List<ClickableItem> items, int perPage, ClickableItem previous, ClickableItem next) {
-		Pagination page = contents.pagination();
-		page.setItemsPerPage(perPage);
-		page.setItems(items.toArray(ClickableItem[]::new));
-		if (page.getPage() > items.size() / perPage)
-			page.page(items.size() / perPage);
-		page.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 1, 0));
-
-		if (!page.isFirst())
-			contents.set(contents.inventory().getRows() - 1, 0, previous);
-		if (!page.isLast())
-			contents.set(contents.inventory().getRows() - 1, 8, next);
-	}
-
-	private void jumpToPage(Player player, int currentPage) {
-		Nexus.getSignMenuFactory()
+		private void jumpToPage(Player player, int currentPage) {
+			Nexus.getSignMenuFactory()
 				.lines("", ARROWS, "Enter a", "page number")
 				.prefix(Shops.PREFIX)
 				.onError(() -> open(player, currentPage))
@@ -284,6 +345,7 @@ public abstract class MenuUtils {
 					} else
 						open(player, currentPage);
 				}).open(player);
+		}
 	}
 
 	public static void openAnvilMenu(Player player, String text, BiFunction<Player, String, AnvilGUI.Response> onComplete, Consumer<Player> onClose) {

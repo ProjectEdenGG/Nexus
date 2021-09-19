@@ -73,7 +73,7 @@ public class MobHeadUserMenu extends MenuUtils implements InventoryProvider {
 				addItem.accept(mobHeadType);
 		}
 
-		addPagination(player, contents, items);
+		paginator(player, contents, items);
 
 		formatKillsFilter(player, contents);
 		formatHeadsFilter(player, contents);

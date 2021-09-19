@@ -140,7 +140,7 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 			items.add(ClickableItem.from(item.build(), e -> HomesMenu.edit(home)));
 		});
 
-		addPagination(homeOwner.getOnlinePlayer(), contents, items);
+		paginator(homeOwner.getOnlinePlayer(), contents, items);
 	}
 
 }

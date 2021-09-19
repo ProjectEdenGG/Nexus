@@ -88,7 +88,7 @@ public class MaterialTagCommand extends CustomCommand {
 				items.add(ClickableItem.empty(item));
 			});
 
-			addPagination(player, contents, items);
+			paginator(player, contents, items);
 		}
 
 	}

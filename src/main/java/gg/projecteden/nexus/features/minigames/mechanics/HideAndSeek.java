@@ -367,7 +367,7 @@ public class HideAndSeek extends Infection {
 					PlayerUtils.send(player, new JsonBuilder("&3You have selected ").next(Component.translatable(material.getTranslationKey(), NamedTextColor.YELLOW)));
 				}));
 			});
-			addPagination(player, contents, clickableItems);
+			paginator(player, contents, clickableItems);
 		}
 	}
 }

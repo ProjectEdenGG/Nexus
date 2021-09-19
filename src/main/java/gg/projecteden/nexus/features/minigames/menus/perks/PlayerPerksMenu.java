@@ -61,7 +61,7 @@ public class PlayerPerksMenu extends CommonPerksMenu implements InventoryProvide
 
 			clickableItems.add(ClickableItem.from(item, e -> toggleBoolean(player, perkType, contents)));
 		});
-		addPagination(player, contents, clickableItems);
+		paginator(player, contents, clickableItems);
 	}
 
 	protected void toggleBoolean(Player player, PerkType perkType, InventoryContents contents) {

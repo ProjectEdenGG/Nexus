@@ -212,7 +212,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 					items.add(formatCostume(user, costume, contents));
 			}
 
-			addPagination(player, contents, items);
+			paginator(player, contents, items);
 		}
 
 		protected abstract CostumeMenu newMenu(CostumeMenu previousMenu, CustomModelFolder subfolder);

@@ -104,7 +104,7 @@ public class YourShopProvider extends ShopProvider {
 			}));
 		});
 
-		addPagination(player, contents, items);
+		paginator(player, contents, items);
 	}
 
 	public static class CollectItemsProvider extends ShopProvider implements TemporaryListener {

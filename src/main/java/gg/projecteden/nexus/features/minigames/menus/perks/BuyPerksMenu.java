@@ -71,7 +71,7 @@ public class BuyPerksMenu extends CommonPerksMenu implements InventoryProvider {
 			ItemStack item = getItem(perk, lore);
 			clickableItems.add(ClickableItem.from(item, e -> buyItem(player, perkType, contents)));
 		});
-		addPagination(player, contents, clickableItems);
+		paginator(player, contents, clickableItems);
 	}
 
 	protected void buyItem(Player player, PerkType perkType, InventoryContents contents) {

@@ -90,7 +90,7 @@ public class CustomModelMenu extends MenuUtils implements InventoryProvider {
 					PlayerUtils.giveItem(player, isShiftClick(e) ? model.getDisplayItem() : model.getItem())));
 		}
 
-		addPagination(player, contents, items);
+		paginator(player, contents, items);
 	}
 
 	static void load() {

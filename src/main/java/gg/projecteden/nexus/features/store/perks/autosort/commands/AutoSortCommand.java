@@ -107,7 +107,7 @@ public class AutoSortCommand extends CustomCommand implements Listener {
 				}));
 			}
 
-			addPagination(player, contents, items);
+			paginator(player, contents, items);
 		}
 
 	}

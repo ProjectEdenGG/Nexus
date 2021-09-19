@@ -193,7 +193,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 					items.add(ClickableItem.empty(item.build()));
 				}
 
-			addPagination(viewer, contents, items);
+			paginator(viewer, contents, items);
 		}
 
 	}

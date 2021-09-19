@@ -50,7 +50,7 @@ public abstract class EventStoreMenu extends MenuUtils implements InventoryProvi
 		ItemStack tokens = new ItemBuilder(Material.BOOK).name("Tokens").build();
 		contents.set(0, 8, ClickableItem.empty(tokens));
 
-		addPagination(player, contents, getItems(player));
+		paginator(player, contents, getItems(player));
 	}
 
 	protected void charge(Player player, int price) {

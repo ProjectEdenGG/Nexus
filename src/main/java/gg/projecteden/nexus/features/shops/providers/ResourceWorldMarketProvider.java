@@ -62,7 +62,7 @@ public class ResourceWorldMarketProvider extends ShopProvider {
 			}));
 		});
 
-		addPagination(player, contents, items);
+		paginator(player, contents, items);
 	}
 
 }

@@ -175,7 +175,7 @@ public class ItemInfoCommand extends CustomCommand {
 
 		@Override
 		public void init(Player player, InventoryContents contents) {
-			addPagination(player, contents, new ArrayList<>() {{
+			paginator(player, contents, new ArrayList<>() {{
 				for (Material material : Material.values())
 					if (!material.isLegacy() && material.isItem())
 						if (new ItemStack(material).getItemMeta() != null)
