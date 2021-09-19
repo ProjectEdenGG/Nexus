@@ -51,7 +51,7 @@ public class SocialMediaCommand extends CustomCommand {
 		if (user.getConnections().isEmpty())
 			error((isSelf(user) ? "You have" : user.getNickname() + " has") + " not linked any social media accounts");
 
-		final JsonBuilder page = new JsonBuilder("&3&lSocial Media").newline().newline();
+		final JsonBuilder page = new JsonBuilder("&3&lSocial Media").newline().newline().group();
 
 		for (SocialMediaSite site : SocialMediaSite.values()) {
 			final Connection connection = user.getConnection(site);
