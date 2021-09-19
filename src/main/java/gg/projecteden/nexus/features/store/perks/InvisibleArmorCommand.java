@@ -1,19 +1,10 @@
 package gg.projecteden.nexus.features.store.perks;
 
-import com.comphenix.protocol.PacketType.Play.Client;
-import com.comphenix.protocol.PacketType.Play.Server;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
-import gg.projecteden.annotations.Environments;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.MenuUtils;
-import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -22,47 +13,38 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.invisiblearmour.InvisibleArmor;
 import gg.projecteden.nexus.models.invisiblearmour.InvisibleArmorService;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.Env;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType.SlotType;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.inventory.ItemStack;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static gg.projecteden.nexus.features.store.perks.InvisibleArmorCommand.PERMISSION;
+import static gg.projecteden.nexus.models.invisiblearmour.InvisibleArmor.SLOTS;
 
 @NoArgsConstructor
 @Permission(PERMISSION)
 @Aliases({"ia", "invisarmor", "invisarmour", "invisiblearmor"})
-@Environments({Env.DEV, Env.TEST})
-public class InvisibleArmorCommand extends CustomCommand {
+public class InvisibleArmorCommand extends CustomCommand implements Listener {
 	public static final String PERMISSION = "invisiblearmor.use";
-	private static final List<ItemSlot> armourSlots = Arrays.asList(ItemSlot.HEAD, ItemSlot.CHEST, ItemSlot.LEGS, ItemSlot.FEET);
 	private final InvisibleArmorService service = new InvisibleArmorService();
 	private InvisibleArmor invisibleArmor;
 
 	public InvisibleArmorCommand(@NonNull CommandEvent event) {
 		super(event);
 		invisibleArmor = new InvisibleArmorService().get(event.getPlayer());
-	}
-
-	static {
-		Tasks.repeat(TickTime.SECOND, TickTime.SECOND.x(5), InvisibleArmorCommand::sendPackets);
 	}
 
 	@Path("reset")
@@ -82,11 +64,10 @@ public class InvisibleArmorCommand extends CustomCommand {
 		service.save(invisibleArmor);
 		sendPackets();
 
-		if (invisibleArmor.isEnabled()) {
-			send(PREFIX + "&cArmour hidden");
-		} else {
-			send(PREFIX + "&aArmour shown");
-		}
+		if (invisibleArmor.isEnabled())
+			send(PREFIX + "&cArmor hidden");
+		else
+			send(PREFIX + "&aArmor shown");
 	}
 
 	@Path("menu")
@@ -100,34 +81,8 @@ public class InvisibleArmorCommand extends CustomCommand {
 	}
 
 	@EventHandler
-	public void onWorldChange(PlayerChangedWorldEvent event) {
-		InvisibleArmor invisibleArmor = new InvisibleArmorService().get(event.getPlayer());
-		if (!invisibleArmor.isEnabled())
-			return;
-
-		sendPackets();
-	}
-
-	@EventHandler
 	public void onTeleport(PlayerTeleportEvent event) {
-		InvisibleArmor invisibleArmor = new InvisibleArmorService().get(event.getPlayer());
-		if (!invisibleArmor.isEnabled())
-			return;
-
-		sendPackets();
-	}
-
-	@EventHandler
-	public void onInventoryClick(InventoryClickEvent event) {
-		if (!(event.getWhoClicked() instanceof Player)) return;
-		InvisibleArmor invisibleArmor = new InvisibleArmorService().get(event.getWhoClicked());
-		if (!invisibleArmor.isEnabled())
-			return;
-
-		if (event.getSlotType() == SlotType.ARMOR) {
-			event.setCancelled(true);
-			sendPackets();
-		}
+		new InvisibleArmorService().get(event.getPlayer()).sendPackets();
 	}
 
 	@EventHandler
@@ -136,110 +91,66 @@ public class InvisibleArmorCommand extends CustomCommand {
 	}
 
 	static {
-		ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(Nexus.getInstance(), Server.ENTITY_EQUIPMENT) {
-			@Override
-			public void onPacketReceiving(PacketEvent event) {
-				InvisibleArmor invisibleArmor = new InvisibleArmorService().get(event.getPlayer());
-				if (!invisibleArmor.isEnabled())
-					return;
-
-				for (ItemSlot value : event.getPacket().getItemSlots().getValues())
-					if (armourSlots.contains(value)) {
-						event.setCancelled(true);
-						return;
-					}
-			}
-
-			// Not sure why this is needed, it kept erroring without it
-			@Override
-			public void onPacketSending(PacketEvent event) {}
-		});
-
-		ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(Nexus.getInstance(), Client.CLOSE_WINDOW) {
-			@Override
-			public void onPacketReceiving(PacketEvent event) {
-				Tasks.wait(1, InvisibleArmorCommand::sendPackets);
-			}
-		});
+		Tasks.repeat(TickTime.TICK, TickTime.TICK, InvisibleArmorCommand::sendPackets);
 	}
 
 	private static void sendPackets() {
-		AtomicInteger wait = new AtomicInteger(0);
-		OnlinePlayers.getAll().forEach(player -> Tasks.wait(wait.getAndIncrement(), () -> {
-			InvisibleArmorService service = new InvisibleArmorService();
-			InvisibleArmor invisibleArmor = service.get(player);
-
-			if (Minigames.isMinigameWorld(player.getWorld())) {
-				invisibleArmor.setEnabled(false);
-				service.save(invisibleArmor);
-				return;
-			}
-
-			armourSlots.forEach(slot -> sendPackets(invisibleArmor, slot));
-		}));
+		final InvisibleArmorService service = new InvisibleArmorService();
+		OnlinePlayers.getAll().forEach(player -> service.get(player).sendPackets());
 	}
 
-	private static void sendPackets(InvisibleArmor invisibleArmor, ItemSlot slot) {
-		Player player = PlayerUtils.getPlayer(invisibleArmor.getUuid()).getPlayer();
-		if (player == null)
-			return;
-
-		// TODO
+	@EventHandler
+	public void onInventoryClose(InventoryCloseEvent event) {
+		Tasks.wait(1, new InvisibleArmorService().get(event.getPlayer())::sendResetPackets);
 	}
 
+	@RequiredArgsConstructor
 	private class InvisibleArmorProvider extends MenuUtils implements InventoryProvider {
-		InvisibleArmorService service = new InvisibleArmorService();
-		InvisibleArmor invisibleArmor;
-
-		public InvisibleArmorProvider(InvisibleArmor invisibleArmor) {
-			this.invisibleArmor = invisibleArmor;
-		}
+		private final InvisibleArmorService service = new InvisibleArmorService();
+		private final InvisibleArmor user;
 
 		@Override
 		public void init(Player player, InventoryContents contents) {
 			addCloseItem(contents);
 
 			AtomicInteger row = new AtomicInteger(1);
-			armourSlots.forEach(slot -> {
-				if (!ItemUtils.isNullOrAir(invisibleArmor.getItem(slot))) {
-					contents.set(row.get(), 2, ClickableItem.empty(invisibleArmor.getItem(slot)));
+			SLOTS.forEach(slot -> {
+				ItemStack displayItem = user.getDisplayItem(slot);
+				contents.set(row.get(), 2, ClickableItem.empty(displayItem));
 
-					ItemBuilder item;
-					if (invisibleArmor.show(slot))
-						item = new ItemBuilder(Material.LIME_WOOL).name("&aShown").lore("&cClick to hide");
-					else
-						item = new ItemBuilder(Material.RED_WOOL).name("&cHidden").lore("&aClick to show");
+				final ItemBuilder other;
+				if (user.isHidden(slot))
+					other = new ItemBuilder(user.getHiddenIcon(slot)).name("&cHidden").lore("&aClick to show");
+				else
+					other = new ItemBuilder(user.getShownIcon(slot)).name("&aShown").lore("&cClick to hide");
 
-					String lore = "&eThis will allow you to use things like elytras and depth strider while still hiding your armour from other players";
-					ItemBuilder self;
-					if (invisibleArmor.showSelf(slot))
-						self = new ItemBuilder(Material.LIME_WOOL).name("&aShow-Self: Enabled").lore("&cClick to disable");
-					else
-						self = new ItemBuilder(Material.RED_WOOL).name("&cShow-Self: Disabled").lore("&aClick to enable");
+				String lore = "&eThis will allow you to use things like elytras and depth strider while still hiding your armor from other players";
+				final ItemBuilder self;
+				if (user.isHiddenFromSelf(slot))
+					self = new ItemBuilder(user.getHiddenIcon(slot)).name("&cSelf: Hidden").lore("&aClick to show", "", lore);
+				else
+					self = new ItemBuilder(user.getShownIcon(slot)).name("&aSelf: Shown").lore("&cClick to hide", "", lore);
 
-					contents.set(row.get(), 4, ClickableItem.from(item.build(), e -> {
-						invisibleArmor.toggle(slot);
-						service.save(invisibleArmor);
-						sendPackets(invisibleArmor, slot);
-						menu();
-					}));
+				contents.set(row.get(), 4, ClickableItem.from(other.build(), e -> {
+					user.toggleHide(slot);
+					service.save(user);
+					menu();
+				}));
 
-					contents.set(row.get(), 6, ClickableItem.from(self.lore("").lore(lore).build(), e -> {
-						invisibleArmor.toggleShowSelf(slot);
-						service.save(invisibleArmor);
-						sendPackets(invisibleArmor, slot);
-						menu();
-					}));
+				contents.set(row.get(), 6, ClickableItem.from(self.build(), e -> {
+					user.toggleHideSelf(slot);
+					service.save(user);
+					menu();
+				}));
 
-					row.getAndIncrement();
-				}
+				row.getAndIncrement();
 			});
 
 			ItemBuilder toggle = new ItemBuilder(Material.LEVER);
-			if (invisibleArmor.isEnabled())
-				toggle.name("&cArmour hidden").lore("&eClick to show armour");
+			if (user.isEnabled())
+				toggle.name("&cArmor hidden").lore("&eClick to show");
 			else
-				toggle.name("&aArmour shown").lore("&eClick to hide armour");
+				toggle.name("&aArmor shown").lore("&eClick to hide");
 			contents.set(4, 8, ClickableItem.from(toggle.build(), e -> {
 				run(null);
 				menu();

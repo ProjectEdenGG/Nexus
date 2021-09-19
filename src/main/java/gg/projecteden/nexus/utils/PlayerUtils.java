@@ -62,6 +62,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -130,6 +131,8 @@ public class PlayerUtils {
 	public static class OnlinePlayers {
 		private UUID viewer;
 		private World world;
+		private Location origin;
+		private Double radius;
 		private final List<UUID> include = new ArrayList<>();
 		private final List<UUID> exclude = new ArrayList<>();
 
@@ -157,6 +160,17 @@ public class PlayerUtils {
 
 		public OnlinePlayers world(World world) {
 			this.world = world;
+			return this;
+		}
+
+		public OnlinePlayers radius(double radius) {
+			this.radius = radius;
+			return this;
+		}
+
+		public OnlinePlayers radius(Location origin, double radius) {
+			this.origin = origin;
+			this.radius = radius;
 			return this;
 		}
 
@@ -194,12 +208,32 @@ public class PlayerUtils {
 				.filter(player -> !CitizensUtils.isNPC(player));
 
 			if (viewer != null)
-				stream = stream.filter(_player -> canSee(Bukkit.getPlayer(viewer), _player));
+				stream = viewerFilter.apply(stream);
 			if (world != null)
-				stream = stream.filter(_player -> _player.getWorld().equals(world));
+				stream = worldFilter.apply(stream);
+			if (radius != null)
+				stream = radiusFilter.apply(stream);
 
 			return stream.toList();
 		}
+
+		private final Function<Stream<Player>, Stream<Player>> viewerFilter = stream ->
+			stream.filter(_player -> canSee(Bukkit.getPlayer(viewer), _player));
+
+		private final Function<Stream<Player>, Stream<Player>> worldFilter = stream ->
+			stream.filter(_player -> _player.getWorld().equals(world));
+
+		private final Function<Stream<Player>, Stream<Player>> radiusFilter = stream -> {
+			if (viewer == null && origin == null)
+				return stream;
+
+			if (origin == null)
+				origin = Bukkit.getPlayer(viewer).getLocation();
+
+			stream = worldFilter.apply(stream);
+			stream = stream.filter(_player -> _player.getLocation().distance(origin) <= radius);
+			return stream;
+		};
 	}
 
 	public static boolean isVanished(OptionalPlayer player) {

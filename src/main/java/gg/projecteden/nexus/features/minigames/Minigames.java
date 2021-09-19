@@ -28,6 +28,7 @@ import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.Getter;
+import me.lexikiq.OptionalLocation;
 import me.lucko.helper.Services;
 import me.lucko.helper.scoreboard.PacketScoreboard;
 import me.lucko.helper.scoreboard.PacketScoreboardProvider;
@@ -108,7 +109,15 @@ public class Minigames extends Feature {
 	}
 
 	public static boolean isMinigameWorld(World world) {
-		return WorldGroup.of(world) == WorldGroup.MINIGAMES;
+		return isMinigameWorld(WorldGroup.of(world));
+	}
+
+	public static boolean isMinigameWorld(OptionalLocation location) {
+		return isMinigameWorld(WorldGroup.of(location));
+	}
+
+	public static boolean isMinigameWorld(WorldGroup worldGroup) {
+		return worldGroup == WorldGroup.MINIGAMES;
 	}
 
 	public static List<Player> getPlayers() {
