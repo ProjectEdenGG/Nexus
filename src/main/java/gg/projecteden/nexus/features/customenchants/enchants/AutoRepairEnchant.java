@@ -22,29 +22,31 @@ public class AutoRepairEnchant extends CustomEnchant {
 	static {
 		Tasks.repeat(TickTime.SECOND.x(3), TickTime.SECOND.x(1.5), () -> {
 			for (Player player : OnlinePlayers.getAll()) {
-				if (AFK.get(player).isAfk()) continue;
+				if (AFK.get(player).isAfk())
+					continue;
+
 				for (ItemStack item : getItems(player.getInventory())) {
 					ItemMeta meta = item.getItemMeta();
 					if (meta == null)
 						continue;
 
-					if (!(meta instanceof Damageable)) continue;
+					if (!(meta instanceof Damageable))
+						continue;
+
 					int damage = ((Damageable) meta).getDamage();
-					int level = getEnchLevel(item);
+					int level = item.getItemMeta().getEnchantLevel(Enchant.AUTOREPAIR);
 
 					if (level == 0)
 						continue;
 
-					if (((Damageable) meta).getDamage() == 0) continue;
+					if (((Damageable) meta).getDamage() == 0)
+						continue;
+
 					((Damageable) meta).setDamage(Math.max(0, damage - level));
 					item.setItemMeta(meta);
 				}
 			}
 		});
-	}
-
-	private static int getEnchLevel(ItemStack item) {
-		return item.getItemMeta().getEnchantLevel(Enchant.AUTOREPAIR);
 	}
 
 }

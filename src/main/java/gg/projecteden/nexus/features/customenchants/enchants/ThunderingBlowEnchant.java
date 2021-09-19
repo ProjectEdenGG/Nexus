@@ -25,16 +25,20 @@ public class ThunderingBlowEnchant extends CustomEnchant implements Listener {
 		Player player = null;
 		if (event.getDamager() instanceof Player)
 			player = (Player) event.getDamager();
+
 		if (event.getDamager() instanceof Arrow)
 			if (((Arrow) event.getDamager()).getShooter() instanceof Player)
 				player = (Player) ((Arrow) event.getDamager()).getShooter();
+
 		if (player == null)
 			return;
 		if (event.getCause() == EntityDamageEvent.DamageCause.THORNS)
 			return;
 		if (ItemUtils.isNullOrAir(player.getInventory().getItemInMainHand()))
 			return;
+
 		int level = getLevel(player.getInventory().getItemInMainHand());
+
 		while (level > 0) {
 			if (RandomUtils.chanceOf(20)) {
 				player.getWorld().strikeLightning(event.getEntity().getLocation());

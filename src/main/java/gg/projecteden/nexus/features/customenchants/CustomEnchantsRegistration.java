@@ -5,14 +5,13 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import lombok.SneakyThrows;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
 
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Set;
-
-import static gg.projecteden.nexus.utils.Utils.registerListeners;
 
 public class CustomEnchantsRegistration {
 
@@ -22,8 +21,6 @@ public class CustomEnchantsRegistration {
 
 			for (Class<? extends CustomEnchant> clazz : getClasses())
 				register(clazz);
-
-			registerListeners(getEnchantsPackage());
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -45,6 +42,10 @@ public class CustomEnchantsRegistration {
 		CustomEnchant enchant = clazz.getConstructor(NamespacedKey.class).newInstance(CustomEnchants.getKey(clazz));
 		Enchantment.registerEnchantment(enchant);
 		CustomEnchants.getEnchantsMap().put(clazz, enchant);
+
+		if (enchant instanceof Listener listener)
+			Nexus.registerListener(listener);
+
 		return enchant;
 	}
 
