@@ -51,8 +51,8 @@ public enum Condition implements ITag {
 		if (!ItemTagsUtils.isArmor(itemStack) && !ItemTagsUtils.isTool(itemStack))
 			return null;
 
-//		if (ItemTagsUtils.isMythicMobsItem(itemStack))
-//			return null;
+		if (ItemTagsUtils.isMythicMobsItem(itemStack))
+			return null;
 
 		ItemMeta meta = itemStack.getItemMeta();
 		if (meta instanceof Damageable damageable) {

@@ -80,8 +80,8 @@ public enum Rarity implements ITag {
 		if (!ItemTagsUtils.isArmor(itemStack) && !ItemTagsUtils.isTool(itemStack))
 			return null;
 
-//		if (ItemTagsUtils.isMythicMobsItem(itemStack))
-//			return null;
+		if (ItemTagsUtils.isMythicMobsItem(itemStack))
+			return null;
 
 		RarityArgs args = new RarityArgs();
 		args.setCondition(condition);
