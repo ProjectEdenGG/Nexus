@@ -56,9 +56,6 @@ public class ChatGamesCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onChat(PublicChatEvent event) {
-		if (event.getChatter().getPlayer() == null)
-			return;
-
 		final ChatGame game = ChatGamesConfig.getCurrentGame();
 		if (game == null || game.getAnswer() == null)
 			return;
