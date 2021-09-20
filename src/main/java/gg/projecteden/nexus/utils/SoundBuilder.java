@@ -41,8 +41,8 @@ public class SoundBuilder implements Cloneable {
 	private int delay = 0;
 
 	private boolean singleton;
-	private String cooldownContext;
-	private LocalDateTime cooldownExpiration;
+	private String context;
+	private LocalDateTime expiration;
 
 	public static final List<SoundCooldown<?>> COOLDOWNS = new ArrayList<>();
 
@@ -193,13 +193,19 @@ public class SoundBuilder implements Cloneable {
 		return this;
 	}
 
-	public SoundBuilder cooldownContext(String context) {
-		this.cooldownContext = context;
+	public SoundBuilder singleton(String context) {
+		this.singleton = true;
+		this.context = context;
 		return this;
 	}
 
-	public SoundBuilder cooldownExpiration(LocalDateTime expiration) {
-		this.cooldownExpiration = expiration;
+	public SoundBuilder context(String context) {
+		this.context = context;
+		return this;
+	}
+
+	public SoundBuilder expiration(LocalDateTime expiration) {
+		this.expiration = expiration;
 		return this;
 	}
 
@@ -212,8 +218,9 @@ public class SoundBuilder implements Cloneable {
 			.pitch(pitch)
 			.volume(volume)
 			.delay(delay)
-			.cooldownContext(cooldownContext)
-			.cooldownExpiration(cooldownExpiration);
+			.singleton(singleton)
+			.context(context)
+			.expiration(expiration);
 	}
 
 	public void play() {
@@ -232,7 +239,7 @@ public class SoundBuilder implements Cloneable {
 	private void world() {
 		Tasks.wait(delay, () -> {
 			if (singleton) {
-				for (LocationSoundCooldown cooldown : cooldowns(LocationSoundCooldown.class, cooldownContext)) {
+				for (LocationSoundCooldown cooldown : cooldowns(LocationSoundCooldown.class, context)) {
 					if (!cooldown.getLocation().toBlockLocation().equals(location.toBlockLocation()))
 						continue;
 
@@ -243,7 +250,7 @@ public class SoundBuilder implements Cloneable {
 				if (expiration != null)
 					new LocationSoundCooldown()
 						.location(location)
-						.context(cooldownContext)
+						.context(context)
 						.expiration(expiration)
 						.create();
 			}
@@ -272,7 +279,7 @@ public class SoundBuilder implements Cloneable {
 
 		Tasks.wait(delay, () -> {
 			if (singleton) {
-				for (PlayerSoundCooldown cooldown : cooldowns(PlayerSoundCooldown.class, cooldownContext)) {
+				for (PlayerSoundCooldown cooldown : cooldowns(PlayerSoundCooldown.class, context)) {
 					if (!cooldown.getUuid().equals(player.getUniqueId()))
 						continue;
 
@@ -283,7 +290,7 @@ public class SoundBuilder implements Cloneable {
 				if (expiration != null)
 					new PlayerSoundCooldown()
 						.player(player)
-						.context(cooldownContext)
+						.context(context)
 						.expiration(expiration)
 						.create();
 			}
@@ -297,8 +304,8 @@ public class SoundBuilder implements Cloneable {
 	}
 
 	private LocalDateTime expiration() {
-		if (cooldownExpiration != null)
-			return cooldownExpiration;
+		if (expiration != null)
+			return expiration;
 
 		if (!SOUND_DURATIONS.containsKey(sound))
 			return null;
