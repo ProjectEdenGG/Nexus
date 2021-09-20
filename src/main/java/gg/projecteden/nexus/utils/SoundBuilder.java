@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.M
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.utils.MathUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
