@@ -64,7 +64,9 @@ public class ChatGamesCommand extends CustomCommand implements Listener {
 			return;
 
 		if (event.getOriginalMessage().equalsIgnoreCase(game.getAnswer())) {
-			game.onAnswer(Nerd.of(event.getChatter()));
+			if (event.getChatter() != null)
+				game.onAnswer(Nerd.of(event.getChatter()));
+
 			event.setCancelled(true);
 		}
 	}
