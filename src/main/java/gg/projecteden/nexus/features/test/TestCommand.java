@@ -450,9 +450,9 @@ public class TestCommand extends CustomCommand implements Listener {
 		send("Biome Climate Type: " + BiomeClimateType.of(location()));
 	}
 
-	@Path("soundbuilder cooldowns")
-	void soundbuilder_cooldowns() {
-		for (SoundCooldown<?> cooldown : SoundBuilder.cooldowns(SoundCooldown.class))
+	@Path("soundbuilder cooldowns [context]")
+	void soundbuilder_cooldowns(String context) {
+		for (SoundCooldown<?> cooldown : SoundBuilder.cooldowns(SoundCooldown.class, context))
 			send(cooldown.toString());
 	}
 }

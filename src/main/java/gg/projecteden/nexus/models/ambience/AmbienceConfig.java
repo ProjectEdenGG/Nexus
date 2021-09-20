@@ -128,7 +128,7 @@ public class AmbienceConfig implements PlayerOwnedObject {
 						.volume(1.5)
 						.pitch(RandomUtils.randomDouble(0.1, 2.0))
 						.singleton()
-						.cooldownContext(getShortLocationString(location))
+						.cooldownContext("windchimes")
 						.play();
 				}
 			},
