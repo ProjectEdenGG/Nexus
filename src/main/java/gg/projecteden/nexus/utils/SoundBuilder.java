@@ -1,6 +1,9 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -11,6 +14,7 @@ import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -18,18 +22,21 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.Map;
 import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 public class SoundBuilder implements Cloneable {
-	private List<HasPlayer> receivers;
-	private Location location;
 	private String sound;
+	private List<HasPlayer> receivers = new ArrayList<>();
+	private Location location;
 	private SoundCategory category = SoundCategory.MASTER;
-	private float volume = 1.0F;
-	private float pitch = 1.0F;
+	private MuteMenuItem muteMenuItem;
+	private Function<HasPlayer, Float> volume = player -> 1F;
+	private Function<HasPlayer, Float> pitch = player -> 1F;
 	private int delay = 0;
 
 	private boolean singleton;
@@ -113,13 +120,16 @@ public class SoundBuilder implements Cloneable {
 		return this;
 	}
 
-	public SoundBuilder receiver(HasPlayer reciever) {
-		this.receivers = Collections.singletonList(reciever);
-		return this;
+	public SoundBuilder everyone() {
+		return receivers(OnlinePlayers.getAll().stream().map(Player::getPlayer).collect(Collectors.toList()));
 	}
 
-	public SoundBuilder receivers(List<HasPlayer> recievers) {
-		this.receivers = recievers;
+	public SoundBuilder receiver(HasPlayer receiver) {
+		return receivers(Collections.singletonList(receiver));
+	}
+
+	public SoundBuilder receivers(List<HasPlayer> receivers) {
+		this.receivers.addAll(receivers);
 		return this;
 	}
 
@@ -138,12 +148,30 @@ public class SoundBuilder implements Cloneable {
 		return this;
 	}
 
+	public SoundBuilder category(SoundCategory category) {
+		this.category = category;
+		return this;
+	}
+
+	public SoundBuilder muteMenuItem(MuteMenuItem muteMenuItem) {
+		this.muteMenuItem = muteMenuItem;
+		return this;
+	}
+
 	public SoundBuilder volume(double volume) {
 		return volume((float) volume);
 	}
 
 	public SoundBuilder volume(float volume) {
-		volume = Math.max(volume, 0.0F);
+		this.volume = player -> Math.max(volume, 0.0F);
+		return this;
+	}
+
+	public SoundBuilder volume(MuteMenuItem muteMenuItem) {
+		return volume(player -> SoundUtils.getMuteMenuVolume(player, muteMenuItem));
+	}
+
+	public SoundBuilder volume(Function<HasPlayer, Float> volume) {
 		this.volume = volume;
 		return this;
 	}
@@ -157,13 +185,12 @@ public class SoundBuilder implements Cloneable {
 	}
 
 	public SoundBuilder pitch(float pitch) {
-		pitch = MathUtils.clamp(pitch, 0.1F, 2.0F);
-		this.pitch = pitch;
+		this.pitch = player -> MathUtils.clamp(pitch, 0.1F, 2.0F);
 		return this;
 	}
 
-	public SoundBuilder category(SoundCategory category) {
-		this.category = category;
+	public SoundBuilder pitch(Function<HasPlayer, Float> pitch) {
+		this.pitch = pitch;
 		return this;
 	}
 
@@ -192,13 +219,14 @@ public class SoundBuilder implements Cloneable {
 	}
 
 	public SoundBuilder clone() {
-		return new SoundBuilder(this.sound)
-			.receivers(new ArrayList<>(this.receivers))
-			.location(this.location.clone())
-			.category(this.category)
-			.pitch(this.pitch)
-			.volume(this.volume)
-			.delay(this.delay)
+		return new SoundBuilder(sound)
+			.receivers(new ArrayList<>(receivers))
+			.location(location.clone())
+			.category(category)
+			.muteMenuItem(muteMenuItem)
+			.pitch(pitch)
+			.volume(volume)
+			.delay(delay)
 			.cooldownContext(cooldownContext)
 			.cooldownExpiration(cooldownExpiration);
 	}
@@ -243,14 +271,21 @@ public class SoundBuilder implements Cloneable {
 							.create();
 				}
 
-				location.getWorld().playSound(location, sound, category, volume, pitch);
+				location.getWorld().playSound(location, sound, category, volume.apply(null), pitch.apply(null))
 			});
-
 		else {
 			// Play sound to receivers
-			for (HasPlayer receiver : receivers) {
-				if (location != null && receiver.getPlayer().getWorld() != location.getWorld())
+			for (HasPlayer hasPlayer : receivers) {
+				Player player = hasPlayer.getPlayer();
+				if (!player.isOnline())
 					continue;
+
+				if (location != null && player.getWorld() != location.getWorld())
+					continue;
+
+				if (muteMenuItem != null)
+					if (MuteMenuUser.hasMuted(player, muteMenuItem))
+						continue;
 
 				Tasks.wait(delay, () -> {
 					if (singleton) {
@@ -274,14 +309,17 @@ public class SoundBuilder implements Cloneable {
 						if (expiration != null)
 							new PlayerSoundCooldown()
 								.sound(sound)
-								.player(receiver.getPlayer())
+								.player(player)
 								.context(cooldownContext)
 								.expiration(expiration)
 								.create();
 					}
 
-					Location origin = location == null ? receiver.getPlayer().getLocation() : location;
-					receiver.getPlayer().playSound(origin, sound, category, volume, pitch);
+					if (!player.isOnline())
+						return;
+
+					Location origin = location == null ? player.getLocation() : location;
+					player.playSound(origin, sound, category, volume.apply(player), pitch.apply(player));
 				});
 			}
 		}

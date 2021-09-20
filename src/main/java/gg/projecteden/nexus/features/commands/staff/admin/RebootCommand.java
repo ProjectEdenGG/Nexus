@@ -37,7 +37,12 @@ public class RebootCommand extends CustomCommand implements Listener {
 	private static boolean queued;
 	private static boolean rebooting;
 
-	private static final List<ReloadCondition> conditions = Arrays.asList(ReloadCondition.MINIGAMES, ReloadCondition.CRATES, ReloadCondition.WITHER);
+	private static final List<ReloadCondition> conditions = Arrays.asList(
+		ReloadCondition.MINIGAMES,
+		ReloadCondition.CRATES,
+		ReloadCondition.WITHER,
+		ReloadCondition.CHAT_GAMES
+	);
 
 	public RebootCommand(@NonNull CommandEvent event) {
 		super(event);

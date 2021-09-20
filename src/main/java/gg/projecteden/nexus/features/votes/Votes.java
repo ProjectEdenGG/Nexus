@@ -23,11 +23,7 @@ import gg.projecteden.nexus.models.voter.VoteSite;
 import gg.projecteden.nexus.models.voter.Voter;
 import gg.projecteden.nexus.models.voter.Voter.Vote;
 import gg.projecteden.nexus.models.voter.VoterService;
-import gg.projecteden.nexus.utils.IOUtils;
-import gg.projecteden.nexus.utils.Name;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -35,7 +31,9 @@ import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
@@ -156,6 +154,14 @@ public class Votes extends Feature implements Listener {
 			int points = vote.getExtra() + basePoints;
 			voter.givePoints(points);
 			PlayerUtils.send(player, VPS.PREFIX + "You have received " + points + plural(" point", points));
+			if (player.isOnline()) {
+				Player online = player.getPlayer();
+				online.playSound(online.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1f, SoundUtils.getPitch(6));
+				if (points > basePoints) {
+					Tasks.wait(2, () -> online.playSound(online.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1f, SoundUtils.getPitch(10)));
+					Tasks.wait(4, () -> online.playSound(online.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1f, SoundUtils.getPitch(13)));
+				}
+			}
 		}
 
 		voterService.save(voter);

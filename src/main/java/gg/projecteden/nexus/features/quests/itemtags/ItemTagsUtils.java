@@ -12,8 +12,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
@@ -202,15 +204,20 @@ public class ItemTagsUtils {
 		return MaterialTag.ARMOR.isTagged(itemStack);
 	}
 
+	private static final Set<Material> ignoreMaterials = new HashSet<>() {{
+		addAll(MaterialTag.ARROWS.getValues());
+		add(Material.LEAD);
+	}};
+	private static final Set<Material> uniqueMaterials = Set.of(Material.SHIELD);
+
 	public static boolean isTool(@NotNull ItemStack itemStack) {
 		Material type = itemStack.getType();
-		List<Material> uniqueTools = List.of(Material.SHIELD);
 
-		if (MaterialTag.ARROWS.isTagged(itemStack))
-			return false;
-
-		if (uniqueTools.contains(type))
+		if (uniqueMaterials.contains(type))
 			return true;
+
+		if (ignoreMaterials.contains(type))
+			return false;
 
 		return MaterialTag.WEAPONS.isTagged(itemStack) || MaterialTag.TOOLS.isTagged(itemStack);
 	}
