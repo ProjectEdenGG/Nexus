@@ -1,19 +1,14 @@
 package gg.projecteden.nexus.features.votes.vps;
 
-import gg.projecteden.nexus.features.afk.AFK;
-import gg.projecteden.nexus.features.chat.games.ChatGames;
 import gg.projecteden.nexus.features.crates.models.CrateType;
-import gg.projecteden.nexus.features.store.perks.joinquit.VanishCommand;
 import gg.projecteden.nexus.features.votes.vps.VPSMenu.VPSPage.VPSSlot;
 import gg.projecteden.nexus.features.votes.vps.VPSMenu.VPSPage.VPSSlot.VPSSlotBuilder;
-import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.models.chatgames.ChatGamesConfig;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.Builder;
 import lombok.Builder.Default;
 import lombok.Data;
 import lombok.Getter;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -27,106 +22,103 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.BiPredicate;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public enum VPSMenu {
 	SURVIVAL {
 		@Getter
 		final List<VPSPage> pages = new ArrayList<>() {{
-			add(VPSPage.builder().items(new HashMap<>() {
-				{
+			add(VPSPage.builder().items(new HashMap<>() {{
 				put(10, VPSSlot.builder()
-						.name("$250")
-						.display(Material.IRON_NUGGET)
-						.price(1)
-						.money(250));
+					.name("$250")
+					.display(Material.IRON_NUGGET)
+					.price(1)
+					.money(250));
 				put(11, VPSSlot.builder()
-						.name("$2,500")
-						.display(Material.GOLD_NUGGET)
-						.price(10)
-						.money(2500));
+					.name("$2,500")
+					.display(Material.GOLD_NUGGET)
+					.price(10)
+					.money(2500));
 				put(12, VPSSlot.builder()
-						.name("$5,000")
-						.display(Material.GOLD_INGOT)
-						.price(20)
-						.money(5000));
+					.name("$5,000")
+					.display(Material.GOLD_INGOT)
+					.price(20)
+					.money(5000));
 				put(13, VPSSlot.builder()
-						.name("$10,000")
-						.display(Material.GOLD_BLOCK)
-						.price(40)
-						.money(10000));
+					.name("$10,000")
+					.display(Material.GOLD_BLOCK)
+					.price(40)
+					.money(10000));
 
 				put(19, VPSSlot.builder()
-						.name("1 Vote Crate Key")
-						.display(new ItemBuilder(Material.TRIPWIRE_HOOK).glow().amount(1))
-						.price(2)
-						.onPurchase((player, item) -> CrateType.VOTE.giveVPS(player, 1)));
+					.name("1 Vote Crate Key")
+					.display(new ItemBuilder(Material.TRIPWIRE_HOOK).glow().amount(1))
+					.price(2)
+					.onPurchase((player, item) -> CrateType.VOTE.giveVPS(player, 1)));
 				put(20, VPSSlot.builder()
-						.name("8 Vote Crate Key")
-						.display(new ItemBuilder(Material.TRIPWIRE_HOOK).glow().amount(8))
-						.price(16)
-						.onPurchase((player, item) -> CrateType.VOTE.giveVPS(player, 8)));
+					.name("8 Vote Crate Key")
+					.display(new ItemBuilder(Material.TRIPWIRE_HOOK).glow().amount(8))
+					.price(16)
+					.onPurchase((player, item) -> CrateType.VOTE.giveVPS(player, 8)));
 				put(21, VPSSlot.builder()
-						.name("16 Vote Crate Key")
-						.display(new ItemBuilder(Material.TRIPWIRE_HOOK).glow().amount(16))
-						.price(32)
-						.onPurchase((player, item) -> CrateType.VOTE.giveVPS(player, 16)));
+					.name("16 Vote Crate Key")
+					.display(new ItemBuilder(Material.TRIPWIRE_HOOK).glow().amount(16))
+					.price(32)
+					.onPurchase((player, item) -> CrateType.VOTE.giveVPS(player, 16)));
 				put(22, VPSSlot.builder()
-						.name("32 Vote Crate Key")
-						.display(new ItemBuilder(Material.TRIPWIRE_HOOK).glow().amount(32))
-						.price(64)
-						.onPurchase((player, item) -> CrateType.VOTE.giveVPS(player, 32)));
+					.name("32 Vote Crate Key")
+					.display(new ItemBuilder(Material.TRIPWIRE_HOOK).glow().amount(32))
+					.price(64)
+					.onPurchase((player, item) -> CrateType.VOTE.giveVPS(player, 32)));
 
 				put(16, VPSSlot.builder()
-						.name("Uncraftable Banners")
-						.display(new ItemBuilder(Material.CYAN_BANNER)
-							 .lore("&3Pre-selected banners or")
-							 .lore("&3choose your own!")
-							 .lore("")
-							 .lore("&eClick to teleport &3to the")
-							 .lore("&3banner display area")
-							 .lore("")
-							 .lore("&3Read the &ehologram&3!")
-							 .lore("")
-							 .lore("&6Price: &e5-10vp"))
-						.command("warp banners")
-						.close(true));
+					.name("Uncraftable Banners")
+					.display(new ItemBuilder(Material.CYAN_BANNER)
+						.lore("&3Pre-selected banners or")
+						.lore("&3choose your own!")
+						.lore("")
+						.lore("&eClick to teleport &3to the")
+						.lore("&3banner display area")
+						.lore("")
+						.lore("&3Read the &ehologram&3!")
+						.lore("")
+						.lore("&6Price: &e5-10vp"))
+					.command("warp banners")
+					.close(true));
 
-				int players = 0;
-				for (Player player : Bukkit.getOnlinePlayers())
-					if (!AFK.get(player).isAfk() && !Nerd.of(player).isVanished())
-						players++;
-				List<String> chatGameLore = new ArrayList<>();
-				if (players < ChatGames.REQUIRED_PLAYERS)
-					chatGameLore.add("&cNot enough active players!");
-				
+				final ItemBuilder chatGameItem = new ItemBuilder(Material.PAPER).lore(new ArrayList<>() {{
+					if (!ChatGamesConfig.hasRequiredPlayers()) {
+						add("&cNot enough active players! Games will not");
+						add("&cactivate until " + ChatGamesConfig.REQUIRED_PLAYERS + " players are active");
+					}
+				}});
+
+				Function<Integer, BiPredicate<Player, VPSSlot>> chatGameOnPurchase = amount -> (player, vpsSlot) -> {
+					ChatGamesConfig.queue(amount, player);
+					return true;
+				};
+
 				put(37, VPSSlot.builder()
-						.name("1 Chat Game")
-						.display(new ItemBuilder(Material.PAPER)
-							.lore(chatGameLore))
-						.price(1)
-						.onPurchase(((player, vpsSlot) -> ChatGames.queue(1, player))));
+					.name("1 Chat Game")
+					.display(chatGameItem)
+					.price(1)
+					.onPurchase(chatGameOnPurchase.apply(1)));
 				put(38, VPSSlot.builder()
-						.name("3 Chat Games")
-						.display(new ItemBuilder(Material.PAPER)
-							.amount(3)
-							.lore(chatGameLore))
-						.price(3)
-						.onPurchase(((player, vpsSlot) -> ChatGames.queue(3, player))));
+					.name("3 Chat Games")
+					.display(new ItemBuilder(chatGameItem).amount(3))
+					.price(3)
+					.onPurchase(chatGameOnPurchase.apply(3)));
 				put(39, VPSSlot.builder()
-						.name("5 Chat Games")
-						.display(new ItemBuilder(Material.PAPER)
-							.amount(5)
-							.lore(chatGameLore))
-						.price(5)
-						.onPurchase(((player, vpsSlot) -> ChatGames.queue(5, player))));
+					.name("5 Chat Games")
+					.display(new ItemBuilder(chatGameItem).amount(5))
+					.price(5)
+					.onPurchase(chatGameOnPurchase.apply(5)));
 				put(40, VPSSlot.builder()
-						.name("10 Chat Games")
-						.display(new ItemBuilder(Material.PAPER)
-							.amount(10)
-							.lore(chatGameLore))
-						.price(10)
-						.onPurchase(((player, vpsSlot) -> ChatGames.queue(10, player))));
+					.name("10 Chat Games")
+					.display(new ItemBuilder(chatGameItem).amount(10))
+					.price(10)
+					.onPurchase(chatGameOnPurchase.apply(10)));
 //				put(34, VPSSlot.builder()
 //						.name("Easel")
 //						.display(new ItemBuilder(Material.ARMOR_STAND))
@@ -137,401 +129,400 @@ public enum VPSMenu {
 //						.display(new ItemBuilder(Material.PAPER))
 //						.consoleCommand("artmap give [player] canvas")
 //						.price(10));
-				}}).build());
-			add(VPSPage.builder().items(new HashMap<>() {
-				{
-				put(11, VPSSlot.builder()
-						.name("Full Diamond Armor Set")
-						.display(Material.DIAMOND_CHESTPLATE)
-						.price(28)
-						.give(Material.DIAMOND_HELMET, Material.DIAMOND_CHESTPLATE, Material.DIAMOND_LEGGINGS, Material.DIAMOND_BOOTS));
-				put(12, VPSSlot.builder()
-						.name("Full Iron Armor Set")
-						.display(Material.IRON_CHESTPLATE)
-						.price(18)
-						.give(Material.IRON_HELMET, Material.IRON_CHESTPLATE, Material.IRON_LEGGINGS, Material.IRON_BOOTS));
-				put(14, VPSSlot.builder()
-						.name("Full Golden Armor Set")
-						.display(Material.GOLDEN_CHESTPLATE)
-						.price(15)
-						.give(Material.GOLDEN_HELMET, Material.GOLDEN_CHESTPLATE, Material.GOLDEN_LEGGINGS, Material.GOLDEN_BOOTS));
-				put(15, VPSSlot.builder()
-						.name("Full Chainmail Armor Set")
-						.display(Material.CHAINMAIL_CHESTPLATE)
-						.price(20)
-						.give(Material.CHAINMAIL_HELMET, Material.CHAINMAIL_CHESTPLATE, Material.CHAINMAIL_LEGGINGS, Material.CHAINMAIL_BOOTS));
-
-				put(20, VPSSlot.builder()
-						.name("Diamond Horse Armor")
-						.displayAndGive(Material.DIAMOND_HORSE_ARMOR)
-						.price(10));
-				put(21, VPSSlot.builder()
-						.name("Iron Horse Armor")
-						.displayAndGive(Material.IRON_HORSE_ARMOR)
-						.price(6));
-				put(23, VPSSlot.builder()
-						.name("Gold Horse Armor")
-						.displayAndGive(Material.GOLDEN_HORSE_ARMOR)
-						.price(8));
-				put(24, VPSSlot.builder()
-						.name("Leather Horse Armor")
-						.displayAndGive(Material.LEATHER_HORSE_ARMOR)
-						.price(4));
-				put(22, VPSSlot.builder()
-						.name("Saddle")
-						.displayAndGive(Material.SADDLE)
-						.price(10));
-
-				put(37, VPSSlot.builder()
-						.name("1 Ancient Debris")
-						.displayAndGive(Material.ANCIENT_DEBRIS)
-						.price(3));
-				put(38, VPSSlot.builder()
-						.name("10 Emeralds")
-						.displayAndGive(Material.EMERALD, 10)
-						.price(12));
-				put(39, VPSSlot.builder()
-						.name("10 Diamonds")
-						.displayAndGive(Material.DIAMOND, 10)
-						.price(15));
-				put(40, VPSSlot.builder()
-						.name("10 Gold Ingots")
-						.displayAndGive(Material.GOLD_INGOT, 10)
-						.price(7));
-				put(41, VPSSlot.builder()
-						.name("10 Iron Ingots")
-						.displayAndGive(Material.IRON_INGOT, 10)
-						.price(5));
-				put(42, VPSSlot.builder()
-						.name("10 Lapis Lazuli")
-						.displayAndGive(Material.LAPIS_LAZULI, 10)
-						.price(3));
-				put(43, VPSSlot.builder()
-						.name("16 Quartz")
-						.displayAndGive(Material.QUARTZ, 16)
-						.price(2));
 			}}).build());
 
-			add(VPSPage.builder().items(new HashMap<>() {
-				{
-					put(10, VPSSlot.builder()
-						.name("Enchanted Book")
-						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.FROST_WALKER, 2))
-						.price(30));
-					put(11, VPSSlot.builder()
-						.name("Enchanted Book")
-						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.DEPTH_STRIDER, 3))
-						.price(35));
-					put(12, VPSSlot.builder()
-						.name("Enchanted Book")
-						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.SOUL_SPEED, 3))
-						.price(45));
-					put(13, VPSSlot.builder()
-						.name("Enchanted Book")
-						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.SILK_TOUCH))
-						.price(30));
-					put(14, VPSSlot.builder()
-						.name("Enchanted Book")
-						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.DURABILITY, 3))
-						.price(30));
-					put(15, VPSSlot.builder()
-						.name("Enchanted Book")
-						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.ARROW_INFINITE))
-						.price(40));
-					put(16, VPSSlot.builder()
-						.name("Enchanted Book")
-						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.THORNS))
-						.price(15));
+			add(VPSPage.builder().items(new HashMap<>() {{
+				put(11, VPSSlot.builder()
+					.name("Full Diamond Armor Set")
+					.display(Material.DIAMOND_CHESTPLATE)
+					.price(28)
+					.give(Material.DIAMOND_HELMET, Material.DIAMOND_CHESTPLATE, Material.DIAMOND_LEGGINGS, Material.DIAMOND_BOOTS));
+				put(12, VPSSlot.builder()
+					.name("Full Iron Armor Set")
+					.display(Material.IRON_CHESTPLATE)
+					.price(18)
+					.give(Material.IRON_HELMET, Material.IRON_CHESTPLATE, Material.IRON_LEGGINGS, Material.IRON_BOOTS));
+				put(14, VPSSlot.builder()
+					.name("Full Golden Armor Set")
+					.display(Material.GOLDEN_CHESTPLATE)
+					.price(15)
+					.give(Material.GOLDEN_HELMET, Material.GOLDEN_CHESTPLATE, Material.GOLDEN_LEGGINGS, Material.GOLDEN_BOOTS));
+				put(15, VPSSlot.builder()
+					.name("Full Chainmail Armor Set")
+					.display(Material.CHAINMAIL_CHESTPLATE)
+					.price(20)
+					.give(Material.CHAINMAIL_HELMET, Material.CHAINMAIL_CHESTPLATE, Material.CHAINMAIL_LEGGINGS, Material.CHAINMAIL_BOOTS));
 
-					put(19, VPSSlot.builder()
-						.name("Enchanted Book")
-						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.CHANNELING))
-						.price(30));
-					put(20, VPSSlot.builder()
-						.name("Enchanted Book")
-						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.LOYALTY, 3))
-						.price(40));
-					put(21, VPSSlot.builder()
-						.name("Enchanted Book")
-						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.IMPALING, 5))
-						.price(38));
-					put(22, VPSSlot.builder()
-						.name("Enchanted Book")
-						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.RIPTIDE, 3))
-						.price(50));
-					put(23, VPSSlot.builder()
-						.name("Enchanted Book")
-						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.MULTISHOT))
-						.price(35));
-					put(24, VPSSlot.builder()
-						.name("Enchanted Book")
-						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.QUICK_CHARGE, 3))
-						.price(30));
-					put(25, VPSSlot.builder()
-						.name("Enchanted Book")
-						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.PIERCING, 4))
-						.price(30));
+				put(20, VPSSlot.builder()
+					.name("Diamond Horse Armor")
+					.displayAndGive(Material.DIAMOND_HORSE_ARMOR)
+					.price(10));
+				put(21, VPSSlot.builder()
+					.name("Iron Horse Armor")
+					.displayAndGive(Material.IRON_HORSE_ARMOR)
+					.price(6));
+				put(23, VPSSlot.builder()
+					.name("Gold Horse Armor")
+					.displayAndGive(Material.GOLDEN_HORSE_ARMOR)
+					.price(8));
+				put(24, VPSSlot.builder()
+					.name("Leather Horse Armor")
+					.displayAndGive(Material.LEATHER_HORSE_ARMOR)
+					.price(4));
+				put(22, VPSSlot.builder()
+					.name("Saddle")
+					.displayAndGive(Material.SADDLE)
+					.price(10));
 
-					put(31, VPSSlot.builder()
-						.name("Enchanted Book")
-						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.MENDING))
-						.price(45));
-				}}).build());
+				put(37, VPSSlot.builder()
+					.name("1 Ancient Debris")
+					.displayAndGive(Material.ANCIENT_DEBRIS)
+					.price(3));
+				put(38, VPSSlot.builder()
+					.name("10 Emeralds")
+					.displayAndGive(Material.EMERALD, 10)
+					.price(12));
+				put(39, VPSSlot.builder()
+					.name("10 Diamonds")
+					.displayAndGive(Material.DIAMOND, 10)
+					.price(15));
+				put(40, VPSSlot.builder()
+					.name("10 Gold Ingots")
+					.displayAndGive(Material.GOLD_INGOT, 10)
+					.price(7));
+				put(41, VPSSlot.builder()
+					.name("10 Iron Ingots")
+					.displayAndGive(Material.IRON_INGOT, 10)
+					.price(5));
+				put(42, VPSSlot.builder()
+					.name("10 Lapis Lazuli")
+					.displayAndGive(Material.LAPIS_LAZULI, 10)
+					.price(3));
+				put(43, VPSSlot.builder()
+					.name("16 Quartz")
+					.displayAndGive(Material.QUARTZ, 16)
+					.price(2));
+			}}).build());
 
 			add(VPSPage.builder().items(new HashMap<>() {{
 				put(10, VPSSlot.builder()
-						.name("Horse Spawn Egg")
-						.displayAndGive(Material.HORSE_SPAWN_EGG)
-						.price(50));
+					.name("Enchanted Book")
+					.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.FROST_WALKER, 2))
+					.price(30));
 				put(11, VPSSlot.builder()
-						.name("Donkey Spawn Egg")
-						.displayAndGive(Material.DONKEY_SPAWN_EGG)
-						.price(50));
+					.name("Enchanted Book")
+					.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.DEPTH_STRIDER, 3))
+					.price(35));
 				put(12, VPSSlot.builder()
-						.name("Llama Spawn Egg")
-						.displayAndGive(Material.LLAMA_SPAWN_EGG)
-						.price(50));
+					.name("Enchanted Book")
+					.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.SOUL_SPEED, 3))
+					.price(45));
 				put(13, VPSSlot.builder()
-						.name("Cow Spawn Egg")
-						.displayAndGive(Material.COW_SPAWN_EGG)
-						.price(75));
+					.name("Enchanted Book")
+					.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.SILK_TOUCH))
+					.price(30));
 				put(14, VPSSlot.builder()
-						.name("Mooshroom Spawn Egg")
-						.displayAndGive(Material.MOOSHROOM_SPAWN_EGG)
-						.price(100));
+					.name("Enchanted Book")
+					.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.DURABILITY, 3))
+					.price(30));
 				put(15, VPSSlot.builder()
-						.name("Sheep Spawn Egg")
-						.displayAndGive(Material.SHEEP_SPAWN_EGG)
-						.price(50));
+					.name("Enchanted Book")
+					.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.ARROW_INFINITE))
+					.price(40));
 				put(16, VPSSlot.builder()
-						.name("Pig Spawn Egg")
-						.displayAndGive(Material.PIG_SPAWN_EGG)
-						.price(25));
+					.name("Enchanted Book")
+					.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.THORNS))
+					.price(15));
 
 				put(19, VPSSlot.builder()
-						.name("Villager Spawn Egg")
-						.displayAndGive(Material.VILLAGER_SPAWN_EGG)
-						.price(100));
+					.name("Enchanted Book")
+					.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.CHANNELING))
+					.price(30));
 				put(20, VPSSlot.builder()
-						.name("Fox Spawn Egg")
-						.displayAndGive(Material.FOX_SPAWN_EGG)
-						.price(100));
+					.name("Enchanted Book")
+					.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.LOYALTY, 3))
+					.price(40));
 				put(21, VPSSlot.builder()
-						.name("Ocelot Spawn Egg")
-						.displayAndGive(Material.OCELOT_SPAWN_EGG)
-						.price(25));
+					.name("Enchanted Book")
+					.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.IMPALING, 5))
+					.price(38));
 				put(22, VPSSlot.builder()
-						.name("Cat Spawn Egg")
-						.displayAndGive(Material.CAT_SPAWN_EGG)
-						.price(20));
+					.name("Enchanted Book")
+					.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.RIPTIDE, 3))
+					.price(50));
 				put(23, VPSSlot.builder()
-						.name("Wolf Spawn Egg")
-						.displayAndGive(Material.WOLF_SPAWN_EGG)
-						.price(20));
+					.name("Enchanted Book")
+					.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.MULTISHOT))
+					.price(35));
 				put(24, VPSSlot.builder()
-						.name("Bunny Spawn Egg")
-						.displayAndGive(Material.RABBIT_SPAWN_EGG)
-						.price(25));
+					.name("Enchanted Book")
+					.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.QUICK_CHARGE, 3))
+					.price(30));
 				put(25, VPSSlot.builder()
-						.name("Parrot Spawn Egg")
-						.displayAndGive(Material.PARROT_SPAWN_EGG)
-						.price(40));
+					.name("Enchanted Book")
+					.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.PIERCING, 4))
+					.price(30));
 
-				put(29, VPSSlot.builder()
-						.name("Panda Spawn Egg")
-						.displayAndGive(Material.PANDA_SPAWN_EGG)
-						.price(50));
-				put(30, VPSSlot.builder()
-						.name("Dolphin Spawn Egg")
-						.displayAndGive(Material.DOLPHIN_SPAWN_EGG)
-						.price(75));
 				put(31, VPSSlot.builder()
-						.name("Turtle Spawn Egg")
-						.displayAndGive(Material.TURTLE_SPAWN_EGG)
-						.price(40));
-				put(32, VPSSlot.builder()
-						.name("Bee Spawn Egg")
-						.displayAndGive(Material.BEE_SPAWN_EGG)
-						.price(75));
-				put(33, VPSSlot.builder()
-						.name("Strider Spawn Egg")
-						.displayAndGive(Material.STRIDER_SPAWN_EGG)
-						.price(50));
-
-				put(40, VPSSlot.builder()
-						.name("1 Name Tag")
-						.displayAndGive(Material.NAME_TAG)
-						.price(2));
+					.name("Enchanted Book")
+					.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.MENDING))
+					.price(45));
 			}}).build());
 
 			add(VPSPage.builder().items(new HashMap<>() {{
 				put(10, VPSSlot.builder()
-						.name("8 Blue Ice")
-						.displayAndGive(Material.BLUE_ICE, 8)
-						.price(36));
+					.name("Horse Spawn Egg")
+					.displayAndGive(Material.HORSE_SPAWN_EGG)
+					.price(50));
 				put(11, VPSSlot.builder()
-						.name("32 Sea Lanterns")
-						.displayAndGive(Material.SEA_LANTERN, 32)
-						.price(10));
+					.name("Donkey Spawn Egg")
+					.displayAndGive(Material.DONKEY_SPAWN_EGG)
+					.price(50));
 				put(12, VPSSlot.builder()
-						.name("32 Glowstone")
-						.displayAndGive(Material.GLOWSTONE, 32)
-						.price(7));
+					.name("Llama Spawn Egg")
+					.displayAndGive(Material.LLAMA_SPAWN_EGG)
+					.price(50));
 				put(13, VPSSlot.builder()
-						.name("32 Shroomlight")
-						.displayAndGive(Material.SHROOMLIGHT, 32)
-						.price(10));
+					.name("Cow Spawn Egg")
+					.displayAndGive(Material.COW_SPAWN_EGG)
+					.price(75));
 				put(14, VPSSlot.builder()
-						.name("1 Sponge")
-						.displayAndGive(Material.SPONGE)
-						.price(35));
+					.name("Mooshroom Spawn Egg")
+					.displayAndGive(Material.MOOSHROOM_SPAWN_EGG)
+					.price(100));
 				put(15, VPSSlot.builder()
-						.name("8 Honeycomb Blocks")
-						.displayAndGive(Material.HONEYCOMB_BLOCK, 8)
-						.price(15));
+					.name("Sheep Spawn Egg")
+					.displayAndGive(Material.SHEEP_SPAWN_EGG)
+					.price(50));
 				put(16, VPSSlot.builder()
-						.name("8 Honey Blocks")
-						.displayAndGive(Material.HONEY_BLOCK, 8)
-						.price(20));
+					.name("Pig Spawn Egg")
+					.displayAndGive(Material.PIG_SPAWN_EGG)
+					.price(25));
+
+				put(19, VPSSlot.builder()
+					.name("Villager Spawn Egg")
+					.displayAndGive(Material.VILLAGER_SPAWN_EGG)
+					.price(100));
+				put(20, VPSSlot.builder()
+					.name("Fox Spawn Egg")
+					.displayAndGive(Material.FOX_SPAWN_EGG)
+					.price(100));
+				put(21, VPSSlot.builder()
+					.name("Ocelot Spawn Egg")
+					.displayAndGive(Material.OCELOT_SPAWN_EGG)
+					.price(25));
+				put(22, VPSSlot.builder()
+					.name("Cat Spawn Egg")
+					.displayAndGive(Material.CAT_SPAWN_EGG)
+					.price(20));
+				put(23, VPSSlot.builder()
+					.name("Wolf Spawn Egg")
+					.displayAndGive(Material.WOLF_SPAWN_EGG)
+					.price(20));
+				put(24, VPSSlot.builder()
+					.name("Bunny Spawn Egg")
+					.displayAndGive(Material.RABBIT_SPAWN_EGG)
+					.price(25));
+				put(25, VPSSlot.builder()
+					.name("Parrot Spawn Egg")
+					.displayAndGive(Material.PARROT_SPAWN_EGG)
+					.price(40));
+
+				put(29, VPSSlot.builder()
+					.name("Panda Spawn Egg")
+					.displayAndGive(Material.PANDA_SPAWN_EGG)
+					.price(50));
+				put(30, VPSSlot.builder()
+					.name("Dolphin Spawn Egg")
+					.displayAndGive(Material.DOLPHIN_SPAWN_EGG)
+					.price(75));
+				put(31, VPSSlot.builder()
+					.name("Turtle Spawn Egg")
+					.displayAndGive(Material.TURTLE_SPAWN_EGG)
+					.price(40));
+				put(32, VPSSlot.builder()
+					.name("Bee Spawn Egg")
+					.displayAndGive(Material.BEE_SPAWN_EGG)
+					.price(75));
+				put(33, VPSSlot.builder()
+					.name("Strider Spawn Egg")
+					.displayAndGive(Material.STRIDER_SPAWN_EGG)
+					.price(50));
+
+				put(40, VPSSlot.builder()
+					.name("1 Name Tag")
+					.displayAndGive(Material.NAME_TAG)
+					.price(2));
+			}}).build());
+
+			add(VPSPage.builder().items(new HashMap<>() {{
+				put(10, VPSSlot.builder()
+					.name("8 Blue Ice")
+					.displayAndGive(Material.BLUE_ICE, 8)
+					.price(36));
+				put(11, VPSSlot.builder()
+					.name("32 Sea Lanterns")
+					.displayAndGive(Material.SEA_LANTERN, 32)
+					.price(10));
+				put(12, VPSSlot.builder()
+					.name("32 Glowstone")
+					.displayAndGive(Material.GLOWSTONE, 32)
+					.price(7));
+				put(13, VPSSlot.builder()
+					.name("32 Shroomlight")
+					.displayAndGive(Material.SHROOMLIGHT, 32)
+					.price(10));
+				put(14, VPSSlot.builder()
+					.name("1 Sponge")
+					.displayAndGive(Material.SPONGE)
+					.price(35));
+				put(15, VPSSlot.builder()
+					.name("8 Honeycomb Blocks")
+					.displayAndGive(Material.HONEYCOMB_BLOCK, 8)
+					.price(15));
+				put(16, VPSSlot.builder()
+					.name("8 Honey Blocks")
+					.displayAndGive(Material.HONEY_BLOCK, 8)
+					.price(20));
 
 				put(28, VPSSlot.builder()
-						.name("4 Blaze Rods")
-						.displayAndGive(Material.BLAZE_ROD, 4)
-						.price(8));
+					.name("4 Blaze Rods")
+					.displayAndGive(Material.BLAZE_ROD, 4)
+					.price(8));
 				put(29, VPSSlot.builder()
-						.name("8 Ender Pearls")
-						.displayAndGive(Material.ENDER_PEARL, 8)
-						.price(2));
+					.name("8 Ender Pearls")
+					.displayAndGive(Material.ENDER_PEARL, 8)
+					.price(2));
 				put(30, VPSSlot.builder()
-						.name("4 Slimeballs")
-						.displayAndGive(Material.SLIME_BALL, 4)
-						.price(5));
+					.name("4 Slimeballs")
+					.displayAndGive(Material.SLIME_BALL, 4)
+					.price(5));
 				put(31, VPSSlot.builder()
-						.name("16 Gunpowder")
-						.displayAndGive(Material.GUNPOWDER, 16)
-						.price(2));
+					.name("16 Gunpowder")
+					.displayAndGive(Material.GUNPOWDER, 16)
+					.price(2));
 				put(32, VPSSlot.builder()
-						.name("16 Leather")
-						.displayAndGive(Material.LEATHER, 16)
-						.price(10));
+					.name("16 Leather")
+					.displayAndGive(Material.LEATHER, 16)
+					.price(10));
 				put(33, VPSSlot.builder()
-						.name("16 Phantom Membranes")
-						.displayAndGive(Material.PHANTOM_MEMBRANE, 16)
-						.price(12));
+					.name("16 Phantom Membranes")
+					.displayAndGive(Material.PHANTOM_MEMBRANE, 16)
+					.price(12));
 				put(34, VPSSlot.builder()
-						.name("5 Scutes")
-						.displayAndGive(Material.SCUTE, 5)
-						.price(30));
+					.name("5 Scutes")
+					.displayAndGive(Material.SCUTE, 5)
+					.price(30));
 
 				put(37, VPSSlot.builder()
-						.name("64 Experience Bottles")
-						.displayAndGive(Material.EXPERIENCE_BOTTLE, 64)
-						.price(15));
+					.name("64 Experience Bottles")
+					.displayAndGive(Material.EXPERIENCE_BOTTLE, 64)
+					.price(15));
 				put(38, VPSSlot.builder()
-						.name("1 Enchanted Golden Apple")
-						.displayAndGive(Material.ENCHANTED_GOLDEN_APPLE)
-						.price(30));
+					.name("1 Enchanted Golden Apple")
+					.displayAndGive(Material.ENCHANTED_GOLDEN_APPLE)
+					.price(30));
 				put(39, VPSSlot.builder()
-						.name("1 Golden Apple")
-						.displayAndGive(Material.GOLDEN_APPLE)
-						.price(10));
+					.name("1 Golden Apple")
+					.displayAndGive(Material.GOLDEN_APPLE)
+					.price(10));
 				put(40, VPSSlot.builder()
-						.name("16 Bones")
-						.displayAndGive(Material.BONE, 16)
-						.price(2));
+					.name("16 Bones")
+					.displayAndGive(Material.BONE, 16)
+					.price(2));
 				put(41, VPSSlot.builder()
-						.name("4 Steak")
-						.displayAndGive(Material.COOKED_BEEF, 4)
-						.price(1));
+					.name("4 Steak")
+					.displayAndGive(Material.COOKED_BEEF, 4)
+					.price(1));
 				put(42, VPSSlot.builder()
-						.name("16 Sweet Berries")
-						.displayAndGive(Material.SWEET_BERRIES, 16)
-						.price(1));
+					.name("16 Sweet Berries")
+					.displayAndGive(Material.SWEET_BERRIES, 16)
+					.price(1));
 				put(43, VPSSlot.builder()
-						.name("16 Sea Pickles")
-						.displayAndGive(Material.SEA_PICKLE, 16)
-						.price(5));
+					.name("16 Sea Pickles")
+					.displayAndGive(Material.SEA_PICKLE, 16)
+					.price(5));
 			}}).build());
 
 			add(VPSPage.builder().items(new HashMap<>() {{
 				put(10, VPSSlot.builder()
-						.name("4 Oak Saplings")
-						.displayAndGive(Material.OAK_SAPLING, 4)
-						.price(2));
+					.name("4 Oak Saplings")
+					.displayAndGive(Material.OAK_SAPLING, 4)
+					.price(2));
 				put(11, VPSSlot.builder()
-						.name("4 Spruce Saplings")
-						.displayAndGive(Material.SPRUCE_SAPLING, 4)
-						.price(8));
+					.name("4 Spruce Saplings")
+					.displayAndGive(Material.SPRUCE_SAPLING, 4)
+					.price(8));
 				put(12, VPSSlot.builder()
-						.name("4 Birch Saplings")
-						.displayAndGive(Material.BIRCH_SAPLING, 4)
-						.price(4));
+					.name("4 Birch Saplings")
+					.displayAndGive(Material.BIRCH_SAPLING, 4)
+					.price(4));
 				put(13, VPSSlot.builder()
-						.name("4 Jungle Saplings")
-						.displayAndGive(Material.JUNGLE_SAPLING, 4)
-						.price(6));
+					.name("4 Jungle Saplings")
+					.displayAndGive(Material.JUNGLE_SAPLING, 4)
+					.price(6));
 				put(14, VPSSlot.builder()
-						.name("4 Acacia Saplings")
-						.displayAndGive(Material.ACACIA_SAPLING, 4)
-						.price(4));
+					.name("4 Acacia Saplings")
+					.displayAndGive(Material.ACACIA_SAPLING, 4)
+					.price(4));
 				put(15, VPSSlot.builder()
-						.name("4 Dark Oak Saplings")
-						.displayAndGive(Material.DARK_OAK_SAPLING, 4)
-						.price(6));
+					.name("4 Dark Oak Saplings")
+					.displayAndGive(Material.DARK_OAK_SAPLING, 4)
+					.price(6));
 				put(16, VPSSlot.builder()
-						.name("16 Bamboo")
-						.displayAndGive(Material.BAMBOO, 16)
-						.price(5));
+					.name("16 Bamboo")
+					.displayAndGive(Material.BAMBOO, 16)
+					.price(5));
 
 				put(29, VPSSlot.builder()
-						.name("1 Wither Skeleton Skull")
-						.displayAndGive(Material.WITHER_SKELETON_SKULL)
-						.price(40));
+					.name("1 Wither Skeleton Skull")
+					.displayAndGive(Material.WITHER_SKELETON_SKULL)
+					.price(40));
 				put(30, VPSSlot.builder()
-						.name("4 Wither Rose")
-						.displayAndGive(Material.WITHER_ROSE, 4)
-						.price(120));
+					.name("4 Wither Rose")
+					.displayAndGive(Material.WITHER_ROSE, 4)
+					.price(120));
 				put(31, VPSSlot.builder()
-						.name("1 Beacon")
-						.displayAndGive(Material.BEACON)
-						.price(250));
+					.name("1 Beacon")
+					.displayAndGive(Material.BEACON)
+					.price(250));
 				put(32, VPSSlot.builder()
-						.name("1 Trident")
-						.displayAndGive(Material.TRIDENT)
-						.price(80));
+					.name("1 Trident")
+					.displayAndGive(Material.TRIDENT)
+					.price(80));
 				put(33, VPSSlot.builder()
-						.name("1 Heart of the Sea")
-						.displayAndGive(Material.HEART_OF_THE_SEA)
-						.price(60));
+					.name("1 Heart of the Sea")
+					.displayAndGive(Material.HEART_OF_THE_SEA)
+					.price(60));
 
 				put(37, VPSSlot.builder()
-						.name("4 Crying Obsidian")
-						.displayAndGive(Material.CRYING_OBSIDIAN, 4)
-						.price(10));
+					.name("4 Crying Obsidian")
+					.displayAndGive(Material.CRYING_OBSIDIAN, 4)
+					.price(10));
 				put(38, VPSSlot.builder()
-						.name("1 Dragon Head")
-						.displayAndGive(Material.DRAGON_HEAD)
-						.price(50));
+					.name("1 Dragon Head")
+					.displayAndGive(Material.DRAGON_HEAD)
+					.price(50));
 				put(39, VPSSlot.builder()
-						.name("4 Ender Crystals")
-						.displayAndGive(Material.END_CRYSTAL, 4)
-						.price(20));
+					.name("4 Ender Crystals")
+					.displayAndGive(Material.END_CRYSTAL, 4)
+					.price(20));
 				put(40, VPSSlot.builder()
-						.name("1 Shulker Box")
-						.displayAndGive(Material.SHULKER_BOX)
-						.price(50));
+					.name("1 Shulker Box")
+					.displayAndGive(Material.SHULKER_BOX)
+					.price(50));
 				put(41, VPSSlot.builder()
-						.name("1 Elytra")
-						.displayAndGive(Material.ELYTRA)
-						.price(40));
+					.name("1 Elytra")
+					.displayAndGive(Material.ELYTRA)
+					.price(40));
 				put(42, VPSSlot.builder()
-						.name("1 Totem of Undying")
-						.displayAndGive(Material.TOTEM_OF_UNDYING)
-						.price(50));
+					.name("1 Totem of Undying")
+					.displayAndGive(Material.TOTEM_OF_UNDYING)
+					.price(50));
 				put(43, VPSSlot.builder()
-						.name("1 Pigstep Music Disc")
-						.displayAndGive(Material.MUSIC_DISC_PIGSTEP)
-						.price(30));
+					.name("1 Pigstep Music Disc")
+					.displayAndGive(Material.MUSIC_DISC_PIGSTEP)
+					.price(30));
 			}}).build());
 		}};
 	},
@@ -540,18 +531,18 @@ public enum VPSMenu {
 		@Getter
 		final List<VPSPage> pages = new ArrayList<>() {{
 			add(VPSPage.builder()
-					.rows(3)
-					.items(new HashMap<>() {{
-						put(13, VPSSlot.builder()
-								.name("+1 Plot")
-								.display(new ItemBuilder(Material.SANDSTONE_SLAB)
-										.lore("&3You may purchase up to")
-										.lore("&efour &3additional plots either")
-										.lore("&3from the VPS or the server &c/store")
-										.lore("")
-										.lore("&6Price: &e150vp"))
-								.command("vps buy plot"));
-					}}).build());
+				.rows(3)
+				.items(new HashMap<>() {{
+					put(13, VPSSlot.builder()
+						.name("+1 Plot")
+						.display(new ItemBuilder(Material.SANDSTONE_SLAB)
+							.lore("&3You may purchase up to")
+							.lore("&efour &3additional plots either")
+							.lore("&3from the VPS or the server &c/store")
+							.lore("")
+							.lore("&6Price: &e150vp"))
+						.command("vps buy plot"));
+				}}).build());
 		}};
 	},
 
@@ -559,62 +550,62 @@ public enum VPSMenu {
 		@Getter
 		final List<VPSPage> pages = new ArrayList<>() {{
 			add(VPSPage.builder()
-					.rows(5)
-					.items(new HashMap<>() {{
-						put(10, VPSSlot.builder()
-								.name("5 dirt")
-								.displayAndGive(Material.DIRT, 5)
-								.price(10));
-						put(11, VPSSlot.builder()
-								.name("1 grass")
-								.displayAndGive(Material.GRASS_BLOCK)
-								.price(5));
-						put(12, VPSSlot.builder()
-								.name("64 cobble")
-								.displayAndGive(Material.COBBLESTONE, 64)
-								.price(5));
-						put(14, VPSSlot.builder()
-								.name("1 water bucket")
-								.displayAndGive(Material.WATER_BUCKET)
-								.price(25));
-						put(15, VPSSlot.builder()
-								.name("1 lava bucket")
-								.displayAndGive(Material.LAVA_BUCKET)
-								.price(35));
-						put(16, VPSSlot.builder()
-								.name("1 iron pickaxe")
-								.displayAndGive(Material.IRON_PICKAXE)
-								.price(10));
-						put(28, VPSSlot.builder()
-								.name("5 seeds")
-								.displayAndGive(Material.WHEAT_SEEDS, 5)
-								.price(5));
-						put(29, VPSSlot.builder()
-								.name("1 pumpkin seeds")
-								.displayAndGive(Material.PUMPKIN_SEEDS)
-								.price(3));
-						put(30, VPSSlot.builder()
-								.name("1 melon seeds")
-								.displayAndGive(Material.MELON_SEEDS)
-								.price(3));
-						put(31, VPSSlot.builder()
-								.name("3 bone meal")
-								.displayAndGive(new ItemStack(Material.BONE_MEAL, 3))
-								.price(1));
-						put(32, VPSSlot.builder()
-								.name("8 bread")
-								.displayAndGive(Material.BREAD, 8)
-								.price(3));
-						put(33, VPSSlot.builder()
-								.name("16 torches")
-								.displayAndGive(Material.TORCH, 16)
-								.price(5));
-						put(34, VPSSlot.builder()
-								.name("Reset your deaths to 0")
-								.display(Material.TOTEM_OF_UNDYING)
-								.price(40)
-								.consoleCommand("asadmin setdeaths [player] 0"));
-					}}).build());
+				.rows(5)
+				.items(new HashMap<>() {{
+					put(10, VPSSlot.builder()
+						.name("5 dirt")
+						.displayAndGive(Material.DIRT, 5)
+						.price(10));
+					put(11, VPSSlot.builder()
+						.name("1 grass")
+						.displayAndGive(Material.GRASS_BLOCK)
+						.price(5));
+					put(12, VPSSlot.builder()
+						.name("64 cobble")
+						.displayAndGive(Material.COBBLESTONE, 64)
+						.price(5));
+					put(14, VPSSlot.builder()
+						.name("1 water bucket")
+						.displayAndGive(Material.WATER_BUCKET)
+						.price(25));
+					put(15, VPSSlot.builder()
+						.name("1 lava bucket")
+						.displayAndGive(Material.LAVA_BUCKET)
+						.price(35));
+					put(16, VPSSlot.builder()
+						.name("1 iron pickaxe")
+						.displayAndGive(Material.IRON_PICKAXE)
+						.price(10));
+					put(28, VPSSlot.builder()
+						.name("5 seeds")
+						.displayAndGive(Material.WHEAT_SEEDS, 5)
+						.price(5));
+					put(29, VPSSlot.builder()
+						.name("1 pumpkin seeds")
+						.displayAndGive(Material.PUMPKIN_SEEDS)
+						.price(3));
+					put(30, VPSSlot.builder()
+						.name("1 melon seeds")
+						.displayAndGive(Material.MELON_SEEDS)
+						.price(3));
+					put(31, VPSSlot.builder()
+						.name("3 bone meal")
+						.displayAndGive(new ItemStack(Material.BONE_MEAL, 3))
+						.price(1));
+					put(32, VPSSlot.builder()
+						.name("8 bread")
+						.displayAndGive(Material.BREAD, 8)
+						.price(3));
+					put(33, VPSSlot.builder()
+						.name("16 torches")
+						.displayAndGive(Material.TORCH, 16)
+						.price(5));
+					put(34, VPSSlot.builder()
+						.name("Reset your deaths to 0")
+						.display(Material.TOTEM_OF_UNDYING)
+						.price(40)
+						.consoleCommand("asadmin setdeaths [player] 0"));
+				}}).build());
 		}};
 	};
 
