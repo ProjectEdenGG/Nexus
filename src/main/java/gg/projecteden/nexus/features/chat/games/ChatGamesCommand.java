@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.chat.games;
 
 import de.myzelyam.api.vanish.PlayerVanishStateChangeEvent;
-import gg.projecteden.nexus.features.chat.events.PublicChatEvent;
+import gg.projecteden.nexus.features.chat.events.ChatEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
@@ -55,7 +55,7 @@ public class ChatGamesCommand extends CustomCommand implements Listener {
 	}
 
 	@EventHandler
-	public void onChat(PublicChatEvent event) {
+	public void onChat(ChatEvent event) {
 		final ChatGame game = ChatGamesConfig.getCurrentGame();
 		if (game == null || game.getAnswer() == null)
 			return;
