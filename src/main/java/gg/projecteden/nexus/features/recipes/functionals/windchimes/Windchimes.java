@@ -4,16 +4,13 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.models.ambience.AmbienceConfig.Ambience.AmbienceType;
-import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.BlockFace;
@@ -143,15 +140,18 @@ public abstract class Windchimes extends FunctionalRecipe {
 		public void onClickWindchime(PlayerInteractEvent event) {
 			Player player = event.getPlayer();
 
-			if (player.isSneaking()) return;
-			if (!EquipmentSlot.HAND.equals(event.getHand())) return;
-			if (!ActionGroup.RIGHT_CLICK.applies(event)) return;
+			if (player.isSneaking())
+				return;
+			if (!EquipmentSlot.HAND.equals(event.getHand()))
+				return;
+			if (!ActionGroup.RIGHT_CLICK.applies(event))
+				return;
 
 			ItemFrame itemFrame = PlayerUtils.getTargetItemFrame(player, 4, Map.of(BlockFace.UP, 1));
-			if (itemFrame == null || ItemUtils.isNullOrAir(itemFrame.getItem())) return;
-			if (!isWindchime(itemFrame.getItem())) return;
-
-			if (!Nerd.of(player).getRank().isAdmin()) return;
+			if (itemFrame == null || ItemUtils.isNullOrAir(itemFrame.getItem()))
+				return;
+			if (!isWindchime(itemFrame.getItem()))
+				return;
 
 			event.setCancelled(true);
 			AmbienceType.METAL_WINDCHIMES.play(itemFrame.getLocation());
@@ -161,14 +161,16 @@ public abstract class Windchimes extends FunctionalRecipe {
 		public void onInteractItemFrame(PlayerInteractEntityEvent event) {
 			Player player = event.getPlayer();
 
-			if (player.isSneaking()) return;
-			if (!EquipmentSlot.HAND.equals(event.getHand())) return;
+			if (player.isSneaking())
+				return;
+			if (!EquipmentSlot.HAND.equals(event.getHand()))
+				return;
 
 			Entity clicked = event.getRightClicked();
-			if (!(clicked instanceof ItemFrame itemFrame)) return;
-			if (!isWindchime(itemFrame.getItem())) return;
-
-			if (!Nerd.of(player).getRank().isAdmin()) return;
+			if (!(clicked instanceof ItemFrame itemFrame))
+				return;
+			if (!isWindchime(itemFrame.getItem()))
+				return;
 
 			event.setCancelled(true);
 			AmbienceType.METAL_WINDCHIMES.play(itemFrame.getLocation());
