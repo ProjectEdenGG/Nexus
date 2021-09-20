@@ -4,7 +4,6 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
-import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.chat.games.ChatGameType;
 import gg.projecteden.nexus.features.chat.games.ChatGamesCommand;
@@ -13,6 +12,7 @@ import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationCon
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
+import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -164,7 +164,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 				}
 			}
 
-			Chat.Broadcast.all()
+			Broadcast.all()
 				.prefix("ChatGames")
 				.message(message)
 				.muteMenuItem(MuteMenuItem.CHAT_GAMES)
@@ -181,7 +181,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 			Tasks.wait(TickTime.SECOND, ChatGamesConfig::processQueue);
 		}
 
-		public void onAnswer(Player player) {
+		public void onAnswer(Nerd player) {
 			if (completed.contains(player.getUniqueId())) {
 				PlayerUtils.send(player, ChatGamesCommand.PREFIX + colorize("&cYou've already correctly answered this game"));
 				return;
@@ -192,7 +192,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 			PlayerUtils.send(player, ChatGamesCommand.PREFIX + colorize("&3That's correct! You've been given &e" + Prize.random().apply(this, player)));
 
 			new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL)
-				.receiver(player)
+				.receiver(player.getPlayer())
 				.pitchStep(6)
 				.play();
 		}
@@ -200,9 +200,9 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 		public enum Prize {
 			ECONOMY {
 				@Override
-				String apply(ChatGame game, Player player) {
+				String apply(ChatGame game, Nerd player) {
 					int amount = Math.max(25, 150 - (50 * game.getCompleted().size() - 1));
-					new BankerService().deposit(player, amount, ShopGroup.of(player), TransactionCause.SERVER);
+					new BankerService().deposit(player, amount, ShopGroup.SURVIVAL, TransactionCause.SERVER);
 					return prettyMoney(amount);
 				}
 			},
@@ -212,7 +212,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 				return EnumUtils.random(Prize.class);
 			}
 
-			abstract String apply(ChatGame game, Player player);
+			abstract String apply(ChatGame game, Nerd player);
 		}
 	}
 

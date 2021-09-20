@@ -262,7 +262,7 @@ public class SoundBuilder implements Cloneable {
 	private void players() {
 		for (HasPlayer hasPlayer : receivers) {
 			Player player = hasPlayer.getPlayer();
-			if (!player.isOnline())
+			if (player == null || !player.isOnline())
 				continue;
 
 			player(player);

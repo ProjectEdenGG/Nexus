@@ -12,6 +12,7 @@ import gg.projecteden.nexus.models.afk.events.NotAFKEvent;
 import gg.projecteden.nexus.models.chatgames.ChatGamesConfig;
 import gg.projecteden.nexus.models.chatgames.ChatGamesConfig.ChatGame;
 import gg.projecteden.nexus.models.chatgames.ChatGamesConfigService;
+import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NoArgsConstructor;
 import org.bukkit.event.EventHandler;
@@ -63,7 +64,7 @@ public class ChatGamesCommand extends CustomCommand implements Listener {
 			return;
 
 		if (event.getOriginalMessage().equalsIgnoreCase(game.getAnswer())) {
-			game.onAnswer(event.getChatter().getPlayer());
+			game.onAnswer(Nerd.of(event.getChatter()));
 			event.setCancelled(true);
 		}
 	}
