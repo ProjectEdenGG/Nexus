@@ -22,10 +22,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -36,7 +36,7 @@ public class SoundBuilder implements Cloneable {
 	private SoundCategory category = SoundCategory.MASTER;
 	private MuteMenuItem muteMenuItem;
 	private Function<HasPlayer, Float> volume = player -> 1F;
-	private Function<HasPlayer, Float> pitch = player -> 1F;
+	private float pitch = 1F;
 	private int delay = 0;
 
 	private boolean singleton;
@@ -185,12 +185,7 @@ public class SoundBuilder implements Cloneable {
 	}
 
 	public SoundBuilder pitch(float pitch) {
-		this.pitch = player -> MathUtils.clamp(pitch, 0.1F, 2.0F);
-		return this;
-	}
-
-	public SoundBuilder pitch(Function<HasPlayer, Float> pitch) {
-		this.pitch = pitch;
+		this.pitch = MathUtils.clamp(pitch, 0.1F, 2.0F);
 		return this;
 	}
 
@@ -238,91 +233,92 @@ public class SoundBuilder implements Cloneable {
 		if (!sound.contains(":"))
 			sound = "minecraft:" + sound;
 
-		System.out.println(this);
-
 		if (Utils.isNullOrEmpty(receivers) && location != null)
-			// play sound in world
-			Tasks.wait(delay, () -> {
-				if (singleton) {
-					for (SoundCooldown<?> soundCooldown : cooldowns()) {
-						if (!(soundCooldown instanceof LocationSoundCooldown cooldown))
-							continue;
+			world();
+		else
+			players();
+	}
 
-						if (!cooldown.getLocation().toBlockLocation().equals(location))
-							continue;
+	private void world() {
+		Tasks.wait(delay, () -> {
+			if (singleton) {
+				for (LocationSoundCooldown cooldown : cooldowns(LocationSoundCooldown.class)) {
+					if (!cooldown.getLocation().toBlockLocation().equals(location))
+						continue;
 
-						if (cooldown.getContext() == null) {
-							if (cooldownContext != null)
-								continue;
-						} else
+					if (cooldown.getContext() == null) {
+						if (cooldownContext != null)
+							continue;
+					} else
 						if (!cooldown.getContext().equals(cooldownContext))
 							continue;
 
-						return;
-					}
-
-					LocalDateTime expiration = expiration();
-					if (expiration != null)
-						new LocationSoundCooldown()
-							.sound(sound)
-							.location(location)
-							.context(cooldownContext)
-							.expiration(expiration)
-							.create();
+					return;
 				}
 
-				location.getWorld().playSound(location, sound, category, volume.apply(null), pitch.apply(null))
-			});
-		else {
-			// Play sound to receivers
-			for (HasPlayer hasPlayer : receivers) {
-				Player player = hasPlayer.getPlayer();
-				if (!player.isOnline())
-					continue;
+				LocalDateTime expiration = expiration();
+				if (expiration != null)
+					new LocationSoundCooldown()
+						.sound(sound)
+						.location(location)
+						.context(cooldownContext)
+						.expiration(expiration)
+						.create();
+			}
 
-				if (location != null && player.getWorld() != location.getWorld())
-					continue;
+			location.getWorld().playSound(location, sound, category, volume.apply(null), pitch);
+		});
+	}
 
-				if (muteMenuItem != null)
-					if (MuteMenuUser.hasMuted(player, muteMenuItem))
+	private void players() {
+		for (HasPlayer hasPlayer : receivers) {
+			Player player = hasPlayer.getPlayer();
+			if (!player.isOnline())
+				continue;
+
+			player(player);
+		}
+	}
+
+	private void player(Player player) {
+		if (location != null && player.getWorld() != location.getWorld())
+			return;
+
+		if (muteMenuItem != null)
+			if (MuteMenuUser.hasMuted(player, muteMenuItem))
+				return;
+
+		Tasks.wait(delay, () -> {
+			if (singleton) {
+				for (PlayerSoundCooldown cooldown : cooldowns(PlayerSoundCooldown.class)) {
+					if (!cooldown.getUuid().equals(player.getUniqueId()))
 						continue;
 
-				Tasks.wait(delay, () -> {
-					if (singleton) {
-						for (SoundCooldown<?> soundCooldown : cooldowns()) {
-							if (!(soundCooldown instanceof PlayerSoundCooldown cooldown))
-								continue;
+					if (cooldown.getContext() == null) {
+						if (cooldownContext != null)
+							continue;
+					} else if (!cooldown.getContext().equals(cooldownContext))
+						continue;
 
-							if (!cooldown.getUuid().equals(receiver.getPlayer().getUniqueId()))
-								continue;
+					return;
+				}
 
-							if (cooldown.getContext() == null) {
-								if (cooldownContext != null)
-									continue;
-							} else if (!cooldown.getContext().equals(cooldownContext))
-								continue;
-
-							return;
-						}
-
-						LocalDateTime expiration = expiration();
-						if (expiration != null)
-							new PlayerSoundCooldown()
-								.sound(sound)
-								.player(player)
-								.context(cooldownContext)
-								.expiration(expiration)
-								.create();
-					}
-
-					if (!player.isOnline())
-						return;
-
-					Location origin = location == null ? player.getLocation() : location;
-					player.playSound(origin, sound, category, volume.apply(player), pitch.apply(player));
-				});
+				LocalDateTime expiration = expiration();
+				if (expiration != null)
+					new PlayerSoundCooldown()
+						.sound(sound)
+						.player(player)
+						.context(cooldownContext)
+						.expiration(expiration)
+						.create();
 			}
-		}
+
+			if (!player.isOnline())
+				return;
+
+			Location origin = location == null ? player.getLocation() : location;
+			player.playSound(origin, sound, category, volume.apply(player), pitch);
+		});
 	}
 
 	private LocalDateTime expiration() {
@@ -335,9 +331,12 @@ public class SoundBuilder implements Cloneable {
 		return LocalDateTime.now().plus((long) (SOUND_DURATIONS.get(sound) * pitch), ChronoUnit.MILLIS);
 	}
 
-	public static List<SoundCooldown<?>> cooldowns() {
+	public static <T extends SoundCooldown<?>> List<T> cooldowns(Class<T> clazz) {
 		COOLDOWNS.removeIf(SoundCooldown::isExpired);
-		return COOLDOWNS;
+		return COOLDOWNS.stream()
+			.filter(cooldown -> clazz.isAssignableFrom(cooldown.getClass()))
+			.map(cooldown -> (T) cooldown)
+			.toList();
 	}
 
 }

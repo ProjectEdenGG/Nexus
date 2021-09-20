@@ -452,7 +452,7 @@ public class TestCommand extends CustomCommand implements Listener {
 
 	@Path("soundbuilder cooldowns")
 	void soundbuilder_cooldowns() {
-		for (SoundCooldown<?> cooldown : SoundBuilder.cooldowns())
+		for (SoundCooldown<?> cooldown : SoundBuilder.cooldowns(SoundCooldown.class))
 			send(cooldown.toString());
 	}
 }
