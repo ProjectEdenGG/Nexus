@@ -317,7 +317,7 @@ public class SoundUtils {
 		}
 	}
 
-	private static float getMuteMenuVolume(HasPlayer player, MuteMenuItem item) {
+	public static float getMuteMenuVolume(HasPlayer player, MuteMenuItem item) {
 		float volume = .5f;
 		Integer customVolume = MuteMenuUser.getVolume(player.getPlayer(), item);
 		if (customVolume != null)

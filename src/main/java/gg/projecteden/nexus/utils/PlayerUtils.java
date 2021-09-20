@@ -10,14 +10,17 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
+import gg.projecteden.nexus.models.afk.AFKUserService;
 import gg.projecteden.nexus.models.mail.Mailer;
 import gg.projecteden.nexus.models.mail.Mailer.Mail;
 import gg.projecteden.nexus.models.mail.MailerService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.NerdService;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.nickname.NicknameService;
 import gg.projecteden.utils.Utils.MinMaxResult;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
@@ -62,7 +65,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Function;
+import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -133,6 +137,10 @@ public class PlayerUtils {
 		private World world;
 		private Location origin;
 		private Double radius;
+		private Boolean afk;
+		private Boolean vanished;
+		private Predicate<Rank> rank;
+		private String permission;
 		private List<UUID> include;
 		private List<UUID> exclude;
 
@@ -162,6 +170,30 @@ public class PlayerUtils {
 		public OnlinePlayers radius(Location origin, double radius) {
 			this.origin = origin;
 			this.radius = radius;
+			return this;
+		}
+
+		public OnlinePlayers afk(boolean afk) {
+			this.afk = afk;
+			return this;
+		}
+
+		public OnlinePlayers vanished(boolean vanished) {
+			this.vanished = vanished;
+			return this;
+		}
+
+		public OnlinePlayers rank(Rank rank) {
+			return rank(_rank -> _rank == rank);
+		}
+
+		public OnlinePlayers rank(Predicate<Rank> rankPredicate) {
+			this.rank = rankPredicate;
+			return this;
+		}
+
+		public OnlinePlayers hasPermission(String permission) {
+			this.permission = permission;
 			return this;
 		}
 
@@ -213,33 +245,53 @@ public class PlayerUtils {
 				.map(OfflinePlayer::getPlayer)
 				.filter(player -> !CitizensUtils.isNPC(player));
 
-			if (viewer != null)
-				stream = viewerFilter.apply(stream);
-			if (world != null)
-				stream = worldFilter.apply(stream);
-			if (radius != null)
-				stream = radiusFilter.apply(stream);
+			if (origin == null) {
+				final Player viewer = Bukkit.getPlayer(this.viewer);
+				if (viewer != null)
+					origin = viewer.getLocation();
+			}
+
+			for (Filter filter : Filter.values())
+				stream = filter.filter(this, stream);
 
 			return stream.toList();
 		}
 
-		private final Function<Stream<Player>, Stream<Player>> viewerFilter = stream ->
-			stream.filter(_player -> canSee(Bukkit.getPlayer(viewer), _player));
+		@AllArgsConstructor
+		private enum Filter {
+			AFK(
+				search -> search.afk != null,
+				(search, player) -> new AFKUserService().get(player).isAfk() == search.afk),
+			VANISHED(
+				search -> search.vanished != null,
+				(search, player) -> Nerd.of(player).isVanished() == search.vanished),
+			RANK(
+				search -> search.rank != null,
+				(search, player) -> search.rank.test(Rank.of(player))),
+			PERMISSION(
+				search -> search.permission != null,
+				(search, player) -> player.hasPermission(search.permission)),
+			VIEWER(
+				search -> search.viewer != null,
+				(search, player) -> canSee(Bukkit.getPlayer(search.viewer), player)),
+			WORLD(
+				search -> search.world != null,
+				(search, player) -> player.getWorld().equals(search.world)),
+			RADIUS(
+				search -> search.origin != null && search.radius != null,
+				(search, player) -> search.origin.getWorld().equals(player.getWorld()) && player.getLocation().distance(search.origin) <= search.radius),
+			;
 
-		private final Function<Stream<Player>, Stream<Player>> worldFilter = stream ->
-			stream.filter(_player -> _player.getWorld().equals(world));
+			private final Predicate<OnlinePlayers> canFilter;
+			private final BiPredicate<OnlinePlayers, Player> predicate;
 
-		private final Function<Stream<Player>, Stream<Player>> radiusFilter = stream -> {
-			if (viewer == null && origin == null)
-				return stream;
+			private Stream<Player> filter(OnlinePlayers search, Stream<Player> stream) {
+				if (!canFilter.test(search))
+					return stream;
 
-			if (origin == null)
-				origin = Bukkit.getPlayer(viewer).getLocation();
-
-			stream = worldFilter.apply(stream);
-			stream = stream.filter(_player -> _player.getLocation().distance(origin) <= radius);
-			return stream;
-		};
+				return stream.filter(player -> predicate.test(search, player));
+			}
+		}
 	}
 
 	public static boolean isVanished(OptionalPlayer player) {

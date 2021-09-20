@@ -30,6 +30,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.CommandCooldownE
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Features;
 import gg.projecteden.nexus.models.MongoService;
+import gg.projecteden.nexus.models.chatgames.ChatGamesConfig;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -187,6 +188,10 @@ public class NexusCommand extends CustomCommand implements Listener {
 		SIGN_MENUS(() -> {
 			if (!Nexus.getSignMenuFactory().getInputReceivers().isEmpty())
 				throw new InvalidInputException("There are " + Nexus.getSignMenuFactory().getInputReceivers().size() + " sign menus open");
+		}),
+		CHAT_GAMES(() -> {
+			if (ChatGamesConfig.getCurrentGame() != null)
+				throw new InvalidInputException("There is an active chat game");
 		}),
 		CRATES(() -> {
 			for (CrateType crateType : Arrays.stream(CrateType.values()).filter(crateType -> crateType != CrateType.ALL).collect(Collectors.toList()))
