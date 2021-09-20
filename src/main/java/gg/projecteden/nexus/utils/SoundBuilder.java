@@ -311,7 +311,7 @@ public class SoundBuilder implements Cloneable {
 		if (!SOUND_DURATIONS.containsKey(sound))
 			return null;
 
-		return LocalDateTime.now().plus((long) (SOUND_DURATIONS.get(sound) * pitch), ChronoUnit.MILLIS);
+		return LocalDateTime.now().plus((long) (SOUND_DURATIONS.get(sound) * pitch * .95), ChronoUnit.MILLIS);
 	}
 
 	public static <T extends SoundCooldown<?>> List<T> cooldowns(Class<T> clazz, String context) {
