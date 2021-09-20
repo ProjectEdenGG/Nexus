@@ -1,13 +1,19 @@
 package gg.projecteden.nexus.features.votes.vps;
 
+import gg.projecteden.nexus.features.afk.AFK;
+import gg.projecteden.nexus.features.chat.games.ChatGames;
 import gg.projecteden.nexus.features.crates.models.CrateType;
+import gg.projecteden.nexus.features.store.perks.joinquit.VanishCommand;
 import gg.projecteden.nexus.features.votes.vps.VPSMenu.VPSPage.VPSSlot;
 import gg.projecteden.nexus.features.votes.vps.VPSMenu.VPSPage.VPSSlot.VPSSlotBuilder;
+import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.Builder;
 import lombok.Builder.Default;
 import lombok.Data;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -27,7 +33,8 @@ public enum VPSMenu {
 	SURVIVAL {
 		@Getter
 		final List<VPSPage> pages = new ArrayList<>() {{
-			add(VPSPage.builder().items(new HashMap<>() {{
+			add(VPSPage.builder().items(new HashMap<>() {
+				{
 				put(10, VPSSlot.builder()
 						.name("$250")
 						.display(Material.IRON_NUGGET)
@@ -73,17 +80,53 @@ public enum VPSMenu {
 				put(16, VPSSlot.builder()
 						.name("Uncraftable Banners")
 						.display(new ItemBuilder(Material.CYAN_BANNER)
-								.lore("&3Pre-selected banners or")
-								.lore("&3choose your own!")
-								.lore("")
-								.lore("&eClick to teleport &3to the")
-								.lore("&3banner display area")
-								.lore("")
-								.lore("&3Read the &ehologram&3!")
-								.lore("")
-								.lore("&6Price: &e5-10vp"))
+							 .lore("&3Pre-selected banners or")
+							 .lore("&3choose your own!")
+							 .lore("")
+							 .lore("&eClick to teleport &3to the")
+							 .lore("&3banner display area")
+							 .lore("")
+							 .lore("&3Read the &ehologram&3!")
+							 .lore("")
+							 .lore("&6Price: &e5-10vp"))
 						.command("warp banners")
 						.close(true));
+
+				int players = 0;
+				for (Player player : Bukkit.getOnlinePlayers())
+					if (!AFK.get(player).isAfk() && !Nerd.of(player).isVanished())
+						players++;
+				List<String> chatGameLore = new ArrayList<>();
+				if (players < ChatGames.REQUIRED_PLAYERS)
+					chatGameLore.add("&cNot enough active players!");
+				
+				put(37, VPSSlot.builder()
+						.name("1 Chat Game")
+						.display(new ItemBuilder(Material.PAPER)
+							.lore(chatGameLore))
+						.price(1)
+						.onPurchase(((player, vpsSlot) -> ChatGames.queue(1, player))));
+				put(38, VPSSlot.builder()
+						.name("3 Chat Games")
+						.display(new ItemBuilder(Material.PAPER)
+							.amount(3)
+							.lore(chatGameLore))
+						.price(3)
+						.onPurchase(((player, vpsSlot) -> ChatGames.queue(3, player))));
+				put(39, VPSSlot.builder()
+						.name("5 Chat Games")
+						.display(new ItemBuilder(Material.PAPER)
+							.amount(5)
+							.lore(chatGameLore))
+						.price(5)
+						.onPurchase(((player, vpsSlot) -> ChatGames.queue(5, player))));
+				put(40, VPSSlot.builder()
+						.name("10 Chat Games")
+						.display(new ItemBuilder(Material.PAPER)
+							.amount(10)
+							.lore(chatGameLore))
+						.price(10)
+						.onPurchase(((player, vpsSlot) -> ChatGames.queue(10, player))));
 //				put(34, VPSSlot.builder()
 //						.name("Easel")
 //						.display(new ItemBuilder(Material.ARMOR_STAND))
@@ -94,113 +137,50 @@ public enum VPSMenu {
 //						.display(new ItemBuilder(Material.PAPER))
 //						.consoleCommand("artmap give [player] canvas")
 //						.price(10));
-
-				put(28, VPSSlot.builder()
+				}}).build());
+			add(VPSPage.builder().items(new HashMap<>() {
+				{
+				put(11, VPSSlot.builder()
 						.name("Full Diamond Armor Set")
 						.display(Material.DIAMOND_CHESTPLATE)
 						.price(28)
 						.give(Material.DIAMOND_HELMET, Material.DIAMOND_CHESTPLATE, Material.DIAMOND_LEGGINGS, Material.DIAMOND_BOOTS));
-				put(29, VPSSlot.builder()
+				put(12, VPSSlot.builder()
 						.name("Full Iron Armor Set")
 						.display(Material.IRON_CHESTPLATE)
 						.price(18)
 						.give(Material.IRON_HELMET, Material.IRON_CHESTPLATE, Material.IRON_LEGGINGS, Material.IRON_BOOTS));
-				put(30, VPSSlot.builder()
+				put(14, VPSSlot.builder()
 						.name("Full Golden Armor Set")
 						.display(Material.GOLDEN_CHESTPLATE)
 						.price(15)
 						.give(Material.GOLDEN_HELMET, Material.GOLDEN_CHESTPLATE, Material.GOLDEN_LEGGINGS, Material.GOLDEN_BOOTS));
-				put(31, VPSSlot.builder()
+				put(15, VPSSlot.builder()
 						.name("Full Chainmail Armor Set")
 						.display(Material.CHAINMAIL_CHESTPLATE)
 						.price(20)
 						.give(Material.CHAINMAIL_HELMET, Material.CHAINMAIL_CHESTPLATE, Material.CHAINMAIL_LEGGINGS, Material.CHAINMAIL_BOOTS));
 
-				put(37, VPSSlot.builder()
+				put(20, VPSSlot.builder()
 						.name("Diamond Horse Armor")
 						.displayAndGive(Material.DIAMOND_HORSE_ARMOR)
 						.price(10));
-				put(38, VPSSlot.builder()
+				put(21, VPSSlot.builder()
 						.name("Iron Horse Armor")
 						.displayAndGive(Material.IRON_HORSE_ARMOR)
 						.price(6));
-				put(39, VPSSlot.builder()
+				put(23, VPSSlot.builder()
 						.name("Gold Horse Armor")
 						.displayAndGive(Material.GOLDEN_HORSE_ARMOR)
 						.price(8));
-				put(40, VPSSlot.builder()
+				put(24, VPSSlot.builder()
 						.name("Leather Horse Armor")
 						.displayAndGive(Material.LEATHER_HORSE_ARMOR)
 						.price(4));
-				put(41, VPSSlot.builder()
+				put(22, VPSSlot.builder()
 						.name("Saddle")
 						.displayAndGive(Material.SADDLE)
 						.price(10));
-			}}).build());
-
-			add(VPSPage.builder().items(new HashMap<>() {{
-				put(10, VPSSlot.builder()
-						.name("Enchanted Book")
-						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.FROST_WALKER, 2))
-						.price(30));
-				put(11, VPSSlot.builder()
-						.name("Enchanted Book")
-						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.DEPTH_STRIDER, 3))
-						.price(35));
-				put(12, VPSSlot.builder()
-						.name("Enchanted Book")
-						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.SOUL_SPEED, 3))
-						.price(45));
-				put(13, VPSSlot.builder()
-						.name("Enchanted Book")
-						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.SILK_TOUCH))
-						.price(30));
-				put(14, VPSSlot.builder()
-						.name("Enchanted Book")
-						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.DURABILITY, 3))
-						.price(30));
-				put(15, VPSSlot.builder()
-						.name("Enchanted Book")
-						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.ARROW_INFINITE))
-						.price(40));
-				put(16, VPSSlot.builder()
-						.name("Enchanted Book")
-						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.THORNS))
-						.price(15));
-
-				put(19, VPSSlot.builder()
-						.name("Enchanted Book")
-						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.CHANNELING))
-						.price(30));
-				put(20, VPSSlot.builder()
-						.name("Enchanted Book")
-						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.LOYALTY, 3))
-						.price(40));
-				put(21, VPSSlot.builder()
-						.name("Enchanted Book")
-						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.IMPALING, 5))
-						.price(38));
-				put(22, VPSSlot.builder()
-						.name("Enchanted Book")
-						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.RIPTIDE, 3))
-						.price(50));
-				put(23, VPSSlot.builder()
-						.name("Enchanted Book")
-						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.MULTISHOT))
-						.price(35));
-				put(24, VPSSlot.builder()
-						.name("Enchanted Book")
-						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.QUICK_CHARGE, 3))
-						.price(30));
-				put(25, VPSSlot.builder()
-						.name("Enchanted Book")
-						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.PIERCING, 4))
-						.price(30));
-
-				put(31, VPSSlot.builder()
-						.name("Enchanted Book")
-						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.MENDING))
-						.price(45));
 
 				put(37, VPSSlot.builder()
 						.name("1 Ancient Debris")
@@ -231,6 +211,72 @@ public enum VPSMenu {
 						.displayAndGive(Material.QUARTZ, 16)
 						.price(2));
 			}}).build());
+
+			add(VPSPage.builder().items(new HashMap<>() {
+				{
+					put(10, VPSSlot.builder()
+						.name("Enchanted Book")
+						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.FROST_WALKER, 2))
+						.price(30));
+					put(11, VPSSlot.builder()
+						.name("Enchanted Book")
+						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.DEPTH_STRIDER, 3))
+						.price(35));
+					put(12, VPSSlot.builder()
+						.name("Enchanted Book")
+						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.SOUL_SPEED, 3))
+						.price(45));
+					put(13, VPSSlot.builder()
+						.name("Enchanted Book")
+						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.SILK_TOUCH))
+						.price(30));
+					put(14, VPSSlot.builder()
+						.name("Enchanted Book")
+						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.DURABILITY, 3))
+						.price(30));
+					put(15, VPSSlot.builder()
+						.name("Enchanted Book")
+						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.ARROW_INFINITE))
+						.price(40));
+					put(16, VPSSlot.builder()
+						.name("Enchanted Book")
+						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.THORNS))
+						.price(15));
+
+					put(19, VPSSlot.builder()
+						.name("Enchanted Book")
+						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.CHANNELING))
+						.price(30));
+					put(20, VPSSlot.builder()
+						.name("Enchanted Book")
+						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.LOYALTY, 3))
+						.price(40));
+					put(21, VPSSlot.builder()
+						.name("Enchanted Book")
+						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.IMPALING, 5))
+						.price(38));
+					put(22, VPSSlot.builder()
+						.name("Enchanted Book")
+						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.RIPTIDE, 3))
+						.price(50));
+					put(23, VPSSlot.builder()
+						.name("Enchanted Book")
+						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.MULTISHOT))
+						.price(35));
+					put(24, VPSSlot.builder()
+						.name("Enchanted Book")
+						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.QUICK_CHARGE, 3))
+						.price(30));
+					put(25, VPSSlot.builder()
+						.name("Enchanted Book")
+						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.PIERCING, 4))
+						.price(30));
+
+					put(31, VPSSlot.builder()
+						.name("Enchanted Book")
+						.displayAndGive(new ItemBuilder(Material.ENCHANTED_BOOK).enchant(Enchantment.MENDING))
+						.price(45));
+				}}).build());
 
 			add(VPSPage.builder().items(new HashMap<>() {{
 				put(10, VPSSlot.builder()
