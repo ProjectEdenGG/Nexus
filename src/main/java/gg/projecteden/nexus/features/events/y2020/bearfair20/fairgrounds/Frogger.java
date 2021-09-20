@@ -60,7 +60,7 @@ public class Frogger implements Listener {
 	//
 	private static Map<Location, Material> carSpawnMap = new HashMap<>();
 	private static List<Integer> carTasks = new ArrayList<>();
-	private static Set<Material> carMaterials = MaterialTag.CONCRETES.exclude(Material.BLACK_CONCRETE, Material.LIGHT_GRAY_CONCRETE).getValues();
+	private static Set<Material> carMaterials = new MaterialTag(MaterialTag.CONCRETES).exclude(Material.BLACK_CONCRETE, Material.LIGHT_GRAY_CONCRETE).getValues();
 
 	public Frogger() {
 		Nexus.registerListener(this);
