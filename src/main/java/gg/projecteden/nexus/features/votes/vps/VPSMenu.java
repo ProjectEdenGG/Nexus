@@ -87,10 +87,10 @@ public enum VPSMenu {
 					.command("warp banners")
 					.close(true));
 
-				final ItemBuilder chatGameItem = new ItemBuilder(Material.PAPER).lore(new ArrayList<>() {{
+				final ItemBuilder chatGameItem = new ItemBuilder(Material.PAPER).loreize(false).lore(new ArrayList<>() {{
 					if (!ChatGamesConfig.hasRequiredPlayers()) {
 						add("&cNot enough active players! Games will not");
-						add("&cactivate until " + ChatGamesConfig.REQUIRED_PLAYERS + " players are active");
+						add("&cactivate until there are " + ChatGamesConfig.REQUIRED_PLAYERS + " active players");
 					}
 				}});
 
