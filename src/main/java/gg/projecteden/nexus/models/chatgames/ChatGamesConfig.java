@@ -127,6 +127,8 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 					.message("Game cancelled")
 					.muteMenuItem(MuteMenuItem.CHAT_GAMES)
 					.send();
+
+			ChatGamesConfig.setCurrentGame(null);
 		}
 
 		public void start() {
