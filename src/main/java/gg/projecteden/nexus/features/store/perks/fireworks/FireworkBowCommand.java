@@ -23,7 +23,7 @@ public class FireworkBowCommand extends CustomCommand {
 		runCommandAsOp("ce enchant firework");
 		if (player().hasPermission("fireworkbow.single")) {
 			send("&eYou have created your one firework bow! If you lose this bow, you won't be able to get another unless you purchase the command again.");
-			LuckPermsUtils.PermissionChange.unset().uuid(uuid()).permission("firework.single").runAsync();
+			LuckPermsUtils.PermissionChange.unset().uuid(uuid()).permissions("firework.single").runAsync();
 		}
 
 	}

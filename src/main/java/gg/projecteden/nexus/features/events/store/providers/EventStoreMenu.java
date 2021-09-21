@@ -66,8 +66,7 @@ public abstract class EventStoreMenu extends MenuUtils implements InventoryProvi
 
 	protected void chargeAndAddPermissions(Player player, int price, String... permissions) {
 		charge(player, price);
-		for (String permission : permissions)
-			PermissionChange.set().player(player).permission(permission).runAsync();
+		PermissionChange.set().player(player).permissions(permissions).runAsync();
 		open(player);
 	}
 

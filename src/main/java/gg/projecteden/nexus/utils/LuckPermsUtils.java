@@ -242,8 +242,8 @@ public class LuckPermsUtils {
 				return this;
 			}
 
-			public PermissionChangeBuilder permission(String permission) {
-				this.permissions.add(permission);
+			public PermissionChangeBuilder permissions(String... permission) {
+				this.permissions.addAll(Arrays.asList(permission));
 				return this;
 			}
 

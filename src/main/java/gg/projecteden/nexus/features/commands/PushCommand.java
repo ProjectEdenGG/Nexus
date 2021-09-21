@@ -17,7 +17,7 @@ public class PushCommand extends CustomCommand {
 	}
 
 	public static @NotNull CompletableFuture<Void> set(UUID uuid, boolean enabled) {
-		return PermissionChange.set().uuid(uuid).permission(PERMISSION).value(enabled).runAsync();
+		return PermissionChange.set().uuid(uuid).permissions(PERMISSION).value(enabled).runAsync();
 	}
 
 	@Path("[enable]")

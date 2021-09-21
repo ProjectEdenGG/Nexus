@@ -100,11 +100,11 @@ public class PermHelperCommand extends CustomCommand {
 		}
 
 		public void set(UUID uuid, int amount) {
-			PermissionChange.set().permission(permission + amount).world(world).uuid(uuid).runAsync();
+			PermissionChange.set().permissions(permission + amount).world(world).uuid(uuid).runAsync();
 		}
 
 		public void unset(UUID uuid, int amount) {
-			PermissionChange.unset().permission(permission + amount).uuid(uuid).world(world).runAsync();
+			PermissionChange.unset().permissions(permission + amount).uuid(uuid).world(world).runAsync();
 		}
 	}
 
