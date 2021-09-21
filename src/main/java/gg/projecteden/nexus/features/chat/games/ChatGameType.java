@@ -28,7 +28,7 @@ public enum ChatGameType {
 		@Override
 		public ChatGame create() {
 			String answer = RandomUtils.randomElement(ChatGameType.WORDS);
-			return new ChatGame(this, answer, new JsonBuilder("&eHover with your mouse &3and type the correct word in chat!").hover("&e" + answer));
+			return new ChatGame(this, answer, new JsonBuilder("&eHover with your mouse &3and type the correct phrase in chat!").hover("&e" + answer));
 		}
 	},
 	UNMUTE(30) {
@@ -44,7 +44,7 @@ public enum ChatGameType {
 				else
 					muted.append(c);
 			}
-			return new ChatGame(this, answer, new JsonBuilder("&3Fix the muted word: &e" + muted + ". &eType the full word in chat!"));
+			return new ChatGame(this, answer, new JsonBuilder("&3Complete the phrase: &e" + muted + ". &eType the full phrase in chat!"));
 		}
 	},
 	UNSCRAMBLE(30) {
@@ -55,7 +55,7 @@ public enum ChatGameType {
 			StringBuilder scrambled = new StringBuilder();
 			for (String string : split)
 				scrambled.append(shuffle(string)).append(" ");
-			return new ChatGame(this, answer, new JsonBuilder("&3Unscramble the word: &e" + scrambled.toString().trim() + ". &eType the full word in chat!"));
+			return new ChatGame(this, answer, new JsonBuilder("&3Unscramble the phrase: &e" + scrambled.toString().trim() + ". &eType the full phrase in chat!"));
 		}
 
 		private String shuffle(String word) {

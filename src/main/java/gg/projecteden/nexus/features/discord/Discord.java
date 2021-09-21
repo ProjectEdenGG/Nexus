@@ -23,8 +23,6 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -113,10 +111,6 @@ public class Discord extends Feature {
 		return message;
 	}
 
-	public static String discordize(Component message) {
-		return discordize(PlainComponentSerializer.plain().serialize(message));
-	}
-
 	@Nullable
 	public static Guild getGuild() {
 		if (Bot.KODA.jda() == null) return null;
@@ -145,7 +139,7 @@ public class Discord extends Feature {
 	}
 
 	public static void send(String message, TextChannel... targets) {
-		send(new MessageBuilder(stripColor(message).replace("<@role", "<@&")), targets);
+		send(new MessageBuilder(discordize(stripColor(message).replace("<@role", "<@&"))), targets);
 	}
 
 	public static void send(MessageBuilder message, TextChannel... targets) {
@@ -157,7 +151,7 @@ public class Discord extends Feature {
 	}
 
 	public static void koda(String message, TextChannel... targets) {
-		koda(new MessageBuilder(stripColor(message)), targets);
+		koda(new MessageBuilder(discordize(stripColor(message))), targets);
 	}
 	public static void koda(MessageBuilder message, TextChannel... targets) {
 		koda(message, success -> {}, error -> {}, targets);

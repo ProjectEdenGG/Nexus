@@ -7,7 +7,6 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
-import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
@@ -285,7 +284,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 			if (player.getKiller() != null)
 				deathString = deathString.replace(player.getKiller().getName(), Nickname.of(player.getKiller()));
 		}
-		Broadcast.discord().message(Discord.discordize(deathString)).send();
+		Broadcast.discord().message(deathString).send();
 	}
 
 	private void local(Player player, JsonBuilder output) {

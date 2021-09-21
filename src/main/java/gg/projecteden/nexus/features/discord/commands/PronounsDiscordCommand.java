@@ -5,7 +5,6 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import gg.projecteden.exceptions.EdenException;
 import gg.projecteden.models.nerd.Nerd.Pronoun;
 import gg.projecteden.nexus.features.discord.Bot;
-import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.discord.HandledBy;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.discord.DiscordUser;
@@ -16,6 +15,7 @@ import gg.projecteden.nexus.utils.Tasks;
 import java.util.Set;
 import java.util.function.Function;
 
+import static gg.projecteden.nexus.features.discord.Discord.discordize;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @HandledBy(Bot.KODA)
@@ -71,7 +71,7 @@ public class PronounsDiscordCommand extends Command {
 					output = "Removed **%s** from your pronouns";
 				}
 
-				event.reply(String.format(output, Discord.discordize(pronoun.toString()).replaceAll("[*`@]", "")));
+				event.reply(String.format(output, discordize(pronoun.toString()).replaceAll("[*`@]", "")));
 			} catch (Exception ex) {
 				event.reply(stripColor(ex.getMessage()));
 				if (!(ex instanceof EdenException))
