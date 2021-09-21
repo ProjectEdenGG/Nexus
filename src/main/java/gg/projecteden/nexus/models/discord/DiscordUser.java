@@ -51,7 +51,7 @@ public class DiscordUser implements PlayerOwnedObject {
 
 	public String getBridgeName() {
 		OfflinePlayer player = PlayerUtils.getPlayer(uuid);
-		String name = "**" + Nickname.of(player) + "**";
+		String name = "**" + Nickname.discordOf(player) + "**";
 		if (roleId != null)
 			name = "<@&&f" + roleId + ">";
 		return name;

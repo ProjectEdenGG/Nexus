@@ -23,7 +23,12 @@ import gg.projecteden.nexus.models.voter.VoteSite;
 import gg.projecteden.nexus.models.voter.Voter;
 import gg.projecteden.nexus.models.voter.Voter.Vote;
 import gg.projecteden.nexus.models.voter.VoterService;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.IOUtils;
+import gg.projecteden.nexus.utils.Name;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.SoundUtils;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -47,6 +52,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static gg.projecteden.nexus.features.discord.Discord.discordize;
 import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
 import static gg.projecteden.nexus.utils.StringUtils.plural;
 import static gg.projecteden.nexus.utils.Utils.epochSecond;
@@ -142,12 +148,12 @@ public class Votes extends Feature implements Listener {
 				message += " &e" + left + " &3more votes needed to hit the goal";
 
 			Broadcast.ingame().message("&a[✔] &3" + name + " &bvoted" + message).send();
-			Broadcast.discord().message(":white_check_mark: **" + name + " voted**" + message).send();
+			Broadcast.discord().message(":white_check_mark: **" + discordize(name) + " voted**" + message).send();
 		}
 
 		if (vote.getExtra() > 0) {
 			Broadcast.ingame().message("&3[✦] &e" + name + " &3received &e" + vote.getExtra() + " extra &3vote points!").send();
-			Broadcast.discord().message(":star: **" + name + "** received **" + vote.getExtra() + "** extra vote points!").send();
+			Broadcast.discord().message(":star: **" + discordize(name) + "** received **" + vote.getExtra() + "** extra vote points!").send();
 		}
 
 		if (player != null) {

@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -23,6 +24,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
+import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -104,19 +106,17 @@ public class Discord extends Feature {
 	}
 
 	public static String discordize(String message) {
-		StringBuilder builder = new StringBuilder();
-		for (String word : message.split(" ")) {
-			// skip emojis
-			if (!word.matches("^<.*>$")) {
-				message = message.replaceAll("\\\\", "\\\\\\\\"); // what the fuck
-				message = message.replaceAll("_", "\\\\_");
-				message = message.replaceAll("\\*", "\\\\*");
-			}
+		if (message != null)
+			message = message
+				.replaceAll("\\\\", "\\\\\\\\")
+				.replaceAll("_", "\\\\_")
+				.replaceAll("\\*", "\\\\*");
 
-			builder.append(word).append(" ");
-		}
+		return message;
+	}
 
-		return builder.toString().trim();
+	public static String discordize(ComponentLike component) {
+		return discordize(AdventureUtils.asPlainText(component));
 	}
 
 	@Nullable
@@ -147,7 +147,7 @@ public class Discord extends Feature {
 	}
 
 	public static void send(String message, TextChannel... targets) {
-		send(new MessageBuilder(discordize(stripColor(message).replace("<@role", "<@&"))), targets);
+		send(new MessageBuilder(stripColor(message).replace("<@role", "<@&")), targets);
 	}
 
 	public static void send(MessageBuilder message, TextChannel... targets) {
@@ -159,7 +159,7 @@ public class Discord extends Feature {
 	}
 
 	public static void koda(String message, TextChannel... targets) {
-		koda(new MessageBuilder(discordize(stripColor(message))), targets);
+		koda(new MessageBuilder(stripColor(message)), targets);
 	}
 	public static void koda(MessageBuilder message, TextChannel... targets) {
 		koda(message, success -> {}, error -> {}, targets);
@@ -226,7 +226,7 @@ public class Discord extends Feature {
 
 		String topic = "Online nerds (" + players.size() + "): " + System.lineSeparator() + players.stream()
 				.map(player -> {
-					String name = discordize(Nickname.of(player));
+					String name = Nickname.discordOf(player);
 					if (AFK.get(player).isAfk())
 						name += " _[AFK]_";
 					return name.trim();
@@ -260,7 +260,7 @@ public class Discord extends Feature {
 
 		return "Online staff (" + players.size() + "): " + System.lineSeparator() + players.stream()
 				.map(player -> {
-					String name = discordize(Nickname.of(player));
+					String name = Nickname.of(player);
 					if (PlayerUtils.isVanished(player))
 						name += " _[V]_";
 					if (AFK.get(player).isAfk())

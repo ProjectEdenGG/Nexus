@@ -61,6 +61,16 @@ public class ChatGamesCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Cleared queue");
 	}
 
+	@Path("start <type>")
+	@Permission("group.admin")
+	void start(ChatGameType type) {
+		if (ChatGamesConfig.getCurrentGame() != null)
+			error("There is already an active game");
+
+		type.create().start();
+		send(PREFIX + "Game started");
+	}
+
 	@EventHandler
 	public void onChat(ChatEvent event) {
 		final ChatGame game = ChatGamesConfig.getCurrentGame();

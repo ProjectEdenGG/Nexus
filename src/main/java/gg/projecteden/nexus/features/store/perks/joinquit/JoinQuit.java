@@ -38,6 +38,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static gg.projecteden.nexus.features.discord.Discord.discordize;
+
 @NoArgsConstructor
 public class JoinQuit extends Feature implements Listener {
 	@Getter
@@ -87,7 +89,7 @@ public class JoinQuit extends Feature implements Listener {
 				DiscordUser user = new DiscordUserService().get(player);
 				RoleManager.update(user);
 
-				final String discord = finalMessage.replaceAll("\\[player]", "**" + Nickname.of(player) + "**");
+				final String discord = discordize(finalMessage).replaceAll("\\[player]", "**" + Nickname.discordOf(player) + "**");
 				Discord.send("<:blue_arrow_right:883811353641517126> " + discord, TextChannel.BRIDGE);
 			});
 		}
@@ -126,7 +128,7 @@ public class JoinQuit extends Feature implements Listener {
 			DiscordUser user = new DiscordUserService().get(player);
 			RoleManager.update(user);
 
-			final String discord = finalMessage.replaceAll("\\[player]", "**" + Nickname.of(player) + "**");
+			final String discord = discordize(finalMessage).replaceAll("\\[player]", "**" + Nickname.discordOf(player) + "**");
 			Discord.send("<:red_arrow_left:331808021267218432> " + discord, TextChannel.BRIDGE);
 		});
 	}
@@ -140,9 +142,8 @@ public class JoinQuit extends Feature implements Listener {
 		event.joinMessage(null);
 		Player player = event.getPlayer();
 		if (!player.hasPlayedBefore()) {
-			final String message = "Welcome to Project Eden, " + Nickname.of(player) + "!";
-			Koda.replyIngame("&l" + message);
-			Koda.replyDiscord("**" + message + "**");
+			Koda.replyIngame("&lWelcome to Project Eden, " + Nickname.of(player) + "!");
+			Koda.replyDiscord("**Welcome to Project Eden, " + Nickname.discordOf(player) + "!**");
 		}
 
 		if (!PlayerUtils.isVanished(player))

@@ -36,6 +36,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static gg.projecteden.nexus.features.discord.Discord.discordize;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 import static gg.projecteden.utils.TimeUtils.shortishDateTimeFormat;
 
@@ -83,6 +84,24 @@ public class Nickname extends gg.projecteden.models.nickname.Nickname implements
 	 */
 	public static String of(UUID uuid) {
 		return new NicknameService().get(uuid).getNickname();
+	}
+
+	/**
+	 * Returns the Discord safe nickname (or name if unset) of a player.
+	 * @param player player
+	 * @return nickname or username
+	 */
+	public static String discordOf(HasUniqueId player) {
+		return of(player.getUniqueId());
+	}
+
+	/**
+	 * Returns the Discord safe nickname (or name if unset) of a player.
+	 * @param uuid player UUID
+	 * @return nickname or username
+	 */
+	public static String discordOf(UUID uuid) {
+		return discordize(of(uuid));
 	}
 
 	public @NotNull String getNickname() {

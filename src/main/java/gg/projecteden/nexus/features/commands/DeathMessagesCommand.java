@@ -64,6 +64,7 @@ import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.regex.Pattern;
 
+import static gg.projecteden.nexus.features.discord.Discord.discordize;
 import static org.apache.commons.lang.StringUtils.countMatches;
 
 @NoArgsConstructor
@@ -284,7 +285,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 			if (player.getKiller() != null)
 				deathString = deathString.replace(player.getKiller().getName(), Nickname.of(player.getKiller()));
 		}
-		Broadcast.discord().message(deathString).send();
+		Broadcast.discord().message(discordize(deathString)).send();
 	}
 
 	private void local(Player player, JsonBuilder output) {
