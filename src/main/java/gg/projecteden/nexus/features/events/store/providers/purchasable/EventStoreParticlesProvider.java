@@ -35,8 +35,7 @@ public class EventStoreParticlesProvider extends EventStoreMenu {
 	protected List<ClickableItem> getItems(Player player) {
 		List<ClickableItem> items = new ArrayList<>();
 
-		ParticleService service = new ParticleService();
-		ParticleOwner particleOwner = service.get(player);
+		ParticleOwner particleOwner = new ParticleService().get(player);
 		int price = EventStoreItem.PARTICLES.getPrice();
 
 		for (ParticleType type : EnumUtils.valuesExcept(ParticleType.class, ParticleType.WINGS)) {

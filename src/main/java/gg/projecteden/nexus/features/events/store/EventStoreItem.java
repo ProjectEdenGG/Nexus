@@ -7,12 +7,16 @@ import gg.projecteden.nexus.features.events.store.providers.EventStoreProvider;
 import gg.projecteden.nexus.features.events.store.providers.purchasable.EventStoreEmojiHatProvider;
 import gg.projecteden.nexus.features.events.store.providers.purchasable.EventStoreParticlesProvider;
 import gg.projecteden.nexus.features.events.store.providers.purchasable.EventStoreWingsProvider;
+import gg.projecteden.nexus.features.particles.effects.WingsEffect.WingStyle;
+import gg.projecteden.nexus.features.store.perks.emojihats.EmojiHat;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.contributor.ContributorService;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
+import gg.projecteden.nexus.models.particle.ParticleType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.utils.EnumUtils;
 import gg.projecteden.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -62,17 +66,44 @@ public enum EventStoreItem {
 		}
 
 		@Override
+		public boolean canView(Player player) {
+			for (EmojiHat type : EmojiHat.values())
+				if (!type.canBeUsedBy(player))
+					return true;
+
+			return false;
+		}
+
+		@Override
 		public void onClick(Player player, EventStoreMenu currentMenu) {
 			new EventStoreEmojiHatProvider(currentMenu).open(player);
 		}
 	},
 	PARTICLES(3, 0, 75, Material.REDSTONE) {
 		@Override
+		public boolean canView(Player player) {
+			for (ParticleType type : EnumUtils.valuesExcept(ParticleType.class, ParticleType.WINGS))
+				if (!type.canBeUsedBy(player))
+					return true;
+
+			return false;
+		}
+
+		@Override
 		public void onClick(Player player, EventStoreMenu currentMenu) {
 			new EventStoreParticlesProvider(currentMenu).open(player);
 		}
 	},
 	WINGS(3, 2, 75, Material.ELYTRA) {
+		@Override
+		public boolean canView(Player player) {
+			for (WingStyle style : WingStyle.values())
+				if (!style.canBeUsedBy(player))
+					return true;
+
+			return false;
+		}
+
 		@Override
 		public void onClick(Player player, EventStoreMenu currentMenu) {
 			new EventStoreWingsProvider(currentMenu).open(player);
@@ -91,6 +122,8 @@ public enum EventStoreItem {
 		}
 	},
 	STORE_CREDIT(3, 8, -1, Material.PAPER) {
+		private static final int TOKENS_PER_USD = 50;
+
 		@Override
 		public void onClick(Player player, EventStoreMenu currentMenu) {
 			Nexus.getSignMenuFactory()
@@ -107,17 +140,15 @@ public enum EventStoreItem {
 					if (!Utils.isDouble(line))
 						throw new InvalidInputException(line + " is not a valid number");
 
-					final double input = Double.parseDouble(line);
-					final double scaled = BigDecimal.valueOf(input).setScale(2, RoundingMode.HALF_UP).doubleValue();
-					final double usd = Math.ceil(scaled * 2) / 2;
-					final int price = (int) (usd * 50);
+					final double input = BigDecimal.valueOf(Double.parseDouble(line)).setScale(2, RoundingMode.HALF_UP).doubleValue();
+					final double usd = Math.ceil(input * 2) / 2;
+					final int price = (int) (usd * TOKENS_PER_USD);
 					final String moneyFormatted = StringUtils.prettyMoney(usd);
 
 					new EventUserService().edit(player, user -> user.charge(price));
 					new ContributorService().edit(player, user -> user.giveCredit(usd));
 
-					PlayerUtils.send(player, STORE_PREFIX + "You have purchased &e" + moneyFormatted + " store " +
-							"credit &3with &e" + price + " event tokens&3. Manage with &c/store credit");
+					PlayerUtils.send(player, STORE_PREFIX + "You have purchased &e" + moneyFormatted + " store credit. Manage with &c/store credit");
 				})
 				.open(player);
 		}
@@ -143,6 +174,10 @@ public enum EventStoreItem {
 
 	public ItemBuilder getDisplayItem() {
 		return getRawDisplayItem().name(camelCase(name())).lore(getLore()).itemFlags(ItemFlag.HIDE_ATTRIBUTES);
+	}
+
+	public boolean canView(Player player) {
+		return true;
 	}
 
 	public abstract void onClick(Player player, EventStoreMenu currentMenu);
