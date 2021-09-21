@@ -106,8 +106,8 @@ public class Pugmas21Command extends CustomCommand {
 				_item.setVelocity(VectorUtils.getRandomDirection().multiply(0.25).add(new Vector(0, 0.25, 0)));
 
 				int taskId = Tasks.repeat(0, TickTime.TICK, () -> {
-					if (!item.isOnGround())
-						new ParticleBuilder(Particle.SMOKE_NORMAL).count(1).extra(0).location(item.getLocation()).spawn();
+					if (!_item.isOnGround())
+						new ParticleBuilder(Particle.SMOKE_NORMAL).count(1).extra(0).location(_item.getLocation()).spawn();
 				});
 
 				int random = RandomUtils.randomInt(0, TickTime.SECOND.x(0.5));
