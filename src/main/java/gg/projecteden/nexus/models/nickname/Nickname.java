@@ -92,7 +92,7 @@ public class Nickname extends gg.projecteden.models.nickname.Nickname implements
 	 * @return nickname or username
 	 */
 	public static String discordOf(HasUniqueId player) {
-		return of(player.getUniqueId());
+		return discordOf(player.getUniqueId());
 	}
 
 	/**

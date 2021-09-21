@@ -260,7 +260,7 @@ public class Discord extends Feature {
 
 		return "Online staff (" + players.size() + "): " + System.lineSeparator() + players.stream()
 				.map(player -> {
-					String name = Nickname.of(player);
+					String name = Nickname.discordOf(player);
 					if (PlayerUtils.isVanished(player))
 						name += " _[V]_";
 					if (AFK.get(player).isAfk())
