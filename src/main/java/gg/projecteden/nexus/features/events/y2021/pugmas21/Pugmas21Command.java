@@ -82,7 +82,7 @@ public class Pugmas21Command extends CustomCommand {
 		npc.execute(player());
 	}
 
-	@Path("openAdvent")
+	@Path("openAdvent <particle>")
 	void openAdvent() {
 		ItemStack chest = new ItemBuilder(Material.TRAPPED_CHEST).customModelData(1).build();
 		Item item = world().dropItem(location(), chest);
@@ -107,7 +107,7 @@ public class Pugmas21Command extends CustomCommand {
 
 				int taskId = Tasks.repeat(0, TickTime.TICK, () -> {
 					if (!_item.isOnGround())
-						new ParticleBuilder(Particle.SMOKE_NORMAL).count(1).extra(0).location(_item.getLocation()).spawn();
+						new ParticleBuilder(Particle.CRIT).count(1).extra(0).location(_item.getLocation()).spawn();
 				});
 
 				int random = RandomUtils.randomInt(0, TickTime.SECOND.x(0.5));
