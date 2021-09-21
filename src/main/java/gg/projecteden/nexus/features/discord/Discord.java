@@ -110,6 +110,7 @@ public class Discord extends Feature {
 			if (!word.matches("^<.*>$")) {
 				message = message.replaceAll("\\\\", "\\\\\\\\"); // what the fuck
 				message = message.replaceAll("_", "\\\\_");
+				message = message.replaceAll("\\*", "\\\\*");
 			}
 
 			builder.append(word).append(" ");
