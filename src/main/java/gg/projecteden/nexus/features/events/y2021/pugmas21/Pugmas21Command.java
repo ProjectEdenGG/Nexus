@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.features.events.y2021.pugmas21;
 
+import com.destroystokyo.paper.ParticleBuilder;
+import gg.projecteden.nexus.features.particles.VectorUtils;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -9,7 +11,23 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.pugmas21.Pugmas21User;
 import gg.projecteden.nexus.models.pugmas21.Pugmas21UserService;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.utils.RandomUtils;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NonNull;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.entity.Item;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Pugmas21Command extends CustomCommand {
 	private final Pugmas21UserService service = new Pugmas21UserService();
@@ -64,4 +82,41 @@ public class Pugmas21Command extends CustomCommand {
 		npc.execute(player());
 	}
 
+	@Path("openAdvent")
+	void openAdvent() {
+		ItemStack chest = new ItemBuilder(Material.TRAPPED_CHEST).customModelData(1).build();
+		Item item = world().dropItem(location(), chest);
+		item.setCanPlayerPickup(false);
+		item.setCanMobPickup(false);
+
+		item.setVelocity(location().getDirection().multiply(0.5).add(new Vector(0, 0.5, 0)));
+
+		List<ItemStack> items = new ArrayList<>();
+		MaterialTag.CONCRETES.getValues().forEach(material -> items.add(new ItemStack(material)));
+
+		Tasks.wait(TickTime.SECOND.x(2), () -> {
+			new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).location(item.getLocation()).play();
+			Location location = item.getLocation();
+			item.remove();
+
+			for (ItemStack itemStack : items) {
+				Item _item = world().dropItem(location, itemStack);
+				_item.setCanPlayerPickup(false);
+				_item.setCanMobPickup(false);
+				_item.setVelocity(VectorUtils.getRandomDirection().multiply(0.25).add(new Vector(0, 0.25, 0)));
+
+				int taskId = Tasks.repeat(0, TickTime.TICK, () -> {
+					if (!item.isOnGround())
+						new ParticleBuilder(Particle.SMOKE_NORMAL).count(1).extra(0).location(item.getLocation()).spawn();
+				});
+
+				int random = RandomUtils.randomInt(0, TickTime.SECOND.x(0.5));
+				Tasks.wait(TickTime.SECOND.x(2) + random, () -> {
+					Tasks.cancel(taskId);
+					_item.remove();
+					new SoundBuilder(Sound.ENTITY_CHICKEN_EGG).location(_item.getLocation()).play();
+				});
+			}
+		});
+	}
 }
