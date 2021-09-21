@@ -5,7 +5,6 @@ import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.MenuUtils;
-import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -47,21 +46,18 @@ public abstract class EventStoreMenu extends MenuUtils implements InventoryProvi
 		else
 			addBackItem(contents, e -> getPreviousMenu().open(player));
 
-		ItemStack tokens = new ItemBuilder(Material.BOOK).name("Tokens").build();
+		ItemStack tokens = new ItemBuilder(Material.BOOK).name("Tokens: &e" + getUser(player).getTokens()).build();
 		contents.set(0, 8, ClickableItem.empty(tokens));
 
 		paginator(player, contents, getItems(player));
 	}
 
+	protected EventUser getUser(Player player) {
+		return new EventUserService().get(player);
+	}
+
 	protected void charge(Player player, int price) {
-		EventUserService service = new EventUserService();
-		EventUser user = service.get(player);
-
-		if (!user.hasTokens(price))
-			throw new InvalidInputException("You do not have enough tokens to purchase that");
-
-		user.takeTokens(price);
-		service.save(user);
+		new EventUserService().edit(player, user -> user.charge(price));
 	}
 
 	protected void chargeAndAddPermissions(Player player, int price, String... permissions) {
@@ -71,12 +67,9 @@ public abstract class EventStoreMenu extends MenuUtils implements InventoryProvi
 	}
 
 	protected void lore(Player player, ItemBuilder item, int price) {
-		EventUserService service = new EventUserService();
-		EventUser user = service.get(player);
-
 		item
 				.lore("")
-				.lore("&6Price: " + (user.hasTokens(price) ? "&e" : "&c") + price + " event tokens")
+				.lore("&6Price: " + (getUser(player).hasTokens(price) ? "&e" : "&c") + price + " event tokens")
 				.lore("")
 				.lore("&7Click to preview")
 				.lore("&7Shift click to buy");

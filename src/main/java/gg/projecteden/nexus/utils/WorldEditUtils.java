@@ -38,6 +38,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import lombok.experimental.Accessors;
 import me.lexikiq.HasPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -80,7 +81,8 @@ public class WorldEditUtils {
 	private final BukkitWorld bukkitWorld;
 	private final World worldEditWorld;
 	@Getter
-	private final WorldGuardUtils worldGuardUtils;
+	@Accessors(fluent = true)
+	private final WorldGuardUtils worldguard;
 	@Getter
 	private static final String schematicsDirectory = "plugins/FastAsyncWorldEdit/schematics/";
 	@Getter
@@ -107,7 +109,7 @@ public class WorldEditUtils {
 		this.world = world;
 		this.bukkitWorld = new BukkitWorld(world);
 		this.worldEditWorld = WorldWrapper.wrap(bukkitWorld);
-		this.worldGuardUtils = new WorldGuardUtils(world);
+		this.worldguard = new WorldGuardUtils(world);
 	}
 
 	public EditSessionBuilder getEditSessionBuilder() {
@@ -286,7 +288,7 @@ public class WorldEditUtils {
 	}
 
 	public List<Block> getBlocks(ProtectedRegion region) {
-		return getBlocks(worldGuardUtils.convert(region), new ArrayList<>());
+		return getBlocks(worldguard.convert(region), new ArrayList<>());
 	}
 
 	public List<Block> getBlocks(Region region) {
@@ -334,7 +336,7 @@ public class WorldEditUtils {
 	}
 
 	public CompletableFuture<Clipboard> copy(Location min, Location max) {
-		return copy(worldGuardUtils.getRegion(min, max), null);
+		return copy(worldguard.getRegion(min, max), null);
 	}
 
 	public CompletableFuture<Clipboard> copy(Region region) {
@@ -430,7 +432,7 @@ public class WorldEditUtils {
 		}
 
 		public Paster regionMask(String... regions) {
-			this.regionMask = Arrays.stream(regions).map(worldGuardUtils::getRegion).toArray(Region[]::new);
+			this.regionMask = Arrays.stream(regions).map(worldguard::getRegion).toArray(Region[]::new);
 			return this;
 		}
 
@@ -674,7 +676,7 @@ public class WorldEditUtils {
 	}
 
 	public void set(String region, BlockType blockType) {
-		set(worldGuardUtils.convert(worldGuardUtils.getProtectedRegion(region)), blockType);
+		set(worldguard.convert(worldguard.getProtectedRegion(region)), blockType);
 	}
 
 	public void set(Region region, BlockType blockType) {

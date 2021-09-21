@@ -7,6 +7,7 @@ import dev.morphia.annotations.Id;
 import dev.morphia.annotations.PreLoad;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.events.Events;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import lombok.AllArgsConstructor;
@@ -95,6 +96,16 @@ public class EventUser implements PlayerOwnedObject {
 
 	public boolean hasTokens(int tokens) {
 		return this.tokens >= tokens;
+	}
+
+	public void checkHasTokens(int tokens) {
+		if (!hasTokens(tokens))
+			throw new InvalidInputException("You do not have enough tokens");
+	}
+
+	public void charge(int tokens) {
+		checkHasTokens(tokens);
+		takeTokens(tokens);
 	}
 
 }

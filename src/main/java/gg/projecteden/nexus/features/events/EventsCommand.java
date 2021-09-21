@@ -3,17 +3,26 @@ package gg.projecteden.nexus.features.events;
 import gg.projecteden.annotations.Async;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.store.EventStoreListener;
+import gg.projecteden.nexus.features.events.store.models.EventStoreImage;
 import gg.projecteden.nexus.features.events.store.providers.EventStoreProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.utils.Env;
 import lombok.NonNull;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static gg.projecteden.nexus.features.events.store.models.EventStoreImage.IMAGES;
 
 @Aliases("event")
 public class EventsCommand extends CustomCommand {
@@ -22,9 +31,11 @@ public class EventsCommand extends CustomCommand {
 
 	public EventsCommand(@NonNull CommandEvent event) {
 		super(event);
-		if (isPlayer())
+		if (isPlayerCommandEvent())
 			user = service.get(player());
 	}
+
+	// Store
 
 	static {
 		new EventStoreListener();
@@ -38,14 +49,14 @@ public class EventsCommand extends CustomCommand {
 		new EventStoreProvider().open(player());
 	}
 
-	// Token commands
+	// Tokens
 
 	private String plural(int tokens) {
 		return tokens + plural(" token", tokens);
 	}
 
 	@Path("tokens [player]")
-	public void tokens(@Arg("self") EventUser user) {
+	void tokens(@Arg("self") EventUser user) {
 		if (isSelf(user)) {
 			send(PREFIX + "&3Current balance: &e" + plural(user.getTokens()));
 			line();
@@ -57,14 +68,14 @@ public class EventsCommand extends CustomCommand {
 
 	@Async
 	@Path("tokens top [page]")
-	public void tokensTop(@Arg("1") int page) {
+	void tokens_top(@Arg("1") int page) {
 		send(PREFIX + "Top Token Earners");
 		paginate(service.getTopTokens(), (user, index) -> json(index + " &e" + user.getNickname() + " &7- " + user.getTokens()), "/event tokens top", page);
 	}
 
 	/* TODO
 	@Path("tokens daily [player]")
-	public void tokensDaily(@Arg("self") EventUser user) {
+	void tokensDaily(@Arg("self") EventUser user) {
 		if (isSelf(user))
 			send(PREFIX + "&3Daily tokens:");
 		else
@@ -85,7 +96,7 @@ public class EventsCommand extends CustomCommand {
 	*/
 
 	@Path("tokens pay <player> <tokens>")
-	public void tokensPay(EventUser toUser, int tokens) {
+	void tokens_pay(EventUser toUser, int tokens) {
 		EventUser fromUser = service.get(player());
 		if (isSelf(toUser))
 			error("You cannot pay yourself");
@@ -102,7 +113,7 @@ public class EventsCommand extends CustomCommand {
 
 	@Path("tokens give <player> <tokens>")
 	@Permission("group.admin")
-	public void tokensGive(EventUser user, int tokens) {
+	void tokens_give(EventUser user, int tokens) {
 		user.giveTokens(tokens);
 		service.save(user);
 		send(PREFIX + "&e" + plural(tokens) + " &3given to &e" + user.getNickname());
@@ -110,7 +121,7 @@ public class EventsCommand extends CustomCommand {
 
 	@Path("tokens take <player> <tokens>")
 	@Permission("group.admin")
-	public void tokensTake(EventUser user, int tokens) {
+	void tokens_take(EventUser user, int tokens) {
 		user.takeTokens(tokens);
 		service.save(user);
 		send(PREFIX + "&e" + plural(tokens) + " &3taken from &e" + user.getNickname());
@@ -118,7 +129,7 @@ public class EventsCommand extends CustomCommand {
 
 	@Path("tokens set <player> <tokens>")
 	@Permission("group.admin")
-	public void tokensSet(EventUser user, int tokens) {
+	void tokens_set(EventUser user, int tokens) {
 		user.setTokens(tokens);
 		service.save(user);
 		send(PREFIX + "&3Set &e" + user.getNickname() + "&3's balance to &e" + plural(tokens));
@@ -126,12 +137,41 @@ public class EventsCommand extends CustomCommand {
 
 	@Path("tokens reset <player>")
 	@Permission("group.admin")
-	public void tokensReset(EventUser user) {
+	void tokens_reset(EventUser user) {
 		user.setTokens(0);
 		user.getTokensReceivedByDate().clear();
 		service.save(user);
 	}
 
-	// Database commands
+	// Images
+
+	static {
+		EventStoreImage.reload();
+	}
+
+	@Path("store images reload")
+	@Permission("group.admin")
+	void store_images_reload() {
+		EventStoreImage.reload();
+		send(PREFIX + "Loaded " + IMAGES.size() + " maps");
+	}
+
+	@Path("store images get <image...>")
+	@Permission("group.admin")
+	void store_images_get(EventStoreImage image) {
+		PlayerUtils.giveItem(player(), image.getSplatterMap());
+	}
+
+	@ConverterFor(EventStoreImage.class)
+	EventStoreImage convertToEventStoreImage(String value) {
+		return EventStoreImage.of(value);
+	}
+
+	@TabCompleterFor(EventStoreImage.class)
+	List<String> tabCompleteEventStoreImage(String filter) {
+		return IMAGES.keySet().stream()
+			.filter(id -> id.toLowerCase().startsWith(filter.toLowerCase()))
+			.collect(Collectors.toList());
+	}
 
 }

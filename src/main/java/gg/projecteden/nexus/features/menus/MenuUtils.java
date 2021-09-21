@@ -439,10 +439,10 @@ public abstract class MenuUtils {
 		private final String title = "&4Are you sure?";
 		@Builder.Default
 		private final String cancelText = "&cNo";
-		private final String cancelLore;
+		private final List<String> cancelLore;
 		@Builder.Default
 		private final String confirmText = "&aYes";
-		private final String confirmLore;
+		private final List<String> confirmLore;
 		@Builder.Default
 		private final Consumer<ItemClickData> onCancel = (e) -> e.getPlayer().closeInventory();
 		@NonNull
@@ -472,10 +472,10 @@ public abstract class MenuUtils {
 
 		@Override
 		public void init(Player player, InventoryContents contents) {
-			ItemStack cancelItem = nameItem(Material.RED_CONCRETE, cancelText, cancelLore);
-			ItemStack confirmItem = nameItem(Material.LIME_CONCRETE, confirmText, confirmLore);
+			ItemBuilder cancelItem = new ItemBuilder(Material.RED_CONCRETE).name(cancelText).lore(cancelLore);
+			ItemBuilder confirmItem = new ItemBuilder(Material.LIME_CONCRETE).name(confirmText).lore(confirmLore);
 
-			contents.set(1, 2, ClickableItem.from(cancelItem, (e) -> {
+			contents.set(1, 2, ClickableItem.from(cancelItem.build(), e -> {
 				try {
 					if (onCancel != null)
 						onCancel.accept(e);
@@ -490,7 +490,7 @@ public abstract class MenuUtils {
 				}
 			}));
 
-			contents.set(1, 6, ClickableItem.from(confirmItem, e -> {
+			contents.set(1, 6, ClickableItem.from(confirmItem.build(), e -> {
 				try {
 					onConfirm.accept(e);
 
