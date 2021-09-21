@@ -9,7 +9,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.FakePlayerInteractEvent;
-import gg.projecteden.nexus.utils.SerializationUtils.JSON;
+import gg.projecteden.nexus.utils.SerializationUtils.Json;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
@@ -319,8 +319,8 @@ public class Backpacks extends FunctionalRecipe {
 		private void handleError(ItemStack[] contents) {
 			Nexus.warn("There was an error while saving Backpack contents for " + player.getName());
 			Nexus.warn("Below is a serialized paste of the original and new contents in the backpack:");
-			Nexus.warn("Old Contents: " + paste(JSON.toString(JSON.serialize(Arrays.asList(originalItems)))));
-			Nexus.warn("New Contents: " + paste(JSON.toString(JSON.serialize(Arrays.asList(contents)))));
+			Nexus.warn("Old Contents: " + paste(Json.toString(Json.serialize(Arrays.asList(originalItems)))));
+			Nexus.warn("New Contents: " + paste(Json.toString(Json.serialize(Arrays.asList(contents)))));
 			PlayerUtils.send(player, "&cThere was an error while saving your backpack items. Please report this to staff to retrieve your lost items.");
 		}
 

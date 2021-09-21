@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.minigames.models.arenas;
 
 import gg.projecteden.nexus.features.minigames.models.Arena;
-import gg.projecteden.nexus.utils.SerializationUtils;
+import gg.projecteden.nexus.utils.SerializationUtils.YML;
 import lombok.Data;
 import lombok.ToString;
 import org.bukkit.Material;
@@ -23,13 +23,13 @@ public class GrabAJumbuckArena extends Arena {
 
 	public GrabAJumbuckArena(Map<String, Object> map) {
 		super(map);
-		this.sheepSpawnBlocks = SerializationUtils.YML.deserializeMaterialSet((List<String>) map.getOrDefault("sheepSpawnBlocks", new ArrayList<>()));
+		this.sheepSpawnBlocks = YML.deserializeMaterialSet((List<String>) map.getOrDefault("sheepSpawnBlocks", new ArrayList<>()));
 	}
 
 	@Override
 	public @NotNull Map<String, Object> serialize() {
 		LinkedHashMap<String, Object> map = (LinkedHashMap<String, Object>) super.serialize();
-		map.put("sheepSpawnBlocks", SerializationUtils.YML.serializeMaterialSet(sheepSpawnBlocks));
+		map.put("sheepSpawnBlocks", YML.serializeMaterialSet(sheepSpawnBlocks));
 
 		return map;
 	}

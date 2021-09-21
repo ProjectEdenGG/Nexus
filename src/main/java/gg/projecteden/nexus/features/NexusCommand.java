@@ -41,7 +41,7 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.nexus.utils.SerializationUtils.JSON;
+import gg.projecteden.nexus.utils.SerializationUtils.Json;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -474,7 +474,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 		if ("target".equalsIgnoreCase(value))
 			return getTargetBlockRequired().getLocation();
 
-		return JSON.deserializeLocation(value);
+		return Json.deserializeLocation(value);
 	}
 
 }

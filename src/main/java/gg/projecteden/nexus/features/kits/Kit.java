@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.kits;
 
 import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.SerializationUtils;
+import gg.projecteden.nexus.utils.SerializationUtils.YML;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -24,7 +24,7 @@ public class Kit implements ConfigurationSerializable {
 
 	public Kit(Map<String, Object> map) {
 		this.name = (String) map.getOrDefault("name", name);
-		this.items = Arrays.stream(SerializationUtils.YML.deserializeItems((Map<String, Object>) map.getOrDefault("items", items)))
+		this.items = Arrays.stream(YML.deserializeItems((Map<String, Object>) map.getOrDefault("items", items)))
 				.filter(itemStack -> !ItemUtils.isNullOrAir(itemStack)).toArray(ItemStack[]::new);
 		this.delay = (int) map.getOrDefault("delay", delay);
 	}
@@ -33,7 +33,7 @@ public class Kit implements ConfigurationSerializable {
 	public Map<String, Object> serialize() {
 		return new LinkedHashMap<>() {{
 			put("name", name);
-			put("items", SerializationUtils.YML.serializeItems(items));
+			put("items", YML.serializeItems(items));
 			put("delay", delay);
 		}};
 	}

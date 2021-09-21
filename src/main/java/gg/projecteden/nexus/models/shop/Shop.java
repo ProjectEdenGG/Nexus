@@ -20,7 +20,7 @@ import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.SerializationUtils.JSON;
+import gg.projecteden.nexus.utils.SerializationUtils.Json;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.utils.EnumUtils.IteratableEnum;
@@ -197,7 +197,7 @@ public class Shop implements PlayerOwnedObject {
 		@PostLoad
 		void fix(DBObject dbObject) {
 			if (!(price instanceof Number))
-				price = JSON.deserializeItemStack((Map<String, Object>) dbObject.get("price"));
+				price = Json.deserializeItemStack((Map<String, Object>) dbObject.get("price"));
 		}
 
 		public Shop getShop() {

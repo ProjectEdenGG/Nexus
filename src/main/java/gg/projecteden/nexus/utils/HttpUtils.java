@@ -1,10 +1,13 @@
 package gg.projecteden.nexus.utils;
 
 import gg.projecteden.nexus.framework.exceptions.NexusException;
+import gg.projecteden.nexus.utils.SerializationUtils.Json;
 import lombok.SneakyThrows;
+import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Request.Builder;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import okio.BufferedSink;
@@ -100,6 +103,15 @@ public class HttpUtils {
 	@SneakyThrows
 	private static <T> T mapJson(Class<T> clazz, Response response) {
 		return Utils.getGson().fromJson(response.body().string(), clazz);
+	}
+
+	public static void post(String url, Map<String, String> headers, Map<String, Object> body) {
+		post(url, Headers.of(headers), Json.of(body));
+	}
+
+	@SneakyThrows
+	public static void post(String url, Headers headers, String body) {
+		client.newCall(createRequest(url).headers(headers).post(RequestBody.create(body.getBytes())).build()).execute();
 	}
 
 }

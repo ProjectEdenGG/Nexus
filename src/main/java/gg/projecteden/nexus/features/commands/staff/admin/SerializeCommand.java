@@ -8,7 +8,7 @@ import gg.projecteden.nexus.models.serializetest.SerializeTest;
 import gg.projecteden.nexus.models.serializetest.SerializeTestService;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.SerializationUtils.JSON;
+import gg.projecteden.nexus.utils.SerializationUtils.Json;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
 import org.bukkit.Material;
@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
-import static gg.projecteden.nexus.utils.SerializationUtils.JSON.serialize;
+import static gg.projecteden.nexus.utils.SerializationUtils.Json.serialize;
 
 @Permission("group.admin")
 public class SerializeCommand extends CustomCommand {
@@ -43,7 +43,7 @@ public class SerializeCommand extends CustomCommand {
 
 	@Path("item toJson")
 	void itemStackToJson() {
-		String serialized = JSON.toString(serialize(getToolRequired()));
+		String serialized = Json.toString(serialize(getToolRequired()));
 		send(json(serialized).copy(serialized).hover("Click to copy"));
 	}
 
@@ -52,7 +52,7 @@ public class SerializeCommand extends CustomCommand {
 		if (!input.startsWith("{"))
 			input = StringUtils.getPaste(input);
 
-		PlayerUtils.giveItem(player(), JSON.deserializeItemStack(input));
+		PlayerUtils.giveItem(player(), Json.deserializeItemStack(input));
 	}
 
 	@Path("item database")

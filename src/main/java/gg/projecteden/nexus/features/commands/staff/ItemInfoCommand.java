@@ -15,7 +15,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.SerializationUtils.JSON;
+import gg.projecteden.nexus.utils.SerializationUtils.Json;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Material;
@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 
 import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
-import static gg.projecteden.nexus.utils.SerializationUtils.JSON.serialize;
+import static gg.projecteden.nexus.utils.SerializationUtils.Json.serialize;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.nexus.utils.StringUtils.paste;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
@@ -114,7 +114,7 @@ public class ItemInfoCommand extends CustomCommand {
 	void serializeJson(Material material, @Arg("1") int amount) {
 		ItemStack tool = material == null ? getToolRequired() : new ItemStack(material);
 
-		send(json("&e&l[Click to Copy NBT]").hover("&e&l[Click to Copy NBT]").copy(JSON.toString(serialize(tool))));
+		send(json("&e&l[Click to Copy NBT]").hover("&e&l[Click to Copy NBT]").copy(Json.toString(serialize(tool))));
 	}
 
 	@Nullable

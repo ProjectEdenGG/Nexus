@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.minigames.models;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerLoadoutEvent;
 import gg.projecteden.nexus.models.minigamersetting.MinigamerSetting;
 import gg.projecteden.nexus.models.minigamersetting.MinigamerSettingService;
-import gg.projecteden.nexus.utils.SerializationUtils;
+import gg.projecteden.nexus.utils.SerializationUtils.YML;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -32,7 +32,7 @@ public class Loadout implements ConfigurationSerializable {
 	private List<PotionEffect> effects = new ArrayList<>();
 
 	public Loadout(Map<String, Object> map) {
-		this.inventory = SerializationUtils.YML.deserializeItems((Map<String, Object>) map.getOrDefault("inventory", inventory));
+		this.inventory = YML.deserializeItems((Map<String, Object>) map.getOrDefault("inventory", inventory));
 		this.effects = (List<PotionEffect>) map.getOrDefault("effects", effects);
 		isLoadoutEmpty = Arrays.stream(inventory).noneMatch(Objects::nonNull);
 	}
@@ -40,7 +40,7 @@ public class Loadout implements ConfigurationSerializable {
 	@Override
 	public Map<String, Object> serialize() {
 		return new LinkedHashMap<>() {{
-			put("inventory", SerializationUtils.YML.serializeItems(inventory));
+			put("inventory", YML.serializeItems(inventory));
 			put("effects", effects);
 		}};
 	}
