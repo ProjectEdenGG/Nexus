@@ -20,7 +20,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import static gg.projecteden.nexus.utils.Utils.collect;
@@ -307,6 +307,8 @@ public class MaterialTag implements Tag<Material> {
 						materialTag.key = new NamespacedKey(Nexus.getInstance(), field.getName());
 					} catch (NoSuchMethodException ignore) {
 					}
+
+					materialTag.lock();
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
@@ -362,23 +364,23 @@ public class MaterialTag implements Tag<Material> {
 	}
 
 	public MaterialTag append(Material... materials) {
-		this.materials.addAll(Arrays.asList(materials));
-		return this;
+		return edit(values -> values.addAll(Arrays.asList(materials)));
 	}
 
 	@SafeVarargs
 	public final MaterialTag append(Tag<Material>... materialTags) {
-		for (Tag<Material> materialTag : materialTags)
-			this.materials.addAll(materialTag.getValues());
-
-		return this;
+		return edit(values -> {
+			for (Tag<Material> materialTag : materialTags)
+				values.addAll(materialTag.getValues());
+		});
 	}
 
 	public MaterialTag append(Predicate<Material> predicate) {
-		for (Material m : Material.values())
-			if (predicate.test(m))
-				this.materials.add(m);
-		return this;
+		return edit(values -> {
+			for (Material material : Material.values())
+				if (predicate.test(material))
+					values.add(material);
+		});
 	}
 
 	public MaterialTag append(String segment, MatchMode mode) {
@@ -387,49 +389,54 @@ public class MaterialTag implements Tag<Material> {
 	}
 
 	public MaterialTag append(String segment, MatchMode mode, Material[] materials) {
-		segment = segment.toUpperCase();
+		edit(values -> {
+			switch (mode) {
+				case PREFIX:
+					for (Material material : materials)
+						if (material.name().startsWith(segment.toUpperCase()))
+							values.add(material);
+					break;
 
-		switch (mode) {
-			case PREFIX:
-				for (Material m : materials)
-					if (m.name().startsWith(segment))
-						this.materials.add(m);
-				break;
+				case SUFFIX:
+					for (Material material : materials)
+						if (material.name().endsWith(segment.toUpperCase()))
+							values.add(material);
+					break;
 
-			case SUFFIX:
-				for (Material m : materials)
-					if (m.name().endsWith(segment))
-						this.materials.add(m);
-				break;
-
-			case CONTAINS:
-				for (Material m : materials)
-					if (m.name().contains(segment))
-						this.materials.add(m);
-				break;
-		}
+				case CONTAINS:
+					for (Material material : materials)
+						if (material.name().contains(segment.toUpperCase()))
+							values.add(material);
+					break;
+			};
+		});
 
 		return this;
 	}
 
 	public MaterialTag exclude(Material... materials) {
-		for (Material m : materials)
-			this.materials.remove(m);
-
-		return this;
+		return edit(values -> {
+			for (Material material : materials)
+				values.remove(material);
+		});
 	}
 
 	@SafeVarargs
 	public final MaterialTag exclude(Tag<Material>... materialTags) {
-		for (Tag<Material> materialTag : materialTags)
-			this.materials.removeAll(materialTag.getValues());
-
-		return this;
+		return edit(values -> {
+			for (Tag<Material> materialTag : materialTags)
+				values.removeAll(materialTag.getValues());
+		});
 	}
 
 	public MaterialTag exclude(Predicate<Material> predicate) {
-		materials.removeIf(predicate);
-		return this;
+		return edit(values -> values.removeIf(predicate));
+	}
+
+	private MaterialTag edit(Consumer<EnumSet<Material>> consumer) {
+		EnumSet<Material> materials = getValues();
+		consumer.accept(materials);
+		return locked ? new MaterialTag(materials) : this;
 	}
 
 	public MaterialTag exclude(String segment, MatchMode mode) {
@@ -438,34 +445,32 @@ public class MaterialTag implements Tag<Material> {
 	}
 
 	public MaterialTag exclude(String segment, MatchMode mode, Material[] materials) {
-		segment = segment.toUpperCase();
+		return edit(values -> {
+			switch (mode) {
+				case PREFIX:
+					for (Material material : materials)
+						if (material.name().startsWith(segment.toUpperCase()))
+							values.remove(material);
+					break;
 
-		switch (mode) {
-			case PREFIX:
-				for (Material m : materials)
-					if (m.name().startsWith(segment))
-						this.materials.remove(m);
-				break;
+				case SUFFIX:
+					for (Material material : materials)
+						if (material.name().endsWith(segment.toUpperCase()))
+							values.remove(material);
+					break;
 
-			case SUFFIX:
-				for (Material m : materials)
-					if (m.name().endsWith(segment))
-						this.materials.remove(m);
-				break;
-
-			case CONTAINS:
-				for (Material m : materials)
-					if (m.name().contains(segment))
-						this.materials.remove(m);
-				break;
-		}
-
-		return this;
+				case CONTAINS:
+					for (Material material : materials)
+						if (material.name().contains(segment.toUpperCase()))
+							values.remove(material);
+					break;
+			}
+		});
 	}
 
 	@Override
-	public Set<Material> getValues() {
-		return materials;
+	public EnumSet<Material> getValues() {
+		return locked ? EnumSet.copyOf(materials) : materials;
 	}
 
 	public Material first() {
@@ -522,6 +527,12 @@ public class MaterialTag implements Tag<Material> {
 		PREFIX,
 		SUFFIX,
 		CONTAINS
+	}
+
+	private boolean locked;
+
+	private void lock() {
+		this.locked = true;
 	}
 
 }
