@@ -4,6 +4,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.chat.games.ChatGameType;
 import gg.projecteden.nexus.features.chat.games.ChatGamesCommand;
@@ -93,14 +94,25 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 	}
 
 	public static void processQueue() {
+		processQueue(false);
+	}
+
+	public static void processQueue(boolean force) {
+		if (!force)
+			if (!hasRequiredPlayers())
+				return;
+
 		if (getCurrentGame() != null)
 			return;
 
-		if (!hasRequiredPlayers())
+		final ChatGamesConfigService service = new ChatGamesConfigService();
+		final ChatGamesConfig config = service.get0();
+		if (!config.hasQueuedGames())
 			return;
 
 		ChatGameType.random().create().queue();
-		new ChatGamesConfigService().edit0(config -> config.removeQueuedGames(1));
+		config.removeQueuedGames(1);
+		service.save(config);
 	}
 
 	@Data
@@ -191,6 +203,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 
 			completed.add(player.getUniqueId());
 
+			Nexus.log(ChatGamesCommand.PREFIX + player.getNickname() + " answered correctly");
 			PlayerUtils.send(player, ChatGamesCommand.PREFIX + colorize("&3That's correct! You've been given &e" + Prize.random().apply(this, player)));
 
 			new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL)

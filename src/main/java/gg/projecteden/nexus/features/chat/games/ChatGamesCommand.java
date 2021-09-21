@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.afk.events.NotAFKEvent;
 import gg.projecteden.nexus.models.chatgames.ChatGamesConfig;
@@ -26,8 +27,7 @@ public class ChatGamesCommand extends CustomCommand implements Listener {
 	private static final ChatGamesConfig config = service.get0();
 
 	static {
-		if (config.hasQueuedGames())
-			ChatGamesConfig.processQueue();
+		ChatGamesConfig.processQueue();
 	}
 
 	public ChatGamesCommand(CommandEvent event) {
@@ -43,6 +43,13 @@ public class ChatGamesCommand extends CustomCommand implements Listener {
 	@Path("queue count")
 	void count() {
 		send(PREFIX + "There are " + config.getQueuedGames() + " queued games");
+	}
+
+	@Path("queue process [--force]")
+	@Permission("group.admin")
+	void process(@Switch boolean force) {
+		ChatGamesConfig.processQueue(force);
+		send(PREFIX + "Queue" + (force ? " force" : "") + " processed");
 	}
 
 	@Confirm
