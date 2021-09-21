@@ -1,9 +1,11 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.exceptions.EdenException;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.utils.SerializationUtils.Json;
 import lombok.SneakyThrows;
 import okhttp3.Headers;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Request.Builder;
@@ -110,8 +112,29 @@ public class HttpUtils {
 	}
 
 	@SneakyThrows
-	public static void post(String url, Headers headers, String body) {
-		client.newCall(createRequest(url).headers(headers).post(RequestBody.create(body.getBytes())).build()).execute();
+	public static String post(String url, Headers headers, String body) {
+		final Request request = createRequest(url)
+			.headers(headers)
+			.post(json(body))
+			.build();
+
+		try (Response response = client.newCall(request).execute()) {
+			final ResponseBody responseBody = response.body();
+			if (!response.isSuccessful()) {
+				String message = response.code() + " " + response.message();
+				if (responseBody != null)
+					message += ": " + responseBody.string();
+
+				throw new EdenException(message);
+			}
+
+			return responseBody == null ? null : responseBody.string();
+		}
+	}
+
+	@NotNull
+	private static RequestBody json(String body) {
+		return RequestBody.create(body, MediaType.parse("application/json"));
 	}
 
 }
