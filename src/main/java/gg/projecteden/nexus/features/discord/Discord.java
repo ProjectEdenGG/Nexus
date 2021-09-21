@@ -104,11 +104,18 @@ public class Discord extends Feature {
 	}
 
 	public static String discordize(String message) {
-		if (message != null) {
-			message = message.replaceAll("\\\\", "\\\\\\\\"); // what the fuck
-			message = message.replaceAll("_", "\\\\_");
+		StringBuilder builder = new StringBuilder();
+		for (String word : message.split(" ")) {
+			// skip emojis
+			if (!word.matches("^<.*>$")) {
+				message = message.replaceAll("\\\\", "\\\\\\\\"); // what the fuck
+				message = message.replaceAll("_", "\\\\_");
+			}
+
+			builder.append(word).append(" ");
 		}
-		return message;
+
+		return builder.toString().trim();
 	}
 
 	@Nullable
