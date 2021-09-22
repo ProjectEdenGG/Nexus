@@ -30,9 +30,11 @@ import java.math.RoundingMode;
 import java.util.List;
 
 import static gg.projecteden.nexus.features.events.Events.STORE_PREFIX;
+import static gg.projecteden.nexus.utils.PlayerUtils.runCommand;
 import static gg.projecteden.nexus.utils.PlayerUtils.runCommandAsOp;
 import static gg.projecteden.utils.StringUtils.camelCase;
 import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
+import static gg.projecteden.utils.StringUtils.prettyMoney;
 
 @Getter
 @AllArgsConstructor
@@ -117,11 +119,11 @@ public enum EventStoreItem {
 	SONGS(-1, Material.JUKEBOX) {
 		@Override
 		public void onClick(Player player, EventStoreMenu currentMenu) {
-			// TODO
+			runCommand(player, "event store songs");
 		}
 	},
 	STORE_CREDIT(-1, Material.PAPER) {
-		private static final int TOKENS_PER_USD = 50;
+		private static final int TOKENS_PER_USD = 100;
 
 		@Override
 		public void onClick(Player player, EventStoreMenu currentMenu) {
@@ -135,21 +137,24 @@ public enum EventStoreItem {
 						return;
 					}
 
-					line = StringUtils.asParsableDecimal(line);
-					if (!Utils.isDouble(line))
-						throw new InvalidInputException(line + " is not a valid number");
-
-					final double input = BigDecimal.valueOf(Double.parseDouble(line)).setScale(2, RoundingMode.HALF_UP).doubleValue();
-					final double usd = Math.ceil(input * 2) / 2;
+					final double usd = convertToUSD(line);
 					final int price = (int) (usd * TOKENS_PER_USD);
-					final String moneyFormatted = StringUtils.prettyMoney(usd);
 
 					new EventUserService().edit(player, user -> user.charge(price));
 					new ContributorService().edit(player, user -> user.giveCredit(usd));
 
-					PlayerUtils.send(player, STORE_PREFIX + "You have purchased &e" + moneyFormatted + " store credit. Manage with &c/store credit");
+					PlayerUtils.send(player, STORE_PREFIX + "You have purchased &e" + prettyMoney(usd) + " store credit. Manage with &c/store credit");
 				})
 				.open(player);
+		}
+
+		private double convertToUSD(String line) {
+			line = StringUtils.asParsableDecimal(line);
+			if (!Utils.isDouble(line))
+				throw new InvalidInputException(line + " is not a valid number");
+
+			final double input = BigDecimal.valueOf(Double.parseDouble(line)).setScale(2, RoundingMode.HALF_UP).doubleValue();
+			return Math.ceil(input * 2) / 2;
 		}
 	},
 	;

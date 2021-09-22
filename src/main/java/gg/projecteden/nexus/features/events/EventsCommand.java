@@ -1,14 +1,10 @@
 package gg.projecteden.nexus.features.events;
 
-import com.ruinscraft.powder.PowderPlugin;
-import com.ruinscraft.powder.model.Powder;
-import com.xxmicloxx.NoteBlockAPI.model.Song;
-import com.xxmicloxx.NoteBlockAPI.songplayer.RadioSongPlayer;
-import com.xxmicloxx.NoteBlockAPI.utils.NBSDecoder;
 import gg.projecteden.annotations.Async;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.store.EventStoreListener;
 import gg.projecteden.nexus.features.events.store.models.EventStoreImage;
+import gg.projecteden.nexus.features.events.store.models.EventStoreSong;
 import gg.projecteden.nexus.features.events.store.providers.EventStoreProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -20,19 +16,18 @@ import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFo
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.Env;
 import lombok.NonNull;
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
 
-import java.io.File;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.features.events.Events.STORE_PREFIX;
 import static gg.projecteden.nexus.features.events.store.models.EventStoreImage.IMAGES;
+import static gg.projecteden.nexus.features.events.store.models.EventStoreSong.SONGS;
 
 @Aliases("event")
 public class EventsCommand extends CustomCommand {
@@ -153,6 +148,15 @@ public class EventsCommand extends CustomCommand {
 		service.save(user);
 	}
 
+	// Store
+
+	@Override
+	public String getPrefix() {
+		if ("store".equalsIgnoreCase(arg(1)))
+			return STORE_PREFIX;
+		return super.getPrefix();
+	}
+
 	// Images
 
 	static {
@@ -163,34 +167,13 @@ public class EventsCommand extends CustomCommand {
 	@Permission("group.admin")
 	void store_images_reload() {
 		EventStoreImage.reload();
-		send(PREFIX + "Loaded " + IMAGES.size() + " maps");
+		send(STORE_PREFIX + "Loaded " + IMAGES.size() + " maps");
 	}
 
 	@Path("store images get <image...>")
 	@Permission("group.admin")
 	void store_images_get(EventStoreImage image) {
 		PlayerUtils.giveItem(player(), image.getSplatterMap());
-	}
-
-	@Path("store songs")
-	@Permission("group.admin")
-	void store_songs() {
-		final YamlConfiguration config = YamlConfiguration.loadConfiguration(new File("plugins/Powder/powders.yml"));
-		final PowderPlugin powder = (PowderPlugin) Bukkit.getServer().getPluginManager().getPlugin("Powder");
-		final List<Powder> songs = powder.getPowderHandler().getPowdersFromCategory("Songs");
-
-		final Powder song = songs.iterator().next();
-		send(song.getName());
-		final ConfigurationSection songConfig = config.getConfigurationSection(String.format("powders.%s.songs.song", song.getPath()));
-		final String fileName = songConfig.getString("fileName");
-
-		final Song parse = NBSDecoder.parse(new File("plugins/Powder/songs/" + fileName));
-		final RadioSongPlayer radio = new RadioSongPlayer(parse);
-
-		radio.addPlayer(player());
-		radio.setStereo(true);
-		radio.setPlaying(true);
-		Tasks.wait(radio.getSong().getLength(), radio::destroy);
 	}
 
 	@ConverterFor(EventStoreImage.class)
@@ -202,6 +185,52 @@ public class EventsCommand extends CustomCommand {
 	List<String> tabCompleteEventStoreImage(String filter) {
 		return IMAGES.keySet().stream()
 			.filter(id -> id.toLowerCase().startsWith(filter.toLowerCase()))
+			.collect(Collectors.toList());
+	}
+
+	// Songs
+
+	@Path("store songs [page]")
+	void store_songs(@Arg("1") int page) {
+		if (SONGS.isEmpty())
+			error("No songs loaded");
+
+		final BiFunction<EventStoreSong, String, JsonBuilder> formatter = (song, index) ->
+			json("&3" + index + " &e" + song.getName())
+				.hover("&eClick to play")
+				.command("/event store songs play " + song.getName());
+
+		paginate(SONGS, formatter, "/event store songs", page);
+	}
+
+	@Path("store songs play <song>")
+	void store_songs_play(EventStoreSong song) {
+		song.play(player());
+		send(json(STORE_PREFIX + "Playing &e" + song.getName() + " ")
+			.group()
+			.next("&c[Stop]")
+			.hover("&eClick to stop")
+			.command("/event store songs stop"));
+	}
+
+	@Path("store songs stop")
+	void store_songs_stop() {
+		if (EventStoreSong.stop(player()))
+			send(STORE_PREFIX + "Song stopped");
+		else
+			error("No song is playing");
+	}
+
+	@ConverterFor(EventStoreSong.class)
+	EventStoreSong convertToEventStoreSong(String value) {
+		return EventStoreSong.of(value);
+	}
+
+	@TabCompleterFor(EventStoreSong.class)
+	List<String> tabCompleteEventStoreSong(String filter) {
+		return SONGS.stream()
+			.map(EventStoreSong::getName)
+			.filter(song -> song.toLowerCase().startsWith(filter.toLowerCase()))
 			.collect(Collectors.toList());
 	}
 
