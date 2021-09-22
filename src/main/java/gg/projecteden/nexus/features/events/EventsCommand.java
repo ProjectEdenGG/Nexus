@@ -1,5 +1,10 @@
 package gg.projecteden.nexus.features.events;
 
+import com.ruinscraft.powder.PowderPlugin;
+import com.ruinscraft.powder.model.Powder;
+import com.xxmicloxx.NoteBlockAPI.model.Song;
+import com.xxmicloxx.NoteBlockAPI.songplayer.RadioSongPlayer;
+import com.xxmicloxx.NoteBlockAPI.utils.NBSDecoder;
 import gg.projecteden.annotations.Async;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.store.EventStoreListener;
@@ -16,9 +21,14 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.Env;
 import lombok.NonNull;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 
+import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -160,6 +170,27 @@ public class EventsCommand extends CustomCommand {
 	@Permission("group.admin")
 	void store_images_get(EventStoreImage image) {
 		PlayerUtils.giveItem(player(), image.getSplatterMap());
+	}
+
+	@Path("store songs")
+	@Permission("group.admin")
+	void store_songs() {
+		final YamlConfiguration config = YamlConfiguration.loadConfiguration(new File("plugins/Powder/powders.yml"));
+		final PowderPlugin powder = (PowderPlugin) Bukkit.getServer().getPluginManager().getPlugin("Powder");
+		final List<Powder> songs = powder.getPowderHandler().getPowdersFromCategory("Songs");
+
+		final Powder song = songs.iterator().next();
+		send(song.getName());
+		final ConfigurationSection songConfig = config.getConfigurationSection(String.format("powders.%s.songs.song", song.getPath()));
+		final String fileName = songConfig.getString("fileName");
+
+		final Song parse = NBSDecoder.parse(new File("plugins/Powder/songs/" + fileName));
+		final RadioSongPlayer radio = new RadioSongPlayer(parse);
+
+		radio.addPlayer(player());
+		radio.setStereo(true);
+		radio.setPlaying(true);
+		Tasks.wait(radio.getSong().getLength(), radio::destroy);
 	}
 
 	@ConverterFor(EventStoreImage.class)

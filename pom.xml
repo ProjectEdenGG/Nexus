@@ -596,6 +596,13 @@
             <version>2.10.10</version>
             <scope>provided</scope>
         </dependency>
+        <!-- Powder -->
+        <dependency>
+            <groupId>com.ruinscraft</groupId>
+            <artifactId>powder</artifactId>
+            <version>0.2.1</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <distributionManagement>

@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.events.store;
 
-import fr.minuskube.inv.content.SlotPos;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.store.providers.EventStoreMenu;
 import gg.projecteden.nexus.features.events.store.providers.EventStoreProvider;
@@ -39,14 +38,14 @@ import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public enum EventStoreItem {
-	IMAGES(1, 1, -1, Material.PAINTING) {
+	IMAGES(-1, Material.PAINTING) {
 		@Override
 		public void onClick(Player player, EventStoreMenu currentMenu) {
 			PlayerUtils.runCommand(player, "warp images");
 			// TODO Hologram & way to request image
 		}
 	},
-	HEADS(1, 5, 50, Material.PLAYER_HEAD) {
+	HEADS(50, Material.PLAYER_HEAD) {
 		@Override
 		@NotNull
 		public ItemBuilder getRawDisplayItem() {
@@ -58,7 +57,7 @@ public enum EventStoreItem {
 			runCommandAsOp(player, "hdb");
 		}
 	},
-	EMOJI_HATS(1, 7, 75, Material.PLAYER_HEAD) {
+	EMOJI_HATS(75, Material.PLAYER_HEAD) {
 		@Override
 		@NotNull
 		public ItemBuilder getRawDisplayItem() {
@@ -79,7 +78,7 @@ public enum EventStoreItem {
 			new EventStoreEmojiHatProvider(currentMenu).open(player);
 		}
 	},
-	PARTICLES(3, 0, 75, Material.REDSTONE) {
+	PARTICLES(75, Material.REDSTONE) {
 		@Override
 		public boolean canView(Player player) {
 			for (ParticleType type : EnumUtils.valuesExcept(ParticleType.class, ParticleType.WINGS))
@@ -94,7 +93,7 @@ public enum EventStoreItem {
 			new EventStoreParticlesProvider(currentMenu).open(player);
 		}
 	},
-	WINGS(3, 2, 75, Material.ELYTRA) {
+	WINGS(75, Material.ELYTRA) {
 		@Override
 		public boolean canView(Player player) {
 			for (WingStyle style : WingStyle.values())
@@ -109,19 +108,19 @@ public enum EventStoreItem {
 			new EventStoreWingsProvider(currentMenu).open(player);
 		}
 	},
-	CHAT_EMOJIS(3, 4, -1, Material.PAPER) {
+	CHAT_EMOJIS(-1, Material.PAPER) {
 		@Override
 		public void onClick(Player player, EventStoreMenu currentMenu) {
 			// TODO
 		}
 	},
-	SONGS(3, 6, -1, Material.JUKEBOX) {
+	SONGS(-1, Material.JUKEBOX) {
 		@Override
 		public void onClick(Player player, EventStoreMenu currentMenu) {
 			// TODO
 		}
 	},
-	STORE_CREDIT(3, 8, -1, Material.PAPER) {
+	STORE_CREDIT(-1, Material.PAPER) {
 		private static final int TOKENS_PER_USD = 50;
 
 		@Override
@@ -155,13 +154,9 @@ public enum EventStoreItem {
 	},
 	;
 
-	private final int row, column, price;
+	private final int price;
 	private final Material material;
 	private int customModelData;
-
-	public SlotPos getSlot() {
-		return SlotPos.of(row, column);
-	}
 
 	protected List<String> getLore() {
 		return null;
