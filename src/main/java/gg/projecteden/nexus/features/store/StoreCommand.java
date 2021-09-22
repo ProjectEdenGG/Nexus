@@ -92,7 +92,23 @@ public class StoreCommand extends CustomCommand implements Listener {
 	@Path("credit [player]")
 	void credit(@Arg(value = "self", permission = "group.staff") Contributor contributor) {
 		send(PREFIX + (isSelf(contributor) ? "Your" : contributor.getNickname() + "'s") + " store credit: " + contributor.getCreditFormatted());
-		// TODO Info on how to convert to coupons
+		if (isSelf(contributor)) {
+			line();
+			send("&3Redeem with &c/store credit redeem <amount>");
+			send("&3View available coupons with &c/store coupons list");
+		}
+	}
+
+	@Async
+	@Path("credit redeem <amount> [player]")
+	void credit_redeem(double amount, @Arg(value = "self", permission = "group.staff") Contributor contributor) {
+		if (!contributor.hasCredit(amount))
+			error("You do not have enough credit");
+
+		contributor.takeCredit(amount);
+		String code = new CouponCreator(contributor, amount).create();
+
+		send(json(PREFIX + "Created store coupon &e" + code + "&3. Click to copy").copy(code).hover("&fClick to copy", "&fRedeem at " + StoreCommand.URL));
 	}
 
 	@Permission("group.admin")
@@ -131,17 +147,22 @@ public class StoreCommand extends CustomCommand implements Listener {
 	@Async
 	@SneakyThrows
 	@Path("coupons list <player>")
-	@Permission("group.admin")
-	void coupon_list(Contributor contributor) {
+	void coupon_list(@Arg(value = "self", permission = "group.staff") Contributor contributor) {
 		final List<Coupon> coupons = Nexus.getBuycraft().getApiClient().getAllCoupons().execute().body().getData().stream()
 			.filter(coupon -> coupon.getUsername().equals(contributor.getName()))
 			.toList();
 
 		if (coupons.isEmpty())
-			error("No coupons found for " + contributor.getNickname());
+			error("No coupons found" + (isSelf(contributor) ? ". Create one with /store credit redeem <amount>" : " for " + contributor.getNickname()));
 
+		send(PREFIX + "Available coupons (&eClick &3to copy)");
+
+		line();
 		for (Coupon coupon : coupons)
-			send(coupon.getCode() + " ($" + coupon.getDiscount().getValue() + ")");
+			send(json(" &e" + coupon.getCode() + " &7- $" + coupon.getDiscount().getValue()).copy(coupon.getCode()).hover("&fClick to copy"));
+
+		line();
+		send("&3Redeem at &e" + StoreCommand.URL);
 	}
 
 	@AllArgsConstructor

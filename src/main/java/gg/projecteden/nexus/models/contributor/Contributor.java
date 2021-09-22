@@ -66,6 +66,10 @@ public class Contributor implements PlayerOwnedObject {
 		setCredit(this.credit - credit);
 	}
 
+	public boolean hasCredit(double credit) {
+		return this.credit >= credit;
+	}
+
 	public void setCredit(double credit) {
 		if (credit < 0)
 			throw new NegativeBalanceException();
