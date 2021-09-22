@@ -126,7 +126,7 @@ public class LockdownCommand extends CustomCommand implements Listener {
 			return true;
 
 		Hours hours = new HoursService().get(player);
-		return hours.getTotal() > (30 * 60);
+		return hours.has(TickTime.MINUTE.x(30));
 	}
 
 	private Component getLockdownReason() {

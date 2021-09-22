@@ -67,7 +67,7 @@ public class WelcomeCommand extends CustomCommand {
 		if (player != null) {
 			if (Rank.of(player) != Rank.GUEST)
 				error("Prevented accidental welcome");
-			if (new HoursService().get(player.getUniqueId()).getTotal() > (60 * 60))
+			if (new HoursService().get(player).has(TickTime.HOUR))
 				error("Prevented accidental welcome");
 		}
 

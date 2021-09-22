@@ -19,6 +19,7 @@ import gg.projecteden.utils.TimeUtils.Timespan;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
@@ -35,10 +36,11 @@ public class NewPlayersDiscordCommand extends Command {
 
 		Tasks.async(() -> {
 			try {
-				HashMap<Player, Integer> players = new HashMap<>() {{
+				final HoursService service = new HoursService();
+				Map<Player, Integer> players = new HashMap<>() {{
 					for (Player player : OnlinePlayers.getAll()) {
-						Hours hours = new HoursService().get(player);
-						if (hours.getTotal() < (TickTime.HOUR.get() / 20))
+						Hours hours = service.get(player);
+						if (!hours.has(TickTime.HOUR))
 							put(player, hours.getTotal());
 					}
 				}};

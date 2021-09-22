@@ -16,6 +16,7 @@ import lombok.NonNull;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.function.BiFunction;
 
 @Permission("group.staff")
@@ -27,10 +28,11 @@ public class NewPlayersCommand extends CustomCommand {
 
 	@Path("[page]")
 	void run(@Arg("1") int page) {
-		HashMap<Player, Integer> players = new HashMap<>();
+		final Map<Player, Integer> players = new HashMap<>();
+		final HoursService service = new HoursService();
 		for (Player player : OnlinePlayers.getAll()) {
-			Hours hours = new HoursService().get(player.getUniqueId());
-			if (hours.getTotal() < (TickTime.HOUR.get() / 20))
+			Hours hours = service.get(player.getUniqueId());
+			if (!hours.has(TickTime.HOUR))
 				players.put(player, hours.getTotal());
 		}
 

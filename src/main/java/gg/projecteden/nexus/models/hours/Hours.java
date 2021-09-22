@@ -6,6 +6,7 @@ import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.LocalDateConverter;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -40,6 +41,14 @@ public class Hours implements PlayerOwnedObject {
 
 	public void increment(int amount) {
 		times.put(LocalDate.now(), times.getOrDefault(LocalDate.now(), 0) + amount);
+	}
+
+	public boolean has(TickTime time) {
+		return has(time.get());
+	}
+
+	public boolean has(int ticks) {
+		return getTotal() >= ticks / TickTime.SECOND.get();
 	}
 
 	/**

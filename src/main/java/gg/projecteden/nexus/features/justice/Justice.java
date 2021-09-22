@@ -15,6 +15,7 @@ import gg.projecteden.nexus.features.tickets.TicketCommand;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.events.CommandRunEvent;
 import gg.projecteden.nexus.framework.features.Feature;
+import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.afk.events.NotAFKEvent;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.geoip.GeoIP;
@@ -72,10 +73,10 @@ public class Justice extends Feature implements Listener {
 		return ingame.hover("&eClick for more information").command("/history " + punishment.getName());
 	}
 
-	private boolean isNewPlayer(Nerd nerd) {
-		if (nerd.getRank().gt(Rank.GUEST))
+	public static boolean isNewPlayer(PlayerOwnedObject nerd) {
+		if (Rank.of(nerd).gt(Rank.GUEST))
 			return false;
-		if (new HoursService().get(nerd).getTotal() >= TickTime.HOUR.get() / 20)
+		if (new HoursService().get(nerd).has(TickTime.HOUR))
 			return false;
 
 		return true;
