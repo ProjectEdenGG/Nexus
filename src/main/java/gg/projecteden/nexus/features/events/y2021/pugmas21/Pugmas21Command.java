@@ -82,37 +82,51 @@ public class Pugmas21Command extends CustomCommand {
 		npc.execute(player());
 	}
 
-	@Path("openAdvent <particle>")
-	void openAdvent() {
+	@Path("openAdvent [--height1] [--length1] [--particle1] [--ticks1] [--height2] [--length2] [--particle2] [--ticks2] [--randomMax]")
+	void openAdvent(
+		@Arg("0.25") @Switch double length1,
+		@Arg("0.5") @Switch double height1,
+		@Arg("crit") @Switch Particle particle1,
+		@Arg("40") @Switch int ticks1,
+		@Arg("0.25") @Switch double length2,
+		@Arg("0.25") @Switch double height2,
+		@Arg("crit") @Switch Particle particle2,
+		@Arg("40") @Switch int ticks2,
+		@Arg("40") @Switch int randomMax
+	) {
 		ItemStack chest = new ItemBuilder(Material.TRAPPED_CHEST).customModelData(1).build();
 		Item item = world().dropItem(location(), chest);
 		item.setCanPlayerPickup(false);
 		item.setCanMobPickup(false);
 
-		item.setVelocity(location().getDirection().multiply(0.5).add(new Vector(0, 0.5, 0)));
+		item.setVelocity(location().getDirection().multiply(length1).add(new Vector(0, height1, 0)));
+		int itemTaskId = Tasks.repeat(0, TickTime.TICK, () -> {
+			if (!item.isOnGround())
+				new ParticleBuilder(particle1).count(1).extra(0).location(item.getLocation()).spawn();
+		});
 
 		List<ItemStack> items = new ArrayList<>();
 		MaterialTag.CONCRETES.getValues().forEach(material -> items.add(new ItemStack(material)));
 
-		Tasks.wait(TickTime.SECOND.x(2), () -> {
+		Tasks.wait(ticks1, () -> {
 			new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).location(item.getLocation()).play();
 			Location location = item.getLocation();
+			Tasks.cancel(itemTaskId);
 			item.remove();
 
 			for (ItemStack itemStack : items) {
 				Item _item = world().dropItem(location, itemStack);
 				_item.setCanPlayerPickup(false);
 				_item.setCanMobPickup(false);
-				_item.setVelocity(VectorUtils.getRandomDirection().multiply(0.25).add(new Vector(0, 0.25, 0)));
+				_item.setVelocity(VectorUtils.getRandomDirection().multiply(length2).add(new Vector(0, height2, 0)));
 
-				int taskId = Tasks.repeat(0, TickTime.TICK, () -> {
+				int _itemTaskId = Tasks.repeat(0, TickTime.TICK, () -> {
 					if (!_item.isOnGround())
-						new ParticleBuilder(Particle.CRIT).count(1).extra(0).location(_item.getLocation()).spawn();
+						new ParticleBuilder(particle2).count(1).extra(0).location(_item.getLocation()).spawn();
 				});
 
-				int random = RandomUtils.randomInt(0, TickTime.SECOND.x(0.5));
-				Tasks.wait(TickTime.SECOND.x(2) + random, () -> {
-					Tasks.cancel(taskId);
+				Tasks.wait(ticks2 + RandomUtils.randomInt(0, randomMax), () -> {
+					Tasks.cancel(_itemTaskId);
 					_item.remove();
 					new SoundBuilder(Sound.ENTITY_CHICKEN_EGG).location(_item.getLocation()).play();
 				});
