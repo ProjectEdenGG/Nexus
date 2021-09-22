@@ -154,6 +154,7 @@ public abstract class Windchimes extends FunctionalRecipe {
 				return;
 
 			event.setCancelled(true);
+			event.getPlayer().swingMainHand();
 			AmbienceType.METAL_WINDCHIMES.play(itemFrame.getLocation());
 		}
 
@@ -173,6 +174,7 @@ public abstract class Windchimes extends FunctionalRecipe {
 				return;
 
 			event.setCancelled(true);
+			event.getPlayer().swingMainHand();
 			AmbienceType.METAL_WINDCHIMES.play(itemFrame.getLocation());
 		}
 	}
