@@ -78,10 +78,7 @@ public class SocialMediaCommand extends CustomCommand {
 
 	@Path("link <site> <username> [player]")
 	void link(SocialMediaSite site, String username, @Arg(value = "self", permission = "group.staff") SocialMediaUser player) {
-		username = username
-			.replace(site.getProfileUrl().replaceFirst("%s", ""), "")
-			.replace(site.getUrl(), "")
-			.replace(site.getUrl().replace("https://", "https://www."), "");
+		username = username.replaceAll("(http(s)?://)?(www.)?" + site.getProfileUrl().replace("https://", "").replace("%s", ""), "");
 
 		if (site == SocialMediaSite.YOUTUBE && (username.length() != 24 || !username.startsWith("UC")))
 			error("You must provide your 24 character YouTube channel id");
