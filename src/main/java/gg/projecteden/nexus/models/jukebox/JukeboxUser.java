@@ -1,14 +1,16 @@
 package gg.projecteden.nexus.models.jukebox;
 
 import com.xxmicloxx.NoteBlockAPI.model.Song;
-import com.xxmicloxx.NoteBlockAPI.songplayer.PositionSongPlayer;
+import com.xxmicloxx.NoteBlockAPI.songplayer.EntitySongPlayer;
 import com.xxmicloxx.NoteBlockAPI.songplayer.RadioSongPlayer;
 import com.xxmicloxx.NoteBlockAPI.songplayer.SongPlayer;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
+import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
@@ -16,6 +18,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,9 +58,8 @@ public class JukeboxUser implements PlayerOwnedObject {
 		cancel();
 
 		final Song song = jukeboxSong.getSong();
-		final PositionSongPlayer songPlayer = new PositionSongPlayer(song);
-		OnlinePlayers.getAll().forEach(songPlayer::addPlayer);
-		songPlayer.setTargetLocation(getLocation());
+		final EntitySongPlayer songPlayer = new EntitySongPlayer(song);
+		updatePlayers(songPlayer);
 		songPlayer.setPlaying(true);
 		songPlayer.setTick((short) tick);
 
@@ -70,9 +72,17 @@ public class JukeboxUser implements PlayerOwnedObject {
 				return;
 			}
 
-			OnlinePlayers.getAll().forEach(songPlayer::addPlayer);
-			songPlayer.setTargetLocation(getLocation());
+			updatePlayers(songPlayer);
 		}));
+	}
+
+	private void updatePlayers(SongPlayer songPlayer) {
+		for (Player player : OnlinePlayers.getAll()) {
+			if (MuteMenuUser.hasMuted(player, MuteMenuItem.JUKEBOX))
+				songPlayer.removePlayer(player);
+			else
+				songPlayer.addPlayer(player);
+		}
 	}
 
 	public void preview(JukeboxSong jukeboxSong) {

@@ -137,7 +137,7 @@ public class JukeboxCommand extends CustomCommand {
 		new EventUserService().edit(user, eventUser -> eventUser.charge(EventStoreItem.SONGS.getPrice()));
 		user.give(song);
 		service.save(user);
-		send(STORE_PREFIX + "Purchased song &e" + song.getName() + "&3. Play with &c/song " + song.getName());
+		send(STORE_PREFIX + "Purchased song &e" + song.getName() + "&3. Play with &c/song play " + song.getName());
 	}
 
 	@Path("stop")
