@@ -22,12 +22,12 @@ import java.util.List;
 import java.util.UUID;
 
 @Data
-@Entity(value = "jukebox_song_user", noClassnameStored = true)
+@Entity(value = "jukebox_user", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Converters(UUIDConverter.class)
-public class JukeboxSongUser implements PlayerOwnedObject {
+public class JukeboxUser implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
@@ -84,7 +84,6 @@ public class JukeboxSongUser implements PlayerOwnedObject {
 		songPlayer.setStereo(true);
 		songPlayer.setPlaying(true);
 
-		this.currentSong = jukeboxSong.getName();
 		this.songPlayer = songPlayer;
 		this.taskIds.add(Tasks.wait(song.getLength(), this::cancel));
 	}

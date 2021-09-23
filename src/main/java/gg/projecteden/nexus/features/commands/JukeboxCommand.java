@@ -11,8 +11,8 @@ import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFo
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.jukebox.JukeboxSong;
-import gg.projecteden.nexus.models.jukebox.JukeboxSongUser;
-import gg.projecteden.nexus.models.jukebox.JukeboxSongUserService;
+import gg.projecteden.nexus.models.jukebox.JukeboxUser;
+import gg.projecteden.nexus.models.jukebox.JukeboxUserService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
@@ -27,8 +27,8 @@ import static gg.projecteden.nexus.models.jukebox.JukeboxSong.SONGS;
 @Aliases({"song", "songs"})
 @Redirect(from = {"/sogn", "/sogns"}, to = "/songs")
 public class JukeboxCommand extends CustomCommand {
-	private final JukeboxSongUserService service = new JukeboxSongUserService();
-	private JukeboxSongUser user;
+	private final JukeboxUserService service = new JukeboxUserService();
+	private JukeboxUser user;
 
 	public JukeboxCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -38,7 +38,7 @@ public class JukeboxCommand extends CustomCommand {
 
 	static {
 		JukeboxSong.reload().thenRun(() -> {
-			for (JukeboxSongUser user : new JukeboxSongUserService().getOnline()) {
+			for (JukeboxUser user : new JukeboxUserService().getOnline()) {
 				if (user.getCurrentSong() == null)
 					return;
 
@@ -49,8 +49,8 @@ public class JukeboxCommand extends CustomCommand {
 
 	@Override
 	public void _shutdown() {
-		final JukeboxSongUserService service = new JukeboxSongUserService();
-		for (JukeboxSongUser user : service.getOnline()) {
+		final JukeboxUserService service = new JukeboxUserService();
+		for (JukeboxUser user : service.getOnline()) {
 			user.pause();
 			service.saveSync(user);
 		}

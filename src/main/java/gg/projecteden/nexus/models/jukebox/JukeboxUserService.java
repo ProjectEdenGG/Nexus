@@ -7,11 +7,11 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-@PlayerClass(JukeboxSongUser.class)
-public class JukeboxSongUserService extends MongoService<JukeboxSongUser> {
-	private final static Map<UUID, JukeboxSongUser> cache = new ConcurrentHashMap<>();
+@PlayerClass(JukeboxUser.class)
+public class JukeboxUserService extends MongoService<JukeboxUser> {
+	private final static Map<UUID, JukeboxUser> cache = new ConcurrentHashMap<>();
 
-	public Map<UUID, JukeboxSongUser> getCache() {
+	public Map<UUID, JukeboxUser> getCache() {
 		return cache;
 	}
 
