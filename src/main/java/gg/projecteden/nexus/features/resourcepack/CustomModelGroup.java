@@ -95,6 +95,8 @@ class CustomModelGroup {
 							addCustomModel(path);
 						if (uri.endsWith("minecraft/sounds.json"))
 							ResourcePack.setSoundsFile(Utils.getGson().fromJson("{\"sounds\":" + String.join("", Files.readAllLines(path)) + "}", SoundsFile.class));
+						if (uri.endsWith("font/default.json"))
+							ResourcePack.setFontFile(Utils.getGson().fromJson(String.join("", Files.readAllLines(path)), FontFile.class));
 						if (uri.contains(".ogg"))
 							addAudioFile(path);
 					} catch (Exception ex) {

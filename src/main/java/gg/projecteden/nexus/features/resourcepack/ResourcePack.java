@@ -57,6 +57,9 @@ public class ResourcePack extends Feature implements Listener {
 	@Getter
 	@Setter
 	private static SoundsFile soundsFile;
+	@Getter
+	@Setter
+	private static FontFile fontFile;
 
 	@Getter
 	static final URI fileUri = URI.create("jar:" + ResourcePack.getFile().toURI());
