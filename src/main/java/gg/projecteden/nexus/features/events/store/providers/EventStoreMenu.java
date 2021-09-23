@@ -46,7 +46,7 @@ public abstract class EventStoreMenu extends MenuUtils implements InventoryProvi
 		else
 			addBackItem(contents, e -> getPreviousMenu().open(player));
 
-		ItemStack tokens = new ItemBuilder(Material.BOOK).name("Tokens: &e" + getUser(player).getTokens()).build();
+		ItemStack tokens = new ItemBuilder(Material.GOLD_INGOT).customModelData(100).name("&e&lEvent Tokens").lore("&f" + getUser(player).getTokens()).build();
 		contents.set(0, 8, ClickableItem.empty(tokens));
 
 		paginator(player, contents, getItems(player));

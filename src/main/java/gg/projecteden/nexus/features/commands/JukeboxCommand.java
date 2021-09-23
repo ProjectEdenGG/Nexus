@@ -1,15 +1,17 @@
 package gg.projecteden.nexus.features.commands;
 
-import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
+import gg.projecteden.nexus.features.events.store.EventStoreItem;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.jukebox.JukeboxSong;
 import gg.projecteden.nexus.models.jukebox.JukeboxUser;
 import gg.projecteden.nexus.models.jukebox.JukeboxUserService;
@@ -70,6 +72,9 @@ public class JukeboxCommand extends CustomCommand {
 			.filter(song -> user.owns(song))
 			.toList();
 
+		if (songs.isEmpty())
+			error("You do not own any songs. Purchase some with Event Tokens at /jukebox store");
+
 		final BiFunction<JukeboxSong, String, JsonBuilder> formatter = (song, index) ->
 			json("&3" + index + " ")
 				.group().next(playButton(song))
@@ -97,6 +102,9 @@ public class JukeboxCommand extends CustomCommand {
 			.filter(song -> !user.owns(song))
 			.toList();
 
+		if (songs.isEmpty())
+			error("No songs available for purchase");
+
 		final BiFunction<JukeboxSong, String, JsonBuilder> formatter = (song, index) ->
 			json("&3" + index + " ")
 				.group().next(previewButton(song))
@@ -116,18 +124,16 @@ public class JukeboxCommand extends CustomCommand {
 			.group().next(buyButton(song)));
 	}
 
+	@Confirm
 	@Path("store purchase <song...>")
 	void store_buy(JukeboxSong song) {
 		if (user.owns(song))
 			error("You already own that song");
 
-		ConfirmationMenu.builder()
-			.onConfirm(e -> {
-				user.give(song);
-				service.save(user);
-				send(STORE_PREFIX + "Purchased song &e" + song.getName() + "&3. Play with &c/song " + song.getName());
-			})
-			.open(player());
+		new EventUserService().edit(user, eventUser -> eventUser.charge(EventStoreItem.SONGS.getPrice()));
+		user.give(song);
+		service.save(user);
+		send(STORE_PREFIX + "Purchased song &e" + song.getName() + "&3. Play with &c/song " + song.getName());
 	}
 
 	@Path("stop")

@@ -119,7 +119,7 @@ public enum EventStoreItem {
 	SONGS(-1, Material.JUKEBOX) {
 		@Override
 		public void onClick(Player player, EventStoreMenu currentMenu) {
-			runCommand(player, "event store songs");
+			runCommand(player, "jukebox store");
 		}
 	},
 	STORE_CREDIT(-1, Material.PAPER) {
