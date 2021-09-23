@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.models.jukebox;
 
 import com.xxmicloxx.NoteBlockAPI.model.Song;
-import com.xxmicloxx.NoteBlockAPI.songplayer.EntitySongPlayer;
+import com.xxmicloxx.NoteBlockAPI.songplayer.PositionSongPlayer;
 import com.xxmicloxx.NoteBlockAPI.songplayer.RadioSongPlayer;
 import com.xxmicloxx.NoteBlockAPI.songplayer.SongPlayer;
 import dev.morphia.annotations.Converters;
@@ -58,20 +58,21 @@ public class JukeboxUser implements PlayerOwnedObject {
 		cancel();
 
 		final Song song = jukeboxSong.getSong();
-		final EntitySongPlayer songPlayer = new EntitySongPlayer(song);
+		final PositionSongPlayer songPlayer = new PositionSongPlayer(song);
 		updatePlayers(songPlayer);
+		songPlayer.setTargetLocation(getLocation());
 		songPlayer.setPlaying(true);
 		songPlayer.setTick((short) tick);
 
 		this.currentSong = jukeboxSong.getName();
 		this.songPlayer = songPlayer;
-		this.taskIds.add(Tasks.wait(song.getLength(), this::cancel));
 		this.taskIds.add(Tasks.repeat(0, 1, () -> {
 			if (!isOnline()) {
 				cancel();
 				return;
 			}
 
+			songPlayer.setTargetLocation(getLocation());
 			updatePlayers(songPlayer);
 		}));
 	}
@@ -95,7 +96,6 @@ public class JukeboxUser implements PlayerOwnedObject {
 		songPlayer.setPlaying(true);
 
 		this.songPlayer = songPlayer;
-		this.taskIds.add(Tasks.wait(song.getLength(), this::cancel));
 	}
 
 	public boolean cancel() {

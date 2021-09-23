@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands;
 
+import com.xxmicloxx.NoteBlockAPI.event.SongEndEvent;
 import gg.projecteden.nexus.features.events.store.EventStoreItem;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -16,7 +17,10 @@ import gg.projecteden.nexus.models.jukebox.JukeboxSong;
 import gg.projecteden.nexus.models.jukebox.JukeboxUser;
 import gg.projecteden.nexus.models.jukebox.JukeboxUserService;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -26,9 +30,10 @@ import java.util.stream.Collectors;
 import static gg.projecteden.nexus.features.events.Events.STORE_PREFIX;
 import static gg.projecteden.nexus.models.jukebox.JukeboxSong.SONGS;
 
+@NoArgsConstructor
 @Aliases({"song", "songs"})
 @Redirect(from = {"/sogn", "/sogns"}, to = "/songs")
-public class JukeboxCommand extends CustomCommand {
+public class JukeboxCommand extends CustomCommand implements Listener {
 	private final JukeboxUserService service = new JukeboxUserService();
 	private JukeboxUser user;
 
@@ -201,6 +206,13 @@ public class JukeboxCommand extends CustomCommand {
 			.map(JukeboxSong::getName)
 			.filter(song -> song.toLowerCase().startsWith(filter.toLowerCase()))
 			.collect(Collectors.toList());
+	}
+
+	@EventHandler
+	public void onSongEnd(SongEndEvent event) {
+		for (JukeboxUser user : new JukeboxUserService().getOnline())
+			if (user.getSongPlayer().equals(event.getSongPlayer()))
+				user.cancel();
 	}
 
 }

@@ -19,8 +19,6 @@ import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
 @Data
 @RequiredArgsConstructor
 public class JukeboxSong {
-	private final String author;
-	private final String title;
 	private final Song song;
 
 	public static List<JukeboxSong> SONGS = new ArrayList<>();
@@ -33,9 +31,17 @@ public class JukeboxSong {
 	}
 
 	public String getName() {
-		if (!isNullOrEmpty(author))
-			return author + " - " + title;
-		return title;
+		if (!isNullOrEmpty(getAuthor()))
+			return getAuthor() + " - " + getTitle();
+		return getTitle();
+	}
+
+	public String getTitle() {
+		return song.getTitle();
+	}
+
+	public String getAuthor() {
+		return song.getAuthor();
 	}
 
 	public static CompletableFuture<Void> reload() {
@@ -44,17 +50,11 @@ public class JukeboxSong {
 			SONGS.clear();
 			try (Stream<Path> paths = Files.walk(getPluginFolder("jukebox").toPath())) {
 				paths.forEach(path -> {
-					String fileName = path.getFileName().toString();
+					final String fileName = path.getFileName().toString();
 					if (!fileName.contains(".nbs"))
 						return;
 
-					fileName = fileName.replace(".nbs", "");
-
-					final String[] split = fileName.split(" - ", 2);
-					final String author = split.length > 1 ? split[0].trim() : null;
-					final String title = split.length > 1 ? split[1].trim() : split[0].trim();
-					final Song song = NBSDecoder.parse(path.toFile());
-					SONGS.add(new JukeboxSong(author, title, song));
+					SONGS.add(new JukeboxSong(NBSDecoder.parse(path.toFile())));
 				});
 			} catch (Exception ex) {
 				ex.printStackTrace();
