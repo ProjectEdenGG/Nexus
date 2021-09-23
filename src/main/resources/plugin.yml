@@ -29,7 +29,6 @@ softdepend:
   - NoteBlockAPI
   - PlaceholderAPI
   - PremiumVanish
-  - Powder
   - SmartInvs
   - Vault
   - ViaVersion

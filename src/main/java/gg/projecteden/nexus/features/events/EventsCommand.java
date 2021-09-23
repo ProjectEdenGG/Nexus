@@ -4,7 +4,6 @@ import gg.projecteden.annotations.Async;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.store.EventStoreListener;
 import gg.projecteden.nexus.features.events.store.models.EventStoreImage;
-import gg.projecteden.nexus.features.events.store.models.EventStoreSong;
 import gg.projecteden.nexus.features.events.store.providers.EventStoreProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -16,18 +15,15 @@ import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFo
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
-import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.utils.Env;
 import lombok.NonNull;
 
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.features.events.Events.STORE_PREFIX;
 import static gg.projecteden.nexus.features.events.store.models.EventStoreImage.IMAGES;
-import static gg.projecteden.nexus.features.events.store.models.EventStoreSong.SONGS;
 
 @Aliases("event")
 public class EventsCommand extends CustomCommand {
@@ -185,52 +181,6 @@ public class EventsCommand extends CustomCommand {
 	List<String> tabCompleteEventStoreImage(String filter) {
 		return IMAGES.keySet().stream()
 			.filter(id -> id.toLowerCase().startsWith(filter.toLowerCase()))
-			.collect(Collectors.toList());
-	}
-
-	// Songs
-
-	@Path("store songs [page]")
-	void store_songs(@Arg("1") int page) {
-		if (SONGS.isEmpty())
-			error("No songs loaded");
-
-		final BiFunction<EventStoreSong, String, JsonBuilder> formatter = (song, index) ->
-			json("&3" + index + " &e" + song.getName())
-				.hover("&eClick to play")
-				.command("/event store songs play " + song.getName());
-
-		paginate(SONGS, formatter, "/event store songs", page);
-	}
-
-	@Path("store songs play <song>")
-	void store_songs_play(EventStoreSong song) {
-		song.play(player());
-		send(json(STORE_PREFIX + "Playing &e" + song.getName() + " ")
-			.group()
-			.next("&c[Stop]")
-			.hover("&eClick to stop")
-			.command("/event store songs stop"));
-	}
-
-	@Path("store songs stop")
-	void store_songs_stop() {
-		if (EventStoreSong.stop(player()))
-			send(STORE_PREFIX + "Song stopped");
-		else
-			error("No song is playing");
-	}
-
-	@ConverterFor(EventStoreSong.class)
-	EventStoreSong convertToEventStoreSong(String value) {
-		return EventStoreSong.of(value);
-	}
-
-	@TabCompleterFor(EventStoreSong.class)
-	List<String> tabCompleteEventStoreSong(String filter) {
-		return SONGS.stream()
-			.map(EventStoreSong::getName)
-			.filter(song -> song.toLowerCase().startsWith(filter.toLowerCase()))
 			.collect(Collectors.toList());
 	}
 

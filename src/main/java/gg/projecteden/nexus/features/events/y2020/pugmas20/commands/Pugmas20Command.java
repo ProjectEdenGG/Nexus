@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.events.y2020.pugmas20.commands;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.annotations.Environments;
 import gg.projecteden.nexus.features.events.models.QuestStage;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.AdventChests;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20;
@@ -33,6 +34,7 @@ import gg.projecteden.nexus.models.pugmas20.Pugmas20UserService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MerchantBuilder.TradeBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.utils.Env;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import lombok.NoArgsConstructor;
 import org.bukkit.Bukkit;
@@ -56,6 +58,7 @@ import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.showW
 import static gg.projecteden.nexus.features.events.y2020.pugmas20.models.QuestNPC.getUnplayedToysList;
 
 @NoArgsConstructor
+@Environments(Env.PROD)
 //@Redirect(from = "/advent", to = "/pugmas advent")
 //@Redirect(from = "/district", to = "/pugmas district")
 //@Redirect(from = "/waypoint", to = "/pugmas waypoint")
