@@ -43,6 +43,7 @@ public enum EventStoreItem {
 	IMAGES(-1, Material.PAINTING) {
 		@Override
 		public void onClick(Player player, EventStoreMenu currentMenu) {
+			player.closeInventory();
 			PlayerUtils.runCommand(player, "warp images");
 			// TODO Hologram & way to request image
 		}
@@ -120,6 +121,7 @@ public enum EventStoreItem {
 		@Override
 		public void onClick(Player player, EventStoreMenu currentMenu) {
 			runCommand(player, "jukebox store");
+			player.closeInventory();
 		}
 	},
 	STORE_CREDIT(-1, Material.PAPER) {

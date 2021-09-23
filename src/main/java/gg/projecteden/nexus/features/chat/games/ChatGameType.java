@@ -23,12 +23,13 @@ import java.util.stream.Stream;
 @Getter
 @AllArgsConstructor
 public enum ChatGameType {
-
 	HOVER(15) {
 		@Override
 		public ChatGame create() {
 			String answer = RandomUtils.randomElement(ChatGameType.WORDS);
-			return new ChatGame(this, answer, new JsonBuilder("&eHover with your mouse &3and type the correct phrase in chat!").hover("&e" + answer));
+			return new ChatGame(this, answer,
+				new JsonBuilder("&eHover with your mouse &3and type the phrase in chat!").hover("&e" + answer),
+				"Type the phrase in chat: ||" + answer + "||");
 		}
 	},
 	UNMUTE(30) {

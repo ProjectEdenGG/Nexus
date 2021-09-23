@@ -126,7 +126,12 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 		private final ChatGameType gameType;
 		private final String answer;
 		private final JsonBuilder broadcast;
+		private final String discordBroadcast;
 		private List<UUID> completed = new ArrayList<>();
+
+		public ChatGame(ChatGameType gameType, String answer, JsonBuilder broadcast) {
+			this(gameType, answer, broadcast, discordize(broadcast));
+		}
 
 		private boolean started;
 		private int taskId;
@@ -161,7 +166,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 
 			Broadcast.discord()
 				.prefix("ChatGames")
-				.message(discordize(broadcast))
+				.message(discordBroadcast)
 				.send();
 
 			new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL)
@@ -190,7 +195,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 		}
 
 		private void broadcastEndIngame() {
-			JsonBuilder message = new JsonBuilder("&3The current game has ended! The correct answer was &e" + answer + "&3. ");
+			JsonBuilder message = new JsonBuilder("&3Game over! The correct answer was &e" + answer + "&3. ");
 			if (!completed.isEmpty()) {
 				message.next("&e" + Nickname.of(completed.get(0)) + " &3was the " + (completed.size() == 1 ? "only" : "first") + " to answer correctly!");
 
@@ -214,7 +219,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 
 		private void broadcastEndDiscord() {
 			final MessageBuilder message = new MessageBuilder(getDiscordPrefix("ChatGames") +
-				"The current game has ended! The correct answer was **" + answer + "**. ");
+				"Game over! The correct answer was **" + answer + "**. ");
 
 			if (completed.isEmpty())
 				message.append("No one answered correctly");
@@ -253,7 +258,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 			ECONOMY {
 				@Override
 				String apply(ChatGame game, Nerd player) {
-					int amount = Math.max(25, 150 - ((50 * game.getCompleted().size()) - 1));
+					int amount = Math.max(25, 150 - (50 * (game.getCompleted().size() - 1)));
 					new BankerService().deposit(player, amount, ShopGroup.SURVIVAL, TransactionCause.SERVER);
 					return prettyMoney(amount);
 				}

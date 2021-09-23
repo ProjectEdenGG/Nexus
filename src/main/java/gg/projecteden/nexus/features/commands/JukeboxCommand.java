@@ -75,6 +75,8 @@ public class JukeboxCommand extends CustomCommand {
 		if (songs.isEmpty())
 			error("You do not own any songs. Purchase some with Event Tokens at /jukebox store");
 
+		send(PREFIX);
+
 		final BiFunction<JukeboxSong, String, JsonBuilder> formatter = (song, index) ->
 			json("&3" + index + " ")
 				.group().next(playButton(song))
@@ -104,6 +106,8 @@ public class JukeboxCommand extends CustomCommand {
 
 		if (songs.isEmpty())
 			error("No songs available for purchase");
+
+		send(PREFIX + "Store");
 
 		final BiFunction<JukeboxSong, String, JsonBuilder> formatter = (song, index) ->
 			json("&3" + index + " ")
