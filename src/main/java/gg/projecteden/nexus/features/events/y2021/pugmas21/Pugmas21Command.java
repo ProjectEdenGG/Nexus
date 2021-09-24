@@ -25,6 +25,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -95,42 +96,98 @@ public class Pugmas21Command extends CustomCommand {
 		@Arg("40") @Switch int randomMax
 	) {
 		ItemStack chest = new ItemBuilder(Material.TRAPPED_CHEST).customModelData(1).build();
-		Item item = world().dropItem(location(), chest);
-		item.setCanPlayerPickup(false);
-		item.setCanMobPickup(false);
-
-		item.setVelocity(location().getDirection().multiply(length1).add(new Vector(0, height1, 0)));
-		int itemTaskId = Tasks.repeat(0, TickTime.TICK, () -> {
-			if (!item.isOnGround())
-				new ParticleBuilder(particle1).count(1).extra(0).location(item.getLocation()).spawn();
-		});
+		Item item = spawnItem(location(), chest, length1, height1, location().getDirection());
+		int itemTaskId = particleTask(particle1, item);
 
 		List<ItemStack> items = new ArrayList<>();
 		MaterialTag.CONCRETES.getValues().forEach(material -> items.add(new ItemStack(material)));
 
 		Tasks.wait(ticks1, () -> {
-			new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).location(item.getLocation()).play();
-			Location location = item.getLocation();
 			Tasks.cancel(itemTaskId);
-			item.remove();
+			Location location = removeItem(item);
+			new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).location(location).play();
 
 			for (ItemStack itemStack : items) {
-				Item _item = world().dropItem(location, itemStack);
-				_item.setCanPlayerPickup(false);
-				_item.setCanMobPickup(false);
-				_item.setVelocity(VectorUtils.getRandomDirection().multiply(length2).add(new Vector(0, height2, 0)));
-
-				int _itemTaskId = Tasks.repeat(0, TickTime.TICK, () -> {
-					if (!_item.isOnGround())
-						new ParticleBuilder(particle2).count(1).extra(0).location(_item.getLocation()).spawn();
-				});
+				Item _item = spawnItem(location, itemStack, length2, height2, VectorUtils.getRandomDirection());
+				int _itemTaskId = particleTask(particle2, _item);
 
 				Tasks.wait(ticks2 + RandomUtils.randomInt(0, randomMax), () -> {
 					Tasks.cancel(_itemTaskId);
-					_item.remove();
-					new SoundBuilder(Sound.ENTITY_CHICKEN_EGG).location(_item.getLocation()).play();
+					Location _location = removeItem(_item);
+					new SoundBuilder(Sound.ENTITY_CHICKEN_EGG).location(_location).play();
 				});
 			}
 		});
+	}
+
+	@Path("openAdventDouble [--height1] [--length1] [--particle1] [--ticks1] [--height2] [--length2] [--particle2] [--ticks2] [--randomMax]")
+	void openAdventDouble(
+		@Arg("0.25") @Switch double length1,
+		@Arg("0.5") @Switch double height1,
+		@Arg("crit") @Switch Particle particle1,
+		@Arg("40") @Switch int ticks1,
+		@Arg("0.25") @Switch double length2,
+		@Arg("0.25") @Switch double height2,
+		@Arg("crit") @Switch Particle particle2,
+		@Arg("40") @Switch int ticks2,
+		@Arg("40") @Switch int randomMax
+	) {
+		ItemStack chest = new ItemBuilder(Material.TRAPPED_CHEST).customModelData(1).build();
+		Item item = spawnItem(location(), chest, length1, height1, location().getDirection());
+		int itemTaskId = particleTask(particle1, item);
+
+		List<ItemStack> items = new ArrayList<>();
+		MaterialTag.CONCRETES.getValues().forEach(material -> items.add(new ItemStack(material)));
+
+		Tasks.wait(ticks1, () -> {
+			Tasks.cancel(itemTaskId);
+			Location location = removeItem(item);
+			new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).location(location).play();
+
+			for (ItemStack itemStack : items) {
+				Item _item = spawnItem(location, itemStack, length2, height2, VectorUtils.getRandomDirection());
+				int _itemTaskId = particleTask(particle2, _item);
+
+				Tasks.wait(ticks2 + RandomUtils.randomInt(0, randomMax), () -> {
+					Tasks.cancel(_itemTaskId);
+					Location _location = removeItem(_item);
+					new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).location(_location).play();
+
+					for (ItemStack _itemStack : items) {
+						Item __item = spawnItem(_location, _itemStack, length2, height2, VectorUtils.getRandomDirection());
+						int __itemTaskId = particleTask(particle2, __item);
+
+						Tasks.wait(ticks2 + RandomUtils.randomInt(0, randomMax), () -> {
+							Tasks.cancel(__itemTaskId);
+							Location __location = removeItem(__item);
+							new SoundBuilder(Sound.ENTITY_CHICKEN_EGG).location(__location).play();
+						});
+					}
+				});
+			}
+		});
+	}
+
+	@NotNull
+	private Location removeItem(Item item) {
+		Location location = item.getLocation();
+		item.remove();
+		return location;
+	}
+
+	private int particleTask(Particle particle1, Item item) {
+		return Tasks.repeat(0, TickTime.TICK, () -> {
+			if (!item.isOnGround())
+				new ParticleBuilder(particle1).count(1).extra(0).location(item.getLocation()).spawn();
+		});
+	}
+
+	@NotNull
+	private Item spawnItem(Location location, ItemStack itemStack, double length, double height, Vector direction) {
+		Item _item = world().dropItem(location, itemStack);
+		_item.setCanPlayerPickup(false);
+		_item.setCanMobPickup(false);
+		_item.setVelocity(direction.multiply(length).add(new Vector(0, height, 0)));
+		return _item;
 	}
 }

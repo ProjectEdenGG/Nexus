@@ -30,6 +30,8 @@ public class FireworkLauncher {
 	private Integer detonateAfter;
 	private Boolean silent;
 	private Boolean noDamage;
+	@Getter
+	private static final String METADATA_NO_DAMAGE = "noDamage";
 
 	public FireworkLauncher(Location location) {
 		this.location = location;
@@ -41,7 +43,7 @@ public class FireworkLauncher {
 		FireworkMeta meta = firework.getFireworkMeta();
 
 		if (noDamage != null)
-			firework.setMetadata("noDamage", new FixedMetadataValue(Nexus.getInstance(), noDamage));
+			firework.setMetadata(METADATA_NO_DAMAGE, new FixedMetadataValue(Nexus.getInstance(), noDamage));
 		if (silent != null)
 			firework.setSilent(silent);
 
@@ -66,29 +68,34 @@ public class FireworkLauncher {
 
 	public static FireworkLauncher random(Location location) {
 		// Get Random Colors
-		ColorType[] colorTypes = ColorType.values();
-		List<Color> colorList = new ArrayList<>();
-		for (ColorType colorType : colorTypes)
-			if (RandomUtils.chanceOf(40))
-				colorList.add(colorType.getBukkitColor());
-		if (colorList.size() == 0)
-			colorList.add(RandomUtils.randomElement(Arrays.asList(colorTypes)).getBukkitColor());
+		List<Color> colorList = getRandomColors();
 
 		// Get Random Fade Colors
-		List<Color> fadeColorList = new ArrayList<>();
-		for (ColorType colorType : colorTypes)
-			if (RandomUtils.chanceOf(40))
-				fadeColorList.add(colorType.getBukkitColor());
+		List<Color> fadeColorList = getRandomColors();
 
 		// Get Random Type
 		FireworkEffect.Type type = RandomUtils.randomElement(Arrays.asList(FireworkEffect.Type.values()));
 
 		return new FireworkLauncher(location)
-				.type(type)
-				.colors(colorList)
-				.fadeColors(fadeColorList)
-				.trailing(RandomUtils.chanceOf(50))
-				.flickering(RandomUtils.chanceOf(50))
-				.power(RandomUtils.randomInt(1, 3));
+			.type(type)
+			.colors(colorList)
+			.fadeColors(fadeColorList)
+			.trailing(RandomUtils.chanceOf(50))
+			.flickering(RandomUtils.chanceOf(50))
+			.power(RandomUtils.randomInt(1, 3));
+	}
+
+	private static List<Color> getRandomColors() {
+		List<Color> colorList = new ArrayList<>();
+		if (RandomUtils.chanceOf(50)) {
+			for (ColorType colorType : ColorType.values())
+				if (RandomUtils.chanceOf(40))
+					colorList.add(colorType.getBukkitColor());
+			if (colorList.isEmpty())
+				colorList.add(ColorType.getRandom().getBukkitColor());
+		} else
+			colorList.add(ColorType.getRandom().getBukkitColor());
+
+		return colorList;
 	}
 }
