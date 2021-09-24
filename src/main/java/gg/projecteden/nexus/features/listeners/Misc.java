@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.listeners;
 
 import com.destroystokyo.paper.ClientOption;
 import com.destroystokyo.paper.ClientOption.ChatVisibility;
+import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.NBTTileEntity;
 import gg.projecteden.nexus.Nexus;
@@ -169,10 +170,12 @@ public class Misc implements Listener {
 			final EquipmentSlot slot = slots.get(tag);
 			if (tag.isTagged(item)) {
 				final ItemStack existing = ItemUtils.clone(inventory.getItem(slot));
-				inventory.setItem(slot, ItemUtils.clone(item));
-				inventory.setItem(EquipmentSlot.HAND, existing);
-				event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f);
-				return;
+				if (new PlayerArmorChangeEvent(event.getPlayer(), PlayerArmorChangeEvent.SlotType.valueOf(slot.name()), existing, item).callEvent()) {
+					inventory.setItem(EquipmentSlot.HAND, existing);
+					inventory.setItem(slot, ItemUtils.clone(item));
+					event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f);
+					return;
+				}
 			}
 		}
 	}

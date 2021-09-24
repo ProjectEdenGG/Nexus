@@ -136,7 +136,7 @@ public class WitherArmorListener implements Listener {
 		Tasks.repeat(1, 1, () -> {
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				if (!hasFullSet(player)) continue;
-				if (player.getGameMode() == GameMode.CREATIVE) continue;
+				if (player.getGameMode() != GameMode.SURVIVAL) continue;
 				if (!player.isFlying()) continue;
 
 				player.setAllowFlight(false);
