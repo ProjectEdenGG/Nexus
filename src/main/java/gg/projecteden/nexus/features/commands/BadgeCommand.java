@@ -88,7 +88,7 @@ public class BadgeCommand extends CustomCommand {
 	@ConverterFor(Badge.class)
 	Badge convertToBadge(String value, BadgeUser context) {
 		Badge badge = convertToEnum(value, Badge.class);
-		if (isAdmin())
+		if (isSeniorStaff())
 			return badge;
 
 		if (context == null)
