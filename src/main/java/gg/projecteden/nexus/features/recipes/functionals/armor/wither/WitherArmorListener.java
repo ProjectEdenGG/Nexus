@@ -148,7 +148,11 @@ public class WitherArmorListener implements Listener {
 
 				player.setVelocity(vector);
 				player.playSound(player.getLocation(), Sound.ENTITY_GHAST_SHOOT, 0.8f, 0.7f);
-				Tasks.wait(TimeUtils.TickTime.SECOND.x(10), () -> player.setAllowFlight(true));
+				Tasks.wait(TimeUtils.TickTime.SECOND.x(10), () -> {
+					if (hasFullSet(player)) {
+						player.setAllowFlight(true);
+					}
+				});
 			}
 		});
 	}
