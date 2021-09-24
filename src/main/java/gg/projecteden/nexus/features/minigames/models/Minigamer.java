@@ -19,6 +19,7 @@ import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.Utils;
@@ -43,7 +44,7 @@ import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -362,7 +363,7 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 			respawning = true;
 			teleportAsync(match.getArena().getRespawnLocation(), true);
 			clearState();
-			getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 2, false, false));
+			addPotionEffect(new PotionEffectBuilder(PotionEffectType.BLINDNESS).duration(TickTime.SECOND.x(2)).amplifier(2));
 			hideAll();
 			Runnable respawn = () -> {
 				if (!match.isEnded()) {
@@ -514,6 +515,18 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 
 	public boolean usesPerk(@NotNull Perk perk) {
 		return match.getMechanic().usesPerk(perk, this);
+	}
+
+	public void addPotionEffect(PotionEffect potionEffect){
+		getPlayer().addPotionEffect(potionEffect);
+	}
+
+	public void addPotionEffect(PotionEffectBuilder effectBuilder){
+		getPlayer().addPotionEffect(effectBuilder.build());
+	}
+
+	public void removePotionEffect(PotionEffectType type){
+		getPlayer().removePotionEffect(type);
 	}
 
 }

@@ -18,6 +18,7 @@ import gg.projecteden.nexus.models.godmode.GodmodeService;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Timer;
 import gg.projecteden.nexus.utils.WorldEditUtils;
@@ -42,7 +43,6 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.Collections;
@@ -358,8 +358,7 @@ public class BearFair21 implements Listener {
 		BearFair21User user = userService.get(player);
 
 		Tasks.wait(TickTime.SECOND.x(2), () -> {
-			player.addPotionEffects(Collections.singletonList
-				(new PotionEffect(PotionEffectType.BLINDNESS, 80, 250, false, false, false)));
+			player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.BLINDNESS).duration(80).amplifier(250).build());
 			player.teleportAsync(spawnTransition);
 			send("", player);
 			send("&e&o*You immediately fall asleep in your bed*", player);

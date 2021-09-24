@@ -10,6 +10,7 @@ import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.punishments.Punishment;
 import gg.projecteden.nexus.models.punishments.PunishmentType;
 import gg.projecteden.nexus.models.punishments.Punishments;
+import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -97,7 +98,13 @@ public class Freeze implements PlayerOwnedObject {
 		if (armorStandsDisabled) {
 			SpeedCommand.setSpeed(player, 0, false);
 			SpeedCommand.setSpeed(player, 0, true);
-			player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 9999999, 200, true, false, false));
+			PotionEffect potionEffect = new PotionEffectBuilder(PotionEffectType.JUMP)
+				.maxDuration()
+				.amplifier(200)
+				.ambient(true)
+				.build();
+
+			player.addPotionEffect(potionEffect);
 		} else {
 			if (player.getVehicle() != null)
 				player.getVehicle().removePassenger(player);

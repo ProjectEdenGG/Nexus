@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.wither.WitherChallenge;
 import gg.projecteden.nexus.features.wither.models.WitherFight;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
@@ -23,7 +24,6 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
@@ -49,7 +49,7 @@ public class CorruptedFight extends WitherFight {
 	@Override
 	public void start() {
 		super.start();
-		alivePlayers().forEach(player -> player.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 999999, 0)));
+		alivePlayers().forEach(player -> player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.WITHER).maxDuration().amplifier(0).build()));
 	}
 
 	@EventHandler
@@ -228,7 +228,7 @@ public class CorruptedFight extends WitherFight {
 		HUNGER {
 			@Override
 			public void execute(Player player) {
-				player.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, TickTime.SECOND.x(10), 3, true));
+				player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.HUNGER).duration(TickTime.SECOND.x(10)).amplifier(3).ambient(true).build());
 			}
 		},
 		SILVERFISH {
@@ -246,7 +246,7 @@ public class CorruptedFight extends WitherFight {
 		WEAKNESS {
 			@Override
 			public void execute(Player player) {
-				player.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, TickTime.SECOND.x(10), 1, true));
+				player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.WEAKNESS).duration(TickTime.SECOND.x(10)).ambient(true).build());
 			}
 		};
 

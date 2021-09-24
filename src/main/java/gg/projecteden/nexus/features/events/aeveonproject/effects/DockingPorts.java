@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.events.aeveonproject.effects;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
+import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -34,7 +35,12 @@ public class DockingPorts implements Listener {
 
 		String id = event.getRegion().getId();
 		if (id.contains("dockingtube") || id.contains("vent")) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 9999999, 15, false, false));
+			PotionEffect potionEffect = new PotionEffectBuilder(PotionEffectType.SPEED)
+				.maxDuration()
+				.amplifier(15)
+				.build();
+
+			player.addPotionEffect(potionEffect);
 		}
 	}
 

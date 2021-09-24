@@ -10,6 +10,8 @@ import gg.projecteden.nexus.features.minigames.utils.PowerUpUtils;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.PotionEffectBuilder;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -17,7 +19,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -47,7 +48,7 @@ public final class KangarooJumping extends TeamlessMechanic {
 		super.onStart(event);
 		Match match = event.getMatch();
 		KangarooJumpingArena arena = match.getArena();
-		match.getTasks().wait(5 * 20, () -> {
+		match.getTasks().wait(TickTime.SECOND.x(5), () -> {
 			match.broadcast("Power ups have spawned!");
 			for (Location loc : arena.getPowerUpLocations())
 				new PowerUpUtils(match, powerUps).spawn(loc, true);
@@ -60,14 +61,11 @@ public final class KangarooJumping extends TeamlessMechanic {
 		if (!minigamer.isPlaying(this)) return;
 		if (!minigamer.getMatch().getArena().ownsRegion(event.getRegion().getId(), "win")) return;
 		if (hasAnyoneScored(minigamer.getMatch())) return;
+
 		minigamer.scored();
 		minigamer.getMatch().broadcast("&e" + minigamer.getColoredName() + " has reached the finish area!");
-		minigamer.getMatch().getTasks().wait(5 * 20, () -> minigamer.getMatch().end());
+		minigamer.getMatch().getTasks().wait(TickTime.SECOND.x(5), () -> minigamer.getMatch().end());
 	}
-
-//	@Override
-//	public void kill(Minigamer victim, Minigamer attacker) {
-//	}
 
 	boolean hasAnyoneScored(Match match) {
 		for (Minigamer minigamer : match.getMinigamers())
@@ -79,8 +77,10 @@ public final class KangarooJumping extends TeamlessMechanic {
 	PowerUpUtils.PowerUp JUMP = new PowerUpUtils.PowerUp("Extra Jump Boost", true,
 			new ItemBuilder(Material.LEATHER_BOOTS).glow().build(),
 			minigamer -> {
-				minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 10 * 20, 20), true);
-				minigamer.getMatch().getTasks().wait(10 * 20, () -> minigamer.getMatch().getAliveTeams().get(0).getLoadout().apply(minigamer));
+				minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.JUMP).duration(TickTime.SECOND.x(10)).amplifier(20));
+
+				minigamer.getMatch().getTasks().wait(TickTime.SECOND.x(10), () ->
+					minigamer.getMatch().getAliveTeams().get(0).getLoadout().apply(minigamer));
 			});
 
 	PowerUpUtils.PowerUp POSITIVE_BLINDNESS = new PowerUpUtils.PowerUp("Blindness", true,
@@ -88,14 +88,14 @@ public final class KangarooJumping extends TeamlessMechanic {
 			minigamer -> {
 				for (Minigamer _minigamer : minigamer.getMatch().getMinigamers())
 					if (_minigamer != minigamer) {
-						_minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 5 * 20, 1));
+						_minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.BLINDNESS).duration(TickTime.SECOND.x(5)));
 						_minigamer.tell("You have been trapped!");
 					}
 			});
 
 	PowerUpUtils.PowerUp NEGATIVE_BLINDNESS = new PowerUpUtils.PowerUp("Blindness", false,
 			new ItemBuilder(Material.POTION).potionEffectColor(ColorType.BLACK.getBukkitColor()).build(),
-			minigamer -> minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 5 * 20, 1)));
+			minigamer -> minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.BLINDNESS).duration(TickTime.SECOND.x(5))));
 
 	PowerUpUtils.PowerUp SNOWBALL = new PowerUpUtils.PowerUp("Snowball", true, Material.SNOWBALL,
 			minigamer ->
@@ -111,7 +111,7 @@ public final class KangarooJumping extends TeamlessMechanic {
 			minigamer -> {
 				for (Minigamer _minigamer : minigamer.getMatch().getMinigamers())
 					if (_minigamer != minigamer) {
-						_minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 5 * 20, 3));
+						_minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.LEVITATION).duration(TickTime.SECOND.x(5)).amplifier(3));
 						_minigamer.tell("You have been trapped!");
 					}
 			});
@@ -120,9 +120,13 @@ public final class KangarooJumping extends TeamlessMechanic {
 
 	@EventHandler
 	public void onSnowballHit(ProjectileHitEvent event) {
-		if (!(event.getHitEntity() instanceof Player player)) return;
+		if (!(event.getHitEntity() instanceof Player player))
+			return;
+
 		Minigamer minigamer = PlayerManager.get(player);
-		if (!minigamer.isPlaying(this)) return;
+		if (!minigamer.isPlaying(this))
+			return;
+
 		player.setVelocity(event.getEntity().getVelocity().multiply(0.5).add(new Vector(0, .5, 0)));
 	}
 

@@ -12,6 +12,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartE
 import gg.projecteden.nexus.features.minigames.models.matchdata.MonsterMazeMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import gg.projecteden.nexus.features.minigames.utils.PowerUpUtils;
+import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
@@ -23,7 +24,6 @@ import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -150,7 +150,7 @@ public class MonsterMaze extends TeamlessMechanic {
 	}
 
 	private void preventJump(Minigamer minigamer) {
-		minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 9999999, 250, false, false));
+		minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.JUMP).maxDuration().amplifier(250));
 	}
 
 	@EventHandler

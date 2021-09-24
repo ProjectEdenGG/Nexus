@@ -21,6 +21,7 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
@@ -638,13 +639,13 @@ public abstract class WitherFight implements Listener {
 		BLINDNESS {
 			@Override
 			public void execute(Player player) {
-				player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, TickTime.SECOND.x(5), 0, true));
+				player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.BLINDNESS).duration(TickTime.SECOND.x(5)).amplifier(0).ambient(true).build());
 			}
 		},
 		CONFUSION {
 			@Override
 			public void execute(Player player) {
-				player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, TickTime.SECOND.x(10), 0, true));
+				player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.CONFUSION).duration(TickTime.SECOND.x(10)).amplifier(0).ambient(true).build());
 			}
 		},
 		TAKE_POTIONS {
@@ -662,19 +663,19 @@ public abstract class WitherFight implements Listener {
 		HUNGER {
 			@Override
 			public void execute(Player player) {
-				player.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, TickTime.SECOND.x(10), 1, true));
+				player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.HUNGER).duration(TickTime.SECOND.x(10)).amplifier(1).ambient(true).build());
 			}
 		},
 		LEVITATION {
 			@Override
 			public void execute(Player player) {
-				player.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, TickTime.SECOND.x(5), 0, true));
+				player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.LEVITATION).duration(TickTime.SECOND.x(5)).amplifier(0).ambient(true).build());
 			}
 		},
 		WITHER_EFFECT {
 			@Override
 			public void execute(Player player) {
-				player.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, TickTime.SECOND.x(10), 0, true));
+				player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.WITHER).duration(TickTime.SECOND.x(10)).amplifier(0).ambient(true).build());
 			}
 		},
 		DUPLICATE {

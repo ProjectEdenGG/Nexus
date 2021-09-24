@@ -9,6 +9,7 @@ import gg.projecteden.nexus.models.bearfair20.BearFair20User;
 import gg.projecteden.nexus.models.bearfair20.BearFair20UserService;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -20,10 +21,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-
-import java.util.Collections;
 
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.send;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.worldguard;
@@ -140,8 +138,7 @@ public class Beehive implements Listener {
 	}
 
 	private void denied(Player player) {
-		player.addPotionEffects(Collections.singletonList
-				(new PotionEffect(PotionEffectType.BLINDNESS, 40, 250, false, false, false)));
+		player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.BLINDNESS).duration(40).amplifier(250).build());
 		player.teleportAsync(exitLoc);
 		player.playSound(enterLoc, Sound.ENTITY_BEE_LOOP_AGGRESSIVE, 0.5F, 1F);
 		Tasks.wait(5, () -> send(deniedMsg, player));

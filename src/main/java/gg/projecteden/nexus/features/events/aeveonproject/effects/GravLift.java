@@ -4,12 +4,12 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
+import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
@@ -44,10 +44,11 @@ public class GravLift implements Listener {
 				}
 				//
 
+				PotionEffectBuilder effectBuilder = new PotionEffectBuilder().duration(6);
 				if (player.isSneaking())
-					player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 6, 4, false, false, false));
+					player.addPotionEffect(effectBuilder.type(PotionEffectType.SLOW_FALLING).amplifier(4).build());
 				else
-					player.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 6, 3, false, false, false));
+					player.addPotionEffect(effectBuilder.type(PotionEffectType.LEVITATION).amplifier(3).build());
 			}
 		});
 	}

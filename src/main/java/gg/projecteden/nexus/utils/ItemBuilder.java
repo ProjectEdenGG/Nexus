@@ -13,6 +13,7 @@ import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.skincache.SkinCache;
 import gg.projecteden.nexus.utils.SymbolBanner.Symbol;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.lexikiq.HasOfflinePlayer;
@@ -278,7 +279,12 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	public ItemBuilder potionEffect(PotionEffectType potionEffectType, int seconds, int amplifier) {
-		return potionEffect(new PotionEffect(potionEffectType, seconds * 20, amplifier - 1));
+		return potionEffect(new PotionEffectBuilder(potionEffectType).duration(TickTime.SECOND.x(seconds)).amplifier(amplifier - 1));
+	}
+
+	public ItemBuilder potionEffect(PotionEffectBuilder potionEffect) {
+		((PotionMeta) itemMeta).addCustomEffect(potionEffect.build(), true);
+		return this;
 	}
 
 	public ItemBuilder potionEffect(PotionEffect potionEffect) {

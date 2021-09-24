@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NonNull;
 import net.wesjd.anvilgui.AnvilGUI;
@@ -62,7 +63,7 @@ public class PotionEffectsMenu extends MenuUtils implements InventoryProvider {
 
 		contents.set(0, 4, ClickableItem.from(nameItem(Material.EMERALD_BLOCK, "&eAdd Potion Effect"),
 			e -> {
-					PotionEffect potionEffect = new PotionEffect(PotionEffectType.SPEED, 5, 0, true, false);
+					PotionEffect potionEffect = new PotionEffectBuilder(PotionEffectType.SPEED).duration(5).amplifier(5).ambient(true).build();
 					team.getLoadout().getEffects().add(potionEffect);
 					arena.write();
 					menus.getTeamMenus().openPotionEffectEditorMenu(player, arena, team, potionEffect);

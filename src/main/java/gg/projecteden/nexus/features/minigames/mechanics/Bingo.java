@@ -32,6 +32,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -59,7 +60,6 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
@@ -106,7 +106,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 
 	@Override
 	public void onDeath(@NotNull Minigamer victim) {
-		victim.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, TickTime.SECOND.x(3), 10, false, false));
+		victim.getPlayer().addPotionEffect(new PotionEffectBuilder(PotionEffectType.BLINDNESS).duration(TickTime.SECOND.x(3)).amplifier(10).build());
 		new TitleBuilder().players(victim).title("&cYou died!").stay(150).send();
 
 		final Location bed = victim.getPlayer().getBedSpawnLocation();

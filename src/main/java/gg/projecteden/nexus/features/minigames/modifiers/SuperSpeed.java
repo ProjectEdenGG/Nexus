@@ -2,14 +2,14 @@ package gg.projecteden.nexus.features.minigames.modifiers;
 
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.modifiers.MinigameModifier;
-import org.bukkit.potion.PotionEffect;
+import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
 public class SuperSpeed implements MinigameModifier {
 	@Override
 	public void afterLoadout(@NotNull Minigamer minigamer) {
-		minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 1000000, 2, true, false, true));
+		minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.SPEED).maxDuration().amplifier(2).ambient(true).icon(true));
 	}
 
 	@Override
