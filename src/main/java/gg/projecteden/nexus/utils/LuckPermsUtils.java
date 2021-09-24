@@ -208,7 +208,6 @@ public class LuckPermsUtils {
 		private final BiConsumer<NodeMap, Node> consumer;
 	}
 
-	@AllArgsConstructor
 	public static class PermissionChange {
 
 		public static PermissionChangeBuilder set() {

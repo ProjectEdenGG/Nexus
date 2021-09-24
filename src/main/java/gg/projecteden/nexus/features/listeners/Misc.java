@@ -17,6 +17,7 @@ import gg.projecteden.nexus.models.tip.Tip.TipType;
 import gg.projecteden.nexus.models.tip.TipService;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.ActionBarUtils;
+import gg.projecteden.nexus.utils.FireworkLauncher;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -89,6 +90,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.MapMeta;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
@@ -291,8 +293,15 @@ public class Misc implements Listener {
 
 	@EventHandler
 	public void onFireworkDamage(EntityDamageByEntityEvent event) {
-		if (event.getDamager() instanceof Firework firework && firework.hasMetadata("noDamage"))
-			event.setCancelled(true);
+		if (!(event.getDamager() instanceof Firework firework))
+			return;
+
+		if (!firework.hasMetadata(FireworkLauncher.METADATA_KEY_DAMAGE))
+			return;
+
+		for (MetadataValue value : firework.getMetadata(FireworkLauncher.METADATA_KEY_DAMAGE))
+			if (!value.asBoolean())
+				event.setCancelled(true);
 	}
 
 	@EventHandler

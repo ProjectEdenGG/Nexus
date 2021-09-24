@@ -37,7 +37,6 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
@@ -112,7 +111,7 @@ public class DyeBombCommand extends CustomCommand implements Listener {
 		Snowball snowball = (Snowball) player.getWorld().spawnEntity(location, EntityType.SNOWBALL);
 		snowball.setVelocity(location.getDirection().multiply(1.2));
 		snowball.setShooter(player);
-		snowball.setMetadata(FireworkLauncher.METADATA_NO_DAMAGE(), new FixedMetadataValue(Nexus.getInstance(), true));
+		snowball.setMetadata(FireworkLauncher.METADATA_KEY_DAMAGE, new FixedMetadataValue(Nexus.getInstance(), false));
 
 		player.playSound(player.getLocation(), Sound.ENTITY_EGG_THROW, 0.5F, 1F);
 	}
@@ -120,26 +119,25 @@ public class DyeBombCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onDyeBombHit(ProjectileHitEvent event) {
 		if (!(event.getEntity() instanceof Snowball snowball)) return;
-		if (!snowball.hasMetadata("noDamage")) return;
+		if (!snowball.hasMetadata(FireworkLauncher.METADATA_KEY_DAMAGE)) return;
 		if (event.getHitBlock() == null && event.getHitEntity() == null) return;
 
-		Vector vel = snowball.getVelocity().normalize().multiply(0.1);
-		Location hitLoc = snowball.getLocation().subtract(vel);
+		Vector vector = snowball.getVelocity().normalize().multiply(0.1);
+		Location location = snowball.getLocation().subtract(vector);
 
-		FireworkLauncher fw = FireworkLauncher.random(hitLoc)
+		FireworkLauncher firework = FireworkLauncher.random(location)
 			.detonateAfter(0)
 			.power(0)
 			.type(FireworkEffect.Type.BURST)
+			.colors(randomColors())
+			.fadeColors(randomColors())
 			.silent(true)
-			.noDamage(true);
-
-		fw.colors(randomColors());
-		fw.fadeColors(randomColors());
+			.damage(false);
 
 		if (RandomUtils.chanceOf(50))
-			fw.colors(Collections.singletonList(randomColor())).fadeColors(Collections.singletonList(randomColor()));
+			firework.color(randomColor()).fadeColor(randomColor());
 
-		fw.launch();
+		firework.launch();
 	}
 
 	private List<Color> randomColors() {

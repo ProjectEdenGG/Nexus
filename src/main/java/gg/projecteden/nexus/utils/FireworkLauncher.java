@@ -14,6 +14,7 @@ import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Getter
@@ -29,12 +30,21 @@ public class FireworkLauncher {
 	private Integer power;
 	private Integer detonateAfter;
 	private Boolean silent;
-	private Boolean noDamage;
-	@Getter
-	private static final String METADATA_NO_DAMAGE = "noDamage";
+	private Boolean damage;
+	public static final String METADATA_KEY_DAMAGE = "damage";
 
 	public FireworkLauncher(Location location) {
 		this.location = location;
+	}
+
+	public FireworkLauncher color(Color color) {
+		this.colors = Collections.singletonList(color);
+		return this;
+	}
+
+	public FireworkLauncher fadeColor(Color color) {
+		this.fadeColors = Collections.singletonList(color);
+		return this;
 	}
 
 	public void launch() {
@@ -42,8 +52,8 @@ public class FireworkLauncher {
 		FireworkEffect.Builder builder = FireworkEffect.builder();
 		FireworkMeta meta = firework.getFireworkMeta();
 
-		if (noDamage != null)
-			firework.setMetadata(METADATA_NO_DAMAGE, new FixedMetadataValue(Nexus.getInstance(), noDamage));
+		if (damage != null)
+			firework.setMetadata(METADATA_KEY_DAMAGE, new FixedMetadataValue(Nexus.getInstance(), damage));
 		if (silent != null)
 			firework.setSilent(silent);
 
