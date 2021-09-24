@@ -67,7 +67,7 @@ public class OldCEConverter {
 				int level = 1;
 				if (line.matches(String.format("(?i)%s ((I?X|IV|V?I{0,3})|\\d)", enchant.getCEName()))) {
 					try {
-						level = StringUtils.fromRoman(line.replace(String.format("(?i)%s", enchant.getCEName()), ""));
+						level = StringUtils.fromRoman(line.replace(StringUtils.camelCase(enchant.getCEName()), "").trim());
 					} catch (Exception ignore) { } // invalid roman numeral parsing
 				}
 				item.getItemMeta().getLore().remove(ogLine);
@@ -89,7 +89,9 @@ public class OldCEConverter {
 	public enum ConversionEnchant {
 		GLOWING(Enchant.GLOWING),
 		AUTOREPAIR(Enchant.AUTOREPAIR),
-		THUNDERINGBLOW(Enchant.THUNDERINGBLOW);
+		THUNDERINGBLOW(Enchant.THUNDERINGBLOW),
+		FIREWORK(Enchant.FIREWORK),
+		;
 
 		CustomEnchant enchant;
 

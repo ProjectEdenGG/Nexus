@@ -131,8 +131,7 @@ public class DyeBombCommand extends CustomCommand implements Listener {
 			.type(FireworkEffect.Type.BURST)
 			.colors(randomColors())
 			.fadeColors(randomColors())
-			.silent(true)
-			.damage(false);
+			.silent(true);
 
 		if (RandomUtils.chanceOf(50))
 			firework.color(randomColor()).fadeColor(randomColor());
