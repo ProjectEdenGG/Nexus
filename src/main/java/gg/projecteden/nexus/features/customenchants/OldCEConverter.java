@@ -25,19 +25,18 @@ public class OldCEConverter {
 				final Iterator<Player> iterator = OnlinePlayers.getAll().iterator();
 
 				int wait = 0;
-				Tasks.wait(TickTime.SECOND.x(++wait), () -> {
-					if (!iterator.hasNext()) {
-						Tasks.sync(get());
-						return;
-					}
-
+				while (iterator.hasNext()) {
 					final Player player = iterator.next();
-					if (!player.isOnline())
-						return;
+					Tasks.wait(TickTime.SECOND.x(++wait), () -> {
+						if (!player.isOnline())
+							return;
 
-					for (ItemStack item : player.getInventory())
-						convertItem(item);
-				});
+						for (ItemStack item : player.getInventory())
+							convertItem(item);
+					});
+				}
+
+				Tasks.wait(TickTime.SECOND.x(++wait), get());
 			});
 		}}.get());
 	}
