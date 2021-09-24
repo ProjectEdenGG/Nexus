@@ -46,7 +46,7 @@ public class BadgeCommand extends CustomCommand {
 		send(PREFIX + "Set " + (isSelf(user) ? "your" : "&e" + user.getNickname() + "&3's") + " active badge to &e" + camelCase(badge));
 	}
 
-	@Permission("group.admin")
+	@Permission("group.seniorstaff")
 	@Path("give <badge> [user]")
 	void give(Badge badge, @Arg("self") BadgeUser user) {
 		user.give(badge);

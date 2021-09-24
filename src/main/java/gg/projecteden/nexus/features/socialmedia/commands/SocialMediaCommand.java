@@ -77,7 +77,7 @@ public class SocialMediaCommand extends CustomCommand {
 	}
 
 	@Path("link <site> <username> [player]")
-	void link(SocialMediaSite site, String username, @Arg(value = "self", permission = "group.staff") SocialMediaUser player) {
+	void link(SocialMediaSite site, String username, @Arg(value = "self", permission = "group.seniorstaff") SocialMediaUser player) {
 		username = username.replaceAll("(http(s)?://)?(www.)?" + site.getProfileUrl().replace("https://", "").replace("%s", ""), "");
 
 		if (site == SocialMediaSite.YOUTUBE && (username.length() != 24 || !username.startsWith("UC")))
