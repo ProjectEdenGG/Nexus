@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.models.ambience.AmbienceConfig.Ambience.AmbienceType;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -124,7 +125,7 @@ public abstract class Windchimes extends FunctionalRecipe {
 		if (!item.getType().equals(Material.AMETHYST_SHARD))
 			return false;
 
-		if (new ItemBuilder(item).customModelData() > WindchimeType.values().length)
+		if (CustomModelData.of(item) > WindchimeType.values().length)
 			return false;
 
 		return true;

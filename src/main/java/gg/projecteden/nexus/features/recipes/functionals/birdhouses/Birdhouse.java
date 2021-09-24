@@ -4,6 +4,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
@@ -37,14 +38,18 @@ public abstract class Birdhouse extends FunctionalRecipe {
 		private final Material roof, hole, siding;
 		private final Set<Integer> models;
 
-		protected static BirdhouseType of(int customModelData) {
+		public static BirdhouseType of(ItemStack item) {
+			return of(CustomModelData.of(item));
+		}
+
+		public static BirdhouseType of(int customModelData) {
 			for (BirdhouseType type : values())
 				if (type.getModels().contains(customModelData))
 					return type;
 			return null;
 		}
 
-		protected ItemBuilder getDisplayItem() {
+		public ItemBuilder getDisplayItem() {
 			return new ItemBuilder(Material.OAK_WOOD)
 				.name(camelCase(this) + " Birdhouse")
 				.customModelData(baseModel());

@@ -646,6 +646,18 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return customModelData == null ? 0 : customModelData;
 	}
 
+	public static class CustomModelData {
+
+		public static int of(ItemStack item) {
+			return of(new ItemBuilder(item));
+		}
+
+		public static int of(ItemBuilder item) {
+			return item.customModelData();
+		}
+
+	}
+
 	// Use this when you don't want the glowing, infinite deaths, & no combining
 	// TODO ProtocolLib instead?
 	public ItemBuilder soulbound() {
