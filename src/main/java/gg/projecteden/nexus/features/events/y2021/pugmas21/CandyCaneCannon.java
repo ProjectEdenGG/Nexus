@@ -1,21 +1,21 @@
 package gg.projecteden.nexus.features.events.y2021.pugmas21;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import io.papermc.paper.event.entity.EntityLoadCrossbowEvent;
-import org.bukkit.Location;
+import gg.projecteden.nexus.utils.Utils.ActionGroup;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.CrossbowMeta;
-import org.bukkit.util.Vector;
 
 import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
 
@@ -25,63 +25,43 @@ public class CandyCaneCannon implements Listener {
 		Nexus.registerListener(this);
 	}
 
-	@EventHandler
-	public void onEntityShootBow(EntityShootBowEvent event) {
-		if (!(event.getEntity() instanceof Player player))
-			return;
+	public static boolean isCannon(ItemStack item) {
+		return !isNullOrAir(item) && item.getType() == Material.STICK && CustomModelData.of(item) == 49;
+	}
 
-		final ItemStack crossbow = event.getBow();
-		if (isNullOrAir(crossbow))
-			return;
-
-		if (!(crossbow.getItemMeta() instanceof CrossbowMeta meta))
-			return;
-
-		if (CustomModelData.of(crossbow) != 1)
-			return;
-
-		final ItemStack ammo = meta.getChargedProjectiles().iterator().next();
-		final CandyCane candyCane = CandyCane.of(ammo);
-		if (candyCane == null)
-			return;
-
-		final Entity arrow = event.getProjectile();
-		final Vector velocity = arrow.getVelocity();
-		final Location location = arrow.getLocation();
-		arrow.remove();
-		final Snowball snowball = location.getWorld().spawn(location, Snowball.class);
-		snowball.setVelocity(velocity.multiply(.75));
-		snowball.setItem(candyCane.item());
-		snowball.setSilent(true);
+	public static ItemBuilder getItem() {
+		return new ItemBuilder(Material.STICK).customModelData(49).name("&cCandy Cane Cannon");
 	}
 
 	@EventHandler
-	public void onEntityLoadCrossbow(EntityLoadCrossbowEvent event) {
-		if (!(event.getEntity() instanceof Player player))
+	public void onPlayerInteract(PlayerInteractEvent event) {
+		if (!ActionGroup.RIGHT_CLICK.applies(event))
 			return;
 
-		final ItemStack crossbow = event.getCrossbow();
-		if (isNullOrAir(crossbow))
+		if (event.getHand() != EquipmentSlot.HAND)
 			return;
 
-		if (!(crossbow.getItemMeta() instanceof CrossbowMeta meta))
-			return;
+		final Player player = event.getPlayer();
+		final ItemStack item = player.getInventory().getItem(event.getHand());
 
-		final int customModelData = CustomModelData.of(crossbow);
-		if (customModelData != 1)
+		if (!isCannon(item))
 			return;
-
-		event.setConsumeItem(false);
 
 		final CandyCane candyCane = findCandyCane(player);
 		if (candyCane == null) {
-			PlayerUtils.send(player, "&cYou are out of candy cane ammo!");
+			if (new CooldownService().check(player, "candycanecannonammo", TickTime.SECOND.x(3)))
+				PlayerUtils.send(player, "&cYou are out of candy cane ammo!");
+
 			event.setCancelled(true);
 			return;
 		}
 
-		meta.addChargedProjectile(candyCane.item());
-		PlayerUtils.removeItem(player, candyCane.item());
+		final Snowball snowball = player.launchProjectile(Snowball.class);
+		snowball.setItem(candyCane.item());
+		snowball.setSilent(true);
+
+		if (!GameModeWrapper.of(player).isCreative())
+			PlayerUtils.removeItem(player, candyCane.item());
 	}
 
 	private enum CandyCane {
@@ -91,18 +71,18 @@ public class CandyCaneCannon implements Listener {
 		;
 
 		private int customModelData() {
-			return ordinal() + 1;
+			return ordinal() + 50;
 		}
 
 		private ItemStack item() {
-			return new ItemBuilder(Material.ARROW).customModelData(customModelData()).build();
+			return new ItemBuilder(Material.STICK).customModelData(customModelData()).build();
 		}
 
 		public static CandyCane of(ItemStack item) {
 			if (isNullOrAir(item))
 				return null;
 
-			if (item.getType() != Material.ARROW)
+			if (item.getType() != Material.STICK)
 				return null;
 
 			return of(CustomModelData.of(item));

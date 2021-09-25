@@ -30,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+@Permission("group.staff")
 public class Pugmas21Command extends CustomCommand {
 	private final Pugmas21UserService service = new Pugmas21UserService();
 	private Pugmas21User user;
@@ -41,14 +42,12 @@ public class Pugmas21Command extends CustomCommand {
 	}
 
 	@Path("train spawn <model>")
-	@Permission("group.admin")
 	@Description("Spawn a train armor stand")
 	void train(int model) {
 		Train.armorStand(model, location());
 	}
 
 	@Path("train spawn all")
-	@Permission("group.admin")
 	@Description("Spawn all train armor stands")
 	void train() {
 		Train.builder()
@@ -81,6 +80,11 @@ public class Pugmas21Command extends CustomCommand {
 	@Path("npcs interact <npc>")
 	void npcs_interact(Pugmas21InstructionNPC npc) {
 		npc.execute(player());
+	}
+
+	@Path("candycane cannon")
+	void candycane_cannon() {
+		giveItem(CandyCaneCannon.getItem().build());
 	}
 
 	@Path("openAdvent [--height1] [--length1] [--particle1] [--ticks1] [--height2] [--length2] [--particle2] [--ticks2] [--randomMax]")
