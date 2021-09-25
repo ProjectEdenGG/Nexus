@@ -6,9 +6,11 @@ import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
@@ -60,6 +62,7 @@ public class CandyCaneCannon implements Listener {
 		final Snowball snowball = player.launchProjectile(Snowball.class);
 		snowball.setItem(candyCane.item());
 		snowball.setSilent(true);
+		new SoundBuilder(Sound.ENTITY_SNOWBALL_THROW).location(player).pitch(2).play();
 
 		if (!GameModeWrapper.of(player).isCreative())
 			PlayerUtils.removeItem(player, candyCane.item());
