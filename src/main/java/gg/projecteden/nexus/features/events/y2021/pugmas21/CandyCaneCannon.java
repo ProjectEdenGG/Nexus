@@ -19,6 +19,7 @@ import org.bukkit.inventory.ItemStack;
 
 import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
 
+// TODO Recipe: Sugar + Dye + ?
 public class CandyCaneCannon implements Listener {
 
 	public CandyCaneCannon() {

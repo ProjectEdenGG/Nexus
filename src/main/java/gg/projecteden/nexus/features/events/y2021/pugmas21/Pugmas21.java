@@ -5,7 +5,7 @@ import gg.projecteden.nexus.utils.Timer;
 public class Pugmas21 {
 
 	public Pugmas21() {
-		new Timer("    Events.Pugmas21.CandyCaneCannon", CandyCaneCannon::new);
+		new Timer("      Events.Pugmas21.CandyCaneCannon", CandyCaneCannon::new);
 	}
 
 }
