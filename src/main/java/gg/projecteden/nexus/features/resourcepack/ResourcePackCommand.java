@@ -20,13 +20,20 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUser;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
 import gg.projecteden.nexus.utils.HttpUtils;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.bukkit.Color;
+import org.bukkit.Material;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -35,6 +42,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -48,6 +56,7 @@ import static gg.projecteden.nexus.features.resourcepack.ResourcePack.file;
 import static gg.projecteden.nexus.features.resourcepack.ResourcePack.fileName;
 import static gg.projecteden.nexus.features.resourcepack.ResourcePack.hash;
 import static gg.projecteden.nexus.features.resourcepack.ResourcePack.openZip;
+import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
 
 @Aliases("rp")
 @NoArgsConstructor
@@ -223,5 +232,93 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onResourcePackEvent(PlayerResourcePackStatusEvent event) {
 		Nexus.debug("Resource Pack Status Update: " + event.getPlayer().getName() + " = " + event.getStatus());
+	}
+
+	@Path("convert balloons")
+	@Permission("group.admin")
+	void convert_balloons() {
+		int converted = 0;
+		for (ItemFrame itemFrame : location().getNearbyEntitiesByType(ItemFrame.class, 200)) {
+			final ItemStack item = itemFrame.getItem();
+			if (isNullOrAir(item))
+				continue;
+
+			if (item.getType() != Material.STICK)
+				continue;
+
+			final BalloonSize size = BalloonSize.ofOld(item);
+			if (size == null)
+				return;
+
+			final BalloonColor color = BalloonColor.ofOld(item);
+
+			itemFrame.setItem(new ItemBuilder(Material.LEATHER_HORSE_ARMOR)
+				.customModelData(size.getNewId())
+				.armorColor(color.getColor())
+				.build());
+			++converted;
+		}
+
+		send(PREFIX + "Converted " + converted + " balloons");
+	}
+
+	@Getter
+	@AllArgsConstructor
+	private enum BalloonSize {
+		TALL(2, 15, 5),
+		MEDIUM(16, 29, 4),
+		SHORT(30, 43, 3),
+		;
+
+		private final int oldMin;
+		private final int oldMax;
+		private final int newId;
+
+		public static BalloonSize ofOld(ItemStack item) {
+			return ofOld(CustomModelData.of(item));
+		}
+
+		public static BalloonSize ofOld(int customModelData) {
+			for (BalloonSize size : values())
+				if (customModelData >= size.oldMin && customModelData <= size.oldMax)
+					return size;
+
+			return null;
+		}
+	}
+
+	@Getter
+	@AllArgsConstructor
+	private enum BalloonColor {
+		RED("#fb5449"),
+		ORANGE("#fd9336"),
+		YELLOW("#ffea00"),
+		LIME("#55ed57"),
+		GREEN("#359c27"),
+		CYAN("#00aa94"),
+		LIGHT_BLUE("#55ffed"),
+		BLUE("#5c6bd8"),
+		PURPLE("#ac5cd8"),
+		MAGENTA("#d85cd3"),
+		PINK("#ff9ccf"),
+		BROWN("#7a4d35"),
+		BLACK("#1e1e1e"),
+		WHITE("#ffffff"),
+		;
+
+		private final String hex;
+
+		private Color getColor() {
+			final java.awt.Color decode = java.awt.Color.decode(hex);
+			return Color.fromRGB(decode.getRed(), decode.getGreen(), decode.getBlue());
+		}
+
+		public static BalloonColor ofOld(ItemStack item) {
+			return ofOld(CustomModelData.of(item));
+		}
+
+		public static BalloonColor ofOld(int customModelData) {
+			return BalloonColor.values()[(customModelData - 2) % 14];
+		}
 	}
 }
