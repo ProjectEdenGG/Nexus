@@ -69,9 +69,9 @@ public class Pugmas21Command extends CustomCommand {
 		giveItem(CandyCaneCannon.getItem().build());
 	}
 
-	@Path("advent animation [--double] [--height1] [--length1] [--particle1] [--ticks1] [--height2] [--length2] [--particle2] [--ticks2] [--randomMax]")
+	@Path("advent animation [--twice] [--height1] [--length1] [--particle1] [--ticks1] [--height2] [--length2] [--particle2] [--ticks2] [--randomMax]")
 	void advent_animation(
-		@Arg("false") @Switch boolean openDouble,
+		@Arg("false") @Switch boolean twice,
 		@Arg("0.25") @Switch double length1,
 		@Arg("0.5") @Switch double height1,
 		@Arg("crit") @Switch Particle particle1,
@@ -95,8 +95,8 @@ public class Pugmas21Command extends CustomCommand {
 			.randomMax(randomMax)
 			.build();
 
-		if (openDouble)
-			animation.openDouble();
+		if (twice)
+			animation.openTwice();
 		else
 			animation.open();
 	}

@@ -71,7 +71,7 @@ public class AdventAnimation {
 		});
 	}
 
-	public void openDouble() {
+	public void openTwice() {
 		ItemStack chest = new ItemBuilder(Material.TRAPPED_CHEST).customModelData(1).build();
 		Item item = spawnItem(location, chest, length1, height1, location.getDirection());
 		int itemTaskId = particleTask(particle1, item);
