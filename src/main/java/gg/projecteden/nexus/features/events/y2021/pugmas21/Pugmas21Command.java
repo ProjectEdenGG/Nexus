@@ -1,7 +1,5 @@
 package gg.projecteden.nexus.features.events.y2021.pugmas21;
 
-import com.destroystokyo.paper.ParticleBuilder;
-import gg.projecteden.nexus.features.particles.VectorUtils;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -11,24 +9,8 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.pugmas21.Pugmas21User;
 import gg.projecteden.nexus.models.pugmas21.Pugmas21UserService;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.RandomUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NonNull;
-import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Particle;
-import org.bukkit.Sound;
-import org.bukkit.entity.Item;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Permission("group.staff")
 public class Pugmas21Command extends CustomCommand {
@@ -87,8 +69,9 @@ public class Pugmas21Command extends CustomCommand {
 		giveItem(CandyCaneCannon.getItem().build());
 	}
 
-	@Path("openAdvent [--height1] [--length1] [--particle1] [--ticks1] [--height2] [--length2] [--particle2] [--ticks2] [--randomMax]")
-	void openAdvent(
+	@Path("advent animation [--double] [--height1] [--length1] [--particle1] [--ticks1] [--height2] [--length2] [--particle2] [--ticks2] [--randomMax]")
+	void advent_animation(
+		@Arg("false") @Switch boolean openDouble,
 		@Arg("0.25") @Switch double length1,
 		@Arg("0.5") @Switch double height1,
 		@Arg("crit") @Switch Particle particle1,
@@ -99,99 +82,23 @@ public class Pugmas21Command extends CustomCommand {
 		@Arg("40") @Switch int ticks2,
 		@Arg("40") @Switch int randomMax
 	) {
-		ItemStack chest = new ItemBuilder(Material.TRAPPED_CHEST).customModelData(1).build();
-		Item item = spawnItem(location(), chest, length1, height1, location().getDirection());
-		int itemTaskId = particleTask(particle1, item);
+		final AdventAnimation animation = AdventAnimation.builder()
+			.location(location())
+			.length1(length1)
+			.height1(height1)
+			.particle1(particle1)
+			.ticks1(ticks1)
+			.length2(length2)
+			.height2(height2)
+			.particle2(particle2)
+			.ticks2(ticks2)
+			.randomMax(randomMax)
+			.build();
 
-		List<ItemStack> items = new ArrayList<>();
-		MaterialTag.CONCRETES.getValues().forEach(material -> items.add(new ItemStack(material)));
-
-		Tasks.wait(ticks1, () -> {
-			Tasks.cancel(itemTaskId);
-			Location location = removeItem(item);
-			new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).location(location).play();
-
-			for (ItemStack itemStack : items) {
-				Item _item = spawnItem(location, itemStack, length2, height2, VectorUtils.getRandomDirection());
-				int _itemTaskId = particleTask(particle2, _item);
-
-				Tasks.wait(ticks2 + RandomUtils.randomInt(0, randomMax), () -> {
-					Tasks.cancel(_itemTaskId);
-					Location _location = removeItem(_item);
-					new SoundBuilder(Sound.ENTITY_CHICKEN_EGG).location(_location).play();
-				});
-			}
-		});
+		if (openDouble)
+			animation.openDouble();
+		else
+			animation.open();
 	}
 
-	@Path("openAdventDouble [--height1] [--length1] [--particle1] [--ticks1] [--height2] [--length2] [--particle2] [--ticks2] [--randomMax]")
-	void openAdventDouble(
-		@Arg("0.25") @Switch double length1,
-		@Arg("0.5") @Switch double height1,
-		@Arg("crit") @Switch Particle particle1,
-		@Arg("40") @Switch int ticks1,
-		@Arg("0.25") @Switch double length2,
-		@Arg("0.25") @Switch double height2,
-		@Arg("crit") @Switch Particle particle2,
-		@Arg("40") @Switch int ticks2,
-		@Arg("40") @Switch int randomMax
-	) {
-		ItemStack chest = new ItemBuilder(Material.TRAPPED_CHEST).customModelData(1).build();
-		Item item = spawnItem(location(), chest, length1, height1, location().getDirection());
-		int itemTaskId = particleTask(particle1, item);
-
-		List<ItemStack> items = new ArrayList<>();
-		MaterialTag.CONCRETES.getValues().forEach(material -> items.add(new ItemStack(material)));
-
-		Tasks.wait(ticks1, () -> {
-			Tasks.cancel(itemTaskId);
-			Location location = removeItem(item);
-			new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).location(location).play();
-
-			for (ItemStack itemStack : items) {
-				Item _item = spawnItem(location, itemStack, length2, height2, VectorUtils.getRandomDirection());
-				int _itemTaskId = particleTask(particle2, _item);
-
-				Tasks.wait(ticks2 + RandomUtils.randomInt(0, randomMax), () -> {
-					Tasks.cancel(_itemTaskId);
-					Location _location = removeItem(_item);
-					new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).location(_location).play();
-
-					for (ItemStack _itemStack : items) {
-						Item __item = spawnItem(_location, _itemStack, length2, height2, VectorUtils.getRandomDirection());
-						int __itemTaskId = particleTask(particle2, __item);
-
-						Tasks.wait(ticks2 + RandomUtils.randomInt(0, randomMax), () -> {
-							Tasks.cancel(__itemTaskId);
-							Location __location = removeItem(__item);
-							new SoundBuilder(Sound.ENTITY_CHICKEN_EGG).location(__location).play();
-						});
-					}
-				});
-			}
-		});
-	}
-
-	@NotNull
-	private Location removeItem(Item item) {
-		Location location = item.getLocation();
-		item.remove();
-		return location;
-	}
-
-	private int particleTask(Particle particle1, Item item) {
-		return Tasks.repeat(0, TickTime.TICK, () -> {
-			if (!item.isOnGround())
-				new ParticleBuilder(particle1).count(1).extra(0).location(item.getLocation()).spawn();
-		});
-	}
-
-	@NotNull
-	private Item spawnItem(Location location, ItemStack itemStack, double length, double height, Vector direction) {
-		Item _item = world().dropItem(location, itemStack);
-		_item.setCanPlayerPickup(false);
-		_item.setCanMobPickup(false);
-		_item.setVelocity(direction.multiply(length).add(new Vector(0, height, 0)));
-		return _item;
-	}
 }
