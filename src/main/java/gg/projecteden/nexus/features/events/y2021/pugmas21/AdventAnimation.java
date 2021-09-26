@@ -24,15 +24,24 @@ import java.util.List;
 @Builder
 public class AdventAnimation {
 	private final Location location;
-	private final double length1;
-	private final double height1;
-	private final Particle particle1;
-	private final int ticks1;
-	private final double length2;
-	private final double height2;
-	private final Particle particle2;
-	private final int ticks2;
-	private final int randomMax;
+	@Builder.Default
+	private final double length1 = 0.25;
+	@Builder.Default
+	private final double height1 = 0.5;
+	@Builder.Default
+	private final Particle particle1 = Particle.CRIT;
+	@Builder.Default
+	private final int ticks1 = 40;
+	@Builder.Default
+	private final double length2 = 0.25;
+	@Builder.Default
+	private final double height2 = 0.25;
+	@Builder.Default
+	private final Particle particle2 = Particle.CRIT;
+	@Builder.Default
+	private final int ticks2 = 40;
+	@Builder.Default
+	private final int randomMax = 40;
 
 	public void open() {
 		ItemStack chest = new ItemBuilder(Material.TRAPPED_CHEST).customModelData(1).build();

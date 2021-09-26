@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.menus;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.ItemClickData;
 import fr.minuskube.inv.SmartInventory;
+import fr.minuskube.inv.SmartInvsPlugin;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.Pagination;
@@ -41,6 +42,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -52,6 +54,11 @@ import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.nexus.utils.StringUtils.loreize;
 
 public abstract class MenuUtils {
+
+	protected boolean isOpen(Player player) {
+		Optional<SmartInventory> inventory = SmartInvsPlugin.manager().getInventory(player);
+		return inventory.isPresent() && this.equals(inventory.get().getProvider());
+	}
 
 	public static int getRows(int items) {
 		return getRows(items, 2, 9);
