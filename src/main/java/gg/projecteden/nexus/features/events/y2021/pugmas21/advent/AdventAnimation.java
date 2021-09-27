@@ -63,18 +63,7 @@ public class AdventAnimation {
 				Tasks.wait(ticks2 + RandomUtils.randomInt(0, randomMax), () -> {
 					Tasks.cancel(_itemTaskId);
 					Location _location = removeItem(_item);
-					new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).location(_location).play();
-
-					for (ItemStack _itemStack : items) {
-						Item __item = spawnItem(_location, _itemStack, length2, height2, VectorUtils.getRandomDirection());
-						int __itemTaskId = particleTask(particle2, __item);
-
-						Tasks.wait(ticks2 + RandomUtils.randomInt(0, randomMax), () -> {
-							Tasks.cancel(__itemTaskId);
-							Location __location = removeItem(__item);
-							new SoundBuilder(Sound.ENTITY_CHICKEN_EGG).location(__location).play();
-						});
-					}
+					new SoundBuilder(Sound.ENTITY_CHICKEN_EGG).location(_location).play();
 				});
 			}
 		});
