@@ -28,6 +28,10 @@ public class Pugmas21 {
 		Nexus.getCron().schedule("0 0 * * *", () -> TODAY = TODAY.plusDays(1));
 	}
 
+	public static void shutdown() {
+		Advent.shutdown();
+	}
+
 	public static World getWorld() {
 		return Bukkit.getWorld(WORLD);
 	}

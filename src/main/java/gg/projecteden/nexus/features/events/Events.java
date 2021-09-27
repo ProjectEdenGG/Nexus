@@ -32,6 +32,7 @@ public class Events extends Feature {
 	public void onStop() {
 		MiniGolf.shutdown();
 		BearFair21.shutdown();
+		Pugmas21.shutdown();
 	}
 
 }

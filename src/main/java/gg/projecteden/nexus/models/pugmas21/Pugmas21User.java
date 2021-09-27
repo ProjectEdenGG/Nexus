@@ -106,6 +106,8 @@ public class Pugmas21User implements PlayerOwnedObject {
 			collected.add(present.getDay());
 			found.add(present.getDay());
 			sendMessage(PREFIX + "You found present &e#" + present.getDay() + "&3!");
+			show(present);
+
 			PlayerUtils.giveItem(getOnlinePlayer(), present.getItem().build());
 			// TODO Sound
 		}
@@ -151,13 +153,16 @@ public class Pugmas21User implements PlayerOwnedObject {
 		}
 
 		public EntityItemFrame show(AdventPresent present) {
-			EntityItemFrame itemFrame = getItemFrame(present);
-			if (itemFrame != null)
-				PacketUtils.entityDestroy(getOnlinePlayer(), itemFrame.getId());
+			hide(present);
+			return frames.compute(present.getDay(), ($1, $2) -> present.sendPacket(this));
+		}
 
-			itemFrame = present.sendPacket(this);
-			frames.put(present.getDay(), itemFrame);
-			return itemFrame;
+		public void hide(AdventPresent present) {
+			EntityItemFrame itemFrame = getItemFrame(present);
+			if (itemFrame == null)
+				return;
+
+			PacketUtils.entityDestroy(getOnlinePlayer(), itemFrame.getId());
 		}
 
 	}

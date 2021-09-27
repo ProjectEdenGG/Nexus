@@ -31,6 +31,14 @@ public class Advent implements Listener {
 			sendPackets(player);
 	}
 
+	public static void shutdown() {
+		for (Player player : OnlinePlayers.where().world(Pugmas21.getWorld()).get()) {
+			final Pugmas21User user = userService.get(player);
+			for (AdventPresent present : Advent21Config.get().getPresents())
+				user.advent().hide(present);
+		}
+	}
+
 	private static void sendPackets(Player player) {
 		final Pugmas21User user = userService.get(player);
 		for (AdventPresent present : Advent21Config.get().getPresents())
