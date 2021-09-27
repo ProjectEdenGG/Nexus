@@ -171,7 +171,7 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 
 	@Path("advent config set <day>")
 	@Permission("group.admin")
-	void advent_config(int day) {
+	void advent_config(@Arg(min = 1, max = 25) int day) {
 		final Block block = getTargetBlockRequired();
 		if (block.getType() != Material.BARRIER)
 			error("You must be looking at a barrier");

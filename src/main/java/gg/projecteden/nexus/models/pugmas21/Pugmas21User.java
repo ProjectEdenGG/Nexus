@@ -129,7 +129,7 @@ public class Pugmas21User implements PlayerOwnedObject {
 		}
 
 		public void teleportAsync(AdventPresent present) {
-			getOnlinePlayer().teleportAsync(present.getLocation());
+			getOnlinePlayer().teleportAsync(present.getLocation().toCenterLocation());
 		}
 
 		public void locate(AdventPresent present) {
