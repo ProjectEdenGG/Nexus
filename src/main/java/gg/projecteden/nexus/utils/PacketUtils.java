@@ -78,6 +78,10 @@ public class PacketUtils {
 
 	// Common
 
+	public static void entityDestroy(@NonNull HasPlayer player, org.bukkit.entity.Entity entity) {
+		entityDestroy(player, entity.getEntityId());
+	}
+
 	public static void entityDestroy(@NonNull HasPlayer player, int entityId) {
 		PacketPlayOutEntityDestroy destroyPacket = new PacketPlayOutEntityDestroy(entityId);
 		sendPacket(player, destroyPacket);

@@ -1,10 +1,11 @@
 package gg.projecteden.nexus.features.events.y2021.pugmas21;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.advent.AdventAnimation;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.advent.AdventMenu;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.models.CandyCaneCannon;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.models.District;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Pugmas21InstructionNPC;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Train;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -12,33 +13,41 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.pugmas21.Advent21Config;
+import gg.projecteden.nexus.models.pugmas21.Advent21Config.AdventPresent;
+import gg.projecteden.nexus.models.pugmas21.Advent21ConfigService;
 import gg.projecteden.nexus.models.pugmas21.Pugmas21User;
 import gg.projecteden.nexus.models.pugmas21.Pugmas21UserService;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.EnumUtils.IteratableEnum;
-import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.Particle;
-import org.bukkit.entity.Player;
+import org.bukkit.block.Block;
+import org.bukkit.event.Listener;
 
 import java.time.LocalDate;
-import java.util.List;
 
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
+import static gg.projecteden.utils.TimeUtils.shortDateFormat;
 
+@NoArgsConstructor
 @Permission("group.staff")
-public class Pugmas21Command extends CustomCommand {
+public class Pugmas21Command extends CustomCommand implements Listener {
+	public String PREFIX = Pugmas21.PREFIX;
 	private final Pugmas21UserService service = new Pugmas21UserService();
 	private Pugmas21User user;
+
+	private final Advent21ConfigService adventService = new Advent21ConfigService();
+	private final Advent21Config adventConfig = adventService.get0();
 
 	public Pugmas21Command(@NonNull CommandEvent event) {
 		super(event);
 		if (isPlayerCommandEvent())
 			user = service.get(player());
+	}
+
+	@Override
+	public String getPrefix() {
+		return Pugmas21.PREFIX;
 	}
 
 	@Path("train spawn <model>")
@@ -87,6 +96,16 @@ public class Pugmas21Command extends CustomCommand {
 		giveItem(CandyCaneCannon.getItem().build());
 	}
 
+	@Path("district")
+	@Description("View which district you are currently in")
+	void district() {
+		District district = District.of(location());
+		if (district == null)
+			error("You must be in Pugmas to run this command");
+
+		send(PREFIX + "You are " + (district == District.UNKNOWN ? "not in a district" : "in the &e" + district.getFullName()));
+	}
+
 	@Path("advent animation [--twice] [--height1] [--length1] [--particle1] [--ticks1] [--height2] [--length2] [--particle2] [--ticks2] [--randomMax]")
 	void advent_animation(
 		@Arg("false") @Switch boolean twice,
@@ -120,106 +139,67 @@ public class Pugmas21Command extends CustomCommand {
 	}
 
 	@Path("advent")
+	@Description("Open the advent calender")
 	void advent(
-		@Arg("30") @Switch int frameTicks,
-		@Switch int day,
-		@Arg(value = "-1", type = Integer.class) @Switch List<Integer> opened
+		@Arg(value = "0", permission = "group.admin") @Switch int day,
+		@Arg(value = "30", permission = "group.admin") @Switch int frameTicks
 	) {
-		new AdventMenu(frameTicks, Pugmas21.EPOCH.plusDays(day - 1), opened).open(player());
+		LocalDate date = Pugmas21.TODAY;
+		if (date.isBefore(Pugmas21.EPOCH) || day > 0)
+			date = Pugmas21.EPOCH.plusDays(day - 1);
+
+		new AdventMenu(user, date, frameTicks).open(player());
 	}
 
-	@RequiredArgsConstructor
-	public static class AdventMenu extends MenuUtils implements InventoryProvider {
-		@NonNull
-		private int frameTicks;
-		@NonNull
-		private LocalDate date;
-		@NonNull
-		private List<Integer> opened;
-		private Title title = Title.FRAME_1;
+	@Path("advent waypoint <day>")
+	@Description("Get directions to a present you've already found")
+	void advent_waypoint(int day) {
+		if (!user.advent().hasFound(day))
+			error("You have not found day &e#" + day);
 
-		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-				.provider(this)
-				.size(6, 9)
-				.title(title.getTitle())
-				.build()
-				.open(player);
-		}
+		user.advent().locate(adventConfig.get(day));
+	}
 
-		@Override
-		public void init(Player player, InventoryContents contents) {
-			int row = 1;
-			int column = 4;
+	@Path("advent waypoints")
+	@Permission("group.admin")
+	void advent_waypoints() {
+		for (AdventPresent present : adventConfig.getPresents())
+			user.advent().glow(present);
 
-			for (int day = 1; day <= 25; day++) {
-				LocalDate dateIndex = Pugmas21.EPOCH.plusDays(day - 1);
-				final Icon icon;
-				if (opened.contains(day))
-					icon = Icon.OPENED;
-				else if (dateIndex.isAfter(this.date))
-					icon = Icon.LOCKED;
-				else if (dateIndex.equals(this.date) || this.date.isAfter(Pugmas21.PUGMAS.plusDays(-1)))
-					icon = Icon.AVAILABLE;
-				else
-					icon = Icon.MISSED;
+		send(PREFIX + "Made " + adventConfig.getPresents().size() + " presents glow");
+	}
 
-				final ItemBuilder item = new ItemBuilder(icon.getItem(day));
-				contents.set(row, column, ClickableItem.empty(item.build()));
+	@Path("advent config set <day>")
+	@Permission("group.admin")
+	void advent_config(int day) {
+		final Block block = getTargetBlockRequired();
+		if (block.getType() != Material.BARRIER)
+			error("You must be looking at a barrier");
 
-				if (column == 7) {
-					column = 1;
-					row++;
-				} else
-					column++;
-			}
+		adventConfig.set(day, block.getLocation());
+		adventService.save(adventConfig);
+		send(PREFIX + "Advent day #" + day + " configured");
+	}
 
-			updateTask(player, contents);
-		}
+	@Path("advent tp <day>")
+	@Permission("group.admin")
+	void advent_tp(int day) {
+		user.advent().teleportAsync(adventConfig.get(day));
+		send(PREFIX + "Teleported to day #" + day);
+	}
 
-		private void updateTask(Player player, InventoryContents contents) {
-			Tasks.wait(frameTicks, () -> {
-				if (!isOpen(player))
-					return;
+	@Path("simulate today <day>")
+	@Permission("group.admin")
+	void simulate_today(int day) {
+		Pugmas21.TODAY = Pugmas21.EPOCH.plusDays(day - 1);
+		send(PREFIX + "Simulating date &e" + shortDateFormat(Pugmas21.TODAY));
+	}
 
-				title = title.nextWithLoop();
-				open(player, contents.pagination().getPage());
-			});
-		}
-
-		@AllArgsConstructor
-		public enum Title implements IteratableEnum {
-			FRAME_1("ꈉ盆"),
-			FRAME_2("ꈉ鉊"),
-			;
-
-			private String title;
-
-			public String getTitle() {
-				return colorize("&f" + title);
-			}
-
-		}
-
-		@AllArgsConstructor
-		public enum Icon {
-			MISSED(Material.TRAPPED_CHEST, 3),
-			OPENED(Material.TRAPPED_CHEST, 5),
-			AVAILABLE(Material.TRAPPED_CHEST, 4),
-			LOCKED(Material.WHITE_STAINED_GLASS_PANE, 1),
-			;
-
-			private final Material material;
-			private final int customModelData;
-
-			public ItemBuilder getItem(int day) {
-				return new ItemBuilder(material)
-					.customModelData(customModelData)
-					.name(StringUtils.camelCase(name()));
-			}
-		}
-
+	@Path("simulate today reset")
+	@Permission("group.admin")
+	void simulate_today_reset() {
+		Pugmas21.TODAY = LocalDate.now();
+		send(PREFIX + "Simulating date &e" + shortDateFormat(Pugmas21.TODAY));
 	}
 
 }

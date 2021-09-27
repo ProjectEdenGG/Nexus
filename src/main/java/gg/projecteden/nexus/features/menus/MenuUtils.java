@@ -8,6 +8,7 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.Pagination;
 import fr.minuskube.inv.content.SlotIterator;
+import fr.minuskube.inv.content.SlotIterator.Type;
 import fr.minuskube.inv.content.SlotPos;
 import gg.projecteden.exceptions.EdenException;
 import gg.projecteden.nexus.Nexus;
@@ -58,6 +59,22 @@ public abstract class MenuUtils {
 	protected boolean isOpen(Player player) {
 		Optional<SmartInventory> inventory = SmartInvsPlugin.manager().getInventory(player);
 		return inventory.isPresent() && this.equals(inventory.get().getProvider());
+	}
+
+	public static final int COLUMNS = 9;
+
+	public static SlotIterator innerSlotIterator(InventoryContents contents) {
+		return innerSlotIterator(contents, SlotPos.of(0, 0));
+	}
+
+	protected static SlotIterator innerSlotIterator(InventoryContents contents, SlotPos start) {
+		final SlotIterator slotIterator = contents.newIterator(Type.HORIZONTAL, start);
+		final int rows = contents.inventory().getRows();
+		for (int i = 0; i < rows * COLUMNS; i++)
+			if (i < COLUMNS || i % COLUMNS == 0 || (i + 1) % COLUMNS == 0 || i >= (rows - 1) * COLUMNS)
+				slotIterator.blacklist(i);
+
+		return slotIterator;
 	}
 
 	public static int getRows(int items) {

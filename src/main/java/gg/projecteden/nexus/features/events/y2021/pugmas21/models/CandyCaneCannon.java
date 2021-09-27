@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.events.y2021.pugmas21;
+package gg.projecteden.nexus.features.events.y2021.pugmas21.models;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.models.cooldown.CooldownService;

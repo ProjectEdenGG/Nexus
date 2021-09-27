@@ -199,11 +199,11 @@ public class ClientsideContentManager implements Listener {
 
 		for (Content content : contentList) {
 			entities.stream()
-					.filter(entity -> LocationUtils.isFuzzyEqual(content.getLocation(), entity.getBukkitEntity().getLocation())).toList()
-					.forEach(entity -> {
-						PacketUtils.entityDestroy(player, entity.getId());
-						playerEntities.get(player.getUniqueId()).remove(entity);
-					});
+				.filter(entity -> LocationUtils.isFuzzyEqual(content.getLocation(), entity.getBukkitEntity().getLocation())).toList()
+				.forEach(entity -> {
+					PacketUtils.entityDestroy(player, entity.getId());
+					playerEntities.get(player.getUniqueId()).remove(entity);
+				});
 		}
 	}
 
@@ -256,11 +256,7 @@ public class ClientsideContentManager implements Listener {
 	}
 
 	private static void addClientsideEntity(Player player, Entity entity) {
-		UUID uuid = player.getUniqueId();
-		if (!playerEntities.containsKey(uuid))
-			playerEntities.put(uuid, new ArrayList<>());
-
-		playerEntities.get(uuid).add(entity);
+		playerEntities.computeIfAbsent(player.getUniqueId(), $ -> new ArrayList<>()).add(entity);
 	}
 
 	private static Player getPlayer(UUID uuid) {

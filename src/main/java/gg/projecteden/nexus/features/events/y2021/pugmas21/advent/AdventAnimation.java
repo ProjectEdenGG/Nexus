@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.events.y2021.pugmas21;
+package gg.projecteden.nexus.features.events.y2021.pugmas21.advent;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import gg.projecteden.nexus.features.particles.VectorUtils;

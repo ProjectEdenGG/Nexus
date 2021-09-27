@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.events.y2021.pugmas21;
+package gg.projecteden.nexus.features.events.y2021.pugmas21.models;
 
 import gg.projecteden.nexus.features.commands.ArmorStandEditorCommand;
 import gg.projecteden.nexus.utils.ItemBuilder;
