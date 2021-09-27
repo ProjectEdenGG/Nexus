@@ -104,7 +104,7 @@ public class AdventMenu extends MenuUtils implements InventoryProvider {
 		MISSED(Material.TRAPPED_CHEST, 3),
 		OPENED(Material.TRAPPED_CHEST, 5),
 		AVAILABLE(Material.TRAPPED_CHEST, 4),
-		LOCKED(Material.WHITE_STAINED_GLASS_PANE, 1),
+		LOCKED(Material.TRAPPED_CHEST, 6),
 		;
 
 		private final Material material;
