@@ -4,8 +4,10 @@ import gg.projecteden.nexus.features.commands.ArmorStandEditorCommand;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Builder;
+import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -16,7 +18,6 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,28 +30,42 @@ public class Train {
 	private final Location location;
 	private final BlockFace forwards;
 	private final BlockFace backwards;
-	@Builder.Default
-	private double speed = .25;
-	@Builder.Default
-	private int seconds = 75;
+	private final double speed;
+	private final int seconds;
+	private final boolean test;
 	private final Vector smokeBack;
 	private final Vector smokeUp;
 
+	@Getter
+	private boolean active;
 	private final List<ArmorStand> armorStands = new ArrayList<>();
 	private int taskId;
+	private Location lightLocation;
 
+	private final WorldGuardUtils worldguard;
+
+	private static final String REGION = Pugmas21.region("train");
 	private static final int TOTAL_MODELS = 18;
 	private static final double SEPARATOR = 7.5;
 
+	@Getter
+	private static final List<Train> instances = new ArrayList<>();
+
+	public static boolean anyActiveInstances() {
+		return instances.stream().anyMatch(Train::isActive);
+	}
+
 	@Builder
-	public Train(Location location, BlockFace direction, double speed, int seconds) {
+	public Train(Location location, BlockFace direction, double speed, int seconds, boolean test) {
 		this.location = location.toCenterLocation();
 		this.forwards = direction;
 		this.backwards = direction.getOppositeFace();
 		this.speed = speed;
 		this.seconds = seconds;
+		this.test = test;
 		this.smokeBack = backwards.getDirection().multiply(4);
 		this.smokeUp = BlockFace.UP.getDirection().multiply(5.3);
+		this.worldguard = new WorldGuardUtils(location);
 	}
 
 	public static void schedule() {
@@ -58,10 +73,11 @@ public class Train {
 			.location(Pugmas21.location(112.5, 54, 7.5, 90, 0))
 			.direction(BlockFace.WEST)
 			.seconds(60)
-			.speed(.3);
+			.speed(.3)
+			.test(false);
 
 		Tasks.repeat(TickTime.SECOND.x(30), TickTime.MINUTE.x(5), () -> {
-			if (Pugmas21.getPlayers().size() == 0)
+			if (!Pugmas21.anyActivePlayers())
 				return;
 
 			train.build().start();
@@ -70,9 +86,12 @@ public class Train {
 	}
 
 	public void start() {
+		active = true;
+		instances.add(this);
+
 		spawnArmorStands();
 
-		taskId = Tasks.repeat(1, 1, this::move);
+		taskId = Tasks.repeat(0, 1, this::move);
 
 		Tasks.wait(TickTime.SECOND.x(seconds), this::stop);
 	}
@@ -80,6 +99,9 @@ public class Train {
 	public void stop() {
 		Tasks.cancel(taskId);
 		armorStands.forEach(Entity::remove);
+
+		active = false;
+		instances.remove(this);
 	}
 
 	private void move() {
@@ -91,34 +113,61 @@ public class Train {
 	}
 
 	private void smoke() {
-		new Smoke(getSmokeLocation());
+		final Location location = getSmokeLocation();
+		if (location != null)
+			new Smoke(location);
 	}
 
 	private void light() {
-		final Location lightBlock = front().add(BlockFace.UP.getDirection());
-		if (lightBlock.getBlock().getType() == Material.AIR) {
-			lightBlock.getBlock().setType(Material.LIGHT);
-			Light light = (Light) lightBlock.getBlock().getBlockData();
-			light.setLevel(light.getMaximumLevel());
-			lightBlock.getBlock().setBlockData(light);
+		final Location front = front();
+		if (front == null) {
+			if (lightLocation.getBlock().getType() == Material.LIGHT)
+				lightLocation.getBlock().setType(Material.AIR);
+		} else {
+			lightLocation = front.add(BlockFace.UP.getDirection());
+			if (lightLocation.getBlock().getType() == Material.AIR) {
+				lightLocation.getBlock().setType(Material.LIGHT);
+				Light light = (Light) lightLocation.getBlock().getBlockData();
+				light.setLevel(light.getMaximumLevel());
+				lightLocation.getBlock().setBlockData(light);
+			}
 		}
 
-		final Location backOneBlock = lightBlock.add(backwards.getDirection());
+		final Location backOneBlock = lightLocation.clone().add(backwards.getDirection());
 		if (backOneBlock.getBlock().getType() == Material.LIGHT)
 			backOneBlock.getBlock().setType(Material.AIR);
 	}
 
 	private void move(ArmorStand armorStand) {
+		if (!armorStand.isValid())
+			return;
+
 		forcePacket(armorStand);
-		armorStand.teleport(armorStand.getLocation().add(forwards.getDirection().multiply(speed)));
+		final Location to = armorStand.getLocation().add(forwards.getDirection().multiply(speed));
+		if (!isValidLocation(to))
+			armorStand.remove();
+		else
+			armorStand.teleport(to);
+	}
+
+	private boolean isValidLocation(Location to) {
+		return test || !worldguard.getRegionsLikeAt(REGION, to).isEmpty();
 	}
 
 	private Location getSmokeLocation() {
-		return front().add(smokeBack).add(smokeUp);
+		final Location front = front();
+		if (front == null)
+			return null;
+
+		return front.add(smokeBack).add(smokeUp);
 	}
 
-	private @NotNull Location front() {
-		return armorStands.iterator().next().getLocation();
+	private Location front() {
+		final ArmorStand first = armorStands.iterator().next();
+		if (!first.isValid())
+			return null;
+
+		return first.getLocation();
 	}
 
 	public void spawnArmorStands() {

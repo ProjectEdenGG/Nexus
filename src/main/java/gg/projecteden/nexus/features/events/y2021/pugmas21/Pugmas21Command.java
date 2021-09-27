@@ -77,6 +77,7 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 			.direction(player().getFacing())
 			.speed(speed)
 			.seconds(seconds)
+			.test(true)
 			.build()
 			.start();
 	}

@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.crates.models.CrateType;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.customenchants.OldCEConverter;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Train;
 import gg.projecteden.nexus.features.listeners.TemporaryListener;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
@@ -201,7 +202,12 @@ public class NexusCommand extends CustomCommand implements Listener {
 		WITHER(() -> {
 			if (WitherChallenge.currentFight != null)
 				throw new InvalidInputException("The wither is currently being fought");
-		});
+		}),
+		PUGMAS21_TRAIN(() -> {
+			if (Train.anyActiveInstances())
+				throw new InvalidInputException("There is an active Pugmas train");
+		}),
+		;
 
 		public static boolean canReload() {
 			try {

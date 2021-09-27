@@ -77,8 +77,16 @@ public class Pugmas21 {
 		return new Location(getWorld(), x, y, z, yaw, pitch);
 	}
 
+	public static String region(String region) {
+		return REGION + "_" + region;
+	}
+
 	public static List<Player> getPlayers() {
 		return OnlinePlayers.where().world(getWorld()).get();
+	}
+
+	public static boolean anyActivePlayers() {
+		return !getPlayers().isEmpty();
 	}
 
 	public static void actionBar(String message, int ticks) {
