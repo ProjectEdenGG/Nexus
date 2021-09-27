@@ -80,6 +80,7 @@ public class BadgeUser implements PlayerOwnedObject {
 		TIKTOK(SocialMediaSite.TIKTOK),
 		DISCORD(SocialMediaSite.DISCORD),
 		STEAM(SocialMediaSite.STEAM),
+		SPOTIFY(SocialMediaSite.SPOTIFY),
 		REDDIT(SocialMediaSite.REDDIT),
 		GITHUB(SocialMediaSite.GITHUB),
 		;

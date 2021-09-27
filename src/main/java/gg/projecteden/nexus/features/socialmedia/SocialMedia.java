@@ -72,6 +72,7 @@ public class SocialMedia extends Feature implements Listener {
 		TIKTOK("TikTok", ChatColor.of("#69C9D0"), "", "https://tiktok.com", "https://tiktok.com/@%s"),
 		DISCORD("Discord", ChatColor.of("#7289da"), "", "https://discord.com", "%s"),
 		STEAM("Steam", ChatColor.of("#356d92"), "", "https://store.steampowered.com", "https://steamcommunity.com/id/%s"),
+		SPOTIFY("Spotify", ChatColor.of("#1ed760"), "", "https://spotify.com", "https://open.spotify.com/user/%s"),
 		REDDIT("Reddit", ChatColor.of("#ff5700"), "", "https://reddit.com", "https://reddit.com/u/%s"),
 		GITHUB("GitHub", ChatColor.of("#777777"), "", "https://github.com", "https://github.com/%s"),
 //		QUEUP("QueUp", ChatColor.of("#d42f8a"), "https://queup.net", "https://queup.net/user/%s"), // TODO QueUp
