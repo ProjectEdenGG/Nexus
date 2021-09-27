@@ -70,18 +70,13 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	@Description("Start a moving train")
 	void train(
 		@Arg(".3") @Switch double speed,
-		@Arg("60") @Switch int seconds,
-		@Arg("4") @Switch double smokeBack,
-		@Arg("5.3") @Switch double smokeUp,
-		@Arg("false") @Switch boolean test
+		@Arg("60") @Switch int seconds
 	) {
 		Train.builder()
 			.location(location())
 			.direction(player().getFacing())
 			.speed(speed)
 			.seconds(seconds)
-			.smokeBack(smokeBack)
-			.smokeUp(smokeUp)
 			.build()
 			.start();
 	}

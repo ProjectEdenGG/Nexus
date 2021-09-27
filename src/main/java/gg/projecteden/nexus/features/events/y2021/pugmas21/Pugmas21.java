@@ -3,6 +3,9 @@ package gg.projecteden.nexus.features.events.y2021.pugmas21;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.advent.Advent;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.CandyCaneCannon;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Train;
+import gg.projecteden.nexus.utils.ActionBarUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Timer;
 import org.bukkit.Bukkit;
@@ -11,6 +14,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class Pugmas21 {
 	public static final String PREFIX = StringUtils.getPrefix("Pugmas 2021");
@@ -22,8 +26,9 @@ public class Pugmas21 {
 	public static LocalDate TODAY = LocalDate.now();
 
 	public Pugmas21() {
-		new Timer("      Events.Pugmas21.CandyCaneCannon", CandyCaneCannon::new);
+		new Timer("      Events.Pugmas21.Train", Train::schedule);
 		new Timer("      Events.Pugmas21.AdventPresents", Advent::new);
+		new Timer("      Events.Pugmas21.CandyCaneCannon", CandyCaneCannon::new);
 
 		Nexus.getCron().schedule("0 0 * * *", () -> TODAY = TODAY.plusDays(1));
 	}
@@ -62,6 +67,22 @@ public class Pugmas21 {
 
 	public static boolean isAtPugmas(Location location) {
 		return location.getWorld().equals(getWorld());
+	}
+
+	public static Location location(double x, double y, double z) {
+		return location(x, y, z, 0, 0);
+	}
+
+	public static Location location(double x, double y, double z, float yaw, float pitch) {
+		return new Location(getWorld(), x, y, z, yaw, pitch);
+	}
+
+	public static List<Player> getPlayers() {
+		return OnlinePlayers.where().world(getWorld()).get();
+	}
+
+	public static void actionBar(String message, int ticks) {
+		getPlayers().forEach(player -> ActionBarUtils.sendActionBar(player, message, ticks));
 	}
 
 }

@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.events.y2021.pugmas21.models;
 
 import gg.projecteden.nexus.features.commands.ArmorStandEditorCommand;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -28,8 +29,10 @@ public class Train {
 	private final Location location;
 	private final BlockFace forwards;
 	private final BlockFace backwards;
-	private final double speed;
-	private final int seconds;
+	@Builder.Default
+	private double speed = .25;
+	@Builder.Default
+	private int seconds = 75;
 	private final Vector smokeBack;
 	private final Vector smokeUp;
 
@@ -40,14 +43,30 @@ public class Train {
 	private static final double SEPARATOR = 7.5;
 
 	@Builder
-	public Train(Location location, BlockFace direction, double speed, int seconds, double smokeBack, double smokeUp) {
+	public Train(Location location, BlockFace direction, double speed, int seconds) {
 		this.location = location.toCenterLocation();
 		this.forwards = direction;
 		this.backwards = direction.getOppositeFace();
 		this.speed = speed;
 		this.seconds = seconds;
-		this.smokeBack = backwards.getDirection().multiply(smokeBack);
-		this.smokeUp = BlockFace.UP.getDirection().multiply(smokeUp);
+		this.smokeBack = backwards.getDirection().multiply(4);
+		this.smokeUp = BlockFace.UP.getDirection().multiply(5.3);
+	}
+
+	public static void schedule() {
+		final TrainBuilder train = Train.builder()
+			.location(Pugmas21.location(112.5, 54, 7.5, 90, 0))
+			.direction(BlockFace.WEST)
+			.seconds(60)
+			.speed(.3);
+
+		Tasks.repeat(TickTime.SECOND.x(30), TickTime.MINUTE.x(5), () -> {
+			if (Pugmas21.getPlayers().size() == 0)
+				return;
+
+			train.build().start();
+			Pugmas21.actionBar("&c&lA train is passing by", TickTime.SECOND.x(10));
+		});
 	}
 
 	public void start() {
@@ -110,8 +129,10 @@ public class Train {
 	}
 
 	public static ArmorStand armorStand(int model, Location location) {
-		return ArmorStandEditorCommand.summon(location, armorStand ->
-			armorStand.setItem(EquipmentSlot.HEAD, new ItemBuilder(Material.MINECART).customModelData(model).build()));
+		return ArmorStandEditorCommand.summon(location, armorStand -> {
+			armorStand.setVisible(false);
+			armorStand.setItem(EquipmentSlot.HEAD, new ItemBuilder(Material.MINECART).customModelData(model).build());
+		});
 	}
 
 	public static class Smoke {
