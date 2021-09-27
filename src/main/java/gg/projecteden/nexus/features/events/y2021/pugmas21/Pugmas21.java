@@ -20,7 +20,7 @@ public class Pugmas21 {
 	public static final String PREFIX = StringUtils.getPrefix("Pugmas 2021");
 	public static final LocalDate EPOCH = LocalDate.of(2021, 12, 1);
 	public static final LocalDate PUGMAS = LocalDate.of(2021, 12, 25);
-	public static final LocalDate END = LocalDate.of(2022, 1, 9);
+	public static final LocalDate END = LocalDate.of(2022, 1, 10);
 	public static final String WORLD = "pugmas21";
 	public static final String REGION = "pugmas21";
 	public static LocalDate TODAY = LocalDate.now();

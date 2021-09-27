@@ -20,9 +20,11 @@ import gg.projecteden.nexus.models.pugmas21.Pugmas21User;
 import gg.projecteden.nexus.models.pugmas21.Pugmas21UserService;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import java.time.LocalDate;
@@ -85,6 +87,15 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	@Path("npcs interact <npc>")
 	void npcs_interact(Pugmas21InstructionNPC npc) {
 		npc.execute(player());
+	}
+
+	@EventHandler
+	public void onNPCRightClick(NPCRightClickEvent event) {
+		final Pugmas21InstructionNPC npc = Pugmas21InstructionNPC.of(event.getNPC());
+		if (npc == null)
+			return;
+
+		npc.execute(event.getClicker());
 	}
 
 	@Path("candycane cannon")

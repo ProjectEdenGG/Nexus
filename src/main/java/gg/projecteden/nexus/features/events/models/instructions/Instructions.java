@@ -1,10 +1,13 @@
 package gg.projecteden.nexus.features.events.models.instructions;
 
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import kotlin.Pair;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,11 +15,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 @Data
 @RequiredArgsConstructor
-public
-class Instructions {
+public class Instructions {
 	private final InstructionNPC npc;
 	private final List<Pair<Consumer<Player>, Integer>> instructions = new ArrayList<>();
 
@@ -44,12 +47,12 @@ class Instructions {
 	}
 
 	public Instructions npc(String npcName, String message) {
-		instruction(player -> PlayerUtils.send(player, "&3" + npcName + " &7> &f" + message), calculateDelay(message));
+		instruction(player -> PlayerUtils.send(player, "&3" + npcName + " &7> &f" + interpolate(message, player)), calculateDelay(message));
 		return this;
 	}
 
 	public Instructions player(String message) {
-		instruction(player -> PlayerUtils.send(player, "&b&lYOU &7> &f" + message), calculateDelay(message));
+		instruction(player -> PlayerUtils.send(player, "&b&lYOU &7> &f" + interpolate(message, player)), calculateDelay(message));
 		return this;
 	}
 
@@ -71,9 +74,33 @@ class Instructions {
 		instructions.add(new Pair<>(task, delay));
 	}
 
+	@AllArgsConstructor
+	public enum Variable {
+		PLAYER_NAME(Nickname::of),
+		;
+
+		private Function<Player, String> interpolater;
+
+		public String interpolate(String message, Player player) {
+			return message.replaceAll(placeholder(), interpolater.apply(player));
+		}
+
+		public String placeholder() {
+			return "\\{\\{" + name() + "}}";
+		}
+	}
+
+	@NotNull
+	private String interpolate(String message, Player player) {
+		for (Variable variable : Variable.values())
+			message = variable.interpolate(message, player);
+
+		return message;
+	}
+
 	private int calculateDelay(String message) {
 		// TODO
-		return 60;
+		return 200;
 	}
 
 }
