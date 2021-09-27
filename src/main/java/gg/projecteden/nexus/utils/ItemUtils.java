@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.utils;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.quests.itemtags.Condition;
+import gg.projecteden.nexus.features.itemtags.Condition;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import me.lexikiq.HasPlayer;

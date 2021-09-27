@@ -1,0 +1,153 @@
+// Costume Store Quest
+
+GatherTask gatherWood = GatherTask.builder()
+	.talkTo(ROWAN)
+	.instructions(dialog -> dialog
+		.npc("hi i need help")
+		.player("ok whats up")
+		.npc("gimme wood")
+	)
+	.reminder(dialog -> dialog
+		.npc("wheres my wood")
+	)
+	.gather(32 crystal wood, 32 bloodwood)
+	.complete(dialog -> dialog
+		.npc("thanks")
+		.player("np")
+	)
+	.award(EVENT_TOKENS, 40)
+	.build();
+
+Quest gatherMaterials = Quest.builder()
+	.do(randomElement(gatherWood, gatherCloth, gatherGems))
+	.assign(player)
+	.start();
+
+// Penguin Mafia Quest
+
+InteractTask investigatePenguinMafia = InteractTask.builder()
+	.talkTo(FISH_VENDOR)
+	.instructions(dialog -> dialog
+		.npc("someone stole my fish")
+		.player("oh no how i can i help")
+		.npc("they went that way")
+	)
+	.reminder(dialog -> dialog
+		.npc("what are you still doing here")
+		.npc("they want that way")
+	)
+	.then()
+	.talkTo(OMALLEY)
+	.instructions(dialog -> dialog
+		.player("did u see anything fishy")
+		.npc("ya that penguin")
+	)
+	.then()
+	.talkTo(PENGUIN_1)
+	.instructions(dialog -> dialog
+		.player("did u steal")
+		.npc("no of course not")
+		.npc("dont go upstairs, nothing suspicious up there")
+	)
+	.then()
+	.talkTo(PENGUIN_2)
+	.instructions(dialog -> dialog
+		.player("where'd this fish come from")
+		.npc("aw u caught me")
+		.player("stop it")
+		.npc("ok")
+	)
+	.then()
+	.talkTo(FISH_VENDOR)
+	.instructions(dialog -> dialog
+		.player("it was the penguins")
+		.player("i told them to stop")
+		.npc("ok thanks"
+	)
+	.award(EVENT_TOKENS, 40)
+	.build();
+
+Quest investigateMafia = Quest.builder()
+	.do(investigatePenguinMafia)
+	.assign(player)
+	.start();
+
+// Models
+
+// For the user
+
+public class Quester implements PlayerOwnedObject {
+	List<Quest> quests;
+
+	void interact(Interactable interactable) {
+		for (Quest quest : quests)
+			QuestTask questTask = quest.getCurrentTask();
+			Task task = questTask.get();
+			if (task.getInteractable() == interactable)
+				task.interact(this, questTask);
+
+		// TODO Look for quests to start
+	}
+}
+
+public class Quest implements PlayerOwnedObject {
+	List<QuestTask> tasks;
+	private int step;
+
+	QuestTask getCurrentTask() {
+		return tasks.get(step);
+	}
+}
+
+public class QuestTask implements PlayerOwnedObject {
+	ITask task; // TODO This needs to be an interface that enums extend
+	int step;
+	boolean firstInteraction;
+
+}
+
+// Not aware of the user
+// Effectively static final
+
+public abstract class Task {
+	protected final Interactable interactable;
+	protected final Instructions instructions;
+	protected final Instructions reminder;
+
+	abstract public void interact(Quester quester, QuestTask questTask);
+}
+
+public class GatherTask extends Task {
+	List<ItemStack> materials;
+	Instructions complete;
+
+	@Override
+	public void interact(Quester quester, QuestTask questTask) {
+		if (questTask.isFirstInteraction())
+			instructions.send(quester);
+		else
+			if (quester.has(materials))
+				complete.send(quester);
+			else
+				reminder.send(quester);
+	}
+
+}
+
+public class InteractTask extends Task {
+
+	@Override
+	public void interact(Quester quester, QuestTask questTask) {
+		if (questTask.isFirstInteraction())
+			instructions.send(quester);
+		else
+			reminder.send(quester);
+	}
+
+}
+
+public enum Pugmas21Task implements ITask {
+	COSTUME_STORE_GATHER_WOOD(gatherWood),
+	INVESTIGATE_PENGUIN_MAFIA(investigatePenguinMafia),
+	;
+}

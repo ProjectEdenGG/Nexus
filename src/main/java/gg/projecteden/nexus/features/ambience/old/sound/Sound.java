@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.quests.ambienceold.sound;
+package gg.projecteden.nexus.features.ambience.old.sound;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

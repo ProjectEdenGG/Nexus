@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.quests;
+package gg.projecteden.nexus.features.listeners;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.Nexus;
@@ -13,10 +13,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
 public class RegenRegions implements Listener {
-
-	public RegenRegions() {
-		Nexus.registerListener(this);
-	}
 
 	private int getInteger(String string) {
 		int result;

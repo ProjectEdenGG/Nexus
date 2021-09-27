@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.quests;
+package gg.projecteden.nexus.features.ambience.old;
 
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static gg.projecteden.nexus.features.quests.AmbientSounds.AmbientSoundType.UNDERGROUND;
+import static gg.projecteden.nexus.features.ambience.old.AmbientSounds.AmbientSoundType.UNDERGROUND;
 
 public class AmbientSounds extends Feature {
 	int startDelay = TickTime.SECOND.x(5);

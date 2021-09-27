@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.quests.itemtags;
+package gg.projecteden.nexus.features.itemtags;
 
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.utils.JsonBuilder;

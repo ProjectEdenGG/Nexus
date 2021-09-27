@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.quests.pathfinder;
+package gg.projecteden.nexus.features.test.pathfinder;
 
 import lombok.Getter;
 import lombok.Setter;

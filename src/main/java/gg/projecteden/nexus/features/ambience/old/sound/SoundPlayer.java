@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.quests.ambienceold.sound;
+package gg.projecteden.nexus.features.ambience.old.sound;
 
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Utils;

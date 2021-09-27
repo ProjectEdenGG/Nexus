@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.quests.itemtags;
+package gg.projecteden.nexus.features.itemtags;
 
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.framework.features.Depends;
@@ -29,7 +29,7 @@ public class ItemTags extends Feature {
 	private static final Map<String, Integer> toolConfigMap = new HashMap<>();
 
 	@Getter
-	private static final String fileName = "quests/itemtags.yml";
+	private static final String fileName = "itemtags.yml";
 	private static YamlConfiguration config;
 
 	@Data

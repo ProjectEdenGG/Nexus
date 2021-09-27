@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.quests.pathfinder;
+package gg.projecteden.nexus.features.test.pathfinder;
 
 import com.sk89q.worldedit.regions.Region;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;

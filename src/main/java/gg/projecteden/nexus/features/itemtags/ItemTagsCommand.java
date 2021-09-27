@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.quests.itemtags;
+package gg.projecteden.nexus.features.itemtags;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;

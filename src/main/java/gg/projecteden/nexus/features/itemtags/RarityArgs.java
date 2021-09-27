@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.quests.itemtags;
+package gg.projecteden.nexus.features.itemtags;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
