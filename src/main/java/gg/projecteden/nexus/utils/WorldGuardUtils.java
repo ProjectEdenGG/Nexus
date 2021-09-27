@@ -210,7 +210,7 @@ public final class WorldGuardUtils {
 	}
 
 	public @NotNull Collection<Player> getPlayersInRegion(@NotNull ProtectedRegion region) {
-		return OnlinePlayers.builder().world(world).get().stream().filter(player -> isInRegion(player.getLocation(), region) && !CitizensUtils.isNPC(player)).collect(Collectors.toList());
+		return OnlinePlayers.where().world(world).get().stream().filter(player -> isInRegion(player.getLocation(), region) && !CitizensUtils.isNPC(player)).collect(Collectors.toList());
 	}
 
 	public @NotNull Collection<NPC> getNPCsInRegion(@NotNull String region) {

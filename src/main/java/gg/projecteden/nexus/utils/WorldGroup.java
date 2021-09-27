@@ -65,7 +65,7 @@ public enum WorldGroup {
 	}
 
 	public List<Player> getPlayers() {
-		return getWorlds().stream().map(world -> OnlinePlayers.builder().world(world).get()).flatMap(Collection::stream).toList();
+		return getWorlds().stream().map(world -> OnlinePlayers.where().world(world).get()).flatMap(Collection::stream).toList();
 	}
 
 	public static WorldGroup of(@Nullable Entity entity) {

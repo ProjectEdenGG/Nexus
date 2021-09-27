@@ -112,11 +112,11 @@ public class AFK extends Feature {
 	}
 
 	public static int getActivePlayers() {
-		return OnlinePlayers.builder().afk(false).get().size();
+		return OnlinePlayers.where().afk(false).get().size();
 	}
 
 	public static int getActiveStaff() {
-		return OnlinePlayers.builder().afk(false).rank(Rank::isStaff).get().size();
+		return OnlinePlayers.where().afk(false).rank(Rank::isStaff).get().size();
 	}
 
 }

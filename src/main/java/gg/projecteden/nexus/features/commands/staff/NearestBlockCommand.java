@@ -77,7 +77,7 @@ public class NearestBlockCommand extends CustomCommand {
 							.viewers(Collections.singletonList(player()))
 							.onComplete(() -> {
 								fallingBlock.remove();
-								for (Player player : OnlinePlayers.builder().world(blockWorld).get())
+								for (Player player : OnlinePlayers.where().world(blockWorld).get())
 									player.sendBlockChange(blockLoc, block.getType().createBlockData());
 							})
 							.start();

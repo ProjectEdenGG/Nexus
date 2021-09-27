@@ -79,13 +79,13 @@ public class PublicChannel implements Channel {
 	public Set<Chatter> getRecipients(Chatter chatter) {
 		List<Player> recipients = new ArrayList<>();
 		if (local)
-			recipients.addAll(OnlinePlayers.builder().world(chatter.getOnlinePlayer().getWorld()).get().stream()
+			recipients.addAll(OnlinePlayers.where().world(chatter.getOnlinePlayer().getWorld()).get().stream()
 					.filter(player -> player.getLocation().distance(chatter.getOnlinePlayer().getLocation()) <= Chat.getLocalRadius())
 					.collect(Collectors.toList()));
 		else if (crossWorld)
 			recipients.addAll(OnlinePlayers.getAll());
 		else
-			recipients.addAll(OnlinePlayers.builder().world(chatter.getOnlinePlayer().getWorld()).get());
+			recipients.addAll(OnlinePlayers.where().world(chatter.getOnlinePlayer().getWorld()).get());
 
 		return recipients.stream()
 				.map(player -> new ChatterService().get(player))

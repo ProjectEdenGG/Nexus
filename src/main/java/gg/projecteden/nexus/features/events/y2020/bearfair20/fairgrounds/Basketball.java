@@ -166,7 +166,7 @@ public class Basketball implements Listener {
 		Tasks.repeat(0, 20 * 20, () -> {
 			cleanupBasketballs();
 
-			List<Player> players = OnlinePlayers.builder().world(world).get();
+			List<Player> players = OnlinePlayers.where().world(world).get();
 
 			players.forEach(player -> {
 				if (worldguard().isInRegion(player.getLocation(), courtRg)) {

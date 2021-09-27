@@ -27,7 +27,7 @@ public class Advent implements Listener {
 	}
 
 	static {
-		for (Player player : OnlinePlayers.builder().world(Pugmas21.getWorld()).get())
+		for (Player player : OnlinePlayers.where().world(Pugmas21.getWorld()).get())
 			sendPackets(player);
 	}
 

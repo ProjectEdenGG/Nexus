@@ -94,7 +94,7 @@ public class CreativeFilterCommand extends CustomCommand implements Listener {
 	static {
 		Tasks.repeat(TickTime.TICK, TickTime.TICK.x(2), () -> {
 			for (World world : WorldGroup.CREATIVE.getWorlds()) {
-				for (Player player : OnlinePlayers.builder().world(world).get()) {
+				for (Player player : OnlinePlayers.where().world(world).get()) {
 					final PlayerInventory inventory = player.getInventory();
 
 					for (int i = 0; i < inventory.getSize(); i++) {

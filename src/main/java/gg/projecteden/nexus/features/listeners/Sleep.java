@@ -55,7 +55,7 @@ public class Sleep implements Listener {
 		world.setStorm(false);
 		world.setThundering(false);
 
-		int taskId = Tasks.repeat(0, 1, () -> OnlinePlayers.builder().world(world).get().forEach(player ->
+		int taskId = Tasks.repeat(0, 1, () -> OnlinePlayers.where().world(world).get().forEach(player ->
 			ActionBarUtils.sendActionBar(player, "The night was skipped because 50% of players slept")));
 		
 		int wait = 0;
@@ -114,7 +114,7 @@ public class Sleep implements Listener {
 	}
 
 	private static List<Player> getCanSleep(World world) {
-		return OnlinePlayers.builder().world(world).get().stream().filter(Sleep::canSleep).toList();
+		return OnlinePlayers.where().world(world).get().stream().filter(Sleep::canSleep).toList();
 	}
 
 	private static List<Player> getSleeping(World world) {

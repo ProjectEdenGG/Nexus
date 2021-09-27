@@ -187,7 +187,7 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 
 	static {
 		final WorldGuardUtils worldGuardUtils = new WorldGuardUtils(getWorld());
-		Tasks.repeat(INTERVAL, INTERVAL, () -> OnlinePlayers.builder().world(getWorld()).get().stream()
+		Tasks.repeat(INTERVAL, INTERVAL, () -> OnlinePlayers.where().world(getWorld()).get().stream()
 				.filter(player -> !AFK.get(player).isAfk())
 				.filter(player -> worldGuardUtils.isInRegion(player.getLocation(), "jigsawjam"))
 				.map(player -> new JigsawJamService().get(player))

@@ -181,11 +181,11 @@ public abstract class WitherFight implements Listener {
 	}
 
 	public List<Player> alivePlayers() {
-		return OnlinePlayers.builder().include(alivePlayers).get();
+		return OnlinePlayers.where().include(alivePlayers).get();
 	}
 
 	public List<Player> spectators() {
-		return OnlinePlayers.builder().include(spectators).get();
+		return OnlinePlayers.where().include(spectators).get();
 	}
 
 	public void sendSpectatorsToSpawn() {

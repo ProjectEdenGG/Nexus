@@ -149,7 +149,7 @@ public class InvisibleArmor implements PlayerOwnedObject {
 	}
 
 	private OnlinePlayers getPacketTargets() {
-		return OnlinePlayers.builder().world(getOnlinePlayer().getWorld()).radius(100);
+		return OnlinePlayers.where().world(getOnlinePlayer().getWorld()).radius(100);
 	}
 
 }

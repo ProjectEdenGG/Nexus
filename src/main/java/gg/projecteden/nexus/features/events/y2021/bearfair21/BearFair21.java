@@ -214,7 +214,7 @@ public class BearFair21 implements Listener {
 	}
 
 	public static Set<Player> getPlayers() {
-		return new HashSet<>(OnlinePlayers.builder().world(getWorld()).get());
+		return new HashSet<>(OnlinePlayers.where().world(getWorld()).get());
 	}
 
 	// point stuff

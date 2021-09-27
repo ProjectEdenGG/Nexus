@@ -133,7 +133,7 @@ public class BasketballCommand extends CustomCommand implements Listener {
 		Tasks.repeat(0, TickTime.SECOND.x(20), () -> {
 			cleanupBasketballs();
 
-			for (Player player : OnlinePlayers.builder().world(world).get()) {
+			for (Player player : OnlinePlayers.where().world(world).get()) {
 				if (worldguard.isInRegion(player.getLocation(), region)) {
 					if (!hasBasketball(player)) {
 						boolean found = false;

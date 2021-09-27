@@ -76,7 +76,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 	private static ChatGame currentGame;
 
 	public static boolean hasRequiredPlayers() {
-		return OnlinePlayers.builder().afk(false).vanished(false).get().size() >= REQUIRED_PLAYERS;
+		return OnlinePlayers.where().afk(false).vanished(false).get().size() >= REQUIRED_PLAYERS;
 	}
 
 	public static void queue(int amount, Player player) {

@@ -144,12 +144,12 @@ public class PlayerUtils {
 		private List<UUID> include;
 		private List<UUID> exclude;
 
-		public static OnlinePlayers builder() {
+		public static OnlinePlayers where() {
 			return new OnlinePlayers();
 		}
 
 		public static List<Player> getAll() {
-			return builder().get();
+			return where().get();
 		}
 
 		public OnlinePlayers viewer(HasUniqueId player) {
@@ -420,11 +420,11 @@ public class PlayerUtils {
 	}
 
 	public static MinMaxResult<Player> getNearestPlayer(Location location) {
-		return getMin(OnlinePlayers.builder().world(location.getWorld()).get(), player -> player.getLocation().distance(location));
+		return getMin(OnlinePlayers.where().world(location.getWorld()).get(), player -> player.getLocation().distance(location));
 	}
 
 	public static MinMaxResult<Player> getNearestVisiblePlayer(Location location, Integer radius) {
-		List<Player> players = OnlinePlayers.builder().world(location.getWorld()).get().stream()
+		List<Player> players = OnlinePlayers.where().world(location.getWorld()).get().stream()
 			.filter(_player -> !GameMode.SPECTATOR.equals(_player.getGameMode()))
 			.filter(_player -> !isVanished(_player))
 			.collect(toList());
@@ -437,7 +437,7 @@ public class PlayerUtils {
 
 	public static MinMaxResult<Player> getNearestPlayer(HasPlayer original) {
 		Player _original = original.getPlayer();
-		List<Player> players = OnlinePlayers.builder().world(_original.getWorld()).get().stream()
+		List<Player> players = OnlinePlayers.where().world(_original.getWorld()).get().stream()
 			.filter(player -> !isSelf(_original, player)).collect(toList());
 
 		return getMin(players, player -> player.getLocation().distance(_original.getLocation()));

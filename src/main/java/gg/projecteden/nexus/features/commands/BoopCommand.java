@@ -29,7 +29,7 @@ public class BoopCommand extends CustomCommand {
 	@Description("boop all players")
 	@Permission("group.admin")
 	void boopAll(String message, @Switch(shorthand = 'a') boolean anonymous) {
-		final List<Player> players = OnlinePlayers.builder().viewer(player()).get().stream()
+		final List<Player> players = OnlinePlayers.where().viewer(player()).get().stream()
 			.filter(player -> !isSelf(player) && !Minigames.isMinigameWorld(player.getWorld()))
 			.toList();
 

@@ -40,7 +40,7 @@ public class ClientSideEntitiesCommand extends CustomCommand {
 
 			final ClientSideEntitiesConfigService service = new ClientSideEntitiesConfigService();
 
-			for (Player player : OnlinePlayers.builder().world(Bukkit.getWorld("buildadmin")).get()) {
+			for (Player player : OnlinePlayers.where().world(Bukkit.getWorld("buildadmin")).get()) {
 				final ClientSideEntitiesConfig config = service.get(player);
 				if (!config.isEnabled())
 					continue;

@@ -32,7 +32,7 @@ public class NearCommand extends CustomCommand {
 			error("This command cannot be used during Minigames");
 
 		UUID uuid = player.getUniqueId();
-		List<Player> nearby = OnlinePlayers.builder().world(player.getWorld()).get().stream()
+		List<Player> nearby = OnlinePlayers.where().world(player.getWorld()).get().stream()
 				.filter(_player -> !uuid.equals(_player.getUniqueId())
 						 && getDistance(player, _player) <= Chat.getLocalRadius()
 						 && (!isPlayer() || PlayerUtils.canSee(player(), _player)))

@@ -749,7 +749,7 @@ public abstract class CustomCommand extends ICustomCommand {
 				return PlayerUtils.getNearestPlayer(location()).getObject();
 			if ("@r".equals(value)) {
 				Player player = isPlayer() ? player() : null;
-				return RandomUtils.randomElement(OnlinePlayers.builder().viewer(player).get());
+				return RandomUtils.randomElement(OnlinePlayers.where().viewer(player).get());
 			}
 			if ("@s".equals(value))
 				return player();

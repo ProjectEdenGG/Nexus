@@ -48,7 +48,7 @@ public enum ScoreboardLine {
 	ONLINE {
 		@Override
 		public String render(Player player) {
-			return "&3Online Nerds: &e" + OnlinePlayers.builder().viewer(player).get().size();
+			return "&3Online Nerds: &e" + OnlinePlayers.where().viewer(player).get().size();
 		}
 	},
 

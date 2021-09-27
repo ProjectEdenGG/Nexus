@@ -119,7 +119,7 @@ public class Connect4Command extends CustomCommand {
 
 		public void win(Connect4Team team) {
 			won = true;
-			for (Player player : OnlinePlayers.builder().world(Minigames.getWorld()).get()) {
+			for (Player player : OnlinePlayers.where().world(Minigames.getWorld()).get()) {
 				String teamName = team.getColor() + "" + team.name().charAt(0) + team.name().substring(1).toLowerCase() + " Team";
 				PlayerUtils.send(player, PREFIX + teamName + ChatColor.WHITE + " has won Connect4!");
 			}

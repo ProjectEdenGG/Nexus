@@ -54,7 +54,7 @@ public class Gun {
 
 		for (int counter = 0; counter < blockDistance - 1; counter++) {
 			Location point = start.add(increase);
-			for (Player _player : OnlinePlayers.builder().world(minigamer.getPlayer().getWorld()).get())
+			for (Player _player : OnlinePlayers.where().world(minigamer.getPlayer().getWorld()).get())
 				_player.spawnParticle(Particle.CRIT, point, 1, 0, 0, 0, 0.1);
 		}
 

@@ -32,7 +32,7 @@ public class LostPumpkins implements Listener {
 
 	private void startParticleTask() {
 		Tasks.repeatAsync(0, 2 * 20, () -> {
-			for (Player player : OnlinePlayers.builder().world(Halloween20.getWorld()).get()) {
+			for (Player player : OnlinePlayers.where().world(Halloween20.getWorld()).get()) {
 				Halloween20User user = new Halloween20Service().get(player);
 				for (Pumpkin pumpkin : Pumpkin.values()) {
 					if (user.getFoundPumpkins().contains(pumpkin.getOriginal())) continue;
