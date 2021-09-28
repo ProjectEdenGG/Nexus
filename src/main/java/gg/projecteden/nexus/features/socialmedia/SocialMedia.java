@@ -4,23 +4,14 @@ import gg.projecteden.annotations.Environments;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.framework.features.Feature;
-import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.Env;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.Sign;
-import org.bukkit.block.Skull;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
@@ -104,38 +95,6 @@ public class SocialMedia extends Feature implements Listener {
 			return color + name;
 		}
 
-		static {
-			if (Nexus.getEnv() == Env.PROD)
-				reload();
-		}
-
-		public static void reload() {
-			try {
-				World world = Bukkit.getWorld("survival");
-
-				for (Block block : new WorldEditUtils(world).getBlocks(new WorldGuardUtils(world).getRegion("socialmedia"))) {
-					try {
-						if (!MaterialTag.SIGNS.isTagged(block.getType())) continue;
-						Sign sign = (Sign) block.getState();
-						String line = sign.getLine(0);
-						try {
-							SocialMediaSite site = SocialMediaSite.valueOf(line);
-							Block head = block.getRelative(BlockFace.DOWN);
-							if (head.getState() instanceof Skull)
-								site.setHead(head.getDrops().iterator().next());
-							else
-								Nexus.warn("Head for " + camelCase(site.name()) + " not found");
-						} catch (IllegalArgumentException ex) {
-							Nexus.warn("Found unknown social media head: " + line);
-						}
-					} catch (Throwable ex) {
-						ex.printStackTrace();
-					}
-				}
-			} catch (Throwable ex) {
-				ex.printStackTrace();
-			}
-		}
 	}
 
 	public enum EdenSocialMediaSite {

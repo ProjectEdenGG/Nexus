@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.socialmedia.commands;
 
 import gg.projecteden.nexus.features.menus.BookBuilder.WrittenBookMenu;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
-import gg.projecteden.nexus.features.socialmedia.SocialMedia;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.SocialMediaSite;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -31,13 +30,6 @@ public class SocialMediaCommand extends CustomCommand {
 		line();
 		for (EdenSocialMediaSite site : EdenSocialMediaSite.values())
 			send(json().next(site.getName() + " &7- &e" + site.getUrl()));
-	}
-
-	@Path("reload")
-	@Permission("group.admin")
-	void reload() {
-		SocialMedia.SocialMediaSite.reload();
-		send(PREFIX + "Reloaded");
 	}
 
 	@Path("getItem <site>")
