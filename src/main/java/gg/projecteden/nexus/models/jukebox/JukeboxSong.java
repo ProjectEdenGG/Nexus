@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static gg.projecteden.nexus.utils.IOUtils.getPluginFolder;
@@ -19,6 +20,8 @@ import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
 @Data
 @RequiredArgsConstructor
 public class JukeboxSong {
+	private final String author;
+	private final String title;
 	private final Song song;
 
 	public static List<JukeboxSong> SONGS = new ArrayList<>();
@@ -31,17 +34,9 @@ public class JukeboxSong {
 	}
 
 	public String getName() {
-		if (!isNullOrEmpty(getAuthor()))
-			return getAuthor() + " - " + getTitle();
-		return getTitle();
-	}
-
-	public String getTitle() {
-		return song.getTitle();
-	}
-
-	public String getAuthor() {
-		return song.getAuthor();
+		if (!isNullOrEmpty(author))
+			return author + " - " + title;
+		return title;
 	}
 
 	public static CompletableFuture<Void> reload() {
@@ -50,11 +45,18 @@ public class JukeboxSong {
 			SONGS.clear();
 			try (Stream<Path> paths = Files.walk(getPluginFolder("jukebox").toPath())) {
 				paths.forEach(path -> {
-					final String fileName = path.getFileName().toString();
+					String fileName = path.getFileName().toString();
 					if (!fileName.contains(".nbs"))
 						return;
 
-					SONGS.add(new JukeboxSong(NBSDecoder.parse(path.toFile())));
+					fileName = fileName.replace(".nbs", "");
+
+					Function<String, String> formatter = string -> string.replaceAll("_", " ").trim();
+					final String[] split = fileName.split("-", 2);
+					final String author = split.length > 1 ? formatter.apply(split[0]) : null;
+					final String title = split.length > 1 ? formatter.apply(split[1]) : formatter.apply(split[0]);
+					final Song song = NBSDecoder.parse(path.toFile());
+					SONGS.add(new JukeboxSong(author, title, song));
 				});
 			} catch (Exception ex) {
 				ex.printStackTrace();
