@@ -22,7 +22,6 @@ public enum Pugmas21NPC implements InteractableNPC {
 	}
 
 	public static Pugmas21NPC of(int id) {
-		System.out.println("Looking for NPC #" + id);
 		for (Pugmas21NPC npc : values())
 			if (npc.getNpcId() == id)
 				return npc;

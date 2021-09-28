@@ -38,15 +38,12 @@ public class Quester implements PlayerOwnedObject {
 	//
 
 	public void interact(Interactable interactable) {
-		System.out.println("checking dialog");
 		if (dialog != null && dialog.getTaskId().get() > 0) {
 			dialog.advance();
 			return;
 		}
 
-		System.out.println("checking quests @ current step");
 		for (Quest quest : new ArrayList<>(quests)) {
-			System.out.println(quest);
 			final QuestTaskProgress questTask = quest.getCurrentTaskProgress();
 			final QuestStepProgress step = questTask.currentStep();
 			final TaskStep<?, ?> taskStep = questTask.get().getSteps().get(questTask.getStep());
@@ -68,7 +65,6 @@ public class Quester implements PlayerOwnedObject {
 			}
 		}
 
-		System.out.println("checking quests @ previous step");
 		for (Quest quest : quests) {
 			final QuestTaskProgress questTask = quest.getCurrentTaskProgress();
 			if (!questTask.hasPreviousStep())

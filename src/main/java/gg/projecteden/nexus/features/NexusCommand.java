@@ -49,6 +49,7 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.QueuedTask;
 import gg.projecteden.nexus.utils.Utils;
+import gg.projecteden.utils.Env;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import lombok.AllArgsConstructor;
@@ -204,8 +205,14 @@ public class NexusCommand extends CustomCommand implements Listener {
 				throw new InvalidInputException("The wither is currently being fought");
 		}),
 		PUGMAS21_TRAIN(() -> {
-			if (Train.anyActiveInstances())
-				throw new InvalidInputException("There is an active Pugmas train");
+			if (Nexus.getEnv() == Env.PROD) {
+				if (Train.anyActiveInstances())
+					throw new InvalidInputException("There is an active Pugmas train");
+			} else {
+				for (Train train : new ArrayList<>(Train.getInstances()))
+					train.stop();
+			}
+
 		}),
 		;
 

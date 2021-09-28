@@ -221,7 +221,6 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 		if (npc == null)
 			return;
 
-		System.out.println("test");
 		Quester.of(event.getClicker()).interact(npc);
 	}
 
