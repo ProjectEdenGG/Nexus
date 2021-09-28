@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.quests.users;
 
 import gg.projecteden.nexus.features.quests.interactable.Interactable;
 import gg.projecteden.nexus.features.quests.interactable.instructions.DialogInstance;
-import gg.projecteden.nexus.features.quests.tasks.common.Task.TaskStep;
+import gg.projecteden.nexus.features.quests.tasks.common.QuestTaskStep;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import lombok.Data;
 import lombok.NonNull;
@@ -45,8 +45,8 @@ public class Quester implements PlayerOwnedObject {
 
 		for (Quest quest : new ArrayList<>(quests)) {
 			final QuestTaskProgress questTask = quest.getCurrentTaskProgress();
-			final QuestStepProgress step = questTask.currentStep();
-			final TaskStep<?, ?> taskStep = questTask.get().getSteps().get(questTask.getStep());
+			final QuestTaskStepProgress step = questTask.currentStep();
+			final QuestTaskStep<?, ?> taskStep = questTask.get().getSteps().get(questTask.getStep());
 
 			if (taskStep.getInteractable() == interactable) {
 				dialog = taskStep.interact(this, step);
@@ -54,8 +54,10 @@ public class Quester implements PlayerOwnedObject {
 				if (taskStep.shouldAdvance(this, step))
 					questTask.incrementStep();
 
-				if (questTask.get().getSteps().size() <= questTask.getStep())
+				if (questTask.get().getSteps().size() <= questTask.getStep()) {
+					questTask.reward();
 					quest.incrementTask();
+				}
 
 				if (quest.getTasks().size() <= quest.getTask())
 					quest.complete();
@@ -70,8 +72,8 @@ public class Quester implements PlayerOwnedObject {
 			if (!questTask.hasPreviousStep())
 				continue;
 
-			final QuestStepProgress step = questTask.previousStep();
-			final TaskStep<?, ?> taskStep = questTask.get().getSteps().get(questTask.getStep() - 1);
+			final QuestTaskStepProgress step = questTask.previousStep();
+			final QuestTaskStep<?, ?> taskStep = questTask.get().getSteps().get(questTask.getStep() - 1);
 
 			if (taskStep.getInteractable() == interactable) {
 				dialog = taskStep.interact(this, step);

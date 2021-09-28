@@ -2,9 +2,10 @@ package gg.projecteden.nexus.features.quests.tasks;
 
 import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
 import gg.projecteden.nexus.features.quests.interactable.instructions.DialogInstance;
-import gg.projecteden.nexus.features.quests.tasks.GatherTask.GatherTaskStep;
-import gg.projecteden.nexus.features.quests.tasks.common.Task;
-import gg.projecteden.nexus.features.quests.users.QuestStepProgress;
+import gg.projecteden.nexus.features.quests.tasks.GatherQuestTask.GatherQuestTaskStep;
+import gg.projecteden.nexus.features.quests.tasks.common.QuestTask;
+import gg.projecteden.nexus.features.quests.tasks.common.QuestTaskStep;
+import gg.projecteden.nexus.features.quests.users.QuestTaskStepProgress;
 import gg.projecteden.nexus.features.quests.users.Quester;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,18 +19,18 @@ import static gg.projecteden.nexus.features.quests.interactable.instructions.Dia
 import static java.util.Collections.singletonList;
 
 @Data
-public class GatherTask extends Task<GatherTask, GatherTaskStep> {
+public class GatherQuestTask extends QuestTask<GatherQuestTask, GatherQuestTaskStep> {
 
-	public GatherTask(List<GatherTaskStep> steps) {
+	public GatherQuestTask(List<GatherQuestTaskStep> steps) {
 		super(steps);
 	}
 
-	public static class GatherTaskStep extends TaskStep<GatherTask, GatherTaskStep> {
+	public static class GatherQuestTaskStep extends QuestTaskStep<GatherQuestTask, GatherQuestTaskStep> {
 		private List<ItemStack> items;
 		private Dialog complete;
 
 		@Override
-		public DialogInstance interact(Quester quester, QuestStepProgress stepProgress) {
+		public DialogInstance interact(Quester quester, QuestTaskStepProgress stepProgress) {
 			if (stepProgress.isFirstInteraction())
 				return dialog.send(quester);
 			else
@@ -43,7 +44,7 @@ public class GatherTask extends Task<GatherTask, GatherTaskStep> {
 		}
 
 		@Override
-		public boolean shouldAdvance(Quester quester, QuestStepProgress stepProgress) {
+		public boolean shouldAdvance(Quester quester, QuestTaskStepProgress stepProgress) {
 			return !stepProgress.isFirstInteraction() && quester.has(items);
 		}
 
@@ -54,16 +55,16 @@ public class GatherTask extends Task<GatherTask, GatherTaskStep> {
 	}
 
 	@NoArgsConstructor
-	public static class GatherTaskBuilder extends TaskBuilder<GatherTask, GatherTaskBuilder, GatherTaskStep> {
+	public static class GatherTaskBuilder extends TaskBuilder<GatherQuestTask, GatherTaskBuilder, GatherQuestTaskStep> {
 
 		@Override
-		public GatherTaskStep nextStep() {
-			return new GatherTaskStep();
+		public GatherQuestTaskStep nextStep() {
+			return new GatherQuestTaskStep();
 		}
 
 		@NotNull
-		public GatherTask newInstance() {
-			return new GatherTask(steps);
+		public GatherQuestTask newInstance() {
+			return new GatherQuestTask(steps);
 		}
 
 		public GatherTaskBuilder gather(ItemStack item) {

@@ -7,7 +7,7 @@ import gg.projecteden.nexus.features.events.y2021.pugmas21.models.District;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Train;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21Entity;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21NPC;
-import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21Task;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestTask;
 import gg.projecteden.nexus.features.quests.users.Quest;
 import gg.projecteden.nexus.features.quests.users.Quester;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -201,7 +201,7 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	}
 
 	@Path("quest start <task>")
-	void quest_start(Pugmas21Task task) {
+	void quest_start(Pugmas21QuestTask task) {
 		Quest.builder()
 			.task(task)
 			.assign(player())
@@ -211,7 +211,7 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	}
 
 	@Path("quest debug <task>")
-	void quest_debug(Pugmas21Task task) {
+	void quest_debug(Pugmas21QuestTask task) {
 		send(String.valueOf(task.get()));
 	}
 

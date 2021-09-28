@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Data
 @RequiredArgsConstructor
-public class QuestStepProgress implements PlayerOwnedObject {
+public class QuestTaskStepProgress implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private boolean firstInteraction = true;

@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.quests.tasks.common;
 
-public interface ITask {
+public interface IQuestTask {
 
-	Task<?, ?> get();
+	QuestTask<?, ?> get();
 
 }

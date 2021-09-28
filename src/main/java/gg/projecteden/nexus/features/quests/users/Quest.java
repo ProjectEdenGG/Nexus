@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.quests.users;
 
-import gg.projecteden.nexus.features.quests.tasks.common.ITask;
+import gg.projecteden.nexus.features.quests.tasks.common.IQuestTask;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import lombok.Data;
 import lombok.NonNull;
@@ -42,17 +42,17 @@ public class Quest implements PlayerOwnedObject {
 
 	public static class QuestBuilder {
 		private UUID uuid;
-		private List<ITask> tasks = new ArrayList<>();
+		private List<IQuestTask> tasks = new ArrayList<>();
 
-		public QuestBuilder task(ITask task) {
+		public QuestBuilder task(IQuestTask task) {
 			return tasks(task);
 		}
 
-		public QuestBuilder tasks(ITask... tasks) {
+		public QuestBuilder tasks(IQuestTask... tasks) {
 			return tasks(List.of(tasks));
 		}
 
-		public QuestBuilder tasks(List<ITask> tasks) {
+		public QuestBuilder tasks(List<IQuestTask> tasks) {
 			this.tasks.addAll(tasks);
 			return this;
 		}

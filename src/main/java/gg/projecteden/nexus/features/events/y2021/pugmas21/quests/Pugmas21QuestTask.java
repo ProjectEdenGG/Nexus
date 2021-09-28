@@ -1,20 +1,20 @@
 package gg.projecteden.nexus.features.events.y2021.pugmas21.quests;
 
-import gg.projecteden.nexus.features.quests.tasks.GatherTask;
-import gg.projecteden.nexus.features.quests.tasks.InteractTask;
-import gg.projecteden.nexus.features.quests.tasks.common.ITask;
-import gg.projecteden.nexus.features.quests.tasks.common.Task;
+import gg.projecteden.nexus.features.quests.tasks.GatherQuestTask;
+import gg.projecteden.nexus.features.quests.tasks.InteractQuestTask;
+import gg.projecteden.nexus.features.quests.tasks.common.IQuestTask;
+import gg.projecteden.nexus.features.quests.tasks.common.QuestTask;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-import static gg.projecteden.nexus.features.quests.tasks.QuestReward.EVENT_TOKENS;
+import static gg.projecteden.nexus.features.quests.QuestReward.EVENT_TOKENS;
 
 @Getter
 @AllArgsConstructor
-public enum Pugmas21Task implements ITask {
-	COSTUME_STORE_GATHER_WOOD(GatherTask.builder()
+public enum Pugmas21QuestTask implements IQuestTask {
+	COSTUME_STORE_GATHER_WOOD(GatherQuestTask.builder()
 		.talkTo(Pugmas21NPC.ROWAN)
 		.instructions(dialog -> dialog
 			.npc("hi i need help")
@@ -32,7 +32,7 @@ public enum Pugmas21Task implements ITask {
 		.reward(EVENT_TOKENS, 40)
 		.build()
 	),
-	INVESTIGATE_PENGUIN_MAFIA(InteractTask.builder()
+	INVESTIGATE_PENGUIN_MAFIA(InteractQuestTask.builder()
 		.talkTo(Pugmas21NPC.FISH_VENDOR)
 		.instructions(dialog -> dialog
 			.npc("someone stole my fish")
@@ -76,10 +76,10 @@ public enum Pugmas21Task implements ITask {
 	),
 	;
 
-	private final Task<?, ?> task;
+	private final QuestTask<?, ?> task;
 
 	@Override
-	public Task<?, ?> get() {
+	public QuestTask<?, ?> get() {
 		return task;
 	}
 }

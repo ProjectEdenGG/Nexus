@@ -1,52 +1,38 @@
 package gg.projecteden.nexus.features.quests.tasks.common;
 
+import gg.projecteden.nexus.features.quests.QuestReward;
 import gg.projecteden.nexus.features.quests.interactable.Interactable;
 import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
-import gg.projecteden.nexus.features.quests.interactable.instructions.DialogInstance;
-import gg.projecteden.nexus.features.quests.tasks.QuestReward;
-import gg.projecteden.nexus.features.quests.tasks.common.Task.TaskStep;
-import gg.projecteden.nexus.features.quests.users.QuestStepProgress;
 import gg.projecteden.nexus.features.quests.users.Quester;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 @Data
 @NoArgsConstructor
-public abstract class Task<
-	TaskType extends Task<TaskType, TaskStepType>,
-	TaskStepType extends TaskStep<TaskType, TaskStepType>
+public abstract class QuestTask<
+	TaskType extends QuestTask<TaskType, TaskStepType>,
+	TaskStepType extends QuestTaskStep<TaskType, TaskStepType>
 > {
 	protected List<TaskStepType> steps;
+	protected List<Consumer<Quester>> rewards = new ArrayList<>();
 
-	public Task(List<TaskStepType> steps) {
+	public QuestTask(List<TaskStepType> steps) {
 		this.steps = steps;
 	}
 
-	@Data
-	public static abstract class TaskStep<
-		TaskType extends Task<TaskType, TaskStepType>,
-		TaskStepType extends TaskStep<TaskType, TaskStepType>
-	> {
-		protected Interactable interactable;
-		protected Dialog dialog;
-		protected Dialog reminder;
-
-		abstract public DialogInstance interact(Quester quester, QuestStepProgress stepProgress);
-
-		abstract public boolean shouldAdvance(Quester quester, QuestStepProgress stepProgress);
-	}
-
 	public static abstract class TaskBuilder<
-		TaskType extends Task<TaskType, TaskStepType>,
+		TaskType extends QuestTask<TaskType, TaskStepType>,
 		TaskBuilderType extends TaskBuilder<TaskType, TaskBuilderType, TaskStepType>,
-		TaskStepType extends TaskStep<TaskType, TaskStepType>
+		TaskStepType extends QuestTaskStep<TaskType, TaskStepType>
 	> {
 		protected List<TaskStepType> steps = new ArrayList<>();
 		protected TaskStepType currentStep = nextStep();
+		protected List<Consumer<Quester>> rewards = new ArrayList<>();
 
 		abstract public TaskStepType nextStep();
 
@@ -72,8 +58,13 @@ public abstract class Task<
 			return (TaskBuilderType) this;
 		}
 
+		public TaskBuilderType reward(QuestReward reward) {
+			rewards.add(reward::apply);
+			return (TaskBuilderType) this;
+		}
+
 		public TaskBuilderType reward(QuestReward reward, int amount) {
-			// TODO
+			rewards.add(quester -> reward.apply(quester, amount));
 			return (TaskBuilderType) this;
 		}
 
