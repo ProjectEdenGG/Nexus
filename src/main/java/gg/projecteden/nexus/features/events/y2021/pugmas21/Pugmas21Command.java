@@ -4,8 +4,12 @@ import gg.projecteden.nexus.features.events.y2021.pugmas21.advent.AdventAnimatio
 import gg.projecteden.nexus.features.events.y2021.pugmas21.advent.AdventMenu;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.CandyCaneCannon;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.District;
-import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Pugmas21InstructionNPC;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Train;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21Entity;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21NPC;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21Task;
+import gg.projecteden.nexus.features.quests.users.Quest;
+import gg.projecteden.nexus.features.quests.users.Quester;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -26,6 +30,7 @@ import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 
 import java.time.LocalDate;
 
@@ -82,20 +87,6 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 			.test(true)
 			.build()
 			.start();
-	}
-
-	@Path("npcs interact <npc>")
-	void npcs_interact(Pugmas21InstructionNPC npc) {
-		npc.execute(player());
-	}
-
-	@EventHandler
-	public void onNPCRightClick(NPCRightClickEvent event) {
-		final Pugmas21InstructionNPC npc = Pugmas21InstructionNPC.of(event.getNPC());
-		if (npc == null)
-			return;
-
-		npc.execute(event.getClicker());
 	}
 
 	@Path("candycane cannon")
@@ -207,6 +198,41 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	void simulate_today_reset() {
 		Pugmas21.TODAY = LocalDate.now();
 		send(PREFIX + "Simulating date &e" + shortDateFormat(Pugmas21.TODAY));
+	}
+
+	@Path("quest start <task>")
+	void quest_start(Pugmas21Task task) {
+		Quest.builder()
+			.task(task)
+			.assign(player())
+			.start();
+
+		send(PREFIX + "Quest started");
+	}
+
+	@Path("quest debug <task>")
+	void quest_debug(Pugmas21Task task) {
+		send(String.valueOf(task.get()));
+	}
+
+	@EventHandler
+	public void onNPCRightClick(NPCRightClickEvent event) {
+		final Pugmas21NPC npc = Pugmas21NPC.of(event.getNPC());
+		if (npc == null)
+			return;
+
+		System.out.println("test");
+		Quester.of(event.getClicker()).interact(npc);
+	}
+
+	@EventHandler
+	public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
+		final Pugmas21Entity entity = Pugmas21Entity.of(event.getRightClicked());
+		if (entity == null)
+			return;
+
+		Quester.of(event.getPlayer()).interact(entity);
+		event.setCancelled(true);
 	}
 
 }

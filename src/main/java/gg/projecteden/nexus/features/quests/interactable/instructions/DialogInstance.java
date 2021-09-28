@@ -1,9 +1,9 @@
-package gg.projecteden.nexus.features.events.models.instructions;
+package gg.projecteden.nexus.features.quests.interactable.instructions;
 
+import gg.projecteden.nexus.features.quests.users.Quester;
 import gg.projecteden.nexus.utils.Tasks;
 import kotlin.Pair;
 import lombok.Data;
-import org.bukkit.entity.Player;
 
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -11,23 +11,23 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 @Data
-public class InstructionsInstance {
-	private final Instructions instructions;
-	private final Player player;
+public class DialogInstance {
+	private final Quester quester;
+	private final Dialog dialog;
 	private final AtomicInteger taskId = new AtomicInteger(-1);
 
-	private final Iterator<Pair<Consumer<Player>, Integer>> iterator;
+	private final Iterator<Pair<Consumer<Quester>, Integer>> iterator;
 	private final AtomicReference<Runnable> runner;
 
-	public InstructionsInstance(Instructions instructions, Player player) {
-		this.instructions = instructions;
-		this.player = player;
+	public DialogInstance(Quester quester, Dialog dialog) {
+		this.quester = quester;
+		this.dialog = dialog;
 
-		this.iterator = instructions.getInstructions().iterator();
+		this.iterator = dialog.getInstructions().iterator();
 
 		this.runner = new AtomicReference<>() {{
 			set(() -> {
-				if (!iterator.hasNext() || player == null || !player.isOnline()) {
+				if (!iterator.hasNext() || quester == null || !quester.isOnline()) {
 					taskId.set(-1);
 					return;
 				}
@@ -40,7 +40,12 @@ public class InstructionsInstance {
 				}
 
 				if (next.getFirst() != null)
-					next.getFirst().accept(player);
+					next.getFirst().accept(quester);
+
+				if (!iterator.hasNext()) {
+					taskId.set(-1);
+					return;
+				}
 
 				taskId.set(Tasks.wait(next.getSecond(), get()));
 			});
