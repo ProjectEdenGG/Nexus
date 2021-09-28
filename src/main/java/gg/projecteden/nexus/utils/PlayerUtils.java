@@ -135,6 +135,7 @@ public class PlayerUtils {
 	public static class OnlinePlayers {
 		private UUID viewer;
 		private World world;
+		private String region;
 		private Location origin;
 		private Double radius;
 		private Boolean afk;
@@ -159,6 +160,11 @@ public class PlayerUtils {
 
 		public OnlinePlayers world(World world) {
 			this.world = world;
+			return this;
+		}
+
+		public OnlinePlayers region(String region) {
+			this.region = region;
 			return this;
 		}
 
@@ -277,6 +283,9 @@ public class PlayerUtils {
 			WORLD(
 				search -> search.world != null,
 				(search, player) -> player.getWorld().equals(search.world)),
+			REGION(
+				search -> search.world != null && search.region != null,
+				(search, player) -> new WorldGuardUtils(search.world).isInRegion(player, search.region)),
 			RADIUS(
 				search -> search.origin != null && search.radius != null,
 				(search, player) -> search.origin.getWorld().equals(player.getWorld()) && player.getLocation().distance(search.origin) <= search.radius),

@@ -81,16 +81,24 @@ public class Pugmas21 {
 		return REGION + "_" + region;
 	}
 
-	public static List<Player> getPlayers() {
-		return OnlinePlayers.where().world(getWorld()).get();
+	private static OnlinePlayers getPlayers() {
+		return OnlinePlayers.where().world(getWorld());
+	}
+
+	public static List<Player> getAllPlayers() {
+		return getPlayers().get();
+	}
+
+	public static List<Player> getPlayers(String region) {
+		return getPlayers().region(region(region)).get();
 	}
 
 	public static boolean anyActivePlayers() {
-		return !getPlayers().isEmpty();
+		return !getAllPlayers().isEmpty();
 	}
 
 	public static void actionBar(String message, int ticks) {
-		getPlayers().forEach(player -> ActionBarUtils.sendActionBar(player, message, ticks));
+		getAllPlayers().forEach(player -> ActionBarUtils.sendActionBar(player, message, ticks));
 	}
 
 }

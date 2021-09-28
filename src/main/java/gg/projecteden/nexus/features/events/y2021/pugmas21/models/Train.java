@@ -1,8 +1,10 @@
 package gg.projecteden.nexus.features.events.y2021.pugmas21.models;
 
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.ArmorStandEditorCommand;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -11,20 +13,27 @@ import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.SoundCategory;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.Light;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 import static gg.projecteden.nexus.utils.EntityUtils.forcePacket;
 import static gg.projecteden.nexus.utils.RandomUtils.randomDouble;
+import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
 
 public class Train {
 	private final Location location;
@@ -39,7 +48,7 @@ public class Train {
 	@Getter
 	private boolean active;
 	private final List<ArmorStand> armorStands = new ArrayList<>();
-	private int taskId;
+	private final List<Integer> taskIds = new ArrayList<>();
 	private Location lightLocation;
 
 	private final WorldGuardUtils worldguard;
@@ -76,28 +85,64 @@ public class Train {
 			.speed(.3)
 			.test(false);
 
-		Tasks.repeat(TickTime.SECOND.x(30), TickTime.MINUTE.x(5), () -> {
-			if (!Pugmas21.anyActivePlayers())
-				return;
+		final Supplier<Integer> delay = () -> TickTime.MINUTE.x(randomInt(5, 10));
 
-			train.build().start();
-			Pugmas21.actionBar("&c&lA train is passing by", TickTime.SECOND.x(10));
-		});
+		Tasks.wait(delay.get(), new AtomicReference<Runnable>() {{
+			set(() -> {
+				if (!Pugmas21.anyActivePlayers())
+					return;
+
+				train.build().start();
+				Pugmas21.actionBar("&c&lA train is passing by...", TickTime.SECOND.x(10));
+				Tasks.wait(delay.get(), get());
+			});
+		}}.get());
 	}
 
 	public void start() {
 		active = true;
 		instances.add(this);
 
+		taskIds.add(Tasks.wait(TickTime.SECOND.x(3), () ->
+			new SoundBuilder("custom.train.whistle")
+				.receivers(Pugmas21.getAllPlayers())
+				.category(SoundCategory.AMBIENT)
+				.play()));
+
 		spawnArmorStands();
 
-		taskId = Tasks.repeat(0, 1, this::move);
+		taskIds.add(Tasks.repeat(0, 1, this::move));
+		taskIds.add(Tasks.repeat(0, TickTime.SECOND.x(3.75), () ->
+				Pugmas21.getPlayers("trainsound").forEach(player -> {
+					Nexus.debug("Sending chug sound to " + player.getName());
+					final ArmorStand nearest = getNearestArmorStand(player);
+					if (nearest != null)
+						new SoundBuilder("custom.train.chug")
+							.receiver(player)
+							.location(nearest.getLocation())
+							.category(SoundCategory.AMBIENT)
+							.volume(4)
+							.pitch(.75)
+							.play();
+				})));
 
-		Tasks.wait(TickTime.SECOND.x(seconds), this::stop);
+		taskIds.add(Tasks.wait(TickTime.SECOND.x(seconds), this::stop));
+	}
+
+	@Nullable
+	private ArmorStand getNearestArmorStand(Player player) {
+		final ArmorStand nearest = Collections.min(getValidArmorStands(), Comparator.comparing(armorStand -> player.getLocation().distance(armorStand.getLocation())));
+		if (nearest == null)
+			return null;
+		return nearest;
+	}
+
+	private List<ArmorStand> getValidArmorStands() {
+		return armorStands.stream().filter(ArmorStand::isValid).toList();
 	}
 
 	public void stop() {
-		Tasks.cancel(taskId);
+		taskIds.forEach(Tasks::cancel);
 		armorStands.forEach(Entity::remove);
 
 		active = false;

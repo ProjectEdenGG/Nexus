@@ -33,11 +33,11 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class SoundBuilder implements Cloneable {
 	private String sound;
-	private List<HasPlayer> receivers = new ArrayList<>();
+	private List<Player> receivers = new ArrayList<>();
 	private Location location;
 	private SoundCategory category = SoundCategory.MASTER;
 	private MuteMenuItem muteMenuItem;
-	private Function<HasPlayer, Float> volume = player -> 1F;
+	private Function<Player, Float> volume = player -> 1F;
 	private float pitch = 1F;
 	private int delay = 0;
 
@@ -116,10 +116,10 @@ public class SoundBuilder implements Cloneable {
 	}
 
 	public SoundBuilder receiver(HasPlayer receiver) {
-		return receivers(Collections.singletonList(receiver));
+		return receivers(Collections.singletonList(receiver.getPlayer()));
 	}
 
-	public SoundBuilder receivers(List<HasPlayer> receivers) {
+	public SoundBuilder receivers(List<Player> receivers) {
 		this.receivers.addAll(receivers);
 		return this;
 	}
@@ -162,7 +162,7 @@ public class SoundBuilder implements Cloneable {
 		return volume(player -> SoundUtils.getMuteMenuVolume(player, muteMenuItem));
 	}
 
-	public SoundBuilder volume(Function<HasPlayer, Float> volume) {
+	public SoundBuilder volume(Function<Player, Float> volume) {
 		this.volume = volume;
 		return this;
 	}
@@ -261,8 +261,7 @@ public class SoundBuilder implements Cloneable {
 	}
 
 	private void players() {
-		for (HasPlayer hasPlayer : receivers) {
-			Player player = hasPlayer.getPlayer();
+		for (Player player : receivers) {
 			if (player == null || !player.isOnline())
 				continue;
 
@@ -311,7 +310,8 @@ public class SoundBuilder implements Cloneable {
 		if (!SOUND_DURATIONS.containsKey(sound))
 			return null;
 
-		return LocalDateTime.now().plus((long) (SOUND_DURATIONS.get(sound) * pitch * .95), ChronoUnit.MILLIS);
+		final int duration = SOUND_DURATIONS.get(sound);
+		return LocalDateTime.now().plus((long) (duration + (duration * (1 - pitch) * .95)), ChronoUnit.MILLIS);
 	}
 
 	public static <T extends SoundCooldown<?>> List<T> cooldowns(Class<T> clazz, String context) {

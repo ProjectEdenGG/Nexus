@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.models.jukebox;
 
 import com.xxmicloxx.NoteBlockAPI.model.Song;
+import com.xxmicloxx.NoteBlockAPI.model.SoundCategory;
 import com.xxmicloxx.NoteBlockAPI.songplayer.PositionSongPlayer;
 import com.xxmicloxx.NoteBlockAPI.songplayer.RadioSongPlayer;
 import com.xxmicloxx.NoteBlockAPI.songplayer.SongPlayer;
@@ -63,6 +64,7 @@ public class JukeboxUser implements PlayerOwnedObject {
 		songPlayer.setTargetLocation(getLocation());
 		songPlayer.setPlaying(true);
 		songPlayer.setTick((short) tick);
+		songPlayer.setCategory(SoundCategory.RECORDS);
 
 		this.currentSong = jukeboxSong.getName();
 		this.songPlayer = songPlayer;
@@ -94,6 +96,7 @@ public class JukeboxUser implements PlayerOwnedObject {
 		songPlayer.addPlayer(getOnlinePlayer());
 		songPlayer.setStereo(true);
 		songPlayer.setPlaying(true);
+		songPlayer.setCategory(SoundCategory.RECORDS);
 
 		this.songPlayer = songPlayer;
 	}
