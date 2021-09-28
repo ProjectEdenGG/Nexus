@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.mobheads;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.mobheads.common.MobHead;
+import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.MobHeadConverter;
 import gg.projecteden.nexus.models.boost.BoostConfig;
 import gg.projecteden.nexus.models.boost.Boostable;
@@ -17,6 +18,7 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
+import lombok.NoArgsConstructor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Ageable;
@@ -47,12 +49,14 @@ import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
 import static gg.projecteden.utils.RandomUtils.randomDouble;
 import static gg.projecteden.utils.StringUtils.camelCase;
 
-public class MobHeadListener implements Listener {
+@NoArgsConstructor
+public class MobHeads extends Feature implements Listener {
 	private static final int REQUIRED_SKIN_DAYS = 3;
 	private static final List<UUID> handledEntities = new ArrayList<>();
 
-	public MobHeadListener() {
-		Nexus.registerListener(this);
+	@Override
+	public void onStart() {
+		MobHeadType.load();
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)

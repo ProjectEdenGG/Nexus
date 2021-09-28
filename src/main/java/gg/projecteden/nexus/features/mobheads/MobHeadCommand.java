@@ -39,10 +39,6 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	static {
-		new MobHeadListener();
-	}
-
 	@Path
 	void menu() {
 		new MobHeadUserMenu().open(player());
