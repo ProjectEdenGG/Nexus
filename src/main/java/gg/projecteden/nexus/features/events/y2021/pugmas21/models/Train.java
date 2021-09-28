@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.events.y2021.pugmas21.models;
 
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.ArmorStandEditorCommand;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -114,7 +113,6 @@ public class Train {
 		taskIds.add(Tasks.repeat(0, 1, this::move));
 		taskIds.add(Tasks.repeat(0, TickTime.SECOND.x(3.75), () ->
 				Pugmas21.getPlayers("trainsound").forEach(player -> {
-					Nexus.debug("Sending chug sound to " + player.getName());
 					final ArmorStand nearest = getNearestArmorStand(player);
 					if (nearest != null)
 						new SoundBuilder("custom.train.chug")

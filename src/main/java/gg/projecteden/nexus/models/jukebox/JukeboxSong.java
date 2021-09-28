@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
@@ -52,7 +53,7 @@ public class JukeboxSong {
 					fileName = fileName.replace(".nbs", "");
 
 					Function<String, String> formatter = string -> string.replaceAll("_", " ").trim();
-					final String[] split = fileName.split("-", 2);
+					final String[] split = fileName.split("=", 2);
 					final String author = split.length > 1 ? formatter.apply(split[0]) : null;
 					final String title = split.length > 1 ? formatter.apply(split[1]) : formatter.apply(split[0]);
 					final Song song = NBSDecoder.parse(path.toFile());
@@ -61,6 +62,7 @@ public class JukeboxSong {
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
+			SONGS.sort(Comparator.comparing(JukeboxSong::getName));
 			future.complete(null);
 		});
 		return future;
