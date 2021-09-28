@@ -30,6 +30,26 @@ public class Quest implements PlayerOwnedObject {
 		return new QuestBuilder();
 	}
 
+	public boolean hasPreviousTask() {
+		return task > 0;
+	}
+
+	public QuestTaskProgress previousTask() {
+		return tasks.get(task - 1);
+	}
+
+	public QuestTaskProgress currentTask() {
+		return tasks.get(task);
+	}
+
+	public boolean hasNextTask() {
+		return tasks.size() > task + 1;
+	}
+
+	public QuestTaskProgress nextTask() {
+		return tasks.get(task + 1);
+	}
+
 	public void incrementTask() {
 		sendMessage("Moving to next task");
 		++task;

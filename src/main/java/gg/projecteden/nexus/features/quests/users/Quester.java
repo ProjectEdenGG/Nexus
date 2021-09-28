@@ -51,16 +51,18 @@ public class Quester implements PlayerOwnedObject {
 			if (taskStep.getInteractable() == interactable) {
 				dialog = taskStep.interact(this, step);
 
-				if (taskStep.shouldAdvance(this, step))
-					questTask.incrementStep();
+				if (taskStep.shouldAdvance(this, step)) {
+					if (questTask.hasNextStep())
+						questTask.incrementStep();
+				}
 
 				if (questTask.get().getSteps().size() <= questTask.getStep()) {
 					questTask.reward();
-					quest.incrementTask();
+					if (quest.hasNextTask())
+						quest.incrementTask();
+					else
+						quest.complete();
 				}
-
-				if (quest.getTasks().size() <= quest.getTask())
-					quest.complete();
 
 				step.setFirstInteraction(false);
 				return;

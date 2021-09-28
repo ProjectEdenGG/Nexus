@@ -44,7 +44,7 @@ public class QuestTaskProgress implements PlayerOwnedObject {
 	}
 
 	public boolean hasNextStep() {
-		return get().getSteps().size() > step;
+		return get().getSteps().size() > step + 1;
 	}
 
 	public QuestTaskStepProgress nextStep() {
