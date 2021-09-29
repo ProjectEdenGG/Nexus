@@ -18,7 +18,9 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Ageable;
@@ -53,10 +55,18 @@ import static gg.projecteden.utils.StringUtils.camelCase;
 public class MobHeads extends Feature implements Listener {
 	private static final int REQUIRED_SKIN_DAYS = 3;
 	private static final List<UUID> handledEntities = new ArrayList<>();
+	@Getter
+	@Setter
+	private static boolean debug;
 
 	@Override
 	public void onStart() {
 		MobHeadType.load();
+	}
+
+	public static void debug(String message) {
+		if (debug)
+			Nexus.log("[MobHeads] [DEBUG] " + message);
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -103,8 +113,8 @@ public class MobHeads extends Feature implements Listener {
 		final double finalChance = (chance + looting) * boost;
 		final double random = randomDouble(0, 100);
 		final boolean drop = random <= finalChance;
-		Nexus.debug("" +
-			"Player: " + player.getName() +
+		MobHeads.debug(
+			"\nPlayer: " + player.getName() +
 			"\n  Type: " + MobHeadConverter.encode(mobHead) +
 			"\n  Chance: " + chance +
 			"\n  Looting bonus: " + looting +

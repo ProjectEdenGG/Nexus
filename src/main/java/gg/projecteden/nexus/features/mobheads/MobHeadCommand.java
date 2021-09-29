@@ -57,6 +57,16 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Reloaded");
 	}
 
+	@Path("debug [enable]")
+	@Permission("group.admin")
+	void debug(Boolean enable) {
+		if (enable == null)
+			enable = !MobHeads.isDebug();
+
+		MobHeads.setDebug(enable);
+		send(PREFIX + "Debug " + (enable ? "&aenabled" : "&cdisabled"));
+	}
+
 	@Path("validate types")
 	@Permission("group.admin")
 	void validateTypes() {
