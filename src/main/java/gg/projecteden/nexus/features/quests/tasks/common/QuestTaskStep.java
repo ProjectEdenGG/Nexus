@@ -11,7 +11,7 @@ import lombok.Data;
 public abstract class QuestTaskStep<
 	TaskType extends QuestTask<TaskType, TaskStepType>,
 	TaskStepType extends QuestTaskStep<TaskType, TaskStepType>
-	> {
+> {
 	protected Interactable interactable;
 	protected Dialog dialog;
 	protected Dialog reminder;
