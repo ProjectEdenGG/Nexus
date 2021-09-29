@@ -2,17 +2,23 @@ package gg.projecteden.nexus.features.test;
 
 import gg.projecteden.nexus.features.particles.effects.DotEffect;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ColorType;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
-import org.bukkit.Material;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import static java.lang.Math.pow;
 
 @Permission("group.admin")
 public class CurveTestCommand extends CustomCommand {
@@ -21,106 +27,84 @@ public class CurveTestCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("start")
-	public void point1() {
-		start = location();
-		send("P1: " + StringUtils.getCoordinateString(start));
-		location().getBlock().setType(Material.RED_STAINED_GLASS);
+	private static final Map<UUID, BezierCurve> curves = new HashMap<>();
+
+	@NotNull
+	private BezierCurve curve() {
+		return curves.computeIfAbsent(uuid(), $ -> new BezierCurve());
 	}
 
-	@Path("control1")
-	public void point3() {
-		startControl = location();
-		send("P3: " + StringUtils.getCoordinateString(startControl));
-		location().getBlock().setType(Material.PINK_STAINED_GLASS);
+	private void dot(Location control, ColorType lightGreen) {
+		DotEffect.builder().player(player()).location(control).speed(0.1).ticks(TickTime.SECOND.x(10)).color(lightGreen.getBukkitColor()).start();
 	}
 
-	@Path("end")
-	public void point2() {
-		end = location();
-		send("P2: " + StringUtils.getCoordinateString(end));
-		location().getBlock().setType(Material.LIGHT_BLUE_STAINED_GLASS);
+	@Path("reset")
+	public void reset() {
+		curves.remove(uuid());
+		send(PREFIX + "Reset");
 	}
 
-	@Path("control2")
-	public void point4() {
-		endControl = location();
-		send("P4: " + StringUtils.getCoordinateString(endControl));
-		location().getBlock().setType(Material.BLUE_STAINED_GLASS);
+	@Path("add")
+	public void add() {
+		curve().add(location());
+		dot(location(), ColorType.LIGHT_GREEN);
+		send(PREFIX + "Point added");
 	}
 
-	@Path("showPoints")
-	void showPoints() {
-		start.getBlock().setType(Material.RED_STAINED_GLASS);
-		startControl.getBlock().setType(Material.PINK_STAINED_GLASS);
-		end.getBlock().setType(Material.LIGHT_BLUE_STAINED_GLASS);
-		endControl.getBlock().setType(Material.BLUE_STAINED_GLASS);
+	@Path("draw [--segments]")
+	void draw(@Arg("100") @Switch int segments) {
+		final BezierCurve curve = curve();
+		for (Location control : curve.controls)
+			dot(control, ColorType.LIGHT_GREEN);
+
+		final List<Location> points = curve.build(segments);
+
+		for (Location point : points)
+			dot(point, ColorType.PURPLE);
 	}
 
-	@Path("display <segments>")
-	public void display(int segments) {
-		startControl.getBlock().setType(Material.AIR);
-		endControl.getBlock().setType(Material.AIR);
-		start.getBlock().setType(Material.AIR);
-		end.getBlock().setType(Material.AIR);
+	public static class BezierCurve {
+		private final List<Location> controls = new ArrayList<>();
 
-		DotEffect.builder().player(player()).location(start).speed(0.1).ticks(TickTime.SECOND.x(10)).color(ColorType.LIGHT_RED.getBukkitColor()).start();
-		DotEffect.builder().player(player()).location(startControl).speed(0.1).ticks(TickTime.SECOND.x(10)).color(ColorType.PINK.getBukkitColor()).start();
-		DotEffect.builder().player(player()).location(end).speed(0.1).ticks(TickTime.SECOND.x(10)).color(ColorType.LIGHT_BLUE.getBukkitColor()).start();
-		DotEffect.builder().player(player()).location(endControl).speed(0.1).ticks(TickTime.SECOND.x(10)).color(ColorType.BLUE.getBukkitColor()).start();
-
-		List<Location> curve;
-		if (endControl != null)
-			curve = bezierCurve(segments, start, startControl, end, endControl);
-		else
-			curve = bezierCurve(segments, start, startControl, end);
-
-		for (Location point : curve) {
-			DotEffect.builder()
-					.player(player())
-					.location(point)
-					.speed(0.1)
-					.ticks(TickTime.SECOND.x(10))
-					.color(ColorType.PURPLE.getBukkitColor())
-					.start();
+		public static BezierCurve builder() {
+			return new BezierCurve();
 		}
-	}
-	static Location start, end, startControl, endControl;
 
-	public static Location bezierPoint(float t, Location start, Location control, Location end) {
-		float a = (1 - t) * (1 - t); // (1−t)^2
-		float b = 2 * (1 - t) * t; // 2(1−t)*t
-		float c = t * t; // t^2
-
-		return end.clone().multiply(a).add(control.clone().multiply(b)).add(start.clone().multiply(c));
-	}
-
-	public static Location bezierPoint(float t, Location start, Location startControl, Location end, Location endControl) {
-		float a = (1 - t) * (1 - t) * (1 - t); // (1−t)^3
-		float b = 3 * (1 - t) * (1 - t) * t; // 3(1−t)^2*t
-		float c = 3 * (1 - t) * t * t; // 3(1−t)*t^2
-		float d = t * t * t; // t^3
-
-		return start.clone().multiply(a).add(startControl.clone().multiply(b)).add(endControl.clone().multiply(c)).add(end.clone().multiply(d));
-
-	}
-
-	public static List<Location> bezierCurve(int segmentCount, Location start, Location control, Location end) {
-		List<Location> points = new ArrayList<>();
-		for (int i = 1; i < segmentCount; i++) {
-			float t = i / (float) segmentCount;
-			points.add(bezierPoint(t, start, control, end));
+		public BezierCurve add(Location location) {
+			controls.add(location);
+			return this;
 		}
-		return points;
-	}
 
-	public static List<Location> bezierCurve(int segmentCount, Location start, Location startControl, Location end, Location endControl) {
-		List<Location> points = new ArrayList<>();
-		for (int i = 1; i < segmentCount; i++) {
-			float t = i / (float) segmentCount;
-			points.add(bezierPoint(t, start, startControl, end, endControl));
+		public BezierCurve add(List<Location> locations) {
+			this.controls.addAll(locations);
+			return this;
 		}
-		return points;
+
+		public List<Location> build(int segments) {
+			return new ArrayList<>() {{
+				for (int i = 1; i < segments; i++)
+					add(bezier(i / (float) segments));
+			}};
+		}
+
+		private float binomial(float n, float k) {
+			var coeff = 1;
+			for (var i = n - k + 1; i <= n; i++) coeff *= i;
+			for (var i = 1; i <= k; i++) coeff /= i;
+			return coeff;
+		}
+
+		private Location bezier(float step) {
+			var size = controls.size() - 1;
+
+			final Location location = new Location(controls.get(0).getWorld(), 0, 0, 0);
+
+			for (int i = 0; i <= size; i++)
+				location.add(controls.get(i).clone().multiply(binomial(size, i) * pow((1 - step), (size - i)) * pow(step, i)));
+
+			return location;
+		}
+
 	}
 
 }
