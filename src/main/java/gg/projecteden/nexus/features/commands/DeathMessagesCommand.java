@@ -69,7 +69,7 @@ import static org.apache.commons.lang.StringUtils.countMatches;
 
 @NoArgsConstructor
 public class DeathMessagesCommand extends CustomCommand implements Listener {
-	private static final Pattern HEART_PATTERN = Pattern.compile("^[\u2764\u25A0]+$");
+	private static final Pattern HEART_PATTERN = Pattern.compile("[\u2764\u25A0]+");
 	private final DeathMessagesService service = new DeathMessagesService();
 
 	public DeathMessagesCommand(@NonNull CommandEvent event) {
@@ -233,8 +233,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 		JsonBuilder output = new JsonBuilder("☠ ", NamedTextColor.RED);
 
 		if (deathMessageRaw instanceof TranslatableComponent deathMessage) {
-			List<Component> args = deathMessage.args().stream().map(arg -> handleArgument(deathMessages, arg)).toList();
-			output.next(deathMessage.args(args));
+			output.next(deathMessage.args(deathMessage.args().stream().map(arg -> handleArgument(deathMessages, arg)).toList()));
 		} else {
 			Nexus.warn("Death message ("+deathMessageRaw.examinableName()+") is not translatable: " + AdventureUtils.asPlainText(deathMessageRaw));
 			output.next(deathMessageRaw);
@@ -252,35 +251,13 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	private Component handleArgument(DeathMessages player, Component component) {
-		Component originalComponent = component;
-
-		ShowEntity hover = getEntityHover(component);
-
-		String playerName;
-		// for some reason, these children differ depending on system. lexi's local test server triggers the
-		// first if block, the BN server triggered the 2nd, unsure of which eden fires
-		if (!component.children().isEmpty() && component.children().get(0) instanceof TextComponent textComponent)
-			playerName = textComponent.content();
-		else if (component instanceof TextComponent textComponent && !textComponent.content().isEmpty()) {
-			playerName = textComponent.content();
-			component = textComponent.content(""); // preserves hover text/click events but clears the content as we manually add it back it
-		} else {
-			return component;
-		}
-
-		Component finalComponent = cleanup(player, originalComponent, hover, playerName);
-
-		return component.children(Collections.singletonList(finalComponent));
-	}
-
 	private void discord(String deathString, Player player) {
 		// workaround for dumb Adventure bug (ProjectEdenGG/Issues#657)
 		if (deathString == null)
 			deathString = "☠ " + Nickname.of(player) + " died";
 		else {
 			deathString = ("☠ " + HEART_PATTERN.matcher(deathString).replaceAll("a mob"))
-					.replace(" " + player.getName() + " ", " " + Nickname.of(player) + " ");
+				.replace(" " + player.getName() + " ", " " + Nickname.of(player) + " ");
 
 			if (player.getKiller() != null)
 				deathString = deathString.replace(player.getKiller().getName(), Nickname.of(player.getKiller()));
@@ -293,6 +270,36 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 		for (Chatter recipient : StaticChannel.LOCAL.getChannel().getRecipients(chatter))
 			if (!MuteMenuUser.hasMuted(recipient.getOnlinePlayer(), MuteMenuItem.DEATH_MESSAGES))
 				recipient.sendMessage(player, output, MessageType.CHAT);
+	}
+
+	private Component handleArgument(DeathMessages player, Component component) {
+		Component originalComponent = component;
+
+		ShowEntity hover = getEntityHover(component);
+
+		String playerName = null;
+		for (Component child : component.children()) {
+			if (child instanceof TextComponent childText) {
+				final String content = childText.content();
+				if (!isNullOrEmpty(content)) {
+					playerName = content;
+					break;
+				}
+			}
+		}
+
+		if (playerName == null) {
+			if (component instanceof TextComponent textComponent && !textComponent.content().isEmpty()) {
+				playerName = textComponent.content();
+				component = textComponent.content(""); // preserves hover text/click events but clears the content as we manually add it back it
+			} else {
+				return component;
+			}
+		}
+
+		Component finalComponent = cleanup(player, originalComponent, hover, playerName);
+
+		return component.children(Collections.singletonList(finalComponent));
 	}
 
 	private Component cleanup(DeathMessages deathMessages, Component originalComponent, ShowEntity hover, String playerName) {
