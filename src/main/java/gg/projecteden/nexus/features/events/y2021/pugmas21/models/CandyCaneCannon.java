@@ -71,15 +71,15 @@ public class CandyCaneCannon implements Listener {
 	private enum CandyCane {
 		RED,
 		GREEN,
-		BLUE,
+		YELLOW,
 		;
 
 		private int customModelData() {
-			return ordinal() + 50;
+			return ordinal() + 100;
 		}
 
 		private ItemStack item() {
-			return new ItemBuilder(Material.STICK).customModelData(customModelData()).build();
+			return new ItemBuilder(Material.COOKIE).customModelData(customModelData()).build();
 		}
 
 		public static CandyCane of(ItemStack item) {
