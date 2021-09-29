@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.features.events.y2021.pugmas21;
 
+import gg.projecteden.nexus.features.commands.ArmorStandEditorCommand;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21Command.MultiModelStructure.Model;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.advent.AdventAnimation;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.advent.AdventMenu;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.CandyCaneCannon;
@@ -22,17 +24,33 @@ import gg.projecteden.nexus.models.pugmas21.Advent21Config.AdventPresent;
 import gg.projecteden.nexus.models.pugmas21.Advent21ConfigService;
 import gg.projecteden.nexus.models.pugmas21.Pugmas21User;
 import gg.projecteden.nexus.models.pugmas21.Pugmas21UserService;
+import gg.projecteden.nexus.utils.EntityUtils;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.LocationUtils.CardinalDirection;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.utils.TimeUtils.TickTime;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.util.Vector;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 import static gg.projecteden.utils.TimeUtils.shortDateFormat;
 
@@ -87,6 +105,104 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 			.test(true)
 			.build()
 			.start();
+	}
+
+	@Data
+	public static class MultiModelStructure {
+		private Location location;
+		private final List<Model> models = new ArrayList<>();
+
+		public static final double SEPARATOR = 7.5;
+
+		@Data
+		@RequiredArgsConstructor
+		public static class Model {
+			private final Map<BlockFace, Integer> modifiers;
+			private final int customModelData;
+			private BlockFace direction;
+
+			private ArmorStand armorStand;
+
+			public Model direction(BlockFace direction) {
+				this.direction = direction;
+				return this;
+			}
+
+			public Location modify(Location location) {
+				modifiers.forEach((direction, amount) -> location.add(direction.getDirection().multiply(SEPARATOR * amount)));
+				if (direction != null)
+					location.setYaw(CardinalDirection.of(direction).getYaw());
+				return location;
+			}
+
+			public void spawn(Location location) {
+				armorStand = ArmorStandEditorCommand.summon(modify(location.clone()), armorStand -> {
+					armorStand.setVisible(false);
+					armorStand.setItem(EquipmentSlot.HEAD, new ItemBuilder(Material.MINECART).customModelData(customModelData).build());
+				});
+			}
+		}
+
+		public static MultiModelStructure builder() {
+			return new MultiModelStructure();
+		}
+
+		public MultiModelStructure from(Location location) {
+			this.location = location;
+			return this;
+		}
+
+		public MultiModelStructure add(Map<BlockFace, Integer> modifier, Integer customModelData) {
+			models.add(new Model(modifier, customModelData));
+			return this;
+		}
+
+		public MultiModelStructure cardinal(Function<BlockFace, Model> function) {
+			for (BlockFace direction : CardinalDirection.blockFaces())
+				models.add(function.apply(direction));
+			return this;
+		}
+
+		public MultiModelStructure spawn() {
+			for (Model model : models)
+				model.spawn(location);
+			return this;
+		}
+	}
+
+	@Path("balloon spawn")
+	void balloon_spawn() {
+		getBalloonStructure().spawn();
+	}
+
+	private MultiModelStructure getBalloonStructure() {
+		return MultiModelStructure.builder()
+			.from(location().subtract(BlockFace.UP.getDirection().multiply(1.5)))
+			.add(Map.of(BlockFace.UP, 0), 31)
+			.add(Map.of(BlockFace.UP, 1), 32)
+			.add(Map.of(BlockFace.UP, 2), 33)
+			.cardinal(direction -> new Model(Map.of(BlockFace.UP, 1, direction, 1), 34).direction(direction))
+			.cardinal(direction -> new Model(Map.of(BlockFace.UP, 2, direction, 1), 35).direction(direction));
+	}
+
+	@Path("balloon move [--seconds]")
+	void balloon_move(@Arg("20") @Switch int seconds) {
+		final MultiModelStructure structure = getBalloonStructure().spawn();
+
+		player().setGravity(false);
+		int taskId = Tasks.repeat(0, 1, () -> {
+			final Vector west = BlockFace.WEST.getDirection().multiply(.1);
+			player().setVelocity(west);
+			for (Model model : structure.getModels()) {
+				EntityUtils.forcePacket(model.getArmorStand());
+				model.getArmorStand().teleport(model.getArmorStand().getLocation().add(west));
+			}
+		});
+
+		Tasks.wait(TickTime.SECOND.x(seconds), () -> {
+			Tasks.cancel(taskId);
+			player().setGravity(true);
+		});
 	}
 
 	@Path("candycane cannon")
