@@ -8,6 +8,8 @@ import gg.projecteden.nexus.features.scoreboard.ScoreboardLine;
 import gg.projecteden.nexus.features.socialmedia.commands.TwitchCommand;
 import gg.projecteden.nexus.models.afk.AFKUser;
 import gg.projecteden.nexus.models.afk.events.AFKEvent;
+import gg.projecteden.nexus.models.badge.BadgeUser.Badge;
+import gg.projecteden.nexus.models.badge.BadgeUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
@@ -138,7 +140,7 @@ public class Tab implements Listener {
 		public enum Modifier {
 			AFK(AFKUser::isAfk),
 			DND(player -> false), // TODO
-			LIVE(TwitchCommand::isStreaming),
+			LIVE(player -> new BadgeUserService().get(player).owns(Badge.TWITCH) && TwitchCommand.isStreaming(player)),
 			VANISHED(PlayerUtils::isVanished),
 			;
 
