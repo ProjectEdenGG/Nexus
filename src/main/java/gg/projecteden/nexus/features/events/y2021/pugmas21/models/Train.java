@@ -78,13 +78,6 @@ public class Train {
 	}
 
 	public static void schedule() {
-		final TrainBuilder train = Train.builder()
-			.location(Pugmas21.location(112.5, 54, 7.5, 90, 0))
-			.direction(BlockFace.WEST)
-			.seconds(60)
-			.speed(.3)
-			.test(false);
-
 		final Supplier<Integer> delay = () -> TickTime.MINUTE.x(randomInt(5, 10));
 
 		Tasks.wait(delay.get(), new AtomicReference<Runnable>() {{
@@ -92,11 +85,20 @@ public class Train {
 				if (!Pugmas21.anyActivePlayers())
 					return;
 
-				train.build().start();
+				getDefault().build().start();
 				Pugmas21.actionBar("&c&lA train is passing by...", TickTime.SECOND.x(10));
 				Tasks.wait(delay.get(), get());
 			});
 		}}.get());
+	}
+
+	public static TrainBuilder getDefault() {
+		return Train.builder()
+			.location(Pugmas21.location(112.5, 54, 7.5, 90, 0))
+			.direction(BlockFace.WEST)
+			.seconds(60)
+			.speed(.3)
+			.test(false);
 	}
 
 	public void start() {
@@ -120,7 +122,7 @@ public class Train {
 							.receiver(player)
 							.location(nearest.getLocation())
 							.category(SoundCategory.AMBIENT)
-							.volume(MathUtils.clamp((33 - player.getLocation().distance(nearest.getLocation())) * 0.06896551724, 0, 2))
+							.volume(MathUtils.clamp((63 - player.getLocation().distance(nearest.getLocation())) * .03448275862, 0, 2))
 							.pitch(.75)
 							.play();
 				})));

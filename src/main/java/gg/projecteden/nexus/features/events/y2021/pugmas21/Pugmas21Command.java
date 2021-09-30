@@ -77,13 +77,13 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 
 	@Path("train spawn <model>")
 	@Description("Spawn a train armor stand")
-	void train(int model) {
+	void train_spawn(int model) {
 		Train.armorStand(model, location());
 	}
 
 	@Path("train spawn all")
 	@Description("Spawn all train armor stands")
-	void train() {
+	void train_spawn_all() {
 		Train.builder()
 			.location(location())
 			.direction(player().getFacing())
@@ -91,9 +91,15 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 			.spawnArmorStands();
 	}
 
-	@Path("train start")
+	@Path("train start default")
 	@Description("Start a moving train")
-	void train(
+	void train_start_default() {
+		Train.getDefault().build().start();
+	}
+
+	@Path("train start here")
+	@Description("Start a moving train")
+	void train_start_here(
 		@Arg(".3") @Switch double speed,
 		@Arg("60") @Switch int seconds
 	) {
