@@ -93,6 +93,7 @@ public class ItemTagsCommand extends CustomCommand {
 	void setCondition(Condition condition) {
 		ItemStack tool = getToolRequired();
 		ItemTagsUtils.updateCondition(tool, condition);
+		Condition.setDurability(tool, condition);
 	}
 
 	@Path("reload")
