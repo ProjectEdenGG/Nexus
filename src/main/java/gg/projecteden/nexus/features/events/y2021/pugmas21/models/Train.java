@@ -6,6 +6,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.utils.MathUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Builder;
 import lombok.Getter;
@@ -119,7 +120,7 @@ public class Train {
 							.receiver(player)
 							.location(nearest.getLocation())
 							.category(SoundCategory.AMBIENT)
-							.volume(4)
+							.volume(MathUtils.clamp((33 - player.getLocation().distance(nearest.getLocation())) * 0.06896551724, 0, 2))
 							.pitch(.75)
 							.play();
 				})));
