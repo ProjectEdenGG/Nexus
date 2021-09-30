@@ -344,7 +344,6 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 			if (!channel.equalsIgnoreCase("titan:out"))
 				return;
 			String stringMessage = new String(message);
-			Nexus.log(stringMessage);
 			JsonObject json = new Gson().fromJson(stringMessage, JsonObject.class);
 			String titanVersion = json.has("titan") ? json.get("titan").toString() : null;
 			String saturnVersion = json.has("saturn") ? json.get("saturn").toString() : null;
