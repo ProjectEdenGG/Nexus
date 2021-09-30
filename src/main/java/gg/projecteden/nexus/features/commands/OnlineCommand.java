@@ -1,6 +1,8 @@
 package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.nexus.features.afk.AFK;
+import gg.projecteden.nexus.features.listeners.Tab.Presence;
+import gg.projecteden.nexus.features.listeners.Tab.Presence.Modifier;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -49,7 +51,7 @@ public class OnlineCommand extends CustomCommand {
 
 			JsonBuilder builder = new JsonBuilder(rank.getColoredName() + "s&f: ");
 
-			nerds.forEach(nerd -> getNameWithModifiers(nerd, builder));
+			nerds.forEach(nerd -> getNameWithPresence(nerd, builder));
 
 			send(builder);
 		});
@@ -63,31 +65,21 @@ public class OnlineCommand extends CustomCommand {
 		return PlayerUtils.canSee(player(), nerd.getOnlinePlayer()) && player().canSee(nerd.getOnlinePlayer());
 	}
 
-	void getNameWithModifiers(Nerd nerd, JsonBuilder builder) {
-		boolean vanished = PlayerUtils.isVanished(nerd.getOnlinePlayer());
-		boolean afk = AFK.get(nerd.getOnlinePlayer()).isAfk();
-
-		String modifiers = "";
-		if (vanished)
-			if (afk)
-				modifiers = "&7[AFK] [V] ";
-			else
-				modifiers = "&7[V] ";
-		else if (afk)
-			modifiers = "&7[AFK] ";
+	void getNameWithPresence(Nerd nerd, JsonBuilder builder) {
+		final Presence presence = Presence.of(nerd.getOnlinePlayer());
 
 		if (!builder.isInitialized())
 			builder.initialize();
 		else
 			builder.next("&f, ").group();
 
-		builder.next(modifiers + nerd.getColoredName())
+		builder.next(presence.getCharacter() + " " + nerd.getColoredName())
 				.command("/quickaction " + nerd.getName())
-				.hover(getInfo(nerd, modifiers))
+				.hover(getInfo(nerd, presence))
 				.group();
 	}
 
-	String getInfo(Nerd nerd, String modifiers) {
+	String getInfo(Nerd nerd, Presence presence) {
 		Player player = nerd.getOnlinePlayer();
 		Hours hours = new HoursService().get(player.getUniqueId());
 
@@ -101,7 +93,7 @@ public class OnlineCommand extends CustomCommand {
 		String totalHours = Timespan.of(hours.getTotal()).format();
 		String afk = "";
 
-		if (modifiers.contains("AFK")) {
+		if (presence.applies(Modifier.AFK)) {
 			AFKUser afkUser = AFK.get(player);
 			String timeAFK = Timespan.of(afkUser.getTime()).format();
 			afk = "&3AFK for: &e" + timeAFK + "\n \n";
