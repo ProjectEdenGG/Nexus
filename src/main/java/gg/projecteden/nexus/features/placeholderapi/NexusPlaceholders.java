@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.placeholderapi;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.listeners.Tab;
 import gg.projecteden.nexus.features.listeners.Tab.NameplateUtils;
 import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -61,8 +60,6 @@ public class NexusPlaceholders extends PlaceholderExpansion {
 
 			if (minigamer.isPlaying())
 				nameplate = minigamer.getColoredName();
-
-			nameplate = Tab.addStateTags(player, nameplate);
 
 			// TODO Should be fixed on Nameplate's side
 			if (NameplateUtils.NameplateType.hasEquippedNameplate(player.getUniqueId()))

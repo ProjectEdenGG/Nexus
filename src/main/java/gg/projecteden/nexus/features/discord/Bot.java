@@ -19,6 +19,7 @@ import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
+import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
 
@@ -79,6 +80,7 @@ public enum Bot {
 		final JDA jda = build()
 			.enableIntents(EnumSet.allOf(GatewayIntent.class))
 			.setMemberCachePolicy(MemberCachePolicy.ALL)
+			.enableCache(CacheFlag.ACTIVITY)
 			.build()
 			.awaitReady();
 

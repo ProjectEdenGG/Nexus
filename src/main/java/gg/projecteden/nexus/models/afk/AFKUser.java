@@ -169,6 +169,10 @@ public class AFKUser implements PlayerOwnedObject {
 			settings.put(setting, value);
 	}
 
+	public static boolean isAfk(Player player) {
+		return new AFKUserService().get(player).isAfk();
+	}
+
 	public void setMessage(String message) {
 		this.message = stripColor(message);
 	}

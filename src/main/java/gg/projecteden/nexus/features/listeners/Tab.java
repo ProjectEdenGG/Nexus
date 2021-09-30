@@ -1,16 +1,23 @@
 package gg.projecteden.nexus.features.listeners;
 
 import de.myzelyam.api.vanish.PlayerVanishStateChangeEvent;
-import gg.projecteden.nexus.features.afk.AFK;
+import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.resourcepack.FontFile.CustomCharacter;
+import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.scoreboard.ScoreboardLine;
+import gg.projecteden.nexus.features.socialmedia.commands.TwitchCommand;
+import gg.projecteden.nexus.models.afk.AFKUser;
 import gg.projecteden.nexus.models.afk.events.AFKEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange.PlayerRankChangeEvent;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import me.lexikiq.HasUniqueId;
 import net.luckperms.api.node.Node;
 import org.bukkit.Bukkit;
@@ -21,8 +28,11 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
@@ -60,15 +70,76 @@ public class Tab implements Listener {
 
 	public static String getFormat(Player player) {
 		String name = Nerd.of(player).getColoredName();
-		return addStateTags(player, name).trim();
+		return String.format(" %s %s ", Presence.of(player).getCharacter(), name);
 	}
 
-	public static String addStateTags(Player player, String name) {
-		if (AFK.get(player).isAfk())
-			name += " &7&o[AFK]";
-		if (Nerd.of(player).isVanished())
-			name += " &7&o[V]";
-		return name;
+	public static final List<Presence> PRESENCES = new ArrayList<>();
+
+	static {
+		ResourcePack.getLoader().thenRun(() -> {
+			System.out.println("ResourcePack.getFontFile().getProviders().size(): " + ResourcePack.getFontFile().getProviders().size());
+			for (CustomCharacter character : ResourcePack.getFontFile().getProviders()) {
+				final String file = character.getFile();
+				System.out.println("Character: " + file);
+				if (!file.contains("presence_"))
+					continue;
+
+				final String id = file.split("presence_")[1].replace(".png", "");
+				final Presence presence = new Presence(id, character.getChars().get(0));
+				PRESENCES.add(presence);
+			}
+		});
+	}
+
+	@Data
+	public static class Presence {
+		private final String id;
+		private final String character;
+
+		public boolean applies(Modifier modifier) {
+			return id.toUpperCase().contains(modifier.name());
+		}
+
+		public static Presence active() {
+			return PRESENCES.stream().filter(presence -> presence.getId().equals("active")).findFirst().orElse(new Presence("active", ""));
+		}
+
+		public static Presence of(Player player) {
+			presences:
+			for (Presence presence : PRESENCES) {
+				for (Modifier modifier : Modifier.values()) {
+					final boolean presenceAppliesModifier = presence.applies(modifier);
+					final boolean modifierAppliesPlayer = modifier.applies(player);
+					final boolean matches = presenceAppliesModifier != modifierAppliesPlayer;
+					Nexus.debug(presence.getId() + " - " + modifier.name() + " | " +
+						"presenceAppliesModifier: " + presenceAppliesModifier + " / " +
+						"modifierAppliesPlayer: " + modifierAppliesPlayer + " / " +
+						"matches: " + matches);
+					if (matches)
+						continue presences;
+				}
+
+				return presence;
+			}
+
+			Nexus.warn("Could not determine " + Nickname.of(player) + "'s presence");
+			return active();
+		}
+
+		@AllArgsConstructor
+		public enum Modifier {
+			AFK(AFKUser::isAfk),
+			DND(player -> false), // TODO
+			LIVE(TwitchCommand::isStreaming),
+			VANISHED(PlayerUtils::isVanished),
+			;
+
+			private Predicate<Player> predicate;
+
+			public boolean applies(Player player) {
+				return predicate.test(player);
+			}
+		}
 	}
 
 	@EventHandler
