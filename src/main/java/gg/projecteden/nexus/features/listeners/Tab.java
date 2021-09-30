@@ -109,10 +109,10 @@ public class Tab implements Listener {
 					final boolean presenceAppliesModifier = presence.applies(modifier);
 					final boolean modifierAppliesPlayer = modifier.applies(player);
 					final boolean matches = presenceAppliesModifier != modifierAppliesPlayer;
-					Nexus.debug(presence.getId() + " - " + modifier.name() + " | " +
-						"presenceAppliesModifier: " + presenceAppliesModifier + " / " +
-						"modifierAppliesPlayer: " + modifierAppliesPlayer + " / " +
-						"matches: " + matches);
+//					Nexus.debug(presence.getId() + " - " + modifier.name() + " | " +
+//						"presenceAppliesModifier: " + presenceAppliesModifier + " / " +
+//						"modifierAppliesPlayer: " + modifierAppliesPlayer + " / " +
+//						"matches: " + matches);
 					if (matches)
 						continue presences;
 				}
