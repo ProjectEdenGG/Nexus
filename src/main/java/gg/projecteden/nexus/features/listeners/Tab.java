@@ -70,7 +70,7 @@ public class Tab implements Listener {
 
 	public static String getFormat(Player player) {
 		String name = Nerd.of(player).getColoredName();
-		return String.format(" %s %s ", Presence.of(player).getCharacter(), name);
+		return String.format(" &f%s %s ", Presence.of(player).getCharacter(), name);
 	}
 
 	public static final List<Presence> PRESENCES = new ArrayList<>();
@@ -78,12 +78,11 @@ public class Tab implements Listener {
 	static {
 		ResourcePack.getLoader().thenRun(() -> {
 			for (CustomCharacter character : ResourcePack.getFontFile().getProviders()) {
-				final String file = character.getFile();
-				if (!file.contains("presence_"))
+				final String id = character.fileName();
+				if (!id.startsWith("presence_"))
 					continue;
 
-				final String id = file.split("presence_")[1].replace(".png", "");
-				final Presence presence = new Presence(id, character.getChars().get(0));
+				final Presence presence = new Presence(id, character.getChars().get(0), character.getDiscordId());
 				PRESENCES.add(presence);
 			}
 		});
@@ -93,13 +92,24 @@ public class Tab implements Listener {
 	public static class Presence {
 		private final String id;
 		private final String character;
+		private final String discordId;
 
 		public boolean applies(Modifier modifier) {
 			return id.toUpperCase().contains(modifier.name());
 		}
 
+		public String discord() {
+			return String.format("<:%s:%s>", id, discordId);
+		}
+
+		public boolean isActive() {
+			return id.equals(ACTIVE.getId());
+		}
+
+		public static final Presence ACTIVE = new Presence("presence_active", "", "892994697600040990");
+
 		public static Presence active() {
-			return PRESENCES.stream().filter(presence -> presence.getId().equals("active")).findFirst().orElse(new Presence("active", ""));
+			return PRESENCES.stream().filter(presence -> presence.getId().equals("active")).findFirst().orElse(ACTIVE);
 		}
 
 		public static Presence of(Player player) {

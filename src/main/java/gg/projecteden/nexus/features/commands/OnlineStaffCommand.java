@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.commands;
 
-import gg.projecteden.nexus.features.afk.AFK;
+import gg.projecteden.nexus.features.listeners.Tab.Presence;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -32,7 +32,7 @@ public class OnlineStaffCommand extends CustomCommand {
 			List<Nerd> nerds = rank.getOnlineNerds();
 			if (nerds.size() == 0) return;
 
-			send(rank.getColoredName() + "s&f: " + nerds.stream().filter(this::canSee).map(this::getNameWithModifiers).collect(Collectors.joining("&f, ")));
+			send(rank.getColoredName() + "s&f: " + nerds.stream().filter(this::canSee).map(this::getNameWithPresence).collect(Collectors.joining("&f, ")));
 		});
 		line();
 		send("&3View a full list of staff members with &c/staff");
@@ -44,19 +44,9 @@ public class OnlineStaffCommand extends CustomCommand {
 		return PlayerUtils.canSee(player(), nerd.getOnlinePlayer()) && player().canSee(nerd.getOnlinePlayer());
 	}
 
-	String getNameWithModifiers(Nerd nerd) {
-		boolean vanished = PlayerUtils.isVanished(nerd.getOnlinePlayer());
-		boolean afk = AFK.get(nerd.getOnlinePlayer()).isAfk();
-
-		String modifiers = "";
-		if (vanished)
-			if (afk)
-				modifiers = "&7[AFK] [V] ";
-			else
-				modifiers = "&7[V] ";
-		else if (afk)
-			modifiers = "&7[AFK] ";
-
-		return modifiers + nerd.getRank().getChatColor() + nerd.getName();
+	private String getNameWithPresence(Nerd nerd) {
+		final Presence presence = Presence.of(nerd.getOnlinePlayer());
+		final String name = nerd.getColoredName();
+		return (presence.isActive() ? "" : presence.getCharacter() + " ") + name;
 	}
 }

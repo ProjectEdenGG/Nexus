@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.discord;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.afk.AFK;
+import gg.projecteden.nexus.features.listeners.Tab.Presence;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.discord.DiscordUser;
@@ -225,12 +225,7 @@ public class Discord extends Feature {
 				.collect(Collectors.toList());
 
 		String topic = "Online nerds (" + players.size() + "): " + System.lineSeparator() + players.stream()
-				.map(player -> {
-					String name = Nickname.discordOf(player);
-					if (AFK.get(player).isAfk())
-						name += " _[AFK]_";
-					return name.trim();
-				})
+				.map(player -> Presence.of(player).discord() + " " + Nickname.discordOf(player).trim())
 				.collect(Collectors.joining(", " + System.lineSeparator()));
 
 		/*
@@ -259,14 +254,7 @@ public class Discord extends Feature {
 				.collect(Collectors.toList());
 
 		return "Online staff (" + players.size() + "): " + System.lineSeparator() + players.stream()
-				.map(player -> {
-					String name = Nickname.discordOf(player);
-					if (PlayerUtils.isVanished(player))
-						name += " _[V]_";
-					if (AFK.get(player).isAfk())
-						name += " _[AFK]_";
-					return name.trim();
-				})
+				.map(player -> Presence.of(player).discord() + " " + Nickname.discordOf(player).trim())
 				.collect(Collectors.joining(", " + System.lineSeparator()));
 	}
 

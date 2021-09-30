@@ -67,13 +67,14 @@ public class OnlineCommand extends CustomCommand {
 
 	void getNameWithPresence(Nerd nerd, JsonBuilder builder) {
 		final Presence presence = Presence.of(nerd.getOnlinePlayer());
+		final String name = nerd.getColoredName();
 
 		if (!builder.isInitialized())
 			builder.initialize();
 		else
 			builder.next("&f, ").group();
 
-		builder.next(presence.getCharacter() + " " + nerd.getColoredName())
+		builder.next((presence.isActive() ? "" : presence.getCharacter() + " ") + name)
 				.command("/quickaction " + nerd.getName())
 				.hover(getInfo(nerd, presence))
 				.group();
