@@ -109,6 +109,7 @@ public class Train {
 			new SoundBuilder("custom.train.whistle")
 				.receivers(Pugmas21.getAllPlayers())
 				.category(SoundCategory.AMBIENT)
+				.volume(0.5)
 				.play()));
 
 		spawnArmorStands();
