@@ -114,18 +114,17 @@ public class Train {
 		spawnArmorStands();
 
 		taskIds.add(Tasks.repeat(0, 1, this::move));
-		taskIds.add(Tasks.repeat(0, TickTime.SECOND.x(3.75), () ->
-				Pugmas21.getPlayers("trainsound").forEach(player -> {
-					final ArmorStand nearest = getNearestArmorStand(player);
-					if (nearest != null)
-						new SoundBuilder("custom.train.chug")
-							.receiver(player)
-							.location(nearest.getLocation())
-							.category(SoundCategory.AMBIENT)
-							.volume(MathUtils.clamp((63 - player.getLocation().distance(nearest.getLocation())) * .03448275862, 0, 2))
-							.pitch(.75)
-							.play();
-				})));
+		taskIds.add(Tasks.repeat(0, TickTime.SECOND, () ->
+			Pugmas21.getPlayers("trainsound").forEach(player -> {
+				final ArmorStand nearest = getNearestArmorStand(player);
+				if (nearest != null)
+					new SoundBuilder("custom.train.chug")
+						.receiver(player)
+						.location(nearest.getLocation())
+						.category(SoundCategory.AMBIENT)
+						.volume(MathUtils.clamp((63 - player.getLocation().distance(nearest.getLocation())) * .03448275862, 0, 2))
+						.play();
+			})));
 
 		taskIds.add(Tasks.wait(TickTime.SECOND.x(seconds), this::stop));
 	}
