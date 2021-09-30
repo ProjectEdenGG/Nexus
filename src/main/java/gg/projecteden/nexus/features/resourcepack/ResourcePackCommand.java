@@ -1,5 +1,8 @@
 package gg.projecteden.nexus.features.resourcepack;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import gg.projecteden.annotations.Async;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.admin.BashCommand;
@@ -31,6 +34,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.entity.ItemFrame;
@@ -43,6 +47,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.messaging.PluginMessageListener;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -62,6 +68,15 @@ import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
 @NoArgsConstructor
 public class ResourcePackCommand extends CustomCommand implements Listener {
 	private static final LocalResourcePackUserService service = new LocalResourcePackUserService();
+
+	static {
+		Bukkit.getMessenger().registerIncomingPluginChannel(Nexus.getInstance(), "titan:out", new VersionsChannelListener());
+	}
+
+	@Override
+	public void _shutdown() {
+		Bukkit.getMessenger().unregisterOutgoingPluginChannel(Nexus.getInstance(), "titan:out");
+	}
 
 	public ResourcePackCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -321,4 +336,24 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 			return BalloonColor.values()[(customModelData - 2) % 14];
 		}
 	}
+
+	public static class VersionsChannelListener implements PluginMessageListener {
+
+		@Override
+		public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, @NotNull byte[] message) {
+			if (!channel.equalsIgnoreCase("titan:out"))
+				return;
+			String stringMessage = new String(message);
+			Nexus.log(stringMessage);
+			JsonObject json = new Gson().fromJson(stringMessage, JsonObject.class);
+			String titanVersion = json.has("titan") ? json.get("titan").toString() : null;
+			String saturnVersion = json.has("saturn") ? json.get("saturn").toString() : null;
+			Nexus.log("Received Saturn/Titan updates from " + player.getName() + ". Saturn: " + saturnVersion + " Titan: " + titanVersion);
+			new LocalResourcePackUserService().edit(player, user -> {
+				user.setSaturnVersion(saturnVersion);
+				user.setTitanVersion(titanVersion);
+			});
+		}
+	}
+
 }
