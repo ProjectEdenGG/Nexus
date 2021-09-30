@@ -19,6 +19,7 @@ public class TwitterCommand extends CustomCommand {
 	}
 
 	static {
+		Twitter.connect();
 		if (Nexus.getEnv() == Env.PROD)
 			Tasks.repeatAsync(TickTime.MINUTE, TickTime.MINUTE.x(5), Twitter::lookForNewTweets);
 	}

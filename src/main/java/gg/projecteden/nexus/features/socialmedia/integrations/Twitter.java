@@ -19,7 +19,7 @@ import java.util.List;
 public class Twitter {
 	public static twitter4j.Twitter twitter;
 
-	static {
+	public static void connect() {
 		Tasks.async(() -> {
 			FileConfiguration config = Nexus.getInstance().getConfig();
 			ConfigurationBuilder twitterConfig = new ConfigurationBuilder();

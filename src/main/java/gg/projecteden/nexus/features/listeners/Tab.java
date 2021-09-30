@@ -41,7 +41,7 @@ import static gg.projecteden.nexus.utils.StringUtils.colorize;
 public class Tab implements Listener {
 
 	static {
-		Tasks.repeatAsync(TickTime.TICK, TickTime.SECOND.x(5), Tab::update);
+		Tasks.repeatAsync(TickTime.SECOND.x(5), TickTime.SECOND.x(5), Tab::update);
 	}
 
 	public static void update() {

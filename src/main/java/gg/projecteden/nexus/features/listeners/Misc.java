@@ -71,7 +71,6 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryAction;
@@ -120,9 +119,10 @@ public class Misc implements Listener {
 	}
 
 	@EventHandler
-	public void onHangingBreakByEntity(HangingBreakByEntityEvent event) {
-		if (event.getRemover() instanceof Projectile)
-			event.setCancelled(true);
+	public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+		if (event.getEntity() instanceof ItemFrame)
+			if (event.getDamager() instanceof Projectile)
+				event.setCancelled(true);
 	}
 
 	@EventHandler
