@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Color;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -131,8 +132,12 @@ public class RainbowArmor implements PlayerOwnedObject {
 	public static boolean isLeatherArmor(ItemStack item) {
 		if (isNullOrAir(item))
 			return false;
-		if (CustomModel.exists(item))
+
+		if (CustomModel.exists(item)) {
+			if (item.getType().equals(Material.LEATHER_HORSE_ARMOR))
+				return true;
 			return false;
+		}
 
 		return MaterialTag.ARMOR_LEATHER.isTagged(item.getType());
 	}
