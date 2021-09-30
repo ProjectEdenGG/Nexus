@@ -77,10 +77,8 @@ public class Tab implements Listener {
 
 	static {
 		ResourcePack.getLoader().thenRun(() -> {
-			System.out.println("ResourcePack.getFontFile().getProviders().size(): " + ResourcePack.getFontFile().getProviders().size());
 			for (CustomCharacter character : ResourcePack.getFontFile().getProviders()) {
 				final String file = character.getFile();
-				System.out.println("Character: " + file);
 				if (!file.contains("presence_"))
 					continue;
 
