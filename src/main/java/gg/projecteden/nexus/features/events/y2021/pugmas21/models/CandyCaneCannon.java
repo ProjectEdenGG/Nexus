@@ -86,7 +86,7 @@ public class CandyCaneCannon implements Listener {
 			if (isNullOrAir(item))
 				return null;
 
-			if (item.getType() != Material.STICK)
+			if (item.getType() != Material.COOKIE)
 				return null;
 
 			return of(CustomModelData.of(item));

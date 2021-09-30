@@ -22,11 +22,16 @@ public class RarityArgs {
 
 	boolean conflictingEnchants;
 	boolean incompatibleEnchants;
+	boolean uncraftableItem;
 
 	int customEnchantsSum = 0;
 
 	public boolean isCraftable() {
-		return customEnchantsSum <= 0 && !aboveVanillaEnchants && !conflictingEnchants && !incompatibleEnchants;
+		return customEnchantsSum <= 0
+			&& !aboveVanillaEnchants
+			&& !conflictingEnchants
+			&& !incompatibleEnchants
+			&& !uncraftableItem;
 	}
 
 	public int getTotalSum() {

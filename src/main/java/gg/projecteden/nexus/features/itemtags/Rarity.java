@@ -8,9 +8,11 @@ import lombok.Getter;
 import lombok.NonNull;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.block.Banner;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
@@ -103,7 +105,7 @@ public enum Rarity implements ITag {
 			args.setCustomEnchantsSum(getCustomEnchantsVal(itemStack, debugger));
 			ItemTags.debug(debugger, "    &3Sum: &e" + number(args.getCustomEnchantsSum()));
 
-			checkEnchantRules(itemStack, args, debugger);
+			checkCraftableRules(itemStack, args, debugger);
 		}
 
 		if (condition != null && condition != Condition.PRISTINE) {
@@ -241,9 +243,11 @@ public enum Rarity implements ITag {
 		return defaultValue;
 	}
 
-	private static void checkEnchantRules(ItemStack itemStack, RarityArgs args, Player debugger) {
-		Set<Enchantment> enchants = itemStack.getItemMeta().getEnchants().keySet();
+	private static void checkCraftableRules(ItemStack itemStack, RarityArgs args, Player debugger) {
+		ItemMeta itemMeta = itemStack.getItemMeta();
+		Set<Enchantment> enchants = itemMeta.getEnchants().keySet();
 
+		// Check compatible enchants
 		for (Enchantment enchant : enchants) {
 			if (!args.isIncompatibleEnchants() && !enchant.canEnchantItem(itemStack)) {
 				args.setIncompatibleEnchants(true);
@@ -251,6 +255,7 @@ public enum Rarity implements ITag {
 			}
 		}
 
+		// Check conflicting enchants
 		conflicts:
 		for (Enchantment enchant : enchants) {
 			for (Enchantment _enchant : enchants) {
@@ -262,6 +267,14 @@ public enum Rarity implements ITag {
 					break conflicts;
 				}
 			}
+		}
+
+		// Check shield banner pattern size
+		if (itemStack.getType().equals(Material.SHIELD)) {
+			BlockStateMeta blockStateMeta = (BlockStateMeta) itemMeta;
+			Banner banner = (Banner) blockStateMeta.getBlockState();
+			if (banner.getPatterns().size() > 6)
+				args.setUncraftableItem(true);
 		}
 	}
 
