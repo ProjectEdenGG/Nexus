@@ -7,7 +7,7 @@ import gg.projecteden.mongodb.serializers.LocalDateTimeConverter;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.features.discord.ReactionVoter;
-import gg.projecteden.nexus.features.socialmedia.SocialMedia;
+import gg.projecteden.nexus.features.socialmedia.integrations.Twitter;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.HttpUtils;
 import gg.projecteden.utils.DiscordId.Role;
@@ -127,7 +127,7 @@ public class TwitterData implements PlayerOwnedObject {
 							Response response = HttpUtils.callUrl(attachment.getUrl());
 
 							if (response.body() != null) {
-								UploadedMedia uploadedMedia = SocialMedia.getTwitter().tweets().uploadMedia(attachment.getFileName(), response.body().byteStream());
+								UploadedMedia uploadedMedia = Twitter.get().tweets().uploadMedia(attachment.getFileName(), response.body().byteStream());
 								mediaIds.add(uploadedMedia.getMediaId());
 							}
 						}
@@ -135,10 +135,10 @@ public class TwitterData implements PlayerOwnedObject {
 						statusUpdate.setMediaIds(mediaIds.stream().mapToLong(l -> l).toArray());
 					}
 
-					Status status = SocialMedia.getTwitter().tweets().updateStatus(statusUpdate);
+					Status status = Twitter.get().tweets().updateStatus(statusUpdate);
 
 					message.addReaction("twitter:829474002586173460").queue();
-					message.reply("Tweeted successfully: " + SocialMedia.getUrl(status)).queue();
+					message.reply("Tweeted successfully: " + Twitter.getUrl(status)).queue();
 
 					TwitterService service = new TwitterService();
 					TwitterData data = service.get0();

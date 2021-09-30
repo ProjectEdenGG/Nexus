@@ -1,18 +1,13 @@
 package gg.projecteden.nexus.features.socialmedia.commands;
 
+import gg.projecteden.annotations.Async;
+import gg.projecteden.nexus.features.socialmedia.integrations.Twitch;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.discord.DiscordUser;
-import gg.projecteden.nexus.models.discord.DiscordUserService;
-import gg.projecteden.utils.Utils;
+import gg.projecteden.nexus.models.socialmedia.SocialMediaUser;
 import lombok.NonNull;
-import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.entities.Activity.ActivityType;
-import net.dv8tion.jda.api.entities.Member;
-import org.bukkit.entity.Player;
-
-import java.util.List;
 
 public class TwitchCommand extends CustomCommand {
 
@@ -20,26 +15,20 @@ public class TwitchCommand extends CustomCommand {
 		super(event);
 	}
 
+	static {
+		Twitch.connect();
+	}
+
 	@Path("status <user>")
 	void status(DiscordUser user) {
-		final boolean streaming = isStreaming(user);
+		final boolean streaming = Twitch.isStreaming(user);
 		send(PREFIX + "User " + (streaming ? "&ais" : "is &cnot") + " &3streaming");
 	}
 
-	public static boolean isStreaming(Player player) {
-		return isStreaming(new DiscordUserService().get(player));
-	}
-
-	public static boolean isStreaming(DiscordUser user) {
-		final Member member = user.getMember();
-		if (member == null)
-			return false;
-
-		final List<Activity> activities = member.getActivities();
-		if (Utils.isNullOrEmpty(activities))
-			return false;
-
-		return activities.stream().anyMatch(activity -> activity.getType() == ActivityType.STREAMING);
+	@Async
+	@Path("api status <user>")
+	void status(SocialMediaUser user) {
+		Twitch.isStreaming(user).thenAccept(streaming -> send(PREFIX + "User " + (streaming ? "&ais" : "is &cnot") + " &3streaming"));
 	}
 
 }

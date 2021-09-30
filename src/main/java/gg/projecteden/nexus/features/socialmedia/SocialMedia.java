@@ -1,58 +1,21 @@
 package gg.projecteden.nexus.features.socialmedia;
 
-import gg.projecteden.annotations.Environments;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Discord;
-import gg.projecteden.nexus.framework.features.Feature;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.Env;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import twitter4j.Status;
-import twitter4j.Twitter;
-import twitter4j.TwitterFactory;
-import twitter4j.conf.ConfigurationBuilder;
 
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @NoArgsConstructor
-@Environments(Env.PROD)
-public class SocialMedia extends Feature implements Listener {
-
-	@Getter
-	private static Twitter twitter;
-
-	@Override
-	public void onStart() {
-		Tasks.async(() -> {
-			try {
-				FileConfiguration config = Nexus.getInstance().getConfig();
-				ConfigurationBuilder twitterConfig = new ConfigurationBuilder();
-
-				twitterConfig.setDebugEnabled(true)
-						.setOAuthConsumerKey(config.getString("tokens.twitter.consumerKey"))
-						.setOAuthConsumerSecret(config.getString("tokens.twitter.consumerSecret"))
-						.setOAuthAccessToken(config.getString("tokens.twitter.accessToken"))
-						.setOAuthAccessTokenSecret(config.getString("tokens.twitter.accessTokenSecret"));
-
-				twitter = new TwitterFactory(twitterConfig.build()).getInstance();
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		});
-	}
-
-	public static String getUrl(Status status) {
-		return "https://twitter.com/" + status.getUser().getScreenName() + "/status/" + status.getId();
-	}
+public class SocialMedia implements Listener {
 
 	public enum SocialMediaSite {
 		TWITTER("Twitter", ChatColor.of("#1da1f2"), "", "https://twitter.com", "https://twitter.com/%s"),

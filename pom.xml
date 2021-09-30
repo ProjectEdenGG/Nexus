@@ -287,6 +287,12 @@
             <artifactId>twitter4j-core</artifactId>
             <version>4.0.7</version>
         </dependency>
+        <!-- Twitch4J -->
+        <dependency>
+            <groupId>com.github.twitch4j</groupId>
+            <artifactId>twitch4j</artifactId>
+            <version>1.5.0</version>
+        </dependency>
         <!-- Google API -->
         <dependency>
             <groupId>com.google.api-client</groupId>

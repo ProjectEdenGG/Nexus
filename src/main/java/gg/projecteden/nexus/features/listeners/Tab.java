@@ -5,11 +5,12 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.FontFile.CustomCharacter;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.scoreboard.ScoreboardLine;
-import gg.projecteden.nexus.features.socialmedia.commands.TwitchCommand;
+import gg.projecteden.nexus.features.socialmedia.integrations.Twitch;
 import gg.projecteden.nexus.models.afk.AFKUserService;
 import gg.projecteden.nexus.models.afk.events.AFKEvent;
 import gg.projecteden.nexus.models.badge.BadgeUser.Badge;
 import gg.projecteden.nexus.models.badge.BadgeUserService;
+import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
@@ -131,7 +132,7 @@ public class Tab implements Listener {
 		public enum Modifier {
 			AFK(player -> new AFKUserService().get(player).isAfk()),
 			DND(player -> false), // TODO
-			LIVE(player -> new BadgeUserService().get(player).owns(Badge.TWITCH) && TwitchCommand.isStreaming(player)),
+			LIVE(player -> new BadgeUserService().get(player).owns(Badge.TWITCH) && Twitch.isStreaming(new DiscordUserService().get(player))),
 			VANISHED(player -> Nerd.of(player).isVanished()),
 			;
 
