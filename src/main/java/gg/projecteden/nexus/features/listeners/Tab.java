@@ -6,7 +6,7 @@ import gg.projecteden.nexus.features.resourcepack.FontFile.CustomCharacter;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.scoreboard.ScoreboardLine;
 import gg.projecteden.nexus.features.socialmedia.commands.TwitchCommand;
-import gg.projecteden.nexus.models.afk.AFKUser;
+import gg.projecteden.nexus.models.afk.AFKUserService;
 import gg.projecteden.nexus.models.afk.events.AFKEvent;
 import gg.projecteden.nexus.models.badge.BadgeUser.Badge;
 import gg.projecteden.nexus.models.badge.BadgeUserService;
@@ -14,7 +14,6 @@ import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange.PlayerRankChangeEvent;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -100,6 +99,10 @@ public class Tab implements Listener {
 			return id.toUpperCase().contains(modifier.name());
 		}
 
+		public boolean applies(Modifier modifier, Player player) {
+			return applies(modifier) == modifier.applies(player);
+		}
+
 		public String discord() {
 			return String.format("<:%s:%s>", id, discordId);
 		}
@@ -110,38 +113,26 @@ public class Tab implements Listener {
 
 		public static final Presence ACTIVE = new Presence("presence_active", "", "892994697600040990");
 
-		public static Presence active() {
-			return PRESENCES.stream().filter(presence -> presence.getId().equals("active")).findFirst().orElse(ACTIVE);
-		}
-
 		public static Presence of(Player player) {
 			presences:
 			for (Presence presence : PRESENCES) {
-				for (Modifier modifier : Modifier.values()) {
-					final boolean presenceAppliesModifier = presence.applies(modifier);
-					final boolean modifierAppliesPlayer = modifier.applies(player);
-					final boolean matches = presenceAppliesModifier != modifierAppliesPlayer;
-//					Nexus.debug(presence.getId() + " - " + modifier.name() + " | " +
-//						"presenceAppliesModifier: " + presenceAppliesModifier + " / " +
-//						"modifierAppliesPlayer: " + modifierAppliesPlayer + " / " +
-//						"matches: " + matches);
-					if (matches)
+				for (Modifier modifier : Modifier.values())
+					if (presence.applies(modifier, player))
 						continue presences;
-				}
 
 				return presence;
 			}
 
 			Nexus.warn("Could not determine " + Nickname.of(player) + "'s presence");
-			return active();
+			return ACTIVE;
 		}
 
 		@AllArgsConstructor
 		public enum Modifier {
-			AFK(AFKUser::isAfk),
+			AFK(player -> new AFKUserService().get(player).isAfk()),
 			DND(player -> false), // TODO
 			LIVE(player -> new BadgeUserService().get(player).owns(Badge.TWITCH) && TwitchCommand.isStreaming(player)),
-			VANISHED(PlayerUtils::isVanished),
+			VANISHED(player -> Nerd.of(player).isVanished()),
 			;
 
 			private Predicate<Player> predicate;
@@ -184,7 +175,6 @@ public class Tab implements Listener {
 
 		public static void update(HasUniqueId player) {
 			// TODO Player specific reload
-			PlayerUtils.runCommandAsConsole("nameplates reload");
 		}
 
 		public enum NameplateType {
