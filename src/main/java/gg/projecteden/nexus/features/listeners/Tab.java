@@ -117,7 +117,7 @@ public class Tab implements Listener {
 			presences:
 			for (Presence presence : PRESENCES) {
 				for (Modifier modifier : Modifier.values())
-					if (presence.applies(modifier, player))
+					if (!presence.applies(modifier, player))
 						continue presences;
 
 				return presence;
