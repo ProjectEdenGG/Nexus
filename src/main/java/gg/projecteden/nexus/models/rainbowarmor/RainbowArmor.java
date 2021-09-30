@@ -78,6 +78,7 @@ public class RainbowArmor implements PlayerOwnedObject {
 	public void stopArmor() {
 		Tasks.cancel(taskId);
 		removeColor();
+		enabled = false;
 	}
 
 	public void startArmor() {
@@ -92,6 +93,8 @@ public class RainbowArmor implements PlayerOwnedObject {
 			increment();
 			editArmor(this::color);
 		});
+
+		enabled = true;
 	}
 
 	public boolean canUse() {
