@@ -134,6 +134,8 @@ public class MuteMenuCommand extends CustomCommand {
 				contents.set(0, 8, ClickableItem.from(nameItem(Material.COMMAND_BLOCK, "&dSounds"), e -> open(player, PageType.SOUNDS)));
 
 				for (MuteMenuItem item : MuteMenuItem.values()) {
+					if (item == MuteMenuItem.QUEUP) // TODO QueUp
+						continue;
 					if (item.getDefaultVolume() != null)
 						continue;
 					if (!Strings.isNullOrEmpty(item.getPermission()) && !player.hasPermission(item.getPermission()))
