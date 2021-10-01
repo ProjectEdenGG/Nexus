@@ -37,6 +37,7 @@ public class DNDCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
+		DNDUser user = new DNDUserService().get(event.getPlayer());
 		if (user.isDnd())
 			PlayerUtils.send(user.getPlayer(), PREFIX + "You currently have Do Not Disturb mode &aenabled&3.");
 	}

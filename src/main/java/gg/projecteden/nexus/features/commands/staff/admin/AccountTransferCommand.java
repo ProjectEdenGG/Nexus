@@ -142,7 +142,6 @@ public class AccountTransferCommand extends CustomCommand {
 		@Override
 		protected void transfer(Alerts previous, Alerts current) {
 			previous.getHighlights().forEach(highlight -> current.getHighlights().add(highlight));
-			current.setMuted(previous.isMuted());
 
 			previous.getHighlights().clear();
 		}

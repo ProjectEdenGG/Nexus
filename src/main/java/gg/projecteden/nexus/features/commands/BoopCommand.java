@@ -8,6 +8,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
@@ -52,6 +53,9 @@ public class BoopCommand extends CustomCommand {
 
 		if (isSelf(booped))
 			error("You cannot boop yourself!");
+
+		if (MuteMenuUser.hasMuted(booped, MuteMenuCommand.MuteMenuProvider.MuteMenuItem.MESSAGES))
+			error(booped.getName() + " has boops disabled!");
 
 		if (Minigames.isMinigameWorld(booper.getWorld()))
 			error("You cannot boop in minigames!");

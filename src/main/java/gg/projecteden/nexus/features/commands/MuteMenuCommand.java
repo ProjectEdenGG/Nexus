@@ -68,6 +68,8 @@ public class MuteMenuCommand extends CustomCommand {
 			QUEUP("QueUp Song Updates", Material.MUSIC_DISC_MALL),
 			JUKEBOX("Custom Jukebox Songs", Material.JUKEBOX, List.of("Custom songs played via &c/jukebox")),
 			CHAT_GAMES("Chat Games", Material.PAPER),
+			TP_REQUESTS("Teleport Requests", Material.ENDER_PEARL),
+			MESSAGES("Messages/Boops", Material.BOOK),
 			// Sounds
 			FIRST_JOIN_SOUND("First Join", Material.GOLD_BLOCK, 50),
 			JOIN_QUIT_SOUNDS("Join/Quit", Material.NOTE_BLOCK, 50),
