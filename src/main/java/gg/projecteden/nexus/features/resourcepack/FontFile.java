@@ -14,6 +14,7 @@ public class FontFile {
 	public static class CustomCharacter {
 		private final String type;
 		private final String file;
+		private final boolean purchasable;
 		private final String discordId;
 		private final int height;
 		private final int ascent;
@@ -21,6 +22,10 @@ public class FontFile {
 
 		public String fileName() {
 			return StringUtils.listLast(file, "/").split("\\.")[0];
+		}
+
+		public String getChar() {
+			return chars.get(0);
 		}
 	}
 

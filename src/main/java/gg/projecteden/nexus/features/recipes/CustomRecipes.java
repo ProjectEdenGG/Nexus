@@ -47,7 +47,7 @@ public class CustomRecipes extends Feature implements Listener {
 	@Override
 	public void onStart() {
 		Nexus.registerListener(this);
-		Tasks.async(() -> ResourcePack.getLoader().thenRun(() -> {
+		ResourcePack.getLoader().thenRun(() -> Tasks.async(() -> {
 			registerDyes();
 			registerSlabs();
 			registerQuartz();

@@ -41,10 +41,6 @@ import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 public class Tab implements Listener {
 
-	static {
-		Tasks.repeatAsync(TickTime.SECOND.x(5), TickTime.SECOND.x(5), Tab::update);
-	}
-
 	public static void update() {
 		OnlinePlayers.getAll().forEach(Tab::update);
 	}
@@ -88,6 +84,8 @@ public class Tab implements Listener {
 				final Presence presence = new Presence(id, character.getChars().get(0), character.getDiscordId());
 				PRESENCES.add(presence);
 			}
+
+			Tasks.repeatAsync(0, TickTime.SECOND.x(5), Tab::update);
 		});
 	}
 
