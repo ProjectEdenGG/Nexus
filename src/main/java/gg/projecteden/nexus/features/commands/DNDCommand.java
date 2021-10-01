@@ -28,9 +28,9 @@ public class DNDCommand extends CustomCommand implements Listener {
 		service.save(user);
 
 		if (state)
-			send(PREFIX + "Your status is now set to Do Not Disturb! Make sure you manage what's muted in &e/mutemenu&3.");
+			send(PREFIX + "You have &aenabled Do Not Disturb mode! Make sure you manage what's muted in &e/mutemenu&3.");
 		else
-			send(PREFIX + "Your status is no longer set to Do Not Disturb!");
+			send(PREFIX + "You have &cdisabled Do Not Disturb mode!");
 	}
 
 	@EventHandler
