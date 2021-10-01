@@ -25,7 +25,6 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
-import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
@@ -364,15 +363,6 @@ public class Misc implements Listener {
 				ActionBarUtils.sendActionBar(player, CHAT_DISABLED_WARNING, WARNING_LENGTH_TICKS);
 			}
 		});
-	}
-
-	@EventHandler
-	public void onEnderDragonDeath(EntityDeathEvent event) {
-		if (!event.getEntityType().equals(EntityType.ENDER_DRAGON))
-			return;
-
-		if (RandomUtils.chanceOf(33))
-			event.getDrops().add(new ItemStack(Material.DRAGON_EGG));
 	}
 
 	@EventHandler
