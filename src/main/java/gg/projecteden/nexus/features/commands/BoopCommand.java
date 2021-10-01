@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands;
 
+import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
@@ -54,7 +55,7 @@ public class BoopCommand extends CustomCommand {
 		if (isSelf(booped))
 			error("You cannot boop yourself!");
 
-		if (MuteMenuUser.hasMuted(booped, MuteMenuCommand.MuteMenuProvider.MuteMenuItem.MESSAGES))
+		if (MuteMenuUser.hasMuted(booped, MuteMenuItem.MESSAGES))
 			error(booped.getName() + " has boops disabled!");
 
 		if (Minigames.isMinigameWorld(booper.getWorld()))

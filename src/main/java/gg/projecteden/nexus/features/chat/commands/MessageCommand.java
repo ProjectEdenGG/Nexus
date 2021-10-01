@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.chat.commands;
 
 import gg.projecteden.nexus.features.chat.Chat;
-import gg.projecteden.nexus.features.commands.MuteMenuCommand;
+import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -28,7 +28,7 @@ public class MessageCommand extends CustomCommand {
 		if (isSelf(to))
 			error("You cannot message yourself");
 
-		if (MuteMenuUser.hasMuted(to, MuteMenuCommand.MuteMenuProvider.MuteMenuItem.MESSAGES))
+		if (MuteMenuUser.hasMuted(to, MuteMenuItem.MESSAGES))
 			error(to.getName() + " has messages disabled!");
 
 		PrivateChannel dm = new PrivateChannel(chatter, new ChatterService().get(to));

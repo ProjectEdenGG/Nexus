@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.commands.poof;
 
-import gg.projecteden.nexus.features.commands.MuteMenuCommand;
+import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -24,7 +24,7 @@ public class PoofHereCommand extends CustomCommand {
 		if (isSelf(target))
 			error("You cannot poof to yourself");
 
-		if (MuteMenuUser.hasMuted(target, MuteMenuCommand.MuteMenuProvider.MuteMenuItem.TP_REQUESTS))
+		if (MuteMenuUser.hasMuted(target, MuteMenuItem.TP_REQUESTS))
 			error(target.getName() + " has teleport requests disabled!");
 
 		Poof request = new Poof(player(), target, Poof.PoofType.POOF_HERE);
