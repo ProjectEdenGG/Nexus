@@ -65,7 +65,7 @@ public class ChatManager {
 		if (!Rank.of(chatter.getOnlinePlayer()).isAdmin())
 			message = stripColor(message);
 
-		if (message.length() == 0)
+		if (message.isEmpty())
 			return;
 
 		if (channel == null) {

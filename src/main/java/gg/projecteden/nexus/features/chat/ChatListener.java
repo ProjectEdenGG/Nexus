@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.chat.events.PublicChatEvent;
 import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.ChatterService;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
 import org.bukkit.event.EventHandler;
@@ -39,6 +40,12 @@ public class ChatListener implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void onChat(ChatEvent event) {
 		Censor.process(event);
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onEmptyChat(ChatEvent event) {
+		if (StringUtils.isNullOrEmpty(event.getMessage()))
+			event.setCancelled(true);
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)

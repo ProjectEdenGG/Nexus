@@ -13,6 +13,7 @@ import gg.projecteden.nexus.models.contributor.ContributorService;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.particle.ParticleType;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.utils.EnumUtils;
@@ -45,7 +46,6 @@ public enum EventStoreItem {
 		public void onClick(Player player, EventStoreMenu currentMenu) {
 			player.closeInventory();
 			PlayerUtils.runCommand(player, "warp images");
-			// TODO Hologram & way to request image
 		}
 	},
 	HEADS(50, Material.PLAYER_HEAD) {
@@ -111,10 +111,15 @@ public enum EventStoreItem {
 			new EventStoreWingsProvider(currentMenu).open(player);
 		}
 	},
-	CHAT_EMOJIS(-1, Material.PAPER) {
+	CHAT_EMOJIS(5, Material.PAPER) {
 		@Override
 		public void onClick(Player player, EventStoreMenu currentMenu) {
-			// TODO
+			PlayerUtils.send(player, STORE_PREFIX + "Send custom emojis in chat! &f👀 💯 🔥 👍 👏 😍 😎");
+			PlayerUtils.send(player, STORE_PREFIX + new JsonBuilder("Browse the &c/emoji store")
+				.command("/emoji store")
+				.hover("Click to open the Emoji store")
+				.group()
+				.next("&3, or request your own via &c/ticket or &#5865F2#questions"));
 		}
 	},
 	SONGS(200, Material.JUKEBOX) {

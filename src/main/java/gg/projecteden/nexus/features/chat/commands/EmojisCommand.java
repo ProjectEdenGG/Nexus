@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.features.chat.commands;
 
+import gg.projecteden.nexus.features.chat.Chat;
+import gg.projecteden.nexus.features.chat.events.ChatEvent;
 import gg.projecteden.nexus.features.events.store.EventStoreItem;
 import gg.projecteden.nexus.features.menus.BookBuilder.WrittenBookMenu;
 import gg.projecteden.nexus.features.resourcepack.FontFile.CustomCharacter;
@@ -12,14 +14,19 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.emoji.EmojiUser;
 import gg.projecteden.nexus.models.emoji.EmojiUser.Emoji;
 import gg.projecteden.nexus.models.emoji.EmojiUserService;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import java.util.List;
@@ -84,7 +91,7 @@ public class EmojisCommand extends CustomCommand implements Listener {
 
 			picker.group()
 				.next(emoji.getEmoji())
-				.hover("&e" + emoji.getName(), "", "&eClick to buy")
+				.hover("&e" + emoji.getName(), "", "&eClick to purchase", "&3Price: &e" + EventStoreItem.CHAT_EMOJIS.getPrice() + " Event Tokens")
 				.command("/emoji buy " + emoji.getName())
 				.color(NamedTextColor.WHITE);
 
@@ -110,6 +117,35 @@ public class EmojisCommand extends CustomCommand implements Listener {
 		user.give(emoji);
 		service.save(user);
 		send(PREFIX + "Purchased &e" + emoji.getName() + " &f" + emoji.getEmoji() + "&3, use with &c/emoji picker");
+	}
+
+	@EventHandler
+	public void onChat(ChatEvent event) {
+		final Chatter chatter = event.getChatter();
+		String message = event.getMessage();
+
+		if (chatter == null) {
+			for (Emoji emoji : EMOJIS)
+				message = message.replaceAll(emoji.getEmoji(), "");
+		} else {
+			final EmojiUser user = new EmojiUserService().get(chatter);
+			if (!Rank.of(chatter).isAdmin())
+				for (Emoji emoji : EMOJIS) {
+					if (!message.contains(emoji.getEmoji()))
+						continue;
+					if (user.owns(emoji))
+						continue;
+
+					message = message.replaceAll(emoji.getEmoji(), "");
+				}
+		}
+
+		if (!message.equals(event.getMessage())) {
+			if (chatter != null)
+				Tasks.wait(1, () -> PlayerUtils.send(chatter, Chat.PREFIX + "&cYou do not own some of the emojis you used! &3Purchase in &c/emoji store"));
+
+			event.setMessage(message);
+		}
 	}
 
 	@ConverterFor(Emoji.class)
