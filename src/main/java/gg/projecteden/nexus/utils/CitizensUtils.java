@@ -3,6 +3,7 @@ package gg.projecteden.nexus.utils;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import lombok.Builder;
 import me.lexikiq.HasUniqueId;
@@ -144,13 +145,24 @@ public class CitizensUtils {
 		private final @Nullable ProtectedRegion region;
 		private final @Nullable World world;
 		private final @Nullable UUID owner;
+		private final @Nullable Rank rankGte;
+		private final @Nullable Rank rankLte;
 
 		private final @Nullable Integer radius;
 		private final @Nullable Location from;
 
 		private boolean filter(NPC npc) {
-			if (owner != null && !owner.equals(npc.getTrait(Owner.class).getOwnerId()))
-				return false;
+			final UUID ownerId = npc.getTrait(Owner.class).getOwnerId();
+			if (ownerId != null) {
+				if (owner != null && !owner.equals(ownerId))
+					return false;
+
+				if (rankGte != null && !Rank.of(ownerId).gte(rankGte))
+					return false;
+
+				if (rankLte != null && !Rank.of(ownerId).lte(rankLte))
+					return false;
+			}
 
 			if (spawned != null && (npc.getStoredLocation() == null || !npc.getTrait(Spawned.class).shouldSpawn()) && spawned)
 				return false;
