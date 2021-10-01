@@ -167,7 +167,7 @@ public class ModReviewCommand extends CustomCommand implements Listener {
 	}
 
 	@Permission("group.admin")
-	@Path("set notes <mod> [notes]")
+	@Path("set notes <mod> [notes...]")
 	void setNotes(Mod mod, String notes) {
 		mod.setNotes(notes);
 		save();
