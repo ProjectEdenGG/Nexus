@@ -38,8 +38,6 @@ public class AlertsCommand extends CustomCommand {
 				.next("&c /alerts delete <word or phrase>").suggest("/alerts delete ")
 				.newline()
 				.next("&c /alerts clear").suggest("/alerts clear")
-				.newline()
-				.next("&c /alerts <mute|unmute|toggle>").suggest("/alerts toggle")
 				.send(player());
 	}
 
@@ -111,24 +109,6 @@ public class AlertsCommand extends CustomCommand {
 		alerts.clear();
 		service.save(alerts);
 		send(PREFIX + "Cleared your alerts");
-	}
-
-	@Path("mute")
-	void mute() {
-		alerts.setMuted(true);
-		send(PREFIX + "Alerts muted");
-	}
-
-	@Path("unmute")
-	void unmute() {
-		alerts.setMuted(false);
-		send(PREFIX + "Alerts unmuted");
-	}
-
-	@Path("toggle")
-	void toggle() {
-		alerts.setMuted(!alerts.isMuted());
-		send(PREFIX + "Alerts " + (alerts.isMuted() ? "" : "un") + "muted");
 	}
 
 	@Path("sound")

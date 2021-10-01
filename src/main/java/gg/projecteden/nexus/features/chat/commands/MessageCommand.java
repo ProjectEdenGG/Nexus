@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.chat.commands;
 
 import gg.projecteden.nexus.features.chat.Chat;
+import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -8,6 +9,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.ChatterService;
 import gg.projecteden.nexus.models.chat.PrivateChannel;
+import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
 import lombok.NonNull;
 import org.bukkit.OfflinePlayer;
 
@@ -25,6 +27,9 @@ public class MessageCommand extends CustomCommand {
 	void message(OfflinePlayer to, String message) {
 		if (isSelf(to))
 			error("You cannot message yourself");
+
+		if (MuteMenuUser.hasMuted(to, MuteMenuItem.MESSAGES))
+			error(to.getName() + " has messages disabled!");
 
 		PrivateChannel dm = new PrivateChannel(chatter, new ChatterService().get(to));
 		if (isNullOrEmpty(message))

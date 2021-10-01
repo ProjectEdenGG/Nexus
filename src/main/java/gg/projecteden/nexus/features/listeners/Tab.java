@@ -11,6 +11,7 @@ import gg.projecteden.nexus.models.afk.events.AFKEvent;
 import gg.projecteden.nexus.models.badge.BadgeUser.Badge;
 import gg.projecteden.nexus.models.badge.BadgeUserService;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
+import gg.projecteden.nexus.models.dnd.DNDUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
@@ -131,7 +132,7 @@ public class Tab implements Listener {
 		@AllArgsConstructor
 		public enum Modifier {
 			AFK(player -> new AFKUserService().get(player).isAfk()),
-			DND(player -> false), // TODO
+			DND(player -> new DNDUserService().get(player).isDnd()),
 			LIVE(player -> new BadgeUserService().get(player).owns(Badge.TWITCH) && Twitch.isStreaming(new DiscordUserService().get(player))),
 			VANISHED(player -> Nerd.of(player).isVanished()),
 			;

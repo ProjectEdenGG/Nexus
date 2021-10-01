@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands.poof;
 
+import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -7,6 +8,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
+import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.poof.Poof;
@@ -60,6 +62,9 @@ public class PoofCommand extends CustomCommand {
 
 		if (!canSee(player(), target))
 			throw new PlayerNotOnlineException(target);
+
+		if (MuteMenuUser.hasMuted(target, MuteMenuItem.TP_REQUESTS))
+			error(target.getName() + " has teleport requests disabled!");
 
 		Location targetLocation = Nerd.of(target).getLocation();
 		World targetWorld = targetLocation.getWorld();
