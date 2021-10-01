@@ -31,15 +31,16 @@ public class BoopCommand extends CustomCommand {
 	@Description("boop all players")
 	@Permission("group.admin")
 	void boopAll(String message, @Switch(shorthand = 'a') boolean anonymous) {
-		final List<Player> players = OnlinePlayers.where().viewer(player()).get().stream()
-			.filter(player -> !isSelf(player) && !Minigames.isMinigameWorld(player.getWorld()))
-			.toList();
+		final List<Player> players = OnlinePlayers.where().viewer(player()).get().stream().toList();
 
 		if (players.isEmpty())
 			error("No players to boop");
 
-		for (Player player : players)
-			run(player(), player, message, anonymous);
+		for (Player player : players) {
+			try {
+				run(player(), player, message, anonymous);
+			} catch (Exception ignore) {}
+		}
 	}
 
 	@Path("<player> [message...] [--anonymous]")
@@ -55,7 +56,7 @@ public class BoopCommand extends CustomCommand {
 		if (isSelf(booped))
 			error("You cannot boop yourself!");
 
-		if (MuteMenuUser.hasMuted(booped, MuteMenuItem.MESSAGES))
+		if (MuteMenuUser.hasMuted(booped, MuteMenuItem.BOOPS))
 			error(booped.getName() + " has boops disabled!");
 
 		if (Minigames.isMinigameWorld(booper.getWorld()))
