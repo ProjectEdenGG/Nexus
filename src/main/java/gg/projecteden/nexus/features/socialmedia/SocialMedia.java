@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.socialmedia;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Discord;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -16,6 +17,7 @@ import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @NoArgsConstructor
 public class SocialMedia implements Listener {
+	public static final String PREFIX = StringUtils.getPrefix("SocialMedia");
 
 	public enum SocialMediaSite {
 		TWITTER("Twitter", ChatColor.of("#1da1f2"), "", "https://twitter.com", "https://twitter.com/%s"),
