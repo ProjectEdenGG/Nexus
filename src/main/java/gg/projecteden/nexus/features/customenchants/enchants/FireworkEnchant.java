@@ -2,15 +2,18 @@ package gg.projecteden.nexus.features.customenchants.enchants;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.CustomEnchant;
+import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.FireworkLauncher;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.RandomUtils;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -39,6 +42,15 @@ public class FireworkEnchant extends CustomEnchant implements Listener {
 
 		int level = getLevel(bow);
 		if (level == 0)
+			return;
+
+		if (!(event.getEntity() instanceof Player player))
+			return;
+
+		if (!event.getBow().equals(player.getInventory().getItem(event.getHand())))
+			return;
+
+		if (!new CooldownService().check(player, "fireworkbow", TickTime.SECOND))
 			return;
 
 		int chance = Math.max(100 - (5 + (5 * level)), 0);
