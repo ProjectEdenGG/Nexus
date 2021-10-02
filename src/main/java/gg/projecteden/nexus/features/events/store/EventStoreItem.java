@@ -41,13 +41,13 @@ import static gg.projecteden.utils.StringUtils.prettyMoney;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public enum EventStoreItem {
-	CUSTOM_PAINTINGS(-1, Material.PAINTING) {
+	CUSTOM_PAINTINGS(40, Material.PAINTING) {
 		@Override
 		public List<String> getLore() {
 			return List.of(
 				"&eChoose from over 60 pre-imported images or request your own to hang on your wall",
 				"",
-				"&6Price:&e 40 tokens per frame"
+				"&6Price:&e " + getPrice() + " tokens per frame"
 			);
 		}
 
@@ -68,7 +68,7 @@ public enum EventStoreItem {
 		public List<String> getLore() {
 			return List.of("&eChoose from over 25,000 heads to decorate your builds",
 				"",
-				"&6Price:&e 50 tokens per head");
+				"&6Price:&e " + getPrice() + " tokens per head");
 		}
 
 		@Override
@@ -87,7 +87,7 @@ public enum EventStoreItem {
 		public List<String> getLore() {
 			return List.of("&eAnimated heads to express your emotions!",
 				"",
-				"&6Price:&e 75 tokens per emote");
+				"&6Price:&e " + getPrice() + " tokens per emote");
 		}
 
 		@Override
@@ -109,7 +109,7 @@ public enum EventStoreItem {
 		public List<String> getLore() {
 			return List.of("&eCustomizable particle shapes and designs",
 				"",
-				"&6Price:&e 75 tokens per particle");
+				"&6Price:&e " + getPrice() + " tokens per particle");
 		}
 
 		@Override
@@ -131,7 +131,7 @@ public enum EventStoreItem {
 		public List<String> getLore() {
 			return List.of("&eParticle wings with customizable styles and colors",
 				"",
-				"&6Price:&e 75 tokens per style");
+				"&6Price:&e " + getPrice() + " tokens per style");
 		}
 
 		@Override
@@ -153,7 +153,7 @@ public enum EventStoreItem {
 		public List<String> getLore() {
 			return List.of("&eSend custom emojis in chat!", "&f👀 💯 🔥 👍 👏 😍 😎",
 				"",
-				"&6Price:&e 5 tokens per emoji");
+				"&6Price:&e " + getPrice() + " tokens per emoji");
 		}
 
 		@Override
@@ -172,7 +172,7 @@ public enum EventStoreItem {
 		protected List<String> getLore() {
 			return List.of("&ePlay custom noteblock songs from anywhere",
 				"",
-				"&6Price:&e 200 tokens per song");
+				"&6Price:&e " + getPrice() + " tokens per song");
 		}
 
 		@Override
@@ -181,14 +181,12 @@ public enum EventStoreItem {
 			player.closeInventory();
 		}
 	},
-	STORE_CREDIT(-1, Material.PAPER) {
-		private static final int TOKENS_PER_USD = 100;
-
+	STORE_CREDIT(100, Material.PAPER) {
 		@Override
 		protected List<String> getLore() {
 			return List.of("&eConvert Event Tokens into coupons for the &c/store",
 				"",
-				"&6Price:&e 100 tokens per dollar");
+				"&6Price:&e " + getPrice() + " tokens per dollar");
 		}
 
 		@Override
@@ -204,7 +202,7 @@ public enum EventStoreItem {
 					}
 
 					final double usd = convertToUSD(line);
-					final int price = (int) (usd * TOKENS_PER_USD);
+					final int price = (int) (usd * getPrice());
 
 					if (usd < 1)
 						throw new InvalidInputException("Amount must be $1 or more");
