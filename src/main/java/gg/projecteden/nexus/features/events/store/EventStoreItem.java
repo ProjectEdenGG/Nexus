@@ -43,6 +43,11 @@ import static gg.projecteden.utils.StringUtils.prettyMoney;
 public enum EventStoreItem {
 	IMAGES(-1, Material.PAINTING) {
 		@Override
+		public List<String> getLore() {
+			return List.of("&eChoose from over 60 pre-imported images or request your own to hang on your wall");
+		}
+
+		@Override
 		public void onClick(Player player, EventStoreMenu currentMenu) {
 			player.closeInventory();
 			PlayerUtils.runCommand(player, "warp images");
@@ -56,6 +61,11 @@ public enum EventStoreItem {
 		}
 
 		@Override
+		public List<String> getLore() {
+			return List.of("&eChoose from over 25,000 heads to decorate your builds");
+		}
+
+		@Override
 		public void onClick(Player player, EventStoreMenu currentMenu) {
 			runCommandAsOp(player, "hdb");
 		}
@@ -65,6 +75,11 @@ public enum EventStoreItem {
 		@NotNull
 		public ItemBuilder getRawDisplayItem() {
 			return ItemBuilder.fromHeadId("537");
+		}
+
+		@Override
+		public List<String> getLore() {
+			return List.of("&eAnimated heads to express your emotions!");
 		}
 
 		@Override
@@ -83,6 +98,11 @@ public enum EventStoreItem {
 	},
 	PARTICLES(75, Material.REDSTONE) {
 		@Override
+		public List<String> getLore() {
+			return List.of("&eCustomizable particle shapes and designs");
+		}
+
+		@Override
 		public boolean canView(Player player) {
 			for (ParticleType type : EnumUtils.valuesExcept(ParticleType.class, ParticleType.WINGS))
 				if (!type.canBeUsedBy(player))
@@ -97,6 +117,11 @@ public enum EventStoreItem {
 		}
 	},
 	WINGS(75, Material.ELYTRA) {
+		@Override
+		public List<String> getLore() {
+			return List.of("&eParticle wings with customizable styles and colors");
+		}
+
 		@Override
 		public boolean canView(Player player) {
 			for (WingStyle style : WingStyle.values())
@@ -113,6 +138,11 @@ public enum EventStoreItem {
 	},
 	CHAT_EMOJIS(5, Material.PAPER) {
 		@Override
+		public List<String> getLore() {
+			return List.of("&eSend custom emojis in chat!", "&f👀 💯 🔥 👍 👏 😍 😎");
+		}
+
+		@Override
 		public void onClick(Player player, EventStoreMenu currentMenu) {
 			PlayerUtils.send(player, STORE_PREFIX + "Send custom emojis in chat! &f👀 💯 🔥 👍 👏 😍 😎");
 			PlayerUtils.send(player, STORE_PREFIX + new JsonBuilder("Browse the &c/emoji store")
@@ -124,6 +154,11 @@ public enum EventStoreItem {
 	},
 	SONGS(200, Material.JUKEBOX) {
 		@Override
+		protected List<String> getLore() {
+			return List.of("&ePlay custom noteblock songs from anywhere");
+		}
+
+		@Override
 		public void onClick(Player player, EventStoreMenu currentMenu) {
 			runCommand(player, "jukebox store");
 			player.closeInventory();
@@ -131,6 +166,11 @@ public enum EventStoreItem {
 	},
 	STORE_CREDIT(-1, Material.PAPER) {
 		private static final int TOKENS_PER_USD = 100;
+
+		@Override
+		protected List<String> getLore() {
+			return List.of("&eConvert Event Tokens into coupons for the &c/store");
+		}
 
 		@Override
 		public void onClick(Player player, EventStoreMenu currentMenu) {
