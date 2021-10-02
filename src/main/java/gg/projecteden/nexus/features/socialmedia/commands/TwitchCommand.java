@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.discord.DiscordUser;
+import gg.projecteden.nexus.models.socialmedia.SocialMediaUserService;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -33,13 +34,13 @@ public class TwitchCommand extends CustomCommand implements Listener {
 	@Path("api status <user>")
 	@Permission("group.admin")
 	void status(DiscordUser user) {
-		final boolean streaming = Twitch.isStreaming(user.getUuid());
+		final boolean streaming = new SocialMediaUserService().get(user.getUuid()).isStreaming();
 		send(PREFIX + "User " + (streaming ? "&ais" : "is &cnot") + " &3streaming");
 	}
 
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
-		Tasks.async(() -> Twitch.checkStreaming(event.getPlayer().getUniqueId()));
+		Tasks.async(() -> SocialMedia.checkStreaming(event.getPlayer().getUniqueId()));
 	}
 
 }

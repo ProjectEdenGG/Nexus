@@ -35,6 +35,8 @@ public class SocialMediaUser implements PlayerOwnedObject {
 	private Map<SocialMediaSite, Connection> connections = new HashMap<>();
 	private boolean mature;
 
+	private boolean streaming;
+
 	public Connection getConnection(SocialMediaSite site) {
 		return connections.get(site);
 	}
