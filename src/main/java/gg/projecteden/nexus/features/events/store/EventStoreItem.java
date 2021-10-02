@@ -136,7 +136,7 @@ public enum EventStoreItem {
 			new EventStoreWingsProvider(currentMenu).open(player);
 		}
 	},
-	CHAT_EMOJIS(5, Material.PAPER) {
+	CHAT_EMOJIS(5, Material.MAP, 1000) {
 		@Override
 		public List<String> getLore() {
 			return List.of("&eSend custom emojis in chat!", "&f👀 💯 🔥 👍 👏 😍 😎");
