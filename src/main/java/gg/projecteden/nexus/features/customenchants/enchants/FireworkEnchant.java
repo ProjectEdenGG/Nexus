@@ -41,8 +41,8 @@ public class FireworkEnchant extends CustomEnchant implements Listener {
 		if (level == 0)
 			return;
 
-		int chance = 15 + (5 * level);
-		if (!RandomUtils.chanceOf(chance))
+		int chance = Math.max(100 - (10 * level), 0);
+		if (RandomUtils.chanceOf(chance))
 			return;
 
 		AtomicInteger lifeTicks = new AtomicInteger(DURATION + level);
