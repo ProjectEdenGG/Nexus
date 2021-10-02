@@ -41,7 +41,7 @@ import static gg.projecteden.utils.StringUtils.prettyMoney;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public enum EventStoreItem {
-	IMAGES(-1, Material.PAINTING) {
+	CUSTOM_PAINTINGS(-1, Material.PAINTING) {
 		@Override
 		public List<String> getLore() {
 			return List.of("&eChoose from over 60 pre-imported images or request your own to hang on your wall");
@@ -53,7 +53,7 @@ public enum EventStoreItem {
 			PlayerUtils.runCommand(player, "warp images");
 		}
 	},
-	HEADS(50, Material.PLAYER_HEAD) {
+	DECORATION_HEADS(50, Material.PLAYER_HEAD) {
 		@Override
 		@NotNull
 		public ItemBuilder getRawDisplayItem() {

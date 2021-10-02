@@ -53,7 +53,7 @@ public class EventStoreListener implements Listener {
 			final WorldGroup worldGroup = WorldGroup.of(player);
 			final Rank rank = Rank.of(player);
 
-			int price = EventStoreItem.HEADS.getPrice();
+			int price = EventStoreItem.DECORATION_HEADS.getPrice();
 
 			if (rank.isSeniorStaff())
 				return;

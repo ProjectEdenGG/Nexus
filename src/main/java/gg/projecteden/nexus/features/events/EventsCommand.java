@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.events;
 
 import gg.projecteden.annotations.Async;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.store.EventStoreListener;
 import gg.projecteden.nexus.features.events.store.models.EventStoreImage;
 import gg.projecteden.nexus.features.events.store.providers.EventStoreProvider;
@@ -16,7 +15,6 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.utils.Env;
 import lombok.NonNull;
 
 import java.util.List;
@@ -44,9 +42,6 @@ public class EventsCommand extends CustomCommand {
 
 	@Path("store")
 	void store() {
-		if (Nexus.getEnv() == Env.PROD && !isStaff())
-			error("Coming Soon™");
-
 		new EventStoreProvider().open(player());
 	}
 
