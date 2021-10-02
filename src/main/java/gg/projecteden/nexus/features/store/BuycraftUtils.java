@@ -53,7 +53,7 @@ public class BuycraftUtils {
 		private final boolean expire_never = true;
 		private final double minimum = 0;
 		private final boolean redeem_unlimited = false;
-		private final String start_date = LocalDate.now().format(ISO_LOCAL_DATE);
+		private final String start_date = LocalDate.now().plusDays(-1).format(ISO_LOCAL_DATE);
 
 		public CouponCreator(Contributor user, double amount) {
 			this.username = user.getName();
