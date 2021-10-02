@@ -101,6 +101,7 @@ public class WitherArmorListener implements Listener {
 		wc.setVelocity(velocity.multiply(.6));
 		wc.setIsIncendiary(false);
 		wc.setYield(0f);
+		player.getWorld().playSound(player.getLocation(), Sound.ENTITY_WITHER_SHOOT, 1f, 1f);
 		Tasks.wait(TimeUtils.TickTime.SECOND.x(1.5), wc::remove);
 	}
 
