@@ -41,7 +41,7 @@ public class FireworkEnchant extends CustomEnchant implements Listener {
 		if (level == 0)
 			return;
 
-		int chance = Math.max(100 - (10 * level), 0);
+		int chance = Math.max(100 - (5 + (5 * level)), 0);
 		if (RandomUtils.chanceOf(chance))
 			return;
 
