@@ -86,7 +86,7 @@ public class NearCommand extends CustomCommand {
 		return nearbyPlayers;
 	}
 
-	static private long getDistance(@Arg("self") Player player, Player _player) {
+	static private long getDistance(Player player, Player _player) {
 		return Math.round(player.getLocation().distance(_player.getLocation()));
 	}
 
