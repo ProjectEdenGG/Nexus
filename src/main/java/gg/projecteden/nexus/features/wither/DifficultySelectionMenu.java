@@ -6,6 +6,7 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.wither.models.WitherFight;
+import gg.projecteden.nexus.models.witherarena.WitherArenaConfigService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -45,7 +46,8 @@ public class DifficultySelectionMenu extends MenuUtils implements InventoryProvi
 				fight.setParty(new ArrayList<>(List.of(player.getUniqueId())));
 				WitherChallenge.currentFight = fight;
 				player.closeInventory();
-				WitherChallenge.queue.remove(player.getUniqueId());
+
+				new WitherArenaConfigService().edit0(config -> config.getQueue().remove(player.getUniqueId()));
 				JsonBuilder builder = new JsonBuilder(WitherChallenge.PREFIX + "You have challenge the wither in " + difficulty.getTitle() + " &3mode. ");
 				builder.next("&3You can invite players to fight the Wither with you with &c/wither invite <player>&3.").suggest("/wither invite ").group();
 				builder.next(" &3Once you are ready, ").next("&e&lClick Here to Start").command("/wither start").hover("&eThis will teleport you\n&eto the wither arena.");

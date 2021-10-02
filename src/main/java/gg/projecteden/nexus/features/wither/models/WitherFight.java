@@ -13,7 +13,6 @@ import gg.projecteden.nexus.features.warps.Warps;
 import gg.projecteden.nexus.features.wither.BeginningCutscene;
 import gg.projecteden.nexus.features.wither.WitherChallenge;
 import gg.projecteden.nexus.features.wither.WitherChallenge.Difficulty;
-import gg.projecteden.nexus.features.wither.WitherCommand;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.EntityUtils;
@@ -81,6 +80,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import static gg.projecteden.nexus.models.witherarena.WitherArenaConfig.isBeta;
 import static gg.projecteden.nexus.utils.Utils.tryCalculate;
 import static gg.projecteden.utils.StringUtils.plural;
 
@@ -113,7 +113,7 @@ public abstract class WitherFight implements Listener {
 			JsonBuilder message = new JsonBuilder(WitherChallenge.PREFIX + "The fight has started! &e&lClick here to spectate")
 				.command("/wither spectate").hover("&eYou will be teleported to the wither arena");
 
-			if (WitherCommand.betaMode)
+			if (isBeta())
 				Broadcast.staffIngame().message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
 			else
 				Broadcast.ingame().message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
@@ -381,7 +381,7 @@ public abstract class WitherFight implements Listener {
 				(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3have" : " &3has") +
 				" lost to the Wither in " + getDifficulty().getTitle() + " &3mode";
 
-			if (WitherCommand.betaMode)
+			if (isBeta())
 				Broadcast.staff().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
 			else
 				Broadcast.all().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
@@ -431,7 +431,7 @@ public abstract class WitherFight implements Listener {
 			(partySize > 1 ? " and " + (partySize - 1) + plural(" other", partySize - 1) + " &3have" : " &3has") +
 			" successfully beaten the Wither in " + getDifficulty().getTitle() + " &3mode " + (gotStar ? "and got" : "but did not get") + " the star";
 
-		if (WitherCommand.betaMode)
+		if (isBeta())
 			Broadcast.staff().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
 		else
 			Broadcast.all().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();

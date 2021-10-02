@@ -11,6 +11,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redi
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.models.witherarena.WitherArenaConfigService;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGroup;
@@ -24,10 +25,11 @@ import org.bukkit.inventory.PlayerInventory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static gg.projecteden.nexus.features.wither.WitherChallenge.currentFight;
-import static gg.projecteden.nexus.features.wither.WitherChallenge.maintenance;
-import static gg.projecteden.nexus.features.wither.WitherChallenge.queue;
+import static gg.projecteden.nexus.models.witherarena.WitherArenaConfig.isBeta;
+import static gg.projecteden.nexus.models.witherarena.WitherArenaConfig.isMaintenance;
 import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
 
 @Redirect(from = "/wchat", to = "/wither chat")
@@ -37,12 +39,10 @@ public class WitherCommand extends CustomCommand {
 		super(event);
 	}
 
-	public static boolean betaMode = false;
-
 	@SneakyThrows
 	@Path("challenge")
 	void fight() {
-		if (!isStaff() && betaMode)
+		if (!isStaff() && isBeta())
 			error("The wither is currently being beta tested by staff. It should be back soon!");
 
 		if (RebootCommand.isQueued())
@@ -51,7 +51,7 @@ public class WitherCommand extends CustomCommand {
 		if (worldGroup() != WorldGroup.SURVIVAL)
 			error("You cannot fight the wither in " + camelCase(worldGroup()));
 
-		if (maintenance && !isStaff())
+		if (isMaintenance() && !isStaff())
 			error("The wither arena is currently under maintenance, please wait");
 
 		if (!checkHasItems())
@@ -63,6 +63,9 @@ public class WitherCommand extends CustomCommand {
 		new DifficultySelectionMenu().open(player());
 
 		/*
+		final WitherArenaConfigService service = new WitherArenaConfigService();
+		final WitherArenaConfig config = service.get0();
+		final List<UUID> queue = config.getQueue();
 		int index = queue.indexOf(uuid());
 
 		if (index > 0)
@@ -70,6 +73,7 @@ public class WitherCommand extends CustomCommand {
 
 		if (index == -1) {
 			queue.add(uuid());
+			service.save(config);
 			index = queue.indexOf(uuid());
 		}
 
@@ -140,7 +144,7 @@ public class WitherCommand extends CustomCommand {
 
 	@Path("join")
 	void join() {
-		if (!Rank.of(player()).isStaff() && betaMode)
+		if (!Rank.of(player()).isStaff() && isBeta())
 			error("The wither is currently being beta tested by staff. It should be back soon!");
 
 		if (currentFight == null)
@@ -213,7 +217,7 @@ public class WitherCommand extends CustomCommand {
 				(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3are" : " &3is") +
 				" challenging the wither to a fight in " + currentFight.getDifficulty().getTitle() + " &3mode";
 
-		if (betaMode)
+		if (isBeta())
 			Broadcast.staffIngame().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
 		else
 			Broadcast.all().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
@@ -267,7 +271,7 @@ public class WitherCommand extends CustomCommand {
 
 	@Path("spectate")
 	void spectate() {
-		if (!Rank.of(player()).isStaff() && betaMode)
+		if (!Rank.of(player()).isStaff() && isBeta())
 			error("The wither is currently being beta tested by staff. It should be back soon!");
 
 		if (currentFight == null)
@@ -292,8 +296,9 @@ public class WitherCommand extends CustomCommand {
 	void reset() {
 		WitherChallenge.reset(false);
 		send(PREFIX + "Arena successfully reset");
+		final List<UUID> queue = new WitherArenaConfigService().get0().getQueue();
 		if (queue.size() > 0)
-			send(json(PREFIX + "&eThere are players queued to fight the wither. Click here to process the queue.").command("/wither processQueue"));
+			send(json(PREFIX + "&eThere are " + queue.size() + " players queued to fight the wither. Click here to process the queue.").command("/wither processQueue"));
 	}
 
 	@Path("processQueue")
@@ -306,8 +311,15 @@ public class WitherCommand extends CustomCommand {
 	@Path("maintenance")
 	@Permission("group.staff")
 	void maintenance() {
-		maintenance = !maintenance;
-		send(PREFIX + "Wither arena maintenance mode " + (maintenance ? "&aenabled" : "&cdisabled"));
+		new WitherArenaConfigService().edit0(config -> config.setMaintenance(isMaintenance()));
+		send(PREFIX + "Wither arena maintenance mode " + (isMaintenance() ? "&aenabled" : "&cdisabled"));
+	}
+
+	@Path("beta")
+	@Permission("group.staff")
+	void beta() {
+		new WitherArenaConfigService().edit0(config -> config.setBeta(isBeta()));
+		send(PREFIX + "Wither arena beta mode " + (isBeta() ? "&aenabled" : "&cdisabled"));
 	}
 
 	@Path("getFragment")
