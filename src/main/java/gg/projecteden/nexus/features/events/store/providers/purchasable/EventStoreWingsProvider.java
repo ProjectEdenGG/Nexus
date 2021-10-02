@@ -8,6 +8,7 @@ import gg.projecteden.nexus.models.particle.ParticleOwner;
 import gg.projecteden.nexus.models.particle.ParticleService;
 import gg.projecteden.nexus.models.particle.ParticleType;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
@@ -50,6 +51,7 @@ public class EventStoreWingsProvider extends EventStoreMenu {
 				try {
 					if (isShiftClick(e)) {
 						chargeAndAddPermissions(player, price, "wings.use", style.getPermission());
+						PlayerUtils.send(player, STORE_PREFIX + "Purchased wing style #" + (style.ordinal() + 1) + ", manage with &c/wings");
 						open(player);
 					} else {
 						player.closeInventory();

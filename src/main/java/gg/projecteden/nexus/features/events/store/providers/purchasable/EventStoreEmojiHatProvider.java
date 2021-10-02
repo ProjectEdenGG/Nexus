@@ -5,7 +5,6 @@ import gg.projecteden.nexus.features.events.store.EventStoreItem;
 import gg.projecteden.nexus.features.events.store.providers.EventStoreMenu;
 import gg.projecteden.nexus.features.store.perks.emojihats.EmojiHat;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.entity.Player;
@@ -15,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static gg.projecteden.nexus.features.events.Events.STORE_PREFIX;
+import static gg.projecteden.nexus.utils.PlayerUtils.send;
+import static gg.projecteden.utils.StringUtils.camelCase;
 
 @AllArgsConstructor
 public class EventStoreEmojiHatProvider extends EventStoreMenu {
@@ -44,11 +45,12 @@ public class EventStoreEmojiHatProvider extends EventStoreMenu {
 				try {
 					if (isShiftClick(e)) {
 						chargeAndAddPermissions(player, price, type.getPermission());
+						send(player, STORE_PREFIX + "Purchased &e" + camelCase(type) + "&3, use with &c/emojihats " + type.name().toLowerCase());
 						open(player);
 					} else {
 						player.closeInventory();
 						type.runSelf(player);
-						PlayerUtils.send(player, STORE_PREFIX + "Use F5 to view the emoji");
+						send(player, STORE_PREFIX + "Use F5 to view the emoji");
 					}
 				} catch (Exception ex) {
 					handleException(player, STORE_PREFIX, ex);
