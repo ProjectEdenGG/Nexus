@@ -248,10 +248,11 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 			Nexus.log(ChatGamesCommand.PREFIX + player.getNickname() + " answered correctly");
 			PlayerUtils.send(player, ChatGamesCommand.PREFIX + colorize("&3That's correct! You've been given &e" + Prize.random().apply(this, player)));
 
-			new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL)
-				.receiver(player.getPlayer())
-				.pitchStep(6)
-				.play();
+			if (player.getPlayer() != null)
+				new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL)
+					.receiver(player.getPlayer())
+					.pitchStep(6)
+					.play();
 		}
 
 		public enum Prize {

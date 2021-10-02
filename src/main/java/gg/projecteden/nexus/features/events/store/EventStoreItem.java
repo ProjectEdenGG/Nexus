@@ -186,7 +186,7 @@ public enum EventStoreItem {
 		protected List<String> getLore() {
 			return List.of("&eConvert Event Tokens into coupons for the &c/store",
 				"",
-				"&6Price:&e " + getPrice() + " tokens per dollar");
+				"&6Price:&e " + getPrice() + " tokens per $USD");
 		}
 
 		@Override
