@@ -311,14 +311,14 @@ public class WitherCommand extends CustomCommand {
 	@Path("maintenance")
 	@Permission("group.staff")
 	void maintenance() {
-		new WitherArenaConfigService().edit0(config -> config.setMaintenance(isMaintenance()));
+		new WitherArenaConfigService().edit0(config -> config.setMaintenance(!isMaintenance()));
 		send(PREFIX + "Wither arena maintenance mode " + (isMaintenance() ? "&aenabled" : "&cdisabled"));
 	}
 
 	@Path("beta")
-	@Permission("group.staff")
+	@Permission("group.admin")
 	void beta() {
-		new WitherArenaConfigService().edit0(config -> config.setBeta(isBeta()));
+		new WitherArenaConfigService().edit0(config -> config.setBeta(!isBeta()));
 		send(PREFIX + "Wither arena beta mode " + (isBeta() ? "&aenabled" : "&cdisabled"));
 	}
 
