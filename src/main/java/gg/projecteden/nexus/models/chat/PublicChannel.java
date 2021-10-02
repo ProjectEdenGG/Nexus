@@ -80,7 +80,7 @@ public class PublicChannel implements Channel {
 	public Set<Chatter> getRecipients(Chatter chatter) {
 		List<Player> recipients = new ArrayList<>();
 		if (local)
-			recipients.addAll(NearCommand.getNearbyPlayers(chatter.getPlayer(), new HashSet<>(), true));
+			recipients.addAll(NearCommand.getNearbyPlayers(chatter.getPlayer(), chatter.getPlayer(), new HashSet<>(), true));
 		else if (crossWorld)
 			recipients.addAll(OnlinePlayers.getAll());
 		else

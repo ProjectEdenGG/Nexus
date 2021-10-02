@@ -33,7 +33,7 @@ public class NearCommand extends CustomCommand {
 		if (PlayerManager.get(player).isPlaying())
 			error("This command cannot be used during Minigames");
 
-		Set<Player> nearby = getNearbyPlayers(player, new TreeSet<>(Comparator.comparing(p -> location().distance(p.getLocation()))), false);
+		Set<Player> nearby = getNearbyPlayers(player, player, new TreeSet<>(Comparator.comparing(p -> location().distance(p.getLocation()))), false);
 		nearby.remove(player);
 
 		boolean showDistance = player.hasPermission("near.distance");
@@ -49,7 +49,14 @@ public class NearCommand extends CustomCommand {
 							return new JsonBuilder(Nickname.of(_player) + " (&3" + getDistance(player, _player) + "m&f)");
 						} else {
 							return new JsonBuilder(Nickname.of(_player) + " (&c" + getDistance(player, _player) + "m&f)")
-								.hover("&cChained by another player.");
+								.hover(
+									"&cChained by another player.\n" +
+									"\n" +
+									"&cThis player is not in your local\n" +
+									"&cradius (" + Chat.getLocalRadius() + " blocks), but they're\n" +
+									"&cincluded as they're in the local\n" +
+									"&cradius of someone who is.\n"
+								);
 						}
 					} else {
 						return new JsonBuilder(Nickname.of(_player));
@@ -59,21 +66,21 @@ public class NearCommand extends CustomCommand {
 			));
 	}
 
-	static public Set<Player> getNearbyPlayers(Player player, Set<Player> nearbyPlayers, boolean includeUnseen) {
-		nearbyPlayers.add(player);
+	static public Set<Player> getNearbyPlayers(Player originalPlayer, Player checkPlayer, Set<Player> nearbyPlayers, boolean includeUnseen) {
+		nearbyPlayers.add(checkPlayer);
 		for (Player _player : new ArrayList<>(nearbyPlayers)) {
 			UUID uuid = _player.getUniqueId();
-			Stream<Player> stream = OnlinePlayers.where().world(player.getWorld()).get().stream()
+			Stream<Player> stream = OnlinePlayers.where().world(checkPlayer.getWorld()).get().stream()
 				.filter(_player2 -> !uuid.equals(_player2.getUniqueId())
 					&& getDistance(_player, _player2) <= Chat.getLocalRadius());
 			if (!includeUnseen)
-				stream = stream.filter(_player2 -> PlayerUtils.canSee(_player, _player2));
+				stream = stream.filter(_player2 -> PlayerUtils.canSee(originalPlayer, _player2));
 
 			List<Player> nearby = stream.collect(Collectors.toList());
 
 			for (Player _player2 : nearby) {
 				if (!nearbyPlayers.contains(_player2))
-					getNearbyPlayers(_player2, nearbyPlayers, includeUnseen);
+					getNearbyPlayers(originalPlayer, _player2, nearbyPlayers, includeUnseen);
 			}
 		}
 		return nearbyPlayers;
