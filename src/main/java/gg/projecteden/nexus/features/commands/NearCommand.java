@@ -16,11 +16,7 @@ import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -37,7 +33,7 @@ public class NearCommand extends CustomCommand {
 		if (PlayerManager.get(player).isPlaying())
 			error("This command cannot be used during Minigames");
 
-		Set<Player> nearby = getNearbyPlayers(player, new HashSet<>(), false);
+		Set<Player> nearby = getNearbyPlayers(player, new TreeSet<>(Comparator.comparing(p -> location().distance(p.getLocation()))), false);
 		nearby.remove(player);
 
 		boolean showDistance = player.hasPermission("near.distance");
