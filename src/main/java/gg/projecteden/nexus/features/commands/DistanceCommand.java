@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.utils.StringUtils;
 import org.bukkit.entity.Player;
 
 @Description("View the distance between you and another player")
@@ -27,6 +28,6 @@ public class DistanceCommand extends CustomCommand {
 		if (PlayerUtils.isVanished(target) && !player().hasPermission("pv.see"))
 			throw new PlayerNotOnlineException(target);
 
-		send(PREFIX + location().distance(target.getLocation()) + " blocks.");
+		send(PREFIX + StringUtils.getDf().format(location().distance(target.getLocation())) + " blocks.");
 	}
 }
