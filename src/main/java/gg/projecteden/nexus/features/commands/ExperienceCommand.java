@@ -13,7 +13,7 @@ import static gg.projecteden.nexus.utils.StringUtils.pretty;
 import static gg.projecteden.nexus.utils.StringUtils.stripTrailingZeros;
 import static gg.projecteden.nexus.utils.StringUtils.trimFirst;
 
-@Aliases("exp")
+@Aliases({"exp", "xp"})
 @Permission("experience.use")
 public class ExperienceCommand extends CustomCommand {
 

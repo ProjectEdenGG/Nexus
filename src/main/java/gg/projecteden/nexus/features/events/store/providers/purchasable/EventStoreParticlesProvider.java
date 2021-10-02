@@ -47,9 +47,10 @@ public class EventStoreParticlesProvider extends EventStoreMenu {
 
 			items.add(ClickableItem.from(item.build(), e -> {
 				try {
-					if (isShiftClick(e))
+					if (isShiftClick(e)) {
 						chargeAndAddPermissions(player, price, type.getPermission());
-					else {
+						open(player);
+					} else {
 						player.closeInventory();
 						type.run(player);
 						Tasks.wait(TickTime.SECOND.x(15), () -> particleOwner.cancel(type));

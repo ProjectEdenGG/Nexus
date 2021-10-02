@@ -48,9 +48,10 @@ public class EventStoreWingsProvider extends EventStoreMenu {
 
 			items.add(ClickableItem.from(item.build(), e -> {
 				try {
-					if (isShiftClick(e))
+					if (isShiftClick(e)) {
 						chargeAndAddPermissions(player, price, "wings.use", style.getPermission());
-					else {
+						open(player);
+					} else {
 						player.closeInventory();
 						style.preview(player);
 						Tasks.wait(TickTime.SECOND.x(15), () -> particleOwner.cancel(ParticleType.WINGS));

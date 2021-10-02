@@ -144,12 +144,13 @@ public enum EventStoreItem {
 
 		@Override
 		public void onClick(Player player, EventStoreMenu currentMenu) {
+			player.closeInventory();
 			PlayerUtils.send(player, STORE_PREFIX + "Send custom emojis in chat! &f👀 💯 🔥 👍 👏 😍 😎");
-			PlayerUtils.send(player, STORE_PREFIX + new JsonBuilder("Browse the &c/emoji store")
+			PlayerUtils.send(player, new JsonBuilder(STORE_PREFIX + "Browse the &c/emoji store")
 				.command("/emoji store")
 				.hover("Click to open the Emoji store")
 				.group()
-				.next("&3, or request your own via &c/ticket or &#5865F2#questions"));
+				.next("&3, or request your own via &c/ticket &3or &#5865F2#questions"));
 		}
 	},
 	SONGS(200, Material.JUKEBOX) {
@@ -186,6 +187,9 @@ public enum EventStoreItem {
 
 					final double usd = convertToUSD(line);
 					final int price = (int) (usd * TOKENS_PER_USD);
+
+					if (usd < 1)
+						throw new InvalidInputException("Amount must be $1 or more");
 
 					new EventUserService().edit(player, user -> user.charge(price));
 					new ContributorService().edit(player, user -> user.giveCredit(usd));

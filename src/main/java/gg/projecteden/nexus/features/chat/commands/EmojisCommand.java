@@ -30,6 +30,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import static gg.projecteden.nexus.models.emoji.EmojiUser.Emoji.EMOJIS;
 
@@ -48,11 +49,16 @@ public class EmojisCommand extends CustomCommand implements Listener {
 
 	@Path("picker")
 	void picker() {
-		send(PREFIX);
+		final List<Emoji> emojis = EMOJIS.stream()
+			.filter(emoji -> isAdmin() || user.owns(emoji))
+			.toList();
+
+		if (emojis.isEmpty())
+			error("You do not own any emojis");
 
 		final JsonBuilder picker = json();
 
-		for (Emoji emoji : EMOJIS) {
+		for (Emoji emoji : emojis) {
 			if (!isAdmin() && !user.owns(emoji))
 				continue;
 
@@ -64,10 +70,9 @@ public class EmojisCommand extends CustomCommand implements Listener {
 			picker.group().next(emoji.getEmoji()).insert(emoji.getEmoji()).hover("&e" + emoji.getName(), "", "&eShift+Click to insert");
 		}
 
+		send(PREFIX);
 		send(picker);
 	}
-
-	private static final int PER_PAGE = 9 * 12;
 
 	@Path("store")
 	void store() {
@@ -75,31 +80,29 @@ public class EmojisCommand extends CustomCommand implements Listener {
 
 		final List<Emoji> emojis = EMOJIS.stream()
 			.filter(Emoji::isPurchasable)
-			.filter(emoji -> user.owns(emoji))
+			.filter(emoji -> !user.owns(emoji))
 			.toList();
 
 		if (emojis.isEmpty())
 			error("No emojis available for purchase");
 
 		JsonBuilder picker = json();
-		int count = 0;
 		for (Emoji emoji : emojis) {
 			if (picker.isInitialized())
 				picker.group().next(" ");
 			else
 				picker.initialize();
 
-			picker.group()
-				.next(emoji.getEmoji())
+			final JsonBuilder next = new JsonBuilder(emoji.getEmoji())
 				.hover("&e" + emoji.getName(), "", "&eClick to purchase", "&3Price: &e" + EventStoreItem.CHAT_EMOJIS.getPrice() + " Event Tokens")
 				.command("/emoji buy " + emoji.getName())
 				.color(NamedTextColor.WHITE);
 
-			if (++count >= PER_PAGE) {
+			if (new JsonBuilder(picker).next(next).serialize().length() > Short.MAX_VALUE) {
 				book.addPage(picker);
 				picker = json();
-				count = 0;
-			}
+			} else
+				picker.next(next);
 		}
 
 		if (picker.isInitialized())
@@ -117,6 +120,11 @@ public class EmojisCommand extends CustomCommand implements Listener {
 		user.give(emoji);
 		service.save(user);
 		send(PREFIX + "Purchased &e" + emoji.getName() + " &f" + emoji.getEmoji() + "&3, use with &c/emoji picker");
+	}
+
+	@Path("reload")
+	void load() {
+		reload().thenRun(() -> send(PREFIX + "Loaded " + EMOJIS.size() + " emojis"));
 	}
 
 	@EventHandler
@@ -167,7 +175,13 @@ public class EmojisCommand extends CustomCommand implements Listener {
 	private static final String EMOJI_ROOT = "projecteden/font/emojis/";
 
 	static {
-		ResourcePack.getLoader().thenRun(() -> {
+		reload();
+	}
+
+	public static CompletableFuture<Void> reload() {
+		return ResourcePack.getLoader().thenRun(() -> {
+			EMOJIS.clear();
+
 			for (CustomCharacter character : ResourcePack.getFontFile().getProviders()) {
 				if (!character.getFile().contains(EMOJI_ROOT))
 					continue;

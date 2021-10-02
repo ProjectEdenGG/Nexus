@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.events.store.EventStoreItem;
 import gg.projecteden.nexus.features.events.store.providers.EventStoreMenu;
 import gg.projecteden.nexus.features.store.perks.emojihats.EmojiHat;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.entity.Player;
@@ -41,11 +42,13 @@ public class EventStoreEmojiHatProvider extends EventStoreMenu {
 
 			items.add(ClickableItem.from(item.build(), e -> {
 				try {
-					if (isShiftClick(e))
+					if (isShiftClick(e)) {
 						chargeAndAddPermissions(player, price, type.getPermission());
-					else {
+						open(player);
+					} else {
 						player.closeInventory();
 						type.runSelf(player);
+						PlayerUtils.send(player, STORE_PREFIX + "Use F5 to view the emoji");
 					}
 				} catch (Exception ex) {
 					handleException(player, STORE_PREFIX, ex);

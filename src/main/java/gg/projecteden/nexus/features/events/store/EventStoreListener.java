@@ -10,7 +10,6 @@ import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.mail.Mailer.Mail;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.BlockUtils;
-import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.WorldGroup;
@@ -66,42 +65,11 @@ public class EventStoreListener implements Listener {
 				return;
 
 			if (!HDB_ALLOWED.contains(worldGroup))
-				throw new InvalidInputException("You can not purchase heads here");
+				throw new InvalidInputException("You can not purchase heads in this world");
 
 			new EventUserService().edit(player, user -> user.charge(price));
 		} catch (Exception ex) {
 			event.setCancelled(true);
-			handleException(player, ex);
-		}
-	}
-
-	@EventHandler
-	public void updateSign(PlayerInteractEvent event) {
-		final Player player = event.getPlayer();
-		try {
-			if (!player.getWorld().getName().equalsIgnoreCase("server"))
-				return;
-			if (BlockUtils.isNullOrAir(event.getClickedBlock()))
-				return;
-			if (!MaterialTag.SIGNS.isTagged(event.getClickedBlock().getType()))
-				return;
-			if (!(event.getClickedBlock().getState() instanceof Sign sign))
-				return;
-
-			final String prefix = stripColor(sign.getLine(0));
-			if (!prefix.equalsIgnoreCase("[Buy Painting]"))
-				return;
-
-			final String priceString = stripColor(sign.getLine(1)).split(" ")[0];
-			if (!Utils.isInt(priceString))
-				return;
-
-			final int price = Integer.parseInt(priceString);
-
-			sign.line(0, new JsonBuilder("&e[Purchase]").build());
-			sign.line(1, new JsonBuilder("&e" + price + " &3Event Tokens").build());
-			sign.update();
-		} catch (Exception ex) {
 			handleException(player, ex);
 		}
 	}
@@ -157,6 +125,7 @@ public class EventStoreListener implements Listener {
 						user.charge(price);
 						service.save(user);
 						Mail.fromServer(player.getUniqueId(), WorldGroup.SURVIVAL, image.getSplatterMap()).send();
+						send(player, STORE_PREFIX + "Your image has been mailed to you in the Survival world");
 					} catch (Exception ex) {
 						handleException(player, ex);
 					}
