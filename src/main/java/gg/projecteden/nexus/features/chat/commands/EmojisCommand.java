@@ -36,7 +36,6 @@ import static gg.projecteden.nexus.models.emoji.EmojiUser.Emoji.EMOJIS;
 
 @NoArgsConstructor
 @Aliases("emoji")
-@Permission("group.staff")
 public class EmojisCommand extends CustomCommand implements Listener {
 	private static final EmojiUserService service = new EmojiUserService();
 	private EmojiUser user;
@@ -123,6 +122,7 @@ public class EmojisCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("reload")
+	@Permission("group.admin")
 	void load() {
 		reload().thenRun(() -> send(PREFIX + "Loaded " + EMOJIS.size() + " emojis"));
 	}
