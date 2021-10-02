@@ -44,7 +44,11 @@ public enum EventStoreItem {
 	CUSTOM_PAINTINGS(-1, Material.PAINTING) {
 		@Override
 		public List<String> getLore() {
-			return List.of("&eChoose from over 60 pre-imported images or request your own to hang on your wall");
+			return List.of(
+				"&eChoose from over 60 pre-imported images or request your own to hang on your wall",
+				"",
+				"&6Price:&e 40 tokens per frame"
+			);
 		}
 
 		@Override
@@ -62,7 +66,9 @@ public enum EventStoreItem {
 
 		@Override
 		public List<String> getLore() {
-			return List.of("&eChoose from over 25,000 heads to decorate your builds");
+			return List.of("&eChoose from over 25,000 heads to decorate your builds",
+				"",
+				"&6Price:&e 50 tokens per head");
 		}
 
 		@Override
@@ -79,7 +85,9 @@ public enum EventStoreItem {
 
 		@Override
 		public List<String> getLore() {
-			return List.of("&eAnimated heads to express your emotions!");
+			return List.of("&eAnimated heads to express your emotions!",
+				"",
+				"&6Price:&e 75 tokens per emote");
 		}
 
 		@Override
@@ -99,7 +107,9 @@ public enum EventStoreItem {
 	PARTICLES(75, Material.REDSTONE) {
 		@Override
 		public List<String> getLore() {
-			return List.of("&eCustomizable particle shapes and designs");
+			return List.of("&eCustomizable particle shapes and designs",
+				"",
+				"&6Price:&e 75 tokens per particle");
 		}
 
 		@Override
@@ -119,7 +129,9 @@ public enum EventStoreItem {
 	WINGS(75, Material.ELYTRA) {
 		@Override
 		public List<String> getLore() {
-			return List.of("&eParticle wings with customizable styles and colors");
+			return List.of("&eParticle wings with customizable styles and colors",
+				"",
+				"&6Price:&e 75 tokens per style");
 		}
 
 		@Override
@@ -139,7 +151,9 @@ public enum EventStoreItem {
 	CHAT_EMOJIS(5, Material.MAP, 1000) {
 		@Override
 		public List<String> getLore() {
-			return List.of("&eSend custom emojis in chat!", "&f👀 💯 🔥 👍 👏 😍 😎");
+			return List.of("&eSend custom emojis in chat!", "&f👀 💯 🔥 👍 👏 😍 😎",
+				"",
+				"&6Price:&e 5 tokens per emoji");
 		}
 
 		@Override
@@ -156,7 +170,9 @@ public enum EventStoreItem {
 	SONGS(200, Material.JUKEBOX) {
 		@Override
 		protected List<String> getLore() {
-			return List.of("&ePlay custom noteblock songs from anywhere");
+			return List.of("&ePlay custom noteblock songs from anywhere",
+				"",
+				"&6Price:&e 200 tokens per song");
 		}
 
 		@Override
@@ -170,7 +186,9 @@ public enum EventStoreItem {
 
 		@Override
 		protected List<String> getLore() {
-			return List.of("&eConvert Event Tokens into coupons for the &c/store");
+			return List.of("&eConvert Event Tokens into coupons for the &c/store",
+				"",
+				"&6Price:&e 100 tokens per dollar");
 		}
 
 		@Override
