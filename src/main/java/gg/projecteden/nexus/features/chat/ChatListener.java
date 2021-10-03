@@ -44,8 +44,12 @@ public class ChatListener implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onEmptyChat(ChatEvent event) {
-		if (StringUtils.isNullOrEmpty(event.getMessage()))
-			event.setCancelled(true);
+		if (!StringUtils.isNullOrEmpty(event.getMessage()))
+			return;
+		if (event instanceof DiscordChatEvent discordChatEvent && discordChatEvent.hasAttachments())
+			return;
+
+		event.setCancelled(true);
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)

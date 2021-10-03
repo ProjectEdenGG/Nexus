@@ -39,15 +39,16 @@ public class DiscordBridgeListener extends ListenerAdapter {
 				if (!event.getAuthor().getId().equals(User.UBER.getId()))
 					return;
 
-			String content = stripColor(event.getMessage().getContentDisplay().trim());
+			final Message message = event.getMessage();
+			String content = stripColor(message.getContentDisplay().trim());
 
 			try {
 				content = EmojiParser.parseToAliases(content);
 			} catch (Throwable ignore) {}
 
-			DiscordChatEvent discordChatEvent = new DiscordChatEvent(event.getMember(), channel.get(), content, content, channel.get().getPermission());
+			DiscordChatEvent discordChatEvent = new DiscordChatEvent(event.getMember(), channel.get(), content, content, !message.getAttachments().isEmpty(), channel.get().getPermission());
 			if (!discordChatEvent.callEvent()) {
-				Tasks.async(() -> event.getMessage().delete().queue());
+				Tasks.async(() -> message.delete().queue());
 				return;
 			}
 
@@ -61,7 +62,7 @@ public class DiscordBridgeListener extends ListenerAdapter {
 			if (content.length() > 0)
 				builder.next(" " + colorize(content.replaceAll("&", "&&f")));
 
-			for (Message.Attachment attachment : event.getMessage().getAttachments())
+			for (Message.Attachment attachment : message.getAttachments())
 				builder.group()
 					.next(" &f&l[View Attachment]")
 					.url(attachment.getUrl());
