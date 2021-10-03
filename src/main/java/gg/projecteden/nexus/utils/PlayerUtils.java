@@ -144,6 +144,7 @@ public class PlayerUtils {
 		private String permission;
 		private List<UUID> include;
 		private List<UUID> exclude;
+		private List<Predicate<Player>> filters = new ArrayList<>();
 
 		public static OnlinePlayers where() {
 			return new OnlinePlayers();
@@ -237,6 +238,11 @@ public class PlayerUtils {
 			return this;
 		}
 
+		public OnlinePlayers filter(Predicate<Player> filter) {
+			this.filters.add(filter);
+			return this;
+		}
+
 		public List<Player> get() {
 			final Supplier<List<UUID>> online = () -> Bukkit.getOnlinePlayers().stream().map(Player::getUniqueId).collect(toList());
 			final List<UUID> uuids = include == null ? online.get() : include;
@@ -259,6 +265,9 @@ public class PlayerUtils {
 
 			for (Filter filter : Filter.values())
 				stream = filter.filter(this, stream);
+
+			for (Predicate<Player> filter : filters)
+				stream = stream.filter(filter);
 
 			return stream.toList();
 		}
@@ -340,6 +349,10 @@ public class PlayerUtils {
 		return OnlinePlayers.getAll().stream()
 				.map(player -> player.getUniqueId().toString())
 				.collect(toList());
+	}
+
+	public static List<UUID> uuidsOf(Collection<Player> players) {
+		return players.stream().map(Player::getUniqueId).toList();
 	}
 
 	public static @NotNull OfflinePlayer getPlayer(UUID uuid) {

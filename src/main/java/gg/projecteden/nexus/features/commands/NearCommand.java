@@ -16,9 +16,14 @@ import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
+import static gg.projecteden.nexus.utils.PlayerUtils.uuidsOf;
 
 @Aliases("nearby")
 @Description("View nearby players and their distance from you. Players in this list can see your local chat.")
@@ -33,7 +38,7 @@ public class NearCommand extends CustomCommand {
 		if (PlayerManager.get(player).isPlaying())
 			error("This command cannot be used during Minigames");
 
-		Set<Player> nearby = getNearbyPlayers(player, player, new TreeSet<>(Comparator.comparing(p -> location().distance(p.getLocation()))), false);
+		Set<Player> nearby = new Near(player).sorted().find();
 		nearby.remove(player);
 
 		boolean showDistance = player.hasPermission("near.distance");
@@ -50,12 +55,12 @@ public class NearCommand extends CustomCommand {
 						} else {
 							return new JsonBuilder(Nickname.of(_player) + " (&c" + getDistance(player, _player) + "m&f)")
 								.hover(
-									"&cChained by another player.\n" +
-									"\n" +
-									"&cThis player is not in your local\n" +
-									"&cradius (" + Chat.getLocalRadius() + " blocks), but they're\n" +
-									"&cincluded as they're in the local\n" +
-									"&cradius of someone who is.\n"
+									"&cChained by another player.",
+									"",
+									"&cThis player is not in your local",
+									"&cradius (" + Chat.getLocalRadius() + " blocks), but they're",
+									"&cincluded as they're in the local",
+									"&cradius of someone who is."
 								);
 						}
 					} else {
@@ -66,28 +71,49 @@ public class NearCommand extends CustomCommand {
 			));
 	}
 
-	static public Set<Player> getNearbyPlayers(Player originalPlayer, Player checkPlayer, Set<Player> nearbyPlayers, boolean includeUnseen) {
-		nearbyPlayers.add(checkPlayer);
-		for (Player _player : new ArrayList<>(nearbyPlayers)) {
-			UUID uuid = _player.getUniqueId();
-			Stream<Player> stream = OnlinePlayers.where().world(checkPlayer.getWorld()).get().stream()
-				.filter(_player2 -> !uuid.equals(_player2.getUniqueId())
-					&& getDistance(_player, _player2) <= Chat.getLocalRadius());
-			if (!includeUnseen)
-				stream = stream.filter(_player2 -> PlayerUtils.canSee(originalPlayer, _player2));
+	public static class Near {
+		private final Player origin;
+		private Set<Player> results;
+		private boolean includeUnseen;
+		private Player current;
 
-			List<Player> nearby = stream.collect(Collectors.toList());
-
-			for (Player _player2 : nearby) {
-				if (!nearbyPlayers.contains(_player2))
-					getNearbyPlayers(originalPlayer, _player2, nearbyPlayers, includeUnseen);
-			}
+		public Near(Player origin) {
+			this.origin = origin;
+			this.current = origin;
+			this.results = new HashSet<>();
 		}
-		return nearbyPlayers;
+
+		public Near includeUnseen() {
+			this.includeUnseen = true;
+			return this;
+		}
+
+		public Near sorted() {
+			this.results = new TreeSet<>(Comparator.comparing(player -> origin.getLocation().distance(player.getLocation())));
+			return this;
+		}
+
+		public Set<Player> find() {
+			results.add(current);
+
+			for (Player player : new ArrayList<>(results))
+				OnlinePlayers.where()
+					.radius(player.getLocation(), Chat.getLocalRadius())
+					.exclude(uuidsOf(results))
+					.filter(chained -> includeUnseen || PlayerUtils.canSee(origin, chained))
+					.get()
+					.forEach(chained -> {
+						current = chained;
+						find();
+					});
+
+			return results;
+		}
+
 	}
 
-	static private long getDistance(Player player, Player _player) {
-		return Math.round(player.getLocation().distance(_player.getLocation()));
+	private static long getDistance(Player from, Player to) {
+		return Math.round(from.getLocation().distance(to.getLocation()));
 	}
 
 }
