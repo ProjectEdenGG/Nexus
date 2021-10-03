@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.models.chat;
 
-import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
+import gg.projecteden.nexus.features.commands.NearCommand.Near;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -79,9 +79,7 @@ public class PublicChannel implements Channel {
 	public Set<Chatter> getRecipients(Chatter chatter) {
 		List<Player> recipients = new ArrayList<>();
 		if (local)
-			recipients.addAll(OnlinePlayers.where().world(chatter.getOnlinePlayer().getWorld()).get().stream()
-					.filter(player -> player.getLocation().distance(chatter.getOnlinePlayer().getLocation()) <= Chat.getLocalRadius())
-					.collect(Collectors.toList()));
+			recipients.addAll(new Near(chatter.getPlayer()).includeUnseen().find());
 		else if (crossWorld)
 			recipients.addAll(OnlinePlayers.getAll());
 		else
