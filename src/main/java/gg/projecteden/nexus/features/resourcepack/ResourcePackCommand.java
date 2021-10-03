@@ -36,15 +36,18 @@ import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.jetbrains.annotations.NotNull;
@@ -241,6 +244,26 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 					resourcePack(player);
 			});
 		});
+	}
+
+	@EventHandler
+	public void onPlayerInteractAtEntity(PlayerInteractAtEntityEvent event) {
+		if (!Rank.of(event.getPlayer()).isAdmin())
+			return;
+
+		if (event.getHand() != EquipmentSlot.HAND)
+			return;
+
+		final ItemStack item = event.getPlayer().getInventory().getItem(EquipmentSlot.HAND);
+		if (CustomModelData.of(item) == 0)
+			return;
+
+		if (!(event.getRightClicked() instanceof ArmorStand armorStand))
+			return;
+
+		final ItemStack existing = armorStand.getItem(EquipmentSlot.HEAD);
+		armorStand.setItem(EquipmentSlot.HEAD, item);
+		event.getPlayer().getInventory().setItem(EquipmentSlot.HAND, existing);
 	}
 
 	@EventHandler
