@@ -89,6 +89,8 @@ public class HandlePurchaseCommand extends CustomCommand {
 					else
 						discordMessage += "\nUser does not have a linked discord account";
 				}
+			} else {
+				send(purchase.getUuid(), "Your free " + purchase.getPackageName() + " has been successfully processed, enjoy!");
 			}
 
 			packageType.apply(purchase.getUuid());
