@@ -68,6 +68,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @SuppressWarnings({"unused", "UnusedReturnValue", "ResultOfMethodCallIgnored", "CopyConstructorMissesField", "deprecation"})
@@ -649,6 +650,9 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	public static class CustomModelData {
 
 		public static int of(ItemStack item) {
+			if (isNullOrAir(item))
+				return 0;
+
 			return of(new ItemBuilder(item));
 		}
 
