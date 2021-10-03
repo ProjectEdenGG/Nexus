@@ -150,6 +150,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 	void coupon_list(@Arg(value = "self", permission = "group.staff") Contributor contributor) {
 		final List<Coupon> coupons = Nexus.getBuycraft().getApiClient().getAllCoupons().execute().body().getData().stream()
 			.filter(coupon -> coupon.getUsername().equals(contributor.getName()))
+			.filter(coupon -> coupon.getExpire().getLimit() > 0)
 			.toList();
 
 		if (coupons.isEmpty())
