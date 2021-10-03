@@ -1,18 +1,10 @@
 package gg.projecteden.nexus.utils;
 
-import com.comphenix.packetwrapper.WrapperPlayServerEntityHeadRotation;
-import com.comphenix.packetwrapper.WrapperPlayServerNamedEntitySpawn;
-import com.comphenix.packetwrapper.WrapperPlayServerPlayerInfo;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.EnumWrappers;
-import com.comphenix.protocol.wrappers.EnumWrappers.NativeGameMode;
-import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
-import com.comphenix.protocol.wrappers.PlayerInfoData;
-import com.comphenix.protocol.wrappers.WrappedChatComponent;
-import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.mojang.authlib.GameProfile;
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.Nexus;
@@ -286,42 +278,6 @@ public class PacketUtils {
 		sendPacket(player, new PacketPlayOutEntityTeleport(entity));
 		entityLook(player, bukkitEntity, location.getYaw(), location.getPitch());
 	}
-
-	// NPC
-
-	// untested
-	public void npcPacket(Entity entity, HasPlayer recipient) {
-		WrapperPlayServerPlayerInfo playerInfo = new WrapperPlayServerPlayerInfo();
-
-		playerInfo.setAction(PlayerInfoAction.UPDATE_DISPLAY_NAME);
-		//
-		PlayerInfoData hi = new PlayerInfoData(
-			WrappedGameProfile.fromHandle(playerInfo.getHandle()),
-			0,
-			NativeGameMode.SURVIVAL,
-			WrappedChatComponent.fromText("hi")
-		);
-
-		PlayerInfoData playerInfoData = playerInfo.getData().get(0);
-		WrappedGameProfile profile = playerInfoData.getProfile();
-		WrappedGameProfile newProfile = profile.withName("hi");
-
-		playerInfo.setData(Collections.singletonList(hi));
-		//
-
-		WrapperPlayServerNamedEntitySpawn entitySpawn = new WrapperPlayServerNamedEntitySpawn();
-		entitySpawn.setEntityID(entity.getId());
-
-		WrapperPlayServerEntityHeadRotation headRotation = new WrapperPlayServerEntityHeadRotation();
-		headRotation.setEntityID(entity.getId());
-		headRotation.setHeadYaw((byte) (entity.getBukkitEntity().getLocation().getYaw() * 256 / 360));
-
-		Player player = recipient.getPlayer();
-		playerInfo.sendPacket(player);
-		entitySpawn.sendPacket(player);
-		headRotation.sendPacket(player);
-	}
-
 
 	// TODO: if possible
 	public static void entityName(@NonNull HasPlayer player, org.bukkit.entity.NPC entity, String name) {
