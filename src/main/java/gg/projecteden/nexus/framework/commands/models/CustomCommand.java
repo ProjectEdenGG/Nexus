@@ -3,6 +3,8 @@ package gg.projecteden.nexus.framework.commands.models;
 import com.google.common.base.Strings;
 import gg.projecteden.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.features.commands.staff.MultiCommandCommand;
+import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
+import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Fallback;
@@ -15,6 +17,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandRunEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
+import gg.projecteden.nexus.framework.exceptions.preconfigured.BlockedInMinigamesException;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.MustBeCommandBlockException;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.MustBeConsoleException;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.MustBeIngameException;
@@ -323,17 +326,17 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	@Contract("_ -> fail")
-	public void error(String error) {
+	public void error(String error) throws InvalidInputException {
 		throw new InvalidInputException(error);
 	}
 
 	@Contract("_ -> fail")
-	public void error(JsonBuilder error) {
+	public void error(JsonBuilder error) throws InvalidInputException {
 		throw new InvalidInputException(error);
 	}
 
 	@Contract("_ -> fail")
-	public void error(ComponentLike error) {
+	public void error(ComponentLike error) throws InvalidInputException {
 		throw new InvalidInputException(error);
 	}
 
@@ -348,6 +351,25 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	public void permissionError() {
 		throw new NoPermissionException();
+	}
+
+	/**
+	 * Throws a {@link BlockedInMinigamesException} if the user is {@link Minigamer#isPlaying() playing a minigame}.
+	 * @throws BlockedInMinigamesException user is inside a minigame world
+	 * @throws PlayerNotOnlineException the user is not on the server
+	 */
+	public void blockInMinigames() throws PlayerNotOnlineException, BlockedInMinigamesException {
+		if (PlayerManager.get(uuid()).isPlaying())
+			throw new BlockedInMinigamesException(false);
+	}
+
+	/**
+	 * Throws a {@link BlockedInMinigamesException} if the user is inside of a {@link WorldGroup#MINIGAMES minigame world}.
+	 * @throws BlockedInMinigamesException user is inside a minigame world
+	 */
+	public void blockInMinigameWorld() throws BlockedInMinigamesException {
+		if (worldGroup() == WorldGroup.MINIGAMES)
+			throw new BlockedInMinigamesException(true);
 	}
 
 	public boolean hasPermission(String permission) {

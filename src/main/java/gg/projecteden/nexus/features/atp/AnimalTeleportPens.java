@@ -44,7 +44,8 @@ public class AnimalTeleportPens {
 
 			switch (entity.getType()) {
 				case PIG, RABBIT, FOX, TURTLE, COW, SHEEP, MUSHROOM_COW, POLAR_BEAR,
-					PANDA, GOAT, HORSE, DONKEY, MULE, LLAMA, TRADER_LLAMA, VILLAGER ->
+					PANDA, GOAT, HORSE, DONKEY, MULE, LLAMA, TRADER_LLAMA, VILLAGER,
+					SHULKER ->
 					finalEntities.add(entity);
 			}
 		}
@@ -63,6 +64,8 @@ public class AnimalTeleportPens {
 						price += 250;
 				case VILLAGER ->
 						price += 500;
+				case SHULKER ->
+						price += 2000;
 				default ->
 						price += 50;
 			}

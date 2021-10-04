@@ -7,12 +7,15 @@ import me.lexikiq.HasUniqueId;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
 public class PlayerManager {
 
-	public static Minigamer get(UUID uuid) {
+	@NotNull
+	public static Minigamer get(@NotNull UUID uuid) throws PlayerNotOnlineException {
 		for (Match match : MatchManager.getAll())
 			for (Minigamer minigamer : match.getMinigamers())
 				if (minigamer.getUniqueId().equals(uuid))
@@ -25,7 +28,7 @@ public class PlayerManager {
 	}
 
 	@Contract("null -> null; !null -> !null")
-	public static Minigamer get(HasUniqueId player) {
+	public static Minigamer get(@Nullable HasUniqueId player) {
 		if (player == null) return null;
 		if (player instanceof Minigamer minigamer)
 			return minigamer;
