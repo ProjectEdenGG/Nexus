@@ -224,14 +224,19 @@ public class Votes extends Feature implements Listener {
 
 	protected static void write() {
 		Tasks.async(() -> {
-			List<TopVoter> topVoters = new VoterService().getTopVoters(LocalDateTime.now().getMonth());
+			final LocalDateTime now = LocalDateTime.now();
+			List<TopVoter> topVoters = new VoterService().getTopVoters(now.getMonth());
 
 			votes_sites();
+			votes_voted();
+			votes_monthly_total(topVoters);
 			votes_monthly_top(topVoters);
 			votes_monthly(topVoters);
-			votes();
-			votes_monthly_total(topVoters);
-			votes_voted();
+			votes_alltime();
+
+			List<TopVoter> lastMonthTopVoters = new VoterService().getTopVoters(now.minusMonths(1).getMonth());
+			lastmonth_votes_monthly_total(lastMonthTopVoters);
+			lastmonth_votes_monthly(lastMonthTopVoters);
 		});
 	}
 
@@ -276,7 +281,7 @@ public class Votes extends Feature implements Listener {
 			for (TopVoter topVoter : topVoters) {
 				if (++index <= 3)
 					continue;
-				if (index >= 54)
+				if (index > 53)
 					break;
 
 				outputs.add(String.format("""
@@ -290,7 +295,7 @@ public class Votes extends Feature implements Listener {
 		});
 	}
 
-	private static void votes() {
+	private static void votes_alltime() {
 		IOUtils.fileWrite("plugins/website/votes.html", (writer, outputs) -> {
 			List<TopVoter> allTimeTopVoters = new VoterService().getTopVoters();
 
@@ -334,6 +339,29 @@ public class Votes extends Feature implements Listener {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+	}
+
+	private static void lastmonth_votes_monthly_total(List<TopVoter> topVoters) {
+		int sum = topVoters.stream().mapToInt(topVoter -> Long.valueOf(topVoter.getCount()).intValue()).sum();
+		IOUtils.fileWrite("plugins/website/lastmonth_votes_monthly_total.html", (writer, outputs) -> outputs.add(String.valueOf(sum)));
+	}
+
+	private static void lastmonth_votes_monthly(List<TopVoter> topVoters) {
+		IOUtils.fileWrite("plugins/website/lastmonth_votes_monthly.html", (writer, outputs) -> {
+			int index = 0;
+			for (TopVoter topVoter : topVoters) {
+				if (++index > 50)
+					break;
+
+				outputs.add(String.format("""
+					<tr>
+						<th>%d</th>
+						<th>%s</th>
+						<th>%d</th>
+					</tr>
+				""", index, topVoter.getNickname(), topVoter.getCount()));
+			}
+		});
 	}
 
 }
