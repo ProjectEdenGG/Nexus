@@ -144,7 +144,7 @@ public class Minigames extends Feature {
 		if (component == null) return;
 		final Component message = Minigames.COMPONENT_PREFIX.append(component);
 		getPlayers().forEach(player -> player.sendMessage(message));
-		System.out.println(AdventureUtils.asPlainText(message));
+		Nexus.log(AdventureUtils.asPlainText(message));
 	}
 
 	// Registration
