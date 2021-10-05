@@ -55,12 +55,12 @@ public class PerkOwner implements PlayerOwnedObject {
 	}
 
 	public Set<PerkType> getEnabledPerks() {
-		Set<PerkType> perks = new HashSet<>();
-		purchasedPerks.forEach((perkType, enabled) -> {
-			if (enabled)
-				perks.add(perkType);
-		});
-		return perks;
+		return new HashSet<>() {{
+			purchasedPerks.forEach((perkType, enabled) -> {
+				if (enabled)
+					add(perkType);
+			});
+		}};
 	}
 
 	public <T extends Perk> Set<T> getEnabledPerksByClass(Class<T> tClass) {

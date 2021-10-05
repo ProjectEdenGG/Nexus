@@ -21,7 +21,6 @@ import lombok.Data;
 import me.lexikiq.HasUniqueId;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -33,7 +32,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -61,41 +59,39 @@ public class TickPerks implements Listener {
 
 		Tasks.repeat(5, Minigames.PERK_TICK_DELAY, () -> Minigames.getWorld().getPlayers().forEach(player -> {
 			Minigamer minigamer = PlayerManager.get(player);
-			if ((minigamer.isPlaying() || isInRegion(player)) && !isNPC(player)) {
+			if ((minigamer.isPlaying() || isInLobby(player)) && !isNPC(player)) {
 				PerkOwner perkOwner = service.get(player);
 
 				AtomicInteger gadgetSlot = new AtomicInteger(8);
 				boolean processInventory = player.getGameMode() == GameMode.SURVIVAL && !minigamer.isPlaying();
 
-				if (processInventory) {
+				if (processInventory)
 					player.getInventory().setItem(8, MENU_ITEM);
-				}
 
-				List<PerkType> enabledPerks = new ArrayList<>(perkOwner.getEnabledPerks());
-				// sort alphabetically for consistent lobby gadget order
-				enabledPerks.sort(Comparator.comparing(PerkType::getName).reversed());
+				perkOwner.getEnabledPerks().stream()
+					.sorted(Comparator.comparing(PerkType::getName).reversed())
+					.forEach(perkType -> {
+						Perk perk = perkType.getPerk();
+						if (perk instanceof GadgetPerk gadgetPerk && processInventory) {
+							int slot = gadgetSlot.decrementAndGet();
+							if (slot < 1) return; // don't overwrite first slot (could hold a basketball!)
+							gadgetPerk.tick(player, slot);
+							return;
+						}
 
-				enabledPerks.forEach(perkType -> {
-					Perk perk = perkType.getPerk();
-					if (perk instanceof GadgetPerk && processInventory) {
-						int slot = gadgetSlot.decrementAndGet();
-						if (slot < 1) return; // don't overwrite first slot (could hold a basketball!)
-						((GadgetPerk) perk).tick(player, slot);
-						return;
-					}
+						if (perk instanceof LoadoutPerk)
+							loadoutUsers.add(perkOwner);
 
-					if (perk instanceof LoadoutPerk)
-						loadoutUsers.add(perkOwner);
+						if (perk instanceof TickablePerk tickablePerk) {
+							if (!tickablePerk.shouldTickFor(player))
+								return;
 
-					if (perk instanceof TickablePerk tickablePerk) {
-						if (minigamer.isPlaying() && (minigamer.isRespawning() || !minigamer.usesPerk(perk)) || PlayerUtils.isVanished(player) || player.getGameMode() == GameMode.SPECTATOR || !minigamer.isAlive()) return;
-
-						if (minigamer.isPlaying())
-							tickablePerk.tick(minigamer);
-						else
-							tickablePerk.tick(player);
-					}
-				});
+							if (minigamer.isPlaying())
+								tickablePerk.tick(minigamer);
+							else
+								tickablePerk.tick(player);
+						}
+					});
 
 				if (processInventory)
 					while (gadgetSlot.get() > 1) {
@@ -107,31 +103,21 @@ public class TickPerks implements Listener {
 
 		// clear legacy loadout perk owners and send real packets
 		Tasks.repeat(5, TickTime.SECOND.x(1), () -> new HashSet<>(loadoutUsers).forEach(perkOwner -> {
-			perkOwner = service.get(perkOwner.getUuid()); // update loadout perks...? not sure if necessary
-			OfflinePlayer _player = PlayerUtils.getPlayer(perkOwner.getUuid());
-			Minigamer minigamer = _player.getPlayer() != null ? PlayerManager.get(_player.getPlayer()) : null;
-			if (_player.getPlayer() == null || (!minigamer.isPlaying() && !isInRegion((Player) _player)) || (minigamer.isPlaying() && (!minigamer.usesPerk(LoadoutPerk.class) || !minigamer.isAlive() || minigamer.isRespawning()))
-					|| perkOwner.getEnabledPerksByClass(LoadoutPerk.class).isEmpty() || PlayerUtils.isVanished(_player) || ((Player) _player).getGameMode() == GameMode.SPECTATOR) {
-				loadoutUsers.remove(perkOwner);
-				// send true packets
-				Player player = _player.getPlayer();
-				if (player == null)
-					return;
-				ItemStack[] items = player.getInventory().getArmorContents();
-				for (int i = 0; i < player.getInventory().getArmorContents().length; i++) {
-					ItemStack item = items[i];
-					if (item == null)
-						item = new ItemStack(Material.AIR);
+			if (!perkOwner.isOnline())
+				return;
 
-					EquipmentSlot slot = switch (i) {
-						case 3 -> EquipmentSlot.HEAD;
-						case 2 -> EquipmentSlot.CHEST;
-						case 1 -> EquipmentSlot.LEGS;
-						case 0 -> EquipmentSlot.FEET;
-						default -> throw new IllegalStateException("Unexpected value: " + i);
-					};
-					LoadoutPerk.sendPackets(player, player.getWorld().getPlayers(), item, slot);
-				}
+			if (shouldShowLoadout(perkOwner))
+				return;
+
+			loadoutUsers.remove(perkOwner);
+			// send true packets
+			final Player player = perkOwner.getOnlinePlayer();
+			for (EquipmentSlot slot : List.of(EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET)) {
+				ItemStack item = player.getInventory().getItem(slot);
+				if (item == null)
+					item = new ItemStack(Material.AIR);
+
+				LoadoutPerk.sendPackets(player, player.getWorld().getPlayers(), item, slot);
 			}
 		}));
 
@@ -144,6 +130,25 @@ public class TickPerks implements Listener {
 			else
 				cooldowns.put(entry.getKey(), ticks);
 		}));
+	}
+
+	private boolean shouldShowLoadout(PerkOwner perkOwner) {
+		final Player player = perkOwner.getOnlinePlayer();
+		final Minigamer minigamer = PlayerManager.get(player);
+
+		if (!minigamer.isPlaying() && !isInLobby(player))
+			return false;
+		if (minigamer.isPlaying())
+			if (!minigamer.usesPerk(LoadoutPerk.class) || !minigamer.isAlive() || minigamer.isRespawning())
+				return false;
+		if (perkOwner.getEnabledPerksByClass(LoadoutPerk.class).isEmpty())
+			return false;
+		if (PlayerUtils.isVanished(player))
+			return false;
+		if (player.getGameMode() == GameMode.SPECTATOR)
+			return false;
+
+		return true;
 	}
 
 	protected static GadgetPerk getGadgetPerk(ItemStack item) {
@@ -168,7 +173,7 @@ public class TickPerks implements Listener {
 
 		Player player = event.getPlayer();
 		if (!player.getWorld().equals(Minigames.getWorld())) return;
-		if (!isInRegion(player)) return;
+		if (!isInLobby(player)) return;
 
 		if (event.getItem().equals(MENU_ITEM)) {
 			new PerkMenu().open(player);
@@ -214,7 +219,7 @@ public class TickPerks implements Listener {
 			event.setCancelled(true);
 	}
 
-	public boolean isInRegion(Player player) {
+	public boolean isInLobby(Player player) {
 		return Minigames.worldguard().isInRegion(player.getLocation(), Minigames.getLobbyRegion());
 	}
 

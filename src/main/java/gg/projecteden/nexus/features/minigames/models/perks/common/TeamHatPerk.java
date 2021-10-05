@@ -21,15 +21,15 @@ public interface TeamHatPerk extends TeamLoadoutPerk, HatPerk {
 	}
 
 	default Map<ChatColor, Map<EquipmentSlot, ItemStack>> getColorLoadouts() {
-		Map<ChatColor, Map<EquipmentSlot, ItemStack>> loadout = new HashMap<>();
-		Arrays.stream(ColorType.values()).forEach(colorType -> {
-			try {
-				loadout.put(colorType.getChatColor(), Map.of(
-					EquipmentSlot.HEAD, getColorItem(colorType)
-				));
-			} catch (IllegalArgumentException ignored){}
-		});
-		return loadout;
+		return new HashMap<>() {{
+			Arrays.stream(ColorType.values()).forEach(colorType -> {
+				try {
+					put(colorType.getChatColor(), Map.of(
+						EquipmentSlot.HEAD, getColorItem(colorType)
+					));
+				} catch (IllegalArgumentException ignored) {}
+			});
+		}};
 	}
 
 	@Override

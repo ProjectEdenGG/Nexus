@@ -30,7 +30,9 @@ public interface TeamLoadoutPerk extends LoadoutPerk {
 			tick(minigamer.getPlayer());
 			return;
 		}
-		getLoadout(minigamer.getTeam().getChatColor()).forEach((itemSlot, itemStack) -> sendColorablePackets(minigamer.getPlayer(), minigamer.getMatch().getPlayers(), itemStack, itemSlot));
+
+		getLoadout(minigamer.getTeam().getChatColor()).forEach((itemSlot, itemStack) ->
+			sendColorablePackets(minigamer.getPlayer(), minigamer.getMatch().getPlayers(), itemStack, itemSlot));
 	}
 
 }

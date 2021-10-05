@@ -5,7 +5,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -18,9 +17,7 @@ public interface HatPerk extends LoadoutPerk {
 	}
 
 	default @NotNull Map<EquipmentSlot, ItemStack> getLoadout() {
-		Map<EquipmentSlot, ItemStack> loadout = new HashMap<>();
-		loadout.put(EquipmentSlot.HEAD, getItem());
-		return loadout;
+		return Map.of(EquipmentSlot.HEAD, getItem());
 	}
 
 	@NotNull ItemStack getItem();

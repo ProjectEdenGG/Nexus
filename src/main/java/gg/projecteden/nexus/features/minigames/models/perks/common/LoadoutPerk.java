@@ -56,17 +56,16 @@ public interface LoadoutPerk extends TickablePerk {
 			default -> null;
 		};
 
-		if (currentStack == null)
-			return;
+		if (currentStack != null) {
+			// don't overwrite banners and don't overwrite colored armor (if the current item isn't colorable)
+			Material type = currentStack.getType();
+			boolean isZombieHead = type == Material.ZOMBIE_HEAD;
+			boolean isBanner = MaterialTag.ALL_BANNERS.isTagged(type);
+			boolean isColorable = MaterialTag.COLORABLE.isTagged(type);
 
-		// don't overwrite banners and don't overwrite colored armor (if the current item isn't colorable)
-		Material type = currentStack.getType();
-		boolean isZombieHead = type == Material.ZOMBIE_HEAD;
-		boolean isBanner = MaterialTag.ALL_BANNERS.isTagged(type);
-		boolean isColorable = MaterialTag.COLORABLE.isTagged(type);
-
-		if (isZombieHead || isBanner || (isColorable && !overrideColorables))
-			return;
+			if (isZombieHead || isBanner || (isColorable && !overrideColorables))
+				return;
+		}
 
 		PacketUtils.sendFakeItem(player, players, item, slot);
 	}
