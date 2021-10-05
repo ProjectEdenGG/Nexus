@@ -745,7 +745,7 @@ public class Shop implements PlayerOwnedObject {
 
 		@Override
 		public boolean canFulfillPurchase() {
-			return product.getCalculatedStock() >= price;
+			return product.getCalculatedStock() >= price && new BankerService().get(product.getUuid()).has(price, product.getShopGroup());
 		}
 
 		@Override
