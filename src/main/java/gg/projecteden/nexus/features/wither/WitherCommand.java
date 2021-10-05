@@ -12,7 +12,10 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.witherarena.WitherArenaConfigService;
+import gg.projecteden.nexus.utils.FuzzyItemStack;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -25,7 +28,9 @@ import org.bukkit.inventory.PlayerInventory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.features.wither.WitherChallenge.currentFight;
 import static gg.projecteden.nexus.models.witherarena.WitherArenaConfig.isBeta;
@@ -86,43 +91,37 @@ public class WitherCommand extends CustomCommand {
 	}
 
 	public boolean checkHasItems() {
-		List<ItemStack> missingItems = new ArrayList<>();
-		List<ItemStack> neededItems = new ArrayList<>() {{
-			add(new ItemStack(Material.WITHER_SKELETON_SKULL, 3));
-			add(new ItemStack(Material.SOUL_SAND, 4));
-			add(new ItemStack(Material.BOW));
-			add(new ItemStack(Material.ARROW));
+		PlayerInventory inventory = player().getInventory();
+		List<FuzzyItemStack> missing = new ArrayList<>();
+		List<FuzzyItemStack> required = new ArrayList<>() {{
+			add(new FuzzyItemStack(Material.WITHER_SKELETON_SKULL, 3));
+			add(new FuzzyItemStack(Material.SOUL_SAND, 4));
+			add(new FuzzyItemStack(Set.of(Material.BOW, Material.CROSSBOW), 1));
+			add(new FuzzyItemStack(MaterialTag.ARROWS, 1));
 		}};
 
-		PlayerInventory inventory = player().getInventory();
-		for (ItemStack item : neededItems) {
-			if (item.getType().equals(Material.BOW)) {
-
-				if (!inventory.contains(item.getType(), item.getAmount()) && !inventory.contains(Material.CROSSBOW, item.getAmount()))
-					missingItems.add(item);
-			}
-
-			if (!inventory.contains(item.getType(), item.getAmount())) {
-				// if player has a crossbow instead of a bow
-				if (item.getType().equals(Material.BOW) && inventory.contains(Material.CROSSBOW, item.getAmount()))
-					continue;
-
-				missingItems.add(item);
-			}
-
+		requiredItems:
+		for (FuzzyItemStack item : required) {
+			for (Material material : item.getMaterials())
+				if (inventory.contains(material, item.getAmount()))
+					continue requiredItems;
+			missing.add(item);
 		}
-		if (missingItems.size() != 0) {
-			tellNeededItems(missingItems);
+
+		if (!missing.isEmpty()) {
+			tellNeededItems(missing);
 			return false;
 		}
+
 		return true;
 	}
 
-	public void tellNeededItems(List<ItemStack> items) {
+	public void tellNeededItems(List<FuzzyItemStack> items) {
 		send(PREFIX + "&cYou do not have the necessary items in your inventory to spawn the wither. You are missing:");
-		for (ItemStack item : items)
-			send("&c - " + camelCase(item.getType()) + (item.getAmount() > 1 ? " &ex &c" + item.getAmount() : ""));
-
+		for (FuzzyItemStack item : items) {
+			final String materials = item.getMaterials().stream().map(StringUtils::camelCase).collect(Collectors.joining(" &eor "));
+			send("&c - " + materials + (item.getAmount() > 1 ? " &ex &c" + item.getAmount() : ""));
+		}
 	}
 
 	@Path("invite <player>")
