@@ -29,6 +29,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fox;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Sittable;
 import org.bukkit.entity.Tameable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -69,6 +70,32 @@ public class TameablesCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Punch the animal you wish to remove ownership of");
 	}
 
+	@Path("sit <entityType>")
+	@Description("Make all your animals sit")
+	void sit(SittableTameableEntity entityType) {
+		int count = 0;
+		for (Entity entity : list(entityType))
+			if (entity instanceof Sittable sittable) {
+				sittable.setSitting(true);
+				++count;
+			}
+
+		send(PREFIX + "Made &e" + count + " " + entityType.plural(count) + " &3sit");
+	}
+
+	@Path("stand <entityType>")
+	@Description("Make all your animals stand up")
+	void stand(SittableTameableEntity entityType) {
+		int count = 0;
+		for (Entity entity : list(entityType))
+			if (entity instanceof Sittable sittable) {
+				sittable.setSitting(false);
+				++count;
+			}
+
+		send(PREFIX + "Made &e" + count + " " + entityType.plural(count) + " &3stand up");
+	}
+
 	@Path("move")
 	@Description("Teleport an animal to your location")
 	void move() {
@@ -102,7 +129,8 @@ public class TameablesCommand extends CustomCommand implements Listener {
 	@Path("count <entityType>")
 	@Description("Count the animals you own (Must be in loaded chunks)")
 	void count(TameableEntity entityType) {
-		send(PREFIX + "Found &e" + list(entityType).size() + " " + camelCase(entityType) + " &3in loaded chunks belonging to you");
+		final int count = list(entityType).size();
+		send(PREFIX + "Found &e" + count + " " + entityType.plural(count) + " &3in loaded chunks belonging to you");
 	}
 
 	@Path("summon <entityType>")
@@ -117,22 +145,23 @@ public class TameablesCommand extends CustomCommand implements Listener {
 				++failed;
 
 		if (succeeded > 0)
-			send(PREFIX + "Summoned &e" + succeeded + " " + camelCase(entityType) + "s &3in loaded chunks to your location");
+			send(PREFIX + "Summoned &e" + succeeded + " " + entityType.plural(succeeded) + " &3in loaded chunks to your location");
 		if (failed > 0)
-			send(PREFIX + "Failed to teleport &e" + failed + " " + camelCase(entityType) + "s to your location &3(not allowed here)");
+			send(PREFIX + "Failed to teleport &e" + failed + " " + entityType.plural(failed) + " to your location &3(not allowed here)");
 	}
 
 	@Path("find <entityType>")
 	@Description("Make your nearby animals glow so you can find them")
 	void find(TameableEntity entityType) {
 		List<Entity> entities = list(entityType);
-		entities.forEach(entity -> GlowTask.builder()
+		entities.forEach(entity ->
+			GlowTask.builder()
 				.entity(entity)
 				.color(Color.RED)
 				.viewers(Collections.singletonList(player()))
 				.duration(TickTime.SECOND.x(10))
 				.start());
-		send(PREFIX + "Highlighted &e" + entities.size() + " " + (entityType == null ? "animals" : camelCase(entityType) + "s") + " &3in loaded chunks");
+		send(PREFIX + "Highlighted &e" + entities.size() + " " + (entityType == null ? "animals" : entityType.plural(entities.size())) + " &3in loaded chunks");
 	}
 
 	private List<Entity> list(TameableEntityList entityType) {
@@ -145,20 +174,45 @@ public class TameablesCommand extends CustomCommand implements Listener {
 							entities.add(entity);
 
 		if (entities.isEmpty())
-			error("Could not find any " + camelCase(entityType.name()) + " in loaded chunks belonging to you");
+			error("Could not find any " + (entityType == null ? "animals" : camelCase(entityType.name())) + " in loaded chunks belonging to you");
 
 		return entities;
 	}
 
 	private interface TameableEntityList {
 		String name();
+
+		default String plural(int count) {
+			return count == 1 ? StringUtils.camelCase(name()) : plural();
+		}
+
+		default String plural() {
+			return TameableEntity.valueOf(name()).plural();
+		}
+	}
+
+	private enum SittableTameableEntity implements TameableEntityList {
+		WOLF,
+		CAT,
+		PARROT,
+		;
+
+		public static boolean isSittable(EntityType entityType) {
+			try {
+				valueOf(entityType.name());
+				return true;
+			} catch (IllegalArgumentException ex) {
+				return false;
+			}
+		}
 	}
 
 	private enum SummonableTameableEntity implements TameableEntityList {
 		WOLF,
 		CAT,
 		FOX,
-		PARROT;
+		PARROT,
+		;
 
 		public static boolean isSummonable(EntityType entityType) {
 			try {
@@ -170,16 +224,25 @@ public class TameablesCommand extends CustomCommand implements Listener {
 		}
 	}
 
+	@AllArgsConstructor
 	private enum TameableEntity implements TameableEntityList {
-		WOLF,
-		CAT,
-		FOX,
-		PARROT,
-		HORSE,
-		SKELETON_HORSE,
-		DONKEY,
-		MULE,
-		LLAMA;
+		WOLF("Wolves"),
+		CAT("Cats"),
+		FOX("Foxes"),
+		PARROT("Parrots"),
+		HORSE("Horses"),
+		SKELETON_HORSE("Skeleton Horses"),
+		DONKEY("Donkeys"),
+		MULE("Mules"),
+		LLAMA("Llamas"),
+		;
+
+		private final String plural;
+
+		@Override
+		public String plural() {
+			return plural;
+		}
 
 		public static boolean isTameable(EntityType entityType) {
 			try {
