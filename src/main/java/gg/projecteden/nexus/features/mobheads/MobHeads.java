@@ -212,7 +212,7 @@ public class MobHeads extends Feature implements Listener {
 		DamageCause.MAGIC
 	);
 
-	private boolean shouldIgnore(Player player, LivingEntity victim) {
+	public static boolean shouldIgnore(Player player, LivingEntity victim) {
 		if (player == null || victim == null)
 			return true;
 
@@ -238,7 +238,7 @@ public class MobHeads extends Feature implements Listener {
 		return shouldIgnore(victim);
 	}
 
-	private boolean isNewSkin(LivingEntity player) {
+	private static boolean isNewSkin(LivingEntity player) {
 		final SkinCache skinCache = SkinCache.of(player);
 		skinCache.update();
 
@@ -249,7 +249,7 @@ public class MobHeads extends Feature implements Listener {
 		return lastChanged.isAfter(LocalDateTime.now().minusDays(REQUIRED_SKIN_DAYS));
 	}
 
-	private boolean shouldIgnore(LivingEntity entity) {
+	private static boolean shouldIgnore(LivingEntity entity) {
 		EntityType type = entity.getType();
 		SpawnReason reason = entity.getEntitySpawnReason();
 
