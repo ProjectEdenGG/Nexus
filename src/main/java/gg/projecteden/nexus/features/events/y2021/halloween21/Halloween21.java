@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.mobheads.MobHeads;
 import gg.projecteden.nexus.models.halloween21.Halloween21PumpkinHeadConfig;
 import gg.projecteden.nexus.models.halloween21.Halloween21PumpkinHeadConfigService;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
@@ -37,6 +38,9 @@ public class Halloween21 implements Listener {
 		final Player killer = event.getEntity().getKiller();
 
 		new Halloween21PumpkinHeadConfigService().edit0(config -> config.unpumpkin(victim));
+
+		if (!EntityUtils.isHostile(victim))
+			return;
 
 		if (killer == null)
 			return;
