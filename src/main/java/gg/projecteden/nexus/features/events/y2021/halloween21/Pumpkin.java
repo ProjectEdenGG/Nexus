@@ -8,8 +8,12 @@ import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
 
 public class Pumpkin {
 	private static final Material MATERIAL = Material.STONE_BUTTON;
-	private static final int MIN = 900;
-	private static final int MAX = 919;
+	public static final int MIN = 900;
+	public static final int MAX = 919;
+
+	private static boolean isOutOfRange(int customModelData) {
+		return customModelData < MIN || customModelData > MAX;
+	}
 
 	public static CustomModel random() {
 		return of(randomCustomModelData());
@@ -20,10 +24,16 @@ public class Pumpkin {
 	}
 
 	public static CustomModel of(int customModelData) {
+		if (isOutOfRange(customModelData))
+			return null;
+
 		return CustomModel.of(MATERIAL, customModelData);
 	}
 
 	public static ItemBuilder itemOf(int customModelData) {
+		if (isOutOfRange(customModelData))
+			return null;
+
 		return new ItemBuilder(MATERIAL).customModelData(customModelData);
 	}
 
