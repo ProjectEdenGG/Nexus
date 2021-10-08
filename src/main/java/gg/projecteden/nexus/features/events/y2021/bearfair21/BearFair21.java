@@ -190,7 +190,7 @@ public class BearFair21 implements Listener {
 		if (!player.getGameMode().equals(GameMode.SURVIVAL)) return "creative";
 		if (player.isFlying()) return "fly";
 		if (isVanished(player)) return "vanish";
-		if (new GodmodeService().get(player).isEnabled()) return "godmode";
+		if (new GodmodeService().get(player).isActive()) return "godmode";
 
 		return null;
 	}

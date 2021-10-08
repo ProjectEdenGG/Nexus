@@ -131,7 +131,7 @@ public class PVPCommand extends CustomCommand implements Listener {
 		Godmode victimGodmode = godmodeService.get(victim);
 		Godmode attackerGodmode = godmodeService.get(attacker);
 
-		if (victimGodmode.isEnabled() || attackerGodmode.isEnabled())
+		if (victimGodmode.isActive() || attackerGodmode.isActive())
 			event.setCancelled(true);
 	}
 

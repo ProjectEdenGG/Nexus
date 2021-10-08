@@ -47,7 +47,7 @@ public class GodmodeCommand extends CustomCommand implements Listener {
 			error("Godmode disabled here");
 
 		if (enable == null)
-			enable = !godmode.isEnabled();
+			enable = !godmode.isActive();
 
 		godmode.setEnabled(enable);
 		service.save(godmode);
@@ -63,7 +63,7 @@ public class GodmodeCommand extends CustomCommand implements Listener {
 	}
 
 	private boolean hasGodmode(Player player) {
-		return new GodmodeService().get(player).isEnabled();
+		return new GodmodeService().get(player).isActive();
 	}
 
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
