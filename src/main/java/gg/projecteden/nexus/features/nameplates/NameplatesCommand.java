@@ -29,7 +29,7 @@ public class NameplatesCommand extends CustomCommand {
 		user.setViewOwnNameplate(enable);
 		service.save(user);
 
-		Nameplates.get().getFakeEntityManager().updateFakeEntityForSelf(player());
+		Nameplates.get().getNameplateManager().updateForSelf(player());
 
 		send(PREFIX + "Own nameplate visibility " + (enable ? "&aenabled" : "&cdisabled"));
 	}
@@ -37,7 +37,7 @@ public class NameplatesCommand extends CustomCommand {
 	@Path("update [player]")
 	@Permission("group.admin")
 	void update(@Arg("self") Player player) {
-		Nameplates.get().getFakeEntityManager().updateFakeEntityAroundPlayer(player);
+		Nameplates.get().getNameplateManager().update(player);
 		send(PREFIX + "Updated " + (isSelf(player) ? "your" : Nickname.of(player) + "'s") + " nameplate entity");
 	}
 

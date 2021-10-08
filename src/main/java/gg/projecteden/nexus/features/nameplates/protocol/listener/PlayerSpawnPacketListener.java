@@ -21,7 +21,7 @@ public class PlayerSpawnPacketListener extends PacketAdapter {
 
 		event.getNetworkMarker().addPostListener(new PacketPostAdapter(this.plugin) {
 			public void onPostEvent(PacketEvent event) {
-				Nameplates.get().getFakeEntityManager().spawnFakeEntity(event.getPlayer(), event.getPlayer());
+				Nameplates.get().getNameplateManager().spawn(event.getPlayer(), event.getPlayer());
 			}
 		});
 	}

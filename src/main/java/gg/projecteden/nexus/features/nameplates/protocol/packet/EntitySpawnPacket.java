@@ -25,8 +25,8 @@ public class EntitySpawnPacket extends NameplatePacket {
 		this.packet.getIntegers().write(0, var1).write(1, 0).write(2, 0).write(3, 0).write(4, 0).write(5, 0).write(6, 0);
 	}
 
-	public void writeLocation(@NotNull Location var1) {
-		this.packet.getDoubles().write(0, var1.getX()).write(1, var1.getY()).write(2, var1.getZ());
+	public void writeLocation(@NotNull Location location) {
+		this.packet.getDoubles().write(0, location.getX()).write(1, location.getY() + 1.35).write(2, location.getZ());
 	}
 
 }
