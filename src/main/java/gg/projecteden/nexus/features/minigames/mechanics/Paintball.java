@@ -100,6 +100,6 @@ public final class Paintball extends TeamMechanic {
 
 	// TODO:
 	// Guns
-	// Different objects to throw (enderpearl/snowball/armour stand with colored blocks)
+	// Different objects to throw (enderpearl/snowball/armor stand with colored blocks)
 
 }

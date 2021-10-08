@@ -73,6 +73,10 @@ public class WorldGuardFlagUtils {
 		 */
 		USE_TRAP_DOORS(registerFlag(new StateFlag("use-trap-doors", false))),
 		/**
+		 * Toggles if players can use note blocks
+		 */
+		USE_NOTE_BLOCKS(registerFlag(new StateFlag("use-note-blocks", false))),
+		/**
 		 * Toggles if players get damaged while inside water
 		 */
 		MINIGAMES_WATER_DAMAGE(registerFlag(new StateFlag("minigames-water-damage", false))),

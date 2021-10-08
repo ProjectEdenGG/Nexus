@@ -19,12 +19,13 @@ import java.util.Optional;
 @Aliases("h")
 public class HomeCommand extends CustomCommand {
 	private final HomeService service = new HomeService();
-	private final HomeOwner homeOwner;
+	private HomeOwner homeOwner;
 
 	public HomeCommand(CommandEvent event) {
 		super(event);
 		PREFIX = HomesFeature.PREFIX;
-		homeOwner = service.get(player());
+		if (isPlayerCommandEvent())
+			homeOwner = service.get(player());
 	}
 
 	@Path("[home]")

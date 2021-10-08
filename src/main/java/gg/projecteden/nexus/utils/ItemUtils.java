@@ -1,8 +1,9 @@
 package gg.projecteden.nexus.utils;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.quests.itemtags.Condition;
+import gg.projecteden.nexus.features.itemtags.Condition;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import me.lexikiq.HasPlayer;
 import org.bukkit.Material;
 import org.bukkit.StructureType;
@@ -217,7 +218,7 @@ public class ItemUtils {
 	 */
 	@Contract("null -> true; !null -> _")
 	public static boolean isNullOrAir(ItemStack itemStack) {
-		return itemStack == null || MaterialTag.ALL_AIR.isTagged(itemStack.getType());
+		return itemStack == null || itemStack.getType().isEmpty();
 	}
 
 	/**
@@ -227,7 +228,7 @@ public class ItemUtils {
 	 */
 	@Contract("null -> true; !null -> _")
 	public static boolean isNullOrAir(Material material) {
-		return material == null || MaterialTag.ALL_AIR.isTagged(material);
+		return material == null || material.isEmpty();
 	}
 
 	public static boolean isInventoryEmpty(Inventory inventory) {
@@ -347,7 +348,7 @@ public class ItemUtils {
 			result = Integer.compare(b.getAmount(), a.getAmount());
 			if (result != 0) return result;
 
-			result = Integer.compare(new ItemBuilder(a).customModelData(), new ItemBuilder(b).customModelData());
+			result = Integer.compare(CustomModelData.of(a), CustomModelData.of(b));
 			return result;
 		}
 	}

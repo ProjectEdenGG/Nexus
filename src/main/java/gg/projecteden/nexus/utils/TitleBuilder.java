@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.title.Title;
@@ -19,7 +20,7 @@ public class TitleBuilder {
 	private int fadeOut = 20;
 
 	public TitleBuilder allPlayers() {
-		this.players.addAll(PlayerUtils.getOnlinePlayers());
+		this.players.addAll(OnlinePlayers.getAll());
 		return this;
 	}
 

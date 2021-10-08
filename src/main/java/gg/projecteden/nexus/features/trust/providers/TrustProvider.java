@@ -92,7 +92,7 @@ public class TrustProvider extends MenuUtils implements InventoryProvider {
 							TrustPlayerProvider.open(player, _player)));
 				});
 
-		addPagination(player, contents, items);
+		paginator(player, contents, items);
 
 		ItemBuilder add = new ItemBuilder(Material.LIME_CONCRETE_POWDER).name("&aAdd Trust");
 		contents.set(0, 8, ClickableItem.from(add.build(), e ->

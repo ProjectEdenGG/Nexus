@@ -5,6 +5,7 @@ import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.ticket.Tickets.Ticket;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.entity.Player;
 
@@ -42,7 +43,7 @@ public class TicketFeature {
 		Discord.log("**[Tickets]** " + message);
 
 		Set<UUID> uuids = new HashSet<>();
-		for (Player staff : PlayerUtils.getOnlinePlayers())
+		for (Player staff : OnlinePlayers.getAll())
 			if (Rank.of(staff).isMod())
 				if (player == null || !staff.getUniqueId().equals(player.getUniqueId()))
 					uuids.add(staff.getUniqueId());

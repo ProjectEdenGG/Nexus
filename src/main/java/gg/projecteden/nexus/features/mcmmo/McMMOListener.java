@@ -9,7 +9,7 @@ import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGroup;
@@ -55,7 +55,7 @@ public class McMMOListener implements Listener {
 
 	void scheduler() {
 		Tasks.repeat(0, TickTime.SECOND.x(1), () -> {
-			PlayerUtils.getOnlinePlayers().forEach(player -> {
+			OnlinePlayers.getAll().forEach(player -> {
 				if (!canBootBonemeal(player))
 					return;
 

@@ -1,8 +1,6 @@
 package gg.projecteden.nexus.features.shops.providers;
 
 import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.SmartInvsPlugin;
 import fr.minuskube.inv.content.InventoryContents;
 import gg.projecteden.nexus.features.shops.providers.common.ShopProvider;
 import gg.projecteden.nexus.models.shop.Shop;
@@ -13,7 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MainMenuProvider extends ShopProvider {
@@ -49,8 +46,7 @@ public class MainMenuProvider extends ShopProvider {
 		final List<Shop> shops = service.getShopsSorted(shopGroup);
 
 		taskId.set(Tasks.repeat(0, 30, () -> {
-			Optional<SmartInventory> inventory = SmartInvsPlugin.manager().getInventory(player);
-			if (!(inventory.isPresent() && this.equals(inventory.get().getProvider()))) {
+			if (!isOpen(player)) {
 				Tasks.cancel(taskId.get());
 				return;
 			}

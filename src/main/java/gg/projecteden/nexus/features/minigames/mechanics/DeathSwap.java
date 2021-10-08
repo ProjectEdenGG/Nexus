@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.minigames.models.matchdata.DeathSwapMatchDa
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessVanillaMechanic;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.EntityUtils;
+import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -17,7 +18,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
@@ -74,9 +74,9 @@ public final class DeathSwap extends TeamlessVanillaMechanic {
 
 	public void swap(Match match) {
 		List<Minigamer> swappingList = match.getAliveMinigamers();
-		swappingList.forEach(player -> {
-			player.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 30, 1));
-			ActionBarUtils.sendActionBar(player.getPlayer(), "&3SWAPPING");
+		swappingList.forEach(minigamer -> {
+			minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.BLINDNESS).duration(30));
+			ActionBarUtils.sendActionBar(minigamer.getPlayer(), "&3SWAPPING");
 		});
 		Collections.shuffle(swappingList);
 

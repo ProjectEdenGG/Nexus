@@ -7,7 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.clientsideentities.ClientSideEntitiesConfig;
 import gg.projecteden.nexus.models.clientsideentities.ClientSideEntitiesConfigService;
 import gg.projecteden.nexus.utils.PacketUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NonNull;
@@ -40,7 +40,7 @@ public class ClientSideEntitiesCommand extends CustomCommand {
 
 			final ClientSideEntitiesConfigService service = new ClientSideEntitiesConfigService();
 
-			for (Player player : PlayerUtils.getOnlinePlayers(Bukkit.getWorld("buildadmin"))) {
+			for (Player player : OnlinePlayers.where().world(Bukkit.getWorld("buildadmin")).get()) {
 				final ClientSideEntitiesConfig config = service.get(player);
 				if (!config.isEnabled())
 					continue;

@@ -12,6 +12,7 @@ import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.WorldGroup;
 import lombok.NoArgsConstructor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -64,6 +65,9 @@ public class KitCommand extends CustomCommand implements Listener {
 
 	@Path("<kit>")
 	void kit(Kit kit) {
+		WorldGroup worldGroup = worldGroup();
+		if (worldGroup != WorldGroup.SURVIVAL && worldGroup != WorldGroup.CREATIVE)
+			error("Kits may only be claimed in survival and creative");
 		if (!player().hasPermission("kit." + kit.getName()))
 			error("You do not have permission to use this kit");
 		CooldownService service = new CooldownService();

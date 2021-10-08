@@ -198,7 +198,10 @@ class PathParser {
 					if (PlayerOwnedObject.class.isAssignableFrom(arg.getType()) && arg.getTabCompleter() == null)
 						arg.setTabCompleter(OfflinePlayer.class);
 
-					switches.addAll(arg.tabComplete().stream().map(completion -> lastArg.split("=")[0] + "=" + completion).collect(toList()));
+					final boolean matchesLong = lastArg.toLowerCase().startsWith("--" + parameter.getName().toLowerCase() + "=");
+					final boolean matchesShort = switchAnnotation.shorthand() != '-' && lastArg.toLowerCase().startsWith("-" + switchAnnotation.shorthand() + "=");
+					if (matchesLong || matchesShort)
+						switches.addAll(arg.tabComplete().stream().map(completion -> lastArg.split("=")[0] + "=" + completion).collect(toList()));
 				}
 			}
 

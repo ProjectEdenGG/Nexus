@@ -32,8 +32,14 @@ public class DailyVoteRewardsCommand extends CustomCommand {
 	}
 
 	@Path("streak [player]")
-	void streak(@Arg("self") DailyVoteReward player) {
-		send(PREFIX + (isSelf(player) ? "Your" : player.getNickname() + "'s") + " streak is &e" + player.getCurrentStreak().getStreak());
+	void streak(@Arg(value = "self", permission = "group.staff") DailyVoteReward user) {
+		send(PREFIX + (isSelf(user) ? "Your" : user.getNickname() + "'s") + " streak is &e" + user.getCurrentStreak().getStreak());
+	}
+
+	@Path("today [player]")
+	void today(@Arg(value = "self", permission = "group.staff") DailyVoteReward user) {
+		boolean earnedToday = user.getCurrentStreak().isEarnedToday();
+		send(PREFIX + (isSelf(user) ? "You have " : user.getNickname() + " has ") + (earnedToday ? "&e" : "&cnot ") + "advanced your streak today");
 	}
 
 	@Path("top [page]")

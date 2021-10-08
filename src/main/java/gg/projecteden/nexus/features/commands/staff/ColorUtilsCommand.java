@@ -5,6 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
@@ -18,7 +19,10 @@ import lombok.NonNull;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.World;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,8 +32,7 @@ import static gg.projecteden.nexus.utils.StringUtils.decolorize;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 import static gg.projecteden.nexus.utils.StringUtils.toHex;
 
-public class
-ColorUtilsCommand extends CustomCommand {
+public class ColorUtilsCommand extends CustomCommand {
 
 	public ColorUtilsCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -41,12 +44,13 @@ ColorUtilsCommand extends CustomCommand {
 		send(json("&" + hex + hex).copy(hex).hover("Click to copy"));
 	}
 
-	@Path("getRankHex <color>")
+	@Path("getRankHex <rank>")
 	void getHex(Rank rank) {
 		getHex(rank.getChatColor());
 	}
 
 	@Path("runSpigotHexCommand <commandNoSlash...>")
+	@Permission("group.admin")
 	void runHexCommand(String commandNoSlash) {
 		runCommand(decolorize(commandNoSlash));
 	}
@@ -69,14 +73,26 @@ ColorUtilsCommand extends CustomCommand {
 		player().sendMessage(decolorize ? decolorize(rainbow) : colorize(rainbow));
 	}
 
+	@Path("setLeatherColor <color>")
+	void setLeatherColor(@Arg(type = ChatColor.class) ChatColor chatColor) {
+		ItemStack item = getToolRequired();
+		if (!(item.getItemMeta() instanceof LeatherArmorMeta armorMeta))
+			return;
+
+		java.awt.Color color = chatColor.getColor();
+		armorMeta.setColor(Color.fromRGB(color.getRed(), color.getGreen(), color.getBlue()));
+		item.setItemMeta(armorMeta);
+	}
+
 	@Path("updateAllHOHNpcs")
+	@Permission("group.admin")
 	void updateAllHOHNpcs() {
 		runCommand("hoh");
 		World safepvp = world();
 		WorldGuardUtils worldGuardUtils = new WorldGuardUtils(safepvp);
 		ProtectedRegion region = worldGuardUtils.getProtectedRegion("hallofhistory");
 		List<NPC> npcs = safepvp.getEntities().stream()
-				.filter(entity -> CitizensUtils.isNPC(entity) && worldGuardUtils.isInRegion(entity.getLocation(), region))
+			.filter(entity -> CitizensUtils.isNPC(entity) && worldGuardUtils.isInRegion(entity.getLocation(), region))
 				.map(entity -> CitizensAPI.getNPCRegistry().getNPC(entity))
 				.collect(Collectors.toList());
 

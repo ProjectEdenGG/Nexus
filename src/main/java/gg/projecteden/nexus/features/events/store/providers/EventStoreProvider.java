@@ -30,6 +30,9 @@ public class EventStoreProvider extends EventStoreMenu {
 		List<ClickableItem> items = new ArrayList<>();
 
 		for (EventStoreItem eventStoreItem : EventStoreItem.values()) {
+			if (!eventStoreItem.canView(player))
+				continue;
+
 			ItemBuilder item = eventStoreItem.getDisplayItem();
 			items.add(ClickableItem.from(item.build(), e -> eventStoreItem.onClick(player, this)));
 		}

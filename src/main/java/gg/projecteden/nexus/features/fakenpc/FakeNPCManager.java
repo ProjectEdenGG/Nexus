@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.fakenpc;
 
 import gg.projecteden.nexus.utils.Name;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
@@ -29,7 +29,7 @@ public class FakeNPCManager {
 
 	public FakeNPCManager() {
 		Tasks.repeat(0, TickTime.SECOND.x(1), () -> {
-			Collection<? extends Player> players = PlayerUtils.getOnlinePlayers();
+			Collection<? extends Player> players = OnlinePlayers.getAll();
 			fakeNpcs.forEach(fakeNPC -> {
 				if (fakeNPC.isVisible()) {
 					List<Player> nearby = players.stream().filter(player -> isNear(player, fakeNPC)).collect(Collectors.toList());

@@ -5,7 +5,7 @@ import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreboard;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import me.lucko.helper.scoreboard.ScoreboardTeam;
 import org.bukkit.ChatColor;
 
@@ -64,7 +64,7 @@ public class SabotageScoreboard implements MinigameScoreboard.ITeams {
 	public void handleEnd() {
 		scoreboards.forEach(($, scoreboardTeam) -> {
 			scoreboardTeam.getPlayers().forEach(scoreboardTeam::removePlayer);
-			PlayerUtils.getOnlinePlayers().forEach(scoreboardTeam::unsubscribe);
+			OnlinePlayers.getAll().forEach(scoreboardTeam::unsubscribe);
 			Minigames.getScoreboard().removeTeam(scoreboardTeam.getId());
 		});
 	}

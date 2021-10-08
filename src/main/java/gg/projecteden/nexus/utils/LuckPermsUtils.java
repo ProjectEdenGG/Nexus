@@ -3,6 +3,7 @@ package gg.projecteden.nexus.utils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
+import gg.projecteden.utils.CompletableFutures;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
@@ -208,7 +209,6 @@ public class LuckPermsUtils {
 		private final BiConsumer<NodeMap, Node> consumer;
 	}
 
-	@AllArgsConstructor
 	public static class PermissionChange {
 
 		public static PermissionChangeBuilder set() {
@@ -242,8 +242,8 @@ public class LuckPermsUtils {
 				return this;
 			}
 
-			public PermissionChangeBuilder permission(String permission) {
-				this.permissions.add(permission);
+			public PermissionChangeBuilder permissions(String... permission) {
+				this.permissions.addAll(Arrays.asList(permission));
 				return this;
 			}
 
@@ -404,7 +404,7 @@ public class LuckPermsUtils {
 			}
 
 			@Override
-			public HandlerList getHandlers() {
+			public @NotNull HandlerList getHandlers() {
 				return handlers;
 			}
 		}

@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import me.lexikiq.HasPlayer;
@@ -80,7 +81,7 @@ public class ActionBarUtils {
 	// All players
 
 	public static void sendActionBarToAllPlayers(ActionBar actionBar) {
-		for (Player player : PlayerUtils.getOnlinePlayers())
+		for (Player player : OnlinePlayers.getAll())
 			sendActionBar(player, actionBar.getText(), actionBar.getDuration(), actionBar.isFade());
 	}
 
@@ -93,7 +94,7 @@ public class ActionBarUtils {
 	}
 
 	public static void sendActionBarToAllPlayers(String message, int duration, boolean fade) {
-		for (Player player : PlayerUtils.getOnlinePlayers())
+		for (Player player : OnlinePlayers.getAll())
 			sendActionBar(player, message, duration, fade);
 	}
 

@@ -8,6 +8,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.CitizensUtils.NPCFinder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -53,24 +54,36 @@ public class NPCUtilsCommand extends CustomCommand {
 	}
 
 	@Async
-	@Path("list [page] [--owner] [--world] [--radius] [--spawned]")
-	void list(@Arg("1") int page, @Switch OfflinePlayer owner, @Switch World world, @Switch Integer radius, @Switch Boolean spawned) {
+	@Path("list [page] [--owner] [--rankGte] [--rankLte] [--world] [--radius] [--spawned]")
+	void list(
+		@Arg("1") int page,
+		@Switch OfflinePlayer owner,
+		@Switch Rank rankGte,
+		@Switch Rank rankLte,
+		@Switch World world,
+		@Switch Integer radius,
+		@Switch Boolean spawned
+	) {
 		List<NPC> npcs = NPCFinder.builder()
-				.owner(owner)
-				.world(world)
-				.spawned(spawned)
-				.radius(radius)
-				.from(location())
-				.build().get();
+			.owner(owner)
+			.rankGte(rankGte)
+			.rankLte(rankLte)
+			.world(world)
+			.spawned(spawned)
+			.radius(radius)
+			.from(location())
+			.build().get();
 
 		if (npcs.isEmpty())
 			error("No matches found");
 
 		String command = "/npcutils list" +
-				" --player=" + (owner == null ? "null" : owner.getName()) +
-				" --world=" + (world == null ? "null" : world.getName()) +
-				" --radius=" + (radius == null ? "null" : radius) +
-				" --spawned=" + spawned;
+			(owner == null ? "" : " --player=" + owner.getName()) +
+			(rankGte == null ? "" : " --rankGte=" + rankGte) +
+			(rankLte == null ? "" : " --rankLte=" + rankLte) +
+			(world == null ? "" : " --world=" + world.getName()) +
+			(radius == null ? "" : " --radius=" + radius) +
+			(spawned == null ? "" : " --spawned=" + spawned);
 
 		Comparator<NPC> comparator;
 		if (radius != null)

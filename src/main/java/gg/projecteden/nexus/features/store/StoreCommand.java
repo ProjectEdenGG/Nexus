@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.store;
 
-import com.google.common.collect.ImmutableList;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
@@ -8,6 +7,7 @@ import fr.minuskube.inv.content.InventoryProvider;
 import gg.projecteden.annotations.Async;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.store.BuycraftUtils.CouponCreator;
 import gg.projecteden.nexus.features.store.annotations.Category.StoreCategory;
 import gg.projecteden.nexus.features.store.gallery.StoreGalleryNPCs;
 import gg.projecteden.nexus.features.store.gallery.StoreGalleryNPCs.DisplaySet;
@@ -29,27 +29,20 @@ import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange.PlayerRankChangeEvent;
-import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import net.buycraft.plugin.data.Coupon;
-import net.buycraft.plugin.data.Coupon.Discount;
-import net.buycraft.plugin.data.Coupon.Effective;
-import net.buycraft.plugin.data.Coupon.Expire;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.BiFunction;
@@ -99,7 +92,23 @@ public class StoreCommand extends CustomCommand implements Listener {
 	@Path("credit [player]")
 	void credit(@Arg(value = "self", permission = "group.staff") Contributor contributor) {
 		send(PREFIX + (isSelf(contributor) ? "Your" : contributor.getNickname() + "'s") + " store credit: " + contributor.getCreditFormatted());
-		// TODO Info on how to convert to coupons
+		if (isSelf(contributor)) {
+			line();
+			send("&3Redeem with &c/store credit redeem <amount>");
+			send("&3View available coupons with &c/store coupons list");
+		}
+	}
+
+	@Async
+	@Path("credit redeem <amount> [player]")
+	void credit_redeem(double amount, @Arg(value = "self", permission = "group.staff") Contributor contributor) {
+		if (!contributor.hasCredit(amount))
+			error("You do not have enough credit");
+
+		contributor.takeCredit(amount);
+		String code = new CouponCreator(contributor, amount).create();
+
+		send(json(PREFIX + "Created store coupon &e" + code + "&3. Click to copy").copy(code).hover("&fClick to copy", "&fRedeem at " + StoreCommand.URL));
 	}
 
 	@Permission("group.admin")
@@ -124,6 +133,37 @@ public class StoreCommand extends CustomCommand implements Listener {
 		contributor.takeCredit(amount);
 		service.save(contributor);
 		send(PREFIX + "Removed &e" + prettyMoney(amount) + " &3from &e" + Nickname.of(contributor) + "'s &3balance. New balance: &e" + contributor.getCreditFormatted());
+	}
+
+	@Async
+	@SneakyThrows
+	@Path("coupons create <player> <amount>")
+	@Permission("group.admin")
+	void coupon_create(Contributor contributor, double amount) {
+		String code = new CouponCreator(contributor, amount).create();
+		send(json(PREFIX + "Created coupon &e" + code).copy(code).hover("&fClick to copy"));
+	}
+
+	@Async
+	@SneakyThrows
+	@Path("coupons list <player>")
+	void coupon_list(@Arg(value = "self", permission = "group.staff") Contributor contributor) {
+		final List<Coupon> coupons = Nexus.getBuycraft().getApiClient().getAllCoupons().execute().body().getData().stream()
+			.filter(coupon -> coupon.getUsername().equals(contributor.getName()))
+			.filter(coupon -> coupon.getExpire().getLimit() > 0)
+			.toList();
+
+		if (coupons.isEmpty())
+			error("No coupons found" + (isSelf(contributor) ? ". Create one with /store credit redeem <amount>" : " for " + contributor.getNickname()));
+
+		send(PREFIX + "Available coupons (&eClick &3to copy)");
+
+		line();
+		for (Coupon coupon : coupons)
+			send(json(" &e" + coupon.getCode() + " &7- $" + coupon.getDiscount().getValue()).copy(coupon.getCode()).hover("&fClick to copy"));
+
+		line();
+		send("&3Redeem at &e" + StoreCommand.URL);
 	}
 
 	@AllArgsConstructor
@@ -193,7 +233,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 					items.add(ClickableItem.empty(item.build()));
 				}
 
-			addPagination(viewer, contents, items);
+			paginator(viewer, contents, items);
 		}
 
 	}
@@ -207,41 +247,6 @@ public class StoreCommand extends CustomCommand implements Listener {
 		send(PLUS + "If you are under the age of eighteen, be sure to have a parent or guardians permission");
 		send(PLUS + "None of the money that is donated goes to a Staff member personally. The money is for improving the server only");
 		send(PLUS + "Just because you donate does not mean you can not be banned");
-	}
-
-	public static String generateCouponCode() {
-		StringBuilder code = new StringBuilder();
-		for (int i = 1; i < 15; i++)
-			if (i % 5 == 0)
-				code.append("-");
-			else
-				code.append(RandomUtils.randomAlphanumeric());
-		return code.toString();
-	}
-
-	@Async
-	@SneakyThrows
-	@Path("createCoupon <player> <amount>")
-	@Permission("group.admin")
-	void createCoupon(OfflinePlayer offlinePlayer, double amount) {
-		Coupon coupon = Coupon.builder()
-				.code(generateCouponCode())
-				.effective(new Effective("cart", ImmutableList.of(), ImmutableList.of()))
-				.basketType("both")
-				.discount(new Discount("amount", BigDecimal.ZERO, BigDecimal.valueOf(amount)))
-				.discountMethod(2)
-				.username(Name.of(offlinePlayer))
-				.redeemUnlimited(false)
-				.redeemUnlimited(1)
-				.minimum(BigDecimal.ZERO)
-				.startDate(new Date())
-				.expireNever(true)
-				.expire(new Expire("timestamp", 0, new Date(System.currentTimeMillis() + 1L)))
-				.build();
-
-		Nexus.getBuycraft().getApiClient().createCoupon(coupon).execute();
-
-		send(json(PREFIX + "Created coupon &e" + coupon.getCode()).insert(coupon.getCode()));
 	}
 
 	@Path("apply <package> [player]")

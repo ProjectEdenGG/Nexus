@@ -2,32 +2,46 @@ package gg.projecteden.nexus.features.recipes.models;
 
 import gg.projecteden.nexus.features.recipes.CustomRecipes;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.utils.StringUtils.camelCase;
+
+@Getter
+@RequiredArgsConstructor
 public enum RecipeType {
 	MAIN(null),
 	SLABS(Material.OAK_SLAB),
 	QUARTZ(Material.QUARTZ),
-	BEDS(Material.CYAN_BED),
+	BEDS_BANNERS(Material.CYAN_BED) {
+		@Override
+		public ItemStack getItem() {
+			return new ItemBuilder(Material.CYAN_BED).name("&eBeds/Banners").build();
+		}
+	},
 	DYES(Material.YELLOW_DYE),
 	WOOL(Material.WHITE_WOOL),
 	STONE_BRICK(Material.STONE_BRICKS),
 	MISC(Material.BLUE_ICE),
-	FUNCTIONAL(Material.CHEST),
-	ARMOR(Material.DIAMOND_CHESTPLATE);
+	FUNCTIONAL(Material.CHEST, 0, true),
+	DECORATION(Material.AMETHYST_SHARD, 4, true),
+	ARMOR(Material.DIAMOND_CHESTPLATE, 0, true);
 
-	@Getter
-	public ItemStack item;
+	private final Material material;
+	private final int customModelData;
+	private final boolean folder;
 
 	RecipeType(Material material) {
-		if (material == null) return;
-		this.item = new ItemBuilder(material).name("&e" + StringUtils.camelCase(name().replace("_", " "))).build();
+		this(material, 0, false);
+	}
+
+	public ItemStack getItem() {
+		return new ItemBuilder(material).customModelData(customModelData).name("&e" + camelCase(this)).build();
 	}
 
 	public List<NexusRecipe> getRecipes() {

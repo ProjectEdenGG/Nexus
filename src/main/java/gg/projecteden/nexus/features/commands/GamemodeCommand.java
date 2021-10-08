@@ -16,7 +16,6 @@ import org.bukkit.entity.Player;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Aliases({"gm", "egm", "egamemode", "gmt", "egmt"})
 @Permission("essentials.gamemode")
@@ -55,9 +54,10 @@ public class GamemodeCommand extends CustomCommand {
 	@TabCompleterFor(GameMode.class)
 	List<String> tabCompleteGameMode(String filter) {
 		return Arrays.stream(GameMode.values())
-				.filter(gamemode -> player().hasPermission("essentials.gamemode." + gamemode.name().toLowerCase()))
-				.map(gamemode -> gamemode.name().toLowerCase())
-				.collect(Collectors.toList());
+			.filter(gamemode -> player().hasPermission("essentials.gamemode." + gamemode.name().toLowerCase()))
+			.map(gamemode -> gamemode.name().toLowerCase())
+			.filter(name -> name.toLowerCase().startsWith(filter.toLowerCase()))
+			.toList();
 	}
 
 }

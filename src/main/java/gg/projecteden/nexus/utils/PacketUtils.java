@@ -70,6 +70,10 @@ public class PacketUtils {
 
 	// Common
 
+	public static void entityDestroy(@NonNull HasPlayer player, org.bukkit.entity.Entity entity) {
+		entityDestroy(player, entity.getEntityId());
+	}
+
 	public static void entityDestroy(@NonNull HasPlayer player, int entityId) {
 		PacketPlayOutEntityDestroy destroyPacket = new PacketPlayOutEntityDestroy(entityId);
 		sendPacket(player, destroyPacket);
@@ -274,9 +278,6 @@ public class PacketUtils {
 		sendPacket(player, new PacketPlayOutEntityTeleport(entity));
 		entityLook(player, bukkitEntity, location.getYaw(), location.getPitch());
 	}
-
-	// NPC
-
 
 	// TODO: if possible
 	public static void entityName(@NonNull HasPlayer player, org.bukkit.entity.NPC entity, String name) {

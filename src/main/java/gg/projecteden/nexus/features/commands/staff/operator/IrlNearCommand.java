@@ -25,6 +25,8 @@ import java.util.function.BiFunction;
 
 @Permission("group.seniorstaff")
 public class IrlNearCommand extends CustomCommand {
+	private final GeoIPService service = new GeoIPService();
+	private final HoursService hoursService = new HoursService();
 
 	public IrlNearCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -35,11 +37,12 @@ public class IrlNearCommand extends CustomCommand {
 	@Path("[player] [page]")
 	void run(@Arg("self") GeoIP player, @Arg("1") int page) {
 		Map<UUID, Distance> near = new HashMap<>() {{
-			for (GeoIP geoip : new GeoIPService().getAll())
-				if (new HoursService().get(geoip).getTotal() > TickTime.MINUTE.x(30) / 20)
+			for (GeoIP geoip : service.getAll()) {
+				if (hoursService.get(geoip).has(TickTime.MINUTE.x(30)))
 					try {
 						put(geoip.getUuid(), new Distance(player, geoip));
 					} catch (InvalidInputException ignore) {}
+			}
 		}};
 
 		BiFunction<UUID, String, JsonBuilder> formatter = (uuid, index) -> {

@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.wither;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
@@ -23,7 +24,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
@@ -74,7 +74,7 @@ public class BeginningCutscene implements Listener {
 
 		for (Player player : currentFight.alivePlayers()) {
 			player.setGameMode(GameMode.SPECTATOR);
-			player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, TickTime.SECOND.x(3), 1, true));
+			player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.BLINDNESS).duration(TickTime.SECOND.x(3)).ambient(true).build());
 			player.teleport(location(-150.5, 77, -82.5, 0, 20));
 
 			new TitleBuilder()

@@ -1,85 +1,79 @@
 package gg.projecteden.nexus.features.socialmedia;
 
-import gg.projecteden.annotations.Environments;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Discord;
-import gg.projecteden.nexus.framework.features.Feature;
-import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.features.socialmedia.integrations.Twitch;
+import gg.projecteden.nexus.models.socialmedia.SocialMediaUser;
+import gg.projecteden.nexus.models.socialmedia.SocialMediaUser.Connection;
+import gg.projecteden.nexus.models.socialmedia.SocialMediaUserService;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.Env;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.Sign;
-import org.bukkit.block.Skull;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import twitter4j.Status;
-import twitter4j.Twitter;
-import twitter4j.TwitterFactory;
-import twitter4j.conf.ConfigurationBuilder;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @NoArgsConstructor
-@Environments(Env.PROD)
-public class SocialMedia extends Feature implements Listener {
+public class SocialMedia implements Listener {
+	public static final String PREFIX = StringUtils.getPrefix("SocialMedia");
 
-	@Getter
-	private static Twitter twitter;
-
-	@Override
-	public void onStart() {
+	public static CompletableFuture<Boolean> checkStreaming(UUID uuid) {
+		CompletableFuture<Boolean> future = new CompletableFuture<>();
 		Tasks.async(() -> {
-			try {
-				FileConfiguration config = Nexus.getInstance().getConfig();
-				ConfigurationBuilder twitterConfig = new ConfigurationBuilder();
+			boolean streaming;
 
-				twitterConfig.setDebugEnabled(true)
-						.setOAuthConsumerKey(config.getString("tokens.twitter.consumerKey"))
-						.setOAuthConsumerSecret(config.getString("tokens.twitter.consumerSecret"))
-						.setOAuthAccessToken(config.getString("tokens.twitter.accessToken"))
-						.setOAuthAccessTokenSecret(config.getString("tokens.twitter.accessTokenSecret"));
+			final SocialMediaUserService service = new SocialMediaUserService();
+			final SocialMediaUser user = service.get(uuid);
+			final Connection connection = user.getConnection(SocialMediaSite.TWITCH);
+			if (Twitch.get() == null || connection == null)
+				streaming = false;
+			else
+				streaming = !Twitch.get().getStreams(null, null, null, 1, null, null, null, List.of(connection.getUsername()))
+					.execute()
+					.getStreams()
+					.isEmpty();
 
-				twitter = new TwitterFactory(twitterConfig.build()).getInstance();
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
+			user.setStreaming(streaming);
+			service.save(user);
+
+			future.complete(streaming);
 		});
-	}
 
-	public static String getUrl(Status status) {
-		return "https://twitter.com/" + status.getUser().getScreenName() + "/status/" + status.getId();
+		return future;
 	}
 
 	public enum SocialMediaSite {
-		TWITTER("Twitter", ChatColor.of("#1da1f2"), "https://twitter.com", "https://twitter.com/{{USERNAME}}"),
-		INSTAGRAM("Instagram", ChatColor.of("#e1306c"), "https://instgram.com", "https://instgram.com/{{USERNAME}}"),
-		SNAPCHAT("Snapchat", ChatColor.of("#fffc00"), "https://snapchat.com", "https://snapchat.com/add/{{USERNAME}}"),
-		YOUTUBE("YouTube", ChatColor.of("#ff0000"), "https://youtube.com", "{{USERNAME}}"),
-		TWITCH("Twitch", ChatColor.of("#6441a5"), "https://twitch.tv", "https://twitch.tv/{{USERNAME}}"),
-		DISCORD("Discord", ChatColor.of("#7289da"), "https://discord.com", "{{USERNAME}}"),
-		STEAM("Steam", ChatColor.of("#356d92"), "https://store.steampowered.com", "https://steamcommunity.com/id/{{USERNAME}}"),
-		REDDIT("Reddit", ChatColor.of("#ff5700"), "https://reddit.com", "https://reddit.com/u/{{USERNAME}}"),
-		GITHUB("GitHub", ChatColor.of("#ffffff"), "https://github.com", "https://github.com/{{USERNAME}}"),
-//		QUEUP("QueUp", ChatColor.of("#d42f8a"), "https://queup.net", "https://queup.net/user/{{USERNAME}}"), // TODO QueUp
+		TWITTER("Twitter", ChatColor.of("#1da1f2"), "", "https://twitter.com", "https://twitter.com/%s"),
+		INSTAGRAM("Instagram", ChatColor.of("#e1306c"), "", "https://instgram.com", "https://instgram.com/%s"),
+		SNAPCHAT("Snapchat", ChatColor.of("#fffc00"), "", "https://snapchat.com", "https://snapchat.com/add/%s"),
+		YOUTUBE("YouTube", ChatColor.of("#ff0000"), "", "https://youtube.com", "https://youtube.com/channel/%s"),
+		TWITCH("Twitch", ChatColor.of("#6441a5"), "", "https://twitch.tv", "https://twitch.tv/%s"),
+		TIKTOK("TikTok", ChatColor.of("#69C9D0"), "", "https://tiktok.com", "https://tiktok.com/@%s"),
+		DISCORD("Discord", ChatColor.of("#7289da"), "", "https://discord.com", "%s"),
+		STEAM("Steam", ChatColor.of("#356d92"), "", "https://store.steampowered.com", "https://steamcommunity.com/id/%s"),
+		SPOTIFY("Spotify", ChatColor.of("#1ed760"), "", "https://spotify.com", "https://open.spotify.com/user/%s"),
+		REDDIT("Reddit", ChatColor.of("#ff5700"), "", "https://reddit.com", "https://reddit.com/u/%s"),
+		GITHUB("GitHub", ChatColor.of("#777777"), "", "https://github.com", "https://github.com/%s"),
+//		QUEUP("QueUp", ChatColor.of("#d42f8a"), "https://queup.net", "https://queup.net/user/%s"), // TODO QueUp
 		;
 
 		@Getter
 		private final String name;
 		@Getter
 		private final ChatColor color;
+		@Getter
+		private final String emoji;
 		@Getter
 		private final String url;
 		@Getter
@@ -88,9 +82,10 @@ public class SocialMedia extends Feature implements Listener {
 		@Setter
 		private ItemStack head = new ItemStack(Material.PLAYER_HEAD);
 
-		SocialMediaSite(String name, ChatColor color, String url, String profileUrl) {
+		SocialMediaSite(String name, ChatColor color, String emoji, String url, String profileUrl) {
 			this.name = name;
 			this.color = color;
+			this.emoji = emoji;
 			this.url = url;
 			this.profileUrl = profileUrl;
 		}
@@ -99,38 +94,6 @@ public class SocialMedia extends Feature implements Listener {
 			return color + name;
 		}
 
-		static {
-			if (Nexus.getEnv() == Env.PROD)
-				reload();
-		}
-
-		public static void reload() {
-			try {
-				World world = Bukkit.getWorld("survival");
-
-				for (Block block : new WorldEditUtils(world).getBlocks(new WorldGuardUtils(world).getRegion("socialmedia"))) {
-					try {
-						if (!MaterialTag.SIGNS.isTagged(block.getType())) continue;
-						Sign sign = (Sign) block.getState();
-						String line = sign.getLine(0);
-						try {
-							SocialMediaSite site = SocialMediaSite.valueOf(line);
-							Block head = block.getRelative(BlockFace.DOWN);
-							if (head.getState() instanceof Skull)
-								site.setHead(head.getDrops().iterator().next());
-							else
-								Nexus.warn("Head for " + camelCase(site.name()) + " not found");
-						} catch (IllegalArgumentException ex) {
-							Nexus.warn("Found unknown social media head: " + line);
-						}
-					} catch (Throwable ex) {
-						ex.printStackTrace();
-					}
-				}
-			} catch (Throwable ex) {
-				ex.printStackTrace();
-			}
-		}
 	}
 
 	public enum EdenSocialMediaSite {
@@ -139,10 +102,7 @@ public class SocialMedia extends Feature implements Listener {
 			@Override
 			@NotNull
 			public String getUrl() {
-				String url = "https://discord." + Nexus.DOMAIN;
-				if (Discord.getGuild() != null && Discord.getGuild().getBoostTier().getKey() == 3)
-					url = "https://discord.gg/ProjectEdenGG";
-				return url;
+				return Discord.getInvite();
 			}
 		},
 		YOUTUBE("https://youtube." + Nexus.DOMAIN),

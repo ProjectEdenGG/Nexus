@@ -9,18 +9,18 @@ import gg.projecteden.nexus.models.home.Home;
 import gg.projecteden.nexus.models.home.HomeOwner;
 import gg.projecteden.nexus.models.home.HomeService;
 import lombok.NonNull;
-import org.bukkit.OfflinePlayer;
 
 import java.util.Optional;
 
 public class SetHomeCommand extends CustomCommand {
-	HomeService service = new HomeService();
-	HomeOwner homeOwner;
+	private final HomeService service = new HomeService();
+	private HomeOwner homeOwner;
 
 	public SetHomeCommand(@NonNull CommandEvent event) {
 		super(event);
 		PREFIX = HomesFeature.PREFIX;
-		homeOwner = service.get(player());
+		if (isPlayerCommandEvent())
+			homeOwner = service.get(player());
 	}
 
 	@Path("[name]")
@@ -47,9 +47,7 @@ public class SetHomeCommand extends CustomCommand {
 
 	@Permission("group.staff")
 	@Path("<player> <name>")
-	void setHome(OfflinePlayer player, String homeName) {
-		homeOwner = service.get(player);
-
+	void setHome(HomeOwner homeOwner, String homeName) {
 		Optional<Home> home = homeOwner.getHome(homeName);
 		String message;
 		if (home.isPresent()) {

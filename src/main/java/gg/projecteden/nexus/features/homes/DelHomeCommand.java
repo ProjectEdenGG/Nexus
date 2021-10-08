@@ -9,16 +9,16 @@ import gg.projecteden.nexus.models.home.Home;
 import gg.projecteden.nexus.models.home.HomeOwner;
 import gg.projecteden.nexus.models.home.HomeService;
 import lombok.NonNull;
-import org.bukkit.OfflinePlayer;
 
 public class DelHomeCommand extends CustomCommand {
-	HomeService service = new HomeService();
-	HomeOwner homeOwner;
+	private final HomeService service = new HomeService();
+	private HomeOwner homeOwner;
 
 	public DelHomeCommand(@NonNull CommandEvent event) {
 		super(event);
 		PREFIX = HomesFeature.PREFIX;
-		homeOwner = service.get(player());
+		if (isPlayerCommandEvent())
+			homeOwner = service.get(player());
 	}
 
 	@Path("<name>")
@@ -31,8 +31,7 @@ public class DelHomeCommand extends CustomCommand {
 
 	@Permission("group.staff")
 	@Path("<player> <name>")
-	void delhome(OfflinePlayer player, @Arg(context = 1) Home home) {
-		homeOwner = service.get(player);
+	void delhome(HomeOwner homeOwner, @Arg(context = 1) Home home) {
 		homeOwner.delete(home);
 		service.save(homeOwner);
 

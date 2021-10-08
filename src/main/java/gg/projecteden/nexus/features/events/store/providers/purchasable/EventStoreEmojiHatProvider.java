@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static gg.projecteden.nexus.features.events.Events.STORE_PREFIX;
+import static gg.projecteden.nexus.utils.PlayerUtils.send;
+import static gg.projecteden.utils.StringUtils.camelCase;
 
 @AllArgsConstructor
 public class EventStoreEmojiHatProvider extends EventStoreMenu {
@@ -41,11 +43,14 @@ public class EventStoreEmojiHatProvider extends EventStoreMenu {
 
 			items.add(ClickableItem.from(item.build(), e -> {
 				try {
-					if (isShiftClick(e))
+					if (isShiftClick(e)) {
 						chargeAndAddPermissions(player, price, type.getPermission());
-					else {
+						send(player, STORE_PREFIX + "Purchased &e" + camelCase(type) + "&3, use with &c/emojihats " + type.name().toLowerCase());
+						open(player);
+					} else {
 						player.closeInventory();
 						type.runSelf(player);
+						send(player, STORE_PREFIX + "Use F5 to view the emoji");
 					}
 				} catch (Exception ex) {
 					handleException(player, STORE_PREFIX, ex);

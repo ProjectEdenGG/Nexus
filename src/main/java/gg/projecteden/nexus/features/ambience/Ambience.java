@@ -5,7 +5,7 @@ import gg.projecteden.nexus.features.ambience.managers.common.AmbienceManagers;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.ambience.AmbienceUser;
 import gg.projecteden.nexus.models.ambience.AmbienceUserService;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.Env;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -52,7 +52,7 @@ public class Ambience extends Feature implements Listener {
 	}
 
 	public static List<AmbienceUser> getUsers() {
-		return PlayerUtils.getOnlinePlayers().stream().map(userService::get).toList();
+		return OnlinePlayers.getAll().stream().map(userService::get).toList();
 	}
 
 }

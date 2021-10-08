@@ -11,7 +11,11 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redi
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.models.witherarena.WitherArenaConfigService;
+import gg.projecteden.nexus.utils.FuzzyItemStack;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -24,10 +28,13 @@ import org.bukkit.inventory.PlayerInventory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.features.wither.WitherChallenge.currentFight;
-import static gg.projecteden.nexus.features.wither.WitherChallenge.maintenance;
-import static gg.projecteden.nexus.features.wither.WitherChallenge.queue;
+import static gg.projecteden.nexus.models.witherarena.WitherArenaConfig.isBeta;
+import static gg.projecteden.nexus.models.witherarena.WitherArenaConfig.isMaintenance;
 import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
 
 @Redirect(from = "/wchat", to = "/wither chat")
@@ -37,12 +44,10 @@ public class WitherCommand extends CustomCommand {
 		super(event);
 	}
 
-	public static boolean betaMode = false;
-
 	@SneakyThrows
 	@Path("challenge")
 	void fight() {
-		if (!isStaff() && betaMode)
+		if (!isStaff() && isBeta())
 			error("The wither is currently being beta tested by staff. It should be back soon!");
 
 		if (RebootCommand.isQueued())
@@ -51,12 +56,21 @@ public class WitherCommand extends CustomCommand {
 		if (worldGroup() != WorldGroup.SURVIVAL)
 			error("You cannot fight the wither in " + camelCase(worldGroup()));
 
-		if (maintenance && !Rank.of(player()).isStaff())
+		if (isMaintenance() && !isStaff())
 			error("The wither arena is currently under maintenance, please wait");
 
 		if (!checkHasItems())
 			return;
 
+		if (currentFight != null)
+			error("The wither is already being fought, please try again later");
+
+		new DifficultySelectionMenu().open(player());
+
+		/*
+		final WitherArenaConfigService service = new WitherArenaConfigService();
+		final WitherArenaConfig config = service.get0();
+		final List<UUID> queue = config.getQueue();
 		int index = queue.indexOf(uuid());
 
 		if (index > 0)
@@ -64,6 +78,7 @@ public class WitherCommand extends CustomCommand {
 
 		if (index == -1) {
 			queue.add(uuid());
+			service.save(config);
 			index = queue.indexOf(uuid());
 		}
 
@@ -72,46 +87,41 @@ public class WitherCommand extends CustomCommand {
 		else
 			send(PREFIX + "You have been added to the queue. You are #" + queue.size() + " in line. " +
 					"You will be prompted when it is your time to challenge the wither. Please keep the necessary items on you to spawn the Wither");
+		 */
 	}
 
 	public boolean checkHasItems() {
-		List<ItemStack> missingItems = new ArrayList<>();
-		List<ItemStack> neededItems = new ArrayList<>() {{
-			add(new ItemStack(Material.WITHER_SKELETON_SKULL, 3));
-			add(new ItemStack(Material.SOUL_SAND, 4));
-			add(new ItemStack(Material.BOW));
-			add(new ItemStack(Material.ARROW));
+		PlayerInventory inventory = player().getInventory();
+		List<FuzzyItemStack> missing = new ArrayList<>();
+		List<FuzzyItemStack> required = new ArrayList<>() {{
+			add(new FuzzyItemStack(Material.WITHER_SKELETON_SKULL, 3));
+			add(new FuzzyItemStack(Material.SOUL_SAND, 4));
+			add(new FuzzyItemStack(Set.of(Material.BOW, Material.CROSSBOW), 1));
+			add(new FuzzyItemStack(MaterialTag.ARROWS, 1));
 		}};
 
-		PlayerInventory inventory = player().getInventory();
-		for (ItemStack item : neededItems) {
-			if (item.getType().equals(Material.BOW)) {
-
-				if (!inventory.contains(item.getType(), item.getAmount()) && !inventory.contains(Material.CROSSBOW, item.getAmount()))
-					missingItems.add(item);
-			}
-
-			if (!inventory.contains(item.getType(), item.getAmount())) {
-				// if player has a crossbow instead of a bow
-				if (item.getType().equals(Material.BOW) && inventory.contains(Material.CROSSBOW, item.getAmount()))
-					continue;
-
-				missingItems.add(item);
-			}
-
+		requiredItems:
+		for (FuzzyItemStack item : required) {
+			for (Material material : item.getMaterials())
+				if (inventory.contains(material, item.getAmount()))
+					continue requiredItems;
+			missing.add(item);
 		}
-		if (missingItems.size() != 0) {
-			tellNeededItems(missingItems);
+
+		if (!missing.isEmpty()) {
+			tellNeededItems(missing);
 			return false;
 		}
+
 		return true;
 	}
 
-	public void tellNeededItems(List<ItemStack> items) {
+	public void tellNeededItems(List<FuzzyItemStack> items) {
 		send(PREFIX + "&cYou do not have the necessary items in your inventory to spawn the wither. You are missing:");
-		for (ItemStack item : items)
-			send("&c - " + camelCase(item.getType()) + (item.getAmount() > 1 ? " &ex &c" + item.getAmount() : ""));
-
+		for (FuzzyItemStack item : items) {
+			final String materials = item.getMaterials().stream().map(StringUtils::camelCase).collect(Collectors.joining(" &eor "));
+			send("&c - " + materials + (item.getAmount() > 1 ? " &ex &c" + item.getAmount() : ""));
+		}
 	}
 
 	@Path("invite <player>")
@@ -133,7 +143,7 @@ public class WitherCommand extends CustomCommand {
 
 	@Path("join")
 	void join() {
-		if (!Rank.of(player()).isStaff() && betaMode)
+		if (!Rank.of(player()).isStaff() && isBeta())
 			error("The wither is currently being beta tested by staff. It should be back soon!");
 
 		if (currentFight == null)
@@ -206,7 +216,7 @@ public class WitherCommand extends CustomCommand {
 				(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3are" : " &3is") +
 				" challenging the wither to a fight in " + currentFight.getDifficulty().getTitle() + " &3mode";
 
-		if (betaMode)
+		if (isBeta())
 			Broadcast.staffIngame().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
 		else
 			Broadcast.all().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
@@ -260,7 +270,7 @@ public class WitherCommand extends CustomCommand {
 
 	@Path("spectate")
 	void spectate() {
-		if (!Rank.of(player()).isStaff() && betaMode)
+		if (!Rank.of(player()).isStaff() && isBeta())
 			error("The wither is currently being beta tested by staff. It should be back soon!");
 
 		if (currentFight == null)
@@ -285,8 +295,9 @@ public class WitherCommand extends CustomCommand {
 	void reset() {
 		WitherChallenge.reset(false);
 		send(PREFIX + "Arena successfully reset");
+		final List<UUID> queue = new WitherArenaConfigService().get0().getQueue();
 		if (queue.size() > 0)
-			send(json(PREFIX + "&eThere are players queued to fight the wither. Click here to process the queue.").command("/wither processQueue"));
+			send(json(PREFIX + "&eThere are " + queue.size() + " players queued to fight the wither. Click here to process the queue.").command("/wither processQueue"));
 	}
 
 	@Path("processQueue")
@@ -299,8 +310,15 @@ public class WitherCommand extends CustomCommand {
 	@Path("maintenance")
 	@Permission("group.staff")
 	void maintenance() {
-		maintenance = !maintenance;
-		send(PREFIX + "Wither arena maintenance mode " + (maintenance ? "&aenabled" : "&cdisabled"));
+		new WitherArenaConfigService().edit0(config -> config.setMaintenance(!isMaintenance()));
+		send(PREFIX + "Wither arena maintenance mode " + (isMaintenance() ? "&aenabled" : "&cdisabled"));
+	}
+
+	@Path("beta")
+	@Permission("group.admin")
+	void beta() {
+		new WitherArenaConfigService().edit0(config -> config.setBeta(!isBeta()));
+		send(PREFIX + "Wither arena beta mode " + (isBeta() ? "&aenabled" : "&cdisabled"));
 	}
 
 	@Path("getFragment")

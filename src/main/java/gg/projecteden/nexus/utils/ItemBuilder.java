@@ -4,8 +4,8 @@ import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.customenchants.enchants.SoulboundEnchant;
-import gg.projecteden.nexus.features.quests.itemtags.Condition;
-import gg.projecteden.nexus.features.quests.itemtags.Rarity;
+import gg.projecteden.nexus.features.itemtags.Condition;
+import gg.projecteden.nexus.features.itemtags.Rarity;
 import gg.projecteden.nexus.features.recipes.functionals.Backpacks;
 import gg.projecteden.nexus.features.resourcepack.CustomModel;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -13,6 +13,7 @@ import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.skincache.SkinCache;
 import gg.projecteden.nexus.utils.SymbolBanner.Symbol;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.lexikiq.HasOfflinePlayer;
@@ -67,6 +68,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @SuppressWarnings({"unused", "UnusedReturnValue", "ResultOfMethodCallIgnored", "CopyConstructorMissesField", "deprecation"})
@@ -278,7 +280,12 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	public ItemBuilder potionEffect(PotionEffectType potionEffectType, int seconds, int amplifier) {
-		return potionEffect(new PotionEffect(potionEffectType, seconds * 20, amplifier - 1));
+		return potionEffect(new PotionEffectBuilder(potionEffectType).duration(TickTime.SECOND.x(seconds)).amplifier(amplifier - 1));
+	}
+
+	public ItemBuilder potionEffect(PotionEffectBuilder potionEffect) {
+		((PotionMeta) itemMeta).addCustomEffect(potionEffect.build(), true);
+		return this;
 	}
 
 	public ItemBuilder potionEffect(PotionEffect potionEffect) {
@@ -638,6 +645,21 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		NBTItem nbtItem = nbtItem();
 		final Integer customModelData = nbtItem.getInteger(CustomModel.NBT_KEY);
 		return customModelData == null ? 0 : customModelData;
+	}
+
+	public static class CustomModelData {
+
+		public static int of(ItemStack item) {
+			if (isNullOrAir(item))
+				return 0;
+
+			return of(new ItemBuilder(item));
+		}
+
+		public static int of(ItemBuilder item) {
+			return item.customModelData();
+		}
+
 	}
 
 	// Use this when you don't want the glowing, infinite deaths, & no combining

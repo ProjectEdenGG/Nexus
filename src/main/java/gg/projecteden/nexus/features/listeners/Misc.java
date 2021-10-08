@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.listeners;
 
 import com.destroystokyo.paper.ClientOption;
 import com.destroystokyo.paper.ClientOption.ChatVisibility;
+import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.NBTTileEntity;
 import gg.projecteden.nexus.Nexus;
@@ -17,12 +18,13 @@ import gg.projecteden.nexus.models.tip.Tip.TipType;
 import gg.projecteden.nexus.models.tip.TipService;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.ActionBarUtils;
+import gg.projecteden.nexus.utils.FireworkLauncher;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
@@ -45,6 +47,7 @@ import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Bee;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.Golem;
 import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.ItemFrame;
@@ -53,6 +56,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Snowman;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -66,6 +70,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryAction;
@@ -86,7 +91,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.MapMeta;
-import org.bukkit.potion.PotionEffect;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
@@ -111,6 +116,19 @@ public class Misc implements Listener {
 
 			world.setKeepSpawnInMemory(false);
 		}
+	}
+
+	@EventHandler
+	public void onHangingBreakByEntity(HangingBreakByEntityEvent event) {
+		if (event.getRemover() instanceof Projectile)
+			event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+		if (event.getEntity() instanceof ItemFrame)
+			if (event.getDamager() instanceof Projectile)
+				event.setCancelled(true);
 	}
 
 	@EventHandler
@@ -145,7 +163,7 @@ public class Misc implements Listener {
 		MaterialTag.ALL_BOOTS, EquipmentSlot.FEET
 	);
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		if (!ActionGroup.RIGHT_CLICK.applies(event))
 			return;
@@ -165,9 +183,12 @@ public class Misc implements Listener {
 			final EquipmentSlot slot = slots.get(tag);
 			if (tag.isTagged(item)) {
 				final ItemStack existing = ItemUtils.clone(inventory.getItem(slot));
-				inventory.setItem(slot, ItemUtils.clone(item));
-				inventory.setItem(EquipmentSlot.HAND, existing);
-				return;
+				if (new PlayerArmorChangeEvent(event.getPlayer(), PlayerArmorChangeEvent.SlotType.valueOf(slot.name()), existing, item).callEvent()) {
+					inventory.setItem(EquipmentSlot.HAND, existing);
+					inventory.setItem(slot, ItemUtils.clone(item));
+					event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f);
+					return;
+				}
 			}
 		}
 	}
@@ -181,7 +202,7 @@ public class Misc implements Listener {
 		if (event.getItem().getType() != Material.GLOW_BERRIES)
 			return;
 
-		player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, TickTime.MINUTE.x(1.5), 1));
+		player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.GLOWING).duration(TickTime.MINUTE.x(1.5)).build());
 	}
 
 	@EventHandler
@@ -287,6 +308,19 @@ public class Misc implements Listener {
 	}
 
 	@EventHandler
+	public void onFireworkDamage(EntityDamageByEntityEvent event) {
+		if (!(event.getDamager() instanceof Firework firework))
+			return;
+
+		if (!firework.hasMetadata(FireworkLauncher.METADATA_KEY_DAMAGE))
+			return;
+
+		for (MetadataValue value : firework.getMetadata(FireworkLauncher.METADATA_KEY_DAMAGE))
+			if (!value.asBoolean())
+				event.setCancelled(true);
+	}
+
+	@EventHandler
 	public void onPlaceChest(BlockPlaceEvent event) {
 		if (WorldGroup.of(event.getPlayer()) != WorldGroup.SURVIVAL)
 			return;
@@ -329,15 +363,6 @@ public class Misc implements Listener {
 				ActionBarUtils.sendActionBar(player, CHAT_DISABLED_WARNING, WARNING_LENGTH_TICKS);
 			}
 		});
-	}
-
-	@EventHandler
-	public void onEnderDragonDeath(EntityDeathEvent event) {
-		if (!event.getEntityType().equals(EntityType.ENDER_DRAGON))
-			return;
-
-		if (RandomUtils.chanceOf(33))
-			event.getDrops().add(new ItemStack(Material.DRAGON_EGG));
 	}
 
 	@EventHandler

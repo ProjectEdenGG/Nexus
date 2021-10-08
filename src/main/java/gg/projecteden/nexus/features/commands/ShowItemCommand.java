@@ -134,11 +134,10 @@ public class ShowItemCommand extends CustomCommand {
 
 			DiscordUser user = new DiscordUserService().get(player);
 
-			String discordMessage = discordize(message);
-			discordMessage = IngameBridgeListener.parseMentions(discordMessage);
+			message = IngameBridgeListener.parseMentions(message);
 
 			MessageBuilder content = new MessageBuilder()
-				.setContent(stripColor(user.getBridgeName() + " **>** " + discordMessage))
+				.setContent(stripColor(user.getBridgeName() + " **>** " + discordize(message)))
 				.setEmbed(embed.build());
 
 			Discord.send(content, channel.getDiscordTextChannel());

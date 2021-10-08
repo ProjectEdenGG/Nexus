@@ -2,6 +2,7 @@ package gg.projecteden.nexus.utils;
 
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import me.lexikiq.HasPlayer;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -312,11 +313,11 @@ public class SoundUtils {
 		}
 
 		public void playAll() {
-			play(PlayerUtils.getOnlinePlayers());
+			play(OnlinePlayers.getAll());
 		}
 	}
 
-	private static float getMuteMenuVolume(HasPlayer player, MuteMenuItem item) {
+	public static float getMuteMenuVolume(HasPlayer player, MuteMenuItem item) {
 		float volume = .5f;
 		Integer customVolume = MuteMenuUser.getVolume(player.getPlayer(), item);
 		if (customVolume != null)

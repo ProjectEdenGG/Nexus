@@ -1,6 +1,10 @@
 package gg.projecteden.nexus.features.placeholderapi;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.listeners.Tab.NameplateUtils;
+import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
+import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;

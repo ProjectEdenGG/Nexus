@@ -2,11 +2,11 @@ package gg.projecteden.nexus.features.listeners;
 
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.StateFlag.State;
+import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import gg.projecteden.nexus.utils.ActionBarUtils;
-import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.Set;
 
 import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
+import static gg.projecteden.nexus.utils.BlockUtils.isNullOrAir;
 import static gg.projecteden.nexus.utils.EntityUtils.isHostile;
 import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.ACTIONBAR_TICKS;
 import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.ALLOW_SPAWN;
@@ -63,9 +64,28 @@ import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.MOB_AGGRESSIO
 import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.TAMING;
 import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.TITLE_FADE;
 import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.TITLE_TICKS;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.USE_NOTE_BLOCKS;
 import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.USE_TRAP_DOORS;
 
 public class WorldGuardFlags implements Listener {
+
+	@EventHandler
+	public void onCandleExtinguish(PlayerInteractEvent event) {
+		final Block block = event.getClickedBlock();
+		if (isNullOrAir(block))
+			return;
+
+		if (!MaterialTag.CANDLES.isTagged(block.getType()))
+			return;
+
+		if (WorldGuardEditCommand.canWorldGuardEdit(event.getPlayer()))
+			return;
+
+		if (new WorldGuardUtils(block).getRegionsAt(block.getLocation()).isEmpty())
+			return;
+
+		event.setCancelled(true);
+	}
 
 	@EventHandler
 	public void onItemFrameBreak(HangingBreakEvent event) {
@@ -93,7 +113,7 @@ public class WorldGuardFlags implements Listener {
 		if (!item.getType().equals(Material.BONE_MEAL)) return;
 
 		Block clicked = event.getClickedBlock();
-		if (BlockUtils.isNullOrAir(clicked)) return;
+		if (isNullOrAir(clicked)) return;
 		if (!(clicked instanceof Ageable ageable)) return;
 
 		int age = ageable.getAge();
@@ -174,10 +194,23 @@ public class WorldGuardFlags implements Listener {
 	@EventHandler
 	public void onInteractTrapDoor(PlayerInteractEvent event) {
 		Block block = event.getClickedBlock();
-		if (BlockUtils.isNullOrAir(block) || !(MaterialTag.TRAPDOORS.isTagged(block.getType())))
+		if (isNullOrAir(block) || !(MaterialTag.TRAPDOORS.isTagged(block.getType())))
 			return;
 
 		if (WorldGuardFlagUtils.query(block, USE_TRAP_DOORS) == State.DENY) {
+			if (canWorldGuardEdit(event.getPlayer()))
+				return;
+			event.setCancelled(true);
+		}
+	}
+
+	@EventHandler
+	public void onInteractNoteBlock(PlayerInteractEvent event) {
+		Block block = event.getClickedBlock();
+		if (isNullOrAir(block) || !block.getType().equals(Material.NOTE_BLOCK))
+			return;
+
+		if (WorldGuardFlagUtils.query(block, USE_NOTE_BLOCKS) == State.DENY) {
 			if (canWorldGuardEdit(event.getPlayer()))
 				return;
 			event.setCancelled(true);

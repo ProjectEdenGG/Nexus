@@ -416,12 +416,8 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 					seed = "-460015119172653"; // TODO List of approved seeds
 				}
 
-				Tasks.wait(wait.getAndAdd(5), () -> {
-					Nexus.getMultiverseCore().getMVWorldManager().addWorld(worldName, env, seed, WorldType.NORMAL, true, null);
-
-					Tasks.wait(wait.getAndAdd(5), () -> HomesFeature.deleteFromWorld(worldName, null));
-					new ResourceMarketLoggerService().deleteAll();
-				});
+				Tasks.wait(wait.getAndAdd(5), () ->
+					Nexus.getMultiverseCore().getMVWorldManager().addWorld(worldName, env, seed, WorldType.NORMAL, true, null));
 			}
 		});
 	}
@@ -434,6 +430,9 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 			.at(new Location(Bukkit.getWorld(worldName), 0, 150, 0))
 			.air(false)
 			.pasteAsync();
+
+		HomesFeature.deleteFromWorld(worldName, null);
+		new ResourceMarketLoggerService().deleteAll();
 
 		Warp warp = WarpType.NORMAL.get(worldName);
 		Nexus.getMultiverseCore().getMVWorldManager().getMVWorld(worldName).setSpawnLocation(warp.getLocation());

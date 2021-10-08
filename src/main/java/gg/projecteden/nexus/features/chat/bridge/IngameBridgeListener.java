@@ -32,10 +32,7 @@ public class IngameBridgeListener implements Listener {
 		DiscordUser user = new DiscordUserService().get(player);
 		RoleManager.update(user);
 
-		String message = event.getMessage();
-		message = discordize(message);
-		message = parseMentions(message);
-		Discord.send(user.getBridgeName() + " **>** " + message, discordTextChannel);
+		Discord.send(user.getBridgeName() + " **>** " + discordize(parseMentions(event.getMessage())), discordTextChannel);
 	}
 
 	public static String parseMentions(String message) {

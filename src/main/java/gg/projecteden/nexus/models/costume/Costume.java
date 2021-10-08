@@ -23,13 +23,11 @@ import static java.util.stream.Collectors.toSet;
 @AllArgsConstructor
 public class Costume {
 	private final String id;
-	private final CustomModel model;
 	private final CostumeType type;
 	private final ItemStack item;
 
 	public Costume(CustomModel model, CostumeType type) {
 		this.id = getId(model);
-		this.model = model;
 		this.type = type;
 		this.item = new ItemBuilder(model.getItem())
 			.undroppable()
@@ -40,7 +38,11 @@ public class Costume {
 	}
 
 	public static String getId(CustomModel model) {
-		return model.getFolder().getDisplayPath().replace("costumes/", "") + "/" + model.getFileName();
+		return model.getId().replaceFirst("costumes/", "");
+	}
+
+	public CustomModel getModel() {
+		return CustomModel.of("costumes/" + id);
 	}
 
 	@Getter
@@ -53,7 +55,7 @@ public class Costume {
 		private final EquipmentSlot slot;
 
 		public CustomModelFolder getFolder() {
-			return getRootFolder().getFolder("/costumes/" + name().toLowerCase());
+			return getRootFolder().getFolder(ROOT_FOLDER + "/" + name().toLowerCase());
 		}
 
 		public static Set<EquipmentSlot> getSlots() {
@@ -91,9 +93,6 @@ public class Costume {
 
 	public static void load() {
 		ResourcePack.getLoader().thenRun(() -> {
-			final CostumeUserService service = new CostumeUserService();
-			service.saveCache();
-			service.clearCache();
 			costumes.clear();
 			for (CostumeType type : CostumeType.values())
 				load(type, type.getFolder());

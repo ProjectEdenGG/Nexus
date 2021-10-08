@@ -114,10 +114,19 @@ public class DatabaseCommand extends CustomCommand {
 	}
 
 	@Async
-	@Path("createQuery <service> <uuid>")
-	<T extends PlayerOwnedObject> void createQuery(MongoService<T> service, UUID uuid) {
+	@Path("createQuery get <service> <uuid>")
+	<T extends PlayerOwnedObject> void createQuery_get(MongoService<T> service, UUID uuid) {
 		final MongoNamespace namespace = service.getCollection().getNamespace();
 		String queryString = "db.getSiblingDB(\"%s\").%s.find({\"_id\":\"%s\"}).pretty();";
+		String query = String.format(queryString, namespace.getDatabaseName(), namespace.getCollectionName(), uuid.toString());
+		send(json(query).copy(query).hover("&fClick to copy"));
+	}
+
+	@Async
+	@Path("createQuery delete <service> <uuid>")
+	<T extends PlayerOwnedObject> void createQuery_delete(MongoService<T> service, UUID uuid) {
+		final MongoNamespace namespace = service.getCollection().getNamespace();
+		String queryString = "db.getSiblingDB(\"%s\").%s.remove({\"_id\":\"%s\"});";
 		String query = String.format(queryString, namespace.getDatabaseName(), namespace.getCollectionName(), uuid.toString());
 		send(json(query).copy(query).hover("&fClick to copy"));
 	}

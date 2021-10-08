@@ -9,6 +9,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import net.md_5.bungee.api.ChatColor;
@@ -118,7 +119,7 @@ public class Connect4Command extends CustomCommand {
 
 		public void win(Connect4Team team) {
 			won = true;
-			for (Player player : PlayerUtils.getOnlinePlayers(Minigames.getWorld())) {
+			for (Player player : OnlinePlayers.where().world(Minigames.getWorld()).get()) {
 				String teamName = team.getColor() + "" + team.name().charAt(0) + team.name().substring(1).toLowerCase() + " Team";
 				PlayerUtils.send(player, PREFIX + teamName + ChatColor.WHITE + " has won Connect4!");
 			}

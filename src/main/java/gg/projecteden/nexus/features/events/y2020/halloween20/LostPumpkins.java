@@ -7,7 +7,7 @@ import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegion
 import gg.projecteden.nexus.models.halloween20.Halloween20Service;
 import gg.projecteden.nexus.models.halloween20.Halloween20User;
 import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
@@ -32,7 +32,7 @@ public class LostPumpkins implements Listener {
 
 	private void startParticleTask() {
 		Tasks.repeatAsync(0, 2 * 20, () -> {
-			for (Player player : PlayerUtils.getOnlinePlayers(Halloween20.getWorld())) {
+			for (Player player : OnlinePlayers.where().world(Halloween20.getWorld()).get()) {
 				Halloween20User user = new Halloween20Service().get(player);
 				for (Pumpkin pumpkin : Pumpkin.values()) {
 					if (user.getFoundPumpkins().contains(pumpkin.getOriginal())) continue;

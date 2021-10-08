@@ -6,7 +6,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.compass.Compass;
 import gg.projecteden.nexus.models.compass.CompassService;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.event.EventHandler;
@@ -53,7 +53,7 @@ public class CompassCommand extends CustomCommand implements Listener {
 
 	static {
 		CompassService service = new CompassService();
-		PlayerUtils.getOnlinePlayers().forEach(player -> {
+		OnlinePlayers.getAll().forEach(player -> {
 			Compass compass = service.get(player);
 			compass.start();
 		});

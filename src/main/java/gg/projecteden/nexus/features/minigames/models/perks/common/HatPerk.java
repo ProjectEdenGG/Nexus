@@ -1,11 +1,10 @@
 package gg.projecteden.nexus.features.minigames.models.perks.common;
 
-import com.comphenix.protocol.wrappers.EnumWrappers;
 import gg.projecteden.nexus.features.minigames.models.perks.PerkCategory;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -17,10 +16,8 @@ public interface HatPerk extends LoadoutPerk {
 		return PerkCategory.HAT;
 	}
 
-	default @NotNull Map<EnumWrappers.ItemSlot, ItemStack> getLoadout() {
-		Map<EnumWrappers.ItemSlot, ItemStack> loadout = new HashMap<>();
-		loadout.put(EnumWrappers.ItemSlot.HEAD, getItem());
-		return loadout;
+	default @NotNull Map<EquipmentSlot, ItemStack> getLoadout() {
+		return Map.of(EquipmentSlot.HEAD, getItem());
 	}
 
 	@NotNull ItemStack getItem();

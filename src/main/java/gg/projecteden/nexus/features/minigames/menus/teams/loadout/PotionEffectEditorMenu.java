@@ -8,7 +8,7 @@ import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.PotionEffectEditor;
+import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
@@ -52,7 +52,7 @@ public class PotionEffectEditorMenu extends MenuUtils implements InventoryProvid
 				e -> openAnvilMenu(player, arena, team, potionEffect, String.valueOf(potionEffect.getDuration()), (p, text) -> {
 					if (Utils.isInt(text)) {
 						team.getLoadout().getEffects().remove(potionEffect);
-						potionEffect = new PotionEffectEditor(potionEffect).withDuration(Integer.parseInt(text));
+						potionEffect = new PotionEffectBuilder(potionEffect).duration(Integer.parseInt(text)).build();
 						team.getLoadout().getEffects().add(potionEffect);
 						arena.write();
 						Tasks.wait(1, () -> {
@@ -76,7 +76,7 @@ public class PotionEffectEditorMenu extends MenuUtils implements InventoryProvid
 				e -> openAnvilMenu(player, arena, team, potionEffect, String.valueOf(potionEffect.getAmplifier()), (p, text) -> {
 					if (Utils.isInt(text)) {
 						team.getLoadout().getEffects().remove(potionEffect);
-						potionEffect = new PotionEffectEditor(potionEffect).withAmplifier(Integer.parseInt(text) - 1);
+						potionEffect = new PotionEffectBuilder(potionEffect).amplifier(Integer.parseInt(text) - 1).build();
 						team.getLoadout().getEffects().add(potionEffect);
 						arena.write();
 						Tasks.wait(1, () -> {
@@ -99,7 +99,7 @@ public class PotionEffectEditorMenu extends MenuUtils implements InventoryProvid
 
 			ItemStack potionItem = new ItemBuilder(Material.POTION)
 					.name("&e" + StringUtils.camelCase(effect.getName().replace("_", " ")))
-					.potionEffect(new PotionEffect(effect, 5 ,0))
+					.potionEffect(new PotionEffectBuilder(effect).duration(5).amplifier(0))
 					.potionEffectColor(effect.getColor())
 					.build();
 
@@ -108,7 +108,7 @@ public class PotionEffectEditorMenu extends MenuUtils implements InventoryProvid
 			contents.set(row, column, ClickableItem.from(potionItem,
 					e-> {
 						team.getLoadout().getEffects().remove(potionEffect);
-						potionEffect = new PotionEffectEditor(potionEffect).withType(effect);
+						potionEffect = new PotionEffectBuilder(potionEffect).type(effect).build();
 						team.getLoadout().getEffects().add(potionEffect);
 						arena.write();
 						Tasks.wait(1, () -> {

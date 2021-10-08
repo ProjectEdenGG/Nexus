@@ -4,24 +4,26 @@ import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.math.transform.AffineTransform;
 import com.sk89q.worldedit.regions.Region;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.utils.CompletableFutures;
 import gg.projecteden.nexus.utils.FakeWorldEdit;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldEditUtils.Paster;
+import gg.projecteden.utils.CompletableFutures;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 
 import java.util.ArrayList;
@@ -31,6 +33,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+@Aliases("weutils")
 @Permission("group.staff")
 public class WorldEditUtilsCommand extends CustomCommand {
 	private WorldEditUtils worldEditUtils;
@@ -117,6 +120,18 @@ public class WorldEditUtilsCommand extends CustomCommand {
 				continue;
 
 			block.setBlockData(Bukkit.createBlockData(block.getBlockData().getAsString().replace(from.name().toLowerCase(), to.name().toLowerCase())));
+		}
+	}
+
+	@Path("tagReplace <from> <to>")
+	void smartReplace(Tag<Material> from, Material to) {
+		Region selection = worldEditUtils.getPlayerSelection(player());
+
+		for (Block block : worldEditUtils.getBlocks(selection)) {
+			if (!from.isTagged(block.getType()))
+				continue;
+
+			block.setType(to);
 		}
 	}
 

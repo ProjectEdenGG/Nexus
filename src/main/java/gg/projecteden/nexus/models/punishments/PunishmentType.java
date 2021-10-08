@@ -1,20 +1,18 @@
 package gg.projecteden.nexus.models.punishments;
 
 import gg.projecteden.nexus.features.discord.Discord;
+import gg.projecteden.nexus.features.justice.Justice;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.framework.interfaces.IsColoredAndNamed;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.freeze.FreezeService;
-import gg.projecteden.nexus.models.hours.Hours;
-import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import gg.projecteden.utils.TimeUtils.Timespan.FormatType;
 import lombok.AllArgsConstructor;
@@ -45,8 +43,7 @@ public enum PunishmentType implements IsColoredAndNamed {
 
 		private void checkEstablishedPlayer(Punishment punishment) {
 			Tasks.waitAsync(10, () -> {
-				Hours hours = new HoursService().get(punishment.getUuid());
-				if (hours.getTotal() >= TickTime.HOUR.get() / 20) {
+				if (!Justice.isNewPlayer(punishment)) {
 					Nerd punisher = Nerd.of(punishment.getPunisher());
 					DiscordUser discordUser = new DiscordUserService().get(punisher);
 					if (!isNullOrEmpty(discordUser.getUserId()))
@@ -55,7 +52,7 @@ public enum PunishmentType implements IsColoredAndNamed {
 
 					new JsonBuilder()
 							.line()
-							.next("&cYou have banned an established player")
+							.next("&cYou have banned an established player (1+ hour)")
 							.line()
 							.next("&3If applicable, please remember to add any additional information about this ban in #staff-log")
 							.line()

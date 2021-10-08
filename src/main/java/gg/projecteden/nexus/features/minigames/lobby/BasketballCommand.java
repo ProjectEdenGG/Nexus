@@ -12,6 +12,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -132,7 +133,7 @@ public class BasketballCommand extends CustomCommand implements Listener {
 		Tasks.repeat(0, TickTime.SECOND.x(20), () -> {
 			cleanupBasketballs();
 
-			for (Player player : PlayerUtils.getOnlinePlayers(world)) {
+			for (Player player : OnlinePlayers.where().world(world).get()) {
 				if (worldguard.isInRegion(player.getLocation(), region)) {
 					if (!hasBasketball(player)) {
 						boolean found = false;

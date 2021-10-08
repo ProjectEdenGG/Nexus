@@ -26,8 +26,10 @@ public class ArmorStandStalker {
 	// TODO Database
 	public static final List<Stalker> stalkers = new ArrayList<>() {{
 		switch (Nexus.getEnv()) {
-			case TEST ->
+			case TEST -> {
 				add(Stalker.builder().uuid("c590d410-2604-48bb-aa3b-dd78419bf672").world("world").radius(25).percentage(.1).build());
+				add(Stalker.builder().uuid("8bb5a1fa-cbb3-4ff2-952f-75833d467082").world("world").radius(25).build());
+			}
 			case PROD -> {
 				// Spawn - Wakka Crate
 				add(Stalker.builder().uuid("ab374814-dbda-4d83-a796-87c8037ee7d2").world("survival").build());
@@ -120,15 +122,20 @@ public class ArmorStandStalker {
 	}
 
 	private void lookAt(ArmorStand armorStand, Stalker stalker, Player player) {
-		EntityUtils.makeArmorStandLookAtPlayer(
-			armorStand,
-			player,
-			stalker.getMinYaw(),
-			stalker.getMaxYaw(),
-			stalker.getMinPitch(),
-			stalker.getMaxPitch(),
-			stalker.getPercentage()
-		);
+		if (stalker.getPercentage() == null) {
+			EntityUtils.makeArmorStandLookAtPlayer(
+				armorStand, player,
+				stalker.getMinYaw(), stalker.getMaxYaw(),
+				stalker.getMinPitch(), stalker.getMaxPitch()
+			);
+		} else {
+			EntityUtils.makeArmorStandLookAtPlayer(
+				armorStand, player,
+				stalker.getMinYaw(), stalker.getMaxYaw(),
+				stalker.getMinPitch(), stalker.getMaxPitch(),
+				stalker.getPercentage()
+			);
+		}
 	}
 
 }

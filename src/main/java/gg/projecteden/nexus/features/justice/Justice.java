@@ -15,6 +15,7 @@ import gg.projecteden.nexus.features.tickets.TicketCommand;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.events.CommandRunEvent;
 import gg.projecteden.nexus.framework.features.Feature;
+import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.afk.events.NotAFKEvent;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.geoip.GeoIP;
@@ -30,6 +31,7 @@ import gg.projecteden.nexus.models.punishments.Punishments;
 import gg.projecteden.nexus.models.punishments.PunishmentsService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -71,10 +73,10 @@ public class Justice extends Feature implements Listener {
 		return ingame.hover("&eClick for more information").command("/history " + punishment.getName());
 	}
 
-	private boolean isNewPlayer(Nerd nerd) {
-		if (nerd.getRank().gt(Rank.GUEST))
+	public static boolean isNewPlayer(PlayerOwnedObject nerd) {
+		if (Rank.of(nerd).gt(Rank.GUEST))
 			return false;
-		if (new HoursService().get(nerd).getTotal() >= TickTime.HOUR.get() / 20)
+		if (new HoursService().get(nerd).has(TickTime.HOUR))
 			return false;
 
 		return true;
@@ -228,7 +230,7 @@ public class Justice extends Feature implements Listener {
 			};
 
 			if (Rank.of(player).isMod())
-				for (Player onlinePlayer : PlayerUtils.getOnlinePlayers())
+				for (Player onlinePlayer : OnlinePlayers.getAll())
 					Punishments.of(onlinePlayer).getActiveWatchlist().ifPresent(watchlist ->
 							PlayerUtils.send(player, new JsonBuilder(PREFIX).next(notification.apply(watchlist))));
 

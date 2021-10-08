@@ -100,7 +100,7 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 			}
 		}
 
-		addPagination(player, contents, items);
+		paginator(player, contents, items);
 	}
 
 	private ItemStack nameItem(ItemStack item, String name, String lore, int day) {

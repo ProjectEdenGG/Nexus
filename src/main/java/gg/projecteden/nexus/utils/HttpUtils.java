@@ -1,10 +1,15 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.exceptions.EdenException;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
+import gg.projecteden.nexus.utils.SerializationUtils.Json;
 import lombok.SneakyThrows;
+import okhttp3.Headers;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Request.Builder;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import okio.BufferedSink;
@@ -100,6 +105,36 @@ public class HttpUtils {
 	@SneakyThrows
 	private static <T> T mapJson(Class<T> clazz, Response response) {
 		return Utils.getGson().fromJson(response.body().string(), clazz);
+	}
+
+	public static void post(String url, Map<String, String> headers, Map<String, Object> body) {
+		post(url, Headers.of(headers), Json.of(body));
+	}
+
+	@SneakyThrows
+	public static String post(String url, Headers headers, String body) {
+		final Request request = createRequest(url)
+			.headers(headers)
+			.post(json(body))
+			.build();
+
+		try (Response response = client.newCall(request).execute()) {
+			final ResponseBody responseBody = response.body();
+			if (!response.isSuccessful()) {
+				String message = response.code() + " " + response.message();
+				if (responseBody != null)
+					message += ": " + responseBody.string();
+
+				throw new EdenException(message);
+			}
+
+			return responseBody == null ? null : responseBody.string();
+		}
+	}
+
+	@NotNull
+	private static RequestBody json(String body) {
+		return RequestBody.create(body, MediaType.parse("application/json"));
 	}
 
 }

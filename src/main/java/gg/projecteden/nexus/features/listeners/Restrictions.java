@@ -9,6 +9,7 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
@@ -39,9 +40,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static gg.projecteden.nexus.utils.BlockUtils.isNullOrAir;
 import static gg.projecteden.nexus.utils.PlayerUtils.getAdvancement;
@@ -108,7 +110,8 @@ public class Restrictions implements Listener {
 			return;
 
 		PlayerUtils.send(player, "&cInappropriate sign content");
-		String message = "&cSign content by " + Nickname.of(player) + " was censored: &e" + String.join(", ", lines);
+		String location = "(" + StringUtils.getShortLocationString(event.getBlock().getLocation()) + ")";
+		String message = "&cSign content by " + Nickname.of(player) + " was censored: &e" + String.join(", ", lines) + " " + location;
 		Broadcast.staff().prefix("Censor").message(message).send();
 	}
 
@@ -178,7 +181,7 @@ public class Restrictions implements Listener {
 		if (isVanished(player))
 			return;
 
-		if (player.getLocation().getY() < 300)
+		if (player.getLocation().getY() < -300)
 			return;
 
 		if (player.getFallDistance() > 5 && !player.isFlying()) {
@@ -229,13 +232,12 @@ public class Restrictions implements Listener {
 		if (!command.split(" ")[0].replace("worldedit:", "").startsWith("//"))
 			return;
 
-		if (command.split(" ", 2).length < 2)
-			return;
-
-		List<Material> used = new ArrayList<>();
+		Set<Material> used = new HashSet<>();
 		disallowedInWorldEdit.forEach(material -> {
-			if (command.split(" ", 2)[1].contains(material.name().toLowerCase()))
-				used.add(material);
+			for (String arg : command.split(" "))
+				for (String input : arg.split(","))
+					if (input.equals(material.name().toLowerCase()))
+						used.add(material);
 		});
 
 		if (!used.isEmpty()) {
@@ -246,7 +248,7 @@ public class Restrictions implements Listener {
 		}
 	}
 
-	private static final List<Material> disallowedInWorldEdit = Arrays.asList(
+	private static final Set<Material> disallowedInWorldEdit = Set.of(
 			Material.ACACIA_BUTTON,
 			Material.ACACIA_PRESSURE_PLATE,
 			Material.ACACIA_SAPLING,
@@ -308,7 +310,7 @@ public class Restrictions implements Listener {
 			Material.END_PORTAL,
 			Material.FERN,
 			Material.FLOWER_POT,
-//			Material.GRASS,
+			Material.GRASS,
 			Material.GRAVEL,
 			Material.GRAY_BANNER,
 			Material.GRAY_CARPET,
@@ -384,7 +386,7 @@ public class Restrictions implements Listener {
 			Material.RED_CARPET,
 			Material.RED_CONCRETE_POWDER,
 			Material.RED_MUSHROOM,
-//			Material.RED_SAND,
+			Material.RED_SAND,
 			Material.RED_TULIP,
 			Material.RED_WALL_BANNER,
 			Material.REDSTONE,
@@ -392,7 +394,7 @@ public class Restrictions implements Listener {
 			Material.REDSTONE_TORCH,
 			Material.REPEATER,
 			Material.ROSE_BUSH,
-//			Material.SAND,
+			Material.SAND,
 			Material.SEA_PICKLE,
 			Material.SEAGRASS,
 			Material.SNOW,

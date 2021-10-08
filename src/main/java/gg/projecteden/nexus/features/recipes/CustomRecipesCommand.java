@@ -35,7 +35,7 @@ public class CustomRecipesCommand extends CustomCommand {
 
 	@Path
 	void open() {
-		CustomRecipesMenu.open(RecipeType.MAIN, player());
+		new CustomRecipesMenu(RecipeType.MAIN).open(player());
 	}
 
 	@Path("reload")

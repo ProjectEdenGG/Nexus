@@ -14,6 +14,7 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -74,7 +75,7 @@ public class JoinQuit extends Feature implements Listener {
 			final String ingame = "&2 &2&m &2&m &2&m &2>&5 " + finalMessage.replaceAll("\\[player]", "&a" + Nickname.of(player) + "&5");
 			final Component component = AdventureUtils.fromLegacyAmpersandText(ingame);
 
-			PlayerUtils.getOnlinePlayers().forEach(_player -> {
+			OnlinePlayers.getAll().forEach(_player -> {
 				if (!MuteMenuUser.hasMuted(_player, MuteMenuItem.JOIN_QUIT))
 					_player.sendMessage(player, component, MessageType.CHAT);
 			});
@@ -88,7 +89,7 @@ public class JoinQuit extends Feature implements Listener {
 				DiscordUser user = new DiscordUserService().get(player);
 				RoleManager.update(user);
 
-				final String discord = discordize(finalMessage.replaceAll("\\[player]", "**" + Nickname.of(player) + "**"));
+				final String discord = discordize(finalMessage).replaceAll("\\[player]", "**" + Nickname.discordOf(player) + "**");
 				Discord.send("<:blue_arrow_right:883811353641517126> " + discord, TextChannel.BRIDGE);
 			});
 		}
@@ -112,7 +113,7 @@ public class JoinQuit extends Feature implements Listener {
 		final Component component = AdventureUtils.fromLegacyAmpersandText(ingame);
 		final Component staffComponent = AdventureUtils.fromLegacyAmpersandText(ingame + " (" + StringUtils.camelCase(reason.name()) + ")");
 
-		PlayerUtils.getOnlinePlayers().forEach(_player -> {
+		OnlinePlayers.getAll().forEach(_player -> {
 			if (!MuteMenuUser.hasMuted(_player, MuteMenuItem.JOIN_QUIT)) {
 				if (reason != QuitReason.DISCONNECTED && Rank.of(_player).isStaff())
 					_player.sendMessage(player, staffComponent, MessageType.CHAT);
@@ -127,7 +128,7 @@ public class JoinQuit extends Feature implements Listener {
 			DiscordUser user = new DiscordUserService().get(player);
 			RoleManager.update(user);
 
-			final String discord = discordize(finalMessage.replaceAll("\\[player]", "**" + Nickname.of(player) + "**"));
+			final String discord = discordize(finalMessage).replaceAll("\\[player]", "**" + Nickname.discordOf(player) + "**");
 			Discord.send("<:red_arrow_left:331808021267218432> " + discord, TextChannel.BRIDGE);
 		});
 	}
@@ -142,7 +143,7 @@ public class JoinQuit extends Feature implements Listener {
 		Player player = event.getPlayer();
 		if (!player.hasPlayedBefore()) {
 			Koda.replyIngame("&lWelcome to Project Eden, " + Nickname.of(player) + "!");
-			Koda.replyDiscord("**Welcome to Project Eden, " + discordize(Nickname.of(player)) + "!**");
+			Koda.replyDiscord("**Welcome to Project Eden, " + Nickname.discordOf(player) + "!**");
 		}
 
 		if (!PlayerUtils.isVanished(player))
@@ -165,7 +166,7 @@ public class JoinQuit extends Feature implements Listener {
 	}
 
 	public static void updateVanished() {
-		PlayerUtils.getOnlinePlayers().forEach(player -> {
+		OnlinePlayers.getAll().forEach(player -> {
 			if (PlayerUtils.isVanished(player))
 				vanished.add(player);
 			else

@@ -26,6 +26,7 @@ import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.SoundUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -35,7 +36,9 @@ import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
@@ -49,6 +52,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static gg.projecteden.nexus.features.discord.Discord.discordize;
 import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
 import static gg.projecteden.nexus.utils.StringUtils.plural;
 import static gg.projecteden.nexus.utils.Utils.epochSecond;
@@ -144,18 +148,26 @@ public class Votes extends Feature implements Listener {
 				message += " &e" + left + " &3more votes needed to hit the goal";
 
 			Broadcast.ingame().message("&a[✔] &3" + name + " &bvoted" + message).send();
-			Broadcast.discord().message(":white_check_mark: **" + name + " voted**" + message).send();
+			Broadcast.discord().message(":white_check_mark: **" + discordize(name) + " voted**" + message).send();
 		}
 
 		if (vote.getExtra() > 0) {
 			Broadcast.ingame().message("&3[✦] &e" + name + " &3received &e" + vote.getExtra() + " extra &3vote points!").send();
-			Broadcast.discord().message(":star: **" + name + "** received **" + vote.getExtra() + "** extra vote points!").send();
+			Broadcast.discord().message(":star: **" + discordize(name) + "** received **" + vote.getExtra() + "** extra vote points!").send();
 		}
 
 		if (player != null) {
 			int points = vote.getExtra() + basePoints;
 			voter.givePoints(points);
 			PlayerUtils.send(player, VPS.PREFIX + "You have received " + points + plural(" point", points));
+			if (player.isOnline()) {
+				Player online = player.getPlayer();
+				online.playSound(online.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1f, SoundUtils.getPitch(6));
+				if (points > basePoints) {
+					Tasks.wait(2, () -> online.playSound(online.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1f, SoundUtils.getPitch(10)));
+					Tasks.wait(4, () -> online.playSound(online.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1f, SoundUtils.getPitch(13)));
+				}
+			}
 		}
 
 		voterService.save(voter);
@@ -212,14 +224,19 @@ public class Votes extends Feature implements Listener {
 
 	protected static void write() {
 		Tasks.async(() -> {
-			List<TopVoter> topVoters = new VoterService().getTopVoters(LocalDateTime.now().getMonth());
+			final LocalDateTime now = LocalDateTime.now();
+			List<TopVoter> topVoters = new VoterService().getTopVoters(now.getMonth());
 
 			votes_sites();
+			votes_voted();
+			votes_monthly_total(topVoters);
 			votes_monthly_top(topVoters);
 			votes_monthly(topVoters);
-			votes();
-			votes_monthly_total(topVoters);
-			votes_voted();
+			votes_alltime();
+
+			List<TopVoter> lastMonthTopVoters = new VoterService().getTopVoters(now.minusMonths(1).getMonth());
+			lastmonth_votes_monthly_total(lastMonthTopVoters);
+			lastmonth_votes_monthly(lastMonthTopVoters);
 		});
 	}
 
@@ -264,7 +281,7 @@ public class Votes extends Feature implements Listener {
 			for (TopVoter topVoter : topVoters) {
 				if (++index <= 3)
 					continue;
-				if (index >= 54)
+				if (index > 53)
 					break;
 
 				outputs.add(String.format("""
@@ -278,7 +295,7 @@ public class Votes extends Feature implements Listener {
 		});
 	}
 
-	private static void votes() {
+	private static void votes_alltime() {
 		IOUtils.fileWrite("plugins/website/votes.html", (writer, outputs) -> {
 			List<TopVoter> allTimeTopVoters = new VoterService().getTopVoters();
 
@@ -322,6 +339,29 @@ public class Votes extends Feature implements Listener {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+	}
+
+	private static void lastmonth_votes_monthly_total(List<TopVoter> topVoters) {
+		int sum = topVoters.stream().mapToInt(topVoter -> Long.valueOf(topVoter.getCount()).intValue()).sum();
+		IOUtils.fileWrite("plugins/website/lastmonth_votes_monthly_total.html", (writer, outputs) -> outputs.add(String.valueOf(sum)));
+	}
+
+	private static void lastmonth_votes_monthly(List<TopVoter> topVoters) {
+		IOUtils.fileWrite("plugins/website/lastmonth_votes_monthly.html", (writer, outputs) -> {
+			int index = 0;
+			for (TopVoter topVoter : topVoters) {
+				if (++index > 50)
+					break;
+
+				outputs.add(String.format("""
+					<tr>
+						<th>%d</th>
+						<th>%s</th>
+						<th>%d</th>
+					</tr>
+				""", index, topVoter.getNickname(), topVoter.getCount()));
+			}
+		});
 	}
 
 }

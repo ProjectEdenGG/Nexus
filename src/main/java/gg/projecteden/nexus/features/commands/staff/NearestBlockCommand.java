@@ -5,7 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -77,7 +77,7 @@ public class NearestBlockCommand extends CustomCommand {
 							.viewers(Collections.singletonList(player()))
 							.onComplete(() -> {
 								fallingBlock.remove();
-								for (Player player : PlayerUtils.getOnlinePlayers(blockWorld))
+								for (Player player : OnlinePlayers.where().world(blockWorld).get())
 									player.sendBlockChange(blockLoc, block.getType().createBlockData());
 							})
 							.start();

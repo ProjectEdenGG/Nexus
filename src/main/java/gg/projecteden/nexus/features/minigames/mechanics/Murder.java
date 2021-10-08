@@ -20,10 +20,12 @@ import gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreb
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks.Countdown;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.md_5.bungee.api.ChatColor;
@@ -48,7 +50,6 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
@@ -138,7 +139,7 @@ public class Murder extends TeamMechanic {
 				});
 			else {
 				minigamer.getPlayer().setFoodLevel(3);
-				minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 1000000, 255, true, false, false));
+				minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.WEAKNESS).maxDuration().maxAmplifier().ambient(true));
 			}
 		}
 	}
@@ -295,7 +296,7 @@ public class Murder extends TeamMechanic {
 						minigamer.getMatch().getAliveMinigamers().forEach(_minigamer -> {
 							Player player = _minigamer.getPlayer();
 							player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_BREATH, SoundCategory.MASTER, 2F, 0.1F);
-							player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 40, 1, false, false));
+							player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.GLOWING).duration(TickTime.SECOND.x(2)).build());
 							// TODO SkriptFunctions.redTint(player, 0.5, 10);
 						});
 				}));
@@ -303,7 +304,7 @@ public class Murder extends TeamMechanic {
 
 	private void useAdrenaline(Minigamer minigamer) {
 		Player player = minigamer.getPlayer();
-		player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 80, 2));
+		player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.SPEED).duration(80).amplifier(2).build());
 		player.getInventory().remove(Material.SUGAR);
 	}
 
@@ -494,8 +495,8 @@ public class Murder extends TeamMechanic {
 		player.getLocation().getWorld().dropItem(player.getLocation(), gun);
 
 		// Make drunk
-		player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 1200, 2));
-		player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 1200, 4));
+		player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.CONFUSION).duration(1200).amplifier(2).build());
+		player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.SLOW).duration(1200).amplifier(4).build());
 		// Glass bottle will signify that they are 'drunk' and can't pick up guns
 		player.getInventory().setItem(17, new ItemStack(Material.GLASS_BOTTLE));
 	}

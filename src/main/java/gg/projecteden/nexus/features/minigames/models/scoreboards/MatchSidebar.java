@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.minigames.models.scoreboards;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.utils.EdenScoreboard;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import org.bukkit.entity.Player;
 
 public class MatchSidebar implements MinigameScoreboard {
@@ -20,7 +20,7 @@ public class MatchSidebar implements MinigameScoreboard {
 		scoreboard.setTitle(match.getMechanic().getScoreboardTitle(match));
 		scoreboard.setLines(match.getMechanic().getScoreboardLines(match));
 
-		for (Player player : PlayerUtils.getOnlinePlayers())
+		for (Player player : OnlinePlayers.getAll())
 			if (!match.getPlayers().contains(player))
 				scoreboard.unsubscribe(player);
 

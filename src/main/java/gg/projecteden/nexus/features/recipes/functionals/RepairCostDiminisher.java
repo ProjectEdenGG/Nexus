@@ -7,6 +7,7 @@ import gg.projecteden.nexus.utils.*;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -104,15 +105,17 @@ public class RepairCostDiminisher extends FunctionalRecipe {
 		if (ItemUtils.isSimilar(inventory.getItemInMainHand(), getItem())) {
 			ItemStack diminisher = inventory.getItemInMainHand();
 			ItemStack tool = inventory.getItemInOffHand();
-			lowerRepairCost(player, inventory, diminisher, tool);
+			lowerRepairCost(player, diminisher, tool);
+			event.setCancelled(true);
 		} else if (ItemUtils.isSimilar(inventory.getItemInOffHand(), getItem())) {
 			ItemStack diminisher = inventory.getItemInOffHand();
 			ItemStack tool = inventory.getItemInMainHand();
-			lowerRepairCost(player, inventory, diminisher, tool);
+			lowerRepairCost(player, diminisher, tool);
+			event.setCancelled(true);
 		}
 	}
 
-	public void lowerRepairCost(Player player, PlayerInventory inventory, ItemStack diminisher, ItemStack tool) {
+	public void lowerRepairCost(Player player, ItemStack diminisher, ItemStack tool) {
 		if (ItemUtils.isNullOrAir(tool)) {
 			PlayerUtils.send(player, "&cYou must hold an item in your other hand");
 			return;
@@ -128,13 +131,9 @@ public class RepairCostDiminisher extends FunctionalRecipe {
 			}
 			repairable.setRepairCost(Math.max(1, repairable.getRepairCost() / 2));
 			tool.setItemMeta((ItemMeta) repairable);
-			if (inventory.getItemInMainHand().equals(diminisher)) {
-				inventory.setItemInMainHand(null);
-			}
-			else if (inventory.getItemInOffHand().equals(diminisher)) {
-				inventory.setItemInOffHand(null);
-			}
+			diminisher.setAmount(diminisher.getAmount() - 1);
 			PlayerUtils.send(player, "&aThe item's repair cost has been halved");
+			player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_USE, 1f, 1f);
 		}
 		else {
 			PlayerUtils.send(player, "&cThat tool is not repairable");

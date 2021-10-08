@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.particles.VectorUtils;
 import gg.projecteden.nexus.models.particle.ParticleOwner;
 import gg.projecteden.nexus.models.particle.ParticleService;
 import gg.projecteden.nexus.models.particle.ParticleSetting;
+import gg.projecteden.nexus.models.particle.ParticleTask;
 import gg.projecteden.nexus.models.particle.ParticleType;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -996,16 +997,19 @@ public class WingsEffect {
 			wingSettings.put(ParticleSetting.WINGS_RAINBOW_TWO, false);
 			wingSettings.put(ParticleSetting.WINGS_RAINBOW_THREE, false);
 
-			Tasks.wait(5, () -> ParticleType.WINGS.run(player));
-			Tasks.wait(TickTime.SECOND.x(15), () -> {
-				owner.cancel(ParticleType.WINGS);
-				wingSettings.put(ParticleSetting.WINGS_STYLE, cur_Style);
-				wingSettings.put(ParticleSetting.WINGS_COLOR_ONE, cur_Color1);
-				wingSettings.put(ParticleSetting.WINGS_COLOR_TWO, cur_Color2);
-				wingSettings.put(ParticleSetting.WINGS_COLOR_THREE, cur_Color3);
-				wingSettings.put(ParticleSetting.WINGS_RAINBOW_ONE, cur_Rainbow1);
-				wingSettings.put(ParticleSetting.WINGS_RAINBOW_TWO, cur_Rainbow2);
-				wingSettings.put(ParticleSetting.WINGS_RAINBOW_THREE, cur_Rainbow3);
+			Tasks.wait(5, () -> {
+				ParticleType.WINGS.run(player);
+
+				owner.getTasks().add(new ParticleTask(ParticleType.WINGS, Tasks.wait(TickTime.SECOND.x(15), () -> {
+					owner.cancel(ParticleType.WINGS);
+					wingSettings.put(ParticleSetting.WINGS_STYLE, cur_Style);
+					wingSettings.put(ParticleSetting.WINGS_COLOR_ONE, cur_Color1);
+					wingSettings.put(ParticleSetting.WINGS_COLOR_TWO, cur_Color2);
+					wingSettings.put(ParticleSetting.WINGS_COLOR_THREE, cur_Color3);
+					wingSettings.put(ParticleSetting.WINGS_RAINBOW_ONE, cur_Rainbow1);
+					wingSettings.put(ParticleSetting.WINGS_RAINBOW_TWO, cur_Rainbow2);
+					wingSettings.put(ParticleSetting.WINGS_RAINBOW_THREE, cur_Rainbow3);
+				})));
 			});
 		}
 	}

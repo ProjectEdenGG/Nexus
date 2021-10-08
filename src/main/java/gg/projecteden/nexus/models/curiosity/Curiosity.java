@@ -49,6 +49,7 @@ public class Curiosity implements PlayerOwnedObject {
 
 	public enum CuriosityReward {
 		COOKIES(new ItemStack(Material.COOKIE, 16)),
+		PUMPKIN_PIE(new ItemStack(Material.PUMPKIN_PIE, 12)),
 		CAKE(new ItemStack(Material.CAKE));
 
 		@Getter

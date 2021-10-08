@@ -66,7 +66,7 @@ public class MiniGolfColorMenu extends MenuUtils implements InventoryProvider {
 			clickableItems.add(ClickableItem.from(item.build(), e -> setColor(user, miniGolfColor)));
 		}
 
-		addPagination(player, contents, clickableItems);
+		paginator(player, contents, clickableItems);
 	}
 
 	private void setColor(MiniGolf21User user, MiniGolfColor color) {

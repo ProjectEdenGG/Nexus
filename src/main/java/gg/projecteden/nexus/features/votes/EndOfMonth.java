@@ -20,11 +20,6 @@ import lombok.Data;
 import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.BufferedWriter;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.YearMonth;
 import java.util.Collections;
 import java.util.List;
@@ -46,7 +41,7 @@ public class EndOfMonth {
 				Nexus.log(data.toString());
 
 				Koda.announce(data.getDiscordMessage());
-				writeHtml(data);
+				Votes.write();
 
 				if (data.getMysteryChestWinner() != null)
 					CrateType.MYSTERY.give(PlayerUtils.getPlayer(data.getMysteryChestWinner().getVoter()));
@@ -180,28 +175,6 @@ public class EndOfMonth {
 			msg += System.lineSeparator();
 			msg += "**<" + EdenSocialMediaSite.WEBSITE.getUrl() + "/vote>**";
 			return msg;
-		}
-	}
-
-	private static void writeHtml(TopVoterData data) {
-		Path table = Paths.get("plugins/website/lastmonth_votes_monthly.jhtml");
-
-		try (BufferedWriter writer = Files.newBufferedWriter(table, StandardCharsets.UTF_8)) {
-			int index = 0;
-			for (TopVoter topVoter : data.getTopVoters()) {
-				++index;
-
-				writer.write("  <tr>" + System.lineSeparator());
-				writer.write("    <th>" + index + "</th>" + System.lineSeparator());
-				writer.write("    <th>" + topVoter.getVoter().getName() + "</th>" + System.lineSeparator());
-				writer.write("    <th>" + topVoter.getCount() + "</th>" + System.lineSeparator());
-				writer.write("  <tr>" + System.lineSeparator());
-			}
-
-			Path total = Paths.get("plugins/website/lastmonth_votes_monthly.jhtml");
-			Files.write(total, String.valueOf(data.getTotal()).getBytes());
-		} catch(Exception ex) {
-			ex.printStackTrace();
 		}
 	}
 }

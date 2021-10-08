@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.crates.models.CrateType;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.customenchants.OldCEConverter;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Train;
 import gg.projecteden.nexus.features.listeners.TemporaryListener;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
@@ -30,6 +31,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.CommandCooldownE
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Features;
 import gg.projecteden.nexus.models.MongoService;
+import gg.projecteden.nexus.models.chatgames.ChatGamesConfig;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -39,13 +41,15 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
-import gg.projecteden.nexus.utils.SerializationUtils.JSON;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.SerializationUtils.Json;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.QueuedTask;
 import gg.projecteden.nexus.utils.Utils;
+import gg.projecteden.utils.Env;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import lombok.AllArgsConstructor;
@@ -130,7 +134,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 			error(json.next(", reload queued ").group().next("&e⟳").hover("&eClick to retry manually").command("/nexus reload"));
 		}
 
-		for (Player player : PlayerUtils.getOnlinePlayers())
+		for (Player player : OnlinePlayers.getAll())
 			if (Dev.WAKKA.is(player) || Dev.BLAST.is(player) || Dev.LUI.is(player))
 				new SoundBuilder(Sound.ENTITY_EVOKER_PREPARE_WOLOLO).receiver(player).play();
 
@@ -165,7 +169,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 				throw new InvalidInputException("There are " + matchCount + " active matches");
 		}),
 		SMARTINVS(() -> {
-			long count = PlayerUtils.getOnlinePlayers().stream().filter(player -> {
+			long count = OnlinePlayers.getAll().stream().filter(player -> {
 				boolean open = SmartInvsPlugin.manager().getInventory(player).isPresent();
 
 				if (open && AFK.get(player).hasBeenAfkFor(TickTime.MINUTE.x(15))) {
@@ -187,6 +191,10 @@ public class NexusCommand extends CustomCommand implements Listener {
 			if (!Nexus.getSignMenuFactory().getInputReceivers().isEmpty())
 				throw new InvalidInputException("There are " + Nexus.getSignMenuFactory().getInputReceivers().size() + " sign menus open");
 		}),
+		CHAT_GAMES(() -> {
+			if (ChatGamesConfig.getCurrentGame() != null)
+				throw new InvalidInputException("There is an active chat game");
+		}),
 		CRATES(() -> {
 			for (CrateType crateType : Arrays.stream(CrateType.values()).filter(crateType -> crateType != CrateType.ALL).collect(Collectors.toList()))
 				if (crateType.getCrateClass().isInUse())
@@ -195,7 +203,18 @@ public class NexusCommand extends CustomCommand implements Listener {
 		WITHER(() -> {
 			if (WitherChallenge.currentFight != null)
 				throw new InvalidInputException("The wither is currently being fought");
-		});
+		}),
+		PUGMAS21_TRAIN(() -> {
+			if (Nexus.getEnv() == Env.PROD) {
+				if (Train.anyActiveInstances())
+					throw new InvalidInputException("There is an active Pugmas train");
+			} else {
+				for (Train train : new ArrayList<>(Train.getInstances()))
+					train.stop();
+			}
+
+		}),
+		;
 
 		public static boolean canReload() {
 			try {
@@ -263,7 +282,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 	@Path("smartInvs")
 	void smartInvs() {
 		Map<String, String> playerInventoryMap = new HashMap<>();
-		PlayerUtils.getOnlinePlayers().stream()
+		OnlinePlayers.getAll().stream()
 				.filter(player -> SmartInvsPlugin.manager().getInventory(player).isPresent())
 				.forEach(player -> playerInventoryMap.put(player.getName(),
 						SmartInvsPlugin.manager().getInventory(player).map(SmartInventory::getTitle).orElse(null)));
@@ -468,7 +487,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 		if ("target".equalsIgnoreCase(value))
 			return getTargetBlockRequired().getLocation();
 
-		return JSON.deserializeLocation(value);
+		return Json.deserializeLocation(value);
 	}
 
 }

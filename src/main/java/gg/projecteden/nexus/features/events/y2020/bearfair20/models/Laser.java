@@ -88,7 +88,7 @@ public class Laser {
 							// If the block under the laser is a banner
 							Block below = block.getRelative(0, -1, 0);
 							Material bannerType = below.getType();
-							if (MaterialTag.BANNERS.isTagged(bannerType)) {
+							if (MaterialTag.STANDING_BANNERS.isTagged(bannerType)) {
 								curLoc.set(LocationUtils.getCenteredLocation(curLoc.get()));
 								curLoc.get().setY(curLoc.get().getY() + 0.25);
 								Rotatable rotatable = (Rotatable) below.getBlockData();

@@ -28,6 +28,7 @@ import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.FileSystems;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 @NoArgsConstructor
@@ -49,10 +50,16 @@ public class ResourcePack extends Feature implements Listener {
 	private static List<CustomModelFolder> folders;
 	@Getter
 	@Setter
-	private static List<CustomModel> models;
+	private static Map<String, CustomModel> models;
 	@Getter
 	@Setter
 	private static CustomModelFolder rootFolder;
+	@Getter
+	@Setter
+	private static SoundsFile soundsFile;
+	@Getter
+	@Setter
+	private static FontFile fontFile;
 
 	@Getter
 	static final URI fileUri = URI.create("jar:" + ResourcePack.getFile().toURI());
@@ -62,7 +69,6 @@ public class ResourcePack extends Feature implements Listener {
 	private static FileSystem zipFile;
 	@Getter
 	private static final CompletableFuture<Void> loader = new CompletableFuture<>();
-
 
 	@Override
 	public void onStart() {

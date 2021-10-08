@@ -4,7 +4,6 @@ import com.destroystokyo.paper.ParticleBuilder;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.models.AdventChest;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.models.Merchants;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.models.QuestNPC;
@@ -19,6 +18,7 @@ import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -87,8 +87,6 @@ public class Pugmas20 implements Listener {
 	public Pugmas20() {
 		Nexus.registerListener(this);
 
-		AdventMenu.loadHeads();
-		new AdventChests();
 		new Quests();
 		new Train();
 //		new Minecarts();
@@ -298,7 +296,7 @@ public class Pugmas20 implements Listener {
 					.viewers(Collections.singletonList(player))
 					.onComplete(() -> {
 						fallingBlock.remove();
-						for (Player _player : PlayerUtils.getOnlinePlayers(blockWorld))
+						for (Player _player : OnlinePlayers.where().world(blockWorld).get())
 							_player.sendBlockChange(chestLoc, chest.getBlockData());
 					})
 					.start();

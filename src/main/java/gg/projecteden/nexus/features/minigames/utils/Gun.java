@@ -5,7 +5,7 @@ import gg.projecteden.nexus.features.minigames.mechanics.Murder;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.matchdata.MurderMatchData;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks.Countdown;
 import lombok.Data;
 import lombok.NonNull;
@@ -54,7 +54,7 @@ public class Gun {
 
 		for (int counter = 0; counter < blockDistance - 1; counter++) {
 			Location point = start.add(increase);
-			for (Player _player : PlayerUtils.getOnlinePlayers(minigamer.getPlayer().getWorld()))
+			for (Player _player : OnlinePlayers.where().world(minigamer.getPlayer().getWorld()).get())
 				_player.spawnParticle(Particle.CRIT, point, 1, 0, 0, 0, 0.1);
 		}
 

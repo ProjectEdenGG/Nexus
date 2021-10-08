@@ -200,7 +200,7 @@ public class BrowseProductsProvider extends ShopProvider {
 		if (end < products.size())
 			items.add(empty);
 
-		addPagination(player, contents, items);
+		paginator(player, contents, items);
 	}
 
 	private void processAll(Player player, Pagination page, Product product) {

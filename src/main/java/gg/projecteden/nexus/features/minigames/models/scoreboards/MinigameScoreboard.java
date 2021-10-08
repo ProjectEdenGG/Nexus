@@ -6,7 +6,7 @@ import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.annotations.Scoreboard;
 import gg.projecteden.nexus.utils.ColorType;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import me.lucko.helper.scoreboard.ScoreboardTeam;
@@ -111,7 +111,7 @@ public interface MinigameScoreboard {
 					getScoreboardTeam(minigamer.getTeam()).addPlayer(minigamer.getPlayer());
 			});
 
-			scoreboardTeams.values().forEach(scoreboardTeam -> PlayerUtils.getOnlinePlayers().forEach(scoreboardTeam::subscribe));
+			scoreboardTeams.values().forEach(scoreboardTeam -> OnlinePlayers.getAll().forEach(scoreboardTeam::subscribe));
 		}
 
 		@Override
@@ -119,7 +119,7 @@ public interface MinigameScoreboard {
 			if (minigamer.getTeam() == null) return;
 			ScoreboardTeam scoreboardTeam = getScoreboardTeam(minigamer.getTeam());
 			scoreboardTeam.addPlayer(minigamer.getPlayer());
-			PlayerUtils.getOnlinePlayers().forEach(scoreboardTeam::subscribe);
+			OnlinePlayers.getAll().forEach(scoreboardTeam::subscribe);
 		}
 
 		@Override
@@ -127,14 +127,14 @@ public interface MinigameScoreboard {
 			if (minigamer.getTeam() == null) return;
 			ScoreboardTeam scoreboardTeam = getScoreboardTeam(minigamer.getTeam());
 			scoreboardTeam.removePlayer(minigamer.getPlayer());
-			PlayerUtils.getOnlinePlayers().forEach(scoreboardTeam::subscribe);
+			OnlinePlayers.getAll().forEach(scoreboardTeam::subscribe);
 		}
 
 		@Override
 		public void handleEnd() {
 			scoreboardTeams.forEach((team, scoreboardTeam) -> {
 				scoreboardTeam.getPlayers().forEach(scoreboardTeam::removePlayer);
-				PlayerUtils.getOnlinePlayers().forEach(scoreboardTeam::unsubscribe);
+				OnlinePlayers.getAll().forEach(scoreboardTeam::unsubscribe);
 				Minigames.getScoreboard().removeTeam(scoreboardTeam.getId());
 			});
 		}
@@ -166,24 +166,24 @@ public interface MinigameScoreboard {
 				else
 					scoreboardTeam.addPlayer(minigamer.getPlayer());
 			});
-			PlayerUtils.getOnlinePlayers().forEach(scoreboardTeam::subscribe);
+			OnlinePlayers.getAll().forEach(scoreboardTeam::subscribe);
 		}
 
 		@Override
 		public void handleJoin(Minigamer minigamer) {
 			scoreboardTeam.addPlayer(minigamer.getPlayer());
-			PlayerUtils.getOnlinePlayers().forEach(scoreboardTeam::subscribe);
+			OnlinePlayers.getAll().forEach(scoreboardTeam::subscribe);
 		}
 
 		@Override
 		public void handleQuit(Minigamer minigamer) {
 			scoreboardTeam.removePlayer(minigamer.getPlayer());
-			PlayerUtils.getOnlinePlayers().forEach(scoreboardTeam::subscribe);
+			OnlinePlayers.getAll().forEach(scoreboardTeam::subscribe);
 		}
 
 		@Override
 		public void handleEnd() {
-			PlayerUtils.getOnlinePlayers().forEach(player -> {
+			OnlinePlayers.getAll().forEach(player -> {
 				scoreboardTeam.removePlayer(player);
 				scoreboardTeam.unsubscribe(player);
 			});

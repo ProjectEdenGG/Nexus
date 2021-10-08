@@ -2,7 +2,9 @@ package gg.projecteden.nexus.features.recipes.functionals.birdhouses;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
+import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
@@ -13,6 +15,7 @@ import org.bukkit.inventory.RecipeChoice.MaterialChoice;
 import org.bukkit.inventory.ShapedRecipe;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -26,7 +29,7 @@ public abstract class Birdhouse extends FunctionalRecipe {
 
 	@Getter
 	@AllArgsConstructor
-	protected enum BirdhouseType {
+	public enum BirdhouseType {
 		FOREST(Material.RED_TERRACOTTA, Material.DARK_OAK_PLANKS, Material.BIRCH_PLANKS, Set.of(1, 2, 3)),
 		ENCHANTED(Material.BLUE_TERRACOTTA, Material.DARK_PRISMARINE, Material.CYAN_CONCRETE_POWDER, Set.of(4, 5, 6)),
 		DEPTHS(Material.GREEN_TERRACOTTA, Material.DEEPSLATE_TILES, Material.STONE, Set.of(7, 8, 9)),
@@ -35,14 +38,18 @@ public abstract class Birdhouse extends FunctionalRecipe {
 		private final Material roof, hole, siding;
 		private final Set<Integer> models;
 
-		protected static BirdhouseType of(int customModelData) {
+		public static BirdhouseType of(ItemStack item) {
+			return of(CustomModelData.of(item));
+		}
+
+		public static BirdhouseType of(int customModelData) {
 			for (BirdhouseType type : values())
 				if (type.getModels().contains(customModelData))
 					return type;
 			return null;
 		}
 
-		protected ItemBuilder getDisplayItem() {
+		public ItemBuilder getDisplayItem() {
 			return new ItemBuilder(Material.OAK_WOOD)
 				.name(camelCase(this) + " Birdhouse")
 				.customModelData(baseModel());
@@ -50,6 +57,13 @@ public abstract class Birdhouse extends FunctionalRecipe {
 
 		public int baseModel() {
 			return ordinal() * 3 + 1;
+		}
+
+		public static Set<Integer> ids() {
+			return new HashSet<>() {{
+				for (int i = 1; i <= BirdhouseType.values().length * BirdhouseOrientation.values().length ; i++)
+					add(i);
+			}};
 		}
 	}
 
@@ -106,6 +120,11 @@ public abstract class Birdhouse extends FunctionalRecipe {
 	@Override
 	public MaterialChoice getMaterialChoice() {
 		return null;
+	}
+
+	@Override
+	public RecipeType getRecipeType() {
+		return RecipeType.DECORATION;
 	}
 
 }

@@ -27,6 +27,7 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Permission("group.staff")
@@ -36,35 +37,112 @@ public class WeeklyWakkaCommand extends _WarpCommand implements Listener {
 	private static final int npcId = 3362;
 	private static final int stationaryNPCId = 3361;
 
-	private static final List<JsonBuilder> tips = new ArrayList<>() {{
-		add(new JsonBuilder("&3You can reset your McMMO stats when maxed with &c/mcmmo reset &3for unique gear and in-game money.").command("/mcmmo reset").hover("&eClick to run the command!"));
-		add(new JsonBuilder("&3Considering a donor perk, but not sure? You can test many of the commands in the donor test world- find it in the &c/warps &3menu!").command("/warps"));
-		add(new JsonBuilder("&3Each month the community has a group goal for voting." +
-				" You can see progress on our website (&e" + EdenSocialMediaSite.WEBSITE.getUrl() + "/vote&3). Reaching the goal means a prize for the whole community the following month!").url(EdenSocialMediaSite.WEBSITE.getUrl() + "/vote").hover("&eClick to visit the site!"));
-		add(new JsonBuilder("&3Have you checked out our YouTube channel yet? We highlight our server, updates, and our dedicated staff members! &eClick here to visit!").url(EdenSocialMediaSite.YOUTUBE.getUrl()).hover("&eClick to visit the site!"));
-		add(new JsonBuilder("&3You can buy extra plots in the creative world through the vote point store or the donor perk store. If you have more than one plot, you can merge adjacent plots to form larger plots."));
-		add(new JsonBuilder("&3Want a schematic of your creative plot? You can request one with &c/dlrequest"));
-		add(new JsonBuilder("&3Have you visited the resource world &c/market &3yet? You can earn a large profit selling farmed resources!").command("/market").hover("&eClick to run the command!"));
-		add(new JsonBuilder("&3The podiums at spawn are updated periodically showing a variety of achievements and leaderboards. Have you made it to any of the leaderboards?").command("/warp leaderboards").hover("&eClick to run the command!"));
-		add(new JsonBuilder("&3Been to our banner store? Warp to &e/warp banners &3to find a big selection of banners available for vote points!").command("/warp banners").hover("&eClick to run the command!"));
-		add(new JsonBuilder("&3We hold many events during the year! Check back frequently for holiday fun all year round."));
-		add(new JsonBuilder("&3Have you thanked a code nerd today? ;)").suggest("Thank you code nerds for your hard work! <3").hover("&eClick to thank the code nerds!"));
-		add(new JsonBuilder("&3Our server has hundreds of hours of custom code thanks to the work of our code nerds- but many of the most loved features came from community suggestions. " +
-				"Head to the Discord (&e" + EdenSocialMediaSite.DISCORD.getUrl() + "&3) if you have an idea for a feature.").url(EdenSocialMediaSite.DISCORD.getUrl()).hover("&eClick to visit the site!"));
-		add(new JsonBuilder("&3If you see a bug, please report it in the #bugs-support-and-suggestions channel on our Discord server (&e" + EdenSocialMediaSite.DISCORD.getUrl() + "&3).").url(EdenSocialMediaSite.DISCORD.getUrl()).hover("&eClick to visit the site!"));
-		add(new JsonBuilder("&3Tired of logs and stairs placing the wrong way?  Try ")
-				.next("&c/swl ").suggest("/swl").hover("&eClick to run the command!").group()
-				.next("&3(sideways logs) and ").group()
-				.next("&c/sws").suggest("/sws").hover("&eClick to run the command!").group()
-				.next(" &3(sideways stairs) to \"lock\" your placement direction while you build.").group());
-		add(new JsonBuilder("&3Don't forget that you can set multiple homes which you can warp back to at any time! To add a new one, just use &c/sethome name").suggest("/sethome ").hover("&eClick to run the command!"));
-		add(new JsonBuilder("&3Did you know you can lock or unlock your homes to change if other people can access them? Try it out in the &c/homes edit &3menu!").command("/homes edit").hover("&eClick to run the command!"));
-		add(new JsonBuilder("&3Complete Discord verification with Koda to unlock several commands, like &c/pay&3, from the Discord's #bridge channel. You can even be reminded to vote!"));
-		add(new JsonBuilder("&3Did you know you can ").group()
-				.next("&c/vote").command("/vote").hover("&eClick to run the command!").group()
-				.next("&3 for the server for free rewards? After voting, you can redeem your points in our vote point store with ").group()
-				.next("&c/vps!").command("/vps").hover("&eClick to run the command!").group());
-		add(new JsonBuilder("&3The walls of grace (&c/wog&3) are a great way to share your love for the server. Leave a sign for others to read").command("/wog").hover("&eClick to run the command!"));
+	private static final List<Supplier<JsonBuilder>> tips = new ArrayList<>() {{
+		add(() -> new JsonBuilder(
+			"&3You can reset your McMMO stats when maxed with &c/mcmmo reset &3for unique gear and in-game money.")
+			.command("/mcmmo reset")
+			.hover("&eClick to run the command!"));
+
+		add(() -> new JsonBuilder(
+			"&3Considering a donor perk, but not sure? You can test many of the commands in the donor test world- find it in the &c/warps &3menu!")
+			.command("/warps"));
+
+		add(() -> new JsonBuilder(
+			"&3Each month the community has a group goal for voting. You can see progress on our website " +
+			"(&e" + EdenSocialMediaSite.WEBSITE.getUrl() + "/vote&3). Reaching the goal means a prize for the whole community the following month!")
+			.url(EdenSocialMediaSite.WEBSITE.getUrl() + "/vote")
+			.hover("&eClick to visit the site!"));
+
+		add(() -> new JsonBuilder(
+			"&3Have you checked out our YouTube channel yet? We highlight our server, updates, and our dedicated staff members! &eClick here to visit!")
+			.url(EdenSocialMediaSite.YOUTUBE.getUrl())
+			.hover("&eClick to visit the site!"));
+
+		add(() -> new JsonBuilder(
+			"&3You can buy extra plots in the creative world through the vote point store or the donor perk store. If you have more than one plot, you can merge adjacent plots to form larger plots."));
+		add(() -> new JsonBuilder(
+			"&3Want a schematic of your creative plot? You can request one with &c/dlrequest"));
+
+		add(() -> new JsonBuilder(
+			"&3Have you visited the resource world &c/market &3yet? You can earn a large profit selling farmed resources!")
+			.command("/market")
+			.hover("&eClick to run the command!"));
+
+		add(() -> new JsonBuilder(
+			"&3The podiums at spawn are updated periodically showing a variety of achievements and leaderboards. Have you made it to any of the leaderboards?")
+			.command("/warp leaderboards")
+			.hover("&eClick to run the command!"));
+
+		add(() -> new JsonBuilder(
+			"&3Been to our banner store? Warp to &e/warp banners &3to find a big selection of banners available for vote points!")
+			.command("/warp banners")
+			.hover("&eClick to run the command!"));
+
+		add(() -> new JsonBuilder(
+			"&3We hold many events during the year! Check back frequently for holiday fun all year round."));
+
+		add(() -> new JsonBuilder(
+			"&3Have you thanked a code nerd today? ;)")
+			.suggest("Thank you code nerds for your hard work! <3")
+			.hover("&eClick to thank the code nerds!"));
+
+		add(() -> new JsonBuilder(
+			"&3Our server has hundreds of hours of custom code thanks to the work of our code nerds- but many of the most loved features came from community suggestions. " +
+			"Head to the Discord (&e" + EdenSocialMediaSite.DISCORD.getUrl() + "&3) if you have an idea for a feature.")
+			.url(EdenSocialMediaSite.DISCORD.getUrl())
+			.hover("&eClick to visit the site!"));
+
+		add(() -> new JsonBuilder(
+			"&3If you see a bug, please report it in the #bugs-support-and-suggestions channel on our Discord server (&e" + EdenSocialMediaSite.DISCORD.getUrl() + "&3).")
+			.url(EdenSocialMediaSite.DISCORD.getUrl())
+			.hover("&eClick to visit the site!"));
+
+		add(() -> new JsonBuilder(
+			"&3Tired of logs and stairs placing the wrong way?  Try ")
+			.next("&c/swl ")
+			.suggest("/swl")
+			.hover("&eClick to run the command!")
+			.group()
+			.next("&3(sideways logs) and ")
+			.group()
+			.next("&c/sws")
+			.suggest("/sws")
+			.hover("&eClick to run the command!")
+			.group()
+			.next(" &3(sideways stairs) to \"lock\" your placement direction while you build.")
+			.group());
+
+		add(() -> new JsonBuilder(
+			"&3Don't forget that you can set multiple homes which you can warp back to at any time! To add a new one, just use &c/sethome name")
+			.suggest("/sethome ")
+			.hover("&eClick to run the command!"));
+
+		add(() -> new JsonBuilder(
+			"&3Did you know you can lock or unlock your homes to change if other people can access them? Try it out in the &c/homes edit &3menu!")
+			.command("/homes edit")
+			.hover("&eClick to run the command!"));
+
+		add(() -> new JsonBuilder(
+			"&3Complete Discord verification with Koda to unlock several commands, like &c/pay&3, from the Discord's #bridge channel. You can even be reminded to vote!"));
+
+		add(() -> new JsonBuilder(
+			"&3Did you know you can ")
+			.group()
+			.next("&c/vote")
+			.command("/vote")
+			.hover("&eClick to run the command!")
+			.group()
+			.next("&3 for the server for free rewards? After voting, you can redeem your points in our vote point store with ")
+			.group()
+			.next("&c/vps!")
+			.command("/vps")
+			.hover("&eClick to run the command!")
+			.group());
+
+		add(() -> new JsonBuilder(
+			"&3The walls of grace (&c/wog&3) are a great way to share your love for the server. Leave a sign for others to read")
+			.command("/wog")
+			.hover("&eClick to run the command!"));
 	}};
 
 	public WeeklyWakkaCommand(CommandEvent event) {
@@ -119,7 +197,7 @@ public class WeeklyWakkaCommand extends _WarpCommand implements Listener {
 		weeklyWakka.getFoundPlayers().add(player.getUniqueId());
 		service.save(weeklyWakka);
 
-		tips.get(Integer.parseInt(weeklyWakka.getCurrentTip())).send(player);
+		tips.get(Integer.parseInt(weeklyWakka.getCurrentTip())).get().send(player);
 		CrateType.WEEKLY_WAKKA.give(player);
 	}
 
@@ -130,8 +208,8 @@ public class WeeklyWakkaCommand extends _WarpCommand implements Listener {
 		WeeklyWakkaService service = new WeeklyWakkaService();
 		WeeklyWakka weeklyWakka = service.get0();
 		warps.stream().filter(warp -> warp.getName().equals(weeklyWakka.getCurrentLocation())).findFirst().ifPresent(warps::remove);
-		List<JsonBuilder> newTips = new ArrayList<>();
-		for (JsonBuilder tip : tips) {
+		List<Supplier<JsonBuilder>> newTips = new ArrayList<>();
+		for (Supplier<JsonBuilder> tip : tips) {
 			if (weeklyWakka.getCurrentTip() == null) {
 				newTips.addAll(tips);
 				break;
@@ -139,7 +217,7 @@ public class WeeklyWakkaCommand extends _WarpCommand implements Listener {
 			if (!(tips.indexOf(tip) + "").equals(weeklyWakka.getCurrentTip()))
 				newTips.add(tip);
 		}
-		JsonBuilder newTip = RandomUtils.randomElement(newTips);
+		Supplier<JsonBuilder> newTip = RandomUtils.randomElement(newTips);
 		Warp newWarp = RandomUtils.randomElement(warps);
 		weeklyWakka.setCurrentLocation(newWarp.getName());
 		weeklyWakka.setCurrentTip(String.valueOf(tips.indexOf(newTip)));

@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.particles;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.particle.ParticleOwner;
 import gg.projecteden.nexus.models.particle.ParticleService;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.entity.Player;
 
@@ -13,7 +13,7 @@ public class Particles extends Feature {
 
 	@Override
 	public void onStart() {
-		Tasks.async(() -> PlayerUtils.getOnlinePlayers().forEach(Particles::startParticles));
+		Tasks.async(() -> OnlinePlayers.getAll().forEach(Particles::startParticles));
 	}
 
 	protected static void startParticles(Player player) {

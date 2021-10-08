@@ -19,8 +19,8 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.LocalDateTime.now;
 
 public class IOUtils {
-	private final static String PLUGIN_ROOT = "plugins/" + Nexus.class.getSimpleName() + "/";
-	private final static String LOGS_ROOT = PLUGIN_ROOT + "logs/";
+	public final static String PLUGIN_ROOT = "plugins/" + Nexus.class.getSimpleName() + "/";
+	public final static String LOGS_ROOT = PLUGIN_ROOT + "logs/";
 
 	public static void fileAppend(String file, String message) {
 		write(LOGS_ROOT + file + ".log", List.of(StandardOpenOption.APPEND), writer ->

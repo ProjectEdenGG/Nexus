@@ -47,7 +47,7 @@ public class MiniGolfParticleMenu extends MenuUtils implements InventoryProvider
 			clickableItems.add(ClickableItem.from(item, e -> setParticle(user, miniGolfParticle)));
 		}
 
-		addPagination(player, contents, clickableItems);
+		paginator(player, contents, clickableItems);
 	}
 
 	private void setParticle(MiniGolf21User user, MiniGolfParticle particle) {

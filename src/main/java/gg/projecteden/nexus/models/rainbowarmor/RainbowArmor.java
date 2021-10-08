@@ -9,14 +9,15 @@ import gg.projecteden.nexus.features.resourcepack.CustomModel;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.MathUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.utils.MathUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Color;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -77,6 +78,7 @@ public class RainbowArmor implements PlayerOwnedObject {
 	public void stopArmor() {
 		Tasks.cancel(taskId);
 		removeColor();
+		enabled = false;
 	}
 
 	public void startArmor() {
@@ -91,6 +93,8 @@ public class RainbowArmor implements PlayerOwnedObject {
 			increment();
 			editArmor(this::color);
 		});
+
+		enabled = true;
 	}
 
 	public boolean canUse() {
@@ -131,8 +135,12 @@ public class RainbowArmor implements PlayerOwnedObject {
 	public static boolean isLeatherArmor(ItemStack item) {
 		if (isNullOrAir(item))
 			return false;
-		if (CustomModel.exists(item))
+
+		if (CustomModel.exists(item)) {
+			if (item.getType().equals(Material.LEATHER_HORSE_ARMOR))
+				return true;
 			return false;
+		}
 
 		return MaterialTag.ARMOR_LEATHER.isTagged(item.getType());
 	}

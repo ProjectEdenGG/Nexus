@@ -6,13 +6,12 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEve
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.VanillaMechanic;
+import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -62,12 +61,12 @@ public abstract class TeamlessVanillaMechanic extends TeamlessMechanic implement
 	@Override
 	public void spreadPlayers(@NotNull Match match) {
 		for (Minigamer minigamer : match.getMinigamers()) {
-			Player player = minigamer.getPlayer();
-			player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, TimeUtils.TickTime.SECOND.x(20), 10, false, false));
-			player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, TimeUtils.TickTime.SECOND.x(5), 10, false, false));
-			player.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, TimeUtils.TickTime.SECOND.x(5), 255, false, false));
-			player.setVelocity(new Vector(0, 0, 0));
-			player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 1000000, 254, false, false));
+			minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.DAMAGE_RESISTANCE).duration(TimeUtils.TickTime.SECOND.x(20)).amplifier(10));
+			minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.BLINDNESS).duration(TimeUtils.TickTime.SECOND.x(5)).amplifier(10));
+			minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.LEVITATION).duration(TimeUtils.TickTime.SECOND.x(5)).maxAmplifier());
+			minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.DAMAGE_RESISTANCE).maxDuration().amplifier(254));
+
+			minigamer.getPlayer().setVelocity(new Vector(0, 0, 0));
 			Tasks.async(() -> randomTeleport(match, minigamer));
 		}
 	}
@@ -75,9 +74,8 @@ public abstract class TeamlessVanillaMechanic extends TeamlessMechanic implement
 	@Override
 	public @NotNull CompletableFuture<Void> onRandomTeleport(@NotNull Match match, @NotNull Minigamer minigamer, @NotNull Location location) {
 		return minigamer.teleportAsync(location).thenRun(() -> {
-			Player player = minigamer.getPlayer();
-			player.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
-			player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 400, 254, false, false));
+			minigamer.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
+			minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.DAMAGE_RESISTANCE).duration(400).amplifier(254));
 		});
 	}
 }

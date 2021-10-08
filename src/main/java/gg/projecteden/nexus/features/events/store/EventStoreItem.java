@@ -1,19 +1,22 @@
 package gg.projecteden.nexus.features.events.store;
 
-import fr.minuskube.inv.content.SlotPos;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.store.providers.EventStoreMenu;
 import gg.projecteden.nexus.features.events.store.providers.EventStoreProvider;
 import gg.projecteden.nexus.features.events.store.providers.purchasable.EventStoreEmojiHatProvider;
 import gg.projecteden.nexus.features.events.store.providers.purchasable.EventStoreParticlesProvider;
 import gg.projecteden.nexus.features.events.store.providers.purchasable.EventStoreWingsProvider;
+import gg.projecteden.nexus.features.particles.effects.WingsEffect.WingStyle;
+import gg.projecteden.nexus.features.store.perks.emojihats.EmojiHat;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.models.contributor.Contributor;
 import gg.projecteden.nexus.models.contributor.ContributorService;
-import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
+import gg.projecteden.nexus.models.particle.ParticleType;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.utils.EnumUtils;
 import gg.projecteden.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,29 +28,36 @@ import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
 
 import static gg.projecteden.nexus.features.events.Events.STORE_PREFIX;
 import static gg.projecteden.nexus.utils.PlayerUtils.runCommand;
+import static gg.projecteden.nexus.utils.PlayerUtils.runCommandAsOp;
 import static gg.projecteden.utils.StringUtils.camelCase;
 import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
+import static gg.projecteden.utils.StringUtils.prettyMoney;
 
 @Getter
 @AllArgsConstructor
 @RequiredArgsConstructor
 public enum EventStoreItem {
-	PAINTINGS(1, 1, 999, Material.PAINTING) {
+	CUSTOM_PAINTINGS(40, Material.PAINTING) {
+		@Override
+		public List<String> getLore() {
+			return List.of(
+				"&eChoose from over 60 pre-imported images or request your own to hang on your wall",
+				"",
+				"&6Price:&e " + getPrice() + " tokens per frame"
+			);
+		}
+
 		@Override
 		public void onClick(Player player, EventStoreMenu currentMenu) {
-
+			player.closeInventory();
+			PlayerUtils.runCommand(player, "warp images");
 		}
 	},
-	IMAGES(1, 3, 999, Material.FLOWER_BANNER_PATTERN) {
-		@Override
-		public void onClick(Player player, EventStoreMenu currentMenu) {
-
-		}
-	},
-	HEADS(1, 5, 50, Material.PLAYER_HEAD) {
+	DECORATION_HEADS(50, Material.PLAYER_HEAD) {
 		@Override
 		@NotNull
 		public ItemBuilder getRawDisplayItem() {
@@ -55,11 +65,18 @@ public enum EventStoreItem {
 		}
 
 		@Override
+		public List<String> getLore() {
+			return List.of("&eChoose from over 25,000 heads to decorate your builds",
+				"",
+				"&6Price:&e " + getPrice() + " tokens per head");
+		}
+
+		@Override
 		public void onClick(Player player, EventStoreMenu currentMenu) {
-			runCommand(player, "hdb");
+			runCommandAsOp(player, "hdb");
 		}
 	},
-	EMOJI_HATS(1, 7, 75, Material.PLAYER_HEAD) {
+	EMOJI_HATS(75, Material.PLAYER_HEAD) {
 		@Override
 		@NotNull
 		public ItemBuilder getRawDisplayItem() {
@@ -67,84 +84,154 @@ public enum EventStoreItem {
 		}
 
 		@Override
+		public List<String> getLore() {
+			return List.of("&eAnimated heads to express your emotions!",
+				"",
+				"&6Price:&e " + getPrice() + " tokens per emote");
+		}
+
+		@Override
+		public boolean canView(Player player) {
+			for (EmojiHat type : EmojiHat.values())
+				if (!type.canBeUsedBy(player))
+					return true;
+
+			return false;
+		}
+
+		@Override
 		public void onClick(Player player, EventStoreMenu currentMenu) {
 			new EventStoreEmojiHatProvider(currentMenu).open(player);
 		}
 	},
-	PARTICLES(3, 0, 75, Material.REDSTONE) {
+	PARTICLES(75, Material.REDSTONE) {
+		@Override
+		public List<String> getLore() {
+			return List.of("&eCustomizable particle shapes and designs",
+				"",
+				"&6Price:&e " + getPrice() + " tokens per particle");
+		}
+
+		@Override
+		public boolean canView(Player player) {
+			for (ParticleType type : EnumUtils.valuesExcept(ParticleType.class, ParticleType.WINGS))
+				if (!type.canBeUsedBy(player))
+					return true;
+
+			return false;
+		}
+
 		@Override
 		public void onClick(Player player, EventStoreMenu currentMenu) {
 			new EventStoreParticlesProvider(currentMenu).open(player);
 		}
 	},
-	WINGS(3, 2, 75, Material.ELYTRA) {
+	WINGS(75, Material.ELYTRA) {
+		@Override
+		public List<String> getLore() {
+			return List.of("&eParticle wings with customizable styles and colors",
+				"",
+				"&6Price:&e " + getPrice() + " tokens per style");
+		}
+
+		@Override
+		public boolean canView(Player player) {
+			for (WingStyle style : WingStyle.values())
+				if (!style.canBeUsedBy(player))
+					return true;
+
+			return false;
+		}
+
 		@Override
 		public void onClick(Player player, EventStoreMenu currentMenu) {
 			new EventStoreWingsProvider(currentMenu).open(player);
 		}
 	},
-	CHAT_EMOJIS(3, 4, 999, Material.PAPER) {
+	CHAT_EMOJIS(5, Material.MAP, 1000) {
+		@Override
+		public List<String> getLore() {
+			return List.of("&eSend custom emojis in chat!", "&f👀 💯 🔥 👍 👏 😍 😎",
+				"",
+				"&6Price:&e " + getPrice() + " tokens per emoji");
+		}
+
 		@Override
 		public void onClick(Player player, EventStoreMenu currentMenu) {
-
+			player.closeInventory();
+			PlayerUtils.send(player, STORE_PREFIX + "Send custom emojis in chat! &f👀 💯 🔥 👍 👏 😍 😎");
+			PlayerUtils.send(player, new JsonBuilder(STORE_PREFIX + "Browse the &c/emoji store")
+				.command("/emoji store")
+				.hover("Click to open the Emoji store")
+				.group()
+				.next("&3, or request your own via &c/ticket &3or &#5865F2#questions"));
 		}
 	},
-	SONGS(3, 6, 999, Material.JUKEBOX) {
+	SONGS(200, Material.JUKEBOX) {
+		@Override
+		protected List<String> getLore() {
+			return List.of("&ePlay custom noteblock songs from anywhere",
+				"",
+				"&6Price:&e " + getPrice() + " tokens per song");
+		}
+
 		@Override
 		public void onClick(Player player, EventStoreMenu currentMenu) {
-
+			runCommand(player, "jukebox store");
+			player.closeInventory();
 		}
 	},
-	STORE_CREDIT(3, 8, 999, Material.PAPER) {
+	STORE_CREDIT(100, Material.PAPER) {
+		@Override
+		protected List<String> getLore() {
+			return List.of("&eConvert Event Tokens into coupons for the &c/store",
+				"",
+				"&6Price:&e " + getPrice() + " tokens per $USD");
+		}
+
 		@Override
 		public void onClick(Player player, EventStoreMenu currentMenu) {
 			Nexus.getSignMenuFactory()
-					.lines("", "Enter the amount", "of credit you", "want ($USD)")
-					.prefix(STORE_PREFIX)
-					.response(lines -> {
-						String line = lines[0];
-						if (isNullOrEmpty(line)) {
-							new EventStoreProvider().open(player);
-							return;
-						}
+				.lines("", "Enter the amount", "of credit you", "want ($USD)")
+				.prefix(STORE_PREFIX)
+				.response(lines -> {
+					String line = lines[0];
+					if (isNullOrEmpty(line)) {
+						new EventStoreProvider().open(player);
+						return;
+					}
 
-						line = StringUtils.asParsableDecimal(line);
-						if (!Utils.isDouble(line))
-							throw new InvalidInputException(line + " is not a valid number");
+					final double usd = convertToUSD(line);
+					final int price = (int) (usd * getPrice());
 
-						final double input = Double.parseDouble(line);
-						final double scaled = BigDecimal.valueOf(input).setScale(2, RoundingMode.HALF_UP).doubleValue();
-						final double usd = Math.ceil(scaled * 2) / 2;
-						final int price = (int) (usd * 50);
-						final String moneyFormatted = StringUtils.prettyMoney(usd);
+					if (usd < 1)
+						throw new InvalidInputException("Amount must be $1 or more");
 
-						final EventUserService eventUserService = new EventUserService();
-						final ContributorService contributorService = new ContributorService();
-						final EventUser eventUser = eventUserService.get(player);
-						final Contributor contributor = contributorService.get(player);
+					new EventUserService().edit(player, user -> user.charge(price));
+					new ContributorService().edit(player, user -> user.giveCredit(usd));
 
-						if (!eventUser.hasTokens(price))
-							throw new InvalidInputException("You do not have enough tokens for " + moneyFormatted);
+					PlayerUtils.send(player, STORE_PREFIX + "You have purchased &e" + prettyMoney(usd) + " store credit. Manage with &c/store credit");
+				})
+				.open(player);
+		}
 
-						eventUser.takeTokens(price);
-						eventUserService.save(eventUser);
-						contributor.giveCredit(usd);
-						contributorService.save(contributor);
+		private double convertToUSD(String line) {
+			line = StringUtils.asParsableDecimal(line);
+			if (!Utils.isDouble(line))
+				throw new InvalidInputException(line + " is not a valid number");
 
-						eventUser.sendMessage(STORE_PREFIX + "You have purchased &e" + moneyFormatted + " store " +
-								"credit &3with &e" + price + " event tokens&3. Manage with &c/store credit");
-					})
-					.open(player);
+			final double input = BigDecimal.valueOf(Double.parseDouble(line)).setScale(2, RoundingMode.HALF_UP).doubleValue();
+			return Math.ceil(input * 2) / 2;
 		}
 	},
 	;
 
-	private final int row, column, price;
+	private final int price;
 	private final Material material;
 	private int customModelData;
 
-	public SlotPos getSlot() {
-		return SlotPos.of(row, column);
+	protected List<String> getLore() {
+		return null;
 	}
 
 	@NotNull
@@ -153,7 +240,11 @@ public enum EventStoreItem {
 	}
 
 	public ItemBuilder getDisplayItem() {
-		return getRawDisplayItem().name(camelCase(name())).itemFlags(ItemFlag.HIDE_ATTRIBUTES);
+		return getRawDisplayItem().name(camelCase(name())).lore(getLore()).itemFlags(ItemFlag.HIDE_ATTRIBUTES);
+	}
+
+	public boolean canView(Player player) {
+		return true;
 	}
 
 	public abstract void onClick(Player player, EventStoreMenu currentMenu);

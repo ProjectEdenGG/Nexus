@@ -129,7 +129,7 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 		else if (npc.getId() == 2697)
 			runCommand(event.getClicker(), "filidwelc");
 		else if (npc.getId() == 2990)
-			runCommand(event.getClicker(), "crates");
+			runCommand(event.getClicker(), "crates info");
 	}
 
 }

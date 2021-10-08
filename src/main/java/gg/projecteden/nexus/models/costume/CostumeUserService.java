@@ -7,8 +7,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static gg.projecteden.utils.Utils.isNullOrEmpty;
-
 @PlayerClass(CostumeUser.class)
 public class CostumeUserService extends MongoService<CostumeUser> {
 	private final static Map<UUID, CostumeUser> cache = new ConcurrentHashMap<>();
@@ -17,9 +15,11 @@ public class CostumeUserService extends MongoService<CostumeUser> {
 		return cache;
 	}
 
+	/*
 	@Override
 	protected boolean deleteIf(CostumeUser user) {
 		return user.getVouchers() == 0 && user.getActiveCostume() == null && isNullOrEmpty(user.getOwnedCostumes());
 	}
+	*/
 
 }

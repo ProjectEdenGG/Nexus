@@ -114,7 +114,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				"One horse, your favorite color, max stats. Simple, No?") {
 				@Override
 				void onClick(Player player) {
-					LuckPermsUtils.PermissionChange.set().permission("horsepicker.pick").player(player).runAsync();
+					LuckPermsUtils.PermissionChange.set().permissions("horsepicker.pick").player(player).runAsync();
 					PlayerUtils.send(player, "&eUse &c/horsepicker &eto pick your horse. Make sure you are standing in an open area or the horse might die!");
 				}
 		},
@@ -140,7 +140,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 				@Override
 				void onClick(Player player) {
 					PlayerUtils.runCommandAsConsole("ce give " + player.getName() + " " + Material.HOPPER.name() + " potionlauncher");
-					PermissionChange.set().player(player).permission("combine.use").runAsync();
+					PermissionChange.set().player(player).permissions("combine.use").runAsync();
 					PlayerUtils.send(player, "&eTo shoot potions, first run &c/combine &eto combine all similar potions in your inventory into one stack, " +
 							"then place the stack in the slot to the right of the Potion Launcher. If you place the hopper, hold it and do &c/fixpotionlauncher");
 				}

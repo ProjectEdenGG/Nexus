@@ -109,4 +109,12 @@ public class VectorUtils {
 		float newX = (float) (location.getX() + 1.0D * Math.cos(Math.toRadians(location.getYaw() + 90.0F)));
 		return new Vector((double) newX - location.getX(), 0.0D, (double) newZ - location.getZ());
 	}
+
+	public static Vector getRandomDirection() {
+		Vector direction = new Vector();
+		direction.setX(Math.random() * 2.0 - 1.0);
+		direction.setY(Math.random());
+		direction.setZ(Math.random() * 2.0 - 1.0);
+		return direction.normalize();
+	}
 }

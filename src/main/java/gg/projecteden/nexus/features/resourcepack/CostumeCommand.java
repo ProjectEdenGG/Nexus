@@ -17,7 +17,7 @@ import gg.projecteden.nexus.models.costume.CostumeUserService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
@@ -54,7 +54,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 		ResourcePack.getLoader().thenRun(() -> {
 			final CostumeUserService service = new CostumeUserService();
 			Tasks.repeat(TickTime.TICK, TickTime.TICK, () -> {
-				for (Player player : PlayerUtils.getOnlinePlayers())
+				for (Player player : OnlinePlayers.getAll())
 					service.get(player).sendCostumePacket();
 			});
 		});
@@ -116,8 +116,8 @@ public class CostumeCommand extends CustomCommand implements Listener {
 		Map<Costume, Integer> counts = new HashMap<>() {{
 			for (CostumeUser user : service.getAll())
 				if (user.getRank() != Rank.ADMIN)
-					for (Costume costume : user.getOwnedCostumes())
-						put(costume, getOrDefault(costume, 0) + 1);
+					for (String costume : user.getOwnedCostumes())
+						put(Costume.of(costume), getOrDefault(costume, 0) + 1);
 		}};
 
 		final BiFunction<Costume, String, JsonBuilder> formatter = (costume, index) ->
@@ -212,7 +212,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 					items.add(formatCostume(user, costume, contents));
 			}
 
-			addPagination(player, contents, items);
+			paginator(player, contents, items);
 		}
 
 		protected abstract CostumeMenu newMenu(CostumeMenu previousMenu, CustomModelFolder subfolder);
@@ -267,7 +267,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 
 		@Override
 		protected boolean isAvailableCostume(CostumeUser user, Costume costume) {
-			return !user.getOwnedCostumes().contains(costume);
+			return !user.getOwnedCostumes().contains(costume.getId());
 		}
 
 		protected ClickableItem formatCostume(CostumeUser user, Costume costume, InventoryContents contents) {
@@ -279,7 +279,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 					ConfirmationMenu.builder()
 						.onConfirm(e2 -> {
 							user.takeVouchers(1);
-							user.getOwnedCostumes().add(costume);
+							user.getOwnedCostumes().add(costume.getId());
 							service.save(user);
 						})
 						.onFinally(e2 -> open(user.getOnlinePlayer(), contents.pagination().getPage()))
@@ -310,7 +310,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 			contents.set(0, 8, ClickableItem.from(info.build(), e ->
 				new CostumeStoreMenu(this, Costume.getRootFolder()).open(user.getOnlinePlayer())));
 
-			final Costume costume = user.getActiveCostume();
+			final Costume costume = Costume.of(user.getActiveCostume());
 			if (costume != null) {
 				final ItemBuilder builder = new ItemBuilder(costume.getModel().getDisplayItem())
 					.lore("", "&a&lActive", "&cClick to deactivate")
@@ -326,16 +326,16 @@ public class CostumeCommand extends CustomCommand implements Listener {
 
 		@Override
 		protected boolean isAvailableCostume(CostumeUser user, Costume costume) {
-			return user.getOwnedCostumes().contains(costume);
+			return user.getOwnedCostumes().contains(costume.getId());
 		}
 
 		protected ClickableItem formatCostume(CostumeUser user, Costume costume, InventoryContents contents) {
 			final ItemBuilder builder = new ItemBuilder(costume.getModel().getDisplayItem());
-			if (costume.equals(user.getActiveCostume()))
+			if (costume.getId().equals(user.getActiveCostume()))
 				builder.lore("", "&a&lActive").glow();
 
 			return ClickableItem.from(builder.build(), e -> {
-				user.setActiveCostume(costume.equals(user.getActiveCostume()) ? null : costume);
+				user.setActiveCostume(costume.getId().equals(user.getActiveCostume()) ? null : costume);
 				service.save(user);
 				open(user.getOnlinePlayer(), contents.pagination().getPage());
 			});

@@ -30,7 +30,6 @@ public class Alerts implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private List<Highlight> highlights = new ArrayList<>();
-	private boolean muted;
 
 	public boolean add(String highlight) {
 		return add(highlight, true);
@@ -70,17 +69,8 @@ public class Alerts implements PlayerOwnedObject {
 		highlights.clear();
 	}
 
-	public boolean isMuted() {
-		return muted;
-	}
-
-	public void setMuted(boolean muted) {
-		this.muted = muted;
-	}
-
 	public void playSound() {
-		if (!isMuted())
-			Jingle.PING.play(PlayerUtils.getPlayer(uuid).getPlayer());
+		Jingle.PING.play(PlayerUtils.getPlayer(uuid).getPlayer());
 	}
 
 	public void tryAlerts(String message) {

@@ -46,7 +46,7 @@ public class PayDiscordCommand extends Command {
 				ShopGroup shopGroup = ShopGroup.SURVIVAL;
 				String reason = null;
 				if (args.length > 2)
-					shopGroup = ShopGroup.valueOf(args[2]);
+					shopGroup = ShopGroup.valueOf(args[2].toUpperCase());
 				if (args.length > 3)
 					reason = event.getArgs().split(" ", 4)[3];
 

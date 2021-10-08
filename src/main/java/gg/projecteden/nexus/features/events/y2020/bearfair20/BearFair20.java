@@ -184,8 +184,7 @@ public class BearFair20 implements Listener {
 //		BearFairUser user = service.get(player);
 //
 //		Tasks.wait(TickTime.SECOND.x(2), () -> {
-//			player.addPotionEffects(Collections.singletonList
-//					(new PotionEffect(PotionEffectType.BLINDNESS, 80, 250, false, false, false)));
+//			player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.BLINDNESS).duration(80).amplifier(250).build());
 //			player.teleportAsync(spawnTransition);
 //			send("", player);
 //			send("&e&o*You immediately fall asleep in your bed*", player);
@@ -212,7 +211,7 @@ public class BearFair20 implements Listener {
 		if (!player.getGameMode().equals(GameMode.SURVIVAL)) return "creative";
 		if (player.isFlying()) return "fly";
 		if (isVanished(player)) return "vanish";
-		if (new GodmodeService().get(player).isEnabled()) return "godemode";
+		if (new GodmodeService().get(player).isActive()) return "godemode";
 
 		return null;
 	}

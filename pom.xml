@@ -219,7 +219,7 @@
         <dependency>
             <groupId>gg.projecteden</groupId>
             <artifactId>eden-api</artifactId>
-            <version>1.5.7</version>
+            <version>1.6.4</version>
         </dependency>
         <!-- Lombok Project -->
         <dependency>
@@ -286,6 +286,12 @@
             <groupId>org.twitter4j</groupId>
             <artifactId>twitter4j-core</artifactId>
             <version>4.0.7</version>
+        </dependency>
+        <!-- Twitch4J -->
+        <dependency>
+            <groupId>com.github.twitch4j</groupId>
+            <artifactId>twitch4j</artifactId>
+            <version>1.5.0</version>
         </dependency>
         <!-- Google API -->
         <dependency>

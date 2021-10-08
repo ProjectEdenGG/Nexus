@@ -26,13 +26,18 @@ public class CrateCommand extends CustomCommand {
 		super(event);
 	}
 
+	@Path
+	void warp() {
+		runCommand("warp crates");
+	}
+
 	@Path("toggle")
 	void toggle() {
 		Crates.setEnabled(!Crates.isEnabled());
 		send(PREFIX + "Crates " + (Crates.isEnabled() ? "&aenabled" : "&cdisabled"));
 	}
 
-	@Path
+	@Path("info")
 	void info() {
 		line();
 		send("&3Hi there, I'm &eBlast.");

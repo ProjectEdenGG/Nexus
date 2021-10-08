@@ -25,7 +25,7 @@ import gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreb
 import gg.projecteden.nexus.features.minigames.modifiers.NoModifier;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.BossBarBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.Countdown.CountdownBuilder;
@@ -46,6 +46,7 @@ import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -108,16 +109,27 @@ public class Match implements ForwardingAudience {
 		return null;
 	}
 
+	/**
+	 * Gets players who are currently in the match
+	 *
+	 * @return list of players
+	 */
 	public List<Player> getPlayers() {
 		return minigamers.stream().map(Minigamer::getPlayer).collect(Collectors.toList());
 	}
 
-	public List<Player> getAllPlayers() {
+	/**
+	 * Gets all players who have joined the match
+	 *
+	 * @return list of offline players
+	 */
+	public List<OfflinePlayer> getAllPlayers() {
 		return allMinigamers.stream().map(Minigamer::getPlayer).collect(Collectors.toList());
 	}
 
 	/**
 	 * Gets all teams with living (i.e. not spectating) players.
+	 *
 	 * @return list of teams
 	 */
 	public List<Team> getAliveTeams() {
@@ -331,7 +343,10 @@ public class Match implements ForwardingAudience {
 
 	private void stopModifierBar() {
 		if (modifierBar == null) return;
-		getAllPlayers().forEach(player -> player.hideBossBar(modifierBar));
+		getAllPlayers().stream()
+			.filter(OfflinePlayer::isOnline)
+			.filter(player -> player.getPlayer() != null)
+			.forEach(player -> player.getPlayer().hideBossBar(modifierBar));
 	}
 
 	private void startTimer() {
@@ -349,7 +364,7 @@ public class Match implements ForwardingAudience {
 			AtomicInteger taskId = new AtomicInteger(-1);
 			taskId.set(tasks.wait(1, () -> {
 				List<Player> teamMembers = team.getMinigamers(this).stream().map(Minigamer::getPlayer).collect(Collectors.toList());
-				List<Player> otherPlayers = new ArrayList<>(PlayerUtils.getOnlinePlayers());
+				List<Player> otherPlayers = new ArrayList<>(OnlinePlayers.getAll());
 				otherPlayers.removeAll(teamMembers);
 				GlowAPI.setGlowing(teamMembers, team.getColorType().getGlowColor(), teamMembers);
 				GlowAPI.setGlowing(otherPlayers, GlowAPI.Color.NONE, teamMembers);

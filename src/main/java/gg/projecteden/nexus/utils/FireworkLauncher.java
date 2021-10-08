@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.nexus.Nexus;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -9,9 +10,11 @@ import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Getter
@@ -26,15 +29,33 @@ public class FireworkLauncher {
 	private FireworkEffect.Type type;
 	private Integer power;
 	private Integer detonateAfter;
+	private Boolean silent;
+	private Boolean damage;
+	public static final String METADATA_KEY_DAMAGE = "damage";
 
 	public FireworkLauncher(Location location) {
 		this.location = location;
+	}
+
+	public FireworkLauncher color(Color color) {
+		this.colors = Collections.singletonList(color);
+		return this;
+	}
+
+	public FireworkLauncher fadeColor(Color color) {
+		this.fadeColors = Collections.singletonList(color);
+		return this;
 	}
 
 	public void launch() {
 		Firework firework = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK);
 		FireworkEffect.Builder builder = FireworkEffect.builder();
 		FireworkMeta meta = firework.getFireworkMeta();
+
+		if (damage != null)
+			firework.setMetadata(METADATA_KEY_DAMAGE, new FixedMetadataValue(Nexus.getInstance(), damage));
+		if (silent != null)
+			firework.setSilent(silent);
 
 		if (type != null)
 			builder.with(type);
@@ -57,29 +78,34 @@ public class FireworkLauncher {
 
 	public static FireworkLauncher random(Location location) {
 		// Get Random Colors
-		ColorType[] colorTypes = ColorType.values();
-		List<Color> colorList = new ArrayList<>();
-		for (ColorType colorType : colorTypes)
-			if (RandomUtils.chanceOf(40))
-				colorList.add(colorType.getBukkitColor());
-		if (colorList.size() == 0)
-			colorList.add(RandomUtils.randomElement(Arrays.asList(colorTypes)).getBukkitColor());
+		List<Color> colorList = getRandomColors();
 
 		// Get Random Fade Colors
-		List<Color> fadeColorList = new ArrayList<>();
-		for (ColorType colorType : colorTypes)
-			if (RandomUtils.chanceOf(40))
-				fadeColorList.add(colorType.getBukkitColor());
+		List<Color> fadeColorList = getRandomColors();
 
 		// Get Random Type
 		FireworkEffect.Type type = RandomUtils.randomElement(Arrays.asList(FireworkEffect.Type.values()));
 
 		return new FireworkLauncher(location)
-				.type(type)
-				.colors(colorList)
-				.fadeColors(fadeColorList)
-				.trailing(RandomUtils.chanceOf(50))
-				.flickering(RandomUtils.chanceOf(50))
-				.power(RandomUtils.randomInt(1, 3));
+			.type(type)
+			.colors(colorList)
+			.fadeColors(fadeColorList)
+			.trailing(RandomUtils.chanceOf(50))
+			.flickering(RandomUtils.chanceOf(50))
+			.power(RandomUtils.randomInt(1, 3));
+	}
+
+	private static List<Color> getRandomColors() {
+		List<Color> colorList = new ArrayList<>();
+		if (RandomUtils.chanceOf(50)) {
+			for (ColorType colorType : ColorType.values())
+				if (RandomUtils.chanceOf(40))
+					colorList.add(colorType.getBukkitColor());
+			if (colorList.isEmpty())
+				colorList.add(ColorType.getRandom().getBukkitColor());
+		} else
+			colorList.add(ColorType.getRandom().getBukkitColor());
+
+		return colorList;
 	}
 }

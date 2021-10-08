@@ -10,6 +10,7 @@ import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.ChatterService;
 import gg.projecteden.nexus.models.chat.PrivateChannel;
 import gg.projecteden.nexus.models.chat.PublicChannel;
+import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.hours.Hours;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.models.nerd.Rank;
@@ -19,7 +20,7 @@ import gg.projecteden.nexus.models.ticket.Tickets;
 import gg.projecteden.nexus.models.ticket.TicketsService;
 import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import gg.projecteden.utils.TimeUtils.Timespan.TimespanBuilder;
@@ -48,7 +49,7 @@ public enum ScoreboardLine {
 	ONLINE {
 		@Override
 		public String render(Player player) {
-			return "&3Online Nerds: &e" + PlayerUtils.getOnlinePlayers(player).size();
+			return "&3Online Nerds: &e" + OnlinePlayers.where().viewer(player).get().size();
 		}
 	},
 
@@ -184,6 +185,13 @@ public enum ScoreboardLine {
 		}
 	},
 
+	EVENT_TOKENS {
+		@Override
+		public String render(Player player) {
+			return "&3Event Tokens: &e" + new EventUserService().get(player).getTokens();
+		}
+	},
+
 	@Interval(2)
 	COMPASS {
 		@Override
@@ -275,6 +283,7 @@ public enum ScoreboardLine {
 			if (ScoreboardLine.MCMMO.hasPermission(player)) put(ScoreboardLine.MCMMO, !isStaff);
 			if (ScoreboardLine.BALANCE.hasPermission(player)) put(ScoreboardLine.BALANCE, !isStaff);
 			if (ScoreboardLine.VOTE_POINTS.hasPermission(player)) put(ScoreboardLine.VOTE_POINTS, !isStaff);
+			if (ScoreboardLine.EVENT_TOKENS.hasPermission(player)) put(ScoreboardLine.EVENT_TOKENS, false);
 			if (ScoreboardLine.GAMEMODE.hasPermission(player)) put(ScoreboardLine.GAMEMODE, true);
 			if (ScoreboardLine.WORLD.hasPermission(player)) put(ScoreboardLine.WORLD, true);
 			if (ScoreboardLine.BIOME.hasPermission(player)) put(ScoreboardLine.BIOME, false);

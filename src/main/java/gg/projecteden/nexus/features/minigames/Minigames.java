@@ -20,6 +20,7 @@ import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.minigamessetting.MinigamesConfigService;
 import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
@@ -27,6 +28,7 @@ import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.Getter;
+import me.lexikiq.OptionalLocation;
 import me.lucko.helper.Services;
 import me.lucko.helper.scoreboard.PacketScoreboard;
 import me.lucko.helper.scoreboard.PacketScoreboardProvider;
@@ -107,11 +109,19 @@ public class Minigames extends Feature {
 	}
 
 	public static boolean isMinigameWorld(World world) {
-		return WorldGroup.of(world) == WorldGroup.MINIGAMES;
+		return isMinigameWorld(WorldGroup.of(world));
+	}
+
+	public static boolean isMinigameWorld(OptionalLocation location) {
+		return isMinigameWorld(WorldGroup.of(location));
+	}
+
+	public static boolean isMinigameWorld(WorldGroup worldGroup) {
+		return worldGroup == WorldGroup.MINIGAMES;
 	}
 
 	public static List<Player> getPlayers() {
-		return PlayerUtils.getOnlinePlayers().stream()
+		return OnlinePlayers.getAll().stream()
 			.filter(player -> isMinigameWorld(player.getWorld()))
 			.collect(Collectors.toList());
 	}
@@ -134,7 +144,7 @@ public class Minigames extends Feature {
 		if (component == null) return;
 		final Component message = Minigames.COMPONENT_PREFIX.append(component);
 		getPlayers().forEach(player -> player.sendMessage(message));
-		System.out.println(AdventureUtils.asPlainText(message));
+		Nexus.log(AdventureUtils.asPlainText(message));
 	}
 
 	// Registration

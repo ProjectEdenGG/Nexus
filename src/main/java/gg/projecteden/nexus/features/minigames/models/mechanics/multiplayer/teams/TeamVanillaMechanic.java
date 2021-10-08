@@ -7,13 +7,13 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEve
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.VanillaMechanic;
-import gg.projecteden.nexus.utils.CompletableFutures;
+import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils;
+import gg.projecteden.utils.CompletableFutures;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -63,9 +63,10 @@ public abstract class TeamVanillaMechanic extends TeamMechanic implements Vanill
 	@Override
 	public void spreadPlayers(@NotNull Match match) {
 		match.getMinigamers().forEach(minigamer -> {
-			minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, TimeUtils.TickTime.SECOND.x(20), 10, false, false));
-			minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, TimeUtils.TickTime.SECOND.x(5), 10, false, false));
-			minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, TimeUtils.TickTime.SECOND.x(5), 255, false, false));
+			minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.DAMAGE_RESISTANCE).duration(TickTime.SECOND.x(20)).amplifier(10));
+			minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.BLINDNESS).duration(TickTime.SECOND.x(5)).amplifier(10));
+			minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.LEVITATION).duration(TickTime.SECOND.x(5)).amplifier(255));
+
 			minigamer.getPlayer().setVelocity(new Vector(0, 0, 0));
 		});
 		match.getAliveTeams().forEach(team -> Tasks.async(() -> randomTeleport(match, team)));

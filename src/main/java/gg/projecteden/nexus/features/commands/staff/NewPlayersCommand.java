@@ -8,7 +8,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.hours.Hours;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
@@ -16,6 +16,7 @@ import lombok.NonNull;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.function.BiFunction;
 
 @Permission("group.staff")
@@ -27,10 +28,11 @@ public class NewPlayersCommand extends CustomCommand {
 
 	@Path("[page]")
 	void run(@Arg("1") int page) {
-		HashMap<Player, Integer> players = new HashMap<>();
-		for (Player player : PlayerUtils.getOnlinePlayers()) {
-			Hours hours = new HoursService().get(player.getUniqueId());
-			if (hours.getTotal() < (TickTime.HOUR.get() / 20))
+		final Map<Player, Integer> players = new HashMap<>();
+		final HoursService service = new HoursService();
+		for (Player player : OnlinePlayers.getAll()) {
+			Hours hours = service.get(player.getUniqueId());
+			if (!hours.has(TickTime.HOUR))
 				players.put(player, hours.getTotal());
 		}
 

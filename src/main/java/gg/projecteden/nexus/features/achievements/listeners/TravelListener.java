@@ -6,7 +6,7 @@ import gg.projecteden.nexus.features.regionapi.MovementType;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import gg.projecteden.nexus.models.achievement.Achievement;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
@@ -57,7 +57,7 @@ public class TravelListener implements Listener {
 	}
 
 	private static void check() {
-		for (Player player : PlayerUtils.getOnlinePlayers()) {
+		for (Player player : OnlinePlayers.getAll()) {
 			checkWalk(player);
 			checkRide(player);
 			checkAviate(player);

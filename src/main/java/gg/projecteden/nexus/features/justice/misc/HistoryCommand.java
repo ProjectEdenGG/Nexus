@@ -8,6 +8,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.punishments.Punishment;
+import gg.projecteden.nexus.models.punishments.PunishmentType;
 import gg.projecteden.nexus.models.punishments.Punishments;
 import gg.projecteden.nexus.models.punishments.PunishmentsService;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -21,7 +22,6 @@ import java.util.function.BiFunction;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 import static java.util.stream.Collectors.toList;
 
-@Permission("group.moderator")
 public class HistoryCommand extends _JusticeCommand {
 	private final PunishmentsService service = new PunishmentsService();
 
@@ -30,12 +30,15 @@ public class HistoryCommand extends _JusticeCommand {
 	}
 
 	@Path("<player> [page]")
-	void run(Punishments player, @Arg("1") int page) {
+	void run(@Arg(value = "self", permission = "group.moderator") Punishments player, @Arg("1") int page) {
 		if (player.getPunishments().isEmpty())
-			error("No history found for " + player.getNickname());
+			if (isSelf(player))
+				error("You do not have any logged punishments");
+			else
+				error("No history found for " + player.getNickname());
 
 		send("");
-		send(PREFIX + "History of &e" + player.getNickname());
+		send(PREFIX + "History" + (isSelf(player) ? "" : " of &e" + player.getNickname()));
 
 		int perPage = 3;
 
@@ -49,6 +52,7 @@ public class HistoryCommand extends _JusticeCommand {
 
 		List<Punishment> sorted = player.getPunishments().stream()
 				.sorted(Comparator.comparing(Punishment::getTimestamp).reversed())
+				.filter(punishment -> !isSelf(player) || punishment.getType() != PunishmentType.WATCHLIST)
 				.collect(toList());
 
 		paginate(sorted, formatter, "/history " + player.getName(), page, perPage);
@@ -57,6 +61,7 @@ public class HistoryCommand extends _JusticeCommand {
 	@Confirm
 	@TabCompleteIgnore
 	@Path("delete <player> <id>")
+	@Permission("group.moderator")
 	void delete(Punishments player, @Arg(context = 1) Punishment punishment) {
 		player.remove(punishment);
 		service.save(player);

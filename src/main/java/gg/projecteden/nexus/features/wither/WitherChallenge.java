@@ -12,6 +12,7 @@ import gg.projecteden.nexus.features.wither.models.WitherFight;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.models.witherarena.WitherArenaConfigService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -39,11 +40,11 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import static gg.projecteden.nexus.models.witherarena.WitherArenaConfig.isMaintenance;
 import static gg.projecteden.nexus.utils.WorldGroup.isResourceWorld;
 
 @NoArgsConstructor
@@ -52,8 +53,6 @@ public class WitherChallenge extends Feature implements Listener {
 	public static final String PREFIX = StringUtils.getPrefix("Wither");
 	public static final Location cageLoc = location(-151.5, 76, -69.5, 180, 0);
 	public static WitherFight currentFight;
-	public static List<UUID> queue = new ArrayList<>();
-	public static boolean maintenance = false;
 
 	static Location location(double x, double y, double z) {
 		return location(x, y, z, 0, 0);
@@ -91,11 +90,13 @@ public class WitherChallenge extends Feature implements Listener {
 				e.remove();
 		});
 		new WorldEditUtils("events").paster().file("wither_arena").at(region.getMinimumPoint()).pasteAsync();
-		if (!maintenance && processQueue)
+		if (!isMaintenance() && processQueue)
 			processQueue();
 	}
 
 	public static void processQueue() {
+		final WitherArenaConfigService service = new WitherArenaConfigService();
+		final List<UUID> queue = service.get0().getQueue();
 		if (queue.size() == 0)
 			return;
 

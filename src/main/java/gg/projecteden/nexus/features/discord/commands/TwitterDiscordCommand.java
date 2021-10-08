@@ -6,7 +6,7 @@ import com.vdurmont.emoji.EmojiManager;
 import gg.projecteden.exceptions.EdenException;
 import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.features.discord.HandledBy;
-import gg.projecteden.nexus.features.socialmedia.SocialMedia;
+import gg.projecteden.nexus.features.socialmedia.integrations.Twitter;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.socialmedia.TwitterData;
 import gg.projecteden.nexus.models.socialmedia.TwitterData.PendingTweet;
@@ -55,10 +55,10 @@ public class TwitterDiscordCommand extends Command {
 						}
 						case "history" -> {
 							Query query = new Query("from:ProjectEdenGG");
-							List<Status> tweets = SocialMedia.getTwitter().search().search(query).getTweets();
+							List<Status> tweets = Twitter.get().search().search(query).getTweets();
 							StringBuilder reply = new StringBuilder("Tweets from past 7 days: " + (tweets.isEmpty() ? "None" : ""));
 							for (Status tweet : tweets)
-								reply.append(System.lineSeparator()).append(SocialMedia.getUrl(tweet));
+								reply.append(System.lineSeparator()).append(Twitter.getUrl(tweet));
 							event.reply(reply.toString());
 						}
 						case "tweet" -> {

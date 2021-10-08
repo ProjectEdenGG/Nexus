@@ -6,13 +6,13 @@ import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.badge.BadgeUser.Badge;
+import gg.projecteden.nexus.models.badge.BadgeUserService;
 import gg.projecteden.nexus.models.contributor.Contributor;
 import gg.projecteden.nexus.models.contributor.Contributor.Purchase;
 import gg.projecteden.nexus.models.contributor.ContributorService;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
-import gg.projecteden.nexus.models.emblem.BadgeUser.Badge;
-import gg.projecteden.nexus.models.emblem.BadgeUserService;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.utils.DiscordId.Role;
 import gg.projecteden.utils.DiscordId.TextChannel;
@@ -89,6 +89,8 @@ public class HandlePurchaseCommand extends CustomCommand {
 					else
 						discordMessage += "\nUser does not have a linked discord account";
 				}
+			} else {
+				send(purchase.getUuid(), "Your free " + purchase.getPackageName() + " has been successfully processed, enjoy!");
 			}
 
 			packageType.apply(purchase.getUuid());

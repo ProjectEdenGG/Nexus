@@ -39,6 +39,12 @@ public class RainbowArmorCommand extends CustomCommand implements Listener {
 			rbaPlayer = service.get(player());
 	}
 
+	static {
+		for (RainbowArmor rainbowArmor : new RainbowArmorService().getOnline())
+			if (rainbowArmor.isEnabled())
+				rainbowArmor.startArmor();
+	}
+
 	@Path
 	void toggle() {
 		if (!rbaPlayer.canUse())

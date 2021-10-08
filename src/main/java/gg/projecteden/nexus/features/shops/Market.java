@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.shops;
 
+import gg.projecteden.nexus.features.mobheads.MobHeadType;
 import gg.projecteden.nexus.models.boost.BoostConfig;
 import gg.projecteden.nexus.models.boost.Boostable;
 import gg.projecteden.nexus.models.shop.Shop;
@@ -89,10 +90,10 @@ public class Market {
 		addSellItem(ShopGroup.SURVIVAL, false, Material.OAK_LOG, 32, 75);
 		addSellItem(ShopGroup.SURVIVAL, false, Material.CRIMSON_STEM, 32, 75);
 		addSellItem(ShopGroup.SURVIVAL, false, Material.WARPED_STEM, 32, 75);
-		addSellItem(ShopGroup.SURVIVAL, false, Material.CREEPER_HEAD, 1, 5000);
-		addSellItem(ShopGroup.SURVIVAL, false, Material.SKELETON_SKULL, 1, 5000);
-		addSellItem(ShopGroup.SURVIVAL, false, Material.WITHER_SKELETON_SKULL, 1, 6000);
-		addSellItem(ShopGroup.SURVIVAL, false, Material.ZOMBIE_HEAD, 1, 5000);
+		addSellItem(ShopGroup.SURVIVAL, false, MobHeadType.CREEPER.getSkull(), 5000);
+		addSellItem(ShopGroup.SURVIVAL, false, MobHeadType.SKELETON.getSkull(), 5000);
+		addSellItem(ShopGroup.SURVIVAL, false, MobHeadType.WITHER_SKELETON.getSkull(), 6000);
+		addSellItem(ShopGroup.SURVIVAL, false, MobHeadType.ZOMBIE.getSkull(), 5000);
 		addSellItem(ShopGroup.SURVIVAL, false, Material.BOOKSHELF, 1, 300);
 		addSellItem(ShopGroup.SURVIVAL, false, Material.NAUTILUS_SHELL, 1, 10000);
 		addSellItem(ShopGroup.SURVIVAL, false, Material.BEACON, 1, 200000);
@@ -135,7 +136,7 @@ public class Market {
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.DEEPSLATE_GOLD_ORE, 32, 1350);
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.COAL_BLOCK, 32, 120);
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.QUARTZ_BLOCK, 32, 300);
-		addBuyItem(ShopGroup.SURVIVAL, false, Material.SEA_LANTERN, 1, 7.5);
+		addBuyItem(ShopGroup.SURVIVAL, false, Material.SEA_LANTERN, 3, 7.5);
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.REDSTONE_BLOCK, 32, 500);
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.LAPIS_BLOCK, 32, 800);
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.IRON_BLOCK, 8, 35);
@@ -152,10 +153,10 @@ public class Market {
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.BIRCH_LOG, 32, 45);
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.SPRUCE_LOG, 32, 40);
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.OAK_LOG, 32, 45);
-		addBuyItem(ShopGroup.SURVIVAL, false, Material.CREEPER_HEAD, 1, 1000);
-		addBuyItem(ShopGroup.SURVIVAL, false, Material.SKELETON_SKULL, 1, 1000);
-		addBuyItem(ShopGroup.SURVIVAL, false, Material.WITHER_SKELETON_SKULL, 1, 1500);
-		addBuyItem(ShopGroup.SURVIVAL, false, Material.ZOMBIE_HEAD, 1, 1000);
+		addBuyItem(ShopGroup.SURVIVAL, false, MobHeadType.CREEPER.getSkull(), 1000);
+		addBuyItem(ShopGroup.SURVIVAL, false, MobHeadType.SKELETON.getSkull(), 1000);
+		addBuyItem(ShopGroup.SURVIVAL, false, MobHeadType.WITHER_SKELETON.getSkull(), 1500);
+		addBuyItem(ShopGroup.SURVIVAL, false, MobHeadType.ZOMBIE.getSkull(), 1000);
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.ELYTRA, 1, 1000);
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.GLASS, 32, 25);
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.HONEY_BLOCK, 4, 60);

@@ -7,6 +7,7 @@ import gg.projecteden.nexus.models.particle.ParticleOwner;
 import gg.projecteden.nexus.models.particle.ParticleService;
 import gg.projecteden.nexus.models.particle.ParticleType;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.EnumUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static gg.projecteden.nexus.features.events.Events.STORE_PREFIX;
+import static gg.projecteden.utils.StringUtils.camelCase;
 
 @AllArgsConstructor
 public class EventStoreParticlesProvider extends EventStoreMenu {
@@ -35,8 +37,7 @@ public class EventStoreParticlesProvider extends EventStoreMenu {
 	protected List<ClickableItem> getItems(Player player) {
 		List<ClickableItem> items = new ArrayList<>();
 
-		ParticleService service = new ParticleService();
-		ParticleOwner particleOwner = service.get(player);
+		ParticleOwner particleOwner = new ParticleService().get(player);
 		int price = EventStoreItem.PARTICLES.getPrice();
 
 		for (ParticleType type : EnumUtils.valuesExcept(ParticleType.class, ParticleType.WINGS)) {
@@ -48,9 +49,11 @@ public class EventStoreParticlesProvider extends EventStoreMenu {
 
 			items.add(ClickableItem.from(item.build(), e -> {
 				try {
-					if (isShiftClick(e))
+					if (isShiftClick(e)) {
 						chargeAndAddPermissions(player, price, type.getPermission());
-					else {
+						PlayerUtils.send(player, STORE_PREFIX + "Purchased " + camelCase(type) + " particle, manage with &c/particles");
+						open(player);
+					} else {
 						player.closeInventory();
 						type.run(player);
 						Tasks.wait(TickTime.SECOND.x(15), () -> particleOwner.cancel(type));

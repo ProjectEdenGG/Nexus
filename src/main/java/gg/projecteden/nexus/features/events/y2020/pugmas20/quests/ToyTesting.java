@@ -23,6 +23,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -93,9 +94,9 @@ public class ToyTesting implements Listener {
 		Pugmas20UserService service = new Pugmas20UserService();
 		Pugmas20User user = service.get(player);
 
-		String lore = null;
+		List<String> lore = new ArrayList<>();
 		if (user.getToyTestingStage() != QuestStage.NOT_STARTED)
-			lore = "&f||&fUse &c/pugmas toys &fto||&freturn to this location";
+			lore.addAll(List.of("", "&fUse &c/pugmas toys &fto", "&freturn to this location"));
 
 		ConfirmationMenu.builder()
 				.title("Play " + camelCase(toy) + "?")

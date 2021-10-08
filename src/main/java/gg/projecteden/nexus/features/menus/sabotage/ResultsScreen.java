@@ -9,7 +9,7 @@ import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.matchdata.SabotageMatchData;
 import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.MathUtils;
+import gg.projecteden.utils.MathUtils;
 import gg.projecteden.utils.TimeUtils;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

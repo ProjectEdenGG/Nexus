@@ -1,10 +1,10 @@
 package gg.projecteden.nexus.features.discord;
 
 import gg.projecteden.exceptions.EdenException;
+import gg.projecteden.nexus.models.badge.BadgeUser.Badge;
+import gg.projecteden.nexus.models.badge.BadgeUserService;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
-import gg.projecteden.nexus.models.emblem.BadgeUser.Badge;
-import gg.projecteden.nexus.models.emblem.BadgeUserService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.setting.Setting;
 import gg.projecteden.nexus.models.setting.SettingService;

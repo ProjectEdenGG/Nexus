@@ -36,7 +36,7 @@ import org.reflections.Reflections;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 @Depends({ResourcePack.class, CustomEnchants.class})
 public class CustomRecipes extends Feature implements Listener {
@@ -47,7 +47,7 @@ public class CustomRecipes extends Feature implements Listener {
 	@Override
 	public void onStart() {
 		Nexus.registerListener(this);
-		Tasks.async(() -> ResourcePack.getLoader().thenRun(() -> {
+		ResourcePack.getLoader().thenRun(() -> Tasks.async(() -> {
 			registerDyes();
 			registerSlabs();
 			registerQuartz();
@@ -143,19 +143,19 @@ public class CustomRecipes extends Feature implements Listener {
 
 		final List<MaterialTag> shapeless = List.of(
 			MaterialTag.BEDS,
-			MaterialTag.BANNERS
+			MaterialTag.STANDING_BANNERS
 		);
 
 		for (ColorType color : ColorType.getDyes()) {
 			final Material dye = color.switchColor(Material.WHITE_DYE);
 
-			Consumer<NexusRecipe> register = recipe -> recipe.type(RecipeType.DYES).register();
+			BiConsumer<NexusRecipe, RecipeType> register = (recipe, type) -> recipe.type(type).register();
 
 			surround.forEach(tag ->
-				register.accept(NexusRecipe.surround(new ItemStack(color.switchColor(tag.first()), 8), dye, choiceOf(tag))));
+				register.accept(NexusRecipe.surround(new ItemStack(color.switchColor(tag.first()), 8), dye, choiceOf(tag)), RecipeType.DYES));
 
 			shapeless.forEach(tag ->
-				register.accept(NexusRecipe.shapeless(new ItemStack(color.switchColor(tag.first())), dye, choiceOf(tag))));
+				register.accept(NexusRecipe.shapeless(new ItemStack(color.switchColor(tag.first())), dye, choiceOf(tag)), RecipeType.BEDS_BANNERS));
 		}
 	}
 

@@ -49,6 +49,11 @@ public class ModReviewCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
+	@Path
+	void list() {
+		list(1);
+	}
+
 	@Path("<mod>")
 	@Description("View detailed information on a mod and it's verdict")
 	void check(Mod mod) {
@@ -162,7 +167,7 @@ public class ModReviewCommand extends CustomCommand implements Listener {
 	}
 
 	@Permission("group.admin")
-	@Path("set notes <mod> [notes]")
+	@Path("set notes <mod> [notes...]")
 	void setNotes(Mod mod, String notes) {
 		mod.setNotes(notes);
 		save();

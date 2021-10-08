@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.utils;
 
 import com.google.common.collect.ImmutableList;
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
@@ -30,6 +29,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
+import static me.libraryaddict.disguise.utilities.DisguiseUtilities.getGson;
 
 public class SerializationUtils {
 
@@ -73,24 +73,26 @@ public class SerializationUtils {
 
 	}
 
-	public static class JSON {
+	public static class Json {
+
+		public static String of(Object object) {
+			return Utils.getGson().toJson(object);
+		}
 
 		public static String toString(Map<String, Object> map) {
-			Gson gson = new Gson();
-			return gson.toJson(gson.toJsonTree(map, Map.class));
+			return getGson().toJson(getGson().toJsonTree(map, Map.class));
 		}
 
 		public static String toString(List<Map<String, Object>> list) {
-			Gson gson = new Gson();
-			return gson.toJson(gson.toJsonTree(list, List.class));
+			return getGson().toJson(getGson().toJsonTree(list, List.class));
 		}
 
 		public static Map<String, Object> fromString(String value) {
-			return new Gson().fromJson(value, Map.class);
+			return getGson().fromJson(value, Map.class);
 		}
 
 		public static List<Map<String, Object>> fromStringToList(String value) {
-			return new Gson().fromJson(value, List.class);
+			return getGson().fromJson(value, List.class);
 		}
 
 		/** Bukkit ConfigurationSerializable */

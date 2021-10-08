@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events;
 
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -20,7 +21,6 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
@@ -32,10 +32,11 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
@@ -43,6 +44,12 @@ import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
 @NoArgsConstructor
 @Permission("group.moderator")
 public class DyeBombCommand extends CustomCommand implements Listener {
+	private static final List<ColorType> filter = List.of(ColorType.BLACK, ColorType.GRAY, ColorType.LIGHT_GRAY, ColorType.BROWN);
+	private static final List<Color> colors = Arrays.stream(ColorType.values())
+		.filter(colorType -> !filter.contains(colorType))
+		.map(ColorType::getBukkitColor)
+		.toList();
+
 	public static ItemStack getDyeBomb() {
 		return new ItemBuilder(Material.MAGMA_CREAM).name("Dye Bomb").lore("&bEvent Item").unbreakable().itemFlags(ItemFlag.HIDE_UNBREAKABLE).build();
 	}
@@ -79,10 +86,6 @@ public class DyeBombCommand extends CustomCommand implements Listener {
 		if (isNullOrAir(item))
 			return;
 
-		// WhiteWolfKnight
-		if (event.getPlayer().getUniqueId().toString().equals("f325c439-02c2-4043-995e-668113c7eb9f"))
-			return;
-
 		ItemMeta meta = item.getItemMeta();
 		String originalName = StringUtils.stripColor(getDyeBomb().getItemMeta().getDisplayName());
 		String itemName = StringUtils.stripColor(meta.getDisplayName());
@@ -108,57 +111,46 @@ public class DyeBombCommand extends CustomCommand implements Listener {
 		Snowball snowball = (Snowball) player.getWorld().spawnEntity(location, EntityType.SNOWBALL);
 		snowball.setVelocity(location.getDirection().multiply(1.2));
 		snowball.setShooter(player);
-		snowball.setCustomName("DyeBomb");
+		snowball.setMetadata(FireworkLauncher.METADATA_KEY_DAMAGE, new FixedMetadataValue(Nexus.getInstance(), false));
 
 		player.playSound(player.getLocation(), Sound.ENTITY_EGG_THROW, 0.5F, 1F);
 	}
 
 	@EventHandler
 	public void onDyeBombHit(ProjectileHitEvent event) {
-		Entity entity = event.getEntity();
-		EntityType entityType = entity.getType();
-		if (!entityType.equals(EntityType.SNOWBALL)) return;
-		if (entity.getCustomName() == null) return;
-		if (!entity.getCustomName().equalsIgnoreCase("DyeBomb")) return;
-		if (event.getHitBlock() == null) {
-			if (event.getHitEntity() == null)
-				return;
-		}
+		if (!(event.getEntity() instanceof Snowball snowball)) return;
+		if (!snowball.hasMetadata(FireworkLauncher.METADATA_KEY_DAMAGE)) return;
+		if (event.getHitBlock() == null && event.getHitEntity() == null) return;
 
-		Vector vel = event.getEntity().getVelocity().normalize().multiply(0.1);
-		Location hitLoc = event.getEntity().getLocation().subtract(vel);
+		Vector vector = snowball.getVelocity().normalize().multiply(0.1);
+		Location location = snowball.getLocation().subtract(vector);
 
-		FireworkLauncher fw = FireworkLauncher.random(hitLoc).detonateAfter(0).power(0).type(FireworkEffect.Type.BURST);
-		fw.colors(removeUgly(fw.colors()));
-		fw.fadeColors(removeUgly(fw.fadeColors()));
+		FireworkLauncher firework = FireworkLauncher.random(location)
+			.detonateAfter(0)
+			.power(0)
+			.type(FireworkEffect.Type.BURST)
+			.colors(randomColors())
+			.fadeColors(randomColors())
+			.silent(true);
 
 		if (RandomUtils.chanceOf(50))
-			fw.colors(Collections.singletonList(randomColor())).fadeColors(Collections.singletonList(randomColor()));
-		fw.launch();
+			firework.color(randomColor()).fadeColor(randomColor());
+
+		firework.launch();
+	}
+
+	private List<Color> randomColors() {
+		List<Color> random = new ArrayList<>();
+		for (int i = 0; i < colors.size(); i++) {
+			Color color = randomColor();
+			if (!random.contains(color))
+				random.add(color);
+		}
+
+		return random;
 	}
 
 	private Color randomColor() {
-		List<Color> colors = new ArrayList<>() {{
-			for (ColorType colortype : ColorType.values())
-				add(colortype.getBukkitColor());
-		}};
-
-		return RandomUtils.randomElement(removeUgly(colors));
-	}
-
-	private static final List<ColorType> ugly = List.of(ColorType.BLACK, ColorType.GRAY, ColorType.LIGHT_GRAY, ColorType.BROWN);
-
-	private List<Color> removeUgly(List<Color> oldColors) {
-		List<Color> newColors = new ArrayList<>();
-		for (Color color : oldColors) {
-			ColorType type = ColorType.of(color);
-			if (type != null && !ugly.contains(type))
-				newColors.add(color);
-		}
-
-		if (newColors.isEmpty())
-			newColors.add(randomColor());
-
-		return newColors;
+		return RandomUtils.randomElement(colors);
 	}
 }

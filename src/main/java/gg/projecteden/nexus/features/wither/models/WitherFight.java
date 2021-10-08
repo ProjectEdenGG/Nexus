@@ -7,18 +7,20 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
+import gg.projecteden.nexus.features.commands.staff.CheatsCommand;
 import gg.projecteden.nexus.features.commands.staff.HealCommand;
 import gg.projecteden.nexus.features.warps.Warps;
 import gg.projecteden.nexus.features.wither.BeginningCutscene;
 import gg.projecteden.nexus.features.wither.WitherChallenge;
 import gg.projecteden.nexus.features.wither.WitherChallenge.Difficulty;
-import gg.projecteden.nexus.features.wither.WitherCommand;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
@@ -78,7 +80,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static gg.projecteden.nexus.utils.PlayerUtils.getOnlinePlayers;
+import static gg.projecteden.nexus.models.witherarena.WitherArenaConfig.isBeta;
 import static gg.projecteden.nexus.utils.Utils.tryCalculate;
 import static gg.projecteden.utils.StringUtils.plural;
 
@@ -111,7 +113,7 @@ public abstract class WitherFight implements Listener {
 			JsonBuilder message = new JsonBuilder(WitherChallenge.PREFIX + "The fight has started! &e&lClick here to spectate")
 				.command("/wither spectate").hover("&eYou will be teleported to the wither arena");
 
-			if (WitherCommand.betaMode)
+			if (isBeta())
 				Broadcast.staffIngame().message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
 			else
 				Broadcast.ingame().message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
@@ -179,11 +181,11 @@ public abstract class WitherFight implements Listener {
 	}
 
 	public List<Player> alivePlayers() {
-		return getOnlinePlayers(alivePlayers);
+		return OnlinePlayers.where().include(alivePlayers).get();
 	}
 
 	public List<Player> spectators() {
-		return getOnlinePlayers(spectators);
+		return OnlinePlayers.where().include(spectators).get();
 	}
 
 	public void sendSpectatorsToSpawn() {
@@ -204,7 +206,8 @@ public abstract class WitherFight implements Listener {
 		started = true;
 		alivePlayers = party;
 		for (Player player : alivePlayers())
-			player.teleport(new Location(Bukkit.getWorld("events"), -150.50, 69.00, -114.50, .00F, .00F));
+			player.teleportAsync(new Location(Bukkit.getWorld("events"), -150.5, 69, -114.5))
+				.thenRun(() -> CheatsCommand.off(player));
 	}
 
 	public void giveItems() {
@@ -378,7 +381,7 @@ public abstract class WitherFight implements Listener {
 				(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3have" : " &3has") +
 				" lost to the Wither in " + getDifficulty().getTitle() + " &3mode";
 
-			if (WitherCommand.betaMode)
+			if (isBeta())
 				Broadcast.staff().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
 			else
 				Broadcast.all().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
@@ -428,7 +431,7 @@ public abstract class WitherFight implements Listener {
 			(partySize > 1 ? " and " + (partySize - 1) + plural(" other", partySize - 1) + " &3have" : " &3has") +
 			" successfully beaten the Wither in " + getDifficulty().getTitle() + " &3mode " + (gotStar ? "and got" : "but did not get") + " the star";
 
-		if (WitherCommand.betaMode)
+		if (isBeta())
 			Broadcast.staff().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
 		else
 			Broadcast.all().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
@@ -636,13 +639,13 @@ public abstract class WitherFight implements Listener {
 		BLINDNESS {
 			@Override
 			public void execute(Player player) {
-				player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, TickTime.SECOND.x(5), 0, true));
+				player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.BLINDNESS).duration(TickTime.SECOND.x(5)).amplifier(0).ambient(true).build());
 			}
 		},
 		CONFUSION {
 			@Override
 			public void execute(Player player) {
-				player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, TickTime.SECOND.x(10), 0, true));
+				player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.CONFUSION).duration(TickTime.SECOND.x(10)).amplifier(0).ambient(true).build());
 			}
 		},
 		TAKE_POTIONS {
@@ -660,19 +663,19 @@ public abstract class WitherFight implements Listener {
 		HUNGER {
 			@Override
 			public void execute(Player player) {
-				player.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, TickTime.SECOND.x(10), 1, true));
+				player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.HUNGER).duration(TickTime.SECOND.x(10)).amplifier(1).ambient(true).build());
 			}
 		},
 		LEVITATION {
 			@Override
 			public void execute(Player player) {
-				player.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, TickTime.SECOND.x(5), 0, true));
+				player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.LEVITATION).duration(TickTime.SECOND.x(5)).amplifier(0).ambient(true).build());
 			}
 		},
 		WITHER_EFFECT {
 			@Override
 			public void execute(Player player) {
-				player.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, TickTime.SECOND.x(10), 0, true));
+				player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.WITHER).duration(TickTime.SECOND.x(10)).amplifier(0).ambient(true).build());
 			}
 		},
 		DUPLICATE {

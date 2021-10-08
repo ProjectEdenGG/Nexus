@@ -29,7 +29,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Set;
 import java.util.UUID;
 
-import static gg.projecteden.nexus.features.discord.Discord.discordize;
 import static gg.projecteden.nexus.features.discord.Discord.getGuild;
 
 @Data
@@ -52,7 +51,7 @@ public class DiscordUser implements PlayerOwnedObject {
 
 	public String getBridgeName() {
 		OfflinePlayer player = PlayerUtils.getPlayer(uuid);
-		String name = "**" + discordize(Nickname.of(player)) + "**";
+		String name = "**" + Nickname.discordOf(player) + "**";
 		if (roleId != null)
 			name = "<@&&f" + roleId + ">";
 		return name;

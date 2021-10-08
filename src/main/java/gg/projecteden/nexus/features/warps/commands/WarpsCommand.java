@@ -15,7 +15,6 @@ import gg.projecteden.nexus.models.warps.WarpType;
 @Redirect(from = {"/shub", "/shophub"}, to = "/warp shub")
 @Redirect(from = "/creative", to = "/warp creative")
 @Redirect(from = "/skyblock", to = "/warp skyblock")
-@Redirect(from = {"/minigames", "/gamelobby", "/gl"}, to = "/warp minigames")
 @Redirect(from = "/is", to = "/ob")
 @Aliases({"warp", "go", "goto", "hub", "tphub", "server", "servers", "lobby"})
 public class WarpsCommand extends _WarpCommand {

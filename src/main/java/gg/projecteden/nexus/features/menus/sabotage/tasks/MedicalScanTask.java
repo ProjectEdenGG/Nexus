@@ -12,9 +12,9 @@ import gg.projecteden.nexus.features.minigames.models.matchdata.SabotageMatchDat
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.SabotageColor;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.Task;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.MathUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.utils.MathUtils;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.Sound;

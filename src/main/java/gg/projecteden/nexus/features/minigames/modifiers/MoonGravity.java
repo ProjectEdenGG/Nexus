@@ -1,17 +1,15 @@
 package gg.projecteden.nexus.features.minigames.modifiers;
 
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
-import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffect;
+import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
 public class MoonGravity extends BulletArrows {
 	@Override
 	public void afterLoadout(@NotNull Minigamer minigamer) {
-		Player player = minigamer.getPlayer();
-		player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 1000000, 1, true, false, true));
-		player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 1000000, 0, true, false, true));
+		minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.JUMP).maxDuration().ambient(true).icon(true));
+		minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.SLOW_FALLING).maxDuration().amplifier(0).ambient(true).icon(true));
 	}
 
 	@Override

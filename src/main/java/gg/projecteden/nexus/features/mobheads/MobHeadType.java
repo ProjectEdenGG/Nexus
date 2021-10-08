@@ -229,10 +229,6 @@ public enum MobHeadType implements MobHead {
 		return expectedTypes;
 	}
 
-	static {
-		load();
-	}
-
 	static void load() {
 		World world = Bukkit.getWorld(Nexus.getEnv() == Env.PROD ? "survival" : "world");
 		if (world == null)

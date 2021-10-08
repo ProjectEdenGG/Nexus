@@ -39,10 +39,6 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	static {
-		new MobHeadListener();
-	}
-
 	@Path
 	void menu() {
 		new MobHeadUserMenu().open(player());
@@ -59,6 +55,16 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 	void reload() {
 		MobHeadType.load();
 		send(PREFIX + "Reloaded");
+	}
+
+	@Path("debug [enable]")
+	@Permission("group.admin")
+	void debug(Boolean enable) {
+		if (enable == null)
+			enable = !MobHeads.isDebug();
+
+		MobHeads.setDebug(enable);
+		send(PREFIX + "Debug " + (enable ? "&aenabled" : "&cdisabled"));
 	}
 
 	@Path("validate types")

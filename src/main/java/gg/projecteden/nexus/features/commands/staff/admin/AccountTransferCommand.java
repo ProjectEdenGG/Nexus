@@ -142,7 +142,6 @@ public class AccountTransferCommand extends CustomCommand {
 		@Override
 		protected void transfer(Alerts previous, Alerts current) {
 			previous.getHighlights().forEach(highlight -> current.getHighlights().add(highlight));
-			current.setMuted(previous.isMuted());
 
 			previous.getHighlights().clear();
 		}
@@ -188,7 +187,7 @@ public class AccountTransferCommand extends CustomCommand {
 		public void transfer(CostumeUser previous, CostumeUser current) {
 			current.addVouchers(previous.getVouchers());
 			if (current.getActiveCostume() == null)
-				current.setActiveCostume(previous.getActiveCostume());
+				current.setActiveCostumeId(previous.getActiveCostume());
 			current.getOwnedCostumes().addAll(previous.getOwnedCostumes());
 
 			previous.setVouchers(0);

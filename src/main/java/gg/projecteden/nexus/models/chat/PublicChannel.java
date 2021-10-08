@@ -1,11 +1,11 @@
 package gg.projecteden.nexus.models.chat;
 
-import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
+import gg.projecteden.nexus.features.commands.NearCommand.Near;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.utils.DiscordId.TextChannel;
 import lombok.Builder;
 import lombok.Data;
@@ -79,13 +79,11 @@ public class PublicChannel implements Channel {
 	public Set<Chatter> getRecipients(Chatter chatter) {
 		List<Player> recipients = new ArrayList<>();
 		if (local)
-			recipients.addAll(PlayerUtils.getOnlinePlayers(chatter.getOnlinePlayer().getWorld()).stream()
-					.filter(player -> player.getLocation().distance(chatter.getOnlinePlayer().getLocation()) <= Chat.getLocalRadius())
-					.collect(Collectors.toList()));
+			recipients.addAll(new Near(chatter.getPlayer()).includeUnseen().find());
 		else if (crossWorld)
-			recipients.addAll(PlayerUtils.getOnlinePlayers());
+			recipients.addAll(OnlinePlayers.getAll());
 		else
-			recipients.addAll(PlayerUtils.getOnlinePlayers(chatter.getOnlinePlayer().getWorld()));
+			recipients.addAll(OnlinePlayers.where().world(chatter.getOnlinePlayer().getWorld()).get());
 
 		return recipients.stream()
 				.map(player -> new ChatterService().get(player))

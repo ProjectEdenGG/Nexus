@@ -3,6 +3,8 @@ package gg.projecteden.nexus.framework.commands.models;
 import com.google.common.base.Strings;
 import gg.projecteden.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.features.commands.staff.MultiCommandCommand;
+import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
+import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Fallback;
@@ -15,6 +17,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandRunEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
+import gg.projecteden.nexus.framework.exceptions.preconfigured.BlockedInMinigamesException;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.MustBeCommandBlockException;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.MustBeConsoleException;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.MustBeIngameException;
@@ -30,9 +33,12 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -230,6 +236,14 @@ public abstract class CustomCommand extends ICustomCommand {
 		return player().getInventory();
 	}
 
+	protected WorldEditUtils worldedit() {
+		return new WorldEditUtils(world());
+	}
+
+	protected WorldGuardUtils worldguard() {
+		return new WorldGuardUtils(world());
+	}
+
 	public void giveItem(ItemStack item) {
 		PlayerUtils.giveItems(player(), Collections.singletonList(item));
 	}
@@ -312,17 +326,17 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	@Contract("_ -> fail")
-	public void error(String error) {
+	public void error(String error) throws InvalidInputException {
 		throw new InvalidInputException(error);
 	}
 
 	@Contract("_ -> fail")
-	public void error(JsonBuilder error) {
+	public void error(JsonBuilder error) throws InvalidInputException {
 		throw new InvalidInputException(error);
 	}
 
 	@Contract("_ -> fail")
-	public void error(ComponentLike error) {
+	public void error(ComponentLike error) throws InvalidInputException {
 		throw new InvalidInputException(error);
 	}
 
@@ -337,6 +351,25 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	public void permissionError() {
 		throw new NoPermissionException();
+	}
+
+	/**
+	 * Throws a {@link BlockedInMinigamesException} if the user is {@link Minigamer#isPlaying() playing a minigame}.
+	 * @throws BlockedInMinigamesException user is inside a minigame world
+	 * @throws PlayerNotOnlineException the user is not on the server
+	 */
+	public void blockInMinigames() throws PlayerNotOnlineException, BlockedInMinigamesException {
+		if (PlayerManager.get(uuid()).isPlaying())
+			throw new BlockedInMinigamesException(false);
+	}
+
+	/**
+	 * Throws a {@link BlockedInMinigamesException} if the user is inside of a {@link WorldGroup#MINIGAMES minigame world}.
+	 * @throws BlockedInMinigamesException user is inside a minigame world
+	 */
+	public void blockInMinigameWorld() throws BlockedInMinigamesException {
+		if (worldGroup() == WorldGroup.MINIGAMES)
+			throw new BlockedInMinigamesException(true);
 	}
 
 	public boolean hasPermission(String permission) {
@@ -502,8 +535,9 @@ public abstract class CustomCommand extends ICustomCommand {
 		return isOfflinePlayer(player) && Rank.of(player).isAdmin();
 	}
 
+	@Contract("null -> true")
 	protected boolean isNullOrEmpty(String string) {
-		return Strings.isNullOrEmpty(string);
+		return StringUtils.isNullOrEmpty(string);
 	}
 
 	protected void runCommand(String commandNoSlash) {
@@ -735,8 +769,10 @@ public abstract class CustomCommand extends ICustomCommand {
 		if (isCommandBlock() || isAdmin()) {
 			if ("@p".equals(value))
 				return PlayerUtils.getNearestPlayer(location()).getObject();
-			if ("@r".equals(value))
-				return RandomUtils.randomElement(PlayerUtils.getOnlinePlayers(isPlayer() ? player() : null));
+			if ("@r".equals(value)) {
+				Player player = isPlayer() ? player() : null;
+				return RandomUtils.randomElement(OnlinePlayers.where().viewer(player).get());
+			}
 			if ("@s".equals(value))
 				return player();
 		}
@@ -756,7 +792,7 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	@TabCompleterFor({Player.class, OfflinePlayer.class})
 	public List<String> tabCompletePlayer(String filter) {
-		return PlayerUtils.getOnlinePlayers().stream()
+		return OnlinePlayers.getAll().stream()
 				.filter(player -> PlayerUtils.canSee(player(), player))
 				.map(Nickname::of)
 				.filter(name -> name.toLowerCase().startsWith(filter.replaceFirst("[pP]:", "").toLowerCase()))
@@ -795,7 +831,7 @@ public abstract class CustomCommand extends ICustomCommand {
 				.collect(toList());
 	}
 
-	@TabCompleterFor({Boolean.class})
+	@TabCompleterFor(Boolean.class)
 	List<String> tabCompleteBoolean(String filter) {
 		return Stream.of("true", "false")
 				.filter(bool -> bool.toLowerCase().startsWith(filter.toLowerCase()))

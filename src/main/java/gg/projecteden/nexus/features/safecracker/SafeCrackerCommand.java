@@ -18,6 +18,7 @@ import gg.projecteden.nexus.models.safecracker.SafeCrackerPlayer.SafeCrackerPlay
 import gg.projecteden.nexus.models.safecracker.SafeCrackerPlayerService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -38,7 +39,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.time.Duration;
@@ -222,7 +222,7 @@ public class SafeCrackerCommand extends CustomCommand implements Listener {
 
 	public void complete(Player player) {
 		player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, .5f, .01f);
-		player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, TickTime.SECOND.x(1), 1, false, false));
+		player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.BLINDNESS).duration(TickTime.SECOND.x(1)).build());
 		player.teleport(new Location(Bukkit.getWorld("safepvp"), -985.5, 110, -1616.5));
 		send(player, "&7&kasdl &eThe safe draws you inside. It is larger on the inside than it appears. &7&kasdl");
 	}

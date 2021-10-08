@@ -66,11 +66,17 @@ public class MuteMenuCommand extends CustomCommand {
 			BOOSTS("Boost Broadcasts", Material.EXPERIENCE_BOTTLE),
 			MINIGAMES("Minigame Broadcasts", Material.DIAMOND_SWORD),
 			QUEUP("QueUp Song Updates", Material.MUSIC_DISC_MALL),
+			JUKEBOX("Custom Jukebox Songs", Material.JUKEBOX, List.of("Custom songs played via &c/jukebox")),
+			CHAT_GAMES("Chat Games", Material.PAPER),
+			TP_REQUESTS("Teleport Requests", Material.ENDER_PEARL),
+			MESSAGES("Messages", Material.BOOK),
+			BOOPS("Boops", Material.BELL),
 			// Sounds
 			FIRST_JOIN_SOUND("First Join", Material.GOLD_BLOCK, 50),
 			JOIN_QUIT_SOUNDS("Join/Quit", Material.NOTE_BLOCK, 50),
 			ALERTS("Alerts", Material.NAME_TAG, 50),
-			RANK_UP("Rank Up", Material.EMERALD, 50);
+			RANK_UP("Rank Up", Material.EMERALD, 50),
+			CHAT_GAMES_SOUND("Chat Games", Material.PAPER, 50);
 
 			@NonNull
 			private final String title;
@@ -128,6 +134,8 @@ public class MuteMenuCommand extends CustomCommand {
 				contents.set(0, 8, ClickableItem.from(nameItem(Material.COMMAND_BLOCK, "&dSounds"), e -> open(player, PageType.SOUNDS)));
 
 				for (MuteMenuItem item : MuteMenuItem.values()) {
+					if (item == MuteMenuItem.QUEUP) // TODO QueUp
+						continue;
 					if (item.getDefaultVolume() != null)
 						continue;
 					if (!Strings.isNullOrEmpty(item.getPermission()) && !player.hasPermission(item.getPermission()))

@@ -20,8 +20,8 @@ import gg.projecteden.nexus.models.reminders.ReminderConfig.Reminder;
 import gg.projecteden.nexus.models.reminders.ReminderConfig.Reminder.ReminderCondition;
 import gg.projecteden.nexus.utils.GoogleUtils.SheetsUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
@@ -349,7 +349,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 	public static void startTask() {
 		Tasks.cancel(taskId);
 		taskId = Tasks.repeatAsync(interval, interval, () -> {
-			for (Player player : PlayerUtils.getOnlinePlayers()) {
+			for (Player player : OnlinePlayers.getAll()) {
 				if (!Dev.GRIFFIN.is(player))
 					continue;
 

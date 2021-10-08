@@ -6,7 +6,7 @@ import gg.projecteden.nexus.features.commands.SpeedCommand;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
@@ -26,6 +26,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.util.Vector;
@@ -35,7 +36,7 @@ import java.util.Arrays;
 public class WitherArmorListener implements Listener {
 
 	public WitherArmorListener() {
-		for (Player player : PlayerUtils.getOnlinePlayers()) {
+		for (Player player : OnlinePlayers.getAll()) {
 			if (hasFullSet(player)) {
 				player.setAllowFlight(true);
 			}
@@ -70,7 +71,7 @@ public class WitherArmorListener implements Listener {
 
 	@EventHandler
 	public void onInteract(PlayerInteractEvent event) {
-		if (event.getAction() == Action.LEFT_CLICK_AIR) {
+		if (event.getAction() == Action.LEFT_CLICK_AIR && event.getHand() == EquipmentSlot.HAND) {
 			handleEvent(event.getPlayer());
 		}
 	}
@@ -100,6 +101,7 @@ public class WitherArmorListener implements Listener {
 		wc.setVelocity(velocity.multiply(.6));
 		wc.setIsIncendiary(false);
 		wc.setYield(0f);
+		player.getWorld().playSound(player.getLocation(), Sound.ENTITY_WITHER_SHOOT, 1f, 1f);
 		Tasks.wait(TimeUtils.TickTime.SECOND.x(1.5), wc::remove);
 	}
 
@@ -135,7 +137,7 @@ public class WitherArmorListener implements Listener {
 		Tasks.repeat(1, 1, () -> {
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				if (!hasFullSet(player)) continue;
-				if (player.getGameMode() == GameMode.CREATIVE) continue;
+				if (player.getGameMode() != GameMode.SURVIVAL) continue;
 				if (!player.isFlying()) continue;
 
 				player.setAllowFlight(false);
@@ -148,7 +150,11 @@ public class WitherArmorListener implements Listener {
 
 				player.setVelocity(vector);
 				player.playSound(player.getLocation(), Sound.ENTITY_GHAST_SHOOT, 0.8f, 0.7f);
-				Tasks.wait(TimeUtils.TickTime.SECOND.x(10), () -> player.setAllowFlight(true));
+				Tasks.wait(TimeUtils.TickTime.SECOND.x(10), () -> {
+					if (hasFullSet(player)) {
+						player.setAllowFlight(true);
+					}
+				});
 			}
 		});
 	}

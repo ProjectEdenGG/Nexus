@@ -178,9 +178,10 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 			ItemStack applyToChest = new ItemBuilder(Material.CHEST).name("&eApply to chest").build();
 			ItemStack teleport = new ItemBuilder(Material.COMPASS).name("&eTeleport").build();
 			ItemStack info = new ItemBuilder(Material.BOOK).name("&eInfo")
-					.lore("&3Reason: &e" + snapshot.getReason().getColor() + StringUtils.camelCase(snapshot.getReason()))
-					.lore("&3Time: &e" + shortDateTimeFormat(snapshot.getTimestamp()))
-					.lore("&3Location: &e" + getShortLocationString(snapshot.getLocation()))
+				.lore("&3Reason: &e" + snapshot.getReason().getColor() + StringUtils.camelCase(snapshot.getReason()))
+				.lore("&3Time: &e" + shortDateTimeFormat(snapshot.getTimestamp()))
+				.lore("&3Location: &e" + getShortLocationString(snapshot.getLocation()))
+				.lore("&3Levels: &e" + snapshot.getLevel())
 					.loreize(false)
 					.build();
 

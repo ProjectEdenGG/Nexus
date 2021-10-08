@@ -27,20 +27,7 @@ import gg.projecteden.nexus.features.minigames.models.perks.Perk;
 import gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreboard;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
-import gg.projecteden.nexus.utils.ActionBarUtils;
-import gg.projecteden.nexus.utils.AdventureUtils;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.nexus.utils.PacketUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.SoundUtils;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.TitleBuilder;
-import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.utils.TimeUtils;
 import me.lexikiq.event.sound.LocationNamedSoundEvent;
 import net.kyori.adventure.text.Component;
@@ -75,7 +62,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.inventivetalent.glow.GlowAPI;
 import org.jetbrains.annotations.NotNull;
@@ -338,16 +324,19 @@ public class Sabotage extends TeamMechanic {
 		Chat.setActiveChannel(minigamer, matchData.getSpectatorChannel());
 		event.setDeathMessage(null);
 		new SoundBuilder(Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR).receiver(minigamer).volume(1).pitch(0.9).play();
+
 		JsonBuilder builder = new JsonBuilder();
 		if (event.getAttacker() != null) {
 			new SoundBuilder(Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR).receiver(event.getAttacker()).volume(.5).pitch(1.2).play();
 			builder.next("You were killed by ").next(event.getAttacker().getNickname(), matchData.getColor(event.getAttacker()).colored());
 		} else
 			builder.next("You have been ejected");
+
 		final Duration fade = Duration.ofSeconds(1).dividedBy(2);
 		new TitleBuilder().players(minigamer).title(builder).times(fade, TimeUtils.TickTime.SECOND.duration(4), fade).send();
 		minigamer.setAlive(false);
-		minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 1000000, 0, true, false, false));
+		minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.NIGHT_VISION).maxDuration().amplifier(0).ambient(true));
+
 		PlayerUtils.showPlayers(minigamer, match.getMinigamers());
 		PlayerUtils.showPlayer(minigamer).to(match.getMinigamers().stream().filter(minigamer1 -> !minigamer1.isAlive()).collect(Collectors.toList()));
 		PlayerUtils.hidePlayer(minigamer).from(match.getAliveMinigamers());
@@ -384,7 +373,7 @@ public class Sabotage extends TeamMechanic {
 				inventory.setItem(4, SABOTAGE_MENU.get());
 			}
 			if (team == SabotageTeam.IMPOSTOR || !minigamer.isAlive())
-				minigamer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 1000000, 0, true, false, false));
+				minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.NIGHT_VISION).maxDuration().amplifier(0).ambient(true));
 		});
 	}
 

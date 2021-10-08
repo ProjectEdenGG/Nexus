@@ -38,7 +38,7 @@ public class CustomModel implements Comparable<CustomModel> {
 	}
 
 	public static CustomModel of(Material material, int data) {
-		return ResourcePack.getModels().stream()
+		return ResourcePack.getModels().values().stream()
 				.filter(model -> model.getMaterial() == material && model.getData() == data)
 				.findFirst()
 				.orElse(null);
@@ -54,12 +54,28 @@ public class CustomModel implements Comparable<CustomModel> {
 	}
 
 	public static CustomModel of(ItemStack item) {
-		if (isNullOrAir(item)) return null;
-		return of(item.getType(), getId(item));
+		if (isNullOrAir(item))
+			return null;
+
+		return of(item.getType(), getModelId(item));
 	}
 
-	public static Integer getId(ItemStack item) {
-		if (isNullOrAir(item)) return null;
+	public static CustomModel of(String path) {
+		if (isNullOrEmpty(path))
+			return null;
+
+		return ResourcePack.getModels().get(path);
+	}
+
+	@NotNull
+	public String getId() {
+		return folder.getDisplayPath() + "/" + fileName;
+	}
+
+	public static Integer getModelId(ItemStack item) {
+		if (isNullOrAir(item))
+			return null;
+
 		return new NBTItem(item).getInteger(NBT_KEY);
 	}
 

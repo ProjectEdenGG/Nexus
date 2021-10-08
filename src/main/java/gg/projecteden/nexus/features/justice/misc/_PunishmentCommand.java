@@ -45,15 +45,18 @@ public abstract class _PunishmentCommand extends _JusticeCommand {
 						.now(now));
 
 				Optional<Punishment> cooldown = player.getCooldown(uuid());
-				if (cooldown.isPresent())
+				if (cooldown.isPresent()) {
+					final Punishment punishment = cooldown.get();
 					ConfirmationMenu.builder()
 							.title(camelCase(getType()) + " " + player.getNickname())
-							.confirmLore("&c" + player.getNickname() + " was recently " + System.lineSeparator()
-									+ "&c" + cooldown.get().getType().getColoredName().toLowerCase() + " by " + Nickname.of(cooldown.get().getPunisher()))
+							.confirmLore(List.of(
+								"&c" + player.getNickname() + " was recently",
+								"&c" + punishment.getType().getColoredName().toLowerCase() + " by " + Nickname.of(punishment.getPunisher())
+							))
 							.onConfirm($ -> punish.run())
 							.onFinally(e -> loop.get().run())
 							.open(player());
-				else {
+				} else {
 					punish.run();
 					loop.get().run();
 				}

@@ -5,11 +5,11 @@ import dev.morphia.converters.SimpleValueConverter;
 import dev.morphia.converters.TypeConverter;
 import dev.morphia.mapping.MappedField;
 import dev.morphia.mapping.Mapper;
-import gg.projecteden.nexus.utils.SerializationUtils.JSON;
+import gg.projecteden.nexus.utils.SerializationUtils.Json;
 import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
-import static gg.projecteden.nexus.utils.SerializationUtils.JSON.serialize;
+import static gg.projecteden.nexus.utils.SerializationUtils.Json.serialize;
 
 public class ItemStackConverter extends TypeConverter implements SimpleValueConverter {
 
@@ -21,13 +21,13 @@ public class ItemStackConverter extends TypeConverter implements SimpleValueConv
 	public Object encode(Object value, MappedField optionalExtraInfo) {
 		if (value == null) return null;
 
-		return BasicDBObject.parse(JSON.toString(serialize((ItemStack) value)));
+		return BasicDBObject.parse(Json.toString(serialize((ItemStack) value)));
 	}
 
 	@Override
 	public Object decode(Class<?> aClass, Object value, MappedField mappedField) {
 		if (value == null) return null;
-		return JSON.deserializeItemStack(((BasicDBObject) value).toJson());
+		return Json.deserializeItemStack(((BasicDBObject) value).toJson());
 	}
 
 }

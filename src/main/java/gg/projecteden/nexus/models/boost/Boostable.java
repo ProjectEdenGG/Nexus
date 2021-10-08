@@ -33,6 +33,7 @@ public enum Boostable {
 	KILLER_MONEY(Material.GOLD_INGOT),
 	MOB_HEADS(Material.ZOMBIE_HEAD),
 	MYSTERY_CRATE_KEY(Material.TRIPWIRE_HOOK),
+	HALLOWEEN_CANDY(Material.COOKIE, 110),
 	;
 
 	@NonNull

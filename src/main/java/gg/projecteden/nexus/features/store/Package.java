@@ -346,6 +346,34 @@ public enum Package {
 		}
 	},
 
+	@Id("4714837")
+	@Category(StoreCategory.BOOSTS)
+	HALLOWEEN_CANDY {
+		public Boostable getType() {
+			return Boostable.valueOf(name());
+		}
+
+		@Override
+		public void handleApply(UUID uuid) {
+			new BoosterService().edit(uuid, booster -> booster.add(getType(), 2, TickTime.DAY));
+		}
+
+		@Override
+		public @NotNull ItemBuilder getDisplayItem() {
+			return getType().getDisplayItem();
+		}
+
+		@Override
+		public int count(OfflinePlayer player) {
+			return new BoosterService().get(player).count(getType());
+		}
+
+		@Override
+		public boolean has(OfflinePlayer player) {
+			return count(player) > 0;
+		}
+	},
+
 	@Id("4610203")
 	@Category(StoreCategory.VISUALS)
 	@Display(value = Material.STONE_BUTTON, customModelData = 208)

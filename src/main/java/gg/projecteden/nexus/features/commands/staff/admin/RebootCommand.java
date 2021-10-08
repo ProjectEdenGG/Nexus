@@ -8,10 +8,11 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.Utils;
+import gg.projecteden.utils.EnumUtils;
 import gg.projecteden.utils.Env;
 import gg.projecteden.utils.TimeUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -24,7 +25,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -37,7 +37,7 @@ public class RebootCommand extends CustomCommand implements Listener {
 	private static boolean queued;
 	private static boolean rebooting;
 
-	private static final List<ReloadCondition> conditions = Arrays.asList(ReloadCondition.MINIGAMES, ReloadCondition.CRATES, ReloadCondition.WITHER);
+	private static final List<ReloadCondition> conditions = EnumUtils.valuesExcept(ReloadCondition.class, ReloadCondition.SMARTINVS);
 
 	public RebootCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -69,7 +69,7 @@ public class RebootCommand extends CustomCommand implements Listener {
 		Tasks.wait(TickTime.SECOND.x(10), () -> {
 			rebooting = false;
 			conditions.forEach(ReloadCondition::run);
-			for (Player player : PlayerUtils.getOnlinePlayers())
+			for (Player player : OnlinePlayers.getAll())
 				player.kickPlayer(colorize("&6&lRebooting server!\n&eCome back in about 60 seconds\n&f\n&7" + TimeUtils.shortDateTimeFormat(LocalDateTime.now()) + " EST"));
 			Utils.bash("mark2 send -n " + (Nexus.getEnv() == Env.PROD ? "smp" : "test") + " ~restart");
 		});

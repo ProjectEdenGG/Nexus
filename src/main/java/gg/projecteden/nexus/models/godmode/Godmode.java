@@ -40,7 +40,7 @@ public class Godmode implements PlayerOwnedObject {
 		addAll(WorldGroup.ONEBLOCK.getWorldNames());
 	}};
 
-	public boolean isEnabled() {
+	public boolean isActive() {
 		if (!isOnline())
 			return false;
 
@@ -53,10 +53,7 @@ public class Godmode implements PlayerOwnedObject {
 			return false;
 		if (disabledWorlds.contains(player.getWorld().getName()))
 			return false;
-		return enabled;
-	}
 
-	public boolean isEnabledRaw() {
 		return enabled;
 	}
 

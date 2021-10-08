@@ -230,7 +230,7 @@ public class Reflection implements Listener {
 
 				Block below = block.getRelative(0, -1, 0);
 				Material bannerType = below.getType();
-				if (middle == 0.5 && MaterialTag.BANNERS.isTagged(bannerType) && cooldown.get() == 0) {
+				if (middle == 0.5 && MaterialTag.STANDING_BANNERS.isTagged(bannerType) && cooldown.get() == 0) {
 					loc[0] = LocationUtils.getCenteredLocation(loc[0]);
 					loc[0].setY(loc[0].getY() + 0.25);
 					Rotatable rotatable = (Rotatable) below.getBlockData();

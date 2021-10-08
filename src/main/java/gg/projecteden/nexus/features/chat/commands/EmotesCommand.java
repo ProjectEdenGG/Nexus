@@ -14,7 +14,6 @@ import gg.projecteden.nexus.utils.LuckPermsUtils;
 import lombok.NonNull;
 import me.lexikiq.HasUniqueId;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.OfflinePlayer;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,8 +31,8 @@ public class EmotesCommand extends CustomCommand {
 	 * @param emote emote to check
 	 * @return if a user can use the specified emote
 	 */
-	public static boolean hasEmotePermissions(HasUniqueId player, Emotes emote) {
-		return hasEmotePermissions(player) || LuckPermsUtils.hasPermission(player, PERMISSION + "." + emote.name().toLowerCase());
+	public static boolean hasPermission(HasUniqueId player, Emotes emote) {
+		return hasPermission(player) || LuckPermsUtils.hasPermission(player, PERMISSION + "." + emote.name().toLowerCase());
 	}
 
 	/**
@@ -41,7 +40,7 @@ public class EmotesCommand extends CustomCommand {
 	 * @param player player to check
 	 * @return if a user is able to use all emotes
 	 */
-	public static boolean hasEmotePermissions(HasUniqueId player) {
+	public static boolean hasPermission(HasUniqueId player) {
 		return LuckPermsUtils.hasPermission(player, PERMISSION);
 	}
 
@@ -91,12 +90,16 @@ public class EmotesCommand extends CustomCommand {
 	@Path("[page]")
 	void page(@Arg("1") int page) {
 		line(3);
-		OfflinePlayer player = offlinePlayer();
-		List<Emotes> emotes;
-		if (hasEmotePermissions(player))
+
+		final List<Emotes> emotes;
+		if (hasPermission(player()))
 			emotes = Arrays.asList(Emotes.values());
 		else
-			emotes = Arrays.stream(Emotes.values()).filter(emote -> LuckPermsUtils.hasPermission(player, PERMISSION + "." + emote.name().toLowerCase())).collect(Collectors.toList());
+			emotes = Arrays.stream(Emotes.values()).filter(emote -> hasPermission(player(), emote)).collect(Collectors.toList());
+
+		if (emotes.isEmpty())
+			error("You do not have access to any emotes");
+
 		paginate(emotes, this::format, "/emotes", page);
 	}
 

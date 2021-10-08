@@ -92,7 +92,7 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 				}));
 			}
 
-			addPagination(player, contents, items);
+			paginator(player, contents, items);
 		}
 
 	}
@@ -137,7 +137,7 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 				}));
 			}
 
-			addPagination(player, contents, items);
+			paginator(player, contents, items);
 		}
 
 	}

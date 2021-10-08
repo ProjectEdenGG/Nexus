@@ -140,7 +140,7 @@ public class TrophyCommand extends CustomCommand {
 				}
 			}
 
-			addPagination(player, contents, items);
+			paginator(player, contents, items);
 		}
 
 	}

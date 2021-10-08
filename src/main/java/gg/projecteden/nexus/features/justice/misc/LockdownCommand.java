@@ -11,6 +11,7 @@ import gg.projecteden.nexus.models.hours.Hours;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
@@ -47,10 +48,10 @@ public class LockdownCommand extends CustomCommand implements Listener {
 
 	static {
 		Tasks.repeat(TickTime.SECOND, TickTime.SECOND, () -> {
-			if (!lockdown || LockdownCommand.end == null)
+			if (!lockdown || end == null)
 				return;
 
-			if (LockdownCommand.end.isBefore(LocalDateTime.now()))
+			if (end.isBefore(LocalDateTime.now()))
 				PlayerUtils.runCommandAsConsole("lockdown end");
 		});
 	}
@@ -58,21 +59,21 @@ public class LockdownCommand extends CustomCommand implements Listener {
 	@Path("start <time/reason...>")
 	void start(String input) {
 		if (lockdown) {
-			send(PREFIX + "Overriding previous lockdown: &c" + LockdownCommand.reason);
+			send(PREFIX + "Overriding previous lockdown: &c" + reason);
 			reason = null;
 			end = null;
 		}
 
 		lockdown = true;
 		Timespan timespan = Timespan.find(input);
-		LockdownCommand.reason = timespan.getRest();
+		reason = timespan.getRest();
 		if (timespan.getOriginal() > 0)
-			LockdownCommand.end = timespan.fromNow();
+			end = timespan.fromNow();
 
 		String message = "&c" + name() + " initiated lockdown for &e" + (timespan.isNull() ? "" : timespan.format(FormatType.LONG) + "&c for &e") + timespan.getRest();
 		broadcast(message);
 
-		for (Player player : PlayerUtils.getOnlinePlayers())
+		for (Player player : OnlinePlayers.getAll())
 			if (!canBypass(player.getUniqueId())) {
 				player.kick(getLockdownReason());
 				broadcast("Removed " + player.getName() + " from server");
@@ -125,7 +126,7 @@ public class LockdownCommand extends CustomCommand implements Listener {
 			return true;
 
 		Hours hours = new HoursService().get(player);
-		return hours.getTotal() > (30 * 60);
+		return hours.has(TickTime.MINUTE.x(30));
 	}
 
 	private Component getLockdownReason() {

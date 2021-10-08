@@ -20,7 +20,7 @@ import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.LocationUtils.Axis;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -125,7 +125,7 @@ public class JigsawJam20Command extends CustomCommand implements Listener {
 	private static final int INTERVAL = 5;
 
 	static {
-		Tasks.repeat(INTERVAL, INTERVAL, () -> PlayerUtils.getOnlinePlayers().stream()
+		Tasks.repeat(INTERVAL, INTERVAL, () -> OnlinePlayers.getAll().stream()
 				.filter(player -> player.getWorld().getName().equals(WORLD))
 				.filter(player -> !AFK.get(player).isAfk())
 				.filter(player -> new WorldGuardUtils(player).getRegionNamesAt(player.getLocation()).contains("jigsawjam"))

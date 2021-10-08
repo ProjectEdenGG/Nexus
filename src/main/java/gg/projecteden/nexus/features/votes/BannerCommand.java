@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.votes;
 
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -27,6 +26,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BannerMeta;
 
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
@@ -36,6 +37,34 @@ public class BannerCommand extends CustomCommand implements Listener {
 
 	public BannerCommand(@NonNull CommandEvent event) {
 		super(event);
+	}
+
+	@Path("copy")
+	void copy() {
+		final ItemStack mainHand = inventory().getItemInMainHand();
+		final ItemStack offHand = inventory().getItemInOffHand();
+
+		if (!MaterialTag.STANDING_BANNERS.isTagged(mainHand) || !MaterialTag.STANDING_BANNERS.isTagged(offHand))
+			error("You must be holding each banner in your hand");
+
+		ItemStack from;
+		ItemStack to;
+
+		BannerMeta mainHandMeta = (BannerMeta) mainHand.getItemMeta();
+
+		if (!mainHandMeta.getPatterns().isEmpty()) {
+			from = mainHand;
+			to = offHand;
+		} else {
+			from = offHand;
+			to = mainHand;
+		}
+
+		if (!((BannerMeta) to.getItemMeta()).getPatterns().isEmpty())
+			error("Cannot copy to a banner that already has patterns");
+
+		to.setItemMeta(from.getItemMeta().clone());
+		send(PREFIX + "Copied banner");
 	}
 
 	@Permission("nexus.banners")
@@ -61,16 +90,6 @@ public class BannerCommand extends CustomCommand implements Listener {
 					PlayerUtils.giveItem(player(), banner.build());
 			}
 		}
-	}
-
-	@Path("textures")
-	void textures() {
-		send(json()
-				.group().next("&3We have created a custom texture pack that only contains the default banner textures. ")
-				.group().next("&eDownload &3this texture pack").url("http://dl." + Nexus.DOMAIN + "/tp/Default-Banners.zip").hover("&eClick for a download link.")
-				.group().next(" and ")
-				.group().next("&eplace it at the top of your texture pack list (image)").url("http://i." + Nexus.DOMAIN + "/textures.png").hover("&eClick to show an example")
-				.group().next(" &3to make all the banners appear as they would in the default texture pack. It will not override any other textures."));
 	}
 
 	@Path("custom")
@@ -102,7 +121,7 @@ public class BannerCommand extends CustomCommand implements Listener {
 
 		Block banner = event.getClickedBlock().getLocation().add(0, -1, 0).getBlock();
 
-		if (!MaterialTag.BANNERS.isTagged(banner.getType()))
+		if (!MaterialTag.STANDING_BANNERS.isTagged(banner.getType()))
 			return;
 
 		ConfirmationMenu.builder()

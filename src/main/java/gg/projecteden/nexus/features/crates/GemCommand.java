@@ -7,13 +7,17 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.NoArgsConstructor;
+import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -62,15 +66,17 @@ public class GemCommand extends CustomCommand implements Listener {
 		if (isGem(inventory.getItemInMainHand())) {
 			ItemStack gem = inventory.getItemInMainHand();
 			ItemStack tool = inventory.getItemInOffHand();
-			addGemEnchantToTool(player, inventory, gem, tool);
+			addGemEnchantToTool(player, gem, tool);
+			event.setCancelled(true);
 		} else if (isGem(inventory.getItemInOffHand())) {
 			ItemStack gem = inventory.getItemInOffHand();
 			ItemStack tool = inventory.getItemInMainHand();
-			addGemEnchantToTool(player, inventory, gem, tool);
+			addGemEnchantToTool(player, gem, tool);
+			event.setCancelled(true);
 		}
 	}
 
-	public void addGemEnchantToTool(Player player, PlayerInventory inventory, ItemStack gem, ItemStack tool) {
+	public void addGemEnchantToTool(Player player, ItemStack gem, ItemStack tool) {
 		Enchantment enchantment = gem.getEnchantments().entrySet().stream().findFirst().get().getKey();
 		int level = gem.getEnchantments().entrySet().stream().findFirst().get().getValue();
 		if (ItemUtils.isNullOrAir(tool)) {
@@ -93,19 +99,21 @@ public class GemCommand extends CustomCommand implements Listener {
 				level++;
 			}
 		}
-		if (inventory.getItemInOffHand().equals(gem))
-			inventory.setItemInOffHand(null);
-		else
-			inventory.removeItem(gem);
+		ComponentLike displayName = gem.getItemMeta().displayName();
+		gem.setAmount(gem.getAmount() - 1);
 		tool.addUnsafeEnchantment(enchantment, level);
 		CustomEnchants.update(tool);
+		player.sendActionBar(new JsonBuilder("&aYou added a ")
+			.next(displayName)
+			.next(" &a to your " + StringUtils.camelCase(tool.getType())));
+		player.playSound(player.getLocation(), Sound.BLOCK_ENCHANTMENT_TABLE_USE, 1f, 1f);
 	}
 
 	public boolean isGem(ItemStack item) {
 		if (ItemUtils.isNullOrAir(item)) return false;
 		if (!item.getType().equals(Material.EMERALD)) return false;
 		if (item.getEnchantments().isEmpty()) return false;
-		return new ItemBuilder(item).customModelData() == 1;
+		return CustomModelData.of(item) == 1;
 	}
 
 	public static ItemStack makeGem(Enchantment enchantment, int level) {

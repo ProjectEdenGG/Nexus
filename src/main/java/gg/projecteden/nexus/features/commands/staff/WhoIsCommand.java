@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.commands.staff;
 import com.destroystokyo.paper.ClientOption;
 import com.destroystokyo.paper.ClientOption.ChatVisibility;
 import gg.projecteden.annotations.Async;
-import gg.projecteden.nexus.features.resourcepack.ResourcePackCommand;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -19,6 +18,8 @@ import gg.projecteden.nexus.models.hours.Hours;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.punishments.Punishments;
+import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUser;
+import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -124,13 +125,15 @@ public class WhoIsCommand extends CustomCommand {
 
 			json.newline().next("&3Client Brand Name: &e" + player.getClientBrandName()).group();
 
+			final LocalResourcePackUser packUser = new LocalResourcePackUserService().get(nerd);
+			json.newline().next("&3Saturn: &e" + packUser.getSaturnStatus()).group();
+			json.newline().next("&3Titan: &e" + packUser.getTitanStatus()).group();
+
 			json.newline().next("&3Gamemode: &e" + camelCase(player.getGameMode())).group();
 
-			json.newline().next("&3God mode: &e" + godmode.isEnabledRaw()).group();
+			json.newline().next("&3God mode: &e" + godmode.isEnabled()).group();
 
 			json.newline().next("&3Fly mode: &e" + player.getAllowFlight() + " &3(" + (player.isFlying() ? "flying" : "not flying") + ")").group();
-
-			json.newline().next("&3RP status: &e" + ResourcePackCommand.statusOf(player)).group();
 
 			final ChatVisibility chatVisibility = player.getClientOption(ClientOption.CHAT_VISIBILITY);
 			if (chatVisibility != ChatVisibility.FULL)

@@ -447,14 +447,18 @@ public enum ColorType implements IsColored {
 	@SneakyThrows
 	public static Map<String, ChatColor> getColors() {
 		return getAll().entrySet().stream()
-				.filter(entry -> entry.getValue().getColor() != null)
-				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+			.filter(entry -> entry.getValue().getColor() != null)
+			.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 	}
 
 	@SneakyThrows
 	public static Map<String, ChatColor> getFormats() {
 		return getAll().entrySet().stream()
-				.filter(entry -> entry.getValue().getColor() == null)
-				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+			.filter(entry -> entry.getValue().getColor() == null)
+			.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+	}
+
+	public static ColorType getRandom() {
+		return RandomUtils.randomElement(ColorType.class);
 	}
 }

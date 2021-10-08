@@ -129,7 +129,7 @@ public class HorsePickerCommand extends CustomCommand {
 			for (HorseMarking marking : HorseMarking.values()) {
 				contents.set(1, column++, ClickableItem.from(nameItem(marking.getItem(), marking.getName()), e -> {
 					spawnHorse(player, color, Horse.Style.valueOf(marking.name()));
-					LuckPermsUtils.PermissionChange.unset().permission("horsepicker.pick").player(player).runAsync();
+					LuckPermsUtils.PermissionChange.unset().permissions("horsepicker.pick").player(player).runAsync();
 				}));
 			}
 		}
