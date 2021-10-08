@@ -74,7 +74,7 @@ public class OnlineCommand extends CustomCommand {
 		else
 			builder.next("&f, ").group();
 
-		builder.next((presence.isActive() ? "" : presence.getCharacter() + " ") + name)
+		builder.next((presence.isActive() ? "" : presence.ingame() + " ") + name)
 				.command("/quickaction " + nerd.getName())
 				.hover(getInfo(nerd, presence))
 				.group();

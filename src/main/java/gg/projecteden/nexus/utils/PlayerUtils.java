@@ -66,6 +66,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiPredicate;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -270,6 +271,10 @@ public class PlayerUtils {
 				stream = stream.filter(filter);
 
 			return stream.toList();
+		}
+
+		public void forEach(Consumer<Player> consumer) {
+			get().forEach(consumer);
 		}
 
 		@AllArgsConstructor

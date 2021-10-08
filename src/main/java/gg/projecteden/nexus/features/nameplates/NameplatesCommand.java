@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.nameplates;
 
-import gg.projecteden.annotations.Environments;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -9,11 +8,9 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nameplates.NameplateUser;
 import gg.projecteden.nexus.models.nameplates.NameplateUserService;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.utils.Env;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 
-@Environments({Env.DEV, Env.TEST})
 public class NameplatesCommand extends CustomCommand {
 	private final NameplateUserService service = new NameplateUserService();
 	private NameplateUser user;

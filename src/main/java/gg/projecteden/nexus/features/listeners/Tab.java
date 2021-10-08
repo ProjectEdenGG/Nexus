@@ -1,8 +1,6 @@
 package gg.projecteden.nexus.features.listeners;
 
 import de.myzelyam.api.vanish.PlayerVanishStateChangeEvent;
-import gg.projecteden.nexus.features.afk.AFK;
-import gg.projecteden.nexus.features.nameplates.Nameplates;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.FontFile.CustomCharacter;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
@@ -15,27 +13,21 @@ import gg.projecteden.nexus.models.dnd.DNDUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUserService;
-import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange.PlayerRankChangeEvent;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import me.lexikiq.HasUniqueId;
-import net.luckperms.api.node.Node;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
 import java.util.function.Predicate;
 
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
@@ -74,7 +66,7 @@ public class Tab implements Listener {
 
 	public static String getFormat(Player player) {
 		String name = Nerd.of(player).getColoredName();
-		return String.format(" &f%s %s ", Presence.of(player).getCharacter(), name);
+		return String.format(" &f%s %s ", Presence.of(player).ingame(), name);
 	}
 
 	public static final List<Presence> PRESENCES = new ArrayList<>();
@@ -106,6 +98,10 @@ public class Tab implements Listener {
 
 		public boolean applies(Modifier modifier, Player player) {
 			return applies(modifier) == modifier.applies(player);
+		}
+
+		public String ingame() {
+			return character;
 		}
 
 		public String discord() {
@@ -173,7 +169,6 @@ public class Tab implements Listener {
 			return;
 
 		Tab.update(player);
-		Nameplates.get().getFakeEntityManager().updateFakeEntityAroundPlayer(player);
 	}
 
 }

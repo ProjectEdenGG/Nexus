@@ -47,6 +47,6 @@ public class OnlineStaffCommand extends CustomCommand {
 	private String getNameWithPresence(Nerd nerd) {
 		final Presence presence = Presence.of(nerd.getOnlinePlayer());
 		final String name = nerd.getColoredName();
-		return (presence.isActive() ? "" : presence.getCharacter() + " ") + name;
+		return (presence.isActive() ? "" : presence.ingame() + " ") + name;
 	}
 }

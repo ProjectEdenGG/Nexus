@@ -1,45 +1,34 @@
 package gg.projecteden.nexus.features.nameplates.protocol;
 
-import gg.projecteden.annotations.Environments;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.nameplates.Nameplates;
 import gg.projecteden.nexus.features.nameplates.protocol.packet.EntityDestroyPacket;
 import gg.projecteden.nexus.features.nameplates.protocol.packet.EntityMetadataPacket;
 import gg.projecteden.nexus.features.nameplates.protocol.packet.EntitySpawnPacket;
 import gg.projecteden.nexus.features.nameplates.protocol.packet.MountPacket;
-import gg.projecteden.nexus.framework.features.Depends;
-import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.nameplates.NameplateUserService;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.utils.Env;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Stream;
 
-@NoArgsConstructor
-@Depends({Nameplates.class, ProtocolManager.class})
-@Environments({Env.DEV, Env.TEST})
-public class FakeEntityManager extends Feature {
-	private final Nexus plugin = Nexus.getInstance();
-	private final Map<UUID, NameplatePlayer> players = new HashMap<>();
+public class FakeEntityManager {
 	private final NameplateUserService service = new NameplateUserService();
+	private final Map<UUID, NameplatePlayer> players = new HashMap<>();
 
-	@Override
 	public void onStart() {
-		plugin.getServer().getOnlinePlayers().forEach(this::spawnFakeEntityAroundPlayer);
+		OnlinePlayers.getAll().forEach(this::spawnFakeEntityAroundPlayer);
 	}
 
-	@Override
-	public void onStop() {
-		plugin.getServer().getOnlinePlayers().forEach(this::removeFakeEntityAroundPlayer);
+	public void shutdown() {
+		OnlinePlayers.getAll().forEach(this::removeFakeEntityAroundPlayer);
 	}
 
 	private NameplatePlayer managerOf(@NotNull Player holder) {
@@ -55,7 +44,6 @@ public class FakeEntityManager extends Feature {
 	}
 
 	public void spawnFakeEntityForSelf(@NotNull Player holder) {
-		if(true) return;
 		System.out.println("spawnFakeEntityForSelf(holder=" + holder.getName() + ")");
 		if (service.get(holder).isViewOwnNameplate())
 			spawnFakeEntity(holder, holder);
@@ -63,13 +51,16 @@ public class FakeEntityManager extends Feature {
 
 	public void spawnFakeEntity(@NotNull Player holder, @NotNull Player viewer) {
 		System.out.println("spawnFakeEntity(holder=" + holder.getName() + ", viewer=" + viewer.getName() + ")");
-		/*
-		if (!PlayerUtils.canSee(viewer, holder))
-			return;
 
-		if (holder.getGameMode() == GameMode.SPECTATOR && viewer.getGameMode() != GameMode.SPECTATOR)
+		if (!PlayerUtils.canSee(viewer, holder)) {
+			System.out.println(" " + viewer.getName() + " cant see " + holder.getName());
 			return;
-		*/
+		}
+
+		if (holder.getGameMode() == GameMode.SPECTATOR && viewer.getGameMode() != GameMode.SPECTATOR) {
+			System.out.println(" " + viewer.getName() + " cant see " + holder.getName());
+			return;
+		}
 
 		managerOf(holder.getUniqueId()).getSpawnPacket().send(viewer);
 		updateFakeEntity(holder, viewer);
@@ -119,13 +110,12 @@ public class FakeEntityManager extends Feature {
 	}
 
 	@NotNull
-	private Stream<Player> getNearbyPlayers(@NotNull Player holder) {
-		return PlayerUtils.getOnlinePlayers(holder, holder.getWorld()).stream()
-			.filter(_player -> holder.getLocation().distanceSquared(_player.getLocation()) <= 250);
+	private OnlinePlayers getNearbyPlayers(@NotNull Player holder) {
+		return OnlinePlayers.where().viewer(holder).world(holder.getWorld()).radius(250);
 	}
 
 	@Data
-	private final class NameplatePlayer implements PlayerOwnedObject {
+	private static class NameplatePlayer implements PlayerOwnedObject {
 		private final UUID uuid;
 		private final int entityId;
 		private final EntitySpawnPacket spawnPacket;
