@@ -17,7 +17,7 @@ public class GodmodeService extends MongoService<Godmode> {
 
 	@Override
 	protected boolean deleteIf(Godmode godmode) {
-		return !godmode.isEnabledRaw();
+		return !godmode.isEnabled();
 	}
 
 }

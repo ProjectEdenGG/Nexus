@@ -131,7 +131,7 @@ public class WhoIsCommand extends CustomCommand {
 
 			json.newline().next("&3Gamemode: &e" + camelCase(player.getGameMode())).group();
 
-			json.newline().next("&3God mode: &e" + godmode.isEnabledRaw()).group();
+			json.newline().next("&3God mode: &e" + godmode.isEnabled()).group();
 
 			json.newline().next("&3Fly mode: &e" + player.getAllowFlight() + " &3(" + (player.isFlying() ? "flying" : "not flying") + ")").group();
 
