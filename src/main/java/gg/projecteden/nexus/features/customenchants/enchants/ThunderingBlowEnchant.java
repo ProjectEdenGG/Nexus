@@ -51,6 +51,4 @@ public class ThunderingBlowEnchant extends CustomEnchant implements Listener {
 		}
 	}
 
-
-
 }

@@ -86,4 +86,5 @@ public class CustomEnchantsRegistration {
 		fieldByName.setAccessible(true);
 		return (Map<String, Enchantment>) fieldByName.get(null);
 	}
+
 }

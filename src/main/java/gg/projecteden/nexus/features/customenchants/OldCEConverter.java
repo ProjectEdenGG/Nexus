@@ -98,8 +98,6 @@ public class OldCEConverter {
 		public String getCEName() {
 			return name().toLowerCase().replace("_", " ");
 		}
-
 	}
-
 
 }

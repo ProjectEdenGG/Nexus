@@ -48,4 +48,5 @@ public class GlowingEnchant extends CustomEnchant {
 	public @NotNull EnchantmentTarget getItemTarget() {
 		return EnchantmentTarget.ARMOR_HEAD;
 	}
+
 }
