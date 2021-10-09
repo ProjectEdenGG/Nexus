@@ -106,13 +106,12 @@ public class Discord extends Feature {
 	}
 
 	public static String discordize(String message) {
-		if (message != null)
-			message = message
-				.replaceAll("\\\\", "\\\\\\\\")
-				.replaceAll("_", "\\\\_")
-				.replaceAll("\\*", "\\\\*");
+		if (message == null)
+			return null;
 
-		return message;
+		return message
+			.replaceAll("\\\\([*_`~\\\\])", "$1")
+			.replaceAll("([*_`~\\\\])", "\\\\$1");
 	}
 
 	public static String discordize(ComponentLike component) {
