@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.jetbrains.annotations.NotNull;
 
 public class ThunderingBlowEnchant extends CustomEnchant implements Listener {
@@ -37,7 +37,7 @@ public class ThunderingBlowEnchant extends CustomEnchant implements Listener {
 
 		if (player == null)
 			return;
-		if (event.getCause() == EntityDamageEvent.DamageCause.THORNS)
+		if (event.getCause() == DamageCause.THORNS)
 			return;
 		if (ItemUtils.isNullOrAir(player.getInventory().getItemInMainHand()))
 			return;
