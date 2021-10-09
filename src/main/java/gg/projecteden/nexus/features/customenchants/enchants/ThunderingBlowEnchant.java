@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.customenchants.enchants;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.CustomEnchant;
+import gg.projecteden.nexus.models.pvp.PVPService;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import org.bukkit.NamespacedKey;
@@ -20,15 +21,19 @@ public class ThunderingBlowEnchant extends CustomEnchant implements Listener {
 		Nexus.registerListener(this);
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onEntityDamage(EntityDamageByEntityEvent event) {
-		Player player = null;
-		if (event.getDamager() instanceof Player)
-			player = (Player) event.getDamager();
+		if (event.getEntity() instanceof Player victim)
+			if (!new PVPService().get(victim).isEnabled())
+				return;
 
-		if (event.getDamager() instanceof Arrow)
-			if (((Arrow) event.getDamager()).getShooter() instanceof Player)
-				player = (Player) ((Arrow) event.getDamager()).getShooter();
+		Player player = null;
+		if (event.getDamager() instanceof Player damager)
+			player = damager;
+
+		if (event.getDamager() instanceof Arrow arrow)
+			if (arrow.getShooter() instanceof Player damager)
+				player = damager;
 
 		if (player == null)
 			return;
@@ -40,9 +45,8 @@ public class ThunderingBlowEnchant extends CustomEnchant implements Listener {
 		int level = getLevel(player.getInventory().getItemInMainHand());
 
 		while (level > 0) {
-			if (RandomUtils.chanceOf(20)) {
+			if (RandomUtils.chanceOf(20))
 				player.getWorld().strikeLightning(event.getEntity().getLocation());
-			}
 			--level;
 		}
 	}
