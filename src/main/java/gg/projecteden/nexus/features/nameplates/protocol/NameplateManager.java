@@ -50,10 +50,12 @@ public class NameplateManager {
 	}
 
 	public void spawnAll() {
+		Nameplates.debug("  spawnAll()");
 		OnlinePlayers.getAll().forEach(this::spawn);
 	}
 
 	public void spawnViewable(Player player) {
+		Nameplates.debug("  spawnViewable(holder=" + player.getName() + ")");
 		Nameplates.getViewable(player).forEach(holder -> spawn(holder, player));
 	}
 
@@ -75,11 +77,13 @@ public class NameplateManager {
 	}
 
 	public void updateAll() {
+		Nameplates.debug("  updateAll()");
 		for (Player player : OnlinePlayers.getAll())
 			update(player);
 	}
 
 	public void updateViewable(Player player) {
+		Nameplates.debug("  updateViewable()");
 		Nameplates.getViewable(player).forEach(holder -> update(holder, player));
 	}
 
@@ -104,10 +108,12 @@ public class NameplateManager {
 	}
 
 	public void destroyAll() {
+		Nameplates.debug("  destroyAll()");
 		OnlinePlayers.getAll().forEach(this::destroy);
 	}
 
 	public void destroyViewable(Player player) {
+		Nameplates.debug("  destroyViewable(player=" + player.getName() + ")");
 		Nameplates.getViewable(player).forEach(holder -> destroy(holder, player));
 	}
 
@@ -128,6 +134,7 @@ public class NameplateManager {
 	}
 
 	public void respawn(Player holder) {
+		Nameplates.debug("  respawn(holder=" + holder.getName() + ")");
 		destroy(holder);
 		Tasks.waitAsync(2, () -> {
 			spawn(holder);
@@ -159,6 +166,8 @@ public class NameplateManager {
 
 		private boolean ignore(Player viewer) {
 			if (!isOnline())
+				return true;
+			if (getOnlinePlayer().isDead())
 				return true;
 			if (getOnlinePlayer().isSneaking())
 				return true;

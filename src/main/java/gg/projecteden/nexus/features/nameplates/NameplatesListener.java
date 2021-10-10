@@ -16,15 +16,15 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.potion.PotionEffectType;
-
-import java.util.Objects;
 
 public class NameplatesListener implements Listener {
 
@@ -85,17 +85,17 @@ public class NameplatesListener implements Listener {
 		manager().respawn(event.getPlayer());
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void on(PlayerVanishStateChangeEvent event) {
 		final Player player = Bukkit.getPlayer(event.getUUID());
 		if (player == null || !player.isOnline())
 			return;
 
-		Nameplates.debug("on PlayerVanishStateChangeEvent(" + Objects.requireNonNull(Bukkit.getPlayer(event.getUUID())).getName() + ")");
-		manager().respawn(Bukkit.getPlayer(event.getUUID()));
+		Nameplates.debug("on PlayerVanishStateChangeEvent(" + player.getName() + ")");
+		manager().respawn(player);
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void on(EntityPotionEffectEvent event) {
 		if (!(event.getEntity() instanceof Player player))
 			return;
@@ -110,13 +110,13 @@ public class NameplatesListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void on(AFKEvent event) {
 		Nameplates.debug("on AFKEvent(" + event.getUser().getOnlinePlayer().getName() + ")");
 		manager().update(event.getUser().getOnlinePlayer());
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void on(PlayerRankChangeEvent event) {
 		final Player player = Bukkit.getPlayer(event.getUuid());
 		if (player == null || !player.isOnline())
@@ -126,7 +126,7 @@ public class NameplatesListener implements Listener {
 		manager().update(player);
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void on(PlayerToggleSneakEvent event) {
 		Nameplates.debug("on PlayerToggleSneakEvent(" + event.getPlayer().getName() + ", sneaking=" + event.isSneaking() + ")");
 		if (event.isSneaking())
@@ -137,7 +137,7 @@ public class NameplatesListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void on(DisguiseEvent event) {
 		if (!(event.getEntity() instanceof Player player))
 			return;
@@ -146,13 +146,25 @@ public class NameplatesListener implements Listener {
 		manager().destroy(player);
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void on(UndisguiseEvent event) {
 		if (!(event.getEntity() instanceof Player player))
 			return;
 
 		Nameplates.debug("on UndisguiseEvent(" + player.getName() + ")");
 		manager().spawn(player);
+	}
+
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+	public void on(PlayerDeathEvent event) {
+		Nameplates.debug("on PlayerDeathEvent(" + event.getEntity().getName() + ")");
+		manager().destroy(event.getEntity());
+	}
+
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+	public void on(PlayerRespawnEvent event) {
+		Nameplates.debug("on PlayerRespawnEvent(" + event.getPlayer().getName() + ")");
+		manager().spawn(event.getPlayer());
 	}
 
 }

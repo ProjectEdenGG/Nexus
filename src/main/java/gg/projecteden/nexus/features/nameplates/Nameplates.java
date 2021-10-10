@@ -106,18 +106,21 @@ public class Nameplates extends Feature {
 	private static OnlinePlayers getNearbyPlayers(@NotNull Player holder) {
 		return OnlinePlayers.where()
 			.world(holder.getWorld())
-			.radius(RADIUS)
-			.filter(viewer -> holder.getGameMode() != GameMode.SPECTATOR || viewer.getGameMode() == GameMode.SPECTATOR);
+			.radius(RADIUS);
 	}
 
 	@NotNull
 	public static OnlinePlayers getViewers(@NotNull Player holder) {
-		return getNearbyPlayers(holder).filter(viewer -> canSee(viewer, holder));
+		return getNearbyPlayers(holder)
+			.filter(viewer -> holder.getGameMode() != GameMode.SPECTATOR || viewer.getGameMode() == GameMode.SPECTATOR)
+			.filter(viewer -> canSee(viewer, holder));
 	}
 
 	@NotNull
 	public static OnlinePlayers getViewable(@NotNull Player viewer) {
-		return getNearbyPlayers(viewer).filter(holder -> canSee(viewer, holder));
+		return getNearbyPlayers(viewer)
+			.filter(holder -> holder.getGameMode() != GameMode.SPECTATOR || viewer.getGameMode() == GameMode.SPECTATOR)
+			.filter(holder -> canSee(viewer, holder));
 	}
 
 }
