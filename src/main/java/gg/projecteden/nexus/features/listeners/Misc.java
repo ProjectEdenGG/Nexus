@@ -35,6 +35,7 @@ import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import me.libraryaddict.disguise.DisguiseAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -451,10 +452,12 @@ public class Misc implements Listener {
 	public void onWorldChange(PlayerChangedWorldEvent event) {
 		Player player = event.getPlayer();
 
-		WorldGroup worldGroup = WorldGroup.of(player);
-		if (worldGroup == WorldGroup.MINIGAMES)
+		final WorldGroup oldWorldGroup = WorldGroup.of(event.getFrom());
+		final WorldGroup newWorldGroup = WorldGroup.of(player);
+
+		if (newWorldGroup == WorldGroup.MINIGAMES)
 			Tasks.wait(5, () -> joinMinigames(player));
-		else if (worldGroup == WorldGroup.CREATIVE)
+		else if (newWorldGroup == WorldGroup.CREATIVE)
 			Tasks.wait(5, () -> joinCreative(player));
 
 		Tasks.wait(10, player::resetPlayerTime);
@@ -465,7 +468,7 @@ public class Misc implements Listener {
 			player.setFlying(false);
 		}
 
-		if (WorldGroup.of(event.getFrom()) == WorldGroup.CREATIVE) {
+		if (oldWorldGroup == WorldGroup.CREATIVE) {
 			if (Nerd.of(player).isVanished())
 				if (player.hasPermission("essentials.fly")) {
 					player.setFallDistance(0);
@@ -488,6 +491,11 @@ public class Misc implements Listener {
 
 		if (player.getWorld().getName().equalsIgnoreCase("staff_world"))
 			Tasks.wait(20, () -> PlayerUtils.runCommand(player, "cheats off"));
+
+		if (DisguiseAPI.isDisguised(player))
+			if (oldWorldGroup != WorldGroup.MINIGAMES)
+				if (newWorldGroup == WorldGroup.MINIGAMES)
+					DisguiseAPI.undisguiseToAll(player);
 	}
 
 	public void joinMinigames(Player player) {

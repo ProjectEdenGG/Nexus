@@ -11,7 +11,9 @@ import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Data;
+import me.libraryaddict.disguise.DisguiseAPI;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -156,7 +158,19 @@ public class NameplateManager {
 		}
 
 		private boolean ignore(Player viewer) {
-			return !isOnline() || getOnlinePlayer().isSneaking() || (isSelf(this, viewer) && !new NameplateUserService().get(this).isViewOwnNameplate());
+			if (!isOnline())
+				return true;
+			if (getOnlinePlayer().isSneaking())
+				return true;
+			if (DisguiseAPI.isDisguised(getOnlinePlayer()))
+				return true;
+			if (getOnlinePlayer().hasPotionEffect(PotionEffectType.INVISIBILITY))
+				return true;
+
+			if (isSelf(this, viewer))
+				if (!new NameplateUserService().get(this).isViewOwnNameplate())
+					return true;
+			return false;
 		}
 
 		public void sendSpawnPacket(Player viewer) {

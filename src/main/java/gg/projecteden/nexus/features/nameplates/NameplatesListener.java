@@ -7,25 +7,28 @@ import gg.projecteden.nexus.models.afk.events.AFKEvent;
 import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange.PlayerRankChangeEvent;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
+import me.libraryaddict.disguise.events.DisguiseEvent;
+import me.libraryaddict.disguise.events.UndisguiseEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.Objects;
 
 public class NameplatesListener implements Listener {
 
 	public NameplatesListener() {
-		Nameplates.debug("===== NameplatesListener()");
 		Nexus.registerListener(this);
 	}
 
@@ -93,6 +96,21 @@ public class NameplatesListener implements Listener {
 	}
 
 	@EventHandler
+	public void on(EntityPotionEffectEvent event) {
+		if (!(event.getEntity() instanceof Player player))
+			return;
+
+		Nameplates.debug("on EntityPotionEffectEvent(" + player.getName() + ", type=" + event.getModifiedType() + ", action=" + event.getAction() + ")");
+		if (!event.getModifiedType().equals(PotionEffectType.INVISIBILITY))
+			return;
+
+		switch (event.getAction()) {
+			case ADDED -> manager().destroy(player);
+			case REMOVED -> manager().spawn(player);
+		}
+	}
+
+	@EventHandler
 	public void on(AFKEvent event) {
 		Nameplates.debug("on AFKEvent(" + event.getUser().getOnlinePlayer().getName() + ")");
 		manager().update(event.getUser().getOnlinePlayer());
@@ -117,6 +135,24 @@ public class NameplatesListener implements Listener {
 			event.getPlayer().setSneaking(false);
 			manager().spawn(event.getPlayer());
 		}
+	}
+
+	@EventHandler
+	public void on(DisguiseEvent event) {
+		if (!(event.getEntity() instanceof Player player))
+			return;
+
+		Nameplates.debug("on DisguiseEvent(" + player.getName() + ")");
+		manager().destroy(player);
+	}
+
+	@EventHandler
+	public void on(UndisguiseEvent event) {
+		if (!(event.getEntity() instanceof Player player))
+			return;
+
+		Nameplates.debug("on UndisguiseEvent(" + player.getName() + ")");
+		manager().spawn(player);
 	}
 
 }

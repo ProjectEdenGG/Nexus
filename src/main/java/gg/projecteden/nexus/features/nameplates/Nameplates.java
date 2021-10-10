@@ -14,6 +14,7 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
+import me.lucko.helper.scoreboard.ScoreboardTeam.NameTagVisibility;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
@@ -92,7 +93,10 @@ public class Nameplates extends Feature {
 
 		final JsonBuilder nameplate = new JsonBuilder();
 		if (minigamer.isPlaying())
-			nameplate.next(minigamer.getColoredName());
+			if (minigamer.getTeam() != null && minigamer.getTeam().getNameTagVisibility() == NameTagVisibility.NEVER)
+				nameplate.next(minigamer.getNickname());
+			else
+				nameplate.next(minigamer.getColoredName());
 		else
 			nameplate.next(presence.ingame()).next(" ").next(Nerd.of(player).getChatFormat(new ChatterService().get(viewer)));
 
