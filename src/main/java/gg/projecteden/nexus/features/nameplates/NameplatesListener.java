@@ -18,6 +18,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerToggleSneakEvent;
 
 import java.util.Objects;
 
@@ -83,6 +84,10 @@ public class NameplatesListener implements Listener {
 
 	@EventHandler
 	public void on(PlayerVanishStateChangeEvent event) {
+		final Player player = Bukkit.getPlayer(event.getUUID());
+		if (player == null || !player.isOnline())
+			return;
+
 		Nameplates.debug("on PlayerVanishStateChangeEvent(" + Objects.requireNonNull(Bukkit.getPlayer(event.getUUID())).getName() + ")");
 		manager().respawn(Bukkit.getPlayer(event.getUUID()));
 	}
@@ -101,6 +106,17 @@ public class NameplatesListener implements Listener {
 
 		Nameplates.debug("on PlayerRankChangeEvent(" + player.getName() + ")");
 		manager().update(player);
+	}
+
+	@EventHandler
+	public void on(PlayerToggleSneakEvent event) {
+		Nameplates.debug("on PlayerToggleSneakEvent(" + event.getPlayer().getName() + ", sneaking=" + event.isSneaking() + ")");
+		if (event.isSneaking())
+			manager().destroy(event.getPlayer());
+		else {
+			event.getPlayer().setSneaking(false);
+			manager().spawn(event.getPlayer());
+		}
 	}
 
 }

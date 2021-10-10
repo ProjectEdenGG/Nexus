@@ -156,7 +156,7 @@ public class NameplateManager {
 		}
 
 		private boolean ignore(Player viewer) {
-			return !isOnline() || (isSelf(this, viewer) && !new NameplateUserService().get(this).isViewOwnNameplate());
+			return !isOnline() || getOnlinePlayer().isSneaking() || (isSelf(this, viewer) && !new NameplateUserService().get(this).isViewOwnNameplate());
 		}
 
 		public void sendSpawnPacket(Player viewer) {
