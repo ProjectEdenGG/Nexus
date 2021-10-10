@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.listeners;
 import com.destroystokyo.paper.ClientOption;
 import com.destroystokyo.paper.ClientOption.ChatVisibility;
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
+import de.myzelyam.api.vanish.PlayerVanishStateChangeEvent;
 import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.NBTTileEntity;
 import gg.projecteden.nexus.Nexus;
@@ -117,6 +118,15 @@ public class Misc implements Listener {
 
 			world.setKeepSpawnInMemory(false);
 		}
+	}
+
+	@EventHandler
+	public void onPlayerVanishStateChange(PlayerVanishStateChangeEvent event) {
+		final Player player = Bukkit.getPlayer(event.getUUID());
+		if (player == null || !player.isOnline())
+			return;
+
+		Nexus.getOpenInv().setPlayerSilentChestStatus(player, event.isVanishing());
 	}
 
 	@EventHandler
