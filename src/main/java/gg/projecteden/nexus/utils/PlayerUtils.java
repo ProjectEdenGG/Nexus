@@ -263,7 +263,7 @@ public class PlayerUtils {
 				.map(OfflinePlayer::getPlayer)
 				.filter(player -> !CitizensUtils.isNPC(player));
 
-			if (origin == null) {
+			if (origin == null && this.viewer != null) {
 				final Player viewer = Bukkit.getPlayer(this.viewer);
 				if (viewer != null)
 					origin = viewer.getLocation();
