@@ -345,7 +345,12 @@ public class PlayerUtils {
 	 */
 	@Contract("null, _ -> false; _, null -> false")
 	public static boolean canSee(@Nullable Player viewer, @Nullable Player target) {
-		if (viewer == null || target == null) return false;
+		if (viewer == null || target == null)
+			return false;
+
+		if (!viewer.canSee(target))
+			return false;
+
 		return !isVanished(target) || viewer.hasPermission("pv.see");
 	}
 
