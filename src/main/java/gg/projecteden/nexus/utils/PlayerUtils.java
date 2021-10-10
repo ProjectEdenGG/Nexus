@@ -516,6 +516,9 @@ public class PlayerUtils {
 	}
 
 	public static void runCommand(CommandSender sender, String commandNoSlash) {
+		if (sender == null)
+			return;
+
 //		if (sender instanceof Player)
 //			Utils.callEvent(new PlayerCommandPreprocessEvent((Player) sender, "/" + command));
 

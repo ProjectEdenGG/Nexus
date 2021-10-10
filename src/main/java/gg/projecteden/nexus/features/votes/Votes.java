@@ -26,7 +26,7 @@ import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.SoundUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -38,7 +38,6 @@ import net.dv8tion.jda.api.entities.User;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
@@ -138,9 +137,14 @@ public class Votes extends Feature implements Listener {
 
 		int sum = voterService.getTopVoters(LocalDateTime.now().getMonth()).stream()
 			.mapToInt(topVoter -> Long.valueOf(topVoter.getCount()).intValue()).sum();
+
 		int left = 0;
 		if (GOAL > sum)
 			left = GOAL - sum;
+
+		int points = vote.getExtra() + basePoints;
+		voter.givePoints(points);
+		voterService.save(voter);
 
 		if (new CooldownService().check(uuid, "vote-announcement", TickTime.HOUR)) {
 			String message = " &3for the server and received &b" + basePoints + plural(" &3vote point", basePoints) + " per site!";
@@ -151,26 +155,15 @@ public class Votes extends Feature implements Listener {
 			Broadcast.discord().message(":white_check_mark: **" + discordize(name) + " voted**" + message).send();
 		}
 
+		PlayerUtils.send(player, VPS.PREFIX + "You have received " + points + plural(" point", points));
+		new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).receiver(voter).pitchStep(6).play();
+
 		if (vote.getExtra() > 0) {
 			Broadcast.ingame().message("&3[✦] &e" + name + " &3received &e" + vote.getExtra() + " extra &3vote points!").send();
 			Broadcast.discord().message(":star: **" + discordize(name) + "** received **" + vote.getExtra() + "** extra vote points!").send();
+			new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).receiver(voter).pitchStep(10).play();
+			new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).receiver(voter).pitchStep(13).play();
 		}
-
-		if (player != null) {
-			int points = vote.getExtra() + basePoints;
-			voter.givePoints(points);
-			PlayerUtils.send(player, VPS.PREFIX + "You have received " + points + plural(" point", points));
-			if (player.isOnline()) {
-				Player online = player.getPlayer();
-				online.playSound(online.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1f, SoundUtils.getPitch(6));
-				if (points > basePoints) {
-					Tasks.wait(2, () -> online.playSound(online.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1f, SoundUtils.getPitch(10)));
-					Tasks.wait(4, () -> online.playSound(online.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1f, SoundUtils.getPitch(13)));
-				}
-			}
-		}
-
-		voterService.save(voter);
 
 		final int allVotes = voter.getVotes().size();
 		final int todaysVotes = voter.getTodaysVotes().size();
