@@ -22,6 +22,8 @@ import org.bukkit.scoreboard.Team.Option;
 import org.bukkit.scoreboard.Team.OptionStatus;
 import org.jetbrains.annotations.NotNull;
 
+import static gg.projecteden.nexus.utils.PlayerUtils.canSee;
+
 @Getter
 public class Nameplates extends Feature {
 	private final ProtocolManager protocolManager;
@@ -29,19 +31,16 @@ public class Nameplates extends Feature {
 	private final Team team;
 	private final String teamName = "NP_HIDE";
 	private final boolean manageTeams = true;
+	private final static int RADIUS = 75;
+
+	@Getter
+	private static boolean debug;
 
 	public Nameplates() {
-		System.out.println("===== Nameplates()");
-		System.out.println("ProtocolManager v");
 		protocolManager = new ProtocolManager();
-		System.out.println("ProtocolManager ^");
-		System.out.println("FakeEntityManager v");
 		nameplateManager = new NameplateManager();
-		System.out.println("FakeEntityManager ^");
 
-		System.out.println("NameplatesListener v");
 		new NameplatesListener();
-		System.out.println("NameplatesListener ^");
 
 		final Scoreboard scoreboard = Nexus.getInstance().getServer().getScoreboardManager().getMainScoreboard();
 
@@ -74,6 +73,15 @@ public class Nameplates extends Feature {
 		this.nameplateManager.shutdown();
 	}
 
+	public static void toggleDebug() {
+		debug = !debug;
+	}
+
+	public static void debug(String message) {
+		if (debug)
+			Nexus.log("[Nameplates] [DEBUG] " + message);
+	}
+
 	public static Nameplates get() {
 		return Features.get(Nameplates.class);
 	}
@@ -91,24 +99,21 @@ public class Nameplates extends Feature {
 		return nameplate.serialize();
 	}
 
-	@NotNull
-	public static OnlinePlayers getViewers(@NotNull Player holder) {
+	private static OnlinePlayers getNearbyPlayers(@NotNull Player holder) {
 		return OnlinePlayers.where()
-			.viewer(holder)
 			.world(holder.getWorld())
+			.radius(RADIUS)
 			.filter(viewer -> holder.getGameMode() != GameMode.SPECTATOR || viewer.getGameMode() == GameMode.SPECTATOR);
 	}
 
 	@NotNull
-	public static OnlinePlayers getViewable(@NotNull Player viewer) {
-		return Nameplates.getNearbyPlayers(viewer).filter(holder ->
-			Nameplates.getViewers(holder).get().contains(viewer));
+	public static OnlinePlayers getViewers(@NotNull Player holder) {
+		return getNearbyPlayers(holder).filter(viewer -> canSee(viewer, holder));
 	}
 
 	@NotNull
-	public static OnlinePlayers getNearbyPlayers(@NotNull Player holder) {
-		return OnlinePlayers.where()
-			.world(holder.getWorld());
+	public static OnlinePlayers getViewable(@NotNull Player viewer) {
+		return getNearbyPlayers(viewer).filter(holder -> canSee(viewer, holder));
 	}
 
 }

@@ -8,9 +8,9 @@ import java.util.Collections;
 
 public class EntityDestroyPacket extends NameplatePacket {
 
-	public EntityDestroyPacket(int var1) {
+	public EntityDestroyPacket(int entityId) {
 		super(new PacketContainer(Server.ENTITY_DESTROY));
-		this.packet.getIntLists().write(0, Collections.singletonList(var1));
+		this.packet.getIntLists().write(0, Collections.singletonList(entityId));
 	}
 
 }

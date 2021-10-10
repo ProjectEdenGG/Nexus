@@ -29,18 +29,20 @@ public class EntityMetadataPacket extends NameplatePacket {
 		this.packet.getWatchableCollectionModifier().write(0, this.watcher.getWatchableObjects());
 	}
 
-	public void setName(String text) {
-		Optional<Object> var2 = Optional.of(WrappedChatComponent.fromText(text).getHandle());
-		this.watcher.setObject(this.entityNameObject, var2);
+	public EntityMetadataPacket setName(String text) {
+		Optional<Object> name = Optional.of(WrappedChatComponent.fromText(text).getHandle());
+		this.watcher.setObject(this.entityNameObject, name);
 		this.watcher.setObject(this.displayNameObject, true);
 		this.updateCollection();
+		return this;
 	}
 
-	public void setNameJson(String text) {
-		Optional<Object> var2 = Optional.of(WrappedChatComponent.fromJson(text).getHandle());
-		this.watcher.setObject(this.entityNameObject, var2);
+	public EntityMetadataPacket setNameJson(String text) {
+		Optional<Object> name = Optional.of(WrappedChatComponent.fromJson(text).getHandle());
+		this.watcher.setObject(this.entityNameObject, name);
 		this.watcher.setObject(this.displayNameObject, true);
 		this.updateCollection();
+		return this;
 	}
 
 	private void setRadius(float radius) {

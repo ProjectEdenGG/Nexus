@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.nameplates.protocol.NameplateManager;
 import gg.projecteden.nexus.models.afk.events.AFKEvent;
 import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange.PlayerRankChangeEvent;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -23,21 +24,25 @@ import java.util.Objects;
 public class NameplatesListener implements Listener {
 
 	public NameplatesListener() {
-		System.out.println("===== NameplatesListener()");
+		Nameplates.debug("===== NameplatesListener()");
 		Nexus.registerListener(this);
 	}
 
-	private Nameplates nameplates() {
+	private static Nameplates nameplates() {
 		return Nameplates.get();
 	}
 
-	private NameplateManager manager() {
+	private static NameplateManager manager() {
 		return nameplates().getNameplateManager();
+	}
+
+	static {
+		Tasks.repeatAsync(TickTime.SECOND.x(5), TickTime.SECOND.x(5), () -> manager().spawnAll());
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void on(PlayerJoinEvent event) {
-		System.out.println("on PlayerJoinEvent(" + event.getPlayer().getName() + ")");
+		Nameplates.debug("on PlayerJoinEvent(" + event.getPlayer().getName() + ")");
 		Player player = event.getPlayer();
 		if (nameplates().isManageTeams())
 			nameplates().getTeam().addEntry(player.getName());
@@ -47,25 +52,28 @@ public class NameplatesListener implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void on(PlayerQuitEvent event) {
-		System.out.println("on PlayerQuitEvent(" + event.getPlayer().getName() + ")");
+		Nameplates.debug("on PlayerQuitEvent(" + event.getPlayer().getName() + ")");
 		manager().removeManagerOf(event.getPlayer());
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void on(PlayerKickEvent event) {
-		System.out.println("on PlayerKickEvent(" + event.getPlayer().getName() + ")");
+		Nameplates.debug("on PlayerKickEvent(" + event.getPlayer().getName() + ")");
 		manager().removeManagerOf(event.getPlayer());
 	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void on(PlayerTeleportEvent event) {
-		System.out.println("on PlayerTeleportEvent(" + event.getPlayer().getName() + ")");
+		Nameplates.debug("on PlayerTeleportEvent(" + event.getPlayer().getName() + ")");
+		if (!event.getFrom().getWorld().equals(event.getTo().getWorld()))
+			manager().destroyViewable(event.getPlayer());
+
 		manager().respawn(event.getPlayer());
 	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void on(PlayerGameModeChangeEvent event) {
-		System.out.println("on PlayerGameModeChangeEvent(" + event.getPlayer().getName() + ")");
+		Nameplates.debug("on PlayerGameModeChangeEvent(" + event.getPlayer().getName() + ")");
 
 		if (event.getPlayer().getGameMode() == GameMode.SPECTATOR)
 			manager().destroyViewable(event.getPlayer());
@@ -75,13 +83,13 @@ public class NameplatesListener implements Listener {
 
 	@EventHandler
 	public void on(PlayerVanishStateChangeEvent event) {
-		System.out.println("on PlayerVanishStateChangeEvent(" + Objects.requireNonNull(Bukkit.getPlayer(event.getUUID())).getName() + ")");
+		Nameplates.debug("on PlayerVanishStateChangeEvent(" + Objects.requireNonNull(Bukkit.getPlayer(event.getUUID())).getName() + ")");
 		manager().respawn(Bukkit.getPlayer(event.getUUID()));
 	}
 
 	@EventHandler
 	public void on(AFKEvent event) {
-		System.out.println("on AFKEvent(" + event.getUser().getOnlinePlayer().getName() + ")");
+		Nameplates.debug("on AFKEvent(" + event.getUser().getOnlinePlayer().getName() + ")");
 		manager().update(event.getUser().getOnlinePlayer());
 	}
 
@@ -91,7 +99,7 @@ public class NameplatesListener implements Listener {
 		if (player == null || !player.isOnline())
 			return;
 
-		System.out.println("on PlayerRankChangeEvent(" + player.getName() + ")");
+		Nameplates.debug("on PlayerRankChangeEvent(" + player.getName() + ")");
 		manager().update(player);
 	}
 
