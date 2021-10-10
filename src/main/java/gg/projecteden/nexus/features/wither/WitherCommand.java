@@ -119,7 +119,7 @@ public class WitherCommand extends CustomCommand {
 	public void tellNeededItems(List<FuzzyItemStack> items) {
 		send(PREFIX + "&cYou do not have the necessary items in your inventory to spawn the wither. You are missing:");
 		for (FuzzyItemStack item : items) {
-			final String materials = item.getMaterials().stream().map(StringUtils::camelCase).collect(Collectors.joining(" &eor "));
+			final String materials = item.getMaterials().stream().map(StringUtils::camelCase).collect(Collectors.joining(" &eor &c"));
 			send("&c - " + materials + (item.getAmount() > 1 ? " &ex &c" + item.getAmount() : ""));
 		}
 	}
