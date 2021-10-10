@@ -44,7 +44,7 @@ import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -361,14 +361,14 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 			spawn();
 		else {
 			respawning = true;
-			teleportAsync(match.getArena().getRespawnLocation(), true);
 			clearState();
-			addPotionEffect(new PotionEffectBuilder(PotionEffectType.BLINDNESS).duration(TickTime.SECOND.x(2)).amplifier(2));
 			hideAll();
+			teleportAsync(match.getArena().getRespawnLocation(), true);
+			addPotionEffect(new PotionEffectBuilder(PotionEffectType.BLINDNESS).duration(TickTime.SECOND.x(2)).amplifier(2));
 			Runnable respawn = () -> {
 				if (!match.isEnded()) {
-					unhideAll();
 					spawn();
+					unhideAll();
 					respawning = false;
 					// hides players who are still respawning (as unhideAll unhides them)
 					match.getMinigamers().forEach(minigamer -> {
