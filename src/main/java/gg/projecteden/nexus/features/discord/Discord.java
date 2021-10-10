@@ -106,13 +106,12 @@ public class Discord extends Feature {
 	}
 
 	public static String discordize(String message) {
-		if (message != null)
-			message = message
-				.replaceAll("\\\\", "\\\\\\\\")
-				.replaceAll("_", "\\\\_")
-				.replaceAll("\\*", "\\\\*");
+		if (message == null)
+			return null;
 
-		return message;
+		return message
+			.replaceAll("\\\\([*_`~\\\\])", "$1")
+			.replaceAll("([*_`~\\\\])", "\\\\$1");
 	}
 
 	public static String discordize(ComponentLike component) {
@@ -218,15 +217,20 @@ public class Discord extends Feature {
 			updateStaffBridgeTopic(newStaffBridgeTopic);
 	}
 
+	@NotNull
+	private static String getTopicPlayerList(List<Player> players) {
+		return players.stream()
+			.map(player -> Presence.of(player).discord() + " " + Nickname.discordOf(player).trim())
+			.collect(Collectors.joining(System.lineSeparator()));
+	}
+
 	private static String getBridgeTopic() {
 		List<Player> players = OnlinePlayers.getAll().stream()
 				.filter(player -> !PlayerUtils.isVanished(player))
 				.sorted(Comparator.comparing(player -> Nickname.of(player).toLowerCase()))
 				.collect(Collectors.toList());
 
-		String topic = "Online nerds (" + players.size() + "): " + System.lineSeparator() + players.stream()
-				.map(player -> Presence.of(player).discord() + " " + Nickname.discordOf(player).trim())
-				.collect(Collectors.joining(", " + System.lineSeparator()));
+		String topic = "Online nerds (%d): %n%s".formatted(players.size(), getTopicPlayerList(players));
 
 		/*
 		// TODO QueUp
@@ -239,23 +243,25 @@ public class Discord extends Feature {
 		return topic;
 	}
 
+	private static String getStaffBridgeTopic() {
+		List<Player> players = OnlinePlayers.getAll().stream()
+			.filter(player -> Rank.of(player).isStaff())
+			.sorted(Comparator.comparing(Nickname::of))
+			.collect(Collectors.toList());
+
+		return "Online staff (%d): %n%s".formatted(players.size(), getTopicPlayerList(players));
+	}
+
+	private static String timestamp() {
+		return "%n%n%s".formatted("Last update: <t:" + System.currentTimeMillis() / 1000 + ">");
+	}
+
 	private static void updateBridgeTopic(String newBridgeTopic) {
 		if (Discord.getGuild() == null) return;
 		bridgeTopic = newBridgeTopic;
 		GuildChannel channel = Discord.getGuild().getGuildChannelById(TextChannel.BRIDGE.getId());
 		if (channel != null)
-			channel.getManager().setTopic(bridgeTopic).queue();
-	}
-
-	private static String getStaffBridgeTopic() {
-		List<Player> players = OnlinePlayers.getAll().stream()
-				.filter(player -> Rank.of(player).isStaff())
-				.sorted(Comparator.comparing(Nickname::of))
-				.collect(Collectors.toList());
-
-		return "Online staff (" + players.size() + "): " + System.lineSeparator() + players.stream()
-				.map(player -> Presence.of(player).discord() + " " + Nickname.discordOf(player).trim())
-				.collect(Collectors.joining(", " + System.lineSeparator()));
+			channel.getManager().setTopic(bridgeTopic + timestamp()).queue();
 	}
 
 	private static void updateStaffBridgeTopic(String newStaffBridgeTopic) {
@@ -263,7 +269,7 @@ public class Discord extends Feature {
 		staffBridgeTopic = newStaffBridgeTopic;
 		GuildChannel channel = Discord.getGuild().getGuildChannelById(TextChannel.STAFF_BRIDGE.getId());
 		if (channel != null)
-			channel.getManager().setTopic(staffBridgeTopic).queue();
+			channel.getManager().setTopic(staffBridgeTopic + timestamp()).queue();
 	}
 
 	@NotNull

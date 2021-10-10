@@ -37,6 +37,7 @@ import gg.projecteden.nexus.models.minigamersetting.MinigamerSettingService;
 import gg.projecteden.nexus.models.minigamessetting.MinigamesConfig;
 import gg.projecteden.nexus.models.minigamessetting.MinigamesConfigService;
 import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.perkowner.PerkOwner;
 import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
@@ -54,6 +55,7 @@ import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
+import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.Env;
 import net.citizensnpcs.api.CitizensAPI;
@@ -436,8 +438,13 @@ public class MinigamesCommand extends CustomCommand {
 			}
 		}
 
+		final boolean noStaffInMinigames = OnlinePlayers.where()
+			.worldGroup(WorldGroup.MINIGAMES)
+			.rank(Rank::isStaff)
+			.get().isEmpty();
+
 		boolean canUse = false;
-		if (!isMinigameNight)
+		if (!isMinigameNight || noStaffInMinigames)
 			canUse = true;
 		if (player().hasPermission("minigames.invite"))
 			canUse = true;

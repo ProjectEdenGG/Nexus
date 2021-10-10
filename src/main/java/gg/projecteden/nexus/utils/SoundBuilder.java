@@ -8,14 +8,15 @@ import gg.projecteden.utils.MathUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import me.lexikiq.HasPlayer;
 import me.lexikiq.HasUniqueId;
+import me.lexikiq.OptionalPlayer;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -115,8 +116,10 @@ public class SoundBuilder implements Cloneable {
 		return receivers(OnlinePlayers.getAll().stream().map(Player::getPlayer).collect(Collectors.toList()));
 	}
 
-	public SoundBuilder receiver(HasPlayer receiver) {
-		return receivers(Collections.singletonList(receiver.getPlayer()));
+	public SoundBuilder receiver(@Nullable OptionalPlayer receiver) {
+		if (receiver != null && receiver.getPlayer() != null)
+			receivers(Collections.singletonList(receiver.getPlayer()));
+		return this;
 	}
 
 	public SoundBuilder receivers(List<Player> receivers) {

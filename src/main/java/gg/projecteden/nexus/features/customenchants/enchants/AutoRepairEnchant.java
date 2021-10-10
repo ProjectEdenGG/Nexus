@@ -30,19 +30,19 @@ public class AutoRepairEnchant extends CustomEnchant {
 					if (meta == null)
 						continue;
 
-					if (!(meta instanceof Damageable))
+					if (!(meta instanceof Damageable damageable))
 						continue;
 
-					int damage = ((Damageable) meta).getDamage();
+					int damage = damageable.getDamage();
 					int level = item.getItemMeta().getEnchantLevel(Enchant.AUTOREPAIR);
 
 					if (level == 0)
 						continue;
 
-					if (((Damageable) meta).getDamage() == 0)
+					if (damageable.getDamage() == 0)
 						continue;
 
-					((Damageable) meta).setDamage(Math.max(0, damage - level));
+					damageable.setDamage(Math.max(0, damage - level));
 					item.setItemMeta(meta);
 				}
 			}

@@ -2,6 +2,7 @@ package gg.projecteden.nexus;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
+import com.lishid.openinv.IOpenInv;
 import com.onarandombox.MultiverseCore.MultiverseCore;
 import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.discord.Discord;
@@ -269,6 +270,8 @@ public class Nexus extends JavaPlugin {
 	private static Permission perms = null;
 	@Getter
 	private static LuckPerms luckPerms = null;
+	@Getter
+	private static IOpenInv openInv = null;
 
 	@Getter
 	// http://www.sauronsoftware.it/projects/cron4j/manual.php
@@ -285,6 +288,7 @@ public class Nexus extends JavaPlugin {
 		multiverseCore = (MultiverseCore) Bukkit.getPluginManager().getPlugin("Multiverse-Core");
 		citizens = (Citizens) Bukkit.getPluginManager().getPlugin("Citizens");
 		buycraft = (BuycraftPluginBase) Bukkit.getServer().getPluginManager().getPlugin("BuycraftX");
+		openInv = (IOpenInv) Bukkit.getPluginManager().getPlugin("OpenInv");
 		cron.start();
 		perms = getServer().getServicesManager().getRegistration(Permission.class).getProvider();
 		RegisteredServiceProvider<LuckPerms> lpProvider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);

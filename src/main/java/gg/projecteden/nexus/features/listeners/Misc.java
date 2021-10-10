@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.listeners;
 import com.destroystokyo.paper.ClientOption;
 import com.destroystokyo.paper.ClientOption.ChatVisibility;
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
+import de.myzelyam.api.vanish.PlayerVanishStateChangeEvent;
 import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.NBTTileEntity;
 import gg.projecteden.nexus.Nexus;
@@ -24,6 +25,7 @@ import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.FakePlayerInteractEvent;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
@@ -119,6 +121,15 @@ public class Misc implements Listener {
 	}
 
 	@EventHandler
+	public void onPlayerVanishStateChange(PlayerVanishStateChangeEvent event) {
+		final Player player = Bukkit.getPlayer(event.getUUID());
+		if (player == null || !player.isOnline())
+			return;
+
+		Nexus.getOpenInv().setPlayerSilentChestStatus(player, event.isVanishing());
+	}
+
+	@EventHandler
 	public void onHangingBreakByEntity(HangingBreakByEntityEvent event) {
 		if (event.getRemover() instanceof Projectile)
 			event.setCancelled(true);
@@ -165,6 +176,9 @@ public class Misc implements Listener {
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
 	public void onPlayerInteract(PlayerInteractEvent event) {
+		if (event instanceof FakePlayerInteractEvent)
+			return;
+
 		if (!ActionGroup.RIGHT_CLICK.applies(event))
 			return;
 
