@@ -27,10 +27,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.features.wither.WitherChallenge.currentFight;
 import static gg.projecteden.nexus.models.witherarena.WitherArenaConfig.isBeta;
@@ -90,38 +91,10 @@ public class WitherCommand extends CustomCommand {
 		 */
 	}
 
-	public boolean checkHasItems() {
-		PlayerInventory inventory = player().getInventory();
-		List<FuzzyItemStack> missing = new ArrayList<>();
-		List<FuzzyItemStack> required = new ArrayList<>() {{
-			add(new FuzzyItemStack(Material.WITHER_SKELETON_SKULL, 3));
-			add(new FuzzyItemStack(Material.SOUL_SAND, 4));
-			add(new FuzzyItemStack(Set.of(Material.BOW, Material.CROSSBOW), 1));
-			add(new FuzzyItemStack(MaterialTag.ARROWS, 1));
-		}};
-
-		requiredItems:
-		for (FuzzyItemStack item : required) {
-			for (Material material : item.getMaterials())
-				if (inventory.contains(material, item.getAmount()))
-					continue requiredItems;
-			missing.add(item);
-		}
-
-		if (!missing.isEmpty()) {
-			tellNeededItems(missing);
-			return false;
-		}
-
-		return true;
-	}
-
 	public void tellNeededItems(List<FuzzyItemStack> items) {
 		send(PREFIX + "&cYou do not have the necessary items in your inventory to spawn the wither. You are missing:");
-		for (FuzzyItemStack item : items) {
-			final String materials = item.getMaterials().stream().map(StringUtils::camelCase).collect(Collectors.joining(" &eor &c"));
-			send("&c - " + materials + (item.getAmount() > 1 ? " &ex &c" + item.getAmount() : ""));
-		}
+		for (FuzzyItemStack item : items)
+			send("&c - " + StringUtils.pretty(item));
 	}
 
 	@Path("invite <player>")
@@ -208,8 +181,7 @@ public class WitherCommand extends CustomCommand {
 		if (!checkHasItems())
 			return;
 
-		removeRequiredItems(Material.WITHER_SKELETON_SKULL, 3);
-		removeRequiredItems(Material.SOUL_SAND, 4);
+		removeRequiredItems();
 
 		int partySize = currentFight.getParty().size();
 		String message = "&e" + Nickname.of(currentFight.getHostPlayer()) +
@@ -239,22 +211,57 @@ public class WitherCommand extends CustomCommand {
 			.start();
 	}
 
-	private void removeRequiredItems(Material material, int amount) {
-		int removed = 0;
-		for (ItemStack content : inventory().getContents()) {
-			if (isNullOrAir(content))
-				continue;
-			if (content.getType() != material)
-				continue;
+	private static final Map<FuzzyItemStack, Boolean> required = new LinkedHashMap<>() {{
+		put(new FuzzyItemStack(Material.WITHER_SKELETON_SKULL, 3), true);
+		put(new FuzzyItemStack(Set.of(Material.SOUL_SAND, Material.SOUL_SOIL), 4), true);
+		put(new FuzzyItemStack(Set.of(Material.BOW, Material.CROSSBOW), 1), false);
+		put(new FuzzyItemStack(MaterialTag.ARROWS, 1), false);
+	}};
 
-			while (content.getAmount() > 0) {
-				content.setAmount(content.getAmount() - 1);
-				if (++removed == amount)
-					return;
+	public boolean checkHasItems() {
+		PlayerInventory inventory = player().getInventory();
+		List<FuzzyItemStack> missing = new ArrayList<>();
+
+		requiredItems:
+		for (FuzzyItemStack item : required.keySet()) {
+			for (Material material : item.getMaterials())
+				if (inventory.contains(material, item.getAmount()))
+					continue requiredItems;
+			missing.add(item);
+		}
+
+		if (!missing.isEmpty()) {
+			tellNeededItems(missing);
+			return false;
+		}
+
+		return true;
+	}
+
+	private void removeRequiredItems() {
+		for (FuzzyItemStack item : required.keySet())
+			if (required.get(item))
+				removeRequiredItems(item);
+	}
+
+	private void removeRequiredItems(FuzzyItemStack item) {
+		for (Material material : item.getMaterials()) {
+			int removed = 0;
+			for (ItemStack content : inventory().getContents()) {
+				if (isNullOrAir(content))
+					continue;
+				if (content.getType() != material)
+					continue;
+
+				while (content.getAmount() > 0) {
+					content.setAmount(content.getAmount() - 1);
+					if (++removed == item.getAmount())
+						return;
+				}
 			}
 		}
 
-		error("Could not remove " + (amount - removed) + " " + camelCase(material) + " from your inventory");
+		error("Could not remove %s from your inventory".formatted(StringUtils.pretty(item)));
 	}
 
 	@Path("chat <message...>")

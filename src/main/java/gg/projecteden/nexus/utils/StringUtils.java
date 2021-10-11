@@ -12,7 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static java.util.stream.Collectors.joining;
 
 public class StringUtils extends gg.projecteden.utils.StringUtils {
 	@Getter
@@ -193,6 +195,18 @@ public class StringUtils extends gg.projecteden.utils.StringUtils {
 
 	public static String pretty(ItemStack item, int amount) {
 		return item.getAmount() * amount + " " + camelCase(item.getType().name());
+	}
+
+	@NotNull
+	public static String pretty(FuzzyItemStack item) {
+		return pretty(item, ChatColor.RED, ChatColor.YELLOW);
+	}
+
+	@NotNull
+	public static String pretty(FuzzyItemStack item, ChatColor color, ChatColor delimiterColor) {
+		final String delimiter = " %sor %s".formatted(delimiterColor, color);
+		final String materials = item.getMaterials().stream().map(StringUtils::camelCase).collect(joining(delimiter));
+		return materials + (item.getAmount() > 1 ? " %sx %s%d".formatted(delimiterColor, color, item.getAmount()) : "");
 	}
 
 	public static String bool(boolean b) {
