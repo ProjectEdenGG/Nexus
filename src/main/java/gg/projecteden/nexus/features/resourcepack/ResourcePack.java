@@ -46,8 +46,9 @@ import static gg.projecteden.nexus.features.resourcepack.models.files.CustomMode
 
 @NoArgsConstructor
 public class ResourcePack extends Feature implements Listener {
-	public static final String FILE_NAME = "ResourcePack" + (Nexus.getEnv() == Env.PROD ? "" : "-" + Nexus.getEnv()) + ".zip";
-	public static final String URL = "http://cdn." + Nexus.DOMAIN + "/" + FILE_NAME;
+	public static final String ENV_SUFFIX = Nexus.getEnv() == Env.PROD ? "" : "-" + Nexus.getEnv();
+	public static final String FILE_NAME = "ResourcePack%s.zip".formatted(ENV_SUFFIX);
+	public static final String URL = "http://cdn.%s/%s".formatted(Nexus.DOMAIN, FILE_NAME);
 	@Getter
 	static final String fileRegex = "[\\w]+";
 	@Getter
@@ -89,13 +90,13 @@ public class ResourcePack extends Feature implements Listener {
 	}
 
 	public static void read() {
-		new ResourcePackUpdateStartEvent().callEvent();
 
 		Tasks.async(() -> {
-			openZip();
+			new ResourcePackUpdateStartEvent().callEvent();
 			try {
+				openZip();
 				CustomModelMenu.load();
-				Tasks.sync(() -> new ResourcePackUpdateCompleteEvent().callEvent());
+				new ResourcePackUpdateCompleteEvent().callEvent();
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			} finally {
