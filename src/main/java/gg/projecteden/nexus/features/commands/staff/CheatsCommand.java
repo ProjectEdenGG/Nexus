@@ -1,12 +1,12 @@
 package gg.projecteden.nexus.features.commands.staff;
 
+import de.myzelyam.api.vanish.VanishAPI;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.godmode.GodmodeService;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.WorldGroup;
 import org.bukkit.GameMode;
@@ -25,16 +25,19 @@ public class CheatsCommand extends CustomCommand {
 
 	@Path("<on|off>")
 	void toggle(boolean enabled) {
-		if (enabled)
+		if (enabled) {
 			on(player());
-		else
+			send(PREFIX + "&aEnabled");
+		} else {
 			off(player());
+			send(PREFIX + "&cDisabled");
+		}
 	}
 
 	public static void off(Player player) {
 		new GodmodeService().edit(player, godmode -> godmode.setEnabled(false));
-		PlayerUtils.runCommand(player, "vanish off");
-		PlayerUtils.runCommand(player, "wgedit off");
+		VanishAPI.showPlayer(player);
+		WorldGuardEditCommand.off(player);
 
 		if (WorldGroup.of(player) != WorldGroup.CREATIVE) {
 			player.setGameMode(GameMode.SURVIVAL);
@@ -45,8 +48,6 @@ public class CheatsCommand extends CustomCommand {
 				player.setFlying(false);
 			}
 		}
-
-		PlayerUtils.send(player, PREFIX + "&cDisabled");
 	}
 
 	public static void on(Player player) {
@@ -60,9 +61,7 @@ public class CheatsCommand extends CustomCommand {
 			player.setFlying(true);
 		}
 
-		PlayerUtils.runCommand(player, "vanish on");
-
-		PlayerUtils.send(player, PREFIX + "&aEnabled");
+		VanishAPI.hidePlayer(player);
 	}
 
 }

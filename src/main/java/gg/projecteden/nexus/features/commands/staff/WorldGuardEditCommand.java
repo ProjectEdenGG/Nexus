@@ -57,11 +57,11 @@ public class WorldGuardEditCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Flag registry " + (enable ? "&aenabled" : "&cdisabled"));
 	}
 
-	private void on(Player player) {
+	public static void on(Player player) {
 		PermissionChange.set().player(player).permissions(PERMISSION).runAsync();
 	}
 
-	private void off(Player player) {
+	public static void off(Player player) {
 		PermissionChange.unset().player(player).permissions(PERMISSION).runAsync();
 	}
 
