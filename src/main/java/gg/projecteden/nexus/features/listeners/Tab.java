@@ -112,7 +112,7 @@ public class Tab implements Listener {
 			return id.equals(ACTIVE.getId());
 		}
 
-		public static final Presence ACTIVE = new Presence("presence_active", "", "892994697600040990");
+		public static final Presence ACTIVE = new Presence("presence_active", "", "896466289508356106");
 
 		public static Presence of(Player player) {
 			presences:
