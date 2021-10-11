@@ -466,6 +466,24 @@ public enum Package {
 	@Display(Material.DAYLIGHT_DETECTOR)
 	PTIME,
 
+	@Id("4722595")
+	@Category(StoreCategory.VISUALS)
+	@Permission(PlayerTimeCommand.PERMISSION)
+	@Display(value = Material.LAPIS_LAZULI, customModelData = 1)
+	PLAYER_PLUSHIES_TIER_1,
+
+	@Id("TODO")
+	@Category(StoreCategory.VISUALS)
+	@Permission(PlayerTimeCommand.PERMISSION)
+	@Display(value = Material.LAPIS_LAZULI, customModelData = 10000)
+	PLAYER_PLUSHIES_TIER_2,
+
+	@Id("TODO")
+	@Category(StoreCategory.VISUALS)
+	@Permission(PlayerTimeCommand.PERMISSION)
+	@Display(value = Material.LAPIS_LAZULI, customModelData = 20000)
+	PLAYER_PLUSHIES_TIER_3,
+
 	@Id("2019251")
 	@Category(StoreCategory.INVENTORY)
 	@Permission(AutoSortCommand.PERMISSION)
