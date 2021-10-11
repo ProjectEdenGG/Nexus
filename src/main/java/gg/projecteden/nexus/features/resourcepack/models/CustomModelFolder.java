@@ -1,6 +1,7 @@
-package gg.projecteden.nexus.features.resourcepack;
+package gg.projecteden.nexus.features.resourcepack.models;
 
-import gg.projecteden.nexus.features.resourcepack.CustomModelGroup.Override;
+import gg.projecteden.nexus.features.resourcepack.ResourcePack;
+import gg.projecteden.nexus.features.resourcepack.models.CustomModelGroup.Override;
 import lombok.Data;
 import lombok.NonNull;
 

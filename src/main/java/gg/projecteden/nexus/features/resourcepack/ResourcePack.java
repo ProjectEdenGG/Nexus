@@ -2,6 +2,11 @@ package gg.projecteden.nexus.features.resourcepack;
 
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.features.resourcepack.models.CustomModelFolder;
+import gg.projecteden.nexus.features.resourcepack.models.CustomModelGroup;
+import gg.projecteden.nexus.features.resourcepack.models.FontFile;
+import gg.projecteden.nexus.features.resourcepack.models.SoundsFile;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
 import gg.projecteden.nexus.utils.IOUtils;
@@ -13,6 +18,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import me.lexikiq.OptionalPlayerLike;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -33,14 +39,14 @@ import java.util.concurrent.CompletableFuture;
 
 @NoArgsConstructor
 public class ResourcePack extends Feature implements Listener {
-	static final String URL = "http://cdn." + Nexus.DOMAIN + "/ResourcePack.zip";
-	static final String fileName = "ResourcePack.zip";
+	public static final String URL = "http://cdn." + Nexus.DOMAIN + "/ResourcePack.zip";
+	public static final String fileName = "ResourcePack.zip";
 	@Getter
 	static final String fileRegex = "[\\w]+";
 	@Getter
-	static String hash = Utils.createSha1(URL);
+	public static String hash = Utils.createSha1(URL);
 	@Getter
-	static File file = IOUtils.getPluginFile(fileName);
+	public static File file = IOUtils.getPluginFile(fileName);
 
 	@Getter
 	@Setter
@@ -72,6 +78,8 @@ public class ResourcePack extends Feature implements Listener {
 
 	@Override
 	public void onStart() {
+		Bukkit.getMessenger().registerIncomingPluginChannel(Nexus.getInstance(), "titan:out", new VersionsChannelListener());
+
 		Tasks.async(() -> {
 			openZip();
 			CustomModelMenu.load();
@@ -83,10 +91,11 @@ public class ResourcePack extends Feature implements Listener {
 	@SneakyThrows
 	public void onStop() {
 		closeZip();
+		Bukkit.getMessenger().unregisterOutgoingPluginChannel(Nexus.getInstance(), "titan:out");
 	}
 
 	@SneakyThrows
-	static void openZip() {
+	public static void openZip() {
 		try {
 			FileSystem existing = FileSystems.getFileSystem(fileUri);
 			if (existing != null && existing.isOpen())
@@ -97,7 +106,7 @@ public class ResourcePack extends Feature implements Listener {
 	}
 
 	@SneakyThrows
-	static void closeZip() {
+	public static void closeZip() {
 		if (zipFile != null && zipFile.isOpen())
 			zipFile.close();
 	}

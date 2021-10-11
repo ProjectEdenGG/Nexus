@@ -1,8 +1,9 @@
-package gg.projecteden.nexus.features.resourcepack;
+package gg.projecteden.nexus.features.resourcepack.models;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
-import gg.projecteden.nexus.features.resourcepack.CustomModel.CustomModelMeta;
+import gg.projecteden.nexus.features.resourcepack.ResourcePack;
+import gg.projecteden.nexus.features.resourcepack.models.CustomModel.CustomModelMeta;
 import gg.projecteden.nexus.utils.AudioUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
@@ -20,6 +21,7 @@ import java.util.List;
 import static gg.projecteden.nexus.utils.SoundBuilder.SOUND_DURATIONS;
 
 @Data
+public
 class CustomModelGroup {
 	private Material material;
 	private List<Override> overrides = new ArrayList<>();
@@ -85,7 +87,7 @@ class CustomModelGroup {
 		return Material.getMaterial(materialName.toUpperCase());
 	}
 
-	static void load() {
+	public static void load() {
 		try {
 			for (Path root : ResourcePack.getZipFile().getRootDirectories()) {
 				Files.walk(root).forEach(path -> {

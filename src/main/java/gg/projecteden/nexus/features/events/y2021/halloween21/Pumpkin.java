@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.events.y2021.halloween21;
 
-import gg.projecteden.nexus.features.resourcepack.CustomModel;
+import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
 

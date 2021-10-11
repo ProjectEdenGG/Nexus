@@ -7,7 +7,7 @@ import gg.projecteden.nexus.features.customenchants.enchants.SoulboundEnchant;
 import gg.projecteden.nexus.features.itemtags.Condition;
 import gg.projecteden.nexus.features.itemtags.Rarity;
 import gg.projecteden.nexus.features.recipes.functionals.Backpacks;
-import gg.projecteden.nexus.features.resourcepack.CustomModel;
+import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.models.nickname.Nickname;

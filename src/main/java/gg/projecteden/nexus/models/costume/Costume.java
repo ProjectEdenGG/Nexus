@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.models.costume;
 
-import gg.projecteden.nexus.features.resourcepack.CustomModel;
-import gg.projecteden.nexus.features.resourcepack.CustomModelFolder;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
+import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.features.resourcepack.models.CustomModelFolder;
 import gg.projecteden.nexus.features.store.StoreCommand;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.AllArgsConstructor;

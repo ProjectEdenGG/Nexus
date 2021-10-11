@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.store.perks.autosort.features;
 
-import gg.projecteden.nexus.features.resourcepack.CustomModel;
+import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.store.perks.autosort.AutoSortFeature;
 import gg.projecteden.nexus.models.autosort.AutoSortUser;
 import gg.projecteden.nexus.models.autosort.AutoSortUser.AutoTrashBehavior;

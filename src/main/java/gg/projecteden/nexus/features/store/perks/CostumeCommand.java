@@ -1,10 +1,13 @@
-package gg.projecteden.nexus.features.resourcepack;
+package gg.projecteden.nexus.features.store.perks;
 
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.resourcepack.ResourcePack;
+import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.features.resourcepack.models.CustomModelFolder;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -38,7 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 
-import static gg.projecteden.nexus.features.resourcepack.CustomModel.ICON;
+import static gg.projecteden.nexus.features.resourcepack.models.CustomModel.ICON;
 import static gg.projecteden.nexus.models.costume.Costume.EXCLUSIVE;
 
 @NoArgsConstructor

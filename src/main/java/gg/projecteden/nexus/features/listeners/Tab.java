@@ -2,8 +2,8 @@ package gg.projecteden.nexus.features.listeners;
 
 import de.myzelyam.api.vanish.PlayerVanishStateChangeEvent;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.resourcepack.FontFile.CustomCharacter;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
+import gg.projecteden.nexus.features.resourcepack.models.FontFile.CustomCharacter;
 import gg.projecteden.nexus.features.scoreboard.ScoreboardLine;
 import gg.projecteden.nexus.models.afk.AFKUserService;
 import gg.projecteden.nexus.models.afk.events.AFKEvent;

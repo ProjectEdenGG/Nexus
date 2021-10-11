@@ -5,7 +5,7 @@ import com.viaversion.viaversion.api.Via;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.resourcepack.CustomModel;
+import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;

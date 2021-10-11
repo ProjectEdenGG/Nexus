@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.resourcepack;
+package gg.projecteden.nexus.features.resourcepack.models;
 
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Data;

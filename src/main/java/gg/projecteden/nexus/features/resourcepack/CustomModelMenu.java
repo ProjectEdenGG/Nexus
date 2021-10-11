@@ -5,6 +5,9 @@ import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.features.resourcepack.models.CustomModelFolder;
+import gg.projecteden.nexus.features.resourcepack.models.CustomModelGroup;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.NonNull;
@@ -93,7 +96,7 @@ public class CustomModelMenu extends MenuUtils implements InventoryProvider {
 		paginator(player, contents, items);
 	}
 
-	static void load() {
+	public static void load() {
 		ResourcePack.setModelGroups(new ArrayList<>());
 		ResourcePack.setFolders(new ArrayList<>());
 		ResourcePack.setModels(new HashMap<>());

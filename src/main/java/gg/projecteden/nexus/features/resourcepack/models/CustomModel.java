@@ -1,6 +1,7 @@
-package gg.projecteden.nexus.features.resourcepack;
+package gg.projecteden.nexus.features.resourcepack.models;
 
 import de.tr7zw.nbtapi.NBTItem;
+import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -2,8 +2,8 @@ package gg.projecteden.nexus.features.events.y2021.halloween21;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.mobheads.MobHeads;
-import gg.projecteden.nexus.features.resourcepack.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
+import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.PacketUtils;
