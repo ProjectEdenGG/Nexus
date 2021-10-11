@@ -48,9 +48,8 @@ public class NameplatesListener implements Listener {
 	public void on(PlayerJoinEvent event) {
 		Nameplates.debug("on PlayerJoinEvent(" + event.getPlayer().getName() + ")");
 		Player player = event.getPlayer();
-		if (nameplates().isManageTeams())
-			nameplates().getTeam().addEntry(player.getName());
 
+		Nameplates.addToTeam(player);
 		Tasks.waitAsync(10, () -> manager().respawn(player));
 	}
 
@@ -92,6 +91,7 @@ public class NameplatesListener implements Listener {
 			return;
 
 		Nameplates.debug("on PlayerVanishStateChangeEvent(" + player.getName() + ")");
+		Nameplates.addToTeam(player);
 		manager().respawn(player);
 	}
 
@@ -131,10 +131,8 @@ public class NameplatesListener implements Listener {
 		Nameplates.debug("on PlayerToggleSneakEvent(" + event.getPlayer().getName() + ", sneaking=" + event.isSneaking() + ")");
 		if (event.isSneaking())
 			manager().destroy(event.getPlayer());
-		else {
-			event.getPlayer().setSneaking(false);
-			manager().spawn(event.getPlayer());
-		}
+		else
+			Tasks.wait(1, () -> manager().spawn(event.getPlayer()));
 	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)

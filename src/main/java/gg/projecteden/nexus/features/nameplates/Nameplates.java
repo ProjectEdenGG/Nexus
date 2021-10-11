@@ -63,6 +63,11 @@ public class Nameplates extends Feature {
 		this.team = team;
 	}
 
+	public static void addToTeam(Player player) {
+		if (Nameplates.get().isManageTeams())
+			Nameplates.get().getTeam().addEntry(player.getName());
+	}
+
 	@Override
 	public void onStart() {
 		Tasks.wait(1, this.nameplateManager::onStart);

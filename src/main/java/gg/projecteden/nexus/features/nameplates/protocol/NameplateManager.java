@@ -179,6 +179,7 @@ public class NameplateManager {
 			if (isSelf(this, viewer))
 				if (!new NameplateUserService().get(this).isViewOwnNameplate())
 					return true;
+
 			return false;
 		}
 

@@ -123,11 +123,7 @@ public class Misc implements Listener {
 
 	@EventHandler
 	public void onPlayerVanishStateChange(PlayerVanishStateChangeEvent event) {
-		final Player player = Bukkit.getPlayer(event.getUUID());
-		if (player == null || !player.isOnline())
-			return;
-
-		Nexus.getOpenInv().setPlayerSilentChestStatus(player, event.isVanishing());
+		Nexus.getOpenInv().setPlayerSilentChestStatus(Bukkit.getOfflinePlayer(event.getUUID()), event.isVanishing());
 	}
 
 	@EventHandler
