@@ -34,8 +34,8 @@ public class WitherChestplate extends FunctionalRecipe {
 				.setLore(WitherHelmet.getLore())
 				.customModelData(1)
 				.rarity(Rarity.ARTIFACT)
-				.attribute(Attribute.GENERIC_ARMOR, new AttributeModifier(UUID.randomUUID(),"wither-armor-points", 8, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST))
-				.attribute(Attribute.GENERIC_ARMOR_TOUGHNESS, new AttributeModifier(UUID.randomUUID(), "wither-armor-toughness", 2, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST))
+				.attribute(Attribute.GENERIC_ARMOR, new AttributeModifier(UUID.nameUUIDFromBytes("wither-armor-points".getBytes()), "wither-armor-points", 8, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST))
+				.attribute(Attribute.GENERIC_ARMOR_TOUGHNESS, new AttributeModifier(UUID.nameUUIDFromBytes("wither-armor-toughness".getBytes()), "wither-armor-toughness", 2, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST))
 				.nbt(nbtItem -> nbtItem.setBoolean("wither-armor", true))
 				.build();
 

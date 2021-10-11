@@ -30,8 +30,8 @@ public class WitherLeggings extends FunctionalRecipe {
 				.name("&eWither Leggings")
 				.setLore(WitherHelmet.getLore())
 				.rarity(Rarity.ARTIFACT)
-				.attribute(Attribute.GENERIC_ARMOR, new AttributeModifier(UUID.randomUUID(),"wither-armor-points", 6, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.LEGS))
-				.attribute(Attribute.GENERIC_ARMOR_TOUGHNESS, new AttributeModifier(UUID.randomUUID(), "wither-armor-toughness", 2, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.LEGS))
+				.attribute(Attribute.GENERIC_ARMOR, new AttributeModifier(UUID.nameUUIDFromBytes("wither-armor-points".getBytes()), "wither-armor-points", 6, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.LEGS))
+				.attribute(Attribute.GENERIC_ARMOR_TOUGHNESS, new AttributeModifier(UUID.nameUUIDFromBytes("wither-armor-toughness".getBytes()), "wither-armor-toughness", 2, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.LEGS))
 				.customModelData(1)
 				.nbt(nbtItem -> nbtItem.setBoolean("wither-armor", true))
 				.build();

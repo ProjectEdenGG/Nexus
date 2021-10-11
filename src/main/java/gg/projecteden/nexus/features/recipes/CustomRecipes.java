@@ -45,11 +45,6 @@ public class CustomRecipes extends Feature implements Listener {
 	@Getter
 	public static List<NexusRecipe> recipes = new ArrayList<>();
 
-	@Override
-	public void onStart() {
-		Nexus.registerListener(this);
-	}
-
 	@EventHandler
 	public void on(ResourcePackUpdateCompleteEvent event) {
 		Tasks.async(() -> {
