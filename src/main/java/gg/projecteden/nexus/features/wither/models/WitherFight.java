@@ -28,6 +28,7 @@ import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.utils.Utils;
 import lombok.Data;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -39,11 +40,13 @@ import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Blaze;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Hoglin;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.PigZombie;
 import org.bukkit.entity.PiglinBrute;
 import org.bukkit.entity.Player;
@@ -59,9 +62,12 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -80,6 +86,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import static gg.projecteden.nexus.features.wither.WitherChallenge.currentFight;
 import static gg.projecteden.nexus.models.witherarena.WitherArenaConfig.isBeta;
 import static gg.projecteden.nexus.utils.Utils.tryCalculate;
 import static gg.projecteden.utils.StringUtils.plural;
@@ -234,7 +241,6 @@ public abstract class WitherFight implements Listener {
 			PigZombie piglin = location.getWorld().spawn(location, PigZombie.class);
 			piglin.setAdult();
 			piglin.setCanPickupItems(false);
-			piglin.setTarget(getRandomAlivePlayer());
 		}
 	}
 
@@ -263,7 +269,6 @@ public abstract class WitherFight implements Listener {
 			hoglin.setAdult();
 			hoglin.setCanPickupItems(false);
 			hoglin.setImmuneToZombification(true);
-			hoglin.setTarget(getRandomAlivePlayer());
 		}
 	}
 
@@ -273,7 +278,6 @@ public abstract class WitherFight implements Listener {
 			PiglinBrute brute = location.getWorld().spawn(location, PiglinBrute.class);
 			brute.setCanPickupItems(false);
 			brute.setImmuneToZombification(true);
-			brute.setTarget(getRandomAlivePlayer());
 		}
 	}
 
@@ -327,6 +331,42 @@ public abstract class WitherFight implements Listener {
 			return;
 
 		event.setTarget(getRandomAlivePlayer());
+	}
+
+	@EventHandler
+	public void onEntitySpawn(EntitySpawnEvent event) {
+		if (!isInRegion(event.getEntity().getLocation()))
+			return;
+
+		if (!(event.getEntity() instanceof Mob mob))
+			return;
+
+		mob.setTarget(getRandomAlivePlayer());
+	}
+
+	static {
+		Tasks.repeat(TickTime.SECOND, TickTime.SECOND, () -> {
+			if (currentFight == null)
+				return;
+
+			if (!currentFight.isStarted())
+				return;
+
+			if (Utils.isNullOrEmpty(currentFight.getAlivePlayers()))
+				return;
+
+			for (Entity entity : WitherChallenge.getEntities()) {
+				if (!(entity instanceof Mob mob))
+					continue;
+
+				if (mob.getTarget() != null)
+					if (mob.getTarget() instanceof Player player)
+						if (currentFight.getAlivePlayers().contains(player.getUniqueId()))
+							continue;
+
+				mob.setTarget(currentFight.getRandomAlivePlayer());
+			}
+		});
 	}
 
 	@EventHandler
@@ -388,7 +428,7 @@ public abstract class WitherFight implements Listener {
 
 			WitherChallenge.reset();
 		} else {
-			WitherChallenge.currentFight.broadcastToParty("&e" + Nickname.of(player) + " &chas " + reason + " and is out of the fight!");
+			currentFight.broadcastToParty("&e" + Nickname.of(player) + " &chas " + reason + " and is out of the fight!");
 			wither.setTarget(getRandomAlivePlayer());
 		}
 		alivePlayers.remove(player.getUniqueId());
@@ -398,7 +438,7 @@ public abstract class WitherFight implements Listener {
 
 	@EventHandler(priority = EventPriority.LOW)
 	public void onDeath(PlayerDeathEvent event) {
-		if (WitherChallenge.currentFight == null)
+		if (currentFight == null)
 			return;
 
 		Player player = event.getEntity();
@@ -446,8 +486,8 @@ public abstract class WitherFight implements Listener {
 
 		Tasks.wait(TickTime.SECOND.x(10), () -> {
 			started = false;
-			WitherChallenge.currentFight.alivePlayers().forEach(Warps::spawn);
-			WitherChallenge.currentFight.sendSpectatorsToSpawn();
+			currentFight.alivePlayers().forEach(Warps::spawn);
+			currentFight.sendSpectatorsToSpawn();
 			WitherChallenge.reset();
 		});
 	}
@@ -473,6 +513,17 @@ public abstract class WitherFight implements Listener {
 			return;
 
 		if (event.getDamager() instanceof Player || event.getDamager() instanceof Arrow)
+			return;
+
+		if (!isInRegion(event.getEntity().getLocation()))
+			return;
+
+		event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onSuffocate(EntityDamageEvent event) {
+		if (event.getCause() != DamageCause.SUFFOCATION)
 			return;
 
 		if (!isInRegion(event.getEntity().getLocation()))
@@ -629,7 +680,7 @@ public abstract class WitherFight implements Listener {
 		KNOCKBACK {
 			@Override
 			public void execute(Player player) {
-				Location witherLocation = WitherChallenge.currentFight.wither.getLocation();
+				Location witherLocation = currentFight.wither.getLocation();
 				Location playerLocation = player.getLocation();
 				int x = (int) (playerLocation.getX() - witherLocation.getX());
 				int z = (int) (playerLocation.getZ() - witherLocation.getZ());
@@ -681,12 +732,9 @@ public abstract class WitherFight implements Listener {
 		DUPLICATE {
 			@Override
 			public void execute(List<Player> players) {
-				Location witherLoc = WitherChallenge.currentFight.wither.getLocation();
-				Wither wither1 = spawnMinion(witherLoc.clone().add(3, 0, 0));
-				wither1.setTarget(PlayerUtils.getPlayer(RandomUtils.randomElement(players)).getPlayer());
-
-				Wither wither2 = spawnMinion(witherLoc.clone().add(-3, 0, 0));
-				wither2.setTarget(PlayerUtils.getPlayer(RandomUtils.randomElement(players)).getPlayer());
+				Location witherLoc = currentFight.wither.getLocation();
+				spawnMinion(witherLoc.clone().add(3, 0, 0));
+				spawnMinion(witherLoc.clone().add(-3, 0, 0));
 			}
 
 			public Wither spawnMinion(Location location) {
@@ -702,7 +750,7 @@ public abstract class WitherFight implements Listener {
 		TNT {
 			@Override
 			public void execute(List<Player> players) {
-				Location witherLoc = WitherChallenge.currentFight.wither.getLocation();
+				Location witherLoc = currentFight.wither.getLocation();
 				TNTPrimed tnt = witherLoc.getWorld().spawn(witherLoc, TNTPrimed.class);
 				tnt.setFuseTicks(50);
 			}

@@ -29,6 +29,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -39,8 +40,10 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -83,15 +86,36 @@ public class WitherChallenge extends Feature implements Listener {
 			currentFight.sendSpectatorsToSpawn();
 			currentFight = null;
 		}
-		WorldGuardUtils worldGuardUtils = new WorldGuardUtils("events");
-		ProtectedRegion region = worldGuardUtils.getProtectedRegion("witherarena");
-		worldGuardUtils.getEntitiesInRegion(region.getId()).forEach(e -> {
-			if (e.getType() != EntityType.PLAYER)
-				e.remove();
-		});
-		new WorldEditUtils("events").paster().file("wither_arena").at(region.getMinimumPoint()).pasteAsync();
+
+		removeAllEntities();
+
+		paste();
+
 		if (!isMaintenance() && processQueue)
 			processQueue();
+	}
+
+	private static void removeAllEntities() {
+		getEntities().forEach(entity -> {
+			if (entity.getType() != EntityType.PLAYER)
+				entity.remove();
+		});
+	}
+
+	private static void paste() {
+		new WorldEditUtils("events").paster().file("wither_arena").at(worldguard().getProtectedRegion("witherarena").getMinimumPoint()).pasteAsync();
+	}
+
+	@NotNull
+	public static Collection<Entity> getEntities() {
+		WorldGuardUtils worldguard = worldguard();
+		ProtectedRegion region = worldguard.getProtectedRegion("witherarena");
+		return worldguard.getEntitiesInRegion(region.getId());
+	}
+
+	@NotNull
+	private static WorldGuardUtils worldguard() {
+		return new WorldGuardUtils("events");
 	}
 
 	public static void processQueue() {
