@@ -26,6 +26,7 @@ import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -148,12 +149,15 @@ public class EmojisCommand extends CustomCommand implements Listener {
 				}
 		}
 
-		if (!message.equals(event.getMessage())) {
+		if (!message.equals(event.getMessage()))
 			if (chatter != null)
 				Tasks.wait(1, () -> PlayerUtils.send(chatter, Chat.PREFIX + "&cYou do not own some of the emojis you used! &3Purchase in &c/emoji store"));
 
+		for (Emoji emoji : EMOJIS)
+			message = message.replaceAll(emoji.getEmoji(), ChatColor.WHITE + emoji.getEmoji() + event.getChannel().getMessageColor());
+
+		if (!message.equals(event.getMessage()))
 			event.setMessage(message);
-		}
 	}
 
 	@ConverterFor(Emoji.class)
