@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.nameplates.protocol.packet.EntityDestroyPac
 import gg.projecteden.nexus.features.nameplates.protocol.packet.EntityMetadataPacket;
 import gg.projecteden.nexus.features.nameplates.protocol.packet.EntitySpawnPacket;
 import gg.projecteden.nexus.features.nameplates.protocol.packet.MountPacket;
+import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.nameplates.NameplateUserService;
 import gg.projecteden.nexus.utils.Name;
@@ -165,15 +166,19 @@ public class NameplateManager {
 		}
 
 		private boolean ignore(Player viewer) {
+			if (ResourcePack.isReloading())
+				return true;
 			if (!isOnline())
 				return true;
-			if (getOnlinePlayer().isDead())
+
+			final Player player = getOnlinePlayer();
+			if (player.isDead())
 				return true;
-			if (getOnlinePlayer().isSneaking())
+			if (player.isSneaking())
 				return true;
-			if (DisguiseAPI.isDisguised(getOnlinePlayer()))
+			if (DisguiseAPI.isDisguised(player))
 				return true;
-			if (getOnlinePlayer().hasPotionEffect(PotionEffectType.INVISIBILITY))
+			if (player.hasPotionEffect(PotionEffectType.INVISIBILITY))
 				return true;
 
 			if (isSelf(this, viewer))

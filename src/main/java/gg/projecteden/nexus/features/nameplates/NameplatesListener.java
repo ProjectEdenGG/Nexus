@@ -3,6 +3,8 @@ package gg.projecteden.nexus.features.nameplates;
 import de.myzelyam.api.vanish.PlayerVanishStateChangeEvent;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.nameplates.protocol.NameplateManager;
+import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
+import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateStartEvent;
 import gg.projecteden.nexus.models.afk.events.AFKEvent;
 import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange.PlayerRankChangeEvent;
 import gg.projecteden.nexus.utils.Tasks;
@@ -40,8 +42,16 @@ public class NameplatesListener implements Listener {
 		return nameplates().getNameplateManager();
 	}
 
-	static {
-		Tasks.repeatAsync(TickTime.SECOND.x(5), TickTime.SECOND.x(5), () -> manager().spawnAll());
+	private static int taskId;
+
+	@EventHandler
+	public void on(ResourcePackUpdateStartEvent event) {
+		Tasks.cancel(taskId);
+	}
+
+	@EventHandler
+	public void on(ResourcePackUpdateCompleteEvent event) {
+		taskId = Tasks.repeatAsync(TickTime.SECOND.x(5), TickTime.SECOND.x(5), () -> manager().spawnAll());
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)

@@ -53,6 +53,10 @@ public class ResourcePack extends Feature implements Listener {
 	public static String hash = Utils.createSha1(URL);
 	@Getter
 	public static File file = IOUtils.getPluginFile(FILE_NAME);
+	@Getter
+	static final URI fileUri = URI.create("jar:" + file.toURI());
+	@Getter
+	private static FileSystem zipFile;
 
 	@Getter
 	private static List<CustomModelGroup> modelGroups;
@@ -68,9 +72,7 @@ public class ResourcePack extends Feature implements Listener {
 	private static FontFile fontFile;
 
 	@Getter
-	static final URI fileUri = URI.create("jar:" + ResourcePack.getFile().toURI());
-	@Getter
-	private static FileSystem zipFile;
+	private static boolean reloading;
 
 	@Override
 	public void onStart() {
@@ -89,6 +91,7 @@ public class ResourcePack extends Feature implements Listener {
 		Tasks.async(() -> {
 			try {
 				new ResourcePackUpdateStartEvent().callEvent();
+				reloading = true;
 
 				openZip();
 
@@ -96,6 +99,7 @@ public class ResourcePack extends Feature implements Listener {
 				readAllFiles();
 				CustomModelMenu.load();
 
+				reloading = false;
 				new ResourcePackUpdateCompleteEvent().callEvent();
 			} catch (Exception ex) {
 				ex.printStackTrace();

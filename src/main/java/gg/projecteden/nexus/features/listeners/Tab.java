@@ -36,8 +36,17 @@ import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 public class Tab implements Listener {
 
-	static {
-		Tasks.repeatAsync(TickTime.TICK, TickTime.SECOND.x(5), Tab::update);
+	private static int taskId;
+
+	@EventHandler
+	public void on(ResourcePackUpdateStartEvent event) {
+		Tasks.cancel(taskId);
+	}
+
+	@EventHandler
+	public void on(ResourcePackUpdateCompleteEvent event) {
+		Presence.loadAll();
+		taskId = Tasks.repeatAsync(0, TickTime.SECOND.x(5), Tab::update);
 	}
 
 	public static void update() {
@@ -51,19 +60,17 @@ public class Tab implements Listener {
 	}
 
 	public static String getHeader(Player player) {
-		return System.lineSeparator() + ScoreboardLine.ONLINE.render(player) + System.lineSeparator();
+		return "%n%s%n".formatted(ScoreboardLine.ONLINE.render(player));
 	}
 
 	public static String getFooter(Player player) {
-		return System.lineSeparator() +
-				"  " + ScoreboardLine.PING.render(player) + "  &8&l|  " + ScoreboardLine.TPS.render(player) + "  " +
-				System.lineSeparator() +
-				ScoreboardLine.CHANNEL.render(player) +
-				System.lineSeparator() +
-				"" +
-				System.lineSeparator() +
-				"&3Join us on &c/discord" +
-				System.lineSeparator();
+		final String nl = System.lineSeparator();
+		return
+			nl + "  " + ScoreboardLine.PING.render(player) + "  &8&l|  " + ScoreboardLine.TPS.render(player) + "  " +
+			nl + ScoreboardLine.CHANNEL.render(player) +
+			nl + "" +
+			nl + "&3Join us on &c/discord" +
+			nl;
 	}
 
 	public static String getFormat(Player player) {
@@ -72,19 +79,6 @@ public class Tab implements Listener {
 	}
 
 	public static final List<Presence> PRESENCES = new ArrayList<>();
-
-	private static int taskId;
-
-	@EventHandler
-	public void on(ResourcePackUpdateStartEvent event) {
-		Tasks.cancel(taskId);
-	}
-
-	@EventHandler
-	public void on(ResourcePackUpdateCompleteEvent event) {
-		Presence.loadAll();
-		taskId = Tasks.repeatAsync(0, TickTime.SECOND.x(5), Tab::update);
-	}
 
 	@Data
 	public static class Presence {
@@ -125,6 +119,8 @@ public class Tab implements Listener {
 			}
 
 			Nexus.warn("Could not determine " + Nickname.of(player) + "'s presence");
+			if (Nexus.isDebug())
+				Thread.dumpStack();
 			return ACTIVE;
 		}
 
