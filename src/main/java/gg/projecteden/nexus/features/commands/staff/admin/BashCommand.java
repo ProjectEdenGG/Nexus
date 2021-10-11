@@ -6,7 +6,6 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.utils.Utils;
 import lombok.NonNull;
 
@@ -22,7 +21,11 @@ public class BashCommand extends CustomCommand {
 	@Path("<command...>")
 	@Async
 	void run(String command) {
-		send(tryExecute(command));
+		final String output = tryExecute(command);
+		if (Strings.isNullOrEmpty(output))
+			send(PREFIX + "Command executed successfully");
+		else
+			send(PREFIX + "&7" + output);
 	}
 
 	public static String tryExecute(String command) {
@@ -30,13 +33,8 @@ public class BashCommand extends CustomCommand {
 	}
 
 	public static String tryExecute(String command, File workingDirectory) {
-		String PREFIX = StringUtils.getPrefix("Bash");
 		try {
-			String result = Utils.bash(command, workingDirectory);
-			if (Strings.isNullOrEmpty(result))
-				return PREFIX + "Command executed successfully";
-			else
-				return PREFIX + "&7" + result;
+			return Utils.bash(command, workingDirectory);
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}

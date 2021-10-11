@@ -3,8 +3,8 @@ package gg.projecteden.nexus.features.resourcepack.models.files;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
+import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel.CustomModelMeta;
-import gg.projecteden.nexus.utils.AudioUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Data;
 import lombok.SneakyThrows;
@@ -16,8 +16,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.SoundBuilder.SOUND_DURATIONS;
 
 @Data
 public
@@ -49,7 +47,7 @@ class CustomModelGroup {
 
 		@SneakyThrows
 		public CustomModelMeta getMeta() {
-			String metaUri = ResourcePack.getSubdirectory() + model.replaceFirst("projecteden", "") + ".meta";
+			String metaUri = CustomModel.getSubdirectory() + model.replaceFirst("projecteden", "") + ".meta";
 			Path metaPath = ResourcePack.getZipFile().getPath(metaUri);
 			if (Files.exists(metaPath))
 				return new Gson().fromJson(String.join("", Files.readAllLines(metaPath)), CustomModelMeta.class);
@@ -57,18 +55,18 @@ class CustomModelGroup {
 		}
 	}
 
-	private static final String MODEL_REGEX = ".*" + ResourcePack.getSubdirectory() + "/" + ResourcePack.getFileRegex() + "\\.json";
+	private static final String MODEL_REGEX = ".*" + CustomModel.getSubdirectory() + "/" + ResourcePack.getFileRegex() + "\\.json";
 
 	public static void addCustomModel(Path path) {
 		if (!path.toUri().toString().matches(MODEL_REGEX))
 			return;
 
-		CustomModelGroup group = read(path);
+		CustomModelGroup group = of(path);
 		if (group.getMaterial() != null && !group.getOverrides().isEmpty())
 			ResourcePack.getModelGroups().add(group);
 	}
 
-	private static CustomModelGroup read(Path path) {
+	private static CustomModelGroup of(Path path) {
 		CustomModelGroup model = getCustomModel(path);
 		model.setMaterial(getMaterial(path));
 		return model;
@@ -84,26 +82,6 @@ class CustomModelGroup {
 	private static Material getMaterial(Path path) {
 		String materialName = path.getName(path.getNameCount() - 1).toString().split("\\.")[0];
 		return Material.getMaterial(materialName.toUpperCase());
-	}
-
-	public static void addAudioFile(Path path) {
-		final String filePath = path.toUri().toString().split("sounds/", 2)[1].replace(".ogg", "");
-		ResourcePack.getSoundsFile().getSounds().forEach((sound, group) -> {
-			if (!sound.contains(":"))
-				sound = "minecraft:" + sound;
-
-			for (String file : group.getSounds()) {
-				try {
-					if (!file.equals(filePath))
-						continue;
-
-					SOUND_DURATIONS.put(sound, (int) AudioUtils.getVorbisDuration(Files.readAllBytes(path)));
-					return;
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-			}
-		});
 	}
 
 }

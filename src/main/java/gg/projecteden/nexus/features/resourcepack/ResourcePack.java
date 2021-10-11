@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.resourcepack;
 
-import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
@@ -12,13 +11,13 @@ import gg.projecteden.nexus.features.resourcepack.models.files.SoundsFile;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
 import gg.projecteden.nexus.utils.IOUtils;
+import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.utils.Env;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.SneakyThrows;
 import me.lexikiq.OptionalPlayerLike;
 import org.bukkit.Bukkit;
@@ -37,11 +36,12 @@ import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static gg.projecteden.nexus.features.resourcepack.models.files.CustomModelGroup.addAudioFile;
 import static gg.projecteden.nexus.features.resourcepack.models.files.CustomModelGroup.addCustomModel;
 
 @NoArgsConstructor
@@ -57,28 +57,20 @@ public class ResourcePack extends Feature implements Listener {
 	public static File file = IOUtils.getPluginFile(FILE_NAME);
 
 	@Getter
-	@Setter
 	private static List<CustomModelGroup> modelGroups;
 	@Getter
-	@Setter
 	private static List<CustomModelFolder> folders;
 	@Getter
-	@Setter
 	private static Map<String, CustomModel> models;
 	@Getter
-	@Setter
 	private static CustomModelFolder rootFolder;
 	@Getter
-	@Setter
 	private static SoundsFile soundsFile;
 	@Getter
-	@Setter
 	private static FontFile fontFile;
 
 	@Getter
 	static final URI fileUri = URI.create("jar:" + ResourcePack.getFile().toURI());
-	@Getter
-	static final String subdirectory = "/assets/minecraft/models/item";
 	@Getter
 	private static FileSystem zipFile;
 
@@ -90,12 +82,16 @@ public class ResourcePack extends Feature implements Listener {
 	}
 
 	public static void read() {
-
 		Tasks.async(() -> {
-			new ResourcePackUpdateStartEvent().callEvent();
 			try {
+				new ResourcePackUpdateStartEvent().callEvent();
+
 				openZip();
+
+				setup();
+				readAllFiles();
 				CustomModelMenu.load();
+
 				new ResourcePackUpdateCompleteEvent().callEvent();
 			} catch (Exception ex) {
 				ex.printStackTrace();
@@ -105,20 +101,32 @@ public class ResourcePack extends Feature implements Listener {
 		});
 	}
 
+	private static void setup() {
+		modelGroups = new ArrayList<>();
+		folders = new ArrayList<>();
+		models = new HashMap<>();
+		rootFolder = new CustomModelFolder("/");
+	}
+
 	static void readAllFiles() {
 		try {
-			for (Path root : ResourcePack.getZipFile().getRootDirectories()) {
+			for (Path root : zipFile.getRootDirectories()) {
 				Files.walk(root).forEach(path -> {
 					try {
 						final String uri = path.toUri().toString();
-						if (uri.contains(ResourcePack.getSubdirectory()))
+
+						if (uri.contains(CustomModel.getSubdirectory()))
 							addCustomModel(path);
-						if (uri.endsWith("minecraft/sounds.json"))
-							soundsFile = Utils.getGson().fromJson("{\"sounds\":" + String.join("", Files.readAllLines(path)) + "}", SoundsFile.class);
-						if (uri.endsWith("font/default.json"))
-							fontFile = Utils.getGson().fromJson(String.join("", Files.readAllLines(path)), FontFile.class);
+
+						if (uri.endsWith(FontFile.getPath()))
+							fontFile = FontFile.of(path);
+
+						if (uri.endsWith(SoundsFile.getPath()))
+							soundsFile = SoundsFile.of(path);
+
 						if (uri.contains(".ogg"))
-							addAudioFile(path);
+							SoundsFile.addAudioFile(path);
+
 					} catch (Exception ex) {
 						ex.printStackTrace();
 					}
@@ -154,7 +162,7 @@ public class ResourcePack extends Feature implements Listener {
 	}
 
 	public static boolean isCustomItem(@Nullable ItemStack item) {
-		return item != null && !MaterialTag.ALL_AIR.isTagged(item.getType()) && new NBTItem(item).hasKey(CustomModel.NBT_KEY);
+		return item != null && !MaterialTag.ALL_AIR.isTagged(item.getType()) && CustomModelData.of(item) > 0;
 	}
 
 	@EventHandler

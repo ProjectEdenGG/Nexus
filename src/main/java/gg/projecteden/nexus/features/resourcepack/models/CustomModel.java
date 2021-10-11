@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelGroup;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -30,6 +31,9 @@ public class CustomModel implements Comparable<CustomModel> {
 
 	public static final String NBT_KEY = "CustomModelData";
 	public static final String ICON = "icon";
+
+	@Getter
+	private static final String subdirectory = "/assets/minecraft/models/item";
 
 	public CustomModel(@NonNull CustomModelFolder folder, @NonNull CustomModelGroup.Override override, @NonNull Material material) {
 		this.folder = folder;

@@ -17,6 +17,7 @@ import static gg.projecteden.nexus.features.resourcepack.ResourcePack.FILE_NAME;
 import static gg.projecteden.nexus.features.resourcepack.ResourcePack.URL;
 import static gg.projecteden.nexus.features.resourcepack.ResourcePack.hash;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
+import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
 
 public class Saturn {
 	public static final String DIRECTORY = "/home/minecraft/git/Saturn" + (Nexus.getEnv() == Env.PROD ? "" : "-" + Nexus.getEnv()) + "/";
@@ -28,8 +29,10 @@ public class Saturn {
 	public static final List<String> INCLUDED = List.of("assets", "pack.mcmeta", "pack.png");
 
 	private static void execute(String command, Path path) {
-		Nexus.log("Executing %s at %s".formatted(command, path.toUri()));
-		Nexus.log(stripColor(BashCommand.tryExecute(command, path.toFile())));
+		Nexus.log("Executing %s at %s".formatted(command, path.toUri().toString().replaceFirst("file://", "")));
+		final String output = BashCommand.tryExecute(command, path.toFile());
+		if (!isNullOrEmpty(output))
+			Nexus.log(stripColor(output));
 	}
 
 	public static void deploy() {
@@ -70,7 +73,7 @@ public class Saturn {
 
 	@SneakyThrows
 	private static void copy() {
-		INCLUDED.forEach(included -> execute("cp %s deploy -r".formatted(included)));
+		execute("cp %s deploy -r".formatted(String.join(" ", INCLUDED)));
 	}
 
 	private static void execute(String command) {
@@ -118,7 +121,7 @@ public class Saturn {
 		String newHash = Utils.createSha1(URL);
 
 		if (Objects.equals(hash, newHash))
-			Nexus.warn("No resource pack update found");
+			Nexus.log("No resource pack update found");
 
 		hash = newHash;
 
