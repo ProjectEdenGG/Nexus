@@ -1,13 +1,10 @@
 package gg.projecteden.nexus.features.resourcepack.commands;
 
 import gg.projecteden.annotations.Async;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.admin.BashCommand;
 import gg.projecteden.nexus.features.resourcepack.CustomModelMenu;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.Saturn;
-import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
-import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateStartEvent;
 import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -25,27 +22,17 @@ import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUser;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
-import gg.projecteden.nexus.utils.HttpUtils;
-import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldGroup;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
-import org.bukkit.event.player.PlayerInteractAtEntityEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerResourcePackStatusEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
-import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -53,12 +40,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.nexus.features.resourcepack.ResourcePack.FILE_NAME;
 import static gg.projecteden.nexus.features.resourcepack.ResourcePack.URL;
-import static gg.projecteden.nexus.features.resourcepack.ResourcePack.closeZip;
-import static gg.projecteden.nexus.features.resourcepack.ResourcePack.file;
 import static gg.projecteden.nexus.features.resourcepack.ResourcePack.hash;
-import static gg.projecteden.nexus.features.resourcepack.ResourcePack.openZip;
 
 @Aliases("rp")
 @NoArgsConstructor
@@ -69,19 +52,15 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	private void resourcePack(Player player) {
-		player.setResourcePack(URL, hash);
-	}
-
 	@Path
-	void resourcePack() {
+	void run() {
 		if (hash == null)
 			error("Resource pack hash is null");
 
 		if (Status.DECLINED == player().getResourcePackStatus())
 			error("You declined the original prompt for the resource pack. In order to use the resource pack, you must edit the server in your server list and change the \"Server Resource Packs\" option to either \"enabled\" or \"prompt\"");
 
-		resourcePack(player());
+		ResourcePack.send(player());
 	}
 
 	@Path("local [enabled]")
@@ -126,7 +105,7 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	}
 
 	@Permission("group.staff")
-	@Path("getStatus [player]")
+	@Path("status [player]")
 	void getStatus(@Arg("self") LocalResourcePackUser user) {
 		send(PREFIX + "Status of &e" + user.getNickname());
 		send("&6 Saturn &7- " + user.getSaturnStatus());
@@ -134,7 +113,7 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	}
 
 	@Permission("group.staff")
-	@Path("getStatuses")
+	@Path("statuses")
 	void getStatuses() {
 		final List<Player> players = OnlinePlayers.getAll();
 
@@ -161,22 +140,24 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	}
 
 	@Async
-	@Path("update")
+	@Path("deploy")
 	@Permission("group.admin")
-	void update() {
+	void deploy() {
 		send(BashCommand.tryExecute("sudo /home/minecraft/git/Saturn/deploy.sh"));
 
 		String newHash = Utils.createSha1(URL);
 
-		if (hash != null && hash.equals(newHash))
-			error("No resource pack update found");
+		if (newHash == null)
+			error("Hash is null");
+
+		if (hash.equals(newHash))
+			send(PREFIX + "&3Resource pack hash unchanged");
 
 		hash = newHash;
 
-		if (hash == null)
-			error("Resource pack hash is null");
+		send(PREFIX + "Deployed");
 
-		menuReload();
+		reload();
 
 //		TODO: Figure out a solution that actually works, this just disables the active resource pack for all players who click it
 //		for (Player player : PlayerUtils.getOnlinePlayers())
@@ -185,25 +166,21 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	}
 
 	@Async
-	@Path("newupdate")
+	@Path("newdeploy")
 	@Permission("group.admin")
-	void newupdate() {
+	void newdeploy() {
 		Saturn.deploy();
+		send(PREFIX + "Deployed");
 
-		menuReload();
+		reload();
 	}
 
 	@Async
-	@Path("menu reload")
+	@Path("reload")
 	@Permission("group.admin")
-	void menuReload() {
-		new ResourcePackUpdateStartEvent().callEvent();
-		closeZip();
-		file = HttpUtils.saveFile(URL, FILE_NAME);
-		openZip();
-		CustomModelMenu.load();
-		new ResourcePackUpdateCompleteEvent().callEvent();
-		send(PREFIX + "Menu updated");
+	void reload() {
+		ResourcePack.read();
+		send(PREFIX + "Reloaded");
 	}
 
 	@Path("menu [folder]")
@@ -226,45 +203,6 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 				.map(CustomModelFolder::getDisplayPath)
 				.filter(path -> path.toLowerCase().startsWith(filter.toLowerCase()))
 				.collect(Collectors.toList());
-	}
-
-	@EventHandler
-	public void onJoin(PlayerJoinEvent event) {
-		Player player = event.getPlayer();
-		Tasks.wait(TickTime.SECOND.x(2), () -> {
-			resourcePack(player);
-
-			// Try Again if failed
-			Tasks.wait(TickTime.SECOND.x(5), () -> {
-				if (Status.FAILED_DOWNLOAD == player.getResourcePackStatus())
-					resourcePack(player);
-			});
-		});
-	}
-
-	@EventHandler
-	public void onPlayerInteractAtEntity(PlayerInteractAtEntityEvent event) {
-		if (!Rank.of(event.getPlayer()).isAdmin())
-			return;
-
-		if (event.getHand() != EquipmentSlot.HAND)
-			return;
-
-		final ItemStack item = event.getPlayer().getInventory().getItem(EquipmentSlot.HAND);
-		if (CustomModelData.of(item) == 0)
-			return;
-
-		if (!(event.getRightClicked() instanceof ArmorStand armorStand))
-			return;
-
-		final ItemStack existing = armorStand.getItem(EquipmentSlot.HEAD);
-		armorStand.setItem(EquipmentSlot.HEAD, item);
-		event.getPlayer().getInventory().setItem(EquipmentSlot.HAND, existing);
-	}
-
-	@EventHandler
-	public void onResourcePackEvent(PlayerResourcePackStatusEvent event) {
-		Nexus.debug("Resource Pack Status Update: " + event.getPlayer().getName() + " = " + event.getStatus());
 	}
 
 }

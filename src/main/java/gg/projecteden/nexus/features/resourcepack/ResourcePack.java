@@ -22,9 +22,7 @@ import lombok.SneakyThrows;
 import me.lexikiq.OptionalPlayerLike;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -76,9 +74,15 @@ public class ResourcePack extends Feature implements Listener {
 
 	@Override
 	public void onStart() {
-		Bukkit.getMessenger().registerIncomingPluginChannel(Nexus.getInstance(), "titan:out", new VersionsChannelListener());
-
+		new ResourcePackListener();
 		read();
+	}
+
+	@Override
+	@SneakyThrows
+	public void onStop() {
+		closeZip();
+		Bukkit.getMessenger().unregisterOutgoingPluginChannel(Nexus.getInstance(), "titan:out");
 	}
 
 	public static void read() {
@@ -137,13 +141,6 @@ public class ResourcePack extends Feature implements Listener {
 		}
 	}
 
-	@Override
-	@SneakyThrows
-	public void onStop() {
-		closeZip();
-		Bukkit.getMessenger().unregisterOutgoingPluginChannel(Nexus.getInstance(), "titan:out");
-	}
-
 	@SneakyThrows
 	public static void openZip() {
 		try {
@@ -165,12 +162,6 @@ public class ResourcePack extends Feature implements Listener {
 		return item != null && !MaterialTag.ALL_AIR.isTagged(item.getType()) && CustomModelData.of(item) > 0;
 	}
 
-	@EventHandler
-	public void onPlace(BlockPlaceEvent event) {
-		if (isCustomItem(event.getItemInHand()))
-			event.setCancelled(true);
-	}
-
 	public static boolean isEnabledFor(Player player) {
 		return player.getResourcePackStatus() == Status.SUCCESSFULLY_LOADED || new LocalResourcePackUserService().get(player).isEnabled();
 	}
@@ -180,6 +171,10 @@ public class ResourcePack extends Feature implements Listener {
 			return false;
 
 		return isEnabledFor(player.getPlayer());
+	}
+
+	public static void send(Player player) {
+		player.setResourcePack(URL, hash);
 	}
 
 }

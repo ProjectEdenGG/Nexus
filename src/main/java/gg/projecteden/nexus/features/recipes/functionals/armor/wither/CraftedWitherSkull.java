@@ -2,8 +2,6 @@ package gg.projecteden.nexus.features.recipes.functionals.armor.wither;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
-import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
-import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.wither.WitherChallenge;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -32,7 +30,7 @@ public class CraftedWitherSkull extends FunctionalRecipe {
 
 	@Override
 	public ItemStack getResult() {
-		return CraftedWitherSkull.getItem();
+		return item;
 	}
 
 	@Override
@@ -63,7 +61,7 @@ public class CraftedWitherSkull extends FunctionalRecipe {
 
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event) {
-		if (!ItemUtils.isFuzzyMatch(event.getItemInHand(), getItem())) return;
+		if (!ItemUtils.isFuzzyMatch(event.getItemInHand(), item)) return;
 		if (event.getBlockAgainst().getType() == Material.SOUL_SAND) return;
 		event.setCancelled(true);
 	}
