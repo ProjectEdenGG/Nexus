@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
+import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.framework.features.Depends;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.ColorType;
@@ -47,7 +48,11 @@ public class CustomRecipes extends Feature implements Listener {
 	@Override
 	public void onStart() {
 		Nexus.registerListener(this);
-		ResourcePack.getLoader().thenRun(() -> Tasks.async(() -> {
+	}
+
+	@EventHandler
+	public void on(ResourcePackUpdateCompleteEvent event) {
+		Tasks.async(() -> {
 			registerDyes();
 			registerSlabs();
 			registerQuartz();
@@ -74,7 +79,7 @@ public class CustomRecipes extends Feature implements Listener {
 					recipe.register();
 					recipes.add(recipe);
 				});
-		}));
+		});
 	}
 
 	public static void register(Recipe recipe) {

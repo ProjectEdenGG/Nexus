@@ -3,7 +3,9 @@ package gg.projecteden.nexus.features.listeners;
 import de.myzelyam.api.vanish.PlayerVanishStateChangeEvent;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
-import gg.projecteden.nexus.features.resourcepack.models.FontFile.CustomCharacter;
+import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
+import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateStartEvent;
+import gg.projecteden.nexus.features.resourcepack.models.files.FontFile.CustomCharacter;
 import gg.projecteden.nexus.features.scoreboard.ScoreboardLine;
 import gg.projecteden.nexus.models.afk.AFKUserService;
 import gg.projecteden.nexus.models.afk.events.AFKEvent;
@@ -71,19 +73,17 @@ public class Tab implements Listener {
 
 	public static final List<Presence> PRESENCES = new ArrayList<>();
 
-	static {
-		ResourcePack.getLoader().thenRun(() -> {
-			for (CustomCharacter character : ResourcePack.getFontFile().getProviders()) {
-				final String id = character.fileName();
-				if (!id.startsWith("presence_"))
-					continue;
+	private static int taskId;
 
-				final Presence presence = new Presence(id, character.getChars().get(0), character.getDiscordId());
-				PRESENCES.add(presence);
-			}
+	@EventHandler
+	public void on(ResourcePackUpdateStartEvent event) {
+		Tasks.cancel(taskId);
+	}
 
-			Tasks.repeatAsync(0, TickTime.SECOND.x(5), Tab::update);
-		});
+	@EventHandler
+	public void on(ResourcePackUpdateCompleteEvent event) {
+		Presence.loadAll();
+		taskId = Tasks.repeatAsync(0, TickTime.SECOND.x(5), Tab::update);
 	}
 
 	@Data
@@ -140,6 +140,18 @@ public class Tab implements Listener {
 
 			public boolean applies(Player player) {
 				return predicate.test(player);
+			}
+		}
+
+		public static void loadAll() {
+			PRESENCES.clear();
+			for (CustomCharacter character : ResourcePack.getFontFile().getProviders()) {
+				final String id = character.fileName();
+				if (!id.startsWith("presence_"))
+					continue;
+
+				final Presence presence = new Presence(id, character.getChars().get(0), character.getDiscordId());
+				PRESENCES.add(presence);
 			}
 		}
 	}

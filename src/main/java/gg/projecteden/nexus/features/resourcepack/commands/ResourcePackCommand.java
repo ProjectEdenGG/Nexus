@@ -5,8 +5,10 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.admin.BashCommand;
 import gg.projecteden.nexus.features.resourcepack.CustomModelMenu;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
-import gg.projecteden.nexus.features.resourcepack.models.CustomModelFolder;
 import gg.projecteden.nexus.features.resourcepack.models.Saturn;
+import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
+import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateStartEvent;
+import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -195,10 +197,12 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	@Path("menu reload")
 	@Permission("group.admin")
 	void menuReload() {
+		new ResourcePackUpdateStartEvent().callEvent();
 		closeZip();
 		file = HttpUtils.saveFile(URL, FILE_NAME);
 		openZip();
 		CustomModelMenu.load();
+		new ResourcePackUpdateCompleteEvent().callEvent();
 		send(PREFIX + "Menu updated");
 	}
 

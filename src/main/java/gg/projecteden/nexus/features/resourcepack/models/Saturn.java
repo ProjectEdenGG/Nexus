@@ -7,8 +7,10 @@ import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.utils.Env;
 import lombok.SneakyThrows;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import static gg.projecteden.nexus.features.resourcepack.ResourcePack.FILE_NAME;
@@ -75,11 +77,21 @@ public class Saturn {
 		execute(command, PATH);
 	}
 
+	@SneakyThrows
 	private static void minify() {
-		// TODO For each .json file:
-		//   Load as json
-		//   Strip groups
-		//   Save minified (no formatting)
+		Files.walk(DEPLOY_PATH).forEach(path -> {
+			try {
+				if (path.toUri().toString().endsWith(".json") || path.toUri().toString().endsWith(".meta")) {
+					final Map<?, ?> map = Utils.getGson().fromJson(String.join("", Files.readAllLines(path)), Map.class);
+					if (map.containsKey("textures") && map.containsKey("elements"))
+						map.remove("groups");
+
+					Files.write(path, Utils.getGson().toJson(map).getBytes());
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		});
 	}
 
 	private static void compute() {

@@ -5,9 +5,10 @@ import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.MenuUtils;
-import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
-import gg.projecteden.nexus.features.resourcepack.models.CustomModelFolder;
+import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
+import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateStartEvent;
+import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -53,13 +54,21 @@ public class CostumeCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	static {
-		ResourcePack.getLoader().thenRun(() -> {
-			final CostumeUserService service = new CostumeUserService();
-			Tasks.repeat(TickTime.TICK, TickTime.TICK, () -> {
-				for (Player player : OnlinePlayers.getAll())
-					service.get(player).sendCostumePacket();
-			});
+	private static int taskId;
+
+	@EventHandler
+	public void on(ResourcePackUpdateStartEvent event) {
+		Tasks.cancel(taskId);
+	}
+
+	@EventHandler
+	public void on(ResourcePackUpdateCompleteEvent event) {
+		Costume.loadAll();
+
+		final CostumeUserService service = new CostumeUserService();
+		taskId = Tasks.repeat(TickTime.TICK, TickTime.TICK, () -> {
+			for (Player player : OnlinePlayers.getAll())
+				service.get(player).sendCostumePacket();
 		});
 	}
 
@@ -87,7 +96,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 	@Permission("group.admin")
 	@Path("reload")
 	void reload() {
-		Costume.load();
+		Costume.loadAll();
 		send(PREFIX + "Loaded " + Costume.values().size() + " costumes");
 	}
 

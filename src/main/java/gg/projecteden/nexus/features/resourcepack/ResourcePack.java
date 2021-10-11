@@ -3,10 +3,12 @@ package gg.projecteden.nexus.features.resourcepack;
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
-import gg.projecteden.nexus.features.resourcepack.models.CustomModelFolder;
-import gg.projecteden.nexus.features.resourcepack.models.CustomModelGroup;
-import gg.projecteden.nexus.features.resourcepack.models.FontFile;
-import gg.projecteden.nexus.features.resourcepack.models.SoundsFile;
+import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
+import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateStartEvent;
+import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
+import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelGroup;
+import gg.projecteden.nexus.features.resourcepack.models.files.FontFile;
+import gg.projecteden.nexus.features.resourcepack.models.files.SoundsFile;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
 import gg.projecteden.nexus.utils.IOUtils;
@@ -33,10 +35,14 @@ import java.net.URI;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
+
+import static gg.projecteden.nexus.features.resourcepack.models.files.CustomModelGroup.addAudioFile;
+import static gg.projecteden.nexus.features.resourcepack.models.files.CustomModelGroup.addCustomModel;
 
 @NoArgsConstructor
 public class ResourcePack extends Feature implements Listener {
@@ -74,18 +80,52 @@ public class ResourcePack extends Feature implements Listener {
 	static final String subdirectory = "/assets/minecraft/models/item";
 	@Getter
 	private static FileSystem zipFile;
-	@Getter
-	private static final CompletableFuture<Void> loader = new CompletableFuture<>();
 
 	@Override
 	public void onStart() {
 		Bukkit.getMessenger().registerIncomingPluginChannel(Nexus.getInstance(), "titan:out", new VersionsChannelListener());
 
+		read();
+	}
+
+	public static void read() {
+		new ResourcePackUpdateStartEvent().callEvent();
+
 		Tasks.async(() -> {
 			openZip();
-			CustomModelMenu.load();
-			loader.complete(null);
+			try {
+				CustomModelMenu.load();
+				Tasks.sync(() -> new ResourcePackUpdateCompleteEvent().callEvent());
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			} finally {
+				closeZip();
+			}
 		});
+	}
+
+	static void readAllFiles() {
+		try {
+			for (Path root : ResourcePack.getZipFile().getRootDirectories()) {
+				Files.walk(root).forEach(path -> {
+					try {
+						final String uri = path.toUri().toString();
+						if (uri.contains(ResourcePack.getSubdirectory()))
+							addCustomModel(path);
+						if (uri.endsWith("minecraft/sounds.json"))
+							soundsFile = Utils.getGson().fromJson("{\"sounds\":" + String.join("", Files.readAllLines(path)) + "}", SoundsFile.class);
+						if (uri.endsWith("font/default.json"))
+							fontFile = Utils.getGson().fromJson(String.join("", Files.readAllLines(path)), FontFile.class);
+						if (uri.contains(".ogg"))
+							addAudioFile(path);
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+				});
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	@Override
@@ -132,4 +172,5 @@ public class ResourcePack extends Feature implements Listener {
 
 		return isEnabledFor(player.getPlayer());
 	}
+
 }

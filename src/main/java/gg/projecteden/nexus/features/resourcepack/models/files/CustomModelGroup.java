@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.resourcepack.models;
+package gg.projecteden.nexus.features.resourcepack.models.files;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
@@ -6,7 +6,6 @@ import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel.CustomModelMeta;
 import gg.projecteden.nexus.utils.AudioUtils;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Utils;
 import lombok.Data;
 import lombok.SneakyThrows;
 import org.bukkit.Material;
@@ -60,7 +59,7 @@ class CustomModelGroup {
 
 	private static final String MODEL_REGEX = ".*" + ResourcePack.getSubdirectory() + "/" + ResourcePack.getFileRegex() + "\\.json";
 
-	private static void addCustomModel(Path path) {
+	public static void addCustomModel(Path path) {
 		if (!path.toUri().toString().matches(MODEL_REGEX))
 			return;
 
@@ -87,31 +86,7 @@ class CustomModelGroup {
 		return Material.getMaterial(materialName.toUpperCase());
 	}
 
-	public static void load() {
-		try {
-			for (Path root : ResourcePack.getZipFile().getRootDirectories()) {
-				Files.walk(root).forEach(path -> {
-					try {
-						final String uri = path.toUri().toString();
-						if (uri.contains(ResourcePack.getSubdirectory()))
-							addCustomModel(path);
-						if (uri.endsWith("minecraft/sounds.json"))
-							ResourcePack.setSoundsFile(Utils.getGson().fromJson("{\"sounds\":" + String.join("", Files.readAllLines(path)) + "}", SoundsFile.class));
-						if (uri.endsWith("font/default.json"))
-							ResourcePack.setFontFile(Utils.getGson().fromJson(String.join("", Files.readAllLines(path)), FontFile.class));
-						if (uri.contains(".ogg"))
-							addAudioFile(path);
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
-				});
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-	}
-
-	private static void addAudioFile(Path path) {
+	public static void addAudioFile(Path path) {
 		final String filePath = path.toUri().toString().split("sounds/", 2)[1].replace(".ogg", "");
 		ResourcePack.getSoundsFile().getSounds().forEach((sound, group) -> {
 			if (!sound.contains(":"))

@@ -2,10 +2,11 @@ package gg.projecteden.nexus.features.events.y2021.halloween21;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.mobheads.MobHeads;
-import gg.projecteden.nexus.features.resourcepack.ResourcePack;
-import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
+import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateStartEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.EntityUtils;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
@@ -67,7 +68,7 @@ public class Halloween21 implements Listener {
 		VEX,
 		;
 
-		public static CustomModel getPumpkin(LivingEntity entity) {
+		public static ItemBuilder getPumpkin(LivingEntity entity) {
 			try {
 				of(entity);
 			} catch (IllegalArgumentException ex) {
@@ -75,8 +76,11 @@ public class Halloween21 implements Listener {
 			}
 
 			final String bits = String.valueOf(entity.getUniqueId().getLeastSignificantBits());
-			final int customModelData = Integer.parseInt(right(bits, 2));
-			return Pumpkin.of(Pumpkin.MIN + customModelData);
+			final int customModelData = Pumpkin.MIN + Integer.parseInt(right(bits, 2));
+			if (Pumpkin.isOutOfRange(customModelData))
+				return null;
+
+			return Pumpkin.itemOf(Pumpkin.MIN + customModelData);
 		}
 
 		public static PumpkinableEntity of(LivingEntity entity) {
@@ -86,23 +90,30 @@ public class Halloween21 implements Listener {
 
 	private static final List<WorldGroup> PUMPKINABLE_WORLD_GROUPS = List.of(WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK, WorldGroup.ONEBLOCK);
 
-	static {
-		ResourcePack.getLoader().thenRun(() -> {
-			Tasks.repeat(0, 1, () -> {
-				for (WorldGroup worldGroup : PUMPKINABLE_WORLD_GROUPS) {
-					for (World world : worldGroup.getWorlds()) {
-						final List<Player> players = OnlinePlayers.where().world(world).rank(Rank::isAdmin).get(); // TODO Remove rank
 
-						for (LivingEntity entity : world.getLivingEntities()) {
-							final CustomModel pumpkin = PumpkinableEntity.getPumpkin(entity);
-							if (pumpkin == null)
-								continue;
+	public static int taskId;
 
-							PacketUtils.sendFakeItem(entity, players, pumpkin.getItem(), EquipmentSlot.HEAD);
-						}
+	@EventHandler
+	public void onResourcePackUpdateStart(ResourcePackUpdateStartEvent event) {
+		Tasks.cancel(taskId);
+	}
+
+	@EventHandler
+	public void onResourcePackUpdate(ResourcePackUpdateCompleteEvent event) {
+		taskId = Tasks.repeat(0, 1, () -> {
+			for (WorldGroup worldGroup : PUMPKINABLE_WORLD_GROUPS) {
+				for (World world : worldGroup.getWorlds()) {
+					final List<Player> players = OnlinePlayers.where().world(world).get();
+
+					for (LivingEntity entity : world.getLivingEntities()) {
+						final ItemBuilder pumpkin = PumpkinableEntity.getPumpkin(entity);
+						if (pumpkin == null)
+							continue;
+
+						PacketUtils.sendFakeItem(entity, players, pumpkin.build(), EquipmentSlot.HEAD);
 					}
 				}
-			});
+			}
 		});
 	}
 

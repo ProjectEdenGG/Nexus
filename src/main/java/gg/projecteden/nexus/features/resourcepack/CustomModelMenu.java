@@ -6,8 +6,8 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
-import gg.projecteden.nexus.features.resourcepack.models.CustomModelFolder;
-import gg.projecteden.nexus.features.resourcepack.models.CustomModelGroup;
+import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
+import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelGroup;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.NonNull;
@@ -102,7 +102,7 @@ public class CustomModelMenu extends MenuUtils implements InventoryProvider {
 		ResourcePack.setModels(new HashMap<>());
 		ResourcePack.setRootFolder(new CustomModelFolder("/"));
 
-		CustomModelGroup.load();
+		ResourcePack.readAllFiles();
 
 		for (String path : getFolderPaths())
 			addFoldersRecursively(path);

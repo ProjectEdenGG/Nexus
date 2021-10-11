@@ -5,7 +5,8 @@ import gg.projecteden.nexus.features.chat.events.ChatEvent;
 import gg.projecteden.nexus.features.events.store.EventStoreItem;
 import gg.projecteden.nexus.features.menus.BookBuilder.WrittenBookMenu;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
-import gg.projecteden.nexus.features.resourcepack.models.FontFile.CustomCharacter;
+import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
+import gg.projecteden.nexus.features.resourcepack.models.files.FontFile.CustomCharacter;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
@@ -31,7 +32,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 import static gg.projecteden.nexus.models.emoji.EmojiUser.Emoji.EMOJIS;
 
@@ -125,7 +125,8 @@ public class EmojisCommand extends CustomCommand implements Listener {
 	@Path("reload")
 	@Permission("group.admin")
 	void load() {
-		reload().thenRun(() -> send(PREFIX + "Loaded " + EMOJIS.size() + " emojis"));
+		reload();
+		send(PREFIX + "Loaded " + EMOJIS.size() + " emojis");
 	}
 
 	@EventHandler
@@ -178,22 +179,21 @@ public class EmojisCommand extends CustomCommand implements Listener {
 
 	private static final String EMOJI_ROOT = "projecteden/font/emojis/";
 
-	static {
+	@EventHandler
+	public void on(ResourcePackUpdateCompleteEvent event) {
 		reload();
 	}
 
-	public static CompletableFuture<Void> reload() {
-		return ResourcePack.getLoader().thenRun(() -> {
-			EMOJIS.clear();
+	public static void reload() {
+		EMOJIS.clear();
 
-			for (CustomCharacter character : ResourcePack.getFontFile().getProviders()) {
-				if (!character.getFile().contains(EMOJI_ROOT))
-					continue;
+		for (CustomCharacter character : ResourcePack.getFontFile().getProviders()) {
+			if (!character.getFile().contains(EMOJI_ROOT))
+				continue;
 
-				final Emoji emoji = new Emoji(character.fileName(), character.getChar(), character.isPurchasable());
-				EMOJIS.add(emoji);
-			}
-		});
+			final Emoji emoji = new Emoji(character.fileName(), character.getChar(), character.isPurchasable());
+			EMOJIS.add(emoji);
+		}
 	}
 
 }

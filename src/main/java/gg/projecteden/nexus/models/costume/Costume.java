@@ -2,7 +2,7 @@ package gg.projecteden.nexus.models.costume;
 
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
-import gg.projecteden.nexus.features.resourcepack.models.CustomModelFolder;
+import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
 import gg.projecteden.nexus.features.store.StoreCommand;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.AllArgsConstructor;
@@ -87,16 +87,10 @@ public class Costume {
 		return ResourcePack.getRootFolder().getFolder(ROOT_FOLDER);
 	}
 
-	static {
-		load();
-	}
-
-	public static void load() {
-		ResourcePack.getLoader().thenRun(() -> {
-			costumes.clear();
-			for (CostumeType type : CostumeType.values())
-				load(type, type.getFolder());
-		});
+	public static void loadAll() {
+		costumes.clear();
+		for (CostumeType type : CostumeType.values())
+			load(type, type.getFolder());
 	}
 
 	private static void load(CostumeType type, CustomModelFolder folder) {
