@@ -13,6 +13,7 @@ import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
+import gg.projecteden.utils.Env;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -39,14 +40,14 @@ import java.util.concurrent.CompletableFuture;
 
 @NoArgsConstructor
 public class ResourcePack extends Feature implements Listener {
-	public static final String URL = "http://cdn." + Nexus.DOMAIN + "/ResourcePack.zip";
-	public static final String fileName = "ResourcePack.zip";
+	public static final String FILE_NAME = "ResourcePack" + (Nexus.getEnv() == Env.PROD ? "" : "-" + Nexus.getEnv()) + ".zip";
+	public static final String URL = "http://cdn." + Nexus.DOMAIN + "/" + FILE_NAME;
 	@Getter
 	static final String fileRegex = "[\\w]+";
 	@Getter
 	public static String hash = Utils.createSha1(URL);
 	@Getter
-	public static File file = IOUtils.getPluginFile(fileName);
+	public static File file = IOUtils.getPluginFile(FILE_NAME);
 
 	@Getter
 	@Setter

@@ -10,6 +10,8 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.utils.Utils;
 import lombok.NonNull;
 
+import java.io.File;
+
 @Permission("group.admin")
 public class BashCommand extends CustomCommand {
 
@@ -24,9 +26,13 @@ public class BashCommand extends CustomCommand {
 	}
 
 	public static String tryExecute(String command) {
+		return tryExecute(command, null);
+	}
+
+	public static String tryExecute(String command, File workingDirectory) {
 		String PREFIX = StringUtils.getPrefix("Bash");
 		try {
-			String result = Utils.bash(command);
+			String result = Utils.bash(command, workingDirectory);
 			if (Strings.isNullOrEmpty(result))
 				return PREFIX + "Command executed successfully";
 			else

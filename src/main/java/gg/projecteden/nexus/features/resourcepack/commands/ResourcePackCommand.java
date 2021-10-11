@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.commands.staff.admin.BashCommand;
 import gg.projecteden.nexus.features.resourcepack.CustomModelMenu;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModelFolder;
+import gg.projecteden.nexus.features.resourcepack.models.Saturn;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -50,10 +51,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.features.resourcepack.ResourcePack.FILE_NAME;
 import static gg.projecteden.nexus.features.resourcepack.ResourcePack.URL;
 import static gg.projecteden.nexus.features.resourcepack.ResourcePack.closeZip;
 import static gg.projecteden.nexus.features.resourcepack.ResourcePack.file;
-import static gg.projecteden.nexus.features.resourcepack.ResourcePack.fileName;
 import static gg.projecteden.nexus.features.resourcepack.ResourcePack.hash;
 import static gg.projecteden.nexus.features.resourcepack.ResourcePack.openZip;
 
@@ -182,11 +183,20 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	}
 
 	@Async
+	@Path("newupdate")
+	@Permission("group.admin")
+	void newupdate() {
+		Saturn.deploy();
+
+		menuReload();
+	}
+
+	@Async
 	@Path("menu reload")
 	@Permission("group.admin")
 	void menuReload() {
 		closeZip();
-		file = HttpUtils.saveFile(URL, fileName);
+		file = HttpUtils.saveFile(URL, FILE_NAME);
 		openZip();
 		CustomModelMenu.load();
 		send(PREFIX + "Menu updated");
