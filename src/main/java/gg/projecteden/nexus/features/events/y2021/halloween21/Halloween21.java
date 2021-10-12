@@ -1,10 +1,12 @@
 package gg.projecteden.nexus.features.events.y2021.halloween21;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.events.y2021.halloween21.models.Candy;
+import gg.projecteden.nexus.features.events.y2021.halloween21.models.Pumpkin;
 import gg.projecteden.nexus.features.mobheads.MobHeads;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateStartEvent;
-import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.models.halloween21.Halloween21UserService;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PacketUtils;
@@ -19,6 +21,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.List;
@@ -43,10 +46,6 @@ public class Halloween21 implements Listener {
 		if (killer == null)
 			return;
 
-		// TODO Remove
-		if (!Rank.of(killer).isAdmin())
-			return;
-
 		if (MobHeads.shouldIgnore(killer, victim))
 			return;
 
@@ -54,6 +53,20 @@ public class Halloween21 implements Listener {
 			return;
 
 		event.getDrops().add(Candy.random().getDisplayItem());
+	}
+
+	@EventHandler
+	public void onEntityPickupItem(EntityPickupItemEvent event) {
+		if (!(event.getEntity() instanceof Player player))
+			return;
+
+		if (!Candy.isCandy(event.getItem().getItemStack()))
+			return;
+
+		if (new Halloween21UserService().get(player).isPickupCandy())
+			return;
+
+		event.setCancelled(true);
 	}
 
 	@Getter
@@ -77,10 +90,7 @@ public class Halloween21 implements Listener {
 
 			final String bits = String.valueOf(entity.getUniqueId().getLeastSignificantBits());
 			final int customModelData = Pumpkin.MIN + Integer.parseInt(right(bits, 2));
-			if (Pumpkin.isOutOfRange(customModelData))
-				return null;
-
-			return Pumpkin.itemOf(Pumpkin.MIN + customModelData);
+			return Pumpkin.itemOf(customModelData);
 		}
 
 		public static PumpkinableEntity of(LivingEntity entity) {

@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.events.y2021.halloween21;
+package gg.projecteden.nexus.features.events.y2021.halloween21.models;
 
 import gg.projecteden.nexus.utils.ItemBuilder;
 import org.bukkit.Material;

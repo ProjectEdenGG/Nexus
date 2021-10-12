@@ -1,10 +1,9 @@
-package gg.projecteden.nexus.models.playerplushie;
+package gg.projecteden.nexus.models.halloween21;
 
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
-import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import lombok.AllArgsConstructor;
@@ -13,27 +12,18 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Data
-@Entity(value = "player_plushie_config", noClassnameStored = true)
+@Entity(value = "halloween21_user", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Converters({UUIDConverter.class, LocationConverter.class})
-public class PlayerPlushieConfig implements PlayerOwnedObject {
+public class Halloween21User implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-
-	private Map<Pose, List<UUID>> subscriptions = new ConcurrentHashMap<>();
-
-	public void addSubscription(Pose pose, UUID uuid) {
-		subscriptions.computeIfAbsent(pose, $ -> new ArrayList<>()).add(uuid);
-	}
+	private boolean pickupCandy = true;
 
 }
