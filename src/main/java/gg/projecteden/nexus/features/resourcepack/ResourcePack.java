@@ -123,7 +123,7 @@ public class ResourcePack extends Feature implements Listener {
 					try {
 						final String uri = path.toUri().toString();
 
-						if (uri.contains(CustomModel.getSubdirectory()))
+						if (uri.contains(CustomModel.getVanillaSubdirectory()))
 							addCustomModel(path);
 
 						if (uri.endsWith(FontFile.getPath()))

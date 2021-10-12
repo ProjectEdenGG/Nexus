@@ -47,15 +47,17 @@ class CustomModelGroup {
 
 		@SneakyThrows
 		public CustomModelMeta getMeta() {
-			String metaUri = CustomModel.getSubdirectory() + model.replaceFirst("projecteden", "") + ".meta";
+			String metaUri = CustomModel.getModelsSubdirectory() + "/" + model + ".meta";
 			Path metaPath = ResourcePack.getZipFile().getPath(metaUri);
+
 			if (Files.exists(metaPath))
 				return new Gson().fromJson(String.join("", Files.readAllLines(metaPath)), CustomModelMeta.class);
+
 			return new CustomModelMeta();
 		}
 	}
 
-	private static final String MODEL_REGEX = ".*" + CustomModel.getSubdirectory() + "/" + ResourcePack.getFileRegex() + "\\.json";
+	private static final String MODEL_REGEX = ".*" + CustomModel.getVanillaSubdirectory() + "/" + ResourcePack.getFileRegex() + "\\.json";
 
 	public static void addCustomModel(Path path) {
 		if (!path.toUri().toString().matches(MODEL_REGEX))

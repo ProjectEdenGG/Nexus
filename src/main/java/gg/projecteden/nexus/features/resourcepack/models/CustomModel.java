@@ -33,7 +33,11 @@ public class CustomModel implements Comparable<CustomModel> {
 	public static final String ICON = "icon";
 
 	@Getter
-	private static final String subdirectory = "/assets/minecraft/models/item";
+	private static final String modelsSubdirectory = "/assets/minecraft/models/";
+	@Getter
+	private static final String vanillaSubdirectory = modelsSubdirectory + "item";
+	@Getter
+	private static final String customSubdirectory = modelsSubdirectory + "projecteden";
 
 	public CustomModel(@NonNull CustomModelFolder folder, @NonNull CustomModelGroup.Override override, @NonNull Material material) {
 		this.folder = folder;
