@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.resourcepack.models.files.FontFile;
 import gg.projecteden.nexus.features.resourcepack.models.files.SoundsFile;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
+import gg.projecteden.nexus.utils.HttpUtils;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -93,6 +94,7 @@ public class ResourcePack extends Feature implements Listener {
 				new ResourcePackUpdateStartEvent().callEvent();
 				reloading = true;
 
+				HttpUtils.saveFile(URL, FILE_NAME);
 				openZip();
 
 				setup();
