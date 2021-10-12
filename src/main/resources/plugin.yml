@@ -27,6 +27,7 @@ softdepend:
   - Multiverse-Inventories
   - NBTAPI
   - NoteBlockAPI
+  - OpenInv
   - PlaceholderAPI
   - PremiumVanish
   - SmartInvs

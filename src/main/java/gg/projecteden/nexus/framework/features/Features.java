@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.framework.features;
 
-import gg.projecteden.annotations.Disabled;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.utils.Timer;
@@ -105,7 +104,7 @@ public class Features {
 		for (Class<? extends Feature> clazz : features)
 			if (isRegistered(clazz))
 				unregister(Features.registered.get(clazz));
-			else if (clazz.getAnnotation(Disabled.class) == null)
+			else if (Utils.canEnable(clazz))
 				plugin.getLogger().severe("Cannot unregister feature " + prettyName(clazz) + " because it was never registered");
 	}
 
