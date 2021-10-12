@@ -18,7 +18,6 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerLoadoutEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerVoteEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.SabotageColor;
-import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.SabotageScoreboard;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.SabotageTeam;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.Task;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.TaskPart;
@@ -86,9 +85,9 @@ import java.util.stream.Collectors;
 @Data
 @MatchDataFor(Sabotage.class)
 public class SabotageMatchData extends MatchData {
+
 	public SabotageMatchData(Match match) {
 		super(match);
-		match.setScoreboardTeams(new SabotageScoreboard(match));
 	}
 
 	private final Map<UUID, UUID> votes = new HashMap<>();

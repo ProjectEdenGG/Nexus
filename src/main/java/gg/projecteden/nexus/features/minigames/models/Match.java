@@ -91,7 +91,6 @@ public class Match implements ForwardingAudience {
 	private final Map<Team, Integer> scores = new HashMap<>();
 	private MatchTimer timer;
 	private MinigameScoreboard scoreboard;
-	private MinigameScoreboard.ITeams scoreboardTeams;
 	private final ArrayList<UUID> entities = new ArrayList<>();
 	private final ArrayList<Hologram> holograms = new ArrayList<>();
 	private MatchData matchData;
@@ -195,7 +194,6 @@ public class Match implements ForwardingAudience {
 		} catch (Exception ex) { ex.printStackTrace(); }
 
 		if (scoreboard != null) scoreboard.handleJoin(minigamer);
-		if (scoreboardTeams != null) scoreboardTeams.handleJoin(minigamer);
 
 		return true;
 	}
@@ -215,7 +213,6 @@ public class Match implements ForwardingAudience {
 
 		if (modifierBar != null) minigamer.getPlayer().hideBossBar(modifierBar);
 		if (scoreboard != null) scoreboard.handleQuit(minigamer);
-		if (scoreboardTeams != null) scoreboardTeams.handleQuit(minigamer);
 		GlowAPI.setGlowing(getPlayers(), GlowAPI.Color.NONE, minigamer.getPlayer());
 
 		if (minigamers.size() == 0)
@@ -241,7 +238,6 @@ public class Match implements ForwardingAudience {
 			startTimer(); // -> arena.getMechanic().startTimer();
 			arena.getMechanic().onStart(event);
 			if (scoreboard != null) scoreboard.update();
-			if (scoreboardTeams != null) scoreboardTeams.update();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			end();
@@ -273,7 +269,6 @@ public class Match implements ForwardingAudience {
 		minigamers.clear();
 
 		if (scoreboard != null) scoreboard.handleEnd();
-		if (scoreboardTeams != null) scoreboardTeams.handleEnd();
 
 		List<Player> players = getPlayers();
 		GlowAPI.setGlowing(players, GlowAPI.Color.NONE, players);

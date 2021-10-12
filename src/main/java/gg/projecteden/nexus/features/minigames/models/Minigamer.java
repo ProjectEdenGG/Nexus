@@ -313,9 +313,6 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 				new TitleBuilder().players(this).title("&6Team Objective").subtitle("&e" + team.getObjective()).fadeIn(10).stay(TickTime.SECOND.x(4)).fadeOut(20).send();
 			}
 		}
-
-		if (match.getScoreboardTeams() != null)
-			match.getTasks().wait(1, () -> match.getScoreboardTeams().update());
 	}
 
 	public void scored() {

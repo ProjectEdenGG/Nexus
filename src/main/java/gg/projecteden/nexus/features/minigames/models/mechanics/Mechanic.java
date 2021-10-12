@@ -122,9 +122,6 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		int taskId = match.getTasks().repeat(1, TickTime.SECOND, () -> {
 			if (match.getScoreboard() != null)
 				match.getScoreboard().update();
-
-			if (match.getScoreboardTeams() != null)
-				match.getScoreboardTeams().update();
 		});
 
 		match.getTasks().register(MatchTaskType.SCOREBOARD, taskId);
