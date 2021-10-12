@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.models.playernotes;
 
+import dev.morphia.query.Query;
 import gg.projecteden.mongodb.annotations.PlayerClass;
 import gg.projecteden.nexus.models.MongoService;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -20,17 +20,9 @@ public class PlayerNotesService extends MongoService<PlayerNotes> {
 	}
 
 	public List<PlayerNotes> getByKeyword(String keyword) {
-		List<PlayerNotes> notes = new ArrayList<>();
-		Notes:
-		for (PlayerNotes playerNotes : getAll()) {
-			for (PlayerNotes.PlayerNoteEntry entry : playerNotes.getEntries()) {
-				if (entry.getNote().contains(keyword)) {
-					notes.add(playerNotes);
-					continue Notes;
-				}
-			}
-		}
-		return notes;
+		Query<PlayerNotes> query = database.createQuery(PlayerNotes.class);
+		query.and(query.criteria("entries.note").containsIgnoreCase(keyword));
+		return query.find().toList();
 	}
 
 }
