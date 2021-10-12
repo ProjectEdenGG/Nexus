@@ -45,8 +45,15 @@ public class CustomRecipes extends Feature implements Listener {
 	@Getter
 	public static List<NexusRecipe> recipes = new ArrayList<>();
 
+	private static boolean loaded;
+
 	@EventHandler
 	public void on(ResourcePackUpdateCompleteEvent event) {
+		if (loaded)
+			return;
+
+		loaded = true;
+
 		Tasks.async(() -> {
 			registerDyes();
 			registerSlabs();
