@@ -2,11 +2,11 @@ package gg.projecteden.nexus.features.nameplates;
 
 import de.myzelyam.api.vanish.PlayerVanishStateChangeEvent;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.nameplates.protocol.NameplateManager;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateStartEvent;
 import gg.projecteden.nexus.models.afk.events.AFKEvent;
 import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange.PlayerRankChangeEvent;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import me.libraryaddict.disguise.events.DisguiseEvent;
@@ -52,6 +52,7 @@ public class NameplatesListener implements Listener {
 	@EventHandler
 	public void on(ResourcePackUpdateCompleteEvent event) {
 		taskId = Tasks.repeatAsync(TickTime.SECOND.x(5), TickTime.SECOND.x(5), () -> manager().spawnAll());
+		Tasks.repeat(0, 1, () -> OnlinePlayers.getAll().forEach(Nameplates::addToTeam));
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)

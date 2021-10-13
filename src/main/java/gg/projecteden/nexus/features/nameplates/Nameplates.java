@@ -4,8 +4,6 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.listeners.Tab.Presence;
 import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
-import gg.projecteden.nexus.features.nameplates.protocol.NameplateManager;
-import gg.projecteden.nexus.features.nameplates.protocol.ProtocolManager;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.framework.features.Features;
 import gg.projecteden.nexus.models.chat.ChatterService;
@@ -27,7 +25,6 @@ import static gg.projecteden.nexus.utils.PlayerUtils.canSee;
 
 @Getter
 public class Nameplates extends Feature {
-	private final ProtocolManager protocolManager;
 	private final NameplateManager nameplateManager;
 	private final Team team;
 	private final String teamName = "NP_HIDE";
@@ -38,7 +35,6 @@ public class Nameplates extends Feature {
 	private static boolean debug;
 
 	public Nameplates() {
-		protocolManager = new ProtocolManager();
 		nameplateManager = new NameplateManager();
 
 		new NameplatesListener();
@@ -53,7 +49,7 @@ public class Nameplates extends Feature {
 				team.unregister();
 
 			team = scoreboard.registerNewTeam(teamName);
-			team.setOption(Option.NAME_TAG_VISIBILITY, OptionStatus.NEVER);
+			team.setOption(Option.NAME_TAG_VISIBILITY, OptionStatus.FOR_OWN_TEAM);
 		} else {
 			team = scoreboard.getTeam(teamName);
 			if (team != null)
@@ -75,7 +71,6 @@ public class Nameplates extends Feature {
 
 	@Override
 	public void onStop() {
-		this.protocolManager.shutdown();
 		this.nameplateManager.shutdown();
 	}
 

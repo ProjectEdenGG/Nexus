@@ -1,8 +1,8 @@
-package gg.projecteden.nexus.features.nameplates.protocol.packet;
+package gg.projecteden.nexus.features.nameplates.packet;
 
 import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.events.PacketContainer;
-import gg.projecteden.nexus.features.nameplates.protocol.packet.common.NameplatePacket;
+import gg.projecteden.nexus.features.nameplates.packet.common.NameplatePacket;
 
 import java.util.Collections;
 

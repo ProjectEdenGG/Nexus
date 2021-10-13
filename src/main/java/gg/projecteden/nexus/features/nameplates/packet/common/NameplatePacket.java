@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.nameplates.protocol.packet.common;
+package gg.projecteden.nexus.features.nameplates.packet.common;
 
 import com.comphenix.protocol.events.PacketContainer;
 import gg.projecteden.nexus.features.nameplates.Nameplates;
@@ -14,7 +14,7 @@ public abstract class NameplatePacket {
 	}
 
 	public void send(Player viewer) {
-		Nameplates.get().getProtocolManager().sendServerPacket(viewer, packet);
+		Nameplates.get().getNameplateManager().sendServerPacket(viewer, packet);
 	}
 
 }

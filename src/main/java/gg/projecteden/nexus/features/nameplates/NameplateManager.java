@@ -1,10 +1,12 @@
-package gg.projecteden.nexus.features.nameplates.protocol;
+package gg.projecteden.nexus.features.nameplates;
 
-import gg.projecteden.nexus.features.nameplates.Nameplates;
-import gg.projecteden.nexus.features.nameplates.protocol.packet.EntityDestroyPacket;
-import gg.projecteden.nexus.features.nameplates.protocol.packet.EntityMetadataPacket;
-import gg.projecteden.nexus.features.nameplates.protocol.packet.EntitySpawnPacket;
-import gg.projecteden.nexus.features.nameplates.protocol.packet.MountPacket;
+import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.PacketContainer;
+import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.nameplates.packet.EntityDestroyPacket;
+import gg.projecteden.nexus.features.nameplates.packet.EntityMetadataPacket;
+import gg.projecteden.nexus.features.nameplates.packet.EntitySpawnPacket;
+import gg.projecteden.nexus.features.nameplates.packet.MountPacket;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.nameplates.NameplateUserService;
@@ -17,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -28,6 +31,7 @@ import static gg.projecteden.nexus.utils.PlayerUtils.isSelf;
 public class NameplateManager {
 	private final NameplateUserService service = new NameplateUserService();
 	private final static Map<UUID, NameplatePlayer> players = new HashMap<>();
+	private final ProtocolManager protocolManager = Nexus.getProtocolManager();
 
 	public void onStart() {
 		spawnAll();
@@ -217,6 +221,16 @@ public class NameplateManager {
 
 			viewedBy.remove(viewer.getUniqueId());
 			NameplateManager.get(viewer).getViewing().remove(uuid);
+		}
+	}
+
+	public void sendServerPacket(@NotNull Player player, @NotNull PacketContainer packet) {
+		try {
+			Nameplates.debug("    Sending " + packet.getType().getPacketClass().getSimpleName() + " packet to " + player.getName());
+			this.protocolManager.sendServerPacket(player, packet);
+		} catch (InvocationTargetException ex) {
+			Nexus.warn("      Unable to send " + packet.getType().getPacketClass().getSimpleName() + " packet to " + player.getName());
+			ex.printStackTrace();
 		}
 	}
 

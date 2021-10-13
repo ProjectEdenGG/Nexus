@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.nameplates;
 
-import gg.projecteden.nexus.features.nameplates.protocol.NameplateManager;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;

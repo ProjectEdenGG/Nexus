@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.nameplates.protocol.packet;
+package gg.projecteden.nexus.features.nameplates.packet;
 
 import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.events.PacketContainer;
@@ -6,7 +6,7 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
-import gg.projecteden.nexus.features.nameplates.protocol.packet.common.NameplatePacket;
+import gg.projecteden.nexus.features.nameplates.packet.common.NameplatePacket;
 
 import java.util.Optional;
 
