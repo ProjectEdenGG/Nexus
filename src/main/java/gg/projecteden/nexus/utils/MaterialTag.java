@@ -119,6 +119,8 @@ public class MaterialTag implements Tag<Material> {
 		END_PORTAL, END_PORTAL_FRAME, NETHER_PORTAL, KNOWLEDGE_BOOK,
 		DEBUG_STICK, SPAWNER, CHORUS_PLANT);
 
+	public static final MaterialTag UNSTACKABLE = new MaterialTag(material -> material.getMaxStackSize() == 1);
+
 	public static final MaterialTag POTIONS = new MaterialTag(POTION, SPLASH_POTION, LINGERING_POTION);
 
 	public static final MaterialTag POTION_MATERIALS = new MaterialTag(POTIONS)
