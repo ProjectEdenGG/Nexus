@@ -40,8 +40,8 @@ public class SafeTeleport implements Listener {
 	public boolean isSafe(Location location) {
 		if (location.getBlock().getType() != Material.AIR) return false;
 		if (location.clone().add(0, 1, 0).getBlock().getType() != Material.AIR) return false;
-		Material material = location.clone().subtract(0, 1, 0).getBlock().getType();
-		return (safeBlocks.contains(material) || material.isSolid());
+		Block block = location.clone().subtract(0, 1, 0).getBlock();
+		return (safeBlocks.contains(block.getType()) || block.isSolid());
 	}
 
 	public Location getSafeLocation(Location location) {

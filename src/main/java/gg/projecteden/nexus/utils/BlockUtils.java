@@ -159,7 +159,7 @@ public class BlockUtils {
 		Player player = hasPlayer.getPlayer();
 		Location below = player.getLocation().add(0, -.25, 0);
 		Block block = below.getBlock();
-		if (block.getType().isSolid())
+		if (block.isSolid())
 			return block;
 
 		List<BlockFace> priority = new HashMap<BlockFace, Double>() {{
@@ -168,8 +168,8 @@ public class BlockUtils {
 			put(BlockFace.SOUTH, Math.abs(below.getZ() - Math.ceil(below.getZ())));
 			put(BlockFace.WEST, below.getX() - Math.floor(below.getX()));
 		}}.entrySet().stream()
-				.filter(direction -> direction.getValue() < .3)
-				.sorted(Map.Entry.comparingByValue())
+			.filter(direction -> direction.getValue() < .3)
+			.sorted(Map.Entry.comparingByValue())
 				.map(Map.Entry::getKey)
 				.limit(2)
 				.collect(Collectors.toList());
@@ -179,7 +179,7 @@ public class BlockUtils {
 
 		for (BlockFace blockFace : priority) {
 			Block relative = block.getRelative(blockFace);
-			if (relative.getType().isSolid())
+			if (relative.isSolid())
 				return relative;
 		}
 

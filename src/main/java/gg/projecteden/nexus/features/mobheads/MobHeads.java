@@ -124,7 +124,7 @@ public class MobHeads extends Feature implements Listener {
 			"\n  Drop: " + drop);
 
 		if (drop) {
-			player.getWorld().dropItemNaturally(victim.getLocation(), skull);
+			event.getDrops().add(skull);
 
 			if (victim instanceof Player)
 				Discord.staffLog("**[MobHeads]** Dropped " + Nickname.of(victim) + "'s head for " + Nickname.of(player) + " with texture " + SkinCache.of(victim).getTextureUrl());

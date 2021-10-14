@@ -100,7 +100,7 @@ public class Variables {
 		MORNING(0, 2000),
 		DAY(2000, 12000),
 		EVENING(12000, 14000),
-		NIGHT(14000, 24000),
+		NIGHT(14000, 23999),
 		;
 
 		private final int minTime;

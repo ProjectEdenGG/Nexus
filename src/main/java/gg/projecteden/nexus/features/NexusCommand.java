@@ -134,9 +134,10 @@ public class NexusCommand extends CustomCommand implements Listener {
 			error(json.next(", reload queued ").group().next("&e⟳").hover("&eClick to retry manually").command("/nexus reload"));
 		}
 
+		SoundBuilder soundBuilder = new SoundBuilder(Sound.ENTITY_EVOKER_PREPARE_WOLOLO);
 		for (Player player : OnlinePlayers.getAll())
 			if (Dev.WAKKA.is(player) || Dev.BLAST.is(player) || Dev.LUI.is(player))
-				new SoundBuilder(Sound.ENTITY_EVOKER_PREPARE_WOLOLO).receiver(player).play();
+				soundBuilder.receiver(player).play();
 
 		CooldownService cooldownService = new CooldownService();
 		if (!cooldownService.check(StringUtils.getUUID0(), "reload", TickTime.SECOND.x(15)))

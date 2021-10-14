@@ -117,7 +117,7 @@ public class AntiCampingTask {
 
 			while (location.getY() >= floorTo.getMinimumPoint().getY()) {
 				location.add(0, -1, 0);
-				if (!location.getBlock().getType().isSolid())
+				if (!location.getBlock().isSolid())
 					continue;
 
 				to = location;
@@ -138,7 +138,7 @@ public class AntiCampingTask {
 			}
 
 			List<Block> blocks = BlockUtils.getBlocksInRadius(location.getBlock(), 4, yDiff, 4).stream()
-					.filter(block -> block.getType().isSolid())
+				.filter(block -> block.isSolid())
 					.sorted((block1, block2) -> {
 						Double distance1 = block1.getLocation().distance(minigamer.getPlayer().getLocation());
 						Double distance2 = block2.getLocation().distance(minigamer.getPlayer().getLocation());

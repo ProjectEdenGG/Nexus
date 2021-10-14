@@ -21,6 +21,7 @@ import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -62,7 +63,10 @@ public class RandomTeleportCommand extends CustomCommand {
 		}
 
 		int range = 250;
-		List<Location> locationList = LocationUtils.getRandomPointInCircle(world, radius);
+		List<Location> locationList = new ArrayList<>();
+		for (int i = 0; i < 10; i++) {
+			locationList.add(LocationUtils.getRandomPointInCircle(world, radius));
+		}
 
 		locationList.sort(Comparator.comparingInt(loc -> (int) (getDensity(loc, range) * 100000)));
 		Location best = locationList.get(0);
@@ -74,7 +78,7 @@ public class RandomTeleportCommand extends CustomCommand {
 
 		PaperLib.getChunkAtAsync(best, true).thenAccept(chunk -> {
 			Block highestBlock = world.getHighestBlockAt(best);
-			if (!highestBlock.getType().isSolid() && count.get() < 10) {
+			if (!highestBlock.isSolid() && count.get() < 10) {
 				Tasks.async(this::rtp);
 				return;
 			}

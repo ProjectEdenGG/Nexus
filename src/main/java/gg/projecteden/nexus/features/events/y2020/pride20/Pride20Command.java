@@ -57,7 +57,7 @@ public class Pride20Command extends CustomCommand {
 					error("There was an error while trying to join the parade, please try again");
 					break;
 				}
-			} while (!region.contains(worldguard.toBlockVector3(random)) || citizenAtBlock(random) || !random.getBlock().getType().isSolid() || !isHighestBlock(random));
+			} while (!region.contains(worldguard.toBlockVector3(random)) || citizenAtBlock(random) || !random.getBlock().isSolid() || !isHighestBlock(random));
 			npcLoc = random;
 		} else {
 			npcLoc = player.getPlayer().getLocation();

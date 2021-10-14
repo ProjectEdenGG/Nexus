@@ -49,7 +49,7 @@ public interface VanillaMechanic<T> extends Listener {
 		Location random = getRandomLocationInBorder(getWorld());
 		PaperLib.getChunkAtAsync(random, true).thenRun(() -> {
 			Location location = getWorld().getHighestBlockAt(random).getLocation();
-			if (location.getBlock().getType().isSolid())
+			if (location.getBlock().isSolid())
 				onRandomTeleport(match, t, location.add(0, 1, 0));
 			else
 				randomTeleport(match, t);

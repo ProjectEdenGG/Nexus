@@ -42,7 +42,11 @@ public interface ConditionalEffect {
 	}
 
 	default boolean isTimeQuadrant(AmbienceUser user, TimeQuadrant quadrant) {
-		return user.getVariables().getTimeQuadrant().equals(quadrant);
+		TimeQuadrant timeQuadrant = user.getVariables().getTimeQuadrant();
+		if (timeQuadrant == null)
+			return false;
+
+		return timeQuadrant.equals(quadrant);
 	}
 
 	default boolean isWindBlowing() {

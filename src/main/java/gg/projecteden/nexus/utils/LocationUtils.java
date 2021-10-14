@@ -23,9 +23,7 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -78,61 +76,62 @@ public class LocationUtils {
 	}
 
 	/**
-	 * Returns a list of 10 random locations in a world, within the specified radius of a circle, centered at 0,0,0.
+	 * Returns a random location in a world, within the specified radius of a circle, centered at 0,0,0.
 	 * <br>
 	 * No guarantees are made on the validity of these locations. They may be air, in unloaded chunks, etc.
 	 * <br>
 	 * Locations may contain decimals and may also be duplicated. Consider mapping using {@link #getCenteredLocation(Location)}
 	 * and collecting to a set if unique locations are required.
-	 * @param world the world to set the locations to
+	 *
+	 * @param world  the world to set the locations to
 	 * @param radius circle radius
-	 * @return list of 10 random locations
+	 * @return a random location
 	 */
 	@NotNull
-	public static List<Location> getRandomPointInCircle(World world, int radius) {
+	public static Location getRandomPointInCircle(World world, int radius) {
 		return getRandomPointInCircle(world, radius, 0, 0, 0);
 	}
 
 	/**
-	 * Returns a list of 10 random locations within the specified radius of a circle centered at the provided location.
+	 * Returns a random location within the specified radius of a circle centered at the provided location.
 	 * <br>
 	 * No guarantees are made on the validity of these locations. They may be air, in unloaded chunks, etc.
 	 * <br>
 	 * Locations may contain decimals and may also be duplicated. Consider mapping using {@link #getCenteredLocation(Location)}
 	 * and collecting to a set if unique locations are required.
+	 *
 	 * @param location the location to center the circle on
-	 * @param radius circle radius
-	 * @return list of 10 random locations
+	 * @param radius   circle radius
+	 * @return a random location
 	 */
 	@NotNull
-	public static List<Location> getRandomPointInCircle(Location location, int radius) {
+	public static Location getRandomPointInCircle(Location location, int radius) {
 		return getRandomPointInCircle(location.getWorld(), radius, location.getX(), location.getY(), location.getZ());
 	}
 
 	/**
-	 * Returns a list of 10 random locations in a world, within the specified radius of a circle, centered at the
+	 * Returns a random location in a world, within the specified radius of a circle, centered at the
 	 * specified coordinates.
 	 * <br>
 	 * No guarantees are made on the validity of these locations. They may be air, in unloaded chunks, etc.
 	 * <br>
 	 * Locations may contain decimals and may also be duplicated. Consider mapping using {@link #getCenteredLocation(Location)}
 	 * and collecting to a set if unique locations are required.
-	 * @param world the world to set the locations to
-	 * @param radius circle radius
+	 *
+	 * @param world   the world to set the locations to
+	 * @param radius  circle radius
 	 * @param xOffset center X coordinate
 	 * @param yOffset y coordinate
 	 * @param zOffset center Z coordinate
-	 * @return list of 10 random locations
+	 * @return a random location
 	 */
 	@NotNull
-	public static List<Location> getRandomPointInCircle(World world, int radius, double xOffset, double yOffset, double zOffset) {
-		List<Location> locationList = new ArrayList<>();
-		for (int i = 0; i < 10; i++) {
-			double angle = Math.random() * Math.PI * 2;
-			double r = Math.sqrt(Math.random());
-			locationList.add(new Location(world, xOffset + (r * Math.cos(angle) * radius), yOffset, zOffset + (r * Math.sin(angle) * radius)));
-		}
-		return locationList;
+	public static Location getRandomPointInCircle(World world, int radius, double xOffset, double yOffset, double zOffset) {
+		Location location;
+		double angle = Math.random() * Math.PI * 2;
+		double r = Math.sqrt(Math.random());
+		location = new Location(world, xOffset + (r * Math.cos(angle) * radius), yOffset, zOffset + (r * Math.sin(angle) * radius));
+		return location;
 	}
 
 	public static Block getBlockHit(ProjectileHitEvent event) {
