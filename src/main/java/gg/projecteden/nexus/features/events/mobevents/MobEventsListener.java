@@ -14,6 +14,7 @@ import gg.projecteden.utils.RandomUtils;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Mob;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -24,9 +25,9 @@ import org.bukkit.event.entity.EntityTransformEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent.BedEnterResult;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class MobEventsListener implements Listener {
 
@@ -112,9 +113,16 @@ public class MobEventsListener implements Listener {
 		if (!mobEvent.getSpawnedEntities().contains(entity.getUniqueId()))
 			return;
 
-		List<UUID> newUUIDs = event.getTransformedEntities().stream().map(Entity::getUniqueId).collect(Collectors.toList());
-		newUUIDs.add(event.getTransformedEntity().getUniqueId());
+		List<UUID> newUUIDs = new ArrayList<>();
+		for (Entity _entity : event.getTransformedEntities()) {
+			UUID uuid = _entity.getUniqueId();
+			newUUIDs.add(uuid);
 
+			if (entity instanceof Mob mob) {
+				if (_entity instanceof Mob _mob)
+					_mob.setTarget(mob.getTarget());
+			}
+		}
 		mobEvent.getSpawnedEntities().addAll(newUUIDs);
 	}
 

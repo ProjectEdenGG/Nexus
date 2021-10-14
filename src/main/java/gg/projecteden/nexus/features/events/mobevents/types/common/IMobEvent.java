@@ -37,10 +37,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Data
 public abstract class IMobEvent {
 	protected String name;
+	protected boolean started;
 	protected boolean active;
 	protected boolean ignoreLight;
 	protected boolean ignoreFloor;
@@ -64,10 +66,15 @@ public abstract class IMobEvent {
 
 			int spawnRadius = mobOptions.getSpawnRadius();
 			int mobCap = mobOptions.getCap();
-			int difficultyPercentage = playerDifficulty.getPercentage();
+			int playerPercentage = playerDifficulty.getPercentage();
+			int mobPercentage = mobOptions.getDifficulty().getPercentage();
 
-			// if player difficulty is higher than mobOption difficulty, increase difficulty
-			if (difficultyPercentage > mobOptions.getDifficulty().getPercentage()) {
+			// if player difficulty is lower than mob difficulty, cancel spawn
+			if (playerPercentage < mobPercentage) {
+				continue;
+
+				// if player difficulty is higher than mobOption, increase difficulty
+			} else if (playerPercentage > mobPercentage) {
 				int modifier = 4;
 				switch (playerDifficulty) {
 					case HARD:
@@ -76,7 +83,7 @@ public abstract class IMobEvent {
 						--modifier;
 				}
 
-				double percent = (double) difficultyPercentage / 100.0;
+				double percent = (double) playerPercentage / 100.0;
 				spawnRadius += Math.ceil((percent * (double) (spawnRadius / modifier)));
 				mobCap += Math.ceil((percent * (double) (mobCap / modifier)));
 			}
@@ -84,7 +91,11 @@ public abstract class IMobEvent {
 			Location playerLoc = player.getLocation();
 
 			// check mob caps
-			if (playerLoc.getNearbyEntitiesByType(entityType.getEntityClass(), spawnRadius).size() > mobCap)
+			int checkRadius = spawnRadius;
+			if (entityType.equals(EntityType.GHAST))
+				checkRadius = spawnRadius * 2;
+
+			if (playerLoc.getNearbyEntitiesByType(entityType.getEntityClass(), checkRadius).size() > mobCap)
 				continue;
 
 			// find valid location
@@ -97,7 +108,7 @@ public abstract class IMobEvent {
 			// entity modifications
 			try {
 				entity = getModifier().handleEntity(entity, user);
-				entity = handleEntity(entity, user);
+				entity = handleEntity(entity, user, mobOptions);
 
 				if (entity instanceof LivingEntity livingEntity) {
 					livingEntity.setCanPickupItems(false);
@@ -123,7 +134,7 @@ public abstract class IMobEvent {
 		return location;
 	}
 
-	protected Entity handleEntity(Entity entity, DifficultyUser user) {
+	protected Entity handleEntity(Entity entity, DifficultyUser user, MobOptions mobOptions) {
 		return entity;
 	}
 
@@ -172,24 +183,36 @@ public abstract class IMobEvent {
 
 	public void startEvent(World world, Player debugger) {
 		MobEventUtils.debug(debugger, "&3Starting event &e" + getName());
-		if (isActive()) {
+		if (isStarted()) {
 			MobEventUtils.debug(debugger, "  &cEvent is already active");
 			return;
 		}
-		setActive(true);
+		setStarted(true);
+		AtomicReference<List<Player>> players = new AtomicReference<>(getAffectingPlayers());
 
-		if (getModifier().freezeTime())
-			world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
-
-		List<Player> players = getAffectingPlayers();
-
-		new SoundBuilder(Sound.BLOCK_BELL_RESONATE).receivers(players).play();
-		ActionBarUtils.sendActionBar(players, getModifier().getStartMessage());
-		for (Player player : getAffectingPlayers()) {
-			PlayerUtils.send(player, getModifier().getStartMessage());
+		// notify
+		ActionBarUtils.sendActionBar(players.get(), getModifier().getWarningMessage());
+		for (Player player : players.get()) {
+			PlayerUtils.send(player, getModifier().getWarningMessage());
 		}
 
-		Tasks.wait(getModifier().getDuration(), () -> endEvent(world));
+		Tasks.wait(TickTime.SECOND.x(20), () -> {
+			setActive(true);
+
+			if (getModifier().freezeTime())
+				world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
+
+			players.set(getAffectingPlayers());
+
+			// notify
+			new SoundBuilder(Sound.BLOCK_BELL_RESONATE).receivers(players.get()).play();
+			ActionBarUtils.sendActionBar(players.get(), getModifier().getStartMessage());
+			for (Player player : players.get()) {
+				PlayerUtils.send(player, getModifier().getStartMessage());
+			}
+
+			Tasks.wait(getModifier().getDuration(), () -> endEvent(world));
+		});
 	}
 
 	public void endEvent(World world) {
@@ -217,7 +240,7 @@ public abstract class IMobEvent {
 
 		setActive(false);
 		MobEventUtils.removeEvent(world);
-
+		setStarted(false);
 
 		SleepableWorld sleepableWorld = Sleep.getSleepableWorld(world);
 		if (sleepableWorld != null) {

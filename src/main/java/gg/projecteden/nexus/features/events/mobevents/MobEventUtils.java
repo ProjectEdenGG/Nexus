@@ -10,14 +10,16 @@ import gg.projecteden.nexus.features.particles.effects.DotEffect;
 import gg.projecteden.nexus.models.difficulty.DifficultyUser.Difficulty;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.entity.MagmaCube;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Slime;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,7 +48,7 @@ public class MobEventUtils {
 
 	public static void queueEvent(World world, DayPhase dayPhase, Player debugger) {
 		debug(debugger, "&3Trying to queue an event in &e" + world.getName());
-		if (RandomUtils.chanceOf(80)) {
+		if (RandomUtils.chanceOf(90)) {
 			debug(debugger, " &crandom chance return");
 			return;
 		}
@@ -140,8 +142,11 @@ public class MobEventUtils {
 		if (!foundLocation)
 			return null;
 
-		if (MobEvents.isDebug())
-			DotEffect.debug(Dev.WAKKA.getPlayer(), result.get());
+		if (MobEvents.isDebug()) {
+			for (Player player : OnlinePlayers.where().world(center.getWorld()).get()) {
+				DotEffect.debug(player, result.get());
+			}
+		}
 
 		return result.get();
 	}
@@ -149,12 +154,50 @@ public class MobEventUtils {
 	public static boolean failChance(Difficulty playerDifficulty, int defaultChance, int step) {
 		int chance = defaultChance;
 		switch (playerDifficulty) {
-			case HARD:
-				chance -= step;
-			case EXPERT:
-				chance -= step;
+			case HARD -> chance -= step;
+			case EXPERT -> chance -= (step * 2);
 		}
 
 		return RandomUtils.chanceOf(chance);
+	}
+
+	public static void slimeSize(Slime slime, Difficulty difficulty) {
+		int minSize = 0;
+		int maxSize = 2;
+
+		switch (difficulty) {
+			case HARD -> {
+				minSize += 1;
+				maxSize += 0;
+			}
+
+			case EXPERT -> {
+				minSize += 2;
+				maxSize += 1;
+			}
+		}
+
+		int size = (int) Math.ceil(Math.pow(2, RandomUtils.randomInt(minSize, maxSize)) - 1);
+		slime.setSize(size);
+	}
+
+	public static void magmaCubeSize(MagmaCube slime, Difficulty difficulty) {
+		int minSize = 0;
+		int maxSize = 1;
+
+		switch (difficulty) {
+			case HARD -> {
+				minSize += 0;
+				maxSize += 1;
+			}
+
+			case EXPERT -> {
+				minSize += 1;
+				maxSize += 1;
+			}
+		}
+
+		int size = (int) Math.ceil(Math.pow(2, RandomUtils.randomInt(minSize, maxSize)) - 1);
+		slime.setSize(size);
 	}
 }

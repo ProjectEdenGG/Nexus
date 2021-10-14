@@ -8,7 +8,7 @@ import gg.projecteden.nexus.features.events.mobevents.types.common.IMobEvent;
 import gg.projecteden.nexus.features.events.mobevents.types.common.MobEventType;
 import gg.projecteden.nexus.features.events.mobevents.types.common.MobOptions;
 import gg.projecteden.nexus.models.difficulty.DifficultyUser;
-import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.models.difficulty.DifficultyUser.Difficulty;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
@@ -16,6 +16,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.MagmaCube;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Slime;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -31,7 +32,7 @@ public class SlimeRain extends IMobEvent {
 		this.ignoreFloor = true;
 		this.mobOptionsList = Arrays.asList(
 			new MobOptions(EntityType.SLIME, 75.0, 20, 30),
-			new MobOptions(EntityType.MAGMA_CUBE, 25.0, 15, 30)
+			new MobOptions(EntityType.MAGMA_CUBE, 25.0, 15, 30, Difficulty.HARD)
 		);
 	}
 
@@ -51,7 +52,7 @@ public class SlimeRain extends IMobEvent {
 
 	@Override
 	protected boolean extraChecks(Player player, MobOptions mobOptions, DifficultyUser user) {
-		return !MobEventUtils.failChance(user.getDifficulty(), 80, 15);
+		return !MobEventUtils.failChance(user.getDifficulty(), 85, 5);
 	}
 
 	@Override
@@ -68,21 +69,14 @@ public class SlimeRain extends IMobEvent {
 	}
 
 	@Override
-	public Entity handleEntity(Entity entity, DifficultyUser user) {
+	public Entity handleEntity(Entity entity, DifficultyUser user, MobOptions mobOptions) {
 		if (entity instanceof Slime slime) {
-			int minSize = 0;
-			int maxSize = 2;
-			switch (user.getDifficulty()) {
-				case HARD:
-					++minSize;
-					++maxSize;
-				case EXPERT:
-					++minSize;
-					++maxSize;
-			}
-
-			slime.setSize(RandomUtils.randomInt(minSize, maxSize));
+			if (entity instanceof MagmaCube magmaCube)
+				MobEventUtils.magmaCubeSize(magmaCube, user.getDifficulty());
+			else
+				MobEventUtils.slimeSize(slime, user.getDifficulty());
 		}
+
 
 		entity.setMetadata(MobEvents.METADATA_NO_FALL_DAMAGE, new FixedMetadataValue(Nexus.getInstance(), true));
 

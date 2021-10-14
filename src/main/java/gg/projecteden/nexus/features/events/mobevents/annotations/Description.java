@@ -8,6 +8,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Description {
+	String warning();
+
 	String start();
 
 	String end();

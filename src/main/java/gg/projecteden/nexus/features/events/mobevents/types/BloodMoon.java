@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.events.mobevents.types.common.IMobEvent;
 import gg.projecteden.nexus.features.events.mobevents.types.common.MobEventType;
 import gg.projecteden.nexus.features.events.mobevents.types.common.MobOptions;
 import gg.projecteden.nexus.models.difficulty.DifficultyUser;
+import gg.projecteden.nexus.models.difficulty.DifficultyUser.Difficulty;
 import gg.projecteden.nexus.utils.MaterialTag;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
@@ -20,19 +21,20 @@ public class BloodMoon extends IMobEvent {
 		this.name = "Blood Moon";
 		this.mobOptionsList = Arrays.asList(
 			new MobOptions(EntityType.ZOMBIE, 25, 50, 30),
-			new MobOptions(EntityType.HUSK, 25, 40, 30),
-			new MobOptions(EntityType.SKELETON, 15, 25, 30),
-			new MobOptions(EntityType.SPIDER, 15, 15, 30),
-			new MobOptions(EntityType.CREEPER, 15, 10, 30),
-			new MobOptions(EntityType.WITCH, 10, 5, 30),
-			new MobOptions(EntityType.ZOMBIE_VILLAGER, 10, 5, 30),
-			new MobOptions(EntityType.PHANTOM, 10, 10, 30)
+			new MobOptions(EntityType.ZOMBIE_VILLAGER, 25, 10, 30),
+			new MobOptions(EntityType.HUSK, 25, 25, 30),
+			new MobOptions(EntityType.SKELETON, 15, 20, 30),
+			new MobOptions(EntityType.STRAY, 15, 20, 30),
+			new MobOptions(EntityType.SPIDER, 15, 10, 30),
+			new MobOptions(EntityType.CREEPER, 10, 8, 30, Difficulty.HARD),
+			new MobOptions(EntityType.PHANTOM, 10, 10, 30, Difficulty.HARD),
+			new MobOptions(EntityType.WITCH, 10, 5, 30, Difficulty.EXPERT)
 		);
 	}
 
 	@Override
 	protected boolean extraChecks(Player player, MobOptions mobOptions, DifficultyUser user) {
-		return !MobEventUtils.failChance(user.getDifficulty(), 50, 10);
+		return !MobEventUtils.failChance(user.getDifficulty(), 75, 5);
 	}
 
 	@Override

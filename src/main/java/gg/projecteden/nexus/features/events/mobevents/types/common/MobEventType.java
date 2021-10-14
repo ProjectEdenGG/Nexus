@@ -36,6 +36,7 @@ public enum MobEventType {
 	@FreezeTime(false)
 	@Skippable(value = true, sleepPercent = 100)
 	@Description(
+		warning = "&a&oSlime Rain is about to start!",
 		start = "&a&oSlime is falling from the sky!",
 		end = "&o&7Slime Rain has ended"
 	)
@@ -45,10 +46,11 @@ public enum MobEventType {
 	@Chance(10)
 	@StartsAt(value = 15000, random = 1000)
 	@Affects(Dimension.OVERWORLD)
-	@Duration(value = TickTime.MINUTE, x = 20)
+	@Duration(value = TickTime.MINUTE, x = 10)
 	@FreezeTime(true)
 	@Skippable(value = true, sleepPercent = 100)
 	@Description(
+		warning = "&c&oThe Blood Moon is about to start!",
 		start = "&c&oThe Blood Moon is rising...",
 		end = "&o&7The Blood Moon has ended"
 	)
@@ -70,6 +72,7 @@ public enum MobEventType {
 	@FreezeTime(true)
 	@Skippable(value = true, sleepPercent = 100)
 	@Description(
+		warning = "&c&oRisen Hell is about to start!",
 		start = "&c&oThe gates to hell have been opened...",
 		end = "&o&7Risen Hell has ended."
 	)
@@ -111,6 +114,10 @@ public enum MobEventType {
 	public int getDuration() {
 		Duration annotation = getField().getAnnotation(Duration.class);
 		return annotation.value().x(annotation.x());
+	}
+
+	public String getWarningMessage() {
+		return getField().getAnnotation(Description.class).warning();
 	}
 
 	public String getStartMessage() {
