@@ -34,10 +34,10 @@ public class MobEventsCommand extends CustomCommand {
 	@Path("forceEnd [world]]")
 	void forceEnd(@Arg("current") World world) {
 		IMobEvent mobEvent = MobEventUtils.getCurrentEvent(world);
-		if (mobEvent == null || mobEvent.isActive())
+		if (mobEvent == null || !mobEvent.isActive())
 			error("No mob events are queued or active in world " + world.getName());
 
-		mobEvent.startEvent(world, player());
+		mobEvent.endEvent(world, player());
 	}
 
 	@Path("info [world]")
@@ -53,7 +53,7 @@ public class MobEventsCommand extends CustomCommand {
 
 		send("Current Event: " + mobEvent.getName());
 		send("Active: " + mobEvent.isActive());
-		send("Start Time: " + modifier.getStartTime());
+		send("Start Time: " + modifier.getStartTimes());
 		send("Duration: " + modifier.getDuration());
 		send("Skippable: " + modifier.canBeSkipped());
 	}

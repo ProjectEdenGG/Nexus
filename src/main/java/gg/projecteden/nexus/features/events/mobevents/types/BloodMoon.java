@@ -18,6 +18,8 @@ import java.util.Arrays;
 public class BloodMoon extends IMobEvent {
 
 	public BloodMoon() {
+		super.initialize();
+
 		this.name = "Blood Moon";
 		this.mobOptionsList = Arrays.asList(
 			new MobOptions(EntityType.ZOMBIE, 25, 50, 30),
@@ -39,7 +41,6 @@ public class BloodMoon extends IMobEvent {
 
 	@Override
 	public Location handleLocation(Location location, MobOptions mobOptions) {
-
 		if (mobOptions.getEntityType().equals(EntityType.PHANTOM)) {
 			location = location.clone().add(0, 25, 0);
 			if (!MaterialTag.ALL_AIR.isTagged(location.getBlock()))

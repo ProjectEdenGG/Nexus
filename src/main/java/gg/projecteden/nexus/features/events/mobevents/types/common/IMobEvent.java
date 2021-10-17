@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.mobevents.types.common;
 
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.mobevents.MobEventUtils;
 import gg.projecteden.nexus.features.events.mobevents.annotations.Type;
 import gg.projecteden.nexus.features.events.mobevents.types.common.WorldSet.Dimension;
@@ -28,9 +29,11 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -38,17 +41,26 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Stream;
 
 @Data
-public abstract class IMobEvent {
+public abstract class IMobEvent implements Listener {
 	protected String name;
 	protected boolean started;
 	protected boolean active;
 	protected boolean ignoreLight;
 	protected boolean ignoreFloor;
+	protected boolean ignoreY;
 	protected List<MobOptions> mobOptionsList = new ArrayList<>();
 	protected Set<UUID> spawnedEntities = new HashSet<>();
 	private static final DifficultyService difficultyService = new DifficultyService();
+
+	// All players are currently and were previously affected
+	protected Set<UUID> affectedPlayers = new HashSet<>();
+
+	public void initialize() {
+		Nexus.registerListener(this);
+	}
 
 	public void spawnMob(World world, List<Player> players) {
 		DifficultyUser user;
@@ -95,11 +107,21 @@ public abstract class IMobEvent {
 			if (entityType.equals(EntityType.GHAST))
 				checkRadius = spawnRadius * 2;
 
-			if (playerLoc.getNearbyEntitiesByType(entityType.getEntityClass(), checkRadius).size() > mobCap)
+			int yRadius = checkRadius;
+			boolean ignoreY = isIgnoreY();
+			if (ignoreY)
+				yRadius = playerLoc.getWorld().getMaxHeight();
+
+			Collection<Entity> entities = playerLoc.getNearbyEntities(checkRadius, yRadius, checkRadius);
+			Stream<Entity> entitiesStream = entities.stream().filter(entity -> entity.getType().equals(entityType));
+			entitiesStream = filterMobCap(entityType, entitiesStream);
+			int nearby = entitiesStream.toList().size();
+
+			if (nearby > mobCap)
 				continue;
 
 			// find valid location
-			Location spawnLoc = MobEventUtils.getRandomValidLocation(playerLoc, spawnRadius, 50, this, mobOptions);
+			Location spawnLoc = MobEventUtils.getRandomValidLocation(playerLoc, spawnRadius, ignoreY, 50, this, mobOptions);
 			if (spawnLoc == null)
 				continue;
 
@@ -112,18 +134,21 @@ public abstract class IMobEvent {
 
 				if (entity instanceof LivingEntity livingEntity) {
 					livingEntity.setCanPickupItems(false);
-					livingEntity.setRemoveWhenFarAway(false);
+					livingEntity.setRemoveWhenFarAway(true);
 				}
 
 				if (entity instanceof Mob mob)
 					mob.setTarget(player);
 
+				spawnedEntities.add(entity.getUniqueId());
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
-
-			spawnedEntities.add(entity.getUniqueId());
 		}
+	}
+
+	protected Stream<Entity> filterMobCap(EntityType entityType, Stream<Entity> entities) {
+		return entities;
 	}
 
 	protected boolean extraChecks(Player player, MobOptions mobOptions, DifficultyUser user) {
@@ -190,6 +215,9 @@ public abstract class IMobEvent {
 		setStarted(true);
 		AtomicReference<List<Player>> players = new AtomicReference<>(getAffectingPlayers());
 
+		// timer
+		startTimer(players.get());
+
 		// notify
 		ActionBarUtils.sendActionBar(players.get(), getModifier().getWarningMessage());
 		for (Player player : players.get()) {
@@ -205,14 +233,33 @@ public abstract class IMobEvent {
 			players.set(getAffectingPlayers());
 
 			// notify
-			new SoundBuilder(Sound.BLOCK_BELL_RESONATE).receivers(players.get()).play();
-			ActionBarUtils.sendActionBar(players.get(), getModifier().getStartMessage());
-			for (Player player : players.get()) {
-				PlayerUtils.send(player, getModifier().getStartMessage());
-			}
+			notifySound(players.get());
+			notifyMessage(players.get(), getModifier().getStartMessage());
 
 			Tasks.wait(getModifier().getDuration(), () -> endEvent(world));
 		});
+	}
+
+	public void startTimer(List<Player> players) {
+//		BossBarBuilder
+		for (Player player : players)
+			PlayerUtils.send(player, "TODO: START TIMER");
+	}
+
+	public void clearTimer(List<Player> players) {
+		for (Player player : players)
+			PlayerUtils.send(player, "TODO: CLEAR TIMER");
+	}
+
+	public void notifySound(List<Player> players) {
+		new SoundBuilder(Sound.BLOCK_BELL_RESONATE).receivers(players).play();
+	}
+
+	public void notifyMessage(List<Player> players, String message) {
+		ActionBarUtils.sendActionBar(players, message);
+
+		for (Player player : players)
+			PlayerUtils.send(player, message);
 	}
 
 	public void endEvent(World world) {
@@ -226,12 +273,11 @@ public abstract class IMobEvent {
 			return;
 		}
 
-		List<Player> affectedPlayers = getAffectingPlayers();
+		List<Player> players = getAffectingPlayers();
+		clearTimer(players);
 
-		new SoundBuilder(Sound.BLOCK_BELL_RESONATE).receivers(affectedPlayers).play();
-		ActionBarUtils.sendActionBar(affectedPlayers, getModifier().getEndMessage());
-		for (Player player : getAffectingPlayers())
-			PlayerUtils.send(player, getModifier().getEndMessage());
+		notifySound(players);
+		notifyMessage(players, getModifier().getEndMessage());
 
 		removeEntities(world);
 
@@ -277,12 +323,28 @@ public abstract class IMobEvent {
 	}
 
 	public List<Player> getAffectingPlayers() {
-		return OnlinePlayers.where()
+		List<Player> affecting = OnlinePlayers.where()
 			.filter(player -> getModifier().applies(player.getWorld()))
 			.filter(player -> player.getGameMode().equals(GameMode.SURVIVAL))
 			.filter(player -> !PlayerUtils.isVanished(player))
 			.filter(player -> !difficultyService.get(player).getDifficulty().equals(Difficulty.EASY))
 			.filter(player -> !new GodmodeService().get(player).isActive())
 			.get();
+
+		this.getAffectedPlayers().addAll(affecting.stream().map(Entity::getUniqueId).toList());
+
+		return affecting;
+	}
+
+	public boolean applies(Entity entity) {
+		if (!this.getModifier().applies(entity.getWorld()))
+			return false;
+
+		if (!(entity instanceof Player)) {
+			if (!this.getSpawnedEntities().contains(entity.getUniqueId()))
+				return false;
+		}
+
+		return true;
 	}
 }

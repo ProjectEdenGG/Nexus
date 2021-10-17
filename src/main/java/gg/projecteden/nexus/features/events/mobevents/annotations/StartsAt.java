@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface StartsAt {
-	long value();
+	long[] value();
 
 	long random() default 0;
 }

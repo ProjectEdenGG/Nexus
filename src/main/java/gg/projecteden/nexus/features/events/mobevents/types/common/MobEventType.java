@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.events.mobevents.annotations.Instance;
 import gg.projecteden.nexus.features.events.mobevents.annotations.Skippable;
 import gg.projecteden.nexus.features.events.mobevents.annotations.StartsAt;
 import gg.projecteden.nexus.features.events.mobevents.types.BloodMoon;
+import gg.projecteden.nexus.features.events.mobevents.types.Raid;
 import gg.projecteden.nexus.features.events.mobevents.types.RisenHell;
 import gg.projecteden.nexus.features.events.mobevents.types.SlimeRain;
 import gg.projecteden.nexus.features.events.mobevents.types.common.WorldSet.Dimension;
@@ -25,14 +26,17 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public enum MobEventType {
 	@Instance(SlimeRain.class)
 	@Chance(10)
-	@StartsAt(value = 1000, random = 1000)
+	@StartsAt(value = {1000}, random = 1000)
 	@Affects(Dimension.OVERWORLD)
-	@Duration(value = TickTime.MINUTE, x = 10)
+	@Duration(value = TickTime.MINUTE, x = 6)
 	@FreezeTime(false)
 	@Skippable(value = true, sleepPercent = 100)
 	@Description(
@@ -44,9 +48,9 @@ public enum MobEventType {
 
 	@Instance(BloodMoon.class)
 	@Chance(10)
-	@StartsAt(value = 15000, random = 1000)
+	@StartsAt(value = {15000}, random = 1000)
 	@Affects(Dimension.OVERWORLD)
-	@Duration(value = TickTime.MINUTE, x = 10)
+	@Duration(value = TickTime.MINUTE, x = 8)
 	@FreezeTime(true)
 	@Skippable(value = true, sleepPercent = 100)
 	@Description(
@@ -66,9 +70,9 @@ public enum MobEventType {
 	// TODO: decreases spawn chance in nether
 	@Instance(RisenHell.class)
 	@Chance(10)
-	@StartsAt(value = 15000, random = 1000)
+	@StartsAt(value = {15000}, random = 1000)
 	@Affects({Dimension.OVERWORLD, Dimension.NETHER})
-	@Duration(value = TickTime.MINUTE, x = 10)
+	@Duration(value = TickTime.MINUTE, x = 8)
 	@FreezeTime(true)
 	@Skippable(value = true, sleepPercent = 100)
 	@Description(
@@ -77,12 +81,26 @@ public enum MobEventType {
 		end = "&o&7Risen Hell has ended."
 	)
 	RISEN_HELL,
+
+	@Instance(Raid.class)
+	@Chance(10)
+	@StartsAt(value = {5000, 15000}, random = 1000)
+	@Affects(Dimension.OVERWORLD)
+	@Duration(value = TickTime.MINUTE, x = 8)
+	@FreezeTime(false)
+	@Skippable(value = true, sleepPercent = 100)
+	@Description(
+		warning = "&c&oAn Illager Raid is about to start!",
+		start = "&c&oIllager Raid is starting...",
+		end = "&o&7Illager Raid has ended."
+	)
+	RAID,
 	;
 
 	public static MobEventType random(DayPhase dayPhase) {
 		return RandomUtils.getWeightedRandom(new HashMap<>() {{
 			for (MobEventType type : MobEventType.values())
-				if (type.getChance() > 0 && type.getTimeOfDay() == dayPhase)
+				if (type.getChance() > 0 && type.getDayPhases().contains(dayPhase))
 					put(type, type.getChance());
 		}});
 	}
@@ -99,16 +117,21 @@ public enum MobEventType {
 		return 0;
 	}
 
-	public long getStartTime() {
-		return getField().getAnnotation(StartsAt.class).value();
+	public Set<Long> getStartTimes() {
+		return Arrays.stream(getField().getAnnotation(StartsAt.class).value()).boxed().collect(Collectors.toSet());
 	}
 
 	public int getDelayTime() {
 		return RandomUtils.randomInt(0, (int) getField().getAnnotation(StartsAt.class).random());
 	}
 
-	public DayPhase getTimeOfDay() {
-		return DayPhase.at(getStartTime());
+	public Set<DayPhase> getDayPhases() {
+		Set<DayPhase> result = new HashSet<>();
+		for (long startTime : getStartTimes()) {
+			result.add(DayPhase.at(startTime));
+		}
+
+		return result;
 	}
 
 	public int getDuration() {

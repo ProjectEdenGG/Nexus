@@ -89,11 +89,11 @@ public class MobEventUtils {
 		MobEvents.getActiveEvents().remove(new WorldSet(world));
 	}
 
-	public static Location getRandomValidLocation(Location center, int radius, int tries, IMobEvent mobEvent, MobOptions mobOptions) {
+	public static Location getRandomValidLocation(Location center, int radius, boolean ignoreY, int tries, IMobEvent mobEvent, MobOptions mobOptions) {
 		Location location;
 		Set<Location> triedList = new HashSet<>();
 		for (int i = 0; i < tries; i++) {
-			location = getRandomLocation(center, radius);
+			location = getRandomLocation(center, radius, ignoreY);
 			if (location == null)
 				continue;
 
@@ -128,14 +128,26 @@ public class MobEventUtils {
 		return null;
 	}
 
-	private static @Nullable Location getRandomLocation(Location center, int radius) {
+	private static @Nullable Location getRandomLocation(Location center, int radius, boolean ignoreY) {
 		AtomicReference<Location> result = new AtomicReference<>(null);
 		boolean foundLocation = Utils.attempt(25, () -> {
 			double x = RandomUtils.randomInt(center.getBlockX() - radius, center.getBlockX() + radius);
 			double y = RandomUtils.randomInt(center.getBlockY() - radius, center.getBlockY() + radius);
 			double z = RandomUtils.randomInt(center.getBlockZ() - radius, center.getBlockZ() + radius);
 
+			if (ignoreY) {
+				result.set(new Location(center.getWorld(), x, y, z).toCenterLocation());
+				Location resultY = result.get().clone();
+				resultY.setY(0);
+
+				Location centerXZ = center.clone();
+				centerXZ.setY(0);
+
+				return centerXZ.distance(resultY) > MobEvents.preventSpawnRadius;
+			}
+
 			result.set(new Location(center.getWorld(), x, y, z).toCenterLocation());
+
 			return center.distance(result.get()) > MobEvents.preventSpawnRadius;
 		});
 
@@ -161,23 +173,31 @@ public class MobEventUtils {
 		return RandomUtils.chanceOf(chance);
 	}
 
+
 	public static void slimeSize(Slime slime, Difficulty difficulty) {
-		int minSize = 0;
-		int maxSize = 2;
+		if (slime instanceof MagmaCube magmaCube)
+			MobEventUtils.magmaCubeSize(magmaCube, difficulty);
+		else
+			MobEventUtils.greenSlimeSize(slime, difficulty);
+	}
+
+	public static void greenSlimeSize(Slime slime, Difficulty difficulty) {
+		double minSize = 0;
+		double maxSize = 2;
 
 		switch (difficulty) {
 			case HARD -> {
 				minSize += 1;
-				maxSize += 0;
+				maxSize += 0.5;
 			}
 
 			case EXPERT -> {
-				minSize += 2;
-				maxSize += 1;
+				minSize += 1.5;
+				maxSize += 0.5;
 			}
 		}
 
-		int size = (int) Math.ceil(Math.pow(2, RandomUtils.randomInt(minSize, maxSize)) - 1);
+		int size = (int) Math.ceil(Math.pow(2.0, RandomUtils.randomDouble(minSize, maxSize)) - 1);
 		slime.setSize(size);
 	}
 

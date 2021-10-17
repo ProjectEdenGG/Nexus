@@ -80,7 +80,7 @@ public class MobEvents {
 					continue;
 
 				World world = worldSet.get(Dimension.OVERWORLD);
-				if (mobEvent.getModifier().getStartTime() != world.getTime())
+				if (mobEvent.getModifier().getStartTimes().contains(world.getTime()))
 					continue;
 
 				// TODO: switch to scheduled job
