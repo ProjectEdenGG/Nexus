@@ -29,27 +29,28 @@ public class TicketFeature {
 	public static JsonBuilder getTicketButtons(Ticket ticket) {
 		return new JsonBuilder()
 				.line()
-				.next("&3 |&3|   &3").group()
-				.next("&6&lTeleport").command("/tickets tp " + ticket.getId()).hover("&eClick to teleport").group()
-				.next("&3   |&3|   &3").group()
-				.next("&b&lMessage").suggest("/msg " + ticket.getNickname()).hover("&eClick to message the player").group()
-				.next("&3   |&3|   &3").group()
-				.next("&c&lClose").command("/tickets confirmclose " + ticket.getId()).hover("&eClick to close").group()
-				.next("&3   |&3|")
-				.line();
+			.next("&3 |&3|   &3").group()
+			.next("&6&lTeleport").command("/tickets tp " + ticket.getId()).hover("&eClick to teleport").group()
+			.next("&3   |&3|   &3").group()
+			.next("&b&lMessage").suggest("/msg " + ticket.getNickname()).hover("&eClick to message the player").group()
+			.next("&3   |&3|   &3").group()
+			.next("&c&lClose").command("/tickets confirmclose " + ticket.getId()).hover("&eClick to close").group()
+			.next("&3   |&3|")
+			.line();
 	}
 
-	public static void broadcast(Ticket ticket, Player player, String message) {
+	public static void broadcast(Ticket ticket, Player staff, String message) {
 		Discord.log("**[Tickets]** " + message);
+		Player opener = ticket.getPlayer();
 
 		Set<UUID> uuids = new HashSet<>();
-		for (Player staff : OnlinePlayers.getAll())
-			if (Rank.of(staff).isMod())
-				if (player == null || !staff.getUniqueId().equals(player.getUniqueId()))
-					uuids.add(staff.getUniqueId());
+		for (Player _staff : OnlinePlayers.getAll())
+			if (Rank.of(_staff).isMod())
+				if (staff == null || !_staff.getUniqueId().equals(staff.getUniqueId()))
+					uuids.add(_staff.getUniqueId());
 
-		if (!StringUtils.isUUID0(ticket.getUuid()))
-			uuids.add(ticket.getUuid());
+		if (!StringUtils.isUUID0(ticket.getUuid()) && PlayerUtils.canSee(opener, staff))
+			uuids.add(opener.getUniqueId());
 
 		uuids.forEach(uuid -> PlayerUtils.send(uuid, PREFIX + message));
 	}
