@@ -18,8 +18,6 @@ import java.util.Arrays;
 public class BloodMoon extends IMobEvent {
 
 	public BloodMoon() {
-		super.initialize();
-
 		this.name = "Blood Moon";
 		this.mobOptionsList = Arrays.asList(
 			new MobOptions(EntityType.ZOMBIE, 25, 50, 30),

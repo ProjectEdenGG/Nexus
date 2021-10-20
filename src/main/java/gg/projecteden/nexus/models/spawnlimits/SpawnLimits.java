@@ -63,6 +63,9 @@ public class SpawnLimits implements PlayerOwnedObject {
 			return defaultValue == get(world);
 		}
 
+		public void reset(World world) {
+			set(world, getDefaultValue());
+		}
 	}
 
 }

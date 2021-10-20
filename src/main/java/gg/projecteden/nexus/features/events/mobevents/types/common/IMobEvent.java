@@ -58,7 +58,7 @@ public abstract class IMobEvent implements Listener {
 	// All players are currently and were previously affected
 	protected Set<UUID> affectedPlayers = new HashSet<>();
 
-	public void initialize() {
+	public IMobEvent() {
 		Nexus.registerListener(this);
 	}
 
@@ -186,6 +186,10 @@ public abstract class IMobEvent implements Listener {
 
 	public List<Dimension> getDimensions() {
 		return getModifier().getDimensions();
+	}
+
+	protected World switchDimension(World world, Dimension dimension) {
+		return new WorldSet(world).get(dimension);
 	}
 
 	public void queue(World world) {

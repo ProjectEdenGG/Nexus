@@ -21,7 +21,6 @@ import java.util.Set;
 
 // TODO:
 //	- Make events, and spawned mobs uuid list persistent
-//	- per player difficulty
 
 public class MobEvents {
 	public static final String METADATA_NO_FALL_DAMAGE = "noFallDamage";

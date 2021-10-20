@@ -27,11 +27,8 @@ public class Raid extends IMobEvent implements Listener {
 	private static final List<Spell> blockedSpells = Arrays.asList(Spell.BLINDNESS, Spell.SUMMON_VEX);
 
 	public Raid() {
-		super.initialize();
-
 		this.name = "Illager Raid";
 		this.ignoreLight = true;
-
 		this.mobOptionsList = Arrays.asList(
 			new MobOptions(EntityType.PILLAGER, 50, 10, 30),
 			new MobOptions(EntityType.VINDICATOR, 10, 3, 30, Difficulty.HARD),

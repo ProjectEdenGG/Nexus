@@ -5,8 +5,10 @@ import gg.projecteden.nexus.features.events.mobevents.annotations.Type;
 import gg.projecteden.nexus.features.events.mobevents.types.common.IMobEvent;
 import gg.projecteden.nexus.features.events.mobevents.types.common.MobEventType;
 import gg.projecteden.nexus.features.events.mobevents.types.common.MobOptions;
+import gg.projecteden.nexus.features.events.mobevents.types.common.WorldSet.Dimension;
 import gg.projecteden.nexus.models.difficulty.DifficultyUser;
 import gg.projecteden.nexus.models.difficulty.DifficultyUser.Difficulty;
+import gg.projecteden.nexus.models.spawnlimits.SpawnLimits.SpawnLimitType;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.RandomUtils;
 import org.bukkit.Location;
@@ -34,8 +36,6 @@ import static gg.projecteden.utils.StringUtils.right;
 public class RisenHell extends IMobEvent implements Listener {
 
 	public RisenHell() {
-		super.initialize();
-
 		this.name = "Risen Hell";
 		this.ignoreLight = true;
 		this.mobOptionsList = Arrays.asList(
@@ -48,6 +48,24 @@ public class RisenHell extends IMobEvent implements Listener {
 			new MobOptions(EntityType.PIGLIN_BRUTE, 10, 5, 30, Difficulty.EXPERT),
 			new MobOptions(EntityType.BLAZE, 15, 10, 30, Difficulty.EXPERT)
 		);
+	}
+
+	@Override
+	public void startEvent(World world, Player debugger) {
+		super.startEvent(world);
+
+		World nether = switchDimension(world, Dimension.NETHER);
+		if (nether != null)
+			SpawnLimitType.MONSTERS.set(nether, (int) (SpawnLimitType.MONSTERS.get(nether) * 0.5));
+	}
+
+	@Override
+	public void endEvent(World world, Player debugger) {
+		super.endEvent(world, debugger);
+
+		World nether = switchDimension(world, Dimension.NETHER);
+		if (nether != null)
+			SpawnLimitType.MONSTERS.reset(nether);
 	}
 
 	@Override

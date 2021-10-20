@@ -21,6 +21,7 @@ import org.bukkit.entity.MagmaCube;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Slime;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.SlimeSplitEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 
@@ -28,11 +29,9 @@ import java.util.Arrays;
 import java.util.stream.Stream;
 
 @Type(MobEventType.SLIME_RAIN)
-public class SlimeRain extends IMobEvent {
+public class SlimeRain extends IMobEvent implements Listener {
 
 	public SlimeRain() {
-		super.initialize();
-
 		this.name = "Slime Rain";
 		this.ignoreLight = true;
 		this.ignoreFloor = true;
@@ -64,7 +63,7 @@ public class SlimeRain extends IMobEvent {
 
 	@Override
 	protected Stream<Entity> filterMobCap(EntityType entityType, Stream<Entity> entities) {
-		entities = entities.filter(entity -> {
+		return entities.filter(entity -> {
 			if (entity instanceof Slime slime) {
 				if (entity instanceof MagmaCube)
 					return true;
@@ -73,8 +72,6 @@ public class SlimeRain extends IMobEvent {
 			}
 			return true;
 		});
-
-		return entities;
 	}
 
 	@Override
