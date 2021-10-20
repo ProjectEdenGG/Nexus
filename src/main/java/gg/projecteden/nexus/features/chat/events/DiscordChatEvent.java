@@ -36,6 +36,7 @@ public class DiscordChatEvent extends ChatEvent {
 		this.channel = channel;
 		this.originalMessage = originalMessage;
 		this.message = message;
+		this.hasAttachments = hasAttachments;
 		this.permission = permission;
 	}
 
