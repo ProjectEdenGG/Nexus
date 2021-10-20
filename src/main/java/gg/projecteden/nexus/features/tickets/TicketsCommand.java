@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.tickets;
 
+import gg.projecteden.nexus.features.tickets.TicketFeature.TicketAction;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
@@ -71,16 +72,15 @@ public class TicketsCommand extends CustomCommand {
 
 		player().teleportAsync(ticket.getLocation(), TeleportCause.COMMAND);
 
-		String message = "&e" + nickname() + " &3teleported to ticket &e#" + ticket.getId();
-		TicketFeature.broadcast(ticket, player(), message);
+		TicketFeature.broadcast(ticket, player(), TicketAction.TELEPORT);
 
 		send(PREFIX + "Teleporting to ticket &e#" + ticket.getId());
 
 		Tasks.wait(15 * 20, () -> {
 			if (ticket.isOpen())
 				send(json(PREFIX + "&3Click here to &cclose &3the ticket")
-						.command("/tickets confirmclose " + ticket.getId())
-						.hover("&eClick to close"));
+					.command("/tickets confirmclose " + ticket.getId())
+					.hover("&eClick to close"));
 		});
 	}
 
@@ -102,8 +102,7 @@ public class TicketsCommand extends CustomCommand {
 		ticket.setClosedBy(uuid());
 		service.save(tickets);
 
-		String message = "&e" + nickname() + " &cclosed &3ticket &e#" + ticket.getId();
-		TicketFeature.broadcast(ticket, player(), message);
+		TicketFeature.broadcast(ticket, player(), TicketAction.CLOSE);
 
 		send(PREFIX + "Ticket &e#" + ticket.getId() + " &cclosed");
 	}
@@ -116,8 +115,7 @@ public class TicketsCommand extends CustomCommand {
 		ticket.setOpen(true);
 		service.save(tickets);
 
-		String message = "&e" + nickname() + " &areopened &3ticket &e#" + ticket.getId();
-		TicketFeature.broadcast(ticket, player(), message);
+		TicketFeature.broadcast(ticket, player(), TicketAction.REOPEN);
 
 		send(PREFIX + "Ticket &e#" + ticket.getId() + " &areopened");
 	}

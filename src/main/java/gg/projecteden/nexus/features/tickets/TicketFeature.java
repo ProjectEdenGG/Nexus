@@ -1,16 +1,17 @@
 package gg.projecteden.nexus.features.tickets;
 
 import gg.projecteden.nexus.features.discord.Discord;
+import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.ticket.Tickets.Ticket;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
+import lombok.AllArgsConstructor;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
 public class TicketFeature {
@@ -39,20 +40,67 @@ public class TicketFeature {
 			.line();
 	}
 
-	public static void broadcast(Ticket ticket, Player staff, String message) {
-		Discord.log("**[Tickets]** " + message);
-		Player opener = ticket.getPlayer();
+	public static void broadcastDiscord(Ticket ticket, String staffName, TicketAction action) {
+		action.discordLog(ticket, staffName);
+		sendMessage(ticket, null, staffName, action);
+	}
 
-		Set<UUID> uuids = new HashSet<>();
-		for (Player _staff : OnlinePlayers.getAll())
-			if (Rank.of(_staff).isMod())
-				if (staff == null || !_staff.getUniqueId().equals(staff.getUniqueId()))
-					uuids.add(_staff.getUniqueId());
+	public static void broadcast(Ticket ticket, Player staff, TicketAction action) {
+		String nickname = Nerd.of(staff).getNickname();
+		action.discordLog(ticket, nickname);
+		sendMessage(ticket, staff, nickname, action);
+	}
 
-		if (!StringUtils.isUUID0(ticket.getUuid()) && PlayerUtils.canSee(opener, staff))
-			uuids.add(opener.getUniqueId());
+	private static void sendMessage(Ticket ticket, @Nullable Player staff, String staffName, TicketAction action) {
+		String staffNick = staffName;
+		if (staff != null)
+			staffNick = Nickname.of(staff);
 
-		uuids.forEach(uuid -> PlayerUtils.send(uuid, PREFIX + message));
+		for (Nerd _staff : Rank.getOnlineStaff()) {
+			if (staff == null || !_staff.getUniqueId().equals(staff.getUniqueId()))
+				action.sendMessage(_staff.getUniqueId(), ticket, staffNick);
+		}
+
+		if (StringUtils.isUUID0(ticket.getUuid()))
+			return;
+
+		if (Rank.of(ticket.getUuid()).isStaff())
+			return;
+
+		if (!PlayerUtils.canSee(ticket.getPlayer(), staff)) {
+			if (action.equals(TicketAction.TELEPORT))
+				return;
+
+			staffNick = "A staff member";
+		}
+
+		action.sendMessage(ticket.getUuid(), ticket, staffNick);
+	}
+
+	@AllArgsConstructor
+	public enum TicketAction {
+		CLOSE("&e<staff> &cclosed &3ticket &e#<id>"),
+		REOPEN("&e<staff> &areopened &3ticket &e#<id>"),
+		TELEPORT("&e<staff> &3teleported to ticket &e#<id>"),
+		;
+
+		String message;
+
+		public void discordLog(Ticket ticket, String staff) {
+			Discord.log("**[Tickets]** " + StringUtils.stripColor(formatMessage(message, ticket, staff)));
+		}
+
+		public void sendMessage(UUID receiver, Ticket ticket, String staffName) {
+			PlayerUtils.send(receiver, PREFIX + formatMessage(message, ticket, staffName));
+		}
+
+		private String formatMessage(String message, Ticket ticket, String staffName) {
+			message = message.replaceAll("<opener>", ticket.getNerd().getNickname());
+			message = message.replaceAll("<id>", String.valueOf(ticket.getId()));
+			message = message.replaceAll("<staff>", staffName);
+
+			return message.trim();
+		}
 	}
 
 }
