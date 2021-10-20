@@ -196,7 +196,11 @@ public class SkinCache implements PlayerOwnedObject {
 		;
 
 		public static SkinModel of(BufferedImage image) {
-			return isTransparent(image, 47, 52) ? ALEX : STEVE;
+			try {
+				if (isTransparent(image, 47, 52)) return ALEX;
+			} catch (ArrayIndexOutOfBoundsException ignore) {}
+
+			return STEVE;
 		}
 
 		private static boolean isTransparent(BufferedImage image, int x, int y) {
