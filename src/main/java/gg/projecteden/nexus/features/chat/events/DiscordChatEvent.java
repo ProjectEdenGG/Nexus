@@ -69,7 +69,7 @@ public class DiscordChatEvent extends ChatEvent {
 	@Override
 	public String getOrigin() {
 		if (getChatter() != null)
-			return getChatter().getName();
+			return getChatter().getNickname();
 		return Discord.getName(member);
 	}
 
