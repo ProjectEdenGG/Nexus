@@ -72,7 +72,7 @@ public abstract class _WarpCommand extends CustomCommand {
 		send(builder);
 	}
 
-	@Path("set <name>")
+	@Path("(set|create) <name>")
 	@Permission(value = "group.staff", absolute = true)
 	public void set(@Arg(tabCompleter = Warp.class) String name) {
 		checkPermission();
