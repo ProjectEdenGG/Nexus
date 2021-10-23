@@ -81,12 +81,7 @@ public class StatTrackListener implements Listener {
 
 	// Add this to the items lore?
 //	Map<Player, Integer> hits = new HashMap<>();
-
-	// Getting crit % -- (totalCritDmg / 100)* totalNotCritDmg
 /*
-	private boolean isCritical(Player p) {
-		return (p.getVelocity().getY() + 0.0784000015258789) < 0;
-	}
 
 	private boolean isPlayer(Entity e){
 		return e instanceof Player;
@@ -223,7 +218,7 @@ public class StatTrackListener implements Listener {
 			//This includes using shields as well
 			if(cause.equals(EntityDamageByEntityEvent.DamageCause.ENTITY_ATTACK)){
 				// if the player's hit is critical
-				if(isCritical(damagerP)){
+				if (event.isCritical()) {
 					output += " > Crit -- Dmg: " + dmgFRound + " | Absorbed: " + absorbed;
 				}else {
 					output += " > Attack -- Dmg: " + dmgFRound + " | Absorbed: " + absorbed;
@@ -245,7 +240,7 @@ public class StatTrackListener implements Listener {
 				output += " > Thorns -- Dmg: " + dmgFRound + " | Absorbed: " + absorbed;
 			}else {
 				// if the player's hit is critical
-				if (isCritical(damagerP)) {
+				if (event.isCritical()) {
 					output += " > Crit -- Dmg: " + dmgFRound;
 				} else {
 					output += " > Dmg: " + dmgFRound;
