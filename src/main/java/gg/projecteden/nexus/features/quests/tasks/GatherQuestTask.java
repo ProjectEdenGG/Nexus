@@ -32,7 +32,7 @@ public class GatherQuestTask extends QuestTask<GatherQuestTask, GatherQuestTaskS
 
 		@Override
 		public DialogInstance interact(Quester quester, QuestTaskStepProgress stepProgress) {
-			if (stepProgress.isFirstInteraction())
+			if (dialog != null && stepProgress.isFirstInteraction())
 				return dialog.send(quester);
 			else
 				if (shouldAdvance(quester, stepProgress))

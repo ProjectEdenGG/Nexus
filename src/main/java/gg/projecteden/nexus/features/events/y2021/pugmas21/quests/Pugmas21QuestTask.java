@@ -263,9 +263,6 @@ public enum Pugmas21QuestTask implements IQuestTask {
 		)
 		.then()
 		.talkTo(BELLAMY)
-		.dialog(dialog -> dialog
-			// TODO
-		)
 		.reminder(dialog -> dialog
 			// TODO
 		)
@@ -281,9 +278,6 @@ public enum Pugmas21QuestTask implements IQuestTask {
 		//    Spawn point: /tppos -35.50 58.00 238.50 90 0 pugmas21
 		.then()
 		.talkTo(BELLAMY)
-		.dialog(dialog -> dialog
-			// TODO
-		)
 		.reminder(dialog -> dialog
 			// TODO
 		)
