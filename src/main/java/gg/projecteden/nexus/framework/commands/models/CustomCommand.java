@@ -151,6 +151,13 @@ public abstract class CustomCommand extends ICustomCommand {
 		return ItemUtils.getToolRequired(player());
 	}
 
+	protected ItemStack getToolRequired(Material material) {
+		final ItemStack tool = getToolRequired();
+		if (tool.getType() != material)
+			error("You must be holding a " + camelCase(material));
+		return tool;
+	}
+
 	protected EquipmentSlot getHandWithTool() {
 		return ItemUtils.getHandWithTool(player());
 	}
