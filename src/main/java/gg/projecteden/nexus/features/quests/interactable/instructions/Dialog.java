@@ -16,8 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 @Data
 @RequiredArgsConstructor
@@ -27,8 +27,8 @@ public class Dialog {
 
 	private static final Map<UUID, DialogInstance> instances = new HashMap<>();
 
-	public static Dialog from(Interactable npc) {
-		return new Dialog(npc);
+	public static Dialog from(Interactable interactable) {
+		return new Dialog(interactable);
 	}
 
 	public Dialog npc(String message) {
@@ -69,13 +69,14 @@ public class Dialog {
 
 	@AllArgsConstructor
 	public enum Variable {
-		PLAYER_NAME(Nickname::of),
+		PLAYER_NAME((quester, interactable) -> Nickname.of(quester)),
+		NPC_NAME(((quester, interactable) -> interactable.getName())),
 		;
 
-		private Function<Quester, String> interpolater;
+		private BiFunction<Quester, Interactable, String> interpolator;
 
-		public String interpolate(String message, Quester quester) {
-			return message.replaceAll(placeholder(), interpolater.apply(quester));
+		public String interpolate(String message, Quester quester, Interactable interactable) {
+			return message.replaceAll(placeholder(), interpolator.apply(quester, interactable));
 		}
 
 		public String placeholder() {
@@ -86,7 +87,7 @@ public class Dialog {
 	@NotNull
 	private String interpolate(String message, Quester quester) {
 		for (Variable variable : Variable.values())
-			message = variable.interpolate(message, quester);
+			message = variable.interpolate(message, quester, interactable);
 
 		return message;
 	}
