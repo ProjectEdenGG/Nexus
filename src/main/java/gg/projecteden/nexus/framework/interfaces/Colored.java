@@ -6,7 +6,7 @@ import net.kyori.adventure.util.RGBLike;
 import net.md_5.bungee.api.ChatColor;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.Arrays;
 
 import static gg.projecteden.nexus.utils.StringUtils.toHex;

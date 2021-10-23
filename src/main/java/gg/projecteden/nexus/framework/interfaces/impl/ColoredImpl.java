@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
+import java.awt.Color;
 
 @AllArgsConstructor
 public class ColoredImpl implements Colored {

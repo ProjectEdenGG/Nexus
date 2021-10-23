@@ -15,7 +15,7 @@ import lombok.NonNull;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.EntityType;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.Arrays;
 
 import static gg.projecteden.nexus.utils.StringUtils.decolorize;
