@@ -9,6 +9,8 @@ import kotlin.Pair;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -65,6 +67,19 @@ public class Dialog {
 
 	private void instruction(Consumer<Quester> task, int delay) {
 		instructions.add(new Pair<>(task, delay));
+	}
+
+	public Dialog give(Material material) {
+		return give(new ItemStack(material));
+	}
+
+	public Dialog give(Material material, int amount) {
+		return give(new ItemStack(material, amount));
+	}
+
+	public Dialog give(ItemStack item) {
+		instruction(quester -> PlayerUtils.giveItem(quester, item), 0);
+		return this;
 	}
 
 	@AllArgsConstructor

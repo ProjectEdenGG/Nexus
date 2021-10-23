@@ -1,9 +1,12 @@
 package gg.projecteden.nexus.features.events.y2021.pugmas21.quests;
 
+import gg.projecteden.nexus.features.events.y2021.pugmas21.models.QuestItems;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.models.TreeType;
 import gg.projecteden.nexus.features.quests.tasks.GatherQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.InteractQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.IQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTask;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
@@ -114,17 +117,18 @@ public enum Pugmas21QuestTask implements IQuestTask {
 			.npc("You think I know? That's why I asked you for help! I guess I really should've just gone to that weather guy instead..")
 			.player("Weather guy?")
 			.npc("Yeah there's this strange guy who hangs out near the docs, he stays there and studies the change in weather. ")
+			// TODO Remove dont get along
 			.npc("I know he would be the best to ask about something like this, but frankly I don't want to talk to him. We just.. Don't get along.")
 			.npc("Oh I know! How about you go talk to him, I mean you said you would help so this is your issue now, right?")
 			.player("I don't think that's how it works-")
 			.npc("Now just head right down to the docs and take a right. Have fun!")
 		)
 		.then()
-		// Player goes to -37 53 230
 		.talkTo(BELLAMY)
 		.dialog(dialog -> dialog
 			.npc("Ahh!")
 			.npc("Oh my gosh, you just about gave me a heart attack!")
+			// TODO This is not inside a home
 			.npc("You honestly can't just barge into someone's home uninvited without at least knocking first.")
 			.player("Sorry it's just this is kinda important.")
 			.npc("*sigh* Even so, urgency does not warrant disrespect.")
@@ -132,25 +136,39 @@ public enum Pugmas21QuestTask implements IQuestTask {
 			.player("I need help getting rid of the storm and I thought you could help")
 			.npc("Hmm, get rid of it? I mean it's not impossible but it may be difficult")
 			.npc("This weather is truly like nothing else I've seen before so I don't know how much my prior knowledge will be of help")
-			.npc("However, if it truly is just an overly aggressive storm then...  I think I have an idea, but I'm going to need your help.")
-			.player("I mean, I don't have much other choice here-")
+			.npc("However, if it truly is just an overly aggressive storm then... I think I have an idea, but I'm going to need your help.")
+			.player("I'd be happy to help.")
 			.npc("Perfect! I've been wanting to make this thing for a while now, but I've never had the resources to do it. I'm happy to finally have an assistant.")
 			.player("Okay I wouldn't go that far-")
-			.npc("Hm I mean you are going out of your way to collect whatever materials I require... I'd say that is quite assistant like")
-			.player("I now see why " + JUNIPER + " didn't want to talk to you")
-			.npc("Hm?")
-			.player("Nothing!")
-			.npc("Okay... well I think we should start with some iron and crystal wood for now")
+			.npc("I think we should start with some iron and crystal wood for now")
 			.player("Hold on! You haven't even told me what this is for yet!")
 			.npc("Oh I guess I did forget the part didn't I")
 			.npc("Well since a storm is defined as a violent atmospheric disturbance, characterized by low barometric pressure, cloud cover, precipitation, strong wind-")
 			.player("I'm sorry what?")
 			.npc("Ummm... so essentially...how to explain this in simple terms?")
-			.npc("Basically for storm to be storm, storm need clouds, get rid of clouds storm go poof")
+			.npc("Basically for storm to be storm, storm need clouds, get rid of clouds, storm go poof")
 			.player("Okay you didn't need to go that simple-")
 			.npc("Whatever. The items you're fetching are the necessary materials to create a machine capable of blowing away even the strongest of clouds.")
 			.npc("Get me 32 iron, and 64 crystal wood to start. You'll have to talk to " + FLINT + " in the mines and the lumberjack, " + WARREN + ".")
 			.player("Got it!")
+		)
+		.then()
+		.talkTo(FLINT)
+		.dialog(dialog -> dialog
+			.player("Hi! Are you {{NPC_NAME}}?")
+			.npc("Haha, that's me! Are you in need of some ores kiddo?")
+			.player("Yes, I need some iron and I was hoping you could help me out.")
+			.npc("Hmm, iron...")
+			.npc("Ugh sorry kid, seems im fresh out of iron at the moment.")
+			.player("Are you sure? It's really important that I get this iron.")
+			.npc("I suppose I could theoretically get more but I have so much work to do right now.")
+			.npc("Hey, why don't you get it yourself? The veins right over there, you won't have to walk far.")
+			.npc("Just take this pick and swing at it, I'm sure you'll do great!")
+			.give(Material.IRON_PICKAXE)
+			.player("Wait, am I allowed to keep this?")
+			.npc("Of course! It's just a rusty old spare. I was probably gonna get rid of it at some point so I'm glad to see it get some use.")
+			.player("Okay, awesome! Thanks {{NPC_NAME}}!")
+			.npc("No problem! And you know if you take a liking to the miner's life just let me know, we could always use some extra hands.")
 		)
 		.then()
 		.talkTo(WARREN)
@@ -159,38 +177,24 @@ public enum Pugmas21QuestTask implements IQuestTask {
 			.npc("Hm? Oh, yes that's me.")
 			.npc("Is there something I can help you with?")
 			.player("Yes actually! I was hoping you could point me in the direction of some crystal wood.")
-			.npc("Oh, yeah of course. You can find them in a cave.")
-			.npc("Okay. Do you know how to harvest them?")
+			.npc("Oh, yeah of course. You can find them in a cave. Do you know how to harvest them?")
 			.player("Haha, um... I guess I've just been figuring these things out as I go.")
-			.npc("Unfortunately when it comes to these trees being unprepared won't do, they can be fickle things.")
+			.npc("Unfortunately when it comes to these trees, being unprepared won't do, they can be fickle things.")
 			.npc("Why don't you take my spare axe from the wall? It's not the best but it should get the job done.")
 			.player("Thank you {{NPC_NAME}}!")
 			.npc("It's really no problem. Feel free to stop by anytime.")
 		)
 		.then()
-		.talkTo(FLINT)
-		.dialog(dialog -> dialog
-			.player("Hi! Are you {{NPC_NAME}}?")
-			.npc("Haha, that's me! Are you in need of some ores kiddo?")
-			.player("Yes, I need some iron ore and I was hoping you could help me out.")
-			.npc("Hmm, iron...")
-			.npc("Ugh sorry kid, seems im fresh out of iron at the moment.")
-			.player("Are you sure? It's really important that I get this iron.")
-			.npc("I suppose I could theoretically get more but I have so much work to do right now.")
-			.npc("Hey, why don't you get it yourself? The veins right over there, you won't have to walk far.")
-			.npc("Just take this pick and swing at it, I'm sure you'll do great!")
-			// Player receives a pickaxe
-			.player("Wait, am I allowed to keep this?")
-			.npc("Of course! It's just a rusty old spare. I was probably gonna get rid of it at some point so I'm glad to see it get some use.")
-			.player("Okay, awesome! Thanks {{NPC_NAME}}!")
-			.npc("No problem! And you know if you take a liking to the miner's life just let me know, we could always use some extra hands.")
-		)
-		.then()
 		.talkTo(BELLAMY)
 		.dialog(dialog -> dialog
-			// After handing Bellamy the materials
 			.npc("Ah! You're back!")
-			.npc("Yes, these materials look perfect.")
+		)
+		.reminder(dialog -> dialog
+			// TODO
+		)
+		.gather(new ItemStack(Material.IRON_INGOT, 32), TreeType.CRYSTAL.item(64))
+		.complete(dialog -> dialog
+			.npc("These materials look perfect.")
 			.player("Awesome does this mean I'm done here?")
 			.npc("Haha, no. Not at all.")
 			.npc("We're only just getting started with the base machine, the most important part is yet to come")
@@ -220,13 +224,19 @@ public enum Pugmas21QuestTask implements IQuestTask {
 			.player("Oh, yes! Thanks again for the help with that.")
 			.npc("Then it's settled, bring me 50 oak logs and I'll make your basket for you. ")
 			.player("Okay!")
-			// After giving warren the wood
+		)
+		.reminder(dialog -> dialog
+			// TODO
+		)
+		.gather(TreeType.OAK.item(50))
+		.complete(dialog -> dialog
 			.npc("Ah perfect! It's pretty good quality too. You sure you wanna continue being " + BELLAMY + "'s assistant? I could use someone like you working around the shop.")
 			.player("I'm sorry but I think I'll have to pass.")
 			.npc("Suit yourself. Just give me a few minutes.")
-			// Wait a few seconds
-			.npc("And... done!")
-			.npc("Here you go, one wooden basket!")
+			// TODO Sounds
+			.wait(TickTime.SECOND.x(3))
+			.npc("And... done! Here you go, one wooden basket!")
+			.give(QuestItems.BALLOON_BASKET)
 			.player("Thanks again warren!")
 		)
 		.then()
@@ -242,30 +252,59 @@ public enum Pugmas21QuestTask implements IQuestTask {
 			.player("I don't need a costume!!")
 			.npc("..Oh, I'm sorry I got a little excited there. What is it I can do for you then? ")
 			.player("I need a hot air balloon envelope and was hoping you could help.")
-			.npc("Oh, you're " + BELLAMY + "'s assistant! Why didn't you just say so?  I have it right here for you.")
+			.npc("Oh, you're " + BELLAMY + "'s assistant! Why didn't you just say so? I have it right here for you.")
 			.npc("Now just to add this up... ")
 			.npc("That will be $10,000 please.")
 			.player("...What?")
 			.npc("Pfft.. bahaha, I'm just joking! Sorry about that, but the look on your face was just too good.")
+			.give(QuestItems.BALLOON_ENVELOPE)
 			.player("Oh, okay then haha.")
 			.npc("Please come again! I wouldn't want to have scared you off with that little joke. ")
 		)
 		.then()
 		.talkTo(BELLAMY)
 		.dialog(dialog -> dialog
-			// Player give materials to weatherman
+			// TODO
+		)
+		.reminder(dialog -> dialog
+			// TODO
+		)
+		.gather(QuestItems.BALLOON_BASKET, QuestItems.BALLOON_ENVELOPE)
+		.complete(dialog -> dialog
 			.npc("These are high quality materials so this shouldn't take too long.")
 			.npc("Just gotta attach these here, put that there... and done!")
+			.give(QuestItems.BALLOON)
 			.npc("Now go get me that cloud in a bottle! I'll meet you at [location] with the machine so we can get rid of this storm, once and for all.")
-			// Player uses a hot air balloon to retrieve the cloud in a bottle, then brings it back to Bellamy.
+		)
+		.then()
+		// TODO Hot air balloon
+		.then()
+		.talkTo(BELLAMY)
+		.dialog(dialog -> dialog
+			// TODO
+		)
+		.reminder(dialog -> dialog
+			// TODO
+		)
+		.gather(QuestItems.BOTTLED_CLOUD)
+		.complete(dialog -> dialog
 			.npc("Took you long enough. I suppose now we are all set.")
 			.npc("Just gotta turn this on and...")
 			.npc("Nothing?!")
 			.npc("No that can't be, my plan was perfect and yet the clouds didn't budge")
 			.npc("I need more power.")
+		)
+		.then()
+		.talkTo(BELLAMY)
+		.dialog(dialog -> dialog
 			.npc("You! Bring me 40 pieces of redstone, and be quick about it.")
 			.player("Okay.")
-			// Player gives weatherman redstone
+		)
+		.reminder(dialog -> dialog
+			// TODO
+		)
+		.gather(Material.REDSTONE, 40)
+		.complete(dialog -> dialog
 			.npc("Is that the redstone? Hand it over!")
 			.npc("Okay let's do this now that it's all powered up!")
 			.npc("...")
@@ -273,19 +312,18 @@ public enum Pugmas21QuestTask implements IQuestTask {
 			.npc("I'm so sorry {{PLAYER_NAME}}. I made you run all over the place for nothing.")
 			.npc("Sigh. I was so sure it was going to work.")
 			.npc("I wanted to give you something as a thank you for your hard work but I'm afraid I don't have any money. I hope this item will be okay.")
-			// Player receives a crystal piece
+			.give(QuestItems.CRYSTAL_PIECE)
 			.npc("I don't know if it's just a shiny rock or whether it has some importance, but I hope you enjoy it.")
-			.player("Oh, uhm.. Thanks, I guess?")
+			.player("Oh, uhm.. Thanks, I guess?") // TODO Be more grateful
 			.npc("You're welcome! Also feel free to come help again, you are my assistant after all!")
 			.player("I'm not your assistant...")
 			.npc("If you say so.")
-			// First crystal piece obtained!
 		)
 		.then()
 		.talkTo(MYSTERIOUS_WOMAN)
 		.dialog(dialog -> dialog
 			.npc("Welcome back! I see you were successful in helping them out. It does me good to once again see others having fun.")
-			.player("I'm glad that I could help and look, I was given one of the crystal shards!")
+			.player("I'm glad that I could help, and look, I was given one of the crystal shards!")
 			.npc("Perfect, now let me tell you a little about the Guardian...")
 			.npc("Long ago, there was not just one guardian, but a dozen.")
 			.npc("Over time, they slowly left, one after another, each returning to the spirit realm, till only one remained.")
