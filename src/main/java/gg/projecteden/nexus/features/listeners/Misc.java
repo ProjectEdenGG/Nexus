@@ -480,7 +480,6 @@ public class Misc implements Listener {
 				PlayerUtils.runCommandAsConsole("petadmin remove " + player.getName());
 				PlayerUtils.runCommandAsConsole("mpet remove " + player.getName());
 				PlayerUtils.runCommandAsOp(player, "particles stopall");
-				PlayerUtils.runCommandAsOp(player, "powder cancel");
 				PlayerUtils.runCommandAsConsole("speed walk 1 " + player.getName());
 				player.resetPlayerTime();
 			});
