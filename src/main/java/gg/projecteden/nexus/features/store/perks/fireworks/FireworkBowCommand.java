@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.store.perks.fireworks;
 
+import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -24,9 +25,10 @@ public class FireworkBowCommand extends CustomCommand {
 			error("That bow is already enchanted with Firework");
 
 		tool.addEnchantment(Enchant.FIREWORK, 1);
+		CustomEnchants.update(tool);
 
 		if (player().hasPermission("fireworkbow.single")) {
-			send("&eYou have created your one firework bow! If you lose this bow, you won't be able to get another unless you purchase the command again.");
+			send(PREFIX + "You have created your one firework bow! If you lose this bow, you won't be able to get another unless you purchase the command again.");
 			PermissionChange.unset().uuid(uuid()).permissions("fireworkbow.single").runAsync();
 		}
 	}
