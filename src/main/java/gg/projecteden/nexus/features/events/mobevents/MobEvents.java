@@ -21,6 +21,7 @@ import java.util.Set;
 
 // TODO:
 //	- Make events, and spawned mobs uuid list persistent
+//	- kill blaze fireballs after a few seconds
 
 public class MobEvents {
 	public static final String METADATA_NO_FALL_DAMAGE = "noFallDamage";
