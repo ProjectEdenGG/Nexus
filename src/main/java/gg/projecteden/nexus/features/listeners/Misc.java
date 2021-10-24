@@ -19,6 +19,7 @@ import gg.projecteden.nexus.models.tip.Tip.TipType;
 import gg.projecteden.nexus.models.tip.TipService;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.ActionBarUtils;
+import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.FireworkLauncher;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -62,6 +63,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -119,6 +121,40 @@ public class Misc implements Listener {
 
 			world.setKeepSpawnInMemory(false);
 		}
+	}
+
+	@EventHandler
+	public void onPlaceOnLight(BlockPlaceEvent event) {
+		if (event.getBlockReplacedState().getType() != Material.LIGHT)
+			return;
+
+		if (event.getBlock().getType() == Material.LIGHT)
+			return;
+
+		event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onLightInteract(PlayerInteractEvent event) {
+		if (event.getAction() != Action.LEFT_CLICK_BLOCK)
+			return;
+
+		if (event.getPlayer().getGameMode() != GameMode.SURVIVAL)
+			return;
+
+		final Block block = event.getClickedBlock();
+		if (BlockUtils.isNullOrAir(block) || block.getType() != Material.LIGHT)
+			return;
+
+		final ItemStack item = event.getItem();
+		if (ItemUtils.isNullOrAir(item) || item.getType() != Material.LIGHT)
+			return;
+
+		if (!new BlockBreakEvent(block, event.getPlayer()).callEvent())
+			return;
+
+		block.setType(Material.AIR);
+		block.getWorld().dropItemNaturally(block.getLocation().toCenterLocation(), new ItemStack(Material.LIGHT));
 	}
 
 	@EventHandler

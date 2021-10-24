@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
-import org.bukkit.inventory.RecipeChoice;
+import org.bukkit.inventory.RecipeChoice.MaterialChoice;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +33,7 @@ public class NexusRecipe {
 	@NonNull
 	public ItemStack result;
 	public List<ItemStack> ingredients = new ArrayList<>();
-	public RecipeChoice.MaterialChoice materialChoice;
+	public MaterialChoice materialChoice;
 	public String[] pattern;
 	public Recipe recipe;
 	public RecipeType type = RecipeType.MISC;
@@ -52,7 +52,7 @@ public class NexusRecipe {
 		return this;
 	}
 
-	public static NexusRecipe shapeless(ItemStack result, Material material, RecipeChoice.MaterialChoice ingredients, String namespaceKey) {
+	public static NexusRecipe shapeless(ItemStack result, Material material, MaterialChoice ingredients, String namespaceKey) {
 		NexusRecipe recipe = new NexusRecipe(result);
 		recipe.getIngredients().add(new ItemStack(material));
 
@@ -67,7 +67,7 @@ public class NexusRecipe {
 		return recipe;
 	}
 
-	public static NexusRecipe shapeless(ItemStack result, Material material, RecipeChoice.MaterialChoice ingredients) {
+	public static NexusRecipe shapeless(ItemStack result, Material material, MaterialChoice ingredients) {
 		return shapeless(result, material, ingredients, null);
 	}
 
@@ -116,10 +116,10 @@ public class NexusRecipe {
 	}
 
 	public static ShapedRecipe surroundRecipe(NamespacedKey key, ItemStack result, ItemStack center, Material surround) {
-		return surroundRecipe(key, result, center, new RecipeChoice.MaterialChoice(surround));
+		return surroundRecipe(key, result, center, new MaterialChoice(surround));
 	}
 
-	public static ShapedRecipe surroundRecipe(NamespacedKey key, ItemStack result, ItemStack center, RecipeChoice.MaterialChoice surround) {
+	public static ShapedRecipe surroundRecipe(NamespacedKey key, ItemStack result, ItemStack center, MaterialChoice surround) {
 		ShapedRecipe bukkitRecipe = new ShapedRecipe(key, result);
 		bukkitRecipe.shape("111", "121", "111");
 		bukkitRecipe.setIngredient('1', surround);
@@ -127,25 +127,29 @@ public class NexusRecipe {
 		return bukkitRecipe;
 	}
 
-	public static NexusRecipe surround(ItemStack result, ItemStack center, RecipeChoice.MaterialChoice surround) {
+	public static NexusRecipe surround(ItemStack result, ItemStack center, MaterialChoice surround, String id) {
 		NexusRecipe recipe = new NexusRecipe(result);
 		recipe.setPattern(new String[] {"###", "#2#", "###"});
 		recipe.setMaterialChoice(surround);
 		recipe.getIngredients().add(center);
 
-		NamespacedKey key = new NamespacedKey(Nexus.getInstance(), "custom_" + getItemName(result));
+		NamespacedKey key = new NamespacedKey(Nexus.getInstance(), "custom_" + id);
 		recipe.setRecipe(surroundRecipe(key, result, center, surround));
 
 		CustomRecipes.recipes.add(recipe);
 		return recipe;
 	}
 
-	public static NexusRecipe surround(ItemStack result, Material center, RecipeChoice.MaterialChoice surround) {
+	public static NexusRecipe surround(ItemStack result, ItemStack center, MaterialChoice surround) {
+		return surround(result, center, surround, getItemName(result));
+	}
+
+	public static NexusRecipe surround(ItemStack result, Material center, MaterialChoice surround) {
 		return surround(result, new ItemStack(center), surround);
 	}
 
 	public static NexusRecipe surround(ItemStack result, Material center, Material surround) {
-		return surround(result, center, new RecipeChoice.MaterialChoice(surround));
+		return surround(result, center, new MaterialChoice(surround));
 	}
 
 	public void register() {
