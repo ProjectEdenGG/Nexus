@@ -271,7 +271,7 @@ public enum Pugmas21QuestTask implements IQuestTask {
 			.npc("These are high quality materials so this shouldn't take too long.")
 			.npc("Just gotta attach these here, put that there... and done!")
 			.give(QuestItems.BALLOON)
-			.npc("Now go get me that cloud in a bottle! I'll meet you at [location] with the machine so we can get rid of this storm, once and for all.")
+			.npc("Now go get me that cloud in a bottle! I'll meet you by the docks with the machine so we can get rid of this storm, once and for all.")
 		)
 		.then()
 		// TODO Hot air balloon

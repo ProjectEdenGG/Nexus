@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.events.y2021.pugmas21.models;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import gg.projecteden.nexus.features.events.y2020.pugmas20.quests.OrnamentVendor;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
@@ -95,8 +94,8 @@ public enum TreeType {
 		return getAllMaterials().stream().map(material -> material.name().toLowerCase()).collect(Collectors.joining(","));
 	}
 
-	public static OrnamentVendor.PugmasTreeType of(Material logs) {
-		for (OrnamentVendor.PugmasTreeType treeType : OrnamentVendor.PugmasTreeType.values())
+	public static TreeType of(Material logs) {
+		for (TreeType treeType : TreeType.values())
 			if (treeType.getLogs() == logs)
 				return treeType;
 
@@ -150,7 +149,7 @@ public enum TreeType {
 	public ProtectedRegion getRegion(int id) {
 		regions.computeIfAbsent(id, $ -> {
 			try {
-				String regionName = "pugmas20_trees_" + name().toLowerCase() + "_" + id;
+				String regionName = "pugmas21_trees_" + name().toLowerCase() + "_" + id;
 				return Pugmas21.worldguard().getProtectedRegion(regionName);
 			} catch (InvalidInputException ex) {
 				return null;
