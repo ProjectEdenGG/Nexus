@@ -8,6 +8,7 @@ import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
+import gg.projecteden.utils.RandomUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -18,6 +19,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
 
@@ -106,13 +110,14 @@ public class CandyCaneCannon implements Listener {
 		if (offHand != null)
 			return offHand;
 
+		Set<CandyCane> candyCanes = new HashSet<>();
 		for (ItemStack item : player.getInventory().getContents()) {
 			final CandyCane candyCane = CandyCane.of(item);
 			if (candyCane != null)
-				return candyCane;
+				candyCanes.add(candyCane);
 		}
 
-		return null;
+		return RandomUtils.randomElement(candyCanes);
 	}
 
 }
