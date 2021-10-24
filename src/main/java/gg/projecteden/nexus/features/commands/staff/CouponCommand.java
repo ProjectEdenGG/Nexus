@@ -45,6 +45,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
@@ -260,21 +261,23 @@ public class CouponCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Giving coupon &e" + coupon.getId() + " &3(" + coupon.getUses() + " uses)");
 	}
 
-	@Path("get (type) <amount>")
-	void generic(Integer amount) {
-		String type = arg(2);
-		ItemStack coupon = getGenericCoupon(type, amount);
-		inventory().addItem(coupon);
+	@Path("get <id> <amount>")
+	void generic(Coupon coupon, Integer amount) {
+		ItemStack couponItem = getGenericCoupon(coupon.getId(), amount);
+		giveItem(couponItem);
 	}
 
-	public static ItemStack getGenericCoupon(String type, Integer amount) {
+	public static ItemStack getGenericCoupon(String id, Integer amount) {
 		CouponService service = new CouponService();
 		Coupons coupons = service.get0();
 
-		Coupon coupon = coupons.of(type);
+		Coupon coupon = coupons.of(id);
 		ItemStack itemStack = coupon.getItem().clone();
 		ItemMeta meta = itemStack.getItemMeta();
 		List<String> lore = meta.getLore();
+		if (lore == null)
+			lore = new ArrayList<>();
+
 		lore.set(0, StringUtils.colorize("&3Amount: &e" + amount));
 		meta.setLore(lore);
 		itemStack.setItemMeta(meta);

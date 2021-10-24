@@ -48,7 +48,7 @@ public abstract class QuestTask<
 			return (TaskBuilderType) this;
 		}
 
-		public TaskBuilderType instructions(Function<Dialog, Dialog> instructions) {
+		public TaskBuilderType dialog(Function<Dialog, Dialog> instructions) {
 			currentStep.dialog = instructions.apply(Dialog.from(currentStep.interactable));
 			return (TaskBuilderType) this;
 		}

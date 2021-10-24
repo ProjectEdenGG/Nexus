@@ -3,14 +3,17 @@ package gg.projecteden.nexus.features.resourcepack.models;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.admin.BashCommand;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.models.playerplushie.PlayerPlushieConfig;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.utils.Env;
 import lombok.SneakyThrows;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 
 import static gg.projecteden.nexus.features.resourcepack.ResourcePack.FILE_NAME;
@@ -18,6 +21,7 @@ import static gg.projecteden.nexus.features.resourcepack.ResourcePack.URL;
 import static gg.projecteden.nexus.features.resourcepack.ResourcePack.hash;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
+import static gg.projecteden.utils.StringUtils.listLast;
 
 public class Saturn {
 	public static final String DIRECTORY = "/home/minecraft/git/Saturn" + (Nexus.getEnv() == Env.PROD ? "" : "-" + Nexus.getEnv()) + "/";
@@ -43,8 +47,8 @@ public class Saturn {
 		setup();
 
 		copy();
-		minify();
 		compute();
+		minify();
 
 		zip();
 
@@ -63,17 +67,17 @@ public class Saturn {
 	}
 
 	private static void teardown() {
-		execute("rm " + DEPLOY_DIRECTORY);
+		execute("rm -r " + DEPLOY_DIRECTORY);
 	}
 
 	private static void setup() {
 		teardown();
-		execute("mkdir " + DEPLOY_DIRECTORY);
+		execute("mkdir -p " + DEPLOY_DIRECTORY);
 	}
 
 	@SneakyThrows
 	private static void copy() {
-		execute("cp %s deploy -r".formatted(String.join(" ", INCLUDED)));
+		execute("cp -r %s deploy".formatted(String.join(" ", INCLUDED)));
 	}
 
 	private static void execute(String command) {
@@ -98,9 +102,23 @@ public class Saturn {
 	}
 
 	private static void compute() {
+		write(PlayerPlushieConfig.generate());
 		// TODO
-		//   Player Plushies
 		//   Numbers?
+	}
+
+	private static void write(Map<String, String> files) {
+		for (Entry<String, String> entry : files.entrySet()) {
+			try {
+				final String path = DEPLOY_DIRECTORY + "/" + entry.getKey().replaceAll("//", "/");
+				final String content = entry.getValue();
+
+				execute("mkdir -p " + path.replace(listLast(path, "/"), ""));
+				Files.write(Paths.get(path), content.getBytes());
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
 	}
 
 	private static void zip() {

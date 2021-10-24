@@ -28,6 +28,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.List;
@@ -52,6 +55,9 @@ public class SkinCache implements PlayerOwnedObject {
 	private String signature;
 	private LocalDateTime timestamp;
 	private LocalDateTime lastChanged;
+
+	private transient BufferedImage image;
+	private SkinModel model;
 
 	public static SkinCache of(String name) {
 		return of(PlayerUtils.getPlayer(name));
@@ -83,7 +89,24 @@ public class SkinCache implements PlayerOwnedObject {
 		return (SkullMeta) getHead().getItemMeta();
 	}
 
-	public static final Pattern TEXTURE_URL_REGEX = Pattern.compile("http://textures\\.minecraft\\.net/texture/[a-f\\d]{64}");
+	public SkinModel getModel() {
+		return SkinModel.of(retrieveImage());
+	}
+
+	@SneakyThrows
+	private BufferedImage retrieveImage() {
+		if (image != null)
+			return image;
+
+		final String url = getTextureUrl();
+		if (isNullOrEmpty(url))
+			return null;
+
+		image = ImageIO.read(new URL(url));
+		return image;
+	}
+
+	public static final Pattern TEXTURE_URL_REGEX = Pattern.compile("http://textures\\.minecraft\\.net/texture/[a-f\\d]{63,64}");
 
 	public String getTextureUrl() {
 		return getTextureUrl(this.value);
@@ -98,7 +121,7 @@ public class SkinCache implements PlayerOwnedObject {
 		if (matcher.find())
 			return matcher.group();
 
-		return "Could not find url: " + value;
+		return "Could not find url for " + getNickname() + ": " + value;
 	}
 
 	public boolean update() {
@@ -114,6 +137,7 @@ public class SkinCache implements PlayerOwnedObject {
 		this.timestamp = LocalDateTime.now();
 		this.value = property.getValue();
 		this.signature = property.getSignature();
+		this.image = null;
 		new SkinCacheService().save(this);
 
 		final boolean changed = !getTextureUrl().equals(getTextureUrl(previous));
@@ -164,6 +188,33 @@ public class SkinCache implements PlayerOwnedObject {
 
 	private ItemStack getHeadFromPlayer() {
 		return new ItemBuilder(Material.PLAYER_HEAD).skullOwner(this).build();
+	}
+
+	public enum SkinModel {
+		STEVE,
+		ALEX,
+		;
+
+		public static SkinModel of(BufferedImage image) {
+			try {
+				if (isTransparent(image, 47, 52)) return ALEX;
+			} catch (ArrayIndexOutOfBoundsException ignore) {}
+
+			return STEVE;
+		}
+
+		private static boolean isTransparent(BufferedImage image, int x, int y) {
+			return isTransparent(image.getRGB(x, y));
+		}
+
+		private static boolean isTransparent(int rgb) {
+			return rgb >> 24 == 0x00;
+		}
+
+		@Override
+		public String toString() {
+			return name().toLowerCase();
+		}
 	}
 
 }

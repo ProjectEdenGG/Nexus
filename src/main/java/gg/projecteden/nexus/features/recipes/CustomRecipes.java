@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpda
 import gg.projecteden.nexus.framework.features.Depends;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils.ItemStackComparator;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -19,7 +20,9 @@ import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -28,9 +31,10 @@ import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
-import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.RecipeChoice.MaterialChoice;
-import org.bukkit.potion.PotionEffectType;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionData;
+import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
 
@@ -85,10 +89,12 @@ public class CustomRecipes extends Feature implements Listener {
 	}
 
 	public static void register(Recipe recipe) {
-		try {
-			if (recipe == null)
-				return;
+		if (recipe == null)
+			return;
 
+		final NamespacedKey key = ((Keyed) recipe).getKey();
+
+		try {
 			for (Recipe recipe1 : Bukkit.getServer().getRecipesFor(recipe.getResult()))
 				if (RecipeUtils.areEqual(recipe, recipe1))
 					return;
@@ -99,12 +105,12 @@ public class CustomRecipes extends Feature implements Listener {
 				} catch (IllegalStateException duplicate) {
 					Nexus.log(duplicate.getMessage());
 				} catch (Exception ex) {
-					Nexus.log("Error while adding custom recipe " + ((Keyed) recipe).getKey() + " to Bukkit");
+					Nexus.log("Error while adding custom recipe " + key + " to Bukkit");
 					ex.printStackTrace();
 				}
 			});
 		} catch (Exception ex) {
-			Nexus.log("Error while adding custom recipe " + ((Keyed) recipe).getKey());
+			Nexus.log("Error while adding custom recipe " + key);
 			ex.printStackTrace();
 		}
 	}
@@ -222,10 +228,34 @@ public class CustomRecipes extends Feature implements Listener {
 		NexusRecipe.shapeless(new ItemStack(Material.HONEYCOMB, 4), Material.HONEYCOMB_BLOCK).type(RecipeType.MISC).register();
 		NexusRecipe.shapeless(new ItemStack(Material.MELON_SLICE, 5), Material.MELON).type(RecipeType.MISC).register();
 
-		// Invis Item Frame, No .register() to prevent overriding the recipe of the plugin
-		NexusRecipe.surround(new ItemBuilder(Material.ITEM_FRAME).name("Invisible Item Frame").amount(8).glow().build(),
-			new ItemBuilder(Material.LINGERING_POTION).potionEffect(PotionEffectType.INVISIBILITY).name("Lingering Invisibility Potion").build(),
-			new RecipeChoice.MaterialChoice(Material.ITEM_FRAME)).type(RecipeType.FUNCTIONAL);
+		light();
+
+		invisibleItemFrame();
+	}
+
+	private void light() {
+		final YamlConfiguration config = IOUtils.getConfig("plugins/SurvivalInvisiframes/config.yml");
+		List<ItemStack> centerItems = (List<ItemStack>) config.getList("recipe-center-items");
+		if (Utils.isNullOrEmpty(centerItems))
+			return;
+
+		for (ItemStack centerItem : centerItems) {
+			final PotionData potionData = ((PotionMeta) centerItem.getItemMeta()).getBasePotionData();
+			final String id = "light_" + (potionData.isExtended() ? "long" : "short");
+
+			NexusRecipe.surround(new ItemStack(Material.LIGHT), centerItem, new MaterialChoice(Material.GLOWSTONE), id)
+				.type(RecipeType.FUNCTIONAL)
+				.register();
+		}
+	}
+
+	private void invisibleItemFrame() {
+		NexusRecipe.surround(
+			new ItemBuilder(Material.ITEM_FRAME).name("Invisible Item Frame").amount(8).glow().build(),
+			new ItemBuilder(Material.LINGERING_POTION).potionType(PotionType.INVISIBILITY).build(),
+			new MaterialChoice(Material.ITEM_FRAME)
+		).type(RecipeType.FUNCTIONAL);
+		// No .register() to prevent overriding the recipe of the plugin
 	}
 
 }

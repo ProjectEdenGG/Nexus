@@ -226,8 +226,12 @@ public class NameplateManager {
 
 	public void sendServerPacket(@NotNull Player player, @NotNull PacketContainer packet) {
 		try {
+			if (!player.isOnline())
+				return;
+
 			Nameplates.debug("    Sending " + packet.getType().getPacketClass().getSimpleName() + " packet to " + player.getName());
 			this.protocolManager.sendServerPacket(player, packet);
+		} catch (IllegalArgumentException ignore) {
 		} catch (InvocationTargetException ex) {
 			Nexus.warn("      Unable to send " + packet.getType().getPacketClass().getSimpleName() + " packet to " + player.getName());
 			ex.printStackTrace();

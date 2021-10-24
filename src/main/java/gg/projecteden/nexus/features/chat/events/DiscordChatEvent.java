@@ -36,6 +36,7 @@ public class DiscordChatEvent extends ChatEvent {
 		this.channel = channel;
 		this.originalMessage = originalMessage;
 		this.message = message;
+		this.hasAttachments = hasAttachments;
 		this.permission = permission;
 	}
 
@@ -68,7 +69,7 @@ public class DiscordChatEvent extends ChatEvent {
 	@Override
 	public String getOrigin() {
 		if (getChatter() != null)
-			return getChatter().getName();
+			return getChatter().getNickname();
 		return Discord.getName(member);
 	}
 

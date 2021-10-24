@@ -24,7 +24,7 @@ public class InteractQuestTask extends QuestTask<InteractQuestTask, InteractQues
 
 		@Override
 		public DialogInstance interact(Quester quester, QuestTaskStepProgress stepProgress) {
-			if (stepProgress.isFirstInteraction())
+			if (dialog != null && stepProgress.isFirstInteraction())
 				return dialog.send(quester);
 			else
 				if (reminder != null)

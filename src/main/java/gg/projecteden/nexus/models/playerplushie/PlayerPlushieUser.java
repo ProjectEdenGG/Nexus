@@ -9,6 +9,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.contributor.ContributorService;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -34,6 +35,9 @@ public class PlayerPlushieUser implements PlayerOwnedObject {
 	private Map<Tier, Integer> vouchers = new HashMap<>();
 
 	public boolean isSubscribedAt(Tier tier) {
+		if (Dev.GRIFFIN.is(this) || Dev.WAKKA.is(this))
+			return true;
+
 		return new ContributorService().get(this).getPurchases().stream()
 			.filter(purchase -> tier.getStorePackage().getId().equals(purchase.getPackageId()))
 			.anyMatch(purchase -> purchase.getTimestamp().isAfter(LocalDateTime.now().minusDays(32)));

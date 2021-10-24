@@ -47,7 +47,7 @@ public class ItemTags extends Feature {
 	}
 
 	public static void reloadConfig() {
-		config = IOUtils.getConfig(fileName);
+		config = IOUtils.getNexusConfig(fileName);
 		loadConfigMaps();
 	}
 

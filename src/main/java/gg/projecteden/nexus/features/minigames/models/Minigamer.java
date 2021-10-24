@@ -150,7 +150,10 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 			match.quit(this);
 			match = null;
 		} else {
-			tell("You are not in a match");
+			if (isInGameWorld())
+				toGamelobby();
+			else
+				tell("You are not in a match");
 		}
 	}
 
@@ -216,13 +219,18 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 
 	public boolean isInRegion(@NotNull String type) {
 		return new WorldGuardUtils(getPlayer()).getRegionsAt(getPlayer().getLocation()).stream()
-				.anyMatch(region -> match.getArena().ownsRegion(region.getId(), type));
+			.anyMatch(region -> match.getArena().ownsRegion(region.getId(), type));
+	}
+
+	public boolean isInGameWorld() {
+		return Minigames.isMinigameWorld(getPlayer().getWorld());
 	}
 
 	/**
 	 * Sends a message to this minigamer in their chat with no prefix ("[Minigames]")
 	 * <p>
 	 * This method will automatically {@link gg.projecteden.nexus.utils.StringUtils#colorize(String)} the input.
+	 *
 	 * @param noPrefix a message
 	 */
 	public void sendMessage(@NotNull String noPrefix) {

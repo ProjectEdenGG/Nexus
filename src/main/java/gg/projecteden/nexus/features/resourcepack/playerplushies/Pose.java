@@ -7,7 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum Pose {
 	SITTING(Tier.TIER_1),
-	EXAMPLE(Tier.TIER_2),
+	STANDING(Tier.TIER_2),
 	;
 
 	private final Tier tier;

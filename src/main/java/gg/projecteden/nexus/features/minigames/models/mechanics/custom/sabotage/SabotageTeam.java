@@ -12,7 +12,7 @@ import net.md_5.bungee.api.ChatColor;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

@@ -223,7 +223,7 @@ public class JukeboxCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onSongEnd(SongEndEvent event) {
 		for (JukeboxUser user : new JukeboxUserService().getOnline())
-			if (user.getSongPlayer().equals(event.getSongPlayer()))
+			if (event.getSongPlayer().equals(user.getSongPlayer()))
 				user.cancel();
 	}
 

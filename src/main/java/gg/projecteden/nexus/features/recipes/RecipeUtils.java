@@ -1,8 +1,10 @@
 package gg.projecteden.nexus.features.recipes;
 
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.utils.ItemUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
@@ -10,7 +12,6 @@ import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +40,17 @@ public class RecipeUtils {
 			return false;
 		if (!recipe1.getResult().equals(recipe2.getResult()))
 			return false;
-		return match(recipe1, recipe2);
+
+		final NamespacedKey key1 = ((Keyed) recipe1).getKey();
+		final NamespacedKey key2 = ((Keyed) recipe2).getKey();
+		if (key1.toString().equals(key2.toString()))
+			return true;
+
+		final boolean match = match(recipe1, recipe2);
+		if (match && !key1.equals(key2))
+			Nexus.warn("[Custom Recipes] %s == %s".formatted(key1, key2));
+
+		return match;
 	}
 
 	public static boolean areSimilar(Recipe recipe1, Recipe recipe2) {
@@ -51,7 +62,6 @@ public class RecipeUtils {
 	}
 
 	private static boolean match(Recipe recipe1, Recipe recipe2) {
-		if (((Keyed) recipe1).getKey().toString().equals(((Keyed) recipe2).getKey().toString())) return true;
 		if (recipe1 instanceof ShapedRecipe r1) {
 			if (!(recipe2 instanceof ShapedRecipe r2))
 				return false;
@@ -59,10 +69,11 @@ public class RecipeUtils {
 			ItemStack[] matrix1 = shapeToMatrix(r1.getShape(), r1.getIngredientMap());
 			ItemStack[] matrix2 = shapeToMatrix(r2.getShape(), r2.getIngredientMap());
 
-			if (!Arrays.equals(matrix1, matrix2)) {
+			if (!match(matrix1, matrix2)) {
 				mirrorMatrix(matrix1);
-				return Arrays.equals(matrix1, matrix2);
+				return match(matrix1, matrix2);
 			}
+
 			return true;
 		} else if (recipe1 instanceof ShapelessRecipe r1) {
 			if (!(recipe2 instanceof ShapelessRecipe r2))
@@ -78,10 +89,10 @@ public class RecipeUtils {
 				if (find.size() != compare.size())
 					return false;
 
-				for (ItemStack item : compare) {
+				for (ItemStack item : compare)
 					if (!find.remove(item))
 						return false;
-				}
+
 				return find.isEmpty();
 			} catch (Exception ignore) {
 				return false;
@@ -91,7 +102,25 @@ public class RecipeUtils {
 				return false;
 
 			return r1.getInput().getType() == r2.getInput().getType();
-		} else return false;
+		} else
+			return false;
+	}
+
+	private static boolean match(ItemStack[] matrix1, ItemStack[] matrix2) {
+		for (int i = 0; i < matrix1.length; i++) {
+			final ItemStack i1 = matrix1[i];
+			final ItemStack i2 = matrix2[i];
+
+			if (i1 == null) {
+				if (i2 != null)
+					return false;
+			} else {
+				if (!i1.equals(i2) || !i1.isSimilar(i2))
+					return false;
+			}
+		}
+
+		return true;
 	}
 
 	private static ItemStack[] shapeToMatrix(String[] shape, Map<Character, ItemStack> map) {

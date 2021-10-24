@@ -9,14 +9,15 @@ import gg.projecteden.nexus.features.quests.users.QuestTaskStepProgress;
 import gg.projecteden.nexus.features.quests.users.Quester;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 import static gg.projecteden.nexus.features.quests.interactable.instructions.Dialog.genericGreeting;
-import static java.util.Collections.singletonList;
 
 @Data
 public class GatherQuestTask extends QuestTask<GatherQuestTask, GatherQuestTaskStep> {
@@ -31,7 +32,7 @@ public class GatherQuestTask extends QuestTask<GatherQuestTask, GatherQuestTaskS
 
 		@Override
 		public DialogInstance interact(Quester quester, QuestTaskStepProgress stepProgress) {
-			if (stepProgress.isFirstInteraction())
+			if (dialog != null && stepProgress.isFirstInteraction())
 				return dialog.send(quester);
 			else
 				if (shouldAdvance(quester, stepProgress))
@@ -67,8 +68,16 @@ public class GatherQuestTask extends QuestTask<GatherQuestTask, GatherQuestTaskS
 			return new GatherQuestTask(steps);
 		}
 
-		public GatherTaskBuilder gather(ItemStack item) {
-			return gather(singletonList(item));
+		public GatherTaskBuilder gather(Map<Material, Integer> items) {
+			return gather(items.entrySet().stream().map(entry -> new ItemStack(entry.getKey(), entry.getValue())).toList());
+		}
+
+		public GatherTaskBuilder gather(Material material, int amount) {
+			return gather(new ItemStack(material, amount));
+		}
+
+		public GatherTaskBuilder gather(ItemStack... items) {
+			return gather(List.of(items));
 		}
 
 		public GatherTaskBuilder gather(List<ItemStack> items) {

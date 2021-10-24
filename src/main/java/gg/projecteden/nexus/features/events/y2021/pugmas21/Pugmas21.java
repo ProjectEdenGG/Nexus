@@ -8,6 +8,10 @@ import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Timer;
+import gg.projecteden.nexus.utils.WorldEditUtils;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -25,12 +29,24 @@ public class Pugmas21 {
 	public static final String REGION = "pugmas21";
 	public static LocalDate TODAY = LocalDate.now();
 
+	@Getter
+	@Setter
+	private static boolean treeAnimating = false;
+
 	public Pugmas21() {
 		new Timer("      Events.Pugmas21.Train", Train::schedule);
 		new Timer("      Events.Pugmas21.AdventPresents", Advent::new);
 		new Timer("      Events.Pugmas21.CandyCaneCannon", CandyCaneCannon::new);
 
 		Nexus.getCron().schedule("0 0 * * *", () -> TODAY = TODAY.plusDays(1));
+	}
+
+	public static WorldGuardUtils worldguard() {
+		return new WorldGuardUtils(getWorld());
+	}
+
+	public static WorldEditUtils worldedit() {
+		return new WorldEditUtils(getWorld());
 	}
 
 	public static void shutdown() {

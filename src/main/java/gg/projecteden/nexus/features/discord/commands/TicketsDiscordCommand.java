@@ -6,6 +6,7 @@ import gg.projecteden.exceptions.EdenException;
 import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.features.discord.HandledBy;
 import gg.projecteden.nexus.features.tickets.TicketFeature;
+import gg.projecteden.nexus.features.tickets.TicketFeature.TicketAction;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
@@ -70,7 +71,7 @@ public class TicketsDiscordCommand extends Command {
 						ticket.setOpen(false);
 						service.save(tickets);
 
-						TicketFeature.broadcast(ticket, null, Nickname.of(player) + " closed ticket #" + ticket.getId());
+						TicketFeature.broadcastDiscord(ticket, Nickname.of(player), TicketAction.CLOSE);
 					}
 					case "reopen" -> {
 						if (ticket.isOpen())
@@ -79,7 +80,7 @@ public class TicketsDiscordCommand extends Command {
 						ticket.setOpen(true);
 						service.save(tickets);
 
-						TicketFeature.broadcast(ticket, null, Nickname.of(player) + " reopened ticket #" + ticket.getId());
+						TicketFeature.broadcastDiscord(ticket, Nickname.of(player), TicketAction.REOPEN);
 					}
 				}
 			} catch (Exception ex) {

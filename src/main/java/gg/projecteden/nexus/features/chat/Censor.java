@@ -43,7 +43,7 @@ public class Censor {
 
 	public static void reloadConfig() {
 		censorItems.clear();
-		ConfigurationSection config = IOUtils.getConfig("censor.yml").getConfigurationSection("censor");
+		ConfigurationSection config = IOUtils.getNexusConfig("censor.yml").getConfigurationSection("censor");
 		if (config != null) {
 			for (String key : config.getKeys(false)) {
 				ConfigurationSection section = config.getConfigurationSection(key);

@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.dailyrewards;
 
+import gg.projecteden.nexus.features.commands.staff.CouponCommand;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.dailyreward.DailyRewardUser;
 import gg.projecteden.nexus.models.dailyreward.DailyRewardUser.DailyStreak;
@@ -216,7 +217,7 @@ public class DailyRewardsFeature extends Feature {
 				/*  81 */ add(new Reward("35 Cooked Chicken")						.item(COOKED_CHICKEN, 35));
 				/*  82 */ add(new Reward("35 Steak")								.item(COOKED_BEEF, 35));
 				/*  83 */ add(new Reward("70 Leather")								.item(LEATHER, 70));
-				/*  84 */ add(new Reward("Coupon for 2 McMMO levels")				.item(new ItemBuilder(PAPER).name("&eCoupon for 2 McMMO levels").lore("&3Daily Reward").build()));
+				/*  84 */ add(new Reward("Coupon for 2 McMMO levels")				.item(CouponCommand.getGenericCoupon("mcmmo", 2)));
 				/*  85 */ add(new Reward("2 Horse Spawn Eggs")						.item(HORSE_SPAWN_EGG, 2));
 				/*  86 */ add(new Reward("3 Enchanted Golden Apples")				.item(ENCHANTED_GOLDEN_APPLE, 3));
 				/*  87 */ add(new Reward("Iron, Gold, Diamond Horse Armor")		.item(IRON_HORSE_ARMOR).item(GOLDEN_HORSE_ARMOR).item(DIAMOND_HORSE_ARMOR));
@@ -226,7 +227,7 @@ public class DailyRewardsFeature extends Feature {
 				/*  91 */ add(new Reward("100 Cooked Chicken")						.item(COOKED_CHICKEN, 100));
 				/*  92 */ add(new Reward("100 Steak")								.item(COOKED_BEEF, 100));
 				/*  93 */ add(new Reward("200 Leather")								.item(LEATHER, 200));
-				/*  94 */ add(new Reward("Coupon for 5 McMMO levels")				.item(new ItemBuilder(PAPER).name("&eCoupon for 5 McMMO levels").lore("&3Daily Reward").build()));
+				/*  94 */ add(new Reward("Coupon for 5 McMMO levels")				.item(CouponCommand.getGenericCoupon("mcmmo", 5)));
 				/*  95 */ add(new Reward("5 Enchanted Golden Apples")				.item(ENCHANTED_GOLDEN_APPLE, 5));
 				/*  96 */ add(new Reward("Super Fishing Pole")						.item(new ItemBuilder(FISHING_ROD).enchant(LURE, 5).enchant(LUCK, 3).enchant(DURABILITY, 4)));
 				/*  97 */ add(new Reward("Maxed Diamond Sword")						.item(new ItemBuilder(DIAMOND_SWORD).enchantMax(DAMAGE_ALL).enchantMax(MENDING).enchantMax(FIRE_ASPECT).enchantMax(KNOCKBACK).enchant(DURABILITY, 4)));

@@ -98,8 +98,13 @@ public class IOUtils {
 	}
 
 	@SneakyThrows
-	public static YamlConfiguration getConfig(String path) {
+	public static YamlConfiguration getNexusConfig(String path) {
 		return YamlConfiguration.loadConfiguration(getPluginFile(path));
+	}
+
+	@SneakyThrows
+	public static YamlConfiguration getConfig(String path) {
+		return YamlConfiguration.loadConfiguration(getFile(path));
 	}
 
 }
