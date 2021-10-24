@@ -54,7 +54,7 @@ public class JoinQuit extends Feature implements Listener {
 
 	@SneakyThrows
 	public static void reloadConfig() {
-		YamlConfiguration config = IOUtils.getConfig("jq.yml");
+		YamlConfiguration config = IOUtils.getNexusConfig("jq.yml");
 		if (config.isConfigurationSection("messages")) {
 			joinMessages = config.getConfigurationSection("messages").getStringList("join");
 			quitMessages = config.getConfigurationSection("messages").getStringList("quit");

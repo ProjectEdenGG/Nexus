@@ -121,7 +121,7 @@ public class Koda {
 
 	public static void reloadConfig() {
 		triggers.clear();
-		ConfigurationSection config = IOUtils.getConfig("koda.yml").getConfigurationSection("triggers");
+		ConfigurationSection config = IOUtils.getNexusConfig("koda.yml").getConfigurationSection("triggers");
 		if (config != null) {
 			for (String key : config.getKeys(false)) {
 				ConfigurationSection section = config.getConfigurationSection(key);

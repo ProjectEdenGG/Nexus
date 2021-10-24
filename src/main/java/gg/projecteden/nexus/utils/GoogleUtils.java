@@ -126,7 +126,7 @@ public class GoogleUtils {
 
 		@NotNull
 		private static YamlConfiguration getConfig() {
-			return IOUtils.getConfig(SHEETS_CONFIG_FILE_PATH);
+			return IOUtils.getNexusConfig(SHEETS_CONFIG_FILE_PATH);
 		}
 
 		public static void shutdown() {

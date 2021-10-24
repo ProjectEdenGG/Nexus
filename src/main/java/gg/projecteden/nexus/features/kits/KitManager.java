@@ -38,7 +38,7 @@ public class KitManager {
 	}
 
 	public static void reloadConfig() {
-		config = IOUtils.getConfig(fileName);
+		config = IOUtils.getNexusConfig(fileName);
 	}
 
 	@SneakyThrows

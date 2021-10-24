@@ -54,7 +54,7 @@ public class Crates extends Feature implements Listener {
 	public void onStart() {
 		Tasks.async(() -> {
 			ConfigurationSerialization.registerClass(CrateLoot.class);
-			config = IOUtils.getConfig("crates.yml");
+			config = IOUtils.getNexusConfig("crates.yml");
 			loadCache();
 
 			Tasks.sync(() -> {
