@@ -1,24 +1,20 @@
 package gg.projecteden.nexus.features.recipes.functionals;
 
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityResurrectEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.Recipe;
-import org.bukkit.inventory.RecipeChoice.MaterialChoice;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.surround;
 import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
 
 public class DiamondTotemOfUndying extends FunctionalRecipe {
@@ -36,27 +32,11 @@ public class DiamondTotemOfUndying extends FunctionalRecipe {
 	}
 
 	@Override
-	public Recipe getRecipe() {
-		NamespacedKey key = new NamespacedKey(Nexus.getInstance(), "custom_diamond_totem_of_undying");
-		return surroundRecipe(key, getResult(), Material.TOTEM_OF_UNDYING, Material.DIAMOND);
-	}
-
-	@Override
-	public List<ItemStack> getIngredients() {
-		return new ArrayList<>() {{
-			add(new ItemStack(Material.DIAMOND));
-			add(new ItemStack(Material.TOTEM_OF_UNDYING));
-		}};
-	}
-
-	@Override
-	public String[] getPattern() {
-		return new String[] {"111", "121", "111"};
-	}
-
-	@Override
-	public MaterialChoice getMaterialChoice() {
-		return null;
+	public @NotNull Recipe getRecipe() {
+		return surround(Material.TOTEM_OF_UNDYING)
+			.with(Material.DIAMOND)
+			.toMake(getResult())
+			.getRecipe();
 	}
 
 	@EventHandler

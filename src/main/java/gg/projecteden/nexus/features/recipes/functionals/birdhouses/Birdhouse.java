@@ -8,17 +8,14 @@ import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
-import org.bukkit.inventory.RecipeChoice.MaterialChoice;
-import org.bukkit.inventory.ShapedRecipe;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
+import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
 import static gg.projecteden.utils.StringUtils.camelCase;
 
 public abstract class Birdhouse extends FunctionalRecipe {
@@ -89,37 +86,16 @@ public abstract class Birdhouse extends FunctionalRecipe {
 	}
 
 	@Override
-	public String[] getPattern() {
-		return new String[]{"111", "232", "444"};
-	}
-
-	@Override
-	public Recipe getRecipe() {
+	public @NotNull Recipe getRecipe() {
 		final BirdhouseType type = getBirdhouseType();
-		NamespacedKey key = new NamespacedKey(Nexus.getInstance(), "custom_birdhouse_" + type.name().toLowerCase());
-		ShapedRecipe recipe = new ShapedRecipe(key, item);
-		recipe.shape(getPattern());
-		recipe.setIngredient('1', type.getRoof());
-		recipe.setIngredient('2', type.getHole());
-		recipe.setIngredient('3', Material.FEATHER);
-		recipe.setIngredient('4', type.getSiding());
-		return recipe;
-	}
-
-	@Override
-	public List<ItemStack> getIngredients() {
-		final BirdhouseType type = getBirdhouseType();
-		return new ArrayList<>(List.of(
-			new ItemStack(type.getRoof()),
-			new ItemStack(type.getHole()),
-			new ItemStack(Material.FEATHER),
-			new ItemStack(type.getSiding())
-		));
-	}
-
-	@Override
-	public MaterialChoice getMaterialChoice() {
-		return null;
+		return shaped("111", "232", "444")
+			.add('1', type.getRoof())
+			.add('2', type.getHole())
+			.add('3', Material.FEATHER)
+			.add('4', type.getSiding())
+			.toMake(getResult())
+			.id("birdhouse_" + type.name().toLowerCase())
+			.getRecipe();
 	}
 
 	@Override

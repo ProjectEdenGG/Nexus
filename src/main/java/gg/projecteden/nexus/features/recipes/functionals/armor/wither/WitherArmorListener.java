@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.recipes.functionals.armor.wither;
 
+import com.destroystokyo.paper.event.inventory.PrepareResultEvent;
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.features.commands.SpeedCommand;
@@ -170,6 +171,15 @@ public class WitherArmorListener implements Listener {
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		if (!hasFullSet(event.getPlayer())) return;
 		event.getPlayer().setAllowFlight(false);
+	}
+
+	@EventHandler
+	public void onUpgradeToNetherite(PrepareResultEvent event) {
+		for (ItemStack item : event.getInventory().getContents())
+			if (ItemUtils.isFuzzyMatch(item, WitherChestplate.getItem())) {
+				event.setResult(null);
+				break;
+			}
 	}
 
 }

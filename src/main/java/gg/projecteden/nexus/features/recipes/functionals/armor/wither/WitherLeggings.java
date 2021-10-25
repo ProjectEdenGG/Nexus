@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.recipes.functionals.armor.wither;
 
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.itemtags.Rarity;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
@@ -8,18 +7,16 @@ import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.Getter;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
-import org.bukkit.inventory.RecipeChoice;
-import org.bukkit.inventory.ShapedRecipe;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
+
+import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
 
 public class WitherLeggings extends FunctionalRecipe {
 
@@ -42,29 +39,11 @@ public class WitherLeggings extends FunctionalRecipe {
 	}
 
 	@Override
-	public Recipe getRecipe() {
-		NamespacedKey key = new NamespacedKey(Nexus.getInstance(), "custom_wither_set_leggings");
-		ShapedRecipe recipe = new ShapedRecipe(key, getResult());
-		recipe.shape(getPattern());
-		recipe.setIngredient('1', CraftedWitherSkull.getItem());
-		return recipe;
-	}
-
-	@Override
-	public List<ItemStack> getIngredients() {
-		return new ArrayList<>() {{
-			add(CraftedWitherSkull.getItem());
-		}};
-	}
-
-	@Override
-	public String[] getPattern() {
-		return new String[] { "111", "1 1", "1 1"};
-	}
-
-	@Override
-	public RecipeChoice.MaterialChoice getMaterialChoice() {
-		return null;
+	public @NotNull Recipe getRecipe() {
+		return shaped("111", "1 1", "1 1")
+			.add('1', CraftedWitherSkull.getItem())
+			.toMake(getResult())
+			.getRecipe();
 	}
 
 	@Override

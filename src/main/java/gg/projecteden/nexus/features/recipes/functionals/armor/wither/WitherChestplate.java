@@ -1,28 +1,22 @@
 package gg.projecteden.nexus.features.recipes.functionals.armor.wither;
 
-import com.destroystokyo.paper.event.inventory.PrepareResultEvent;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.itemtags.Rarity;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
 import lombok.Getter;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
-import org.bukkit.event.EventHandler;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
-import org.bukkit.inventory.RecipeChoice;
-import org.bukkit.inventory.ShapedRecipe;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
+
+import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
 
 public class WitherChestplate extends FunctionalRecipe {
 
@@ -45,44 +39,16 @@ public class WitherChestplate extends FunctionalRecipe {
 	}
 
 	@Override
-	public Recipe getRecipe() {
-		NamespacedKey key = new NamespacedKey(Nexus.getInstance(), "custom_wither_set_chestplate");
-		ShapedRecipe recipe = new ShapedRecipe(key, getResult());
-		recipe.shape(getPattern());
-		recipe.setIngredient('1', CraftedWitherSkull.getItem());
-		return recipe;
-	}
-
-	@Override
-	public List<ItemStack> getIngredients() {
-		return new ArrayList<>() {{
-			add(CraftedWitherSkull.getItem());
-		}};
-	}
-
-	@Override
-	public String[] getPattern() {
-		return new String[] { "1 1", "111", "111"};
-	}
-
-	@Override
-	public RecipeChoice.MaterialChoice getMaterialChoice() {
-		return null;
+	public @NotNull Recipe getRecipe() {
+		return shaped("1 1", "111", "111")
+			.add('1', CraftedWitherSkull.getItem())
+			.toMake(getResult())
+			.getRecipe();
 	}
 
 	@Override
 	public RecipeType getRecipeType() {
 		return RecipeType.ARMOR;
-	}
-
-	@EventHandler
-	public void onUpgradeToNetherite(PrepareResultEvent event) {
-		for (ItemStack item : event.getInventory().getContents()) {
-			if (ItemUtils.isFuzzyMatch(item, WitherChestplate.getItem())) {
-				event.setResult(null);
-				break;
-			}
-		}
 	}
 
 }

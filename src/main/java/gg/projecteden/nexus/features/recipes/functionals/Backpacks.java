@@ -14,11 +14,11 @@ import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import lombok.Getter;
+import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import org.apache.commons.lang.RandomStringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
@@ -35,14 +35,13 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.Recipe;
-import org.bukkit.inventory.RecipeChoice.MaterialChoice;
-import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.BlockStateMeta;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
 import static gg.projecteden.nexus.utils.ItemUtils.find;
 import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
 import static gg.projecteden.nexus.utils.MaterialTag.DYES;
@@ -58,45 +57,20 @@ public class Backpacks extends FunctionalRecipe {
 		.build();
 
 	@Override
-	public String getPermission() {
-		return null;
-	}
-
-	@Override
 	public ItemStack getResult() {
 		return getDefaultBackpack();
 	}
 
+	@NonNull
 	@Override
-	public String[] getPattern() {
-		return new String[]{"121", "343", "111"};
-	}
-
-	@Override
-	public Recipe getRecipe() {
-		NamespacedKey key = new NamespacedKey(Nexus.getInstance(), "custom_backpack");
-		ShapedRecipe recipe = new ShapedRecipe(key, getDefaultBackpack());
-		recipe.shape(getPattern());
-		recipe.setIngredient('1', Material.LEATHER);
-		recipe.setIngredient('2', Material.TRIPWIRE_HOOK);
-		recipe.setIngredient('3', Material.SHULKER_SHELL);
-		recipe.setIngredient('4', Material.CHEST);
-		return recipe;
-	}
-
-	@Override
-	public List<ItemStack> getIngredients() {
-		return new ArrayList<>(List.of(
-			new ItemStack(Material.LEATHER),
-			new ItemStack(Material.TRIPWIRE_HOOK),
-			new ItemStack(Material.SHULKER_SHELL),
-			new ItemStack(Material.CHEST)
-		));
-	}
-
-	@Override
-	public MaterialChoice getMaterialChoice() {
-		return null;
+	public @NotNull Recipe getRecipe() {
+		return shaped("121", "343", "111")
+			.add('1', Material.LEATHER)
+			.add('2', Material.TRIPWIRE_HOOK)
+			.add('3', Material.SHULKER_SHELL)
+			.add('4', Material.CHEST)
+			.toMake(getResult())
+			.getRecipe();
 	}
 
 	public static boolean isBackpack(ItemStack item) {

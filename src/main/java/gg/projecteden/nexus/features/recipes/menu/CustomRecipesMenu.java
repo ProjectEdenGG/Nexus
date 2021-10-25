@@ -8,16 +8,20 @@ import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.RandomUtils;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.RecipeChoice;
+import org.bukkit.inventory.RecipeChoice.ExactChoice;
+import org.bukkit.inventory.RecipeChoice.MaterialChoice;
+import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.ShapelessRecipe;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
+
+import static gg.projecteden.utils.RandomUtils.randomElement;
 
 @RequiredArgsConstructor
 public class CustomRecipesMenu extends MenuUtils implements InventoryProvider {
@@ -137,35 +141,28 @@ public class CustomRecipesMenu extends MenuUtils implements InventoryProvider {
 
 	public void addRecipeToMenu(InventoryContents contents, NexusRecipe recipe) {
 		contents.set(1, 6, ClickableItem.empty(recipe.getResult()));
-		if (recipe.getPattern() != null) {
-			Map<Character, ItemStack> characterItemStackMap = new HashMap<>();
-			int items = 0;
-			for (String row : recipe.getPattern())
-				for (char c : row.toCharArray()) {
-					if (c == ' ')
-						continue;
-
-					if (!characterItemStackMap.containsKey(c))
-						if (c == '#' && recipe.getMaterialChoice() != null)
-							characterItemStackMap.put(c, new ItemStack(RandomUtils.randomElement(recipe.getMaterialChoice().getChoices())));
-						else
-							characterItemStackMap.put(c, recipe.getIngredients().get(items++));
-				}
-
+		if (recipe.getRecipe() instanceof ShapedRecipe shaped) {
 			for (int i = 0; i < 9; i++) {
-				char c = recipe.getPattern()[i / 3].toCharArray()[i % 3];
+				char c = shaped.getShape()[i / 3].toCharArray()[i % 3];
 				if (c == ' ')
 					continue;
 
-				contents.set(MATRIX_SLOTS[i], ClickableItem.empty(characterItemStackMap.get(c)));
+				contents.set(MATRIX_SLOTS[i], ClickableItem.empty(random(shaped.getChoiceMap().get(c))));
 			}
-		} else {
+		} else if (recipe.getRecipe() instanceof ShapelessRecipe shapeless) {
 			int slot = 0;
-			for (ItemStack item : recipe.getIngredients())
-				contents.set(MATRIX_SLOTS[slot++], ClickableItem.empty(item));
-			if (recipe.getMaterialChoice() != null)
-				contents.set(MATRIX_SLOTS[slot], ClickableItem.empty(new ItemStack(RandomUtils.randomElement(recipe.getMaterialChoice().getChoices()))));
+			for (RecipeChoice choice : shapeless.getChoiceList())
+				contents.set(MATRIX_SLOTS[slot++], ClickableItem.empty(random(choice)));
 		}
+	}
+
+	private ItemStack random(RecipeChoice choice) {
+		if (choice instanceof MaterialChoice materialChoice)
+			return new ItemStack(randomElement(materialChoice.getChoices()));
+		else if (choice instanceof ExactChoice exactChoice)
+			return randomElement(exactChoice.getChoices());
+		else
+			return new ItemStack(Material.BARRIER);
 	}
 
 }
