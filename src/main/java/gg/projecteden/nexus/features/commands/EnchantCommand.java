@@ -24,7 +24,7 @@ public class EnchantCommand extends CustomCommand {
 	}
 
 	@Path("<enchant> [level]")
-	void run(Enchantment enchantment, @Arg("1") int level, @Switch @Arg("true") boolean unsafe) {
+	void run(Enchantment enchantment, @Arg(value = "1", max = 127, minMaxBypass = "group.admin") int level, @Switch @Arg("true") boolean unsafe) {
 		if (level < 1) {
 			remove(enchantment);
 			return;
