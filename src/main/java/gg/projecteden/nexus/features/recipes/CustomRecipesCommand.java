@@ -87,8 +87,8 @@ public class CustomRecipesCommand extends CustomCommand {
 			contents.set(1, 2, ClickableItem.from(new ItemBuilder(Material.LIGHT_GRAY_STAINED_GLASS_PANE).name("Place Item Here").build(), e -> {
 				InventoryClickEvent clickEvent = (InventoryClickEvent) e.getEvent();
 				if (ItemUtils.isNullOrAir(clickEvent.getWhoClicked().getItemOnCursor())) {
-					for (int i = 0; i < uncraftingSlots.length; i++)
-						contents.set(uncraftingSlots[i], ClickableItem.NONE);
+					for (int uncraftingSlot : uncraftingSlots)
+						contents.set(uncraftingSlot, ClickableItem.NONE);
 					return;
 				}
 				Tasks.wait(2, () -> {
@@ -101,8 +101,8 @@ public class CustomRecipesCommand extends CustomCommand {
 		}
 
 		public void getIndex(List<List<ItemStack>> items, int index, InventoryContents contents) {
-			for (int i = 0; i < uncraftingSlots.length; i++)
-				contents.set(uncraftingSlots[i], ClickableItem.NONE);
+			for (int uncraftingSlot : uncraftingSlots)
+				contents.set(uncraftingSlot, ClickableItem.NONE);
 
 			contents.set(2, 3, ClickableItem.empty(new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).name(" ").build()));
 			contents.set(2, 7, ClickableItem.empty(new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).name(" ").build()));

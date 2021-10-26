@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import static gg.projecteden.nexus.features.recipes.CustomRecipes.choiceOf;
 
@@ -43,8 +42,7 @@ public class ShapedBuilder extends RecipeBuilder<ShapedBuilder> {
 		ShapedRecipe recipe = new ShapedRecipe(key(), result);
 		recipe.shape(pattern[0], pattern[1], pattern[2]);
 
-		for (Entry<Character, RecipeChoice> entry : ingredients.entrySet())
-			recipe.setIngredient(entry.getKey(), entry.getValue());
+		ingredients.forEach(recipe::setIngredient);
 
 		return recipe;
 	}
