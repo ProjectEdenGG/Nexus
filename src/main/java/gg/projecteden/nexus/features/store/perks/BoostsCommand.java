@@ -114,12 +114,23 @@ public class BoostsCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("give <player> <type> <multiplier> <seconds> [amount]")
+	@Permission("group.admin")
 	void give(Booster booster, Boostable type, double multiplier, Timespan seconds, @Arg("1") int amount) {
 		for (int i = 0; i < amount; i++)
 			booster.add(type, multiplier, seconds.getOriginal());
 		service.save(booster);
 
 		send(PREFIX + "Gave " + amount + " " + plural(camelCase(type) + " boost", amount) + " to " + booster.getNickname());
+	}
+
+	@Path("delete <player> <id>")
+	@Permission("group.admin")
+	void delete(Booster booster, int id) {
+		if (!booster.getBoosts().removeIf(boost -> boost.getId() == id))
+			error("Boost &e#" + id + " &cfor &e" + booster.getNickname() + " &cnot found");
+
+		service.save(booster);
+		send(PREFIX + "Deleted boost &e#" + id + " &3for &e" + booster.getNickname());
 	}
 
 	@Confirm

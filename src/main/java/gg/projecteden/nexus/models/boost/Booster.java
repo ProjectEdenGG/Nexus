@@ -212,10 +212,12 @@ public class Booster implements PlayerOwnedObject {
 	}
 
 	public Boost get(int id) {
-		// Shortcut
-		Boost index = boosts.get(id);
-		if (index.getId() == id)
-			return index;
+		try {
+			// Shortcut
+			Boost index = boosts.get(id);
+			if (index.getId() == id)
+				return index;
+		} catch (IndexOutOfBoundsException ignore) {}
 
 		for (Boost boost : boosts)
 			if (boost.getId() == id)
