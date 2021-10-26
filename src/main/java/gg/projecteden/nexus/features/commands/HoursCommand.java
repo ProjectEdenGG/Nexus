@@ -10,6 +10,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.hours.Hours;
@@ -75,9 +76,16 @@ public class HoursCommand extends CustomCommand {
 	@Async
 	@Description("View the play time leaderboard for any year, month, or day")
 	@Path("top [args...]")
-	void top2(@Arg("1") HoursTopArguments args) {
+	void top2(@Arg("1") HoursTopArguments args, @Switch boolean onlyStaff) {
 		int page = args.getPage();
 		List<PageResult> results = service.getPage(args);
+
+		String onlyStaffSwitch = "";
+		if (onlyStaff) {
+			onlyStaffSwitch = " --onlyStaff";
+			results.removeIf(result -> !Rank.of(result.getUuid()).isStaff());
+		}
+
 		if (results.size() == 0)
 			error("&cNo results on page " + page);
 
@@ -89,9 +97,9 @@ public class HoursCommand extends CustomCommand {
 		send(PREFIX + "Total: " + Timespan.of(totalHours).format() + (page > 1 ? "&e  |  &3Page " + page : ""));
 
 		BiFunction<PageResult, String, JsonBuilder> formatter = (result, index) ->
-				json(index + " &e" + Nerd.of(result.getUuid()).getColoredName() + " &7- " + Timespan.of(result.getTotal()).format());
+			json(index + " &e" + Nerd.of(result.getUuid()).getColoredName() + " &7- " + Timespan.of(result.getTotal()).format());
 
-		paginate(results, formatter, "/hours top " + args.getInput(), page);
+		paginate(results, formatter, "/hours top " + args.getInput() + onlyStaffSwitch, page);
 	}
 
 
