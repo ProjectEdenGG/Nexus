@@ -94,7 +94,8 @@ public class HatCommand extends CustomCommand implements Listener {
 		if (event.getSlot() != 39) return;
 		if (isNullOrAir(event.getCursor())) return;
 		if (MaterialTag.SKULLS.isTagged(event.getCursor().getType())) return;
-		if (isPreventBindingHat(player, (PlayerInventory) clickedInventory)) return;
+		if (clickedInventory instanceof PlayerInventory playerInventory && isPreventBindingHat(player, playerInventory))
+			return;
 		if (!player.hasPermission("essentials.hat") && !CustomModel.exists(event.getCursor())) return;
 
 		event.setCancelled(true);
