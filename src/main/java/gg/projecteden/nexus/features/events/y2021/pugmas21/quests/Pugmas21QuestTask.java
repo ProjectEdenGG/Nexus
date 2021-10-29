@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.events.y2021.pugmas21.quests;
 
-import gg.projecteden.nexus.features.events.y2021.pugmas21.models.QuestItems;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.TreeType;
 import gg.projecteden.nexus.features.quests.tasks.GatherQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.InteractQuestTask;
@@ -12,6 +11,15 @@ import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import static gg.projecteden.nexus.features.events.y2021.pugmas21.models.QuestItems.BALLOON;
+import static gg.projecteden.nexus.features.events.y2021.pugmas21.models.QuestItems.BALLOON_BASKET;
+import static gg.projecteden.nexus.features.events.y2021.pugmas21.models.QuestItems.BALLOON_ENVELOPE;
+import static gg.projecteden.nexus.features.events.y2021.pugmas21.models.QuestItems.BOTTLED_CLOUD;
+import static gg.projecteden.nexus.features.events.y2021.pugmas21.models.QuestItems.CRYSTAL_PIECE;
+import static gg.projecteden.nexus.features.events.y2021.pugmas21.models.QuestItems.ELF_EARS;
+import static gg.projecteden.nexus.features.events.y2021.pugmas21.models.QuestItems.PIRATE_HAT;
+import static gg.projecteden.nexus.features.events.y2021.pugmas21.models.QuestItems.PUGMAS_COOKIE_RECIPE;
+import static gg.projecteden.nexus.features.events.y2021.pugmas21.models.QuestItems.RIBBON;
 import static gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21NPC.BELLAMY;
 import static gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21NPC.CAPTAIN_NERISSA;
 import static gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21NPC.CASSIA;
@@ -192,7 +200,7 @@ public enum Pugmas21QuestTask implements IQuestTask {
 			.npc("Ah! You're back!")
 		)
 		.reminder(dialog -> dialog
-			// TODO
+			.npc("TODO Reminder") // TODO
 		)
 		.gather(new ItemStack(Material.IRON_INGOT, 32), TreeType.CRYSTAL.item(64))
 		.complete(dialog -> dialog
@@ -228,7 +236,7 @@ public enum Pugmas21QuestTask implements IQuestTask {
 			.player("Okay!")
 		)
 		.reminder(dialog -> dialog
-			// TODO
+			.npc("TODO Reminder") // TODO
 		)
 		.gather(TreeType.OAK.item(50))
 		.complete(dialog -> dialog
@@ -238,7 +246,7 @@ public enum Pugmas21QuestTask implements IQuestTask {
 			// TODO Sounds
 			.wait(TickTime.SECOND.x(3))
 			.npc("And... done! Here you go, one wooden basket!")
-			.give(QuestItems.BALLOON_BASKET)
+			.give(BALLOON_BASKET)
 			.player("Thanks again warren!")
 		)
 		.then()
@@ -259,20 +267,20 @@ public enum Pugmas21QuestTask implements IQuestTask {
 			.npc("That will be $10,000 please.")
 			.player("...What?")
 			.npc("Pfft.. bahaha, I'm just joking! Sorry about that, but the look on your face was just too good.")
-			.give(QuestItems.BALLOON_ENVELOPE)
+			.give(BALLOON_ENVELOPE)
 			.player("Oh, okay then haha.")
 			.npc("Please come again! I wouldn't want to have scared you off with that little joke. ")
 		)
 		.then()
 		.talkTo(BELLAMY)
 		.reminder(dialog -> dialog
-			// TODO
+			.npc("TODO Reminder") // TODO
 		)
-		.gather(QuestItems.BALLOON_BASKET, QuestItems.BALLOON_ENVELOPE)
+		.gather(BALLOON_BASKET, BALLOON_ENVELOPE)
 		.complete(dialog -> dialog
 			.npc("These are high quality materials so this shouldn't take too long.")
 			.npc("Just gotta attach these here, put that there... and done!")
-			.give(QuestItems.BALLOON)
+			.give(BALLOON)
 			.npc("Now go get me that cloud in a bottle! I'll meet you by the docks with the machine so we can get rid of this storm, once and for all.")
 		)
 		.then()
@@ -281,9 +289,9 @@ public enum Pugmas21QuestTask implements IQuestTask {
 		.then()
 		.talkTo(BELLAMY)
 		.reminder(dialog -> dialog
-			// TODO
+			.npc("TODO Reminder") // TODO
 		)
-		.gather(QuestItems.BOTTLED_CLOUD)
+		.gather(BOTTLED_CLOUD)
 		.complete(dialog -> dialog
 			.npc("Took you long enough. I suppose now we are all set.")
 			.npc("Just gotta turn this on and...")
@@ -298,7 +306,7 @@ public enum Pugmas21QuestTask implements IQuestTask {
 			.player("Okay.")
 		)
 		.reminder(dialog -> dialog
-			// TODO
+			.npc("TODO Reminder") // TODO
 		)
 		.gather(Material.REDSTONE, 40)
 		.complete(dialog -> dialog
@@ -309,7 +317,7 @@ public enum Pugmas21QuestTask implements IQuestTask {
 			.npc("I'm so sorry " + PLAYER_NAME + ". I made you run all over the place for nothing.")
 			.npc("Sigh. I was so sure it was going to work.")
 			.npc("I wanted to give you something as a thank you for your hard work but I'm afraid I don't have any money. I hope this item will be okay.")
-			.give(QuestItems.CRYSTAL_PIECE)
+			.give(CRYSTAL_PIECE)
 			.npc("I don't know if it's just a shiny rock or whether it has some importance, but I hope you enjoy it.")
 			.player("Oh, uhm.. Thanks, I guess?") // TODO Be more grateful
 			.npc("You're welcome! Also feel free to come help again, you are my assistant after all!")
@@ -337,7 +345,7 @@ public enum Pugmas21QuestTask implements IQuestTask {
 		)
 		.build()
 	),
-	HOLIDAY_HEIST_PIRATES(InteractQuestTask.builder()
+	HOLIDAY_HEIST_PIRATES(GatherQuestTask.builder()
 		.talkTo(CAPTAIN_NERISSA)
 		.dialog(dialog -> dialog
 			.npc("Mm. Okay, this is really not good.")
@@ -361,11 +369,16 @@ public enum Pugmas21QuestTask implements IQuestTask {
 			.npc("Oh, what a fun request! I've certainly never got that one before.")
 			.npc("Why don't you bring me 32 string, 64 gold, and 45 crystal wood, and I'll put something together for you.")
 			.npc("I know these materials may seem strange to you, but for the best looking costumes, a little bit of magic is needed.")
-			// Once the npc has received the items
+		)
+		.reminder(dialog -> dialog
+			.npc("TODO Reminder") // TODO
+		)
+		.gather(new ItemStack(Material.STRING, 32), new ItemStack(Material.GOLD_INGOT, 64), TreeType.CRYSTAL.item(45))
+		.complete(dialog -> dialog
 			.npc("Perfect! Let me work my magic for you, it won't take long.")
-			// Wait a few seconds
+			// TODO Sounds
 			.npc("Boom! Okay there, a perfect disguise!")
-			// Give player a pair of elf ears
+			.give(ELF_EARS)
 			.player("This looks amazing! Thank you, this is exactly what I needed.")
 			.npc("Haha! Well, I'm not known as the best costume designer for nothing.")
 			.npc("Do come again!")
@@ -389,7 +402,12 @@ public enum Pugmas21QuestTask implements IQuestTask {
 		//    Grabbing the book warps the player back to the main npc
 		.then()
 		.talkTo(CAPTAIN_NERISSA)
-		.dialog(dialog -> dialog
+		.reminder(dialog -> dialog
+			.npc("TODO Reminder") // TODO
+		)
+		.gather(PUGMAS_COOKIE_RECIPE)
+		.take(false)
+		.complete(dialog -> dialog
 			.npc("You're back! I knew you'd return!")
 			.npc("And there's something in your hand, the elves did have it! You found-")
 			.npc("Wait. " + PLAYER_NAME + "... what is this?")
@@ -400,13 +418,14 @@ public enum Pugmas21QuestTask implements IQuestTask {
 		)
 		.then()
 		.talkTo(PANSY)
+		.gather(PUGMAS_COOKIE_RECIPE)
 		.dialog(dialog -> dialog
 			.npc("Oh, hey " + PLAYER_NAME + "! I didn't expect to see you here.")
 			.npc("What's that you're holding?")
 			.player("It's a cookie recipe that I accidentally stol-, I mean stumbled upon while helping around the island. " + CAPTAIN_NERISSA + " thought you could use it.")
 			.npc("Really? Oh I love learning new recipes, thank you! This will certainly go to good use!")
 			.npc("But wait, you said that the Captain sent you? Can you bring this to them?")
-			// Give player the ribbon
+			.give(RIBBON)
 			.npc("They left it here this morning and I've been meaning to return it all day.")
 			.player("...You mean it was here this whole time?")
 			.npc("Hmm? I'm sorry, I'm not sure what you mean by that.")
@@ -415,17 +434,19 @@ public enum Pugmas21QuestTask implements IQuestTask {
 		)
 		.then()
 		.talkTo(CAPTAIN_NERISSA)
+		.gather(RIBBON)
 		.dialog(dialog -> dialog
 			.player(PANSY + " wanted me to give this to you.")
 			.npc("Is this what I think it is? The item I've been looking for all day?")
 			.player("Yeah, it is. Turns out you left it in the kitchen this morning, meaning it was here this whole time!")
 			.npc("Oh haha... sorry for dragging you into this. My bad memory has once again proved to be troublesome.")
 			.npc("I guess I owe you some compensation for the trouble I put you through. Here, take this.")
-			// Second crystal piece obtained!
+			.give(CRYSTAL_PIECE)
+			// TODO Thanks
 		)
 		.build()
 	),
-	HOLIDAY_HEIST_ELVES(InteractQuestTask.builder()
+	HOLIDAY_HEIST_ELVES(GatherQuestTask.builder()
 		.talkTo(CASSIA)
 		.dialog(dialog -> dialog
 			.npc("Oh sleigh bells! Just where has it gone!? ")
@@ -451,25 +472,37 @@ public enum Pugmas21QuestTask implements IQuestTask {
 			.npc("Oh, what a fun request! I've certainly never got that one before.")
 			.npc("Why don't you bring me 32 string, 64 gold, and 45 crystal wood, and I'll put something together for you.")
 			.npc("I know these materials may seem strange to you, but for the best looking costumes, a little bit of magic is needed.")
-			// Once the npc has received the items
+		)
+		.reminder(dialog -> dialog
+			.npc("TODO Reminder") // TODO
+		)
+		.gather(new ItemStack(Material.STRING, 32), new ItemStack(Material.GOLD_INGOT, 64), TreeType.CRYSTAL.item(45))
+		.complete(dialog -> dialog
 			.npc("Perfect! Let me work my magic for you, it won't take long.")
-			// Wait a few seconds
+			// TODO Sounds
 			.npc("Boom! Okay there, a perfect disguise!")
-			// Give player a pirate hat
+			.give(PIRATE_HAT) // TODO force wearing?
 			.player("This looks amazing! Thank you, this is exactly what I needed.")
 			.npc("Haha! Well, I'm not known as the best costume designer for nothing.")
 			.npc("Do come again!")
-			// Player returns to NPC Main
+		)
+		.then()
+		.talkTo(CASSIA)
+		.dialog(dialog -> dialog
 			.npc("Woah, that disguise is perfect! I almost mistook you for one of those pesky pirates. ")
 			.npc("As soon as you're ready to begin your mission, let me know!")
-			// Player right clicks NPC
 			.player("I'm ready.")
 			// Coordinates/the name of the area are given to the player in chat.
 			// Player arrives and steps on <block>, warping them to a room where this part takes place
+			// Player grabs book and warps back to Main Npc
 		)
-		// Player grabs book and warps back to Main Npc
 		.then()
 		.talkTo(CASSIA)
+		.reminder(dialog -> dialog
+			.npc("TODO Reminder") // TODO
+		)
+		.gather(PUGMAS_COOKIE_RECIPE)
+		.take(false)
 		.dialog(dialog -> dialog
 			.npc("You did it! I always knew you could!")
 			.npc("In your hand! Is that my ribbon? I was right about those pesky pirates, I knew they couldn't be trus-")
@@ -481,6 +514,7 @@ public enum Pugmas21QuestTask implements IQuestTask {
 		)
 		.then()
 		.talkTo(PINE)
+		.gather(PUGMAS_COOKIE_RECIPE)
 		.dialog(dialog -> dialog
 			.npc("Oh, hey new recruit! I didn't expect to see you here. It's nice to meet you, I'm " + NPC_NAME + ".")
 			.player("Hi, I'm " + PLAYER_NAME + ". " + CASSIA + " asked me to give this to you.")
@@ -489,20 +523,23 @@ public enum Pugmas21QuestTask implements IQuestTask {
 			.npc("Really!? I love learning new recipes, thank you so much! Pirate recipe.. It reminds me of my sibling " + PANSY + ". ")
 			.npc("I'll make sure to perfect this dish! Oh, and you said " + CASSIA + "? Would you mind bringing this ribbon to them? I heard they were looking for it.")
 			.npc("She left it here this morning, I've been meaning to bring it to her all day.")
+			.give(RIBBON)
 			.player("Wha- it's been here the whole time!? ")
-			.npc("Huh? ")
+			.npc("Huh?")
 			.player("Oh it's.. Nothing. I'll bring it to her right away! ")
 			.npc("Thanks a ton!")
 		)
 		.then()
 		.talkTo(CASSIA)
+		.gather(RIBBON)
 		.dialog(dialog -> dialog
-			.player("" + NPC_NAME + ", I found your-")
+			.player(NPC_NAME + ", I found your-")
 			.npc("Eh!? Is that my ribbon? Has it been here this whole time?")
 			.player("Yup. " + PINE + " said you left it in the kitchen this morning...")
 			.npc("Hehe, looks like my bad memory has caused problems for us once again. I'm sorry for dragging you into this.")
 			.npc("Here, take this as a thank you, and an apology.")
-			// Second crystal piece obtained!
+			.give(CRYSTAL_PIECE)
+			// TODO Thanks
 		)
 		.build()
 	),

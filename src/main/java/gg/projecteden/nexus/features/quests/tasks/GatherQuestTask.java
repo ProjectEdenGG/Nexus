@@ -28,6 +28,7 @@ public class GatherQuestTask extends QuestTask<GatherQuestTask, GatherQuestTaskS
 
 	public static class GatherQuestTaskStep extends QuestTaskStep<GatherQuestTask, GatherQuestTaskStep> {
 		private List<ItemStack> items;
+		private boolean take = true;
 		private Dialog complete;
 
 		@Override
@@ -35,9 +36,11 @@ public class GatherQuestTask extends QuestTask<GatherQuestTask, GatherQuestTaskS
 			if (dialog != null && stepProgress.isFirstInteraction())
 				return dialog.send(quester);
 			else
-				if (shouldAdvance(quester, stepProgress))
+				if (shouldAdvance(quester, stepProgress)) {
+					if (take)
+						quester.remove(items);
 					return complete.send(quester);
-				else
+				} else
 					if (reminder != null)
 						return reminder.send(quester);
 					else
@@ -82,6 +85,11 @@ public class GatherQuestTask extends QuestTask<GatherQuestTask, GatherQuestTaskS
 
 		public GatherTaskBuilder gather(List<ItemStack> items) {
 			currentStep.items = items;
+			return this;
+		}
+
+		public GatherTaskBuilder take(boolean take) {
+			currentStep.take = take;
 			return this;
 		}
 

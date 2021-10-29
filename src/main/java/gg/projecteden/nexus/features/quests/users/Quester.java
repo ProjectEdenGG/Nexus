@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.quests.interactable.Interactable;
 import gg.projecteden.nexus.features.quests.interactable.instructions.DialogInstance;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTaskStep;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -90,6 +91,11 @@ public class Quester implements PlayerOwnedObject {
 	public boolean has(List<ItemStack> items) {
 		// TODO
 		return true;
+	}
+
+	public void remove(List<ItemStack> items) {
+		for (ItemStack item : items)
+			PlayerUtils.removeItem(getOnlinePlayer(), item);
 	}
 
 }

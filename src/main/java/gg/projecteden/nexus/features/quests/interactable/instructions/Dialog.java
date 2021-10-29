@@ -82,6 +82,19 @@ public class Dialog {
 		return this;
 	}
 
+	public Dialog take(Material material) {
+		return give(new ItemStack(material));
+	}
+
+	public Dialog take(Material material, int amount) {
+		return give(new ItemStack(material, amount));
+	}
+
+	public Dialog take(ItemStack item) {
+		instruction(quester -> PlayerUtils.removeItem(quester.getOnlinePlayer(), item), 0);
+		return this;
+	}
+
 	@AllArgsConstructor
 	public enum Variable {
 		PLAYER_NAME((quester, interactable) -> Nickname.of(quester)),
