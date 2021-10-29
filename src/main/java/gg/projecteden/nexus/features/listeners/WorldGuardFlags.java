@@ -78,7 +78,8 @@ public class WorldGuardFlags implements Listener {
 				cancel = true;
 		}
 
-		event.setCancelled(cancel);
+		if (cancel)
+			event.setCancelled(true);
 	}
 
 	@EventHandler
