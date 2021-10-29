@@ -26,6 +26,8 @@ import static gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas2
 import static gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21NPC.ROWAN;
 import static gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21NPC.WARREN;
 import static gg.projecteden.nexus.features.quests.QuestReward.EVENT_TOKENS;
+import static gg.projecteden.nexus.features.quests.interactable.instructions.Dialog.Variable.NPC_NAME;
+import static gg.projecteden.nexus.features.quests.interactable.instructions.Dialog.Variable.PLAYER_NAME;
 
 @Getter
 @AllArgsConstructor
@@ -36,7 +38,7 @@ public enum Pugmas21QuestTask implements IQuestTask {
 			.npc("Well ain't you a sight for these tired old eyes.")
 			.npc("I didn't think anyone would be coming this year with the storm and everything.")
 			.npc("Where are my manners, my name is " + GLORIA + " and welcome to Pugmas!")
-			.player("Oh... ah, hey there! My name's {{PLAYER_NAME}}. Is this weather normal for this time of year?")
+			.player("Oh... ah, hey there! My name's " + PLAYER_NAME + ". Is this weather normal for this time of year?")
 			.npc("No, it isn't, or at least it didn't use to be.")
 			.npc("Ever since that incident with the crystal, the weather has been out of control and everything seems to be falling apart!")
 			.player("I'm sorry to hear that...")
@@ -88,7 +90,7 @@ public enum Pugmas21QuestTask implements IQuestTask {
 		.talkTo(MYSTERIOUS_WOMAN)
 		.dialog(dialog -> dialog
 			.npc("Ohhh, what's this I see? A visitor? I haven't had one of those in a long time.")
-			.player("Hello there, sorry to intrude. My name is {{PLAYER_NAME}}, I was told that I might be able to find the guardian out here.")
+			.player("Hello there, sorry to intrude. My name is " + PLAYER_NAME + ", I was told that I might be able to find the guardian out here.")
 			.npc("The guardian you say? That is something I haven't heard in quite a while. What interest is the guardian to you?")
 			.player("I just want to help out. A nice lady I met when I first got here asked me to try and seek the guardian out so the crystal may be restored and so that Pugmas can go ahead.")
 			.npc("I'll tell you what. If you help out the people of the village, I'll tell you a bit more about both the guardian and the crystal.")
@@ -109,7 +111,7 @@ public enum Pugmas21QuestTask implements IQuestTask {
 			.npc("Anyways, that's besides the point. My point is that I need your help to get rid of it. ")
 			.npc("This dumb storm has ruined everything in our village, if this keeps up then you can say goodbye to any pugmas celebrations you were looking forward to. ")
 			.player("The whole reason I came here was to celebrate Pugmas, so I have to do something!")
-			.npc("Hurray! Oh {{PLAYER_NAME}}, I just knew you'd help out. ")
+			.npc("Hurray! Oh " + PLAYER_NAME + ", I just knew you'd help out. ")
 			.npc("Now off you go! Good luck and safe travels!")
 			.player("...Huh? Wait, what do you mean?")
 			.npc("Is there a problem?")
@@ -155,7 +157,7 @@ public enum Pugmas21QuestTask implements IQuestTask {
 		.then()
 		.talkTo(FLINT)
 		.dialog(dialog -> dialog
-			.player("Hi! Are you {{NPC_NAME}}?")
+			.player("Hi! Are you " + NPC_NAME + "?")
 			.npc("Haha, that's me! Are you in need of some ores kiddo?")
 			.player("Yes, I need some iron and I was hoping you could help me out.")
 			.npc("Hmm, iron...")
@@ -167,13 +169,13 @@ public enum Pugmas21QuestTask implements IQuestTask {
 			.give(Material.IRON_PICKAXE)
 			.player("Wait, am I allowed to keep this?")
 			.npc("Of course! It's just a rusty old spare. I was probably gonna get rid of it at some point so I'm glad to see it get some use.")
-			.player("Okay, awesome! Thanks {{NPC_NAME}}!")
+			.player("Okay, awesome! Thanks " + NPC_NAME + "!")
 			.npc("No problem! And you know if you take a liking to the miner's life just let me know, we could always use some extra hands.")
 		)
 		.then()
 		.talkTo(WARREN)
 		.dialog(dialog -> dialog
-			.player("Excuse me, are you {{NPC_NAME}} by any chance?")
+			.player("Excuse me, are you " + NPC_NAME + " by any chance?")
 			.npc("Hm? Oh, yes that's me.")
 			.npc("Is there something I can help you with?")
 			.player("Yes actually! I was hoping you could point me in the direction of some crystal wood.")
@@ -181,7 +183,7 @@ public enum Pugmas21QuestTask implements IQuestTask {
 			.player("Haha, um... I guess I've just been figuring these things out as I go.")
 			.npc("Unfortunately when it comes to these trees, being unprepared won't do, they can be fickle things.")
 			.npc("Why don't you take my spare axe from the wall? It's not the best but it should get the job done.")
-			.player("Thank you {{NPC_NAME}}!")
+			.player("Thank you " + NPC_NAME + "!")
 			.npc("It's really no problem. Feel free to stop by anytime.")
 		)
 		.then()
@@ -304,7 +306,7 @@ public enum Pugmas21QuestTask implements IQuestTask {
 			.npc("Okay let's do this now that it's all powered up!")
 			.npc("...")
 			.npc("Still nothing...")
-			.npc("I'm so sorry {{PLAYER_NAME}}. I made you run all over the place for nothing.")
+			.npc("I'm so sorry " + PLAYER_NAME + ". I made you run all over the place for nothing.")
 			.npc("Sigh. I was so sure it was going to work.")
 			.npc("I wanted to give you something as a thank you for your hard work but I'm afraid I don't have any money. I hope this item will be okay.")
 			.give(QuestItems.CRYSTAL_PIECE)
@@ -339,7 +341,7 @@ public enum Pugmas21QuestTask implements IQuestTask {
 		.talkTo(CAPTAIN_NERISSA)
 		.dialog(dialog -> dialog
 			.npc("Mm. Okay, this is really not good.")
-			.npc("Oh, {{PLAYER_NAME}}, why are you just standing around? Come over here.")
+			.npc("Oh, " + PLAYER_NAME + ", why are you just standing around? Come over here.")
 			.npc("Have you seen a recipe lying around? I swear it was just here!")
 			.player("I don't think so?")
 			.npc("Well it certainly didn't just walk away! It had to have gone somewhere-")
@@ -390,7 +392,7 @@ public enum Pugmas21QuestTask implements IQuestTask {
 		.dialog(dialog -> dialog
 			.npc("You're back! I knew you'd return!")
 			.npc("And there's something in your hand, the elves did have it! You found-")
-			.npc("Wait. {{PLAYER_NAME}}... what is this?")
+			.npc("Wait. " + PLAYER_NAME + "... what is this?")
 			.npc("I said you were supposed to bring back a ribbon, how did you manage to confuse it with a recipe for pugmas cookies!?")
 			.player("That's.. what you asked me to get. Do you want me to return it?")
 			.npc("Of course not! Then they'd know you were snooping around!")
@@ -399,7 +401,7 @@ public enum Pugmas21QuestTask implements IQuestTask {
 		.then()
 		.talkTo(PANSY)
 		.dialog(dialog -> dialog
-			.npc("Oh, hey {{PLAYER_NAME}}! I didn't expect to see you here.")
+			.npc("Oh, hey " + PLAYER_NAME + "! I didn't expect to see you here.")
 			.npc("What's that you're holding?")
 			.player("It's a cookie recipe that I accidentally stol-, I mean stumbled upon while helping around the island. " + CAPTAIN_NERISSA + " thought you could use it.")
 			.npc("Really? Oh I love learning new recipes, thank you! This will certainly go to good use!")
@@ -434,7 +436,7 @@ public enum Pugmas21QuestTask implements IQuestTask {
 			.npc("But I have a reason! Those pirates have been causing trouble ever since they've arrived! It has to be them.")
 			.player("If you say so. Can I help you look for the item?")
 			.npc("No need to look around here, I'm sure I know where it is now! ")
-			.npc("{{PLAYER_NAME}}, do you still want to help? If so, why don't you sneak into the pirate headquarters for me! Your mission is to retrieve my recipe and return safely!")
+			.npc("" + PLAYER_NAME + ", do you still want to help? If so, why don't you sneak into the pirate headquarters for me! Your mission is to retrieve my recipe and return safely!")
 			.player("What!? How am I supposed to do that without being caught, I don't exactly look the part of a pirate...")
 			.npc("Oh... I know! There's a costume designer just nearby, if you ask nicely I'm sure they'll put together an amazing pirate disguise you can use.")
 			.npc("Just head out the front entrance and head left until you see a cottage, that's where you'll find them.")
@@ -471,7 +473,7 @@ public enum Pugmas21QuestTask implements IQuestTask {
 		.dialog(dialog -> dialog
 			.npc("You did it! I always knew you could!")
 			.npc("In your hand! Is that my ribbon? I was right about those pesky pirates, I knew they couldn't be trus-")
-			.npc("..Wait.. {{PLAYER_NAME}}, what is that?")
+			.npc("..Wait.. " + PLAYER_NAME + ", what is that?")
 			.npc("Didn't I tell you that you were supposed to be looking for a ribbon? How did you get that confused with a recipe for Flash-Fried Filet? ")
 			.player("That's.. what you asked me to get. Well, do you want me to return it? I didn't see a ribbon there.")
 			.npc("Er- No! We'll get in trouble if they find out we were snooping around...")
@@ -480,8 +482,8 @@ public enum Pugmas21QuestTask implements IQuestTask {
 		.then()
 		.talkTo(PINE)
 		.dialog(dialog -> dialog
-			.npc("Oh, hey new recruit! I didn't expect to see you here. It's nice to meet you, I'm {{NPC_NAME}}.")
-			.player("Hi, I'm {{PLAYER_NAME}}. " + CASSIA + " asked me to give this to you.")
+			.npc("Oh, hey new recruit! I didn't expect to see you here. It's nice to meet you, I'm " + NPC_NAME + ".")
+			.player("Hi, I'm " + PLAYER_NAME + ". " + CASSIA + " asked me to give this to you.")
 			.npc("Oh, lovely! What is it?")
 			.player("It's a pirate dish recipe that I accidentally stol-, I mean stumbled upon while helping around the island. " + CASSIA + " thought you could use it.")
 			.npc("Really!? I love learning new recipes, thank you so much! Pirate recipe.. It reminds me of my sibling " + PANSY + ". ")
@@ -495,7 +497,7 @@ public enum Pugmas21QuestTask implements IQuestTask {
 		.then()
 		.talkTo(CASSIA)
 		.dialog(dialog -> dialog
-			.player("{{NPC_NAME}}, I found your-")
+			.player("" + NPC_NAME + ", I found your-")
 			.npc("Eh!? Is that my ribbon? Has it been here this whole time?")
 			.player("Yup. " + PINE + " said you left it in the kitchen this morning...")
 			.npc("Hehe, looks like my bad memory has caused problems for us once again. I'm sorry for dragging you into this.")

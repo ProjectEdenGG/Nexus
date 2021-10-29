@@ -85,7 +85,7 @@ public class Dialog {
 	@AllArgsConstructor
 	public enum Variable {
 		PLAYER_NAME((quester, interactable) -> Nickname.of(quester)),
-		NPC_NAME(((quester, interactable) -> interactable.getName())),
+		NPC_NAME((quester, interactable) -> interactable.getName()),
 		;
 
 		private BiFunction<Quester, Interactable, String> interpolator;
@@ -96,6 +96,11 @@ public class Dialog {
 
 		public String placeholder() {
 			return "\\{\\{" + name() + "}}";
+		}
+
+		@Override
+		public String toString() {
+			return placeholder();
 		}
 	}
 
