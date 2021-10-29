@@ -9,6 +9,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.framework.exceptions.preconfigured.NegativeBalanceException;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.NotEnoughMoneyException;
 import gg.projecteden.nexus.models.banker.BankerService;
+import gg.projecteden.nexus.models.banker.Transaction;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
@@ -57,11 +58,8 @@ public class PayDiscordCommand extends Command {
 					throw new InvalidInputException("Amount must be greater than $0.01");
 
 				try {
-					ShopGroup finalShopGroup = shopGroup;
-					String finalReason = reason;
-					Tasks.sync(() ->
-							new BankerService().transfer(player, target, BigDecimal.valueOf(amount), finalShopGroup,
-									TransactionCause.PAY.of(player, target, BigDecimal.valueOf(amount), finalShopGroup, finalReason)));
+					final Transaction transaction = TransactionCause.PAY.of(player, target, BigDecimal.valueOf(amount), shopGroup, reason);
+					new BankerService().transfer(player, target, BigDecimal.valueOf(amount), shopGroup, transaction);
 				} catch (NegativeBalanceException ex) {
 					throw new NotEnoughMoneyException();
 				}
