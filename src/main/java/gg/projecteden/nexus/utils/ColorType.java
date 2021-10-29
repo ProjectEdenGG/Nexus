@@ -400,12 +400,12 @@ public enum ColorType implements IsColored {
 
 	@NotNull
 	public Material getCandle() {
-		return getShulkerBox(this);
+		return getCandle(this);
 	}
 
 	@NotNull
 	public static Material getCandle(@NotNull ColorType colorType) {
-		return Material.valueOf(colorType.getSimilarDyeColor() + generic(Material.CANDLE));
+		return Material.valueOf(colorType.getSimilarDyeColor() + generic(Material.WHITE_CANDLE));
 	}
 
 	@NotNull

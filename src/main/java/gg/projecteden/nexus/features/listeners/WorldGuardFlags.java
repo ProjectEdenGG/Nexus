@@ -12,6 +12,7 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
+import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldGuardFlagUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -48,34 +49,14 @@ import java.util.Set;
 import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
 import static gg.projecteden.nexus.utils.BlockUtils.isNullOrAir;
 import static gg.projecteden.nexus.utils.EntityUtils.isHostile;
-import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.ACTIONBAR_TICKS;
-import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.ALLOW_SPAWN;
-import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.FAREWELL_ACTIONBAR;
-import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.FAREWELL_SUBTITLE;
-import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.FAREWELL_TITLE;
-import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.GRASS_DECAY;
-import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.GREETING_ACTIONBAR;
-import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.GREETING_SUBTITLE;
-import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.GREETING_TITLE;
-import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.HANGING_BREAK;
-import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.HOSTILE_SPAWN;
-import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.MINIGAMES_WATER_DAMAGE;
-import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.MOB_AGGRESSION;
-import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.TAMING;
-import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.TITLE_FADE;
-import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.TITLE_TICKS;
-import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.USE_NOTE_BLOCKS;
-import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.USE_TRAP_DOORS;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.*;
 
 public class WorldGuardFlags implements Listener {
 
 	@EventHandler
-	public void onCandleExtinguish(PlayerInteractEvent event) {
+	public void onCandleModify(PlayerInteractEvent event) {
 		final Block block = event.getClickedBlock();
 		if (isNullOrAir(block))
-			return;
-
-		if (!MaterialTag.CANDLES.isTagged(block.getType()))
 			return;
 
 		if (WorldGuardEditCommand.canWorldGuardEdit(event.getPlayer()))
@@ -84,7 +65,20 @@ public class WorldGuardFlags implements Listener {
 		if (new WorldGuardUtils(block).getRegionsAt(block.getLocation()).isEmpty())
 			return;
 
-		event.setCancelled(true);
+		boolean cancel = false;
+
+		// if player clicks candle
+		if (MaterialTag.CANDLES.isTagged(block.getType()))
+			cancel = true;
+
+			// if player right clicks
+		else if (ActionGroup.RIGHT_CLICK.applies(event)) {
+			// if player is holding candle
+			if (event.getItem() != null && MaterialTag.CANDLES.isTagged(event.getItem().getType()))
+				cancel = true;
+		}
+
+		event.setCancelled(cancel);
 	}
 
 	@EventHandler

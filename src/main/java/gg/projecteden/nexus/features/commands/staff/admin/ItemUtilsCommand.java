@@ -9,9 +9,9 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 @Permission("group.admin")
-public class UtilsCommand extends CustomCommand {
+public class ItemUtilsCommand extends CustomCommand {
 
-	public UtilsCommand(@NonNull CommandEvent event) {
+	public ItemUtilsCommand(@NonNull CommandEvent event) {
 		super(event);
 	}
 
