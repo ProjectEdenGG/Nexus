@@ -33,7 +33,7 @@ public class PayDiscordCommand extends Command {
 	}
 
 	protected void execute(CommandEvent event) {
-		Tasks.async(() -> {
+		Tasks.sync(() -> {
 			try {
 				DiscordUser user = new DiscordUserService().checkVerified(event.getAuthor().getId());
 
