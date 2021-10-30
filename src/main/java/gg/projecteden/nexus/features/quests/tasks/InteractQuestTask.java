@@ -11,8 +11,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-import static gg.projecteden.nexus.features.quests.interactable.instructions.Dialog.genericGreeting;
-
 @Data
 public class InteractQuestTask extends QuestTask<InteractQuestTask, InteractQuestTaskStep> {
 
@@ -30,7 +28,7 @@ public class InteractQuestTask extends QuestTask<InteractQuestTask, InteractQues
 				if (reminder != null)
 					return reminder.send(quester);
 				else
-					return genericGreeting(quester, interactable);
+					return null;
 		}
 
 		@Override

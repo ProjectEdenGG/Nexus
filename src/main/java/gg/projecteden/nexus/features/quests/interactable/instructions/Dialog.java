@@ -5,7 +5,6 @@ import gg.projecteden.nexus.features.quests.users.Quester;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
-import kotlin.Pair;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -20,17 +19,30 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 @Data
 @RequiredArgsConstructor
 public class Dialog {
 	private final Interactable interactable;
-	private final List<Pair<Consumer<Quester>, Integer>> instructions = new ArrayList<>();
+	private final List<Instruction> instructions = new ArrayList<>();
+	private boolean condition = true;
 
 	private static final Map<UUID, DialogInstance> instances = new HashMap<>();
 
 	public static Dialog from(Interactable interactable) {
 		return new Dialog(interactable);
+	}
+
+	private void instruction(Consumer<Quester> task, int delay) {
+		instructions.add(new Instruction(task, delay));
+	}
+
+	@Data
+	@AllArgsConstructor
+	public static class Instruction {
+		private final Consumer<Quester> task;
+		private final int delay;
 	}
 
 	public Dialog npc(String message) {
@@ -61,12 +73,14 @@ public class Dialog {
 		return this;
 	}
 
-	public DialogInstance send(Quester quester) {
-		return new DialogInstance(quester, this);
+	public Dialog condition(Predicate<Quester> predicate) {
+		instruction(quester -> condition = predicate.test(quester), -1);
+		return this;
 	}
 
-	private void instruction(Consumer<Quester> task, int delay) {
-		instructions.add(new Pair<>(task, delay));
+	public Dialog endCondition() {
+		instruction(quester -> condition = true, -1);
+		return this;
 	}
 
 	public Dialog give(Material material) {
@@ -78,7 +92,7 @@ public class Dialog {
 	}
 
 	public Dialog give(ItemStack item) {
-		instruction(quester -> PlayerUtils.giveItem(quester, item), 0);
+		instruction(quester -> PlayerUtils.giveItem(quester, item), -1);
 		return this;
 	}
 
@@ -91,8 +105,12 @@ public class Dialog {
 	}
 
 	public Dialog take(ItemStack item) {
-		instruction(quester -> PlayerUtils.removeItem(quester.getOnlinePlayer(), item), 0);
+		instruction(quester -> PlayerUtils.removeItem(quester.getOnlinePlayer(), item), -1);
 		return this;
+	}
+
+	public DialogInstance send(Quester quester) {
+		return new DialogInstance(quester, this);
 	}
 
 	@AllArgsConstructor
@@ -113,7 +131,7 @@ public class Dialog {
 
 		@Override
 		public String toString() {
-			return placeholder();
+			return "{{" + name() + "}}";
 		}
 	}
 

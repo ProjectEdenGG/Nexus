@@ -51,18 +51,18 @@ public class Quest implements PlayerOwnedObject {
 	}
 
 	public void incrementTask() {
-		sendMessage("Moving to next task");
+		sendMessage("&c=== Moving to next task");
 		++task;
 	}
 
 	public void complete() {
-		sendMessage("Complete");
+		sendMessage("&c=== Complete");
 		quester().getQuests().remove(this);
 	}
 
 	public static class QuestBuilder {
 		private UUID uuid;
-		private List<IQuestTask> tasks = new ArrayList<>();
+		private final List<IQuestTask> tasks = new ArrayList<>();
 
 		public QuestBuilder task(IQuestTask task) {
 			return tasks(task);
@@ -72,7 +72,7 @@ public class Quest implements PlayerOwnedObject {
 			return tasks(List.of(tasks));
 		}
 
-		public QuestBuilder tasks(List<IQuestTask> tasks) {
+		public QuestBuilder tasks(List<? extends IQuestTask> tasks) {
 			this.tasks.addAll(tasks);
 			return this;
 		}

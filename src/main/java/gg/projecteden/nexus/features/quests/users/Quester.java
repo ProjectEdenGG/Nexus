@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.quests.interactable.instructions.DialogInst
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTaskStep;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.utils.Utils;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -55,14 +56,13 @@ public class Quester implements PlayerOwnedObject {
 				if (taskStep.shouldAdvance(this, step)) {
 					if (questTask.hasNextStep())
 						questTask.incrementStep();
-				}
-
-				if (questTask.get().getSteps().size() <= questTask.getStep()) {
-					questTask.reward();
-					if (quest.hasNextTask())
-						quest.incrementTask();
-					else
-						quest.complete();
+					else {
+						questTask.reward();
+						if (quest.hasNextTask())
+							quest.incrementTask();
+						else
+							quest.complete();
+					}
 				}
 
 				step.setFirstInteraction(false);
@@ -94,8 +94,9 @@ public class Quester implements PlayerOwnedObject {
 	}
 
 	public void remove(List<ItemStack> items) {
-		for (ItemStack item : items)
-			PlayerUtils.removeItem(getOnlinePlayer(), item);
+		if (!Utils.isNullOrEmpty(items))
+			for (ItemStack item : items)
+				PlayerUtils.removeItem(getOnlinePlayer(), item);
 	}
 
 }

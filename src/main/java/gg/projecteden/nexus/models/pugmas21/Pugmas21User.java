@@ -5,6 +5,7 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestLine;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.pugmas21.Advent21Config.AdventPresent;
@@ -43,6 +44,8 @@ public class Pugmas21User implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
+
+	private Pugmas21QuestLine questLine;
 
 	@Getter(AccessLevel.PRIVATE)
 	private Advent21User advent;

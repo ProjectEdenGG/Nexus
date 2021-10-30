@@ -1,16 +1,17 @@
 package gg.projecteden.nexus.features.events.y2021.pugmas21;
 
-import gg.projecteden.nexus.features.commands.ArmorStandEditorCommand;
-import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21Command.MultiModelStructure.Model;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.advent.AdventAnimation;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.advent.AdventMenu;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.CandyCaneCannon;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.District;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.models.MultiModelStructure;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.models.MultiModelStructure.Model;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Train;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21Entity;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21NPC;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestItem;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestLine;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestTask;
-import gg.projecteden.nexus.features.quests.users.Quest;
 import gg.projecteden.nexus.features.quests.users.Quester;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -24,33 +25,27 @@ import gg.projecteden.nexus.models.pugmas21.Advent21Config.AdventPresent;
 import gg.projecteden.nexus.models.pugmas21.Advent21ConfigService;
 import gg.projecteden.nexus.models.pugmas21.Pugmas21User;
 import gg.projecteden.nexus.models.pugmas21.Pugmas21UserService;
+import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.EntityUtils;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.LocationUtils.CardinalDirection;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
-import org.bukkit.Location;
+import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.util.Vector;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 import static gg.projecteden.utils.TimeUtils.shortDateFormat;
 
@@ -113,74 +108,6 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 			.start();
 	}
 
-	@Data
-	public static class MultiModelStructure {
-		private Location location;
-		private final List<Model> models = new ArrayList<>();
-
-		public static final double SEPARATOR = 7.5;
-
-		@Data
-		@RequiredArgsConstructor
-		public static class Model {
-			private final Map<BlockFace, Integer> modifiers;
-			private final int customModelData;
-			private BlockFace direction;
-
-			private ArmorStand armorStand;
-
-			public Model direction(BlockFace direction) {
-				this.direction = direction;
-				return this;
-			}
-
-			public Location modify(Location location) {
-				modifiers.forEach((direction, amount) -> location.add(direction.getDirection().multiply(SEPARATOR * amount)));
-				if (direction != null)
-					location.setYaw(CardinalDirection.of(direction).getYaw());
-				return location;
-			}
-
-			public void spawn(Location location) {
-				armorStand = ArmorStandEditorCommand.summon(modify(location.clone()), armorStand -> {
-					armorStand.setVisible(false);
-					armorStand.setItem(EquipmentSlot.HEAD, new ItemBuilder(Material.MINECART).customModelData(customModelData).build());
-				});
-			}
-		}
-
-		public static MultiModelStructure builder() {
-			return new MultiModelStructure();
-		}
-
-		public MultiModelStructure from(Location location) {
-			this.location = location;
-			return this;
-		}
-
-		public MultiModelStructure add(Map<BlockFace, Integer> modifier, Integer customModelData) {
-			models.add(new Model(modifier, customModelData));
-			return this;
-		}
-
-		public MultiModelStructure cardinal(Function<BlockFace, Model> function) {
-			for (BlockFace direction : CardinalDirection.blockFaces())
-				models.add(function.apply(direction));
-			return this;
-		}
-
-		public MultiModelStructure spawn() {
-			for (Model model : models)
-				model.spawn(location);
-			return this;
-		}
-	}
-
-	@Path("balloon spawn")
-	void balloon_spawn() {
-		getBalloonStructure().spawn();
-	}
-
 	private MultiModelStructure getBalloonStructure() {
 		return MultiModelStructure.builder()
 			.from(location().subtract(BlockFace.UP.getDirection().multiply(1.5)))
@@ -189,6 +116,11 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 			.add(Map.of(BlockFace.UP, 2), 33)
 			.cardinal(direction -> new Model(Map.of(BlockFace.UP, 1, direction, 1), 34).direction(direction))
 			.cardinal(direction -> new Model(Map.of(BlockFace.UP, 2, direction, 1), 35).direction(direction));
+	}
+
+	@Path("balloon spawn")
+	void balloon_spawn() {
+		getBalloonStructure().spawn();
 	}
 
 	@Path("balloon move [--seconds]")
@@ -322,19 +254,33 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 		send(PREFIX + "Simulating date &e" + shortDateFormat(Pugmas21.TODAY));
 	}
 
-	@Path("quest start <task>")
-	void quest_start(Pugmas21QuestTask task) {
-		Quest.builder()
-			.task(task)
-			.assign(player())
-			.start();
-
-		send(PREFIX + "Quest started");
-	}
-
 	@Path("quest debug <task>")
 	void quest_debug(Pugmas21QuestTask task) {
 		send(String.valueOf(task.get()));
+	}
+
+	@Path("quest start <quest>")
+	void quest_start(Pugmas21QuestLine quest) {
+		user.setQuestLine(quest);
+		quest.start(player());
+		send(PREFIX + "Quest line " + quest + " activated");
+	}
+
+	@Path("quest npc tp <quest>")
+	void quest_npc_tp(Pugmas21NPC pugmasNPC) {
+		final NPC npc = CitizensUtils.getNPC(pugmasNPC.getNpcId());
+		final Entity entity = npc.getEntity();
+		if (entity != null)
+			player().teleportAsync(entity.getLocation(), TeleportCause.COMMAND);
+		else if (npc.getStoredLocation() != null)
+			player().teleportAsync(npc.getStoredLocation(), TeleportCause.COMMAND);
+		else
+			error("Could not determine location of NPC");
+	}
+
+	@Path("quest item <item>")
+	void quest_item(Pugmas21QuestItem item) {
+		giveItem(item.get());
 	}
 
 	@EventHandler

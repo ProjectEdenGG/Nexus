@@ -1,14 +1,14 @@
 package gg.projecteden.nexus.features.quests.interactable.instructions;
 
+import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog.Instruction;
 import gg.projecteden.nexus.features.quests.users.Quester;
 import gg.projecteden.nexus.utils.Tasks;
-import kotlin.Pair;
 import lombok.Data;
 
-import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
 
 @Data
 public class DialogInstance {
@@ -16,38 +16,46 @@ public class DialogInstance {
 	private final Dialog dialog;
 	private final AtomicInteger taskId = new AtomicInteger(-1);
 
-	private final Iterator<Pair<Consumer<Quester>, Integer>> iterator;
+	private final Queue<Instruction> iterator;
 	private final AtomicReference<Runnable> runner;
 
 	public DialogInstance(Quester quester, Dialog dialog) {
 		this.quester = quester;
 		this.dialog = dialog;
 
-		this.iterator = dialog.getInstructions().iterator();
+		this.iterator = new LinkedList<>(dialog.getInstructions());
 
 		this.runner = new AtomicReference<>() {{
 			set(() -> {
-				if (!iterator.hasNext() || quester == null || !quester.isOnline()) {
-					taskId.set(-1);
-					return;
+				while (true) {
+					if (quester == null || !quester.isOnline()) {
+						taskId.set(-1);
+						return;
+					}
+
+					final var next = iterator.poll();
+
+					if (next == null) {
+						taskId.set(-1);
+						return;
+					}
+
+					if (next.getTask() != null)
+						next.getTask().accept(quester);
+
+					final var peek = iterator.peek();
+
+					if (peek == null) {
+						taskId.set(-1);
+						return;
+					}
+
+					if (peek.getDelay() == -1)
+						continue;
+
+					taskId.set(Tasks.wait(next.getDelay(), get()));
+					break;
 				}
-
-				final var next = iterator.next();
-
-				if (next == null) {
-					taskId.set(-1);
-					return;
-				}
-
-				if (next.getFirst() != null)
-					next.getFirst().accept(quester);
-
-				if (!iterator.hasNext()) {
-					taskId.set(-1);
-					return;
-				}
-
-				taskId.set(Tasks.wait(next.getSecond(), get()));
 			});
 		}};
 

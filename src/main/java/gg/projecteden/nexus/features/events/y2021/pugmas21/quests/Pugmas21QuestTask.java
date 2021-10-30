@@ -11,15 +11,6 @@ import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-import static gg.projecteden.nexus.features.events.y2021.pugmas21.models.QuestItems.BALLOON;
-import static gg.projecteden.nexus.features.events.y2021.pugmas21.models.QuestItems.BALLOON_BASKET;
-import static gg.projecteden.nexus.features.events.y2021.pugmas21.models.QuestItems.BALLOON_ENVELOPE;
-import static gg.projecteden.nexus.features.events.y2021.pugmas21.models.QuestItems.BOTTLED_CLOUD;
-import static gg.projecteden.nexus.features.events.y2021.pugmas21.models.QuestItems.CRYSTAL_PIECE;
-import static gg.projecteden.nexus.features.events.y2021.pugmas21.models.QuestItems.ELF_EARS;
-import static gg.projecteden.nexus.features.events.y2021.pugmas21.models.QuestItems.PIRATE_HAT;
-import static gg.projecteden.nexus.features.events.y2021.pugmas21.models.QuestItems.PUGMAS_COOKIE_RECIPE;
-import static gg.projecteden.nexus.features.events.y2021.pugmas21.models.QuestItems.RIBBON;
 import static gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21NPC.BELLAMY;
 import static gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21NPC.CAPTAIN_NERISSA;
 import static gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21NPC.CASSIA;
@@ -33,6 +24,15 @@ import static gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas2
 import static gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21NPC.REED;
 import static gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21NPC.ROWAN;
 import static gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21NPC.WARREN;
+import static gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestItem.BALLOON;
+import static gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestItem.BALLOON_BASKET;
+import static gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestItem.BALLOON_ENVELOPE;
+import static gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestItem.BOTTLED_CLOUD;
+import static gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestItem.CRYSTAL_PIECE;
+import static gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestItem.ELF_EARS;
+import static gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestItem.PIRATE_HAT;
+import static gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestItem.PUGMAS_COOKIE_RECIPE;
+import static gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestItem.RIBBON;
 import static gg.projecteden.nexus.features.quests.QuestReward.EVENT_TOKENS;
 import static gg.projecteden.nexus.features.quests.interactable.instructions.Dialog.Variable.NPC_NAME;
 import static gg.projecteden.nexus.features.quests.interactable.instructions.Dialog.Variable.PLAYER_NAME;
@@ -91,6 +91,7 @@ public enum Pugmas21QuestTask implements IQuestTask {
 			.npc("That's excellent news!")
 			.npc("Would you mind going and checking on these rumours to see if you can find anything there?")
 			.npc("I fear for what will happen to this place, and to Pugmas, if the crystal isn't repaired soon.")
+			// TODO Mysterious Woman isnt in the forest
 			.player("I'll head into the forest and see if I can find a lead on this deer.")
 			.npc("Oh thank you, thank you!")
 		)
@@ -246,7 +247,7 @@ public enum Pugmas21QuestTask implements IQuestTask {
 			// TODO Sounds
 			.wait(TickTime.SECOND.x(3))
 			.npc("And... done! Here you go, one wooden basket!")
-			.give(BALLOON_BASKET)
+			.give(BALLOON_BASKET.get())
 			.player("Thanks again warren!")
 		)
 		.then()
@@ -267,7 +268,7 @@ public enum Pugmas21QuestTask implements IQuestTask {
 			.npc("That will be $10,000 please.")
 			.player("...What?")
 			.npc("Pfft.. bahaha, I'm just joking! Sorry about that, but the look on your face was just too good.")
-			.give(BALLOON_ENVELOPE)
+			.give(BALLOON_ENVELOPE.get())
 			.player("Oh, okay then haha.")
 			.npc("Please come again! I wouldn't want to have scared you off with that little joke. ")
 		)
@@ -276,11 +277,11 @@ public enum Pugmas21QuestTask implements IQuestTask {
 		.reminder(dialog -> dialog
 			.npc("TODO Reminder") // TODO
 		)
-		.gather(BALLOON_BASKET, BALLOON_ENVELOPE)
+		.gather(BALLOON_BASKET.get(), BALLOON_ENVELOPE.get())
 		.complete(dialog -> dialog
 			.npc("These are high quality materials so this shouldn't take too long.")
 			.npc("Just gotta attach these here, put that there... and done!")
-			.give(BALLOON)
+			.give(BALLOON.get())
 			.npc("Now go get me that cloud in a bottle! I'll meet you by the docks with the machine so we can get rid of this storm, once and for all.")
 		)
 		.then()
@@ -291,7 +292,7 @@ public enum Pugmas21QuestTask implements IQuestTask {
 		.reminder(dialog -> dialog
 			.npc("TODO Reminder") // TODO
 		)
-		.gather(BOTTLED_CLOUD)
+		.gather(BOTTLED_CLOUD.get())
 		.complete(dialog -> dialog
 			.npc("Took you long enough. I suppose now we are all set.")
 			.npc("Just gotta turn this on and...")
@@ -317,7 +318,7 @@ public enum Pugmas21QuestTask implements IQuestTask {
 			.npc("I'm so sorry " + PLAYER_NAME + ". I made you run all over the place for nothing.")
 			.npc("Sigh. I was so sure it was going to work.")
 			.npc("I wanted to give you something as a thank you for your hard work but I'm afraid I don't have any money. I hope this item will be okay.")
-			.give(CRYSTAL_PIECE)
+			.give(CRYSTAL_PIECE.get())
 			.npc("I don't know if it's just a shiny rock or whether it has some importance, but I hope you enjoy it.")
 			.player("Oh, uhm.. Thanks, I guess?") // TODO Be more grateful
 			.npc("You're welcome! Also feel free to come help again, you are my assistant after all!")
@@ -337,11 +338,12 @@ public enum Pugmas21QuestTask implements IQuestTask {
 			.npc("But eventually they began to grow distant and eventually faded into myth...")
 			.player("Wow, that's amazing! What happened to them? Why did they disappear?")
 			.npc("If you wish to hear more, bring me the second piece of the crystal.")
-			// If Player chose Pirates
-			.npc("To find it, help out the Captain with their troubles. You can find them at the dock.")
-			// If Player chose Elves
-			.npc("To find it, head to Santa's Manor where you will find a troubled young elf.")
-			// (Player heads to starting location for Holiday Heist)
+			.condition(quester -> Pugmas21QuestLine.of(quester) == Pugmas21QuestLine.PIRATES)
+				.npc("To find it, help out the Captain with their troubles. You can find them at the dock.")
+			.endCondition()
+			.condition(quester -> Pugmas21QuestLine.of(quester) == Pugmas21QuestLine.ELVES)
+				.npc("To find it, head to Santa's Manor where you will find a troubled young elf.")
+			.endCondition()
 		)
 		.build()
 	),
@@ -378,7 +380,7 @@ public enum Pugmas21QuestTask implements IQuestTask {
 			.npc("Perfect! Let me work my magic for you, it won't take long.")
 			// TODO Sounds
 			.npc("Boom! Okay there, a perfect disguise!")
-			.give(ELF_EARS)
+			.give(ELF_EARS.get())
 			.player("This looks amazing! Thank you, this is exactly what I needed.")
 			.npc("Haha! Well, I'm not known as the best costume designer for nothing.")
 			.npc("Do come again!")
@@ -405,7 +407,7 @@ public enum Pugmas21QuestTask implements IQuestTask {
 		.reminder(dialog -> dialog
 			.npc("TODO Reminder") // TODO
 		)
-		.gather(PUGMAS_COOKIE_RECIPE)
+		.gather(PUGMAS_COOKIE_RECIPE.get())
 		.take(false)
 		.complete(dialog -> dialog
 			.npc("You're back! I knew you'd return!")
@@ -418,14 +420,14 @@ public enum Pugmas21QuestTask implements IQuestTask {
 		)
 		.then()
 		.talkTo(PANSY)
-		.gather(PUGMAS_COOKIE_RECIPE)
+		.gather(PUGMAS_COOKIE_RECIPE.get())
 		.dialog(dialog -> dialog
 			.npc("Oh, hey " + PLAYER_NAME + "! I didn't expect to see you here.")
 			.npc("What's that you're holding?")
 			.player("It's a cookie recipe that I accidentally stol-, I mean stumbled upon while helping around the island. " + CAPTAIN_NERISSA + " thought you could use it.")
 			.npc("Really? Oh I love learning new recipes, thank you! This will certainly go to good use!")
 			.npc("But wait, you said that the Captain sent you? Can you bring this to them?")
-			.give(RIBBON)
+			.give(RIBBON.get())
 			.npc("They left it here this morning and I've been meaning to return it all day.")
 			.player("...You mean it was here this whole time?")
 			.npc("Hmm? I'm sorry, I'm not sure what you mean by that.")
@@ -434,14 +436,14 @@ public enum Pugmas21QuestTask implements IQuestTask {
 		)
 		.then()
 		.talkTo(CAPTAIN_NERISSA)
-		.gather(RIBBON)
+		.gather(RIBBON.get())
 		.dialog(dialog -> dialog
 			.player(PANSY + " wanted me to give this to you.")
 			.npc("Is this what I think it is? The item I've been looking for all day?")
 			.player("Yeah, it is. Turns out you left it in the kitchen this morning, meaning it was here this whole time!")
 			.npc("Oh haha... sorry for dragging you into this. My bad memory has once again proved to be troublesome.")
 			.npc("I guess I owe you some compensation for the trouble I put you through. Here, take this.")
-			.give(CRYSTAL_PIECE)
+			.give(CRYSTAL_PIECE.get())
 			// TODO Thanks
 		)
 		.build()
@@ -481,7 +483,7 @@ public enum Pugmas21QuestTask implements IQuestTask {
 			.npc("Perfect! Let me work my magic for you, it won't take long.")
 			// TODO Sounds
 			.npc("Boom! Okay there, a perfect disguise!")
-			.give(PIRATE_HAT) // TODO force wearing?
+			.give(PIRATE_HAT.get()) // TODO force wearing?
 			.player("This looks amazing! Thank you, this is exactly what I needed.")
 			.npc("Haha! Well, I'm not known as the best costume designer for nothing.")
 			.npc("Do come again!")
@@ -501,7 +503,7 @@ public enum Pugmas21QuestTask implements IQuestTask {
 		.reminder(dialog -> dialog
 			.npc("TODO Reminder") // TODO
 		)
-		.gather(PUGMAS_COOKIE_RECIPE)
+		.gather(PUGMAS_COOKIE_RECIPE.get())
 		.take(false)
 		.dialog(dialog -> dialog
 			.npc("You did it! I always knew you could!")
@@ -514,7 +516,7 @@ public enum Pugmas21QuestTask implements IQuestTask {
 		)
 		.then()
 		.talkTo(PINE)
-		.gather(PUGMAS_COOKIE_RECIPE)
+		.gather(PUGMAS_COOKIE_RECIPE.get())
 		.dialog(dialog -> dialog
 			.npc("Oh, hey new recruit! I didn't expect to see you here. It's nice to meet you, I'm " + NPC_NAME + ".")
 			.player("Hi, I'm " + PLAYER_NAME + ". " + CASSIA + " asked me to give this to you.")
@@ -523,7 +525,7 @@ public enum Pugmas21QuestTask implements IQuestTask {
 			.npc("Really!? I love learning new recipes, thank you so much! Pirate recipe.. It reminds me of my sibling " + PANSY + ". ")
 			.npc("I'll make sure to perfect this dish! Oh, and you said " + CASSIA + "? Would you mind bringing this ribbon to them? I heard they were looking for it.")
 			.npc("She left it here this morning, I've been meaning to bring it to her all day.")
-			.give(RIBBON)
+			.give(RIBBON.get())
 			.player("Wha- it's been here the whole time!? ")
 			.npc("Huh?")
 			.player("Oh it's.. Nothing. I'll bring it to her right away! ")
@@ -531,14 +533,14 @@ public enum Pugmas21QuestTask implements IQuestTask {
 		)
 		.then()
 		.talkTo(CASSIA)
-		.gather(RIBBON)
+		.gather(RIBBON.get())
 		.dialog(dialog -> dialog
 			.player(NPC_NAME + ", I found your-")
 			.npc("Eh!? Is that my ribbon? Has it been here this whole time?")
 			.player("Yup. " + PINE + " said you left it in the kitchen this morning...")
 			.npc("Hehe, looks like my bad memory has caused problems for us once again. I'm sorry for dragging you into this.")
 			.npc("Here, take this as a thank you, and an apology.")
-			.give(CRYSTAL_PIECE)
+			.give(CRYSTAL_PIECE.get())
 			// TODO Thanks
 		)
 		.build()

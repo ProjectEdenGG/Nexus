@@ -52,7 +52,7 @@ public class QuestTaskProgress implements PlayerOwnedObject {
 	}
 
 	public void incrementStep() {
-		sendMessage("Moving to next step");
+		sendMessage("&c=== Moving to next step");
 		++step;
 	}
 

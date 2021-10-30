@@ -17,8 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import static gg.projecteden.nexus.features.quests.interactable.instructions.Dialog.genericGreeting;
-
 @Data
 public class GatherQuestTask extends QuestTask<GatherQuestTask, GatherQuestTaskStep> {
 
@@ -39,12 +37,12 @@ public class GatherQuestTask extends QuestTask<GatherQuestTask, GatherQuestTaskS
 				if (shouldAdvance(quester, stepProgress)) {
 					if (take)
 						quester.remove(items);
-					return complete.send(quester);
-				} else
-					if (reminder != null)
-						return reminder.send(quester);
-					else
-						return genericGreeting(quester, interactable);
+					if (complete != null)
+						return complete.send(quester);
+				} else if (reminder != null)
+					return reminder.send(quester);
+
+			return null;
 		}
 
 		@Override
