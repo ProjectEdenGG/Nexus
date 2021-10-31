@@ -86,7 +86,7 @@ public class HomesCommand extends CustomCommand {
 	@Async
 	@Path("near [page]")
 	@Permission("group.staff")
-	void nearest(@Arg("1") int page) {
+	void near(@Arg("1") int page) {
 		Map<Home, Double> unsorted = service.getAll().stream()
 				.map(HomeOwner::getHomes)
 				.flatMap(Collection::stream)
@@ -99,6 +99,27 @@ public class HomesCommand extends CustomCommand {
 						.command("/home " + home.getOwner().getNickname() + " " + home.getName())
 						.hover("&fClick to teleport");
 		paginate(homes.keySet(), formatter, "/homes near", page);
+	}
+
+	@Async
+	@Confirm
+	@Path("lockInWorld <world>")
+	@Permission("group.admin")
+	void lockInWorld(World world) {
+		int count = 0;
+		for (HomeOwner owner : service.getAll()) {
+			boolean updated = false;
+			for (Home home : homeOwner.getHomes()) {
+				if (world.equals(home.getLocation().getWorld()) && !home.isLocked()) {
+					++count;
+					updated = true;
+					home.setLocked(true);
+				}
+			}
+			if (updated)
+				service.save(owner);
+		}
+		send(PREFIX + "Locked " + count + " homes");
 	}
 
 	@Async
