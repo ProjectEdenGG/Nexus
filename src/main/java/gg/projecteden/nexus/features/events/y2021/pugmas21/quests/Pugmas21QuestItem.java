@@ -14,6 +14,7 @@ public enum Pugmas21QuestItem {
 	BALLOON_ENVELOPE(new ItemBuilder(Material.PAPER).name("Hot Air Balloon Envelope")),
 	BOTTLED_CLOUD(new ItemBuilder(Material.PAPER).name("Bottled Cloud")),
 	CRYSTAL_PIECE(new ItemBuilder(Material.PAPER).name("Crystal Piece")),
+	CRYSTAL(new ItemBuilder(Material.PAPER).name("Crystal")),
 	ELF_EARS(new ItemBuilder(Material.PAPER).name("Elf Ears")),
 	PIRATE_HAT(new ItemBuilder(Material.PAPER).name("Pirate Hat")),
 	PUGMAS_COOKIE_RECIPE(new ItemBuilder(Material.PAPER).name("Pugmas Cookie Recipe")),
