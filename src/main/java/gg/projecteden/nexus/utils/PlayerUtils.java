@@ -829,6 +829,7 @@ public class PlayerUtils {
 	public static void giveItems(HasOfflinePlayer player, Collection<ItemStack> items, String nbt) {
 		List<ItemStack> finalItems = new ArrayList<>(items);
 		finalItems.removeIf(ItemUtils::isNullOrAir);
+		finalItems.removeIf(itemStack -> itemStack.getAmount() == 0);
 		if (!Strings.isNullOrEmpty(nbt)) {
 			finalItems.clear();
 			NBTContainer nbtContainer = new NBTContainer(nbt);

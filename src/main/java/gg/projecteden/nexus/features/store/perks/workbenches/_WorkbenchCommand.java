@@ -37,10 +37,18 @@ public abstract class _WorkbenchCommand extends CustomCommand {
 		SMITHING_TABLE(Material.SMITHING_TABLE, player -> player.openSmithingTable(null, true)),
 		GRINDSTONE(Material.GRINDSTONE, player -> player.openGrindstone(null, true)),
 		LOOM(Material.LOOM, player -> player.openLoom(null, true)),
-		CARTOGRAPHY_TABLE(Material.CARTOGRAPHY_TABLE, player -> player.openCartographyTable(null, true));
+		CARTOGRAPHY_TABLE(Material.CARTOGRAPHY_TABLE, player -> player.openCartographyTable(null, true)),
+		DYE_STATION(Material.CRAFTING_TABLE, 1, DyeStationCommand::openMenu);
 
 		private final Material material;
+		private final int customModelData;
 		private final Consumer<Player> open;
+
+		Workbench(Material material, Consumer<Player> open) {
+			this.material = material;
+			this.customModelData = 0;
+			this.open = open;
+		}
 
 		public void open(Player player) {
 			open.accept(player);
