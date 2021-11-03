@@ -31,9 +31,14 @@ public enum Pugmas21Entity implements InteractableEntity {
 	}
 
 	public static Pugmas21Entity of(UUID uuid) {
-		for (Pugmas21Entity entity : values())
+		for (Pugmas21Entity entity : values()) {
+			if (entity.getEntityId() == null)
+				continue;
+
 			if (entity.getEntityId().equals(uuid))
 				return entity;
+		}
+
 		return null;
 	}
 
