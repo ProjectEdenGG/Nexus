@@ -171,9 +171,19 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 	public void init(Player player, InventoryContents contents) {
 		McMMOPlayer mcmmoPlayer = UserManager.getPlayer(player);
 
+		int totalPowerLevel = 0;
+		boolean _canPrestigeAll = true;
+		for (ResetSkillType skill : ResetSkillType.values()) {
+			int powerLevel = Math.min(TIER_ONE, mcmmoPlayer.getSkillLevel(PrimarySkillType.valueOf(skill.name())));
+			totalPowerLevel += powerLevel;
+			if (powerLevel < TIER_ONE)
+				_canPrestigeAll = false;
+		}
+		final boolean canPrestigeAll = _canPrestigeAll;
+
 		ItemStack all = new ItemBuilder(Material.BEACON)
 				.name("&eAll Skills")
-				.lore("&3Power Level: &e" + mcmmoPlayer.getPowerLevel() + "/" + TIER_ONE_ALL +
+				.lore("&3Power Level: &e" + totalPowerLevel + "/" + TIER_ONE_ALL +
 						"|| ||&3&lReward:" +
 						"||&f- " + DEPOSIT_PRETTY + " per level " + TIER_ONE + " skill (x" + MAX_DEPOSIT_MULTIPLIER + " if level " + TIER_TWO + ")" +
 						"||&f- " + DEPOSIT_ALL_PRETTY + " bonus (x" + MAX_DEPOSIT_ALL_MULTIPLIER + " if every skill is level " + TIER_TWO + ")" +
@@ -183,8 +193,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 		ItemStack reset = new ItemBuilder(Material.BARRIER).name("&cReset all with &lno reward").build();
 
 		contents.set(0, 4, ClickableItem.from(all, (e) -> {
-			if (mcmmoPlayer.getPowerLevel() < TIER_ONE_ALL)
-				return;
+			if (!canPrestigeAll) return;
 
 			ConfirmationMenu.builder()
 					.title("&4Confirm Prestige All?")
