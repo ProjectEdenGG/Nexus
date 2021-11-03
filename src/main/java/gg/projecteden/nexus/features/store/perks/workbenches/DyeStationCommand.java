@@ -54,7 +54,6 @@ public class DyeStationCommand extends _WorkbenchCommand {
 		openMenu(player());
 	}
 
-
 	public static void openMenu(Player player) {
 		new DyeStationMenu().open(player);
 	}
@@ -264,7 +263,6 @@ public class DyeStationCommand extends _WorkbenchCommand {
 		}
 	}
 
-
 	private enum ColorChoice {
 		RED("#FF0000", List.of("#FF756B", "#FF5E52", "#FF4233", "#FF0000", "#C70F00", "#9C0B00", "#6E0800")),
 		ORANGE("#FF8000", List.of("#FFFFFF", "#FFFFFF", "#FFFFFF", "#FF8000", "#FFFFFF", "#FFFFFF", "#FFFFFF")),
@@ -284,10 +282,6 @@ public class DyeStationCommand extends _WorkbenchCommand {
 
 		public ItemStack getItem(String name) {
 			return getButton().getItem(name);
-		}
-
-		ColorChoice(String hex) {
-			this.button = new ColoredButton(hex);
 		}
 
 		ColorChoice(String hex, List<String> hexes) {

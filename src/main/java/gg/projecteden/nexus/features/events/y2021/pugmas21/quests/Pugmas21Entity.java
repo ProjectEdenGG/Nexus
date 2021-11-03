@@ -17,13 +17,16 @@ public enum Pugmas21Entity implements InteractableEntity {
 	;
 
 	Pugmas21Entity(String name, String entityId) {
-		this(name, UUID.fromString(entityId));
+		this(name, entityId.equals("") ? null : UUID.fromString(entityId));
 	}
 
 	private final String name;
 	private final UUID entityId;
 
 	public static Pugmas21Entity of(Entity entity) {
+		if (entity == null)
+			return null;
+
 		return of(entity.getUniqueId());
 	}
 
