@@ -111,9 +111,10 @@ public class NameplatesListener implements Listener {
 		if (!(event.getEntity() instanceof Player player))
 			return;
 
-		Nameplates.debug("on EntityPotionEffectEvent(" + player.getName() + ", type=" + event.getModifiedType() + ", action=" + event.getAction() + ")");
 		if (!event.getModifiedType().equals(PotionEffectType.INVISIBILITY))
 			return;
+
+		Nameplates.debug("on EntityPotionEffectEvent(" + player.getName() + ", type=" + event.getModifiedType() + ", action=" + event.getAction() + ")");
 
 		switch (event.getAction()) {
 			case ADDED -> manager().destroy(player);
