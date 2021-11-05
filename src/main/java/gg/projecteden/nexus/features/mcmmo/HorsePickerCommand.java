@@ -11,6 +11,8 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.StringUtils;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Horse;
@@ -26,14 +28,28 @@ public class HorsePickerCommand extends CustomCommand {
 
 	@Path
 	void horsePicker() {
-		SmartInventory colorINV = SmartInventory.builder()
-				.title(StringUtils.colorize("&3Color Picker"))
-				.size(3, 9)
-				.provider(new HorsePickerColorProvider())
-				.build();
-		colorINV.open(player());
+		getColorPicker().open(player());
 	}
 
+	private SmartInventory getColorPicker() {
+		return SmartInventory.builder()
+			.title(StringUtils.colorize("&3Color Picker"))
+			.size(3, 9)
+			.provider(new HorsePickerColorProvider())
+			.build();
+	}
+
+	private SmartInventory getMarkingPicker(HorseColor color) {
+		String title = "&3Markings Picker (" + color.getColor() + StringUtils.camelCase(color.getName()) + "&3)";
+		return SmartInventory.builder()
+			.title(StringUtils.colorize(title))
+			.size(3, 9)
+			.provider(new HorsePickerMarkingsProvider(Horse.Color.valueOf(color.name())))
+			.build();
+
+	}
+
+	@AllArgsConstructor
 	public enum HorseColor {
 		WHITE(new ItemStack(Material.WHITE_WOOL), "&f"),
 		GRAY(new ItemStack(Material.LIGHT_GRAY_WOOL), "&7", "Dapple Gray"),
@@ -43,7 +59,9 @@ public class HorsePickerCommand extends CustomCommand {
 		BROWN(new ItemStack(Material.BROWN_WOOL), "&6"),
 		DARK_BROWN(new ItemStack(Material.BROWN_TERRACOTTA), "&6");
 
+		@Getter
 		ItemStack item;
+		@Getter
 		String color, name;
 
 		HorseColor(ItemStack item, String color) {
@@ -51,26 +69,9 @@ public class HorsePickerCommand extends CustomCommand {
 			this.color = color;
 			this.name = name();
 		}
-
-		HorseColor(ItemStack item, String color, String name) {
-			this.item = item;
-			this.color = color;
-			this.name = name;
-		}
-
-		ItemStack getItem() {
-			return item;
-		}
-
-		String getColor() {
-			return color;
-		}
-
-		String getName() {
-			return name;
-		}
 	}
 
+	@AllArgsConstructor
 	public enum HorseMarking {
 		NONE(new ItemStack(Material.WHITE_WOOL), "&7No Markings"),
 		WHITE(new ItemStack(Material.QUARTZ_BLOCK), "&7White Stockings"),
@@ -78,50 +79,27 @@ public class HorsePickerCommand extends CustomCommand {
 		WHITE_DOTS(new ItemStack(Material.SNOW_BLOCK), "&7White Dots"),
 		BLACK_DOTS(new ItemStack(Material.BLACK_WOOL), "&7Black Dots");
 
+		@Getter
 		ItemStack item;
+		@Getter
 		String name;
-
-		HorseMarking(ItemStack item, String name) {
-			this.item = item;
-			this.name = name;
-		}
-
-		ItemStack getItem() {
-			return item;
-		}
-
-		String getName() {
-			return name;
-		}
 	}
 
 	public class HorsePickerColorProvider extends MenuUtils implements InventoryProvider {
-
 		@Override
 		public void init(Player player, InventoryContents contents) {
 			int column = 1;
 			for (HorseColor color : HorseColor.values()) {
-				contents.set(1, column++, ClickableItem.from(nameItem(color.getItem(), color.getColor() +
-						StringUtils.camelCase(color.getName())), e -> {
-					SmartInventory markingProvider = SmartInventory.builder()
-							.title(StringUtils.colorize("&3Markings Picker (" +
-									color.getColor() + StringUtils.camelCase(color.getName()) + "&3)"))
-							.size(3, 9)
-							.provider(new HorsePickerMarkingsProvider(Horse.Color.valueOf(color.name())))
-							.build();
-					markingProvider.open(player);
-				}));
+				contents.set(1, column++, ClickableItem.from(nameItem(color.getItem(),
+					color.getColor() + StringUtils.camelCase(color.getName())),
+					e -> getMarkingPicker(color).open(player)));
 			}
 		}
 	}
 
+	@AllArgsConstructor
 	public class HorsePickerMarkingsProvider extends MenuUtils implements InventoryProvider {
-
 		Horse.Color color;
-
-		public HorsePickerMarkingsProvider(Horse.Color color) {
-			this.color = color;
-		}
 
 		@Override
 		public void init(Player player, InventoryContents contents) {
@@ -130,6 +108,7 @@ public class HorsePickerCommand extends CustomCommand {
 				contents.set(1, column++, ClickableItem.from(nameItem(marking.getItem(), marking.getName()), e -> {
 					spawnHorse(player, color, Horse.Style.valueOf(marking.name()));
 					LuckPermsUtils.PermissionChange.unset().permissions("horsepicker.pick").player(player).runAsync();
+					player.closeInventory();
 				}));
 			}
 		}
