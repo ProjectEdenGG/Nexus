@@ -178,6 +178,9 @@ public class WitherCommand extends CustomCommand {
 		if (!currentFight.getHostPlayer().equals(player()))
 			error("You are not the host of the challenging party");
 
+		if (currentFight.isStarted())
+			error("The fight has already started!");
+
 		if (!checkHasItems())
 			return;
 
@@ -185,8 +188,8 @@ public class WitherCommand extends CustomCommand {
 
 		int partySize = currentFight.getParty().size();
 		String message = "&e" + Nickname.of(currentFight.getHostPlayer()) +
-				(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3are" : " &3is") +
-				" challenging the wither to a fight in " + currentFight.getDifficulty().getTitle() + " &3mode";
+			(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3are" : " &3is") +
+			" challenging the wither to a fight in " + currentFight.getDifficulty().getTitle() + " &3mode";
 
 		if (isBeta())
 			Broadcast.staffIngame().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
