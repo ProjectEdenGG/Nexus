@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class Warps {
 	@Getter
-	private static Location spawn = WarpType.NORMAL.get("spawn").getLocation();
+	private static final Location spawn = WarpType.NORMAL.get("spawn").getLocation();
 
 	public static void spawn(Player player) {
 		player.teleportAsync(spawn);

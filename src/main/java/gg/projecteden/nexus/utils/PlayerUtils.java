@@ -218,6 +218,9 @@ public class PlayerUtils {
 		public OnlinePlayers include(List<UUID> uuids) {
 			if (this.include == null)
 				this.include = new ArrayList<>();
+			if (uuids == null)
+				uuids = new ArrayList<>();
+
 			this.include.addAll(uuids);
 			return this;
 		}
