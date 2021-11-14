@@ -59,6 +59,9 @@ public class MailCommand extends CustomCommand implements Listener {
 
 	@Path("send <player> [message...]")
 	void send(Mailer to, String message) {
+		if (from.getUuid().equals(to.getUuid()))
+			error("You cannot send mail yourself");
+
 		if (from.hasPending())
 			send(PREFIX + "&cYou already have pending mail to " + from.getPending().getNickname());
 		else
