@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.y2021.halloween21;
 
+import gg.projecteden.annotations.Disabled;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2021.halloween21.models.Candy;
 import gg.projecteden.nexus.features.events.y2021.halloween21.models.Pumpkin;
@@ -31,6 +32,7 @@ import java.util.List;
 import static gg.projecteden.utils.RandomUtils.chanceOf;
 import static gg.projecteden.utils.StringUtils.right;
 
+@Disabled
 public class Halloween21 implements Listener {
 
 	public Halloween21() {

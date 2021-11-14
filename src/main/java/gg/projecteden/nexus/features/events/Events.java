@@ -4,7 +4,6 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.aeveonproject.AeveonProject;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.MiniGolf;
-import gg.projecteden.nexus.features.events.y2021.halloween21.Halloween21;
 import gg.projecteden.nexus.features.events.y2021.pride21.Pride21;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
 import gg.projecteden.nexus.framework.features.Feature;
@@ -26,7 +25,6 @@ public class Events extends Feature {
 
 		new Timer("    Events.ArmorStandStalker", ArmorStandStalker::new);
 		new Timer("    Events.BearFair21", BearFair21::new);
-		new Timer("    Events.Halloween21", Halloween21::new);
 		new Timer("    Events.Pugmas21", Pugmas21::new);
 	}
 
