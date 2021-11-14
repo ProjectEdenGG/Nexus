@@ -1,6 +1,8 @@
 package gg.projecteden.nexus.features.recipes.functionals;
 
 import de.tr7zw.nbtapi.NBTItem;
+import fr.minuskube.inv.SmartInventory;
+import fr.minuskube.inv.SmartInvsPlugin;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.listeners.TemporaryListener;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
@@ -40,6 +42,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
 import static gg.projecteden.nexus.utils.ItemUtils.find;
@@ -104,6 +107,10 @@ public class Backpacks extends FunctionalRecipe {
 			return;
 
 		if (!(event.getWhoClicked() instanceof Player player))
+			return;
+
+		Optional<SmartInventory> smartInv = SmartInvsPlugin.manager().getInventory(player);
+		if (smartInv.isPresent() && !smartInv.get().isCloseable())
 			return;
 
 		event.setCancelled(true);
