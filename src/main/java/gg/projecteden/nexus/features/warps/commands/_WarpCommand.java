@@ -138,7 +138,7 @@ public abstract class _WarpCommand extends CustomCommand {
 		List<Warp> warps = getWarpType().getAll();
 
 		MinMaxResult<Warp> result = getMin(warps, warp -> {
-			if (location == null || location.getWorld() == null) return null;
+			if (location == null || location.getWorld() == null || warp.getLocation() == null) return null;
 			if (!location.getWorld().equals(warp.getLocation().getWorld())) return null;
 			return location.distance(warp.getLocation());
 		});
