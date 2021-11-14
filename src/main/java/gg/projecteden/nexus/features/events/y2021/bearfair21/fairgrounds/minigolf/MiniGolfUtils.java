@@ -97,7 +97,7 @@ public class MiniGolfUtils {
 
 		ball.setVelocity(new Vector(0, 0, 0));
 		ball.setGravity(false);
-		ball.teleportAsync(user.getBallLocation().add(0, MiniGolf.getFloorOffset(), 0));
+		ball.teleport(user.getBallLocation().add(0, MiniGolf.getFloorOffset(), 0));
 		ball.setFireTicks(0);
 		ball.setTicksLived(1);
 

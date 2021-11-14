@@ -474,7 +474,7 @@ public class MiniGolf {
 									int z = Integer.parseInt(split[2]);
 									Location newLoc = new Location(ball.getWorld(), x, y, z);
 									ball.setVelocity(new Vector(0, 0, 0));
-									ball.teleportAsync(LocationUtils.getCenteredLocation(newLoc));
+									ball.teleport(LocationUtils.getCenteredLocation(newLoc));
 									ball.setGravity(true);
 								} catch (Exception ignored) {
 								}
@@ -495,7 +495,7 @@ public class MiniGolf {
 							try {
 								Location newLoc = LocationUtils.getCenteredLocation(below.getRelative(facing).getLocation());
 								ball.setVelocity(new Vector(0, 0, 0));
-								ball.teleportAsync(LocationUtils.getCenteredLocation(newLoc));
+								ball.teleport(LocationUtils.getCenteredLocation(newLoc));
 								ball.setGravity(true);
 
 								double height = Double.parseDouble(heightStr);

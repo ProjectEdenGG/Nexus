@@ -231,7 +231,7 @@ public class PuttListener implements Listener {
 				// Move ball to last location
 				ball.setVelocity(new Vector(0, 0, 0));
 				ball.setGravity(false);
-				ball.teleportAsync(user.getBallLocation().add(0, MiniGolf.getFloorOffset(), 0));
+				ball.teleport(user.getBallLocation().add(0, MiniGolf.getFloorOffset(), 0));
 
 				// Sound
 				new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_CHIME).location(player.getLocation()).volume(0.9).pitch(1.9).play();
