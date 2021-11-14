@@ -71,7 +71,6 @@ import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
@@ -176,28 +175,20 @@ public class Misc implements Listener {
 	}
 
 	@EventHandler
-	public void onBreakArmorStand(EntityDeathEvent event) {
+	public void onDamageArmorStand(EntityDamageByEntityEvent event) {
 		if (!event.getEntityType().equals(EntityType.ARMOR_STAND))
+			return;
+
+		if (!event.getCause().equals(DamageCause.ENTITY_EXPLOSION))
+			return;
+
+		if (event.getDamager() instanceof Player)
 			return;
 
 		if (!WorldGroup.of(event.getEntity()).equals(WorldGroup.SURVIVAL))
 			return;
 
-		EntityDamageEvent damageEvent = event.getEntity().getLastDamageCause();
-		if (damageEvent == null)
-			return;
-
-		boolean cancel = false;
-		if (damageEvent.getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
-			cancel = true;
-
-		} else if (damageEvent instanceof EntityDamageByEntityEvent entityDamageEntityEvent) {
-			if (!(entityDamageEntityEvent.getDamager() instanceof Player))
-				cancel = true;
-		}
-
-		if (cancel)
-			event.setCancelled(true);
+		event.setCancelled(true);
 	}
 
 	private static final Map<MaterialTag, EquipmentSlot> slots = Map.of(
