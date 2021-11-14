@@ -9,7 +9,7 @@ import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import org.bukkit.potion.PotionEffectType;
 
 @Aliases("nv")
-@Permission("group.staff")
+@Permission("nexus.nightvision")
 public class NightVisionCommand extends CustomCommand {
 	private static final PotionEffectType EFFECT_TYPE = PotionEffectType.NIGHT_VISION;
 
