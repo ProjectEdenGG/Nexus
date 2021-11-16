@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
+import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -24,6 +25,7 @@ import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.type.Farmland;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -33,6 +35,7 @@ import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.block.MoistureChangeEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
@@ -82,13 +85,39 @@ public class WorldGuardFlags implements Listener {
 			event.setCancelled(true);
 	}
 
+	// temp fix for item frames making sound on cancelled hanging break with custom model items
+	@EventHandler
+	public void onEntityItemFrameDamage(EntityDamageByEntityEvent event) {
+		if (event.getDamager() instanceof Player) {
+			if (event.getEntity() instanceof ItemFrame itemFrame) {
+				ItemStack itemStack = itemFrame.getItem();
+				if (ItemUtils.isNullOrAir(itemStack))
+					return;
+
+				if (CustomModel.exists(itemStack))
+					itemFrame.setSilent(false);
+			}
+		}
+	}
+
 	@EventHandler
 	public void onItemFrameBreak(HangingBreakEvent event) {
 		if (RemoveCause.ENTITY.equals(event.getCause()))
 			return;
 
-		if (WorldGuardFlagUtils.query(event.getEntity().getLocation(), HANGING_BREAK) == State.DENY)
+		if (WorldGuardFlagUtils.query(event.getEntity().getLocation(), HANGING_BREAK) == State.DENY) {
 			event.setCancelled(true);
+
+		} else if (event.getEntity() instanceof ItemFrame itemFrame) {
+			ItemStack itemStack = itemFrame.getItem();
+			if (ItemUtils.isNullOrAir(itemStack))
+				return;
+
+			if (CustomModel.exists(itemStack)) {
+				itemFrame.setSilent(true);
+				event.setCancelled(true);
+			}
+		}
 	}
 
 	@EventHandler

@@ -94,6 +94,9 @@ public abstract class Windchimes extends FunctionalRecipe {
 	}
 
 	public static boolean isWindchime(ItemStack item) {
+		if (ItemUtils.isNullOrAir(item))
+			return false;
+
 		if (!item.getType().equals(Material.AMETHYST_SHARD))
 			return false;
 

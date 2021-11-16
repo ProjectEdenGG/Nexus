@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.features.store.perks.workbenches;
 
+import gg.projecteden.nexus.features.custombenches.CustomBench.CustomBenchType;
+import gg.projecteden.nexus.features.custombenches.DyeStation;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -38,7 +40,7 @@ public abstract class _WorkbenchCommand extends CustomCommand {
 		GRINDSTONE(Material.GRINDSTONE, player -> player.openGrindstone(null, true)),
 		LOOM(Material.LOOM, player -> player.openLoom(null, true)),
 		CARTOGRAPHY_TABLE(Material.CARTOGRAPHY_TABLE, player -> player.openCartographyTable(null, true)),
-		DYE_STATION(Material.CRAFTING_TABLE, 1, DyeStationCommand::openMenu);
+		DYE_STATION(CustomBenchType.DYE_STATION, DyeStation::open);
 
 		private final Material material;
 		private final int customModelData;
@@ -47,6 +49,12 @@ public abstract class _WorkbenchCommand extends CustomCommand {
 		Workbench(Material material, Consumer<Player> open) {
 			this.material = material;
 			this.customModelData = 0;
+			this.open = open;
+		}
+
+		Workbench(CustomBenchType customBenchType, Consumer<Player> open) {
+			this.material = customBenchType.getMaterial();
+			this.customModelData = customBenchType.getModelData();
 			this.open = open;
 		}
 
