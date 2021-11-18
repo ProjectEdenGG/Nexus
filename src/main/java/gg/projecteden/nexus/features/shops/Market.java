@@ -124,6 +124,13 @@ public class Market {
 		addSellItem(ShopGroup.SURVIVAL, false, Material.BUBBLE_CORAL_BLOCK, 16, 300);
 		addSellItem(ShopGroup.SURVIVAL, false, Material.FIRE_CORAL_BLOCK, 16, 300);
 		addSellItem(ShopGroup.SURVIVAL, false, Material.HORN_CORAL_BLOCK, 16, 300);
+		addSellItem(ShopGroup.SURVIVAL, false, Material.COBBLED_DEEPSLATE, 32, 75);
+		addSellItem(ShopGroup.SURVIVAL, false, Material.TUFF, 32, 100);
+		addSellItem(ShopGroup.SURVIVAL, false, Material.TINTED_GLASS, 8, 500);
+		addSellItem(ShopGroup.SURVIVAL, false, Material.MOSS_BLOCK, 8, 250);
+		addSellItem(ShopGroup.SURVIVAL, false, Material.SMALL_DRIPLEAF, 16, 250);
+		addSellItem(ShopGroup.SURVIVAL, false, Material.FLOWERING_AZALEA, 8, 1000);
+		addSellItem(ShopGroup.SURVIVAL, false, Material.ROOTED_DIRT, 32, 250);
 
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.COBBLESTONE, 64, 10);
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.STONE_BRICKS, 64, 15);
@@ -140,11 +147,13 @@ public class Market {
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.REDSTONE_BLOCK, 32, 500);
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.LAPIS_BLOCK, 32, 800);
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.IRON_BLOCK, 8, 35);
-		addBuyItem(ShopGroup.SURVIVAL, false, Material.GOLD_BLOCK, 16, 70);
-		addBuyItem(ShopGroup.SURVIVAL, false, Material.RAW_IRON_BLOCK, 8, 75);
-		addBuyItem(ShopGroup.SURVIVAL, false, Material.RAW_GOLD_BLOCK, 16, 115);
+		addBuyItem(ShopGroup.SURVIVAL, false, Material.GOLD_BLOCK, 16, 75);
+		addBuyItem(ShopGroup.SURVIVAL, false, Material.RAW_IRON_BLOCK, 8, 45);
+		addBuyItem(ShopGroup.SURVIVAL, false, Material.RAW_GOLD_BLOCK, 16, 100);
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.EMERALD_BLOCK, 16, 144);
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.DIAMOND_BLOCK, 3, 800);
+		addBuyItem(ShopGroup.SURVIVAL, false, Material.COPPER_BLOCK, 8, 25);
+		addBuyItem(ShopGroup.SURVIVAL, false, Material.RAW_COPPER_BLOCK, 8, 40);
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.POISONOUS_POTATO, 16, 30);
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.HAY_BLOCK, 64, 10);
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.DARK_OAK_LOG, 32, 40);
@@ -212,6 +221,7 @@ public class Market {
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.BUBBLE_CORAL_BLOCK, 1, 8);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.FIRE_CORAL_BLOCK, 1, 8);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.HORN_CORAL_BLOCK, 1, 8);
+		addBuyItem(ShopGroup.SURVIVAL, true, Material.AMETHYST_SHARD, 8, 8);
 	}
 
 	private static void addSellItem(ShopGroup shopGroup, boolean isResourceWorld, Material material, int quantity, double price) {
