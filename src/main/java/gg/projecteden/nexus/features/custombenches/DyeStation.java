@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-// TODO: Rainbow Dye uses
 public class DyeStation extends CustomBench {
 
 	public static ItemStack rainbowDye = new ItemBuilder(Material.RED_DYE).customModelData(1).name("Rainbow Dye").build();
@@ -212,15 +211,36 @@ public class DyeStation extends CustomBench {
 			if (!isValidDye(contents) || !isValidDyeable(contents))
 				return;
 
+			List<ItemStack> returnItems = new ArrayList<>();
 			ItemStack _dyeable = dyeableOptional.get().getItem().subtract();
-			ItemStack _dye = dyeOptional.get().getItem().subtract();
-			ItemStack _result = resultOptional.get().getItem();
+			returnItems.add(_dyeable);
 
-			PlayerUtils.giveItems(player, List.of(_dyeable, _dye, _result));
+			ItemStack _result = resultOptional.get().getItem();
+			returnItems.add(_result);
+
+			ItemStack _dye = dyeOptional.get().getItem();
+			if (_dye.getAmount() > 1) {
+				ItemStack _dyeExtra = _dye.clone();
+				_dyeExtra.subtract();
+				_dye.setAmount(1);
+
+				returnItems.add(_dyeExtra);
+			}
+
+			ItemBuilder _dyeBuilder = new ItemBuilder(_dye);
+			int modelData = _dyeBuilder.customModelData();
+			if (modelData < 4) {
+				_dyeBuilder.customModelData(++modelData);
+			} else
+				_dyeBuilder = new ItemBuilder(Material.GLASS_BOTTLE);
+			returnItems.add(_dyeBuilder.build());
+
+			PlayerUtils.giveItems(player, returnItems);
+
 			new SoundBuilder(Sound.ITEM_BOTTLE_EMPTY).location(player).pitch(RandomUtils.randomDouble(0.8, 1.2)).play();
 			Tasks.wait(8, () -> new SoundBuilder(Sound.ITEM_BOTTLE_FILL).location(player).pitch(RandomUtils.randomDouble(0.8, 1.2)).play());
 
-			getInv(player, _dyeable, _dye, _result, colorChoice, color).close(player);
+			getInv(player, _dyeable, _dyeBuilder.build(), _result, colorChoice, color).close(player);
 		}
 
 		private static boolean isValidDye(InventoryContents contents) {
