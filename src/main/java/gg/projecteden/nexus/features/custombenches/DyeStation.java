@@ -30,7 +30,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+// TODO: Rainbow Dye uses
 public class DyeStation extends CustomBench {
+
+	public static ItemStack rainbowDye = new ItemBuilder(Material.RED_DYE).customModelData(1).name("Rainbow Dye").build();
 
 	@Override
 	CustomBenchType getBenchType() {

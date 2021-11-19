@@ -17,6 +17,7 @@ import gg.projecteden.nexus.models.radio.RadioUser;
 import gg.projecteden.nexus.models.radio.RadioUserService;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -73,25 +74,23 @@ public class RadioFeature extends Feature {
 			}
 
 			// Radio Particles Task
-			Tasks.repeat(0, TickTime.SECOND.x(2), () -> {
-				RadioConfigService configService = new RadioConfigService();
-				RadioConfig config = configService.get0();
-				for (Radio radio : config.getRadios()) {
+			Tasks.repeat(0, TickTime.TICK.x(5), () -> {
+				for (Radio radio : getRadios()) {
 					if (!radio.getType().equals(RadioType.RADIUS)) continue;
 					if (!radio.isEnabled()) continue;
 					if (!radio.isParticles()) continue;
 					if (radio.getLocation() == null) continue;
 					new ParticleBuilder(Particle.NOTE)
-							.count(7)
-							.offset(0.25, 0.25, 0.25)
-							.location(radio.getLocation().add(0, 1, 0))
-							.spawn();
+						.count(RandomUtils.randomInt(1, 3))
+						.offset(0.25, 0.25, 0.25)
+						.location(radio.getLocation().add(0, RandomUtils.randomDouble(0.45, 0.75), 0))
+						.spawn();
 				}
 			});
 
 			// Radius Radio User Task
+			RadioUserService service = new RadioUserService();
 			Tasks.repeat(0, TickTime.SECOND.x(2), () -> {
-				RadioUserService service = new RadioUserService();
 				for (Radio radio : getRadios()) {
 					if (!(radio.getSongPlayer() instanceof PositionSongPlayer))
 						continue;

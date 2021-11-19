@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.y2021.pugmas21;
 
+import com.sk89q.worldedit.regions.Region;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.advent.AdventAnimation;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.advent.AdventMenu;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.CandyCaneCannon;
@@ -28,15 +29,20 @@ import gg.projecteden.nexus.models.pugmas21.Pugmas21UserService;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.WorldEditUtils;
+import gg.projecteden.utils.RandomUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
+import org.bukkit.Instrument;
 import org.bukkit.Material;
+import org.bukkit.Note;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.type.NoteBlock;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -45,6 +51,7 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.util.Vector;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 
 import static gg.projecteden.utils.TimeUtils.shortDateFormat;
@@ -68,6 +75,27 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	@Override
 	public String getPrefix() {
 		return Pugmas21.PREFIX;
+	}
+
+	@Path("randomizePresents")
+	@Permission("group.admin")
+	@Description("Randomizes the presents in your selection")
+	void randomizePresents() {
+		List<Instrument> instruments = List.of(Instrument.DIDGERIDOO, Instrument.PLING);
+
+
+		WorldEditUtils WEUtils = new WorldEditUtils(player());
+		Region selection = WEUtils.getPlayerSelection(player());
+
+		for (Block block : WEUtils.getBlocks(selection)) {
+			if (block.getType() != Material.NOTE_BLOCK)
+				continue;
+
+			NoteBlock noteBlock = (NoteBlock) block.getBlockData();
+			noteBlock.setInstrument(RandomUtils.randomElement(instruments));
+			noteBlock.setNote(new Note(RandomUtils.randomInt(0, 24)));
+			block.setBlockData(noteBlock);
+		}
 	}
 
 	@Path("train spawn <model>")

@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.recipes;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.custombenches.DyeStation;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
@@ -256,7 +257,7 @@ public class CustomRecipes extends Feature implements Listener {
 		shapeless().add(Material.MELON).toMake(Material.MELON_SLICE, 5).build().type(RecipeType.MISC).register();
 		shapeless().add(Material.RED_DYE).add(Material.ORANGE_DYE).add(Material.YELLOW_DYE).add(Material.GREEN_DYE).add(Material.CYAN_DYE)
 			.add(Material.BLUE_DYE).add(Material.PURPLE_DYE).add(Material.PINK_DYE).add(Material.GLASS_BOTTLE)
-			.toMake(new ItemBuilder(Material.RED_DYE).customModelData(1).name("Rainbow Dye").build()).build().type(RecipeType.MISC).register();
+			.toMake(DyeStation.rainbowDye).build().type(RecipeType.MISC).register();
 
 		light();
 

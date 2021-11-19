@@ -30,12 +30,13 @@ public abstract class CustomBench extends Feature implements Listener {
 	@Getter
 	@AllArgsConstructor
 	public enum CustomBenchType {
-		DYE_STATION("Dye Station", Material.CRAFTING_TABLE, 1, DyeStation::open),
+		DYE_STATION("Dye Station", Material.CRAFTING_TABLE, 1, Map.of(BlockFace.DOWN, 1), DyeStation::open),
 		;
 
 		private final String name;
 		private final Material material;
 		private final int modelData;
+		Map<BlockFace, Integer> offsets;
 		private final Consumer<Player> interact;
 
 		public void interact(Player player) {
@@ -85,7 +86,6 @@ public abstract class CustomBench extends Feature implements Listener {
 		if (player.isSneaking() && !ItemUtils.isNullOrAir(ItemUtils.getTool(player)))
 			return;
 
-
 		ItemFrame itemFrame = PlayerUtils.getTargetItemFrame(player, 5, Map.of(BlockFace.DOWN, 1));
 
 		if (itemFrame == null || ItemUtils.isNullOrAir(itemFrame.getItem()))
@@ -98,4 +98,50 @@ public abstract class CustomBench extends Feature implements Listener {
 		event.setCancelled(true);
 		customBenchType.interact(event.getPlayer());
 	}
+
+
+	/*
+	 * 	List<ItemFrame> itemFrames = getPossibleItemFrames(block);
+	 * 	for (ItemFrame itemFrame : itemFrames) {
+	 * 		CustomBenchType customBenchType = getCustomBench(itemFrame.getItem());
+	 * 		if (customBenchType == null)
+	 * 			return;
+	 *
+	 * 		event.setCancelled(true);
+	 * 		customBenchType.interact(event.getPlayer());
+	 * 		return;
+	 * 	}
+	 *
+	 * 	private List<ItemFrame> getPossibleItemFrames(Block clicked){
+	 * 		final double searchRadius = 0.5;
+	 *
+	 * 		List<ItemFrame> found = new ArrayList<>();
+	 * 		for (CustomBenchType benchType : CustomBenchType.values()) {
+	 * 			Map<BlockFace, Integer> offsets = benchType.getOffsets();
+	 * 			if (offsets == null || offsets.isEmpty())
+	 * 				continue;
+	 *
+	 * 			List<Block> blocks = new ArrayList<>();
+	 * 			for (BlockFace blockFace : offsets.keySet()) {
+	 * 				for (int i = 1; i <= offsets.get(blockFace); i++)
+	 * 					blocks.add(clicked.getRelative(blockFace, i));
+	 *                        }
+	 *
+	 * 			for (Block block : blocks) {
+	 * 				Collection<ItemFrame> itemFrames = block.getLocation().toCenterLocation().getNearbyEntitiesByType(ItemFrame.class, searchRadius);
+	 * 				if (itemFrames.isEmpty())
+	 * 					continue;
+	 *
+	 * 				for (ItemFrame itemFrame : itemFrames) {
+	 * 					if (isNullOrAir(itemFrame.getItem()))
+	 * 						continue;
+	 *
+	 * 					found.add(itemFrame);
+	 *                }
+	 *            }* 		}
+	 *
+	 * 		return found;
+	 * 	}
+	 *
+	 */
 }
