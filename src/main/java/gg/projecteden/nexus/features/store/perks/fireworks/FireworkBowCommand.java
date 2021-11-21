@@ -40,6 +40,8 @@ public class FireworkBowCommand extends CustomCommand {
 			error("That bow is not enchanted with Firework");
 
 		tool.removeEnchantment(Enchant.FIREWORK);
+		CustomEnchants.update(tool);
+
 		send(PREFIX + "Enchantment removed");
 	}
 
