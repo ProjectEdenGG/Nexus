@@ -67,9 +67,15 @@ public class CurrentTimeCommand extends CustomCommand {
 		if (geoIp == null || geoIp.getIp() == null)
 			error("That player's timezone is not set.");
 
-		DateFormat format = getDateFormat();
-		format.setTimeZone(TimeZone.getTimeZone(geoIp.getTimezone().getId()));
-		send(PREFIX + "The current time for &e" + geoIp.getName() + " &3is &e" + format.format(new Date()));
+		String timezoneId = geoIp.getTimezone().getId();
+		String playerName = geoIp.getNickname();
+		try {
+			DateFormat format = getDateFormat();
+			format.setTimeZone(TimeZone.getTimeZone(timezoneId));
+			send(PREFIX + "The current time for &e" + playerName + " &3is &e" + format.format(new Date()));
+		} catch (Exception e) {
+			error("Something broke. Player: " + playerName + "Timezone Id: " + timezoneId);
+		}
 	}
 
 	@NotNull
