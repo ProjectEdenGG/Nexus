@@ -94,6 +94,7 @@ public class CompactCommand extends CustomCommand {
 		IRON_INGOT(Material.IRON_BLOCK, 9),
 		GOLD_NUGGET(Material.GOLD_INGOT, 9),
 		GOLD_INGOT(Material.GOLD_BLOCK, 9),
+		COPPER_INGOT(Material.COPPER_BLOCK, 9),
 		REDSTONE(Material.REDSTONE_BLOCK, 9),
 		LAPIS_LAZULI(Material.LAPIS_BLOCK, 9),
 		DIAMOND(Material.DIAMOND_BLOCK, 9),
