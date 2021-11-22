@@ -31,6 +31,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
+import org.bukkit.inventory.BlastingRecipe;
+import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
@@ -58,7 +60,7 @@ public class CustomRecipes extends Feature implements Listener {
 	private static boolean loaded;
 
 	@EventHandler
-	public void on(ResourcePackUpdateCompleteEvent event) {
+	public void on(ResourcePackUpdateCompleteEvent ignored) {
 		if (loaded)
 			return;
 
@@ -69,6 +71,7 @@ public class CustomRecipes extends Feature implements Listener {
 			registerSlabs();
 			registerQuartz();
 			registerStoneBricks();
+			registerFurnace();
 			misc();
 
 			new Reflections(getClass().getPackage().getName()).getSubTypesOf(FunctionalRecipe.class).stream()
@@ -241,6 +244,30 @@ public class CustomRecipes extends Feature implements Listener {
 		shapeless().add(Material.DEEPSLATE_TILES).toMake(Material.DEEPSLATE_BRICKS).extra("stonebrick_uncrafting").build().type(RecipeType.STONE_BRICK).register();
 		shapeless().add(Material.DEEPSLATE_BRICKS).toMake(Material.POLISHED_DEEPSLATE).extra("stonebrick_uncrafting").build().type(RecipeType.STONE_BRICK).register();
 		shapeless().add(Material.POLISHED_DEEPSLATE).toMake(Material.COBBLED_DEEPSLATE).extra("stonebrick_uncrafting").build().type(RecipeType.STONE_BRICK).register();
+	}
+
+	private void registerFurnace() {
+		List<Recipe> recipes = new ArrayList<>();
+		// Furnace
+		recipes.add(new FurnaceRecipe(new NamespacedKey(Nexus.getInstance(), "nexus_furnace_raw_copper"),
+			new ItemStack(Material.COPPER_BLOCK), Material.RAW_COPPER_BLOCK, 6.3F, 1200));
+		recipes.add(new FurnaceRecipe(new NamespacedKey(Nexus.getInstance(), "nexus_furnace_raw_iron"),
+			new ItemStack(Material.IRON_BLOCK), Material.RAW_IRON_BLOCK, 6.3F, 1200));
+		recipes.add(new FurnaceRecipe(new NamespacedKey(Nexus.getInstance(), "nexus_furnace_raw_gold"),
+			new ItemStack(Material.GOLD_BLOCK), Material.RAW_GOLD_BLOCK, 9F, 1200));
+
+		// Blast Furnace
+		recipes.add(new BlastingRecipe(new NamespacedKey(Nexus.getInstance(), "nexus_blast_furnace_raw_copper"),
+			new ItemStack(Material.COPPER_BLOCK), Material.RAW_COPPER_BLOCK, 6.3F, 600));
+		recipes.add(new BlastingRecipe(new NamespacedKey(Nexus.getInstance(), "nexus_blast_furnace__raw_iron"),
+			new ItemStack(Material.IRON_BLOCK), Material.RAW_IRON_BLOCK, 6.3F, 600));
+		recipes.add(new BlastingRecipe(new NamespacedKey(Nexus.getInstance(), "nexus_blast_furnace_raw_gold"),
+			new ItemStack(Material.GOLD_BLOCK), Material.RAW_GOLD_BLOCK, 9F, 600));
+
+
+		for (Recipe furnaceRecipe : recipes) {
+			CustomRecipes.register(furnaceRecipe);
+		}
 	}
 
 	public void misc() {
