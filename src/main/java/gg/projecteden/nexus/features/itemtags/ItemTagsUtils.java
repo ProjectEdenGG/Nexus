@@ -197,6 +197,10 @@ public class ItemTagsUtils {
 		item.setLore(lore);
 	}
 
+	public static boolean isTagable(@NotNull ItemStack itemStack) {
+		return isArmor(itemStack) || isTool(itemStack);
+	}
+
 	public static boolean isArmor(@NotNull ItemStack itemStack) {
 		if (itemStack.getType().equals(Material.ELYTRA))
 			return true;

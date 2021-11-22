@@ -692,6 +692,9 @@ public class Shop implements PlayerOwnedObject {
 		public void validateProcessOne(Player customer) {
 			checkStock();
 
+			// TODO: Allow items with itemtags to be sold on the market
+//			if(ItemTagsUtils.isTagable(product.getItem()))
+
 			if (!customer.getInventory().containsAtLeast(product.getItem(), product.getItem().getAmount()))
 				throw new InvalidInputException("You do not have " + pretty(product.getItem()) + " to sell");
 		}
@@ -706,7 +709,10 @@ public class Shop implements PlayerOwnedObject {
 
 			product.setStock(product.getStock() - price);
 			transaction(customer);
+
+			// TODO: Allow items with itemtags to be sold on the market
 			customer.getInventory().removeItem(product.getItem());
+
 			product.getShop().addHolding(product.getItem());
 		}
 
