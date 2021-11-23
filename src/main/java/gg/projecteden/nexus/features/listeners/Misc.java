@@ -132,6 +132,7 @@ public class Misc implements Listener {
 			return;
 
 		event.setCancelled(true);
+		PlayerUtils.send(event.getPlayer(), "&c&lHey! &7There's a light block there.");
 	}
 
 	@EventHandler
