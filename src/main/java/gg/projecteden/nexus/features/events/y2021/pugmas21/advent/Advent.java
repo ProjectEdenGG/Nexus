@@ -45,6 +45,10 @@ public class Advent implements Listener {
 			user.advent().show(present);
 	}
 
+	public static void glow(Pugmas21User user, int day) {
+		user.advent().locate(Advent21Config.get().get(day));
+	}
+
 	@EventHandler
 	public void on(PlayerChangedWorldEvent event) {
 		if (Pugmas21.isAtPugmas(event.getPlayer()))

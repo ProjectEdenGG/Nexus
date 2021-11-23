@@ -8,9 +8,10 @@ import fr.minuskube.inv.content.SlotIterator;
 import fr.minuskube.inv.content.SlotPos;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
 import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.models.pugmas21.Advent21Config;
+import gg.projecteden.nexus.models.pugmas21.Advent21Config.AdventPresent;
 import gg.projecteden.nexus.models.pugmas21.Pugmas21User;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.EnumUtils.IteratableEnum;
 import lombok.AllArgsConstructor;
@@ -51,10 +52,23 @@ public class AdventMenu extends MenuUtils implements InventoryProvider {
 
 		final SlotIterator slotIterator = innerSlotIterator(contents, SlotPos.of(row, column));
 		for (int day = 1; day <= 25; day++) {
-			final LocalDate date = Pugmas21.EPOCH.plusDays(day - 1);
+			final int _day = day;
+
+			final LocalDate date = Pugmas21.EPOCH.plusDays(_day - 1);
 			final Icon icon = getIcon(date);
-			final ItemBuilder item = new ItemBuilder(icon.getItem(day));
-			slotIterator.next().set(ClickableItem.empty(item.build()));
+			final ItemBuilder item = new ItemBuilder(icon.getItem(_day));
+
+			ClickableItem clickableItem = ClickableItem.empty(item.build());
+			if (user.advent().hasFound(_day)) {
+				item.lore("", "&aShow Waypoint");
+
+				clickableItem = ClickableItem.from(item.build(), e -> {
+					player.closeInventory();
+					Advent.glow(user, _day);
+				});
+			}
+
+			slotIterator.next().set(clickableItem);
 		}
 
 		updateTask(player, contents);
@@ -91,7 +105,7 @@ public class AdventMenu extends MenuUtils implements InventoryProvider {
 		FRAME_2("ꈉ鉊"),
 		;
 
-		private String title;
+		private final String title;
 
 		public String getTitle() {
 			return colorize("&f" + title);
@@ -101,19 +115,23 @@ public class AdventMenu extends MenuUtils implements InventoryProvider {
 
 	@AllArgsConstructor
 	public enum Icon {
-		MISSED(Material.TRAPPED_CHEST, 3),
-		OPENED(Material.TRAPPED_CHEST, 5),
-		AVAILABLE(Material.TRAPPED_CHEST, 4),
-		LOCKED(Material.TRAPPED_CHEST, 6),
+		MISSED(Material.TRAPPED_CHEST, 3, "&cMissed"),
+		OPENED(Material.TRAPPED_CHEST, 5, "&aOpened"),
+		AVAILABLE(Material.TRAPPED_CHEST, 4, "&a&oAvailable"),
+		LOCKED(Material.TRAPPED_CHEST, 6, "&7Locked"),
 		;
 
 		private final Material material;
 		private final int customModelData;
+		private final String status;
 
 		public ItemBuilder getItem(int day) {
+			AdventPresent present = Advent21Config.get().get(day);
+
 			return new ItemBuilder(material)
 				.customModelData(customModelData)
-				.name(StringUtils.camelCase(name()));
+				.name("&3Day: &e" + present.getDay())
+				.lore("&3Status: &e" + status);
 		}
 	}
 

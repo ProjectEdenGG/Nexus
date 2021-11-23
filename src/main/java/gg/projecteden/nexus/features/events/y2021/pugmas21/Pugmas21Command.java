@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.events.y2021.pugmas21;
 
 import com.sk89q.worldedit.regions.Region;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.advent.Advent;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.advent.AdventAnimation;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.advent.AdventMenu;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.CandyCaneCannon;
@@ -237,7 +238,7 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 		if (!user.advent().hasFound(day))
 			error("You have not found day &e#" + day);
 
-		user.advent().locate(adventConfig.get(day));
+		Advent.glow(user, day);
 	}
 
 	@Path("advent waypoints")
