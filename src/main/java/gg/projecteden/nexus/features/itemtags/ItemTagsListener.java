@@ -23,6 +23,7 @@ import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
+import org.bukkit.event.player.PlayerItemMendEvent;
 import org.bukkit.event.world.LootGenerateEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -33,9 +34,9 @@ import java.util.UUID;
 import static gg.projecteden.nexus.features.itemtags.ItemTagsUtils.updateItem;
 import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
 
-public class ItemTagListener implements Listener {
+public class ItemTagsListener implements Listener {
 
-	public ItemTagListener() {
+	public ItemTagsListener() {
 		Nexus.registerListener(this);
 	}
 
@@ -184,6 +185,20 @@ public class ItemTagListener implements Listener {
 
 		ItemStack itemStack = item.getItemStack();
 		updateItem(itemStack);
+	}
+
+	@EventHandler
+	public void onMendingRepair(PlayerItemMendEvent event) {
+		if (event.isCancelled())
+			return;
+
+		if (WorldGroup.of(event.getPlayer()) != WorldGroup.SURVIVAL)
+			return;
+
+		ItemStack itemStack = event.getItem();
+		updateItem(itemStack);
+
+
 	}
 
 	@EventHandler
