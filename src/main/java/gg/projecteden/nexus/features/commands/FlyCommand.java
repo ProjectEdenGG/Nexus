@@ -16,7 +16,7 @@ public class FlyCommand extends CustomCommand {
 	}
 
 	@Path("[enable] [player]")
-	void run(Boolean enable, @Arg("self") Player player) {
+	void run(Boolean enable, @Arg(value = "self", permission = "group.staff") Player player) {
 		if (enable == null)
 			enable = !player.getAllowFlight();
 
