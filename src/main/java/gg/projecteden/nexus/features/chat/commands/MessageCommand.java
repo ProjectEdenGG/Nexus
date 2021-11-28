@@ -28,6 +28,9 @@ public class MessageCommand extends CustomCommand {
 		if (isSelf(to))
 			error("You cannot message yourself");
 
+		if (MuteMenuUser.hasMuted(player(), MuteMenuItem.MESSAGES))
+			error("You have messages disabled!");
+
 		if (MuteMenuUser.hasMuted(to, MuteMenuItem.MESSAGES))
 			error(to.getName() + " has messages disabled!");
 

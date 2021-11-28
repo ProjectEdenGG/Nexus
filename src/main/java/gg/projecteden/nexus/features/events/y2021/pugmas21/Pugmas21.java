@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.events.y2021.pugmas21.advent.Advent;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.CandyCaneCannon;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Train;
 import gg.projecteden.nexus.utils.ActionBarUtils;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Timer;
@@ -14,6 +15,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
@@ -27,6 +29,7 @@ public class Pugmas21 {
 	public static final LocalDate END = LocalDate.of(2022, 1, 10);
 	public static final String WORLD = "pugmas21";
 	public static final String REGION = "pugmas21";
+	public static final String LORE = "&ePugmas 2021 Item";
 	public static LocalDate TODAY = LocalDate.now();
 
 	@Getter
@@ -93,6 +96,10 @@ public class Pugmas21 {
 		return new Location(getWorld(), x, y, z, yaw, pitch);
 	}
 
+	public static ItemBuilder item(Material material) {
+		return new ItemBuilder(material).setLore("&f", LORE);
+	}
+
 	public static String region(String region) {
 		return REGION + "_" + region;
 	}
@@ -116,5 +123,4 @@ public class Pugmas21 {
 	public static void actionBar(String message, int ticks) {
 		getAllPlayers().forEach(player -> ActionBarUtils.sendActionBar(player, message, ticks));
 	}
-
 }

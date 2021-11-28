@@ -187,7 +187,7 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 		send(PREFIX + "You are " + (district == District.UNKNOWN ? "not in a district" : "in the &e" + district.getFullName()));
 	}
 
-	@Path("advent animation [--twice] [--height1] [--length1] [--particle1] [--ticks1] [--height2] [--length2] [--particle2] [--ticks2] [--randomMax]")
+	@Path("advent animation [--twice] [--height1] [--length1] [--particle1] [--ticks1] [--height2] [--length2] [--particle2] [--ticks2] [--randomMax] [--day]")
 	void advent_animation(
 		@Arg("false") @Switch boolean twice,
 		@Arg("0.25") @Switch double length1,
@@ -198,7 +198,8 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 		@Arg("0.25") @Switch double height2,
 		@Arg("crit") @Switch Particle particle2,
 		@Arg("40") @Switch int ticks2,
-		@Arg("40") @Switch int randomMax
+		@Arg("40") @Switch int randomMax,
+		@Arg("1") @Switch int day
 	) {
 		final AdventAnimation animation = AdventAnimation.builder()
 			.location(location())
@@ -211,6 +212,8 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 			.particle2(particle2)
 			.ticks2(ticks2)
 			.randomMax(randomMax)
+			.player(player())
+			.items(Advent21Config.get().get(day).getItems())
 			.build();
 
 		if (twice)
@@ -248,6 +251,17 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 			user.advent().glow(present);
 
 		send(PREFIX + "Made " + adventConfig.getPresents().size() + " presents glow");
+	}
+
+	@Path("advent config setLootOrigin")
+	@Permission("group.admin")
+	void advent_lootOrigin() {
+		final Block block = getTargetBlockRequired();
+
+		adventConfig.setLootOrigin(block.getLocation());
+		adventService.save(adventConfig);
+
+		send(PREFIX + " setLootOrigin location");
 	}
 
 	@Path("advent config set <day>")

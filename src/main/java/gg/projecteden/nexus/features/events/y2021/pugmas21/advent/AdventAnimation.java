@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.events.y2021.pugmas21.advent;
 import com.destroystokyo.paper.ParticleBuilder;
 import gg.projecteden.nexus.features.particles.VectorUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.RandomUtils;
@@ -14,6 +14,7 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Item;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -42,68 +43,73 @@ public class AdventAnimation {
 	private final int ticks2 = 40;
 	@Builder.Default
 	private final int randomMax = 40;
+	@Builder.Default
+	private final List<ItemStack> items = new ArrayList<>();
+	private final List<ItemStack> givenItems = new ArrayList<>();
+	private final Player player;
 
 	public void open() {
 		ItemStack chest = new ItemBuilder(Material.TRAPPED_CHEST).customModelData(1).build();
 		Item item = spawnItem(location, chest, length1, height1, location.getDirection());
 		int itemTaskId = particleTask(particle1, item);
 
-		List<ItemStack> items = new ArrayList<>();
-		MaterialTag.CONCRETES.getValues().forEach(material -> items.add(new ItemStack(material)));
-
 		Tasks.wait(ticks1, () -> {
 			Tasks.cancel(itemTaskId);
 			Location location = removeItem(item);
-			new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).location(location).play();
 
-			for (ItemStack itemStack : items) {
-				Item _item = spawnItem(location, itemStack, length2, height2, VectorUtils.getRandomDirection());
-				int _itemTaskId = particleTask(particle2, _item);
-
-				Tasks.wait(ticks2 + RandomUtils.randomInt(0, randomMax), () -> {
-					Tasks.cancel(_itemTaskId);
-					Location _location = removeItem(_item);
-					new SoundBuilder(Sound.ENTITY_CHICKEN_EGG).location(_location).play();
-				});
-			}
+			explodeContents(location);
 		});
+
+
 	}
 
 	public void openTwice() {
 		ItemStack chest = new ItemBuilder(Material.TRAPPED_CHEST).customModelData(1).build();
-		Item item = spawnItem(location, chest, length1, height1, location.getDirection());
-		int itemTaskId = particleTask(particle1, item);
-
-		List<ItemStack> items = new ArrayList<>();
-		MaterialTag.CONCRETES.getValues().forEach(material -> items.add(new ItemStack(material)));
+		Item chestItem = spawnItem(location, chest, length1, height1, location.getDirection());
+		int itemTaskId = particleTask(particle1, chestItem);
 
 		Tasks.wait(ticks1, () -> {
 			Tasks.cancel(itemTaskId);
-			Location location = removeItem(item);
+			Location location = removeItem(chestItem);
 			new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).location(location).play();
 
-			for (ItemStack itemStack : items) {
-				Item _item = spawnItem(location, itemStack, length2, height2, VectorUtils.getRandomDirection());
+			for (int i = 0; i < items.size(); i++) {
+				Item _item = spawnItem(location, chest, length2, height2, VectorUtils.getRandomDirection());
 				int _itemTaskId = particleTask(particle2, _item);
 
 				Tasks.wait(ticks2 + RandomUtils.randomInt(0, randomMax), () -> {
 					Tasks.cancel(_itemTaskId);
 					Location _location = removeItem(_item);
-					new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).location(_location).play();
-
-					for (ItemStack _itemStack : items) {
-						Item __item = spawnItem(_location, _itemStack, length2, height2, VectorUtils.getRandomDirection());
-						int __itemTaskId = particleTask(particle2, __item);
-
-						Tasks.wait(ticks2 + RandomUtils.randomInt(0, randomMax), () -> {
-							Tasks.cancel(__itemTaskId);
-							Location __location = removeItem(__item);
-							new SoundBuilder(Sound.ENTITY_CHICKEN_EGG).location(__location).play();
-						});
-					}
+					explodeContents(_location);
 				});
 			}
+
 		});
+	}
+
+	private void explodeContents(Location location) {
+		new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).location(location).play();
+
+		if (items.isEmpty())
+			return;
+
+		for (ItemStack itemStack : items) {
+			Item _item = spawnItem(location, itemStack, length2, height2, VectorUtils.getRandomDirection());
+			int _itemTaskId = particleTask(particle2, _item);
+
+			Tasks.wait(ticks2 + RandomUtils.randomInt(0, randomMax), () -> {
+				Tasks.cancel(_itemTaskId);
+
+				if (!givenItems.contains(itemStack)) {
+					givenItems.add(itemStack);
+					PlayerUtils.giveItem(player, itemStack);
+				}
+
+				Location _location = removeItem(_item);
+				new SoundBuilder(Sound.ENTITY_CHICKEN_EGG).location(_location).play();
+			});
+		}
+
 	}
 
 	@NotNull

@@ -57,7 +57,7 @@ public class BoopCommand extends CustomCommand {
 			error("You cannot boop yourself!");
 
 		if (MuteMenuUser.hasMuted(booper, MuteMenuItem.BOOPS))
-			error("You boops disabled!");
+			error("You have boops disabled!");
 
 		if (MuteMenuUser.hasMuted(booped, MuteMenuItem.BOOPS))
 			error(booped.getName() + " has boops disabled!");
