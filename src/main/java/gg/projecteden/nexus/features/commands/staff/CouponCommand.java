@@ -8,7 +8,6 @@ import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20;
 import gg.projecteden.nexus.features.mcmmo.menus.McMMOResetProvider;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -103,43 +102,18 @@ public class CouponCommand extends CustomCommand implements Listener {
 				item.setAmount(item.getAmount() - 1);
 			}
 		},
-		PUGMAS20_ADVENT_PAINTING(false) {
+		PAINTING(false) {
 			@Override
 			void use(PlayerInteractEvent event) {
-				PlayerUtils.send(event.getPlayer(), Pugmas20.PREFIX + "This coupon will be claimable at the end of the month");
+				// TODO
+				PlayerUtils.send(event.getPlayer(), "Make a ticket or ask an admin to claim this coupon.");
 			}
 		},
-		PUGMAS20_ADVENT_SONG(false) {
+		SONG(false) {
 			@Override
 			void use(PlayerInteractEvent event) {
-				PlayerUtils.send(event.getPlayer(), Pugmas20.PREFIX + "This coupon will be claimable at the end of the month");
-			}
-		},
-		PUGMAS20_ADVENT_5000(true) {
-			@Override
-			void use(PlayerInteractEvent event) {
-				new BankerService().deposit(event.getPlayer(), 5000, ShopGroup.of(event.getPlayer()), TransactionCause.COUPON);
-			}
-		},
-		PUGMAS20_ITEM_PAINTING(false) {
-			@Override
-			void use(PlayerInteractEvent event) {
-				PlayerUtils.send(event.getPlayer(), Pugmas20.PREFIX + "This coupon will be claimable at the end of the month");
-			}
-		},
-		PUGMAS20_ITEM_SONG(false) {
-			@Override
-			void use(PlayerInteractEvent event) {
-				PlayerUtils.send(event.getPlayer(), Pugmas20.PREFIX + "This coupon will be claimable at the end of the month");
-			}
-		},
-		PUGMAS20_100_EVENT_TOKENS(true) {
-			@Override
-			void use(PlayerInteractEvent event) {
-				EventUserService eventUserService = new EventUserService();
-				EventUser user = eventUserService.get(event.getPlayer());
-				user.giveTokens(100);
-				eventUserService.save(user);
+				// TODO
+				PlayerUtils.send(event.getPlayer(), "Make a ticket or ask an admin to claim this coupon.");
 			}
 		},
 		EXPERIENCE_75(true) {

@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.crates.crates.BearFair21Crate;
 import gg.projecteden.nexus.features.crates.crates.BossCrate;
 import gg.projecteden.nexus.features.crates.crates.FebVoteRewardCrate;
 import gg.projecteden.nexus.features.crates.crates.MysteryCrate;
+import gg.projecteden.nexus.features.crates.crates.Pugmas21Crate;
 import gg.projecteden.nexus.features.crates.crates.VoteCrate;
 import gg.projecteden.nexus.features.crates.crates.WeeklyWakkaCrate;
 import gg.projecteden.nexus.features.crates.menus.CratePreviewProvider;
@@ -32,7 +33,9 @@ public enum CrateType {
 	WEEKLY_WAKKA(new WeeklyWakkaCrate(), new Location(Bukkit.getWorld("survival"), 15, 15, -8)),
 	FEB_VOTE_REWARD(new FebVoteRewardCrate(), null),
 	BOSS(new BossCrate(), new Location(Bukkit.getWorld("survival"), -9, 15, 12)),
-	BEAR_FAIR_21(new BearFair21Crate(), new Location(Bukkit.getWorld("survival"), -12, 15, 9));
+	BEAR_FAIR_21(new BearFair21Crate(), null),
+	PUGMAS_21(new Pugmas21Crate(), new Location(Bukkit.getWorld("survival"), -12, 15, 9)),
+	;
 
 	Crate crateClass;
 	Location location;
