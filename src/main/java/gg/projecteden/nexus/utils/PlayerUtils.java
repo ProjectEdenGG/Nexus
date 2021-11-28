@@ -887,13 +887,20 @@ public class PlayerUtils {
 			excess = Utils.clone(items);
 		if (Utils.isNullOrEmpty(excess)) return;
 
-		MailerService service = new MailerService();
-		Mailer mailer = service.get(offlinePlayer);
-		Mail.fromServer(mailer.getUuid(), worldGroup, message, fixMaxStackSize(excess)).send();
-		service.save(mailer);
-
+		mailItems(offlinePlayer, fixMaxStackSize(excess), message, worldGroup);
 		String send = alwaysMail ? "Items have been given to you as &c/mail" : "Your inventory was full. Excess items were given to you as &c/mail";
-		mailer.sendMessage(JsonBuilder.fromPrefix("Mail").next(send).command("/mail box").hover("&eClick to view your mail box"));
+		PlayerUtils.send(player, send);
+	}
+
+	public static void mailItem(HasOfflinePlayer player, ItemStack item, String message, WorldGroup worldGroup) {
+		mailItems(player, Collections.singletonList(item), message, worldGroup);
+	}
+
+	public static void mailItems(HasOfflinePlayer player, List<ItemStack> items, String message, WorldGroup worldGroup) {
+		MailerService service = new MailerService();
+		Mailer mailer = service.get(player.getOfflinePlayer());
+		Mail.fromServer(mailer.getUuid(), worldGroup, message, items).send();
+		service.save(mailer);
 	}
 
 	public static void dropExcessItems(HasPlayer player, List<ItemStack> excess) {

@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.events.y2021.pugmas21.advent;
 
 import com.destroystokyo.paper.ParticleBuilder;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
 import gg.projecteden.nexus.features.particles.VectorUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -102,7 +103,8 @@ public class AdventAnimation {
 
 				if (!givenItems.contains(itemStack)) {
 					givenItems.add(itemStack);
-					PlayerUtils.giveItem(player, itemStack);
+					ItemStack presentItem = new ItemBuilder(itemStack).lore(Pugmas21.LORE).build();
+					PlayerUtils.giveItem(player, presentItem);
 				}
 
 				Location _location = removeItem(_item);

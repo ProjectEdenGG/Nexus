@@ -125,10 +125,14 @@ public class Advent implements Listener {
 
 		for (String line : lore) {
 			String _line = StringUtils.stripColor(line).trim();
-			if (_line.matches("Day [0-9]+}")) {
-				String day = _line.replaceAll("Day ", "");
-				openPresent(player, Integer.parseInt(day));
-				return;
+			if (_line.matches("Day #[0-9]+")) {
+				try {
+					int day = Integer.parseInt(_line.replaceAll("Day #", ""));
+					openPresent(player, day);
+					item.subtract();
+					return;
+				} catch (Exception ignored) {
+				}
 			}
 		}
 	}

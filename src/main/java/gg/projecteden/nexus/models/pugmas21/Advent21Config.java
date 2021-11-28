@@ -81,7 +81,7 @@ public class Advent21Config implements PlayerOwnedObject {
 		}
 
 		public ItemBuilder getItem() {
-			return new ItemBuilder(Material.TRAPPED_CHEST).customModelData(1).name("Advent Present").lore("&eDay #5", "&f", Pugmas21.LORE);
+			return new ItemBuilder(Material.TRAPPED_CHEST).customModelData(1).name("Advent Present").lore("&eDay #" + day, "&f", Pugmas21.LORE);
 		}
 
 		public District getDistrict() {

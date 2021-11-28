@@ -14,6 +14,7 @@ import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks.GlowTask;
+import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -111,7 +112,9 @@ public class Pugmas21User implements PlayerOwnedObject {
 			sendMessage(PREFIX + "You found present &e#" + present.getDay() + "&3!");
 			show(present);
 
-			PlayerUtils.giveItem(getOnlinePlayer(), present.getItem().build());
+			PlayerUtils.mailItem(getOnlinePlayer(), present.getItem().build(), null, WorldGroup.SURVIVAL);
+			PlayerUtils.send(getOnlinePlayer(), PREFIX + "Items have been given to you as &c/mail");
+
 			// TODO Sound
 		}
 
