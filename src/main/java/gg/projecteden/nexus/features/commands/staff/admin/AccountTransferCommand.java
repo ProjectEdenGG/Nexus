@@ -35,6 +35,7 @@ import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
+import gg.projecteden.nexus.models.home.Home;
 import gg.projecteden.nexus.models.home.HomeOwner;
 import gg.projecteden.nexus.models.home.HomeService;
 import gg.projecteden.nexus.models.hours.Hours;
@@ -49,7 +50,10 @@ import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.punishments.Punishments;
 import gg.projecteden.nexus.models.punishments.PunishmentsService;
+import gg.projecteden.nexus.models.shop.Shop;
+import gg.projecteden.nexus.models.shop.Shop.Product;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
+import gg.projecteden.nexus.models.shop.ShopService;
 import gg.projecteden.nexus.models.trust.Trust;
 import gg.projecteden.nexus.models.trust.TrustService;
 import gg.projecteden.nexus.utils.Tasks;
@@ -103,6 +107,7 @@ public class AccountTransferCommand extends CustomCommand {
 		MOB_HEADS(new MobHeadUserTransferer()),
 		NERD(new NerdTransferer()),
 		PUNISHMENTS(new PunishmentsTransferer()),
+		SHOP(new ShopTransferer()),
 		TRANSACTIONS(new TransactionsTransferer()),
 		TRUSTS(new TrustsTransferer()),
 		;
@@ -246,7 +251,10 @@ public class AccountTransferCommand extends CustomCommand {
 	static class HomeTransferer extends MongoTransferer<HomeOwner> {
 		@Override
 		public void transfer(HomeOwner previous, HomeOwner current) {
-			previous.getHomes().forEach(current::add);
+			for (Home home : previous.getHomes()) {
+				home.setUuid(current.getUuid());
+				current.add(home);
+			}
 			previous.getHomes().clear();
 
 			current.setAutoLock(previous.isAutoLock());
@@ -345,6 +353,26 @@ public class AccountTransferCommand extends CustomCommand {
 		public void transfer(Punishments previous, Punishments current) {
 			current.getPunishments().addAll(previous.getPunishments());
 			current.getIpHistory().addAll(previous.getIpHistory());
+		}
+	}
+
+	@Service(ShopService.class)
+	static class ShopTransferer extends MongoTransferer<Shop> {
+		@Override
+		public void transfer(Shop previous, Shop current) {
+			current.setDescription(previous.getDescription());
+			current.addHolding(previous.getHolding());
+			current.getDisabledResourceMarketItems().addAll(previous.getDisabledResourceMarketItems());
+
+			for (Product product : previous.getProducts()) {
+				product.setUuid(current.getUuid());
+				current.getProducts().add(product);
+			}
+
+			previous.getDescription().clear();
+			previous.getProducts().clear();
+			previous.getHolding().clear();
+			previous.getDisabledResourceMarketItems().clear();
 		}
 	}
 

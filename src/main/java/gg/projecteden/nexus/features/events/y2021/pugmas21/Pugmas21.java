@@ -4,6 +4,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.advent.Advent;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.CandyCaneCannon;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Train;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.models.TrainBackground;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
@@ -38,6 +39,7 @@ public class Pugmas21 {
 
 	public Pugmas21() {
 		new Timer("      Events.Pugmas21.Train", Train::schedule);
+		new Timer("      Events.Pugmas21.TrainBackground", TrainBackground::new);
 		new Timer("      Events.Pugmas21.AdventPresents", Advent::new);
 		new Timer("      Events.Pugmas21.CandyCaneCannon", CandyCaneCannon::new);
 
@@ -109,7 +111,9 @@ public class Pugmas21 {
 	}
 
 	public static List<Player> getAllPlayers() {
-		return getPlayers().get();
+		return getPlayers()
+			.filter(player -> !worldguard().isInRegion(player, TrainBackground.getREGION()))
+			.get();
 	}
 
 	public static List<Player> getPlayers(String region) {

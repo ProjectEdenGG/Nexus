@@ -11,6 +11,7 @@ import gg.projecteden.nexus.features.crates.models.CrateType;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.customenchants.OldCEConverter;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Train;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.models.TrainBackground;
 import gg.projecteden.nexus.features.listeners.TemporaryListener;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
@@ -213,6 +214,12 @@ public class NexusCommand extends CustomCommand implements Listener {
 					train.stop();
 			}
 
+		}),
+		PUGMAS21_TRAIN_BACKGROUND(() -> {
+			if (Nexus.getEnv() == Env.PROD) {
+				if (TrainBackground.isActive())
+					throw new InvalidInputException("Someone is traveling to Pugmas");
+			}
 		}),
 		;
 

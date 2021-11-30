@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.events.y2021.pugmas21.models.District;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.MultiModelStructure;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.MultiModelStructure.Model;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Train;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.models.TrainBackground;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21Entity;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21NPC;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestItem;
@@ -135,6 +136,16 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 			.test(true)
 			.build()
 			.start();
+	}
+
+	@Path("trainBackground start")
+	void trainBackground_start() {
+		TrainBackground.start();
+	}
+
+	@Path("trainBackground stop")
+	void trainBackground_stop() {
+		TrainBackground.stop();
 	}
 
 	private MultiModelStructure getBalloonStructure() {

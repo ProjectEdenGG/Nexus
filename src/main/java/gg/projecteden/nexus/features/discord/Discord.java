@@ -260,8 +260,17 @@ public class Discord extends Feature {
 		if (Discord.getGuild() == null) return;
 		bridgeTopic = newBridgeTopic;
 		GuildChannel channel = Discord.getGuild().getGuildChannelById(TextChannel.BRIDGE.getId());
-		if (channel != null)
-			channel.getManager().setTopic(bridgeTopic + timestamp()).queue();
+		if (channel == null)
+			return;
+
+		String topic = bridgeTopic + timestamp();
+
+		try {
+			channel.getManager().setTopic(topic).queue();
+		} catch (Exception e) {
+			Nexus.warn("Discord topic too long! (" + topic.length() + " /1024)");
+			e.printStackTrace();
+		}
 	}
 
 	private static void updateStaffBridgeTopic(String newStaffBridgeTopic) {
