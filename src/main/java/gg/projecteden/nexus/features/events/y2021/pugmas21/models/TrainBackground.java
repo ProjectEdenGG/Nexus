@@ -76,7 +76,7 @@ public class TrainBackground {
 			new SoundBuilder("custom.train.chug")
 				.location(soundLocation)
 				.category(SoundCategory.AMBIENT)
-				.volume(3)
+				.volume(1)
 				.play()));
 	}
 
@@ -88,8 +88,7 @@ public class TrainBackground {
 	}
 
 	private static void loadArmorStands() {
-		if (!armorStands.isEmpty())
-			return;
+		armorStands.clear();
 
 		for (String uuid : armorstandUuids) {
 			Entity entity = Bukkit.getEntity(UUID.fromString(uuid));

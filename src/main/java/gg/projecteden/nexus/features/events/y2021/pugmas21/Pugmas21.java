@@ -127,4 +127,12 @@ public class Pugmas21 {
 	public static void actionBar(String message, int ticks) {
 		getAllPlayers().forEach(player -> ActionBarUtils.sendActionBar(player, message, ticks));
 	}
+
+	public static boolean isBeforePugmas() {
+		return LocalDate.now().isBefore(EPOCH);
+	}
+
+	public static boolean isPastPugmas() {
+		return LocalDate.now().isAfter(END);
+	}
 }

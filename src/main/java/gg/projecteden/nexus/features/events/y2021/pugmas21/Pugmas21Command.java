@@ -21,6 +21,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.pugmas21.Advent21Config;
@@ -34,6 +35,7 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.utils.RandomUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.utils.TimeUtils.Timespan;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
@@ -59,7 +61,9 @@ import java.util.Map;
 import static gg.projecteden.utils.TimeUtils.shortDateFormat;
 
 @NoArgsConstructor
-@Permission("group.staff")
+@Redirect(from = "/advent", to = "/pugmas21 advent")
+@Redirect(from = "/district", to = "/pugmas21 district")
+@Redirect(from = "/waypoint", to = "/pugmas21 advent waypoint")
 public class Pugmas21Command extends CustomCommand implements Listener {
 	public String PREFIX = Pugmas21.PREFIX;
 	private final Pugmas21UserService service = new Pugmas21UserService();
@@ -101,12 +105,14 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	}
 
 	@Path("train spawn <model>")
+	@Permission("group.admin")
 	@Description("Spawn a train armor stand")
 	void train_spawn(int model) {
 		Train.armorStand(model, location());
 	}
 
 	@Path("train spawn all")
+	@Permission("group.admin")
 	@Description("Spawn all train armor stands")
 	void train_spawn_all() {
 		Train.builder()
@@ -117,12 +123,14 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	}
 
 	@Path("train start default")
+	@Permission("group.admin")
 	@Description("Start a moving train")
 	void train_start_default() {
 		Train.getDefault().build().start();
 	}
 
 	@Path("train start here")
+	@Permission("group.admin")
 	@Description("Start a moving train")
 	void train_start_here(
 		@Arg(".3") @Switch double speed,
@@ -139,11 +147,13 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	}
 
 	@Path("trainBackground start")
+	@Permission("group.admin")
 	void trainBackground_start() {
 		TrainBackground.start();
 	}
 
 	@Path("trainBackground stop")
+	@Permission("group.admin")
 	void trainBackground_stop() {
 		TrainBackground.stop();
 	}
@@ -159,11 +169,13 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	}
 
 	@Path("balloon spawn")
+	@Permission("group.admin")
 	void balloon_spawn() {
 		getBalloonStructure().spawn();
 	}
 
 	@Path("balloon move [--seconds]")
+	@Permission("group.admin")
 	void balloon_move(@Arg("20") @Switch int seconds) {
 		final MultiModelStructure structure = getBalloonStructure().spawn();
 
@@ -184,6 +196,7 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	}
 
 	@Path("candycane cannon")
+	@Permission("group.admin")
 	void candycane_cannon() {
 		giveItem(CandyCaneCannon.getItem().build());
 	}
@@ -199,6 +212,7 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	}
 
 	@Path("advent animation [--twice] [--height1] [--length1] [--particle1] [--ticks1] [--height2] [--length2] [--particle2] [--ticks2] [--randomMax] [--day]")
+	@Permission("group.admin")
 	void advent_animation(
 		@Arg("false") @Switch boolean twice,
 		@Arg("0.25") @Switch double length1,
@@ -239,6 +253,9 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 		@Arg(value = "0", permission = "group.admin") @Switch int day,
 		@Arg(value = "30", permission = "group.admin") @Switch int frameTicks
 	) {
+
+		verifyDate();
+
 		LocalDate date = Pugmas21.TODAY;
 		if (date.isBefore(Pugmas21.EPOCH) || day > 0)
 			date = Pugmas21.EPOCH.plusDays(day - 1);
@@ -249,6 +266,8 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	@Path("advent waypoint <day>")
 	@Description("Get directions to a present you've already found")
 	void advent_waypoint(int day) {
+		verifyDate();
+
 		if (!user.advent().hasFound(day))
 			error("You have not found day &e#" + day);
 
@@ -354,6 +373,17 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 
 		Quester.of(event.getPlayer()).interact(entity);
 		event.setCancelled(true);
+	}
+
+	private void verifyDate() {
+		String timeLeft = Timespan.of(Pugmas21.EPOCH).format();
+		if (!isAdmin()) {
+			if (Pugmas21.isBeforePugmas())
+				error("Soon™ (" + timeLeft + ")");
+
+			if (Pugmas21.isPastPugmas())
+				error("Next year!");
+		}
 	}
 
 }
