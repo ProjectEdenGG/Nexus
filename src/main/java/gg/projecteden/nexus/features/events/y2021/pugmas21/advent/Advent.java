@@ -53,7 +53,7 @@ public class Advent implements Listener {
 					.filter(itemStack -> !ItemUtils.isNullOrAir(itemStack))
 					.collect(Collectors.toList());
 
-				adventConfig.get(index++).setItems(contents);
+				adventConfig.get(index++).setContents(contents);
 			}
 		}
 	}
@@ -85,7 +85,7 @@ public class Advent implements Listener {
 		AdventAnimation.builder()
 			.location(player.getLocation())
 			.player(player)
-			.items(Advent21Config.get().get(day).getItems())
+			.items(Advent21Config.get().get(day).getContents())
 			.build()
 			.open();
 	}
@@ -144,6 +144,9 @@ public class Advent implements Listener {
 		if (event.getHand() != EquipmentSlot.HAND)
 			return;
 
+		if (!Pugmas21.isAtPugmas(player))
+			return;
+
 		final Block block = event.getClickedBlock();
 		if (block == null)
 			return;
@@ -151,13 +154,17 @@ public class Advent implements Listener {
 		if (block.getType() != Material.BARRIER)
 			return;
 
-		if (Pugmas21.TODAY.isAfter(Pugmas21.END))
+		if (Pugmas21.TODAY.isAfter(Pugmas21.END)) {
+			player.sendMessage("debug: is after pugmas");
 			return;
+		}
 
 		final Advent21Config adventConfig = new Advent21ConfigService().get0();
 		final AdventPresent present = adventConfig.get(block.getLocation());
-		if (present == null)
+		if (present == null) {
+			player.sendMessage("debug: present is null");
 			return;
+		}
 
 		new Pugmas21UserService().edit(player, user -> user.advent().tryCollect(present));
 	}

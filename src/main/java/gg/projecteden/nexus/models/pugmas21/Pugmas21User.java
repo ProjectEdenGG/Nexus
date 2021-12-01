@@ -13,6 +13,7 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks.GlowTask;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -23,6 +24,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.world.entity.decoration.EntityItemFrame;
+import org.bukkit.Sound;
 import org.inventivetalent.glow.GlowAPI;
 
 import java.time.LocalDate;
@@ -114,9 +116,8 @@ public class Pugmas21User implements PlayerOwnedObject {
 			show(present);
 
 			PlayerUtils.mailItem(getOnlinePlayer(), present.getItem().build(), null, WorldGroup.SURVIVAL);
-			PlayerUtils.send(getOnlinePlayer(), PREFIX + "Items have been given to you as &c/mail");
-
-			// TODO Sound
+			PlayerUtils.send(getOnlinePlayer(), PREFIX + "This present has been sent to your survival &c/mail box");
+			new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).receiver(getOnlinePlayer()).play();
 		}
 
 		public boolean hasFound(AdventPresent present) {
@@ -134,7 +135,8 @@ public class Pugmas21User implements PlayerOwnedObject {
 			found.add(day);
 			sendMessage(PREFIX + "Location of present &e#" + day + " &3saved. " +
 				"View with the &eAdvent Calendar menu &3or &c/pugmas advent waypoint " + day);
-			// TODO Sound
+
+			new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).receiver(getOnlinePlayer()).play();
 		}
 
 		public void teleportAsync(AdventPresent present) {

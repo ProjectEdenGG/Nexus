@@ -252,7 +252,7 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 			.ticks2(ticks2)
 			.randomMax(randomMax)
 			.player(player())
-			.items(Advent21Config.get().get(day).getItems())
+			.items(Advent21Config.get().get(day).getContents())
 			.build();
 
 		if (twice)
@@ -295,6 +295,12 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 			user.advent().glow(present);
 
 		send(PREFIX + "Made " + adventConfig.getPresents().size() + " presents glow");
+	}
+
+	@Path("advent get <day>")
+	@Permission("group.admin")
+	void advent_get(@Arg(min = 1, max = 25) int day) {
+		giveItem(Advent21Config.get().get(day).getItem().build());
 	}
 
 	@Path("advent config setLootOrigin")

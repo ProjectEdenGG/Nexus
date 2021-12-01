@@ -7,6 +7,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.utils.RandomUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Builder;
@@ -104,7 +105,7 @@ public class AdventAnimation {
 				if (!givenItems.contains(itemStack)) {
 					givenItems.add(itemStack);
 					ItemStack presentItem = new ItemBuilder(itemStack).lore(Pugmas21.LORE).build();
-					PlayerUtils.giveItem(player, presentItem);
+					PlayerUtils.giveItemAndMailExcess(player, presentItem, WorldGroup.SURVIVAL);
 				}
 
 				Location _location = removeItem(_item);

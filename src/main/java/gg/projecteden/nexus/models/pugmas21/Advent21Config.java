@@ -73,7 +73,7 @@ public class Advent21Config implements PlayerOwnedObject {
 	public static class AdventPresent {
 		private int day;
 		private Location location;
-		private List<ItemStack> items = new ArrayList<>();
+		private List<ItemStack> contents = new ArrayList<>();
 
 		public AdventPresent(int day, Location location) {
 			this.day = day;
