@@ -874,6 +874,10 @@ public class PlayerUtils {
 		giveItemsAndMailExcess(player, Collections.singleton(items), message, worldGroup);
 	}
 
+	public static void giveItemsAndMailExcess(HasOfflinePlayer player, Collection<ItemStack> items, WorldGroup worldGroup) {
+		giveItemsAndMailExcess(player, items, null, worldGroup);
+	}
+
 	public static void giveItemsAndMailExcess(HasOfflinePlayer player, Collection<ItemStack> items, String message, WorldGroup worldGroup) {
 		OfflinePlayer offlinePlayer = player.getOfflinePlayer();
 		List<ItemStack> finalItems = new ArrayList<>(items);

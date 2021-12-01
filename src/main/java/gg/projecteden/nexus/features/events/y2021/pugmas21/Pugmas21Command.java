@@ -252,7 +252,7 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 			.ticks2(ticks2)
 			.randomMax(randomMax)
 			.player(player())
-			.items(Advent21Config.get().get(day).getContents())
+			.present(Advent21Config.get().get(day))
 			.build();
 
 		if (twice)
@@ -303,6 +303,14 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 		giveItem(Advent21Config.get().get(day).getItem().build());
 	}
 
+	@Path("advent config loadItems")
+	@Permission("group.admin")
+	void advent_loadItems() {
+		Advent.loadItems();
+
+		send(PREFIX + "items loaded");
+	}
+
 	@Path("advent config setLootOrigin")
 	@Permission("group.admin")
 	void advent_lootOrigin() {
@@ -311,7 +319,7 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 		adventConfig.setLootOrigin(block.getLocation());
 		adventService.save(adventConfig);
 
-		send(PREFIX + " setLootOrigin location");
+		send(PREFIX + "lootOrigin configured");
 	}
 
 	@Path("advent config set <day>")
@@ -323,6 +331,7 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 
 		adventConfig.set(day, block.getLocation());
 		adventService.save(adventConfig);
+
 		send(PREFIX + "Advent day #" + day + " configured");
 	}
 

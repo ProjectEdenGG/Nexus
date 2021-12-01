@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.events.y2021.pugmas21.advent;
 import com.destroystokyo.paper.ParticleBuilder;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
 import gg.projecteden.nexus.features.particles.VectorUtils;
+import gg.projecteden.nexus.models.pugmas21.Advent21Config.AdventPresent;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -45,8 +46,7 @@ public class AdventAnimation {
 	private final int ticks2 = 40;
 	@Builder.Default
 	private final int randomMax = 40;
-	@Builder.Default
-	private final List<ItemStack> items = new ArrayList<>();
+	private final AdventPresent present;
 	private final List<ItemStack> givenItems = new ArrayList<>();
 	private final Player player;
 
@@ -75,7 +75,7 @@ public class AdventAnimation {
 			Location location = removeItem(chestItem);
 			new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).location(location).play();
 
-			for (int i = 0; i < items.size(); i++) {
+			for (int i = 0; i < present.getContents().size(); i++) {
 				Item _item = spawnItem(location, chest, length2, height2, VectorUtils.getRandomDirection());
 				int _itemTaskId = particleTask(particle2, _item);
 
@@ -92,20 +92,30 @@ public class AdventAnimation {
 	private void explodeContents(Location location) {
 		new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).location(location).play();
 
-		if (items.isEmpty())
-			return;
+		List<ItemStack> items = present.getContents();
 
+		if (items.isEmpty()) {
+			player.sendMessage("&cReport this to an admin. Contents of present #" + present.getDay() + " is empty.");
+			return;
+		}
+
+		List<ItemStack> excess = new ArrayList<>();
+		int waitMax = 0;
 		for (ItemStack itemStack : items) {
 			Item _item = spawnItem(location, itemStack, length2, height2, VectorUtils.getRandomDirection());
 			int _itemTaskId = particleTask(particle2, _item);
 
-			Tasks.wait(ticks2 + RandomUtils.randomInt(0, randomMax), () -> {
+			int _wait = ticks2 + RandomUtils.randomInt(0, randomMax);
+			if (_wait > waitMax)
+				waitMax = _wait;
+
+			Tasks.wait(_wait, () -> {
 				Tasks.cancel(_itemTaskId);
 
 				if (!givenItems.contains(itemStack)) {
 					givenItems.add(itemStack);
 					ItemStack presentItem = new ItemBuilder(itemStack).lore(Pugmas21.LORE).build();
-					PlayerUtils.giveItemAndMailExcess(player, presentItem, WorldGroup.SURVIVAL);
+					excess.addAll(PlayerUtils.giveItemsAndGetExcess(player, presentItem));
 				}
 
 				Location _location = removeItem(_item);
@@ -113,6 +123,10 @@ public class AdventAnimation {
 			});
 		}
 
+		Tasks.wait(waitMax, () -> {
+			PlayerUtils.giveItemsAndMailExcess(player, excess, WorldGroup.SURVIVAL);
+			new SoundBuilder(Sound.ENTITY_CHICKEN_EGG).receiver(player).play();
+		});
 	}
 
 	@NotNull

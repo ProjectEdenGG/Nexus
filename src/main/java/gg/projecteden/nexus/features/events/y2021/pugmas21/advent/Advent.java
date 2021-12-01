@@ -35,10 +35,10 @@ public class Advent implements Listener {
 
 	public Advent() {
 		Nexus.registerListener(this);
-		loadItems();
 	}
 
-	private void loadItems() {
+	public static void loadItems() {
+		Advent21ConfigService configService = new Advent21ConfigService();
 		Advent21Config adventConfig = Advent21Config.get();
 		Location lootOrigin = adventConfig.getLootOrigin();
 		int index = 1;
@@ -53,9 +53,14 @@ public class Advent implements Listener {
 					.filter(itemStack -> !ItemUtils.isNullOrAir(itemStack))
 					.collect(Collectors.toList());
 
+				if (Utils.isNullOrEmpty(contents))
+					Nexus.warn("Contents of advent present " + index + " is empty!");
+
 				adventConfig.get(index++).setContents(contents);
 			}
 		}
+
+		configService.save(adventConfig);
 	}
 
 	static {
@@ -85,7 +90,7 @@ public class Advent implements Listener {
 		AdventAnimation.builder()
 			.location(player.getLocation())
 			.player(player)
-			.items(Advent21Config.get().get(day).getContents())
+			.present(Advent21Config.get().get(day))
 			.build()
 			.open();
 	}
@@ -155,16 +160,13 @@ public class Advent implements Listener {
 			return;
 
 		if (Pugmas21.TODAY.isAfter(Pugmas21.END)) {
-			player.sendMessage("debug: is after pugmas");
 			return;
 		}
 
 		final Advent21Config adventConfig = new Advent21ConfigService().get0();
 		final AdventPresent present = adventConfig.get(block.getLocation());
-		if (present == null) {
-			player.sendMessage("debug: present is null");
+		if (present == null)
 			return;
-		}
 
 		new Pugmas21UserService().edit(player, user -> user.advent().tryCollect(present));
 	}
