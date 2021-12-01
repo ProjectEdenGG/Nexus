@@ -47,6 +47,7 @@ public class Pugmas21User implements PlayerOwnedObject {
 	private UUID uuid;
 
 	private Pugmas21QuestLine questLine;
+	private boolean firstVisit = false;
 
 	@Getter(AccessLevel.PRIVATE)
 	private Advent21User advent;

@@ -15,7 +15,6 @@ import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21NPC;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestItem;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestLine;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestTask;
-import gg.projecteden.nexus.features.quests.users.Quester;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -31,6 +30,7 @@ import gg.projecteden.nexus.models.pugmas21.Pugmas21User;
 import gg.projecteden.nexus.models.pugmas21.Pugmas21UserService;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.EntityUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.utils.RandomUtils;
@@ -61,6 +61,7 @@ import java.util.Map;
 import static gg.projecteden.utils.TimeUtils.shortDateFormat;
 
 @NoArgsConstructor
+@Redirect(from = "/pugmas", to = "/pugmas21")
 @Redirect(from = "/advent", to = "/pugmas21 advent")
 @Redirect(from = "/district", to = "/pugmas21 district")
 @Redirect(from = "/waypoint", to = "/pugmas21 advent waypoint")
@@ -72,6 +73,8 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	private final Advent21ConfigService adventService = new Advent21ConfigService();
 	private final Advent21Config adventConfig = adventService.get0();
 
+	private final String timeLeft = Timespan.of(Pugmas21.EPOCH).format();
+
 	public Pugmas21Command(@NonNull CommandEvent event) {
 		super(event);
 		if (isPlayerCommandEvent())
@@ -81,6 +84,17 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	@Override
 	public String getPrefix() {
 		return Pugmas21.PREFIX;
+	}
+
+	@Path
+	void pugmas() {
+		if (Pugmas21.isBeforePugmas() && !isStaff())
+			error("Soon™ (" + timeLeft + ")");
+
+		if (!user.isFirstVisit())
+			error("You need to take the Pugmas train at Spawn to unlock this warp.");
+
+		player().teleportAsync(Pugmas21.warp, TeleportCause.COMMAND);
 	}
 
 	@Path("randomizePresents")
@@ -362,7 +376,12 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 		if (npc == null)
 			return;
 
-		Quester.of(event.getClicker()).interact(npc);
+//		Quester.of(event.getClicker()).interact(npc);
+		event.setCancelled(true);
+
+		String npcName = npc.getName();
+		String message = StringUtils.colorize("&3" + npcName + " &7> &f" + Pugmas21.getGenericGreeting());
+		event.getClicker().sendMessage(message);
 	}
 
 	@EventHandler
@@ -371,12 +390,11 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 		if (entity == null)
 			return;
 
-		Quester.of(event.getPlayer()).interact(entity);
+//		Quester.of(event.getPlayer()).interact(entity);
 		event.setCancelled(true);
 	}
 
 	private void verifyDate() {
-		String timeLeft = Timespan.of(Pugmas21.EPOCH).format();
 		if (!isAdmin()) {
 			if (Pugmas21.isBeforePugmas())
 				error("Soon™ (" + timeLeft + ")");

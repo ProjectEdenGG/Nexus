@@ -3,11 +3,13 @@ package gg.projecteden.nexus.features.events.y2021.pugmas21;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.advent.Advent;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.CandyCaneCannon;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Intro;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Train;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.TrainBackground;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Timer;
 import gg.projecteden.nexus.utils.WorldEditUtils;
@@ -21,6 +23,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 public class Pugmas21 {
@@ -31,6 +34,7 @@ public class Pugmas21 {
 	public static final String WORLD = "pugmas21";
 	public static final String REGION = "pugmas21";
 	public static final String LORE = "&ePugmas 2021 Item";
+	public static final Location warp = location(0.5, 52, 0.5, 0, 0);
 	public static LocalDate TODAY = LocalDate.now();
 
 	@Getter
@@ -40,6 +44,7 @@ public class Pugmas21 {
 	public Pugmas21() {
 		new Timer("      Events.Pugmas21.Train", Train::schedule);
 		new Timer("      Events.Pugmas21.TrainBackground", TrainBackground::new);
+		new Timer("      Events.Pugmas21.Intro", Intro::new);
 		new Timer("      Events.Pugmas21.AdventPresents", Advent::new);
 		new Timer("      Events.Pugmas21.CandyCaneCannon", CandyCaneCannon::new);
 
@@ -134,5 +139,19 @@ public class Pugmas21 {
 
 	public static boolean isPastPugmas() {
 		return LocalDate.now().isAfter(END);
+	}
+
+	public static String getGenericGreeting() {
+		List<String> greetings = Arrays.asList(
+			"Happy holidays!",
+			"Yuletide greetings!",
+			"Season's greetings!",
+			"Happy New Year!",
+			"Merry Pugmas!",
+			"Hello there.",
+			"Hi.",
+			"Hey.",
+			"Warmest wishes.");
+		return RandomUtils.randomElement(greetings);
 	}
 }

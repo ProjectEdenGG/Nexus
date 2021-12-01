@@ -17,6 +17,7 @@ import org.bukkit.SoundCategory;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
@@ -44,7 +45,6 @@ public class TrainBackground {
 		"bb25d13b-c8ae-44b7-94e8-e4f1f9b964c1"
 	);
 
-	private static final Location soundLocation = Pugmas21.location(-3, 12, -69);
 	private static final Location loopLocation = LocationUtils.getCenteredLocation(Pugmas21.location(31, 11, -60, -180, 0));
 	private static final double speed = 0.2;
 	private static final BlockFace forwards = BlockFace.WEST;
@@ -55,12 +55,12 @@ public class TrainBackground {
 	private static boolean active;
 	private static final List<ArmorStand> armorStands = new ArrayList<>();
 	private static final List<Integer> taskIds = new ArrayList<>();
+	@Getter
+	private static final List<Player> chugs = new ArrayList<>();
 
 	public TrainBackground() {
 		Tasks.repeat(1, TickTime.TICK.x(2), () -> {
-			if (WGUtils.getPlayersInRegion(REGION).size() > 0)
-				start();
-			else
+			if (WGUtils.getPlayersInRegion(REGION).size() == 0)
 				stop();
 		});
 	}
@@ -71,20 +71,27 @@ public class TrainBackground {
 
 		loadArmorStands();
 
-		taskIds.add(Tasks.repeat(0, 1, TrainBackground::move));
-		taskIds.add(Tasks.repeat(0, TickTime.SECOND, () ->
-			new SoundBuilder("custom.train.chug")
-				.location(soundLocation)
-				.category(SoundCategory.AMBIENT)
-				.volume(1)
-				.play()));
+		Tasks.wait(2, () -> taskIds.add(Tasks.repeat(0, 1, TrainBackground::move)));
+
+		taskIds.add(Tasks.repeat(0, TickTime.SECOND, () -> {
+			for (Player player : chugs) {
+				new SoundBuilder("custom.train.chug")
+					.receiver(player)
+					.location(player)
+					.category(SoundCategory.AMBIENT)
+					.volume(0.8)
+					.play();
+			}
+		}));
+
 	}
 
 	public static void stop() {
 		if (!active) return;
-
 		active = false;
+
 		taskIds.forEach(Tasks::cancel);
+		chugs.clear();
 	}
 
 	private static void loadArmorStands() {
