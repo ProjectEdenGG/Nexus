@@ -2,12 +2,16 @@ package gg.projecteden.nexus.features.events.y2021.pugmas21.advent;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.models.District;
+import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
+import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeavingRegionEvent;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.models.pugmas21.Advent21Config;
 import gg.projecteden.nexus.models.pugmas21.Advent21Config.AdventPresent;
 import gg.projecteden.nexus.models.pugmas21.Advent21ConfigService;
 import gg.projecteden.nexus.models.pugmas21.Pugmas21User;
 import gg.projecteden.nexus.models.pugmas21.Pugmas21UserService;
+import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -37,7 +41,7 @@ public class Advent implements Listener {
 		Nexus.registerListener(this);
 	}
 
-	public static void loadItems() {
+	public static void updateItems() {
 		Advent21ConfigService configService = new Advent21ConfigService();
 		Advent21Config adventConfig = Advent21Config.get();
 		Location lootOrigin = adventConfig.getLootOrigin();
@@ -169,6 +173,26 @@ public class Advent implements Listener {
 			return;
 
 		new Pugmas21UserService().edit(player, user -> user.advent().tryCollect(present));
+	}
+
+	@EventHandler
+	public void onDistrictEnter(PlayerEnteredRegionEvent event) {
+		Player player = event.getPlayer();
+		if (!Pugmas21.isAtPugmas(player)) return;
+
+		District district = District.of(player.getLocation());
+		if (district != null && district != District.UNKNOWN)
+			ActionBarUtils.sendActionBar(player, "&a&lEntering " + district.getFullName());
+	}
+
+	@EventHandler
+	public void onDistrictExit(PlayerLeavingRegionEvent event) {
+		Player player = event.getPlayer();
+		if (!Pugmas21.isAtPugmas(player)) return;
+
+		District district = District.of(player.getLocation());
+		if (district != null && district != District.UNKNOWN)
+			ActionBarUtils.sendActionBar(player, "&c&lExiting " + district.getFullName());
 	}
 
 }

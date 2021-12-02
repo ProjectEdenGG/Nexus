@@ -131,7 +131,10 @@ public class AdventMenu extends MenuUtils implements InventoryProvider {
 			return new ItemBuilder(material)
 				.customModelData(customModelData)
 				.name("&3Day: &e" + present.getDay())
-				.lore("&3Status: &e" + status);
+				.lore(
+					"&3Status: &e" + status,
+					"&3District: &e" + present.getDistrict().getName()
+				);
 		}
 	}
 

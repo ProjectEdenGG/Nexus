@@ -288,6 +288,25 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 		Advent.glow(user, day);
 	}
 
+	@Path("advent nearest")
+	@Permission("group.admin")
+	void advent_nearest() {
+		AdventPresent nearestPresent = null;
+		double nearestDistance = 500;
+		for (AdventPresent present : adventConfig.getPresents()) {
+			double distance = present.getLocation().distance(location());
+			if (distance < nearestDistance) {
+				nearestDistance = distance;
+				nearestPresent = present;
+			}
+		}
+
+		if (nearestPresent == null)
+			error("None found");
+
+		send("Nearest: #" + nearestPresent.getDay());
+	}
+
 	@Path("advent waypoints")
 	@Permission("group.admin")
 	void advent_waypoints() {
@@ -303,12 +322,12 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 		giveItem(Advent21Config.get().get(day).getItem().build());
 	}
 
-	@Path("advent config loadItems")
+	@Path("advent config updateItems")
 	@Permission("group.admin")
-	void advent_loadItems() {
-		Advent.loadItems();
+	void advent_updateItems() {
+		Advent.updateItems();
 
-		send(PREFIX + "items loaded");
+		send(PREFIX + "updated items");
 	}
 
 	@Path("advent config setLootOrigin")
