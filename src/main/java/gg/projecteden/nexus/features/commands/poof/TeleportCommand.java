@@ -56,6 +56,7 @@ public class TeleportCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("getCoords")
+	@Permission("group.staff")
 	void getCoords() {
 		String message = getTeleportCommand(location());
 		send(json(PREFIX + "Click to copy").copy(message).hover(message));
