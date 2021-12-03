@@ -117,7 +117,7 @@ public class Pugmas21User implements PlayerOwnedObject {
 			show(present);
 
 			PlayerUtils.mailItem(getOnlinePlayer(), present.getItem().build(), null, WorldGroup.SURVIVAL);
-			PlayerUtils.send(getOnlinePlayer(), PREFIX + "This present has been sent to your survival &c/mail box");
+			PlayerUtils.send(getOnlinePlayer(), PREFIX + "This present has been sent to your &esurvival &c/mail box");
 			new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).receiver(getOnlinePlayer()).play();
 		}
 

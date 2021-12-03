@@ -20,17 +20,17 @@ import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static gg.projecteden.nexus.utils.PlayerUtils.isSelf;
 
 public class NameplateManager {
 	private final NameplateUserService service = new NameplateUserService();
-	private final static Map<UUID, NameplatePlayer> players = new HashMap<>();
+	private final static Map<UUID, NameplatePlayer> players = new ConcurrentHashMap<>();
 	private final ProtocolManager protocolManager = Nexus.getProtocolManager();
 
 	public void onStart() {
