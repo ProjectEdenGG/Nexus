@@ -33,6 +33,8 @@ import gg.projecteden.nexus.models.dailyvotereward.DailyVoteReward.DailyVoteStre
 import gg.projecteden.nexus.models.dailyvotereward.DailyVoteRewardService;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
+import gg.projecteden.nexus.models.emoji.EmojiUser;
+import gg.projecteden.nexus.models.emoji.EmojiUserService;
 import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.home.Home;
@@ -110,6 +112,7 @@ public class AccountTransferCommand extends CustomCommand {
 		SHOP(new ShopTransferer()),
 		TRANSACTIONS(new TransactionsTransferer()),
 		TRUSTS(new TrustsTransferer()),
+		EMOJI(new EmojiTransferer()),
 		;
 
 		private final Transferer transferer;
@@ -396,6 +399,16 @@ public class AccountTransferCommand extends CustomCommand {
 			previous.getLocks().clear();
 			previous.getHomes().clear();
 			previous.getTeleports().clear();
+		}
+	}
+
+	@Service(EmojiUserService.class)
+	static class EmojiTransferer extends MongoTransferer<EmojiUser> {
+		@Override
+		public void transfer(EmojiUser previous, EmojiUser current) {
+			current.getOwned().addAll(previous.getOwned());
+
+			previous.getOwned().clear();
 		}
 	}
 
