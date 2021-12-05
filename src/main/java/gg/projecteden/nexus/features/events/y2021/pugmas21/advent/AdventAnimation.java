@@ -114,8 +114,13 @@ public class AdventAnimation {
 
 				if (!givenItems.contains(itemStack)) {
 					givenItems.add(itemStack);
-					ItemStack presentItem = new ItemBuilder(itemStack).lore(Pugmas21.LORE).build();
-					excess.addAll(PlayerUtils.giveItemsAndGetExcess(player, presentItem));
+
+					ItemBuilder itemBuilder = new ItemBuilder(itemStack);
+					if (!itemStack.getType().equals(Material.TRIPWIRE_HOOK)) {
+						itemBuilder.lore(Pugmas21.LORE);
+					}
+
+					excess.addAll(PlayerUtils.giveItemsAndGetExcess(player, itemBuilder.build()));
 				}
 
 				Location _location = removeItem(_item);
