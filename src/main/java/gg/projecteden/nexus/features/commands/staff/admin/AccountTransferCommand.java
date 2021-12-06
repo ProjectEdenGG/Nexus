@@ -50,6 +50,8 @@ import gg.projecteden.nexus.models.mobheads.MobHeadUser;
 import gg.projecteden.nexus.models.mobheads.MobHeadUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.NerdService;
+import gg.projecteden.nexus.models.perkowner.PerkOwner;
+import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
 import gg.projecteden.nexus.models.punishments.Punishments;
 import gg.projecteden.nexus.models.punishments.PunishmentsService;
 import gg.projecteden.nexus.models.shop.Shop;
@@ -64,13 +66,20 @@ import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.OfflinePlayer;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Permission("group.admin")
 public class AccountTransferCommand extends CustomCommand {
 
 	public AccountTransferCommand(@NonNull CommandEvent event) {
 		super(event);
+	}
+
+	@Path("<old> <new> all")
+	void transferAll(OfflinePlayer old, OfflinePlayer target) {
+		transfer(old, target, Arrays.stream(Transferable.values()).collect(Collectors.toList()));
 	}
 
 	@Path("<old> <new> <features...>")
@@ -113,6 +122,7 @@ public class AccountTransferCommand extends CustomCommand {
 		TRANSACTIONS(new TransactionsTransferer()),
 		TRUSTS(new TrustsTransferer()),
 		EMOJI(new EmojiTransferer()),
+		MINIGAME_PERKS(new MinigamePerkTransferer()),
 		;
 
 		private final Transferer transferer;
@@ -409,6 +419,21 @@ public class AccountTransferCommand extends CustomCommand {
 			current.getOwned().addAll(previous.getOwned());
 
 			previous.getOwned().clear();
+		}
+	}
+
+	@Service(PerkOwnerService.class)
+	static class MinigamePerkTransferer extends MongoTransferer<PerkOwner> {
+		@Override
+		public void transfer(PerkOwner previous, PerkOwner current) {
+			current.getPurchasedPerks().putAll(previous.getPurchasedPerks());
+			current.setTokens(current.getTokens() + previous.getTokens());
+			current.setHideParticle(previous.getHideParticle());
+			current.setDailyTokens(previous.getDailyTokens());
+
+			previous.getPurchasedPerks().clear();
+			previous.setTokens(0);
+			previous.setDailyTokens(0);
 		}
 	}
 
