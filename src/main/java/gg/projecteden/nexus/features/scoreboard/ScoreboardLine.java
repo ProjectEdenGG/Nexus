@@ -11,6 +11,8 @@ import gg.projecteden.nexus.models.chat.ChatterService;
 import gg.projecteden.nexus.models.chat.PrivateChannel;
 import gg.projecteden.nexus.models.chat.PublicChannel;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
+import gg.projecteden.nexus.models.geoip.GeoIP;
+import gg.projecteden.nexus.models.geoip.GeoIPService;
 import gg.projecteden.nexus.models.hours.Hours;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.models.nerd.Rank;
@@ -36,6 +38,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.text.DecimalFormat;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +48,7 @@ import java.util.Map;
 import static gg.projecteden.nexus.utils.PlayerUtils.isVanished;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.StringUtils.left;
+import static java.time.format.DateTimeFormatter.ofPattern;
 
 public enum ScoreboardLine {
 	ONLINE {
@@ -233,6 +238,24 @@ public enum ScoreboardLine {
 		}
 	},
 
+	SERVER_TIME {
+		@Override
+		public String render(Player player) {
+			final GeoIP geoip = new GeoIPService().get(player);
+			final LocalDateTime now = LocalDateTime.now();
+			return "&3Server: &e" + now.format(ofPattern("MMM d ")) + geoip.getTimeFormat().formatShort(now);
+		}
+	},
+
+	LOCAL_TIME {
+		@Override
+		public String render(Player player) {
+			final GeoIP geoip = new GeoIPService().get(player);
+			final ZonedDateTime now = geoip.getCurrentTime();
+			return "&7" + now.format(ofPattern("MMM d ")) + geoip.getTimeFormat().formatShort(now);
+		}
+	},
+
 	@Interval(20)
 	@Required
 	AFK {
@@ -291,6 +314,8 @@ public enum ScoreboardLine {
 			if (ScoreboardLine.COORDINATES.hasPermission(player)) put(ScoreboardLine.COORDINATES, true);
 			if (ScoreboardLine.HOURS.hasPermission(player)) put(ScoreboardLine.HOURS, true);
 			if (ScoreboardLine.HELP.hasPermission(player)) put(ScoreboardLine.HELP, !isStaff);
+			if (ScoreboardLine.SERVER_TIME.hasPermission(player)) put(ScoreboardLine.SERVER_TIME, false);
+			if (ScoreboardLine.LOCAL_TIME.hasPermission(player)) put(ScoreboardLine.LOCAL_TIME, false);
 			if (ScoreboardLine.AFK.hasPermission(player)) put(ScoreboardLine.AFK, true);
 		}};
 	}

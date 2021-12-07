@@ -50,12 +50,12 @@ public class GeoIPCommand extends CustomCommand implements Listener {
 	@Async
 	@SneakyThrows
 	@Path("<player>")
-	void geoip(GeoIP geoIp) {
-		String location = geoIp.getFriendlyLocationString();
+	void geoip(GeoIP geoip) {
+		String location = geoip.getFriendlyLocationString();
 		if (isPlayer())
-			send(json("&3Location of &e" + geoIp.getName() + "&3: &e" + location).hover(geoIp.getIp()).insert(geoIp.getIp()));
+			send(json("&3Location of &e" + geoip.getName() + "&3: &e" + location).hover(geoip.getIp()).insert(geoip.getIp()));
 		else
-			send("Location of " + geoIp.getName() + " (" + geoIp.getIp() + "): " + location);
+			send("Location of " + geoip.getName() + " (" + geoip.getIp() + "): " + location);
 	}
 
 	@EventHandler
@@ -89,15 +89,15 @@ public class GeoIPCommand extends CustomCommand implements Listener {
 
 		HoursService hoursService = new HoursService();
 
-		new GeoIPService().getAll().forEach(geoIp -> {
-			String key = geoIp.getCountryCode();
+		new GeoIPService().getAll().forEach(geoip -> {
+			String key = geoip.getCountryCode();
 			if (key == null)
 				return;
 
 			if (!countriesMap.containsKey(key))
-				countriesMap.put(key, geoIp.getCountryName());
+				countriesMap.put(key, geoip.getCountryName());
 
-			Hours hours = hoursService.get(geoIp);
+			Hours hours = hoursService.get(geoip);
 			int hoursPlayed = hours.getTotal() / 3600;
 			if (hoursPlayed < 1) return;
 

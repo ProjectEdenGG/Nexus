@@ -2,91 +2,70 @@ package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.geoip.GeoIP;
+import gg.projecteden.nexus.models.geoip.GeoIP.TimeFormat;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
-import gg.projecteden.nexus.models.setting.Setting;
-import gg.projecteden.nexus.models.setting.SettingService;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.StringUtils;
-import org.jetbrains.annotations.NotNull;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
+import gg.projecteden.utils.TimeUtils.TickTime;
+import org.bukkit.entity.Player;
 
 @Aliases("timefor")
 @Description("Check what time it is for another player")
 public class CurrentTimeCommand extends CustomCommand {
-	GeoIPService geoipService = new GeoIPService();
-	SettingService settingService = new SettingService();
+	GeoIPService service = new GeoIPService();
 
 	public CurrentTimeCommand(CommandEvent event) {
 		super(event);
 		PREFIX = StringUtils.getPrefix("Timezones");
 	}
 
-	@Path("format <12/24>")
-	void format(int format) {
+	@Path("format <12/24> [player]")
+	void format(int format, @Arg(value = "self", permission = "group.seniorstaff") GeoIP user) {
 		if (format != 12 && format != 24)
 			send(json()
 					.line()
 					.next(" &eClick &3 the time format you prefer:  ")
 					.next("&e12 hour")
-					.command("/currenttime format 12")
+					.command("/currenttime format 12 " + user.getName())
 					.hover("&eClick &3to set the display format to &e12 hour")
 					.group()
 					.next("  &3||  &3")
 					.next("&e24 hour")
-					.command("/currenttime format 24")
+					.command("/currenttime format 24 " + user.getName())
 					.hover("&eClick &3to set the display format to &e24 hour")
 					.group());
 		else {
-			Setting setting = settingService.get(player(), "timezoneFormat");
-			setting.setValue(String.valueOf(format));
-			settingService.save(setting);
+			user.setTimeFormat(format == 12 ? TimeFormat.TWELVE : TimeFormat.TWENTY_FOUR);
+			service.save(user);
 			send(PREFIX + "Time format set to &e" + format + " hour");
 		}
 	}
 
-	@Path("update")
-	void update() {
-		send(PREFIX + "Updating your timezone information...");
-		GeoIP geoip = geoipService.request(uuid(), player().getAddress().getHostString());
+	@Path("update [player]")
+	@Cooldown(value = TickTime.HOUR, bypass = "group.seniorstaff")
+	void update(@Arg(value = "self", permission = "group.seniorstaff") Player player) {
+		final String name = isSelf(player) ? "your" : Nickname.of(player) + "'s";
+		send(PREFIX + "Updating " + name + " timezone information...");
+		GeoIP geoip = service.request(player.getUniqueId(), player.getAddress().getHostString());
 		if (geoip == null || geoip.getIp() == null)
-			error("There was an error while updating your timezone. Please try again later.");
+			error("There was an error while updating " + name + " timezone. Please try again later.");
 
-		geoipService.save(geoip);
-		send(PREFIX + "Updated your timezone to &3" + geoip.getTimezone());
+		service.save(geoip);
+		send(PREFIX + "Updated " + name + " timezone to &3" + geoip.getTimezone());
 	}
 
 	@Path("<player>")
-	void timeFor(GeoIP geoIp) {
-		if (geoIp == null || geoIp.getIp() == null)
+	void timeFor(GeoIP geoip) {
+		if (geoip == null || geoip.getIp() == null)
 			error("That player's timezone is not set.");
 
-		String timezoneId = geoIp.getTimezone().getId();
-		String playerName = geoIp.getNickname();
-		try {
-			DateFormat format = getDateFormat();
-			format.setTimeZone(TimeZone.getTimeZone(timezoneId));
-			send(PREFIX + "The current time for &e" + playerName + " &3is &e" + format.format(new Date()));
-		} catch (Exception e) {
-			error("Something broke. Player: " + playerName + "Timezone Id: " + timezoneId);
-		}
-	}
-
-	@NotNull
-	private DateFormat getDateFormat() {
-		DateFormat format = new SimpleDateFormat("h:mm aa");
-		if (!isPlayer()) return format;
-
-		Setting setting = settingService.get(player(), "timezoneFormat");
-		if (setting.getValue() != null && setting.getValue().equalsIgnoreCase("24"))
-			format = new SimpleDateFormat("HH:mm");
-		return format;
+		send(PREFIX + "The current time for &e" + geoip.getName() + " &3is &e" + geoip.getCurrentTimeShort());
 	}
 
 	@Path

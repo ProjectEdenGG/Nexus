@@ -48,14 +48,12 @@ import org.objenesis.ObjenesisStd;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import static gg.projecteden.utils.TimeUtils.shortTimeFormat;
 import static org.reflections.ReflectionUtils.getMethods;
 import static org.reflections.ReflectionUtils.withAnnotation;
 
@@ -226,12 +224,11 @@ public class Nexus extends JavaPlugin {
 		Rank.getOnlineStaff().stream()
 				.map(Nerd::getPlayer)
 				.forEach(player -> {
-					GeoIP geoIp = new GeoIPService().get(player);
+					GeoIP geoip = new GeoIPService().get(player);
 					String message = " &c&l ! &c&l! &eReloading Nexus &c&l! &c&l!";
-					if (geoIp != null && geoIp.getTimezone() != null && geoIp.getTimezone().getId() != null) {
-						String timestamp = shortTimeFormat(LocalDateTime.now(ZoneId.of(geoIp.getTimezone().getId())));
-						PlayerUtils.send(player, "&7 " + timestamp + message);
-					} else
+					if (geoip != null && geoip.getTimezone() != null && geoip.getTimezone().getId() != null)
+						PlayerUtils.send(player, "&7 " + geoip.getCurrentTimeShort() + message);
+					else
 						PlayerUtils.send(player, message);
 				});
 	}

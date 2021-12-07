@@ -49,7 +49,7 @@ public class WhoIsCommand extends CustomCommand {
 		send("&3Who the fuck is &6&l" + nerd.getNickname() + "&3?");
 
 		HoursService hoursService = new HoursService();
-		GeoIPService geoIpService = new GeoIPService();
+		GeoIPService geoipService = new GeoIPService();
 
 		Punishments punishments = Punishments.of(nerd);
 		boolean history = punishments.hasHistory();
@@ -100,9 +100,9 @@ public class WhoIsCommand extends CustomCommand {
 			json.newline().next("&3Past Names: &e" + String.join("&3, &e", pastNames)).group();
 
 		try {
-			GeoIP geoIp = geoIpService.get(nerd);
-			if (!isNullOrEmpty(geoIp.getIp()))
-				json.newline().next("&3GeoIP: &e" + geoIp.getFriendlyLocationString()).hover("&e" + geoIp.getIp()).suggest(geoIp.getIp()).group();
+			GeoIP geoip = geoipService.get(nerd);
+			if (!isNullOrEmpty(geoip.getIp()))
+				json.newline().next("&3GeoIP: &e" + geoip.getFriendlyLocationString()).hover("&e" + geoip.getIp()).suggest(geoip.getIp()).group();
 		} catch (InvalidInputException ex) {
 			json.newline().next("&3GeoIP: &c" + ex.getMessage()).group();
 		}
