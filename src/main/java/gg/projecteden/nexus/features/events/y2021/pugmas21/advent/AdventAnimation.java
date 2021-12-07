@@ -3,10 +3,14 @@ package gg.projecteden.nexus.features.events.y2021.pugmas21.advent;
 import com.destroystokyo.paper.ParticleBuilder;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
 import gg.projecteden.nexus.features.particles.VectorUtils;
+import gg.projecteden.nexus.models.jukebox.JukeboxSong;
+import gg.projecteden.nexus.models.jukebox.JukeboxUser;
+import gg.projecteden.nexus.models.jukebox.JukeboxUserService;
 import gg.projecteden.nexus.models.pugmas21.Advent21Config.AdventPresent;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.utils.RandomUtils;
@@ -49,8 +53,14 @@ public class AdventAnimation {
 	private final AdventPresent present;
 	private final List<ItemStack> givenItems = new ArrayList<>();
 	private final Player player;
+	private static final JukeboxUserService userService = new JukeboxUserService();
 
 	public void open() {
+		if (List.of(9, 15, 17, 20, 25).contains(present.getDay())) {
+			openTwice();
+			return;
+		}
+
 		ItemStack chest = new ItemBuilder(Material.TRAPPED_CHEST).customModelData(1).build();
 		Item item = spawnItem(location, chest, length1, height1, location.getDirection());
 		int itemTaskId = particleTask(particle1, item);
@@ -115,12 +125,19 @@ public class AdventAnimation {
 				if (!givenItems.contains(itemStack)) {
 					givenItems.add(itemStack);
 
+					boolean giveItem = true;
 					ItemBuilder itemBuilder = new ItemBuilder(itemStack);
 					if (!itemStack.getType().equals(Material.TRIPWIRE_HOOK)) {
-						itemBuilder.lore(Pugmas21.LORE);
+						if (itemStack.getType().equals(Material.MUSIC_DISC_WARD)) {
+							giveItem = false;
+							giveSong(player, itemStack);
+						} else {
+							itemBuilder.lore(Pugmas21.LORE);
+						}
 					}
 
-					excess.addAll(PlayerUtils.giveItemsAndGetExcess(player, itemBuilder.build()));
+					if (giveItem)
+						excess.addAll(PlayerUtils.giveItemsAndGetExcess(player, itemBuilder.build()));
 				}
 
 				Location _location = removeItem(_item);
@@ -132,6 +149,22 @@ public class AdventAnimation {
 			PlayerUtils.giveItemsAndMailExcess(player, excess, WorldGroup.SURVIVAL);
 			new SoundBuilder(Sound.ENTITY_CHICKEN_EGG).receiver(player).play();
 		});
+	}
+
+	private void giveSong(Player player, ItemStack itemStack) {
+		String songName = StringUtils.stripColor(itemStack.getItemMeta().getDisplayName());
+		JukeboxSong song = JukeboxSong.of(songName);
+		if (song == null) {
+			player.sendMessage("&cReport this to an admin. Song " + songName + " not found");
+			return;
+		}
+
+		JukeboxUser user = userService.get(player);
+		if (!user.owns(song)) {
+			user.give(song);
+			userService.save(user);
+			user.sendMessage(StringUtils.getPrefix("Jukebox") + "&3You now own &3" + song.getName());
+		}
 	}
 
 	@NotNull

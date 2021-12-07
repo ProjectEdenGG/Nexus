@@ -48,7 +48,8 @@ public class JukeboxUser implements PlayerOwnedObject {
 	}
 
 	public void give(JukeboxSong song) {
-		owned.add(song.getName());
+		if (!owns(song))
+			owned.add(song.getName());
 	}
 
 	public void play(JukeboxSong jukeboxSong) {
