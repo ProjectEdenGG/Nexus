@@ -163,7 +163,7 @@ public class AdventAnimation {
 		if (!user.owns(song)) {
 			user.give(song);
 			userService.save(user);
-			user.sendMessage(StringUtils.getPrefix("Jukebox") + "&3You now own &3" + song.getName());
+			user.sendMessage(StringUtils.getPrefix("Jukebox") + "&3You now own &e" + song.getName());
 		}
 	}
 
