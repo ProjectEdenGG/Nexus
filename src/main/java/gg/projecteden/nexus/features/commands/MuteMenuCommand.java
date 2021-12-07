@@ -5,25 +5,32 @@ import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.mobheads.MobHeadType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuService;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import joptsimple.internal.Strings;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.lexikiq.event.sound.EntitySoundEvent;
 import org.bukkit.Material;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,8 +38,9 @@ import java.util.List;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static java.util.stream.Collectors.toList;
 
+@NoArgsConstructor
 @Description("Hide or mute certain parts of the server, such as chat, automatic broadcasts, and sounds")
-public class MuteMenuCommand extends CustomCommand {
+public class MuteMenuCommand extends CustomCommand implements Listener {
 
 	public MuteMenuCommand(CommandEvent event) {
 		super(event);
@@ -86,19 +94,19 @@ public class MuteMenuCommand extends CustomCommand {
 			private String permission = null;
 			private Integer defaultVolume = null;
 
-			MuteMenuItem(String title, Material material, int defaultVolume) {
+			MuteMenuItem(@NotNull String title, @NotNull Material material, int defaultVolume) {
 				this.title = title;
 				this.material = material;
 				this.defaultVolume = defaultVolume;
 			}
 
-			MuteMenuItem(String title, Material material, String permission) {
+			MuteMenuItem(@NotNull String title, @NotNull Material material, String permission) {
 				this.title = title;
 				this.material = material;
 				this.permission = permission;
 			}
 
-			MuteMenuItem(String title, Material material, List<String> lore) {
+			MuteMenuItem(@NotNull String title, @NotNull Material material, List<String> lore) {
 				this.title = title;
 				this.material = material;
 				this.lore = lore.stream().map(line -> "&f" + line).collect(toList());
@@ -108,110 +116,144 @@ public class MuteMenuCommand extends CustomCommand {
 		}
 
 		@Override
-		public void open(Player player, int page) {
-			open(player, PageType.MESSAGES);
+		public void open(Player viewer, int page) {
+			SmartInventory.builder()
+				.title(colorize("&3" + StringUtils.camelCase(pageType.name())))
+				.size(6, 9)
+				.provider(this)
+				.build()
+				.open(viewer, page);
 		}
 
 		public void open(Player viewer, PageType pageType) {
+			open(viewer, pageType, 0);
+		}
+
+		public void open(Player viewer, PageType pageType, int page) {
 			this.pageType = pageType;
-			String title = "&3" + StringUtils.camelCase(pageType.name());
-			SmartInventory.builder()
-					.title(colorize(title))
-					.size(getRows(getViewableItems(viewer, pageType), 2, 7), 9)
-					.provider(this)
-					.build()
-					.open(viewer);
+			open(viewer, page);
+		}
+
+		public void reopen(Player player, InventoryContents contents) {
+			open(player, contents.pagination().getPage());
 		}
 
 		@Override
 		public void init(Player player, InventoryContents contents) {
 			MuteMenuUser user = service.get(player.getUniqueId());
-			int row = 1;
-			int column = 1;
+			final List<ClickableItem> items = new ArrayList<>();
 
-			if (pageType.equals(PageType.MESSAGES)) {
-				addCloseItem(contents);
-				contents.set(0, 8, ClickableItem.from(nameItem(Material.COMMAND_BLOCK, "&dSounds"), e -> open(player, PageType.SOUNDS)));
+			switch (pageType) {
+				case MESSAGES -> {
+					addCloseItem(contents);
+					contents.set(0, 8, ClickableItem.from(nameItem(Material.COMMAND_BLOCK, "&dSounds"), e -> open(player, PageType.SOUNDS)));
+					for (MuteMenuItem item : MuteMenuItem.values()) {
+						if (item == MuteMenuItem.QUEUP) // TODO QueUp
+							continue;
+						if (item.getDefaultVolume() != null)
+							continue;
+						if (!Strings.isNullOrEmpty(item.getPermission()) && !player.hasPermission(item.getPermission()))
+							continue;
 
-				for (MuteMenuItem item : MuteMenuItem.values()) {
-					if (item == MuteMenuItem.QUEUP) // TODO QueUp
-						continue;
-					if (item.getDefaultVolume() != null)
-						continue;
-					if (!Strings.isNullOrEmpty(item.getPermission()) && !player.hasPermission(item.getPermission()))
-						continue;
-
-					boolean muted = user.hasMuted(item);
-					ItemStack stack = new ItemBuilder(item.getMaterial()).name("&e" + item.getTitle())
+						boolean muted = user.hasMuted(item);
+						ItemStack stack = new ItemBuilder(item.getMaterial()).name("&e" + item.getTitle())
 							.lore(muted ? "&cMuted" : "&aUnmuted")
 							.lore(item.getLore())
 							.glow(muted)
 							.itemFlags(ItemFlag.HIDE_ATTRIBUTES)
 							.build();
 
-					contents.set(row, column, ClickableItem.from(stack, e -> {
-						toggleMute(user, item);
-						open(player, PageType.MESSAGES);
-					}));
-
-					if (column == 7) {
-						column = 1;
-						row++;
-					} else
-						column++;
+						items.add(ClickableItem.from(stack, e -> {
+							toggleMute(user, item);
+							reopen(player, contents);
+						}));
+					}
 				}
-			} else {
-				addBackItem(contents, e -> open(player, PageType.MESSAGES));
-
-				ItemStack info = new ItemBuilder(Material.BOOK)
+				case SOUNDS -> {
+					addBackItem(contents, e -> open(player, PageType.MESSAGES));
+					contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.BOOK)
 						.name("&3Info")
-						.lore("&eLClick - Increase volume", "&eRClick - Decrease volume")
-						.build();
-				contents.set(0, 8, ClickableItem.empty(info));
+						.lore("&eLeft Click - Increase volume", "&eRight Click - Decrease volume")
+						.build()));
 
-				for (MuteMenuItem item : MuteMenuItem.values()) {
-					if (item.getDefaultVolume() == null)
-						continue;
-					if (!Strings.isNullOrEmpty(item.getPermission()) && !player.hasPermission(item.getPermission()))
-						continue;
+					if (Rank.of(player).isAdmin())
+						items.add(ClickableItem.from(nameItem(Material.ZOMBIE_HEAD, "Mob Sounds"), e -> open(player, PageType.MOB_SOUNDS)));
 
-					boolean muted = user.hasMuted(item);
-					int volume = user.getVolume(item);
-					ItemStack stack = nameItem(item.getMaterial(), "&e" + item.getTitle(), muted ? "&c0%" : "&a" + volume + "%");
-					if (muted)
-						addGlowing(stack);
+					for (MuteMenuItem item : MuteMenuItem.values()) {
+						if (item.getDefaultVolume() == null)
+							continue;
+						if (!Strings.isNullOrEmpty(item.getPermission()) && !player.hasPermission(item.getPermission()))
+							continue;
 
-					contents.set(row, column, ClickableItem.from(stack, e -> {
-						InventoryClickEvent clickEvent = ((InventoryClickEvent) e.getEvent());
-						if (clickEvent.isRightClick())
-							decreaseVolume(user, item);
-						else if (clickEvent.isLeftClick())
-							increaseVolume(user, item);
-						open(player, PageType.SOUNDS);
-					}));
+						boolean muted = user.hasMuted(item);
+						int volume = user.getVolume(item);
+						ItemStack stack = nameItem(item.getMaterial(), "&e" + item.getTitle(), muted ? "&c0%" : "&a" + volume + "%");
+						if (muted)
+							addGlowing(stack);
 
-					if (column == 7) {
-						column = 1;
-						row++;
-					} else
-						column++;
+						items.add(ClickableItem.from(stack, e -> {
+							if (isRightClick(e))
+								decreaseVolume(user, item);
+							else if (isLeftClick(e))
+								increaseVolume(user, item);
+							service.save(user);
+							reopen(player, contents);
+						}));
+					}
+				}
+				case MOB_SOUNDS -> {
+					addBackItem(contents, e -> open(player, PageType.SOUNDS));
+					contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.BOOK)
+						.name("&3Info")
+						.lore("&eLeft Click - Increase volume", "&eRight Click - Decrease volume")
+						.build()));
+
+					for (MobHeadType mobHeadType : MobHeadType.values()) {
+						if (mobHeadType == MobHeadType.PLAYER)
+							continue;
+
+						if (mobHeadType.getSkull() == null)
+							continue;
+
+						int volume = user.getVolume(mobHeadType.getEntityType());
+						final ItemBuilder skull = new ItemBuilder(mobHeadType.getSkull()).lore(volume == 0 ? "&c0%" : "&a" + volume + "%");
+						items.add(ClickableItem.from(skull.build(), e -> {
+							if (isRightClick(e))
+								decreaseVolume(user, mobHeadType.getEntityType());
+							else if (isLeftClick(e))
+								increaseVolume(user, mobHeadType.getEntityType());
+							service.save(user);
+							reopen(player, contents);
+						}));
+					}
 				}
 			}
 
+			paginator(player, contents, items);
+		}
+
+		private int increaseVolume(int volume) {
+			return Math.min(volume + 10, 100);
+		}
+
+		private int decreaseVolume(int volume) {
+			return Math.max(0, volume - 10);
 		}
 
 		private void increaseVolume(MuteMenuUser user, MuteMenuItem item) {
-			int previous = user.getVolume(item);
-			int current = Math.min(previous + 10, 100);
-			user.setVolume(item, current);
-			service.save(user);
+			user.setVolume(item, increaseVolume(user.getVolume(item)));
+		}
+
+		private void increaseVolume(MuteMenuUser user, EntityType entityType) {
+			user.setVolume(entityType, increaseVolume(user.getVolume(entityType)));
 		}
 
 		private void decreaseVolume(MuteMenuUser user, MuteMenuItem item) {
-			int previous = user.getVolume(item);
-			int current = Math.max(0, previous - 10);
-			user.setVolume(item, current);
-			service.save(user);
+			user.setVolume(item, decreaseVolume(user.getVolume(item)));
+		}
+
+		private void decreaseVolume(MuteMenuUser user, EntityType entityType) {
+			user.setVolume(entityType, decreaseVolume(user.getVolume(entityType)));
 		}
 
 		public void toggleMute(MuteMenuUser user, MuteMenuItem item) {
@@ -223,7 +265,7 @@ public class MuteMenuCommand extends CustomCommand {
 					PlayerUtils.runCommand(player, "ch leave " + item.name().replace("CHANNEL_", "").toLowerCase());
 			else {
 				if (user.hasMuted(item))
-					user.unMute(item);
+					user.unmute(item);
 				else
 					user.mute(item);
 
@@ -231,30 +273,20 @@ public class MuteMenuCommand extends CustomCommand {
 			}
 		}
 
-		private int getViewableItems(Player player, PageType pageType) {
-			int count = 0;
-			if (pageType.equals(PageType.SOUNDS)) {
-				for (MuteMenuItem item : MuteMenuItem.values()) {
-					if (item.getDefaultVolume() != null)
-						count++;
-				}
-
-			} else {
-				for (MuteMenuItem item : MuteMenuItem.values()) {
-					if (item.getDefaultVolume() != null)
-						continue;
-					if (Strings.isNullOrEmpty(item.getPermission()) || player.hasPermission(item.getPermission()))
-						count++;
-				}
-			}
-			return count;
-		}
-
 		private enum PageType {
 			MESSAGES,
-			SOUNDS
+			SOUNDS,
+			MOB_SOUNDS,
 		}
 	}
 
+	@EventHandler
+	public void onEntitySound(EntitySoundEvent event) {
+		if (event.getPlayer() == null)
+			return;
+
+		final MuteMenuUser user = new MuteMenuService().get(event.getPlayer());
+		event.setVolume(user.getVolume(event.getOrigin().getType()));
+	}
 
 }
