@@ -22,7 +22,9 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -35,7 +37,7 @@ public class JukeboxUser implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private List<String> owned = new ArrayList<>();
+	private Set<String> owned = new HashSet<>();
 
 	private String currentSong;
 	private int currentTick;
@@ -48,8 +50,7 @@ public class JukeboxUser implements PlayerOwnedObject {
 	}
 
 	public void give(JukeboxSong song) {
-		if (!owns(song))
-			owned.add(song.getName());
+		owned.add(song.getName());
 	}
 
 	public void play(JukeboxSong jukeboxSong) {
