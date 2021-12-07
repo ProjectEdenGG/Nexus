@@ -108,7 +108,7 @@ public class ItemNameCommand extends CustomCommand {
 			return;
 
 		int length = StringUtils.stripColor(input).length();
-		if (length > 50)
+		if (length > 50 && !isAdmin())
 			error("Max length is 50, input was " + length);
 
 		if (Censor.isCensored(player(), input)) {
