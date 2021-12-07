@@ -1,8 +1,10 @@
 package gg.projecteden.nexus.features.particles;
 
+import com.destroystokyo.paper.ParticleBuilder;
 import gg.projecteden.nexus.Nexus;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.entity.Player;
 
 import java.awt.Color;
 
@@ -38,6 +40,20 @@ public class ParticleUtils {
 			Nexus.warn("Tried to use DustOptions with " + particle);
 		else if (location.getWorld() != null)
 			location.getWorld().spawnParticle(particle, location, count, x, y, z, speed, dustOptions);
+	}
+
+	public static void display(Player player, Particle particle, Location location, int count, double x, double y, double z, double speed, Particle.DustOptions dustOptions) {
+		if (!particle.equals(Particle.REDSTONE) && dustOptions != null)
+			Nexus.warn("Tried to use DustOptions with " + particle);
+		else if (location.getWorld() != null)
+			new ParticleBuilder(particle)
+				.receivers(player)
+				.location(location)
+				.count(count)
+				.extra(speed)
+				.color(dustOptions.getColor())
+				.offset(x, y, z)
+				.spawn();
 	}
 
 	public static Particle.DustOptions newDustOption(Particle particle, int[] rgb) {

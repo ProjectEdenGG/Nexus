@@ -12,6 +12,7 @@ import lombok.Getter;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.Particle.DustOptions;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -24,7 +25,7 @@ public class CircleEffect {
 	@Builder(buildMethodName = "start")
 	public CircleEffect(Player player, Location location, boolean updateLoc, Vector updateVector, Particle particle, boolean whole, boolean randomRotation,
 						boolean rainbow, Color color, int count, int density, int ticks, double radius, double speed, boolean fast,
-						double disX, double disY, double disZ, int startDelay, int pulseDelay) {
+						double disX, double disY, double disZ, int startDelay, int pulseDelay, boolean clientSide) {
 
 		if (player != null && location == null)
 			location = player.getLocation();
@@ -86,36 +87,47 @@ public class CircleEffect {
 				return;
 			}
 
-			for (int j = 0; j < finalLoops; j++) {
-				if (rainbow) {
-					hue.set(ParticleUtils.incHue(hue.get()));
-					int[] rgb = ParticleUtils.incRainbow(hue.get());
-					red.set(rgb[0]);
-					green.set(rgb[1]);
-					blue.set(rgb[2]);
-				}
-
-				Location loc = finalLocation;
-				if (finalUpdateLoc)
-					loc = player.getLocation().add(finalUpdateVector);
-
-				for (int i = 0; i < steps; i++) {
-					double angle = step.get() * inc;
-					Vector v = new Vector();
-					v.setX(Math.cos(angle) * radius);
-					v.setZ(Math.sin(angle) * radius);
-					if (randomRotation)
-						VectorUtils.rotateVector(v, angularVelocityX * step.get(), angularVelocityY * step.get(), angularVelocityZ * step.get());
-
-					Particle.DustOptions dustOptions = ParticleUtils.newDustOption(finalParticle, red.get(), green.get(), blue.get());
-					ParticleUtils.display(finalParticle, loc.clone().add(v), finalCount, red.get(), green.get(), blue.get(), finalSpeed, dustOptions);
-
-					step.getAndIncrement();
-				}
-			}
+			drawCircle(player, randomRotation, rainbow, radius, inc, steps, angularVelocityX, angularVelocityY, angularVelocityZ, finalSpeed, finalCount, finalParticle, finalLoops, finalLocation, finalUpdateLoc, finalUpdateVector, hue, red, green, blue, step, clientSide);
 
 			if (finalTicks != -1)
 				ticksElapsed.incrementAndGet();
 		});
+	}
+
+	private static void drawCircle(Player player, boolean randomRotation, boolean rainbow, double radius, double inc, int steps, double angularVelocityX, double angularVelocityY, double angularVelocityZ, double finalSpeed, int finalCount, Particle finalParticle, int finalLoops, Location finalLocation, boolean finalUpdateLoc, Vector finalUpdateVector, AtomicDouble hue, AtomicInteger red, AtomicInteger green, AtomicInteger blue, AtomicInteger step, boolean clientSide) {
+		for (int j = 0; j < finalLoops; j++) {
+			if (rainbow) {
+				hue.set(ParticleUtils.incHue(hue.get()));
+				int[] rgb = ParticleUtils.incRainbow(hue.get());
+				red.set(rgb[0]);
+				green.set(rgb[1]);
+				blue.set(rgb[2]);
+			}
+
+			Location loc = finalLocation;
+			if (finalUpdateLoc)
+				loc = player.getLocation().add(finalUpdateVector);
+
+			for (int i = 0; i < steps; i++) {
+				double angle = step.get() * inc;
+				Vector v = new Vector();
+				v.setX(Math.cos(angle) * radius);
+				v.setZ(Math.sin(angle) * radius);
+				if (randomRotation)
+					VectorUtils.rotateVector(v, angularVelocityX * step.get(), angularVelocityY * step.get(), angularVelocityZ * step.get());
+
+				Particle.DustOptions dustOptions = ParticleUtils.newDustOption(finalParticle, red.get(), green.get(), blue.get());
+				display(player, finalSpeed, finalCount, finalParticle, red, green, blue, clientSide, loc, v, dustOptions);
+
+				step.getAndIncrement();
+			}
+		}
+	}
+
+	private static void display(Player player, double finalSpeed, int finalCount, Particle finalParticle, AtomicInteger red, AtomicInteger green, AtomicInteger blue, boolean clientSide, Location loc, Vector v, DustOptions dustOptions) {
+		if (clientSide)
+			ParticleUtils.display(player, finalParticle, loc.clone().add(v), finalCount, red.get(), green.get(), blue.get(), finalSpeed, dustOptions);
+		else
+			ParticleUtils.display(finalParticle, loc.clone().add(v), finalCount, red.get(), green.get(), blue.get(), finalSpeed, dustOptions);
 	}
 }
