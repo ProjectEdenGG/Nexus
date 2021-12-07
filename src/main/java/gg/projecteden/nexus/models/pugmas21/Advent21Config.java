@@ -80,6 +80,10 @@ public class Advent21Config implements PlayerOwnedObject {
 			this.location = location;
 		}
 
+		public Location getLocation() {
+			return location.clone();
+		}
+
 		public ItemBuilder getItem() {
 			return new ItemBuilder(Material.TRAPPED_CHEST).customModelData(1).name("Advent Present").lore("&eDay #" + day, "&f", Pugmas21.LORE);
 		}
@@ -91,7 +95,7 @@ public class Advent21Config implements PlayerOwnedObject {
 		@NotNull EntityItemFrame sendPacket(Advent21User user) {
 			return PacketUtils.spawnItemFrame(
 				user.getOnlinePlayer(),
-				location,
+				getLocation(),
 				BlockFace.UP,
 				new ItemBuilder(Material.TRAPPED_CHEST).customModelData(user.hasCollected(day) ? 2 : 1).build(),
 				0,

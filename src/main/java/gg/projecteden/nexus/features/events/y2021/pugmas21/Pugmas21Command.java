@@ -267,7 +267,6 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 		@Arg(value = "0", permission = "group.admin") @Switch int day,
 		@Arg(value = "30", permission = "group.admin") @Switch int frameTicks
 	) {
-
 		verifyDate();
 
 		LocalDate date = Pugmas21.TODAY;

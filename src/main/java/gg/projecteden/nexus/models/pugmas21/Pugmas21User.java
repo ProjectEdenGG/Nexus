@@ -14,7 +14,6 @@ import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks.GlowTask;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -147,19 +146,12 @@ public class Pugmas21User implements PlayerOwnedObject {
 		// This is breaking advent presents, the server/database somehow loses reference to them when calling this method
 		@Deprecated
 		public void locate(AdventPresent present) {
-			sendMessage("Coords: " + StringUtils.getCoordinateString(present.getLocation()));
-			if (true)
-				return;
-
 			LocationUtils.lookAt(getOnlinePlayer(), present.getLocation());
 			glow(present);
 		}
 
 		@Deprecated
 		public void glow(AdventPresent present) {
-			if (true)
-				return;
-
 			EntityItemFrame itemFrame = getItemFrame(present);
 			if (itemFrame == null)
 				itemFrame = show(present);
