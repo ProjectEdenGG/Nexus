@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.socialmedia.commands;
 
-import gg.projecteden.annotations.Disabled;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
@@ -18,7 +17,6 @@ import gg.projecteden.utils.Env;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NonNull;
 
-@Disabled
 @Aliases("dubtrack")
 @SuppressWarnings("SameParameterValue")
 public class QueUpCommand extends CustomCommand {
