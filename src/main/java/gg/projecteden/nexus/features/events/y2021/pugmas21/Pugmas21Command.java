@@ -23,6 +23,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.pugmas21.Advent21Config;
 import gg.projecteden.nexus.models.pugmas21.Advent21Config.AdventPresent;
 import gg.projecteden.nexus.models.pugmas21.Advent21ConfigService;
@@ -57,6 +58,7 @@ import org.bukkit.util.Vector;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static gg.projecteden.utils.TimeUtils.shortDateFormat;
 
@@ -319,6 +321,24 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	@Permission("group.admin")
 	void advent_get(@Arg(min = 1, max = 25) int day) {
 		giveItem(Advent21Config.get().get(day).getItem().build());
+	}
+
+	@Path("advent stats opened <day>")
+	@Permission("group.admin")
+	void advent_stats_opened(@Arg(min = 1, max = 25) int day) {
+		send(PREFIX + "Players who opened &e#" + day);
+		send(service.getAll().stream()
+			.filter(user -> user.advent().hasCollected(day))
+			.map(user -> Nerd.of(user).getColoredName()).collect(Collectors.joining("&f, ")));
+	}
+
+	@Path("advent stats found <day>")
+	@Permission("group.admin")
+	void advent_stats_found(@Arg(min = 1, max = 25) int day) {
+		send(PREFIX + "Players who found &e#" + day);
+		send(service.getAll().stream()
+			.filter(user -> user.advent().hasFound(day))
+			.map(user -> Nerd.of(user).getColoredName()).collect(Collectors.joining("&f, ")));
 	}
 
 	@Path("advent config updateItems")
