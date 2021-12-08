@@ -4,6 +4,7 @@ import gg.projecteden.annotations.Disabled;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
+import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -21,7 +22,7 @@ import lombok.NonNull;
 @Aliases("dubtrack")
 @SuppressWarnings("SameParameterValue")
 public class QueUpCommand extends CustomCommand {
-	private static final String URL = ""; // EdenSocialMediaSite.QUEUP.getUrl(); // TODO QueUp
+	private static final String URL = EdenSocialMediaSite.QUEUP.getUrl();
 
 	private static boolean enabled = true;
 	private static final QueUpService service = new QueUpService();
@@ -50,7 +51,6 @@ public class QueUpCommand extends CustomCommand {
 	}
 
 	static {
-		if (false) // TODO QueUp
 		if (Nexus.getEnv() == Env.PROD)
 			Tasks.repeatAsync(TickTime.SECOND, TickTime.SECOND.x(15), () -> {
 				if (!enabled)

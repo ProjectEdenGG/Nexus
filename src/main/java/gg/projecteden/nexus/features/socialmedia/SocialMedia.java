@@ -65,7 +65,7 @@ public class SocialMedia implements Listener {
 		SPOTIFY("Spotify", ChatColor.of("#1ed760"), "", "https://spotify.com", "https://open.spotify.com/user/%s"),
 		REDDIT("Reddit", ChatColor.of("#ff5700"), "", "https://reddit.com", "https://reddit.com/u/%s"),
 		GITHUB("GitHub", ChatColor.of("#777777"), "", "https://github.com", "https://github.com/%s"),
-//		QUEUP("QueUp", ChatColor.of("#d42f8a"), "https://queup.net", "https://queup.net/user/%s"), // TODO QueUp
+		QUEUP("QueUp", ChatColor.of("#d42f8a"), "", "https://queup.net", "https://queup.net/user/%s"),
 		;
 
 		@Getter
@@ -110,7 +110,7 @@ public class SocialMedia implements Listener {
 		INSTAGRAM("https://instagram.com/ProjectEdenGG"),
 		REDDIT("https://reddit.com/u/ProjectEdenGG"),
 		STEAM("https://steamcommunity.com/groups/ProjectEdenGG"),
-//		QUEUP("https://queup.net/join/projectedengg"), // TODO QueUp
+		QUEUP("https://queup.net/join/projectedengg"),
 		;
 
 		@Getter

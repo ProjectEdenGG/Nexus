@@ -2,15 +2,17 @@ package gg.projecteden.nexus.features.discord;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.listeners.Tab.Presence;
+import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.models.queup.QueUp;
+import gg.projecteden.nexus.models.queup.QueUpService;
 import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.DiscordId;
 import gg.projecteden.utils.DiscordId.TextChannel;
@@ -37,6 +39,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
+import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
 
 public class Discord extends Feature {
 	@Getter
@@ -232,13 +235,10 @@ public class Discord extends Feature {
 
 		String topic = "Online nerds (%d): %n%s".formatted(players.size(), getTopicPlayerList(players));
 
-		/*
-		// TODO QueUp
 		QueUpService queupService = new QueUpService();
 		QueUp queup = queupService.get0();
-		if (!Strings.isNullOrEmpty(queup.getLastSong()))
+		if (!isNullOrEmpty(queup.getLastSong()))
 			topic += System.lineSeparator() + System.lineSeparator() + "Now playing on " + EdenSocialMediaSite.QUEUP.getUrl() + ": " + stripColor(queup.getLastSong());
-		*/
 
 		return topic;
 	}
@@ -289,7 +289,7 @@ public class Discord extends Feature {
 
 		String url = getGuild().getVanityUrl();
 
-		if (StringUtils.isNullOrEmpty(url)) {
+		if (isNullOrEmpty(url)) {
 			net.dv8tion.jda.api.entities.TextChannel textChannel = guild.getTextChannelById(TextChannel.GENERAL.getId());
 			if (textChannel == null)
 				throw new InvalidInputException("General channel not found");
@@ -297,7 +297,7 @@ public class Discord extends Feature {
 			url = textChannel.createInvite().complete().getUrl();
 		}
 
-		if (StringUtils.isNullOrEmpty(url))
+		if (isNullOrEmpty(url))
 			throw new InvalidInputException("Could not generate invite link");
 
 		return url;
