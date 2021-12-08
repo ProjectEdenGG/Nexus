@@ -9,6 +9,7 @@ import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
+import io.papermc.paper.event.player.PlayerFlowerPotManipulateEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
@@ -62,6 +63,12 @@ public class ResourcePackListener implements Listener {
 			return;
 
 		if (isCustomItem(ItemUtils.getTool(event.getPlayer())))
+			event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void on(PlayerFlowerPotManipulateEvent event) {
+		if (isCustomItem(event.getItem()))
 			event.setCancelled(true);
 	}
 
