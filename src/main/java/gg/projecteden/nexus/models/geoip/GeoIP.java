@@ -191,8 +191,8 @@ public class GeoIP implements PlayerOwnedObject {
 
 	@AllArgsConstructor
 	public enum TimeFormat {
-		TWELVE("h:m a", "hh:mm a"),
-		TWENTY_FOUR("H:m", "HH:mm"),
+		TWELVE("h:mm a", "hh:mm a"),
+		TWENTY_FOUR("H:mm", "HH:mm"),
 		;
 
 		private final String shortFormat, longFormat;

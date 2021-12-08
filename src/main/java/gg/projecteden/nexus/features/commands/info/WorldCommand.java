@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -26,9 +27,9 @@ public class WorldCommand extends CustomCommand {
 		String render = ScoreboardLine.WORLD.render(player).split(":")[1].trim();
 		WorldGroup worldGroup = WorldGroup.of(player);
 		if (!isStaff(player()) && isStaff(player) && worldGroup == WorldGroup.STAFF)
-			send("&3" + (isSelf(player) ? "You are" : player.getName() + " is") + " in a staff world");
+			send("&3" + (isSelf(player) ? "You are" : Nickname.of(player) + " is") + " in a staff world");
 		else
-			send("&3" + (isSelf(player) ? "You are" : player.getName() + " is") + " in world &e" + render + " &3in group &e" + camelCase(worldGroup));
+			send("&3" + (isSelf(player) ? "You are" : Nickname.of(player) + " is") + " in world &e" + render + " &3in group &e" + camelCase(worldGroup));
 	}
 
 	@Path("list")
