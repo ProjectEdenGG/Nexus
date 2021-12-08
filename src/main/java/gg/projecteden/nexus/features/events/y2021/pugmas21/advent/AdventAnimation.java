@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.events.y2021.pugmas21.advent;
 import com.destroystokyo.paper.ParticleBuilder;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
 import gg.projecteden.nexus.features.particles.VectorUtils;
+import gg.projecteden.nexus.models.coupon.CouponService;
 import gg.projecteden.nexus.models.jukebox.JukeboxSong;
 import gg.projecteden.nexus.models.jukebox.JukeboxUser;
 import gg.projecteden.nexus.models.jukebox.JukeboxUserService;
@@ -54,6 +55,7 @@ public class AdventAnimation {
 	private final List<ItemStack> givenItems = new ArrayList<>();
 	private final Player player;
 	private static final JukeboxUserService userService = new JukeboxUserService();
+	private static final ItemStack eventTokenCoupon = new CouponService().get0().of("event_tokens").getItem();
 
 	public void open() {
 		if (List.of(9, 15, 17, 20, 25).contains(present.getDay())) {
@@ -127,7 +129,8 @@ public class AdventAnimation {
 
 					boolean giveItem = true;
 					ItemBuilder itemBuilder = new ItemBuilder(itemStack);
-					if (!itemStack.getType().equals(Material.TRIPWIRE_HOOK)) {
+
+					if (!eventTokenCoupon.equals(itemStack) && !itemStack.getType().equals(Material.TRIPWIRE_HOOK)) {
 						if (itemStack.getType().equals(Material.MUSIC_DISC_WARD)) {
 							giveItem = false;
 							giveSong(player, itemStack);
