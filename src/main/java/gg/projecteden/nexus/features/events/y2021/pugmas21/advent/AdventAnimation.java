@@ -128,16 +128,22 @@ public class AdventAnimation {
 					givenItems.add(itemStack);
 
 					boolean giveItem = true;
+					boolean setLore = true;
 					ItemBuilder itemBuilder = new ItemBuilder(itemStack);
+					String itemName = StringUtils.stripColor(itemStack.getItemMeta().getDisplayName());
 
-					if (!eventTokenCoupon.equals(itemStack) && !itemStack.getType().equals(Material.TRIPWIRE_HOOK)) {
-						if (itemStack.getType().equals(Material.MUSIC_DISC_WARD)) {
-							giveItem = false;
-							giveSong(player, itemStack);
-						} else {
-							itemBuilder.lore(Pugmas21.LORE);
-						}
+					if (itemName.contains("Coupon"))
+						setLore = false;
+					else if (itemStack.getType().equals(Material.TRIPWIRE_HOOK))
+						setLore = false;
+					else if (itemStack.getType().equals(Material.MUSIC_DISC_WARD)) {
+						setLore = false;
+						giveItem = false;
+						giveSong(player, itemName);
 					}
+
+					if (setLore)
+						itemBuilder.lore(Pugmas21.LORE);
 
 					if (giveItem)
 						excess.addAll(PlayerUtils.giveItemsAndGetExcess(player, itemBuilder.build()));
@@ -154,11 +160,10 @@ public class AdventAnimation {
 		});
 	}
 
-	private void giveSong(Player player, ItemStack itemStack) {
-		String songName = StringUtils.stripColor(itemStack.getItemMeta().getDisplayName());
-		JukeboxSong song = JukeboxSong.of(songName);
+	private void giveSong(Player player, String itemName) {
+		JukeboxSong song = JukeboxSong.of(itemName);
 		if (song == null) {
-			player.sendMessage("&cReport this to an admin. Song " + songName + " not found");
+			player.sendMessage("&cReport this to an admin. Song " + itemName + " not found");
 			return;
 		}
 
