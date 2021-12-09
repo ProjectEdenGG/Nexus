@@ -22,6 +22,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
+import static gg.projecteden.nexus.features.listeners.Restrictions.isPerkAllowedAt;
 import static gg.projecteden.nexus.features.store.perks.EntityNameCommand.PERMISSION;
 import static gg.projecteden.nexus.utils.StringUtils.applyFormattingToAll;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
@@ -122,6 +123,9 @@ public class EntityNameCommand extends CustomCommand {
 			Broadcast.staff().prefix("Censor").message(message).send();
 			error("Inappropriate input");
 		}
+
+		if (!isPerkAllowedAt(location()))
+			error("This command is not allowed here");
 	}
 
 }
