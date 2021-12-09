@@ -12,7 +12,6 @@ import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.NPC;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -59,8 +58,6 @@ public class ForceField extends Feature {
 		double radius = user.getRadius();
 
 		boolean movePlayers = user.isMovePlayers();
-		boolean moveItems = user.isMoveItems();
-		boolean moveEntities = user.isMoveEntities();
 		boolean moveProjectiles = user.isMoveProjectiles();
 
 		LinkedHashMap<Entity, Long> entities = EntityUtils.getNearbyEntities(player.getLocation(), radius);
@@ -69,20 +66,19 @@ public class ForceField extends Feature {
 			if (entity instanceof NPC || CitizensUtils.isNPC(entity))
 				continue;
 
-			if (!(entity instanceof Item) && !(entity instanceof Projectile) && !(entity instanceof LivingEntity))
+			if (!(entity instanceof Item) && !(entity instanceof Projectile))
 				continue;
 
 			if (entity instanceof Player) {
 				if (entity.getUniqueId().equals(uuid))
 					continue;
 
+				if (user.getIgnored().contains(entity.getUniqueId()))
+					continue;
+
 				if (!movePlayers)
 					continue;
-			} else if (entity instanceof Item && !moveItems) {
-				continue;
 			} else if (entity instanceof Projectile && !moveProjectiles) {
-				continue;
-			} else if (entity instanceof LivingEntity && !moveEntities) {
 				continue;
 			}
 

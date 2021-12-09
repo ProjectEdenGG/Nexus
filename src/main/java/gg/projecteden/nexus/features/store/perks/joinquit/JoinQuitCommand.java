@@ -9,6 +9,7 @@ import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
 
 @Aliases("jq")
+@Permission("group.seniorstaff")
 public class JoinQuitCommand extends CustomCommand {
 
 	public JoinQuitCommand(@NonNull CommandEvent event) {
@@ -17,7 +18,6 @@ public class JoinQuitCommand extends CustomCommand {
 	}
 
 	@Path("reload")
-	@Permission("group.seniorstaff")
 	void reload() {
 		JoinQuit.reloadConfig();
 		send(PREFIX + "Successfully loaded " + JoinQuit.getJoinMessages().size() + " join and " + JoinQuit.getQuitMessages().size() + " quit messages");

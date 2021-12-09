@@ -17,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.Color;
 import org.bukkit.Particle;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -33,10 +35,9 @@ public class ForceFieldUser implements PlayerOwnedObject {
 	boolean enabled;
 	boolean showParticles = true;
 	boolean movePlayers = true;
-	boolean moveEntities;
-	boolean moveItems;
 	boolean moveProjectiles;
 	int particleTaskId = -1;
+	Set<UUID> ignored = new HashSet<>();
 	@Transient
 	PolygonEffectBuilder effectBuilder;
 
@@ -44,17 +45,7 @@ public class ForceFieldUser implements PlayerOwnedObject {
 		this.enabled = enabled;
 
 		if (enabled) {
-			this.effectBuilder = PolygonEffect.builder()
-				.polygon(PolygonEffect.Polygon.TRIANGLE)
-				.updateLoc(true)
-				.ticks(-1)
-				.clientSide(true)
-				.player(getOnlinePlayer())
-				.radius(this.radius)
-				.whole(false)
-				.particle(Particle.REDSTONE)
-				.color(Color.RED)
-				.rotateSpeed(0.7 * Math.round(radius));
+			setupParticles();
 
 			this.particleTaskId = this.effectBuilder.start().getTaskId();
 		} else {
@@ -67,12 +58,35 @@ public class ForceFieldUser implements PlayerOwnedObject {
 
 	public void setRadius(double radius) {
 		this.radius = radius;
-		this.effectBuilder.radius(radius);
-		refreshEffect();
+		if (isActive()) {
+			this.effectBuilder.radius(radius);
+			refreshEffect();
+		}
+	}
+
+	public boolean isActive() {
+		return particleTaskId != -1;
+	}
+
+	public void setupParticles() {
+		this.effectBuilder = PolygonEffect.builder()
+			.polygon(PolygonEffect.Polygon.TRIANGLE)
+			.updateLoc(true)
+			.ticks(-1)
+			.clientSide(true)
+			.player(getOnlinePlayer())
+			.radius(this.radius)
+			.whole(false)
+			.particle(Particle.REDSTONE)
+			.color(Color.RED)
+			.rotateSpeed(0.7 * Math.round(radius));
 	}
 
 	public void refreshEffect() {
 		Tasks.cancel(this.particleTaskId);
+		if (this.effectBuilder == null)
+			setupParticles();
+
 		this.particleTaskId = this.effectBuilder.start().getTaskId();
 	}
 }
