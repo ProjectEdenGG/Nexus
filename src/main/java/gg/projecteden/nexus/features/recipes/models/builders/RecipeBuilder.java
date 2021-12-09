@@ -93,4 +93,12 @@ public abstract class RecipeBuilder<T extends RecipeBuilder<?>> {
 		return new SurroundBuilder(center);
 	}
 
+	public static FurnaceBuilder smelt(Material smelt) {
+		return new FurnaceBuilder(smelt);
+	}
+
+	public static FurnaceBuilder blast(Material smelt) {
+		return new BlastFurnaceBuilder(smelt);
+	}
+
 }

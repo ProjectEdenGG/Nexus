@@ -56,7 +56,7 @@ public class CustomRecipesMenu extends MenuUtils implements InventoryProvider {
 				int row = 1;
 				int column = 1;
 				for (RecipeType type : RecipeType.values()) {
-					if (type == RecipeType.MAIN)
+					if (type == RecipeType.MAIN || type == RecipeType.FURNACE) // TODO Support furnace recipes in menu
 						continue;
 
 					contents.set(row, column, ClickableItem.from(type.getItem(), e -> new CustomRecipesMenu(type).open(player)));

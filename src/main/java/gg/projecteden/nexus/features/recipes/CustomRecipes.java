@@ -31,8 +31,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
-import org.bukkit.inventory.BlastingRecipe;
-import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
@@ -47,7 +45,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
+import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.blast;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shapeless;
+import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.smelt;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.surround;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
@@ -247,27 +247,13 @@ public class CustomRecipes extends Feature implements Listener {
 	}
 
 	private void registerFurnace() {
-		List<Recipe> recipes = new ArrayList<>();
-		// Furnace
-		recipes.add(new FurnaceRecipe(new NamespacedKey(Nexus.getInstance(), "nexus_furnace_raw_copper"),
-			new ItemStack(Material.COPPER_BLOCK), Material.RAW_COPPER_BLOCK, 6.3F, 1200));
-		recipes.add(new FurnaceRecipe(new NamespacedKey(Nexus.getInstance(), "nexus_furnace_raw_iron"),
-			new ItemStack(Material.IRON_BLOCK), Material.RAW_IRON_BLOCK, 6.3F, 1200));
-		recipes.add(new FurnaceRecipe(new NamespacedKey(Nexus.getInstance(), "nexus_furnace_raw_gold"),
-			new ItemStack(Material.GOLD_BLOCK), Material.RAW_GOLD_BLOCK, 9F, 1200));
+		smelt(Material.RAW_COPPER_BLOCK).toMake(Material.COPPER_BLOCK).exp(6.3f).time(1200).build().register();
+		smelt(Material.RAW_IRON_BLOCK).toMake(Material.IRON_BLOCK).exp(6.3f).time(1200).build().register();
+		smelt(Material.RAW_GOLD_BLOCK).toMake(Material.GOLD_BLOCK).exp(9f).time(1200).build().register();
 
-		// Blast Furnace
-		recipes.add(new BlastingRecipe(new NamespacedKey(Nexus.getInstance(), "nexus_blast_furnace_raw_copper"),
-			new ItemStack(Material.COPPER_BLOCK), Material.RAW_COPPER_BLOCK, 6.3F, 600));
-		recipes.add(new BlastingRecipe(new NamespacedKey(Nexus.getInstance(), "nexus_blast_furnace__raw_iron"),
-			new ItemStack(Material.IRON_BLOCK), Material.RAW_IRON_BLOCK, 6.3F, 600));
-		recipes.add(new BlastingRecipe(new NamespacedKey(Nexus.getInstance(), "nexus_blast_furnace_raw_gold"),
-			new ItemStack(Material.GOLD_BLOCK), Material.RAW_GOLD_BLOCK, 9F, 600));
-
-
-		for (Recipe furnaceRecipe : recipes) {
-			CustomRecipes.register(furnaceRecipe);
-		}
+		blast(Material.RAW_COPPER_BLOCK).toMake(Material.COPPER_BLOCK).exp(6.3f).time(600).build().register();
+		blast(Material.RAW_IRON_BLOCK).toMake(Material.IRON_BLOCK).exp(6.3f).time(600).build().register();
+		blast(Material.RAW_GOLD_BLOCK).toMake(Material.GOLD_BLOCK).exp(9f).time(600).build().register();
 	}
 
 	public void misc() {
@@ -282,8 +268,8 @@ public class CustomRecipes extends Feature implements Listener {
 		shapeless().add(Material.DRIPSTONE_BLOCK).toMake(Material.POINTED_DRIPSTONE, 4).build().type(RecipeType.MISC).register();
 		shapeless().add(Material.HONEYCOMB_BLOCK).toMake(Material.HONEYCOMB, 4).build().type(RecipeType.MISC).register();
 		shapeless().add(Material.MELON).toMake(Material.MELON_SLICE, 5).build().type(RecipeType.MISC).register();
-		shapeless().add(Material.RED_DYE).add(Material.ORANGE_DYE).add(Material.YELLOW_DYE).add(Material.GREEN_DYE).add(Material.CYAN_DYE)
-			.add(Material.BLUE_DYE).add(Material.PURPLE_DYE).add(Material.PINK_DYE).add(Material.GLASS_BOTTLE)
+		shapeless().add(Material.GLASS_BOTTLE, Material.RED_DYE, Material.ORANGE_DYE, Material.YELLOW_DYE,
+				Material.GREEN_DYE, Material.CYAN_DYE, Material.BLUE_DYE, Material.PURPLE_DYE, Material.PINK_DYE)
 			.toMake(DyeStation.rainbowDye).build().type(RecipeType.MISC).register();
 
 		light();

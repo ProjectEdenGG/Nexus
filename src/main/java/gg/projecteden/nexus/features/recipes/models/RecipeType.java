@@ -30,7 +30,8 @@ public enum RecipeType {
 	MISC(Material.BLUE_ICE),
 	FUNCTIONAL(Material.CHEST, 0, true),
 	DECORATION(Material.AMETHYST_SHARD, 4, true),
-	ARMOR(Material.DIAMOND_CHESTPLATE, 0, true);
+	ARMOR(Material.DIAMOND_CHESTPLATE, 0, true),
+	FURNACE(Material.FURNACE);
 
 	private final Material material;
 	private final int customModelData;
