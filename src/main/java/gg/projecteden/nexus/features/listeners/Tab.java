@@ -66,8 +66,10 @@ public class Tab implements Listener {
 	public static String getFooter(Player player) {
 		final String nl = System.lineSeparator();
 		return
-			nl + "  " + ScoreboardLine.PING.render(player) + "  &8&l|  " + ScoreboardLine.TPS.render(player) + "  " +
+			nl + ScoreboardLine.PING.render(player) + "  &8&l|  " + ScoreboardLine.TPS.render(player) +
 			nl + ScoreboardLine.CHANNEL.render(player) +
+			nl + "" +
+			nl + "  " + ScoreboardLine.SERVER_TIME.render(player) + "  " +
 			nl + "" +
 			nl + "&3Join us on &c/discord" +
 			nl;

@@ -1,8 +1,10 @@
 package gg.projecteden.nexus.models.scoreboard;
 
+import com.mongodb.DBObject;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import dev.morphia.annotations.PreLoad;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.scoreboard.ScoreboardLine;
@@ -52,6 +54,13 @@ public class ScoreboardUser implements PlayerOwnedObject {
 		this.uuid = uuid;
 		if (lines.isEmpty())
 			lines = ScoreboardLine.getDefaultLines(getOnlinePlayer());
+	}
+
+	@PreLoad
+	void fixPreLoad(DBObject dbObject) {
+		DBObject map = (DBObject) dbObject.get("lines");
+		if (map != null && map.containsField("SERVER_TIME"))
+			map.removeField("SERVER_TIME");
 	}
 
 	public void on() {

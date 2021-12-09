@@ -238,12 +238,13 @@ public enum ScoreboardLine {
 		}
 	},
 
+	@Permission("group.admin")
 	SERVER_TIME {
 		@Override
 		public String render(Player player) {
 			final GeoIP geoip = new GeoIPService().get(player);
 			final LocalDateTime now = LocalDateTime.now();
-			return "&3Server: &e" + now.format(ofPattern("MMM d ")) + geoip.getTimeFormat().formatShort(now);
+			return "&3Server Time: &e" + now.format(ofPattern("MMM d ")) + geoip.getTimeFormat().formatShort(now);
 		}
 	},
 
@@ -314,7 +315,6 @@ public enum ScoreboardLine {
 			if (ScoreboardLine.COORDINATES.hasPermission(player)) put(ScoreboardLine.COORDINATES, true);
 			if (ScoreboardLine.HOURS.hasPermission(player)) put(ScoreboardLine.HOURS, true);
 			if (ScoreboardLine.HELP.hasPermission(player)) put(ScoreboardLine.HELP, !isStaff);
-			if (ScoreboardLine.SERVER_TIME.hasPermission(player)) put(ScoreboardLine.SERVER_TIME, false);
 			if (ScoreboardLine.LOCAL_TIME.hasPermission(player)) put(ScoreboardLine.LOCAL_TIME, false);
 			if (ScoreboardLine.AFK.hasPermission(player)) put(ScoreboardLine.AFK, true);
 		}};
