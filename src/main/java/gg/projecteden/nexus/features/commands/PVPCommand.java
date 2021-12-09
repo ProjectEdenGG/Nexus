@@ -10,6 +10,7 @@ import gg.projecteden.nexus.models.godmode.GodmodeService;
 import gg.projecteden.nexus.models.pvp.PVP;
 import gg.projecteden.nexus.models.pvp.PVPService;
 import gg.projecteden.nexus.utils.LocationUtils;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGroup;
@@ -24,6 +25,7 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -39,6 +41,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
+import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -109,7 +112,9 @@ public class PVPCommand extends CustomCommand implements Listener {
 			return;
 		if (victim.equals(attacker))
 			return;
-		if (WorldGroup.of(victim) != WorldGroup.SURVIVAL) return;
+		if (WorldGroup.of(victim) != WorldGroup.SURVIVAL)
+			return;
+
 
 		// Cancel if both players do not have pvp on
 		if (!victim.isEnabled() || !attacker.isEnabled()) {
@@ -137,7 +142,9 @@ public class PVPCommand extends CustomCommand implements Listener {
 
 	@Nullable
 	public PVP getDamageCause(EntityDamageEvent event) {
-		if (event == null) return null;
+		if (event == null)
+			return null;
+
 		if (event.getEntity() instanceof Player && ((Player) event.getEntity()).getKiller() != null)
 			return service.get(((Player) event.getEntity()).getKiller());
 
@@ -151,8 +158,12 @@ public class PVPCommand extends CustomCommand implements Listener {
 			} else if (entityEvent.getDamager() instanceof EnderCrystal crystal) {
 				// find last user to damage the end crystal
 				EntityDamageEvent crystalDamage = crystal.getLastDamageCause();
-				if (crystalDamage == null) return null;
-				if (!(crystalDamage instanceof EntityDamageByEntityEvent crystalDamageEvent)) return null;
+				if (crystalDamage == null)
+					return null;
+
+				if (!(crystalDamage instanceof EntityDamageByEntityEvent crystalDamageEvent))
+					return null;
+
 				Entity damager = crystalDamageEvent.getDamager();
 				if (damager instanceof Player)
 					attacker = service.get(damager);
@@ -198,9 +209,13 @@ public class PVPCommand extends CustomCommand implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onPlayerPVP(EntityDamageByEntityEvent event) {
-		if (WorldGroup.of(event.getEntity()) != WorldGroup.SURVIVAL) return;
+		if (WorldGroup.of(event.getEntity()) != WorldGroup.SURVIVAL)
+			return;
 
-		if (!(event.getEntity() instanceof Player player)) return;
+
+		if (!(event.getEntity() instanceof Player player))
+			return;
+
 		PVP victim = service.get(player);
 		PVP attacker = getDamageCause(event);
 
@@ -258,13 +273,16 @@ public class PVPCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onPlayerDeath(PlayerDeathEvent event) {
-		if (WorldGroup.of(event.getEntity()) != WorldGroup.SURVIVAL) return;
-		if (getDamageCause(event.getEntity().getLastDamageCause()) == null) return;
-		PVP victim = service.get(event.getEntity());
-		if (!victim.isEnabled()) return;
-		// For some reason, spigots PlayerDeathEvent#setKeepInventory() method
-		// duplicates the items, and md_5 does not see this as a bug
-		// We must clear the drops as well to keep them from duping
+		if (WorldGroup.of(event.getEntity()) != WorldGroup.SURVIVAL)
+			return;
+
+		if (getDamageCause(event.getEntity().getLastDamageCause()) == null)
+			return;
+
+		final PVP victim = service.get(event.getEntity());
+		if (!victim.isEnabled())
+			return;
+
 		if (victim.isKeepInventory()) {
 			event.setKeepInventory(true);
 			event.getDrops().clear();
@@ -272,6 +290,29 @@ public class PVPCommand extends CustomCommand implements Listener {
 			event.setDroppedExp(0);
 		} else
 			event.setKeepInventory(false);
+	}
+	
+	@EventHandler
+	public void onPlayerItemDamage(PlayerItemDamageEvent event) {
+		final Player player = event.getPlayer();
+		final PVP victim = service.get(player);
+		if (!victim.isEnabled())
+			return;
+
+		if (!MaterialTag.ARMOR.isTagged(event.getItem()))
+			return;
+
+		final EntityDamageEvent lastDamage = player.getLastDamageCause();
+		if (lastDamage == null)
+			return;
+
+		if (!(lastDamage instanceof EntityDamageByEntityEvent attackEvent))
+			return;
+
+		if (attackEvent.getDamager().getType() != EntityType.PLAYER)
+			return;
+
+		event.setCancelled(true);
 	}
 
 }
