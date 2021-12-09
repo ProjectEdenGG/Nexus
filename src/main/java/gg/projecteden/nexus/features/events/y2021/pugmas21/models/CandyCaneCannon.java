@@ -54,8 +54,8 @@ public class CandyCaneCannon implements Listener {
 		if (!isCannon(item))
 			return;
 
-		final CandyCane candyCane = findCandyCane(player);
-		if (candyCane == null) {
+		final ItemStack candyCaneItem = findCandyCane(player);
+		if (candyCaneItem == null) {
 			if (new CooldownService().check(player, "candycanecannonammo", TickTime.SECOND.x(3)))
 				PlayerUtils.send(player, "&cYou are out of candy cane ammo!");
 
@@ -64,12 +64,12 @@ public class CandyCaneCannon implements Listener {
 		}
 
 		final Snowball snowball = player.launchProjectile(Snowball.class);
-		snowball.setItem(candyCane.item());
+		snowball.setItem(candyCaneItem);
 		snowball.setSilent(true);
 		new SoundBuilder(Sound.ENTITY_SNOWBALL_THROW).location(player).pitch(2).play();
 
 		if (!GameModeWrapper.of(player).isCreative())
-			PlayerUtils.removeItem(player, candyCane.item());
+			candyCaneItem.subtract();
 	}
 
 	private enum CandyCane {
@@ -105,16 +105,17 @@ public class CandyCaneCannon implements Listener {
 		}
 	}
 
-	private CandyCane findCandyCane(Player player) {
-		final CandyCane offHand = CandyCane.of(player.getInventory().getItemInOffHand());
+	private ItemStack findCandyCane(Player player) {
+		ItemStack item = player.getInventory().getItemInOffHand();
+		final CandyCane offHand = CandyCane.of(item);
 		if (offHand != null)
-			return offHand;
+			return item;
 
-		Set<CandyCane> candyCanes = new HashSet<>();
-		for (ItemStack item : player.getInventory().getContents()) {
-			final CandyCane candyCane = CandyCane.of(item);
+		Set<ItemStack> candyCanes = new HashSet<>();
+		for (ItemStack _item : player.getInventory().getContents()) {
+			final CandyCane candyCane = CandyCane.of(_item);
 			if (candyCane != null)
-				candyCanes.add(candyCane);
+				candyCanes.add(_item);
 		}
 
 		return RandomUtils.randomElement(candyCanes);
