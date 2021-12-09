@@ -102,7 +102,6 @@ public class HoursCommand extends CustomCommand {
 		paginate(results, formatter, "/hours top " + args.getInput() + onlyStaffSwitch, page);
 	}
 
-
 	@ConverterFor(HoursTopArguments.class)
 	HoursTopArguments convertToHoursTopArgument(String value) {
 		return new HoursTopArguments(value);

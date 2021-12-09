@@ -30,7 +30,8 @@ public class OnlineStaffCommand extends CustomCommand {
 		send("&3There are &e" + counts + " &3staff members online");
 		Rank.STAFF_RANKS.forEach(rank -> {
 			List<Nerd> nerds = rank.getOnlineNerds();
-			if (nerds.size() == 0) return;
+			if (nerds.size() == 0)
+				return;
 
 			send(rank.getColoredName() + "s&f: " + nerds.stream().filter(this::canSee).map(this::getNameWithPresence).collect(Collectors.joining("&f, ")));
 		});

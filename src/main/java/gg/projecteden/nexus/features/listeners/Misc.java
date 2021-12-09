@@ -122,7 +122,6 @@ public class Misc implements Listener {
 		}
 	}
 
-
 	@EventHandler
 	public void onPlaceOnLight(BlockPlaceEvent event) {
 		if (event.getBlockReplacedState().getType() != Material.LIGHT)

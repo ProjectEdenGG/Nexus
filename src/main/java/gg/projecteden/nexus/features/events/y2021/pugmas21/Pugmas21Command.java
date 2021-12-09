@@ -16,6 +16,7 @@ import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestI
 import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestLine;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestTask;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -63,7 +64,7 @@ import java.util.stream.Collectors;
 import static gg.projecteden.utils.TimeUtils.shortDateFormat;
 
 @NoArgsConstructor
-@Redirect(from = "/pugmas", to = "/pugmas21")
+@Aliases("pugmas")
 @Redirect(from = "/advent", to = "/pugmas21 advent")
 @Redirect(from = "/district", to = "/pugmas21 district")
 @Redirect(from = "/waypoint", to = "/pugmas21 advent waypoint")
