@@ -56,9 +56,12 @@ public class StoreCommand extends CustomCommand implements Listener {
 	private static final String PLUS = "&3[+] &e";
 
 	private final ContributorService service = new ContributorService();
+	private Contributor contributor;
 
 	public StoreCommand(CommandEvent event) {
 		super(event);
+		if (isPlayerCommandEvent())
+			contributor = service.get(player());
 	}
 
 	static {
@@ -287,6 +290,16 @@ public class StoreCommand extends CustomCommand implements Listener {
 			send(" 2: " + display.getDisplay2().getId());
 			send(" 3: " + display.getDisplay3().getId());
 		}
+	}
+
+	@Path("broadcasts <on/off>")
+	void broadcasts(Boolean enabled) {
+		if (enabled == null)
+			enabled = contributor.isBroadcasts();
+
+		contributor.setBroadcasts(enabled);
+		service.save(contributor);
+		send(PREFIX + (enabled ? "&aEnabled" : "&cDisabled") + " &3your purchase broadcasts");
 	}
 
 	@EventHandler

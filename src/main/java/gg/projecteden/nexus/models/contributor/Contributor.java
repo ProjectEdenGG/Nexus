@@ -39,6 +39,7 @@ public class Contributor implements PlayerOwnedObject {
 	private UUID uuid;
 	private List<Purchase> purchases = new ArrayList<>();
 	private double credit;
+	private boolean broadcasts = true;
 
 	public void add(Purchase purchase) {
 		purchases.removeIf(_purchase -> purchase.getId().equals(_purchase.getId()));

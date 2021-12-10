@@ -68,17 +68,18 @@ public class HandlePurchaseCommand extends CustomCommand {
 				send(purchase.getUuid(), ("&eThank you for buying " + purchase.getPackageName() + "! " +
 						"&3Your donation is &3&ogreatly &3appreciated and will be put to good use."));
 
-				if (packageType == Package.CUSTOM_DONATION) {
-					Koda.say("Thank you for your custom donation, " + purchase.getNickname() + "! " +
-							"We greatly appreciate your selfless contribution &4❤");
-					// this is not necessarily what they donated
-					// if they make a custom donation and purchase items at the same
-					// time, i have no way to break down the price from the payload
-					// but that is very rare, so its better than nothing i guess
-					contributor.giveCredit(purchase.getPrice());
-				} else
-					Koda.say("Thank you for your purchase, " + purchase.getNickname() + "! " +
-							"Enjoy your " + purchase.getPackageName() + " perk!");
+				if (contributor.isBroadcasts())
+					if (packageType == Package.CUSTOM_DONATION) {
+						Koda.say("Thank you for your custom donation, " + purchase.getNickname() + "! " +
+								"We greatly appreciate your selfless contribution &4❤");
+						// this is not necessarily what they donated
+						// if they make a custom donation and purchase items at the same
+						// time, i have no way to break down the price from the payload
+						// but that is very rare, so its better than nothing i guess
+						contributor.giveCredit(purchase.getPrice());
+					} else
+						Koda.say("Thank you for your purchase, " + purchase.getNickname() + "! " +
+								"Enjoy your " + purchase.getPackageName() + " perk!");
 
 				if (StringUtils.isV4Uuid(purchase.getPurchaserUuid())) {
 					new BadgeUserService().edit(purchase.getPurchaserUuid(), badgeUser -> badgeUser.give(Badge.SUPPORTER));
