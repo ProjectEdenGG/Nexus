@@ -852,6 +852,9 @@ public abstract class CustomCommand extends ICustomCommand {
 
 		Material material = Material.matchMaterial(value);
 		if (material == null)
+			material = Material.matchMaterial("WHITE_" + value);
+
+		if (material == null)
 			throw new InvalidInputException("Material from " + value + " not found");
 
 		if (material == Material.COMMAND_BLOCK_MINECART)
