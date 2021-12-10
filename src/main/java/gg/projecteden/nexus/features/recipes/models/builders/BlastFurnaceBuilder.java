@@ -12,6 +12,11 @@ public class BlastFurnaceBuilder extends FurnaceBuilder {
 	}
 
 	@Override
+	protected @NotNull String getKey() {
+		return "blastfurnace_" + super.getKey();
+	}
+
+	@Override
 	public @NotNull Recipe getRecipe() {
 		return new BlastingRecipe(key(), result, smelt, exp, time);
 	}

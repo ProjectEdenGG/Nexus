@@ -27,6 +27,11 @@ public class FurnaceBuilder extends RecipeBuilder<FurnaceBuilder> {
 	}
 
 	@Override
+	protected @NotNull String getKey() {
+		return "furnace_" + super.getKey();
+	}
+
+	@Override
 	public NexusRecipe build() {
 		return super.build().type(RecipeType.FURNACE);
 	}
