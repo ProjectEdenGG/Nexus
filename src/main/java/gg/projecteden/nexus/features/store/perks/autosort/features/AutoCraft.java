@@ -37,8 +37,11 @@ public class AutoCraft implements Listener {
 		put(Material.DIAMOND_BLOCK, Set.of(Material.DIAMOND));
 		put(Material.EMERALD_BLOCK, Set.of(Material.EMERALD));
 		put(Material.COPPER_BLOCK, Set.of(Material.COPPER_INGOT));
+		put(Material.RAW_COPPER_BLOCK, Set.of(Material.RAW_COPPER));
 		put(Material.GOLD_BLOCK, Set.of(Material.GOLD_INGOT));
+		put(Material.RAW_GOLD_BLOCK, Set.of(Material.RAW_GOLD));
 		put(Material.IRON_BLOCK, Set.of(Material.IRON_INGOT));
+		put(Material.RAW_IRON_BLOCK, Set.of(Material.RAW_IRON));
 		put(Material.REDSTONE_BLOCK, Set.of(Material.REDSTONE));
 		put(Material.LAPIS_BLOCK, Set.of(Material.LAPIS_LAZULI));
 		put(Material.COAL_BLOCK, Set.of(Material.COAL));

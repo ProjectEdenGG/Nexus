@@ -90,10 +90,13 @@ public class CompactCommand extends CustomCommand {
 	@AllArgsConstructor
 	public enum Compactable {
 		COAL(Material.COAL_BLOCK, 9),
+		RAW_IRON(Material.RAW_IRON_BLOCK, 9),
 		IRON_NUGGET(Material.IRON_INGOT, 9),
 		IRON_INGOT(Material.IRON_BLOCK, 9),
+		RAW_GOLD(Material.RAW_GOLD_BLOCK, 9),
 		GOLD_NUGGET(Material.GOLD_INGOT, 9),
 		GOLD_INGOT(Material.GOLD_BLOCK, 9),
+		RAW_COPPER(Material.RAW_COPPER_BLOCK, 9),
 		COPPER_INGOT(Material.COPPER_BLOCK, 9),
 		REDSTONE(Material.REDSTONE_BLOCK, 9),
 		LAPIS_LAZULI(Material.LAPIS_BLOCK, 9),
