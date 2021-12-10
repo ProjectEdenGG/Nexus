@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.minigames;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.minigames.lobby.ActionBar;
 import gg.projecteden.nexus.features.minigames.lobby.Parkour;
 import gg.projecteden.nexus.features.minigames.lobby.TickPerks;
@@ -16,6 +17,7 @@ import gg.projecteden.nexus.features.minigames.models.annotations.MatchDataFor;
 import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.minigames.models.modifiers.MinigameModifier;
+import gg.projecteden.nexus.features.minigames.utils.MinigameNight.NextMGN;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.minigamessetting.MinigamesConfigService;
 import gg.projecteden.nexus.utils.AdventureUtils;
@@ -27,11 +29,13 @@ import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.utils.DiscordId.TextChannel;
 import lombok.Getter;
 import me.lexikiq.OptionalLocation;
 import me.lucko.helper.Services;
 import me.lucko.helper.scoreboard.PacketScoreboard;
 import me.lucko.helper.scoreboard.PacketScoreboardProvider;
+import net.dv8tion.jda.api.entities.GuildChannel;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Bukkit;
@@ -78,6 +82,28 @@ public class Minigames extends Feature {
 			new Parkour();
 			new TickPerks();
 		});
+
+		Nexus.getCron().schedule("0 */2 * * *", Minigames::updateTopic);
+	}
+
+	private static String channelTopic;
+
+	public static void updateTopic() {
+		if (Discord.getGuild() == null)
+			return;
+
+		final NextMGN mgn = new NextMGN();
+		String topic = (mgn.isNow() ? "Minigame night has started!" : "Next minigame night: <t:%s>".formatted(mgn.getNext().toEpochSecond()))
+			+ "%n%nUse /subscribe minigames to get @mentioned for minigame updates";
+
+		if (topic.equals(channelTopic))
+			return;
+
+		channelTopic = topic;
+
+		GuildChannel channel = Discord.getGuild().getGuildChannelById(TextChannel.MINIGAMES.getId());
+		if (channel != null)
+			channel.getManager().setTopic(topic).queue();
 	}
 
 	public static World getWorld() {

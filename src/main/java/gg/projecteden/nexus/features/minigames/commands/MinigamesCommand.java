@@ -19,6 +19,7 @@ import gg.projecteden.nexus.features.minigames.models.matchdata.MastermindMatchD
 import gg.projecteden.nexus.features.minigames.models.modifiers.MinigameModifiers;
 import gg.projecteden.nexus.features.minigames.models.perks.HideParticle;
 import gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreboard;
+import gg.projecteden.nexus.features.minigames.utils.MinigameNight.NextMGN;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -67,8 +68,6 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
-import java.time.DayOfWeek;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -423,28 +422,24 @@ public class MinigamesCommand extends CustomCommand {
 		send(PREFIX + "Pasted schematic " + schematicName);
 	}
 
+	@Async
+	@Path("topic update")
+	@Permission("group.admin")
+	void topic_update() {
+		Minigames.updateTopic();
+	}
+
 	private static String inviteCommand;
 	private static String inviteMessage;
 
 	private void updateInvite() {
-		boolean isMinigameNight = false;
-		LocalDateTime date = LocalDateTime.now();
-		DayOfWeek dow = date.getDayOfWeek();
-
-		if (dow.equals(DayOfWeek.SATURDAY)) {
-			int hour = date.getHour();
-			if (hour > 15 && hour < 18) {
-				isMinigameNight = true;
-			}
-		}
-
 		final boolean noStaffInMinigames = OnlinePlayers.where()
 			.worldGroup(WorldGroup.MINIGAMES)
 			.rank(Rank::isStaff)
 			.get().isEmpty();
 
 		boolean canUse = false;
-		if (!isMinigameNight || noStaffInMinigames)
+		if (!new NextMGN().isNow() || noStaffInMinigames)
 			canUse = true;
 		if (player().hasPermission("minigames.invite"))
 			canUse = true;
