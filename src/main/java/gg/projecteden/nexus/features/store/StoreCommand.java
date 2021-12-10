@@ -109,8 +109,9 @@ public class StoreCommand extends CustomCommand implements Listener {
 			error("You do not have enough credit");
 
 		contributor.takeCredit(amount);
-		String code = new CouponCreator(contributor, amount).create();
+		service.save(contributor);
 
+		String code = new CouponCreator(contributor, amount).create();
 		send(json(PREFIX + "Created store coupon &e" + code + "&3. Click to copy").copy(code).hover("&fClick to copy", "&fRedeem at " + StoreCommand.URL));
 	}
 
