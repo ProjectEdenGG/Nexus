@@ -17,6 +17,7 @@ import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.ItemUtils.ItemStackComparator;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.WoodType;
 import gg.projecteden.utils.Utils;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -272,6 +273,14 @@ public class CustomRecipes extends Feature implements Listener {
 		shapeless().add(Material.MOSS_CARPET, 3).toMake(Material.MOSS_BLOCK, 2).build().type(RecipeType.MISC).register();
 		for (ColorType color : ColorType.getDyes())
 			shapeless().add(color.getCarpet(), 3).toMake(color.getWool(), 2).build().type(RecipeType.MISC).register();
+
+		for (ColorType color : ColorType.getDyes())
+			shapeless().add(color.getConcrete(), 2).toMake(color.getConcretePowder(), 2).extra("powderize").build().type(RecipeType.MISC).register();
+
+		for (WoodType wood : WoodType.values()) {
+			shapeless().add(wood.getStrippedLog(), 2).toMake(wood.getLog(), 2).build().type(RecipeType.MISC).register();
+			shapeless().add(wood.getStrippedWood(), 2).toMake(wood.getWood(), 2).build().type(RecipeType.MISC).register();
+		}
 
 		shapeless().add(Material.GLASS_BOTTLE, Material.RED_DYE, Material.ORANGE_DYE, Material.YELLOW_DYE,
 				Material.GREEN_DYE, Material.CYAN_DYE, Material.BLUE_DYE, Material.PURPLE_DYE, Material.PINK_DYE)
