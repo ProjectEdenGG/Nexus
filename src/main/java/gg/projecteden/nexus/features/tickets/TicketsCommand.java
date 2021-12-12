@@ -18,6 +18,7 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +48,8 @@ public class TicketsCommand extends CustomCommand {
 	@Path("page [page]")
 	void run(@Arg("1") int page) {
 		List<Ticket> collect = tickets.getAll().stream()
-				.filter(ticket -> ticket.canBeSeenBy(player()))
+			.filter(ticket -> ticket.canBeSeenBy(player()))
+			.sorted(Comparator.comparingInt(Ticket::getId).reversed())
 				.collect(Collectors.toList());
 
 		paginate(collect, (ticket, index) -> TicketFeature.formatTicket(player(), ticket), "/tickets page", page);
