@@ -3,22 +3,7 @@ package gg.projecteden.nexus.features.mobheads;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.mobheads.common.MobHead;
 import gg.projecteden.nexus.features.mobheads.common.MobHeadVariant;
-import gg.projecteden.nexus.features.mobheads.variants.AxolotlVariant;
-import gg.projecteden.nexus.features.mobheads.variants.CatVariant;
-import gg.projecteden.nexus.features.mobheads.variants.CreeperVariant;
-import gg.projecteden.nexus.features.mobheads.variants.FoxVariant;
-import gg.projecteden.nexus.features.mobheads.variants.HorseVariant;
-import gg.projecteden.nexus.features.mobheads.variants.LlamaVariant;
-import gg.projecteden.nexus.features.mobheads.variants.MooshroomVariant;
-import gg.projecteden.nexus.features.mobheads.variants.PandaVariant;
-import gg.projecteden.nexus.features.mobheads.variants.ParrotVariant;
-import gg.projecteden.nexus.features.mobheads.variants.RabbitVariant;
-import gg.projecteden.nexus.features.mobheads.variants.SheepVariant;
-import gg.projecteden.nexus.features.mobheads.variants.SnowmanVariant;
-import gg.projecteden.nexus.features.mobheads.variants.TraderLlamaVariant;
-import gg.projecteden.nexus.features.mobheads.variants.TropicalFishVariant;
-import gg.projecteden.nexus.features.mobheads.variants.VillagerVariant;
-import gg.projecteden.nexus.features.mobheads.variants.ZombieVillagerVariant;
+import gg.projecteden.nexus.features.mobheads.variants.*;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.WorldEditUtils;
@@ -33,24 +18,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.Directional;
-import org.bukkit.entity.Axolotl;
-import org.bukkit.entity.Cat;
-import org.bukkit.entity.Creeper;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Fox;
-import org.bukkit.entity.Horse;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Llama;
-import org.bukkit.entity.MushroomCow;
-import org.bukkit.entity.Panda;
-import org.bukkit.entity.Parrot;
-import org.bukkit.entity.Rabbit;
-import org.bukkit.entity.Sheep;
-import org.bukkit.entity.Snowman;
-import org.bukkit.entity.TraderLlama;
-import org.bukkit.entity.Villager;
-import org.bukkit.entity.ZombieVillager;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -266,7 +234,7 @@ public enum MobHeadType implements MobHead {
 					return;
 				}
 
-				skull = new ItemBuilder(skull).name("&e" + mobHeadType.getDisplayName() + " Head").build();
+				skull = new ItemBuilder(skull).name("&e" + mobHeadType.getDisplayName() + " Head").lore("&3Mob Head").build();
 				mobHeadType.setGenericSkull(skull);
 				mobHeadType.setChance(chance);
 				allSkulls.add(skull);
@@ -301,7 +269,7 @@ public enum MobHeadType implements MobHead {
 						continue;
 					}
 
-					skull = new ItemBuilder(skull).name("&e" + mobHeadVariant.getDisplayName() + " Head").build();
+					skull = new ItemBuilder(skull).name("&e" + mobHeadVariant.getDisplayName() + " Head").lore("&3Mob Head").build();
 					mobHeadVariant.setItemStack(skull);
 					allSkulls.add(skull);
 				} catch (Exception ex) {
