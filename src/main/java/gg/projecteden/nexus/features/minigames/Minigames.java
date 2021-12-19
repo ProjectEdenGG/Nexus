@@ -94,7 +94,7 @@ public class Minigames extends Feature {
 
 		final NextMGN mgn = new NextMGN();
 		String topic = (mgn.isNow() ? "Minigame night has started!" : "Next minigame night: <t:%s>".formatted(mgn.getNext().toEpochSecond()))
-			+ "%n%nUse /subscribe minigames to get @mentioned for minigame updates";
+			+ "\n\nUse /subscribe minigames to get @mentioned for minigame updates";
 
 		if (topic.equals(channelTopic))
 			return;
