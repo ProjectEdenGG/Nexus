@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -23,9 +24,10 @@ import lombok.NonNull;
 import java.math.BigDecimal;
 import java.util.Map;
 
-public class WalletCommand extends CustomCommand {
+@Aliases("wallet")
+public class BankCommand extends CustomCommand {
 
-	public WalletCommand(@NonNull CommandEvent event) {
+	public BankCommand(@NonNull CommandEvent event) {
 		super(event);
 	}
 
