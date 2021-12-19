@@ -21,6 +21,9 @@ import gg.projecteden.utils.DiscordId.Role;
 import gg.projecteden.utils.DiscordId.TextChannel;
 import org.bukkit.OfflinePlayer;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @HandledBy(Bot.RELAY)
@@ -43,18 +46,35 @@ public class TicketsDiscordCommand extends Command {
 				OfflinePlayer player = PlayerUtils.getPlayer(user.getUuid());
 
 				String[] args = event.getArgs().split(" ");
-				if (args.length == 0 || !args[0].toLowerCase().matches("(view|close|reopen)"))
-					throw new InvalidInputException("Correct usage: `/tickets <view|close|reopen> <ticketId>`");
+				if (args.length == 0 || !args[0].toLowerCase().matches("(list|view|close|reopen)"))
+					throw new InvalidInputException("Correct usage: `/tickets <list|view|close|reopen> <ticketId>`");
+
+				final String nl = System.lineSeparator();
+				final TicketsService service = new TicketsService();
+				final Tickets tickets = service.get0();
+
+				if (args.length == 1) {
+					if ("list".equalsIgnoreCase(args[0])) {
+						List<Ticket> opened = tickets.getTickets().stream()
+							.filter(Ticket::isOpen).collect(Collectors.toList());
+
+						if (opened.isEmpty())
+							throw new InvalidInputException("There are no open tickets");
+
+						String ids = opened.stream()
+							.map(_ticket -> "#" + _ticket.getId())
+							.collect(Collectors.joining(", "));
+
+						event.reply(PREFIX + ids);
+						return;
+					}
+				}
 
 				String id = args[1];
 				if (!Utils.isInt(id))
 					throw new InvalidInputException("Ticket ID must be a number");
 
-				final String nl = System.lineSeparator();
-				final TicketsService service = new TicketsService();
-				final Tickets tickets = service.get0();
 				final Ticket ticket = tickets.get(Integer.parseInt(id));
-
 				switch (args[0].toLowerCase()) {
 					case "view" -> {
 						String message = PREFIX + "**#" + ticket.getId() + "** ";
