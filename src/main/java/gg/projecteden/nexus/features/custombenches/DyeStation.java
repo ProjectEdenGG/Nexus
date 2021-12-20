@@ -224,8 +224,10 @@ public class DyeStation extends CustomBench {
 			ItemStack _dye = dyeOptional.map(ClickableItem::getItem).orElse(null);
 			if (CustomModelData.of(_dye) == dyeModelData)
 				this.dyeType = DyeType.DYE;
-			else if (CustomModelData.of(_dye) == stainModelData)
+			else if (CustomModelData.of(_dye) == stainModelData) {
 				this.dyeType = DyeType.STAIN;
+				clearChoices(contents);
+			}
 
 			Optional<ClickableItem> resultOptional = contents.get(slot_result);
 			ItemStack _result = resultOptional.map(ClickableItem::getItem).orElse(null);

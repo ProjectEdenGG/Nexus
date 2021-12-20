@@ -29,6 +29,57 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 		super(event);
 	}
 
+	@Path("tables [radius]")
+	void convert_tables(@Arg("200") int radius) {
+		int converted = 0;
+		for (ItemFrame itemFrame : location().getNearbyEntitiesByType(ItemFrame.class, radius)) {
+			final ItemStack item = itemFrame.getItem();
+			if (isNullOrAir(item))
+				continue;
+
+			if (!item.getType().equals(Material.SCAFFOLDING))
+				continue;
+
+			final TableSize size = TableSize.ofOld(item);
+			if (size == null)
+				continue;
+
+			itemFrame.setItem(new ItemBuilder(Material.LEATHER_HORSE_ARMOR)
+				.customModelData(size.getNewId())
+				.armorColor(getColor("#F4C57A"))
+				.build());
+			++converted;
+		}
+
+		send(PREFIX + "Converted " + converted + " tables");
+	}
+
+	@AllArgsConstructor
+	private enum TableSize {
+		_1x1(30, 300),
+		_1x2(31, 301),
+		_2x2(32, 302),
+		_2x3(33, 303),
+		_3x3(34, 304),
+		;
+
+		int oldId;
+		@Getter
+		int newId;
+
+		public static TableSize ofOld(ItemStack item) {
+			return ofOld(CustomModelData.of(item));
+		}
+
+		public static TableSize ofOld(int customModelData) {
+			for (TableSize size : values())
+				if (customModelData == size.oldId)
+					return size;
+
+			return null;
+		}
+	}
+
 	@Path("balloons [radius]")
 	void convert_balloons(@Arg("200") int radius) {
 		int converted = 0;
@@ -42,7 +93,7 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 
 			final BalloonSize size = BalloonSize.ofOld(item);
 			if (size == null)
-				return;
+				continue;
 
 			final BalloonColor color = BalloonColor.ofOld(item);
 
@@ -231,6 +282,11 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 			final java.awt.Color decode = java.awt.Color.decode("#" + hexColor);
 			return Color.fromRGB(decode.getRed(), decode.getGreen(), decode.getBlue());
 		}
+	}
+
+	private Color getColor(String hex) {
+		final java.awt.Color decode = java.awt.Color.decode(hex);
+		return Color.fromRGB(decode.getRed(), decode.getGreen(), decode.getBlue());
 	}
 
 }
