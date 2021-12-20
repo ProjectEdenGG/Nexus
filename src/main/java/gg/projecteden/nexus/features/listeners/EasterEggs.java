@@ -44,7 +44,7 @@ public class EasterEggs implements Listener {
 
 	@EventHandler
 	public void onClickOnPlayer(PlayerInteractEntityEvent event) {
-		if (WorldGroup.of(event.getPlayer()).equals(WorldGroup.MINIGAMES))
+		if (WorldGroup.of(event.getPlayer()).isMinigames())
 			return;
 
 		if (!event.getRightClicked().getType().equals(EntityType.PLAYER))

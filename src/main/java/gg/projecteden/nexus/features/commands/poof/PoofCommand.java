@@ -72,7 +72,7 @@ public class PoofCommand extends CustomCommand {
 
 		if (!isStaff()) {
 			String cannotTeleport = "Cannot teleport to " + nickname(target);
-			if (targetWorldGroup.equals(WorldGroup.MINIGAMES))
+			if (targetWorldGroup.isMinigames())
 				error(cannotTeleport + ", they are playing minigames");
 
 			if (targetWorldGroup.equals(WorldGroup.STAFF) || (targetWorld.equals(BearFair21.getWorld()) && !BearFair21.canWarp()))

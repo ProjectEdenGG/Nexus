@@ -28,7 +28,7 @@ public class ForceFieldCommand extends CustomCommand {
 		if (isPlayerCommandEvent()) {
 			user = userService.get(player());
 
-			if (WorldGroup.of(user).equals(WorldGroup.MINIGAMES))
+			if (WorldGroup.of(user).isMinigames())
 				error("Disabled in Minigames.");
 		}
 	}

@@ -68,6 +68,10 @@ public enum WorldGroup {
 		return getWorlds().stream().map(world -> OnlinePlayers.where().world(world).get()).flatMap(Collection::stream).toList();
 	}
 
+	public boolean isMinigames() {
+		return this.equals(MINIGAMES);
+	}
+
 	public static WorldGroup of(@Nullable Entity entity) {
 		return entity == null ? UNKNOWN : of(entity.getWorld());
 	}

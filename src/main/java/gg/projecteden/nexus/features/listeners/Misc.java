@@ -8,12 +8,15 @@ import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.NBTTileEntity;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Koda;
+import gg.projecteden.nexus.features.commands.GamemodeCommand;
 import gg.projecteden.nexus.features.commands.SpeedCommand;
 import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.warps.Warps;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.models.mode.ModeUser;
+import gg.projecteden.nexus.models.mode.ModeUser.FlightMode;
+import gg.projecteden.nexus.models.mode.ModeUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
-import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.tip.Tip;
 import gg.projecteden.nexus.models.tip.Tip.TipType;
 import gg.projecteden.nexus.models.tip.TipService;
@@ -235,7 +238,7 @@ public class Misc implements Listener {
 	@EventHandler
 	public void onEatGlowBerry(PlayerItemConsumeEvent event) {
 		Player player = event.getPlayer();
-		if (WorldGroup.MINIGAMES.equals(WorldGroup.of(player)))
+		if (WorldGroup.of(player).isMinigames())
 			return;
 
 		if (event.getItem().getType() != Material.GLOW_BERRIES)
@@ -486,19 +489,42 @@ public class Misc implements Listener {
 
 		Tasks.wait(10, player::resetPlayerTime);
 
-		if (!Rank.of(player).isStaff()) {
+		Nerd nerd = Nerd.of(player);
+		boolean isStaff = nerd.getRank().isStaff();
+
+		if (!isStaff) {
 			SpeedCommand.resetSpeed(player);
 			player.setAllowFlight(false);
 			player.setFlying(false);
-		}
-
-		if (oldWorldGroup == WorldGroup.CREATIVE) {
-			if (Nerd.of(player).isVanished())
-				if (player.hasPermission("essentials.fly")) {
-					player.setFallDistance(0);
-					player.setAllowFlight(true);
-					player.setFlying(true);
+		} else {
+			if (nerd.isVanished()) {
+				if (oldWorldGroup == WorldGroup.CREATIVE || oldWorldGroup == WorldGroup.STAFF) {
+					if (player.hasPermission("essentials.fly")) {
+						player.setFallDistance(0);
+						player.setAllowFlight(true);
+						player.setFlying(true);
+					}
 				}
+			}
+
+
+			Tasks.wait(5, () -> {
+				ModeUser mode = new ModeUserService().get(player);
+				GameMode gameMode = mode.getGamemode(newWorldGroup);
+				FlightMode flightMode = mode.getFlightMode(newWorldGroup);
+
+				if (gameMode.equals(GameMode.SPECTATOR)) {
+					flightMode.setAllowFlight(true);
+					flightMode.setFlying(true);
+				}
+
+				GamemodeCommand.setGameMode(player, gameMode);
+//				PlayerUtils.send(player, "GAMEMODE DEBUG: Setting to " + gameMode);
+
+				player.setAllowFlight(flightMode.isAllowFlight());
+				player.setFlying(flightMode.isFlying());
+//				PlayerUtils.send(player, "FLIGHT DEBUG: " + player.getAllowFlight() + " | " + player.isFlying());
+			});
 		}
 
 		if (event.getFrom().getName().equalsIgnoreCase("donortrial"))
@@ -516,9 +542,8 @@ public class Misc implements Listener {
 			Tasks.wait(20, () -> PlayerUtils.runCommand(player, "cheats off"));
 
 		if (DisguiseAPI.isDisguised(player))
-			if (oldWorldGroup != WorldGroup.MINIGAMES)
-				if (newWorldGroup == WorldGroup.MINIGAMES)
-					DisguiseAPI.undisguiseToAll(player);
+			if (!oldWorldGroup.isMinigames() && newWorldGroup.isMinigames())
+				DisguiseAPI.undisguiseToAll(player);
 	}
 
 	public void joinMinigames(Player player) {

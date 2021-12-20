@@ -10,6 +10,8 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redi
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.models.mode.ModeUser;
+import gg.projecteden.nexus.models.mode.ModeUserService;
 import lombok.NonNull;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -25,20 +27,46 @@ import java.util.List;
 @Redirect(from = {"/gmsp", "/gm3", "/egmsp", "/spectator", "/spec"}, to = "/gm sp")
 public class GamemodeCommand extends CustomCommand {
 
+	private final ModeUserService service = new ModeUserService();
+	private ModeUser user;
+
 	public GamemodeCommand(@NonNull CommandEvent event) {
 		super(event);
+		if (isPlayerCommandEvent())
+			user = service.get(player());
 	}
 
 	@Path("<gamemode> [player]")
 	void run(GameMode gamemode, @Arg("self") Player player) {
-		if (!isSelf(player))
+		if (!isSelf(player)) {
 			checkPermission("essentials.gamemode.others");
+			user = service.get(player);
+		}
 
 		checkPermission("essentials.gamemode." + gamemode.name().toLowerCase());
-		player.setGameMode(gamemode);
+
+		setGameMode(player, gamemode);
+
 		send(player, PREFIX + "Switched to &e" + camelCase(gamemode));
 		if (!isSelf(player))
 			send(PREFIX + "Switched to &e" + camelCase(gamemode) + " &3for &e" + player.getName());
+
+		if (!worldGroup().isMinigames() && user.getRank().isStaff()) {
+			user.setGameMode(worldGroup(), gamemode);
+			service.save(user);
+		}
+	}
+
+	public static void setGameMode(Player player, GameMode gamemode) {
+		boolean flight = player.getAllowFlight();
+		player.setGameMode(gamemode);
+		player.setAllowFlight(flight);
+
+		if (gamemode.equals(GameMode.SPECTATOR)) {
+			player.setAllowFlight(true);
+			player.setFlying(true);
+		}
+
 	}
 
 	@ConverterFor(GameMode.class)
