@@ -104,6 +104,10 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return this;
 	}
 
+	public Material material() {
+		return itemStack.getType();
+	}
+
 	public ItemBuilder amount(int amount) {
 		itemStack.setAmount(amount);
 		return this;

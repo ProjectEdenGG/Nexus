@@ -333,6 +333,22 @@ public class ItemUtils {
 		return fixed;
 	}
 
+	public static boolean hasLore(ItemStack dye, String line) {
+		line = StringUtils.stripColor(line);
+
+		List<String> lore = dye.getItemMeta().getLore();
+		if (lore == null || lore.isEmpty())
+			return false;
+
+		for (String _line : lore) {
+			_line = StringUtils.stripColor(_line);
+			if (_line.equals(line))
+				return true;
+		}
+
+		return false;
+	}
+
 	public static class ItemStackComparator implements Comparator<ItemStack> {
 		@Override
 		public int compare(ItemStack a, ItemStack b) {
