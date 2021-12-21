@@ -26,7 +26,7 @@ public class DyeStationCommand extends _WorkbenchCommand {
 	}
 
 	@Path("cheat")
-	@Permission(value = "ladder.builder", absolute = true)
+	@Permission(value = "group.staff", absolute = true)
 	void openCheat() {
 		DyeStation.openCheat(player());
 	}
