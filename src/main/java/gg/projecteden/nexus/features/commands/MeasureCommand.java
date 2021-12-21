@@ -21,7 +21,7 @@ public class MeasureCommand extends CustomCommand {
 
 	@Path("1")
 	void one() {
-		map.put(uuid(), location());
+		map.put(uuid(), location().toCenterLocation());
 		send(PREFIX + "First position set");
 	}
 
@@ -30,7 +30,7 @@ public class MeasureCommand extends CustomCommand {
 		if (!map.containsKey(uuid()))
 			error("You have not set your first position yet");
 
-		send("&3Distance: &e" + (int) map.get(uuid()).distance(location()));
+		send("&3Distance: &e" + (int) (map.get(uuid()).distance(location().toCenterLocation()) + 1));
 		map.remove(uuid());
 	}
 

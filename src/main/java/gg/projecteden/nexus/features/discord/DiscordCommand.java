@@ -57,19 +57,24 @@ public class DiscordCommand extends CustomCommand {
 	@Async
 	@Path("account [player]")
 	void id(@Arg("self") OfflinePlayer player) {
+		String nickname = Nickname.of(player);
+
 		DiscordUser self = service.get(player());
 		user = service.get(player);
 
 		if (isNullOrEmpty(user.getUserId()))
-			error(PREFIX + Nickname.of(player) + " has not linked their Discord account");
+			error(PREFIX + nickname + " has not linked their Discord account");
+
+		if (user.getMember() == null)
+			error(PREFIX + nickname + " has not joined the Discord server");
 
 		try {
 			String asMention = user.getMember().getAsMention();
-			String message = "Discord account for " + Nickname.of(player) + ": ";
+			String message = "Discord account for " + nickname + ": ";
 			send(json(PREFIX + message + user.getNameAndDiscrim()).hover("&eClick to copy").copy(user.getNameAndDiscrim()));
 			if (self.getUserId() != null) {
 				self.getMember().getUser().openPrivateChannel().complete()
-						.sendMessage(message + asMention).queue();
+					.sendMessage(message + asMention).queue();
 				send(json(PREFIX + "Koda has sent your direct message on Discord with their username"));
 			}
 		} catch (ErrorResponseException ex) {
