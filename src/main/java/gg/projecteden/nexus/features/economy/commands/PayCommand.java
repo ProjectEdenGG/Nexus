@@ -13,7 +13,6 @@ import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.banker.Transactions;
-import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -52,28 +51,28 @@ public class PayCommand extends CustomCommand {
 		}
 
 		String description = (reason == null ? "" : " &3for &e" + reason) + " &3in &e" + camelCase(world);
-		send(PREFIX + "Sent &e" + prettyMoney(amount) + " &3to " + banker.getName() + description);
+		send(PREFIX + "Sent &e" + prettyMoney(amount) + " &3to " + banker.getNickname() + description);
 		if (banker.isOnline())
-			send(banker.getOnlinePlayer(), PREFIX + "Received &e" + prettyMoney(amount) + " &3from &e" + self.getName() + description);
+			send(banker.getOnlinePlayer(), PREFIX + "Received &e" + prettyMoney(amount) + " &3from &e" + self.getNickname() + description);
 	}
 
 	@Async
 	@Path("history [player] [page] [--world]")
 	void history(@Arg("self") Transactions banker, @Arg("1") int page, @Switch @Arg("current") ShopGroup world) {
 		List<Transaction> transactions = new ArrayList<>(banker.getTransactions()).stream()
-				.filter(transaction -> transaction.getShopGroup() == world && transaction.getCause() == TransactionCause.PAY)
-				.sorted(Comparator.comparing(Transaction::getTimestamp).reversed())
-				.collect(Collectors.toList());
+			.filter(transaction -> transaction.getShopGroup() == world && transaction.getCause() == TransactionCause.PAY)
+			.sorted(Comparator.comparing(Transaction::getTimestamp).reversed())
+			.collect(Collectors.toList());
 
 		if (transactions.isEmpty())
 			error("&cNo transactions found");
 
 		send("");
-		send(PREFIX + camelCase(world) + " history" + (isSelf(banker) ? "" : " for &e" + Nickname.of(banker)));
+		send(PREFIX + camelCase(world) + " history" + (isSelf(banker) ? "" : " for &e" + banker.getNickname()));
 
 		BiFunction<Transaction, String, JsonBuilder> formatter = getFormatter(player(), banker);
 
-		paginate(combine(transactions), formatter, "/pay history " + banker.getName() + " --world=" + world.name().toLowerCase(), page);
+		paginate(combine(transactions), formatter, "/pay history " + banker.getNickname() + " --world=" + world.name().toLowerCase(), page);
 	}
 
 }

@@ -7,7 +7,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.banker.Banker;
-import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
@@ -25,7 +24,7 @@ public class BalanceCommand extends CustomCommand {
 		if (isSelf(banker))
 			send(PREFIX + "Your " + camelCase(world) + " balance: &e" + banker.getBalanceFormatted(world));
 		else
-			send(PREFIX + "&e" + Nickname.of(banker) + "'s &3" + camelCase(world) + " balance: &e" + banker.getBalanceFormatted(world));
+			send(PREFIX + "&e" + banker.getNickname() + "'s &3" + camelCase(world) + " balance: &e" + banker.getBalanceFormatted(world));
 	}
 
 }

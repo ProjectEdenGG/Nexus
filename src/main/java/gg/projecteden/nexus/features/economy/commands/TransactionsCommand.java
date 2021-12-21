@@ -57,19 +57,19 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 	@Path("history [player] [page] [--world]")
 	void history(@Arg("self") Transactions banker, @Arg("1") int page, @Switch @Arg("current") ShopGroup world) {
 		List<Transaction> transactions = banker.getTransactions().stream()
-				.filter(transaction -> transaction.getShopGroup() == world)
-				.sorted(Comparator.comparing(Transaction::getTimestamp).reversed())
-				.collect(Collectors.toList());
+			.filter(transaction -> transaction.getShopGroup() == world)
+			.sorted(Comparator.comparing(Transaction::getTimestamp).reversed())
+			.collect(Collectors.toList());
 
 		if (transactions.isEmpty())
 			error("&cNo transactions found in this world");
 
 		send("");
-		send(PREFIX + camelCase(world) + " transaction history" + (isSelf(banker) ? "" : " for &e" + banker.getName()));
+		send(PREFIX + camelCase(world) + " transaction history" + (isSelf(banker) ? "" : " for &e" + banker.getNickname()));
 
 		BiFunction<Transaction, String, JsonBuilder> formatter = getFormatter(player(), banker);
 
-		paginate(combine(transactions), formatter, "/transaction history " + banker.getName() + " --world=" + world.name().toLowerCase(), page);
+		paginate(combine(transactions), formatter, "/transaction history " + banker.getNickname() + " --world=" + world.name().toLowerCase(), page);
 	}
 
 	@Async
@@ -137,14 +137,14 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 
 			// Deposit
 			String fromPlayer = "&#dddddd" + getName(transaction.getSender(), cause);
-			String toPlayer = PlayerUtils.isSelf(player, banker) ? "&7&lYOU" : "&7" + Nickname.of(banker);
+			String toPlayer = PlayerUtils.isSelf(player, banker) ? "&7&lYOU" : "&7" + banker.getNickname();
 			String symbol = "&a+";
 			String newBalance = prettyMoney(transaction.getReceiverNewBalance());
 
 			// Withdrawal
 			if (withdrawal) {
 				symbol = "&c-";
-				fromPlayer = PlayerUtils.isSelf(player, banker) ? "&7&lYOU" : "&7" + Nickname.of(banker);
+				fromPlayer = PlayerUtils.isSelf(player, banker) ? "&7&lYOU" : "&7" + banker.getNickname();
 				toPlayer = "&#dddddd" + getName(transaction.getReceiver(), cause);
 				newBalance = prettyMoney(transaction.getSenderNewBalance());
 			}

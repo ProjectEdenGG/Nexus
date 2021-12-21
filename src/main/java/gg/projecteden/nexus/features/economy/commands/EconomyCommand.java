@@ -12,7 +12,6 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.banker.Banker;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
-import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
@@ -74,21 +73,21 @@ public class EconomyCommand extends CustomCommand {
 	@Permission("group.admin")
 	void set(Banker banker, BigDecimal balance, @Arg("server") TransactionCause cause, String reason, @Switch  @Arg("current") ShopGroup world) {
 		service.setBalance(cause.of(banker, balance, world, reason));
-		send(PREFIX + "Set &e" + Nickname.of(banker) + "'s &3balance to &e" + banker.getBalanceFormatted(world));
+		send(PREFIX + "Set &e" + banker.getNickname() + "'s &3balance to &e" + banker.getBalanceFormatted(world));
 	}
 
 	@Path("give <player> <balance> [cause] [reason...] [--world]")
 	@Permission("group.admin")
 	void give(Banker banker, BigDecimal balance, @Arg("server") TransactionCause cause, String reason, @Switch @Arg("current") ShopGroup world) {
 		service.deposit(cause.of(null, banker, balance, world, reason));
-		send(PREFIX + "Added &e" + prettyMoney(balance) + " &3to &e" + Nickname.of(banker) + "'s &3balance. New balance: &e" + banker.getBalanceFormatted(world));
+		send(PREFIX + "Added &e" + prettyMoney(balance) + " &3to &e" + banker.getNickname() + "'s &3balance. New balance: &e" + banker.getBalanceFormatted(world));
 	}
 
 	@Path("take <player> <balance> [cause] [reason...] [--world]")
 	@Permission("group.admin")
 	void take(Banker banker, BigDecimal balance, @Arg("server") TransactionCause cause, String reason, @Switch @Arg("current") ShopGroup world) {
 		service.withdraw(cause.of(null, banker, balance, world, reason));
-		send(PREFIX + "Removed &e" + prettyMoney(balance) + " &3from &e" + Nickname.of(banker) + "'s &3balance. New balance: &e" + banker.getBalanceFormatted(world));
+		send(PREFIX + "Removed &e" + prettyMoney(balance) + " &3from &e" + banker.getNickname() + "'s &3balance. New balance: &e" + banker.getBalanceFormatted(world));
 	}
 
 	@ConverterFor(ShopGroup.class)
