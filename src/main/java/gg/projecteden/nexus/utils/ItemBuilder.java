@@ -168,6 +168,11 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return name((String) null);
 	}
 
+	public ItemBuilder resetLore() {
+		this.lore.clear();
+		return this;
+	}
+
 	public ItemBuilder setLore(String... lore) {
 		return setLore(List.of(lore));
 	}

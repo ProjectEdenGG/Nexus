@@ -41,18 +41,24 @@ public class DyeStation extends CustomBench {
 	private static final String usesLore = "&3Uses: &e";
 
 	private static final int dyeModelData = 5;
-	public static ItemStack magicDye = new ItemBuilder(Material.PAPER)
+	private static final ItemBuilder magicDye = new ItemBuilder(Material.PAPER)
 		.customModelData(dyeModelData)
 		.name(Gradient.of(List.of(ChatColor.RED, ChatColor.YELLOW, ChatColor.AQUA)).apply("Magic Dye"))
-		.lore(usageLore, usesLore + maxUses)
-		.build();
+		.lore(usageLore, usesLore + maxUses);
 
 	private static final int stainModelData = 6;
-	public static ItemStack magicStain = new ItemBuilder(Material.PAPER)
+	private static final ItemBuilder magicStain = new ItemBuilder(Material.PAPER)
 		.customModelData(stainModelData)
 		.name(Gradient.of(List.of(ChatColor.of("#e0a175"), ChatColor.of("#5c371d"))).apply("Magic Stain"))
-		.lore(usageLore, usesLore + maxUses)
-		.build();
+		.lore(usageLore, usesLore + maxUses);
+
+	public static ItemBuilder getMagicDye() {
+		return magicDye.clone();
+	}
+
+	public static ItemBuilder getMagicStain() {
+		return magicStain.clone();
+	}
 
 	@Override
 	CustomBenchType getBenchType() {
@@ -61,8 +67,10 @@ public class DyeStation extends CustomBench {
 
 	public static void open(Player player) {
 		new DyeStationMenu().open(player);
+	}
 
-
+	public static void openCheat(Player player) {
+		new DyeStationMenu().openCheat(player);
 	}
 
 	@AllArgsConstructor
@@ -79,6 +87,7 @@ public class DyeStation extends CustomBench {
 	@AllArgsConstructor
 	private static class DyeStationMenu extends MenuUtils implements InventoryProvider, Listener {
 		Player player;
+		boolean cheatMode = false;
 		DyeType dyeType;
 		ItemStack dyeable;
 		ItemStack dye;
@@ -89,13 +98,21 @@ public class DyeStation extends CustomBench {
 		private static final SlotPos slot_dyeable = new SlotPos(1, 1);
 		private static final SlotPos slot_dye = new SlotPos(3, 1);
 		private static final SlotPos slot_result = new SlotPos(2, 7);
+		private static final SlotPos slot_cheat_dye = new SlotPos(0, 3);
+		private static final SlotPos slot_cheat_stain = new SlotPos(0, 5);
+
 
 		public void open(Player player) {
-			open(player, null, null, null, null, null, null);
+			open(player, false, null, null, null, null, null, null);
 		}
 
-		public void open(Player player, DyeType dyeType, ItemStack dyeable, ItemStack dye, ItemStack result, DyeChoice dyeChoice, Color color) {
+		public void openCheat(Player player) {
+			open(player, true, null, null, null, null, null, null);
+		}
+
+		public void open(Player player, boolean staffMode, DyeType dyeType, ItemStack dyeable, ItemStack dye, ItemStack result, DyeChoice dyeChoice, Color color) {
 			this.player = player;
+			this.cheatMode = staffMode;
 
 			this.dyeType = dyeType;
 			if (dyeType == null)
@@ -106,8 +123,11 @@ public class DyeStation extends CustomBench {
 				this.dyeable = new ItemStack(Material.AIR);
 
 			this.dye = dye;
-			if (dye == null)
+			if (dye == null) {
 				this.dye = new ItemStack(Material.AIR);
+				if (staffMode)
+					this.dye = getMagicDye().build();
+			}
 
 			this.result = result;
 			if (result == null)
@@ -116,14 +136,14 @@ public class DyeStation extends CustomBench {
 			this.dyeChoice = dyeChoice;
 			this.color = color;
 
-			getInv(this.player, this.dyeType, this.dyeable, this.dye, this.result, this.dyeChoice, this.color).open(this.player);
+			getInv(this.player, this.cheatMode, this.dyeType, this.dyeable, this.dye, this.result, this.dyeChoice, this.color).open(this.player);
 		}
 
-		private SmartInventory getInv(Player player, DyeType dyeType, ItemStack dyeable, ItemStack dye, ItemStack result, DyeChoice dyeChoice, Color color) {
+		private SmartInventory getInv(Player player, boolean staffMode, DyeType dyeType, ItemStack dyeable, ItemStack dye, ItemStack result, DyeChoice dyeChoice, Color color) {
 			return SmartInventory.builder()
 				.title(StringUtils.colorize("&fꈉ섈"))
 				.size(6, 9)
-				.provider(new DyeStationMenu(player, dyeType, dyeable, dye, result, dyeChoice, color))
+				.provider(new DyeStationMenu(player, staffMode, dyeType, dyeable, dye, result, dyeChoice, color))
 				.closeable(false)
 				.build();
 		}
@@ -132,9 +152,12 @@ public class DyeStation extends CustomBench {
 		public void init(Player player, InventoryContents contents) {
 			contents.set(0, ClickableItem.from(closeItem(), e -> {
 				contents.get(slot_dyeable).ifPresent(clickableItem -> PlayerUtils.giveItem(player, clickableItem.getItem()));
-				contents.get(slot_dye).ifPresent(clickableItem -> PlayerUtils.giveItem(player, clickableItem.getItem()));
+				contents.get(slot_dye).ifPresent(clickableItem -> {
+					if (!cheatMode)
+						PlayerUtils.giveItem(player, clickableItem.getItem());
+				});
 
-				getInv(player, dyeType, dyeable, dye, result, dyeChoice, color).close(player);
+				getInv(player, cheatMode, dyeType, dyeable, dye, result, dyeChoice, color).close(player);
 			}));
 
 			contents.set(slot_dyeable, ClickableItem.from(dyeable, e -> replaceItem(player, contents, e, slot_dyeable)));
@@ -144,8 +167,23 @@ public class DyeStation extends CustomBench {
 
 			fillColors(dyeType, contents);
 
-			if (dyeChoice != null)
+			if (dyeType.equals(DyeType.DYE) && dyeChoice != null)
 				fillChoices(dyeChoice, contents);
+
+			if (cheatMode) {
+				contents.set(
+					slot_cheat_dye,
+					ClickableItem.from(getMagicDye().resetLore().build(),
+						e -> setDyeItem(contents, getMagicDye().build())));
+				contents.set(slot_cheat_stain,
+					ClickableItem.from(getMagicStain().resetLore().build(),
+						e -> setDyeItem(contents, getMagicStain().build())));
+			}
+		}
+
+		private void setDyeItem(InventoryContents contents, ItemStack item) {
+			contents.set(slot_dye, ClickableItem.empty(item));
+			reopenMenu(contents);
 		}
 
 		private void fillColors(DyeType dyeType, InventoryContents contents) {
@@ -179,8 +217,6 @@ public class DyeStation extends CustomBench {
 							count = 0;
 						}
 					}
-
-					clearChoices(contents);
 				}
 			}
 		}
@@ -226,13 +262,12 @@ public class DyeStation extends CustomBench {
 				this.dyeType = DyeType.DYE;
 			else if (CustomModelData.of(_dye) == stainModelData) {
 				this.dyeType = DyeType.STAIN;
-				clearChoices(contents);
 			}
 
 			Optional<ClickableItem> resultOptional = contents.get(slot_result);
 			ItemStack _result = resultOptional.map(ClickableItem::getItem).orElse(null);
 
-			open(player, dyeType, _dyeable, _dye, _result, dyeChoice, color);
+			open(player, cheatMode, dyeType, _dyeable, _dye, _result, dyeChoice, color);
 		}
 
 		private void clearChoices(InventoryContents contents) {
@@ -293,7 +328,10 @@ public class DyeStation extends CustomBench {
 			if (dyeableOptional.isEmpty() || dyeOptional.isEmpty() || resultOptional.isEmpty())
 				return;
 
-			if (!isValidDyeType(contents) || !isValidDyeable(contents))
+			if (!isValidDyeable(contents))
+				return;
+
+			if (!isValidDyeType(contents))
 				return;
 
 			List<ItemStack> returnItems = new ArrayList<>();
@@ -304,23 +342,25 @@ public class DyeStation extends CustomBench {
 			returnItems.add(_result);
 
 			ItemStack _dye = dyeOptional.get().getItem();
-			if (_dye.getAmount() > 1) {
-				ItemStack _dyeExtra = _dye.clone();
-				_dyeExtra.subtract();
-				_dye.setAmount(1);
+			if (!cheatMode) {
+				if (_dye.getAmount() > 1) {
+					ItemStack _dyeExtra = _dye.clone();
+					_dyeExtra.subtract();
+					_dye.setAmount(1);
 
-				returnItems.add(_dyeExtra);
+					returnItems.add(_dyeExtra);
+				}
+
+				_dye = handleDye(_dye).build();
+				returnItems.add(_dye);
 			}
-
-			ItemBuilder _dyeBuilder = handleDye(_dye);
-			returnItems.add(_dyeBuilder.build());
 
 			PlayerUtils.giveItems(player, returnItems);
 
 			new SoundBuilder(Sound.ITEM_BOTTLE_EMPTY).location(player).pitch(RandomUtils.randomDouble(0.8, 1.2)).play();
 			Tasks.wait(8, () -> new SoundBuilder(Sound.ITEM_BOTTLE_FILL).location(player).pitch(RandomUtils.randomDouble(0.8, 1.2)).play());
 
-			getInv(player, dyeType, _dyeable, _dyeBuilder.build(), _result, dyeChoice, color).close(player);
+			getInv(player, cheatMode, dyeType, _dyeable, _dye, _result, dyeChoice, color).close(player);
 		}
 
 		private ItemBuilder handleDye(ItemStack dye) {

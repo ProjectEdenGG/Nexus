@@ -284,11 +284,11 @@ public class CustomRecipes extends Feature implements Listener {
 
 		shapeless().add(Material.GLASS_BOTTLE, Material.RED_DYE, Material.ORANGE_DYE, Material.YELLOW_DYE,
 			Material.GREEN_DYE, Material.CYAN_DYE, Material.BLUE_DYE, Material.PURPLE_DYE, Material.PINK_DYE)
-			.toMake(DyeStation.magicDye).build().type(RecipeType.MISC).register();
+			.toMake(DyeStation.getMagicDye().build()).build().type(RecipeType.MISC).register();
 
 		shapeless().add(Material.GLASS_BOTTLE, Material.OAK_PLANKS, Material.SPRUCE_PLANKS, Material.BIRCH_PLANKS,
 			Material.DARK_OAK_PLANKS, Material.OAK_SAPLING, Material.SPRUCE_SAPLING, Material.BIRCH_SAPLING, Material.DARK_OAK_SAPLING)
-			.toMake(DyeStation.magicStain).build().type(RecipeType.MISC).register();
+			.toMake(DyeStation.getMagicStain().build()).build().type(RecipeType.MISC).register();
 
 		light();
 
