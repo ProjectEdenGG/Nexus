@@ -8,7 +8,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.Sheets.Spreadsheets;
@@ -54,7 +54,7 @@ public class GoogleUtils {
 
 	private static final String CREDENTIALS_FILE_PATH = "google/credentials.json";
 	private static final String TOKENS_DIRECTORY_PATH = "google/tokens";
-	private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
+	private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
 	private static final List<String> SCOPES = Collections.singletonList(SheetsScopes.SPREADSHEETS);
 
 	private static NetHttpTransport HTTP_TRANSPORT;
@@ -95,7 +95,7 @@ public class GoogleUtils {
 	 */
 	@SneakyThrows
 	private static void login() {
-		GoogleClientSecrets secrets = GoogleClientSecrets.load(JacksonFactory.getDefaultInstance(),
+		GoogleClientSecrets secrets = GoogleClientSecrets.load(JSON_FACTORY,
 			new InputStreamReader(new FileInputStream(IOUtils.getPluginFile(CREDENTIALS_FILE_PATH))));
 
 		final int port = 8888 + (Env.values().length - (Nexus.getEnv().ordinal() + 1));
