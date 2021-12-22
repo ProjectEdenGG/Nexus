@@ -219,7 +219,7 @@
         <dependency>
             <groupId>gg.projecteden</groupId>
             <artifactId>eden-api</artifactId>
-            <version>1.6.7</version>
+            <version>1.6.8</version>
         </dependency>
         <!-- Lombok Project -->
         <dependency>

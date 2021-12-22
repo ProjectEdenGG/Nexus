@@ -46,6 +46,9 @@ import gg.projecteden.nexus.models.inventoryhistory.InventoryHistory;
 import gg.projecteden.nexus.models.inventoryhistory.InventoryHistoryService;
 import gg.projecteden.nexus.models.lwc.LWCProtection;
 import gg.projecteden.nexus.models.lwc.LWCProtectionService;
+import gg.projecteden.nexus.models.mail.Mailer;
+import gg.projecteden.nexus.models.mail.Mailer.Mail;
+import gg.projecteden.nexus.models.mail.MailerService;
 import gg.projecteden.nexus.models.mobheads.MobHeadUser;
 import gg.projecteden.nexus.models.mobheads.MobHeadUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -61,6 +64,7 @@ import gg.projecteden.nexus.models.shop.ShopService;
 import gg.projecteden.nexus.models.trust.Trust;
 import gg.projecteden.nexus.models.trust.TrustService;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
@@ -114,6 +118,7 @@ public class AccountTransferCommand extends CustomCommand {
 		HOURS(new HoursTransferer()),
 		INVENTORY_HISTORY(new InventoryHistoryTransferer()),
 		LWC(new LWCTransferer()),
+		MAIL(new MailTransferer()),
 		MCMMO(new McMMOTransferer()),
 		MOB_HEADS(new MobHeadUserTransferer()),
 		NERD(new NerdTransferer()),
@@ -309,6 +314,22 @@ public class AccountTransferCommand extends CustomCommand {
 					protectionById.save();
 				}
 			}
+		}
+	}
+
+	@Service(MailerService.class)
+	static class MailTransferer extends MongoTransferer<Mailer> {
+		@Override
+		public void transfer(Mailer old, Mailer target) {
+			for (WorldGroup worldGroup : old.getMail().keySet()) {
+				List<Mail> mailOld = old.getMail().get(worldGroup);
+				List<Mail> mailTarget = target.getMail().get(worldGroup);
+
+				mailTarget.addAll(mailOld);
+				target.getMail().put(worldGroup, mailTarget);
+			}
+
+			old.getMail().clear();
 		}
 	}
 

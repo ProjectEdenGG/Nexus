@@ -6,10 +6,12 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.utils.LuckPermsUtils.PermissionChange;
 import gg.projecteden.nexus.utils.LuckPermsUtils.PermissionChange.PermissionChangeBuilder;
 import lombok.NonNull;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Fallback("premiumvanish")
@@ -24,10 +26,21 @@ public class VanishCommand extends CustomCommand {
 		new VanishEvent(player()).callEvent();
 	}
 
+	@Path
+	void vanish() {
+		if (nerd().isVanished())
+			new NerdService().edit(nerd(), nerd -> nerd.setLastUnvanish(LocalDateTime.now()));
+		else
+			new NerdService().edit(nerd(), nerd -> nerd.setLastVanish(LocalDateTime.now()));
+
+		fallback();
+	}
+
 	@Path("(fj|fakejoin)")
 	@Permission("vanish.fakeannounce")
 	void fakeJoin() {
 		JoinQuit.join(player());
+		new NerdService().edit(nerd(), nerd -> nerd.setLastUnvanish(LocalDateTime.now()));
 		runCommand("vanish off");
 	}
 
@@ -35,6 +48,7 @@ public class VanishCommand extends CustomCommand {
 	@Permission("vanish.fakeannounce")
 	void fakeQuit() {
 		JoinQuit.quit(player());
+		new NerdService().edit(nerd(), nerd -> nerd.setLastVanish(LocalDateTime.now()));
 		runCommand("vanish on");
 	}
 

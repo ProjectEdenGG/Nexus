@@ -20,9 +20,7 @@ import gg.projecteden.nexus.models.badge.BadgeUserService;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.freeze.FreezeService;
-import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
@@ -41,6 +39,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,8 +55,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.StringUtils.CHECK;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @Data
 @Entity(value = "nerd", noClassnameStored = true)
@@ -204,6 +201,30 @@ public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwned
 			prefix = "&8&l[&f" + prefix + "&8&l] ";
 
 		return prefix;
+	}
+
+	public LocalDateTime getLastJoin(Player viewer) {
+		if (PlayerUtils.canSee(viewer, this))
+			return super.getLastJoin();
+		return super.getLastUnvanish();
+	}
+
+	@Override
+	public void setLastJoin(LocalDateTime when) {
+		super.setLastJoin(when);
+		super.setLastUnvanish(when);
+	}
+
+	public LocalDateTime getLastQuit(Player viewer) {
+		if (PlayerUtils.canSee(viewer, this))
+			return super.getLastQuit();
+		return super.getLastVanish();
+	}
+
+	@Override
+	public void setLastQuit(LocalDateTime when) {
+		super.setLastQuit(when);
+		super.setLastVanish(when);
 	}
 
 	@ToString.Include

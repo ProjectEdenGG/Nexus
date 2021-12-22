@@ -26,9 +26,6 @@ public class NerdListener implements Listener {
 		nerd.setName(event.getName());
 		nerd.getPastNames().add(event.getName());
 
-		if (nerd.getLastQuit() != null && nerd.getLastQuit().isBefore(nerd.getLastJoin()))
-			nerd.setLastQuit(LocalDateTime.now().minusMinutes(1));
-
 		service.save(nerd);
 	}
 
