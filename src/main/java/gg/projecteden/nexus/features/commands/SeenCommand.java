@@ -11,6 +11,8 @@ import gg.projecteden.utils.TimeUtils;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import lombok.NonNull;
 
+import java.time.LocalDateTime;
+
 @Description("Check when a player was last online, or how long they have been online")
 public class SeenCommand extends CustomCommand {
 
@@ -21,9 +23,19 @@ public class SeenCommand extends CustomCommand {
 	@Path("[player]")
 	public void seen(@Arg("self") Nerd nerd) {
 		String nickname = nerd.getNickname();
-		if (nerd.isOnline() && PlayerUtils.canSee(player(), nerd))
-			send(PREFIX + "&e" + nickname + " &3has been &aonline &3for &e" + Timespan.of(nerd.getLastJoin(player())).format() + " &3(" + TimeUtils.longDateTimeFormat(nerd.getLastJoin(player())) + ")");
-		else
-			send(PREFIX + "&e" + nickname + " &3has been &coffline &3for &e" + Timespan.of(nerd.getLastQuit(player())).format() + " &3(" + TimeUtils.longDateTimeFormat(nerd.getLastQuit(player())) + ")");
+
+		if (nerd.isOnline() && PlayerUtils.canSee(player(), nerd)) {
+			LocalDateTime lastJoin = nerd.getLastJoin(player());
+			String timespan = Timespan.of(lastJoin).format();
+			String time = TimeUtils.longDateTimeFormat(lastJoin);
+
+			send(PREFIX + "&e" + nickname + " &3has been &aonline &3for &e" + timespan + " &3(" + time + ")");
+		} else {
+			LocalDateTime lastQuit = nerd.getLastQuit(player());
+			String timespan = Timespan.of(lastQuit).format();
+			String time = TimeUtils.longDateTimeFormat(lastQuit);
+
+			send(PREFIX + "&e" + nickname + " &3has been &coffline &3for &e" + timespan + " &3(" + time + ")");
+		}
 	}
 }

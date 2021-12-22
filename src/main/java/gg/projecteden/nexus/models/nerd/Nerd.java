@@ -204,9 +204,14 @@ public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwned
 	}
 
 	public LocalDateTime getLastJoin(Player viewer) {
-		if (PlayerUtils.canSee(viewer, this))
-			return super.getLastJoin();
-		return super.getLastUnvanish();
+		if (isOnline()) {
+			if (PlayerUtils.canSee(viewer, this))
+				return super.getLastJoin();
+
+			return super.getLastUnvanish();
+		}
+
+		return super.getLastJoin();
 	}
 
 	@Override
@@ -216,9 +221,14 @@ public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwned
 	}
 
 	public LocalDateTime getLastQuit(Player viewer) {
-		if (PlayerUtils.canSee(viewer, this))
-			return super.getLastQuit();
-		return super.getLastVanish();
+		if (isOnline()) {
+			if (PlayerUtils.canSee(viewer, this))
+				return super.getLastQuit();
+
+			return super.getLastVanish();
+		}
+
+		return super.getLastQuit();
 	}
 
 	@Override
