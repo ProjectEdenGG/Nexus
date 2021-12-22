@@ -40,16 +40,16 @@ public class NerdCommand extends CustomCommand {
 
 	@Path("setFirstJoin <player> <date>")
 	@Permission("group.admin")
-	void setFirstJoin(OfflinePlayer player, LocalDateTime firstJoin) {
-		new NerdService().edit(player, nerd -> nerd.setFirstJoin(firstJoin));
-		send(PREFIX + "Set " + Nickname.of(player) + "'s first join date to &e" + shortDateTimeFormat(nerd().getFirstJoin()));
+	void setFirstJoin(Nerd nerd, LocalDateTime firstJoin) {
+		new NerdService().edit(nerd, _nerd -> _nerd.setFirstJoin(firstJoin));
+		send(PREFIX + "Set " + nerd.getNickname() + "'s first join date to &e" + shortDateTimeFormat(nerd.getFirstJoin()));
 	}
 
 	@Path("setPromotionDate <player> <date>")
 	@Permission("group.admin")
-	void setPromotionDate(OfflinePlayer player, LocalDate promotionDate) {
-		new NerdService().edit(player, nerd -> nerd.setPromotionDate(promotionDate));
-		send(PREFIX + "Set " + Nickname.of(player) + "'s promotion date to &e" + shortDateFormat(nerd().getPromotionDate()));
+	void setPromotionDate(Nerd nerd, LocalDate promotionDate) {
+		new NerdService().edit(nerd, _nerd -> _nerd.setPromotionDate(promotionDate));
+		send(PREFIX + "Set " + nerd.getNickname() + "'s promotion date to &e" + shortDateFormat(nerd.getPromotionDate()));
 	}
 
 	@Async
