@@ -29,15 +29,15 @@ public class CurrentTimeCommand extends CustomCommand {
 	void format(int format, @Arg(value = "self", permission = "group.seniorstaff") GeoIP user) {
 		if (format != 12 && format != 24)
 			send(json()
-					.line()
-					.next(" &eClick &3 the time format you prefer:  ")
-					.next("&e12 hour")
-					.command("/currenttime format 12 " + user.getName())
-					.hover("&eClick &3to set the display format to &e12 hour")
-					.group()
-					.next("  &3||  &3")
-					.next("&e24 hour")
-					.command("/currenttime format 24 " + user.getName())
+				.line()
+				.next(" &eClick &3 the time format you prefer:  ")
+				.next("&e12 hour")
+				.command("/currenttime format 12 " + user.getNickname())
+				.hover("&eClick &3to set the display format to &e12 hour")
+				.group()
+				.next("  &3||  &3")
+				.next("&e24 hour")
+				.command("/currenttime format 24 " + user.getNickname())
 					.hover("&eClick &3to set the display format to &e24 hour")
 					.group());
 		else {
@@ -65,7 +65,7 @@ public class CurrentTimeCommand extends CustomCommand {
 		if (geoip == null || geoip.getIp() == null)
 			error("That player's timezone is not set.");
 
-		send(PREFIX + "The current time for &e" + geoip.getName() + " &3is &e" + geoip.getCurrentTimeShort());
+		send(PREFIX + "The current time for &e" + geoip.getNickname() + " &3is &e" + geoip.getCurrentTimeShort());
 	}
 
 	@Path
