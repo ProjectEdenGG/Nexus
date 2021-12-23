@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.commands.info;
+package gg.projecteden.nexus.features.minigames.commands;
 
 import gg.projecteden.nexus.features.minigames.utils.MinigameNight.NextMGN;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
