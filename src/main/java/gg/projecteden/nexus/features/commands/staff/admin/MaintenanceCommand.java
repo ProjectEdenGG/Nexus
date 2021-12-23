@@ -113,7 +113,7 @@ public class MaintenanceCommand extends CustomCommand implements Listener {
 			return;
 
 		buildTitle().send();
-		Koda.dm(event.getPlayer(), "Rebooting server, come back in 60 seconds");
+		Koda.dm(event.getPlayer(), "Shutting down server for maintenance, check Discord for updates");
 	}
 
 }
