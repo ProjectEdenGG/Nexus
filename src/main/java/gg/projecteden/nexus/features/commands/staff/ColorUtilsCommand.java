@@ -74,6 +74,7 @@ public class ColorUtilsCommand extends CustomCommand {
 	}
 
 	@Path("setLeatherColor <color>")
+	@Permission("group.admin")
 	void setLeatherColor(@Arg(type = ChatColor.class) ChatColor chatColor) {
 		ItemStack item = getToolRequired();
 		if (!(item.getItemMeta() instanceof LeatherArmorMeta armorMeta))
