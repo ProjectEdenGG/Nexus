@@ -8,6 +8,7 @@ import gg.projecteden.nexus.models.jukebox.JukeboxSong;
 import gg.projecteden.nexus.models.jukebox.JukeboxUser;
 import gg.projecteden.nexus.models.jukebox.JukeboxUserService;
 import gg.projecteden.nexus.models.pugmas21.Advent21Config.AdventPresent;
+import gg.projecteden.nexus.models.trophy.Trophy;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -140,6 +141,10 @@ public class AdventAnimation {
 						setLore = false;
 						giveItem = false;
 						giveSong(player, itemName);
+					} else if (itemStack.getType().equals(Material.GOLD_INGOT)) {
+						setLore = false;
+						giveItem = false;
+						Trophy.PUGMAS_2021.give(player);
 					}
 
 					if (setLore)
