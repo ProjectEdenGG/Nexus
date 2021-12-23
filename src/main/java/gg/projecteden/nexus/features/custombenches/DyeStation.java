@@ -52,12 +52,21 @@ public class DyeStation extends CustomBench {
 		.name(Gradient.of(List.of(ChatColor.of("#e0a175"), ChatColor.of("#5c371d"))).apply("Magic Stain"))
 		.lore(usageLore, usesLore + maxUses);
 
+	private static final ItemBuilder dyeStation = new ItemBuilder(Material.CRAFTING_TABLE)
+		.customModelData(1)
+		.name("Dye Station");
+
+
 	public static ItemBuilder getMagicDye() {
 		return magicDye.clone();
 	}
 
 	public static ItemBuilder getMagicStain() {
 		return magicStain.clone();
+	}
+
+	public static ItemBuilder getDyeStation() {
+		return dyeStation.clone();
 	}
 
 	@Override

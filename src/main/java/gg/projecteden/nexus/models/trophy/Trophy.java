@@ -47,7 +47,8 @@ public enum Trophy {
 			return "Griffin & Wakka Birthday Party 2021 Trophy";
 		}
 	},
-	;
+
+	PUGMAS_2021(Material.GOLD_INGOT, 3);
 
 	@NonNull
 	private final Material material;

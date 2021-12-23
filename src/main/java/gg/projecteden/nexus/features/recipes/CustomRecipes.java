@@ -47,6 +47,7 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.blast;
+import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shapeless;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.smelt;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.surround;
@@ -282,17 +283,31 @@ public class CustomRecipes extends Feature implements Listener {
 			shapeless().add(wood.getStrippedWood(), 2).toMake(wood.getWood(), 2).build().type(RecipeType.MISC).register();
 		}
 
-		shapeless().add(Material.GLASS_BOTTLE, Material.RED_DYE, Material.ORANGE_DYE, Material.YELLOW_DYE,
-			Material.GREEN_DYE, Material.CYAN_DYE, Material.BLUE_DYE, Material.PURPLE_DYE, Material.PINK_DYE)
-			.toMake(DyeStation.getMagicDye().build()).build().type(RecipeType.MISC).register();
-
-		shapeless().add(Material.GLASS_BOTTLE, Material.OAK_PLANKS, Material.SPRUCE_PLANKS, Material.BIRCH_PLANKS,
-			Material.DARK_OAK_PLANKS, Material.OAK_SAPLING, Material.SPRUCE_SAPLING, Material.BIRCH_SAPLING, Material.DARK_OAK_SAPLING)
-			.toMake(DyeStation.getMagicStain().build()).build().type(RecipeType.MISC).register();
-
+		dyeStation();
 		light();
 
 		invisibleItemFrame();
+	}
+
+	private void dyeStation() {
+		// Magic Dye
+		shapeless().add(Material.GLASS_BOTTLE, Material.RED_DYE, Material.ORANGE_DYE, Material.YELLOW_DYE,
+			Material.GREEN_DYE, Material.CYAN_DYE, Material.BLUE_DYE, Material.PURPLE_DYE, Material.PINK_DYE)
+			.toMake(DyeStation.getMagicDye().build()).build().type(RecipeType.FUNCTIONAL).register();
+
+		// Magic Stain
+		shapeless().add(Material.GLASS_BOTTLE, Material.OAK_PLANKS, Material.SPRUCE_PLANKS, Material.BIRCH_PLANKS,
+			Material.DARK_OAK_PLANKS, Material.OAK_SAPLING, Material.SPRUCE_SAPLING, Material.BIRCH_SAPLING, Material.DARK_OAK_SAPLING)
+			.toMake(DyeStation.getMagicStain().build()).build().type(RecipeType.FUNCTIONAL).register();
+
+		// Dye Station
+		shaped("111", "232", "242")
+			.add('1', Material.WHITE_WOOL)
+			.add('2', new RecipeChoice.MaterialChoice(Tag.PLANKS))
+			.add('3', DyeStation.getMagicDye().build())
+			.add('4', DyeStation.getMagicStain().build())
+			.toMake(DyeStation.getDyeStation().build())
+			.build().type(RecipeType.FUNCTIONAL).register();
 	}
 
 	private void light() {
