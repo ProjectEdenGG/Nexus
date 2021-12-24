@@ -1,14 +1,15 @@
 package gg.projecteden.nexus.models.resourcepack;
 
-import gg.projecteden.mongodb.annotations.PlayerClass;
-import gg.projecteden.nexus.models.MongoService;
+
+import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-@PlayerClass(LocalResourcePackUser.class)
-public class LocalResourcePackUserService extends MongoService<LocalResourcePackUser> {
+@ObjectClass(LocalResourcePackUser.class)
+public class LocalResourcePackUserService extends MongoPlayerService<LocalResourcePackUser> {
 	private final static Map<UUID, LocalResourcePackUser> cache = new ConcurrentHashMap<>();
 
 	public Map<UUID, LocalResourcePackUser> getCache() {

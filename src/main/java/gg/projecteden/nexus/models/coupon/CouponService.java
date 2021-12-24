@@ -1,7 +1,8 @@
 package gg.projecteden.nexus.models.coupon;
 
-import gg.projecteden.mongodb.annotations.PlayerClass;
-import gg.projecteden.nexus.models.MongoService;
+
+import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 import gg.projecteden.nexus.models.coupon.Coupons.Coupon;
 
 import java.util.Comparator;
@@ -11,8 +12,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static gg.projecteden.utils.Utils.isNullOrEmpty;
 
-@PlayerClass(Coupons.class)
-public class CouponService extends MongoService<Coupons> {
+@ObjectClass(Coupons.class)
+public class CouponService extends MongoPlayerService<Coupons> {
 	private final static Map<UUID, Coupons> cache = new ConcurrentHashMap<>();
 
 	public Map<UUID, Coupons> getCache() {

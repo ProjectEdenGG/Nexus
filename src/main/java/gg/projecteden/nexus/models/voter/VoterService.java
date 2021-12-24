@@ -1,7 +1,8 @@
 package gg.projecteden.nexus.models.voter;
 
-import gg.projecteden.mongodb.annotations.PlayerClass;
-import gg.projecteden.nexus.models.MongoService;
+
+import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 import gg.projecteden.nexus.models.voter.Voter.Vote;
 import gg.projecteden.nexus.utils.Tasks;
 import org.jetbrains.annotations.NotNull;
@@ -19,8 +20,8 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
-@PlayerClass(Voter.class)
-public class VoterService extends MongoService<Voter> {
+@ObjectClass(Voter.class)
+public class VoterService extends MongoPlayerService<Voter> {
 	private final static Map<UUID, Voter> cache = new ConcurrentHashMap<>();
 
 	public Map<UUID, Voter> getCache() {

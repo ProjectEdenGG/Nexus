@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.forcefield;
 
 import gg.projecteden.nexus.framework.features.Feature;
-import gg.projecteden.nexus.models.PlayerOwnedObject;
+import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.forcefield.ForceFieldUser;
 import gg.projecteden.nexus.models.forcefield.ForceFieldUserService;
 import gg.projecteden.nexus.utils.CitizensUtils;

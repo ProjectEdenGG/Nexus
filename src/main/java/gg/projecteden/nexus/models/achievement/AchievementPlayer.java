@@ -2,7 +2,7 @@ package gg.projecteden.nexus.models.achievement;
 
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.nexus.models.PlayerOwnedObject;
+import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import lombok.Data;
 import lombok.NonNull;
 

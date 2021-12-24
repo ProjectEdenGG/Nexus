@@ -1,7 +1,8 @@
-package gg.projecteden.nexus.models;
+package gg.projecteden.nexus.framework.persistence.mongodb.player;
 
 import dev.morphia.mapping.MappingException;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.mail.Mailer;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
@@ -15,7 +16,7 @@ import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 
-public abstract class MongoService<T extends PlayerOwnedObject> extends gg.projecteden.mongodb.MongoService<T> {
+public abstract class MongoPlayerService<T extends PlayerOwnedObject> extends gg.projecteden.mongodb.MongoPlayerService<T> {
 
 	static {
 		loadServices("gg.projecteden.nexus.models");

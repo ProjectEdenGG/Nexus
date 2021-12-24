@@ -1,14 +1,15 @@
 package gg.projecteden.nexus.models.halloween20;
 
-import gg.projecteden.mongodb.annotations.PlayerClass;
-import gg.projecteden.nexus.models.MongoService;
+
+import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-@PlayerClass(Halloween20User.class)
-public class Halloween20Service extends MongoService<Halloween20User> {
+@ObjectClass(Halloween20User.class)
+public class Halloween20Service extends MongoPlayerService<Halloween20User> {
 	private final static Map<UUID, Halloween20User> cache = new ConcurrentHashMap<>();
 
 	@Override

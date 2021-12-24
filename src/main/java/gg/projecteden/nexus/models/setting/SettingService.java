@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.models.setting;
 
-import gg.projecteden.nexus.models.MySQLService;
+import gg.projecteden.nexus.framework.persistence.mysql.MySQLService;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 

@@ -9,7 +9,7 @@ import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.features.discord.Discord;
-import gg.projecteden.nexus.models.PlayerOwnedObject;
+import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.DiscordCaptchaKickJob;
 import gg.projecteden.utils.DiscordId.Role;
 import lombok.AllArgsConstructor;

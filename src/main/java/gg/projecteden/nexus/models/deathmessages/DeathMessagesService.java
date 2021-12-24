@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.models.deathmessages;
 
 import dev.morphia.query.Query;
-import gg.projecteden.mongodb.annotations.PlayerClass;
-import gg.projecteden.nexus.models.MongoService;
+import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -10,8 +10,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-@PlayerClass(DeathMessages.class)
-public class DeathMessagesService extends MongoService<DeathMessages> {
+@ObjectClass(DeathMessages.class)
+public class DeathMessagesService extends MongoPlayerService<DeathMessages> {
 	private final static Map<UUID, DeathMessages> cache = new ConcurrentHashMap<>();
 
 	public Map<UUID, DeathMessages> getCache() {

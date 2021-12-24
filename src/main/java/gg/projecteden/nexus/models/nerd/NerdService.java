@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.models.nerd;
 
 import dev.morphia.query.Query;
-import gg.projecteden.mongodb.annotations.PlayerClass;
+import gg.projecteden.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.models.MongoService;
+import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.utils.Utils;
 import org.jetbrains.annotations.Nullable;
@@ -18,8 +18,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static java.util.stream.Collectors.toList;
 
-@PlayerClass(Nerd.class)
-public class NerdService extends MongoService<Nerd> {
+@ObjectClass(Nerd.class)
+public class NerdService extends MongoPlayerService<Nerd> {
 	private final static Map<UUID, Nerd> cache = new ConcurrentHashMap<>();
 
 	public Map<UUID, Nerd> getCache() {
@@ -28,7 +28,7 @@ public class NerdService extends MongoService<Nerd> {
 
 	public List<Nerd> find(String partialName) {
 		Query<Nerd> query = database.createQuery(Nerd.class);
-		query.and(query.criteria("pastNames").containsIgnoreCase(sanitize(partialName)));
+		query.and(query.criteria("pastNames").containsIgnoreCase(partialName));
 		long count = query.count();
 		if (count > 50)
 			throw new InvalidInputException("Too many name matches for &e" + partialName + " &c(" + count + ")");

@@ -1,14 +1,15 @@
 package gg.projecteden.nexus.models.mode;
 
-import gg.projecteden.mongodb.annotations.PlayerClass;
-import gg.projecteden.nexus.models.MongoService;
+
+import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-@PlayerClass(ModeUser.class)
-public class ModeUserService extends MongoService<ModeUser> {
+@ObjectClass(ModeUser.class)
+public class ModeUserService extends MongoPlayerService<ModeUser> {
 	private final static Map<UUID, ModeUser> cache = new ConcurrentHashMap<>();
 
 	public Map<UUID, ModeUser> getCache() {

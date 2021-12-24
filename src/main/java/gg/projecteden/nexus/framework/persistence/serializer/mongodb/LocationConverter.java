@@ -7,6 +7,8 @@ import dev.morphia.mapping.MappedField;
 import dev.morphia.mapping.Mapper;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -20,7 +22,11 @@ public class LocationConverter extends TypeConverter implements SimpleValueConve
 	@Override
 	public Object encode(Object value, MappedField optionalExtraInfo) {
 		if (value == null) return null;
-		Location location = (Location) value;
+		return encode((Location) value);
+	}
+
+	@Nullable
+	public static BasicDBObject encode(Location location) {
 		if (location.getWorld() == null) return null;
 		return new BasicDBObject() {{
 			put("world", location.getWorld().getName());
@@ -35,14 +41,18 @@ public class LocationConverter extends TypeConverter implements SimpleValueConve
 	@Override
 	public Object decode(Class<?> aClass, Object value, MappedField mappedField) {
 		if (value == null) return null;
-		BasicDBObject deserialized = (BasicDBObject) value;
+		return decode((BasicDBObject) value);
+	}
+
+	@NotNull
+	public static Location decode(BasicDBObject value) {
 		return new Location(
-				Bukkit.getWorld(deserialized.getString("world")),
-				deserialized.getDouble("x"),
-				deserialized.getDouble("y"),
-				deserialized.getDouble("z"),
-				Double.valueOf(deserialized.getDouble("yaw")).floatValue(),
-				Double.valueOf(deserialized.getDouble("pitch")).floatValue()
+				Bukkit.getWorld(value.getString("world")),
+				value.getDouble("x"),
+				value.getDouble("y"),
+				value.getDouble("z"),
+				Double.valueOf(value.getDouble("yaw")).floatValue(),
+				Double.valueOf(value.getDouble("pitch")).floatValue()
 		);
 	}
 

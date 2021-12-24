@@ -1,8 +1,9 @@
 package gg.projecteden.nexus.models.geoip;
 
-import gg.projecteden.mongodb.annotations.PlayerClass;
+
+import gg.projecteden.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.models.MongoService;
+import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.HttpUtils;
 import lombok.SneakyThrows;
@@ -13,8 +14,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-@PlayerClass(GeoIP.class)
-public class GeoIPService extends MongoService<GeoIP> {
+@ObjectClass(GeoIP.class)
+public class GeoIPService extends MongoPlayerService<GeoIP> {
 	private final static Map<UUID, GeoIP> cache = new ConcurrentHashMap<>();
 
 	public Map<UUID, GeoIP> getCache() {

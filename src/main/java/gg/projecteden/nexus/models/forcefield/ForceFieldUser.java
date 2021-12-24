@@ -7,7 +7,7 @@ import dev.morphia.annotations.Transient;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.particles.effects.PolygonEffect;
 import gg.projecteden.nexus.features.particles.effects.PolygonEffect.PolygonEffectBuilder;
-import gg.projecteden.nexus.models.PlayerOwnedObject;
+import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
 import lombok.Data;

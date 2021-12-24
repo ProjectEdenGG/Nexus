@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.minigolf.models;
 
-import gg.projecteden.nexus.models.PlayerOwnedObject;
+import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import lombok.Data;
 import lombok.NonNull;
 

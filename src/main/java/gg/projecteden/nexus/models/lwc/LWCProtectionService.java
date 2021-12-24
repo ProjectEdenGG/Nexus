@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.models.lwc;
 
 import com.dieselpoint.norm.Database;
-import gg.projecteden.nexus.framework.persistence.MySQLDatabase;
-import gg.projecteden.nexus.framework.persistence.MySQLPersistence;
-import gg.projecteden.nexus.models.MySQLService;
+import gg.projecteden.nexus.framework.persistence.mysql.MySQLDatabase;
+import gg.projecteden.nexus.framework.persistence.mysql.MySQLPersistence;
+import gg.projecteden.nexus.framework.persistence.mysql.MySQLService;
 import org.bukkit.Location;
 
 import java.util.Arrays;
@@ -12,7 +12,6 @@ import java.util.UUID;
 
 public class LWCProtectionService extends MySQLService {
 	protected static Database database = MySQLPersistence.getConnection(MySQLDatabase.SMP_LWC);
-
 
 	public LWCProtection get(int id) {
 		return database.where("id = ?", id).first(LWCProtection.class);
