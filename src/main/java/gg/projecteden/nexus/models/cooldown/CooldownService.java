@@ -1,8 +1,9 @@
 package gg.projecteden.nexus.models.cooldown;
 
-import gg.projecteden.mongodb.annotations.PlayerClass;
+
+import gg.projecteden.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.models.MongoService;
+import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -16,8 +17,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static gg.projecteden.utils.Utils.isNullOrEmpty;
 
-@PlayerClass(Cooldown.class)
-public class CooldownService extends MongoService<Cooldown> {
+@ObjectClass(Cooldown.class)
+public class CooldownService extends MongoPlayerService<Cooldown> {
 	private final static Map<UUID, Cooldown> cache = new ConcurrentHashMap<>();
 
 	public Map<UUID, Cooldown> getCache() {

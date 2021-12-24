@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.models.mcmmo;
 
-import gg.projecteden.nexus.models.MySQLService;
+import gg.projecteden.nexus.framework.persistence.mysql.MySQLService;
 import gg.projecteden.nexus.utils.Tasks;
 
 import java.util.HashMap;

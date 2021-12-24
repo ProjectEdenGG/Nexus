@@ -1,14 +1,15 @@
 package gg.projecteden.nexus.models.afk;
 
-import gg.projecteden.mongodb.annotations.PlayerClass;
-import gg.projecteden.nexus.models.MongoService;
+
+import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-@PlayerClass(AFKUser.class)
-public class AFKUserService extends MongoService<AFKUser> {
+@ObjectClass(AFKUser.class)
+public class AFKUserService extends MongoPlayerService<AFKUser> {
 	private final static Map<UUID, AFKUser> cache = new ConcurrentHashMap<>();
 
 	public Map<UUID, AFKUser> getCache() {

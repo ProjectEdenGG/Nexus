@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.models;
+package gg.projecteden.nexus.framework.interfaces;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.afk.AFK;

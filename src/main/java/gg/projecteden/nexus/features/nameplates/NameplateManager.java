@@ -8,7 +8,7 @@ import gg.projecteden.nexus.features.nameplates.packet.EntityMetadataPacket;
 import gg.projecteden.nexus.features.nameplates.packet.EntitySpawnPacket;
 import gg.projecteden.nexus.features.nameplates.packet.MountPacket;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
-import gg.projecteden.nexus.models.PlayerOwnedObject;
+import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.nameplates.NameplateUserService;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;

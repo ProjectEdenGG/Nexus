@@ -1,16 +1,16 @@
 package gg.projecteden.nexus.models.playernotes;
 
 import dev.morphia.query.Query;
-import gg.projecteden.mongodb.annotations.PlayerClass;
-import gg.projecteden.nexus.models.MongoService;
+import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-@PlayerClass(PlayerNotes.class)
-public class PlayerNotesService extends MongoService<PlayerNotes> {
+@ObjectClass(PlayerNotes.class)
+public class PlayerNotesService extends MongoPlayerService<PlayerNotes> {
 
 	private final static Map<UUID, PlayerNotes> cache = new ConcurrentHashMap<>();
 

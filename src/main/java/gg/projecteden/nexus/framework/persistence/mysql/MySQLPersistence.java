@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.framework.persistence;
+package gg.projecteden.nexus.framework.persistence.mysql;
 
 import com.dieselpoint.norm.Database;
 import com.dieselpoint.norm.sqlmakers.MySqlMaker;

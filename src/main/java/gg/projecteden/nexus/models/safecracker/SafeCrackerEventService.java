@@ -1,17 +1,17 @@
 package gg.projecteden.nexus.models.safecracker;
 
 import gg.projecteden.annotations.Disabled;
-import gg.projecteden.mongodb.annotations.PlayerClass;
-import gg.projecteden.nexus.models.MongoService;
+import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 import gg.projecteden.nexus.models.safecracker.SafeCrackerEvent.SafeCrackerGame;
 
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-@PlayerClass(SafeCrackerEvent.class)
+@ObjectClass(SafeCrackerEvent.class)
 @Disabled
-public class SafeCrackerEventService extends MongoService<SafeCrackerEvent> {
+public class SafeCrackerEventService extends MongoPlayerService<SafeCrackerEvent> {
 	private final static Map<UUID, SafeCrackerEvent> cache = new ConcurrentHashMap<>();
 
 	public Map<UUID, SafeCrackerEvent> getCache() {

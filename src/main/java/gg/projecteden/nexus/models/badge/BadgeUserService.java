@@ -1,14 +1,15 @@
 package gg.projecteden.nexus.models.badge;
 
-import gg.projecteden.mongodb.annotations.PlayerClass;
-import gg.projecteden.nexus.models.MongoService;
+
+import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-@PlayerClass(BadgeUser.class)
-public class BadgeUserService extends MongoService<BadgeUser> {
+@ObjectClass(BadgeUser.class)
+public class BadgeUserService extends MongoPlayerService<BadgeUser> {
 	private final static Map<UUID, BadgeUser> cache = new ConcurrentHashMap<>();
 
 	public Map<UUID, BadgeUser> getCache() {

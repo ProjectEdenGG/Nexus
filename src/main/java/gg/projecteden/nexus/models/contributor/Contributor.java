@@ -9,7 +9,7 @@ import gg.projecteden.mongodb.serializers.LocalDateTimeConverter;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.store.Package;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.NegativeBalanceException;
-import gg.projecteden.nexus.models.PlayerOwnedObject;
+import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

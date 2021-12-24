@@ -1,7 +1,8 @@
 package gg.projecteden.nexus.models.contributor;
 
-import gg.projecteden.mongodb.annotations.PlayerClass;
-import gg.projecteden.nexus.models.MongoService;
+
+import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 import gg.projecteden.nexus.models.contributor.Contributor.Purchase;
 
 import java.util.ArrayList;
@@ -18,8 +19,8 @@ import static com.mongodb.client.model.Aggregates.sort;
 import static com.mongodb.client.model.Aggregates.unwind;
 import static com.mongodb.client.model.Sorts.descending;
 
-@PlayerClass(Contributor.class)
-public class ContributorService extends MongoService<Contributor> {
+@ObjectClass(Contributor.class)
+public class ContributorService extends MongoPlayerService<Contributor> {
 	private final static Map<UUID, Contributor> cache = new ConcurrentHashMap<>();
 
 	public Map<UUID, Contributor> getCache() {

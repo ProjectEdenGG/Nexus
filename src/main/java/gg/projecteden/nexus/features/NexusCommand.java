@@ -31,7 +31,7 @@ import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CommandCooldownException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Features;
-import gg.projecteden.nexus.models.MongoService;
+import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 import gg.projecteden.nexus.models.chatgames.ChatGamesConfig;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -346,7 +346,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 		send("Listeners: " + Nexus.getListeners().size());
 		send("Temporary Listeners: " + Nexus.getTemporaryListeners().size());
 		send("Event Handlers: " + Nexus.getEventHandlers().size());
-		send("Services: " + MongoService.getServices().size());
+		send("Services: " + MongoPlayerService.getServices().size());
 		send("Arenas: " + ArenaManager.getAll().size());
 		send("Mechanics: " + MechanicType.values().length);
 		send("Recipes: " + CustomRecipes.getRecipes().size());

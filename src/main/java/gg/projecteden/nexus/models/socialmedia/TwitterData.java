@@ -8,7 +8,7 @@ import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.features.discord.ReactionVoter;
 import gg.projecteden.nexus.features.socialmedia.integrations.Twitter;
-import gg.projecteden.nexus.models.PlayerOwnedObject;
+import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.HttpUtils;
 import gg.projecteden.utils.DiscordId.Role;
 import gg.projecteden.utils.DiscordId.TextChannel;

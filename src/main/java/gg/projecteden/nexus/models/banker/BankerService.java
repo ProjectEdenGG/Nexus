@@ -1,7 +1,8 @@
 package gg.projecteden.nexus.models.banker;
 
-import gg.projecteden.mongodb.annotations.PlayerClass;
-import gg.projecteden.nexus.models.MongoService;
+
+import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import me.lexikiq.HasUniqueId;
@@ -14,8 +15,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-@PlayerClass(Banker.class)
-public class BankerService extends MongoService<Banker> {
+@ObjectClass(Banker.class)
+public class BankerService extends MongoPlayerService<Banker> {
 	private static final Map<UUID, Banker> cache = new ConcurrentHashMap<>();
 
 	public Map<UUID, Banker> getCache() {

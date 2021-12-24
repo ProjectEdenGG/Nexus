@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.framework.persistence;
+package gg.projecteden.nexus.framework.persistence.mysql;
 
 public enum MySQLDatabase {
 	BEARNATION,

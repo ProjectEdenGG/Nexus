@@ -1,14 +1,15 @@
 package gg.projecteden.nexus.models.emote;
 
-import gg.projecteden.mongodb.annotations.PlayerClass;
-import gg.projecteden.nexus.models.MongoService;
+
+import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-@PlayerClass(EmoteUser.class)
-public class EmoteService extends MongoService<EmoteUser> {
+@ObjectClass(EmoteUser.class)
+public class EmoteService extends MongoPlayerService<EmoteUser> {
 	private final static Map<UUID, EmoteUser> cache = new ConcurrentHashMap<>();
 
 	public Map<UUID, EmoteUser> getCache() {

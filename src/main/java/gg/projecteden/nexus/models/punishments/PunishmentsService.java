@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.models.punishments;
 
 import dev.morphia.query.Query;
-import gg.projecteden.mongodb.annotations.PlayerClass;
-import gg.projecteden.nexus.models.MongoService;
+import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 
 import java.util.ArrayList;
@@ -12,8 +12,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-@PlayerClass(Punishments.class)
-public class PunishmentsService extends MongoService<Punishments> {
+@ObjectClass(Punishments.class)
+public class PunishmentsService extends MongoPlayerService<Punishments> {
 	private final static Map<UUID, Punishments> cache = new ConcurrentHashMap<>();
 
 	public Map<UUID, Punishments> getCache() {

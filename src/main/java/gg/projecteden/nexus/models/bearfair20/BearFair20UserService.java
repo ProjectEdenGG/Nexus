@@ -1,16 +1,16 @@
 package gg.projecteden.nexus.models.bearfair20;
 
 import dev.morphia.query.Sort;
-import gg.projecteden.mongodb.annotations.PlayerClass;
-import gg.projecteden.nexus.models.MongoService;
+import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-@PlayerClass(BearFair20User.class)
-public class BearFair20UserService extends MongoService<BearFair20User> {
+@ObjectClass(BearFair20User.class)
+public class BearFair20UserService extends MongoPlayerService<BearFair20User> {
 	private final static Map<UUID, BearFair20User> cache = new ConcurrentHashMap<>();
 
 	public Map<UUID, BearFair20User> getCache() {

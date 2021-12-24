@@ -15,7 +15,7 @@ import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.framework.interfaces.IsColoredAndNicknamed;
-import gg.projecteden.nexus.models.PlayerOwnedObject;
+import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.badge.BadgeUserService;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.discord.DiscordUserService;

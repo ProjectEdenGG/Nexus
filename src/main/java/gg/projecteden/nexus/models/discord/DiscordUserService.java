@@ -1,18 +1,18 @@
 package gg.projecteden.nexus.models.discord;
 
 import dev.morphia.query.Query;
-import gg.projecteden.mongodb.annotations.PlayerClass;
+import gg.projecteden.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.models.MongoService;
+import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 import gg.projecteden.utils.DiscordId.Role;
 
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-@PlayerClass(DiscordUser.class)
-public class DiscordUserService extends MongoService<DiscordUser> {
+@ObjectClass(DiscordUser.class)
+public class DiscordUserService extends MongoPlayerService<DiscordUser> {
 	private final static Map<UUID, DiscordUser> cache = new ConcurrentHashMap<>();
 
 	public Map<UUID, DiscordUser> getCache() {

@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.quests.users;
 import gg.projecteden.nexus.features.quests.interactable.Interactable;
 import gg.projecteden.nexus.features.quests.interactable.instructions.DialogInstance;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTaskStep;
-import gg.projecteden.nexus.models.PlayerOwnedObject;
+import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.utils.Utils;
 import lombok.Data;

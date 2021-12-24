@@ -10,7 +10,7 @@ import gg.projecteden.mongodb.serializers.BigDecimalConverter;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.economy.events.BalanceChangeEvent;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.NegativeBalanceException;
-import gg.projecteden.nexus.models.PlayerOwnedObject;
+import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.ActionBarUtils;

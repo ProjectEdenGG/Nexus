@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.models.poof;
 
 import com.dieselpoint.norm.Query;
-import gg.projecteden.nexus.models.MySQLService;
+import gg.projecteden.nexus.framework.persistence.mysql.MySQLService;
 import org.bukkit.entity.Player;
 
 import java.util.List;

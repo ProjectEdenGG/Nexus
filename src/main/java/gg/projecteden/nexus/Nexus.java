@@ -10,7 +10,7 @@ import gg.projecteden.nexus.features.listeners.TemporaryListener;
 import gg.projecteden.nexus.features.menus.SignMenuFactory;
 import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.framework.features.Features;
-import gg.projecteden.nexus.framework.persistence.MySQLPersistence;
+import gg.projecteden.nexus.framework.persistence.mysql.MySQLPersistence;
 import gg.projecteden.nexus.models.geoip.GeoIP;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
 import gg.projecteden.nexus.models.home.HomeService;

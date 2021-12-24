@@ -22,7 +22,7 @@ import gg.projecteden.nexus.framework.exceptions.preconfigured.MustBeCommandBloc
 import gg.projecteden.nexus.framework.exceptions.preconfigured.MustBeConsoleException;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.MustBeIngameException;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.NoPermissionException;
-import gg.projecteden.nexus.models.MongoService;
+import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nerd.Rank;
@@ -754,11 +754,11 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	@SneakyThrows
 	protected PlayerOwnedObject convertToPlayerOwnedObject(String value, Class<? extends PlayerOwnedObject> type) {
-		Class<? extends MongoService> service = (Class<? extends MongoService>) MongoService.ofObject(type);
+		Class<? extends MongoPlayerService> service = (Class<? extends MongoPlayerService>) MongoPlayerService.ofObject(type);
 		if (service != null) {
 			final OfflinePlayer player = convertToOfflinePlayer(value);
 			if (player != null)
-				return service.newInstance().get(player);
+				return (PlayerOwnedObject) service.newInstance().get(player);
 		}
 		return null;
 	}

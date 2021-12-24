@@ -1,7 +1,8 @@
 package gg.projecteden.nexus.models.inventoryhistory;
 
-import gg.projecteden.mongodb.annotations.PlayerClass;
-import gg.projecteden.nexus.models.MongoService;
+
+import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 import gg.projecteden.nexus.models.inventoryhistory.InventoryHistory.InventorySnapshot;
 
 import java.util.Comparator;
@@ -9,8 +10,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-@PlayerClass(InventoryHistory.class)
-public class InventoryHistoryService extends MongoService<InventoryHistory> {
+@ObjectClass(InventoryHistory.class)
+public class InventoryHistoryService extends MongoPlayerService<InventoryHistory> {
 	private final static Map<UUID, InventoryHistory> cache = new ConcurrentHashMap<>();
 
 	public Map<UUID, InventoryHistory> getCache() {
