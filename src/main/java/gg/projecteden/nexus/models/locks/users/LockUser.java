@@ -30,7 +30,7 @@ public class LockUser implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 
-	private LockType defaultLockType;
+	private LockType defaultLockType = LockType.PRIVATE;
 
 	public void create(Location location) {
 		final BlockLockService service = new BlockLockService();

@@ -6,6 +6,11 @@ public enum LockPermission {
 		public boolean canEdit(LockType lockType) {
 			return true;
 		}
+
+		@Override
+		public boolean canModify(LockType lockType) {
+			return true;
+		}
 	},
 	MEMBER {
 		@Override
@@ -15,8 +20,15 @@ public enum LockPermission {
 				default -> true;
 			};
 		}
+
+		@Override
+		public boolean canModify(LockType lockType) {
+			return false;
+		}
 	},
 	;
 
 	public abstract boolean canEdit(LockType lockType);
+
+	public abstract boolean canModify(LockType lockType);
 }

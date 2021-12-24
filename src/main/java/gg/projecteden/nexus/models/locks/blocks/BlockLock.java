@@ -86,6 +86,10 @@ public class BlockLock implements DatabaseObject {
 		return permissions.containsKey(uuid) && permissions.get(uuid).canEdit(lockType);
 	}
 
+	public boolean canBeModifiedBy(UUID uuid) {
+		return permissions.containsKey(uuid) && permissions.get(uuid).canModify(lockType);
+	}
+
 	public boolean hasFlag(LockFlag flag) {
 		return flags.contains(flag);
 	}
