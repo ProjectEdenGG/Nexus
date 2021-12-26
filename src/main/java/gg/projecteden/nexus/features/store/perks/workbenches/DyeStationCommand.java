@@ -36,7 +36,7 @@ public class DyeStationCommand extends _WorkbenchCommand {
 		DyeStation.openCheat(player());
 	}
 
-	@Path("<color>")
+	@Path("setColor <color>")
 	@Permission(value = "group.staff", absolute = true)
 	void dye(@Arg(type = ChatColor.class) ChatColor chatColor) {
 		ItemStack item = getToolRequired();

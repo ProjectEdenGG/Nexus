@@ -8,10 +8,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import me.lexikiq.HasUniqueId;
 import org.bukkit.Rotation;
+import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -68,9 +71,46 @@ public class Utils extends gg.projecteden.utils.Utils {
 					Nexus.warn("Cannot register listener on " + clazz.getSimpleName() + ", needs @NoArgsConstructor");
 			} else if (new ArrayList<>(getAllMethods(clazz, withAnnotation(EventHandler.class))).size() > 0)
 				Nexus.warn("Found @EventHandlers in " + clazz.getSimpleName() + " which does not implement Listener"
-						+ (hasNoArgsConstructor ? "" : " or have a @NoArgsConstructor"));
+					+ (hasNoArgsConstructor ? "" : " or have a @NoArgsConstructor"));
 		} catch (Exception ex) {
 			ex.printStackTrace();
+		}
+	}
+
+	@AllArgsConstructor
+	public enum ItemFrameRotation {
+		DEGREE_0(Rotation.NONE, BlockFace.NORTH),
+		DEGREE_45(Rotation.CLOCKWISE_45, BlockFace.NORTH_EAST),
+		DEGREE_90(Rotation.CLOCKWISE, BlockFace.EAST),
+		DEGREE_135(Rotation.CLOCKWISE_135, BlockFace.SOUTH_EAST),
+		DEGREE_180(Rotation.FLIPPED, BlockFace.SOUTH),
+		DEGREE_225(Rotation.FLIPPED_45, BlockFace.SOUTH_WEST),
+		DEGREE_270(Rotation.COUNTER_CLOCKWISE, BlockFace.WEST),
+		DEGREE_315(Rotation.COUNTER_CLOCKWISE_45, BlockFace.NORTH_WEST),
+		;
+
+		@Getter
+		Rotation rotation;
+		@Getter
+		BlockFace blockFace;
+
+		public static ItemFrameRotation of(Player player) {
+			BlockFace[] radial = {BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST, BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST};
+			float yaw = LocationUtils.normalizeYaw(player.getLocation());
+			BlockFace blockFace = radial[Math.round(yaw / 45F)];
+			return from(blockFace);
+		}
+
+		public static ItemFrameRotation from(BlockFace blockFace) {
+			return Arrays.stream(values())
+				.filter(itemFrameRotation -> itemFrameRotation.getBlockFace().equals(blockFace))
+				.findFirst().orElse(null);
+		}
+
+		public static ItemFrameRotation from(Rotation rotation) {
+			return Arrays.stream(values())
+				.filter(itemFrameRotation -> itemFrameRotation.getRotation().equals(rotation))
+				.findFirst().orElse(null);
 		}
 	}
 
