@@ -7,8 +7,9 @@ public class MobPlushie extends Decoration {
 	double dropChance;
 
 	public MobPlushie(String name, int modelData, double dropChance) {
-		this.dropChance = dropChance;
-		this.modelData = modelData;
 		this.name = name;
+		this.modelData = modelData;
+		this.dropChance = dropChance;
+
 	}
 }

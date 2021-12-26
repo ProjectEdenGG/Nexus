@@ -6,7 +6,7 @@ import org.bukkit.block.BlockFace;
 import java.util.List;
 import java.util.Map;
 
-public class LargeFireplace extends Decoration {
+public class LargeFireplace extends MultiBlock {
 
 	public LargeFireplace(String name, int modelData) {
 		this.name = name;

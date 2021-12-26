@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.resourcepack;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.resourcepack.decoration.Decorations;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
@@ -12,17 +11,14 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import io.papermc.paper.event.player.PlayerFlowerPotManipulateEvent;
 import org.bukkit.Bukkit;
-import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
@@ -53,34 +49,6 @@ public class ResourcePackListener implements Listener {
 					ResourcePack.send(player);
 			});
 		});
-	}
-
-	@EventHandler
-	public void on(PlayerInteractEvent event) {
-		if (event.getHand() != EquipmentSlot.HAND)
-			return;
-
-		if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
-			return;
-
-		ItemStack tool = ItemUtils.getTool(event.getPlayer());
-		if (tool == null)
-			return;
-
-		Decorations decorations = Decorations.of(tool);
-		if (decorations == null)
-			return;
-
-		Block clicked = event.getClickedBlock();
-		if (clicked == null)
-			return;
-
-		// TODO: Remove
-		if (!Rank.of(event.getPlayer()).isAdmin())
-			return;
-		//
-
-		decorations.place(event.getPlayer(), clicked, event.getBlockFace());
 	}
 
 	@EventHandler

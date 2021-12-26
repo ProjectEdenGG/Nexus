@@ -1,4 +1,5 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.common;
 
-public interface Sittable {
+public class MultiBlockSeat extends Seat {
+
 }

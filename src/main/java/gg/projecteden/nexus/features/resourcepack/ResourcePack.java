@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationListener;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateStartEvent;
@@ -78,6 +79,7 @@ public class ResourcePack extends Feature implements Listener {
 	@Override
 	public void onStart() {
 		new ResourcePackListener();
+		new DecorationListener();
 		read();
 	}
 
