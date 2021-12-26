@@ -175,7 +175,8 @@ public class Punishments implements PlayerOwnedObject {
 
 	public void remove(Punishment punishment) {
 		punishments.remove(punishment);
-		punishment.announceEnd();
+		if (punishment.isActive())
+			punishment.announceEnd();
 		punishment.getType().onExpire(punishment);
 
 		save();

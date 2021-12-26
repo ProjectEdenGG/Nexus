@@ -64,6 +64,7 @@ public class HistoryCommand extends _JusticeCommand {
 	@Path("delete <player> <id>")
 	@Permission(Group.MODERATOR)
 	void delete(Punishments player, @Arg(context = 1) Punishment punishment) {
+		punishment.setRemover(uuid());
 		player.remove(punishment);
 		service.save(player);
 		send(PREFIX + "Punishment deleted");
