@@ -7,8 +7,11 @@ import java.util.List;
 import java.util.Map;
 
 public class Bench extends MultiBlockSeat {
+	private static final List<Hitbox> hitboxes = List.of(
+		Hitbox.origin(Material.BARRIER),
+		new Hitbox(Material.BARRIER, Map.of(BlockFace.EAST, 1)));
 
 	public Bench(String name, int modelData) {
-		super(name, modelData, List.of(Hitbox.origin(Material.BARRIER), new Hitbox(Material.BARRIER, Map.of(BlockFace.EAST, 1))));
+		super(name, modelData, hitboxes);
 	}
 }
