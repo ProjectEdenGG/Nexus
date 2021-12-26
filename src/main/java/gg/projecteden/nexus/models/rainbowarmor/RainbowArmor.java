@@ -77,7 +77,8 @@ public class RainbowArmor implements PlayerOwnedObject {
 
 	public void stopArmor() {
 		Tasks.cancel(taskId);
-		removeColor();
+		if (enabled)
+			removeColor();
 		enabled = false;
 	}
 
