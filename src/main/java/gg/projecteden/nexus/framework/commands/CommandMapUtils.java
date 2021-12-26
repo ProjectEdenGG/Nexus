@@ -59,7 +59,6 @@ public class CommandMapUtils {
 		pluginCommand.setLabel(name);
 		pluginCommand.setAliases(customCommand.getAliases());
 		pluginCommand.setExecutor(handler);
-		pluginCommand.setTabCompleter(handler);
 		Description description = customCommand.getClass().getAnnotation(Description.class);
 		if (description != null)
 			pluginCommand.setDescription(description.value());

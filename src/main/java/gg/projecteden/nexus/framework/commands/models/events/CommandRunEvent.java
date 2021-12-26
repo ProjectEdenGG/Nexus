@@ -26,7 +26,7 @@ public class CommandRunEvent extends CommandEvent {
 	private String usage;
 
 	public CommandRunEvent(CommandSender sender, CustomCommand command, String aliasUsed, List<String> args, List<String> originalArgs) {
-		super(sender, command, aliasUsed, args, originalArgs);
+		super(sender, command, aliasUsed, args, originalArgs, false);
 	}
 
 	public void setUsage(Method method) {

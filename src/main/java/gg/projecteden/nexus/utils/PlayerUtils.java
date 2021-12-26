@@ -111,6 +111,10 @@ public class PlayerUtils {
 			PlayerUtils.send(this, message);
 		}
 
+		public void send(String message, Object... args) {
+			send(message.formatted(args));
+		}
+
 		public void debug(Object message) {
 			if (Nexus.isDebug())
 				PlayerUtils.send(this, message);
