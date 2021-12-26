@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.models.matchdata.PixelPaintersMatchData;
 import gg.projecteden.nexus.features.store.perks.NPCListener;
+import gg.projecteden.nexus.features.store.perks.autosort.features.AutoTool;
 import gg.projecteden.nexus.features.wither.fights.CorruptedFight.CorruptedCounterAttacks;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -23,6 +24,7 @@ import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.SoundBuilder.SoundCooldown;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -56,6 +58,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 import org.inventivetalent.glow.GlowAPI;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,6 +68,7 @@ import java.util.function.Consumer;
 import static gg.projecteden.nexus.utils.BlockUtils.getBlocksInRadius;
 import static gg.projecteden.nexus.utils.BlockUtils.getDirection;
 import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.PlayerUtils.getHotbarContents;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @Permission("group.admin")
@@ -455,4 +459,10 @@ public class TestCommand extends CustomCommand implements Listener {
 		for (SoundCooldown<?> cooldown : SoundBuilder.cooldowns(SoundCooldown.class, context))
 			send(cooldown.toString());
 	}
+	
+	@Path("autotool")
+	void autotool() {
+		AutoTool.getBestTool(Arrays.asList(getHotbarContents(player())), getTargetBlockRequired(), Dev.of(uuid()));
+	}
+
 }

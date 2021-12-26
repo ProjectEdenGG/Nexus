@@ -158,6 +158,8 @@ public class MaterialTag implements Tag<Material> {
 		.append(new MaterialTag("DIORITE", MatchMode.CONTAINS))
 		.append(new MaterialTag("ANDESITE", MatchMode.CONTAINS));
 
+	public static final MaterialTag INFESTED_STONE = new MaterialTag("INFESTED_", MatchMode.PREFIX);
+
 	public static final MaterialTag ALL_COPPER = new MaterialTag("COPPER", MatchMode.CONTAINS);
 
 	public static final MaterialTag MINERAL_ORES = new MaterialTag("_ORE", MatchMode.CONTAINS);
