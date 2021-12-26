@@ -56,13 +56,13 @@ public class Decoration {
 		return ItemFrameRotation.from(frameRotation.getRotation().rotateClockwise());
 	}
 
-	public void place(Player player, Block block, BlockFace blockFace) {
+	public void place(Player player, Block block, BlockFace blockFace, ItemStack item) {
 		World world = block.getWorld();
 		Location origin = block.getRelative(blockFace).getLocation().clone();
 
 		ItemFrame itemFrame = (ItemFrame) world.spawnEntity(origin, EntityType.ITEM_FRAME);
 //		itemFrame.setVisible(false);
-		itemFrame.setItem(getItem(), false);
+		itemFrame.setItem(item, false);
 
 		// TODO: Place hitbox according to frame rotation
 		ItemFrameRotation frameRotation = getValidRotation(ItemFrameRotation.of(player));
@@ -154,6 +154,6 @@ public class Decoration {
 
 	public void interact(Player player, ItemFrame itemFrame) {
 		if (this instanceof Seat seat)
-			seat.trySit(player, itemFrame.getLocation().toCenterLocation());
+			seat.trySit(player, itemFrame);
 	}
 }

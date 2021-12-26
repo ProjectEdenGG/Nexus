@@ -95,9 +95,14 @@ public class Utils extends gg.projecteden.utils.Utils {
 		BlockFace blockFace;
 
 		public static ItemFrameRotation of(Player player) {
-			BlockFace[] radial = {BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST, BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST};
+			BlockFace[] radial = {BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST,
+				BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST};
 			float yaw = LocationUtils.normalizeYaw(player.getLocation());
-			BlockFace blockFace = radial[Math.round(yaw / 45F)];
+			int ndx = Math.round(yaw / 45F);
+			if (ndx > radial.length - 1)
+				ndx = 0;
+
+			BlockFace blockFace = radial[ndx];
 			return from(blockFace);
 		}
 
