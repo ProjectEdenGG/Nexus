@@ -50,6 +50,8 @@ public class AutoTool implements Listener {
 			return;
 		if (!AutoSortUser.of(player).hasFeatureEnabled(AutoSortFeature.AUTOTOOL))
 			return;
+		if (!MaterialTag.TOOLS.isTagged(player.getInventory().getItemInMainHand()))
+			return;
 
 		ItemStack[] contents = getHotbarContents(player);
 		ItemStack bestTool = getBestTool(Arrays.asList(contents), block, null);
