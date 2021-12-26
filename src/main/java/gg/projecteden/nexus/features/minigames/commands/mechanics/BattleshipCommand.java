@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.minigames.commands;
+package gg.projecteden.nexus.features.minigames.commands.mechanics;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.managers.PlayerManager;

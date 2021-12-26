@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.minigames.commands;
+package gg.projecteden.nexus.features.minigames.commands.mechanics;
 
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;

@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.minigames.commands;
+package gg.projecteden.nexus.features.minigames.commands.mechanics;
 
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.util.Direction;

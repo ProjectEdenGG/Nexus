@@ -5,7 +5,7 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.minigames.commands.BattleshipCommand;
+import gg.projecteden.nexus.features.minigames.commands.mechanics.BattleshipCommand;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Arena;

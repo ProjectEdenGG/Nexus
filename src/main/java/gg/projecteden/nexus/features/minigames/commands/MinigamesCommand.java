@@ -28,6 +28,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -80,6 +81,7 @@ import java.util.stream.Collectors;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @Aliases({"mgm", "mg"})
+@Redirect(from = "/mgn", to = "/mgm night")
 @Permission(MinigamesCommand.PERMISSION_USE)
 public class MinigamesCommand extends CustomCommand {
 	public static final String PERMISSION_USE = "minigames.use";
@@ -102,6 +104,18 @@ public class MinigamesCommand extends CustomCommand {
 	@Permission(PERMISSION_USE)
 	void warp() {
 		runCommand("warp minigames");
+	}
+
+	@Path("night")
+	void night() {
+		NextMGN mgn = isPlayer() ? new NextMGN(player()) : new NextMGN();
+
+		line();
+		if (mgn.isNow())
+			send("&3Minigame night is happening right now! Join with &e/gl");
+		else
+			send("&3The next &eMinigame Night &3will be hosted on &e" + mgn.getDateFormatted() + "&3 at &e"
+				+ mgn.getTimeFormatted() + "&3. That is in &e" + mgn.getUntil());
 	}
 
 	@Path("list [filter]")
