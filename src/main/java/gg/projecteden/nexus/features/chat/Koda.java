@@ -174,13 +174,17 @@ public class Koda {
 		}
 	}
 
-	public static void respond(ChatEvent event, String response) {
+	public static void respond(ChatEvent event, PublicChannel channel, String response) {
 		Tasks.waitAsync(TickTime.SECOND, () -> {
 			final String finalResponse = response.replaceAll("\\[player]", event.getOrigin());
-			PublicChannel channel = (PublicChannel) event.getChannel();
-			event.getRecipients().forEach(recipient -> recipient.sendMessage(channel.getChatterFormat(chatter, recipient).next(finalResponse)));
-			Broadcast.discord().channel(channel).message(discordFormat + finalResponse).send();
+			channel.getRecipients(event.getChatter()).forEach(recipient -> recipient.sendMessage(channel.getChatterFormat(chatter, recipient).next(finalResponse)));
+			if (StaticChannel.GLOBAL.getChannel().equals(channel))
+				Broadcast.discord().channel(channel).message(discordFormat + finalResponse).send();
 		});
+	}
+
+	public static void respond(ChatEvent event, String response) {
+		respond(event, (PublicChannel) event.getChannel(), response);
 	}
 
 	private static void routine(ChatEvent event, String id) {
@@ -191,7 +195,7 @@ public class Koda {
 					respond(event, "Minigame night is happening right now! Join with /gl");
 				else
 					respond(event, "The next Minigame Night will be hosted on " + mgn.getDateFormatted() + " at "
-							+ mgn.getTimeFormatted() + ". That is in " + mgn.getUntil());
+						+ mgn.getTimeFormatted() + ". That is in " + mgn.getUntil());
 				break;
 			case "canihaveop":
 				if (event.getChatter() != null && event.getChatter().isOnline()) {
@@ -256,7 +260,7 @@ public class Koda {
 				double tps = Bukkit.getTPS()[1];
 
 				if (ping > 200 && tps > 16)
-					respond(event, "[player], you are lagging (" + ping + "ms), not the server. Try relogging or rebooting your router.");
+					respond(event, StaticChannel.LOCAL.getChannel(), "[player], you are lagging (" + ping + "ms), not the server. Try relogging or rebooting your router.");
 				break;
 		}
 	}
