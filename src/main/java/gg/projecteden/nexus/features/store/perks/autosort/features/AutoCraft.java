@@ -50,6 +50,7 @@ public class AutoCraft implements Listener {
 		put(Material.QUARTZ_BLOCK, Set.of(Material.QUARTZ));
 		put(Material.GLOWSTONE, Set.of(Material.GLOWSTONE_DUST));
 		put(Material.HAY_BLOCK, Set.of(Material.WHEAT));
+		put(Material.PRISMARINE, Set.of(Material.PRISMARINE_SHARD));
 	}};
 
 	@Getter
