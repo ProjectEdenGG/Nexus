@@ -3,6 +3,8 @@ package gg.projecteden.nexus.features.commands.staff.admin;
 import gg.projecteden.nexus.features.particles.effects.DotEffect;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.LocationUtils.CardinalDirection;
@@ -27,6 +29,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import static gg.projecteden.nexus.utils.Utils.sortByKey;
 
 @NoArgsConstructor
+@Permission(Group.ADMIN)
 public class ParseCommandBlockSoundsCommand extends CustomCommand implements Listener {
 
 	public ParseCommandBlockSoundsCommand(@NonNull CommandEvent event) {

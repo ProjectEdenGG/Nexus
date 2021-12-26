@@ -8,6 +8,8 @@ import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -25,6 +27,7 @@ import java.util.List;
 
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
+@Permission(Group.ADMIN)
 public class MaterialTagCommand extends CustomCommand {
 
 	public MaterialTagCommand(@NonNull CommandEvent event) {
