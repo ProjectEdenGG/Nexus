@@ -24,6 +24,7 @@ import java.util.List;
 
 import static gg.projecteden.nexus.features.listeners.Restrictions.isPerkAllowedAt;
 import static gg.projecteden.nexus.features.store.perks.EntityNameCommand.PERMISSION;
+import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.applyFormattingToAll;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
@@ -70,6 +71,8 @@ public class EntityNameCommand extends CustomCommand {
 
 		if (targetEntity instanceof ItemFrame itemFrame) {
 			ItemStack item = itemFrame.getItem();
+			if (isNullOrAir(item))
+				error("Empty item frames cannot be renamed");
 			ItemBuilder.setName(item, input);
 			itemFrame.setItem(item);
 		} else {
