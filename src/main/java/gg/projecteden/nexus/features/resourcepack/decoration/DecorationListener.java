@@ -119,7 +119,6 @@ public class DecorationListener implements Listener {
 
 			event.setCancelled(true);
 			_decorations.getDecoration().place(player, clicked, event.getBlockFace(), tool);
-			tool.subtract();
 		}
 	}
 

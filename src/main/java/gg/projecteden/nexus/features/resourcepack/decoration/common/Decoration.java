@@ -6,6 +6,7 @@ import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -37,6 +39,7 @@ public class Decoration {
 
 	List<Hitbox> hitboxes = Hitbox.NONE();
 	DisabledRotation disabledRotation = DisabledRotation.NONE;
+	List<DisabledPlacement> disabledPlacements = new ArrayList<>();
 
 	public Decoration(String name, int modelData, @NotNull Material material, List<Hitbox> hitboxes) {
 		this.name = name;
@@ -57,16 +60,26 @@ public class Decoration {
 	}
 
 	public void place(Player player, Block block, BlockFace blockFace, ItemStack item) {
+		if (!isValidBlockFace(blockFace))
+			return;
+
+		ItemStack _item = item.clone();
+		_item.setAmount(1);
+		item.subtract();
+
 		World world = block.getWorld();
 		Location origin = block.getRelative(blockFace).getLocation().clone();
+		ItemFrameRotation frameRotation = getValidRotation(ItemFrameRotation.of(player));
 
 		ItemFrame itemFrame = (ItemFrame) world.spawnEntity(origin, EntityType.ITEM_FRAME);
+		itemFrame.setSilent(true);
 //		itemFrame.setVisible(false);
-		itemFrame.setItem(item, false);
-
-		// TODO: Place hitbox according to frame rotation
-		ItemFrameRotation frameRotation = getValidRotation(ItemFrameRotation.of(player));
+		itemFrame.setItem(_item, false);
 		itemFrame.setRotation(frameRotation.getRotation());
+		itemFrame.setFacingDirection(blockFace, true);
+
+		// TODO:
+		//  - Place hitbox according to frame rotation
 
 		for (Hitbox hitbox : getHitboxes()) {
 			Material material = hitbox.getMaterial();
@@ -84,7 +97,18 @@ public class Decoration {
 		}
 	}
 
+	private boolean isValidBlockFace(BlockFace blockFace) {
+		for (DisabledPlacement disabledPlacement : getDisabledPlacements()) {
+			if (disabledPlacement.getBlockFaces().contains(blockFace))
+				return false;
+		}
+		return true;
+	}
+
 	public void destroy(Player player, ItemFrame itemFrame) {
+		if (Seat.isOccupied(itemFrame.getLocation()))
+			return;
+
 		World world = player.getWorld();
 		ItemStack item = itemFrame.getItem().clone();
 		Location origin = itemFrame.getLocation().toBlockLocation().clone();
@@ -102,6 +126,7 @@ public class Decoration {
 
 		world.dropItemNaturally(origin, item);
 	}
+
 
 	@Data
 	@RequiredArgsConstructor
@@ -146,6 +171,21 @@ public class Decoration {
 		public boolean contains(Rotation rotation) {
 			return this.frameRotations.contains(ItemFrameRotation.from(rotation));
 		}
+	}
+
+	@AllArgsConstructor
+	public enum DisabledPlacement {
+		FLOOR(BlockFace.UP),
+		WALL(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST),
+		CEILING(BlockFace.DOWN),
+		;
+
+		DisabledPlacement(BlockFace... blockFaces) {
+			this.blockFaces = Arrays.asList(blockFaces);
+		}
+
+		@Getter
+		List<BlockFace> blockFaces;
 	}
 
 	public ItemStack getItem() {

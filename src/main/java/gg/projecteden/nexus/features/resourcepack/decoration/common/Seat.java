@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.resourcepack.decoration.common;
 
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Rotation;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
@@ -15,6 +16,14 @@ import java.util.List;
 
 public class Seat extends Decoration {
 	private static final String id = "DecorationSeat";
+
+	public Seat(String name, int modelData, List<Hitbox> hitboxes) {
+		this.name = name;
+		this.modelData = modelData;
+		this.hitboxes = hitboxes;
+		this.material = Material.LEATHER_HORSE_ARMOR;
+		this.disabledPlacements = List.of(DisabledPlacement.WALL, DisabledPlacement.CEILING);
+	}
 
 	public void trySit(Player player, ItemFrame itemFrame) {
 		Location location = itemFrame.getLocation().toCenterLocation().clone().subtract(0, 0.9, 0);
