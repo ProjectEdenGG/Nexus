@@ -17,6 +17,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -55,14 +56,14 @@ public class BingoCommand extends CustomCommand {
 	}
 
 	@Confirm
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("challenge complete <challenge> [player]")
 	void complete(Challenge challenge, @Arg("self") Minigamer minigamer) {
 		matchData.getData(minigamer).setCompleted(challenge, true);
 	}
 
 	@Confirm
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("challenge reset <challenge> [player]")
 	void reset(Challenge challenge, @Arg("self") Minigamer minigamer) {
 		matchData.getData(minigamer).setCompleted(challenge, false);

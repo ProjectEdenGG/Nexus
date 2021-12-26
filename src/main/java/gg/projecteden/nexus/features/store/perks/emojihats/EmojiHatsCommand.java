@@ -5,6 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -55,13 +56,13 @@ public class EmojiHatsCommand extends CustomCommand {
 	}
 
 	@Path("run <player> <type>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void run(Player player, EmojiHat type) {
 		type.run(player);
 	}
 
 	@Path("give <player> <type>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void give(Player player, EmojiHat type) {
 		if (type.canBeUsedBy(player))
 			error("&e" + Nickname.of(player) + " &calready owns &e" + camelCase(type));
@@ -71,7 +72,7 @@ public class EmojiHatsCommand extends CustomCommand {
 	}
 
 	@Path("getFrameItems <type>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void getFrameItems(EmojiHat type) {
 		PlayerUtils.giveItems(player(), type.getFrameItems());
 	}

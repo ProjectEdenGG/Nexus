@@ -4,6 +4,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.easter21.Easter21User;
 import gg.projecteden.nexus.models.easter21.Easter21UserService;
@@ -60,7 +61,7 @@ public class EasterCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("topLocations [page]")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void topLocations(@Arg("1") int page) {
 		Map<Location, Integer> counts = new HashMap<>() {{
 			for (Easter21User user : new Easter21UserService().getAll())
@@ -77,7 +78,7 @@ public class EasterCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("start")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void start() {
 		List<Warp> locations = WarpType.EASTER21.getAll();
 		for (Warp warp : locations)
@@ -87,7 +88,7 @@ public class EasterCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("end")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void end() {
 		List<Warp> locations = WarpType.EASTER21.getAll();
 		for (Warp warp : locations)

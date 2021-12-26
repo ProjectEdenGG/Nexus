@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.whereis.WhereIs;
@@ -20,7 +21,7 @@ import org.inventivetalent.glow.GlowAPI;
 
 import java.util.Collections;
 
-@Permission("group.staff")
+@Permission(Group.STAFF)
 public class WhereIsCommand extends CustomCommand {
 	private static boolean enabled = true;
 	private final WhereIsService service = new WhereIsService();

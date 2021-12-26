@@ -10,6 +10,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
@@ -59,7 +60,7 @@ import static gg.projecteden.utils.TimeUtils.shortDateTimeFormat;
 import static gg.projecteden.utils.TimeUtils.shortishDateTimeFormat;
 
 @NoArgsConstructor
-@Permission("group.seniorstaff")
+@Permission(Group.SENIOR_STAFF)
 public class InventorySnapshotsCommand extends CustomCommand implements Listener {
 	public static final String PREFIX = StringUtils.getPrefix("InventorySnapshots");
 	private final InventoryHistoryService service = new InventoryHistoryService();

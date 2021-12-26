@@ -5,6 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
@@ -39,7 +40,7 @@ public class Easter20Command extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	@Path("set <player>")
 	void set(OfflinePlayer player) {
 		Sign sign = getTargetSignRequired();

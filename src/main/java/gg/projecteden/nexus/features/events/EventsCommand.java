@@ -10,6 +10,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.eventuser.EventUser;
@@ -108,7 +109,7 @@ public class EventsCommand extends CustomCommand {
 	}
 
 	@Path("tokens give <player> <tokens>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void tokens_give(EventUser user, int tokens) {
 		user.giveTokens(tokens);
 		service.save(user);
@@ -116,7 +117,7 @@ public class EventsCommand extends CustomCommand {
 	}
 
 	@Path("tokens take <player> <tokens>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void tokens_take(EventUser user, int tokens) {
 		user.takeTokens(tokens);
 		service.save(user);
@@ -124,7 +125,7 @@ public class EventsCommand extends CustomCommand {
 	}
 
 	@Path("tokens set <player> <tokens>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void tokens_set(EventUser user, int tokens) {
 		user.setTokens(tokens);
 		service.save(user);
@@ -132,7 +133,7 @@ public class EventsCommand extends CustomCommand {
 	}
 
 	@Path("tokens reset <player>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void tokens_reset(EventUser user) {
 		user.setTokens(0);
 		user.getTokensReceivedByDate().clear();
@@ -155,14 +156,14 @@ public class EventsCommand extends CustomCommand {
 	}
 
 	@Path("store images reload")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void store_images_reload() {
 		EventStoreImage.reload();
 		send(STORE_PREFIX + "Loaded " + IMAGES.size() + " maps");
 	}
 
 	@Path("store images get <image...>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void store_images_get(EventStoreImage image) {
 		PlayerUtils.giveItem(player(), image.getSplatterMap());
 	}

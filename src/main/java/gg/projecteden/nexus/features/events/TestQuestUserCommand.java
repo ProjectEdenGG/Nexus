@@ -5,12 +5,13 @@ import gg.projecteden.nexus.features.events.y2020.pugmas20.quests.Quests.Pugmas2
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.testquestuser.TestQuestUser;
 import gg.projecteden.nexus.models.testquestuser.TestQuestUserService;
 import lombok.NonNull;
 
-@Permission("group.admin")
+@Permission(Group.ADMIN)
 public class TestQuestUserCommand extends CustomCommand {
 	private TestQuestUserService service = new TestQuestUserService();
 	private TestQuestUser user;

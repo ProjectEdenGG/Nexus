@@ -4,6 +4,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.utils.Env;
 import lombok.NoArgsConstructor;
@@ -15,7 +16,7 @@ import org.bukkit.event.server.ServerListPingEvent;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @NoArgsConstructor
-@Permission("group.admin")
+@Permission(Group.ADMIN)
 public class MotdCommand extends CustomCommand implements Listener {
 	private static final String originalMotd = "&f &f &f &f &f &f &f &f &f &f &f &f &f &f &f &f &f " +
 		"&a&l⚘ &f &#ffff44&lProject Eden" + (Nexus.getEnv() == Env.PROD ? "" : " &6[" + Nexus.getEnv().name() + "]") + " &f &a&l⚘\n" +

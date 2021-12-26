@@ -5,6 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
@@ -27,7 +28,7 @@ public class ExperienceCommand extends CustomCommand {
 	}
 
 	@Path("get <player>")
-	@Permission(value = "group.seniorstaff", absolute = true)
+	@Permission(Group.SENIOR_STAFF)
 	void get(Player player) {
 		send(PREFIX + player.getName() + " has &e" + getFormattedExp(player));
 	}
@@ -37,7 +38,7 @@ public class ExperienceCommand extends CustomCommand {
 	}
 
 	@Path("set <player> <level>")
-	@Permission(value = "group.seniorstaff", absolute = true)
+	@Permission(Group.SENIOR_STAFF)
 	void set(Player player, double amount) {
 		int levels = (int) amount;
 		float exp = (float) (amount - levels);
@@ -45,7 +46,7 @@ public class ExperienceCommand extends CustomCommand {
 	}
 
 	@Path("give <player> <amount>")
-	@Permission(value = "group.seniorstaff", absolute = true)
+	@Permission(Group.SENIOR_STAFF)
 	void give(Player player, double amount) {
 		int levels = (int) amount;
 		float exp = (float) (amount - levels);
@@ -58,7 +59,7 @@ public class ExperienceCommand extends CustomCommand {
 	}
 
 	@Path("take <player> <amount>")
-	@Permission(value = "group.seniorstaff", absolute = true)
+	@Permission(Group.SENIOR_STAFF)
 	void take(Player player, double amount) {
 		int levels = (int) amount;
 		float exp = (float) (amount - levels);

@@ -4,6 +4,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.rainbowbeacon.RainbowBeacon;
 import gg.projecteden.nexus.models.rainbowbeacon.RainbowBeaconService;
@@ -85,7 +86,7 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("list")
-	@Permission(value = "group.seniorstaff", absolute = true)
+	@Permission(Group.SENIOR_STAFF)
 	void list() {
 		if (service.getCache().values().size() == 0)
 			error("No active rainbow beacons");

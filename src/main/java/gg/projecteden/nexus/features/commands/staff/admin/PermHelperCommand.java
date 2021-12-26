@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.commands.staff.admin;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.extraplots.ExtraPlotUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -20,7 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-@Permission("group.admin")
+@Permission(Group.ADMIN)
 public class PermHelperCommand extends CustomCommand {
 	private static final int MAX = 100;
 

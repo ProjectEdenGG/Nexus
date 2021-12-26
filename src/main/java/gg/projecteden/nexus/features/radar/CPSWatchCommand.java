@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.radar;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
@@ -20,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 @NoArgsConstructor
-@Permission("group.moderator")
+@Permission(Group.MODERATOR)
 public class CPSWatchCommand extends CustomCommand implements Listener {
 	private static final Map<Player, Integer> cpsMap = new HashMap<>();
 	private static final Map<Player, List<Player>> watchMap = new HashMap<>();

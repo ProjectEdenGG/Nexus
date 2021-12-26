@@ -11,6 +11,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -48,7 +49,7 @@ public class ItemInfoCommand extends CustomCommand {
 	}
 
 	@Path("extended [material]")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void extended(Material material) {
 		ItemStack tool = material == null ? getToolRequired() : new ItemStack(material);
 		material = tool.getType();
@@ -110,7 +111,7 @@ public class ItemInfoCommand extends CustomCommand {
 	}
 
 	@Path("serialize json [material] [amount]")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void serializeJson(Material material, @Arg("1") int amount) {
 		ItemStack tool = material == null ? getToolRequired() : new ItemStack(material);
 
@@ -148,7 +149,7 @@ public class ItemInfoCommand extends CustomCommand {
 	}
 
 	@Path("notItems")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void notItems() {
 		for (Material material : Material.values())
 			if (!material.isLegacy() && !material.isItem())
@@ -156,7 +157,7 @@ public class ItemInfoCommand extends CustomCommand {
 	}
 
 	@Path("enchanted")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void enchanted() {
 		new EnchantedItemsMenu().open(player());
 	}

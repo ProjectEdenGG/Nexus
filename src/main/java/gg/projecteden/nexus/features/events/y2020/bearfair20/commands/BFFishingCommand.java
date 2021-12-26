@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Fish
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -32,7 +33,7 @@ import java.util.UUID;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.itemLore;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Fishing.weightedList;
 
-@Permission("group.staff")
+@Permission(Group.STAFF)
 public class BFFishingCommand extends CustomCommand {
 	static Map<UUID, LocalDateTime> timestamps = new HashMap<>();
 	ItemStack fishingRod = new ItemBuilder(Material.FISHING_ROD).enchant(Enchantment.LURE, 2).lore(itemLore).build();
@@ -49,7 +50,7 @@ public class BFFishingCommand extends CustomCommand {
 	}
 
 	@Path("giveAll")
-	@Permission(value = "group.admin", absolute = true)
+	@Permission(Group.ADMIN)
 	public void giveAll() {
 		giveAllLoot(player());
 	}

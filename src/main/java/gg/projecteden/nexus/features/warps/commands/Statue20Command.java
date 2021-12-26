@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
@@ -68,33 +69,33 @@ public class Statue20Command extends _WarpCommand implements Listener {
 
 	@Override
 	@Path("(teleport|tp|warp) <name>")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	public void teleport(Warp warp) {
 		super.teleport(warp);
 	}
 
 	@Override
 	@Path("<name>")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	public void tp(Warp warp) {
 		super.tp(warp);
 	}
 
 	@Path("tp nearest")
 	@Override
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	public void teleportNearest() {
 		super.teleportNearest();
 	}
 
 	@Path("nearest")
 	@Override
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	public void nearest() {
 		super.nearest();
 	}
 
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	@Path("sign <player>")
 	void sign(String player) {
 		Sign sign = getTargetSignRequired();

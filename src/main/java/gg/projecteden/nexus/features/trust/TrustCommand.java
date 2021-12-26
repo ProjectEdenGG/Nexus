@@ -9,6 +9,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.home.Home;
@@ -94,28 +95,28 @@ public class TrustCommand extends CustomCommand {
 		process(trust, players, Type.values());
 	}
 
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	@Path("admin locks <owner> <players>")
 	void locks(Trust trust, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		send(PREFIX + "Modifying trusts of &e" + trust.getName());
 		process(trust, players, Type.LOCKS);
 	}
 
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	@Path("admin homes <owner> <players>")
 	void homes(Trust trust, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		send(PREFIX + "Modifying trusts of &e" + trust.getName());
 		process(trust, players, Type.HOMES);
 	}
 
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	@Path("admin teleports <owner> <players>")
 	void teleports(Trust trust, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		send(PREFIX + "Modifying trusts of &e" + trust.getName());
 		process(trust, players, Type.TELEPORTS);
 	}
 
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	@Path("admin all <owner> <players>")
 	void all(Trust trust, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		send(PREFIX + "Modifying trusts of &e" + trust.getName());

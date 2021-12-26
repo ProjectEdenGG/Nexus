@@ -5,10 +5,11 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.utils.TimeUtils.TickTime;
 
-@Permission("group.staff")
+@Permission(Group.STAFF)
 @Aliases({"gpi", "griefinfo"})
 public class GriefProtectionInfoCommand extends CustomCommand {
 

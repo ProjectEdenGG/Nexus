@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.worldban.WorldBan;
 import gg.projecteden.nexus.models.worldban.WorldBanService;
@@ -20,7 +21,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import java.util.List;
 
 @NoArgsConstructor
-@Permission("group.moderator")
+@Permission(Group.MODERATOR)
 public class WorldBanCommand extends CustomCommand implements Listener {
 	public WorldBanService service = new WorldBanService();
 

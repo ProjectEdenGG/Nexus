@@ -165,12 +165,10 @@ public class CommandsConfig implements PlayerOwnedObject {
 					this.descriptionExtra = descriptionExtra.value();
 
 				Permission permission = method.getAnnotation(Permission.class);
-				if (permission != null) {
-					if (permission.absolute() || commandConfig.getPermission() == null)
-						this.permission = permission.value();
-					else
-						this.permission = commandConfig.getPermission() + "." + permission.value();
-				}
+				if (permission != null)
+					this.permission = permission.value();
+				else
+					this.permission = commandConfig.getPermission();
 
 				Cooldown cooldown = method.getAnnotation(Cooldown.class);
 				this.cooldown = 0;

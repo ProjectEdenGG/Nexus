@@ -6,6 +6,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.utils.TimeUtils.Timespan;
@@ -19,7 +20,7 @@ import java.util.List;
 
 import static gg.projecteden.utils.TimeUtils.shortDateTimeFormat;
 
-@Permission("group.seniorstaff")
+@Permission(Group.SENIOR_STAFF)
 @Aliases({"gc", "memory", "uptime"})
 public class LagCommand extends CustomCommand {
 

@@ -4,6 +4,7 @@ import gg.projecteden.annotations.Environments;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.PacketUtils;
@@ -29,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 @Environments(Env.TEST)
-@Permission("group.admin")
+@Permission(Group.ADMIN)
 @NoArgsConstructor
 public class ItemFrameNameCommand extends CustomCommand {
 	private static final List<Player> enabledList = new ArrayList<>();

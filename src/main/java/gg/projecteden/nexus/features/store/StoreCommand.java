@@ -17,6 +17,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.contributor.Contributor;
@@ -115,7 +116,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 		send(json(PREFIX + "Created store coupon &e" + code + "&3. Click to copy").copy(code).hover("&fClick to copy", "&fRedeem at " + StoreCommand.URL));
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("credit set <player> <amount>")
 	void set(Contributor contributor, double amount) {
 		contributor.setCredit(amount);
@@ -123,7 +124,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Set &e" + Nickname.of(contributor) + "'s &3balance to &e" + contributor.getCreditFormatted());
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("credit give <player> <amount>")
 	void give(Contributor contributor, double amount) {
 		contributor.giveCredit(amount);
@@ -131,7 +132,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Added &e" + prettyMoney(amount) + " &3to &e" + Nickname.of(contributor) + "'s &3balance. New balance: &e" + contributor.getCreditFormatted());
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("credit take <player> <amount>")
 	void take(Contributor contributor, double amount) {
 		contributor.takeCredit(amount);
@@ -142,7 +143,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 	@Async
 	@SneakyThrows
 	@Path("coupons create <player> <amount>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void coupon_create(Contributor contributor, double amount) {
 		String code = new CouponCreator(contributor, amount).create();
 		send(json(PREFIX + "Created coupon &e" + code).copy(code).hover("&fClick to copy"));
@@ -254,21 +255,21 @@ public class StoreCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("apply <package> [player]")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void apply(Package packageType, @Arg("self") UUID uuid) {
 		packageType.apply(uuid);
 		send(PREFIX + "Applied package " + camelCase(packageType) + " to " + Nickname.of(uuid));
 	}
 
 	@Path("(expire|remove) <package> [player]")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void expire(Package packageType, @Arg("self") UUID uuid) {
 		packageType.expire(uuid);
 		send(PREFIX + "Removed package " + camelCase(packageType) + " from " + Nickname.of(uuid));
 	}
 
 	@Path("gallery")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void gallery() {
 		WarpType.STAFF.get("store").teleportAsync(player());
 //		WarpType.NORMAL.get("storegallery").teleportAsync(player()); TODO
@@ -276,14 +277,14 @@ public class StoreCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("gallery updateSkins")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void gallery_updateSkins() {
 		StoreGalleryNPCs.updateSkins();
 		send(PREFIX + "Updated skins");
 	}
 
 	@Path("gallery debug displays")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void gallery_debug_displays() {
 		for (DisplaySet display : StoreGalleryNPCs.getDisplays()) {
 			send(display.getId() + ":");

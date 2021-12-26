@@ -5,6 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.godmode.Godmode;
@@ -32,7 +33,7 @@ import static gg.projecteden.nexus.utils.PlayerUtils.isVanished;
 // WorldEdit overriding our alias
 @Redirect(from = "/god", to = "/godmode")
 @NoArgsConstructor
-@Permission("group.staff")
+@Permission(Group.STAFF)
 public class GodmodeCommand extends CustomCommand implements Listener {
 	private final GodmodeService service = new GodmodeService();
 

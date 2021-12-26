@@ -21,6 +21,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -101,7 +102,7 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	}
 
 	@Path("randomizePresents")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Description("Randomizes the presents in your selection")
 	void randomizePresents() {
 		List<Instrument> instruments = List.of(Instrument.DIDGERIDOO, Instrument.PLING);
@@ -122,14 +123,14 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	}
 
 	@Path("train spawn <model>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Description("Spawn a train armor stand")
 	void train_spawn(int model) {
 		Train.armorStand(model, location());
 	}
 
 	@Path("train spawn all")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Description("Spawn all train armor stands")
 	void train_spawn_all() {
 		Train.builder()
@@ -140,14 +141,14 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	}
 
 	@Path("train start default")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Description("Start a moving train")
 	void train_start_default() {
 		Train.getDefault().build().start();
 	}
 
 	@Path("train start here")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Description("Start a moving train")
 	void train_start_here(
 		@Arg(".3") @Switch double speed,
@@ -164,13 +165,13 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	}
 
 	@Path("trainBackground start")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void trainBackground_start() {
 		TrainBackground.start();
 	}
 
 	@Path("trainBackground stop")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void trainBackground_stop() {
 		TrainBackground.stop();
 	}
@@ -186,13 +187,13 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	}
 
 	@Path("balloon spawn")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void balloon_spawn() {
 		getBalloonStructure().spawn();
 	}
 
 	@Path("balloon move [--seconds]")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void balloon_move(@Arg("20") @Switch int seconds) {
 		final MultiModelStructure structure = getBalloonStructure().spawn();
 
@@ -213,7 +214,7 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	}
 
 	@Path("candycane cannon")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void candycane_cannon() {
 		giveItem(CandyCaneCannon.getItem().build());
 	}
@@ -229,7 +230,7 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	}
 
 	@Path("advent animation [--twice] [--height1] [--length1] [--particle1] [--ticks1] [--height2] [--length2] [--particle2] [--ticks2] [--randomMax] [--day]")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void advent_animation(
 		@Arg("false") @Switch boolean twice,
 		@Arg("0.25") @Switch double length1,
@@ -291,7 +292,7 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	}
 
 	@Path("advent nearest")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void advent_nearest() {
 		AdventPresent nearestPresent = null;
 		double nearestDistance = 500;
@@ -310,7 +311,7 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	}
 
 	@Path("advent waypoints")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void advent_waypoints() {
 		for (AdventPresent present : adventConfig.getPresents())
 			user.advent().glow(present);
@@ -319,13 +320,13 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	}
 
 	@Path("advent get <day>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void advent_get(@Arg(min = 1, max = 25) int day) {
 		giveItem(Advent21Config.get().get(day).getItem().build());
 	}
 
 	@Path("advent stats opened <day>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void advent_stats_opened(@Arg(min = 1, max = 25) int day) {
 		send(PREFIX + "Players who opened &e#" + day);
 		send(service.getAll().stream()
@@ -334,7 +335,7 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	}
 
 	@Path("advent stats found <day>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void advent_stats_found(@Arg(min = 1, max = 25) int day) {
 		send(PREFIX + "Players who found &e#" + day);
 		send(service.getAll().stream()
@@ -343,7 +344,7 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	}
 
 	@Path("advent config updateItems")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void advent_updateItems() {
 		Advent.updateItems();
 
@@ -351,7 +352,7 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	}
 
 	@Path("advent config setLootOrigin")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void advent_lootOrigin() {
 		final Block block = getTargetBlockRequired();
 
@@ -362,7 +363,7 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	}
 
 	@Path("advent config set <day>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void advent_config(@Arg(min = 1, max = 25) int day) {
 		final Block block = getTargetBlockRequired();
 		if (block.getType() != Material.BARRIER)
@@ -375,21 +376,21 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	}
 
 	@Path("advent tp <day>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void advent_tp(int day) {
 		user.advent().teleportAsync(adventConfig.get(day));
 		send(PREFIX + "Teleported to day #" + day);
 	}
 
 	@Path("simulate today <day>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void simulate_today(int day) {
 		Pugmas21.TODAY = Pugmas21.EPOCH.plusDays(day - 1);
 		send(PREFIX + "Simulating date &e" + shortDateFormat(Pugmas21.TODAY));
 	}
 
 	@Path("simulate today reset")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void simulate_today_reset() {
 		Pugmas21.TODAY = LocalDate.now();
 		send(PREFIX + "Simulating date &e" + shortDateFormat(Pugmas21.TODAY));

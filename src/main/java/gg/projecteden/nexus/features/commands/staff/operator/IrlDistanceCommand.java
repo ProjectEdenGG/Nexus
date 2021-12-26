@@ -5,13 +5,14 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.geoip.GeoIP;
 import gg.projecteden.nexus.models.geoip.GeoIP.Distance;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
 
-@Permission("group.seniorstaff")
+@Permission(Group.SENIOR_STAFF)
 public class IrlDistanceCommand extends CustomCommand {
 
 	public IrlDistanceCommand(@NonNull CommandEvent event) {

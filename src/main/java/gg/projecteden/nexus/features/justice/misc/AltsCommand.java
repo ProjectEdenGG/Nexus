@@ -4,11 +4,12 @@ import gg.projecteden.annotations.Async;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.punishments.Punishments;
 import lombok.NonNull;
 
-@Permission("group.moderator")
+@Permission(Group.MODERATOR)
 public class AltsCommand extends _JusticeCommand {
 
 	public AltsCommand(@NonNull CommandEvent event) {

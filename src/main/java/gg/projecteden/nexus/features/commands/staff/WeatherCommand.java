@@ -4,6 +4,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -13,7 +14,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.World;
 
-@Permission("group.seniorstaff")
+@Permission(Group.SENIOR_STAFF)
 @Redirect(from = "/sun", to = "/weather sun")
 @Redirect(from = "/storm", to = "/weather storm")
 public class WeatherCommand extends CustomCommand {
@@ -36,7 +37,7 @@ public class WeatherCommand extends CustomCommand {
 		send(PREFIX + "Weather set to &e" + camelCase(weatherType) + (duration > 0 ? " &3for &e" + Timespan.of(duration).format() : ""));
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("getWeatherDuration [world]")
 	void getWeatherDuration(@Arg("current") World world) {
 		send(PREFIX + "Durations for " + StringUtils.getWorldDisplayName(world));

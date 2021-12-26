@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -39,7 +40,7 @@ public class CustomRecipesCommand extends CustomCommand {
 	}
 
 	@Path("reload")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void reload() {
 		send(PREFIX + "Reloading all recipes...");
 		int amount = CustomRecipes.getRecipes().size();
@@ -56,7 +57,7 @@ public class CustomRecipesCommand extends CustomCommand {
 	 * menu to uncraft items.
 	 */
 	@Path("ingredients")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void ingredients() {
 		ItemStack item = getToolRequired();
 		send(PREFIX + "Ingredients for " + pretty(item));
@@ -68,7 +69,7 @@ public class CustomRecipesCommand extends CustomCommand {
 	}
 
 	@Path("uncraft")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void uncraft() {
 		SmartInventory.builder().title("Uncraft Menu").size(3, 9).provider(new UncraftMenu()).build().open(player());
 	}

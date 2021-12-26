@@ -4,6 +4,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.powertool.PowertoolService;
@@ -24,7 +25,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Arrays;
 
 @NoArgsConstructor
-@Permission("group.staff")
+@Permission(Group.STAFF)
 @Aliases({"pt", "powertools"})
 public class PowertoolCommand extends CustomCommand implements Listener {
 	private final PowertoolService service = new PowertoolService();

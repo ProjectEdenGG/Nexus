@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -29,7 +30,7 @@ import java.util.Set;
 
 import static gg.projecteden.nexus.utils.Utils.combine;
 
-@Permission("group.seniorstaff")
+@Permission(Group.SENIOR_STAFF)
 @Aliases({"killall", "mobkill", "butcher", "killentities"})
 public class KillEntityCommand extends CustomCommand {
 

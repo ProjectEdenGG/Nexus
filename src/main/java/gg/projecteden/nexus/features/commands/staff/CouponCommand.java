@@ -16,6 +16,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.banker.BankerService;
@@ -51,7 +52,7 @@ import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @Aliases("coupons")
-@Permission("group.admin")
+@Permission(Group.ADMIN)
 public class CouponCommand extends CustomCommand implements Listener {
 	private final CouponService service = new CouponService();
 	private final Coupons coupons = service.get0();

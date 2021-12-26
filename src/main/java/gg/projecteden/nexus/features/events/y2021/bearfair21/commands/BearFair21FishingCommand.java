@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fi
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.RandomUtils;
 import lombok.AllArgsConstructor;
@@ -14,7 +15,7 @@ import lombok.Getter;
 import java.util.ArrayList;
 import java.util.List;
 
-@Permission("group.admin")
+@Permission(Group.ADMIN)
 public class BearFair21FishingCommand extends CustomCommand {
 	public BearFair21FishingCommand(CommandEvent event) {
 		super(event);

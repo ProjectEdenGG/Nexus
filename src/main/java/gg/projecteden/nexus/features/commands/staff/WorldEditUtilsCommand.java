@@ -9,6 +9,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.FakeWorldEdit;
@@ -34,7 +35,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @Aliases("weutils")
-@Permission("group.staff")
+@Permission(Group.STAFF)
 public class WorldEditUtilsCommand extends CustomCommand {
 	private WorldEditUtils worldEditUtils;
 

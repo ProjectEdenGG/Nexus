@@ -4,6 +4,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.entity.Player;
@@ -12,14 +13,13 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 @Aliases("translate")
-@Permission("translate")
+@Permission(Group.STAFF)
 public class TranslatorCommand extends CustomCommand {
 	public TranslatorCommand(CommandEvent event) {
 		super(event);
 	}
 
 	@Path("stop [player]")
-	@Permission("use")
 	void remove(Player player) {
 		if (player != null) {
 			ArrayList<UUID> translators = Translator.getMap().get(player.getUniqueId());
@@ -39,7 +39,6 @@ public class TranslatorCommand extends CustomCommand {
 	}
 
 	@Path("<player>")
-	@Permission("use")
 	void translate(Player player) {
 		if (player() == player)
 			throw new InvalidInputException("You cannot translate yourself");

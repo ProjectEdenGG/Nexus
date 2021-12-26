@@ -6,6 +6,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.home.Home;
 import gg.projecteden.nexus.models.home.HomeOwner;
@@ -85,7 +86,7 @@ public class HomesCommand extends CustomCommand {
 
 	@Async
 	@Path("near [page]")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void near(@Arg("1") int page) {
 		Map<Home, Double> unsorted = service.getAll().stream()
 				.map(HomeOwner::getHomes)
@@ -104,7 +105,7 @@ public class HomesCommand extends CustomCommand {
 	@Async
 	@Confirm
 	@Path("lockInWorld <world>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void lockInWorld(World world) {
 		int count = 0;
 		for (HomeOwner owner : service.getAll()) {
@@ -137,13 +138,13 @@ public class HomesCommand extends CustomCommand {
 	}
 
 	@Path("reload")
-	@Permission("group.seniorstaff")
+	@Permission(Group.SENIOR_STAFF)
 	void reload() {
 		service.clearCache();
 	}
 
 	@Confirm
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("deleteFromWorld <world>")
 	void deleteFromWorld(World world) {
 		HomesFeature.deleteFromWorld(world.getName(), () ->
@@ -153,7 +154,7 @@ public class HomesCommand extends CustomCommand {
 
 	@Async
 	@Confirm
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("restoreDeleted")
 	void restoreDeleted() {
 		List<Home> deleted = HomesFeature.getDeleted();
@@ -167,7 +168,7 @@ public class HomesCommand extends CustomCommand {
 	}
 
 	@Async
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("fixHomeOwner")
 	void fixHomeOwner() {
 		AtomicInteger fixed = new AtomicInteger(0);
@@ -191,7 +192,7 @@ public class HomesCommand extends CustomCommand {
 	}
 
 	@Async
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("addExtraHomes <player> <amount>")
 	void addExtraHomes(HomeOwner homeOwner, int amount) {
 		homeOwner.addExtraHomes(amount);
@@ -200,7 +201,7 @@ public class HomesCommand extends CustomCommand {
 	}
 
 	@Async
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("removeExtraHomes <player> <amount>")
 	void removeExtraHomes(HomeOwner homeOwner, int amount) {
 		homeOwner.removeExtraHomes(amount);

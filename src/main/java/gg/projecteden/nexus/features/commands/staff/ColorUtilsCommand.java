@@ -6,6 +6,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
@@ -50,7 +51,7 @@ public class ColorUtilsCommand extends CustomCommand {
 	}
 
 	@Path("runSpigotHexCommand <commandNoSlash...>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void runHexCommand(String commandNoSlash) {
 		runCommand(decolorize(commandNoSlash));
 	}
@@ -74,7 +75,7 @@ public class ColorUtilsCommand extends CustomCommand {
 	}
 
 	@Path("setLeatherColor <color>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void setLeatherColor(@Arg(type = ChatColor.class) ChatColor chatColor) {
 		ItemStack item = getToolRequired();
 		if (!(item.getItemMeta() instanceof LeatherArmorMeta armorMeta))
@@ -86,7 +87,7 @@ public class ColorUtilsCommand extends CustomCommand {
 	}
 
 	@Path("updateAllHOHNpcs")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void updateAllHOHNpcs() {
 		runCommand("hoh");
 		World safepvp = world();

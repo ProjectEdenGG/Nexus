@@ -10,6 +10,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.trophy.Trophy;
 import gg.projecteden.nexus.models.trophy.TrophyHolder;
@@ -43,7 +44,7 @@ public class TrophyCommand extends CustomCommand {
 		new TrophyMenu().open(player());
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("reward <player> <trophy>")
 	void reward(TrophyHolder holder, Trophy trophy) {
 		if (holder.earn(trophy)) {
@@ -54,7 +55,7 @@ public class TrophyCommand extends CustomCommand {
 	}
 
 	@Confirm
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("remove <player> <trophy>")
 	void remove(TrophyHolder holder, Trophy trophy) {
 		holder.getEarned().remove(trophy);
@@ -64,7 +65,7 @@ public class TrophyCommand extends CustomCommand {
 	}
 
 	@Confirm
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("reset <player>")
 	void reward(TrophyHolder holder) {
 		holder.getEarned().clear();
@@ -73,7 +74,7 @@ public class TrophyCommand extends CustomCommand {
 		send(PREFIX + "Reset " + holder.getNickname() + "'s trophies");
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("get <trophy>")
 	void get(Trophy trophy) {
 		PlayerUtils.giveItem(player(), trophy.getItem().build());

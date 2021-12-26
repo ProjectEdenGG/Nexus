@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.commands.staff;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -16,7 +17,7 @@ import java.util.UUID;
 
 import static gg.projecteden.nexus.utils.Tasks.repeat;
 
-@Permission("group.staff")
+@Permission(Group.STAFF)
 public class LeashCommand extends CustomCommand {
 	private static HashMap<UUID, Integer> leashes = new HashMap<>();
 	private static double velocity = .8;

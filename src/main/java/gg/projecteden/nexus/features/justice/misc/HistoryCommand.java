@@ -5,6 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.punishments.Punishment;
@@ -61,7 +62,7 @@ public class HistoryCommand extends _JusticeCommand {
 	@Confirm
 	@TabCompleteIgnore
 	@Path("delete <player> <id>")
-	@Permission("group.moderator")
+	@Permission(Group.MODERATOR)
 	void delete(Punishments player, @Arg(context = 1) Punishment punishment) {
 		player.remove(punishment);
 		service.save(player);

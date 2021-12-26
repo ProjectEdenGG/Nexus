@@ -12,6 +12,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -151,7 +152,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("reload")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void reload() {
 		reloadConfig();
 		int total = config.getMessages().values().stream().map(CustomDeathMessage::count).reduce(0, Integer::sum);

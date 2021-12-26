@@ -9,6 +9,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CommandCooldownException;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -102,7 +103,7 @@ public class NicknameCommand extends CustomCommand {
 		}, this::rethrow, TextChannel.STAFF_NICKNAME_QUEUE);
 	}
 
-	@Permission(value = "group.staff", absolute = true)
+	@Permission(Group.STAFF)
 	@Path("set <player> <nickname>")
 	void set(Nickname player, @Arg(min = 2, max = 16, regex = "[\\w]+") String nickname) {
 		player.setNickname(nickname);
@@ -121,14 +122,14 @@ public class NicknameCommand extends CustomCommand {
 	}
 
 	@Path("expire <player>")
-	@Permission(value = "group.admin", absolute = true)
+	@Permission(Group.ADMIN)
 	void expire(Nickname nickname) {
 		console();
 		nickname.resetNickname();
 		send(PREFIX + "Reset nickname of " + nickname.getNickname());
 	}
 
-	@Permission(value = "group.admin", absolute = true)
+	@Permission(Group.ADMIN)
 	@Path("clearData [player]")
 	void clearData(@Arg("self") Nickname player) {
 		player.getNicknameHistory().clear();
@@ -137,7 +138,7 @@ public class NicknameCommand extends CustomCommand {
 		send(PREFIX + "Nickname data cleared for " + player.getNickname());
 	}
 
-	@Permission(value = "group.admin", absolute = true)
+	@Permission(Group.ADMIN)
 	@Path("debug [player]")
 	void debug(@Arg("self") Nickname player) {
 		send(player.toPrettyString());

@@ -21,46 +21,67 @@ public @interface Permission {
 	 */
 	String value();
 
+	class Group {
+		/**
+		 * Admins and Owner
+		 */
+		public static final String ADMIN = "group.admin";
+		/**
+		 * Operator and above
+		 */
+		public static final String SENIOR_STAFF = "group.seniorstaff";
+		/**
+		 * Mod and above
+		 */
+		public static final String MODERATOR = "group.moderator";
+		/**
+		 * Builders & Architects
+		 */
+		public static final String BUILDER = "group.builder";
+		/**
+		 * Builder and above
+		 */
+		public static final String STAFF = "group.staff";
+		/**
+		 * Guest -> Veteran
+		 */
+		public static final String NON_STAFF = "group.nonstaff";
+	}
+
 	/**
-	 * For sub-commands, this specifies whether or not the permission node should derive from the parent command's
-	 * permission node.
-	 * <p>
-	 * Example: if a parent has the permission node <i><code>essentials.signs</code></i> and a child has the permission
-	 * node <i><code>color</code></i>, the effective permission node of the child if this is <code>false</code> will be
-	 * <i><code>essentials.signs.color</code></i>. If this is <code>true</code>, it would be <i><code>color</code></i>.
-	 * @return if this permission node is absolute
+	 * Test if someone has a rank or greater, according to the below hierarchy
+	 *
+	 *          ladder.owner
+	 *          ladder.admin
+	 *          ladder.operator
+	 *           |         \
+	 * ladder.moderator   ladder.architect
+	 *          \         ladder.builder
+	 *           \         |
+	 *          ladder.noble
+	 *          ladder.veteran
+	 *          ladder.elite
+	 *          ladder.trusted
+	 *          ladder.member
+	 *          ladder.guest
+	 *
+	 * Ex:
+	 *   Ladder.TRUSTED = trusted and above
+	 *   Ladder.BUILDER = builder, architect, operator, admin, owner
 	 */
-	boolean absolute() default false;
+	class Ladder {
+		public static final String OWNER = "ladder.owner";
+		public static final String ADMIN = "ladder.admin";
+		public static final String OPERATOR = "ladder.operator";
+		public static final String MODERATOR = "ladder.moderator";
+		public static final String ARCHITECT = "ladder.architect";
+		public static final String BUILDER = "ladder.builder";
+		public static final String NOBLE = "ladder.noble";
+		public static final String VETERAN = "ladder.veteran";
+		public static final String ELITE = "ladder.elite";
+		public static final String TRUSTED = "ladder.trusted";
+		public static final String MEMBER = "ladder.member";
+		public static final String GUEST = "ladder.guest";
+	}
+
 }
-
-/*
-	Groups:
-		group.admin         - admin+
-		group.seniorstaff   - operator+
-		group.moderator	    - mod+
-		group.builder       - builder/architect
-		group.staff         - staff + builders
-		group.nonstaff      - guest - veteran
-
-	Ladder: test if someone has a rank or greater, according to the below hierarchy
-	Rank Exclusive: test if someone has specifically the rank <rankname> with rank.<rankname>
-
-	Ex:
-		ladder.trusted = trusted and above
-		ladder.builder = builder, architect, operator, admin, owner
-		rank.trusted = only trusted, not elite or above
-	Rank Ladder:
-           ladder.owner
-           ladder.admin
-           ladder.operator
-             /        \
-  ladder.moderator   ladder.architect
-            |        ladder.builder
-             \        /
-           ladder.noble
-           ladder.veteran
-           ladder.elite
-           ladder.trusted
-           ladder.member
-           ladder.guest
- */

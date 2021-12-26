@@ -8,6 +8,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -74,7 +75,7 @@ public class VoteCommand extends CustomCommand {
 		send(json("&e[+] &3" + "View top voters, prizes and more on our &ewebsite").url(EdenSocialMediaSite.WEBSITE.getUrl() + "/vote"));
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("extra")
 	void extra() {
 		send("Extra config: " + Votes.getExtras());
@@ -112,7 +113,7 @@ public class VoteCommand extends CustomCommand {
 	}
 
 	@Async
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("getTopDaysThisMonth [page]")
 	void getTopDaysThisMonth(@Arg("1") int page) {
 		Map<LocalDate, Integer> days = service.getVotesByDay();
@@ -127,7 +128,7 @@ public class VoteCommand extends CustomCommand {
 	}
 
 	@Async
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("onlineCounts")
 	void onlineCounts() {
 		Map<Integer, List<Player>> activeVotes = new HashMap<>();
@@ -167,7 +168,7 @@ public class VoteCommand extends CustomCommand {
 			send("&3You have &e" + voter.getPoints() + plural(" &3vote point", voter.getPoints()));
 	}
 
-	@Permission("group.seniorstaff")
+	@Permission(Group.SENIOR_STAFF)
 	@Path("points set <player> <number>")
 	void setPoints(Voter voter, int number) {
 		voter.setPoints(number);
@@ -175,7 +176,7 @@ public class VoteCommand extends CustomCommand {
 		send("&e" + voter.getNickname() + " &3now has &e" + voter.getPoints() + plural(" &3vote point", voter.getPoints()));
 	}
 
-	@Permission("group.seniorstaff")
+	@Permission(Group.SENIOR_STAFF)
 	@Path("points give <player> <number>")
 	void givePoints(Voter voter, int number) {
 		voter.givePoints(number);
@@ -183,7 +184,7 @@ public class VoteCommand extends CustomCommand {
 		send("&e" + voter.getNickname() + " &3now has &e" + voter.getPoints() + plural(" &3vote point", voter.getPoints()));
 	}
 
-	@Permission("group.seniorstaff")
+	@Permission(Group.SENIOR_STAFF)
 	@Path("points take <player> <number>")
 	void takePoints(Voter voter, int number) {
 		voter.takePoints(number);
@@ -192,14 +193,14 @@ public class VoteCommand extends CustomCommand {
 	}
 
 	@Path("endOfMonth")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void endOfMonth() {
 		console();
 		EndOfMonth.run();
 	}
 
 	@Path("write")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void write() {
 		Votes.write();
 		send(PREFIX + "Done");

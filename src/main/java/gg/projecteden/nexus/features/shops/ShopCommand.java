@@ -13,6 +13,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.banker.Transaction;
@@ -127,7 +128,7 @@ public class ShopCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("cleanup")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void cleanup() {
 		Shop shop = service.get(PlayerUtils.getPlayer("LadyAnime"));
 		shop.getProducts().removeIf(product -> !product.canFulfillPurchase());

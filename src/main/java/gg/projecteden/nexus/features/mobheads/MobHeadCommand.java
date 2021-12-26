@@ -8,6 +8,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.MobHeadConverter;
@@ -44,21 +45,21 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 		new MobHeadUserMenu().open(player());
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("get <type>")
 	void mobHead(MobHead mobHead) {
 		giveItem(mobHead.getSkull());
 	}
 
 	@Path("reload")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void reload() {
 		MobHeadType.load();
 		send(PREFIX + "Reloaded");
 	}
 
 	@Path("debug [enable]")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void debug(Boolean enable) {
 		if (enable == null)
 			enable = !MobHeads.isDebug();
@@ -68,7 +69,7 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("validate types")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void validateTypes() {
 		final List<EntityType> missingTypes = MobHeadType.getMissingTypes();
 
@@ -83,7 +84,7 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("validate chances")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void validateChances() {
 		List<MobHeadType> zeroChance = new ArrayList<>();
 		for (MobHeadType type : MobHeadType.values())

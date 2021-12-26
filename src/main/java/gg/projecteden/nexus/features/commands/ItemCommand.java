@@ -5,6 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -26,7 +27,7 @@ public class ItemCommand extends CustomCommand {
 	}
 
 	@Path("rp <material> <id>")
-	@Permission(value = "group.staff", absolute = true)
+	@Permission(Group.STAFF)
 	void rp(Material material, int id) {
 		PlayerUtils.giveItem(player(), new ItemBuilder(material).customModelData(id).build());
 	}

@@ -6,6 +6,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.Tasks;
@@ -19,7 +20,7 @@ import java.io.File;
 import java.nio.file.Paths;
 
 @Redirect(from = {"/rg rename", "/region rename"}, to = "/regionrename")
-@Permission("group.seniorstaff")
+@Permission(Group.SENIOR_STAFF)
 public class RegionRenameCommand extends CustomCommand {
 
 	public RegionRenameCommand(@NonNull CommandEvent event) {

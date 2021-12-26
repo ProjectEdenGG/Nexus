@@ -4,6 +4,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.spawnlimits.SpawnLimits;
 import gg.projecteden.nexus.models.spawnlimits.SpawnLimits.SpawnLimitType;
@@ -16,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static gg.projecteden.nexus.utils.StringUtils.getWorldDisplayName;
 
-@Permission("group.admin")
+@Permission(Group.ADMIN)
 public class SpawnLimitsCommand extends CustomCommand {
 	private final SpawnLimitsService service = new SpawnLimitsService();
 	private final SpawnLimits limits = service.get0();

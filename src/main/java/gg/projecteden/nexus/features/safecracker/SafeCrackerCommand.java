@@ -8,6 +8,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.safecracker.SafeCrackerEvent;
@@ -133,13 +134,13 @@ public class SafeCrackerCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("admin edit")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void edit() {
 		SafeCrackerInventories.openAdminMenu(player());
 	}
 
 	@Path("admin reset [player]")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void reset(@Arg("self") OfflinePlayer player) {
 		SafeCrackerPlayer safeCrackerPlayer = playerService.get(player);
 		safeCrackerPlayer.setGames(new HashMap<>());
@@ -148,7 +149,7 @@ public class SafeCrackerCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("admin riddle <riddle...>")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void riddle(String riddle) {
 		game.setRiddle(riddle);
 		eventService.save(event);
@@ -157,7 +158,7 @@ public class SafeCrackerCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("question <question...>")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void question(String question) {
 		if (!SafeCracker.adminQuestionMap.containsKey(player()))
 			error("You must select an NPC in the GUI first");
@@ -169,7 +170,7 @@ public class SafeCrackerCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("scores [page]")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void scores(@Arg("1") int page) {
 		send(PREFIX + "Scores for current event:");
 		LinkedHashMap<UUID, Integer> scores = playerService.getScores(eventService.getActiveEvent());

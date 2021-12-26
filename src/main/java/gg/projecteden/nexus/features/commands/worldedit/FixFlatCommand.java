@@ -8,13 +8,14 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.DoubleSlash;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 
 @DoubleSlash
-@Permission("group.staff")
+@Permission(Group.STAFF)
 public class FixFlatCommand extends CustomCommand {
 
 	public FixFlatCommand(CommandEvent event) {

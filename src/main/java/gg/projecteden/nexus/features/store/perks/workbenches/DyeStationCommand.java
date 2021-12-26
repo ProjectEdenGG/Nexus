@@ -5,6 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Color;
@@ -31,13 +32,13 @@ public class DyeStationCommand extends _WorkbenchCommand {
 	}
 
 	@Path("cheat")
-	@Permission(value = "group.staff", absolute = true)
+	@Permission(Group.STAFF)
 	void openCheat() {
 		DyeStation.openCheat(player());
 	}
 
 	@Path("setColor <color>")
-	@Permission(value = "group.staff", absolute = true)
+	@Permission(Group.STAFF)
 	void dye(@Arg(type = ChatColor.class) ChatColor chatColor) {
 		ItemStack item = getToolRequired();
 		if (!(item.getItemMeta() instanceof LeatherArmorMeta armorMeta))

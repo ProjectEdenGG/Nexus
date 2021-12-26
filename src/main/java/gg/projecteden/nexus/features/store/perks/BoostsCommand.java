@@ -13,6 +13,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.boost.BoostConfig;
@@ -114,7 +115,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("give <player> <type> <multiplier> <seconds> [amount]")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void give(Booster booster, Boostable type, double multiplier, Timespan seconds, @Arg("1") int amount) {
 		for (int i = 0; i < amount; i++)
 			booster.add(type, multiplier, seconds.getOriginal());
@@ -124,7 +125,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("delete <player> <id>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void delete(Booster booster, int id) {
 		if (!booster.getBoosts().removeIf(boost -> boost.getId() == id))
 			error("Boost &e#" + id + " &cfor &e" + booster.getNickname() + " &cnot found");
@@ -134,7 +135,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 	}
 
 	@Confirm
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	@Path("cancel <type> [--refund]")
 	void cancel(Boostable type, @Switch boolean refund) {
 		if (!config.hasBoost(type))
@@ -153,7 +154,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 	}
 
 	@Confirm
-	@Permission("group.seniorstaff")
+	@Permission(Group.SENIOR_STAFF)
 	@Path("start <type> <multiplier> <duration>")
 	void start(Boostable type, double multiplier, int duration) {
 		if (config.hasBoost(type))

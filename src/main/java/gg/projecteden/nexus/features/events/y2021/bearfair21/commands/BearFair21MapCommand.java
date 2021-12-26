@@ -9,6 +9,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.bearfair21.BearFair21User;
 import gg.projecteden.nexus.models.bearfair21.BearFair21UserService;
@@ -39,7 +40,7 @@ import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
 
 @Aliases("bf21map")
 @NoArgsConstructor
-@Permission("group.admin")
+@Permission(Group.ADMIN)
 public class BearFair21MapCommand extends CustomCommand implements Listener {
 	private BearFair21Renderer myRenderer;
 

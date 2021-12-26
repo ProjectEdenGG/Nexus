@@ -5,6 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.home.Home;
 import gg.projecteden.nexus.models.home.HomeService;
@@ -66,7 +67,7 @@ public class UntrustCommand extends CustomCommand {
 		process(players, Type.values());
 	}
 
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	@Path("admin locks <owner> <players>")
 	void locks(OfflinePlayer owner, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		trust = service.get(owner);
@@ -74,7 +75,7 @@ public class UntrustCommand extends CustomCommand {
 		process(players, Type.LOCKS);
 	}
 
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	@Path("admin homes <owner> <players>")
 	void homes(OfflinePlayer owner, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		trust = service.get(owner);
@@ -82,7 +83,7 @@ public class UntrustCommand extends CustomCommand {
 		process(players, Type.HOMES);
 	}
 
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	@Path("admin teleports <owner> <players>")
 	void teleports(OfflinePlayer owner, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		trust = service.get(owner);
@@ -90,7 +91,7 @@ public class UntrustCommand extends CustomCommand {
 		process(players, Type.TELEPORTS);
 	}
 
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	@Path("admin all <owner> <players>")
 	void all(OfflinePlayer owner, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		trust = service.get(owner);

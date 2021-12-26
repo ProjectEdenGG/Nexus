@@ -12,6 +12,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.halloween20.Halloween20Service;
 import gg.projecteden.nexus.models.halloween20.Halloween20User;
@@ -68,7 +69,7 @@ public class Halloween20Command extends CustomCommand {
 	}
 
 	@Path("stats")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void stats(@Arg("self") OfflinePlayer player) {
 		Halloween20Service service = new Halloween20Service();
 		List<Halloween20User> users = service.getAll();
@@ -107,7 +108,7 @@ public class Halloween20Command extends CustomCommand {
 	}
 
 	@Path("reset [player]")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void reset(@Arg("self") OfflinePlayer player) {
 		Halloween20Service service = new Halloween20Service();
 		Halloween20User user = service.get(player);
@@ -119,55 +120,55 @@ public class Halloween20Command extends CustomCommand {
 	}
 
 	@Path("tp pumpkin original <number>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void teleportPumpkinOriginal(Pumpkin pumpkin) {
 		player().teleportAsync(pumpkin.getOriginal(), TeleportCause.COMMAND);
 	}
 
 	@Path("tp pumpkin end <number>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void teleportPumpkinEnd(Pumpkin pumpkin) {
 		player().teleportAsync(pumpkin.getEnd(), TeleportCause.COMMAND);
 	}
 
 	@Path("tp comboLockNumber <number>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void teleportComboLockNumber(ComboLockNumber number) {
 		player().teleportAsync(number.getLoc(), TeleportCause.COMMAND);
 	}
 
 	@Path("tp button <number>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void teleportButton(SoundButton number) {
 		player().teleportAsync(number.getLocation(), TeleportCause.COMMAND);
 	}
 
 	@Path("picture")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void picture() {
 		Halloween20Menus.openPicturePuzzle(player(), null);
 	}
 
 	@Path("flashCard")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void flash() {
 		Halloween20Menus.openFlashCardPuzzle(player(), null);
 	}
 
 	@Path("gate open")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void openGate() {
 		new Gate(player()).open();
 	}
 
 	@Path("gate close")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void closeGate() {
 		new Gate(player()).close();
 	}
 
 	@Path("test combo")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void testCombo() {
 		Halloween20Service service = new Halloween20Service();
 		Halloween20User user = service.get(player());

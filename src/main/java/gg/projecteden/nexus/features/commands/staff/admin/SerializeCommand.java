@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.commands.staff.admin;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.serializetest.SerializeTest;
 import gg.projecteden.nexus.models.serializetest.SerializeTestService;
@@ -25,7 +26,7 @@ import java.util.Map;
 import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
 import static gg.projecteden.nexus.utils.SerializationUtils.Json.serialize;
 
-@Permission("group.admin")
+@Permission(Group.ADMIN)
 public class SerializeCommand extends CustomCommand {
 	private final SerializeTestService service = new SerializeTestService();
 	private SerializeTest test;

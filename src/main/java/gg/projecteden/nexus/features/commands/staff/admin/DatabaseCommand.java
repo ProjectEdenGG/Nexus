@@ -13,6 +13,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -38,7 +39,7 @@ import java.util.stream.Collectors;
 import static gg.projecteden.utils.StringUtils.isUuid;
 
 @Aliases("db")
-@Permission("group.admin")
+@Permission(Group.ADMIN)
 public class DatabaseCommand extends CustomCommand {
 
 	public DatabaseCommand(@NonNull CommandEvent event) {

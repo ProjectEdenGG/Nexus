@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.justice.misc._PunishmentCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
@@ -15,7 +16,7 @@ import lombok.NonNull;
 
 import java.util.List;
 
-@Permission("group.moderator")
+@Permission(Group.MODERATOR)
 public class AltBanCommand extends _PunishmentCommand {
 
 	public AltBanCommand(@NonNull CommandEvent event) {
@@ -32,7 +33,7 @@ public class AltBanCommand extends _PunishmentCommand {
 		return PunishmentType.ALT_BAN;
 	}
 
-	@Permission(value = "group.admin", absolute = true)
+	@Permission(Group.ADMIN)
 	@Path("bots <names> [--dryrun]")
 	void bots(@Arg(type = String.class) List<String> names, @Switch boolean dryrun) {
 		int banned = 0;

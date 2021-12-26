@@ -9,6 +9,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUser;
@@ -33,7 +34,7 @@ public class SocialMediaCommand extends CustomCommand {
 	}
 
 	@Path("getItem <site>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void getItem(SocialMediaSite site) {
 		PlayerUtils.giveItem(player(), site.getHead());
 	}

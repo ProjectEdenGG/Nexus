@@ -5,6 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -52,13 +53,13 @@ public class KitCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("reload")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void reload() {
 		KitManager.reloadConfig();
 	}
 
 	@Path("edit")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void edit() {
 		KitManagerProvider.getInv(null).open(player());
 	}

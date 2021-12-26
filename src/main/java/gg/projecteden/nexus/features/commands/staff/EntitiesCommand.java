@@ -5,6 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
@@ -27,7 +28,7 @@ import static gg.projecteden.nexus.utils.EntityUtils.getNearbyEntityTypes;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 import static gg.projecteden.nexus.utils.Utils.sortByValue;
 
-@Permission("group.staff")
+@Permission(Group.STAFF)
 public class EntitiesCommand extends CustomCommand {
 
 	public EntitiesCommand(@NonNull CommandEvent event) {

@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.radar;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -23,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 @NoArgsConstructor
-@Permission("group.moderator")
+@Permission(Group.MODERATOR)
 public class ReachWatchCommand extends CustomCommand implements Listener {
 	private static final Map<Player, List<Player>> watchMap = new HashMap<>();
 	private final DecimalFormat nf = new DecimalFormat("#.00");

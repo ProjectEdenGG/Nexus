@@ -11,6 +11,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.nerd.Rank;
@@ -86,7 +87,7 @@ public class EndermanFarmCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("create [player]")
-	@Permission("group.seniorstaff")
+	@Permission(Group.SENIOR_STAFF)
 	void create(OfflinePlayer player) {
 		if (world().getEnvironment() != Environment.THE_END)
 			error("You must be in the end to run this command");

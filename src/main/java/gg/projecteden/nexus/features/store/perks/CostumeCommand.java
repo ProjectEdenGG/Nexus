@@ -14,6 +14,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.costume.Costume;
 import gg.projecteden.nexus.models.costume.CostumeUser;
@@ -93,14 +94,14 @@ public class CostumeCommand extends CustomCommand implements Listener {
 		send(json(PREFIX + "Spend them in &c/costumes store").command("/costumes store"));
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("reload")
 	void reload() {
 		Costume.loadAll();
 		send(PREFIX + "Loaded " + Costume.values().size() + " costumes");
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("vouchers add <amount> [player]")
 	void vouchers_add(int amount, @Arg("self") CostumeUser user) {
 		user.addVouchers(amount);
@@ -108,7 +109,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Gave &e" + amount + " &3vouchers to &e" + user.getNickname() + "&3. New balance: &e" + user.getVouchers());
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("vouchers remove <amount> [player]")
 	void vouchers_remove(int amount, @Arg("self") CostumeUser user) {
 		user.takeVouchers(amount);
@@ -117,13 +118,13 @@ public class CostumeCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("list [page]")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void list(@Arg("1") int page) {
 		paginate(Costume.values(), (costume, index) -> json(index + " &e" + costume.getId()), "/costume list", page);
 	}
 
 	@Path("top [page]")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void top(@Arg("1") int page) {
 		Map<Costume, Integer> counts = new HashMap<>() {{
 			for (CostumeUser user : service.getAll())

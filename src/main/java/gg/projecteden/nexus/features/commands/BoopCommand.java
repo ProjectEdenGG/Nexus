@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
@@ -29,7 +30,7 @@ public class BoopCommand extends CustomCommand {
 
 	@Path("all [message...] [--anonymous]")
 	@Description("boop all players")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void boopAll(String message, @Switch(shorthand = 'a') boolean anonymous) {
 		final List<Player> players = OnlinePlayers.where().viewer(player()).get().stream().toList();
 

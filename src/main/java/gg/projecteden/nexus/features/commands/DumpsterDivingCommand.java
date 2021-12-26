@@ -10,6 +10,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.dumpster.Dumpster;
@@ -29,7 +30,7 @@ import java.util.List;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @NoArgsConstructor
-@Permission("group.staff")
+@Permission(Group.STAFF)
 public class DumpsterDivingCommand extends CustomCommand implements Listener {
 	private final DumpsterService service = new DumpsterService();
 	private final Dumpster dumpster = service.get0();

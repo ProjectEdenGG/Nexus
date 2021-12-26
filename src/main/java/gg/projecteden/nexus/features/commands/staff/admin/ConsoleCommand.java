@@ -3,10 +3,11 @@ package gg.projecteden.nexus.features.commands.staff.admin;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import lombok.NonNull;
 
-@Permission("group.admin")
+@Permission(Group.ADMIN)
 public class ConsoleCommand extends CustomCommand {
 
 	public ConsoleCommand(@NonNull CommandEvent event) {

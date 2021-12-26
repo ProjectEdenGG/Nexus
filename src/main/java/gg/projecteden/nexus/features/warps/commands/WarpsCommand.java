@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.warps.WarpsMenu;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.warps.WarpType;
@@ -31,7 +32,7 @@ public class WarpsCommand extends _WarpCommand {
 	}
 
 	@Path("types")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void types() {
 		send(PREFIX + "Valid warp types:");
 		for (WarpType type : WarpType.values())
@@ -39,7 +40,7 @@ public class WarpsCommand extends _WarpCommand {
 	}
 
 	@Path("updateFlags")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void updateWarpFlags() {
 		for (SurvivalWarp warp : SurvivalWarp.values()) {
 			if (warp == SurvivalWarp.SPAWN) continue;

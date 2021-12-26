@@ -5,6 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import lombok.NonNull;
 import org.bukkit.Material;
@@ -43,7 +44,7 @@ public class BookCommand extends CustomCommand {
 		inventory().setItem(hand, editable);
 	}
 
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	@Path("author <name...>")
 	void author(@Arg(tabCompleter = OfflinePlayer.class) String name) {
 		meta.setAuthor(name);

@@ -14,6 +14,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
@@ -104,7 +105,7 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 		});
 	}
 
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	@Path("status [player]")
 	void getStatus(@Arg("self") LocalResourcePackUser user) {
 		send(PREFIX + "Status of &e" + user.getNickname());
@@ -112,7 +113,7 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 		send("&6 Titan &7- " + user.getTitanStatus());
 	}
 
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	@Path("statuses")
 	void getStatuses() {
 		final List<Player> players = OnlinePlayers.getAll();
@@ -134,14 +135,14 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("getHash")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void getHash() {
 		send(json(PREFIX + "Resource pack hash: &e" + hash).hover("&eClick to copy").copy(hash));
 	}
 
 	@Async
 	@Path("deploy")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void deploy() {
 		send(BashCommand.tryExecute("sudo /home/minecraft/git/Saturn/deploy.sh"));
 
@@ -167,7 +168,7 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("newdeploy")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void newdeploy() {
 		Saturn.deploy();
 		send(PREFIX + "Deployed");
@@ -177,14 +178,14 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("reload")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void reload() {
 		ResourcePack.read();
 		send(PREFIX + "Reloaded");
 	}
 
 	@Path("menu [folder]")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void menu(CustomModelFolder folder) {
 		if (rank() == Rank.MODERATOR && worldGroup() != WorldGroup.STAFF)
 			permissionError();

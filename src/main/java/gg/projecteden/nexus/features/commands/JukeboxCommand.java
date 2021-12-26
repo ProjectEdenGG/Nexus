@@ -9,6 +9,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -154,7 +155,7 @@ public class JukeboxCommand extends CustomCommand implements Listener {
 			error("No song is playing");
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("store give <player> <song...>")
 	void store_give(JukeboxUser user, JukeboxSong song) {
 		if (user.owns(song))

@@ -10,6 +10,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.aeveonproject.AeveonProjectService;
 import gg.projecteden.nexus.models.aeveonproject.AeveonProjectUser;
@@ -35,7 +36,7 @@ import static gg.projecteden.nexus.utils.RandomUtils.getWeightedRandom;
 
 @Aliases("ap")
 @NoArgsConstructor
-@Permission("group.staff")
+@Permission(Group.STAFF)
 public class AeveonProjectCommand extends CustomCommand implements Listener {
 	AeveonProjectService service = new AeveonProjectService();
 	AeveonProjectUser user;
@@ -119,7 +120,7 @@ public class AeveonProjectCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("clearDatabase")
-	@Permission(value = "group.admin", absolute = true)
+	@Permission(Group.ADMIN)
 	public void clearDatabase() {
 		service.clearCache();
 		service.deleteAll();

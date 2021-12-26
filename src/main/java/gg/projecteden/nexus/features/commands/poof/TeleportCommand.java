@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
@@ -56,7 +57,7 @@ public class TeleportCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("getCoords")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void getCoords() {
 		String message = getTeleportCommand(location());
 		send(json(PREFIX + "Click to copy").copy(message).hover(message));
@@ -166,7 +167,7 @@ public class TeleportCommand extends CustomCommand implements Listener {
 	private static final Set<UUID> preventTeleports = new HashSet<>();
 
 	@Path("freeze <player> [enable]")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void lock(Player player, Boolean enable) {
 		UUID uuid = player.getUniqueId();
 		if (enable == null)
@@ -193,7 +194,7 @@ public class TeleportCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("override <player>")
-	@Permission("group.seniorstaff")
+	@Permission(Group.SENIOR_STAFF)
 	void override(Player player) {
 		player().teleportAsync(player.getLocation());
 		send(PREFIX + "Overriding teleport to &e" + player.getName());

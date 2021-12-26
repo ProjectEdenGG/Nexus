@@ -4,6 +4,7 @@ import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -25,7 +26,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.List;
 
 @NoArgsConstructor
-@Permission("group.staff")
+@Permission(Group.STAFF)
 public class SchematicBrushCommand extends CustomCommand implements Listener {
 	private static final String brushName = "Schematic Brush";
 

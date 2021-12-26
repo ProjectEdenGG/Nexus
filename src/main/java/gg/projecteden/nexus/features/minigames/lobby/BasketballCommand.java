@@ -10,6 +10,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
@@ -39,7 +40,7 @@ import java.util.UUID;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @NoArgsConstructor
-@Permission("group.staff")
+@Permission(Group.STAFF)
 public class BasketballCommand extends CustomCommand implements Listener {
 	@Getter
 	static ItemStack basketball = (ItemStack) Nexus.getInstance().getConfig().get("minigames.lobby.basketball.item");

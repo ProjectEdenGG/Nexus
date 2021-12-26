@@ -8,6 +8,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.queup.QueUp;
 import gg.projecteden.nexus.models.queup.QueUpService;
@@ -39,7 +40,7 @@ public class QueUpCommand extends CustomCommand {
 	}
 
 	@Path("updates [enable]")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void updates(Boolean enable) {
 		if (enable == null)
 			enable = !enabled;

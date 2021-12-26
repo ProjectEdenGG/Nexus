@@ -5,6 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -30,7 +31,7 @@ import java.util.function.BiFunction;
 
 import static gg.projecteden.nexus.utils.StringUtils.decolorize;
 
-@Permission("group.staff")
+@Permission(Group.STAFF)
 public class NPCUtilsCommand extends CustomCommand {
 
 	public NPCUtilsCommand(@NonNull CommandEvent event) {

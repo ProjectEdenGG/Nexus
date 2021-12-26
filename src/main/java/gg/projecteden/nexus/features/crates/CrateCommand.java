@@ -8,6 +8,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.Name;
@@ -52,7 +53,7 @@ public class CrateCommand extends CustomCommand {
 	}
 
 	@Path("give <type> [player] [amount]")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void key(CrateType type, @Arg("self") OfflinePlayer player, @Arg("1") Integer amount) {
 		type.give(player, amount);
 		if (player.isOnline())
@@ -64,7 +65,7 @@ public class CrateCommand extends CustomCommand {
 	}
 
 	@Path("animationAndSoundTest")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void animation() {
 		Location location = LocationUtils.getCenteredLocation(new Location(Bukkit.getWorld("buildadmin"), -434.00, 4.00, 2410.00, .00F, .00F));
 		CrateType.VOTE.getCrateClass().playAnimation(location).thenAccept(location1 ->
@@ -73,13 +74,13 @@ public class CrateCommand extends CustomCommand {
 	}
 
 	@Path("edit [filter]")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void edit(@Arg("ALL") CrateType filter) {
 		CrateEditMenu.getMenu(filter, null).open(player());
 	}
 
 	@Path("reset [crate]")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Description("Resets a crate (or all crates if no crate is specified) if it is stuck or errors")
 	void reset(CrateType type) {
 		if (type == null)

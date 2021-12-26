@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
@@ -108,7 +109,7 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("write")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void write() {
 		writeHtml();
 	}

@@ -5,6 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemUtils;
 import org.bukkit.entity.Player;
@@ -37,7 +38,7 @@ public class ItemTagsCommand extends CustomCommand {
 	}
 
 	@Path("update [debug]")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Description("Update item tags on held item")
 	void update(@Arg("false") Boolean bool) {
 		ItemStack tool = getToolRequired();
@@ -47,7 +48,7 @@ public class ItemTagsCommand extends CustomCommand {
 	}
 
 	@Path("updateInv")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Description("Update item tags on all items in inventory")
 	void updateInv() {
 		ItemStack[] contents = inventory().getContents();
@@ -65,7 +66,7 @@ public class ItemTagsCommand extends CustomCommand {
 
 	@Path("get")
 	@Description("Get item tags on held item")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void getTags() {
 		ItemStack tool = getToolRequired();
 
@@ -82,14 +83,14 @@ public class ItemTagsCommand extends CustomCommand {
 	}
 
 	@Path("setRarity <rarity>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void setRarity(Rarity rarity) {
 		ItemStack tool = getToolRequired();
 		ItemTagsUtils.updateRarity(tool, rarity);
 	}
 
 	@Path("setCondition <condition>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void setCondition(Condition condition) {
 		ItemStack tool = getToolRequired();
 		ItemTagsUtils.updateCondition(tool, condition);
@@ -97,7 +98,7 @@ public class ItemTagsCommand extends CustomCommand {
 	}
 
 	@Path("reload")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void reload() {
 		ItemTags.reloadConfig();
 		send(PREFIX + "Reloaded config");

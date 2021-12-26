@@ -4,6 +4,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nameplates.NameplateUser;
 import gg.projecteden.nexus.models.nameplates.NameplateUserService;
@@ -36,42 +37,42 @@ public class NameplatesCommand extends CustomCommand {
 	}
 
 	@Path("update [player]")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void update(@Arg("self") Player player) {
 		Nameplates.get().getNameplateManager().update(player);
 		send(PREFIX + "Updated " + (isSelf(player) ? "your" : Nickname.of(player) + "'s") + " nameplate entity");
 	}
 
 	@Path("spawn [player]")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void spawn(@Arg("self") Player player) {
 		Nameplates.get().getNameplateManager().spawn(player);
 		send(PREFIX + "Spawned " + (isSelf(player) ? "your" : Nickname.of(player) + "'s") + " nameplate entity");
 	}
 
 	@Path("respawn [player]")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void respawn(@Arg("self") Player player) {
 		Nameplates.get().getNameplateManager().respawn(player);
 		send(PREFIX + "Respawned " + (isSelf(player) ? "your" : Nickname.of(player) + "'s") + " nameplate entity");
 	}
 
 	@Path("destroy [player]")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void destroy(@Arg("self") Player player) {
 		Nameplates.get().getNameplateManager().destroy(player);
 		send(PREFIX + "Destroyed " + (isSelf(player) ? "your" : Nickname.of(player) + "'s") + " nameplate entity");
 	}
 
 	@Path("debug")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void debug() {
 		Nameplates.toggleDebug();
 		send(PREFIX + "Debug " + (Nameplates.isDebug() ? "&aenabled" : "&cdisabled"));
 	}
 
 	@Path("debug <player>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void debug(Player player) {
 		send(StringUtils.toPrettyString(NameplateManager.get(player)));
 	}

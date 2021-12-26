@@ -17,6 +17,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
@@ -61,7 +62,7 @@ import java.util.function.BiFunction;
 import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
 
 @NoArgsConstructor
-@Permission("group.staff")
+@Permission(Group.STAFF)
 @Aliases({"hp", "honeypots"})
 public class HoneyPotCommand extends CustomCommand implements Listener {
 	private final HoneyPotGrieferService grieferService = new HoneyPotGrieferService();
@@ -87,7 +88,7 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("set <player> <int>")
-	@Permission(value = "group.seniorstaff", absolute = true)
+	@Permission(Group.SENIOR_STAFF)
 	void set(OfflinePlayer player, int value) {
 		griefer = grieferService.get(player);
 		griefer.setTriggered(value);

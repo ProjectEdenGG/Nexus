@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -87,7 +88,7 @@ public class DiscordCommand extends CustomCommand {
 
 	@Async
 	@Path("link update roles")
-	@Permission("group.seniorstaff")
+	@Permission(Group.SENIOR_STAFF)
 	void updateRoles() {
 		int errors = 0;
 		Role verified = DiscordId.Role.VERIFIED.get(Bot.KODA.jda());
@@ -112,7 +113,7 @@ public class DiscordCommand extends CustomCommand {
 
 	@Async
 	@Path("forceLink <player> <id>")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void forceLink(OfflinePlayer player, String id) {
 		DiscordUserService service = new DiscordUserService();
 		DiscordUser user = service.get(player);
@@ -193,7 +194,7 @@ public class DiscordCommand extends CustomCommand {
 
 	@Async
 	@Path("linkStatus [player]")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void linkStatus(@Arg("self") DiscordUser discordUser) {
 		send(PREFIX + "Link status of &e" + discordUser.getIngameName());
 
@@ -239,7 +240,7 @@ public class DiscordCommand extends CustomCommand {
 	}
 
 	@Path("boosts")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void boosts() {
 		for (Member booster : Discord.getGuild().getBoosters())
 			send(" - " + booster.getEffectiveName());
@@ -247,14 +248,14 @@ public class DiscordCommand extends CustomCommand {
 
 	@Async
 	@Path("connect")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void connect() {
 		Features.get(Discord.class).connect();
 	}
 
 	@Async
 	@Path("lockdown")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void lockdown() {
 		SettingService service = new SettingService();
 		Setting setting = service.get("discord", "lockdown");
@@ -266,14 +267,14 @@ public class DiscordCommand extends CustomCommand {
 
 	@Async
 	@Path("jda dms send <id> <message...>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void jda_dms_send(String id, String message) {
 		Bot.KODA.jda().retrieveUserById(id).complete().openPrivateChannel().complete().sendMessage(message).queue();
 	}
 
 	@Async
 	@Path("jda dms view <id>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void jda_dms_view(String id) {
 		Bot.KODA.jda().retrieveUserById(id).complete().openPrivateChannel().complete().getHistory().retrievePast(50).complete().forEach(message ->
 				send(message.getContentRaw()));
@@ -281,7 +282,7 @@ public class DiscordCommand extends CustomCommand {
 
 	@Async
 	@Path("jda dms delete <id>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void jda_dms_delete(String id) {
 		Bot.KODA.jda().retrieveUserById(id).complete().openPrivateChannel().complete().getHistory().retrievePast(50).complete().forEach(message ->
 				message.delete().queue());
@@ -289,7 +290,7 @@ public class DiscordCommand extends CustomCommand {
 
 	@Async
 	@Path("jda getUser <id>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void jda_getUser(String id) {
 		User user = Bot.KODA.jda().retrieveUserById(id).complete();
 		if (user == null)
@@ -305,14 +306,14 @@ public class DiscordCommand extends CustomCommand {
 
 	@Async
 	@Path("captcha debug")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void debug() {
 		send(new DiscordCaptchaService().get().toString());
 	}
 
 	@Async
 	@Path("captcha unconfirm <id>")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void unconfirm(String id) {
 		DiscordCaptchaService captchaService = new DiscordCaptchaService();
 		DiscordCaptcha captcha = captchaService.get0();
@@ -338,7 +339,7 @@ public class DiscordCommand extends CustomCommand {
 	// TODO Restrospective confirmation checks
 	@Async
 	@Path("captcha info")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void info() {
 		DiscordCaptcha captcha = new DiscordCaptchaService().get();
 

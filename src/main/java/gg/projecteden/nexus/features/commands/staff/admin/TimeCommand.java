@@ -4,12 +4,13 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.DescParseTickFormat;
 import org.bukkit.World;
 
-@Permission("group.admin")
+@Permission(Group.ADMIN)
 public class TimeCommand extends CustomCommand {
 
 	public TimeCommand(CommandEvent event) {

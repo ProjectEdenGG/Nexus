@@ -10,6 +10,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -30,7 +31,7 @@ import java.util.Map;
 import static gg.projecteden.nexus.utils.ItemUtils.isInventoryEmpty;
 
 @Aliases("restoreinv")
-@Permission("group.seniorstaff")
+@Permission(Group.SENIOR_STAFF)
 public class RestoreInventoryCommand extends CustomCommand {
 	public static HashMap<Player, RestoreInventoryPlayer> restorers = new HashMap<>();
 

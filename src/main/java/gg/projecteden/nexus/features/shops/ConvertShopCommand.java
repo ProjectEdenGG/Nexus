@@ -6,6 +6,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -52,7 +53,7 @@ import java.util.Map;
 
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
-@Permission("group.admin")
+@Permission(Group.ADMIN)
 @Cooldown(value = TickTime.SECOND)
 public class ConvertShopCommand extends CustomCommand {
 

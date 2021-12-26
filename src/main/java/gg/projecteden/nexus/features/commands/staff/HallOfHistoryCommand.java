@@ -9,6 +9,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
 import gg.projecteden.nexus.models.hallofhistory.HallOfHistory;
@@ -56,7 +57,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 	}
 
 	@Path("clearCache")
-	@Permission("group.seniorstaff")
+	@Permission(Group.SENIOR_STAFF)
 	void clearCache() {
 		service.clearCache();
 		send(PREFIX + "Successfully cleared cache");
@@ -78,7 +79,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 		for (RankHistory rankHistory : hallOfHistory.getRankHistory()) {
 			JsonBuilder builder = new JsonBuilder();
 			builder.next("  " + (rankHistory.isCurrent() ? "&2Current" : "&cFormer") + " " + rankHistory.getRank().getChatColor() + rankHistory.getRank().getName());
-			if (isPlayer() && player().hasPermission("hoh.edit"))
+			if (isStaff())
 				builder.next("  &c[x]").command("/hoh removerank " + target.getName() + " " + getRankCommandArgs(rankHistory));
 
 			send(builder);
@@ -97,7 +98,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 		}
 	}
 
-	@Permission("hoh.edit")
+	@Permission(Group.STAFF)
 	@Path("create <player>")
 	void create(@Arg(tabCompleter = Nerd.class) String player) {
 		runCommand("blockcenter");
@@ -120,7 +121,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 	}
 
 	@Async
-	@Permission("hoh.edit")
+	@Permission(Group.STAFF)
 	@Path("addRank <player> <current|former> <rank> <promotionDate> [resignationDate]")
 	void addRank(OfflinePlayer target, String when, Rank rank, LocalDate promotion, LocalDate resignation) {
 		boolean current = "current".equalsIgnoreCase(when);
@@ -133,7 +134,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 	}
 
 	@Async
-	@Permission("hoh.edit")
+	@Permission(Group.STAFF)
 	@Path("removeRank <player> <current|former> <rank> <promotionDate> [resignationDate]")
 	void removeRankConfirm(OfflinePlayer player, String when, Rank rank, LocalDate promotion, LocalDate resignation) {
 		boolean current = "current".equalsIgnoreCase(when);
@@ -166,7 +167,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 		return command.trim();
 	}
 
-	@Permission("hoh.edit")
+	@Permission(Group.STAFF)
 	@Path("clear <player>")
 	void clear(OfflinePlayer player) {
 		service.edit(player.getUniqueId(), history -> history.getRankHistory().clear());
@@ -174,7 +175,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 	}
 
 	@Path("setwarp")
-	@Permission("hoh.edit")
+	@Permission(Group.STAFF)
 	void setWarp() {
 		runCommand("blockcenter");
 		Tasks.wait(3, () -> runCommand("warps set hallofhistory"));

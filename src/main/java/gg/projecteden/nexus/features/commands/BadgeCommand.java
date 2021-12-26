@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.badge.BadgeUser;
@@ -46,7 +47,7 @@ public class BadgeCommand extends CustomCommand {
 		send(PREFIX + "Set " + (isSelf(user) ? "your" : "&e" + user.getNickname() + "&3's") + " active badge to &e" + camelCase(badge));
 	}
 
-	@Permission("group.seniorstaff")
+	@Permission(Group.SENIOR_STAFF)
 	@Path("give <badge> [user]")
 	void give(Badge badge, @Arg("self") BadgeUser user) {
 		user.give(badge);
@@ -55,7 +56,7 @@ public class BadgeCommand extends CustomCommand {
 	}
 
 	@Async
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("convert")
 	void convert() {
 		int i = 0;

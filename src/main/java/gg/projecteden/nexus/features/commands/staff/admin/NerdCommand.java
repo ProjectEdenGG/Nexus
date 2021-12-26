@@ -6,6 +6,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.hours.HoursService;
@@ -39,14 +40,14 @@ public class NerdCommand extends CustomCommand {
 	}
 
 	@Path("setFirstJoin <player> <date>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void setFirstJoin(Nerd nerd, LocalDateTime firstJoin) {
 		new NerdService().edit(nerd, _nerd -> _nerd.setFirstJoin(firstJoin));
 		send(PREFIX + "Set " + nerd.getNickname() + "'s first join date to &e" + shortDateTimeFormat(nerd.getFirstJoin()));
 	}
 
 	@Path("setPromotionDate <player> <date>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void setPromotionDate(Nerd nerd, LocalDate promotionDate) {
 		new NerdService().edit(nerd, _nerd -> _nerd.setPromotionDate(promotionDate));
 		send(PREFIX + "Set " + nerd.getNickname() + "'s promotion date to &e" + shortDateFormat(nerd.getPromotionDate()));
@@ -54,7 +55,7 @@ public class NerdCommand extends CustomCommand {
 
 	@Async
 	@Path("getDataFile [player]")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void getDataFile(@Arg("self") Nerd nerd) {
 		send(json().next(paste(nerd.getNbtFile().asNBTString())));
 	}

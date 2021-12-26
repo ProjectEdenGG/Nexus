@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.ticket.Tickets;
@@ -123,7 +124,7 @@ public class TicketsCommand extends CustomCommand {
 	}
 
 	@Path("stats closed [page]")
-	@Permission("group.moderator")
+	@Permission(Group.MODERATOR)
 	void statsClosed(@Arg("1") int page) {
 		Map<UUID, Integer> closers = new HashMap<>();
 		for (Ticket ticket : tickets.getAll()) {

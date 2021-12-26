@@ -11,6 +11,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.jigsawjam.JigsawJamService;
 import gg.projecteden.nexus.models.jigsawjam.JigsawJammer;
@@ -104,19 +105,19 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("paste")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void paste() {
 		paste(location());
 	}
 
 	@Path("clear")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void clear() {
 		clear(location());
 	}
 
 	@Path("reset")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void reset() {
 		paste(location());
 		clear(location());

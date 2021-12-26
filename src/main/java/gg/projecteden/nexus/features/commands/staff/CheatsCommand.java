@@ -4,6 +4,7 @@ import de.myzelyam.api.vanish.VanishAPI;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.godmode.GodmodeService;
@@ -13,7 +14,7 @@ import org.bukkit.GameMode;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.Player;
 
-@Permission("group.staff")
+@Permission(Group.STAFF)
 @Redirect(from = "/nocheats", to = "/cheats off")
 @Redirect(from = "/allcheats", to = "/cheats on")
 public class CheatsCommand extends CustomCommand {

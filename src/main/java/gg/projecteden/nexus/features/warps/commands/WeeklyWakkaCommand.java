@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.crates.models.CrateType;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.warps.WarpType;
@@ -30,7 +31,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-@Permission("group.staff")
+@Permission(Group.STAFF)
 @NoArgsConstructor
 public class WeeklyWakkaCommand extends _WarpCommand implements Listener {
 
@@ -163,7 +164,7 @@ public class WeeklyWakkaCommand extends _WarpCommand implements Listener {
 	}
 
 	@Path("found")
-	@Permission(value = "group.admin", absolute = true)
+	@Permission(Group.ADMIN)
 	void whoFound() {
 		send(PREFIX + "Found: " + new WeeklyWakkaService().get()
 				.getFoundPlayers().stream()
@@ -172,7 +173,7 @@ public class WeeklyWakkaCommand extends _WarpCommand implements Listener {
 	}
 
 	@Path("tp")
-	@Permission(value = "group.admin", absolute = true)
+	@Permission(Group.ADMIN)
 	void tp() {
 		send(PREFIX + "Teleporting to location #" + new WeeklyWakkaService().get().getCurrentLocation());
 		player().teleportAsync(getNPC().getStoredLocation(), TeleportCause.COMMAND);
@@ -202,7 +203,7 @@ public class WeeklyWakkaCommand extends _WarpCommand implements Listener {
 	}
 
 	@Path("move")
-	@Permission(value = "group.admin", absolute = true)
+	@Permission(Group.ADMIN)
 	public void move() {
 		List<Warp> warps = WarpType.WEEKLY_WAKKA.getAll();
 		WeeklyWakkaService service = new WeeklyWakkaService();

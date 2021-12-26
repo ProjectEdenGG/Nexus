@@ -6,6 +6,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -24,7 +25,7 @@ import java.util.Arrays;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @Aliases("c4")
-@Permission("group.staff")
+@Permission(Group.STAFF)
 public class Connect4Command extends CustomCommand {
 	public final static String PREFIX = colorize("&f[&cConnect&94&f] ");
 	static Connect4Game game = new Connect4Game();
@@ -34,26 +35,26 @@ public class Connect4Command extends CustomCommand {
 	}
 
 	@Path("reload")
-	@Permission(value = "group.admin", absolute = true)
+	@Permission(Group.ADMIN)
 	void reload() {
 		Nexus.getInstance().reloadConfig();
 		send(PREFIX + "Config reloaded");
 	}
 
 	@Path("(clear|reset)")
-	@Permission(value = "group.admin", absolute = true)
+	@Permission(Group.ADMIN)
 	void reset() {
 		game.reset();
 	}
 
 	@Path("place <team> <column>")
-	@Permission(value = "group.admin", absolute = true)
+	@Permission(Group.ADMIN)
 	void place(String team, int column) {
 		place(Connect4Team.valueOf(team.toUpperCase()), validate(column));
 	}
 
 	@Path("debug")
-	@Permission(value = "group.admin", absolute = true)
+	@Permission(Group.ADMIN)
 	void debug() {
 		send();
 		int[][] board = game.getBoard();

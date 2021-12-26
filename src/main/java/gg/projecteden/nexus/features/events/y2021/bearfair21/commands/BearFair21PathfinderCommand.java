@@ -9,6 +9,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.bearfair21.BearFair21WebConfig;
 import gg.projecteden.nexus.models.bearfair21.BearFair21WebConfig.Node;
@@ -49,7 +50,7 @@ import static gg.projecteden.nexus.utils.StringUtils.getShortLocationString;
 
 @Disabled
 @NoArgsConstructor
-@Permission("group.admin")
+@Permission(Group.ADMIN)
 public class BearFair21PathfinderCommand extends CustomCommand implements Listener {
 	private static int wait = 0;
 

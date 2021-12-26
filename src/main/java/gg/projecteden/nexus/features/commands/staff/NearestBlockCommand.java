@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.commands.staff;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
@@ -22,7 +23,7 @@ import java.util.Collections;
 
 import static gg.projecteden.nexus.utils.LocationUtils.getCenteredLocation;
 
-@Permission("group.staff")
+@Permission(Group.STAFF)
 public class NearestBlockCommand extends CustomCommand {
 
 	public NearestBlockCommand(CommandEvent event) {

@@ -6,6 +6,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.geoip.GeoIP;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
@@ -35,7 +36,7 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor
-@Permission("group.moderator")
+@Permission(Group.MODERATOR)
 public class GeoIPCommand extends CustomCommand implements Listener {
 
 	public GeoIPCommand(@NonNull CommandEvent event) {
@@ -69,14 +70,14 @@ public class GeoIPCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("write")
-	@Permission(value = "group.admin", absolute = true)
+	@Permission(Group.ADMIN)
 	void write() {
 		writeFiles();
 		send(PREFIX + "Done");
 	}
 
 	@Path("debug [player]")
-	@Permission(value = "group.admin", absolute = true)
+	@Permission(Group.ADMIN)
 	void debug(@Arg("self") OfflinePlayer player) {
 		send(json(PREFIX + "Click to copy Mongo query").copy("db.geoip.find({\"_id\":\"" + player.getUniqueId().toString() + "\"}).pretty();"));
 	}

@@ -10,6 +10,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -99,7 +100,7 @@ public class ModReviewCommand extends CustomCommand implements Listener {
 		Broadcast.staff().prefix("ModReview").message(json(message).command("/modreview requests")).send();
 	}
 
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	@Path("requests [page]")
 	void requests(@Arg("1") int page) {
 		if (requests.isEmpty())
@@ -117,7 +118,7 @@ public class ModReviewCommand extends CustomCommand implements Listener {
 	}
 
 	@Confirm
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("requests remove <mod>")
 	void removeRequest(ModReviewRequest request) {
 		requests.remove(request);
@@ -125,7 +126,7 @@ public class ModReviewCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Removed request for mod &e" + request.getName());
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("add <name> <verdict> [notes...]")
 	void add(String name, ModVerdict verdict, String notes) {
 		Mod mod = new Mod(name, verdict, notes);
@@ -134,7 +135,7 @@ public class ModReviewCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Added mod &e" + mod.getName());
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("alias add <mod> <aliases...>")
 	void addAliases(Mod mod, @Arg(type = String.class) List<String> aliases) {
 		mod.getAliases().addAll(aliases);
@@ -142,7 +143,7 @@ public class ModReviewCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Added aliases to mod &e" + mod.getName());
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("alias remove <mod> <aliases...>")
 	void removeAliases(Mod mod, @Arg(type = String.class) List<String> aliases) {
 		mod.getAliases().removeAll(aliases);
@@ -150,7 +151,7 @@ public class ModReviewCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Removed aliases to mod &e" + mod.getName());
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("set name <mod> <name>")
 	void setName(Mod mod, String name) {
 		mod.setName(name);
@@ -158,7 +159,7 @@ public class ModReviewCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Name updated for mod &e" + mod.getName());
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("set verdict <mod> <verdict>")
 	void setVerdict(Mod mod, ModVerdict verdict) {
 		mod.setVerdict(verdict);
@@ -166,7 +167,7 @@ public class ModReviewCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Verdict updated for mod &e" + mod.getName());
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("set notes <mod> [notes...]")
 	void setNotes(Mod mod, String notes) {
 		mod.setNotes(notes);
@@ -175,7 +176,7 @@ public class ModReviewCommand extends CustomCommand implements Listener {
 	}
 
 	@Confirm
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("delete <mod>")
 	void delete(Mod mod) {
 		modReview.getMods().remove(mod);

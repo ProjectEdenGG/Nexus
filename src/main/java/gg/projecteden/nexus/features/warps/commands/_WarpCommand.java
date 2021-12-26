@@ -5,6 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.NoPermissionException;
@@ -73,7 +74,7 @@ public abstract class _WarpCommand extends CustomCommand {
 	}
 
 	@Path("(set|create) <name>")
-	@Permission(value = "group.staff", absolute = true)
+	@Permission(Group.STAFF)
 	public void set(@Arg(tabCompleter = Warp.class) String name) {
 		checkPermission();
 		Warp warp = getWarpType().get(name);
@@ -86,7 +87,7 @@ public abstract class _WarpCommand extends CustomCommand {
 	}
 
 	@Path("reset <name>")
-	@Permission(value = "group.staff", absolute = true)
+	@Permission(Group.STAFF)
 	public void reset(@Arg(tabCompleter = Warp.class) String name) {
 		checkPermission();
 		getWarpType().delete(name);
@@ -96,7 +97,7 @@ public abstract class _WarpCommand extends CustomCommand {
 	}
 
 	@Path("(rm|remove|delete|del) <name>")
-	@Permission(value = "group.staff", absolute = true)
+	@Permission(Group.STAFF)
 	public void delete(Warp warp) {
 		checkPermission();
 		warps.delete(warp);

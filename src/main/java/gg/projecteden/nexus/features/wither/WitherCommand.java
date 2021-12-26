@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.warps.Warps;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
@@ -301,7 +302,7 @@ public class WitherCommand extends CustomCommand {
 	}
 
 	@Path("reset")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void reset() {
 		WitherChallenge.reset(false);
 		send(PREFIX + "Arena successfully reset");
@@ -311,28 +312,28 @@ public class WitherCommand extends CustomCommand {
 	}
 
 	@Path("processQueue")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void processQueue() {
 		WitherChallenge.processQueue();
 		send(PREFIX + "Sent queue notification to the next player");
 	}
 
 	@Path("maintenance")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void maintenance() {
 		new WitherArenaConfigService().edit0(config -> config.setMaintenance(!isMaintenance()));
 		send(PREFIX + "Wither arena maintenance mode " + (isMaintenance() ? "&aenabled" : "&cdisabled"));
 	}
 
 	@Path("beta")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void beta() {
 		new WitherArenaConfigService().edit0(config -> config.setBeta(!isBeta()));
 		send(PREFIX + "Wither arena beta mode " + (isBeta() ? "&aenabled" : "&cdisabled"));
 	}
 
 	@Path("getFragment")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void fragment() {
 		PlayerUtils.giveItem(player(), WitherChallenge.getWitherFragment());
 	}

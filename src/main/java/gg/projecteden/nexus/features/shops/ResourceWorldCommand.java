@@ -10,6 +10,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.nerd.Rank;
@@ -87,14 +88,14 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 	}
 
 	@Confirm
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("reset <test>")
 	void reset(boolean test) {
 		resetWorlds(test);
 	}
 
 	@Confirm
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("setup <test>")
 	void setup(boolean test) {
 		setupWorlds(test);
@@ -114,7 +115,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 	@Async
 	@Confirm
 	@Path("logger add")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void logger_add() {
 		if (!isResourceWorld(world()))
 			throw new InvalidInputException("You must be in a resource world");
@@ -133,7 +134,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("logger count")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void logger_count() {
 		send(PREFIX + logger.size() + " coordinates logged");
 	}
@@ -141,7 +142,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 	@Async
 	@Environments(Env.TEST)
 	@Path("logger add random [amount]")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void logger_add_random(@Arg("10000") int amount) {
 		if (!isResourceWorld(world()))
 			throw new InvalidInputException("You must be in a resource world");

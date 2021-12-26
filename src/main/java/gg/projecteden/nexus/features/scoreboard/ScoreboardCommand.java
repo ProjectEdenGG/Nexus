@@ -11,6 +11,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.scoreboard.ScoreboardService;
@@ -112,7 +113,7 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 		book();
 	}
 
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	@Path("list")
 	void list() {
 		String collect = OnlinePlayers.getAll().stream()
@@ -124,7 +125,7 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 		send("&e" + collect);
 	}
 
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	@Path("view <player>")
 	void view(OfflinePlayer player) {
 		send(service.get(player).toString());

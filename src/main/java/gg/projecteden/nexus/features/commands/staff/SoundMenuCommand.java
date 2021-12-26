@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.menus.BookBuilder;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import org.bukkit.Location;
@@ -16,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-@Permission("group.staff")
+@Permission(Group.STAFF)
 public class SoundMenuCommand extends CustomCommand {
 
 	private static final List<UUID> playToOthers = new ArrayList<>();

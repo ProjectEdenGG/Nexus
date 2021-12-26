@@ -510,15 +510,8 @@ public abstract class ICustomCommand {
 		if (permission != null && !sender.hasPermission(permission))
 			return false;
 
-		if (method.isAnnotationPresent(Permission.class)) {
-			Permission pathPermission = method.getAnnotation(Permission.class);
-			if (permission != null)
-				permission = (pathPermission.absolute() ? "" : (permission + ".")) + pathPermission.value();
-			else
-				permission = pathPermission.value();
-
-			return sender.hasPermission(permission);
-		}
+		if (method.isAnnotationPresent(Permission.class))
+			return sender.hasPermission(method.getAnnotation(Permission.class).value());
 
 		return true;
 	}

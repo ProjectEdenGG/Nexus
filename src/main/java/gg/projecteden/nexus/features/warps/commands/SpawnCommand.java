@@ -4,6 +4,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.models.warps.WarpsService;
@@ -35,7 +36,7 @@ public class SpawnCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("force [player]")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void sudo(Player player) {
 		runCommand(player, "spawn");
 		runCommand(player, "spawn");

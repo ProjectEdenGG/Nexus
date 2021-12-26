@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.banker.Banker;
@@ -70,21 +71,21 @@ public class EconomyCommand extends CustomCommand {
 	}
 
 	@Path("set <player> <balance> [cause] [reason...] [--world]")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void set(Banker banker, BigDecimal balance, @Arg("server") TransactionCause cause, String reason, @Switch  @Arg("current") ShopGroup world) {
 		service.setBalance(cause.of(banker, balance, world, reason));
 		send(PREFIX + "Set &e" + banker.getNickname() + "'s &3balance to &e" + banker.getBalanceFormatted(world));
 	}
 
 	@Path("give <player> <balance> [cause] [reason...] [--world]")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void give(Banker banker, BigDecimal balance, @Arg("server") TransactionCause cause, String reason, @Switch @Arg("current") ShopGroup world) {
 		service.deposit(cause.of(null, banker, balance, world, reason));
 		send(PREFIX + "Added &e" + prettyMoney(balance) + " &3to &e" + banker.getNickname() + "'s &3balance. New balance: &e" + banker.getBalanceFormatted(world));
 	}
 
 	@Path("take <player> <balance> [cause] [reason...] [--world]")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void take(Banker banker, BigDecimal balance, @Arg("server") TransactionCause cause, String reason, @Switch @Arg("current") ShopGroup world) {
 		service.withdraw(cause.of(null, banker, balance, world, reason));
 		send(PREFIX + "Removed &e" + prettyMoney(balance) + " &3from &e" + banker.getNickname() + "'s &3balance. New balance: &e" + banker.getBalanceFormatted(world));
