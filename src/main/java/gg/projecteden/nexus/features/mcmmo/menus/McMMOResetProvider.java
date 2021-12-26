@@ -131,7 +131,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 			@Override
 			void onClick(Player player) {
 				PlayerUtils.runCommandAsConsole("ce give " + player.getName() + " " + Material.PAPER.name() + " bandage");
-				PlayerUtils.runCommandAsConsole("ce give " + player.getName() + " " + Material.STICK.name() + " Quarterstaff disarming:1");
+				PlayerUtils.giveItem(player, new ItemBuilder(Material.STICK).name("Quarterstaff").enchant(Enchant.DISARMING).build());
 			}
 		},
 		ALCHEMY(4, 8, Material.SPLASH_POTION,

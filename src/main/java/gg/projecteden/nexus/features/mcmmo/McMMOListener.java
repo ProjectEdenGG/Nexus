@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.mcmmo;
 
 import com.gmail.nossr50.events.experience.McMMOPlayerLevelUpEvent;
+import com.gmail.nossr50.events.skills.unarmed.McMMOPlayerDisarmEvent;
 import com.gmail.nossr50.util.player.UserManager;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Koda;
@@ -43,6 +44,11 @@ public class McMMOListener implements Listener {
 	public McMMOListener() {
 		Nexus.registerListener(this);
 		scheduler();
+	}
+
+	@EventHandler
+	public void onMcMMOPlayerDisarm(McMMOPlayerDisarmEvent event) {
+		event.setCancelled(true);
 	}
 
 	@EventHandler

@@ -91,6 +91,7 @@ public class OldCEConverter {
 		AUTOREPAIR(Enchant.AUTOREPAIR),
 		THUNDERINGBLOW(Enchant.THUNDERINGBLOW),
 		FIREWORK(Enchant.FIREWORK),
+		DISARMING(Enchant.DISARMING),
 		;
 
 		CustomEnchant enchant;
