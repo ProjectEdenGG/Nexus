@@ -18,7 +18,8 @@ import gg.projecteden.nexus.models.nickname.NicknameService;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.DiscordId.TextChannel;
 import lombok.NoArgsConstructor;
-import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
+import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
@@ -148,8 +149,11 @@ public class NicknameCommand extends CustomCommand {
 	public static class NicknameApprovalListener extends ListenerAdapter {
 
 		@Override
-		public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent event) {
+		public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
 			Tasks.async(() -> {
+				if (event.getChannelType() != ChannelType.TEXT)
+					return;
+
 				NicknameService service = new NicknameService();
 				Nickname data = service.getFromQueueId(event.getMessageId());
 				if (data == null)

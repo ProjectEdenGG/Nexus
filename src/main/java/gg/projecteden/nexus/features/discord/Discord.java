@@ -1,6 +1,8 @@
 package gg.projecteden.nexus.features.discord;
 
+import gg.projecteden.discord.appcommands.AppCommandRegistry;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.discord.commands.DiscordAppCommand;
 import gg.projecteden.nexus.features.listeners.Tab.Presence;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -21,7 +23,6 @@ import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.GuildChannel;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
@@ -44,6 +45,11 @@ import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
 public class Discord extends Feature {
 	@Getter
 	private static final Map<String, DiscordUser> codes = new HashMap<>();
+
+	public static void onConnect(Bot bot) {
+		final String commandsPackage = DiscordAppCommand.class.getPackage().getName();
+		new AppCommandRegistry(bot.jda(), commandsPackage).registerAll();
+	}
 
 	@Override
 	public void onStart() {
@@ -181,7 +187,7 @@ public class Discord extends Feature {
 				message.denyMentions(Message.MentionType.EVERYONE, Message.MentionType.HERE);
 			else
 				message.allowMentions(Message.MentionType.EVERYONE, Message.MentionType.HERE);
-			net.dv8tion.jda.api.entities.TextChannel textChannel = bot.jda().getTextChannelById(target.getId());
+			var textChannel = target.get(bot.jda());
 			if (textChannel != null)
 				textChannel.sendMessage(message.build()).queue(onSuccess, onError);
 		}
@@ -259,7 +265,7 @@ public class Discord extends Feature {
 	private static void updateBridgeTopic(String newBridgeTopic) {
 		if (Discord.getGuild() == null) return;
 		bridgeTopic = newBridgeTopic;
-		GuildChannel channel = Discord.getGuild().getGuildChannelById(TextChannel.BRIDGE.getId());
+		var channel = TextChannel.STAFF_BRIDGE.get(Bot.KODA.jda());
 		if (channel == null)
 			return;
 
@@ -276,7 +282,7 @@ public class Discord extends Feature {
 	private static void updateStaffBridgeTopic(String newStaffBridgeTopic) {
 		if (Discord.getGuild() == null) return;
 		staffBridgeTopic = newStaffBridgeTopic;
-		GuildChannel channel = Discord.getGuild().getGuildChannelById(TextChannel.STAFF_BRIDGE.getId());
+		var channel = TextChannel.STAFF_BRIDGE.get(Bot.KODA.jda());
 		if (channel != null)
 			channel.getManager().setTopic(staffBridgeTopic + timestamp()).queue();
 	}
@@ -290,7 +296,7 @@ public class Discord extends Feature {
 		String url = getGuild().getVanityUrl();
 
 		if (isNullOrEmpty(url)) {
-			net.dv8tion.jda.api.entities.TextChannel textChannel = guild.getTextChannelById(TextChannel.GENERAL.getId());
+			var textChannel = TextChannel.GENERAL.get(Bot.KODA.jda());
 			if (textChannel == null)
 				throw new InvalidInputException("General channel not found");
 

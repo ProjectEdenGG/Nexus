@@ -6,7 +6,7 @@ import com.vdurmont.emoji.EmojiManager;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.bridge.DiscordBridgeListener;
 import gg.projecteden.nexus.features.commands.NicknameCommand.NicknameApprovalListener;
-import gg.projecteden.nexus.features.discord.commands.TwitterDiscordCommand.TweetApprovalListener;
+import gg.projecteden.nexus.features.discord.commands.TwitterAppCommand.TweetApprovalListener;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.utils.DiscordId.User;
@@ -93,6 +93,7 @@ public enum Bot {
 			if (this.jda == null) {
 				log("Connected to Discord");
 				this.jda = jda;
+				Discord.onConnect(this);
 			} else {
 				log("Discarding extra Discord connection");
 				jda.shutdown();
