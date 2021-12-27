@@ -61,7 +61,7 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 
 		List<ClickableItem> items = new ArrayList<>();
 
-		for (int i = 1; i <= MAX_DAY; i++) {
+		for (int i = 1; i <= Math.max(MAX_DAY, user.getCurrentStreak().getStreak()); i++) {
 			final int day = i;
 			if (ResourcePack.isEnabledFor(player)) {
 				if (user.getCurrentStreak().getStreak() >= day) {
@@ -75,6 +75,7 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 								.name("&eDay " + day)
 								.lore("&6&lUnclaimed", "&3Click to select reward.")
 								.customModelData(1000 + day)
+								.glow(day > MAX_DAY)
 								.build(), e -> new SelectItemMenu(user, day, contents.pagination().getPage()).open(player)));
 					}
 				} else {
