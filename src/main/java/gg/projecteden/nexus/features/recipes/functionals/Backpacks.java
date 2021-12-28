@@ -6,6 +6,7 @@ import fr.minuskube.inv.SmartInvsPlugin;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.listeners.TemporaryListener;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -13,6 +14,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.FakePlayerInteractEvent;
 import gg.projecteden.nexus.utils.SerializationUtils.Json;
 import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import lombok.Getter;
@@ -40,6 +42,7 @@ import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -88,6 +91,13 @@ public class Backpacks extends FunctionalRecipe {
 			return false;
 
 		return new NBTItem(item).getString("BackpackId").equals(id);
+	}
+
+	public static String getBackpackId(ItemStack item) {
+		if (!isBackpack(item))
+			return null;
+
+		return new NBTItem(item).getString("BackpackId");
 	}
 
 	public void openBackpack(Player player, ItemStack backpack) {
@@ -227,12 +237,19 @@ public class Backpacks extends FunctionalRecipe {
 
 			BlockStateMeta blockStateMeta = (BlockStateMeta) backpack.getItemMeta();
 			ShulkerBox shulkerBox = (ShulkerBox) blockStateMeta.getBlockState();
-			originalItems = shulkerBox.getInventory().getContents();
+			this.originalItems = shulkerBox.getInventory().getContents();
 
-			Inventory inv = Bukkit.createInventory(null, 27, backpack.getItemMeta().getDisplayName());
-			inv.setContents(originalItems);
-			player.openInventory(inv);
-			Nexus.registerTemporaryListener(this);
+			try {
+				verifyInventory(player);
+
+				Inventory inv = Bukkit.createInventory(null, 27, backpack.getItemMeta().getDisplayName());
+				inv.setContents(originalItems);
+				player.openInventory(inv);
+				Nexus.registerTemporaryListener(this);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				PlayerUtils.send(player, StringUtils.getPrefix("Backpacks") + "&c" + ex.getMessage());
+			}
 		}
 
 		@EventHandler
@@ -305,6 +322,19 @@ public class Backpacks extends FunctionalRecipe {
 			PlayerUtils.send(player, "&cThere was an error while saving your backpack items. Please report this to staff to retrieve your lost items.");
 		}
 
+	}
+
+	private static void verifyInventory(Player player) {
+		List<String> ids = new ArrayList<>();
+		for (ItemStack item : player.getInventory().getContents()) {
+			if (!isBackpack(item))
+				continue;
+
+			final String id = getBackpackId(item);
+			if (ids.contains(id))
+				throw new InvalidInputException("Duplicate backpacks found, please contact staff");
+			ids.add(id);
+		}
 	}
 
 }
