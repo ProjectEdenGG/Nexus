@@ -4,6 +4,7 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.mobheads.MobHeadType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -15,6 +16,8 @@ import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import joptsimple.internal.Strings;
 import lombok.AllArgsConstructor;
@@ -24,9 +27,10 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.lexikiq.event.sound.EntitySoundEvent;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -278,13 +282,29 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	@EventHandler
+	// TODO 1.18
+//	@EventHandler
 	public void onEntitySound(EntitySoundEvent event) {
-		if (event.getPlayer() == null)
+		final Entity origin = event.getOrigin();
+		if (!(origin instanceof LivingEntity))
 			return;
 
-		final MuteMenuUser user = new MuteMenuService().get(event.getPlayer());
-		event.setVolume(user.getVolume(event.getOrigin().getType()));
+		event.setCancelled(true);
+
+		OnlinePlayers.where()
+			.world(origin.getWorld())
+			.radius(origin.getLocation(), 16 * event.getVolume())
+			.get().forEach(player -> {
+				final MuteMenuUser user = new MuteMenuService().get(player);
+				final int volume = user.getVolume(origin.getType());
+				new SoundBuilder(event.getSound())
+					.location(origin.getLocation())
+					.volume(volume)
+					.receiver(player)
+					.play();
+
+				Nexus.debug("Played sound " + event.getSound() + " to " + player.getName() + " at volume " + volume);
+			});
 	}
 
 }
