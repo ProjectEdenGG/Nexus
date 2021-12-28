@@ -37,12 +37,12 @@ import java.util.concurrent.CompletableFuture;
 @Aliases("weutils")
 @Permission(Group.STAFF)
 public class WorldEditUtilsCommand extends CustomCommand {
-	private WorldEditUtils worldEditUtils;
+	private WorldEditUtils worldedit;
 
 	public WorldEditUtilsCommand(@NonNull CommandEvent event) {
 		super(event);
 		if (isPlayerCommandEvent())
-			worldEditUtils = new WorldEditUtils(player());
+			worldedit = new WorldEditUtils(player());
 	}
 
 	@Path("rotate [y] [x] [z]")
@@ -100,11 +100,11 @@ public class WorldEditUtilsCommand extends CustomCommand {
 	@Confirm
 	@Path("breakNaturally")
 	void breakNaturally() {
-		Region selection = worldEditUtils.getPlayerSelection(player());
+		Region selection = worldedit.getPlayerSelection(player());
 		if (selection.getArea() > 50000)
 			error("Max selection size is 50000");
 
-		for (Block block : worldEditUtils.getBlocks(selection)) {
+		for (Block block : worldedit.getBlocks(selection)) {
 			if (block.getType() == Material.AIR)
 				continue;
 
@@ -114,9 +114,9 @@ public class WorldEditUtilsCommand extends CustomCommand {
 
 	@Path("smartReplace <from> <to>")
 	void smartReplace(Material from, Material to) {
-		Region selection = worldEditUtils.getPlayerSelection(player());
+		Region selection = worldedit.getPlayerSelection(player());
 
-		for (Block block : worldEditUtils.getBlocks(selection)) {
+		for (Block block : worldedit.getBlocks(selection)) {
 			if (block.getType() != from)
 				continue;
 
@@ -126,9 +126,9 @@ public class WorldEditUtilsCommand extends CustomCommand {
 
 	@Path("tagReplace <from> <to>")
 	void smartReplace(Tag<Material> from, Material to) {
-		Region selection = worldEditUtils.getPlayerSelection(player());
+		Region selection = worldedit.getPlayerSelection(player());
 
-		for (Block block : worldEditUtils.getBlocks(selection)) {
+		for (Block block : worldedit.getBlocks(selection)) {
 			if (!from.isTagged(block.getType()))
 				continue;
 
@@ -138,7 +138,7 @@ public class WorldEditUtilsCommand extends CustomCommand {
 
 	@Path("schem buildQueue <schematic> <seconds>")
 	void schemBuildQueue(String schematic, int seconds) {
-		worldEditUtils.paster()
+		worldedit.paster()
 			.file(schematic)
 			.at(location().add(-10, 0, 0))
 			.duration(TickTime.SECOND.x(seconds))
@@ -147,7 +147,7 @@ public class WorldEditUtilsCommand extends CustomCommand {
 
 	@Path("schem saveReal <name>")
 	void schemSaveReal(String name) {
-		worldEditUtils.save(name, worldEditUtils.getPlayerSelection(player()));
+		worldedit.save(name, worldedit.getPlayerSelection(player()));
 		send("Saved schematic " + name);
 	}
 
@@ -155,7 +155,7 @@ public class WorldEditUtilsCommand extends CustomCommand {
 	void schemSave(String name) {
 		GameMode originalGameMode = player().getGameMode();
 		Location originalLocation = location().clone();
-		Location location = worldEditUtils.toLocation(worldEditUtils.getPlayerSelection(player()).getMinimumPoint());
+		Location location = worldedit.toLocation(worldedit.getPlayerSelection(player()).getMinimumPoint());
 		player().setGameMode(GameMode.SPECTATOR);
 		player().teleportAsync(location);
 		runCommand("mcmd /copy ;; wait 10 ;; /schem save " + name + " -f");
@@ -169,7 +169,7 @@ public class WorldEditUtilsCommand extends CustomCommand {
 
 	@Path("schem paste <name>")
 	void schemPaste(String name) {
-		worldEditUtils.paster().file(name).at(location()).pasteAsync();
+		worldedit.paster().file(name).at(location()).pasteAsync();
 		send("Pasted schematic " + name);
 	}
 
@@ -177,7 +177,7 @@ public class WorldEditUtilsCommand extends CustomCommand {
 
 	@Path("clipboard copy")
 	void clipboardCopy() {
-		worldEditUtils.copy(worldEditUtils.getPlayerSelection(player()), worldEditUtils.paster()).thenAccept(clipboard -> {
+		worldedit.copy(worldedit.getPlayerSelection(player()), worldedit.paster()).thenAccept(clipboard -> {
 			clipboards.put(uuid(), clipboard);
 			send("Copied selection");
 		});
@@ -188,7 +188,7 @@ public class WorldEditUtilsCommand extends CustomCommand {
 		if (!clipboards.containsKey(uuid()))
 			error("You have not copied anything");
 
-		worldEditUtils.paster().clipboard(clipboards.get(uuid())).at(location()).pasteAsync();
+		worldedit.paster().clipboard(clipboards.get(uuid())).at(location()).pasteAsync();
 		send("Pasted clipboard");
 	}
 
