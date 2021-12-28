@@ -6,7 +6,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.BlockDecor;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Chair;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.LargeFireplace;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.MobPlushie;
-import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
@@ -30,10 +30,27 @@ public enum Decorations {
 
 	public static Decorations of(ItemStack tool) {
 		for (Decorations decoration : values()) {
-			if (ItemUtils.isFuzzyMatch(decoration.getItem(), tool))
+			if (decoration.isFuzzyMatch(tool))
 				return decoration;
 		}
 
 		return null;
+	}
+
+	public boolean isFuzzyMatch(ItemStack item2) {
+		ItemStack item1 = this.getItem();
+
+		if (item2 == null)
+			return false;
+
+		if (!item1.getType().equals(item2.getType()))
+			return false;
+
+		int decorModelData = CustomModelData.of(item1);
+		int itemModelData = CustomModelData.of(item2);
+		if (decorModelData != itemModelData)
+			return false;
+
+		return true;
 	}
 }

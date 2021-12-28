@@ -63,7 +63,7 @@ public class DecorationListener implements Listener {
 		}
 
 		Player player = event.getPlayer();
-		if (!new CooldownService().check(player, "decoration-interact", TickTime.SECOND.x(1)))
+		if (!new CooldownService().check(player, "decoration-interact", TickTime.TICK.x(5)))
 			return;
 
 		ItemStack tool = ItemUtils.getTool(player);
