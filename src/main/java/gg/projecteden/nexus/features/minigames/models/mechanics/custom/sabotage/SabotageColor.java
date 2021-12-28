@@ -56,14 +56,14 @@ public enum SabotageColor implements IsColoredAndNamed {
 	}
 
 	public @NotNull ItemStack getChest() {
-		return new ItemBuilder(Material.LEATHER_CHESTPLATE).armorColor(colored).build();
+		return new ItemBuilder(Material.LEATHER_CHESTPLATE).dyeColor(colored).build();
 	}
 
 	public @NotNull ItemStack getLegs() {
-		return new ItemBuilder(Material.LEATHER_LEGGINGS).armorColor(colored).build();
+		return new ItemBuilder(Material.LEATHER_LEGGINGS).dyeColor(colored).build();
 	}
 
 	public @NotNull ItemStack getBoots() {
-		return new ItemBuilder(Material.LEATHER_BOOTS).armorColor(colored).build();
+		return new ItemBuilder(Material.LEATHER_BOOTS).dyeColor(colored).build();
 	}
 }

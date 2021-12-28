@@ -461,4 +461,13 @@ public enum ColorType implements IsColored {
 	public static ColorType getRandom() {
 		return RandomUtils.randomElement(ColorType.class);
 	}
+
+	public static Color hexToBukkit(String hex) {
+		if (!hex.startsWith("#"))
+			hex = "#" + hex;
+
+		var decode = java.awt.Color.decode(hex);
+		return Color.fromRGB(decode.getRed(), decode.getGreen(), decode.getBlue());
+	}
+
 }
