@@ -20,11 +20,11 @@ public class HistoryDiscordCommand extends NexusAppCommand {
 	}
 
 	@Command(value = "View a player's history", literals = false)
-	void run(@Desc("Player") Punishments punishments) {
-		if (punishments.hasHistory())
-			replyEphemeral("<" + Justice.URL + "/history/" + Name.of(punishments) + ">");
+	void run(@Desc("Player") Punishments player) {
+		if (player.hasHistory())
+			replyEphemeral("<" + Justice.URL + "/history/" + Name.of(player) + ">");
 		else
-			replyEphemeral("No history found for " + punishments.getNickname());
+			replyEphemeral("No history found for " + player.getNickname());
 	}
 
 }

@@ -3,9 +3,11 @@ package gg.projecteden.nexus.features.discord;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.vdurmont.emoji.EmojiManager;
+import gg.projecteden.discord.appcommands.AppCommandRegistry;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.bridge.DiscordBridgeListener;
 import gg.projecteden.nexus.features.commands.NicknameCommand.NicknameApprovalListener;
+import gg.projecteden.nexus.features.discord.commands.DiscordAppCommand;
 import gg.projecteden.nexus.features.discord.commands.TwitterAppCommand.TweetApprovalListener;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
@@ -43,6 +45,12 @@ public enum Bot {
 		public String getId() {
 			return User.KODA.getId();
 		}
+
+		@Override
+		void onConnect() {
+			final String commandsPackage = DiscordAppCommand.class.getPackage().getName();
+			new AppCommandRegistry(jda, commandsPackage).registerAll();
+		}
 	},
 
 	RELAY {
@@ -61,9 +69,11 @@ public enum Bot {
 
 	@Getter
 	@Accessors(fluent = true)
-	private JDA jda;
+	protected JDA jda;
 
 	abstract JDABuilder build();
+
+	void onConnect() {}
 
 	@SneakyThrows
 	void connect() {
@@ -93,7 +103,7 @@ public enum Bot {
 			if (this.jda == null) {
 				log("Connected to Discord");
 				this.jda = jda;
-				Discord.onConnect(this);
+				onConnect();
 			} else {
 				log("Discarding extra Discord connection");
 				jda.shutdown();
