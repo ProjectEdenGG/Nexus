@@ -8,6 +8,7 @@ import fr.minuskube.inv.content.InventoryProvider;
 import fr.minuskube.inv.content.SlotPos;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -511,8 +512,7 @@ public class DyeStation extends CustomBench {
 			}
 
 			public ColoredButton(String hex) {
-				java.awt.Color decode = java.awt.Color.decode(hex);
-				this.color = org.bukkit.Color.fromRGB(decode.getRed(), decode.getGreen(), decode.getBlue());
+				this.color = ColorType.hexToBukkit(hex);
 			}
 		}
 	}

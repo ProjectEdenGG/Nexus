@@ -101,11 +101,15 @@ public class CustomModel implements Comparable<CustomModel> {
 	}
 
 	public ItemStack getItem() {
-		return new ItemBuilder(material)
-				.customModelData(data)
-				.name(meta.getName())
-				.lore(meta.getLore())
-				.build();
+		final ItemBuilder builder = new ItemBuilder(material)
+			.customModelData(data)
+			.name(meta.getName())
+			.lore(meta.getLore());
+
+		if (meta.hasDefaultColor())
+			builder.dyeColor(meta.getDefaultColor());
+
+		return builder.build();
 	}
 
 	public ItemStack getDisplayItem() {
@@ -126,6 +130,11 @@ public class CustomModel implements Comparable<CustomModel> {
 	public static class CustomModelMeta {
 		private String name;
 		private List<String> lore;
+		private String defaultColor;
+
+		public boolean hasDefaultColor() {
+			return !isNullOrEmpty(defaultColor);
+		}
 	}
 
 }

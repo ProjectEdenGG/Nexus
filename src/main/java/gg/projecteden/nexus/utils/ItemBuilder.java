@@ -260,13 +260,17 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 
 	// Leather armor
 
-	public ItemBuilder armorColor(Color color) {
+	public ItemBuilder dyeColor(Color color) {
 		((LeatherArmorMeta) itemMeta).setColor(color);
 		return this;
 	}
 
-	public ItemBuilder armorColor(Colored color) {
-		return armorColor(color.getBukkitColor());
+	public ItemBuilder dyeColor(Colored color) {
+		return dyeColor(color.getBukkitColor());
+	}
+
+	public ItemBuilder dyeColor(String hex) {
+		return dyeColor(ColorType.hexToBukkit(hex));
 	}
 
 	// Potions

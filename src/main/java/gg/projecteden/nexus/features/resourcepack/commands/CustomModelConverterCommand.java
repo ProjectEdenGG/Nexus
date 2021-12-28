@@ -6,6 +6,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import lombok.AllArgsConstructor;
@@ -47,7 +48,7 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 
 			itemFrame.setItem(new ItemBuilder(Material.LEATHER_HORSE_ARMOR)
 				.customModelData(size.getNewId())
-				.armorColor(getColor("#F4C57A"))
+				.dyeColor(ColorType.hexToBukkit("#F4C57A"))
 				.build());
 			++converted;
 		}
@@ -100,7 +101,7 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 
 			itemFrame.setItem(new ItemBuilder(Material.LEATHER_HORSE_ARMOR)
 				.customModelData(size.getNewId())
-				.armorColor(color.getColor())
+				.dyeColor(color.getColor())
 				.build());
 			++converted;
 		}
@@ -155,8 +156,7 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 		private final String hex;
 
 		private Color getColor() {
-			final java.awt.Color decode = java.awt.Color.decode(hex);
-			return Color.fromRGB(decode.getRed(), decode.getGreen(), decode.getBlue());
+			return ColorType.hexToBukkit(hex);
 		}
 
 		public static BalloonColor ofOld(ItemStack item) {
@@ -184,7 +184,7 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 			if (size != null) {
 				itemFrame.setItem(new ItemBuilder(Material.LEATHER_HORSE_ARMOR)
 					.customModelData(size.getNewId())
-					.armorColor(size.getLeatherColor(CustomModelData.of(item)))
+					.dyeColor(size.getLeatherColor(CustomModelData.of(item)))
 					.build());
 				++converted;
 			}
@@ -193,7 +193,7 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 			if (group != null) {
 				itemFrame.setItem(new ItemBuilder(Material.LEATHER_HORSE_ARMOR)
 					.customModelData(group.getNewId())
-					.armorColor(group.getLeatherColor())
+					.dyeColor(group.getLeatherColor())
 					.build());
 				++converted;
 			}
@@ -242,8 +242,7 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 		}
 
 		public Color getLeatherColor(int modelData) {
-			final java.awt.Color decode = java.awt.Color.decode("#" + getColors().get(modelData - getOldMin()));
-			return Color.fromRGB(decode.getRed(), decode.getGreen(), decode.getBlue());
+			return ColorType.hexToBukkit(getColors().get(modelData - getOldMin()));
 		}
 	}
 
@@ -278,16 +277,9 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 			return null;
 		}
 
-
 		public Color getLeatherColor() {
-			final java.awt.Color decode = java.awt.Color.decode("#" + hexColor);
-			return Color.fromRGB(decode.getRed(), decode.getGreen(), decode.getBlue());
+			return ColorType.hexToBukkit(hexColor);
 		}
-	}
-
-	private Color getColor(String hex) {
-		final java.awt.Color decode = java.awt.Color.decode(hex);
-		return Color.fromRGB(decode.getRed(), decode.getGreen(), decode.getBlue());
 	}
 
 }
