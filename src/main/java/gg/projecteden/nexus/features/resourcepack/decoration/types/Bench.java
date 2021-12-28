@@ -1,5 +1,6 @@
-package gg.projecteden.nexus.features.resourcepack.decoration.common;
+package gg.projecteden.nexus.features.resourcepack.decoration.types;
 
+import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 

@@ -1,11 +1,11 @@
 package gg.projecteden.nexus.features.resourcepack.decoration;
 
-import gg.projecteden.nexus.features.resourcepack.decoration.common.Bench;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.BlockDecor;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.Chair;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.LargeFireplace;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.MobPlushie;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Bench;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.BlockDecor;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Chair;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.LargeFireplace;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.MobPlushie;
 import gg.projecteden.nexus.utils.ItemUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
