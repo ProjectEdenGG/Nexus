@@ -2,13 +2,11 @@ package gg.projecteden.nexus.features.discord.commands;
 
 import gg.projecteden.discord.appcommands.AppCommandEvent;
 import gg.projecteden.discord.appcommands.annotations.Command;
-import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.features.discord.Discord;
-import gg.projecteden.nexus.features.discord.HandledBy;
 import gg.projecteden.nexus.features.discord.appcommands.NexusAppCommand;
 import gg.projecteden.utils.DiscordId.Role;
 
-@HandledBy(Bot.KODA)
+@Command("Subscribe from roles")
 public class SubscribeAppCommand extends NexusAppCommand {
 
 	public SubscribeAppCommand(AppCommandEvent event) {

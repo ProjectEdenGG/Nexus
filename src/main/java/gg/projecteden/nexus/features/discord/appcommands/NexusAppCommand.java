@@ -3,10 +3,11 @@ package gg.projecteden.nexus.features.discord.appcommands;
 import gg.projecteden.discord.appcommands.AppCommand;
 import gg.projecteden.discord.appcommands.AppCommandEvent;
 import gg.projecteden.discord.appcommands.AppCommandRegistry;
+import gg.projecteden.discord.appcommands.annotations.GuildCommand;
 import gg.projecteden.discord.appcommands.exceptions.AppCommandException;
-import gg.projecteden.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.features.discord.appcommands.annotations.Verify;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
@@ -24,16 +25,20 @@ import java.util.UUID;
 
 import static gg.projecteden.utils.TimeUtils.parseDateTime;
 
-public class NexusAppCommand extends AppCommand {
+@GuildCommand("132680070480396288")
+public abstract class NexusAppCommand extends AppCommand {
 
 	public NexusAppCommand(AppCommandEvent event) {
 		super(event);
 	}
 
+	protected void error(String message) {
+		throw new InvalidInputException(message);
+	}
+
 	public @NotNull UUID uuid() {
 		return new DiscordUserService().getFromUserId(member().getId()).getUuid();
 	}
-
 
 	public @NotNull String nickname() {
 		return user().getNickname();
@@ -89,7 +94,7 @@ public class NexusAppCommand extends AppCommand {
 				var service = (Class<? extends MongoPlayerService<?>>) MongoPlayerService.ofObject(argument.getMeta().getType());
 				if (service == null)
 					return null;
-				return service.getConstructor().newInstance().get(input);
+				return service.getConstructor().newInstance().get(convertToOfflinePlayer(input, argument.getCommand()));
 			} catch (Exception ex) {
 				ex.printStackTrace();
 				throw new AppCommandException("Internal error");

@@ -95,6 +95,7 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.zip.ZipFile;
 
+import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 import static gg.projecteden.utils.TimeUtils.shortDateFormat;
 
 @NoArgsConstructor
@@ -300,7 +301,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 		send(PREFIX + "Open SmartInvs:");
 		for (Map.Entry<String, String> entry : playerInventoryMap.entrySet())
-			send(" &7- " + entry.getKey() + " - " + entry.getValue());
+			send(" &7- " + entry.getKey() + " - " + stripColor(entry.getValue()));
 	}
 
 	@Path("closeInventory [player]")

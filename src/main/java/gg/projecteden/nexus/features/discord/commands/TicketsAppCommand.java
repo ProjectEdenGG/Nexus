@@ -1,11 +1,10 @@
 package gg.projecteden.nexus.features.discord.commands;
 
 import gg.projecteden.discord.appcommands.AppCommandEvent;
+import gg.projecteden.discord.appcommands.AppCommandRegistry;
 import gg.projecteden.discord.appcommands.annotations.Command;
 import gg.projecteden.discord.appcommands.annotations.Desc;
 import gg.projecteden.discord.appcommands.annotations.RequiredRole;
-import gg.projecteden.nexus.features.discord.Bot;
-import gg.projecteden.nexus.features.discord.HandledBy;
 import gg.projecteden.nexus.features.discord.appcommands.NexusAppCommand;
 import gg.projecteden.nexus.features.discord.appcommands.annotations.Verify;
 import gg.projecteden.nexus.features.tickets.TicketFeature;
@@ -14,13 +13,14 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.models.ticket.Tickets;
 import gg.projecteden.nexus.models.ticket.Tickets.Ticket;
 import gg.projecteden.nexus.models.ticket.TicketsService;
+import gg.projecteden.nexus.utils.Utils;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Verify
 @RequiredRole("Staff")
-@HandledBy(Bot.RELAY)
+@Command("Manage tickets")
 public class TicketsAppCommand extends NexusAppCommand {
 	private static final String PREFIX = "**[Tickets]** ";
 	private final TicketsService service = new TicketsService();
@@ -78,6 +78,15 @@ public class TicketsAppCommand extends NexusAppCommand {
 
 		TicketFeature.broadcastDiscord(ticket, nickname(), TicketAction.REOPEN);
 		thumbsupEphemeral();
+	}
+
+	static {
+		AppCommandRegistry.registerConverter(Ticket.class, argument -> {
+			if (!Utils.isInt(argument.getInput()))
+				throw new InvalidInputException("Ticket ID must be a number");
+
+			return new TicketsService().get0().get(Integer.parseInt(argument.getInput()));
+		});
 	}
 
 }

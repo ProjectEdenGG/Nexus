@@ -56,6 +56,20 @@ public class DiscordCommand extends CustomCommand {
 	}
 
 	@Async
+	@Permission(Group.ADMIN)
+	@Path("appcommands register")
+	void appcommands_register() {
+		Discord.registerAppCommands();
+	}
+
+	@Async
+	@Permission(Group.ADMIN)
+	@Path("appcommands unregister")
+	void appcommands_unregister() {
+		Discord.unregisterAppCommands();
+	}
+
+	@Async
 	@Path("account [player]")
 	void id(@Arg("self") OfflinePlayer player) {
 		String nickname = Nickname.of(player);

@@ -5,8 +5,6 @@ import gg.projecteden.discord.appcommands.annotations.Command;
 import gg.projecteden.discord.appcommands.annotations.Default;
 import gg.projecteden.discord.appcommands.annotations.Desc;
 import gg.projecteden.discord.appcommands.annotations.Optional;
-import gg.projecteden.nexus.features.discord.Bot;
-import gg.projecteden.nexus.features.discord.HandledBy;
 import gg.projecteden.nexus.features.discord.appcommands.NexusAppCommand;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -15,7 +13,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
-@HandledBy(Bot.KODA)
+@Command("Check a player's balance")
 public class BalanceAppCommand extends NexusAppCommand {
 
 	public BalanceAppCommand(AppCommandEvent event) {
@@ -24,12 +22,12 @@ public class BalanceAppCommand extends NexusAppCommand {
 
 	@Command(value = "Check a player's balance", literals = false)
 	void check(
-		@Desc("player") @Default("self") Nerd nerd,
-		@Desc("gamemode") @Default("SURVIVAL") @Optional ShopGroup shopGroup
+		@Desc("player") @Default("self") Nerd player,
+		@Desc("gamemode") @Default("SURVIVAL") @Optional ShopGroup gamemode
 	) {
-		boolean isSelf = PlayerUtils.isSelf(nerd, verify());
-		String formatted = new BankerService().getBalanceFormatted(nerd, shopGroup);
-		replyEphemeral(camelCase(shopGroup) + " balance" + (isSelf ? "" : " of " + nerd.getNickname()) + ": " + formatted);
+		boolean isSelf = PlayerUtils.isSelf(player, verify());
+		String formatted = new BankerService().getBalanceFormatted(player, gamemode);
+		replyEphemeral(camelCase(gamemode) + " balance" + (isSelf ? "" : " of " + player.getNickname()) + ": " + formatted);
 	}
 
 }

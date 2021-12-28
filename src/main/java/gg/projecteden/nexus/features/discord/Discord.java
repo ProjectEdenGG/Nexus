@@ -1,6 +1,8 @@
 package gg.projecteden.nexus.features.discord;
 
+import gg.projecteden.discord.appcommands.AppCommandRegistry;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.discord.commands.DiscordAppCommand;
 import gg.projecteden.nexus.features.listeners.Tab.Presence;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -43,6 +45,7 @@ import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
 public class Discord extends Feature {
 	@Getter
 	private static final Map<String, DiscordUser> codes = new HashMap<>();
+	private static AppCommandRegistry appCommandRegistry;
 
 	@Override
 	public void onStart() {
@@ -63,6 +66,20 @@ public class Discord extends Feature {
 				ex.printStackTrace();
 			}
 		}
+	}
+
+	public static void registerAppCommands() {
+		getAppCommandRegistry().registerAll();
+	}
+
+	public static void unregisterAppCommands() {
+		getAppCommandRegistry().unregisterAll();
+	}
+
+	private static AppCommandRegistry getAppCommandRegistry() {
+		if (appCommandRegistry == null)
+			appCommandRegistry = new AppCommandRegistry(Bot.KODA.jda(), DiscordAppCommand.class.getPackage().getName());
+		return appCommandRegistry;
 	}
 
 	@Override

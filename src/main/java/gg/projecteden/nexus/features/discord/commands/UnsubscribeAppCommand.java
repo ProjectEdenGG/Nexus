@@ -2,13 +2,11 @@ package gg.projecteden.nexus.features.discord.commands;
 
 import gg.projecteden.discord.appcommands.AppCommandEvent;
 import gg.projecteden.discord.appcommands.annotations.Command;
-import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.features.discord.Discord;
-import gg.projecteden.nexus.features.discord.HandledBy;
 import gg.projecteden.nexus.features.discord.appcommands.NexusAppCommand;
 import gg.projecteden.utils.DiscordId.Role;
 
-@HandledBy(Bot.KODA)
+@Command("Unsubscribe from roles")
 public class UnsubscribeAppCommand extends NexusAppCommand {
 
 	public UnsubscribeAppCommand(AppCommandEvent event) {

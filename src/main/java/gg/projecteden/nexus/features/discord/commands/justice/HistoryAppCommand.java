@@ -4,27 +4,25 @@ import gg.projecteden.discord.appcommands.AppCommandEvent;
 import gg.projecteden.discord.appcommands.annotations.Command;
 import gg.projecteden.discord.appcommands.annotations.Desc;
 import gg.projecteden.discord.appcommands.annotations.RequiredRole;
-import gg.projecteden.nexus.features.discord.Bot;
-import gg.projecteden.nexus.features.discord.HandledBy;
 import gg.projecteden.nexus.features.discord.appcommands.NexusAppCommand;
 import gg.projecteden.nexus.features.justice.Justice;
 import gg.projecteden.nexus.models.punishments.Punishments;
 import gg.projecteden.nexus.utils.Name;
 
 @RequiredRole("Staff")
-@HandledBy(Bot.KODA)
-public class HistoryDiscordCommand extends NexusAppCommand {
+@Command("View a player's history")
+public class HistoryAppCommand extends NexusAppCommand {
 
-	public HistoryDiscordCommand(AppCommandEvent event) {
+	public HistoryAppCommand(AppCommandEvent event) {
 		super(event);
 	}
 
 	@Command(value = "View a player's history", literals = false)
 	void run(@Desc("Player") Punishments player) {
-		if (player.hasHistory())
-			replyEphemeral("<" + Justice.URL + "/history/" + Name.of(player) + ">");
-		else
-			replyEphemeral("No history found for " + player.getNickname());
+		if (!player.hasHistory())
+			error("No history found for " + player.getNickname());
+
+		replyEphemeral("<" + Justice.URL + "/history/" + Name.of(player) + ">");
 	}
 
 }

@@ -3,8 +3,7 @@ package gg.projecteden.nexus.features.discord.commands;
 import gg.projecteden.discord.appcommands.AppCommandEvent;
 import gg.projecteden.discord.appcommands.annotations.Command;
 import gg.projecteden.discord.appcommands.annotations.Desc;
-import gg.projecteden.nexus.features.discord.Bot;
-import gg.projecteden.nexus.features.discord.HandledBy;
+import gg.projecteden.discord.appcommands.annotations.RequiredRole;
 import gg.projecteden.nexus.features.discord.appcommands.NexusAppCommand;
 import gg.projecteden.nexus.features.socialmedia.integrations.Twitter;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -28,7 +27,8 @@ import java.util.List;
 
 import static gg.projecteden.nexus.features.discord.ReactionVoter.addButtons;
 
-@HandledBy(Bot.KODA)
+@RequiredRole("Staff")
+@Command("Manage twitter")
 public class TwitterAppCommand extends NexusAppCommand {
 	private final TwitterService service = new TwitterService();
 	private final TwitterData data = service.get0();

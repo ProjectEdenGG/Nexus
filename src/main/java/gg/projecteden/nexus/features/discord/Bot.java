@@ -1,16 +1,10 @@
 package gg.projecteden.nexus.features.discord;
 
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandClientBuilder;
-import com.vdurmont.emoji.EmojiManager;
-import gg.projecteden.discord.appcommands.AppCommandRegistry;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.bridge.DiscordBridgeListener;
 import gg.projecteden.nexus.features.commands.NicknameCommand.NicknameApprovalListener;
-import gg.projecteden.nexus.features.discord.commands.DiscordAppCommand;
 import gg.projecteden.nexus.features.discord.commands.TwitterAppCommand.TweetApprovalListener;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.utils.DiscordId.User;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -18,12 +12,10 @@ import lombok.experimental.Accessors;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
-import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.jetbrains.annotations.NotNull;
-import org.reflections.Reflections;
 
 import java.util.EnumSet;
 
@@ -36,9 +28,11 @@ public enum Bot {
 		@Override
 		JDABuilder build() {
 			return JDABuilder.createDefault(getToken())
-					.addEventListeners(new DiscordListener(), new TweetApprovalListener(), new NicknameApprovalListener())
-					// .addEventListeners(new DiscordCaptchaListener())
-					.addEventListeners(getCommands().build());
+					.addEventListeners(
+						new DiscordListener(),
+						new TweetApprovalListener(),
+						new NicknameApprovalListener()
+					);
 		}
 
 		@Override
@@ -48,8 +42,7 @@ public enum Bot {
 
 		@Override
 		void onConnect() {
-			final String commandsPackage = DiscordAppCommand.class.getPackage().getName();
-			new AppCommandRegistry(jda, commandsPackage).registerAll();
+//			Discord.registerAppCommands();
 		}
 	},
 
@@ -57,8 +50,8 @@ public enum Bot {
 		@Override
 		JDABuilder build() {
 			return JDABuilder.createDefault(getToken())
-					.addEventListeners(new DiscordBridgeListener())
-					.addEventListeners(getCommands().setStatus(OnlineStatus.INVISIBLE).build());
+				.setStatus(OnlineStatus.INVISIBLE)
+				.addEventListeners(new DiscordBridgeListener());
 		}
 
 		@Override
@@ -69,7 +62,7 @@ public enum Bot {
 
 	@Getter
 	@Accessors(fluent = true)
-	protected JDA jda;
+	private JDA jda;
 
 	abstract JDABuilder build();
 
@@ -135,28 +128,6 @@ public enum Bot {
 	@NotNull
 	private String prefix() {
 		return "[Discord] [" + camelCase(this) + "] ";
-	}
-
-	@SneakyThrows
-	protected CommandClientBuilder getCommands() {
-		CommandClientBuilder commands = new CommandClientBuilder()
-				.setPrefix("/")
-				.setAlternativePrefix("!")
-				.setOwnerId(User.GRIFFIN.getId())
-				.setEmojis(EmojiManager.getForAlias("white_check_mark").getUnicode(), EmojiManager.getForAlias("warning").getUnicode(), EmojiManager.getForAlias("x").getUnicode())
-				.setActivity(Activity.playing("Minecraft"));
-
-		Reflections reflections = new Reflections(getClass().getPackage().getName());
-		for (Class<? extends Command> command : reflections.getSubTypesOf(Command.class))
-			if (Utils.canEnable(command))
-				for (Class<? extends Command> superclass : Utils.getSuperclasses(command)) {
-					HandledBy handledBy = superclass.getAnnotation(HandledBy.class);
-					if (handledBy != null && handledBy.value() == this) {
-						commands.addCommand(command.newInstance());
-						break;
-					}
-				}
-		return commands;
 	}
 
 }

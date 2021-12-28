@@ -5,8 +5,6 @@ import gg.projecteden.discord.appcommands.annotations.Command;
 import gg.projecteden.discord.appcommands.annotations.Desc;
 import gg.projecteden.discord.appcommands.annotations.Optional;
 import gg.projecteden.discord.appcommands.annotations.RequiredRole;
-import gg.projecteden.nexus.features.discord.Bot;
-import gg.projecteden.nexus.features.discord.HandledBy;
 import gg.projecteden.nexus.features.discord.appcommands.NexusAppCommand;
 import gg.projecteden.nexus.features.justice.Justice;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -26,7 +24,7 @@ import java.util.Arrays;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @RequiredRole("Staff")
-@HandledBy(Bot.RELAY)
+@Command("Suggest a player for promotion")
 public class SuggestAppCommand extends NexusAppCommand {
 
 	public SuggestAppCommand(AppCommandEvent event) {

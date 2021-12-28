@@ -4,22 +4,20 @@ import gg.projecteden.discord.appcommands.AppCommandEvent;
 import gg.projecteden.discord.appcommands.annotations.Command;
 import gg.projecteden.discord.appcommands.annotations.Desc;
 import gg.projecteden.discord.appcommands.annotations.RequiredRole;
-import gg.projecteden.nexus.features.discord.Bot;
-import gg.projecteden.nexus.features.discord.HandledBy;
 import gg.projecteden.nexus.features.discord.appcommands.NexusAppCommand;
 import gg.projecteden.nexus.models.punishments.Punishments;
 
 import java.util.stream.Collectors;
 
 @RequiredRole("Staff")
-@HandledBy(Bot.RELAY)
-public class AltsDiscordCommand extends NexusAppCommand {
+@Command("View a player's alts")
+public class AltsAppCommand extends NexusAppCommand {
 
-	public AltsDiscordCommand(AppCommandEvent event) {
+	public AltsAppCommand(AppCommandEvent event) {
 		super(event);
 	}
 
-	@Command("View a player's alts")
+	@Command(value = "View a player's alts", literals = false)
 	void run(
 		@Desc("Player") Punishments player
 	) {

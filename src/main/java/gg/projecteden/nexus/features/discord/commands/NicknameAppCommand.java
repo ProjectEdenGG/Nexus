@@ -4,15 +4,13 @@ import gg.projecteden.discord.appcommands.AppCommandEvent;
 import gg.projecteden.discord.appcommands.annotations.Command;
 import gg.projecteden.discord.appcommands.annotations.Desc;
 import gg.projecteden.discord.appcommands.annotations.RequiredRole;
-import gg.projecteden.nexus.features.discord.Bot;
-import gg.projecteden.nexus.features.discord.HandledBy;
 import gg.projecteden.nexus.features.discord.appcommands.NexusAppCommand;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.nickname.Nickname.NicknameHistoryEntry;
 import gg.projecteden.nexus.models.nickname.NicknameService;
 
 @RequiredRole("Admins")
-@HandledBy(Bot.KODA)
+@Command("Manage nicknames")
 public class NicknameAppCommand extends NexusAppCommand {
 
 	public NicknameAppCommand(AppCommandEvent event) {

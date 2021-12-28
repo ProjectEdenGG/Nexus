@@ -3,8 +3,6 @@ package gg.projecteden.nexus.features.discord.commands;
 import gg.projecteden.discord.appcommands.AppCommandEvent;
 import gg.projecteden.discord.appcommands.annotations.Command;
 import gg.projecteden.discord.appcommands.annotations.RequiredRole;
-import gg.projecteden.nexus.features.discord.Bot;
-import gg.projecteden.nexus.features.discord.HandledBy;
 import gg.projecteden.nexus.features.discord.appcommands.NexusAppCommand;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.hours.Hours;
@@ -21,14 +19,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RequiredRole("Staff")
-@HandledBy(Bot.RELAY)
+@Command("List new players")
 public class NewPlayersAppCommand extends NexusAppCommand {
 
 	public NewPlayersAppCommand(AppCommandEvent event) {
 		super(event);
 	}
 
-	@Command("List new players")
+	@Command(value = "List new players", literals = false)
 	void run() {
 		final HoursService service = new HoursService();
 		Map<Player, Integer> players = new HashMap<>() {{
