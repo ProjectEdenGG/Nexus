@@ -177,7 +177,7 @@ public class WorldEditUtilsCommand extends CustomCommand {
 
 	@Path("clipboard copy")
 	void clipboardCopy() {
-		worldEditUtils.copy(worldEditUtils.getPlayerSelection(player())).thenAccept(clipboard -> {
+		worldEditUtils.copy(worldEditUtils.getPlayerSelection(player()), worldEditUtils.paster()).thenAccept(clipboard -> {
 			clipboards.put(uuid(), clipboard);
 			send("Copied selection");
 		});
