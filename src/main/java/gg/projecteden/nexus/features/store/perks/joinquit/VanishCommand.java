@@ -33,9 +33,9 @@ public class VanishCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onPlayerVanishStateChange(PlayerVanishStateChangeEvent event) {
 		if (event.isVanishing())
-			new NerdService().edit(nerd(), nerd -> nerd.setLastVanish(LocalDateTime.now()));
+			new NerdService().edit(event.getUUID(), nerd -> nerd.setLastVanish(LocalDateTime.now()));
 		else
-			new NerdService().edit(nerd(), nerd -> nerd.setLastUnvanish(LocalDateTime.now()));
+			new NerdService().edit(event.getUUID(), nerd -> nerd.setLastUnvanish(LocalDateTime.now()));
 	}
 
 	@Path("(fj|fakejoin)")
