@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.store.perks.joinquit;
 
+import de.myzelyam.api.vanish.PlayerVanishStateChangeEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Fallback;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -10,6 +11,7 @@ import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.utils.LuckPermsUtils.PermissionChange;
 import gg.projecteden.nexus.utils.LuckPermsUtils.PermissionChange.PermissionChangeBuilder;
 import lombok.NonNull;
+import org.bukkit.event.EventHandler;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,15 +25,18 @@ public class VanishCommand extends CustomCommand {
 
 	public VanishCommand(@NonNull CommandEvent event) {
 		super(event);
-		new VanishEvent(player()).callEvent();
+	}
+
+	@EventHandler
+	public void onPlayerVanishStateChange(PlayerVanishStateChangeEvent event) {
+		if (event.isVanishing())
+			new NerdService().edit(nerd(), nerd -> nerd.setLastVanish(LocalDateTime.now()));
+		else
+			new NerdService().edit(nerd(), nerd -> nerd.setLastUnvanish(LocalDateTime.now()));
 	}
 
 	@Path
 	void vanish() {
-		if (nerd().isVanished())
-			new NerdService().edit(nerd(), nerd -> nerd.setLastUnvanish(LocalDateTime.now()));
-		else
-			new NerdService().edit(nerd(), nerd -> nerd.setLastVanish(LocalDateTime.now()));
 
 		fallback();
 	}
