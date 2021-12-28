@@ -10,18 +10,21 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.utils.LuckPermsUtils.PermissionChange;
 import gg.projecteden.nexus.utils.LuckPermsUtils.PermissionChange.PermissionChangeBuilder;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@NoArgsConstructor
 @Fallback("premiumvanish")
 @Redirect(from = {"/fj", "/fakejoin"}, to = "/nexus:vanish fj")
 @Redirect(from = {"/fq", "/fakequit"}, to = "/nexus:vanish fq")
 @Redirect(from = {"/ni", "/nointeract"}, to = "/nexus:vanish ni")
 @Redirect(from = {"/np", "/nopickup"}, to = "/nexus:vanish np")
-public class VanishCommand extends CustomCommand {
+public class VanishCommand extends CustomCommand implements Listener {
 
 	public VanishCommand(@NonNull CommandEvent event) {
 		super(event);
