@@ -35,12 +35,6 @@ public class VanishCommand extends CustomCommand {
 			new NerdService().edit(nerd(), nerd -> nerd.setLastUnvanish(LocalDateTime.now()));
 	}
 
-	@Path
-	void vanish() {
-
-		fallback();
-	}
-
 	@Path("(fj|fakejoin)")
 	@Permission("vanish.fakeannounce")
 	void fakeJoin() {
