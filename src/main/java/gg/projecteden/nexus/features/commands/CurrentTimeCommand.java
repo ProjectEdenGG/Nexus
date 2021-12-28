@@ -62,7 +62,7 @@ public class CurrentTimeCommand extends CustomCommand {
 
 	@Path("<player>")
 	void timeFor(GeoIP geoip) {
-		if (geoip == null || geoip.getIp() == null)
+		if (!GeoIP.exists(geoip))
 			error("That player's timezone is not set.");
 
 		send(PREFIX + "The current time for &e" + geoip.getNickname() + " &3is &e" + geoip.getCurrentTimeShort());

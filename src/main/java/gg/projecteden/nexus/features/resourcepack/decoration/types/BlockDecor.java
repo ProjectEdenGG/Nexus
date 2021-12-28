@@ -1,5 +1,8 @@
-package gg.projecteden.nexus.features.resourcepack.decoration.common;
+package gg.projecteden.nexus.features.resourcepack.decoration.types;
 
+import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.DisabledRotation;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import org.bukkit.Material;
 
 public class BlockDecor extends Decoration {

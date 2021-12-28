@@ -226,7 +226,7 @@ public class Nexus extends JavaPlugin {
 				.forEach(player -> {
 					GeoIP geoip = new GeoIPService().get(player);
 					String message = " &c&l ! &c&l! &eReloading Nexus &c&l! &c&l!";
-					if (geoip != null && geoip.getTimezone() != null && geoip.getTimezone().getId() != null)
+					if (GeoIP.exists(geoip))
 						PlayerUtils.send(player, "&7 " + geoip.getCurrentTimeShort() + message);
 					else
 						PlayerUtils.send(player, message);

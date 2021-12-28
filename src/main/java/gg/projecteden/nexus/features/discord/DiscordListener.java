@@ -5,6 +5,7 @@ import gg.projecteden.nexus.models.badge.BadgeUser.Badge;
 import gg.projecteden.nexus.models.badge.BadgeUserService;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
+import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.setting.Setting;
 import gg.projecteden.nexus.models.setting.SettingService;
@@ -71,6 +72,8 @@ public class DiscordListener extends ListenerAdapter {
 
 						if (new BadgeUserService().get(user).owns(Badge.SUPPORTER))
 							Discord.addRole(event.getUser().getId(), Role.SUPPORTER);
+
+						user.updatePronouns(new NerdService().get(user).getPronouns());
 					}
 				});
 			}

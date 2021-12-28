@@ -188,9 +188,11 @@ public class PixelDrop extends TeamlessMechanic {
 		int design = RandomUtils.randomInt(1, designCount);
 		for (int i = 0; i < designCount; i++) {
 			design = RandomUtils.randomInt(1, designCount);
-			if (matchData.getDesign() != design)
+			if (!matchData.getDesignsPlayed().contains(design))
 				break;
 		}
+		matchData.getDesignsPlayed().add(design);
+
 		matchData.setDesign(design);
 		matchData.startWordTask(match);
 

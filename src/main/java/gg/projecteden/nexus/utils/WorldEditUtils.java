@@ -359,7 +359,7 @@ public class WorldEditUtils {
 					}
 
 					debug.accept("Completing copy");
-					Operations.completeBlindly(copy); // deadlocking
+					Operations.completeBlindly(copy);
 					debug.accept("Done copying");
 				}
 

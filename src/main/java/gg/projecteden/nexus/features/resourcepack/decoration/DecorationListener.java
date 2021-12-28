@@ -2,9 +2,7 @@ package gg.projecteden.nexus.features.resourcepack.decoration;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.MultiBlock;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.MultiBlockSeat;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.Seat;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Seat;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
@@ -39,6 +37,7 @@ public class DecorationListener implements Listener {
 		if (Seat.isSeat(armorStand)) {
 			event.getVehicle().remove();
 			player.teleport(player.getLocation().add(0, 0.5, 0));
+			Nexus.log("vehicle exit");
 		}
 	}
 
@@ -49,6 +48,7 @@ public class DecorationListener implements Listener {
 		if (Seat.isSeat(armorStand)) {
 			event.getDismounted().remove();
 			player.teleport(player.getLocation().add(0, 0.5, 0));
+			Nexus.log("entity dismount");
 		}
 	}
 
@@ -86,11 +86,6 @@ public class DecorationListener implements Listener {
 
 		Decoration decoration = getDecoration(player, itemFrame);
 		if (decoration == null) return;
-
-		if (decoration instanceof MultiBlock || decoration instanceof MultiBlockSeat) {
-			player.sendMessage("this decoration is currently unsupported");
-			return;
-		}
 
 		event.setCancelled(true);
 		decoration.destroy(player, itemFrame);

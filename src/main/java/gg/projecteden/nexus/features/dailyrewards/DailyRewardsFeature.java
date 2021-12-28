@@ -112,20 +112,26 @@ public class DailyRewardsFeature extends Feature {
 		new DailyRewardsMenu(user).open(player);
 	}
 
+	public static int getRewardDay(int day) {
+		if (day % getMaxDays() == 0)
+			return getMaxDays();
+		return day % getMaxDays();
+	}
+
 	public static Reward getReward(int day, int option) {
 		return switch (option) {
-			case 0 -> rewards1.get(day - 1);
-			case 1 -> rewards2.get(day - 1);
-			case 2 -> rewards3.get(day - 1);
+			case 0 -> rewards1.get(getRewardDay(day) - 1);
+			case 1 -> rewards2.get(getRewardDay(day) - 1);
+			case 2 -> rewards3.get(getRewardDay(day) - 1);
 			default -> null;
 		};
 	}
 
 	public static List<Reward> getRewards(int day) {
 		return Arrays.asList(
-				getReward(day, 0),
-				getReward(day, 1),
-				getReward(day, 2)
+				getReward(getRewardDay(day), 0),
+				getReward(getRewardDay(day), 1),
+				getReward(getRewardDay(day), 2)
 		);
 	}
 

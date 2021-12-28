@@ -70,6 +70,20 @@ public class GeoIP implements PlayerOwnedObject {
 	private Security security;
 	private boolean mitigated;
 
+	public static boolean exists(GeoIP geoip) {
+		if (geoip == null)
+			return false;
+
+		Timezone timeZone = geoip.getTimezone();
+		if (timeZone == null || timeZone.getId() == null)
+			return false;
+
+		if (geoip.getCurrentTime() == null)
+			return false;
+
+		return true;
+	}
+
 	public Security getSecurity(String ip) {
 		if (ip == null)
 			throw new InvalidInputException("Cannot check IP security on null IP");

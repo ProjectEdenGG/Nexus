@@ -14,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
 
+import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
 import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
 import static gg.projecteden.utils.RandomUtils.chanceOf;
 
@@ -38,6 +39,8 @@ public class DisarmingEnchant extends CustomEnchant implements Listener {
 			return;
 
 		final ItemStack weapon = attacker.getOnlinePlayer().getInventory().getItemInMainHand();
+		if (isNullOrAir(weapon) || weapon.getItemMeta() == null)
+			return;
 		if (!weapon.getItemMeta().hasEnchant(Enchant.DISARMING))
 			return;
 
