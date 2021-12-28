@@ -1,12 +1,8 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.common;
 
-import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.MultiBlock;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.MultiBlockSeat;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Seat;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
-import gg.projecteden.utils.Env;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -56,13 +52,6 @@ public class Decoration {
 	}
 
 	public void place(Player player, Block block, BlockFace blockFace, ItemStack item) {
-		if (Nexus.getEnv().equals(Env.PROD)) {
-			if (this instanceof MultiBlock || this instanceof MultiBlockSeat) {
-				player.sendMessage("this decoration is currently unsupported");
-				return;
-			}
-		}
-
 		if (!isValidBlockFace(blockFace))
 			return;
 
@@ -96,13 +85,6 @@ public class Decoration {
 	}
 
 	public void destroy(Player player, ItemFrame itemFrame) {
-		if (Nexus.getEnv().equals(Env.PROD)) {
-			if (this instanceof MultiBlock || this instanceof MultiBlockSeat) {
-				player.sendMessage("this decoration is currently unsupported");
-				return;
-			}
-		}
-
 		if (Seat.isOccupied(itemFrame.getLocation()))
 			return;
 
@@ -111,7 +93,7 @@ public class Decoration {
 		Location origin = itemFrame.getLocation().toBlockLocation().clone();
 
 		itemFrame.remove();
-		Hitbox.destroy(getHitboxes(), origin, ItemFrameRotation.of(player).getBlockFace());
+		Hitbox.destroy(getHitboxes(), origin, ItemFrameRotation.of(itemFrame).getBlockFace());
 
 		world.dropItemNaturally(origin, item);
 	}

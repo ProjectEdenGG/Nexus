@@ -14,6 +14,7 @@ import lombok.SneakyThrows;
 import me.lexikiq.HasUniqueId;
 import org.bukkit.Rotation;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -104,6 +105,10 @@ public class Utils extends gg.projecteden.utils.Utils {
 
 			BlockFace blockFace = radial[ndx];
 			return from(blockFace);
+		}
+
+		public static ItemFrameRotation of(ItemFrame itemFrame) {
+			return from(itemFrame.getRotation());
 		}
 
 		public static ItemFrameRotation from(BlockFace blockFace) {
