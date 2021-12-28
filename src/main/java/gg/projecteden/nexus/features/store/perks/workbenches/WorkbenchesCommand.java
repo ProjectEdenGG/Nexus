@@ -53,7 +53,10 @@ public class WorkbenchesCommand extends CustomCommand {
 		public void init(Player player, InventoryContents contents) {
 			int index = 0;
 			for (Workbench workbench : Workbench.values()) {
-				final ItemBuilder builder = new ItemBuilder(workbench.getMaterial()).name(StringUtils.camelCase(workbench));
+				final ItemBuilder builder = new ItemBuilder(workbench.getMaterial())
+					.name(StringUtils.camelCase(workbench))
+					.customModelData(workbench.getCustomModelData());
+
 				contents.set(index++, ClickableItem.from(builder.build(), e -> workbench.open(player)));
 			}
 		}
