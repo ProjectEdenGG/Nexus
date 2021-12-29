@@ -10,9 +10,9 @@ import org.bukkit.Rotation;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,7 +29,7 @@ public class Seat extends Decoration {
 	}
 
 	public void trySit(Player player, ItemFrame itemFrame) {
-		Location location = itemFrame.getLocation().toCenterLocation().clone().subtract(0, 0.9, 0);
+		Location location = itemFrame.getLocation().toCenterLocation().clone().subtract(0, 0.2, 0);
 		if (!canSit(player, location))
 			return;
 
@@ -40,15 +40,20 @@ public class Seat extends Decoration {
 		World world = location.getWorld();
 		location.setYaw(getYaw(rotation));
 
-		ArmorStand armorStand = (ArmorStand) world.spawnEntity(location, EntityType.ARMOR_STAND);
-		armorStand.setInvulnerable(true);
-		armorStand.setGravity(false);
-		armorStand.setSmall(true);
-		armorStand.setCustomName(id + "-" + player.getUniqueId());
-		armorStand.setCustomNameVisible(false);
-		armorStand.setVisible(false);
+		ArmorStand armorStand = world.spawn(location, ArmorStand.class, _armorStand -> {
+			_armorStand.setMarker(true);
+			_armorStand.setVisible(false);
+			_armorStand.setCustomNameVisible(false);
+			_armorStand.setCustomName(id + "-" + player.getUniqueId());
+			_armorStand.setInvulnerable(true);
+			_armorStand.setGravity(false);
+			_armorStand.setSmall(true);
+			_armorStand.setBasePlate(true);
+			_armorStand.setDisabledSlots(EquipmentSlot.values());
+		});
 
-		armorStand.addPassenger(player);
+		if (armorStand.isValid())
+			armorStand.addPassenger(player);
 	}
 
 	public static boolean canSit(Player player, Location location) {

@@ -48,6 +48,7 @@ import org.bukkit.event.entity.ItemMergeEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffectType;
@@ -213,11 +214,18 @@ public class Murder extends TeamMechanic {
 	public void spawnCorpse(Minigamer minigamer) {
 		// TODO: Sleeping NPC?
 		Player player = minigamer.getPlayer();
-		ArmorStand armorStand = minigamer.getMatch().spawn(player.getLocation().add(0, -1.4, 0), ArmorStand.class);
-		armorStand.setGravity(false);
-		armorStand.setVisible(false);
-		armorStand.setHelmet(new ItemBuilder(Material.PLAYER_HEAD).skullOwner(player).build());
-		// armorStand.setDisableSlots?
+		Location location = player.getLocation().add(0, -1.4, 0);
+
+		minigamer.getMatch().spawn(location, ArmorStand.class, _armorStand -> {
+			_armorStand.setGravity(false);
+			_armorStand.setVisible(false);
+			_armorStand.setInvulnerable(true);
+
+			if (_armorStand.getEquipment() != null)
+				_armorStand.getEquipment().setHelmet(new ItemBuilder(Material.PLAYER_HEAD).skullOwner(player).build());
+
+			_armorStand.setDisabledSlots(EquipmentSlot.values());
+		});
 	}
 
 	private void assignGunner(Match match) {

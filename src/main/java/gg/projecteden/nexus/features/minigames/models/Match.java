@@ -498,7 +498,7 @@ public class Match implements ForwardingAudience {
 		return spawn(location, type, null);
 	}
 
-	public <T extends Entity> T spawn(Location location, Class<T> type, Consumer<Entity> onSpawn) {
+	public <T extends Entity> T spawn(Location location, Class<T> type, Consumer<T> onSpawn) {
 		T entity = location.getWorld().spawn(location, type);
 		entities.add(entity.getUniqueId());
 
