@@ -17,14 +17,12 @@ public class SlapCommand extends CustomCommand {
 	}
 
 	@Path("<player>")
-	void run(Player player) {
-		slap(Nerd.of(player));
-	}
+	void run(Nerd nerd) {
+		if (nerd.getWorldGroup().isMinigames())
+			error("Cannot slap " + nerd.getNickname() + ", they are in minigames");
 
-	public static void slap(Nerd nerd) {
 		final Player player = nerd.getOnlinePlayer();
 		player.setVelocity(player.getLocation().getDirection().multiply(-2).setY(player.getEyeLocation().getPitch() > 0 ? 1.5 : -1.5));
 		PlayerUtils.send(nerd, "&6You have been slapped!");
 	}
-
 }
