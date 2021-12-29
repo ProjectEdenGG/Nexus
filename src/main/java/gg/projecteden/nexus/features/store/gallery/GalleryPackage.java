@@ -7,10 +7,10 @@ import com.gmail.filoghost.holographicdisplays.api.line.ItemLine;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.store.gallery.annotations.Category;
 import gg.projecteden.nexus.features.store.gallery.annotations.Category.GalleryCategory;
+import gg.projecteden.nexus.features.store.perks.joinquit.JoinQuit;
 import gg.projecteden.nexus.features.store.perks.workbenches.WorkbenchesCommand.WorkbenchesMenu;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.models.rainbowarmor.RainbowArmor;
-import gg.projecteden.nexus.models.rainbowarmor.RainbowArmorService;
+import gg.projecteden.nexus.models.rainbowarmor.RainbowArmorTask;
 import gg.projecteden.nexus.models.rainbowbeacon.RainbowBeacon;
 import gg.projecteden.nexus.models.rainbowbeacon.RainbowBeaconService;
 import gg.projecteden.nexus.utils.CitizensUtils;
@@ -18,14 +18,18 @@ import gg.projecteden.nexus.utils.CitizensUtils.NPCRandomizer;
 import gg.projecteden.nexus.utils.FireworkLauncher;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.EnumUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.SneakyThrows;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
@@ -33,13 +37,19 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.utils.RandomUtils.randomElement;
@@ -91,40 +101,43 @@ public enum GalleryPackage {
 		}
 	},
 
+	// TODO Not as smooth as it should be, send update packets?
 	@Category(GalleryCategory.VISUALS)
 	RAINBOW_ARMOR(4530) {
+		private static RainbowArmorTask task;
+
 		@Override
 		public void init() {
-			if (false) // TODO
 			Tasks.repeat(0, TickTime.SECOND.x(5), () -> {
 				final int nearby = OnlinePlayers.where()
-					.radius(CitizensUtils.locationOf(RAINBOW_ARMOR.getNpcId()), 50)
+					.radius(CitizensUtils.locationOf(RAINBOW_ARMOR.getNpcId()), 35)
 					.get().size();
 
 				if (nearby == 0) {
 					if (isActive())
-						deactivate();
+						stop();
 				} else {
 					if (!isActive())
-						activate();
+						start();
 				}
 			});
 		}
 
-		private RainbowArmor getUser() {
-			return new RainbowArmorService().get(RAINBOW_ARMOR.npc().getUniqueId());
-		}
-
 		private boolean isActive() {
-			return getUser().isEnabled();
+			return task != null;
 		}
 
-		private void activate() {
-			getUser().startArmor();
+		private void start() {
+			task = RainbowArmorTask.builder()
+				.inventory(((HumanEntity) npc().getEntity()).getInventory())
+				.start();
 		}
 
-		private void deactivate() {
-			getUser().stopArmor();
+		private void stop() {
+			if (task != null) {
+				task.stop();
+				task = null;
+			}
 		}
 	},
 
@@ -133,6 +146,11 @@ public enum GalleryPackage {
 	RAINBOW_BEACON {
 		public Location getBeaconGlassLocation() {
 			return StoreGallery.location(1064, 67, 990);
+		}
+
+		@NotNull
+		private Block getBeaconLocation() {
+			return getBeaconGlassLocation().getBlock().getRelative(BlockFace.DOWN);
 		}
 
 		@NotNull
@@ -149,10 +167,10 @@ public enum GalleryPackage {
 			if (!cooldown(TickTime.SECOND.x(25)))
 				return;
 
+			getIronBlockLocation().setType(Material.IRON_BLOCK);
 			final RainbowBeacon user = getUser();
 			user.setLocation(getBeaconGlassLocation());
 			user.start();
-			getIronBlockLocation().setType(Material.IRON_BLOCK);
 			Tasks.wait(TickTime.SECOND.x(20), () -> {
 				user.stop();
 				getIronBlockLocation().setType(Material.AIR);
@@ -179,7 +197,18 @@ public enum GalleryPackage {
 	NICKNAMES,
 
 	@Category(GalleryCategory.CHAT)
-	JOIN_QUIT,
+	JOIN_QUIT {
+		@Override
+		public void onImageInteract(Player player) {
+			if (!cooldown(TickTime.SECOND.x(3)))
+				return;
+
+			final boolean join = randomElement(true, false);
+			String message = randomElement(join ? JoinQuit.getJoinMessages() : JoinQuit.getQuitMessages());
+			message = join ? JoinQuit.formatJoin(player, message) : JoinQuit.formatQuit(player, message);
+			PlayerUtils.send(player, "&6&l[Example] " + message);
+		}
+	},
 
 	@Category(GalleryCategory.CHAT)
 	EMOTES,
@@ -203,7 +232,89 @@ public enum GalleryPackage {
 	AUTOSORT,
 
 	@Category(GalleryCategory.INVENTORY)
-	AUTOTORCH,
+	AUTOTORCH {
+		private static final Map<UUID, ExampleTorcher> torchers = new HashMap<>();
+
+		@Data
+		static class ExampleTorcher {
+			@NonNull
+			protected Player player;
+			private List<ExampleTorch> torches = new ArrayList<>();
+			private int taskId;
+
+			public void start() {
+				stop();
+
+				taskId = Tasks.repeat(TickTime.SECOND, TickTime.SECOND.x(2), () -> {
+					if (!player.getWorld().equals(StoreGallery.getWorld()))
+						stop();
+
+					hideOldTorches();
+					placeNewTorch();
+				});
+
+				Tasks.wait(TickTime.SECOND.x(30), this::stop);
+			}
+
+			private void stop() {
+				Tasks.cancel(taskId);
+				taskId = -1;
+				torches.forEach(ExampleTorch::hide);
+				torches.clear();
+			}
+
+			private void placeNewTorch() {
+				final Block block = player.getLocation().getBlock();
+				if (block.getType() != Material.AIR)
+					return;
+
+				if (!MaterialTag.BLOCKS.isTagged(block.getRelative(BlockFace.DOWN).getType()))
+					return;
+
+				torches.removeIf(torch -> torch.getBlock().getLocation().equals(block.getLocation()));
+				torches.add(new ExampleTorch(block).show());
+			}
+
+			private void hideOldTorches() {
+				new ArrayList<>(torches).forEach(torch -> {
+					final LocalDateTime expiration = LocalDateTime.now().minusSeconds(10);
+					if (torch.getCreatedAt().isAfter(expiration))
+						return;
+
+					torch.hide();
+					torches.remove(torch);
+				});
+			}
+
+			@Data
+			class ExampleTorch {
+				@NonNull
+				private Block block;
+				private LocalDateTime createdAt = LocalDateTime.now();
+
+				public ExampleTorch show() {
+					sendBlockChange(Material.TORCH);
+					return this;
+				}
+
+				public void hide() {
+					sendBlockChange(Material.AIR);
+				}
+
+				private void sendBlockChange(Material material) {
+					player.sendBlockChange(block.getLocation(), Bukkit.createBlockData(material));
+				}
+			}
+		}
+
+		@Override
+		public void onImageInteract(Player player) {
+			if (!cooldown(TickTime.SECOND.x(35)))
+				return;
+
+			torchers.computeIfAbsent(player.getUniqueId(), $ -> new ExampleTorcher(player)).start();
+		}
+	},
 
 	@Category(GalleryCategory.INVENTORY)
 	VAULTS {
