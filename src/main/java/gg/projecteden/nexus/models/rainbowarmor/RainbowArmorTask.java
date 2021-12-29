@@ -25,14 +25,16 @@ public class RainbowArmorTask {
 	private final int rate = 12;
 	@Builder.Default
 	private Color color = Color.fromRGB(255, 0, 0);
+	private Runnable onIterate;
 	private Supplier<Boolean> cancelIf;
 	private Runnable onCancel;
 
 	private int taskId;
 
 	@Builder(buildMethodName = "start")
-	public RainbowArmorTask(PlayerInventory inventory, Supplier<Boolean> cancelIf, Runnable onCancel) {
+	public RainbowArmorTask(PlayerInventory inventory, Runnable onIterate, Supplier<Boolean> cancelIf, Runnable onCancel) {
 		this.inventory = inventory;
+		this.onIterate = onIterate;
 		this.cancelIf = cancelIf;
 		this.onCancel = onCancel;
 		start();
@@ -47,6 +49,8 @@ public class RainbowArmorTask {
 
 			increment();
 			editArmor(this::color);
+			if (onIterate != null)
+				onIterate.run();
 		});
 	}
 
