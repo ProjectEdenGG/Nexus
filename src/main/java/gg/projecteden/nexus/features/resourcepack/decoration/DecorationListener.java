@@ -16,7 +16,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -31,24 +30,12 @@ public class DecorationListener implements Listener {
 	}
 
 	@EventHandler
-	public void on(VehicleExitEvent event) {
-		if (!(event.getExited() instanceof Player player)) return;
-		if (!(event.getVehicle() instanceof ArmorStand armorStand)) return;
-		if (Seat.isSeat(armorStand)) {
-			event.getVehicle().remove();
-			player.teleport(player.getLocation().add(0, 0.5, 0));
-			Nexus.log("vehicle exit");
-		}
-	}
-
-	@EventHandler
 	public void on(EntityDismountEvent event) {
 		if (!(event.getEntity() instanceof Player player)) return;
 		if (!(event.getDismounted() instanceof ArmorStand armorStand)) return;
 		if (Seat.isSeat(armorStand)) {
 			event.getDismounted().remove();
 			player.teleport(player.getLocation().add(0, 0.5, 0));
-			Nexus.log("entity dismount");
 		}
 	}
 
