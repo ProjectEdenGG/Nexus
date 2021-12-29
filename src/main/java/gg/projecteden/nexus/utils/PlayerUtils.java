@@ -46,6 +46,7 @@ import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.metadata.MetadataValue;
@@ -966,6 +967,19 @@ public class PlayerUtils {
 		public FakePlayerInteractEvent(Player player, Action action, ItemStack itemInHand, Block clickedBlock, BlockFace blockFace) {
 			super(player, action, itemInHand, clickedBlock, blockFace);
 		}
+	}
+
+	@Getter
+	@AllArgsConstructor
+	public enum ArmorSlot {
+		HELMET(EquipmentSlot.HEAD),
+		CHESTPLATE(EquipmentSlot.CHEST),
+		LEGGINGS(EquipmentSlot.LEGS),
+		BOOTS(EquipmentSlot.FEET),
+		;
+
+		private EquipmentSlot slot;
+
 	}
 
 }

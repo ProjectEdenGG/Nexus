@@ -9,7 +9,6 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.rainbowbeacon.RainbowBeacon;
 import gg.projecteden.nexus.models.rainbowbeacon.RainbowBeaconService;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -23,9 +22,7 @@ import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static gg.projecteden.nexus.features.store.perks.RainbowBeaconCommand.PERMISSION;
 
@@ -51,7 +48,7 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 			} else
 				error("You must be standing on a beacon");
 
-		startTask(rainbowBeacon);
+		rainbowBeacon.start();
 		send(PREFIX + "Activated " + formatWho(rainbowBeacon, WhoType.POSSESSIVE_LOWER) + " rainbow beacon");
 	}
 
@@ -59,8 +56,7 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 	void stop(@Arg(value = "self", permission = "group.seniorstaff") RainbowBeacon rainbowBeacon) {
 		if (rainbowBeacon.getTaskId() == null)
 			error(formatWho(rainbowBeacon, WhoType.ACTIONARY_UPPER) + " not have a running rainbow beacon");
-		Tasks.cancel(rainbowBeacon.getTaskId());
-		rainbowBeacon.getLocation().getBlock().setType(Material.AIR);
+		rainbowBeacon.stop();
 		send(PREFIX + "Successfully deactivated " +  formatWho(rainbowBeacon, WhoType.POSSESSIVE_LOWER) + " rainbow beacon");
 	}
 
@@ -69,10 +65,7 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 		if (rainbowBeacon.getLocation() == null)
 			error(formatWho(rainbowBeacon, WhoType.ACTIONARY_UPPER) + " not have a rainbow beacon set");
 
-		if (rainbowBeacon.getTaskId() != null)
-			Tasks.cancel(rainbowBeacon.getTaskId());
-
-		rainbowBeacon.getLocation().getBlock().setType(Material.AIR);
+		rainbowBeacon.stop();
 		service.delete(rainbowBeacon);
 		send(PREFIX + "Successfully deleted " + formatWho(rainbowBeacon, WhoType.POSSESSIVE_LOWER) + " rainbow beacon");
 	}
@@ -137,7 +130,7 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 			RainbowBeaconService service = new RainbowBeaconService();
 			List<RainbowBeacon> beacons = service.getAll();
 			for (RainbowBeacon rainbowBeacon : beacons) {
-				startTask(rainbowBeacon);
+				rainbowBeacon.start();
 				service.cache(rainbowBeacon);
 			}
 		});
@@ -151,38 +144,6 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 			if (location != null && location.isChunkLoaded())
 				location.getBlock().setType(Material.AIR);
 		}
-	}
-
-	private static final List<Material> colors = new ArrayList<>() {{
-		add(Material.RED_STAINED_GLASS_PANE);
-		add(Material.ORANGE_STAINED_GLASS_PANE);
-		add(Material.YELLOW_STAINED_GLASS_PANE);
-		add(Material.LIME_STAINED_GLASS_PANE);
-		add(Material.LIGHT_BLUE_STAINED_GLASS_PANE);
-		add(Material.BLUE_STAINED_GLASS_PANE);
-		add(Material.PURPLE_STAINED_GLASS_PANE);
-		add(Material.MAGENTA_STAINED_GLASS_PANE);
-	}};
-
-	public static void startTask(RainbowBeacon rainbowBeacon) {
-		Location location = rainbowBeacon.getLocation();
-		AtomicInteger i = new AtomicInteger(0);
-		rainbowBeacon.setTaskId(Tasks.repeat(0, TickTime.SECOND, () -> {
-			if (location == null)
-				return;
-			if (!location.isChunkLoaded())
-				return;
-
-			if (location.getBlock().getRelative(BlockFace.DOWN).getType() != Material.BEACON) {
-				Tasks.cancel(rainbowBeacon.getTaskId());
-				rainbowBeacon.setTaskId(null);
-				return;
-			}
-
-			location.getBlock().setType(colors.get(i.getAndIncrement()));
-			if (i.get() == 8)
-				i.set(0);
-		}));
 	}
 
 }
