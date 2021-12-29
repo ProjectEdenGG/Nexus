@@ -67,7 +67,7 @@ public class BoopCommand extends CustomCommand {
 			error("You cannot boop in minigames!");
 
 		if (Minigames.isMinigameWorld(booped.getWorld()))
-			error("You cannot boop " + booped.getName() + " (in minigames)");
+			error("You cannot boop " + booped.getName() + ", they are in minigames");
 
 		String toBooper = PREFIX;
 		String toBooped = PREFIX;
