@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -47,7 +48,7 @@ public class EntityNameCommand extends CustomCommand {
 			boolean isMarker = targetEntity instanceof ArmorStand armorStand && armorStand.isMarker();
 			boolean isInvulnerable = targetEntity.isInvulnerable();
 
-			if (!hasPermission("Group.STAFF") && (isInvulnerable || hasAI || isFixed || isMarker))
+			if (!hasPermission(Group.STAFF) && (isInvulnerable || hasAI || isFixed || isMarker))
 				error("You cannot name that entity");
 		}
 	}
