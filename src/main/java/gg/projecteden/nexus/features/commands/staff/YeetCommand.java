@@ -19,7 +19,7 @@ public class YeetCommand extends CustomCommand {
 	@Path("<player>")
 	void run(Nerd nerd) {
 		if (nerd.getWorldGroup().isMinigames())
-			error("Cannot slap " + nerd.getNickname() + ", they are in minigames");
+			error("Cannot yeet " + nerd.getNickname() + ", they are in minigames");
 
 		int wait = 0;
 		for (int i = 0; i < 100; i++)

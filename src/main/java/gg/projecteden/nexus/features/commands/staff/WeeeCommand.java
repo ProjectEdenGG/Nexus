@@ -25,7 +25,7 @@ public class WeeeCommand extends CustomCommand {
 	@Path("[player]")
 	void weee(@Arg("self") Nerd nerd) {
 		if (nerd.getWorldGroup().isMinigames())
-			error("Cannot slap " + nerd.getNickname() + ", they are in minigames");
+			error("Cannot weee " + nerd.getNickname() + ", they are in minigames");
 
 		List<Vector> vectors = Arrays.asList(new Vector(3, 0, 1), new Vector(-3, 0, 1), new Vector(1, 0, 3), new Vector(1, 0, -3), new Vector(0, 2.5, 0));
 
