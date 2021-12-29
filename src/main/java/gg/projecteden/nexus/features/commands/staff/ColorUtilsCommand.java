@@ -62,7 +62,7 @@ public class ColorUtilsCommand extends CustomCommand {
 		send(StringUtils.getLastColor(message) + "Last color");
 	}
 
-	@Path("gradient <colors> <input> [--decolorize]")
+	@Path("gradient <colors> <input...> [--decolorize]")
 	void gradient(@Arg(type = ChatColor.class) List<ChatColor> colors, String input, @Switch boolean decolorize) {
 		final String gradient = Gradient.of(colors).apply(input);
 		player().sendMessage(decolorize ? decolorize(gradient) : colorize(gradient));
