@@ -37,7 +37,7 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("start [player]")
-	void activate(@Arg(value = "self", permission = "group.seniorstaff") RainbowBeacon rainbowBeacon) {
+	void activate(@Arg(value = "self", permission = Group.SENIOR_STAFF) RainbowBeacon rainbowBeacon) {
 		if (rainbowBeacon.getTaskId() != null)
 			error(formatWho(rainbowBeacon, WhoType.POSSESSIVE_UPPER) + " rainbow beacon is already activated");
 
@@ -53,7 +53,7 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("stop [player]")
-	void stop(@Arg(value = "self", permission = "group.seniorstaff") RainbowBeacon rainbowBeacon) {
+	void stop(@Arg(value = "self", permission = Group.SENIOR_STAFF) RainbowBeacon rainbowBeacon) {
 		if (rainbowBeacon.getTaskId() == null)
 			error(formatWho(rainbowBeacon, WhoType.ACTIONARY_UPPER) + " not have a running rainbow beacon");
 		rainbowBeacon.stop();
@@ -61,7 +61,7 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("delete [player]")
-	void delete(@Arg(value = "self", permission = "group.seniorstaff") RainbowBeacon rainbowBeacon) {
+	void delete(@Arg(value = "self", permission = Group.SENIOR_STAFF) RainbowBeacon rainbowBeacon) {
 		if (rainbowBeacon.getLocation() == null)
 			error(formatWho(rainbowBeacon, WhoType.ACTIONARY_UPPER) + " not have a rainbow beacon set");
 
@@ -71,7 +71,7 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("tp [player]")
-	void tp(@Arg(value = "self", permission = "group.seniorstaff") RainbowBeacon rainbowBeacon) {
+	void tp(@Arg(value = "self", permission = Group.SENIOR_STAFF) RainbowBeacon rainbowBeacon) {
 		if (rainbowBeacon.getLocation() == null)
 			error(formatWho(rainbowBeacon, WhoType.ACTIONARY_UPPER) + " not have an active rainbow beacon");
 

@@ -4,6 +4,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.mode.ModeUser;
 import gg.projecteden.nexus.models.mode.ModeUserService;
@@ -24,7 +25,7 @@ public class FlyCommand extends CustomCommand {
 	}
 
 	@Path("[enable] [player]")
-	void run(Boolean enable, @Arg(value = "self", permission = "group.staff") Player player) {
+	void run(Boolean enable, @Arg(value = "self", permission = Group.STAFF) Player player) {
 		if (!isSelf(player))
 			user = service.get(player);
 

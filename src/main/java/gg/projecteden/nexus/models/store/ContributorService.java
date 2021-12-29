@@ -1,9 +1,9 @@
-package gg.projecteden.nexus.models.contributor;
+package gg.projecteden.nexus.models.store;
 
 
 import gg.projecteden.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
-import gg.projecteden.nexus.models.contributor.Contributor.Purchase;
+import gg.projecteden.nexus.models.store.Contributor.Purchase;
 
 import java.util.ArrayList;
 import java.util.Comparator;

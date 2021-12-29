@@ -6,6 +6,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.setting.Setting;
@@ -36,7 +37,7 @@ public class Pride20Command extends CustomCommand {
 	}
 
 	@Path("parade join [player]")
-	void joinParade(@Arg(value = "self", permission = "group.staff") OfflinePlayer player) {
+	void joinParade(@Arg(value = "self", permission = Group.STAFF) OfflinePlayer player) {
 		if (!isStaff())
 			player = player();
 
@@ -77,7 +78,7 @@ public class Pride20Command extends CustomCommand {
 	}
 
 	@Path("parade leave [player]")
-	void leaveParade(@Arg(value = "self", permission = "group.staff") OfflinePlayer player) {
+	void leaveParade(@Arg(value = "self", permission = Group.STAFF) OfflinePlayer player) {
 		boolean isSelf = isSelf(player);
 		String playerText = isSelf ? "You have" : Nickname.of(player) + " has";
 		Setting setting = service.get(player, "pride20Parade");

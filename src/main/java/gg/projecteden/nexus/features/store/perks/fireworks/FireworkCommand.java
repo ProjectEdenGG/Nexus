@@ -13,7 +13,7 @@ import static gg.projecteden.nexus.features.store.perks.fireworks.FireworkComman
 
 @Aliases("fw")
 @Permission(PERMISSION)
-@Cooldown(value = TickTime.SECOND, bypass = "group.staff")
+@Cooldown(value = TickTime.SECOND, bypass = "Group.STAFF")
 public class FireworkCommand extends CustomCommand {
 	public static final String PERMISSION = "firework.launch";
 

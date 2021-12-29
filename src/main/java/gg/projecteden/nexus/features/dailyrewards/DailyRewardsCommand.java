@@ -80,7 +80,7 @@ public class DailyRewardsCommand extends CustomCommand {
 
 	@Confirm
 	@Path("reset [player]")
-	void reset(@Arg(value = "self", permission = "group.admin") DailyRewardUser user) {
+	void reset(@Arg(value = "self", permission = Group.ADMIN) DailyRewardUser user) {
 		try {
 			if (!new CooldownService().check(player(), resetCooldownType, TickTime.DAY))
 				throw new CommandCooldownException(player(), resetCooldownType);

@@ -270,7 +270,7 @@ public class BearFair20Command extends _WarpCommand implements Listener {
 		super.tp(warp);
 	}
 
-	@TabCompleteIgnore(permission = "group.admin")
+	@TabCompleteIgnore(permission = Group.ADMIN)
 	@Path("warps tp nearest")
 	public void teleportNearest() {
 		super.teleportNearest();

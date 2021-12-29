@@ -114,7 +114,7 @@ public class NicknameCommand extends CustomCommand {
 
 	@Confirm
 	@Path("reset [player]")
-	void reset(@Arg(value = "self", permission = "group.staff") Nickname player) {
+	void reset(@Arg(value = "self", permission = Group.STAFF) Nickname player) {
 		if (!player.hasNickname())
 			error((isSelf(player) ? "You do not" : player.getName() + " doesn't") + " have a nickname");
 		player.setNickname((String) null);

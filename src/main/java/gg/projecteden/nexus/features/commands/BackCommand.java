@@ -39,7 +39,7 @@ public class BackCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("[count]")
-	void back(@Arg(value = "1", permission = "group.staff", min = 1, max = 10) int count) {
+	void back(@Arg(value = "1", permission = Group.STAFF, min = 1, max = 10) int count) {
 		Location location = null;
 		if (back.getLocations().size() >= count)
 			location = back.getLocations().get(count - 1);

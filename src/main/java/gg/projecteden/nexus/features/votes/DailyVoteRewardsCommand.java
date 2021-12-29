@@ -6,6 +6,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.dailyvotereward.DailyVoteReward;
 import gg.projecteden.nexus.models.dailyvotereward.DailyVoteReward.DailyVoteStreak;
@@ -32,12 +33,12 @@ public class DailyVoteRewardsCommand extends CustomCommand {
 	}
 
 	@Path("streak [player]")
-	void streak(@Arg(value = "self", permission = "group.staff") DailyVoteReward user) {
+	void streak(@Arg(value = "self", permission = Group.STAFF) DailyVoteReward user) {
 		send(PREFIX + (isSelf(user) ? "Your" : user.getNickname() + "'s") + " streak is &e" + user.getCurrentStreak().getStreak());
 	}
 
 	@Path("today [player]")
-	void today(@Arg(value = "self", permission = "group.staff") DailyVoteReward user) {
+	void today(@Arg(value = "self", permission = Group.STAFF) DailyVoteReward user) {
 		boolean earnedToday = user.getCurrentStreak().isEarnedToday();
 		send(PREFIX + (isSelf(user) ? "You have " : user.getNickname() + " has ") + (earnedToday ? "&e" : "&cnot ") + "advanced your streak today");
 	}

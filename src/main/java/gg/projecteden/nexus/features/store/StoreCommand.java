@@ -20,12 +20,12 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.models.contributor.Contributor;
-import gg.projecteden.nexus.models.contributor.Contributor.Purchase;
-import gg.projecteden.nexus.models.contributor.ContributorService;
 import gg.projecteden.nexus.models.extraplots.ExtraPlotUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.models.store.Contributor;
+import gg.projecteden.nexus.models.store.Contributor.Purchase;
+import gg.projecteden.nexus.models.store.ContributorService;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -94,7 +94,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("credit [player]")
-	void credit(@Arg(value = "self", permission = "group.staff") Contributor contributor) {
+	void credit(@Arg(value = "self", permission = Group.STAFF) Contributor contributor) {
 		send(PREFIX + (isSelf(contributor) ? "Your" : contributor.getNickname() + "'s") + " store credit: " + contributor.getCreditFormatted());
 		if (isSelf(contributor)) {
 			line();
@@ -105,7 +105,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("credit redeem <amount> [player]")
-	void credit_redeem(double amount, @Arg(value = "self", permission = "group.staff") Contributor contributor) {
+	void credit_redeem(double amount, @Arg(value = "self", permission = Group.STAFF) Contributor contributor) {
 		if (!contributor.hasCredit(amount))
 			error("You do not have enough credit");
 
@@ -152,7 +152,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 	@Async
 	@SneakyThrows
 	@Path("coupons list <player>")
-	void coupon_list(@Arg(value = "self", permission = "group.staff") Contributor contributor) {
+	void coupon_list(@Arg(value = "self", permission = Group.STAFF) Contributor contributor) {
 		final List<Coupon> coupons = Nexus.getBuycraft().getApiClient().getAllCoupons().execute().body().getData().stream()
 			.filter(coupon -> coupon.getUsername().equals(contributor.getName()))
 			.filter(coupon -> coupon.getExpire().getLimit() > 0)

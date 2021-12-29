@@ -106,7 +106,7 @@ public class EndermanFarmCommand extends CustomCommand implements Listener {
 
 	@SneakyThrows
 	@Path("add <player> [owner]")
-	void add(OfflinePlayer player, @Arg(value = "self", permission = "group.moderator") OfflinePlayer owner) {
+	void add(OfflinePlayer player, @Arg(value = "self", permission = Group.MODERATOR) OfflinePlayer owner) {
 		if (world().getEnvironment() != Environment.THE_END)
 			error("You must be in the end to run this command");
 
@@ -129,7 +129,7 @@ public class EndermanFarmCommand extends CustomCommand implements Listener {
 
 	@SneakyThrows
 	@Path("remove <player> [owner]")
-	void remove(OfflinePlayer player, @Arg(value = "self", permission = "group.moderator") OfflinePlayer owner) {
+	void remove(OfflinePlayer player, @Arg(value = "self", permission = Group.MODERATOR) OfflinePlayer owner) {
 		if (world().getEnvironment() != Environment.THE_END)
 			error("You must be in the end to run this command");
 
@@ -148,7 +148,7 @@ public class EndermanFarmCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("list [owner]")
-	void list(@Arg(value = "self", permission = "group.moderator") OfflinePlayer owner) {
+	void list(@Arg(value = "self", permission = Group.MODERATOR) OfflinePlayer owner) {
 		final ProtectedRegion region = getRegion(world(), owner.getUniqueId());
 		final DefaultDomain members = region.getMembers();
 		final Set<UUID> uuids = members.getUniqueIds();

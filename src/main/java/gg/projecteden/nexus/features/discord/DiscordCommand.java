@@ -181,7 +181,7 @@ public class DiscordCommand extends CustomCommand {
 
 	@Async
 	@Path("unlink [player]")
-	void unlink(@Arg(value = "self", permission = "group.staff") OfflinePlayer player) {
+	void unlink(@Arg(value = "self", permission = Group.STAFF) OfflinePlayer player) {
 		user = service.get(player);
 		if (isNullOrEmpty(user.getUserId()))
 			error("This account is not linked to any Discord account");

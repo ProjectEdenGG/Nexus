@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.store;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.models.contributor.Contributor;
+import gg.projecteden.nexus.models.store.Contributor;
 import gg.projecteden.nexus.utils.HttpUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SerializationUtils.Json;

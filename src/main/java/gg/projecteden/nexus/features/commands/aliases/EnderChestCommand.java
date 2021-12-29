@@ -18,7 +18,7 @@ public class EnderChestCommand extends CustomCommand {
 	}
 
 	@Path("<player>")
-	void run(@Arg(value = "self", permission = "group.moderator") OfflinePlayer player) {
+	void run(@Arg(value = "self", permission = Group.MODERATOR) OfflinePlayer player) {
 		runCommand("openender " + player.getName());
 	}
 }

@@ -4,6 +4,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
@@ -60,7 +61,7 @@ public class Tip implements PlayerOwnedObject {
 	}
 
 	public enum TipType {
-		CONCRETE(1, TickTime.HOUR, player -> player.hasPermission("group.nonstaff")),
+		CONCRETE(1, TickTime.HOUR, player -> player.hasPermission(Group.NON_STAFF)),
 		LWC_CHEST(1, TickTime.MINUTE.x(15), player -> Rank.of(player) == Rank.GUEST),
 		LWC_FURNACE(1, TickTime.MINUTE.x(15), player -> Rank.of(player) == Rank.GUEST),
 		RESOURCE_WORLD_STORAGE(15),

@@ -59,7 +59,7 @@ public class ShowItemCommand extends CustomCommand {
 	}
 
 	@Path("<hand|offhand|helmet|chestplate|leggings|boots> [message...]")
-	@Cooldown(value = TickTime.SECOND, x = 15, bypass = "group.admin")
+	@Cooldown(value = TickTime.SECOND, x = 15, bypass = "Group.ADMIN")
 	void run(String slot, String message) {
 		Player player = player();
 		ItemStack item = getItem(player, slot);

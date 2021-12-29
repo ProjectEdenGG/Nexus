@@ -13,7 +13,7 @@ import org.bukkit.Material;
 
 import static gg.projecteden.nexus.features.store.perks.DonorSkullCommand.PERMISSION;
 
-@Cooldown(value = TickTime.DAY, bypass = "group.admin")
+@Cooldown(value = TickTime.DAY, bypass = "Group.ADMIN")
 @Permission(PERMISSION)
 public class DonorSkullCommand extends CustomCommand {
 	public static final String PERMISSION = "essentials.skull";

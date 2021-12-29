@@ -57,7 +57,7 @@ public class WallsOfGraceCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("removeSigns [player]")
-	void removeSigns(@Arg(value = "self", permission = "group.staff") WallsOfGrace wallsOfGrace) {
+	void removeSigns(@Arg(value = "self", permission = Group.STAFF) WallsOfGrace wallsOfGrace) {
 		if (wallsOfGrace.get(1) == null && wallsOfGrace.get(2) == null)
 			error((isSelf(wallsOfGrace) ? "You have" : wallsOfGrace.getNickname() + " has") + " not created any signs");
 
@@ -72,7 +72,7 @@ public class WallsOfGraceCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("removeSign <id> [player]")
-	void removeSign(int id, @Arg(value = "self", permission = "group.staff") WallsOfGrace wallsOfGrace) {
+	void removeSign(int id, @Arg(value = "self", permission = Group.STAFF) WallsOfGrace wallsOfGrace) {
 		if (wallsOfGrace.get(id) == null)
 			error((isSelf(wallsOfGrace) ? "You have" : wallsOfGrace.getNickname() + " has") + " not created that sign");
 

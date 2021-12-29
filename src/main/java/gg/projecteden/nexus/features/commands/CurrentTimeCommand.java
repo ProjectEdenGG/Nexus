@@ -6,6 +6,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.geoip.GeoIP;
 import gg.projecteden.nexus.models.geoip.GeoIP.TimeFormat;
@@ -26,7 +27,7 @@ public class CurrentTimeCommand extends CustomCommand {
 	}
 
 	@Path("format <12/24> [player]")
-	void format(int format, @Arg(value = "self", permission = "group.seniorstaff") GeoIP user) {
+	void format(int format, @Arg(value = "self", permission = Group.SENIOR_STAFF) GeoIP user) {
 		if (format != 12 && format != 24)
 			send(json()
 				.line()
@@ -48,8 +49,8 @@ public class CurrentTimeCommand extends CustomCommand {
 	}
 
 	@Path("update [player]")
-	@Cooldown(value = TickTime.HOUR, bypass = "group.seniorstaff")
-	void update(@Arg(value = "self", permission = "group.seniorstaff") Player player) {
+	@Cooldown(value = TickTime.HOUR, bypass = "Group.SENIOR_STAFF")
+	void update(@Arg(value = "self", permission = Group.SENIOR_STAFF) Player player) {
 		final String name = isSelf(player) ? "your" : Nickname.of(player) + "'s";
 		send(PREFIX + "Updating " + name + " timezone information...");
 		GeoIP geoip = service.request(player.getUniqueId(), player.getAddress().getHostString());

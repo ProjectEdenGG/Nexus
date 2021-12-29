@@ -79,7 +79,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("off [player]")
-	void off(@Arg(value = "self", permission = "group.staff") CostumeUser user) {
+	void off(@Arg(value = "self", permission = Group.STAFF) CostumeUser user) {
 		user.setActiveCostume(null);
 	}
 

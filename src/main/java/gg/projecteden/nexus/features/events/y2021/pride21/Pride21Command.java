@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.events.y2021.pride21;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.setting.Setting;
@@ -28,7 +29,7 @@ public class Pride21Command extends CustomCommand {
 	}
 
 	@Path("parade join [player]")
-	void joinParade(@Arg(value = "self", permission = "group.staff") Player player) {
+	void joinParade(@Arg(value = "self", permission = Group.STAFF) Player player) {
 		String playerText = isSelf(player) ? "You have" : Nickname.of(player) + " has";
 
 		Setting setting = service.get(player, "pride21Parade");
@@ -52,7 +53,7 @@ public class Pride21Command extends CustomCommand {
 	}
 
 	@Path("parade leave [player]")
-	void leaveParade(@Arg(value = "self", permission = "group.staff") OfflinePlayer player) {
+	void leaveParade(@Arg(value = "self", permission = Group.STAFF) OfflinePlayer player) {
 		String playerText = isSelf(player) ? "You have" : Nickname.of(player) + " has";
 
 		Setting setting = service.get(player, "pride21Parade");

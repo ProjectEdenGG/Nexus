@@ -209,7 +209,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("behavior <behavior> [player] [duration...]")
-	void toggle(Behavior behavior, @Arg(value = "self", permission = "group.staff") OfflinePlayer player, @Arg(permission = "group.staff") Timespan duration) {
+	void toggle(Behavior behavior, @Arg(value = "self", permission = Group.STAFF) OfflinePlayer player, @Arg(permission = Group.STAFF) Timespan duration) {
 		final DeathMessages deathMessages = service.get(player);
 
 		deathMessages.setBehavior(behavior);

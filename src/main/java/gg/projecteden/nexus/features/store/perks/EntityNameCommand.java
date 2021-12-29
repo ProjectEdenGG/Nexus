@@ -47,7 +47,7 @@ public class EntityNameCommand extends CustomCommand {
 			boolean isMarker = targetEntity instanceof ArmorStand armorStand && armorStand.isMarker();
 			boolean isInvulnerable = targetEntity.isInvulnerable();
 
-			if (!hasPermission("group.staff") && (isInvulnerable || hasAI || isFixed || isMarker))
+			if (!hasPermission("Group.STAFF") && (isInvulnerable || hasAI || isFixed || isMarker))
 				error("You cannot name that entity");
 		}
 	}

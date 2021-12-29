@@ -202,7 +202,7 @@ public enum GalleryPackage {
 	ENTITY_NAME,
 
 	@Category(GalleryCategory.CHAT)
-	PREFIXES,
+	PREFIX,
 
 	@Category(GalleryCategory.CHAT)
 	NICKNAMES,
@@ -399,7 +399,7 @@ public enum GalleryPackage {
 	PLUS_5_HOMES,
 
 	@Category(GalleryCategory.MISC)
-	PLOTS,
+	CREATIVE_PLOTS,
 
 	@Category(GalleryCategory.MISC)
 	BOOSTS,
