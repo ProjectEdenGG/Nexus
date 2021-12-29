@@ -418,10 +418,10 @@ public class MinigamesCommand extends CustomCommand {
 	@Path("schem save <arena> <name>")
 	@Permission(PERMISSION_MANAGE)
 	void schemSave(Arena arena, String name) {
-		WorldEditUtils worldEditUtils = new WorldEditUtils(player());
+		WorldEditUtils worldedit = new WorldEditUtils(player());
 		GameMode originalGameMode = player().getGameMode();
 		Location originalLocation = location().clone();
-		Location location = worldEditUtils.toLocation(worldEditUtils.getPlayerSelection(player()).getMinimumPoint());
+		Location location = worldedit.toLocation(worldedit.getPlayerSelection(player()).getMinimumPoint());
 		player().setGameMode(GameMode.SPECTATOR);
 		player().teleportAsync(location);
 		runCommand("mcmd /copy ;; wait 10 ;; /schem save " + (arena.getSchematicBaseName() + name) + " -f");

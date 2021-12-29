@@ -26,13 +26,13 @@ import static gg.projecteden.nexus.utils.Utils.sortByValue;
 @Aliases("distrfixed")
 @Permission("worldedit.analysis.distr")
 public class DistributionFixedCommand extends CustomCommand {
-	private final WorldEditUtils worldEditUtils;
+	private final WorldEditUtils worldedit;
 	private final Region region;
 
 	public DistributionFixedCommand(CommandEvent event) {
 		super(event);
-		worldEditUtils = new WorldEditUtils(player());
-		region = worldEditUtils.getPlayerSelection(player());
+		worldedit = new WorldEditUtils(player());
+		region = worldedit.getPlayerSelection(player());
 	}
 
 	@Async
@@ -44,7 +44,7 @@ public class DistributionFixedCommand extends CustomCommand {
 		Map<Material, Integer> counts = new HashMap<>();
 		Map<Material, Double> percentages = new HashMap<>();
 
-		List<Block> blocks = worldEditUtils.getBlocks(region);
+		List<Block> blocks = worldedit.getBlocks(region);
 
 		if (blocks.isEmpty())
 			error("No blocks found in selection");
