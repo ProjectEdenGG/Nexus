@@ -32,6 +32,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerQuitEvent.QuitReason;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -72,7 +73,7 @@ public class JoinQuit extends Feature implements Listener {
 		final String finalMessage = message;
 
 		if (player.isOnline()) {
-			final String ingame = "&2 &2&m &2&m &2&m &2>&5 " + finalMessage.replaceAll("\\[player]", "&a" + Nickname.of(player) + "&5");
+			final String ingame = formatJoin(player, finalMessage);
 			final Component component = AdventureUtils.fromLegacyAmpersandText(ingame);
 
 			OnlinePlayers.getAll().forEach(_player -> {
@@ -109,7 +110,7 @@ public class JoinQuit extends Feature implements Listener {
 
 		final String finalMessage = message;
 
-		final String ingame = "&4 <&4&m &4&m &4&m &5 " + finalMessage.replaceAll("\\[player]", "&c" + Nickname.of(player) + "&5");
+		final String ingame = formatQuit(player, finalMessage);
 		final Component component = AdventureUtils.fromLegacyAmpersandText(ingame);
 		final Component staffComponent = AdventureUtils.fromLegacyAmpersandText(ingame + " (" + StringUtils.camelCase(reason.name()) + ")");
 
@@ -131,6 +132,16 @@ public class JoinQuit extends Feature implements Listener {
 			final String discord = discordize(finalMessage).replaceAll("\\[player]", "**" + Nickname.discordOf(player) + "**");
 			Discord.send("<:red_arrow_left:331808021267218432> " + discord, TextChannel.BRIDGE);
 		});
+	}
+
+	@NotNull
+	public static String formatJoin(Player player, String finalMessage) {
+		return "&2 &2&m &2&m &2&m &2>&5 " + finalMessage.replaceAll("\\[player]", "&a" + Nickname.of(player) + "&5");
+	}
+
+	@NotNull
+	public static String formatQuit(Player player, String finalMessage) {
+		return "&4 <&4&m &4&m &4&m &5 " + finalMessage.replaceAll("\\[player]", "&c" + Nickname.of(player) + "&5");
 	}
 
 	public static boolean isDuplicate(Player player, String type) {

@@ -9,6 +9,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.rainbowarmor.RainbowArmor;
 import gg.projecteden.nexus.models.rainbowarmor.RainbowArmorService;
+import gg.projecteden.nexus.models.rainbowarmor.RainbowArmorTask;
 import lombok.NoArgsConstructor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -23,7 +24,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
 import static gg.projecteden.nexus.features.store.perks.RainbowArmorCommand.PERMISSION;
-import static gg.projecteden.nexus.models.rainbowarmor.RainbowArmor.isLeatherArmor;
+import static gg.projecteden.nexus.models.rainbowarmor.RainbowArmorTask.isLeatherArmor;
 
 @NoArgsConstructor
 @Permission(PERMISSION)
@@ -31,36 +32,36 @@ import static gg.projecteden.nexus.models.rainbowarmor.RainbowArmor.isLeatherArm
 public class RainbowArmorCommand extends CustomCommand implements Listener {
 	public static final String PERMISSION = "rainbowarmor.use";
 	private final RainbowArmorService service = new RainbowArmorService();
-	private RainbowArmor rbaPlayer;
+	private RainbowArmor rainbowArmor;
 
 	public RainbowArmorCommand(CommandEvent event) {
 		super(event);
 		if (isPlayerCommandEvent())
-			rbaPlayer = service.get(player());
+			rainbowArmor = service.get(player());
 	}
 
 	static {
 		for (RainbowArmor rainbowArmor : new RainbowArmorService().getOnline())
 			if (rainbowArmor.isEnabled())
-				rainbowArmor.startArmor();
+				rainbowArmor.start();
 	}
 
 	@Path
 	void toggle() {
-		if (!rbaPlayer.canUse())
+		if (rainbowArmor.isNotAllowed())
 			error("You cannot use Rainbow Armor here");
 
-		if (rbaPlayer.isEnabled()) {
-			rbaPlayer.stopArmor();
+		if (rainbowArmor.isEnabled()) {
+			rainbowArmor.stop();
 			send("&cRainbow armor unequipped!");
-			rbaPlayer.setEnabled(false);
+			rainbowArmor.setEnabled(false);
 		} else {
-			rbaPlayer.startArmor();
-			rbaPlayer.setEnabled(true);
+			rainbowArmor.start();
+			rainbowArmor.setEnabled(true);
 			send("&cR&6a&ei&an&bb&5o&dw &earmor equipped!");
 		}
 
-		service.save(rbaPlayer);
+		service.save(rainbowArmor);
 	}
 
 	// Remove color
@@ -75,19 +76,19 @@ public class RainbowArmorCommand extends CustomCommand implements Listener {
 		if (player.getGameMode() != GameMode.SURVIVAL)
 			return;
 
-		RainbowArmor rbaPlayer = new RainbowArmorService().get(player);
-		if (rbaPlayer.isEnabled())
+		RainbowArmor rainbowArmor = new RainbowArmorService().get(player);
+		if (rainbowArmor.isEnabled())
 			if (isLeatherArmor(item))
-				rbaPlayer.removeColor(item);
+				RainbowArmorTask.removeColor(item);
 	}
 
 	@EventHandler
 	public void onDeath(PlayerDeathEvent event) {
-		RainbowArmor rbaPlayer = new RainbowArmorService().get(event.getEntity());
-		if (rbaPlayer.isEnabled())
+		RainbowArmor rainbowArmor = new RainbowArmorService().get(event.getEntity());
+		if (rainbowArmor.isEnabled())
 			for (ItemStack itemStack : event.getDrops())
 				if (isLeatherArmor(itemStack))
-					rbaPlayer.removeColor(itemStack);
+					RainbowArmorTask.removeColor(itemStack);
 	}
 
 
@@ -119,13 +120,13 @@ public class RainbowArmorCommand extends CustomCommand implements Listener {
 	}
 
 	private void start(Player player) {
-		RainbowArmor rbaPlayer = new RainbowArmorService().get(player);
-		if (rbaPlayer.isEnabled())
-			rbaPlayer.startArmor();
+		RainbowArmor rainbowArmor = new RainbowArmorService().get(player);
+		if (rainbowArmor.isEnabled())
+			rainbowArmor.start();
 	}
 
 	private void stop(Player player) {
-		new RainbowArmorService().get(player).stopArmor();
+		new RainbowArmorService().get(player).stop();
 	}
 
 }

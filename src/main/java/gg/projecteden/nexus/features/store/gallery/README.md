@@ -12,7 +12,7 @@
     - Rotate NPC between types/settings
 - [x] Fireworks
     - Set off a firework ▷
-- [ ] Rainbow Armor
+- [x] Rainbow Armor
     - Display rainbow armor on an NPC
     - Checks every 5 sec for player in r=50, changes state if necessary
 - [x] Player Time
@@ -27,7 +27,7 @@
     - Predefined prefixes & colors, shows random one  ▷
 - [x] Nicknames
     - N/A
-- [ ] Join/Quit
+- [x] Join/Quit
     - Send example message in chat ▷
 - [ ] Emotes
     - Click to show emotes list
@@ -43,7 +43,7 @@
 #### Inventory
 - [x] AutoSort
     - N/A
-- [ ] AutoTorch
+- [x] AutoTorch
     - Click to activate temporary auto torch, places client side torch every couple seconds
     - Task lasts for 30s, Torches stay for 10s ▷
 - [x] Vaults
