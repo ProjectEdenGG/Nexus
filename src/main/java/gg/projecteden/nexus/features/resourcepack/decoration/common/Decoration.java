@@ -64,14 +64,12 @@ public class Decoration {
 		ItemFrameRotation frameRotation = getValidRotation(ItemFrameRotation.of(player));
 
 		ItemFrame itemFrame = (ItemFrame) world.spawnEntity(origin, EntityType.ITEM_FRAME);
-		itemFrame.setSilent(true);
-//		itemFrame.setVisible(false);
-		itemFrame.setItem(_item, false);
 		itemFrame.setRotation(frameRotation.getRotation());
 		itemFrame.setFacingDirection(blockFace, true);
-
-		// TODO:
-		//  - Place hitbox according to frame rotation
+//		itemFrame.setVisible(false);
+		itemFrame.setGlowing(false);
+		itemFrame.setSilent(true);
+		itemFrame.setItem(_item, false);
 
 		Hitbox.place(getHitboxes(), origin, frameRotation.getBlockFace());
 	}
