@@ -34,14 +34,14 @@ public class BadgeCommand extends CustomCommand {
 	}
 
 	@Path("off [user]")
-	void off(@Arg(value = "self", permission = "group.staff") BadgeUser user) {
+	void off(@Arg(value = "self", permission = Group.STAFF) BadgeUser user) {
 		user.setActive(null);
 		service.save(user);
 		send(PREFIX + (isSelf(user) ? "Badge" : user.getNickname() + "'s badge") + " &cdisabled");
 	}
 
 	@Path("<badge> [user]")
-	void set(Badge badge, @Arg(value = "self", permission = "group.staff") BadgeUser user) {
+	void set(Badge badge, @Arg(value = "self", permission = Group.STAFF) BadgeUser user) {
 		user.setActive(badge);
 		service.save(user);
 		send(PREFIX + "Set " + (isSelf(user) ? "your" : "&e" + user.getNickname() + "&3's") + " active badge to &e" + camelCase(badge));

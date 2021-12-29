@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.models.contributor;
+package gg.projecteden.nexus.models.store;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Converter;

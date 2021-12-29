@@ -291,9 +291,9 @@ public class TestCommand extends CustomCommand implements Listener {
 	void argPermTest(
 		@Arg(tabCompleter = Player.class) String one,
 		@Arg(value = "2", tabCompleter = Player.class) String two,
-		@Arg(permission = "group.staff", tabCompleter = Player.class) String three,
-		@Arg(value = "4", permission = "group.staff", tabCompleter = Player.class) String four,
-		@Arg(value = "5", permission = "group.admin", tabCompleter = Player.class) String five
+		@Arg(permission = Group.STAFF, tabCompleter = Player.class) String three,
+		@Arg(value = "4", permission = Group.STAFF, tabCompleter = Player.class) String four,
+		@Arg(value = "5", permission = Group.ADMIN, tabCompleter = Player.class) String five
 	) {
 		send(one + " / " + two + " / " + three + " / " + four + " / " + five);
 	}

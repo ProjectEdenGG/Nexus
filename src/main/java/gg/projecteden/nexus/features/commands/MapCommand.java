@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import org.bukkit.Location;
@@ -25,7 +26,7 @@ public class MapCommand extends CustomCommand {
 	}
 
 	@Path("[player]")
-	void map(@Arg(value = "self", permission = "group.staff") Nerd nerd) {
+	void map(@Arg(value = "self", permission = Group.STAFF) Nerd nerd) {
 		Location location = nerd.getLocation();
 		String world = location.getWorld().getName().toLowerCase();
 		int x = (int) location.getX();

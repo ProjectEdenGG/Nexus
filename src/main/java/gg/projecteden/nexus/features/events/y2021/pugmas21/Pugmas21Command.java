@@ -268,8 +268,8 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	@Path("advent")
 	@Description("Open the advent calender")
 	void advent(
-		@Arg(value = "0", permission = "group.admin") @Switch int day,
-		@Arg(value = "30", permission = "group.admin") @Switch int frameTicks
+		@Arg(value = "0", permission = Group.ADMIN) @Switch int day,
+		@Arg(value = "30", permission = Group.ADMIN) @Switch int frameTicks
 	) {
 		verifyDate();
 

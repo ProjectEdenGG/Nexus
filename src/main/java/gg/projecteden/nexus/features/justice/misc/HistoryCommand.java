@@ -31,7 +31,7 @@ public class HistoryCommand extends _JusticeCommand {
 	}
 
 	@Path("<player> [page]")
-	void run(@Arg(value = "self", permission = "group.moderator") Punishments player, @Arg("1") int page) {
+	void run(@Arg(value = "self", permission = Group.MODERATOR) Punishments player, @Arg("1") int page) {
 		if (player.getPunishments().isEmpty())
 			if (isSelf(player))
 				error("You do not have any logged punishments");

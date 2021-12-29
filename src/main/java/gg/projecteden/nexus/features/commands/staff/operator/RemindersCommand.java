@@ -306,7 +306,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("motd [player]")
-	void motd(@Arg(value = "self", permission = "group.staff") Player player) {
+	void motd(@Arg(value = "self", permission = Group.STAFF) Player player) {
 		config.showMotd(player);
 	}
 

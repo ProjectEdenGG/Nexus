@@ -107,7 +107,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 
 	@Path("progress [player]")
 	@Description("View your event progress")
-	void progress(@Arg(value = "self", permission = "group.staff") Pugmas20User user) {
+	void progress(@Arg(value = "self", permission = Group.STAFF) Pugmas20User user) {
 		LocalDate now = LocalDate.now();
 
 		if (isBeforePugmas(now))

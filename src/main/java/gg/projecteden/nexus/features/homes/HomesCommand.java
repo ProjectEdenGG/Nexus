@@ -68,7 +68,7 @@ public class HomesCommand extends CustomCommand {
 	}
 
 	@Path("limit [player]")
-	void limit(@Arg(value = "self", permission = "group.staff") HomeOwner homeOwner) {
+	void limit(@Arg(value = "self", permission = Group.STAFF) HomeOwner homeOwner) {
 		int homes = homeOwner.getHomes().size();
 		int max = homeOwner.getHomesLimit();
 		int left = Math.max(0, max - homes);
@@ -125,7 +125,7 @@ public class HomesCommand extends CustomCommand {
 
 	@Async
 	@Path("nearest [player]")
-	void nearest(@Arg(value = "self", permission = "group.staff") OfflinePlayer player) {
+	void nearest(@Arg(value = "self", permission = Group.STAFF) OfflinePlayer player) {
 		MinMaxResult<Home> result = getMin(service.get(player).getHomes(), home -> {
 			if (!world().equals(home.getLocation().getWorld())) return null;
 			return location().distance(home.getLocation());

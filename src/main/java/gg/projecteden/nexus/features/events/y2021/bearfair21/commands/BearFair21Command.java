@@ -116,7 +116,7 @@ public class BearFair21Command extends CustomCommand {
 
 	@Path("progress [player]")
 	@Description("View your event progress")
-	void progress(@Arg(value = "self", permission = "group.staff") BearFair21User user) {
+	void progress(@Arg(value = "self", permission = Group.STAFF) BearFair21User user) {
 		final LocalDate start = LocalDate.of(2021, 6, 28);
 		final LocalDate now = LocalDate.now();
 		int day = start.until(now).getDays() + 1;

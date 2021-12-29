@@ -303,7 +303,7 @@ public class BearFair21 implements Listener {
 	public void onWorldChange(PlayerChangedWorldEvent event) {
 		Player player = event.getPlayer();
 		if (isNotAtBearFair(player)) return;
-		if (player.hasPermission("group.staff") && !PlayerUtils.isVanished(player))
+		if (player.hasPermission("Group.STAFF") && !PlayerUtils.isVanished(player))
 			player.chat("/cheats off");
 	}
 

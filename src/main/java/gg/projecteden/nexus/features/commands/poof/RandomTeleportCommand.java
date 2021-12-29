@@ -39,7 +39,7 @@ public class RandomTeleportCommand extends CustomCommand {
 
 	@Path
 	@Async
-	@Cooldown(value = TickTime.SECOND, x = 30, bypass = "group.admin")
+	@Cooldown(value = TickTime.SECOND, x = 30, bypass = "Group.ADMIN")
 	void rtp() {
 		final World world = world().getName().equalsIgnoreCase("world") ? Objects.requireNonNull(Bukkit.getWorld("survival")) : world();
 

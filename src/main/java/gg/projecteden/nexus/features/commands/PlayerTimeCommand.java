@@ -6,6 +6,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.DescParseTickFormat;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -30,7 +31,7 @@ public class PlayerTimeCommand extends CustomCommand {
 	}
 
 	@Path("<time> [player]")
-	public void time(String time, @Arg(value = "self", permission = "group.staff") Player player) {
+	public void time(String time, @Arg(value = "self", permission = Group.STAFF) Player player) {
 		long ticks = PlayerUtils.setPlayerTime(player, time);
 		String type = "set";
 		if (time.startsWith("@"))

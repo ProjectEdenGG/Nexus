@@ -39,7 +39,7 @@ public class KillEntityCommand extends CustomCommand {
 	}
 
 	@Path("<entityType> <radius> [--force]")
-	void spawnEntity(@Arg(type = KillEntityArg.class) List<KillEntityArg> killEntityArg, double radius, @Switch @Arg(permission = "group.admin") boolean force) {
+	void spawnEntity(@Arg(type = KillEntityArg.class) List<KillEntityArg> killEntityArg, double radius, @Switch @Arg(permission = Group.ADMIN) boolean force) {
 		if (!isAdmin() && radius > 200)
 			error("Radius cannot be greater than 200");
 

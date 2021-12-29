@@ -70,7 +70,7 @@ public class SocialMediaCommand extends CustomCommand {
 	}
 
 	@Path("link <site> <username> [player]")
-	void link(SocialMediaSite site, String username, @Arg(value = "self", permission = "group.seniorstaff") SocialMediaUser player) {
+	void link(SocialMediaSite site, String username, @Arg(value = "self", permission = Group.SENIOR_STAFF) SocialMediaUser player) {
 		username = username.replaceAll("(http(s)?://)?(www.)?" + site.getProfileUrl().replace("https://", "").replace("%s", ""), "");
 
 		if (site == SocialMediaSite.YOUTUBE && (username.length() != 24 || !username.startsWith("UC")))
@@ -82,7 +82,7 @@ public class SocialMediaCommand extends CustomCommand {
 	}
 
 	@Path("unlink <site> [player]")
-	void unlink(SocialMediaSite site, @Arg(value = "self", permission = "group.staff") SocialMediaUser player) {
+	void unlink(SocialMediaSite site, @Arg(value = "self", permission = Group.STAFF) SocialMediaUser player) {
 		player.removeConnection(site);
 		service.save(player);
 		send(PREFIX + "Unlinked from &e" + camelCase(site));
@@ -91,7 +91,7 @@ public class SocialMediaCommand extends CustomCommand {
 	@TabCompleteIgnore
 	@Path("mature [player]")
 	@Description("Mark social media accounts as 18+ only")
-	void mature(@Arg(value = "self", permission = "group.staff") SocialMediaUser player) {
+	void mature(@Arg(value = "self", permission = Group.STAFF) SocialMediaUser player) {
 		if (player.isMature() && !isStaff())
 			error("Only staff can remove 18+ status");
 

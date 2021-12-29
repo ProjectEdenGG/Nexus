@@ -82,7 +82,7 @@ public class VoteCommand extends CustomCommand {
 	}
 
 	@Path("times [player]")
-	void time(@Arg(value = "self", permission = "group.staff") OfflinePlayer player) {
+	void time(@Arg(value = "self", permission = Group.STAFF) OfflinePlayer player) {
 		voter = service.get(player);
 		line();
 		for (VoteSite site : VoteSite.getActiveSites()) {
@@ -97,7 +97,7 @@ public class VoteCommand extends CustomCommand {
 	}
 
 	@Path("history [player] [page]")
-	void history(@Arg(value = "self", permission = "group.staff") Voter voter, @Arg("1") int page) {
+	void history(@Arg(value = "self", permission = Group.STAFF) Voter voter, @Arg("1") int page) {
 		if (voter.getVotes().isEmpty())
 			error(voter.getNickname() + " has not voted");
 
@@ -147,7 +147,7 @@ public class VoteCommand extends CustomCommand {
 	}
 
 	@Path("reminders [enable] [player]")
-	void reminders(Boolean enable, @Arg(value = "self", permission = "group.staff") Voter voter) {
+	void reminders(Boolean enable, @Arg(value = "self", permission = Group.STAFF) Voter voter) {
 		if (enable == null)
 			enable = !voter.isReminders();
 

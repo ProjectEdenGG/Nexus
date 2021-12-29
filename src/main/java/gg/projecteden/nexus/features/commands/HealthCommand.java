@@ -4,6 +4,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.Tasks;
@@ -26,7 +27,7 @@ public class HealthCommand extends CustomCommand {
 	}
 
 	@Path("<player> [number]")
-	void health(@Arg("self") Player player, @Arg(permission = "group.staff", min = 0.0, max = 20.0) Double health) {
+	void health(@Arg("self") Player player, @Arg(permission = Group.STAFF, min = 0.0, max = 20.0) Double health) {
 		if (health == null)
 			send(PREFIX + player.getName() + "'s health is " + nf.format(player.getHealth()));
 		else {
@@ -36,7 +37,7 @@ public class HealthCommand extends CustomCommand {
 	}
 
 	@Path("target [number]")
-	void target(@Arg(permission = "group.staff", min = 0.0, max = 20.0) Double health) {
+	void target(@Arg(permission = Group.STAFF, min = 0.0, max = 20.0) Double health) {
 		LivingEntity target = getTargetLivingEntityRequired();
 
 		Tasks.GlowTask.builder()

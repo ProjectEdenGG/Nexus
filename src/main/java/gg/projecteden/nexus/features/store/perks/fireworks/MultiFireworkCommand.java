@@ -12,7 +12,7 @@ import gg.projecteden.utils.TimeUtils.TickTime;
 
 @Aliases("multifw")
 @Permission("firework.launch")
-@Cooldown(value = TickTime.SECOND, x = 10, bypass = "group.staff")
+@Cooldown(value = TickTime.SECOND, x = 10, bypass = "Group.STAFF")
 public class MultiFireworkCommand extends CustomCommand {
 
 	public MultiFireworkCommand(CommandEvent event) {

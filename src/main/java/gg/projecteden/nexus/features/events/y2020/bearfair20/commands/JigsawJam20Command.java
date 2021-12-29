@@ -105,7 +105,7 @@ public class JigsawJam20Command extends CustomCommand implements Listener {
 	@Async
 	@Confirm
 	@Path("quit [player]")
-	void delete(@Arg(value = "self", permission = "group.staff") JigsawJammer jammer) {
+	void delete(@Arg(value = "self", permission = Group.STAFF) JigsawJammer jammer) {
 		service.delete(jammer);
 		send(PREFIX + "Quit game. Ask a staff member to reset the board.");
 	}
