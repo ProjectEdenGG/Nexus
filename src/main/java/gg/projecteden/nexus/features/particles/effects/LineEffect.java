@@ -12,7 +12,7 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.util.Vector;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -23,7 +23,7 @@ public class LineEffect {
 	private int taskId;
 
 	@Builder(buildMethodName = "start")
-	public LineEffect(Player player, Location startLoc, Location endLoc, Particle particle, int count, double density, int ticks, double speed,
+	public LineEffect(HumanEntity player, Location startLoc, Location endLoc, Particle particle, int count, double density, int ticks, double speed,
 					  boolean rainbow, Color color, double disX, double disY, double disZ,
 					  double distance, double maxLength, int startDelay, int pulseDelay) {
 

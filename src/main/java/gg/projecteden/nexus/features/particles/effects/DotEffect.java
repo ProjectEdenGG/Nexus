@@ -12,6 +12,7 @@ import lombok.Getter;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -21,7 +22,7 @@ public class DotEffect {
 	private int taskId;
 
 	@Builder(buildMethodName = "start")
-	public DotEffect(Player player, Location location, boolean clientSide, Particle particle, int count, int ticks, double speed,
+	public DotEffect(HumanEntity player, Location location, boolean clientSide, Particle particle, int count, int ticks, double speed,
 					 boolean rainbow, Color color, double disX, double disY, double disZ,
 					 int startDelay, int pulseDelay) {
 
@@ -82,9 +83,10 @@ public class DotEffect {
 				.count(finalCount)
 				.color(red.get(), green.get(), blue.get());
 
-			if (clientSide)
-				builder.receivers(player);
-			else
+			if (clientSide) {
+				if (player instanceof Player)
+					builder.receivers((Player) player);
+			} else
 				builder.allPlayers();
 
 			builder.spawn();

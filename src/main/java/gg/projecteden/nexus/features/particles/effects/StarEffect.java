@@ -12,7 +12,7 @@ import lombok.Getter;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.util.Vector;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -23,7 +23,7 @@ public class StarEffect {
 	private int taskId;
 
 	@Builder(buildMethodName = "start")
-	StarEffect(Player player, Location location, boolean updateLoc, Vector updateVector, Particle particle, boolean rotate, double rotateSpeed,
+	StarEffect(HumanEntity player, Location location, boolean updateLoc, Vector updateVector, Particle particle, boolean rotate, double rotateSpeed,
 			   boolean rainbow, Color color, int count, int density, double radius, int ticks, double speed, double growthSpeed,
 			   double disX, double disY, double disZ, int startDelay, int pulseDelay) {
 

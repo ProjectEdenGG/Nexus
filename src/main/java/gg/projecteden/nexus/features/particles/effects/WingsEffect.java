@@ -18,6 +18,7 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -35,7 +36,7 @@ public class WingsEffect {
 	private static final boolean x = true;
 
 	@Builder(buildMethodName = "start")
-	public WingsEffect(Player player, boolean flapMode, WingStyle wingStyle, int ticks, int flapSpeed,
+	public WingsEffect(HumanEntity player, boolean flapMode, WingStyle wingStyle, int ticks, int flapSpeed,
 					   Color color1, boolean rainbow1, Color color2, boolean rainbow2, Color color3, boolean rainbow3,
 					   int startDelay, int pulseDelay) {
 
@@ -975,8 +976,8 @@ public class WingsEffect {
 			return new ItemBuilder(Material.ELYTRA).name("&3Style #" + (ordinal() + 1));
 		}
 
-		public void preview(Player player) {
-			ParticleOwner owner = new ParticleService().get(player);
+		public void preview(HumanEntity entity) {
+			ParticleOwner owner = new ParticleService().get(entity);
 			owner.cancel(ParticleType.WINGS);
 
 			Map<ParticleSetting, Object> wingSettings = owner.getSettings(ParticleType.WINGS);
@@ -998,7 +999,7 @@ public class WingsEffect {
 			wingSettings.put(ParticleSetting.WINGS_RAINBOW_THREE, false);
 
 			Tasks.wait(5, () -> {
-				ParticleType.WINGS.run(player);
+				ParticleType.WINGS.run(owner);
 
 				owner.getTasks().add(new ParticleTask(ParticleType.WINGS, Tasks.wait(TickTime.SECOND.x(15), () -> {
 					owner.cancel(ParticleType.WINGS);
