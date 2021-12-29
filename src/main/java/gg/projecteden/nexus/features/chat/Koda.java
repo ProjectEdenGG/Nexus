@@ -259,8 +259,10 @@ public class Koda {
 				int ping = event.getChatter().getOnlinePlayer().getPing();
 				double tps = Bukkit.getTPS()[1];
 
-				if (ping > 200 && tps > 16)
+				if (ping > 200 && tps > 16) {
+					event.setCancelled(true);
 					respond(event, StaticChannel.LOCAL.getChannel(), "[player], you are lagging (" + ping + "ms), not the server. Try relogging or rebooting your router.");
+				}
 				break;
 		}
 	}
