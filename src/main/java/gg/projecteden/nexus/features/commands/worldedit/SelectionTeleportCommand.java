@@ -17,19 +17,19 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 @Redirect(from = "//sel p", to = "//sel poly")
 @Redirect(from = "//sel e", to = "//sel extend")
 public class SelectionTeleportCommand extends CustomCommand {
-	private final WorldEditUtils worldEditUtils;
+	private final WorldEditUtils worldedit;
 
 	public SelectionTeleportCommand(CommandEvent event) {
 		super(event);
-		worldEditUtils = new WorldEditUtils(player());
+		worldedit = new WorldEditUtils(player());
 	}
 
 	@Path
 	void teleport() {
-		Region playerSelection = worldEditUtils.getPlayerSelection(player());
+		Region playerSelection = worldedit.getPlayerSelection(player());
 		if (playerSelection == null)
 			error("No selection to teleport to");
-		player().teleportAsync(worldEditUtils.toLocation(playerSelection.getCenter()), TeleportCause.COMMAND);
+		player().teleportAsync(worldedit.toLocation(playerSelection.getCenter()), TeleportCause.COMMAND);
 	}
 
 }

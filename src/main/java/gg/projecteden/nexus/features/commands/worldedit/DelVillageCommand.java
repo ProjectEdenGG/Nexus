@@ -26,11 +26,11 @@ public class DelVillageCommand extends CustomCommand {
 	void delVillage() {
 		WorldEditPlugin worldEditPlugin = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
 		LocalSession session = worldEditPlugin.getSession(player());
-		WorldEditUtils worldEditUtils = new WorldEditUtils(player());
-		worldEditUtils.setSelection(player(), location());
+		WorldEditUtils worldedit = new WorldEditUtils(player());
+		worldedit.setSelection(player(), location());
 		ExpandAllCommand.expandAll(player(), 75);
-		worldEditUtils.set(worldEditUtils.getPlayerSelection(player()), BlockTypes.AIR);
-		worldEditUtils.fixFlat(session, worldEditUtils.getPlayerSelection(player()));
+		worldedit.set(worldedit.getPlayerSelection(player()), BlockTypes.AIR);
+		worldedit.fixFlat(session, worldedit.getPlayerSelection(player()));
 		send("&3Successfully removed the village");
 	}
 }

@@ -120,12 +120,12 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 		if (!isResourceWorld(world()))
 			throw new InvalidInputException("You must be in a resource world");
 
-		WorldEditUtils worldEditUtils = new WorldEditUtils(player());
-		Region selection = worldEditUtils.getPlayerSelection(player());
+		WorldEditUtils worldedit = new WorldEditUtils(player());
+		Region selection = worldedit.getPlayerSelection(player());
 		if (selection.getArea() > 1000000)
 			error("Max selection size is 1000000");
 
-		for (Block block : worldEditUtils.getBlocks(selection))
+		for (Block block : worldedit.getBlocks(selection))
 			logger.add(block.getLocation());
 
 		save(world());

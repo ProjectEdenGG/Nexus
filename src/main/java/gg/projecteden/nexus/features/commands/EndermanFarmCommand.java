@@ -41,14 +41,14 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @Aliases("endfarm")
 public class EndermanFarmCommand extends CustomCommand implements Listener {
-	private WorldEditUtils worldEditUtils;
+	private WorldEditUtils worldedit;
 	private WorldGuardUtils worldGuardUtils;
 
 	public EndermanFarmCommand(@NonNull CommandEvent event) {
 		super(event);
 
 		if (isPlayerCommandEvent()) {
-			worldEditUtils = new WorldEditUtils(player());
+			worldedit = new WorldEditUtils(player());
 			worldGuardUtils = new WorldGuardUtils(player());
 		}
 	}
@@ -92,7 +92,7 @@ public class EndermanFarmCommand extends CustomCommand implements Listener {
 		if (world().getEnvironment() != Environment.THE_END)
 			error("You must be in the end to run this command");
 
-		final Region selection = worldEditUtils.getPlayerSelection(player());
+		final Region selection = worldedit.getPlayerSelection(player());
 		if (selection == null)
 			error("You have not selected the farm");
 
