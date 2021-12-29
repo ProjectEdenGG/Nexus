@@ -33,10 +33,10 @@
     - Click to show emotes list
 
 #### Pets & Disguises
-- [ ] Pets
+- [x] Pets
     - Click NPC to change to random type
     - Shared with disguises
-- [ ] Disguises
+- [x] Disguises
     - Click NPC to change to random type
     - Shared with pets
 
@@ -46,18 +46,18 @@
 - [ ] AutoTorch
     - Click to activate temporary auto torch, places client side torch every couple seconds
     - Task lasts for 30s, Torches stay for 10s ▷
-- [ ] Vaults
+- [x] Vaults
     - Open 3x9 inventory ▷
-- [ ] Workbenches
+- [x] Workbenches
     - Open /workbenches
 - [x] Item Name
-    - N/A
+    - Dropped item with name
 - [ ] Hat
     - NPC with rotating hat materials
     - Fish, Glass, Coral, Bed, (Flowering) Azalea, etc
 - [ ] Firework Bow
     - Set off a firework (maybe arrow) ▷
-- [ ] Skull
+- [x] Skull
     - Click to change skull to yours
 - [ ] Player Plushies
     - Click to change to random one

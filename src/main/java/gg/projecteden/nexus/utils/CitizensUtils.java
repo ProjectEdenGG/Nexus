@@ -2,9 +2,11 @@ package gg.projecteden.nexus.utils;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.mobheads.MobHeadType;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.utils.EnumUtils;
 import lombok.Builder;
 import me.lexikiq.HasUniqueId;
 import net.citizensnpcs.api.CitizensAPI;
@@ -29,6 +31,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
+import static gg.projecteden.utils.RandomUtils.randomElement;
 
 public class CitizensUtils {
 
@@ -241,6 +244,27 @@ public class CitizensUtils {
 				region = new WorldGuardUtils(world).getProtectedRegion(regionName);
 				return this;
 			}
+		}
+	}
+
+	public static class NPCRandomizer {
+		private static final List<MobHeadType> disabledEntityTypes = List.of(MobHeadType.WITHER, MobHeadType.GHAST,
+			MobHeadType.ENDER_DRAGON, MobHeadType.ELDER_GUARDIAN, MobHeadType.IRON_GOLEM, MobHeadType.RAVAGER,
+			MobHeadType.HOGLIN, MobHeadType.ZOGLIN, MobHeadType.VEX);
+
+		private static final List<MobHeadType> availableTypes = EnumUtils.valuesExcept(MobHeadType.class, disabledEntityTypes.toArray(Enum<?>[]::new));
+
+		public static void randomize(int npcId, Player clicker) {
+			final MobHeadType mob = randomElement(availableTypes);
+
+			final NPC npc = CitizensUtils.getNPC(npcId);
+			npc.setBukkitEntityType(mob.getEntityType());
+			npc.getEntity().setSilent(true);
+
+			if (mob.getEntityType() == EntityType.PLAYER)
+				CitizensUtils.updateSkin(npcId, clicker.getName());
+			else if (mob.hasVariants())
+				mob.getVariantSetter().accept(npc.getEntity(), mob.getRandomVariant().get());
 		}
 	}
 }
