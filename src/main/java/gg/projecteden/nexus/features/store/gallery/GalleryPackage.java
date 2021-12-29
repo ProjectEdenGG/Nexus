@@ -19,7 +19,9 @@ import gg.projecteden.nexus.utils.FireworkLauncher;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.ArmorSlot;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
@@ -41,6 +43,7 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
@@ -101,7 +104,6 @@ public enum GalleryPackage {
 		}
 	},
 
-	// TODO Not as smooth as it should be, send update packets?
 	@Category(GalleryCategory.VISUALS)
 	RAINBOW_ARMOR(4530) {
 		private static RainbowArmorTask task;
@@ -109,9 +111,7 @@ public enum GalleryPackage {
 		@Override
 		public void init() {
 			Tasks.repeat(0, TickTime.SECOND.x(5), () -> {
-				final int nearby = OnlinePlayers.where()
-					.radius(CitizensUtils.locationOf(RAINBOW_ARMOR.getNpcId()), 35)
-					.get().size();
+				final int nearby = recipients().size();
 
 				if (nearby == 0) {
 					if (isActive())
@@ -123,13 +123,24 @@ public enum GalleryPackage {
 			});
 		}
 
+		private List<Player> recipients() {
+			return OnlinePlayers.where()
+				.radius(CitizensUtils.locationOf(RAINBOW_ARMOR.getNpcId()), 35)
+				.get();
+		}
+
 		private boolean isActive() {
 			return task != null;
 		}
 
 		private void start() {
+			final PlayerInventory inv = ((HumanEntity) npc().getEntity()).getInventory();
 			task = RainbowArmorTask.builder()
-				.inventory(((HumanEntity) npc().getEntity()).getInventory())
+				.inventory(inv)
+				.onIterate(() -> {
+					for (ArmorSlot slot : ArmorSlot.values())
+						PacketUtils.sendFakeItem(npc().getEntity(), recipients(), inv.getItem(slot.getSlot()), slot.getSlot());
+				})
 				.start();
 		}
 
