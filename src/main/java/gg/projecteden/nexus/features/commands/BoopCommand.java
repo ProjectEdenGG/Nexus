@@ -21,7 +21,7 @@ import org.bukkit.entity.Player;
 import java.util.List;
 
 @Description("Boop")
-@Cooldown(value = TickTime.SECOND, x = 5, bypass = "Group.ADMIN")
+@Cooldown(value = TickTime.SECOND, x = 5, bypass = Group.ADMIN)
 public class BoopCommand extends CustomCommand {
 
 	public BoopCommand(CommandEvent event) {

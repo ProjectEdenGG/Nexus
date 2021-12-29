@@ -22,7 +22,7 @@ public class ItemCommand extends CustomCommand {
 	}
 
 	@Path("<type> [amount] [nbt...]")
-	void run(Material material, @Arg(min = 1, max = 2304, minMaxBypass = "Group.STAFF") Integer amount, @Arg(permission = Group.STAFF) String nbt) {
+	void run(Material material, @Arg(min = 1, max = 2304, minMaxBypass = Group.STAFF) Integer amount, @Arg(permission = Group.STAFF) String nbt) {
 		PlayerUtils.giveItem(player(), material, amount == null ? material.getMaxStackSize() : amount, nbt);
 	}
 

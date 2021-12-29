@@ -49,7 +49,7 @@ public class CurrentTimeCommand extends CustomCommand {
 	}
 
 	@Path("update [player]")
-	@Cooldown(value = TickTime.HOUR, bypass = "Group.SENIOR_STAFF")
+	@Cooldown(value = TickTime.HOUR, bypass = Group.SENIOR_STAFF)
 	void update(@Arg(value = "self", permission = Group.SENIOR_STAFF) Player player) {
 		final String name = isSelf(player) ? "your" : Nickname.of(player) + "'s";
 		send(PREFIX + "Updating " + name + " timezone information...");

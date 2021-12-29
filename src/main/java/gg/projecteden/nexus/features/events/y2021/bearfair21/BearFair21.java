@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.islands.MainIsland.
 import gg.projecteden.nexus.features.events.y2021.bearfair21.islands.MinigameNightIsland;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.Merchants;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.models.bearfair21.BearFair21Config;
 import gg.projecteden.nexus.models.bearfair21.BearFair21ConfigService;
 import gg.projecteden.nexus.models.bearfair21.BearFair21User;
@@ -303,7 +304,7 @@ public class BearFair21 implements Listener {
 	public void onWorldChange(PlayerChangedWorldEvent event) {
 		Player player = event.getPlayer();
 		if (isNotAtBearFair(player)) return;
-		if (player.hasPermission("Group.STAFF") && !PlayerUtils.isVanished(player))
+		if (player.hasPermission(Group.STAFF) && !PlayerUtils.isVanished(player))
 			player.chat("/cheats off");
 	}
 

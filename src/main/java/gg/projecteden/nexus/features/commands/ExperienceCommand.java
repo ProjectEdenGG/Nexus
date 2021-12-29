@@ -23,7 +23,7 @@ public class ExperienceCommand extends CustomCommand {
 	}
 
 	@Path("<level>")
-	void level(@Arg(max = 10, minMaxBypass = "Group.SENIOR_STAFF") double amount) {
+	void level(@Arg(max = 10, minMaxBypass = Group.SENIOR_STAFF) double amount) {
 		set(player(), amount);
 	}
 
