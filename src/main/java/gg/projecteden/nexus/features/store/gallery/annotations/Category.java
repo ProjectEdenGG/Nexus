@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.store.gallery.annotations;
 import gg.projecteden.nexus.features.store.gallery.GalleryPackage;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -19,7 +18,6 @@ public @interface Category {
 
 	@Getter
 	@AllArgsConstructor
-	@RequiredArgsConstructor
 	enum GalleryCategory {
 		CHAT,
 		VISUALS,

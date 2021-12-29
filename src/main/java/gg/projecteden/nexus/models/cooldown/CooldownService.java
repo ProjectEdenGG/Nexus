@@ -156,8 +156,10 @@ public class CooldownService extends MongoPlayerService<Cooldown> {
 	@Override
 	protected void beforeSave(Cooldown cooldown) {
 		for (String key : new HashSet<>(cooldown.getCooldowns().keySet()))
-			if (cooldown.check(key))
-				cooldown.getCooldowns().remove(key);
+			try {
+				if (cooldown.check(key))
+					cooldown.getCooldowns().remove(key);
+			} catch (NullPointerException ignore) {}
 	}
 
 }

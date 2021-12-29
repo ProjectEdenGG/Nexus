@@ -8,9 +8,9 @@
     - Selecting wings will activate it on the NPC
 - [x] Invis Armor
     - N/A
-- [ ] NPCs
+- [x] NPCs
     - Rotate NPC between types/settings
-- [ ] Fireworks
+- [x] Fireworks
     - Set off a firework ▷
 - [ ] Rainbow Armor
     - Display rainbow armor on an NPC
@@ -19,7 +19,7 @@
     - N/A
 - [ ] Entity Name
     - Dog/Cat with colorful name (Koda/Bernie?)
-- [ ] Rainbow Beacon
+- [x] Rainbow Beacon
     - Activate rainbow beacon for 20s ▷
 
 #### Chat

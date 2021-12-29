@@ -128,6 +128,16 @@ public class CitizensUtils {
 		return npc;
 	}
 
+	public static Location locationOf(int id) {
+		return locationOf(getNPC(id));
+	}
+
+	public static Location locationOf(NPC npc) {
+		if (npc.getEntity() != null)
+			return npc.getEntity().getLocation();
+		return npc.getStoredLocation();
+	}
+
 	/**
 	 * Gets a list of NPCs owned by the specified player in a provided world. All parameters are optional.
 	 * @deprecated replaced by {@link NPCFinder}

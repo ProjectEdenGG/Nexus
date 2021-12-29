@@ -53,7 +53,7 @@ public class StoreGalleryNPCs {
 		loadDisplays();
 
 		// Update costumes
-		Tasks.repeat(TickTime.TICK.x(10), TickTime.SECOND.x(10), () -> {
+		Tasks.repeat(TickTime.SECOND, TickTime.SECOND.x(10), () -> {
 			for (DisplaySet displaySet : displays) {
 				Display display = displaySet.getNext();
 				if (display == null)
@@ -78,17 +78,20 @@ public class StoreGalleryNPCs {
 		});
 	}
 
-	private boolean canUse(Costume _costume) {
-		if (_costume.getModel().getMaterial() == Material.STONE_BUTTON)
-			if (_costume.getModel().getData() < 100)
-				if (!pirateHatColors.contains(_costume.getModel().getData()))
+	private boolean canUse(Costume costume) {
+		if (costume == null)
+			return false;
+
+		if (costume.getModel().getMaterial() == Material.STONE_BUTTON)
+			if (costume.getModel().getData() < 100)
+				if (!pirateHatColors.contains(costume.getModel().getData()))
 					return false;
 
 		for (DisplaySet _displaySet : displays)
 			for (Display _display : _displaySet.getDisplays())
 				for (ItemStack item : _display.getItems().values())
 					if (!isNullOrAir(item))
-						if (item.isSimilar(_costume.getItem()))
+						if (item.isSimilar(costume.getItem()))
 							return false;
 
 		return true;
