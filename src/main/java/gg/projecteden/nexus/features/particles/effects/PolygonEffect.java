@@ -13,6 +13,7 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Particle.DustOptions;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -24,7 +25,7 @@ public class PolygonEffect {
 	private int taskId;
 
 	@Builder(buildMethodName = "start")
-	public PolygonEffect(Player player, Location location, boolean updateLoc, Vector updateVector, Particle particle,
+	public PolygonEffect(HumanEntity player, Location location, boolean updateLoc, Vector updateVector, Particle particle,
 						 Boolean whole, boolean rotate, double rotateSpeed, Polygon polygon,
 						 boolean rainbow, Color color, int count, double radius, int ticks, double speed,
 						 double disX, double disY, double disZ, int startDelay, int pulseDelay,
@@ -171,10 +172,11 @@ public class PolygonEffect {
 		});
 	}
 
-	private void display(Player player, boolean clientSide, int finalCount, double finalSpeed, Particle finalParticle, AtomicInteger red, AtomicInteger green, AtomicInteger blue, Location newLoc, DustOptions dustOptions) {
-		if (clientSide)
-			ParticleUtils.display(player, finalParticle, newLoc, finalCount, red.get(), green.get(), blue.get(), finalSpeed, dustOptions);
-		else
+	private void display(HumanEntity entity, boolean clientSide, int finalCount, double finalSpeed, Particle finalParticle, AtomicInteger red, AtomicInteger green, AtomicInteger blue, Location newLoc, DustOptions dustOptions) {
+		if (clientSide) {
+			if (entity instanceof Player player)
+				ParticleUtils.display(player, finalParticle, newLoc, finalCount, red.get(), green.get(), blue.get(), finalSpeed, dustOptions);
+		} else
 			ParticleUtils.display(finalParticle, newLoc, finalCount, red.get(), green.get(), blue.get(), finalSpeed, dustOptions);
 	}
 

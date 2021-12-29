@@ -11,7 +11,7 @@ import lombok.Getter;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.util.Vector;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -22,7 +22,7 @@ public class SphereEffect {
 	private int taskId;
 
 	@Builder(buildMethodName = "start")
-	public SphereEffect(Player player, Location location, boolean updateLoc, Vector updateVector, Particle particle,
+	public SphereEffect(HumanEntity player, Location location, boolean updateLoc, Vector updateVector, Particle particle,
 						boolean rainbow, Color color, int count, int density, double radius, int ticks, double speed,
 						double disX, double disY, double disZ, int startDelay, int pulseDelay) {
 

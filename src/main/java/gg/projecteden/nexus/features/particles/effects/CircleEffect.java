@@ -13,6 +13,7 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Particle.DustOptions;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -23,7 +24,7 @@ public class CircleEffect {
 	private int taskId;
 
 	@Builder(buildMethodName = "start")
-	public CircleEffect(Player player, Location location, boolean updateLoc, Vector updateVector, Particle particle, boolean whole, boolean randomRotation,
+	public CircleEffect(HumanEntity player, Location location, boolean updateLoc, Vector updateVector, Particle particle, boolean whole, boolean randomRotation,
 						boolean rainbow, Color color, int count, int density, int ticks, double radius, double speed, boolean fast,
 						double disX, double disY, double disZ, int startDelay, int pulseDelay, boolean clientSide) {
 
@@ -94,7 +95,7 @@ public class CircleEffect {
 		});
 	}
 
-	private static void drawCircle(Player player, boolean randomRotation, boolean rainbow, double radius, double inc, int steps, double angularVelocityX, double angularVelocityY, double angularVelocityZ, double finalSpeed, int finalCount, Particle finalParticle, int finalLoops, Location finalLocation, boolean finalUpdateLoc, Vector finalUpdateVector, AtomicDouble hue, AtomicInteger red, AtomicInteger green, AtomicInteger blue, AtomicInteger step, boolean clientSide) {
+	private static void drawCircle(HumanEntity player, boolean randomRotation, boolean rainbow, double radius, double inc, int steps, double angularVelocityX, double angularVelocityY, double angularVelocityZ, double finalSpeed, int finalCount, Particle finalParticle, int finalLoops, Location finalLocation, boolean finalUpdateLoc, Vector finalUpdateVector, AtomicDouble hue, AtomicInteger red, AtomicInteger green, AtomicInteger blue, AtomicInteger step, boolean clientSide) {
 		for (int j = 0; j < finalLoops; j++) {
 			if (rainbow) {
 				hue.set(ParticleUtils.incHue(hue.get()));
@@ -124,10 +125,11 @@ public class CircleEffect {
 		}
 	}
 
-	private static void display(Player player, double finalSpeed, int finalCount, Particle finalParticle, AtomicInteger red, AtomicInteger green, AtomicInteger blue, boolean clientSide, Location loc, Vector v, DustOptions dustOptions) {
-		if (clientSide)
-			ParticleUtils.display(player, finalParticle, loc.clone().add(v), finalCount, red.get(), green.get(), blue.get(), finalSpeed, dustOptions);
-		else
+	private static void display(HumanEntity player, double finalSpeed, int finalCount, Particle finalParticle, AtomicInteger red, AtomicInteger green, AtomicInteger blue, boolean clientSide, Location loc, Vector v, DustOptions dustOptions) {
+		if (clientSide) {
+			if (player instanceof Player)
+			ParticleUtils.display((Player) player, finalParticle, loc.clone().add(v), finalCount, red.get(), green.get(), blue.get(), finalSpeed, dustOptions);
+		} else
 			ParticleUtils.display(finalParticle, loc.clone().add(v), finalCount, red.get(), green.get(), blue.get(), finalSpeed, dustOptions);
 	}
 }

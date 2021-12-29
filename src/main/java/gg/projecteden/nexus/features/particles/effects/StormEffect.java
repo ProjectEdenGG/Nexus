@@ -11,7 +11,7 @@ import lombok.Getter;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.util.Vector;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -21,7 +21,7 @@ public class StormEffect {
 	private int taskId;
 
 	@Builder(buildMethodName = "start")
-	public StormEffect(Player player, Location location, boolean updateLoc, Vector updateVector, RainPartile rainParticle,
+	public StormEffect(HumanEntity player, Location location, boolean updateLoc, Vector updateVector, RainPartile rainParticle,
 					   int density, double radius, int ticks, int startDelay, int pulseDelay) {
 
 		Particle cloudParticle = Particle.REDSTONE;

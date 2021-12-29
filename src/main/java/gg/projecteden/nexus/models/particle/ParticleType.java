@@ -13,9 +13,11 @@ import gg.projecteden.nexus.features.particles.effects.WingsEffect;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.util.Vector;
@@ -26,50 +28,50 @@ import java.util.Arrays;
 public enum ParticleType {
 	CIRCLE(Material.ENDER_PEARL, true) {
 		@Override
-		int[] start(ParticleOwner particleOwner) {
+		int[] start(ParticleOwner particleOwner, HumanEntity entity) {
 			Double radius = ParticleSetting.RADIUS.get(particleOwner, this);
 			Boolean rainbow = ParticleSetting.RAINBOW.get(particleOwner, this);
 			Color color = ParticleSetting.COLOR.get(particleOwner, this);
 			Boolean whole = ParticleSetting.WHOLE.get(particleOwner, this);
 
 			int taskId = CircleEffect.builder()
-					.player(particleOwner.getOnlinePlayer())
-					.updateLoc(true)
-					.density(100)
-					.radius(radius)
-					.ticks(-1)
-					.whole(whole)
-					.color(color)
-					.rainbow(rainbow)
-					.start()
-					.getTaskId();
+				.player(entity)
+				.updateLoc(true)
+				.density(100)
+				.radius(radius)
+				.ticks(-1)
+				.whole(whole)
+				.color(color)
+				.rainbow(rainbow)
+				.start()
+				.getTaskId();
 			return new int[]{taskId};
 		}
 	},
 	STAR(Material.FIREWORK_STAR, true) {
 		@Override
-		int[] start(ParticleOwner particleOwner) {
+		int[] start(ParticleOwner particleOwner, HumanEntity entity) {
 			Double rotateSpeed = ParticleSetting.ROTATE_SPEED.get(particleOwner, this);
 			Double radius = ParticleSetting.RADIUS.get(particleOwner, this);
 			Boolean rainbow = ParticleSetting.RAINBOW.get(particleOwner, this);
 			Color color = ParticleSetting.COLOR.get(particleOwner, this);
 
 			int taskId = StarEffect.builder()
-					.player(particleOwner.getOnlinePlayer())
-					.radius(radius)
-					.ticks(-1)
-					.updateLoc(true)
-					.color(color)
-					.rainbow(rainbow)
-					.rotateSpeed(rotateSpeed)
-					.start()
-					.getTaskId();
+				.player(entity)
+				.radius(radius)
+				.ticks(-1)
+				.updateLoc(true)
+				.color(color)
+				.rainbow(rainbow)
+				.rotateSpeed(rotateSpeed)
+				.start()
+				.getTaskId();
 			return new int[]{taskId};
 		}
 	},
 	TRIANGLE(Material.REDSTONE, true) {
 		@Override
-		int[] start(ParticleOwner particleOwner) {
+		int[] start(ParticleOwner particleOwner, HumanEntity entity) {
 			Double radius = ParticleSetting.RADIUS.get(particleOwner, this);
 			Boolean whole = ParticleSetting.WHOLE.get(particleOwner, this);
 			Double rotateSpeed = ParticleSetting.ROTATE_SPEED.get(particleOwner, this);
@@ -77,23 +79,23 @@ public enum ParticleType {
 			Color color = ParticleSetting.COLOR.get(particleOwner, this);
 
 			int taskId = PolygonEffect.builder()
-					.player(particleOwner.getOnlinePlayer())
-					.updateLoc(true)
-					.whole(whole)
-					.polygon(PolygonEffect.Polygon.TRIANGLE)
-					.radius(radius)
-					.ticks(-1)
-					.color(color)
-					.rainbow(rainbow)
-					.rotateSpeed(rotateSpeed)
-					.start()
-					.getTaskId();
+				.player(entity)
+				.updateLoc(true)
+				.whole(whole)
+				.polygon(PolygonEffect.Polygon.TRIANGLE)
+				.radius(radius)
+				.ticks(-1)
+				.color(color)
+				.rainbow(rainbow)
+				.rotateSpeed(rotateSpeed)
+				.start()
+				.getTaskId();
 			return new int[]{taskId};
 		}
 	},
 	SQUARE(Material.YELLOW_CARPET, true) {
 		@Override
-		int[] start(ParticleOwner particleOwner) {
+		int[] start(ParticleOwner particleOwner, HumanEntity entity) {
 			Double radius = ParticleSetting.RADIUS.get(particleOwner, this);
 			Boolean whole = ParticleSetting.WHOLE.get(particleOwner, this);
 			Double rotateSpeed = ParticleSetting.ROTATE_SPEED.get(particleOwner, this);
@@ -101,23 +103,23 @@ public enum ParticleType {
 			Color color = ParticleSetting.COLOR.get(particleOwner, this);
 
 			int taskId = PolygonEffect.builder()
-					.player(particleOwner.getOnlinePlayer())
-					.updateLoc(true)
-					.whole(whole)
-					.polygon(PolygonEffect.Polygon.SQUARE)
-					.radius(radius)
-					.ticks(-1)
-					.color(color)
-					.rainbow(rainbow)
-					.rotateSpeed(rotateSpeed)
-					.start()
-					.getTaskId();
+				.player(entity)
+				.updateLoc(true)
+				.whole(whole)
+				.polygon(PolygonEffect.Polygon.SQUARE)
+				.radius(radius)
+				.ticks(-1)
+				.color(color)
+				.rainbow(rainbow)
+				.rotateSpeed(rotateSpeed)
+				.start()
+				.getTaskId();
 			return new int[]{taskId};
 		}
 	},
 	PENTAGON(Material.PAPER, true) {
 		@Override
-		int[] start(ParticleOwner particleOwner) {
+		int[] start(ParticleOwner particleOwner, HumanEntity entity) {
 			Double radius = ParticleSetting.RADIUS.get(particleOwner, this);
 			Boolean whole = ParticleSetting.WHOLE.get(particleOwner, this);
 			Double rotateSpeed = ParticleSetting.ROTATE_SPEED.get(particleOwner, this);
@@ -125,23 +127,23 @@ public enum ParticleType {
 			Color color = ParticleSetting.COLOR.get(particleOwner, this);
 
 			int taskId = PolygonEffect.builder()
-					.player(particleOwner.getOnlinePlayer())
-					.updateLoc(true)
-					.whole(whole)
-					.polygon(PolygonEffect.Polygon.PENTAGON)
-					.radius(radius)
-					.ticks(-1)
-					.color(color)
-					.rainbow(rainbow)
-					.rotateSpeed(rotateSpeed)
-					.start()
-					.getTaskId();
+				.player(entity)
+				.updateLoc(true)
+				.whole(whole)
+				.polygon(PolygonEffect.Polygon.PENTAGON)
+				.radius(radius)
+				.ticks(-1)
+				.color(color)
+				.rainbow(rainbow)
+				.rotateSpeed(rotateSpeed)
+				.start()
+				.getTaskId();
 			return new int[]{taskId};
 		}
 	},
 	HEXAGON(Material.PAPER, true) {
 		@Override
-		int[] start(ParticleOwner particleOwner) {
+		int[] start(ParticleOwner particleOwner, HumanEntity entity) {
 			Double radius = ParticleSetting.RADIUS.get(particleOwner, this);
 			Boolean whole = ParticleSetting.WHOLE.get(particleOwner, this);
 			Double rotateSpeed = ParticleSetting.ROTATE_SPEED.get(particleOwner, this);
@@ -149,46 +151,46 @@ public enum ParticleType {
 			Color color = ParticleSetting.COLOR.get(particleOwner, this);
 
 			int taskId = PolygonEffect.builder()
-					.player(particleOwner.getOnlinePlayer())
-					.updateLoc(true)
-					.whole(whole)
-					.polygon(PolygonEffect.Polygon.HEXAGON)
-					.radius(radius)
-					.ticks(-1)
-					.color(color)
-					.rainbow(rainbow)
-					.rotateSpeed(rotateSpeed)
-					.start()
-					.getTaskId();
+				.player(entity)
+				.updateLoc(true)
+				.whole(whole)
+				.polygon(PolygonEffect.Polygon.HEXAGON)
+				.radius(radius)
+				.ticks(-1)
+				.color(color)
+				.rainbow(rainbow)
+				.rotateSpeed(rotateSpeed)
+				.start()
+				.getTaskId();
 			return new int[]{taskId};
 		}
 	},
 	NYAN_CAT(Material.OCELOT_SPAWN_EGG) {
 		@Override
-		int[] start(ParticleOwner particleOwner) {
+		int[] start(ParticleOwner particleOwner, HumanEntity entity) {
 			int taskId = NyanCatEffect.builder()
-					.player(particleOwner.getOnlinePlayer())
-					.ticks(-1)
-					.start()
-					.getTaskId();
+				.player(entity)
+				.ticks(-1)
+				.start()
+				.getTaskId();
 			return new int[]{taskId};
 		}
 	},
 	BANDS(Material.END_ROD) {
 		@Override
-		int[] start(ParticleOwner particleOwner) {
+		int[] start(ParticleOwner particleOwner, HumanEntity entity) {
 			int taskId = BandsEffect.builder()
-					.player(particleOwner.getOnlinePlayer())
-					.ticks(-1)
-					.rainbow(true)
-					.start()
-					.getTaskId();
+				.player(entity)
+				.ticks(-1)
+				.rainbow(true)
+				.start()
+				.getTaskId();
 			return new int[]{taskId};
 		}
 	},
 	HALO(Material.GOLDEN_HELMET) {
 		@Override
-		int[] start(ParticleOwner particleOwner) {
+		int[] start(ParticleOwner particleOwner, HumanEntity entity) {
 			Double radius = ParticleSetting.RADIUS.get(particleOwner, this);
 			Boolean rainbow = ParticleSetting.RAINBOW.get(particleOwner, this);
 			Color color = ParticleSetting.COLOR.get(particleOwner, this);
@@ -196,97 +198,97 @@ public enum ParticleType {
 			Vector vector = new Vector(0, 2.1, 0);
 			Location loc = particleOwner.getOnlinePlayer().getLocation().add(vector);
 			int taskId = CircleEffect.builder()
-					.player(particleOwner.getOnlinePlayer())
-					.location(loc)
-					.updateVector(vector)
-					.density(20)
-					.radius(radius)
-					.ticks(-1)
-					.color(color)
-					.rainbow(rainbow)
-					.start()
-					.getTaskId();
+				.player(entity)
+				.location(loc)
+				.updateVector(vector)
+				.density(20)
+				.radius(radius)
+				.ticks(-1)
+				.color(color)
+				.rainbow(rainbow)
+				.start()
+				.getTaskId();
 			return new int[]{taskId};
 		}
 	},
 	CIRCLES(Material.ENDER_EYE) {
 		@Override
-		int[] start(ParticleOwner particleOwner) {
+		int[] start(ParticleOwner particleOwner, HumanEntity entity) {
 			Boolean rainbow = ParticleSetting.RAINBOW.get(particleOwner, this);
 			Color color = ParticleSetting.COLOR.get(particleOwner, this);
 
 			int taskId1 = CircleEffect.builder()
-					.player(particleOwner.getOnlinePlayer())
-					.density(10)
-					.radius(0.333)
-					.ticks(-1)
-					.whole(true)
-					.updateLoc(true)
-					.color(color)
-					.rainbow(rainbow)
-					.start()
-					.getTaskId();
+				.player(entity)
+				.density(10)
+				.radius(0.333)
+				.ticks(-1)
+				.whole(true)
+				.updateLoc(true)
+				.color(color)
+				.rainbow(rainbow)
+				.start()
+				.getTaskId();
 			int taskId2 = CircleEffect.builder()
-					.player(particleOwner.getOnlinePlayer())
-					.density(20)
-					.radius(0.666)
-					.ticks(-1)
-					.whole(true)
-					.updateLoc(true)
-					.color(color)
-					.rainbow(rainbow)
-					.startDelay(20)
-					.start()
-					.getTaskId();
+				.player(entity)
+				.density(20)
+				.radius(0.666)
+				.ticks(-1)
+				.whole(true)
+				.updateLoc(true)
+				.color(color)
+				.rainbow(rainbow)
+				.startDelay(20)
+				.start()
+				.getTaskId();
 			int taskId3 = CircleEffect.builder()
-					.player(particleOwner.getOnlinePlayer())
-					.density(40)
-					.radius(0.999)
-					.ticks(-1)
-					.whole(true)
-					.updateLoc(true)
-					.color(color)
-					.rainbow(rainbow)
-					.startDelay(40)
-					.start()
-					.getTaskId();
+				.player(entity)
+				.density(40)
+				.radius(0.999)
+				.ticks(-1)
+				.whole(true)
+				.updateLoc(true)
+				.color(color)
+				.rainbow(rainbow)
+				.startDelay(40)
+				.start()
+				.getTaskId();
 			int taskId4 = CircleEffect.builder()
-					.player(particleOwner.getOnlinePlayer())
-					.density(60)
-					.radius(1.333)
-					.ticks(-1)
-					.whole(true)
-					.updateLoc(true)
-					.color(color)
-					.rainbow(rainbow)
-					.startDelay(60)
-					.start()
-					.getTaskId();
+				.player(entity)
+				.density(60)
+				.radius(1.333)
+				.ticks(-1)
+				.whole(true)
+				.updateLoc(true)
+				.color(color)
+				.rainbow(rainbow)
+				.startDelay(60)
+				.start()
+				.getTaskId();
 			return new int[]{taskId1, taskId2, taskId3, taskId4};
 		}
 	},
 	SPHERE(Material.SLIME_BALL) {
 		@Override
-		int[] start(ParticleOwner particleOwner) {
+		int[] start(ParticleOwner particleOwner, HumanEntity entity) {
 			Double radius = ParticleSetting.RADIUS.get(particleOwner, this);
 			Color color = ParticleSetting.COLOR.get(particleOwner, this);
 			Boolean rainbow = ParticleSetting.RAINBOW.get(particleOwner, this);
 
 			int taskId = SphereEffect.builder()
-					.player(particleOwner.getOnlinePlayer())
-					.radius(radius)
-					.ticks(-1)
-					.updateLoc(true)
-					.color(color)
-					.rainbow(rainbow)
-					.start()
-					.getTaskId();
+				.player(entity)
+				.radius(radius)
+				.ticks(-1)
+				.updateLoc(true)
+				.color(color)
+				.rainbow(rainbow)
+				.start()
+				.getTaskId();
 			return new int[]{taskId};
 		}
 	},
 	GROWING_STARS(Material.BONE_MEAL) {
 		@Override
-		int[] start(ParticleOwner particleOwner) {
+		int[] start(ParticleOwner particleOwner, HumanEntity entity) {
 			Double growthSpeed = ParticleSetting.STAR_GROWTH_SPEED.get(particleOwner, this);
 			Double rotateSpeed = ParticleSetting.ROTATE_SPEED.get(particleOwner, this);
 			Double radius = ParticleSetting.RADIUS.get(particleOwner, this);
@@ -294,42 +296,42 @@ public enum ParticleType {
 			Color color = ParticleSetting.COLOR.get(particleOwner, this);
 
 			int taskId = StarEffect.builder()
-					.player(particleOwner.getOnlinePlayer())
-					.radius(radius)
-					.ticks(-1)
-					.updateLoc(true)
-					.color(color)
-					.rainbow(rainbow)
-					.growthSpeed(growthSpeed)
-					.rotateSpeed(rotateSpeed)
-					.start()
-					.getTaskId();
+				.player(entity)
+				.radius(radius)
+				.ticks(-1)
+				.updateLoc(true)
+				.color(color)
+				.rainbow(rainbow)
+				.growthSpeed(growthSpeed)
+				.rotateSpeed(rotateSpeed)
+				.start()
+				.getTaskId();
 			return new int[]{taskId};
 		}
 	},
 	SPIRAL(Material.STRING) {
 		@Override
-		int[] start(ParticleOwner particleOwner) {
+		int[] start(ParticleOwner particleOwner, HumanEntity entity) {
 			Double radius = ParticleSetting.SPIRAL_RADIUS.get(particleOwner, this);
 			Boolean rainbow = ParticleSetting.RAINBOW.get(particleOwner, this);
 			Color color = ParticleSetting.COLOR.get(particleOwner, this);
 
 			int taskId = SpiralEffect.builder()
-					.player(particleOwner.getOnlinePlayer())
-					.radius(radius)
-					.ticks(-1)
-					.pulseDelay(2)
-					.color(color)
-					.rainbow(rainbow)
-					.updateLoc(true)
-					.start()
-					.getTaskId();
+				.player(entity)
+				.radius(radius)
+				.ticks(-1)
+				.pulseDelay(2)
+				.color(color)
+				.rainbow(rainbow)
+				.updateLoc(true)
+				.start()
+				.getTaskId();
 			return new int[]{taskId};
 		}
 	},
 	SPRITE(Material.SOUL_SAND) {
 		@Override
-		int[] start(ParticleOwner particleOwner) {
+		int[] start(ParticleOwner particleOwner, HumanEntity entity) {
 			Double radius = ParticleSetting.RADIUS.get(particleOwner, this);
 			Boolean rainbow = ParticleSetting.RAINBOW.get(particleOwner, this);
 			Color color = ParticleSetting.COLOR.get(particleOwner, this);
@@ -337,23 +339,23 @@ public enum ParticleType {
 			Vector vector = new Vector(0, 1.5, 0);
 			Location loc = particleOwner.getOnlinePlayer().getLocation().add(vector);
 			int taskId = CircleEffect.builder()
-					.player(particleOwner.getOnlinePlayer())
-					.location(loc)
-					.updateVector(vector)
-					.density(100)
-					.radius(radius)
-					.ticks(-1)
-					.randomRotation(true)
-					.color(color)
-					.rainbow(rainbow)
-					.start()
-					.getTaskId();
+				.player(entity)
+				.location(loc)
+				.updateVector(vector)
+				.density(100)
+				.radius(radius)
+				.ticks(-1)
+				.randomRotation(true)
+				.color(color)
+				.rainbow(rainbow)
+				.start()
+				.getTaskId();
 			return new int[]{taskId};
 		}
 	},
 	CHAOS(Material.FEATHER) {
 		@Override
-		int[] start(ParticleOwner particleOwner) {
+		int[] start(ParticleOwner particleOwner, HumanEntity entity) {
 			Double radius = ParticleSetting.RADIUS.get(particleOwner, this);
 			Boolean rainbow = ParticleSetting.RAINBOW.get(particleOwner, this);
 			Color color = ParticleSetting.COLOR.get(particleOwner, this);
@@ -361,24 +363,24 @@ public enum ParticleType {
 			Vector vector = new Vector(0, 1.5, 0);
 			Location loc = particleOwner.getOnlinePlayer().getLocation().add(vector);
 			int taskId = CircleEffect.builder()
-					.player(particleOwner.getOnlinePlayer())
-					.location(loc)
-					.updateVector(vector)
-					.density(100)
-					.radius(radius)
-					.ticks(-1)
-					.randomRotation(true)
-					.color(color)
-					.rainbow(rainbow)
-					.fast(true)
-					.start()
-					.getTaskId();
+				.player(entity)
+				.location(loc)
+				.updateVector(vector)
+				.density(100)
+				.radius(radius)
+				.ticks(-1)
+				.randomRotation(true)
+				.color(color)
+				.rainbow(rainbow)
+				.fast(true)
+				.start()
+				.getTaskId();
 			return new int[]{taskId};
 		}
 	},
 	DOUBLE_CHAOS(Material.CYAN_WOOL) {
 		@Override
-		int[] start(ParticleOwner particleOwner) {
+		int[] start(ParticleOwner particleOwner, HumanEntity entity) {
 			Double radius1 = ParticleSetting.DOUBLE_CHAOS_RADIUS_ONE.get(particleOwner, this);
 			Boolean rainbow1 = ParticleSetting.DOUBLE_CHAOS_RAINBOW_ONE.get(particleOwner, this);
 			Color color1 = ParticleSetting.DOUBLE_CHAOS_COLOR_ONE.get(particleOwner, this);
@@ -390,55 +392,55 @@ public enum ParticleType {
 			Vector vector = new Vector(0, 1.5, 0);
 			Location loc = particleOwner.getOnlinePlayer().getLocation().add(vector);
 			int taskId1 = CircleEffect.builder()
-					.player(particleOwner.getOnlinePlayer())
-					.location(loc)
-					.updateVector(vector)
-					.density(100)
-					.radius(radius1)
-					.ticks(-1)
-					.randomRotation(true)
-					.color(color1)
-					.rainbow(rainbow1)
-					.fast(true)
-					.start()
-					.getTaskId();
+				.player(entity)
+				.location(loc)
+				.updateVector(vector)
+				.density(100)
+				.radius(radius1)
+				.ticks(-1)
+				.randomRotation(true)
+				.color(color1)
+				.rainbow(rainbow1)
+				.fast(true)
+				.start()
+				.getTaskId();
 			int taskId2 = CircleEffect.builder()
-					.player(particleOwner.getOnlinePlayer())
-					.location(loc)
-					.updateVector(vector)
-					.density(100)
-					.radius(radius2)
-					.ticks(-1)
-					.randomRotation(true)
-					.color(color2)
-					.rainbow(rainbow2)
-					.fast(true)
-					.startDelay(20)
-					.start()
-					.getTaskId();
+				.player(entity)
+				.location(loc)
+				.updateVector(vector)
+				.density(100)
+				.radius(radius2)
+				.ticks(-1)
+				.randomRotation(true)
+				.color(color2)
+				.rainbow(rainbow2)
+				.fast(true)
+				.startDelay(20)
+				.start()
+				.getTaskId();
 			return new int[]{taskId1, taskId2};
 		}
 	},
 	STORM(Material.COBWEB) {
 		@Override
-		int[] start(ParticleOwner particleOwner) {
+		int[] start(ParticleOwner particleOwner, HumanEntity entity) {
 			Double radius = ParticleSetting.RADIUS.get(particleOwner, this);
 			StormEffect.RainPartile rainPartile = ParticleSetting.STORM_RAIN_PARTICLE.get(particleOwner, this);
 
 			int taskId = StormEffect.builder()
-					.player(particleOwner.getOnlinePlayer())
-					.ticks(-1)
-					.updateLoc(true)
-					.radius(radius)
-					.rainParticle(rainPartile)
-					.start()
-					.getTaskId();
+				.player(entity)
+				.ticks(-1)
+				.updateLoc(true)
+				.radius(radius)
+				.rainParticle(rainPartile)
+				.start()
+				.getTaskId();
 			return new int[]{taskId};
 		}
 	},
 	DISCO(Material.REDSTONE_LAMP) {
 		@Override
-		int[] start(ParticleOwner particleOwner) {
+		int[] start(ParticleOwner particleOwner, HumanEntity entity) {
 			DiscoEffect.Direction direction = ParticleSetting.DISCO_DIRECTION.get(particleOwner, this);
 			DiscoEffect.RainbowOption rainbowOption = ParticleSetting.DISCO_RAINBOW_OPTION.get(particleOwner, this);
 			Double radius = ParticleSetting.RADIUS.get(particleOwner, this);
@@ -454,26 +456,26 @@ public enum ParticleType {
 			Location loc = particleOwner.getOnlinePlayer().getLocation().add(vector);
 
 			int taskId = DiscoEffect.builder()
-					.player(particleOwner.getOnlinePlayer())
-					.ticks(-1)
-					.lineLength(lineLength)
-					.maxLines(4)
-					.sphereRadius(radius)
-					.direction(direction)
-					.sphereColor(sphereColor)
-					.sphereRainbow(sphereRainbow)
-					.lineColor(lineColor)
-					.lineRainbow(lineRainbow)
-					.rainbowOption(rainbowOption)
-					.location(loc)
-					.start()
-					.getTaskId();
-			return new int[] {taskId};
+				.player(entity)
+				.ticks(-1)
+				.lineLength(lineLength)
+				.maxLines(4)
+				.sphereRadius(radius)
+				.direction(direction)
+				.sphereColor(sphereColor)
+				.sphereRainbow(sphereRainbow)
+				.lineColor(lineColor)
+				.lineRainbow(lineRainbow)
+				.rainbowOption(rainbowOption)
+				.location(loc)
+				.start()
+				.getTaskId();
+			return new int[]{taskId};
 		}
 	},
 	WINGS(Material.ELYTRA) {
 		@Override
-		int[] start(ParticleOwner particleOwner) {
+		public int[] start(ParticleOwner particleOwner, HumanEntity entity) {
 			Boolean flapMode = ParticleSetting.WINGS_FLAP_MODE.get(particleOwner, this);
 			Integer flapSpeed = ParticleSetting.WINGS_FLAP_SPEED.get(particleOwner, this);
 			WingsEffect.WingStyle style = ParticleSetting.WINGS_STYLE.get(particleOwner, this);
@@ -485,20 +487,20 @@ public enum ParticleType {
 			Boolean rainbow3 = ParticleSetting.WINGS_RAINBOW_THREE.get(particleOwner, this);
 
 			int taskId = WingsEffect.builder()
-					.player(particleOwner.getOnlinePlayer())
-					.flapMode(flapMode)
-					.flapSpeed(flapSpeed)
-					.color1(color1)
-					.rainbow1(rainbow1)
-					.color2(color2)
-					.rainbow2(rainbow2)
-					.color3(color3)
-					.rainbow3(rainbow3)
-					.ticks(-1)
-					.wingStyle(style)
-					.start()
-					.getTaskId();
-			return new int[] {taskId};
+				.player(entity)
+				.flapMode(flapMode)
+				.flapSpeed(flapSpeed)
+				.color1(color1)
+				.rainbow1(rainbow1)
+				.color2(color2)
+				.rainbow2(rainbow2)
+				.color3(color3)
+				.rainbow3(rainbow3)
+				.ticks(-1)
+				.wingStyle(style)
+				.start()
+				.getTaskId();
+			return new int[]{taskId};
 		}
 
 		@Override
@@ -543,7 +545,11 @@ public enum ParticleType {
 		return Arrays.stream(ParticleType.values()).filter(effectType -> !Arrays.asList(particleTypes).contains(effectType)).toArray(ParticleType[]::new);
 	}
 
-	abstract int[] start(ParticleOwner particleOwner);
+	public int[] start(ParticleOwner particleOwner) {
+		return start(particleOwner, (HumanEntity) Bukkit.getEntity(particleOwner.getUuid()));
+	}
+
+	abstract int[] start(ParticleOwner particleOwner, HumanEntity entity);
 
 	public void run(Player player) {
 		run(new ParticleService().get(player));
