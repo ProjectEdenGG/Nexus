@@ -144,6 +144,7 @@ public enum GalleryPackage {
 					itemFrame.setRotation(Rotation.FLIPPED_45);
 					itemFrame.setVisible(false);
 					itemFrame.setItem(getRandomPlushie());
+					itemFrame.setSilent(true);
 					Tasks.cancel(taskId.get());
 				} catch (Exception ignore) {}
 			}));
