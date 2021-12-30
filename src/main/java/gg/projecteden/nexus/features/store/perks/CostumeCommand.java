@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateStartEvent;
 import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
+import gg.projecteden.nexus.features.store.gallery.StoreGallery;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -70,6 +71,8 @@ public class CostumeCommand extends CustomCommand implements Listener {
 		taskId = Tasks.repeat(TickTime.TICK, TickTime.TICK, () -> {
 			for (Player player : OnlinePlayers.getAll())
 				service.get(player).sendCostumePacket();
+			for (Player player : OnlinePlayers.where().world(StoreGallery.getWorld()).get())
+				service.get(player).sendDisplayCostumePacket();
 		});
 	}
 
