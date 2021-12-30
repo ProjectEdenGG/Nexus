@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.particles;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import gg.projecteden.nexus.Nexus;
+import lombok.Data;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -28,6 +29,30 @@ public class ParticleUtils {
 		rgb[1] = g;
 		rgb[2] = b;
 		return rgb;
+	}
+
+	@Data
+	public static class ParticleColor {
+		private double hue;
+		private int red;
+		private int green;
+		private int blue;
+
+		public ParticleColor(org.bukkit.Color color) {
+			this.red = color.getRed();
+			this.green = color.getGreen();
+			this.blue = color.getBlue();
+		}
+
+		public void incrementRainbow() {
+			if (hue >= 20.0) hue = 0.0;
+			hue += 0.1;
+
+			int argb = Color.HSBtoRGB((float) (hue / 20.0F), 1.0F, 1.0F);
+			red = argb >> 16 & 255;
+			green = argb >> 8 & 255;
+			blue = argb & 255;
+		}
 	}
 
 	public static void display(Particle particle, Location location, int count, double x, double y, double z, double speed) {
@@ -63,6 +88,15 @@ public class ParticleUtils {
 	public static Particle.DustOptions newDustOption(Particle particle, int red, int green, int blue) {
 		if (particle.equals(Particle.REDSTONE)) {
 			org.bukkit.Color color = org.bukkit.Color.fromRGB(red, green, blue);
+			return new Particle.DustOptions(color, 1.0F);
+		}
+
+		return null;
+	}
+
+	public static Particle.DustOptions newDustOption(Particle particle, ParticleColor particleColor) {
+		if (particle.equals(Particle.REDSTONE)) {
+			org.bukkit.Color color = org.bukkit.Color.fromRGB(particleColor.getRed(), particleColor.getGreen(), particleColor.getBlue());
 			return new Particle.DustOptions(color, 1.0F);
 		}
 
