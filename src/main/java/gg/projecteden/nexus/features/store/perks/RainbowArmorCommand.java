@@ -1,5 +1,10 @@
 package gg.projecteden.nexus.features.store.perks;
 
+import fr.minuskube.inv.ClickableItem;
+import fr.minuskube.inv.SmartInventory;
+import fr.minuskube.inv.content.InventoryContents;
+import fr.minuskube.inv.content.InventoryProvider;
+import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MinigamerQuitEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -9,22 +14,18 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.rainbowarmor.RainbowArmor;
 import gg.projecteden.nexus.models.rainbowarmor.RainbowArmorService;
-import gg.projecteden.nexus.models.rainbowarmor.RainbowArmorTask;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils.ArmorSlot;
+import gg.projecteden.nexus.utils.StringUtils.Rainbow;
 import lombok.NoArgsConstructor;
-import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.inventory.ItemStack;
 
 import static gg.projecteden.nexus.features.store.perks.RainbowArmorCommand.PERMISSION;
-import static gg.projecteden.nexus.models.rainbowarmor.RainbowArmorTask.isLeatherArmor;
 
 @NoArgsConstructor
 @Permission(PERMISSION)
@@ -53,44 +54,21 @@ public class RainbowArmorCommand extends CustomCommand implements Listener {
 
 		if (rainbowArmor.isEnabled()) {
 			rainbowArmor.stop();
-			send("&cRainbow armor unequipped!");
+			send(PREFIX + "&cDisabled");
 			rainbowArmor.setEnabled(false);
 		} else {
 			rainbowArmor.start();
 			rainbowArmor.setEnabled(true);
-			send("&cR&6a&ei&an&bb&5o&dw &earmor equipped!");
+			send(PREFIX + Rainbow.apply("Enabled"));
 		}
 
 		service.save(rainbowArmor);
 	}
 
-	// Remove color
-	@EventHandler
-	public void onInventoryClick(InventoryClickEvent event) {
-		if (!(event.getWhoClicked() instanceof Player player))
-			return;
-		if (event.getSlotType() != InventoryType.SlotType.ARMOR)
-			return;
-
-		ItemStack item = event.getCurrentItem();
-		if (player.getGameMode() != GameMode.SURVIVAL)
-			return;
-
-		RainbowArmor rainbowArmor = new RainbowArmorService().get(player);
-		if (rainbowArmor.isEnabled())
-			if (isLeatherArmor(item))
-				RainbowArmorTask.removeColor(item);
+	@Path("menu")
+	void menu() {
+		new RainbowArmorProvider().open(player());
 	}
-
-	@EventHandler
-	public void onDeath(PlayerDeathEvent event) {
-		RainbowArmor rainbowArmor = new RainbowArmorService().get(event.getEntity());
-		if (rainbowArmor.isEnabled())
-			for (ItemStack itemStack : event.getDrops())
-				if (isLeatherArmor(itemStack))
-					RainbowArmorTask.removeColor(itemStack);
-	}
-
 
 	// Stop
 	@EventHandler
@@ -127,6 +105,41 @@ public class RainbowArmorCommand extends CustomCommand implements Listener {
 
 	private void stop(Player player) {
 		new RainbowArmorService().get(player).stop();
+	}
+
+	private static class RainbowArmorProvider extends MenuUtils implements InventoryProvider {
+		private final RainbowArmorService service = new RainbowArmorService();
+
+		@Override
+		public void open(Player player, int page) {
+			SmartInventory.builder()
+				.provider(this)
+				.size(6, 9)
+				.title(Rainbow.apply("Rainbow Armor"))
+				.build()
+				.open(player, page);
+		}
+
+		@Override
+		public void init(Player player, InventoryContents contents) {
+			final RainbowArmor user = service.get(player);
+
+			addCloseItem(contents);
+
+			for (ArmorSlot slot : ArmorSlot.values()) {
+				final ItemBuilder other;
+				if (user.isSlotEnabled(slot))
+					other = new ItemBuilder(user.getShownIcon(slot)).name("&aShown").lore("&cClick to hide");
+				else
+					other = new ItemBuilder(user.getHiddenIcon(slot)).name("&cHidden").lore("&aClick to show");
+
+				contents.set(slot.ordinal() + 1, 4, ClickableItem.from(other.build(), e -> {
+					user.toggleSlot(slot);
+					service.save(user);
+					open(player);
+				}));
+			}
+		}
 	}
 
 }

@@ -25,6 +25,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -264,6 +265,19 @@ public class CitizensUtils {
 			if (mob.getEntityType() == EntityType.PLAYER)
 				CitizensUtils.updateSkin(npcId, clicker.getName());
 			else if (mob.hasVariants())
+				mob.getVariantSetter().accept(npc.getEntity(), mob.getRandomVariant().get());
+		}
+
+		public static void randomize(int npcId) {
+			final ArrayList<MobHeadType> availableTypes = new ArrayList<>(NPCRandomizer.availableTypes);
+			availableTypes.remove(MobHeadType.PLAYER);
+			final MobHeadType mob = randomElement(availableTypes);
+
+			final NPC npc = CitizensUtils.getNPC(npcId);
+			npc.setBukkitEntityType(mob.getEntityType());
+			npc.getEntity().setSilent(true);
+
+			if (mob.hasVariants())
 				mob.getVariantSetter().accept(npc.getEntity(), mob.getRandomVariant().get());
 		}
 	}

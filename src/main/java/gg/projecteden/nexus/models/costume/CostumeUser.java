@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
+
 @Data
 @Entity(value = "costume_user", noClassnameStored = true)
 @NoArgsConstructor
@@ -52,6 +54,10 @@ public class CostumeUser implements PlayerOwnedObject {
 
 	public void setActiveCostume(Costume activeCostume) {
 		setActiveCostumeId(activeCostume == null ? null : activeCostume.getId());
+	}
+
+	public boolean hasActiveCostume() {
+		return !isNullOrEmpty(activeCostume);
 	}
 
 	public boolean owns(CustomModel model) {
