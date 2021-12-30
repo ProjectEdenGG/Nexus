@@ -64,7 +64,7 @@ public class CommandOverrideListener implements Listener {
 					}
 
 					int limit = 0;
-					for (int i = 1; i <= 6; i++)
+					for (int i = 1; i <= 99; i++)
 						if (player.hasPermission("plots.plot." + i))
 							limit = i;
 
