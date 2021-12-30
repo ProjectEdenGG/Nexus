@@ -5,6 +5,8 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.features.store.gallery.GalleryPackage;
+import gg.projecteden.nexus.features.store.gallery.StoreGallery;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.CostumeConverter;
@@ -17,6 +19,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -41,6 +44,7 @@ public class CostumeUser implements PlayerOwnedObject {
 	private int vouchers;
 
 	private String activeCostume;
+	private String activeDisplayCostume;
 	private Set<String> ownedCostumes = new HashSet<>();
 
 	private static final List<WorldGroup> DISABLED_WORLDS = List.of(WorldGroup.MINIGAMES);
@@ -105,6 +109,53 @@ public class CostumeUser implements PlayerOwnedObject {
 			return false;
 
 		if (DISABLED_WORLDS.contains(WorldGroup.of(player)))
+			return false;
+
+		return true;
+	}
+
+	public void setActiveDisplayCostumeId(String activeDisplayCostume) {
+		this.activeDisplayCostume = activeDisplayCostume;
+		if (activeDisplayCostume == null)
+			sendResetDisplayPackets();
+	}
+
+	public void setActiveDisplayCostume(Costume activeDisplayCostume) {
+		setActiveDisplayCostumeId(activeDisplayCostume == null ? null : activeDisplayCostume.getId());
+	}
+
+	public void sendDisplayCostumePacket() {
+		if (!shouldSendDisplayPacket())
+			return;
+
+		final Costume costume = Costume.of(activeDisplayCostume);
+		if (costume == null)
+			return;
+
+		sendDisplayPacket(costume.getItem(), costume.getType().getSlot());
+	}
+
+	public void sendResetDisplayPackets() {
+		if (!isOnline())
+			return;
+
+		for (EquipmentSlot slot : CostumeType.getSlots())
+			sendDisplayPacket(new ItemStack(Material.STONE_BUTTON), slot);
+	}
+
+	private void sendDisplayPacket(ItemStack item, EquipmentSlot slot) {
+		final Player player = getOnlinePlayer();
+		PacketUtils.sendFakeItem(GalleryPackage.COSTUMES.entity(), player, item, slot);
+	}
+
+	private boolean shouldSendDisplayPacket() {
+		if (!isOnline())
+			return false;
+
+		if (activeDisplayCostume == null)
+			return false;
+
+		if (!getOnlinePlayer().getWorld().equals(StoreGallery.getWorld()))
 			return false;
 
 		return true;

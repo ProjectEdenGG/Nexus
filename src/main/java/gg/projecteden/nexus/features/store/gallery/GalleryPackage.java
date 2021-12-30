@@ -4,13 +4,19 @@ package gg.projecteden.nexus.features.store.gallery;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.gmail.filoghost.holographicdisplays.api.line.ItemLine;
+import fr.minuskube.inv.ClickableItem;
+import fr.minuskube.inv.content.InventoryContents;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.particles.providers.EffectSettingProvider;
+import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
 import gg.projecteden.nexus.features.store.gallery.annotations.Category;
 import gg.projecteden.nexus.features.store.gallery.annotations.Category.GalleryCategory;
+import gg.projecteden.nexus.features.store.perks.CostumeCommand.CostumeMenu;
 import gg.projecteden.nexus.features.store.perks.joinquit.JoinQuit;
 import gg.projecteden.nexus.features.store.perks.workbenches.WorkbenchesCommand.WorkbenchesMenu;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.models.costume.Costume;
+import gg.projecteden.nexus.models.costume.CostumeUser;
 import gg.projecteden.nexus.models.particle.ParticleType;
 import gg.projecteden.nexus.models.rainbowarmor.RainbowArmorTask;
 import gg.projecteden.nexus.models.rainbowbeacon.RainbowBeacon;
@@ -39,7 +45,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
@@ -61,18 +67,50 @@ import static gg.projecteden.utils.StringUtils.getUUID0;
 @NoArgsConstructor
 @AllArgsConstructor
 public enum GalleryPackage {
-	/** TODO
-	 * Right click on NPC to view costume menu
-	 * Selecting a costume will activate it on the NPC
-	 */
 	@Category(GalleryCategory.VISUALS)
-	COSTUMES(4307),
+	COSTUMES(4307) {
+		@NoArgsConstructor
+		static class CostumeDisplayMenu extends CostumeMenu {
+
+			public CostumeDisplayMenu(CostumeMenu previousMenu, CustomModelFolder folder) {
+				super(previousMenu, folder);
+			}
+
+			@Override
+			protected CostumeMenu newMenu(CostumeMenu previousMenu, CustomModelFolder subfolder) {
+				return new CostumeDisplayMenu(previousMenu, subfolder);
+			}
+
+			@Override
+			protected boolean isAvailableCostume(CostumeUser user, Costume costume) {
+				return true;
+			}
+
+			@Override
+			protected ClickableItem formatCostume(CostumeUser user, Costume costume, InventoryContents contents) {
+				final ItemBuilder builder = new ItemBuilder(costume.getModel().getDisplayItem());
+				if (costume.getId().equals(user.getActiveDisplayCostume()))
+					builder.lore("", "&a&lActive").glow();
+
+				return ClickableItem.from(builder.build(), e -> {
+					user.setActiveDisplayCostume(costume.getId().equals(user.getActiveDisplayCostume()) ? null : costume);
+					service.save(user);
+					open(user.getOnlinePlayer(), contents.pagination().getPage());
+				});
+			}
+		}
+
+		@Override
+		public void onNpcInteract(Player player) {
+			new CostumeDisplayMenu().open(player);
+		}
+	},
 
 	@Category(GalleryCategory.VISUALS)
 	WINGS(4306) {
 		@Override
 		public void onNpcInteract(Player player) {
-			new EffectSettingProvider(ParticleType.WINGS, (HumanEntity) npc().getEntity()).open(player);
+			new EffectSettingProvider(ParticleType.WINGS, entity()).open(player);
 		}
 	},
 
@@ -146,7 +184,7 @@ public enum GalleryPackage {
 
 		private void start() {
 			task = RainbowArmorTask.builder()
-				.entity((HumanEntity) npc().getEntity())
+				.entity(entity())
 				.build()
 				.start();
 		}
@@ -460,6 +498,13 @@ public enum GalleryPackage {
 		if (npcId > 0)
 			return CitizensUtils.getNPC(npcId);
 		return null;
+	}
+
+	public <T extends Entity> T entity() {
+		final NPC npc = npc();
+		if (npc == null || npc.getEntity() == null)
+			return null;
+		return (T) npc.getEntity();
 	}
 
 	@SneakyThrows
