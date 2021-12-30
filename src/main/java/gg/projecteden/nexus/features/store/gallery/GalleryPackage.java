@@ -134,13 +134,9 @@ public enum GalleryPackage {
 		}
 
 		private void start() {
-			final PlayerInventory inv = ((HumanEntity) npc().getEntity()).getInventory();
 			task = RainbowArmorTask.builder()
-				.inventory(inv)
-				.onIterate(() -> {
-					for (ArmorSlot slot : ArmorSlot.values())
-						PacketUtils.sendFakeItem(npc().getEntity(), recipients(), inv.getItem(slot.getSlot()), slot.getSlot());
-				})
+				.entity((HumanEntity) npc().getEntity())
+				.build()
 				.start();
 		}
 

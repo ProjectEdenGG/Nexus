@@ -13,6 +13,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.invisiblearmour.InvisibleArmor;
 import gg.projecteden.nexus.models.invisiblearmour.InvisibleArmorService;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils.ArmorSlot;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -28,10 +29,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import static gg.projecteden.nexus.features.store.perks.InvisibleArmorCommand.PERMISSION;
-import static gg.projecteden.nexus.models.invisiblearmour.InvisibleArmor.SLOTS;
 
 @NoArgsConstructor
 @Permission(PERMISSION)
@@ -108,10 +106,10 @@ public class InvisibleArmorCommand extends CustomCommand implements Listener {
 		public void init(Player player, InventoryContents contents) {
 			addCloseItem(contents);
 
-			AtomicInteger row = new AtomicInteger(1);
-			SLOTS.forEach(slot -> {
+			for (ArmorSlot slot : ArmorSlot.values()) {
+				final int row = slot.ordinal() + 1;
 				ItemStack displayItem = user.getDisplayItem(slot);
-				contents.set(row.get(), 2, ClickableItem.empty(displayItem));
+				contents.set(row, 2, ClickableItem.empty(displayItem));
 
 				final ItemBuilder other;
 				if (user.isHidden(slot))
@@ -126,20 +124,18 @@ public class InvisibleArmorCommand extends CustomCommand implements Listener {
 				else
 					self = new ItemBuilder(user.getShownIcon(slot)).name("&aSelf: Shown").lore("&cClick to hide", "", lore);
 
-				contents.set(row.get(), 4, ClickableItem.from(other.build(), e -> {
+				contents.set(row, 4, ClickableItem.from(other.build(), e -> {
 					user.toggleHide(slot);
 					service.save(user);
 					menu();
 				}));
 
-				contents.set(row.get(), 6, ClickableItem.from(self.build(), e -> {
+				contents.set(row, 6, ClickableItem.from(self.build(), e -> {
 					user.toggleHideSelf(slot);
 					service.save(user);
 					menu();
 				}));
-
-				row.getAndIncrement();
-			});
+			}
 
 			ItemBuilder toggle = new ItemBuilder(Material.LEVER);
 			if (user.isEnabled())

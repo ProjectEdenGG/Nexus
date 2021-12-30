@@ -1,63 +1,70 @@
 package gg.projecteden.nexus.models.rainbowarmor;
 
-import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
-import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.models.costume.CostumeUserService;
+import gg.projecteden.nexus.models.invisiblearmour.InvisibleArmor;
+import gg.projecteden.nexus.models.invisiblearmour.InvisibleArmorService;
+import gg.projecteden.nexus.utils.CitizensUtils;
+import gg.projecteden.nexus.utils.PacketUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.ArmorSlot;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.MathUtils;
 import lombok.Builder;
 import lombok.Data;
 import org.bukkit.Color;
 import org.bukkit.Material;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
-import java.util.function.Consumer;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Supplier;
 
+import static gg.projecteden.utils.Utils.isNullOrEmpty;
+
 @Data
+@Builder
 public class RainbowArmorTask {
-	private final PlayerInventory inventory;
 	@Builder.Default
 	private final int rate = 12;
 	@Builder.Default
 	private Color color = Color.fromRGB(255, 0, 0);
-	private Runnable onIterate;
+
+	private final HumanEntity entity;
+	private Set<ArmorSlot> disabledSlots;
 	private Supplier<Boolean> cancelIf;
 	private Runnable onCancel;
 
 	private int taskId;
 
-	@Builder(buildMethodName = "start")
-	public RainbowArmorTask(PlayerInventory inventory, Runnable onIterate, Supplier<Boolean> cancelIf, Runnable onCancel) {
-		this.inventory = inventory;
-		this.onIterate = onIterate;
-		this.cancelIf = cancelIf;
-		this.onCancel = onCancel;
-		start();
-	}
-
-	public void start() {
-		taskId = Tasks.repeat(4, 2, () -> {
+	public RainbowArmorTask start() {
+		taskId = Tasks.repeat(0, 2, () -> {
 			if (cancelIf != null && cancelIf.get()) {
 				stop();
 				return;
 			}
 
 			increment();
-			editArmor(this::color);
-			if (onIterate != null)
-				onIterate.run();
+			sendPackets();
 		});
+		return this;
 	}
 
 	public void stop() {
 		Tasks.cancel(taskId);
 		if (onCancel != null)
 			onCancel.run();
+
+		for (ArmorSlot slot : ArmorSlot.values())
+			PacketUtils.sendFakeItem(entity, recipients(), entity.getInventory().getItem(slot.getSlot()), slot.getSlot());
+	}
+
+	private List<Player> recipients() {
+		return OnlinePlayers.where().radius(entity.getLocation(), 50).get();
 	}
 
 	public ItemStack color(ItemStack item) {
@@ -67,35 +74,41 @@ public class RainbowArmorTask {
 		return item;
 	}
 
-	public void editArmor(Consumer<ItemStack> editor) {
-		inventory.setArmorContents(Arrays.stream(inventory.getArmorContents()).peek(item -> {
-			if (isLeatherArmor(item))
-				editor.accept(item);
-		}).toArray(ItemStack[]::new));
-	}
+	public void sendPackets() {
+		final boolean npc = CitizensUtils.isNPC(entity);
+		final List<ItemStack> armor = Arrays.stream(armor()).peek(this::color).toList();
 
-	public void removeColor() {
-		editArmor(RainbowArmorTask::removeColor);
-	}
+		for (ArmorSlot slot : ArmorSlot.values()) {
+			if (!isEnabled(slot))
+				continue;
 
-	public static void removeColor(ItemStack itemStack) {
-		LeatherArmorMeta meta = (LeatherArmorMeta) itemStack.getItemMeta();
-		meta.setColor(null);
-		itemStack.setItemMeta(meta);
-	}
+			if (npc)
+				// NPCs send their own packets which causes bad flickering
+				entity.getInventory().setItem(slot.getSlot(), armor.get(slot.ordinal()));
+			else {
+				final InvisibleArmor invisibleArmor = new InvisibleArmorService().get(entity);
+				if (invisibleArmor.isEnabled() && invisibleArmor.isHidden(slot))
+					continue;
+				else if (slot == ArmorSlot.HELMET && new CostumeUserService().get(entity).hasActiveCostume())
+					continue;
+			}
 
-	@Contract("null -> false; !null -> _")
-	public static boolean isLeatherArmor(ItemStack item) {
-		if (ItemUtils.isNullOrAir(item))
-			return false;
-
-		if (CustomModel.exists(item)) {
-			if (item.getType().equals(Material.LEATHER_HORSE_ARMOR))
-				return true;
-			return false;
+			PacketUtils.sendFakeItem(entity, recipients(), armor.get(slot.ordinal()), slot.getSlot());
 		}
+	}
 
-		return MaterialTag.ARMOR_LEATHER.isTagged(item.getType());
+	private boolean isEnabled(ArmorSlot slot) {
+		return isNullOrEmpty(disabledSlots) || !disabledSlots.contains(slot);
+	}
+
+	@NotNull
+	private ItemStack[] armor() {
+		return new ItemStack[]{
+			new ItemStack(Material.LEATHER_HELMET),
+			new ItemStack(Material.LEATHER_CHESTPLATE),
+			new ItemStack(Material.LEATHER_LEGGINGS),
+			new ItemStack(Material.LEATHER_BOOTS)
+		};
 	}
 
 	public void increment() {
