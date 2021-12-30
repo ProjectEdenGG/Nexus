@@ -23,6 +23,7 @@ import gg.projecteden.nexus.models.rainbowbeacon.RainbowBeacon;
 import gg.projecteden.nexus.models.rainbowbeacon.RainbowBeaconService;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.CitizensUtils.NPCRandomizer;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.FireworkLauncher;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -31,6 +32,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.WoodType;
 import gg.projecteden.utils.EnumUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
@@ -46,9 +48,12 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
@@ -60,6 +65,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
+import static gg.projecteden.utils.EnumUtils.random;
 import static gg.projecteden.utils.RandomUtils.randomElement;
 import static gg.projecteden.utils.StringUtils.getUUID0;
 
@@ -437,12 +443,38 @@ public enum GalleryPackage {
 		}
 	},
 
-	/** TODO
-	 * NPC with rotating hat materials
-	 * Fish, Glass, Coral, Bed, (Flowering) Azalea, etc
-	 */
 	@Category(GalleryCategory.INVENTORY)
-	HAT,
+	HAT(4546) {
+		private static final List<Material> HATS = new ArrayList<>() {{
+			final List<ColorType> rainbow = List.of(
+				ColorType.RED, ColorType.ORANGE, ColorType.YELLOW, ColorType.LIGHT_GREEN,
+				ColorType.LIGHT_BLUE, ColorType.BLUE, ColorType.PURPLE
+			);
+
+			addAll(MaterialTag.CORALS.getValues());
+
+			rainbow.forEach(color -> {
+				add(color.getStainedGlass());
+				add(color.getBed());
+				add(color.getCandle());
+			});
+
+			add(random(WoodType.class).getStair());
+			add(random(WoodType.class).getSlab());
+			add(random(WoodType.class).getPressurePlate());
+
+			addAll(List.of(
+				Material.COD, Material.GLASS, Material.AZALEA, Material.FLOWERING_AZALEA, Material.ANVIL,
+				Material.BONE, Material.LANTERN, Material.JACK_O_LANTERN, Material.ICE, Material.ENDER_EYE,
+				Material.SNOW, Material.AMETHYST_CLUSTER, Material.LIGHTNING_ROD
+			));
+		}};
+
+		@Override
+		public void onNpcInteract(Player player) {
+			inventory().setItem(EquipmentSlot.HEAD, new ItemStack(randomElement(HATS)));
+		}
+	},
 
 	/** TODO
 	 * Set off a firework (maybe arrow) ▷
@@ -450,23 +482,29 @@ public enum GalleryPackage {
 	@Category(GalleryCategory.INVENTORY)
 	FIREWORK_BOW,
 
-	/** TODO
-	 * Heart particles
-	 */
 	@Category(GalleryCategory.MISC)
-	CUSTOM_CONTRIBUTION,
+	CUSTOM_CONTRIBUTION {
+		@Override
+		public void onImageInteract(Player player) {
+			// TODO Wakka - Heart particles
+		}
+	},
 
-	/** TODO
-	 * Click to run /homes limit
-	 */
 	@Category(GalleryCategory.MISC)
-	PLUS_5_HOMES,
+	PLUS_5_HOMES {
+		@Override
+		public void onImageInteract(Player player) {
+			PlayerUtils.runCommand(player, "homes limit");
+		}
+	},
 
-	/** TODO
-	 * Click to run /plots limit
-	 */
 	@Category(GalleryCategory.MISC)
-	CREATIVE_PLOTS,
+	CREATIVE_PLOTS {
+		@Override
+		public void onImageInteract(Player player) {
+			PlayerUtils.runCommand(player, "plots limit");
+		}
+	},
 
 	@Category(GalleryCategory.MISC)
 	BOOSTS,
@@ -505,6 +543,14 @@ public enum GalleryPackage {
 		if (npc == null || npc.getEntity() == null)
 			return null;
 		return (T) npc.getEntity();
+	}
+
+	public HumanEntity humanEntity() {
+		return entity();
+	}
+
+	public PlayerInventory inventory() {
+		return humanEntity().getInventory();
 	}
 
 	@SneakyThrows
