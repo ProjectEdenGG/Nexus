@@ -19,9 +19,7 @@ import gg.projecteden.nexus.utils.FireworkLauncher;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.PlayerUtils.ArmorSlot;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
@@ -43,7 +41,6 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
@@ -62,15 +59,26 @@ import static gg.projecteden.utils.StringUtils.getUUID0;
 @NoArgsConstructor
 @AllArgsConstructor
 public enum GalleryPackage {
+	/** TODO
+	 * Right click on NPC to view costume menu
+	 * Selecting a costume will activate it on the NPC
+	 */
 	@Category(GalleryCategory.VISUALS)
-	COSTUMES,
+	COSTUMES(4307),
 
+	/** TODO
+	 * Right click on NPC to view wings menu
+	 * Selecting wings will activate it on the NPC
+	 */
 	@Category(GalleryCategory.VISUALS)
-	WINGS,
+	WINGS(4306),
 
 	@Category(GalleryCategory.VISUALS)
 	INVISIBLE_ARMOR,
 
+	/** TODO
+	 * Click to change to random one
+	 */
 	@Category(GalleryCategory.VISUALS)
 	PLAYER_PLUSHIES,
 
@@ -197,6 +205,9 @@ public enum GalleryPackage {
 	@Category(GalleryCategory.VISUALS)
 	ENTITY_NAME,
 
+	/** TODO
+	 * Predefined prefixes & colors, shows random one  ▷
+	 */
 	@Category(GalleryCategory.CHAT)
 	PREFIX,
 
@@ -217,6 +228,9 @@ public enum GalleryPackage {
 		}
 	},
 
+	/** TODO
+	 * Click to show emotes list
+	 */
 	@Category(GalleryCategory.CHAT)
 	EMOTES,
 
@@ -327,7 +341,7 @@ public enum GalleryPackage {
 	VAULTS {
 		@Override
 		public void onImageInteract(Player player) {
-			player.openInventory(Bukkit.createInventory(null, 3 * 9, new JsonBuilder("&cVault #1").build()));
+			player.openInventory(Bukkit.createInventory(null, 3 * 9, new JsonBuilder("&4Vault #1").build()));
 		}
 	},
 
@@ -382,18 +396,34 @@ public enum GalleryPackage {
 		}
 	},
 
+	/** TODO
+	 * NPC with rotating hat materials
+	 * Fish, Glass, Coral, Bed, (Flowering) Azalea, etc
+	 */
 	@Category(GalleryCategory.INVENTORY)
 	HAT,
 
+	/** TODO
+	 * Set off a firework (maybe arrow) ▷
+	 */
 	@Category(GalleryCategory.INVENTORY)
 	FIREWORK_BOW,
 
+	/** TODO
+	 * Heart particles
+	 */
 	@Category(GalleryCategory.MISC)
 	CUSTOM_CONTRIBUTION,
 
+	/** TODO
+	 * Click to run /homes limit
+	 */
 	@Category(GalleryCategory.MISC)
 	PLUS_5_HOMES,
 
+	/** TODO
+	 * Click to run /plots limit
+	 */
 	@Category(GalleryCategory.MISC)
 	CREATIVE_PLOTS,
 
