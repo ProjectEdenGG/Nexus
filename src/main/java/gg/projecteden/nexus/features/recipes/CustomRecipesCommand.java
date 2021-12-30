@@ -8,10 +8,10 @@ import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.recipes.menu.CustomRecipesMenu;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.utils.StringUtils.pretty;
 
-@Aliases("costumrecipes") // https://i.imgur.com/Bu1hC64.png
+@Redirect(from = "/costumrecipes", to = "/customrecipes") // https://i.imgur.com/Bu1hC64.png
 public class CustomRecipesCommand extends CustomCommand {
 
 	public CustomRecipesCommand(CommandEvent event) {
