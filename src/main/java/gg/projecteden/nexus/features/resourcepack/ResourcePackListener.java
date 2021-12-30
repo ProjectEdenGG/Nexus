@@ -106,8 +106,8 @@ public class ResourcePackListener implements Listener {
 
 			String stringMessage = new String(message);
 			JsonObject json = new Gson().fromJson(stringMessage, JsonObject.class);
-			String titanVersion = json.has("titan") ? json.get("titan").toString() : null;
-			String saturnVersion = json.has("saturn") ? json.get("saturn").toString() : null;
+			String titanVersion = json.has("titan") ? json.get("titan").toString().replaceAll("\"", "") : null;
+			String saturnVersion = json.has("saturn") ? json.get("saturn").toString().replaceAll("\"", "") : null;
 
 			Nexus.log("Received Saturn/Titan updates from " + player.getName() + ". Saturn: " + saturnVersion + " Titan: " + titanVersion);
 			new LocalResourcePackUserService().edit(player, user -> {
