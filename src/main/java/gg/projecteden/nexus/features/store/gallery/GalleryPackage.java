@@ -227,7 +227,7 @@ public enum GalleryPackage {
 			if (!cooldown(TickTime.SECOND.x(.5)))
 				return;
 
-			NPCRandomizer.randomize(npcId, player);
+			NPCRandomizer.randomize(npcId);
 			npc().teleport(CitizensUtils.locationOf(npc()).clone().add(0, .25, 0), TeleportCause.PLUGIN);
 		}
 	},
