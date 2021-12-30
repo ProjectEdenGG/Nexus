@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static gg.projecteden.nexus.utils.PlayerUtils.isSelf;
+
 public class WingsEffect {
 
 	@Getter
@@ -36,7 +38,7 @@ public class WingsEffect {
 	private static final boolean x = true;
 
 	@Builder(buildMethodName = "start")
-	public WingsEffect(HumanEntity player, boolean flapMode, WingStyle wingStyle, int ticks, int flapSpeed,
+	public WingsEffect(ParticleOwner owner, HumanEntity entity, boolean flapMode, WingStyle wingStyle, int ticks, int flapSpeed,
 					   Color color1, boolean rainbow1, Color color2, boolean rainbow2, Color color3, boolean rainbow3,
 					   int startDelay, int pulseDelay) {
 
@@ -75,9 +77,14 @@ public class WingsEffect {
 		int finalTicks = ticks;
 		int finalFlapRange = flapRange;
 
+		final Player receiver = isSelf(owner, entity) ? null : owner == null ? null : owner.getOnlinePlayer();
+
 		taskId = Tasks.repeatAsync(startDelay, pulseDelay, () -> {
 			if (finalTicks != -1 && ticksElapsed.get() >= finalTicks) {
-				new ParticleService().get(player).cancel(taskId);
+				if (owner == null)
+					Tasks.cancel(taskId);
+				else
+					new ParticleService().get(owner).cancel(taskId);
 				return;
 			}
 
@@ -90,7 +97,7 @@ public class WingsEffect {
 			if (rainbow3)
 				_color3.incrementRainbow();
 
-			Location newLoc = player.getLocation();
+			Location newLoc = entity.getLocation();
 			double x;
 			double defX = x = newLoc.getX() + space;
 			double y = newLoc.clone().getY() + 2.7D + height;
@@ -100,7 +107,7 @@ public class WingsEffect {
 			for (boolean[] pixels : shape1) {
 				for (boolean pixel : pixels) {
 					if (pixel)
-						display(flap, wingAngle, wingParticle, _color1, newLoc, x, y);
+						display(receiver, flap, wingAngle, wingParticle, _color1, newLoc, x, y);
 					x += space;
 				}
 				y -= space;
@@ -110,7 +117,7 @@ public class WingsEffect {
 			for (boolean[] pixels : shape2) {
 				for (boolean pixel : pixels) {
 					if (pixel)
-						display(flap, wingAngle, wingParticle, _color2, newLoc, x, y2);
+						display(receiver, flap, wingAngle, wingParticle, _color2, newLoc, x, y2);
 					x += space;
 				}
 				y2 -= space;
@@ -120,7 +127,7 @@ public class WingsEffect {
 			for (boolean[] pixels : shape3) {
 				for (boolean pixel : pixels) {
 					if (pixel)
-						display(flap, wingAngle, wingParticle, _color3, newLoc, x, y3);
+						display(receiver, flap, wingAngle, wingParticle, _color3, newLoc, x, y3);
 					x += space;
 				}
 				y3 -= space;
@@ -141,7 +148,7 @@ public class WingsEffect {
 		});
 	}
 
-	private void display(float[] flap, int wingAngle, Particle wingParticle, ParticleColor color, Location newLoc, double x, double y2) {
+	private void display(Player receiver, float[] flap, int wingAngle, Particle wingParticle, ParticleColor color, Location newLoc, double x, double y2) {
 		Location target;
 		Vector vR, vL, v2;
 		double rightWing, leftWing;
@@ -159,8 +166,8 @@ public class WingsEffect {
 		v2.setY(0).multiply(-0.2D);
 
 		Particle.DustOptions dustOptions = ParticleUtils.newDustOption(wingParticle, color);
-		ParticleUtils.display(wingParticle, newLoc.clone().add(vL).add(v2), 0, color.getRed(), color.getGreen(), color.getBlue(), 1, dustOptions);
-		ParticleUtils.display(wingParticle, newLoc.clone().add(vR).add(v2), 0, color.getRed(), color.getGreen(), color.getBlue(), 1, dustOptions);
+		ParticleUtils.display(receiver, wingParticle, newLoc.clone().add(vL).add(v2), 0, color.getRed(), color.getGreen(), color.getBlue(), 1, dustOptions);
+		ParticleUtils.display(receiver, wingParticle, newLoc.clone().add(vR).add(v2), 0, color.getRed(), color.getGreen(), color.getBlue(), 1, dustOptions);
 	}
 
 	@Getter
@@ -916,8 +923,8 @@ public class WingsEffect {
 
 			// Default Preview Settings
 			wingSettings.put(ParticleSetting.WINGS_STYLE, this);
-			wingSettings.put(ParticleSetting.WINGS_COLOR_ONE, Color.YELLOW);
-			wingSettings.put(ParticleSetting.WINGS_COLOR_TWO, Color.BLACK);
+			wingSettings.put(ParticleSetting.WINGS_COLOR_ONE, ColorType.YELLOW.getBukkitColor());
+			wingSettings.put(ParticleSetting.WINGS_COLOR_TWO, ColorType.ORANGE.getBukkitColor());
 			wingSettings.put(ParticleSetting.WINGS_COLOR_THREE, ColorType.CYAN.getBukkitColor());
 			wingSettings.put(ParticleSetting.WINGS_RAINBOW_ONE, false);
 			wingSettings.put(ParticleSetting.WINGS_RAINBOW_TWO, false);

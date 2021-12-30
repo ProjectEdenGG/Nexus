@@ -5,11 +5,13 @@ import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.gmail.filoghost.holographicdisplays.api.line.ItemLine;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.particles.providers.EffectSettingProvider;
 import gg.projecteden.nexus.features.store.gallery.annotations.Category;
 import gg.projecteden.nexus.features.store.gallery.annotations.Category.GalleryCategory;
 import gg.projecteden.nexus.features.store.perks.joinquit.JoinQuit;
 import gg.projecteden.nexus.features.store.perks.workbenches.WorkbenchesCommand.WorkbenchesMenu;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.models.particle.ParticleType;
 import gg.projecteden.nexus.models.rainbowarmor.RainbowArmorTask;
 import gg.projecteden.nexus.models.rainbowbeacon.RainbowBeacon;
 import gg.projecteden.nexus.models.rainbowbeacon.RainbowBeaconService;
@@ -66,12 +68,13 @@ public enum GalleryPackage {
 	@Category(GalleryCategory.VISUALS)
 	COSTUMES(4307),
 
-	/** TODO
-	 * Right click on NPC to view wings menu
-	 * Selecting wings will activate it on the NPC
-	 */
 	@Category(GalleryCategory.VISUALS)
-	WINGS(4306),
+	WINGS(4306) {
+		@Override
+		public void onNpcInteract(Player player) {
+			new EffectSettingProvider(ParticleType.WINGS, (HumanEntity) npc().getEntity()).open(player);
+		}
+	},
 
 	@Category(GalleryCategory.VISUALS)
 	INVISIBLE_ARMOR,

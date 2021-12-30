@@ -341,8 +341,9 @@ public class PlayerUtils {
 		return false;
 	}
 
-	public static boolean isSelf(HasUniqueId player1, HasUniqueId player2) {
-		return player1.getUniqueId().equals(player2.getUniqueId());
+	@Contract("null, _ -> false; _, null -> false")
+	public static boolean isSelf(@Nullable HasUniqueId player1, @Nullable HasUniqueId player2) {
+		return player1 != null && player2 != null && player1.getUniqueId().equals(player2.getUniqueId());
 	}
 
 	/**
