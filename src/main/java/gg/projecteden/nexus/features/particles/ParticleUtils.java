@@ -70,6 +70,8 @@ public class ParticleUtils {
 	public static void display(Player player, Particle particle, Location location, int count, double x, double y, double z, double speed, Particle.DustOptions dustOptions) {
 		if (!particle.equals(Particle.REDSTONE) && dustOptions != null)
 			Nexus.warn("Tried to use DustOptions with " + particle);
+		if (player == null)
+			display(particle, location, count, x, y, z, speed, dustOptions);
 		else if (location.getWorld() != null)
 			new ParticleBuilder(particle)
 				.receivers(player)

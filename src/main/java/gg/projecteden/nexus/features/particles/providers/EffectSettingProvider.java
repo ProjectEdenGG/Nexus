@@ -9,19 +9,20 @@ import gg.projecteden.nexus.models.particle.ParticleOwner;
 import gg.projecteden.nexus.models.particle.ParticleService;
 import gg.projecteden.nexus.models.particle.ParticleSetting;
 import gg.projecteden.nexus.models.particle.ParticleType;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.Color;
 import org.bukkit.Material;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
 
+@AllArgsConstructor
+@RequiredArgsConstructor
 public class EffectSettingProvider extends MenuUtils implements InventoryProvider {
 	private final ParticleService service = new ParticleService();
 	private final ParticleType type;
-
-	public EffectSettingProvider(ParticleType type) {
-		this.type = type;
-	}
+	private HumanEntity displayEntity;
 
 	@Override
 	public void open(Player player, int page) {
@@ -35,7 +36,14 @@ public class EffectSettingProvider extends MenuUtils implements InventoryProvide
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
-		addBackItem(contents, e -> new ParticleMenuProvider().open(player));
+		// TODO Should receive previousMenu
+		if (displayEntity == null)
+			addCloseItem(contents);
+		else
+			addBackItem(contents, e -> new ParticleMenuProvider().open(player));
+
+		if (displayEntity == null)
+			displayEntity = player;
 
 		contents.set(0, 4, ClickableItem.from(nameItem(Material.TNT, "&cCancel Effect"), e -> {
 			ParticleOwner owner = service.get(player);
@@ -46,21 +54,21 @@ public class EffectSettingProvider extends MenuUtils implements InventoryProvide
 		contents.set(0, 8, ClickableItem.from(nameItem(Material.END_CRYSTAL, "&eUpdate Effect"), e -> {
 			ParticleOwner owner = service.get(player);
 			owner.cancel(type);
-			type.run(player);
+			type.run(owner, displayEntity);
 		}));
 
 		for (ParticleSetting setting : ParticleSetting.values()) {
 			if (!setting.getApplicableEffects().contains(type))
 				continue;
 
-			ItemStack item = nameItem(setting.getItemStack(), "&3" + setting.getTitle(), setting.getLore(player, type));
-			if (setting.getValue() == Color.class) {
-				LeatherArmorMeta meta = (LeatherArmorMeta) item.getItemMeta();
-				meta.setColor(setting.get(new ParticleService().get(player), type));
-				item.setItemMeta(meta);
-			}
+			final ItemBuilder builder = new ItemBuilder(setting.getItemStack())
+				.name("&3" + setting.getTitle())
+				.lore(setting.getLore(player, type));
 
-			contents.set(setting.getRow(), setting.getColumn(), ClickableItem.from(item,
+			if (setting.getValue() == Color.class)
+				builder.dyeColor((Color) setting.get(new ParticleService().get(player), type));
+
+			contents.set(setting.getRow(), setting.getColumn(), ClickableItem.from(builder.build(),
 					e -> setting.onClick(player, type)));
 		}
 	}
