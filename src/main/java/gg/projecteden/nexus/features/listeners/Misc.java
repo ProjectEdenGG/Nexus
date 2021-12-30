@@ -126,6 +126,28 @@ public class Misc implements Listener {
 	}
 
 	@EventHandler
+	public void onLightEndPortal(PlayerInteractEvent event) {
+		if (event.getAction() != Action.RIGHT_CLICK_BLOCK)
+			return;
+
+		final ItemStack item = event.getItem();
+		final Block block = event.getClickedBlock();
+		if (isNullOrAir(item) || BlockUtils.isNullOrAir(block))
+			return;
+
+		if (item.getType() != Material.ENDER_EYE)
+			return;
+
+		if (block.getType() != Material.END_PORTAL_FRAME)
+			return;
+
+		if (WorldGroup.of(block) == WorldGroup.SURVIVAL)
+			return;
+
+		event.setCancelled(true);
+	}
+
+	@EventHandler
 	public void onPlaceOnLight(BlockPlaceEvent event) {
 		if (event.getBlockReplacedState().getType() != Material.LIGHT)
 			return;
