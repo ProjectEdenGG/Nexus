@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import java.lang.reflect.Modifier;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -51,12 +52,26 @@ public class Contributor implements PlayerOwnedObject {
 			for (Purchase purchase : purchases)
 				put(purchase.getTransactionId(), purchase.getPrice());
 		}}.values().stream()
-				.mapToDouble(Double::valueOf)
-				.sum();
+			.mapToDouble(Double::valueOf)
+			.sum();
+	}
+
+	public double getMonthlySum(YearMonth yearMonth) {
+		return new HashMap<String, Double>() {{
+			for (Purchase purchase : purchases)
+				if (yearMonth.equals(YearMonth.from(purchase.getTimestamp())))
+					put(purchase.getTransactionId(), purchase.getPrice());
+		}}.values().stream()
+			.mapToDouble(Double::valueOf)
+			.sum();
 	}
 
 	public String getSumFormatted() {
 		return NumberFormat.getCurrencyInstance().format(getSum());
+	}
+
+	public String getMonthlySumFormatted(YearMonth yearMonth) {
+		return NumberFormat.getCurrencyInstance().format(getMonthlySum(yearMonth));
 	}
 
 	public void giveCredit(double credit) {

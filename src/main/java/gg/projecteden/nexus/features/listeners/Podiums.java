@@ -15,7 +15,6 @@ import gg.projecteden.nexus.models.hours.HoursService.PageResult;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.models.store.Contributor;
-import gg.projecteden.nexus.models.store.Contributor.Purchase;
 import gg.projecteden.nexus.models.store.ContributorService;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -32,9 +31,8 @@ import org.jetbrains.annotations.Nullable;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -49,16 +47,32 @@ import static java.util.stream.Collectors.toList;
 @Environments(Env.PROD)
 public class Podiums implements Listener {
 
+	static {
+		if (Nexus.getEnv() == Env.PROD)
+			for (Podium value : Podium.values())
+				Tasks.repeat(10, TickTime.HOUR, value::update);
+	}
+
+	@EventHandler
+	public void onVote(VotifierEvent event) {
+		Tasks.wait(1, Podium.VOTES::update);
+	}
+
+	@EventHandler
+	public void onMcMMOLevelUp(McMMOPlayerLevelUpEvent event) {
+		Podium.MCMMO.update();
+	}
+
 	public enum Podium {
 		PLAYTIME_TOTAL(2709, 2708, 2707) {
 			@Override
 			Map<UUID, String> getTop() {
 				return new HoursService().getPage().subList(0, 3).stream()
-						.collect(Collectors.toMap(
-								PageResult::getUuid,
-								hours -> Timespan.of(hours.getTotal()).format(),
-								(h1, h2) -> h1, LinkedHashMap::new
-						));
+					.collect(Collectors.toMap(
+						PageResult::getUuid,
+						hours -> Timespan.of(hours.getTotal()).format(),
+						(h1, h2) -> h1, LinkedHashMap::new
+					));
 			}
 		},
 		PLAYTIME_MONTHLY(2712, 2711, 2710) {
@@ -66,87 +80,99 @@ public class Podiums implements Listener {
 			Map<UUID, String> getTop() {
 				HoursService service = new HoursService();
 				return service.getPage(new HoursTopArguments("monthly")).subList(0, 3).stream()
-						.collect(Collectors.toMap(
-								PageResult::getUuid,
-								hours -> Timespan.of(service.get(hours.getUuid()).getMonthly()).format(),
-								(h1, h2) -> h1, LinkedHashMap::new
-						));
+					.collect(Collectors.toMap(
+						PageResult::getUuid,
+						hours -> Timespan.of(service.get(hours.getUuid()).getMonthly()).format(),
+						(h1, h2) -> h1, LinkedHashMap::new
+					));
 			}
 		},
 		VOTES(2700, 2699, 2698) {
 			@Override
 			Map<UUID, String> getTop() {
 				return new TopVoterData(YearMonth.now()).getTopVoters().subList(0, 3).stream()
-						.collect(Collectors.toMap(
-								topVoter -> topVoter.getVoter().getUuid(),
-								topVoter -> String.valueOf(topVoter.getCount()),
-								(h1, h2) -> h1, LinkedHashMap::new
-						));
+					.collect(Collectors.toMap(
+						topVoter -> topVoter.getVoter().getUuid(),
+						topVoter -> String.valueOf(topVoter.getCount()),
+						(h1, h2) -> h1, LinkedHashMap::new
+					));
 			}
 		},
 		BALANCE(2703, 2702, 2701) {
 			@Override
 			Map<UUID, String> getTop() {
 				return new BankerService().getAll().stream()
-						.sorted(Comparator.comparing(banker -> banker.getBalance(ShopGroup.SURVIVAL), Comparator.reverseOrder()))
-						.collect(toList())
-						.subList(0, 3).stream()
-						.collect(Collectors.toMap(
-								Banker::getUuid,
-								banker -> banker.getBalanceFormatted(ShopGroup.SURVIVAL),
-								(h1, h2) -> h1, LinkedHashMap::new
-						));
+					.sorted(Comparator.comparing(banker -> banker.getBalance(ShopGroup.SURVIVAL), Comparator.reverseOrder()))
+					.collect(toList())
+					.subList(0, 3).stream()
+					.collect(Collectors.toMap(
+						Banker::getUuid,
+						banker -> banker.getBalanceFormatted(ShopGroup.SURVIVAL),
+						(h1, h2) -> h1, LinkedHashMap::new
+					));
 			}
 		},
 		MCMMO(2706, 2705, 2704) {
 			@Override
 			Map<UUID, String> getTop() {
 				return mcMMO.getDatabaseManager().readLeaderboard(null, 1, 3).subList(0, 3).stream()
-						.collect(Collectors.toMap(
-								playerStat -> PlayerUtils.getPlayer(playerStat.name).getUniqueId(),
-								playerStat -> String.valueOf(playerStat.statVal),
-								(h1, h2) -> h1, LinkedHashMap::new
-						));
+					.collect(Collectors.toMap(
+						playerStat -> PlayerUtils.getPlayer(playerStat.name).getUniqueId(),
+						playerStat -> String.valueOf(playerStat.statVal),
+						(h1, h2) -> h1, LinkedHashMap::new
+					));
 			}
 		},
-		RECENT_PURCHASES(2772, 2773, 2774) {
+		TOP_MONTHLY_CONTRIBUTORS(2772, 2773, 2774) {
 			@Override
 			Map<UUID, String> getTop() {
-				Iterator<Purchase> iterator = new ContributorService().getRecent(50).iterator();
+				return new ContributorService().getMonthlyTop(YearMonth.now(), 3).stream()
+					.collect(Collectors.toMap(
+						Contributor::getUuid,
+						contributor -> contributor.getMonthlySumFormatted(YearMonth.now()),
+						(h1, h2) -> h1, LinkedHashMap::new
+					));
+			}
 
-				Map<UUID, Map<String, Double>> recent = new LinkedHashMap<>();
-				UUID last = null;
-				while (iterator.hasNext()) {
-					Purchase purchase = iterator.next();
-					if (purchase.getPrice() == 0)
-						continue;
-					UUID key = purchase.getPurchaserUuid();
-
-					if (recent.size() == 3 && last != key)
-						break;
-
-					recent.computeIfAbsent(key, $ -> new HashMap<>()).put(purchase.getTransactionId(), purchase.getPrice());
-
-					last = purchase.getPurchaserUuid();
-				}
-
-				return new LinkedHashMap<>() {{
-					recent.forEach((uuid, txns) -> {
-						final double sum = txns.values().stream().mapToDouble(Double::valueOf).sum();
-						put(uuid, StringUtils.prettyMoney(sum));
-					});
-				}};
+			@Nullable
+			@Override
+			Map<UUID, String> validateGetTop() {
+				Map<UUID, String> top = getTop();
+				if (top.size() != 3)
+					return null;
+				return top;
 			}
 		},
 		TOP_CONTRIBUTORS(3835, 3837, 3836) {
 			@Override
 			Map<UUID, String> getTop() {
 				return new ContributorService().getTop(3).stream()
-						.collect(Collectors.toMap(
-								Contributor::getUuid,
-								Contributor::getSumFormatted,
-								(h1, h2) -> h1, LinkedHashMap::new
-						));
+					.collect(Collectors.toMap(
+						Contributor::getUuid,
+						Contributor::getSumFormatted,
+						(h1, h2) -> h1, LinkedHashMap::new
+					));
+			}
+		},
+		GALLERY_TOP_MONTHLY_CONTRIBUTORS(4537, 4538, 4539) {
+			@Override
+			Map<UUID, String> getTop() {
+				return TOP_MONTHLY_CONTRIBUTORS.getTop();
+			}
+
+			@Nullable
+			@Override
+			Map<UUID, String> validateGetTop() {
+				Map<UUID, String> top = getTop();
+				if (top.size() != 3)
+					return null;
+				return top;
+			}
+		},
+		GALLERY_TOP_CONTRIBUTORS(4540, 4541, 4542) {
+			@Override
+			Map<UUID, String> getTop() {
+				return TOP_CONTRIBUTORS.getTop();
 			}
 		};
 
@@ -174,11 +200,15 @@ public class Podiums implements Listener {
 		}
 
 		@Nullable
-		private Map<UUID, String> validateGetTop() {
+		Map<UUID, String> validateGetTop() {
 			Map<UUID, String> top = getTop();
 			if (top.size() != 3) {
+				if (List.of(GALLERY_TOP_MONTHLY_CONTRIBUTORS, TOP_MONTHLY_CONTRIBUTORS).contains(this))
+					return null;
+
 				if (this != VOTES || LocalDate.now().getDayOfMonth() != 1) // Ignore votes for the first day of the month
 					Nexus.warn(name() + " podium query did not return 3 results (" + top.size() + ")");
+
 				return null;
 			}
 			return top;
@@ -201,19 +231,4 @@ public class Podiums implements Listener {
 		}
 	}
 
-	static {
-		if (Nexus.getEnv() == Env.PROD)
-			for (Podium value : Podium.values())
-				Tasks.repeat(10, TickTime.HOUR, value::update);
-	}
-
-	@EventHandler
-	public void onVote(VotifierEvent event) {
-		Tasks.wait(1, Podium.VOTES::update);
-	}
-
-	@EventHandler
-	public void onMcMMOLevelUp(McMMOPlayerLevelUpEvent event) {
-		Podium.MCMMO.update();
-	}
 }
