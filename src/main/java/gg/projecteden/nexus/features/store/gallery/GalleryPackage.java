@@ -7,6 +7,7 @@ import com.gmail.filoghost.holographicdisplays.api.line.ItemLine;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.chat.Emotes;
 import gg.projecteden.nexus.features.particles.providers.EffectSettingProvider;
 import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
 import gg.projecteden.nexus.features.store.gallery.annotations.Category;
@@ -304,11 +305,18 @@ public enum GalleryPackage {
 		}
 	},
 
-	/** TODO
-	 * Click to show emotes list
-	 */
 	@Category(GalleryCategory.CHAT)
-	EMOTES,
+	EMOTES {
+		@Override
+		public void onImageInteract(Player player) {
+			final Emotes emote = random(Emotes.class);
+			String result = emote.getEmote();
+			if (emote.getColors().size() > 0)
+				result = randomElement(emote.getColors()) + result;
+
+			PlayerUtils.send(player, "&6&l[Example] " + result);
+		}
+	},
 
 	@Category(GalleryCategory.PETS_DISGUISES)
 	PETS(4527) {
@@ -494,8 +502,8 @@ public enum GalleryPackage {
 
 			addAll(List.of(
 				Material.COD, Material.GLASS, Material.AZALEA, Material.FLOWERING_AZALEA, Material.ANVIL,
-				Material.BONE, Material.LANTERN, Material.JACK_O_LANTERN, Material.ICE, Material.ENDER_EYE,
-				Material.SNOW, Material.AMETHYST_CLUSTER, Material.LIGHTNING_ROD
+				Material.BONE, Material.JACK_O_LANTERN, Material.ICE, Material.ENDER_EYE, Material.SNOW,
+				Material.AMETHYST_CLUSTER, Material.LIGHTNING_ROD
 			));
 		}};
 

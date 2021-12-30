@@ -187,7 +187,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 					continue;
 
 				CustomModel firstModel = subfolder.getIcon(model -> {
-					if (this instanceof CostumeStoreMenu)
+					if (!(this instanceof CostumeInventoryMenu))
 						return true;
 					return user.owns(model);
 				});
