@@ -4,9 +4,12 @@ package gg.projecteden.nexus.models.store;
 import gg.projecteden.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 import gg.projecteden.nexus.models.store.Contributor.Purchase;
+import gg.projecteden.utils.Utils;
 
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -44,9 +47,16 @@ public class ContributorService extends MongoPlayerService<Contributor> {
 
 	public List<Contributor> getTop(int count) {
 		return getAll().stream()
-				.sorted(Comparator.comparing(Contributor::getSum).reversed())
-				.collect(Collectors.toList())
-				.subList(0, count);
+			.sorted(Comparator.comparing(Contributor::getSum).reversed())
+			.collect(Collectors.toList())
+			.subList(0, count);
+	}
+
+	public List<Contributor> getMonthlyTop(YearMonth month, int count) {
+		return new ArrayList<>(Utils.sortByValueReverse(new HashMap<Contributor, Double>() {{
+			for (Contributor contributor : getAll())
+				put(contributor, contributor.getMonthlySum(month));
+		}}).keySet()).subList(0, count);
 	}
 
 }
