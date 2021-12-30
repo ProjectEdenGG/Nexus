@@ -49,8 +49,10 @@ public class Podiums implements Listener {
 
 	static {
 		if (Nexus.getEnv() == Env.PROD)
-			for (Podium value : Podium.values())
-				Tasks.repeat(10, TickTime.HOUR, value::update);
+			Tasks.repeat(TickTime.SECOND.x(30), TickTime.HOUR, () -> {
+				for (Podium podium : Podium.values())
+					podium.update();
+			});
 	}
 
 	@EventHandler
