@@ -42,6 +42,11 @@ public class ScheduledJobsCommand extends CustomCommand {
 		ScheduledJobsRunner.start();
 	}
 
+	@Override
+	public void _shutdown() {
+		ScheduledJobsRunner.stop();
+	}
+
 	@Data
 	private class JobType {
 		@NonNull
