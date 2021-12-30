@@ -18,6 +18,7 @@ import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.costume.Costume;
 import gg.projecteden.nexus.models.costume.CostumeUser;
 import gg.projecteden.nexus.models.particle.ParticleType;
+import gg.projecteden.nexus.models.playerplushie.PlayerPlushieConfig;
 import gg.projecteden.nexus.models.rainbowarmor.RainbowArmorTask;
 import gg.projecteden.nexus.models.rainbowbeacon.RainbowBeacon;
 import gg.projecteden.nexus.models.rainbowbeacon.RainbowBeaconService;
@@ -45,10 +46,13 @@ import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Rotation;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.EquipmentSlot;
@@ -63,6 +67,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.utils.EnumUtils.random;
@@ -123,11 +128,35 @@ public enum GalleryPackage {
 	@Category(GalleryCategory.VISUALS)
 	INVISIBLE_ARMOR,
 
-	/** TODO
-	 * Click to change to random one
-	 */
 	@Category(GalleryCategory.VISUALS)
-	PLAYER_PLUSHIES,
+	PLAYER_PLUSHIES(4547) {
+		@Override
+		public void init() {
+			final AtomicInteger taskId = new AtomicInteger();
+			taskId.set(Tasks.repeat(TickTime.SECOND, TickTime.SECOND, () -> {
+				try {
+					npc().setBukkitEntityType(EntityType.ITEM_FRAME);
+					final ItemFrame itemFrame = entity();
+					itemFrame.setFacingDirection(BlockFace.UP);
+					itemFrame.setRotation(Rotation.FLIPPED_45);
+					itemFrame.setVisible(false);
+					itemFrame.setItem(getRandomPlushie());
+					Tasks.cancel(taskId.get());
+				} catch (Exception ignore) {}
+			}));
+		}
+
+		@Override
+		public void onNpcInteract(Player player) {
+			final ItemFrame itemFrame = entity();
+			itemFrame.setRotation(Rotation.FLIPPED);
+			itemFrame.setItem(getRandomPlushie());
+		}
+
+		private ItemStack getRandomPlushie() {
+			return new ItemBuilder(PlayerPlushieConfig.MATERIAL).customModelData(PlayerPlushieConfig.randomActive()).build();
+		}
+	},
 
 	@Category(GalleryCategory.VISUALS)
 	NPCS(4531) {

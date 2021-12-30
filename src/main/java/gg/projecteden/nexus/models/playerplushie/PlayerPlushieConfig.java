@@ -20,12 +20,13 @@ import org.bukkit.Material;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+
+import static gg.projecteden.utils.RandomUtils.randomElement;
 
 @Data
 @Entity(value = "player_plushie_config", noClassnameStored = true)
@@ -39,6 +40,7 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 	private UUID uuid;
 
 	private Map<Pose, List<UUID>> subscriptions = new ConcurrentHashMap<>();
+	public static final Map<Integer, Pair<Pose, UUID>> ACTIVE_SUBSCRIPTIONS = new ConcurrentHashMap<>();
 
 	public void addSubscription(Pose pose, UUID uuid) {
 		subscriptions.computeIfAbsent(pose, $ -> new ArrayList<>()).add(uuid);
@@ -48,7 +50,14 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 		return new PlayerPlushieConfigService().get0();
 	}
 
-	private static final Material MATERIAL = Material.LAPIS_LAZULI;
+	public static int randomActive() {
+		if (ACTIVE_SUBSCRIPTIONS.isEmpty())
+			generate();
+
+		return randomElement(ACTIVE_SUBSCRIPTIONS.keySet());
+	}
+
+	public static final Material MATERIAL = Material.LAPIS_LAZULI;
 	private static final String SUBDIRECTORY = "projecteden/decoration/plushies/player";
 	private static final String DIRECTORY = "assets/minecraft/models/" + SUBDIRECTORY;
 
@@ -78,9 +87,8 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 	""".formatted(SUBDIRECTORY);
 
 	public static Map<String, String> generate() {
+		ACTIVE_SUBSCRIPTIONS.clear();
 		return new HashMap<>() {{
-			final Map<Integer, Pair<String, String>> models = new LinkedHashMap<>();
-
 			PlayerPlushieConfig.get().getSubscriptions().forEach((pose, uuids) -> {
 				int index = pose.getStartingIndex();
 				for (UUID uuid : uuids) {
@@ -94,12 +102,12 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 					final String template = ITEM_TEMPLATE.formatted(poseName, SkinCache.of(uuid).getModel(), poseName, uuid);
 					put(DIRECTORY + file, template);
 
-					models.put(index, new Pair<>(poseName, uuid.toString()));
+					ACTIVE_SUBSCRIPTIONS.put(index, new Pair<>(pose, uuid));
 				}
 			});
 
-			final String overrides = MATERIAL_TEMPLATE.formatted(Utils.sortByKey(models).entrySet().stream()
-				.map(entry -> PREDICATE_TEMPLATE.formatted(entry.getKey(), entry.getValue().getFirst(), entry.getValue().getSecond()))
+			final String overrides = MATERIAL_TEMPLATE.formatted(Utils.sortByKey(ACTIVE_SUBSCRIPTIONS).entrySet().stream()
+				.map(entry -> PREDICATE_TEMPLATE.formatted(entry.getKey(), entry.getValue().getFirst().name().toLowerCase(), entry.getValue().getSecond().toString()))
 				.collect(Collectors.joining(",")));
 
 			put("%s/%s.json".formatted(CustomModel.getVanillaSubdirectory(), MATERIAL.name().toLowerCase()), overrides);
