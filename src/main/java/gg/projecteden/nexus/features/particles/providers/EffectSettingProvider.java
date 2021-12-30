@@ -50,16 +50,18 @@ public class EffectSettingProvider extends MenuUtils implements InventoryProvide
 		}));
 
 		for (ParticleSetting setting : ParticleSetting.values()) {
-			if (setting.getApplicableEffects().contains(type)) {
-				ItemStack item = nameItem(setting.getItemStack(), "&3" + setting.getTitle(), setting.getLore(player, type));
-				if (setting.getValue() == Color.class) {
-					LeatherArmorMeta meta = (LeatherArmorMeta) item.getItemMeta();
-					meta.setColor(setting.get(new ParticleService().get(player), type));
-					item.setItemMeta(meta);
-				}
-				contents.set(setting.getRow(), setting.getColumn(), ClickableItem.from(item,
-						e -> setting.onClick(player, type)));
+			if (!setting.getApplicableEffects().contains(type))
+				continue;
+
+			ItemStack item = nameItem(setting.getItemStack(), "&3" + setting.getTitle(), setting.getLore(player, type));
+			if (setting.getValue() == Color.class) {
+				LeatherArmorMeta meta = (LeatherArmorMeta) item.getItemMeta();
+				meta.setColor(setting.get(new ParticleService().get(player), type));
+				item.setItemMeta(meta);
 			}
+
+			contents.set(setting.getRow(), setting.getColumn(), ClickableItem.from(item,
+					e -> setting.onClick(player, type)));
 		}
 	}
 }

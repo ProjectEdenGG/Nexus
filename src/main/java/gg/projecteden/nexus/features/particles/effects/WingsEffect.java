@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.particles.effects;
 
-import com.google.common.util.concurrent.AtomicDouble;
 import gg.projecteden.nexus.features.particles.ParticleUtils;
+import gg.projecteden.nexus.features.particles.ParticleUtils.ParticleColor;
 import gg.projecteden.nexus.features.particles.VectorUtils;
 import gg.projecteden.nexus.models.particle.ParticleOwner;
 import gg.projecteden.nexus.models.particle.ParticleService;
@@ -62,43 +62,16 @@ public class WingsEffect {
 		final int wingAngle = 125;
 		Particle wingParticle = Particle.REDSTONE;
 
-		if (ticks == 0) ticks = TickTime.SECOND.x(5);
-		if (pulseDelay < 1) pulseDelay = 2;
+		if (ticks == 0)
+			ticks = TickTime.SECOND.x(5);
+		if (pulseDelay < 1)
+			pulseDelay = 2;
 
-		if (color1 == null)
-			color1 = Color.RED;
-		if (color2 == null)
-			color2 = Color.RED;
-		if (color3 == null)
-			color3 = Color.RED;
+		final ParticleColor _color1 = new ParticleColor(color1 == null ? Color.RED : color1);
+		final ParticleColor _color2 = new ParticleColor(color2 == null ? Color.RED : color2);
+		final ParticleColor _color3 = new ParticleColor(color3 == null ? Color.RED : color3);
 
-		int disX1, disY1, disZ1, disX2, disY2, disZ2, disX3, disY3, disZ3;
-		disX1 = color1.getRed();
-		disY1 = color1.getGreen();
-		disZ1 = color1.getBlue();
-		disX2 = color2.getRed();
-		disY2 = color2.getGreen();
-		disZ2 = color2.getBlue();
-		disX3 = color3.getRed();
-		disY3 = color3.getGreen();
-		disZ3 = color3.getBlue();
-
-		final AtomicDouble hue1 = new AtomicDouble(0);
-		final AtomicInteger red1 = new AtomicInteger(disX1);
-		final AtomicInteger green1 = new AtomicInteger(disY1);
-		final AtomicInteger blue1 = new AtomicInteger(disZ1);
-
-		final AtomicDouble hue2 = new AtomicDouble(0);
-		final AtomicInteger red2 = new AtomicInteger(disX2);
-		final AtomicInteger green2 = new AtomicInteger(disY2);
-		final AtomicInteger blue2 = new AtomicInteger(disZ2);
-
-		final AtomicDouble hue3 = new AtomicDouble(0);
-		final AtomicInteger red3 = new AtomicInteger(disX3);
-		final AtomicInteger green3 = new AtomicInteger(disY3);
-		final AtomicInteger blue3 = new AtomicInteger(disZ3);
-
-		AtomicInteger ticksElapsed = new AtomicInteger(0);
+		final AtomicInteger ticksElapsed = new AtomicInteger(0);
 		int finalTicks = ticks;
 		int finalFlapRange = flapRange;
 
@@ -108,116 +81,46 @@ public class WingsEffect {
 				return;
 			}
 
+			if (rainbow1)
+				_color1.incrementRainbow();
+
+			if (rainbow2)
+				_color2.incrementRainbow();
+
+			if (rainbow3)
+				_color3.incrementRainbow();
+
 			Location newLoc = player.getLocation();
 			double x;
 			double defX = x = newLoc.getX() + space;
 			double y = newLoc.clone().getY() + 2.7D + height;
 			double y2 = newLoc.clone().getY() + 2.7D + height;
 			double y3 = newLoc.clone().getY() + 2.7D + height;
-			Location target;
-			Vector vR;
-			Vector vL;
-			Vector v2;
-			double rightWing;
-			double leftWing;
 
-			if (rainbow1) {
-				hue1.set(ParticleUtils.incHue(hue1.get()));
-				int[] rgb = ParticleUtils.incRainbow(hue1.get());
-				red1.set(rgb[0]);
-				green1.set(rgb[1]);
-				blue1.set(rgb[2]);
-			}
-
-			if (rainbow2) {
-				hue2.set(ParticleUtils.incHue(hue2.get()));
-				int[] rgb = ParticleUtils.incRainbow(hue2.get());
-				red2.set(rgb[0]);
-				green2.set(rgb[1]);
-				blue2.set(rgb[2]);
-			}
-
-			if (rainbow3) {
-				hue3.set(ParticleUtils.incHue(hue3.get()));
-				int[] rgb = ParticleUtils.incRainbow(hue3.get());
-				red3.set(rgb[0]);
-				green3.set(rgb[1]);
-				blue3.set(rgb[2]);
-			}
-
-			for (boolean[] booleans : shape1) {
-				for (boolean bool : booleans) {
-					if (bool) {
-						target = newLoc.clone();
-						target.setX(x);
-						target.setY(y);
-						vR = (target.toVector().subtract(newLoc.toVector()));
-						vL = (target.toVector().subtract(newLoc.toVector()));
-						v2 = (VectorUtils.getBackVector(newLoc));
-						rightWing = Math.toRadians(newLoc.getYaw() + 90.0F - (wingAngle - flap[0]));
-						leftWing = Math.toRadians(newLoc.getYaw() + 90.0F + (wingAngle - flap[0]));
-						vR = (VectorUtils.rotateAroundAxisY(vR, -rightWing));
-						vL = (VectorUtils.rotateAroundAxisY(vL, -leftWing));
-						v2.setY(0).multiply(-0.2D);
-
-						Particle.DustOptions dustOptions = ParticleUtils.newDustOption(wingParticle, red1.get(), green1.get(), blue1.get());
-						ParticleUtils.display(wingParticle, newLoc.clone().add(vL).add(v2), 0, red1.get(), green1.get(), blue1.get(), 1, dustOptions);
-						ParticleUtils.display(wingParticle, newLoc.clone().add(vR).add(v2), 0, red1.get(), green1.get(), blue1.get(), 1, dustOptions);
-					}
-
+			for (boolean[] pixels : shape1) {
+				for (boolean pixel : pixels) {
+					if (pixel)
+						display(flap, wingAngle, wingParticle, _color1, newLoc, x, y);
 					x += space;
 				}
-
 				y -= space;
 				x = defX;
 			}
 
-			for (boolean[] booleans : shape2) {
-				for (boolean bool : booleans) {
-					if (bool) {
-						target = newLoc.clone();
-						target.setX(x);
-						target.setY(y2);
-						vR = target.toVector().subtract(newLoc.toVector());
-						vL = target.toVector().subtract(newLoc.toVector());
-						v2 = VectorUtils.getBackVector(newLoc);
-						rightWing = Math.toRadians(newLoc.getYaw() + 90.0F - (wingAngle - flap[0]));
-						leftWing = Math.toRadians(newLoc.getYaw() + 90.0F + (wingAngle - flap[0]));
-						vR = VectorUtils.rotateAroundAxisY(vR, -rightWing);
-						vL = VectorUtils.rotateAroundAxisY(vL, -leftWing);
-						v2.setY(0).multiply(-0.2D);
-
-						Particle.DustOptions dustOptions = ParticleUtils.newDustOption(wingParticle, red2.get(), green2.get(), blue2.get());
-						ParticleUtils.display(wingParticle, newLoc.clone().add(vL).add(v2), 0, red2.get(), green2.get(), blue2.get(), 1, dustOptions);
-						ParticleUtils.display(wingParticle, newLoc.clone().add(vR).add(v2), 0, red2.get(), green2.get(), blue2.get(), 1, dustOptions);
-					}
-
+			for (boolean[] pixels : shape2) {
+				for (boolean pixel : pixels) {
+					if (pixel)
+						display(flap, wingAngle, wingParticle, _color2, newLoc, x, y2);
 					x += space;
 				}
-
 				y2 -= space;
 				x = defX;
 			}
 
-			for (boolean[] booleans : shape3) {
-				for (boolean aBoolean : booleans) {
-					if (aBoolean) {
-						target = newLoc.clone();
-						target.setX(x);
-						target.setY(y3);
-						vR = target.toVector().subtract(newLoc.toVector());
-						vL = target.toVector().subtract(newLoc.toVector());
-						v2 = VectorUtils.getBackVector(newLoc);
-						rightWing = Math.toRadians(newLoc.getYaw() + 90.0F - (wingAngle - flap[0]));
-						leftWing = Math.toRadians(newLoc.getYaw() + 90.0F + (wingAngle - flap[0]));
-						vR = VectorUtils.rotateAroundAxisY(vR, -rightWing);
-						vL = VectorUtils.rotateAroundAxisY(vL, -leftWing);
-						v2.setY(0).multiply(-0.2D);
-
-						Particle.DustOptions dustOptions = ParticleUtils.newDustOption(wingParticle, red3.get(), green3.get(), blue3.get());
-						ParticleUtils.display(wingParticle, newLoc.clone().add(vL).add(v2), 0, red3.get(), green3.get(), blue3.get(), 1, dustOptions);
-						ParticleUtils.display(wingParticle, newLoc.clone().add(vR).add(v2), 0, red3.get(), green3.get(), blue3.get(), 1, dustOptions);
-					}
+			for (boolean[] pixels : shape3) {
+				for (boolean pixel : pixels) {
+					if (pixel)
+						display(flap, wingAngle, wingParticle, _color3, newLoc, x, y3);
 					x += space;
 				}
 				y3 -= space;
@@ -236,6 +139,28 @@ public class WingsEffect {
 			if (finalTicks != -1)
 				ticksElapsed.incrementAndGet();
 		});
+	}
+
+	private void display(float[] flap, int wingAngle, Particle wingParticle, ParticleColor color, Location newLoc, double x, double y2) {
+		Location target;
+		Vector vR, vL, v2;
+		double rightWing, leftWing;
+
+		target = newLoc.clone();
+		target.setX(x);
+		target.setY(y2);
+		vR = target.toVector().subtract(newLoc.toVector());
+		vL = target.toVector().subtract(newLoc.toVector());
+		v2 = VectorUtils.getBackVector(newLoc);
+		rightWing = Math.toRadians(newLoc.getYaw() + 90.0F - (wingAngle - flap[0]));
+		leftWing = Math.toRadians(newLoc.getYaw() + 90.0F + (wingAngle - flap[0]));
+		vR = VectorUtils.rotateAroundAxisY(vR, -rightWing);
+		vL = VectorUtils.rotateAroundAxisY(vL, -leftWing);
+		v2.setY(0).multiply(-0.2D);
+
+		Particle.DustOptions dustOptions = ParticleUtils.newDustOption(wingParticle, color);
+		ParticleUtils.display(wingParticle, newLoc.clone().add(vL).add(v2), 0, color.getRed(), color.getGreen(), color.getBlue(), 1, dustOptions);
+		ParticleUtils.display(wingParticle, newLoc.clone().add(vR).add(v2), 0, color.getRed(), color.getGreen(), color.getBlue(), 1, dustOptions);
 	}
 
 	@Getter

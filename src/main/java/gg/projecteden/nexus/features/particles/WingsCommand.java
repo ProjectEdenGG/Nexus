@@ -28,7 +28,7 @@ public class WingsCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	@Path()
+	@Path
 	void openMenu() {
 		new EffectSettingProvider(ParticleType.WINGS).open(player());
 	}
