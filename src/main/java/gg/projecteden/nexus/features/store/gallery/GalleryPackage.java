@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.store.gallery;
 
 
+import com.destroystokyo.paper.ParticleBuilder;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.gmail.filoghost.holographicdisplays.api.line.ItemLine;
@@ -47,6 +48,7 @@ import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.Rotation;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -521,9 +523,18 @@ public enum GalleryPackage {
 
 	@Category(GalleryCategory.MISC)
 	CUSTOM_CONTRIBUTION {
+		public Location getLocation() {
+			return StoreGallery.location(967.5, 71.5, 992.5);
+		}
+
 		@Override
 		public void onImageInteract(Player player) {
-			// TODO Wakka - Heart particles
+			new ParticleBuilder(Particle.HEART)
+				.location(getLocation())
+				.offset(1, 0.75, 0.2)
+				.extra(0)
+				.count(15)
+				.spawn();
 		}
 	},
 
