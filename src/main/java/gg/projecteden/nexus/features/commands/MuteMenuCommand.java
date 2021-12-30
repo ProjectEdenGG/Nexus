@@ -19,13 +19,12 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
-import joptsimple.internal.Strings;
+import gg.projecteden.parchment.event.sound.EntitySoundEvent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import me.lexikiq.event.sound.EntitySoundEvent;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -154,7 +153,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 					for (MuteMenuItem item : MuteMenuItem.values()) {
 						if (item.getDefaultVolume() != null)
 							continue;
-						if (!Strings.isNullOrEmpty(item.getPermission()) && !player.hasPermission(item.getPermission()))
+						if (!StringUtils.isNullOrEmpty(item.getPermission()) && !player.hasPermission(item.getPermission()))
 							continue;
 
 						boolean muted = user.hasMuted(item);
@@ -184,7 +183,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 					for (MuteMenuItem item : MuteMenuItem.values()) {
 						if (item.getDefaultVolume() == null)
 							continue;
-						if (!Strings.isNullOrEmpty(item.getPermission()) && !player.hasPermission(item.getPermission()))
+						if (!StringUtils.isNullOrEmpty(item.getPermission()) && !player.hasPermission(item.getPermission()))
 							continue;
 
 						boolean muted = user.hasMuted(item);

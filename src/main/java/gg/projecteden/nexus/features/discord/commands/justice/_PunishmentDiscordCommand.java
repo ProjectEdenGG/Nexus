@@ -2,6 +2,8 @@ package gg.projecteden.nexus.features.discord.commands.justice;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import gg.projecteden.discord.DiscordId.Role;
+import gg.projecteden.discord.DiscordId.TextChannel;
 import gg.projecteden.exceptions.EdenException;
 import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.features.discord.HandledBy;
@@ -9,8 +11,6 @@ import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.punishments.PunishmentType;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.DiscordId.Role;
-import gg.projecteden.utils.DiscordId.TextChannel;
 
 import java.util.Arrays;
 

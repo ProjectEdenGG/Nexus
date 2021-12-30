@@ -2,6 +2,8 @@ package gg.projecteden.nexus.features.chat.bridge;
 
 import com.google.gson.Gson;
 import gg.projecteden.annotations.Async;
+import gg.projecteden.discord.DiscordId;
+import gg.projecteden.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.features.discord.Discord;
@@ -21,8 +23,6 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.utils.DiscordId;
-import gg.projecteden.utils.DiscordId.TextChannel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;

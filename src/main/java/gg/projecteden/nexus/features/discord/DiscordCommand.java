@@ -1,6 +1,8 @@
 package gg.projecteden.nexus.features.discord;
 
 import gg.projecteden.annotations.Async;
+import gg.projecteden.discord.DiscordId;
+import gg.projecteden.discord.DiscordId.VoiceChannel;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -21,8 +23,6 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.setting.Setting;
 import gg.projecteden.nexus.models.setting.SettingService;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.utils.DiscordId;
-import gg.projecteden.utils.DiscordId.VoiceChannel;
 import lombok.NonNull;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;

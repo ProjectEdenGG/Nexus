@@ -1,10 +1,10 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.interfaces.HasUniqueId;
 import gg.projecteden.nexus.framework.interfaces.IsColoredAndNamed;
 import gg.projecteden.nexus.framework.interfaces.IsColoredAndNicknamed;
 import gg.projecteden.utils.TimeUtils;
 import lombok.experimental.UtilityClass;
-import me.lexikiq.HasUniqueId;
 import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;

@@ -68,6 +68,7 @@ public class Nexus extends JavaPlugin {
 	public static final LocalDateTime EPOCH = LocalDateTime.now();
 	@Getter
 	private final static HeadDatabaseAPI headAPI = new HeadDatabaseAPI();
+	private static API api;
 	public static final String DOMAIN = "projecteden.gg";
 
 	public static Map<Class<?>, Object> singletons = new HashMap<>();
@@ -89,7 +90,7 @@ public class Nexus extends JavaPlugin {
 		} else
 			Bukkit.getServer().getLogger().info("Nexus could not be initialized: Instance is not null, but is: " + instance.getClass().getName());
 
-		new API();
+		api = new API();
 	}
 
 	public static Nexus getInstance() {
@@ -216,7 +217,7 @@ public class Nexus extends JavaPlugin {
 		try { Bukkit.getServicesManager().unregisterAll(this);			} catch (Throwable ex) { ex.printStackTrace(); }
 		try { MySQLPersistence.shutdown();								} catch (Throwable ex) { ex.printStackTrace(); }
 		try { GoogleUtils.shutdown();									} catch (Throwable ex) { ex.printStackTrace(); }
-		try { API.shutdown();											} catch (Throwable ex) { ex.printStackTrace(); }
+		try { api.shutdown();											} catch (Throwable ex) { ex.printStackTrace(); }
 	}
 	// @formatter:on;
 

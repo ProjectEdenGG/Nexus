@@ -2,10 +2,10 @@ package gg.projecteden.nexus.features.discord.commands.justice;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import gg.projecteden.discord.DiscordId.Role;
+import gg.projecteden.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.features.discord.HandledBy;
-import gg.projecteden.utils.DiscordId.Role;
-import gg.projecteden.utils.DiscordId.TextChannel;
 
 import static gg.projecteden.nexus.utils.PlayerUtils.runCommandAsConsole;
 

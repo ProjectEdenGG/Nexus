@@ -6,7 +6,6 @@ import gg.projecteden.nexus.models.boost.Boostable;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.SerializationUtils.YML;
 import gg.projecteden.nexus.utils.StringUtils;
-import joptsimple.internal.Strings;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -69,7 +68,7 @@ public class CrateLoot implements ConfigurationSerializable {
 	}
 
 	public String getTitle() {
-		if (!Strings.isNullOrEmpty(title))
+		if (!StringUtils.isNullOrEmpty(title))
 			return "&e" + title;
 		if (getDisplayItem() == null)
 			return "";

@@ -1,10 +1,10 @@
 package gg.projecteden.nexus.features.quests.users;
 
+import gg.projecteden.interfaces.HasUniqueId;
 import gg.projecteden.nexus.features.quests.tasks.common.IQuestTask;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import lombok.Data;
 import lombok.NonNull;
-import me.lexikiq.HasUniqueId;
 
 import java.util.ArrayList;
 import java.util.List;

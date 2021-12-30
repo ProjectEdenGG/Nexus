@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage;
 
+import gg.projecteden.interfaces.HasUniqueId;
 import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerCompleteTaskPartEvent;
@@ -7,7 +8,6 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.taskpartdata.TaskPartData;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import me.lexikiq.HasUniqueId;
 import net.md_5.bungee.api.ChatColor;
 
 @Getter

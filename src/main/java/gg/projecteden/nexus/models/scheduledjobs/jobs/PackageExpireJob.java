@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.models.scheduledjobs.jobs;
 
 import gg.projecteden.annotations.Async;
-import gg.projecteden.models.scheduledjobs.common.AbstractJob;
-import gg.projecteden.models.scheduledjobs.common.RetryIfInterrupted;
+import gg.projecteden.mongodb.models.scheduledjobs.common.AbstractJob;
+import gg.projecteden.mongodb.models.scheduledjobs.common.RetryIfInterrupted;
 import gg.projecteden.nexus.features.store.Package;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import lombok.AllArgsConstructor;

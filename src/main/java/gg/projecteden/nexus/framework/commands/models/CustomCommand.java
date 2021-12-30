@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.framework.commands.models;
 
 import com.google.common.base.Strings;
-import gg.projecteden.interfaces.PlayerOwnedObject;
+import gg.projecteden.mongodb.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.features.commands.staff.MultiCommandCommand;
 import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;

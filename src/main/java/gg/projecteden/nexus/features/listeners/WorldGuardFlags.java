@@ -11,13 +11,13 @@ import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldGuardFlagUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
-import joptsimple.internal.Strings;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -262,7 +262,7 @@ public class WorldGuardFlags implements Listener {
 
 		// Action Bar
 		String greeting_actionbar = (String) event.getRegion().getFlag(GREETING_ACTIONBAR.get());
-		if (!Strings.isNullOrEmpty(greeting_actionbar)) {
+		if (!StringUtils.isNullOrEmpty(greeting_actionbar)) {
 			Integer actionbar_ticks = (Integer) event.getRegion().getFlag(ACTIONBAR_TICKS.get());
 			if (actionbar_ticks == null)
 				actionbar_ticks = 60;
@@ -275,7 +275,7 @@ public class WorldGuardFlags implements Listener {
 		// Titles
 		String greeting_title = (String) event.getRegion().getFlag(GREETING_TITLE.get());
 		String greeting_subtitle = (String) event.getRegion().getFlag(GREETING_SUBTITLE.get());
-		if (!(Strings.isNullOrEmpty(greeting_title) && Strings.isNullOrEmpty(greeting_subtitle))) {
+		if (!(StringUtils.isNullOrEmpty(greeting_title) && StringUtils.isNullOrEmpty(greeting_subtitle))) {
 			if (greeting_title == null)
 				greeting_title = "";
 			if (greeting_subtitle == null)
@@ -306,7 +306,7 @@ public class WorldGuardFlags implements Listener {
 			return;
 
 		String farewell_actionbar = (String) event.getRegion().getFlag(FAREWELL_ACTIONBAR.get());
-		if (!Strings.isNullOrEmpty(farewell_actionbar)) {
+		if (!StringUtils.isNullOrEmpty(farewell_actionbar)) {
 
 			Integer actionbar_ticks = (Integer) event.getRegion().getFlag(ACTIONBAR_TICKS.get());
 			if (actionbar_ticks == null)
@@ -320,10 +320,10 @@ public class WorldGuardFlags implements Listener {
 		// Titles
 		String farewell_title = (String) event.getRegion().getFlag(FAREWELL_TITLE.get());
 		String farewell_subtitle = (String) event.getRegion().getFlag(FAREWELL_SUBTITLE.get());
-		if (!(Strings.isNullOrEmpty(farewell_title) && Strings.isNullOrEmpty(farewell_subtitle))) {
-			if (Strings.isNullOrEmpty(farewell_title))
+		if (!(StringUtils.isNullOrEmpty(farewell_title) && StringUtils.isNullOrEmpty(farewell_subtitle))) {
+			if (StringUtils.isNullOrEmpty(farewell_title))
 				farewell_title = "";
-			if (Strings.isNullOrEmpty(farewell_subtitle))
+			if (StringUtils.isNullOrEmpty(farewell_subtitle))
 				farewell_subtitle = "";
 
 			Integer title_ticks = (Integer) event.getRegion().getFlag(TITLE_TICKS.get());

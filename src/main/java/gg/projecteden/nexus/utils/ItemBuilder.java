@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.utils;
 
 import de.tr7zw.nbtapi.NBTItem;
+import gg.projecteden.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.customenchants.enchants.SoulboundEnchant;
@@ -13,11 +14,10 @@ import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.skincache.SkinCache;
 import gg.projecteden.nexus.utils.SymbolBanner.Symbol;
+import gg.projecteden.parchment.HasOfflinePlayer;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import me.lexikiq.HasOfflinePlayer;
-import me.lexikiq.HasUniqueId;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.format.TextDecoration;

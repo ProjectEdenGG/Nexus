@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.models.trophy;
 
+import gg.projecteden.interfaces.HasUniqueId;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Utils;
@@ -7,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import me.lexikiq.HasUniqueId;
 import org.bukkit.Material;
 
 import java.util.ArrayList;

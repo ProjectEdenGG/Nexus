@@ -6,6 +6,7 @@ import de.tr7zw.nbtapi.NBTList;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.PreLoad;
+import gg.projecteden.interfaces.HasUniqueId;
 import gg.projecteden.mongodb.serializers.LocalDateConverter;
 import gg.projecteden.mongodb.serializers.LocalDateTimeConverter;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
@@ -33,7 +34,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
-import me.lexikiq.HasUniqueId;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -61,7 +61,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 @NoArgsConstructor
 @AllArgsConstructor
 @Converters({UUIDConverter.class, LocalDateConverter.class, LocalDateTimeConverter.class})
-public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwnedObject, IsColoredAndNicknamed, Colored {
+public class Nerd extends gg.projecteden.mongodb.models.nerd.Nerd implements PlayerOwnedObject, IsColoredAndNicknamed, Colored {
 	@ToString.Exclude
 	@EqualsAndHashCode.Exclude
 	private Location location;

@@ -4,6 +4,9 @@ import com.vdurmont.emoji.EmojiManager;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import gg.projecteden.EdenAPI;
+import gg.projecteden.discord.DiscordId;
+import gg.projecteden.discord.DiscordId.Role;
+import gg.projecteden.interfaces.HasUniqueId;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -12,15 +15,12 @@ import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.utils.DiscordId;
-import gg.projecteden.utils.DiscordId.Role;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import me.lexikiq.HasUniqueId;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.MessageBuilder;
@@ -45,7 +45,7 @@ import static gg.projecteden.utils.TimeUtils.shortishDateTimeFormat;
 @NoArgsConstructor
 @AllArgsConstructor
 @Converters({UUIDConverter.class, LocationConverter.class})
-public class Nickname extends gg.projecteden.models.nickname.Nickname implements PlayerOwnedObject {
+public class Nickname extends gg.projecteden.mongodb.models.nickname.Nickname implements PlayerOwnedObject {
 
 	private List<NicknameHistoryEntry> nicknameHistory = new ArrayList<>();
 

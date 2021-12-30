@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.chat.commands;
 
+import gg.projecteden.interfaces.HasUniqueId;
 import gg.projecteden.nexus.features.chat.Emotes;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -12,7 +13,6 @@ import gg.projecteden.nexus.models.emote.EmoteUser;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import lombok.NonNull;
-import me.lexikiq.HasUniqueId;
 import net.md_5.bungee.api.ChatColor;
 
 import java.util.Arrays;

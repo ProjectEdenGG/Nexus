@@ -2,11 +2,11 @@ package gg.projecteden.nexus.framework.persistence.mysql;
 
 import com.dieselpoint.norm.Database;
 import com.google.common.base.Strings;
+import gg.projecteden.interfaces.HasUniqueId;
 import gg.projecteden.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.Tasks;
-import me.lexikiq.HasUniqueId;
 import org.bukkit.Bukkit;
 
 import javax.persistence.Table;

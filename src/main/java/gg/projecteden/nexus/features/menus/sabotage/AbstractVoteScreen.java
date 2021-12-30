@@ -11,7 +11,7 @@ import gg.projecteden.nexus.features.minigames.models.matchdata.SabotageMatchDat
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.SabotageColor;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import me.lexikiq.HasPlayer;
+import gg.projecteden.parchment.HasPlayer;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

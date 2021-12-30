@@ -6,7 +6,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.fakenpc.FakeNPC.SkinProperties;
 import gg.projecteden.nexus.utils.Tasks;
 import net.minecraft.server.level.EntityPlayer;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -31,7 +31,7 @@ public class FakeNPCUtils {
 
 	private static String[] getSkin(Player player) {
 		EntityPlayer entityPlayer = ((CraftPlayer) player).getHandle();
-		GameProfile gameProfile = entityPlayer.getProfile();
+		GameProfile gameProfile = entityPlayer.getBukkitEntity().getProfile();
 		Property property = gameProfile.getProperties().get("textures").iterator().next();
 		String texture = property.getValue();
 		String signature = property.getSignature();

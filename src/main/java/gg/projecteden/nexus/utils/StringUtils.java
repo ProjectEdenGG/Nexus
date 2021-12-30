@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.parchment.HasPlayer;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import me.lexikiq.HasPlayer;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;

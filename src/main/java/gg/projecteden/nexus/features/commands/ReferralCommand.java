@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands;
 
 import com.google.common.base.Strings;
 import gg.projecteden.annotations.Async;
+import gg.projecteden.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.BookBuilder.WrittenBookMenu;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -34,7 +35,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import me.lexikiq.HasUniqueId;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;

@@ -2,8 +2,8 @@ package gg.projecteden.nexus.utils;
 
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import lombok.Getter;
-import me.lexikiq.HasLocation;
-import me.lexikiq.OptionalLocation;
+import gg.projecteden.parchment.HasLocation;
+import gg.projecteden.parchment.OptionalLocation;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;

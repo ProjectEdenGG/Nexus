@@ -11,8 +11,8 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.punishments.Punishments;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import joptsimple.internal.Strings;
 import org.bukkit.OfflinePlayer;
 
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
@@ -30,7 +30,7 @@ public class HistoryDiscordCommand extends Command {
 		Tasks.async(() -> {
 			try {
 				String[] args = event.getArgs().split(" ");
-				if (!(args.length > 0 && !Strings.isNullOrEmpty(args[0])))
+				if (!(args.length > 0 && !StringUtils.isNullOrEmpty(args[0])))
 					throw new InvalidInputException("Correct usage: `/history <player>`");
 
 				OfflinePlayer player = PlayerUtils.getPlayer(args[0]);

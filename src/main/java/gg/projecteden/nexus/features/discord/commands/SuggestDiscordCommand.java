@@ -2,6 +2,8 @@ package gg.projecteden.nexus.features.discord.commands;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import gg.projecteden.discord.DiscordId.Role;
+import gg.projecteden.discord.DiscordId.TextChannel;
 import gg.projecteden.exceptions.EdenException;
 import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.features.discord.HandledBy;
@@ -16,8 +18,6 @@ import gg.projecteden.nexus.models.punishments.Punishments;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.DiscordId.Role;
-import gg.projecteden.utils.DiscordId.TextChannel;
 import gg.projecteden.utils.TimeUtils.Timespan.TimespanBuilder;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;

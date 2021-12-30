@@ -2,7 +2,7 @@ package gg.projecteden.nexus.framework.persistence.mysql;
 
 import com.dieselpoint.norm.Database;
 import com.dieselpoint.norm.sqlmakers.MySqlMaker;
-import gg.projecteden.mongodb.DatabaseConfig;
+import gg.projecteden.DatabaseConfig;
 import gg.projecteden.nexus.Nexus;
 import lombok.SneakyThrows;
 

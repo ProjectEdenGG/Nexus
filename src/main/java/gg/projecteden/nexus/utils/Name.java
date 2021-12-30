@@ -1,10 +1,10 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.interfaces.HasUniqueId;
+import gg.projecteden.parchment.HasOfflinePlayer;
+import gg.projecteden.parchment.HasPlayer;
+import gg.projecteden.parchment.OptionalPlayerLike;
 import lombok.experimental.UtilityClass;
-import me.lexikiq.HasOfflinePlayer;
-import me.lexikiq.HasPlayer;
-import me.lexikiq.HasUniqueId;
-import me.lexikiq.OptionalPlayerLike;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;

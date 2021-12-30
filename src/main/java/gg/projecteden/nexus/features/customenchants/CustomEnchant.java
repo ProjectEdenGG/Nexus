@@ -28,6 +28,13 @@ public abstract class CustomEnchant extends Enchantment {
 	}
 
 	@Override
+	public @NotNull String translationKey() {
+		// custom enchants obviously can't be translated so this is a basic response
+		// (actually they could be using our resource pack but it probably wouldn't be worth the effort)
+		return getKey().asString();
+	}
+
+	@Override
 	public @NotNull String getName() {
 		return getKey().getKey();
 	}

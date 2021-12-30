@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.models.scheduledjobs.jobs;
 
-import gg.projecteden.models.scheduledjobs.common.AbstractJob;
-import gg.projecteden.models.scheduledjobs.common.Schedule;
+import gg.projecteden.mongodb.models.scheduledjobs.common.AbstractJob;
+import gg.projecteden.mongodb.models.scheduledjobs.common.Schedule;
 import gg.projecteden.nexus.features.store.gallery.StoreGalleryNPCs;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

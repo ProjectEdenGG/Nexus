@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.features.minigames.managers;
 
+import gg.projecteden.interfaces.HasUniqueId;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
-import me.lexikiq.HasUniqueId;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;

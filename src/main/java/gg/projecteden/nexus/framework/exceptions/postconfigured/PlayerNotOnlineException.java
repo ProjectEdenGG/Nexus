@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.framework.exceptions.postconfigured;
 
+import gg.projecteden.interfaces.HasUniqueId;
 import gg.projecteden.nexus.utils.Name;
-import me.lexikiq.HasUniqueId;
 
 import java.util.UUID;
 

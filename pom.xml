@@ -8,6 +8,7 @@
     <properties>
         <jdk.version>16</jdk.version>
         <lombok.encoding>UTF-8</lombok.encoding>
+        <eden.version>2.0.0-SNAPSHOT</eden.version>
     </properties>
 
     <build>
@@ -93,25 +94,6 @@
                     </execution>
                 </executions>
             </plugin>
-        <!--
-            <plugin>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok-maven-plugin</artifactId>
-                <version>1.18.12.0</version>
-                <executions>
-                    <execution>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>delombok</goal>
-                        </goals>
-                        <configuration>
-                            <addOutputDirectory>false</addOutputDirectory>
-                            <sourceDirectory>src/main/java</sourceDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        -->
         </plugins>
     </build>
 
@@ -202,12 +184,30 @@
     </repositories>
 
     <dependencies>
-        <!-- Parchment API + server (NMS) -->
+        <!-- Parchment-API because Parchment-Server's shading is broken -->
         <dependency>
-            <groupId>me.lexikiq</groupId>
-            <artifactId>parchment</artifactId>
-            <version>1.17.1-R0.1-SNAPSHOT</version>
+            <groupId>gg.projecteden.parchment</groupId>
+            <artifactId>Parchment-API</artifactId>
+            <version>1.18.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
+        </dependency>
+        <!-- Parchment server (NMS) -->
+        <dependency>
+            <groupId>gg.projecteden.parchment</groupId>
+            <artifactId>parchment</artifactId>
+            <version>1.18.1-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- internal mojang libraries (for NMS) because of aforementioned shading issues -->
+        <dependency>
+            <groupId>com.mojang</groupId>
+            <artifactId>authlib</artifactId>
+            <version>3.2.38</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mojang</groupId>
+            <artifactId>datafixerupper</artifactId>
+            <version>4.0.26</version>
         </dependency>
         <!-- PaperLib API wrapper -->
         <dependency>
@@ -218,8 +218,19 @@
         <!-- EdenAPI -->
         <dependency>
             <groupId>gg.projecteden</groupId>
-            <artifactId>eden-api</artifactId>
-            <version>1.7.0</version>
+            <artifactId>eden-db</artifactId>
+            <version>${eden.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>gg.projecteden</groupId>
+            <artifactId>eden-discord</artifactId>
+            <version>${eden.version}</version>
+        </dependency>
+        <!-- Emoji Lib -->
+        <dependency>
+            <groupId>com.vdurmont</groupId>
+            <artifactId>emoji-java</artifactId>
+            <version>5.1.1</version>
         </dependency>
         <!-- Lombok Project -->
         <dependency>
@@ -244,7 +255,7 @@
         <dependency>
             <groupId>org.checkerframework</groupId>
             <artifactId>checker-qual</artifactId>
-            <version>3.20.0</version>
+            <version>3.21.0</version>
         </dependency>
         <!-- Norm -->
         <dependency>
@@ -297,7 +308,7 @@
         <dependency>
             <groupId>com.github.twitch4j</groupId>
             <artifactId>twitch4j</artifactId>
-            <version>1.6.0</version>
+            <version>1.7.0</version>
         </dependency>
         <!-- Google API -->
         <dependency>

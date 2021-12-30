@@ -6,6 +6,7 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.PostLoad;
 import dev.morphia.annotations.PreLoad;
+import gg.projecteden.interfaces.HasUniqueId;
 import gg.projecteden.mongodb.serializers.BigDecimalConverter;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.economy.events.BalanceChangeEvent;
@@ -26,7 +27,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import me.lexikiq.HasUniqueId;
 
 import java.math.BigDecimal;
 import java.util.Map;

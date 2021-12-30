@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.utils;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.mobheads.MobHeadType;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -8,7 +9,6 @@ import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.utils.EnumUtils;
 import lombok.Builder;
-import me.lexikiq.HasUniqueId;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.NPC;

@@ -12,11 +12,11 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.taskpartdata.ReactorTaskPartData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.taskpartdata.TaskPartData;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.parchment.HasPlayer;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import me.lexikiq.HasPlayer;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Contract;

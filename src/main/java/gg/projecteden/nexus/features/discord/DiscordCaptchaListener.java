@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.discord;
 
+import gg.projecteden.discord.DiscordId.Role;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.models.discord.DiscordCaptcha;
@@ -8,7 +9,6 @@ import gg.projecteden.nexus.models.discord.DiscordCaptchaService;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.DiscordId.Role;
 import lombok.NoArgsConstructor;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;

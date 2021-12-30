@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.framework.interfaces;
 
+import gg.projecteden.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
@@ -13,9 +14,8 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.parchment.OptionalPlayerLike;
 import gg.projecteden.utils.StringUtils;
-import me.lexikiq.HasUniqueId;
-import me.lexikiq.OptionalPlayerLike;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.ComponentLike;
@@ -33,7 +33,7 @@ import static gg.projecteden.nexus.utils.AdventureUtils.identityOf;
 /**
  * A mongo database object owned by a player
  */
-public interface PlayerOwnedObject extends gg.projecteden.interfaces.PlayerOwnedObject, OptionalPlayerLike {
+public interface PlayerOwnedObject extends gg.projecteden.mongodb.interfaces.PlayerOwnedObject, OptionalPlayerLike {
 
 	/**
 	 * Gets the unique ID of this object. Alias for {@link #getUuid()}, for compatibility with {@link HasUniqueId}.

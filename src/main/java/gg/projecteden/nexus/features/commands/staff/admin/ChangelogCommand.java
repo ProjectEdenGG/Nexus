@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
+import gg.projecteden.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -16,7 +17,6 @@ import gg.projecteden.nexus.models.changelog.Changelog.ChangelogEntry;
 import gg.projecteden.nexus.models.changelog.ChangelogService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.utils.DiscordId.TextChannel;
 import lombok.NonNull;
 
 import java.time.LocalDateTime;

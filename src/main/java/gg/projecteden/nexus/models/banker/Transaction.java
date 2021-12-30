@@ -2,16 +2,15 @@ package gg.projecteden.nexus.models.banker;
 
 import com.mongodb.DBObject;
 import dev.morphia.annotations.PreLoad;
+import gg.projecteden.interfaces.HasUniqueId;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
-import joptsimple.internal.Strings;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import me.lexikiq.HasUniqueId;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -189,7 +188,7 @@ public class Transaction {
 		if (!shopCauses.contains(previous.getCause()))
 			return 0;
 
-		if (Strings.isNullOrEmpty(transaction.getDescription()))
+		if (StringUtils.isNullOrEmpty(transaction.getDescription()))
 			return 0;
 
 		String[] split = transaction.getDescription().split(" ", 2);

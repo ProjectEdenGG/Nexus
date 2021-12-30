@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.chat.bridge;
 
 import com.vdurmont.emoji.EmojiParser;
+import gg.projecteden.discord.DiscordId.User;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.chat.ChatManager;
 import gg.projecteden.nexus.features.chat.events.DiscordChatEvent;
@@ -12,7 +13,6 @@ import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.DiscordId.User;
 import lombok.NoArgsConstructor;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;

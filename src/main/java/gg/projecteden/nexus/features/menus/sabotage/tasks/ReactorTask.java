@@ -6,8 +6,8 @@ import fr.minuskube.inv.content.InventoryContents;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.Task;
 import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.parchment.HasPlayer;
 import lombok.Getter;
-import me.lexikiq.HasPlayer;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 

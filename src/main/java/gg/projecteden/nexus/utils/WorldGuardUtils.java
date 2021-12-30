@@ -20,7 +20,7 @@ import gg.projecteden.nexus.utils.CitizensUtils.NPCFinder;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.utils.RegexUtils;
 import lombok.Data;
-import me.lexikiq.HasPlayer;
+import gg.projecteden.parchment.HasPlayer;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

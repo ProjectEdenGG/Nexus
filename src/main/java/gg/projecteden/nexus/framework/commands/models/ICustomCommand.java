@@ -3,7 +3,7 @@ package gg.projecteden.nexus.framework.commands.models;
 import gg.projecteden.annotations.Async;
 import gg.projecteden.annotations.Disabled;
 import gg.projecteden.annotations.Environments;
-import gg.projecteden.interfaces.PlayerOwnedObject;
+import gg.projecteden.mongodb.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.framework.commands.Commands;

@@ -11,9 +11,9 @@ import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.hours.Hours;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.Timespan.TimespanBuilder;
-import joptsimple.internal.Strings;
 
 import java.util.UUID;
 
@@ -33,7 +33,7 @@ public class HoursDiscordCommand extends Command {
 				UUID playerUUID;
 
 				String[] args = event.getArgs().split(" ");
-				if (args.length > 0 && !Strings.isNullOrEmpty(args[0]))
+				if (args.length > 0 && !StringUtils.isNullOrEmpty(args[0]))
 					playerUUID = PlayerUtils.getPlayer(args[0]).getUniqueId();
 				else
 					try {

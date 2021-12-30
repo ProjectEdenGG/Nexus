@@ -3,9 +3,9 @@ package gg.projecteden.nexus.features.store.perks.autosort;
 import gg.projecteden.nexus.features.store.StoreCommand;
 import gg.projecteden.nexus.features.store.perks.autosort.features.AutoTool;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.NoPermissionException;
+import gg.projecteden.parchment.HasPlayer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import me.lexikiq.HasPlayer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
