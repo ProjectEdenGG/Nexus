@@ -530,7 +530,11 @@ public enum GalleryPackage {
 
 		@Override
 		public void onImageInteract(Player player) {
+			if (!cooldown(TickTime.SECOND))
+				return;
+
 			new ParticleBuilder(Particle.HEART)
+				.receivers(player)
 				.location(getLocation())
 				.offset(1, 0.75, 0.2)
 				.extra(0)
