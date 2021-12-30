@@ -37,7 +37,7 @@ public class EffectSettingProvider extends MenuUtils implements InventoryProvide
 	@Override
 	public void init(Player player, InventoryContents contents) {
 		// TODO Should receive previousMenu
-		if (displayEntity == null)
+		if (displayEntity != null)
 			addCloseItem(contents);
 		else
 			addBackItem(contents, e -> new ParticleMenuProvider().open(player));

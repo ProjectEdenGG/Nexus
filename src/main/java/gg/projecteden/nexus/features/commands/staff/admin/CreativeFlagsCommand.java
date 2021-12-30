@@ -36,6 +36,7 @@ public class CreativeFlagsCommand extends CustomCommand {
 		runCommand("rg flag -w \"" + world.getName() + "\" __global__ " + Flags.SOIL_DRY.getName() + " " + deny);
 		runCommand("rg flag -w \"" + world.getName() + "\" __global__ " + Flags.CORAL_FADE.getName() + " " + deny);
 		runCommand("rg flag -w \"" + world.getName() + "\" __global__ " + WorldGuardFlagUtils.Flags.GRASS_DECAY.get().getName() + " " + deny);
+		runCommand("rg flag -w \"" + world.getName() + "\" __global__ " + WorldGuardFlagUtils.Flags.HANGING_BREAK.get().getName() + " " + deny);
 	}
 
 }
