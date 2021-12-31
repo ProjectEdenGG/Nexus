@@ -30,7 +30,7 @@ public class TicketsAppCommand extends NexusAppCommand {
 		super(event);
 	}
 
-	@Command(value = "List open tickets", literals = false)
+	@Command("List open tickets")
 	void list() {
 		List<Ticket> opened = tickets.getTickets().stream()
 			.filter(Ticket::isOpen).collect(Collectors.toList());

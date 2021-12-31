@@ -19,7 +19,7 @@ public class HoursAppCommand extends NexusAppCommand {
 	@Verify
 	@Command(value = "Check a player's playtime", literals = false)
 	void check(@Desc("Player") @Default("self") Hours player) {
-		String message = "**[Hours]** " + player.getName() + "'s in-game playtime";
+		String message = "**[Hours]** " + player.getNickname() + "'s in-game playtime";
 		message += System.lineSeparator() + "Total: **" + TimespanBuilder.of(player.getTotal()).noneDisplay(true).format() + "**";
 		message += System.lineSeparator() + "- Today: **" + TimespanBuilder.of(player.getDaily()).noneDisplay(true).format() + "**";
 		message += System.lineSeparator() + "- This month: **" + TimespanBuilder.of(player.getMonthly()).noneDisplay(true).format() + "**";

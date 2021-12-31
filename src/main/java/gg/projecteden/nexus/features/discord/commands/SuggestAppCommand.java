@@ -31,7 +31,7 @@ public class SuggestAppCommand extends NexusAppCommand {
 		super(event);
 	}
 
-	@Command("Suggest a player for promotion")
+	@Command(value = "Suggest a player for promotion", literals = false)
 	void run(
 		@Desc("Player") Nerd nerd,
 		@Desc("Rank") @Optional Rank rank
