@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.store.perks.autosort;
+package gg.projecteden.nexus.features.store.perks.autoinventory;
 
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
@@ -7,17 +7,17 @@ import fr.minuskube.inv.content.InventoryProvider;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.listeners.TemporaryListener;
 import gg.projecteden.nexus.features.menus.MenuUtils;
-import gg.projecteden.nexus.features.store.perks.autosort.features.AutoCraft;
-import gg.projecteden.nexus.features.store.perks.autosort.tasks.FindChestsThread;
+import gg.projecteden.nexus.features.store.perks.autoinventory.features.AutoCraft;
+import gg.projecteden.nexus.features.store.perks.autoinventory.tasks.FindChestsThread;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.models.autosort.AutoInventoryUser;
-import gg.projecteden.nexus.models.autosort.AutoInventoryUser.AutoSortInventoryType;
-import gg.projecteden.nexus.models.autosort.AutoInventoryUser.AutoTrashBehavior;
-import gg.projecteden.nexus.models.autosort.AutoInventoryUserService;
+import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser;
+import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser.AutoSortInventoryType;
+import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser.AutoTrashBehavior;
+import gg.projecteden.nexus.models.autoinventory.AutoInventoryUserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils.ItemStackComparator;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -54,7 +54,6 @@ import static java.util.stream.Collectors.joining;
 @Redirect(from = "/autotrash", to = "/autoinv settings trash")
 @Redirect(from = "/autocraft", to = "/autoinv settings craft")
 public class AutoInventoryCommand extends CustomCommand implements Listener {
-	public static final String PERMISSION = "store.autosort";
 	private final AutoInventoryUserService service = new AutoInventoryUserService();
 	private AutoInventoryUser user;
 

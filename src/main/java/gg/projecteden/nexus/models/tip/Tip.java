@@ -4,6 +4,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.store.perks.autoinventory.AutoInventory;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
@@ -66,11 +67,11 @@ public class Tip implements PlayerOwnedObject {
 		LWC_FURNACE(1, TickTime.MINUTE.x(15), player -> Rank.of(player) == Rank.GUEST),
 		RESOURCE_WORLD_STORAGE(15),
 		SPAM_ATTACK(50, TickTime.MINUTE.x(5)),
-		AUTOSORT_SORT_INVENTORY(1, TickTime.WEEK, player -> player.hasPermission("store.autosort")),
-		AUTOSORT_SORT_CHESTS(1, TickTime.WEEK, player -> player.hasPermission("store.autosort")),
-		AUTOSORT_REFILL(1, TickTime.WEEK, player -> player.hasPermission("store.autosort")),
-		AUTOSORT_DEPOSIT_ALL(1, TickTime.WEEK, player -> player.hasPermission("store.autosort")),
-		AUTOSORT_DEPOSIT_QUICK(1, TickTime.WEEK, player -> player.hasPermission("store.autosort"));
+		AUTOSORT_SORT_INVENTORY(1, TickTime.WEEK, player -> player.hasPermission(AutoInventory.PERMISSION)),
+		AUTOSORT_SORT_CHESTS(1, TickTime.WEEK, player -> player.hasPermission(AutoInventory.PERMISSION)),
+		AUTOSORT_REFILL(1, TickTime.WEEK, player -> player.hasPermission(AutoInventory.PERMISSION)),
+		AUTOSORT_DEPOSIT_ALL(1, TickTime.WEEK, player -> player.hasPermission(AutoInventory.PERMISSION)),
+		AUTOSORT_DEPOSIT_QUICK(1, TickTime.WEEK, player -> player.hasPermission(AutoInventory.PERMISSION));
 
 		@Getter
 		private final int retryChance;

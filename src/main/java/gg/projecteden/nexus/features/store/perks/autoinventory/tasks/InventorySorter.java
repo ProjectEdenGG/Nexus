@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.store.perks.autosort.tasks;
+package gg.projecteden.nexus.features.store.perks.autoinventory.tasks;
 
 import gg.projecteden.nexus.utils.ItemUtils.ItemStackComparator;
 import lombok.AllArgsConstructor;

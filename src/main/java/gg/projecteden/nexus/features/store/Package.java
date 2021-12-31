@@ -26,7 +26,7 @@ import gg.projecteden.nexus.features.store.perks.ItemNameCommand;
 import gg.projecteden.nexus.features.store.perks.PrefixCommand;
 import gg.projecteden.nexus.features.store.perks.RainbowArmorCommand;
 import gg.projecteden.nexus.features.store.perks.RainbowBeaconCommand;
-import gg.projecteden.nexus.features.store.perks.autosort.AutoInventoryCommand;
+import gg.projecteden.nexus.features.store.perks.autoinventory.AutoInventory;
 import gg.projecteden.nexus.features.store.perks.fireworks.FireworkCommand;
 import gg.projecteden.nexus.features.store.perks.workbenches._WorkbenchCommand;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -486,13 +486,13 @@ public enum Package {
 
 	@Id("2019251")
 	@Category(StoreCategory.INVENTORY)
-	@Permission(AutoInventoryCommand.PERMISSION)
+	@Permission(AutoInventory.PERMISSION)
 	@Display(Material.HOPPER)
 	AUTO_INVENTORY_LIFETIME,
 
 	@Id("2729981")
 	@Category(StoreCategory.INVENTORY)
-	@Permission(AutoInventoryCommand.PERMISSION)
+	@Permission(AutoInventory.PERMISSION)
 	@ExpirationDays(30)
 	@Display(Material.HOPPER)
 	AUTO_INVENTORY_ONE_MONTH,

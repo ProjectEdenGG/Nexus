@@ -1,13 +1,11 @@
-package gg.projecteden.nexus.models.autosort;
+package gg.projecteden.nexus.models.autoinventory;
 
-import com.mongodb.DBObject;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import dev.morphia.annotations.PreLoad;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
-import gg.projecteden.nexus.features.store.perks.autosort.AutoInventory;
-import gg.projecteden.nexus.features.store.perks.autosort.AutoInventoryFeature;
+import gg.projecteden.nexus.features.store.perks.autoinventory.AutoInventory;
+import gg.projecteden.nexus.features.store.perks.autoinventory.AutoInventoryFeature;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.tip.Tip;
@@ -39,7 +37,6 @@ import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -77,19 +74,6 @@ public class AutoInventoryUser implements PlayerOwnedObject {
 
 	private transient boolean sortingInventory;
 
-	@PreLoad
-	void fix(DBObject dbObject) {
-		final List<String> disabledFeatures = (List<String>) dbObject.get("disabledFeatures");
-		if (disabledFeatures.contains("INVENTORY")) {
-			disabledFeatures.remove("INVENTORY");
-			disabledFeatures.add("SORT_OWN_INVENTORY");
-		}
-		if (disabledFeatures.contains("CHESTS")) {
-			disabledFeatures.remove("CHESTS");
-			disabledFeatures.add("SORT_OTHER_INVENTORIES");
-		}
-	}
-
 	public static AutoInventoryUser of(String name) {
 		return of(PlayerUtils.getPlayer(name));
 	}
@@ -108,10 +92,10 @@ public class AutoInventoryUser implements PlayerOwnedObject {
 
 		if (tip.show(tipType)) {
 			String message = switch (tipType) {
-				case AUTOSORT_SORT_INVENTORY -> "Your inventory has been automatically sorted. Use &c/autosort inventory &3to disable";
-				case AUTOSORT_SORT_CHESTS -> "Your chests have been automatically sorted. Use &c/autosort chests &3to disable";
+				case AUTOSORT_SORT_INVENTORY -> "Your inventory has been automatically sorted. Use &c/autoinv features &3to disable";
+				case AUTOSORT_SORT_CHESTS -> "Your chests have been automatically sorted. Use &c/autoinv features &3to disable";
 				case AUTOSORT_REFILL -> "Broken tools and depleted stacks will be automatically refilled from your inventory";
-				case AUTOSORT_DEPOSIT_ALL -> "Instantly deposit all matching items from your inventory into all nearby containers with &c/sort";
+				case AUTOSORT_DEPOSIT_ALL -> "Instantly deposit all matching items from your inventory into all nearby containers with &c/autoinv depositall";
 				case AUTOSORT_DEPOSIT_QUICK -> "Quickly deposit all matching items from your inventory into a specific container by hitting it while crouching";
 				default -> null;
 			};

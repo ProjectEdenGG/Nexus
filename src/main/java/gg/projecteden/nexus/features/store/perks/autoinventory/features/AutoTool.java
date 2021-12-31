@@ -1,8 +1,8 @@
-package gg.projecteden.nexus.features.store.perks.autosort.features;
+package gg.projecteden.nexus.features.store.perks.autoinventory.features;
 
-import gg.projecteden.nexus.features.store.perks.autosort.AutoInventory;
-import gg.projecteden.nexus.features.store.perks.autosort.AutoInventoryFeature;
-import gg.projecteden.nexus.models.autosort.AutoInventoryUser;
+import gg.projecteden.nexus.features.store.perks.autoinventory.AutoInventory;
+import gg.projecteden.nexus.features.store.perks.autoinventory.AutoInventoryFeature;
+import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;

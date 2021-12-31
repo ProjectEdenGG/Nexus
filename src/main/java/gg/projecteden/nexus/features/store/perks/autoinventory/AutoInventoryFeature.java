@@ -1,7 +1,7 @@
-package gg.projecteden.nexus.features.store.perks.autosort;
+package gg.projecteden.nexus.features.store.perks.autoinventory;
 
 import gg.projecteden.nexus.features.store.StoreCommand;
-import gg.projecteden.nexus.features.store.perks.autosort.features.AutoTool;
+import gg.projecteden.nexus.features.store.perks.autoinventory.features.AutoTool;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.DescriptionExtra;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.NoPermissionException;
