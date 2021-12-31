@@ -26,7 +26,6 @@ import gg.projecteden.nexus.models.rainbowbeacon.RainbowBeacon;
 import gg.projecteden.nexus.models.rainbowbeacon.RainbowBeaconService;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.CitizensUtils.NPCRandomizer;
-import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.FireworkLauncher;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -35,7 +34,6 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WoodType;
 import gg.projecteden.utils.EnumUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
@@ -423,41 +421,29 @@ public enum GalleryPackage {
 		}
 	},
 
-	// TODO Set off a firework (maybe arrow) ▷
 	@Category(GalleryCategory.INVENTORY)
-	FIREWORK_BOW,
-
-	// TODO Any item?
-	@Category(GalleryCategory.INVENTORY)
-	HAT(4546) {
-		private static final List<Material> HATS = new ArrayList<>() {{
-			final List<ColorType> rainbow = List.of(
-				ColorType.RED, ColorType.ORANGE, ColorType.YELLOW, ColorType.LIGHT_GREEN,
-				ColorType.LIGHT_BLUE, ColorType.BLUE, ColorType.PURPLE
-			);
-
-			addAll(MaterialTag.CORALS.getValues());
-
-			rainbow.forEach(color -> {
-				add(color.getStainedGlass());
-				add(color.getBed());
-				add(color.getCandle());
-			});
-
-			add(random(WoodType.class).getStair());
-			add(random(WoodType.class).getSlab());
-			add(random(WoodType.class).getPressurePlate());
-
-			addAll(List.of(
-				Material.COD, Material.GLASS, Material.AZALEA, Material.FLOWERING_AZALEA, Material.ANVIL,
-				Material.BONE, Material.JACK_O_LANTERN, Material.ICE, Material.ENDER_EYE, Material.SNOW,
-				Material.AMETHYST_CLUSTER, Material.LIGHTNING_ROD
-			));
-		}};
+	FIREWORK_BOW {
+		public Location getLaunchLocation() {
+			return StoreGallery.location(943.5, 69, 972.5);
+		}
 
 		@Override
+		public void onImageInteract(Player player) {
+			if (!cooldown(TickTime.SECOND.x(5)))
+				return;
+
+			FireworkLauncher.random(getLaunchLocation())
+				.detonateAfter(13)
+				.silent(true)
+				.launch();
+		}
+	},
+
+	@Category(GalleryCategory.INVENTORY)
+	HAT(4546) {
+		@Override
 		public void onNpcInteract(Player player) {
-			inventory().setItem(EquipmentSlot.HEAD, new ItemStack(randomElement(HATS)));
+			inventory().setItem(EquipmentSlot.HEAD, new ItemStack(MaterialTag.ITEMS.random()));
 		}
 	},
 

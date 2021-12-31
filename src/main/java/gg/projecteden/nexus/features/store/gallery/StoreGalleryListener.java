@@ -45,7 +45,6 @@ public class StoreGalleryListener implements Listener {
 			return;
 
 		final GalleryPackage galleryPackage = getGalleryPackage(itemFrame.getLocation());
-
 		if (galleryPackage == null)
 			return;
 
@@ -73,7 +72,6 @@ public class StoreGalleryListener implements Listener {
 			return;
 
 		GalleryPackage galleryPackage = getGalleryPackage(block.getLocation());
-
 		if (galleryPackage == null)
 			return;
 
