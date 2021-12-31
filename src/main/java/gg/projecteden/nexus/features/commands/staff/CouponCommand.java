@@ -107,14 +107,14 @@ public class CouponCommand extends CustomCommand implements Listener {
 			@Override
 			void use(PlayerInteractEvent event) {
 				// TODO
-				PlayerUtils.send(event.getPlayer(), "Make a ticket or ask an admin to claim this coupon.");
+				PlayerUtils.send(event.getPlayer(), "Make a /ticket or post in #questions to claim this coupon.");
 			}
 		},
 		SONG(false) {
 			@Override
 			void use(PlayerInteractEvent event) {
 				// TODO
-				PlayerUtils.send(event.getPlayer(), "Make a ticket or ask an admin to claim this coupon.");
+				PlayerUtils.send(event.getPlayer(), "Make a /ticket or post in #questions to claim this coupon.");
 			}
 		},
 		EXPERIENCE_75(true) {
