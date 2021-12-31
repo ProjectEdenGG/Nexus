@@ -80,6 +80,7 @@ import static gg.projecteden.utils.StringUtils.getUUID0;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+// TODO Wakka - Sounds & other feedback
 public enum GalleryPackage {
 	@Category(GalleryCategory.VISUALS)
 	COSTUMES(4307) {
@@ -177,7 +178,7 @@ public enum GalleryPackage {
 	@Category(GalleryCategory.VISUALS)
 	FIREWORKS {
 		public Location getLaunchLocation() {
-			return StoreGallery.location(1057.5, 69, 983.5);
+			return StoreGallery.location(1065.5, 69, 983.5);
 		}
 
 		@Override
@@ -199,6 +200,9 @@ public enum GalleryPackage {
 		@Override
 		public void init() {
 			Tasks.repeat(0, TickTime.SECOND.x(5), () -> {
+				if (npc() == null)
+					return;
+
 				final int nearby = recipients().size();
 
 				if (nearby == 0) {
@@ -280,9 +284,6 @@ public enum GalleryPackage {
 	},
 
 	@Category(GalleryCategory.VISUALS)
-	PLAYER_TIME,
-
-	@Category(GalleryCategory.VISUALS)
 	ENTITY_NAME,
 
 	/** TODO
@@ -292,7 +293,7 @@ public enum GalleryPackage {
 	PREFIX,
 
 	@Category(GalleryCategory.CHAT)
-	NICKNAMES,
+	NICKNAME,
 
 	@Category(GalleryCategory.CHAT)
 	JOIN_QUIT {
@@ -337,10 +338,10 @@ public enum GalleryPackage {
 	DISGUISES,
 
 	@Category(GalleryCategory.INVENTORY)
-	AUTOSORT,
+	AUTO_INVENTORY,
 
 	@Category(GalleryCategory.INVENTORY)
-	AUTOTORCH {
+	AUTO_TORCH {
 		private static final Map<UUID, ExampleTorcher> torchers = new HashMap<>();
 
 		@Data
@@ -424,6 +425,45 @@ public enum GalleryPackage {
 		}
 	},
 
+	/** TODO
+	 * Set off a firework (maybe arrow) ▷
+	 */
+	@Category(GalleryCategory.INVENTORY)
+	FIREWORK_BOW,
+
+	@Category(GalleryCategory.INVENTORY)
+	HAT(4546) {
+		private static final List<Material> HATS = new ArrayList<>() {{
+			final List<ColorType> rainbow = List.of(
+				ColorType.RED, ColorType.ORANGE, ColorType.YELLOW, ColorType.LIGHT_GREEN,
+				ColorType.LIGHT_BLUE, ColorType.BLUE, ColorType.PURPLE
+			);
+
+			addAll(MaterialTag.CORALS.getValues());
+
+			rainbow.forEach(color -> {
+				add(color.getStainedGlass());
+				add(color.getBed());
+				add(color.getCandle());
+			});
+
+			add(random(WoodType.class).getStair());
+			add(random(WoodType.class).getSlab());
+			add(random(WoodType.class).getPressurePlate());
+
+			addAll(List.of(
+				Material.COD, Material.GLASS, Material.AZALEA, Material.FLOWERING_AZALEA, Material.ANVIL,
+				Material.BONE, Material.JACK_O_LANTERN, Material.ICE, Material.ENDER_EYE, Material.SNOW,
+				Material.AMETHYST_CLUSTER, Material.LIGHTNING_ROD
+			));
+		}};
+
+		@Override
+		public void onNpcInteract(Player player) {
+			inventory().setItem(EquipmentSlot.HEAD, new ItemStack(randomElement(HATS)));
+		}
+	},
+
 	@Category(GalleryCategory.INVENTORY)
 	VAULTS {
 		@Override
@@ -459,12 +499,12 @@ public enum GalleryPackage {
 	},
 
 	@Category(GalleryCategory.INVENTORY)
-	SKULL {
+	PLAYER_HEAD {
 		private Hologram hologram;
 
 		@Override
 		public void init() {
-			final Location location = StoreGallery.location(944.5, 70.25, 964.5);
+			final Location location = StoreGallery.location(1048.5, 70.25, 991.5);
 			hologram = HologramsAPI.createHologram(Nexus.getInstance(), location);
 
 			final ItemBuilder builder = new ItemBuilder(Material.PLAYER_HEAD);
@@ -483,47 +523,8 @@ public enum GalleryPackage {
 		}
 	},
 
-	@Category(GalleryCategory.INVENTORY)
-	HAT(4546) {
-		private static final List<Material> HATS = new ArrayList<>() {{
-			final List<ColorType> rainbow = List.of(
-				ColorType.RED, ColorType.ORANGE, ColorType.YELLOW, ColorType.LIGHT_GREEN,
-				ColorType.LIGHT_BLUE, ColorType.BLUE, ColorType.PURPLE
-			);
-
-			addAll(MaterialTag.CORALS.getValues());
-
-			rainbow.forEach(color -> {
-				add(color.getStainedGlass());
-				add(color.getBed());
-				add(color.getCandle());
-			});
-
-			add(random(WoodType.class).getStair());
-			add(random(WoodType.class).getSlab());
-			add(random(WoodType.class).getPressurePlate());
-
-			addAll(List.of(
-				Material.COD, Material.GLASS, Material.AZALEA, Material.FLOWERING_AZALEA, Material.ANVIL,
-				Material.BONE, Material.JACK_O_LANTERN, Material.ICE, Material.ENDER_EYE, Material.SNOW,
-				Material.AMETHYST_CLUSTER, Material.LIGHTNING_ROD
-			));
-		}};
-
-		@Override
-		public void onNpcInteract(Player player) {
-			inventory().setItem(EquipmentSlot.HEAD, new ItemStack(randomElement(HATS)));
-		}
-	},
-
-	/** TODO
-	 * Set off a firework (maybe arrow) ▷
-	 */
-	@Category(GalleryCategory.INVENTORY)
-	FIREWORK_BOW,
-
 	@Category(GalleryCategory.MISC)
-	CUSTOM_CONTRIBUTION {
+	CUSTOM_DONATION {
 		public Location getLocation() {
 			return StoreGallery.location(967.5, 71.5, 992.5);
 		}
@@ -544,7 +545,7 @@ public enum GalleryPackage {
 	},
 
 	@Category(GalleryCategory.MISC)
-	PLUS_5_HOMES {
+	PLUS_FIVE_HOMES {
 		@Override
 		public void onImageInteract(Player player) {
 			PlayerUtils.runCommand(player, "homes limit");

@@ -20,10 +20,10 @@ public @interface Category {
 	@AllArgsConstructor
 	enum GalleryCategory {
 		CHAT,
-		VISUALS,
 		INVENTORY,
 		MISC,
 		PETS_DISGUISES,
+		VISUALS,
 		;
 
 		public List<GalleryPackage> getPackages() {

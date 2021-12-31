@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.commands.AutoTorchCommand;
 import gg.projecteden.nexus.features.commands.HatCommand;
 import gg.projecteden.nexus.features.commands.NicknameCommand;
 import gg.projecteden.nexus.features.commands.PlayerTimeCommand;
+import gg.projecteden.nexus.features.commands.staff.PlayerHeadCommand;
 import gg.projecteden.nexus.features.commands.staff.admin.PermHelperCommand;
 import gg.projecteden.nexus.features.commands.staff.admin.PermHelperCommand.NumericPermission;
 import gg.projecteden.nexus.features.particles.WingsCommand;
@@ -19,14 +20,13 @@ import gg.projecteden.nexus.features.store.annotations.Id;
 import gg.projecteden.nexus.features.store.annotations.PermissionGroup;
 import gg.projecteden.nexus.features.store.annotations.Permissions.Permission;
 import gg.projecteden.nexus.features.store.annotations.World;
-import gg.projecteden.nexus.features.store.perks.DonorSkullCommand;
 import gg.projecteden.nexus.features.store.perks.EntityNameCommand;
 import gg.projecteden.nexus.features.store.perks.InvisibleArmorCommand;
 import gg.projecteden.nexus.features.store.perks.ItemNameCommand;
 import gg.projecteden.nexus.features.store.perks.PrefixCommand;
 import gg.projecteden.nexus.features.store.perks.RainbowArmorCommand;
 import gg.projecteden.nexus.features.store.perks.RainbowBeaconCommand;
-import gg.projecteden.nexus.features.store.perks.autosort.commands.AutoSortCommand;
+import gg.projecteden.nexus.features.store.perks.autosort.commands.AutoInventoryCommand;
 import gg.projecteden.nexus.features.store.perks.fireworks.FireworkCommand;
 import gg.projecteden.nexus.features.store.perks.workbenches._WorkbenchCommand;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -486,13 +486,13 @@ public enum Package {
 
 	@Id("2019251")
 	@Category(StoreCategory.INVENTORY)
-	@Permission(AutoSortCommand.PERMISSION)
+	@Permission(AutoInventoryCommand.PERMISSION)
 	@Display(Material.HOPPER)
 	AUTO_SORT_LIFETIME,
 
 	@Id("2729981")
 	@Category(StoreCategory.INVENTORY)
-	@Permission(AutoSortCommand.PERMISSION)
+	@Permission(AutoInventoryCommand.PERMISSION)
 	@ExpirationDays(30)
 	@Display(Material.HOPPER)
 	AUTO_SORT_ONE_MONTH,
@@ -541,7 +541,7 @@ public enum Package {
 
 	@Id("2019264")
 	@Category(StoreCategory.INVENTORY)
-	@Permission(DonorSkullCommand.PERMISSION)
+	@Permission(PlayerHeadCommand.PERMISSION)
 	@Display(Material.PLAYER_HEAD)
 	DONOR_SKULL,
 
