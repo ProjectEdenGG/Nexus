@@ -12,10 +12,7 @@ public class StoreGallery extends Feature {
 
 	@Override
 	public void onStart() {
-		new StoreGalleryNPCs();
 		new StoreGalleryListener();
-
-		GalleryPackage.onStart();
 	}
 
 	@Override
