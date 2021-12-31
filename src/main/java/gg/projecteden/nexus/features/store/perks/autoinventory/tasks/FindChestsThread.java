@@ -1,7 +1,7 @@
-package gg.projecteden.nexus.features.store.perks.autosort.tasks;
+package gg.projecteden.nexus.features.store.perks.autoinventory.tasks;
 
-import gg.projecteden.nexus.features.store.perks.autosort.AutoInventory;
-import gg.projecteden.nexus.models.autosort.AutoInventoryUser;
+import gg.projecteden.nexus.features.store.perks.autoinventory.AutoInventory;
+import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser;
 import gg.projecteden.nexus.models.tip.Tip.TipType;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils.FakePlayerInteractEvent;

@@ -7,7 +7,7 @@ import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.models.matchdata.PixelPaintersMatchData;
 import gg.projecteden.nexus.features.store.perks.NPCListener;
-import gg.projecteden.nexus.features.store.perks.autosort.features.AutoTool;
+import gg.projecteden.nexus.features.store.perks.autoinventory.features.AutoTool;
 import gg.projecteden.nexus.features.wither.fights.CorruptedFight.CorruptedCounterAttacks;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;

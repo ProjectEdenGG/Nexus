@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.models.autosort;
+package gg.projecteden.nexus.models.autoinventory;
 
 import gg.projecteden.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;

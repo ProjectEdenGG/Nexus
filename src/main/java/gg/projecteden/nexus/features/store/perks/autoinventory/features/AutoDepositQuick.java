@@ -1,9 +1,9 @@
-package gg.projecteden.nexus.features.store.perks.autosort.features;
+package gg.projecteden.nexus.features.store.perks.autoinventory.features;
 
-import gg.projecteden.nexus.features.store.perks.autosort.AutoInventory;
-import gg.projecteden.nexus.features.store.perks.autosort.AutoInventoryFeature;
-import gg.projecteden.nexus.features.store.perks.autosort.tasks.FindChestsThread.DepositRecord;
-import gg.projecteden.nexus.models.autosort.AutoInventoryUser;
+import gg.projecteden.nexus.features.store.perks.autoinventory.AutoInventory;
+import gg.projecteden.nexus.features.store.perks.autoinventory.AutoInventoryFeature;
+import gg.projecteden.nexus.features.store.perks.autoinventory.tasks.FindChestsThread.DepositRecord;
+import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser;
 import gg.projecteden.nexus.utils.PlayerUtils.FakePlayerInteractEvent;
 import lombok.NoArgsConstructor;
 import org.bukkit.Nameable;
@@ -20,7 +20,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
-import static gg.projecteden.nexus.features.store.perks.autosort.AutoInventory.PREFIX;
+import static gg.projecteden.nexus.features.store.perks.autoinventory.AutoInventory.PREFIX;
 import static gg.projecteden.nexus.utils.PlayerUtils.send;
 
 @NoArgsConstructor

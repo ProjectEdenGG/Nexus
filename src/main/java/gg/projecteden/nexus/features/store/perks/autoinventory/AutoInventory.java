@@ -1,9 +1,9 @@
-package gg.projecteden.nexus.features.store.perks.autosort;
+package gg.projecteden.nexus.features.store.perks.autoinventory;
 
-import gg.projecteden.nexus.features.store.perks.autosort.tasks.FindChestsThread.DepositRecord;
+import gg.projecteden.nexus.features.store.perks.autoinventory.tasks.FindChestsThread.DepositRecord;
 import gg.projecteden.nexus.framework.features.Feature;
-import gg.projecteden.nexus.models.autosort.AutoInventoryUser;
-import gg.projecteden.nexus.models.autosort.AutoInventoryUser.AutoSortInventoryType;
+import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser;
+import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser.AutoSortInventoryType;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Name;
@@ -35,7 +35,7 @@ import static gg.projecteden.nexus.utils.Utils.registerListeners;
 
 public class AutoInventory extends Feature {
 	public static final String PREFIX = StringUtils.getPrefix("AutoSort");
-	public static final String PERMISSION = "store.autosort";
+	public static final String PERMISSION = "store.autoinventory";
 	private static final List<String> DISABLED_WORLDS = List.of(WorldGroup.CREATIVE, WorldGroup.MINIGAMES, WorldGroup.STAFF).stream()
 			.map(WorldGroup::getWorldNames)
 			.reduce(Utils::combine)
