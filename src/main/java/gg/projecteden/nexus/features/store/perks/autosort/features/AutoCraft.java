@@ -2,8 +2,8 @@ package gg.projecteden.nexus.features.store.perks.autosort.features;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.recipes.RecipeUtils;
-import gg.projecteden.nexus.features.store.perks.autosort.AutoSortFeature;
-import gg.projecteden.nexus.models.autosort.AutoSortUser;
+import gg.projecteden.nexus.features.store.perks.autosort.AutoInventoryFeature;
+import gg.projecteden.nexus.models.autosort.AutoInventoryUser;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -97,9 +97,9 @@ public class AutoCraft implements Listener {
 		if (!(event.getEntity() instanceof Player player))
 			return;
 
-		AutoSortUser user = AutoSortUser.of(player);
+		AutoInventoryUser user = AutoInventoryUser.of(player);
 
-		if (!user.hasFeatureEnabled(AutoSortFeature.AUTOCRAFT))
+		if (!user.hasFeatureEnabled(AutoInventoryFeature.AUTOCRAFT))
 			return;
 
 		Material material = event.getItem().getItemStack().getType();

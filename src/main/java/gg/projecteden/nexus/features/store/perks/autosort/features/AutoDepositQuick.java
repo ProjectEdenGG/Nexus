@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.features.store.perks.autosort.features;
 
-import gg.projecteden.nexus.features.store.perks.autosort.AutoSort;
-import gg.projecteden.nexus.features.store.perks.autosort.AutoSortFeature;
+import gg.projecteden.nexus.features.store.perks.autosort.AutoInventory;
+import gg.projecteden.nexus.features.store.perks.autosort.AutoInventoryFeature;
 import gg.projecteden.nexus.features.store.perks.autosort.tasks.FindChestsThread.DepositRecord;
-import gg.projecteden.nexus.models.autosort.AutoSortUser;
+import gg.projecteden.nexus.models.autosort.AutoInventoryUser;
 import gg.projecteden.nexus.utils.PlayerUtils.FakePlayerInteractEvent;
 import lombok.NoArgsConstructor;
 import org.bukkit.Nameable;
@@ -20,7 +20,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
-import static gg.projecteden.nexus.features.store.perks.autosort.AutoSort.PREFIX;
+import static gg.projecteden.nexus.features.store.perks.autosort.AutoInventory.PREFIX;
 import static gg.projecteden.nexus.utils.PlayerUtils.send;
 
 @NoArgsConstructor
@@ -29,10 +29,10 @@ public class AutoDepositQuick implements Listener {
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void onBlockDamage(BlockDamageEvent event) {
 		Player player = event.getPlayer();
-		AutoSortUser user = AutoSortUser.of(player);
+		AutoInventoryUser user = AutoInventoryUser.of(player);
 		if (!player.isSneaking()) return;
 
-		if (!user.hasFeatureEnabled(AutoSortFeature.QUICK_DEPOSIT))
+		if (!user.hasFeatureEnabled(AutoInventoryFeature.QUICK_DEPOSIT))
 			return;
 
 		Block clickedBlock = event.getBlock();
@@ -42,7 +42,7 @@ public class AutoDepositQuick implements Listener {
 
 		Inventory inventory = holder.getInventory();
 		String name = (state instanceof Nameable nameable) ? nameable.getCustomName() : null;
-		if (!AutoSort.isSortableChestInventory(player, inventory, name))
+		if (!AutoInventory.isSortableChestInventory(player, inventory, name))
 			return;
 
 		PlayerInteractEvent fakeEvent = new FakePlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, player.getInventory().getItemInMainHand(), clickedBlock, BlockFace.EAST);
@@ -52,12 +52,12 @@ public class AutoDepositQuick implements Listener {
 
 		String materialName = clickedBlock.getType().name().replace('_', ' ').toLowerCase();
 
-		if (!AutoSort.canOpen(clickedBlock)) {
+		if (!AutoInventory.canOpen(clickedBlock)) {
 			send(player, PREFIX + "&cThat " + materialName + " isn't accessible");
 			return;
 		}
 
-		DepositRecord deposits = AutoSort.depositMatching(AutoSortUser.of(player), inventory, true);
+		DepositRecord deposits = AutoInventory.depositMatching(AutoInventoryUser.of(player), inventory, true);
 
 		if (deposits.isDestinationFull() && deposits.getTotalItems() == 0)
 			send(player, PREFIX + "&cThat " + materialName + " is full");

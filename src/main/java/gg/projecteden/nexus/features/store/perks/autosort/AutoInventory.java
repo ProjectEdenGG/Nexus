@@ -2,8 +2,8 @@ package gg.projecteden.nexus.features.store.perks.autosort;
 
 import gg.projecteden.nexus.features.store.perks.autosort.tasks.FindChestsThread.DepositRecord;
 import gg.projecteden.nexus.framework.features.Feature;
-import gg.projecteden.nexus.models.autosort.AutoSortUser;
-import gg.projecteden.nexus.models.autosort.AutoSortUser.AutoSortInventoryType;
+import gg.projecteden.nexus.models.autosort.AutoInventoryUser;
+import gg.projecteden.nexus.models.autosort.AutoInventoryUser.AutoSortInventoryType;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Name;
@@ -33,7 +33,7 @@ import java.util.Set;
 
 import static gg.projecteden.nexus.utils.Utils.registerListeners;
 
-public class AutoSort extends Feature {
+public class AutoInventory extends Feature {
 	public static final String PREFIX = StringUtils.getPrefix("AutoSort");
 	public static final String PERMISSION = "store.autosort";
 	private static final List<String> DISABLED_WORLDS = List.of(WorldGroup.CREATIVE, WorldGroup.MINIGAMES, WorldGroup.STAFF).stream()
@@ -87,7 +87,7 @@ public class AutoSort extends Feature {
 		if (inventory == null || inventory.getHolder() instanceof Player)
 			return false;
 
-		AutoSortUser user = AutoSortUser.of(player);
+		AutoInventoryUser user = AutoInventoryUser.of(player);
 
 		AutoSortInventoryType inventoryType = AutoSortInventoryType.of(inventory, title);
 		if (inventoryType == null)
@@ -102,8 +102,8 @@ public class AutoSort extends Feature {
 		return true;
 	}
 
-	public static DepositRecord depositMatching(AutoSortUser autoSortUser, Inventory destination, boolean depositHotbar) {
-		PlayerInventory source = autoSortUser.getOnlinePlayer().getInventory();
+	public static DepositRecord depositMatching(AutoInventoryUser autoInventoryUser, Inventory destination, boolean depositHotbar) {
+		PlayerInventory source = autoInventoryUser.getOnlinePlayer().getInventory();
 		Set<String> eligibleSignatures = new HashSet<>();
 		DepositRecord deposits = new DepositRecord();
 
@@ -123,7 +123,7 @@ public class AutoSort extends Feature {
 			if (ItemUtils.isNullOrAir(sourceStack))
 				continue;
 
-			if (autoSortUser.getAutoDepositExclude().contains(sourceStack.getType()))
+			if (autoInventoryUser.getAutoDepositExclude().contains(sourceStack.getType()))
 				continue;
 
 			String signature = getSignature(sourceStack);

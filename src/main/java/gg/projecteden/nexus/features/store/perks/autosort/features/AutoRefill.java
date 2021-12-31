@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.store.perks.autosort.features;
 
-import gg.projecteden.nexus.features.store.perks.autosort.AutoSortFeature;
-import gg.projecteden.nexus.models.autosort.AutoSortUser;
+import gg.projecteden.nexus.features.store.perks.autosort.AutoInventoryFeature;
+import gg.projecteden.nexus.models.autosort.AutoInventoryUser;
 import gg.projecteden.nexus.models.tip.Tip.TipType;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -84,8 +84,8 @@ public class AutoRefill implements Listener {
 		if (slot == null)
 			return;
 
-		AutoSortUser autoSortUser = AutoSortUser.of(player);
-		if (!autoSortUser.hasFeatureEnabled(AutoSortFeature.REFILL))
+		AutoInventoryUser autoInventoryUser = AutoInventoryUser.of(player);
+		if (!autoInventoryUser.hasFeatureEnabled(AutoInventoryFeature.REFILL))
 			return;
 
 		EquipmentSlot handWithTool = ItemUtils.getHandWithTool(player);
@@ -105,11 +105,11 @@ public class AutoRefill implements Listener {
 
 		if (new MaterialTag(MaterialTag.ALL_AIR, MaterialTag.POTIONS).isTagged(stack.getType()))
 			return;
-		if (autoSortUser.getAutoRefillExclude().contains(stack.getType()))
+		if (autoInventoryUser.getAutoRefillExclude().contains(stack.getType()))
 			return;
 
 		Tasks.wait(2, () -> {
-			if (!autoSortUser.isOnline())
+			if (!autoInventoryUser.isOnline())
 				return;
 
 			ItemStack currentStack = inventory.getItem(slotIndex);
@@ -142,7 +142,7 @@ public class AutoRefill implements Listener {
 			inventory.setItem(slotIndex, bestMatchStack);
 			inventory.clear(bestMatchSlot);
 
-			AutoSortUser.of(player).tip(TipType.AUTOSORT_REFILL);
+			AutoInventoryUser.of(player).tip(TipType.AUTOSORT_REFILL);
 		});
 	}
 

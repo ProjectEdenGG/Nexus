@@ -2,9 +2,9 @@ package gg.projecteden.nexus.features.store.perks.autosort.features;
 
 import gg.projecteden.nexus.features.itemtags.ItemTagsUtils;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
-import gg.projecteden.nexus.features.store.perks.autosort.AutoSortFeature;
-import gg.projecteden.nexus.models.autosort.AutoSortUser;
-import gg.projecteden.nexus.models.autosort.AutoSortUser.AutoTrashBehavior;
+import gg.projecteden.nexus.features.store.perks.autosort.AutoInventoryFeature;
+import gg.projecteden.nexus.models.autosort.AutoInventoryUser;
+import gg.projecteden.nexus.models.autosort.AutoInventoryUser.AutoTrashBehavior;
 import gg.projecteden.nexus.models.dumpster.Dumpster;
 import gg.projecteden.nexus.models.dumpster.DumpsterService;
 import gg.projecteden.nexus.utils.WorldGroup;
@@ -28,8 +28,8 @@ public class AutoTrash implements Listener {
 		if (!(event.getEntity() instanceof Player player))
 			return;
 
-		AutoSortUser user = AutoSortUser.of(player);
-		if (!user.hasFeatureEnabled(AutoSortFeature.AUTOTRASH))
+		AutoInventoryUser user = AutoInventoryUser.of(player);
+		if (!user.hasFeatureEnabled(AutoInventoryFeature.AUTOTRASH))
 			return;
 
 		if (!Arrays.asList(WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK).contains(WorldGroup.of(player)))

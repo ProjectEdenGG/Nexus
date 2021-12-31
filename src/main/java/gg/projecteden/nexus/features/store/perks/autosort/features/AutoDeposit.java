@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.store.perks.autosort.features;
 
-import gg.projecteden.nexus.features.store.perks.autosort.AutoSortFeature;
-import gg.projecteden.nexus.models.autosort.AutoSortUser;
+import gg.projecteden.nexus.features.store.perks.autosort.AutoInventoryFeature;
+import gg.projecteden.nexus.models.autosort.AutoInventoryUser;
 import gg.projecteden.nexus.models.tip.Tip.TipType;
 import lombok.NoArgsConstructor;
 import org.bukkit.GameMode;
@@ -26,9 +26,9 @@ public class AutoDeposit implements Listener {
 		HumanEntity holder = ((PlayerInventory) bottomInventory).getHolder();
 		if (!(holder instanceof Player player)) return;
 
-		AutoSortUser user = AutoSortUser.of(player);
+		AutoInventoryUser user = AutoInventoryUser.of(player);
 
-		if (user.hasFeatureEnabled(AutoSortFeature.DEPOSIT_ALL))
+		if (user.hasFeatureEnabled(AutoInventoryFeature.DEPOSIT_ALL))
 			if (player.getGameMode() != GameMode.CREATIVE)
 				if (event.getView().getTopInventory().getType() == InventoryType.CHEST)
 					user.tip(TipType.AUTOSORT_DEPOSIT_ALL);

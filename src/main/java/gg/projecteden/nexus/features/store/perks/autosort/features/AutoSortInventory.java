@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.store.perks.autosort.features;
 
-import gg.projecteden.nexus.features.store.perks.autosort.AutoSortFeature;
+import gg.projecteden.nexus.features.store.perks.autosort.AutoInventoryFeature;
 import gg.projecteden.nexus.features.store.perks.autosort.tasks.InventorySorter;
-import gg.projecteden.nexus.models.autosort.AutoSortUser;
+import gg.projecteden.nexus.models.autosort.AutoInventoryUser;
 import gg.projecteden.nexus.models.tip.Tip.TipType;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
@@ -20,8 +20,8 @@ import org.bukkit.inventory.PlayerInventory;
 @NoArgsConstructor
 public class AutoSortInventory implements Listener {
 
-	public static void sort(AutoSortUser user, Inventory inventory) {
-		if (!user.hasFeatureEnabled(AutoSortFeature.INVENTORY))
+	public static void sort(AutoInventoryUser user, Inventory inventory) {
+		if (!user.hasFeatureEnabled(AutoInventoryFeature.SORT_OWN_INVENTORY))
 			return;
 
 		Player player = user.getOnlinePlayer();
@@ -38,9 +38,9 @@ public class AutoSortInventory implements Listener {
 	public void onPickupItem(EntityPickupItemEvent event) {
 		if (!(event.getEntity() instanceof Player player))
 			return;
-		AutoSortUser user = AutoSortUser.of(player);
+		AutoInventoryUser user = AutoInventoryUser.of(player);
 
-		if (!user.hasFeatureEnabled(AutoSortFeature.INVENTORY))
+		if (!user.hasFeatureEnabled(AutoInventoryFeature.SORT_OWN_INVENTORY))
 			return;
 
 		if (user.isSortingInventory()) return;
@@ -63,7 +63,7 @@ public class AutoSortInventory implements Listener {
 		HumanEntity holder = ((PlayerInventory) bottomInventory).getHolder();
 		if (!(holder instanceof Player player)) return;
 
-		AutoSortUser user = AutoSortUser.of(player);
+		AutoInventoryUser user = AutoInventoryUser.of(player);
 		sort(user, bottomInventory);
 	}
 
