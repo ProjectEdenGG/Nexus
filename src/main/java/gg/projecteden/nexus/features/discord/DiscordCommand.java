@@ -29,6 +29,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
+import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 import org.bukkit.OfflinePlayer;
 
 import java.util.Arrays;
@@ -53,6 +54,38 @@ public class DiscordCommand extends CustomCommand {
 	void run() {
 		String url = EdenSocialMediaSite.DISCORD.getUrl();
 		send(json().next("&e" + url).url(url));
+	}
+
+	@Async
+	@Permission(Group.ADMIN)
+	@Path("appcommands registerListener")
+	void appcommands_registerListener() {
+		Discord.registerAppCommandsListener();
+	}
+
+	@Async
+	@Permission(Group.ADMIN)
+	@Path("appcommands register")
+	void appcommands_register() {
+		Discord.registerAppCommands();
+	}
+
+	@Async
+	@Permission(Group.ADMIN)
+	@Path("appcommands unregister")
+	void appcommands_unregister() {
+		Discord.unregisterAppCommands();
+	}
+
+	@Async
+	@Permission(Group.ADMIN)
+	@Path("appcommands privileges retrieve")
+	void appcommands_privileges_retrieve() {
+		Discord.getGuild().retrieveCommandPrivileges().complete().forEach((id, privileges) -> {
+			send(id);
+			for (CommandPrivilege privilege : privileges)
+				send("  " + privilege.getType() + " " + privilege.getId());
+		});
 	}
 
 	@Async

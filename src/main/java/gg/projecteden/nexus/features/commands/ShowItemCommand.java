@@ -139,7 +139,7 @@ public class ShowItemCommand extends CustomCommand {
 
 			MessageBuilder content = new MessageBuilder()
 				.setContent(stripColor(user.getBridgeName() + " **>** " + discordize(message)))
-				.setEmbed(embed.build());
+				.setEmbeds(embed.build());
 
 			Discord.send(content, channel.getDiscordTextChannel());
 		}

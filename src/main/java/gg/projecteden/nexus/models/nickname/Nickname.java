@@ -244,7 +244,7 @@ public class Nickname extends gg.projecteden.models.nickname.Nickname implements
 
 			return new MessageBuilder()
 					.setContent("@everyone **" + getName() + "** has requested a new nickname: **" + nickname + "**")
-					.setEmbed(embed.build());
+					.setEmbeds(embed.build());
 		}
 	}
 
