@@ -286,9 +286,7 @@ public enum GalleryPackage {
 	@Category(GalleryCategory.VISUALS)
 	ENTITY_NAME,
 
-	/** TODO
-	 * Predefined prefixes & colors, shows random one  ▷
-	 */
+	// TODO Predefined prefixes & colors, shows random one  ▷
 	@Category(GalleryCategory.CHAT)
 	PREFIX,
 
@@ -425,9 +423,7 @@ public enum GalleryPackage {
 		}
 	},
 
-	/** TODO
-	 * Set off a firework (maybe arrow) ▷
-	 */
+	// TODO Set off a firework (maybe arrow) ▷
 	@Category(GalleryCategory.INVENTORY)
 	FIREWORK_BOW,
 
@@ -552,6 +548,7 @@ public enum GalleryPackage {
 		}
 	},
 
+	// TODO Doesn't work (see listener)
 	@Category(GalleryCategory.MISC)
 	CREATIVE_PLOTS {
 		@Override
