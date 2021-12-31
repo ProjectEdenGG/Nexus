@@ -7,11 +7,11 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-@ObjectClass(AutoSortUser.class)
-public class AutoSortUserService extends MongoPlayerService<AutoSortUser> {
-	private final static Map<UUID, AutoSortUser> cache = new ConcurrentHashMap<>();
+@ObjectClass(AutoInventoryUser.class)
+public class AutoInventoryUserService extends MongoPlayerService<AutoInventoryUser> {
+	private final static Map<UUID, AutoInventoryUser> cache = new ConcurrentHashMap<>();
 
-	public Map<UUID, AutoSortUser> getCache() {
+	public Map<UUID, AutoInventoryUser> getCache() {
 		return cache;
 	}
 

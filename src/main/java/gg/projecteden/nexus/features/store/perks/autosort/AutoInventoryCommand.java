@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.store.perks.autosort.commands;
+package gg.projecteden.nexus.features.store.perks.autosort;
 
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
@@ -7,25 +7,30 @@ import fr.minuskube.inv.content.InventoryProvider;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.listeners.TemporaryListener;
 import gg.projecteden.nexus.features.menus.MenuUtils;
-import gg.projecteden.nexus.features.store.perks.autosort.AutoSortFeature;
 import gg.projecteden.nexus.features.store.perks.autosort.features.AutoCraft;
+import gg.projecteden.nexus.features.store.perks.autosort.tasks.FindChestsThread;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.models.autosort.AutoSortUser;
-import gg.projecteden.nexus.models.autosort.AutoSortUser.AutoSortInventoryType;
-import gg.projecteden.nexus.models.autosort.AutoSortUser.AutoTrashBehavior;
-import gg.projecteden.nexus.models.autosort.AutoSortUserService;
+import gg.projecteden.nexus.models.autosort.AutoInventoryUser;
+import gg.projecteden.nexus.models.autosort.AutoInventoryUser.AutoSortInventoryType;
+import gg.projecteden.nexus.models.autosort.AutoInventoryUser.AutoTrashBehavior;
+import gg.projecteden.nexus.models.autosort.AutoInventoryUserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils.ItemStackComparator;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.ChunkSnapshot;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -44,13 +49,14 @@ import static java.util.stream.Collectors.joining;
 
 @NoArgsConstructor
 @Aliases("autoinv")
+@Redirect(from = "/depositall", to = "/autoinv depositall")
 @Redirect(from = "/autosort", to = "/autoinv")
-@Redirect(from = "/autotrash", to = "/autoinv trash")
-@Redirect(from = "/autocraft", to = "/autoinv craft")
+@Redirect(from = "/autotrash", to = "/autoinv settings trash")
+@Redirect(from = "/autocraft", to = "/autoinv settings craft")
 public class AutoInventoryCommand extends CustomCommand implements Listener {
 	public static final String PERMISSION = "store.autosort";
-	private final AutoSortUserService service = new AutoSortUserService();
-	private AutoSortUser user;
+	private final AutoInventoryUserService service = new AutoInventoryUserService();
+	private AutoInventoryUser user;
 
 	public AutoInventoryCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -58,17 +64,53 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 			user = service.get(player());
 	}
 
-	@Path("sort")
-	void sort() {
-		runCommand("sort");
+	@Path("depositall")
+	void depositall() {
+		Location location = player().getLocation();
+		Chunk centerChunk = location.getChunk();
+		World world = location.getWorld();
+		ChunkSnapshot[][] snapshots = new ChunkSnapshot[3][3];
+		for (int x = -1; x <= 1; x++)
+			for (int z = -1; z <= 1; z++) {
+				Chunk chunk = world.getChunkAt(centerChunk.getX() + x, centerChunk.getZ() + z);
+				snapshots[x + 1][z + 1] = chunk.getChunkSnapshot();
+			}
+
+		// Create a thread to search those snapshots and create a chain of quick deposit attempts
+		int minY = Math.max(world.getMinHeight(), player().getEyeLocation().getBlockY() - 10);
+		int maxY = Math.min(world.getMaxHeight(), player().getEyeLocation().getBlockY() + 10);
+		int startY = player().getEyeLocation().getBlockY();
+		int startX = player().getEyeLocation().getBlockX();
+		int startZ = player().getEyeLocation().getBlockZ();
+		Thread thread = new FindChestsThread(world, snapshots, minY, maxY, startX, startY, startZ, player());
+		thread.setPriority(Thread.MIN_PRIORITY);
+		thread.start();
 	}
 
-	@Path("<feature> [enable]")
-	void toggle(AutoSortFeature feature, Boolean enable) {
+	@Path("features")
+	void features() {
+		send(PREFIX + "Features");
+		for (AutoInventoryFeature feature : AutoInventoryFeature.values()) {
+			final boolean enabled = user.hasFeatureEnabledRaw(feature);
+			final JsonBuilder json = json("&e" + feature + " &7- " + (enabled ? "&aEnabled" : "&cDisabled"))
+				.hover("Click to " + (enabled ? "&cdisable" : "&aenable"))
+				.command("/autoinv features toggle " + feature.name().toLowerCase() + " " + !enabled)
+				.group().newline()
+				.next("&7  " + feature.getDescription());
+
+			if (feature.hasExtraDescription())
+				json.newline().next("&c  " + feature.getExtraDescription());
+
+			send(json);
+		}
+	}
+
+	@Path("features toggle <feature> [enable]")
+	void features_toggle(AutoInventoryFeature feature, Boolean enable) {
 		feature.checkPermission(player());
 
 		if (enable == null)
-			enable = !user.hasFeatureEnabled(feature);
+			enable = !user.hasFeatureEnabledRaw(feature);
 
 		if (enable)
 			if (!user.getDisabledFeatures().contains(feature))
@@ -85,8 +127,8 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 		send(PREFIX + feature + " " + (enable ? "&aenabled" : "&cdisabled"));
 	}
 
-	@Path("inventoryTypes")
-	void types() {
+	@Path("settings inventoryTypes")
+	void settings_inventoryTypes() {
 		new AutoSortInventoryTypeEditor().open(player());
 	}
 
@@ -104,8 +146,8 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 
 		@Override
 		public void init(Player player, InventoryContents contents) {
-			final AutoSortUserService service = new AutoSortUserService();
-			final AutoSortUser user = service.get(player);
+			final AutoInventoryUserService service = new AutoInventoryUserService();
+			final AutoInventoryUser user = service.get(player);
 
 			addCloseItem(contents);
 
@@ -139,13 +181,13 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	@Path("trash materials")
-	void trash_materials() {
+	@Path("settings trash materials")
+	void settings_trash_materials() {
 		new AutoTrashMaterialEditor(user);
 	}
 
-	@Path("trash behavior [behavior]")
-	void trash_behavior(AutoTrashBehavior behavior) {
+	@Path("settings trash behavior [behavior]")
+	void settings_trash_behavior(AutoTrashBehavior behavior) {
 		if (behavior == null) {
 			send("Current behavior is " + camelCase(user.getAutoTrashBehavior()));
 			return;
@@ -158,14 +200,14 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 
 	public static class AutoTrashMaterialEditor implements TemporaryListener {
 		private static final String TITLE = StringUtils.colorize("&eAuto Trash");
-		private final AutoSortUser user;
+		private final AutoInventoryUser user;
 
 		@Override
 		public Player getPlayer() {
 			return user.getOnlinePlayer();
 		}
 
-		public AutoTrashMaterialEditor(AutoSortUser user) {
+		public AutoTrashMaterialEditor(AutoInventoryUser user) {
 			this.user = user;
 
 			Inventory inv = Bukkit.createInventory(null, 6 * 9, TITLE);
@@ -190,7 +232,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 				.collect(Collectors.toSet());
 			user.setAutoTrashInclude(materials);
 
-			new AutoSortUserService().save(user);
+			new AutoInventoryUserService().save(user);
 
 			user.sendMessage(StringUtils.getPrefix("AutoTrash") + "Automatically trashing " + materials.size() + " materials");
 
@@ -199,8 +241,8 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	@Path("craft")
-	void edit() {
+	@Path("settings crafting")
+	void settings_crafting() {
 		new AutoCraftEditor().open(player());
 	}
 
@@ -218,8 +260,8 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 
 		@Override
 		public void init(Player player, InventoryContents contents) {
-			final AutoSortUserService service = new AutoSortUserService();
-			final AutoSortUser user = service.get(player);
+			final AutoInventoryUserService service = new AutoInventoryUserService();
+			final AutoInventoryUser user = service.get(player);
 
 			addCloseItem(contents);
 

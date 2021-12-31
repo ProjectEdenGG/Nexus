@@ -26,7 +26,7 @@ import gg.projecteden.nexus.features.store.perks.ItemNameCommand;
 import gg.projecteden.nexus.features.store.perks.PrefixCommand;
 import gg.projecteden.nexus.features.store.perks.RainbowArmorCommand;
 import gg.projecteden.nexus.features.store.perks.RainbowBeaconCommand;
-import gg.projecteden.nexus.features.store.perks.autosort.commands.AutoInventoryCommand;
+import gg.projecteden.nexus.features.store.perks.autosort.AutoInventoryCommand;
 import gg.projecteden.nexus.features.store.perks.fireworks.FireworkCommand;
 import gg.projecteden.nexus.features.store.perks.workbenches._WorkbenchCommand;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -488,14 +488,14 @@ public enum Package {
 	@Category(StoreCategory.INVENTORY)
 	@Permission(AutoInventoryCommand.PERMISSION)
 	@Display(Material.HOPPER)
-	AUTO_SORT_LIFETIME,
+	AUTO_INVENTORY_LIFETIME,
 
 	@Id("2729981")
 	@Category(StoreCategory.INVENTORY)
 	@Permission(AutoInventoryCommand.PERMISSION)
 	@ExpirationDays(30)
 	@Display(Material.HOPPER)
-	AUTO_SORT_ONE_MONTH,
+	AUTO_INVENTORY_ONE_MONTH,
 
 	@Id("4471430")
 	@Category(StoreCategory.INVENTORY)
@@ -521,7 +521,7 @@ public enum Package {
 	@Category(StoreCategory.INVENTORY)
 	@Permission(_WorkbenchCommand.PERMISSION)
 	@Display(Material.CRAFTING_TABLE)
-	WORKBENCH,
+	WORKBENCHES,
 
 	@Id("2019259")
 	@Category(StoreCategory.INVENTORY)
@@ -543,7 +543,7 @@ public enum Package {
 	@Category(StoreCategory.INVENTORY)
 	@Permission(PlayerHeadCommand.PERMISSION)
 	@Display(Material.PLAYER_HEAD)
-	DONOR_SKULL,
+	PLAYER_HEAD,
 
 	@Id("2496109")
 	@Category(StoreCategory.INVENTORY)
@@ -566,7 +566,7 @@ public enum Package {
 	@Id("2019261")
 	@Category(StoreCategory.MISC)
 	@Display(Material.CYAN_BED)
-	EXTRA_SETHOMES {
+	PLUS_FIVE_HOMES {
 		@Override
 		public void handleApply(UUID uuid) {
 			new HomeService().edit(uuid, user -> user.addExtraHomes(5));

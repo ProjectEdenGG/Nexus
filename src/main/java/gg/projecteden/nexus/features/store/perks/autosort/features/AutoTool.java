@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.store.perks.autosort.features;
 
-import gg.projecteden.nexus.features.store.perks.autosort.AutoSort;
-import gg.projecteden.nexus.features.store.perks.autosort.AutoSortFeature;
-import gg.projecteden.nexus.models.autosort.AutoSortUser;
+import gg.projecteden.nexus.features.store.perks.autosort.AutoInventory;
+import gg.projecteden.nexus.features.store.perks.autosort.AutoInventoryFeature;
+import gg.projecteden.nexus.models.autosort.AutoInventoryUser;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
@@ -46,9 +46,9 @@ public class AutoTool implements Listener {
 			return;
 		if (event.getHand() != EquipmentSlot.HAND)
 			return;
-		if (!(player.hasPermission(AutoSort.PERMISSION) || player.hasPermission(PERMISSION)))
+		if (!(player.hasPermission(AutoInventory.PERMISSION) || player.hasPermission(PERMISSION)))
 			return;
-		if (!AutoSortUser.of(player).hasFeatureEnabled(AutoSortFeature.AUTOTOOL))
+		if (!AutoInventoryUser.of(player).hasFeatureEnabled(AutoInventoryFeature.AUTOTOOL))
 			return;
 		if (!MaterialTag.TOOLS.isTagged(player.getInventory().getItemInMainHand()))
 			return;

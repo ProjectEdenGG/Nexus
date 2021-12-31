@@ -1,11 +1,13 @@
 package gg.projecteden.nexus.models.autosort;
 
+import com.mongodb.DBObject;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import dev.morphia.annotations.PreLoad;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
-import gg.projecteden.nexus.features.store.perks.autosort.AutoSort;
-import gg.projecteden.nexus.features.store.perks.autosort.AutoSortFeature;
+import gg.projecteden.nexus.features.store.perks.autosort.AutoInventory;
+import gg.projecteden.nexus.features.store.perks.autosort.AutoInventoryFeature;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.tip.Tip;
@@ -37,6 +39,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -49,11 +52,11 @@ import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Converters({UUIDConverter.class, LocationConverter.class})
-public class AutoSortUser implements PlayerOwnedObject {
+public class AutoInventoryUser implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private Set<AutoSortFeature> disabledFeatures = new HashSet<>();
+	private Set<AutoInventoryFeature> disabledFeatures = new HashSet<>();
 
 	private Set<AutoSortInventoryType> disabledInventoryTypes = new HashSet<>();
 
@@ -74,16 +77,29 @@ public class AutoSortUser implements PlayerOwnedObject {
 
 	private transient boolean sortingInventory;
 
-	public static AutoSortUser of(String name) {
+	@PreLoad
+	void fix(DBObject dbObject) {
+		final List<String> disabledFeatures = (List<String>) dbObject.get("disabledFeatures");
+		if (disabledFeatures.contains("INVENTORY")) {
+			disabledFeatures.remove("INVENTORY");
+			disabledFeatures.add("SORT_OWN_INVENTORY");
+		}
+		if (disabledFeatures.contains("CHESTS")) {
+			disabledFeatures.remove("CHESTS");
+			disabledFeatures.add("SORT_OTHER_INVENTORIES");
+		}
+	}
+
+	public static AutoInventoryUser of(String name) {
 		return of(PlayerUtils.getPlayer(name));
 	}
 
-	public static AutoSortUser of(HasUniqueId player) {
+	public static AutoInventoryUser of(HasUniqueId player) {
 		return of(player.getUniqueId());
 	}
 
-	public static AutoSortUser of(UUID uuid) {
-		return new AutoSortUserService().get(uuid);
+	public static AutoInventoryUser of(UUID uuid) {
+		return new AutoInventoryUserService().get(uuid);
 	}
 
 	public void tip(TipType tipType) {
@@ -101,13 +117,13 @@ public class AutoSortUser implements PlayerOwnedObject {
 			};
 
 			if (!isNullOrEmpty(message))
-				sendMessage(AutoSort.PREFIX + message);
+				sendMessage(AutoInventory.PREFIX + message);
 		}
 
 		tipService.save(tip);
 	}
 
-	public boolean hasFeatureEnabled(AutoSortFeature feature) {
+	public boolean hasFeatureEnabled(AutoInventoryFeature feature) {
 		if (!isOnline())
 			return false;
 
@@ -115,12 +131,16 @@ public class AutoSortUser implements PlayerOwnedObject {
 		if (!feature.hasPermission(player))
 			return false;
 
-		if (AutoSort.isWorldDisabled(player.getWorld()))
+		if (AutoInventory.isWorldDisabled(player.getWorld()))
 			return false;
 
 		if (player.getGameMode() != GameMode.SURVIVAL)
 			return false;
 
+		return hasFeatureEnabledRaw(feature);
+	}
+
+	public boolean hasFeatureEnabledRaw(AutoInventoryFeature feature) {
 		return !disabledFeatures.contains(feature);
 	}
 

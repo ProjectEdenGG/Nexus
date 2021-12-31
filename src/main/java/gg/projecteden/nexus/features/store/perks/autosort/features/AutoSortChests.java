@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.features.store.perks.autosort.features;
 
-import gg.projecteden.nexus.features.store.perks.autosort.AutoSort;
-import gg.projecteden.nexus.features.store.perks.autosort.AutoSortFeature;
+import gg.projecteden.nexus.features.store.perks.autosort.AutoInventory;
+import gg.projecteden.nexus.features.store.perks.autosort.AutoInventoryFeature;
 import gg.projecteden.nexus.features.store.perks.autosort.tasks.InventorySorter;
-import gg.projecteden.nexus.models.autosort.AutoSortUser;
+import gg.projecteden.nexus.models.autosort.AutoInventoryUser;
 import gg.projecteden.nexus.models.tip.Tip.TipType;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
@@ -32,16 +32,16 @@ public class AutoSortChests implements Listener {
 		if (!(holder instanceof Player player))
 			return;
 
-		AutoSortUser user = AutoSortUser.of(player);
+		AutoInventoryUser user = AutoInventoryUser.of(player);
 
-		if (!user.hasFeatureEnabled(AutoSortFeature.CHESTS))
+		if (!user.hasFeatureEnabled(AutoInventoryFeature.SORT_OTHER_INVENTORIES))
 			return;
 
 		if (player.isSneaking() || isVanished(player))
 			return;
 
 		Inventory topInventory = event.getView().getTopInventory();
-		if (!AutoSort.isSortableChestInventory(player, topInventory, event.getView().getTitle()))
+		if (!AutoInventory.isSortableChestInventory(player, topInventory, event.getView().getTitle()))
 			return;
 
 		Tasks.wait(1, new InventorySorter(topInventory, 0));

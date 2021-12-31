@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.store.perks.autosort.tasks;
 
-import gg.projecteden.nexus.features.store.perks.autosort.AutoSort;
-import gg.projecteden.nexus.models.autosort.AutoSortUser;
+import gg.projecteden.nexus.features.store.perks.autosort.AutoInventory;
+import gg.projecteden.nexus.models.autosort.AutoInventoryUser;
 import gg.projecteden.nexus.models.tip.Tip.TipType;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils.FakePlayerInteractEvent;
@@ -70,7 +70,7 @@ public class FindChestsThread extends Thread {
 			Location currentLocation = toLocation(current);
 
 			Material type = getType(current);
-			if (isChest(type) && AutoSort.canOpen(currentLocation.getBlock()))
+			if (isChest(type) && AutoInventory.canOpen(currentLocation.getBlock()))
 				chestLocations.add(currentLocation);
 
 			if (isPassable(type)) {
@@ -91,7 +91,7 @@ public class FindChestsThread extends Thread {
 			}
 		}
 
-		QuickDepositChain chain = new QuickDepositChain(AutoSortUser.of(player), chestLocations, new DepositRecord(), true);
+		QuickDepositChain chain = new QuickDepositChain(AutoInventoryUser.of(player), chestLocations, new DepositRecord(), true);
 		Tasks.wait(1, chain);
 	}
 
@@ -151,22 +151,22 @@ public class FindChestsThread extends Thread {
 
 	@AllArgsConstructor
 	static class QuickDepositChain implements Runnable {
-		private final AutoSortUser autoSortUser;
+		private final AutoInventoryUser autoInventoryUser;
 		private final Queue<Location> remainingChestLocations;
 		private final DepositRecord runningDepositRecord;
 		private final boolean respectExclusions;
 
 		@Override
 		public void run() {
-			if (!autoSortUser.isOnline())
+			if (!autoInventoryUser.isOnline())
 				return;
 
 			Location chestLocation = this.remainingChestLocations.poll();
 			if (chestLocation == null) {
-				send(autoSortUser, AutoSort.PREFIX + "Deposited &e%d &3items into nearby chests", runningDepositRecord.totalItems);
-				autoSortUser.tip(TipType.AUTOSORT_DEPOSIT_QUICK);
+				send(autoInventoryUser, AutoInventory.PREFIX + "Deposited &e%d &3items into nearby chests", runningDepositRecord.totalItems);
+				autoInventoryUser.tip(TipType.AUTOSORT_DEPOSIT_QUICK);
 			} else {
-				Player player = autoSortUser.getOnlinePlayer();
+				Player player = autoInventoryUser.getOnlinePlayer();
 
 				Block block = chestLocation.getBlock();
 				PlayerInventory inventory = player.getInventory();
@@ -177,15 +177,15 @@ public class FindChestsThread extends Thread {
 					if (state instanceof InventoryHolder chest) {
 						Inventory chestInventory = chest.getInventory();
 						String title = state instanceof Nameable ? ((Nameable) state).getCustomName() : null;
-						boolean isSortable = AutoSort.isSortableChestInventory(player, chestInventory, title);
+						boolean isSortable = AutoInventory.isSortableChestInventory(player, chestInventory, title);
 						if (!respectExclusions || isSortable) {
-							DepositRecord deposits = AutoSort.depositMatching(autoSortUser, chestInventory, false);
+							DepositRecord deposits = AutoInventory.depositMatching(autoInventoryUser, chestInventory, false);
 							runningDepositRecord.totalItems += deposits.totalItems;
 						}
 					}
 				}
 
-				QuickDepositChain chain = new QuickDepositChain(autoSortUser, remainingChestLocations, runningDepositRecord, respectExclusions);
+				QuickDepositChain chain = new QuickDepositChain(autoInventoryUser, remainingChestLocations, runningDepositRecord, respectExclusions);
 				Tasks.wait(1, chain);
 			}
 		}
