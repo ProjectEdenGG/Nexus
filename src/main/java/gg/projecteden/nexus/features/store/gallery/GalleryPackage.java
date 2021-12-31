@@ -427,6 +427,7 @@ public enum GalleryPackage {
 	@Category(GalleryCategory.INVENTORY)
 	FIREWORK_BOW,
 
+	// TODO Any item?
 	@Category(GalleryCategory.INVENTORY)
 	HAT(4546) {
 		private static final List<Material> HATS = new ArrayList<>() {{
