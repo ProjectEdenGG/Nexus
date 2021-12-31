@@ -244,6 +244,8 @@ public class MaterialTag implements Tag<Material> {
 		.exclude(SIGNS, ALL_BANNERS, ALL_CORALS)
 		.append(CORAL_BLOCKS);
 
+	public static final MaterialTag ITEMS = new MaterialTag(Material::isItem);
+
 	public static final MaterialTag SKULLS = new MaterialTag("_SKULL", MatchMode.SUFFIX).append("_HEAD", MatchMode.SUFFIX).exclude(PISTON_HEAD);
 	public static final MaterialTag PLAYER_SKULLS = new MaterialTag(PLAYER_HEAD, PLAYER_WALL_HEAD);
 	public static final MaterialTag MOB_SKULLS = new MaterialTag(SKULLS).exclude(PLAYER_SKULLS);
