@@ -2,10 +2,11 @@ package gg.projecteden.nexus.utils;
 
 import com.fastasyncworldedit.core.extent.processor.lighting.RelightMode;
 import com.fastasyncworldedit.core.regions.RegionWrapper;
-import com.fastasyncworldedit.core.util.EditSessionBuilder;
 import com.fastasyncworldedit.core.wrappers.WorldWrapper;
 import com.sk89q.worldedit.EditSession;
+import com.sk89q.worldedit.EditSessionBuilder;
 import com.sk89q.worldedit.LocalSession;
+import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.WorldEditException;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.bukkit.BukkitPlayer;
@@ -113,10 +114,11 @@ public class WorldEditUtils {
 	}
 
 	public EditSessionBuilder getEditSessionBuilder() {
-		return new EditSessionBuilder(worldEditWorld)
+		return WorldEdit.getInstance().newEditSessionBuilder()
+			.world(worldEditWorld)
 			.allowedRegionsEverywhere()
 			.relightMode(RelightMode.ALL)
-			.fastmode(true);
+			.fastMode(true);
 	}
 
 	public EditSession getEditSession() {
