@@ -279,7 +279,7 @@ public class Discord extends Feature {
 	private static void updateBridgeTopic(String newBridgeTopic) {
 		if (Discord.getGuild() == null) return;
 		bridgeTopic = newBridgeTopic;
-		var channel = TextChannel.STAFF_BRIDGE.get(Bot.KODA.jda());
+		var channel = TextChannel.BRIDGE.get(Bot.KODA.jda());
 		if (channel == null)
 			return;
 
