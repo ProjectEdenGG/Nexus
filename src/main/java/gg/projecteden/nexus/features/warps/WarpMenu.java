@@ -7,10 +7,10 @@ public enum WarpMenu {
 	MAIN(4),
 	SURVIVAL(5),
 	LEGACY(5),
-	MINIGAMES(5),
+	MINIGAMES(3),
 	CREATIVE(),
 	SKYBLOCK(),
-	OTHER(6),
+	OTHER(5),
 	BUILD_CONTESTS(3);
 
 	private int size = 0;
