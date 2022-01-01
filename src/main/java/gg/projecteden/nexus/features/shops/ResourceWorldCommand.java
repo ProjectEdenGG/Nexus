@@ -75,7 +75,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 
 	public ResourceWorldCommand(@NonNull CommandEvent event) {
 		super(event);
-		if (isPlayerCommandEvent())
+		if (isPlayerCommandEvent() && "logger".equals(arg(1)))
 			logger = getLogger(world());
 	}
 
@@ -96,17 +96,6 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 	@Path("setup")
 	void setup() {
 		setupWorlds();
-	}
-
-	private ResourceMarketLogger getLogger(World world) {
-		if (!isResourceWorld(world))
-			throw new InvalidInputException("Not allowed outside of resource world");
-
-		return service.get(world.getUID());
-	}
-
-	private void save(World world) {
-		service.queueSave(TickTime.SECOND.get(), getLogger(world));
 	}
 
 	@Async
@@ -157,6 +146,17 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 
 		save(world());
 		send(PREFIX + "Added &e" + amount + " &3locations to logger, new size: &e" + getLogger(world()).size());
+	}
+
+	private ResourceMarketLogger getLogger(World world) {
+		if (!isResourceWorld(world))
+			throw new InvalidInputException("Not allowed outside of resource world");
+
+		return service.get(world.getUID());
+	}
+
+	private void save(World world) {
+		service.queueSave(TickTime.SECOND.get(), getLogger(world));
 	}
 
 	@NotNull

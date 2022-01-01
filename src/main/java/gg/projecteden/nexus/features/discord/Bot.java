@@ -42,7 +42,7 @@ public enum Bot {
 
 		@Override
 		void onConnect() {
-//			Discord.registerAppCommands();
+			Discord.registerAppCommands();
 		}
 	},
 

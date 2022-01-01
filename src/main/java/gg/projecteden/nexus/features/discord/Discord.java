@@ -68,10 +68,6 @@ public class Discord extends Feature {
 		}
 	}
 
-	public static void registerAppCommandsListener() {
-		getAppCommandRegistry().registerListener();
-	}
-
 	public static void registerAppCommands() {
 		getAppCommandRegistry().registerAll();
 	}

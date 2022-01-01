@@ -58,13 +58,6 @@ public class DiscordCommand extends CustomCommand {
 
 	@Async
 	@Permission(Group.ADMIN)
-	@Path("appcommands registerListener")
-	void appcommands_registerListener() {
-		Discord.registerAppCommandsListener();
-	}
-
-	@Async
-	@Permission(Group.ADMIN)
 	@Path("appcommands register")
 	void appcommands_register() {
 		Discord.registerAppCommands();
