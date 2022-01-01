@@ -189,6 +189,10 @@ public class Podiums implements Listener {
 		abstract Map<UUID, String> getTop();
 
 		public void update() {
+			// Ignore votes for the first day of the month
+			if (this == VOTES && LocalDate.now().getDayOfMonth() == 1)
+				return;
+
 			Tasks.async(() -> {
 				Map<UUID, String> top = validateGetTop();
 				if (top == null)
@@ -207,9 +211,6 @@ public class Podiums implements Listener {
 			if (top.size() != 3) {
 				if (List.of(GALLERY_TOP_MONTHLY_CONTRIBUTORS, TOP_MONTHLY_CONTRIBUTORS).contains(this))
 					return null;
-
-				if (this != VOTES || LocalDate.now().getDayOfMonth() != 1) // Ignore votes for the first day of the month
-					Nexus.warn(name() + " podium query did not return 3 results (" + top.size() + ")");
 
 				return null;
 			}
