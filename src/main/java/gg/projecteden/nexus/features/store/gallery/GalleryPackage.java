@@ -47,11 +47,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
-import org.bukkit.Rotation;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
@@ -130,32 +128,12 @@ public enum GalleryPackage {
 	INVISIBLE_ARMOR,
 
 	@Category(GalleryCategory.VISUALS)
-	PLAYER_PLUSHIES(4547) {
-		private static boolean initialized = false;
-
+	PLAYER_PLUSHIES {
 		@Override
-		public void init() {
-			Tasks.repeat(TickTime.SECOND, TickTime.MINUTE, () -> {
-				try {
-					npc().setBukkitEntityType(EntityType.ITEM_FRAME);
-					final ItemFrame itemFrame = entity();
-					itemFrame.setFacingDirection(BlockFace.UP);
-					itemFrame.setRotation(Rotation.FLIPPED_45);
-					itemFrame.setVisible(false);
-					itemFrame.setSilent(true);
+		public void onEntityInteract(Player player, Entity entity) {
+			if (!(entity instanceof ItemFrame itemFrame))
+				return;
 
-					if (!initialized)
-						itemFrame.setItem(getRandomPlushie());
-
-					initialized = true;
-				} catch (Exception ignore) {}
-			});
-		}
-
-		@Override
-		public void onNpcInteract(Player player) {
-			final ItemFrame itemFrame = entity();
-			itemFrame.setRotation(Rotation.FLIPPED);
 			itemFrame.setItem(getRandomPlushie());
 		}
 
@@ -567,6 +545,8 @@ public enum GalleryPackage {
 	public void onNpcInteract(Player player) {}
 
 	public void onImageInteract(Player player) {}
+
+	public void onEntityInteract(Player player, Entity entity) {}
 
 	public void shutdown() {}
 

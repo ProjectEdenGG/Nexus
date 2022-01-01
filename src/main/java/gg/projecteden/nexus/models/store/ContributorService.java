@@ -53,10 +53,15 @@ public class ContributorService extends MongoPlayerService<Contributor> {
 	}
 
 	public List<Contributor> getMonthlyTop(YearMonth month, int count) {
-		return new ArrayList<>(Utils.sortByValueReverse(new HashMap<Contributor, Double>() {{
-			for (Contributor contributor : getAll())
-				put(contributor, contributor.getMonthlySum(month));
-		}}).keySet()).subList(0, count);
+		final ArrayList<Contributor> top = new ArrayList<>(Utils.sortByValueReverse(new HashMap<Contributor, Double>() {{
+			for (Contributor contributor : getAll()) {
+				final double sum = contributor.getMonthlySum(month);
+				if (sum > 0)
+					put(contributor, sum);
+			}
+		}}).keySet());
+
+		return top.subList(0, Math.min(top.size(), count));
 	}
 
 }

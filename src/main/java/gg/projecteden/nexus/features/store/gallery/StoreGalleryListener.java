@@ -11,6 +11,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -35,22 +36,20 @@ public class StoreGalleryListener implements Listener {
 		if (event.getHand() != EquipmentSlot.HAND)
 			return;
 
-		if (!(event.getRightClicked() instanceof ItemFrame itemFrame))
-			return;
-
-		if (!List.of(BlockFace.NORTH, BlockFace.SOUTH).contains(itemFrame.getAttachedFace()))
-			return;
-
 		if (WorldGuardEditCommand.canWorldGuardEdit(event.getPlayer()))
 			return;
 
-		final GalleryPackage galleryPackage = getGalleryPackage(itemFrame.getLocation());
+		final Entity entity = event.getRightClicked();
+		final GalleryPackage galleryPackage = getGalleryPackage(entity.getLocation());
 		if (galleryPackage == null)
 			return;
 
 		event.setCancelled(true);
 
-		galleryPackage.onImageInteract(event.getPlayer());
+		if (entity instanceof ItemFrame itemFrame && List.of(BlockFace.NORTH, BlockFace.SOUTH).contains(itemFrame.getAttachedFace()))
+			galleryPackage.onImageInteract(event.getPlayer());
+		else
+			galleryPackage.onEntityInteract(event.getPlayer(), entity);
 	}
 
 	@EventHandler

@@ -144,8 +144,11 @@ public class CostumeUser implements PlayerOwnedObject {
 	}
 
 	private void sendDisplayPacket(ItemStack item, EquipmentSlot slot) {
-		final Player player = getOnlinePlayer();
-		PacketUtils.sendFakeItem(GalleryPackage.COSTUMES.entity(), player, item, slot);
+		final var entity = GalleryPackage.COSTUMES.entity();
+		if (entity == null)
+			return;
+
+		PacketUtils.sendFakeItem(entity, getOnlinePlayer(), item, slot);
 	}
 
 	private boolean shouldSendDisplayPacket() {
