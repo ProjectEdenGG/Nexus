@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 
 @Getter
 public enum WorldGroup {
+	SERVER("server"),
 	SURVIVAL("world", "world_nether", "world_the_end",
 		"survival", "survival_nether", "survival_the_end",
 		"legacy", "legacy_nether", "legacy_the_end",

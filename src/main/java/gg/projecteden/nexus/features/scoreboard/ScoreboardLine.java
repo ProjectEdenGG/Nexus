@@ -143,7 +143,7 @@ public enum ScoreboardLine {
 	WORLD {
 		@Override
 		public String render(Player player) {
-			return "&3World: &e" + StringUtils.getWorldDisplayName(player.getWorld());
+			return "&3World: &e" + StringUtils.getWorldDisplayName(player.getLocation(), player.getWorld());
 		}
 	},
 

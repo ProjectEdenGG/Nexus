@@ -334,7 +334,7 @@ public class StringUtils extends gg.projecteden.utils.StringUtils {
 		return colorize(instance);
 	}
 
-	public static String getWorldDisplayName(String world) {
+	public static String getWorldDisplayName(Location location, String world) {
 		if (Arrays.asList("world", "world_nether", "world_the_end").contains(world))
 			world = world.replace("world", "legacy");
 		else if (world.contains("oneblock"))
@@ -345,11 +345,24 @@ public class StringUtils extends gg.projecteden.utils.StringUtils {
 			return "Bear Fair 21";
 		else if (world.equals("uhc"))
 			return "UHC";
+		else if (world.equals("server")) {
+			if (location != null)
+				if (new WorldGuardUtils(location).getRegionNamesAt(location).contains("hub"))
+					return "Hub";
+		}
 		return camelCase(world);
 	}
 
+	public static String getWorldDisplayName(Location location, World world) {
+		return getWorldDisplayName(location, world.getName());
+	}
+
 	public static String getWorldDisplayName(World world) {
-		return getWorldDisplayName(world.getName());
+		return getWorldDisplayName(null, world.getName());
+	}
+
+	public static String getWorldDisplayName(String world) {
+		return getWorldDisplayName(null, world);
 	}
 
 	public static String getLocationString(Location loc) {
