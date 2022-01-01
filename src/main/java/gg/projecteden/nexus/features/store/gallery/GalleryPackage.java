@@ -68,7 +68,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.utils.EnumUtils.random;
@@ -132,21 +131,25 @@ public enum GalleryPackage {
 
 	@Category(GalleryCategory.VISUALS)
 	PLAYER_PLUSHIES(4547) {
+		private static boolean initialized = false;
+
 		@Override
 		public void init() {
-			final AtomicInteger taskId = new AtomicInteger();
-			taskId.set(Tasks.repeat(TickTime.SECOND, TickTime.SECOND, () -> {
+			Tasks.repeat(TickTime.SECOND, TickTime.MINUTE, () -> {
 				try {
 					npc().setBukkitEntityType(EntityType.ITEM_FRAME);
 					final ItemFrame itemFrame = entity();
 					itemFrame.setFacingDirection(BlockFace.UP);
 					itemFrame.setRotation(Rotation.FLIPPED_45);
 					itemFrame.setVisible(false);
-					itemFrame.setItem(getRandomPlushie());
 					itemFrame.setSilent(true);
-					Tasks.cancel(taskId.get());
+
+					if (!initialized)
+						itemFrame.setItem(getRandomPlushie());
+
+					initialized = true;
 				} catch (Exception ignore) {}
-			}));
+			});
 		}
 
 		@Override

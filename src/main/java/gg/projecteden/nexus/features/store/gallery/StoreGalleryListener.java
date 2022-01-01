@@ -6,7 +6,6 @@ import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.store.gallery.annotations.Category.GalleryCategory;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import net.citizensnpcs.api.event.CitizensEnableEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -29,12 +28,6 @@ public class StoreGalleryListener implements Listener {
 
 	public StoreGalleryListener() {
 		Nexus.registerListener(this);
-	}
-
-	@EventHandler
-	public void on(CitizensEnableEvent event) {
-		new StoreGalleryNPCs();
-		GalleryPackage.onStart();
 	}
 
 	@EventHandler
