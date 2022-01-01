@@ -26,9 +26,11 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.team
 import gg.projecteden.nexus.features.minigames.models.perks.Perk;
 import gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreboard;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
+import gg.projecteden.nexus.features.resourcepack.ResourcePack.ResourcePackNumber;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.AdventureUtils;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -407,11 +409,11 @@ public class Sabotage extends TeamMechanic {
 		PlayerInventory inventory = minigamer.getPlayer().getInventory();
 		inventory.clear();
 		Location currentLoc = vent.getLocation();
-		inventory.setItem(0, new ItemBuilder(Material.ARROW).customModelData(2001).name("Crouch to Exit").lore("&f" + StringUtils.getFlooredCoordinateString(currentLoc) + " " + container.getCustomName() + " 0").loreize(false).build());
+		inventory.setItem(0, ResourcePackNumber.of(1).color(ColorType.RED).get().name("Crouch to Exit").lore("&f" + StringUtils.getFlooredCoordinateString(currentLoc) + " " + container.getCustomName() + " 0").loreize(false).build());
 		int count = 1;
 		for (ItemStack itemStack : container.getInventory()) {
 			if (ItemUtils.isNullOrAir(itemStack)) continue;
-			inventory.setItem(count, new ItemBuilder(Material.ARROW).customModelData(2001 + count).name("Crouch to Exit").lore(itemStack.getItemMeta().getDisplayName()).loreize(false).build());
+			inventory.setItem(count, ResourcePackNumber.of(1 + count).color(ColorType.RED).get().name("Crouch to Exit").lore(itemStack.getItemMeta().getDisplayName()).loreize(false).build());
 			count += 1;
 			if (count > 8)
 				break;

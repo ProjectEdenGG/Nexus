@@ -7,7 +7,7 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.MenuUtils;
-import gg.projecteden.nexus.features.resourcepack.ResourcePack;
+import gg.projecteden.nexus.features.resourcepack.ResourcePack.ResourcePackNumber;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.dailyreward.DailyRewardUser;
@@ -15,6 +15,7 @@ import gg.projecteden.nexus.models.dailyreward.DailyRewardUserService;
 import gg.projecteden.nexus.models.dailyreward.Reward;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.models.voter.VoterService;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -63,51 +64,34 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 
 		for (int i = 1; i <= Math.max(MAX_DAY, user.getCurrentStreak().getStreak()); i++) {
 			final int day = i;
-			if (ResourcePack.isEnabledFor(player)) {
-				if (user.getCurrentStreak().getStreak() >= day) {
-					if (user.getCurrentStreak().hasClaimed(day)) {
-						items.add(ClickableItem.empty(new ItemBuilder(Material.ARROW)
-								.name("&eDay " + day)
-								.lore("&3Claimed")
-								.customModelData(2000 + day).build()));
-					} else {
-						items.add(ClickableItem.from(new ItemBuilder(Material.ARROW)
-								.name("&eDay " + day)
-								.lore("&6&lUnclaimed", "&3Click to select reward.")
-								.customModelData(1000 + day)
-								.glow(day > MAX_DAY)
-								.build(), e -> new SelectItemMenu(user, day, contents.pagination().getPage()).open(player)));
-					}
-				} else {
-					items.add(ClickableItem.empty(new ItemBuilder(Material.ARROW)
-							.name("&eDay " + day)
-							.lore("&cLocked")
-							.customModelData(3000 + day)
-							.build()));
-				}
-			} else {
-				if (user.getCurrentStreak().getStreak() >= day) {
-					if (user.getCurrentStreak().hasClaimed(day)) {
-						ItemStack item = nameItem(claimed.clone(), "&eDay " + day, "&3Claimed" + "", day);
-						items.add(ClickableItem.empty(addGlowing(item)));
-					} else {
-						ItemStack item = nameItem(unclaimed.clone(), "&eDay " + day, "&6&lUnclaimed||" + "&3Click to select reward.", day);
-						items.add(ClickableItem.from(item, e -> new SelectItemMenu(user, day, contents.pagination().getPage()).open(player)));
-					}
-				} else {
-					ItemStack item = nameItem(locked.clone(), "&eDay " + day, "&cLocked" + "", day);
-					items.add(ClickableItem.empty(item));
-				}
-			}
+			if (user.getCurrentStreak().getStreak() >= day)
+				if (user.getCurrentStreak().hasClaimed(day))
+					items.add(ClickableItem.empty(ResourcePackNumber.of(day)
+						.player(player)
+						.color(ColorType.GRAY)
+						.get()
+						.name("&eDay " + day)
+						.lore("&3Claimed")
+						.build()));
+				else
+					items.add(ClickableItem.from(ResourcePackNumber.of(day)
+						.player(player)
+						.color(ColorType.GREEN)
+						.get()
+						.name("&eDay " + day)
+						.lore("&6&lUnclaimed", "&3Click to select reward.")
+						.build(), e -> new SelectItemMenu(user, day, contents.pagination().getPage()).open(player)));
+			else
+				items.add(ClickableItem.empty(ResourcePackNumber.of(day)
+					.player(player)
+					.color(ColorType.RED)
+					.get()
+					.name("&eDay " + day)
+					.lore("&cLocked")
+					.build()));
 		}
 
 		paginator(player, contents, items);
-	}
-
-	private ItemStack nameItem(ItemStack item, String name, String lore, int day) {
-		ItemStack itemStack = super.nameItem(item, name, lore);
-		itemStack.setAmount(day);
-		return itemStack;
 	}
 
 	public static class SelectItemMenu extends MenuUtils implements InventoryProvider {
