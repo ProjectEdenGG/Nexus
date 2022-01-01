@@ -287,9 +287,18 @@ public enum GalleryPackage {
 	@Category(GalleryCategory.VISUALS)
 	ENTITY_NAME,
 
-	// TODO Predefined prefixes & colors, shows random one  ▷
 	@Category(GalleryCategory.CHAT)
-	PREFIX,
+	PREFIX {
+		@Override
+		public void onImageInteract(Player player) {
+			if (!cooldown(TickTime.MINUTE))
+				return;
+
+			PlayerUtils.send(player, "&c/prefix test <prefix...>");
+			PlayerUtils.send(player, "&c/prefix test gradient <colors> <prefix...>");
+			PlayerUtils.send(player, "&c/prefix test rainbow <prefix...>");
+		}
+	},
 
 	@Category(GalleryCategory.CHAT)
 	NICKNAME,

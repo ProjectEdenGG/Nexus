@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.store.perks;
 
+import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
 import gg.projecteden.nexus.features.chat.Emotes;
 import gg.projecteden.nexus.features.chat.commands.EmotesCommand;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -8,6 +9,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.chat.PublicChannel;
 import gg.projecteden.nexus.models.emote.EmoteService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.NerdService;
@@ -107,6 +109,32 @@ public class PrefixCommand extends CustomCommand {
 		}
 
 		send(json(PREFIX + "Click here to copy " + (isSelf(nerd) ? "your" : nerd.getNickname() + "'s") + " current prefix: &f" + original).copy(decolorize(prefix)).hover("&7Click to copy"));
+	}
+
+	@Path("test <prefix...>")
+	void test_prefix(String input) {
+		if (player().hasPermission(EmotesCommand.PERMISSION))
+			input = Emotes.process(new EmoteService().get(player()), input);
+
+		if (stripColor(input).length() > 10)
+			error("Your prefix cannot be more than 10 characters");
+
+		input = stripFormat(input);
+
+		final PublicChannel channel = StaticChannel.GLOBAL.getChannel();
+		final ChatColor channelColor = channel.getColor();
+		send("&6&l[Example] %s[%s] &8&l[&f%s&8&l] %s %s> %sHello!".formatted(channelColor, channel.getNickname(),
+			input, nerd().getColoredName(), channelColor, channel.getMessageColor()));
+	}
+
+	@Path("test gradient <colors> <prefix...>")
+	void test_gradient(@Arg(type = ChatColor.class) List<ChatColor> colors, String input) {
+		test_prefix(Gradient.of(colors).apply(input));
+	}
+
+	@Path("test rainbow <prefix...>")
+	void test_rainbow(String input) {
+		test_prefix(Rainbow.apply(input));
 	}
 
 }
