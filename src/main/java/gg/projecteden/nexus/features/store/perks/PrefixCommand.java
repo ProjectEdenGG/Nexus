@@ -63,14 +63,7 @@ public class PrefixCommand extends CustomCommand {
 	@Path("<prefix...>")
 	@Permission("set.my.prefix")
 	void prefix(String input) {
-		if (player().hasPermission(EmotesCommand.PERMISSION))
-			input = Emotes.process(new EmoteService().get(player()), input);
-
-		if (stripColor(input).length() > 10)
-			error("Your prefix cannot be more than 10 characters");
-
-		input = stripFormat(input);
-
+		input = validate(input);
 		nerd.setPrefix(input);
 		service.save(nerd);
 		send(PREFIX + "Your prefix has been set to &8&l[&f" + input + "&8&l]");
@@ -113,14 +106,7 @@ public class PrefixCommand extends CustomCommand {
 
 	@Path("test <prefix...>")
 	void test_prefix(String input) {
-		if (player().hasPermission(EmotesCommand.PERMISSION))
-			input = Emotes.process(new EmoteService().get(player()), input);
-
-		if (stripColor(input).length() > 10)
-			error("Your prefix cannot be more than 10 characters");
-
-		input = stripFormat(input);
-
+		input = validate(input);
 		final PublicChannel channel = StaticChannel.GLOBAL.getChannel();
 		final ChatColor channelColor = channel.getColor();
 		send("&6&l[Example] %s[%s] &8&l[&f%s&8&l] %s %s> %sHello!".formatted(channelColor, channel.getNickname(),
@@ -135,6 +121,17 @@ public class PrefixCommand extends CustomCommand {
 	@Path("test rainbow <prefix...>")
 	void test_rainbow(String input) {
 		test_prefix(Rainbow.apply(input));
+	}
+
+	private String validate(String input) {
+		if (player().hasPermission(EmotesCommand.PERMISSION))
+			input = Emotes.process(new EmoteService().get(player()), input);
+
+		final int length = stripColor(input).length();
+		if (length > 10)
+			error("Your prefix cannot be more than 10 characters (was " + length + ")");
+
+		return stripFormat(input);
 	}
 
 }
