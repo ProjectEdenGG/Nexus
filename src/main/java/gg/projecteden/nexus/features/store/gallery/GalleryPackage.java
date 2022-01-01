@@ -134,7 +134,8 @@ public enum GalleryPackage {
 			if (!(entity instanceof ItemFrame itemFrame))
 				return;
 
-			itemFrame.setItem(getRandomPlushie());
+			itemFrame.setSilent(true);
+			itemFrame.setItem(getRandomPlushie(), false);
 		}
 
 		private ItemStack getRandomPlushie() {
@@ -600,6 +601,14 @@ public enum GalleryPackage {
 	public static void onStart() {
 		for (GalleryPackage galleryPackage : GalleryPackage.values())
 			galleryPackage.init();
+	}
+
+	public static GalleryPackage of(NPC npc) {
+		for (GalleryPackage galleryPackage : GalleryPackage.values())
+			if (galleryPackage.getNpcId() == npc.getId())
+				return galleryPackage;
+
+		return null;
 	}
 
 }

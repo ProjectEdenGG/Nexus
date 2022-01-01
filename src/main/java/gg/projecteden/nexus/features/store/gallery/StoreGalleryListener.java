@@ -4,15 +4,17 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.store.gallery.annotations.Category.GalleryCategory;
+import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import net.citizensnpcs.api.event.NPCRightClickEvent;
+import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -36,20 +38,30 @@ public class StoreGalleryListener implements Listener {
 		if (event.getHand() != EquipmentSlot.HAND)
 			return;
 
-		if (WorldGuardEditCommand.canWorldGuardEdit(event.getPlayer()))
+		final Player player = event.getPlayer();
+		if (WorldGuardEditCommand.canWorldGuardEdit(player))
 			return;
 
 		final Entity entity = event.getRightClicked();
-		final GalleryPackage galleryPackage = getGalleryPackage(entity.getLocation());
-		if (galleryPackage == null)
-			return;
+		if (CitizensUtils.isNPC(entity)) {
+			final NPC npc = CitizensUtils.getNPC(entity);
+			final GalleryPackage galleryPackage = GalleryPackage.of(npc);
+			if (galleryPackage == null)
+				return;
 
-		event.setCancelled(true);
+			galleryPackage.onNpcInteract(player);
+		} else {
+			final GalleryPackage galleryPackage = getGalleryPackage(entity.getLocation());
+			if (galleryPackage == null)
+				return;
 
-		if (entity instanceof ItemFrame itemFrame && List.of(BlockFace.NORTH, BlockFace.SOUTH).contains(itemFrame.getAttachedFace()))
-			galleryPackage.onImageInteract(event.getPlayer());
-		else
-			galleryPackage.onEntityInteract(event.getPlayer(), entity);
+			event.setCancelled(true);
+
+			if (entity instanceof ItemFrame itemFrame && List.of(BlockFace.NORTH, BlockFace.SOUTH).contains(itemFrame.getAttachedFace()))
+				galleryPackage.onImageInteract(player);
+			else
+				galleryPackage.onEntityInteract(player, entity);
+		}
 	}
 
 	@EventHandler
@@ -77,15 +89,6 @@ public class StoreGalleryListener implements Listener {
 		event.setCancelled(true);
 
 		galleryPackage.onImageInteract(event.getPlayer());
-	}
-
-	@EventHandler
-	public void on(NPCRightClickEvent event) {
-		for (GalleryPackage galleryPackage : GalleryPackage.values())
-			if (galleryPackage.getNpcId() == event.getNPC().getId()) {
-				galleryPackage.onNpcInteract(event.getClicker());
-				return;
-			}
 	}
 
 	@Nullable
