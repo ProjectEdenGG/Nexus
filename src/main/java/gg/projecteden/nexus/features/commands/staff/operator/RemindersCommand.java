@@ -21,7 +21,6 @@ import gg.projecteden.nexus.models.reminders.ReminderConfig.Reminder.ReminderCon
 import gg.projecteden.nexus.utils.GoogleUtils;
 import gg.projecteden.nexus.utils.GoogleUtils.SheetsUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -382,9 +381,6 @@ public class RemindersCommand extends CustomCommand implements Listener {
 		Tasks.cancel(taskId);
 		taskId = Tasks.repeatAsync(interval, interval, () -> {
 			for (Player player : OnlinePlayers.getAll()) {
-				if (!Dev.GRIFFIN.is(player))
-					continue;
-
 				Utils.attempt(100, () -> {
 					Reminder reminder = config.getRandomReminder();
 

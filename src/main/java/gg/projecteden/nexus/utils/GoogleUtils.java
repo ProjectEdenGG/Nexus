@@ -183,7 +183,7 @@ public class GoogleUtils {
 
 		@NotNull
 		public static Object valueOf(Collection<String> strings) {
-			return valueOf(String.join("\n", strings));
+			return Utils.isNullOrEmpty(strings) ? "" : valueOf(String.join("\n", strings));
 		}
 
 		@NotNull
@@ -229,6 +229,8 @@ public class GoogleUtils {
 			String string = asString(iterator, null);
 			if (string != null)
 				string = string.trim();
+			if (isNullOrEmpty(string))
+				return null;
 			return string;
 		}
 
