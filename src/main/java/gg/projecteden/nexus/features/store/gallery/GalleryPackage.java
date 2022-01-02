@@ -11,8 +11,12 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Emotes;
 import gg.projecteden.nexus.features.particles.providers.EffectSettingProvider;
 import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
+import gg.projecteden.nexus.features.store.Package;
+import gg.projecteden.nexus.features.store.StoreCommand;
+import gg.projecteden.nexus.features.store.annotations.Category.StoreCategory;
 import gg.projecteden.nexus.features.store.gallery.annotations.Category;
 import gg.projecteden.nexus.features.store.gallery.annotations.Category.GalleryCategory;
+import gg.projecteden.nexus.features.store.gallery.annotations.RealCategory;
 import gg.projecteden.nexus.features.store.perks.CostumeCommand.CostumeMenu;
 import gg.projecteden.nexus.features.store.perks.joinquit.JoinQuit;
 import gg.projecteden.nexus.features.store.perks.workbenches.WorkbenchesCommand.WorkbenchesMenu;
@@ -67,6 +71,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static gg.projecteden.nexus.features.store.BuycraftUtils.ADD_TO_CART_URL;
+import static gg.projecteden.nexus.features.store.BuycraftUtils.CATEGORY_URL;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.utils.EnumUtils.random;
 import static gg.projecteden.utils.RandomUtils.randomElement;
@@ -117,7 +123,7 @@ public enum GalleryPackage {
 	},
 
 	@Category(GalleryCategory.VISUALS)
-	WINGS(4306) {
+	PARTICLE_WINGS(4306) {
 		@Override
 		public void onNpcInteract(Player player) {
 			new EffectSettingProvider(ParticleType.WINGS, entity()).open(player);
@@ -310,6 +316,7 @@ public enum GalleryPackage {
 	},
 
 	@Category(GalleryCategory.PETS_DISGUISES)
+	@RealCategory(StoreCategory.PETS)
 	PETS(4527) {
 		@Override
 		public void onNpcInteract(Player player) {
@@ -322,6 +329,7 @@ public enum GalleryPackage {
 	},
 
 	@Category(GalleryCategory.PETS_DISGUISES)
+	@RealCategory(StoreCategory.DISGUISES)
 	DISGUISES,
 
 	@Category(GalleryCategory.INVENTORY)
@@ -536,6 +544,7 @@ public enum GalleryPackage {
 	},
 
 	@Category(GalleryCategory.MISC)
+	@RealCategory(StoreCategory.BOOSTS)
 	BOOSTS,
 	;
 
@@ -548,6 +557,22 @@ public enum GalleryPackage {
 	public void onImageInteract(Player player) {}
 
 	public void onEntityInteract(Player player, Entity entity) {}
+
+	public void onClickCart(Player player) {
+		String url;
+		try {
+			url = ADD_TO_CART_URL.formatted(getStorePackage().getId());
+		} catch (IllegalArgumentException ex) {
+			url = CATEGORY_URL.formatted(getCategoryId());
+		}
+
+		new JsonBuilder(StoreCommand.PREFIX + "&eClick here &3to open the store").url(url).send(player);
+	}
+
+	@NotNull
+	private Package getStorePackage() {
+		return Package.valueOf(name());
+	}
 
 	public void shutdown() {}
 
@@ -591,6 +616,16 @@ public enum GalleryPackage {
 
 	public GalleryCategory getCategory() {
 		return getField().getAnnotation(Category.class).value();
+	}
+
+	public String getCategoryId() {
+		final RealCategory annotation = getField().getAnnotation(RealCategory.class);
+		final GalleryCategory galleryCategory = getCategory();
+		final StoreCategory storeCategory = annotation == null ? null : annotation.value();
+		if (storeCategory == null)
+			return galleryCategory.name().toLowerCase();
+		else
+			return storeCategory.name().toLowerCase();
 	}
 
 	public static void onStop() {

@@ -54,6 +54,7 @@ import static gg.projecteden.utils.StringUtils.prettyMoney;
 @Aliases({"donate", "buy"})
 public class StoreCommand extends CustomCommand implements Listener {
 	public static final String URL = "https://store." + Nexus.DOMAIN;
+	public static final String PREFIX = StringUtils.getPrefix("Store");
 	private static final String PLUS = "&3[+] &e";
 
 	private final ContributorService service = new ContributorService();
@@ -269,11 +270,8 @@ public class StoreCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("gallery")
-	@Permission(Group.ADMIN)
 	void gallery() {
 		WarpType.STAFF.get("store").teleportAsync(player());
-//		WarpType.NORMAL.get("storegallery").teleportAsync(player()); TODO
-		send(PREFIX + "Updated skins");
 	}
 
 	@Path("gallery updateSkins")

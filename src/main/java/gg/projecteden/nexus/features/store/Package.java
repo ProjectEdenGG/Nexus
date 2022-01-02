@@ -79,7 +79,7 @@ public enum Package {
 	@Category(StoreCategory.CHAT)
 	@Permission(NicknameCommand.PERMISSION)
 	@Display(Material.NAME_TAG)
-	NICKNAME_LIFETIME,
+	NICKNAME,
 
 	@Id("4425728")
 	@Category(StoreCategory.CHAT)
@@ -93,7 +93,7 @@ public enum Package {
 	@Category(StoreCategory.CHAT)
 	@Permission(PrefixCommand.PERMISSION)
 	@Display(Material.OAK_SIGN)
-	CUSTOM_PREFIX_LIFETIME,
+	PREFIX,
 
 	@Id("2730030")
 	@Category(StoreCategory.CHAT)
@@ -107,14 +107,14 @@ public enum Package {
 	@Category(StoreCategory.CHAT)
 	@Permission("jq.custom")
 	@Display(Material.MAGENTA_GLAZED_TERRACOTTA)
-	CUSTOM_JOIN_QUIT_MESSAGES_LIFETIME,
+	JOIN_QUIT,
 
 	@Id("2965489")
 	@Category(StoreCategory.CHAT)
 	@Permission("jq.custom")
 	@ExpirationDays(30)
 	@Display(Material.MAGENTA_GLAZED_TERRACOTTA)
-	CUSTOM_JOIN_QUIT_MESSAGES_ONE_MONTH,
+	JOIN_QUIT_ONE_MONTH,
 
 	@Id("3239567")
 	@Category(StoreCategory.CHAT)
@@ -377,7 +377,7 @@ public enum Package {
 	@Id("4610203")
 	@Category(StoreCategory.VISUALS)
 	@Display(value = Material.STONE_BUTTON, customModelData = 208)
-	COSTUMES_VOUCHER {
+	COSTUMES {
 		@Override
 		public void handleApply(UUID uuid) {
 			new CostumeUserService().edit(uuid, user -> user.addVouchers(1));
@@ -393,7 +393,7 @@ public enum Package {
 	@Id("4610206")
 	@Category(StoreCategory.VISUALS)
 	@Display(value = Material.STONE_BUTTON, customModelData = 208)
-	COSTUMES_5_VOUCHERS {
+	COSTUMES_5 {
 		@Override
 		public void handleApply(UUID uuid) {
 			new CostumeUserService().edit(uuid, user -> user.addVouchers(5));
@@ -418,7 +418,7 @@ public enum Package {
 	@PermissionGroup("store.npc")
 	@Command("/permhelper add npcs [player] 1")
 	@Display(Material.ARMOR_STAND)
-	NPC {
+	NPCS {
 		@Override
 		public int count(OfflinePlayer player) {
 			return NumericPermission.NPCS.getLimit(player.getUniqueId());
@@ -488,7 +488,7 @@ public enum Package {
 	@Category(StoreCategory.INVENTORY)
 	@Permission(AutoInventory.PERMISSION)
 	@Display(Material.HOPPER)
-	AUTO_INVENTORY_LIFETIME,
+	AUTO_INVENTORY,
 
 	@Id("2729981")
 	@Category(StoreCategory.INVENTORY)
@@ -555,7 +555,7 @@ public enum Package {
 	@Category(StoreCategory.INVENTORY)
 	@Permission("fireworkbow.infinite")
 	@Display(Material.BOW)
-	FIREWORK_BOW_INFINITE,
+	FIREWORK_BOW,
 
 	@Id("2678902")
 	@Category(StoreCategory.INVENTORY)

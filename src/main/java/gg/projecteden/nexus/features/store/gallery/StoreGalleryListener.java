@@ -4,7 +4,9 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.store.gallery.annotations.Category.GalleryCategory;
+import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.CitizensUtils;
+import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import net.citizensnpcs.api.npc.NPC;
@@ -25,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
-import static gg.projecteden.nexus.utils.BlockUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
 
 public class StoreGalleryListener implements Listener {
 
@@ -58,7 +60,10 @@ public class StoreGalleryListener implements Listener {
 			event.setCancelled(true);
 
 			if (entity instanceof ItemFrame itemFrame && List.of(BlockFace.NORTH, BlockFace.SOUTH).contains(itemFrame.getAttachedFace()))
-				galleryPackage.onImageInteract(player);
+				if (!isNullOrAir(itemFrame.getItem()) && CustomModelData.of(itemFrame.getItem()) == 1199)
+					galleryPackage.onClickCart(player);
+				else
+					galleryPackage.onImageInteract(player);
 			else
 				galleryPackage.onEntityInteract(player, entity);
 		}
@@ -73,7 +78,7 @@ public class StoreGalleryListener implements Listener {
 			return;
 
 		final Block block = event.getClickedBlock();
-		if (isNullOrAir(block))
+		if (BlockUtils.isNullOrAir(block))
 			return;
 
 		if (block.getType() != Material.BLACK_CONCRETE)
