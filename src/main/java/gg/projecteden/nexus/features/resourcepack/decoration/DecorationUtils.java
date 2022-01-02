@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.decoration;
 
-import gg.projecteden.nexus.features.custombenches.DyeStation.DyeStationMenu.StainChoice;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
+import gg.projecteden.nexus.utils.ColorType;
 import lombok.Getter;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -24,6 +24,6 @@ public class DecorationUtils {
 	}
 
 	public static Color getDefaultWoodColor() {
-		return StainChoice.OAK.getButton().getColor();
+		return ColorType.hexToBukkit("#F4C57A");
 	}
 }

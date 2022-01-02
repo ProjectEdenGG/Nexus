@@ -24,7 +24,8 @@ public enum Decorations {
 	// Chairs
 	CHAIR_WOODEN_BASIC(new Chair("Wooden Chair", 400, DyedPart.WHOLE)),
 	CHAIR_WOODEN_CUSHION(new Chair("Cushioned Wooden Chair", 401, DyedPart.CUSHION)),
-	BENCH_WOODEN(new Bench("Wooden Bench", 450, DyedPart.WHOLE));
+	BENCH_WOODEN(new Bench("Wooden Bench", 450, DyedPart.WHOLE)),
+	;
 
 	@Getter
 	Decoration decoration;
