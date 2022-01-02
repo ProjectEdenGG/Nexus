@@ -40,6 +40,9 @@ public class Decoration {
 		this.hitboxes = hitboxes;
 	}
 
+	public List<Hitbox> getHitboxes(BlockFace rotateAround) {
+		return Hitbox.rotate(getHitboxes(), rotateAround);
+	}
 
 	public ItemFrameRotation getValidRotation(ItemFrameRotation frameRotation) {
 		if (this.disabledRotation.equals(DisabledRotation.NONE))
@@ -100,8 +103,8 @@ public class Decoration {
 		return new ItemBuilder(material).customModelData(modelData).name(name).lore(lore).build();
 	}
 
-	public void interact(Player player, ItemFrame itemFrame) {
+	public void interact(Player player, ItemFrame itemFrame, Block block) {
 		if (this instanceof Seat seat)
-			seat.trySit(player, itemFrame);
+			seat.trySit(player, block, itemFrame.getRotation());
 	}
 }

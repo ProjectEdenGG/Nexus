@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.commands;
 
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationListener;
 import gg.projecteden.nexus.features.resourcepack.decoration.Decorations;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -20,5 +21,14 @@ public class DecorationCommand extends CustomCommand {
 	void get(Decorations decorations) {
 		giveItem(decorations.getItem());
 		send("Given " + StringUtils.camelCase(decorations));
+	}
+
+	@Path("debug [enabled]")
+	void debug(Boolean enabled) {
+		if (enabled == null)
+			enabled = !DecorationListener.debug;
+
+		DecorationListener.debug = enabled;
+		send("debug " + (enabled ? "&aEnabled" : "&cDisabled"));
 	}
 }

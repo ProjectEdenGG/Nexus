@@ -37,6 +37,7 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.EnumUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -51,6 +52,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -142,6 +144,7 @@ public enum GalleryPackage {
 
 			itemFrame.setSilent(true);
 			itemFrame.setItem(getRandomPlushie(), false);
+			new SoundBuilder(Sound.ENTITY_ITEM_FRAME_ROTATE_ITEM).location(itemFrame).play();
 		}
 
 		private ItemStack getRandomPlushie() {

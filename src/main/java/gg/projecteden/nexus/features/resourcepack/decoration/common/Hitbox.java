@@ -51,7 +51,7 @@ public class Hitbox {
 		return directions.get(index);
 	}
 
-	private static List<Hitbox> rotate(List<Hitbox> hitboxes, BlockFace blockFace) {
+	public static List<Hitbox> rotate(List<Hitbox> hitboxes, BlockFace blockFace) {
 		int ndx = directions.indexOf(blockFace);
 		List<Hitbox> result = new ArrayList<>();
 

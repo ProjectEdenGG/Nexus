@@ -519,7 +519,7 @@ public class Misc implements Listener {
 			player.setAllowFlight(false);
 			player.setFlying(false);
 		} else {
-			if (nerd.isVanished()) {
+			if (nerd.isVanished() || nerd.getOnlinePlayer().getGameMode().equals(GameMode.SPECTATOR)) {
 				if (oldWorldGroup == WorldGroup.CREATIVE || oldWorldGroup == WorldGroup.STAFF) {
 					if (player.hasPermission("essentials.fly")) {
 						player.setFallDistance(0);
@@ -527,26 +527,28 @@ public class Misc implements Listener {
 						player.setFlying(true);
 					}
 				}
+			} else {
+				Tasks.wait(5, () -> {
+					ModeUser mode = new ModeUserService().get(player);
+					GameMode gameMode = mode.getGamemode(newWorldGroup);
+					FlightMode flightMode = mode.getFlightMode(newWorldGroup);
+
+					if (gameMode.equals(GameMode.SPECTATOR)) {
+						flightMode.setAllowFlight(true);
+						flightMode.setFlying(true);
+					}
+
+					GamemodeCommand.setGameMode(player, gameMode);
+//				PlayerUtils.send(player, "GAMEMODE DEBUG: Setting to " + gameMode);
+
+					player.setAllowFlight(flightMode.isAllowFlight());
+					player.setFlying(flightMode.isFlying());
+//				PlayerUtils.send(player, "FLIGHT DEBUG: " + player.getAllowFlight() + " | " + player.isFlying());
+				});
 			}
 
 
-			Tasks.wait(5, () -> {
-				ModeUser mode = new ModeUserService().get(player);
-				GameMode gameMode = mode.getGamemode(newWorldGroup);
-				FlightMode flightMode = mode.getFlightMode(newWorldGroup);
 
-				if (gameMode.equals(GameMode.SPECTATOR)) {
-					flightMode.setAllowFlight(true);
-					flightMode.setFlying(true);
-				}
-
-				GamemodeCommand.setGameMode(player, gameMode);
-//				PlayerUtils.send(player, "GAMEMODE DEBUG: Setting to " + gameMode);
-
-				player.setAllowFlight(flightMode.isAllowFlight());
-				player.setFlying(flightMode.isFlying());
-//				PlayerUtils.send(player, "FLIGHT DEBUG: " + player.getAllowFlight() + " | " + player.isFlying());
-			});
 		}
 
 		if (event.getFrom().getName().equalsIgnoreCase("donortrial"))

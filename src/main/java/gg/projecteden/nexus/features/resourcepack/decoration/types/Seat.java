@@ -8,9 +8,9 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Rotation;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 
@@ -28,12 +28,12 @@ public class Seat extends Decoration {
 		this.disabledPlacements = List.of(DisabledPlacement.WALL, DisabledPlacement.CEILING);
 	}
 
-	public void trySit(Player player, ItemFrame itemFrame) {
-		Location location = itemFrame.getLocation().toCenterLocation().clone().subtract(0, 0.2, 0);
+	public void trySit(Player player, Block block, Rotation rotation) {
+		Location location = block.getLocation().toCenterLocation().clone().subtract(0, 0.2, 0);
 		if (!canSit(player, location))
 			return;
 
-		makeSit(player, location, itemFrame.getRotation());
+		makeSit(player, location, rotation);
 	}
 
 	public void makeSit(Player player, Location location, Rotation rotation) {
