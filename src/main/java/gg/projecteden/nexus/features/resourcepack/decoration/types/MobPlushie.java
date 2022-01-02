@@ -11,6 +11,5 @@ public class MobPlushie extends Decoration {
 		this.name = name;
 		this.modelData = modelData;
 		this.dropChance = dropChance;
-
 	}
 }

@@ -1,7 +1,9 @@
 package gg.projecteden.nexus.features.resourcepack.decoration;
 
+import gg.projecteden.nexus.features.custombenches.DyeStation.DyeStationMenu.StainChoice;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import lombok.Getter;
+import org.bukkit.Color;
 import org.bukkit.Material;
 
 import java.util.HashSet;
@@ -19,5 +21,9 @@ public class DecorationUtils {
 			}
 		}
 		hitboxTypes = materials;
+	}
+
+	public static Color getDefaultWoodColor() {
+		return StainChoice.OAK.getButton().getColor();
 	}
 }

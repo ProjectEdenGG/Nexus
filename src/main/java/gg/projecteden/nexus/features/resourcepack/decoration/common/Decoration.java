@@ -6,6 +6,7 @@ import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -32,6 +33,7 @@ public class Decoration {
 	protected List<Hitbox> hitboxes = Hitbox.NONE();
 	protected DisabledRotation disabledRotation = DisabledRotation.NONE;
 	protected List<DisabledPlacement> disabledPlacements = new ArrayList<>();
+	protected Color defaultColor;
 
 	public Decoration(String name, int modelData, @NotNull Material material, List<Hitbox> hitboxes) {
 		this.name = name;
@@ -100,7 +102,11 @@ public class Decoration {
 	}
 
 	public ItemStack getItem() {
-		return new ItemBuilder(material).customModelData(modelData).name(name).lore(lore).build();
+		ItemBuilder decor = new ItemBuilder(material).customModelData(modelData).name(name).lore(lore);
+		if (defaultColor != null)
+			decor.dyeColor(defaultColor);
+
+		return decor.build();
 	}
 
 	public void interact(Player player, ItemFrame itemFrame, Block block) {

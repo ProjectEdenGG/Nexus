@@ -1,9 +1,13 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types;
 
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DisabledPlacement;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Rotation;
@@ -19,10 +23,13 @@ import java.util.List;
 
 public class Seat extends Decoration {
 	private static final String id = "DecorationSeat";
+	DyedPart dyedPart;
 
-	public Seat(String name, int modelData, List<Hitbox> hitboxes) {
+	public Seat(String name, int modelData, DyedPart dyedPart, List<Hitbox> hitboxes) {
 		this.name = name;
 		this.modelData = modelData;
+		this.dyedPart = dyedPart;
+		this.defaultColor = dyedPart.getDefaultColor();
 		this.hitboxes = hitboxes;
 		this.material = Material.LEATHER_HORSE_ARMOR;
 		this.disabledPlacements = List.of(DisabledPlacement.WALL, DisabledPlacement.CEILING);
@@ -88,5 +95,15 @@ public class Seat extends Decoration {
 		List<BlockFace> radial = Arrays.asList(BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST, BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST);
 		int ndx = radial.indexOf(blockFace);
 		return ndx * 45F;
+	}
+
+	@AllArgsConstructor
+	public enum DyedPart {
+		WHOLE(DecorationUtils.getDefaultWoodColor()),
+		CUSHION(Color.RED),
+		;
+
+		@Getter
+		Color defaultColor;
 	}
 }

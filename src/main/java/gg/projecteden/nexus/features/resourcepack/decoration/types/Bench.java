@@ -12,7 +12,7 @@ public class Bench extends MultiBlockSeat {
 		Hitbox.origin(Material.BARRIER),
 		new Hitbox(Material.BARRIER, Map.of(BlockFace.EAST, 1)));
 
-	public Bench(String name, int modelData) {
-		super(name, modelData, hitboxes);
+	public Bench(String name, int modelData, DyedPart dyedPart) {
+		super(name, modelData, dyedPart, hitboxes);
 	}
 }

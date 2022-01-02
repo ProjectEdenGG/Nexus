@@ -4,6 +4,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Bench;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.BlockDecor;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Chair;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Seat.DyedPart;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Table;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,12 +14,17 @@ import org.bukkit.inventory.ItemStack;
 
 @AllArgsConstructor
 public enum Decorations {
-//	MOB_PLUSHIE_ENDERDRAGON(new MobPlushie("Ender Dragon MobPlushie", -1, 5.0)),
-//	FIREPLACE_LARGE_DARK(new LargeFireplace("Dark Fireplace", -1)),
-DYE_STATION(new BlockDecor("Dye Station", 1, Material.CRAFTING_TABLE)),
-	CHAIR_WOODEN_BASIC(new Chair("Wooden Chair", 400)),
-	CHAIR_WOODEN_CUSHION(new Chair("Cushioned Wooden Chair", 401)),
-	BENCH_WOODEN(new Bench("Wooden Bench", 450));
+	DYE_STATION(new BlockDecor("Dye Station", 1, Material.CRAFTING_TABLE)),
+	// Tables
+	TABLE_WOODEN_1x1(new Table("Wooden Table 1x1", 300, Table.TableSize._1x1)),
+	TABLE_WOODEN_1x2(new Table("Wooden Table 1x2", 301, Table.TableSize._1x2)),
+	TABLE_WOODEN_2x2(new Table("Wooden Table 2x2", 302, Table.TableSize._2x2)),
+	TABLE_WOODEN_2x3(new Table("Wooden Table 2x3", 303, Table.TableSize._2x3)),
+	TABLE_WOODEN_3x3(new Table("Wooden Table 3x3", 304, Table.TableSize._3x3)),
+	// Chairs
+	CHAIR_WOODEN_BASIC(new Chair("Wooden Chair", 400, DyedPart.WHOLE)),
+	CHAIR_WOODEN_CUSHION(new Chair("Cushioned Wooden Chair", 401, DyedPart.CUSHION)),
+	BENCH_WOODEN(new Bench("Wooden Bench", 450, DyedPart.WHOLE));
 
 	@Getter
 	Decoration decoration;

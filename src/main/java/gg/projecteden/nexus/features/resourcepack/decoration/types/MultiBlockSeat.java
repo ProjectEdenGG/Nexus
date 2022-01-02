@@ -7,8 +7,8 @@ import java.util.List;
 
 public class MultiBlockSeat extends Seat {
 
-	public MultiBlockSeat(String name, int modelData, List<Hitbox> hitboxes) {
-		super(name, modelData, hitboxes);
+	public MultiBlockSeat(String name, int modelData, DyedPart dyedPart, List<Hitbox> hitboxes) {
+		super(name, modelData, dyedPart, hitboxes);
 		this.disabledRotation = DisabledRotation.DEGREE_45;
 	}
 }

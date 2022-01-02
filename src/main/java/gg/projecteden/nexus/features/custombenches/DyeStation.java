@@ -95,7 +95,7 @@ public class DyeStation extends CustomBench {
 
 	@NoArgsConstructor
 	@AllArgsConstructor
-	private static class DyeStationMenu extends MenuUtils implements InventoryProvider, Listener {
+	public static class DyeStationMenu extends MenuUtils implements InventoryProvider, Listener {
 		Player player;
 		boolean cheatMode = false;
 		DyeType dyeType;
@@ -440,7 +440,7 @@ public class DyeStation extends CustomBench {
 			}
 		}
 
-		private enum StainChoice {
+		public enum StainChoice {
 			BIRCH("#FEE496"),
 			OAK("#F4C57A"),
 			JUNGLE("#EFA777"),
@@ -492,11 +492,11 @@ public class DyeStation extends CustomBench {
 			}
 		}
 
-		private static class ColoredButton {
+		public static class ColoredButton {
 			ItemBuilder dye = new ItemBuilder(Material.LEATHER_HORSE_ARMOR).customModelData(1);
 			ItemBuilder stain = new ItemBuilder(Material.LEATHER_HORSE_ARMOR).customModelData(2);
 			@Getter
-			org.bukkit.Color color;
+			private final org.bukkit.Color color;
 
 			public ItemStack getItem(@NonNull DyeType dyeType, String name) {
 				ItemBuilder dyeable = new ItemBuilder(dye);
