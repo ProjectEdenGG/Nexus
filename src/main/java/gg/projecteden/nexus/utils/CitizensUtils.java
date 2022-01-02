@@ -73,7 +73,7 @@ public class CitizensUtils {
 	 * @param nerd a server member
 	 */
 	public static void updateNameAndSkin(NPC npc, Nerd nerd) {
-		updateName(npc, Nickname.of(nerd));
+		updateName(npc, nerd.getColoredName());
 		updateSkin(npc, nerd.getName());
 	}
 
