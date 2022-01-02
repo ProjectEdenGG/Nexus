@@ -221,13 +221,13 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 	private void updateNpc(int npcId, Nerd nerd) {
 		final NPC npc = CitizensUtils.getNPC(npcId);
 		if (!npc.isSpawned())
-			npc.spawn(npc.getStoredLocation());
+			runCommandAsConsole("npc spawn " + npcId);
 
 		CitizensUtils.updateNameAndSkin(npc, nerd);
 	}
 
 	private void despawnNpc(int npcId) {
-		CitizensUtils.getNPC(npcId).despawn();
+		runCommandAsConsole("npc despawn " + npcId);
 	}
 
 	@AllArgsConstructor
