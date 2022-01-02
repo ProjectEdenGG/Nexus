@@ -8,6 +8,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -109,7 +110,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 	void moveHere() {
 		if (!moveQueue.containsKey(uuid()))
 			error("You do not have any animal pending teleport");
-		if (!isPerkAllowedAt(location()))
+		if (!isPerkAllowedAt(player(), location()))
 			error("You cannot teleport that animal to this location");
 
 		Entity entity = moveQueue.remove(uuid());
@@ -138,7 +139,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 	void summon(SummonableTameableEntity entityType) {
 		int failed = 0, succeeded = 0;
 		for (Entity entity : list(entityType))
-			if (isPerkAllowedAt(location())) {
+			if (isPerkAllowedAt(player(), location())) {
 				entity.teleportAsync(location());
 				++succeeded;
 			} else
@@ -375,12 +376,13 @@ public class TameablesCommand extends CustomCommand implements Listener {
 		if (owners.isEmpty())
 			return;
 
-		for (AnimalTamer owner : owners)
+		for (AnimalTamer owner : owners) {
 			if (Rank.of(owner.getUniqueId()).gte(Rank.NOBLE))
 				return;
 
-		if (isPerkAllowedAt(event.getTo()))
-			return;
+			if (isPerkAllowedAt(Nerd.of(owner), event.getTo()))
+				return;
+		}
 
 		event.setCancelled(true);
 	}

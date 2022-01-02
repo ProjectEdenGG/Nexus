@@ -50,7 +50,7 @@ public class NPCListener implements Listener {
 		if (Rank.of(owner).gte(Rank.NOBLE) || Dev.of(owner.getUniqueId()) != null)
 			return;
 
-		if (isPerkAllowedAt(owner.getLocation()))
+		if (isPerkAllowedAt(owner, owner.getLocation()))
 			return;
 
 		if (event.getCreator().getWorld().getName().equals("events") && new WorldGuardUtils(event.getCreator()).isInRegion(event.getCreator(), "pride21_parade"))
@@ -90,7 +90,7 @@ public class NPCListener implements Listener {
 		if (Rank.of(owner).gte(Rank.NOBLE) || Dev.of(owner.getUniqueId()) != null)
 			return;
 
-		if (isPerkAllowedAt(event.getTo()))
+		if (isPerkAllowedAt(owner, event.getTo()))
 			return;
 
 		event.setCancelled(true);
@@ -115,7 +115,7 @@ public class NPCListener implements Listener {
 		if (Rank.of(owner).gte(Rank.NOBLE) || Dev.of(owner.getUniqueId()) != null)
 			return;
 
-		if (isPerkAllowedAt(event.getLocation()))
+		if (isPerkAllowedAt(owner, event.getLocation()))
 			return;
 
 		event.setCancelled(true);

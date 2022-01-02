@@ -19,7 +19,7 @@ public class VoteHoloCommand extends CustomCommand {
 
 	@Path("create <text...>")
 	void create(String text) {
-		if (!isPerkAllowedAt(location()))
+		if (!isPerkAllowedAt(player(), location()))
 			error("Holograms cannot be created here");
 
 		runCommandAsOp("hd create voteholo_" + uuid() + " " + text);
@@ -40,7 +40,7 @@ public class VoteHoloCommand extends CustomCommand {
 
 	@Path("tphere")
 	void tphere() {
-		if (!isPerkAllowedAt(location()))
+		if (!isPerkAllowedAt(player(), location()))
 			error("Holograms cannot be teleported here");
 
 		runCommandAsOp("hd movehere voteholo_" + uuid());

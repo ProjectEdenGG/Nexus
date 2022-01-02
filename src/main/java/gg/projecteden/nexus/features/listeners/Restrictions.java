@@ -13,6 +13,7 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import me.lexikiq.HasUniqueId;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -57,7 +58,10 @@ public class Restrictions implements Listener {
 			WorldGroup.SKYBLOCK, WorldGroup.ONEBLOCK);
 	private static final List<String> blockedWorlds = Arrays.asList("safepvp", "events");
 
-	public static boolean isPerkAllowedAt(Location location) {
+	public static boolean isPerkAllowedAt(HasUniqueId player, Location location) {
+		if (Rank.of(player).isAdmin())
+			return true;
+
 		WorldGroup worldGroup = WorldGroup.of(location);
 		if (!allowedWorldGroups.contains(worldGroup))
 			return false;

@@ -128,7 +128,7 @@ public class EntityNameCommand extends CustomCommand {
 			error("Inappropriate input");
 		}
 
-		if (!isPerkAllowedAt(location()))
+		if (!isPerkAllowedAt(player(), location()))
 			error("This command is not allowed here");
 	}
 
