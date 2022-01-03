@@ -5,6 +5,7 @@ import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
+import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicGroup;
@@ -14,7 +15,9 @@ import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -105,9 +108,17 @@ public class GameMenu {
 			if (type == null) {
 				throw new NullPointerException("Both MechanicGroup and MechanicType cannot be null");
 			}
-			return ArenaManager.getAll().stream().filter(arena -> arena.getMechanicType() == type).collect(Collectors.toList());
+			return ArenaManager.getAll().stream()
+				.filter(arena -> arena.getMechanicType() == type)
+				.filter(arena -> !arena.isTestMode())
+				.sorted(Comparator.comparing(Arena::getName))
+				.collect(Collectors.toList());
 		}
-		return ArenaManager.getAll().stream().filter(arena -> arena.getMechanicType().getGroup() == group).collect(Collectors.toList());
+		return ArenaManager.getAll().stream()
+			.filter(arena -> arena.getMechanicType().getGroup() == group)
+			.filter(arena -> !arena.isTestMode())
+			.sorted(Comparator.comparing(Arena::getName))
+			.collect(Collectors.toList());
 	}
 
 	private static String getInventoryName(MechanicGroup group, MechanicType type) {
@@ -139,12 +150,7 @@ public class GameMenu {
 			for (int i = 0; i < arenas.size(); i++) {
 				Arena arena = arenas.get(i);
 				for (int j = 0; j < mapSlots[i].length; j++) {
-					ItemBuilder item;
-					if (j == 0)
-						item = new ItemBuilder(Material.GLASS_PANE).customModelData(2 /* TODO */);
-					else
-						item = new ItemBuilder(Material.BARRIER).customModelData(1);
-					contents.set(mapSlots[i][j], ClickableItem.from(item.name("&ePlay " + arena.getName()).build(), e -> {
+					contents.set(mapSlots[i][j], ClickableItem.from(getItem(arena, j == 0), e -> {
 						PlayerManager.get(e.getPlayer()).join(arena);
 					}));
 				}
@@ -154,12 +160,27 @@ public class GameMenu {
 				contents.set(8, ClickableItem.from(new ItemBuilder(Material.BARRIER).customModelData(1).name("&e^^^^").build(), e -> {
 					GameMenu.open(player, group, type, page - 1);
 				}));
-			if (page < Math.ceil(arenas.size() / 4d))
+			if (page < Math.ceil(this.arenas.size() / 4d))
 				contents.set(53, ClickableItem.from(new ItemBuilder(Material.BARRIER).customModelData(1).name("&evvvv").build(), e -> {
 					GameMenu.open(player, group, type, page + 1);
 				}));
 
 		}
+
+		private ItemStack getItem(Arena arena, boolean main) {
+			ItemBuilder item;
+			if (main)
+				item = new ItemBuilder(Material.GLASS_PANE).customModelData(1000 + arena.getId());
+			else
+				item = new ItemBuilder(Material.BARRIER).customModelData(1);
+
+			item.name("&ePlay " + arena.getName());
+			item.lore("&3Mechanic: &e" + arena.getMechanic().getName());
+			int currentlyPlayer = MatchManager.get(arena).getPlayers().size();
+			item.lore("&3Players: &e" + currentlyPlayer + "/" + arena.getMaxPlayers());
+			return item.build();
+		}
+
 	}
 
 
