@@ -239,7 +239,7 @@ public class LocationUtils {
 		return !(Math.abs(location1.getPitch() - location2.getPitch()) > MathUtils.FLOAT_ROUNDING_ERROR);
 	}
 
-	private static float toDegree(double angle) {
+	public static float toDegree(double angle) {
 		return (float) Math.toDegrees(angle);
 	}
 
