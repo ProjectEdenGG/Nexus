@@ -161,28 +161,21 @@ public class StatisticsMenuProvider extends MenuUtils implements InventoryProvid
 
 			if (total > 1) {
 				ItemStack material;
-				switch (entity) {
-					case MUSHROOM_COW:
-						material = new ItemStack(Material.MOOSHROOM_SPAWN_EGG);
-						break;
-					case SNOWMAN:
-						material = new ItemStack(Material.PUMPKIN);
-						break;
-					case GIANT:
+				try {
+					material = MobHeadType.of(entity).getSkull();
+				} catch (NullPointerException e) {
+					if (entity == EntityType.GIANT)
 						material = new ItemStack(Material.ZOMBIE_SPAWN_EGG);
-						break;
-					default:
-						try {
-							material = new ItemStack(Material.valueOf(entity.name() + "_SPAWN_EGG"));
-						} catch (IllegalArgumentException e) {
-							material = MobHeadType.of(entity).getSkull();
-						}
+					else
+						material = new ItemStack(Material.valueOf(entity.name() + "_SPAWN_EGG"));
 				}
+
 				ItemStack item = new ItemBuilder(material)
-						.name("&3" + StringUtils.camelCase(entity.name().replace("_", " ")))
-						.lore("&eKilled: &3" + killed)
-						.lore("&eKilled By: &3" + killedBy)
-						.build();
+					.name("&3" + StringUtils.camelCase(entity.name().replace("_", " ")))
+					.resetLore()
+					.lore("&eKilled: &3" + killed)
+					.lore("&eKilled By: &3" + killedBy)
+					.build();
 				stats.put(item, total);
 			}
 		});
