@@ -1,8 +1,10 @@
 package gg.projecteden.nexus.models.costume;
 
+import com.mongodb.DBObject;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import dev.morphia.annotations.PreLoad;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.store.gallery.GalleryPackage;
@@ -11,6 +13,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.CostumeConverter;
 import gg.projecteden.nexus.models.costume.Costume.CostumeType;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.WorldGroup;
 import lombok.AllArgsConstructor;
@@ -18,16 +21,20 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.Color;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
 
@@ -46,9 +53,26 @@ public class CostumeUser implements PlayerOwnedObject {
 	private String activeCostume;
 	private String activeDisplayCostume;
 	private Set<String> ownedCostumes = new HashSet<>();
+	private Map<String, Color> colors = new ConcurrentHashMap<>();
 
 	private static final List<WorldGroup> DISABLED_WORLDS = List.of(WorldGroup.MINIGAMES);
 	private static final List<GameMode> DISABLED_GAMEMODES = List.of(GameMode.SPECTATOR);
+
+	@PreLoad
+	void fix(DBObject dbObject) {
+		List<String> owned = (List<String>) dbObject.get("ownedCostumes");
+
+		Map<String, String> converter = new HashMap<>() {{
+			put("old", "new");
+		}};
+
+		converter.forEach((oldId, newId) -> {
+			if (owned.contains(oldId)) {
+				owned.remove(oldId);
+				owned.add(newId);
+			}
+		});
+	}
 
 	public void setActiveCostumeId(String activeCostume) {
 		this.activeCostume = activeCostume;
@@ -72,6 +96,32 @@ public class CostumeUser implements PlayerOwnedObject {
 		return ownedCostumes.contains(costume.getId());
 	}
 
+	public void dye(Costume costume, Color color) {
+		colors.put(costume.getId(), color);
+	}
+
+	public boolean isDyed(Costume costume) {
+		return colors.containsKey(costume.getId());
+	}
+
+	private Color getColor(Costume costume) {
+		return colors.get(costume.getId());
+	}
+
+	public ItemStack getCostumeItem(Costume costume) {
+		ItemStack item = costume.getItem();
+		if (isDyed(costume))
+			item = new ItemBuilder(item).dyeColor(getColor(costume)).build();
+		return item;
+	}
+
+	public ItemStack getCostumeDisplayItem(Costume costume) {
+		ItemStack item = costume.getModel().getDisplayItem();
+		if (isDyed(costume))
+			item = new ItemBuilder(item).dyeColor(getColor(costume)).build();
+		return item;
+	}
+
 	public void sendCostumePacket() {
 		if (!shouldSendPacket())
 			return;
@@ -80,7 +130,7 @@ public class CostumeUser implements PlayerOwnedObject {
 		if (costume == null)
 			return;
 
-		sendPacket(costume.getItem(), costume.getType().getSlot());
+		sendPacket(getCostumeItem(costume), costume.getType().getSlot());
 	}
 
 	public void sendResetPackets() {
@@ -132,7 +182,7 @@ public class CostumeUser implements PlayerOwnedObject {
 		if (costume == null)
 			return;
 
-		sendDisplayPacket(costume.getItem(), costume.getType().getSlot());
+		sendDisplayPacket(getCostumeItem(costume), costume.getType().getSlot());
 	}
 
 	public void sendResetDisplayPackets() {

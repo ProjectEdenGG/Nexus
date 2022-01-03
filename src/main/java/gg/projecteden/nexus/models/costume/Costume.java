@@ -34,7 +34,8 @@ public class Costume {
 			.unframeable()
 			.unplaceable()
 			.unstorable()
-			.untradeable().build();
+			.untradeable()
+			.build();
 	}
 
 	public static String getId(CustomModel model) {

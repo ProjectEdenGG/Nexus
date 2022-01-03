@@ -121,6 +121,8 @@ public class MaterialTag implements Tag<Material> {
 
 	public static final MaterialTag UNSTACKABLE = new MaterialTag(material -> material.getMaxStackSize() == 1);
 
+	public static final MaterialTag DYEABLE = new MaterialTag(ARMOR_LEATHER).append(LEATHER_HORSE_ARMOR);
+
 	public static final MaterialTag POTIONS = new MaterialTag(POTION, SPLASH_POTION, LINGERING_POTION);
 
 	public static final MaterialTag POTION_MATERIALS = new MaterialTag(POTIONS)

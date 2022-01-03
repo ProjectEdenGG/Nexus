@@ -105,8 +105,29 @@ public enum GalleryPackage {
 			}
 
 			@Override
+			protected void init(CostumeUser user, InventoryContents contents) {
+				final Costume costume = Costume.of(user.getActiveDisplayCostume());
+				if (costume != null) {
+					final ItemBuilder builder = new ItemBuilder(user.getCostumeDisplayItem(costume))
+						.lore("", "&a&lActive", "&cClick to deactivate")
+						.glow();
+
+					contents.set(0, 4, ClickableItem.from(builder.build(), e -> {
+						user.setActiveDisplayCostume(null);
+						service.save(user);
+						open(user.getOnlinePlayer(), contents.pagination().getPage());
+					}));
+
+					if (MaterialTag.DYEABLE.isTagged(costume.getItem().getType())) {
+						// TODO Dye Station - user.dye(user.getActiveDisplayCostume(), color); service.save(user);
+//						contents.set(0, 6, );
+					}
+				}
+			}
+
+			@Override
 			protected ClickableItem formatCostume(CostumeUser user, Costume costume, InventoryContents contents) {
-				final ItemBuilder builder = new ItemBuilder(costume.getModel().getDisplayItem());
+				final ItemBuilder builder = new ItemBuilder(user.getCostumeDisplayItem(costume));
 				if (costume.getId().equals(user.getActiveDisplayCostume()))
 					builder.lore("", "&a&lActive").glow();
 
