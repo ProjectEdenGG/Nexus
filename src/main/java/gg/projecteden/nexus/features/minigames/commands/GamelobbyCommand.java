@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.minigames.commands;
 
 import gg.projecteden.nexus.features.minigames.lobby.menu.GameMenu;
+import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicGroup;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -22,9 +23,19 @@ public class GamelobbyCommand extends CustomCommand {
 	}
 
 	@Permission(Permission.Group.ADMIN)
-	@Path("testMenu <mechanic>")
-	void testMenu(MechanicType mechanicType) {
-		GameMenu.open(player(), mechanicType);
+	@Path("testMenu <mechanicGroup> [mechanicType]")
+	void testMenu(MechanicGroup group, MechanicType type) {
+		GameMenu.open(player(), group, type);
+	}
+
+	@Permission(Permission.Group.ADMIN)
+	@Path("getMechanicGroup <mechanicGroup>")
+	void getMechanicType(MechanicGroup group) {
+		StringBuilder builder = new StringBuilder();
+		for (MechanicType type : MechanicType.values())
+			if (type.getGroup() == group)
+				builder.append(type.get().getName()).append(", ");
+		send(builder.toString());
 	}
 
 }

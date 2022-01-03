@@ -7,14 +7,14 @@ import fr.minuskube.inv.content.InventoryProvider;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Arena;
+import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicGroup;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
+import lombok.AllArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,12 +73,13 @@ public class GameMenu {
 		}});
 	}
 
-	public static void open(Player player, MechanicType mechanic) {
-		open(player, mechanic, 1);
+	public static void open(Player player, MechanicGroup group, MechanicType mechanic) {
+		open(player, group, mechanic, 1);
 	}
 
-	private static void open(Player player, MechanicType mechanic, int page) {
-		int pages = (int) Math.ceil(ArenaManager.getAll().stream().filter(arena -> arena.getMechanicType() == mechanic).count() / 4d);
+	private static void open(Player player, MechanicGroup group, MechanicType mechanic, int page) {
+		List<Arena> arenas = getArenas(group, mechanic);
+		int pages = (int) Math.ceil(arenas.size() / 4d);
 		String title = "&f" +
 				MINUS_TEN +
 				BASE +
@@ -89,40 +90,51 @@ public class GameMenu {
 				SCROLLER_INDEXES.get(pages).get(page) +
 				MINUS_TEN.repeat(20) +
 				"&0" +
-				mechanic.get().getName();
+				getInventoryName(group, mechanic);
 
 		SmartInventory.builder()
 			.title(StringUtils.colorize(title))
 			.size(6, 9)
-			.provider(new GameLobbyMenuProvider(mechanic, page))
+			.provider(new GameLobbyMenuProvider(group, mechanic, arenas, page))
 			.build()
 			.open(player);
 	}
 
+	private static List<Arena> getArenas(MechanicGroup group, MechanicType type) {
+		if (group == null || group == MechanicGroup.MECHANIC) {
+			if (type == null) {
+				throw new NullPointerException("Both MechanicGroup and MechanicType cannot be null");
+			}
+			return ArenaManager.getAll().stream().filter(arena -> arena.getMechanicType() == type).collect(Collectors.toList());
+		}
+		return ArenaManager.getAll().stream().filter(arena -> arena.getMechanicType().getGroup() == group).collect(Collectors.toList());
+	}
+
+	private static String getInventoryName(MechanicGroup group, MechanicType type) {
+		if (group == null || group == MechanicGroup.MECHANIC)
+			return type.get().getName();
+		return StringUtils.camelCase(group);
+	}
+
+
+	@AllArgsConstructor
 	public static class GameLobbyMenuProvider implements InventoryProvider {
 
-		private static int[][] mapSlots = {
+		private static final int[][] mapSlots = {
 			{10, 1, 2, 3, 9, 0, 11, 12, 18, 19, 20, 21},
 			{14, 5, 6, 7, 13, 4, 15, 16, 22, 23, 24, 25},
 			{37, 28, 29, 30, 36, 27, 38, 39, 45, 46, 47, 48},
 			{41, 32, 33, 34, 40, 31, 42, 43, 49, 50, 51, 52}
 		};
 
-		private MechanicType mechanicType;
+		private MechanicGroup group;
+		private MechanicType type;
+		private List<Arena> arenas;
 		private int page;
-
-		public GameLobbyMenuProvider(MechanicType mechanicType, int page) {
-			this.mechanicType = mechanicType;
-			this.page = page;
-		}
 
 		@Override
 		public void init(Player player, InventoryContents contents) {
-
-			List<Arena> arenas = ArenaManager.getAll().stream().filter(arena ->  arena.getMechanicType() == mechanicType)
-				.sorted(Comparator.comparing(Arena::getName)).collect(Collectors.toList());
-
-			arenas = arenas.subList((page - 1) * 4, Math.min(page * 4, arenas.size()));
+			List<Arena> arenas = this.arenas.subList((page - 1) * 4, Math.min(page * 4, this.arenas.size()));
 
 			for (int i = 0; i < arenas.size(); i++) {
 				Arena arena = arenas.get(i);
@@ -140,11 +152,11 @@ public class GameMenu {
 
 			if (page > 1)
 				contents.set(8, ClickableItem.from(new ItemBuilder(Material.BARRIER).customModelData(1).name("&e^^^^").build(), e -> {
-					GameMenu.open(player, mechanicType, page - 1);
+					GameMenu.open(player, group, type, page - 1);
 				}));
-			if (page < Math.ceil(ArenaManager.getAll().stream().filter(arena -> arena.getMechanicType() == mechanicType).count() / 4d))
+			if (page < Math.ceil(arenas.size() / 4d))
 				contents.set(53, ClickableItem.from(new ItemBuilder(Material.BARRIER).customModelData(1).name("&evvvv").build(), e -> {
-					GameMenu.open(player, mechanicType, page + 1);
+					GameMenu.open(player, group, type, page + 1);
 				}));
 
 		}
