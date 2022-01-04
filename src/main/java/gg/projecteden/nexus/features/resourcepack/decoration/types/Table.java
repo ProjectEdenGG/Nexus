@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types;
 
-import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DisabledPlacement;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DisabledRotation;
@@ -14,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Table extends Decoration {
+	@Getter
 	TableSize size;
 
 	public Table(String name, int modelData, TableSize size) {
@@ -24,7 +24,7 @@ public class Table extends Decoration {
 		this.material = Material.LEATHER_HORSE_ARMOR;
 		this.disabledRotation = DisabledRotation.DEGREE_45;
 		this.disabledPlacements = List.of(DisabledPlacement.WALL, DisabledPlacement.CEILING);
-		this.defaultColor = DecorationUtils.getDefaultWoodColor();
+		this.defaultColor = getDefaultWoodColor();
 	}
 
 	@AllArgsConstructor
