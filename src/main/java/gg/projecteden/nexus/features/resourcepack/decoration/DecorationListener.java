@@ -121,7 +121,7 @@ public class DecorationListener implements Listener {
 		if (BlockUtils.isNullOrAir(clicked))
 			return null;
 
-		Set<Material> hitboxTypes = DecorationUtils.getHitboxTypes();
+		Set<Material> hitboxTypes = Decorations.getHitboxTypes();
 		if (!hitboxTypes.contains(clicked.getType()))
 			return null;
 
@@ -176,9 +176,10 @@ public class DecorationListener implements Listener {
 		debug("Type: " + relative.getType());
 
 		double distance = maze.getOrigin().getLocation().distance(relative.getLocation());
-		if (maze.getTried().contains(relative) || !DecorationUtils.getHitboxTypes().contains(relative.getType()) || distance > 6) {
+		Set<Material> hitboxTypes = Decorations.getHitboxTypes();
+		if (maze.getTried().contains(relative) || !hitboxTypes.contains(relative.getType()) || distance > 6) {
 
-			if (!DecorationUtils.getHitboxTypes().contains(relative.getType()))
+			if (!hitboxTypes.contains(relative.getType()))
 				debug("Type not a hitbox");
 			else if (distance > 6)
 				debug("distance > 6");

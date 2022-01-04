@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types;
 
-import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DisabledPlacement;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
@@ -99,7 +98,7 @@ public class Seat extends Decoration {
 
 	@AllArgsConstructor
 	public enum DyedPart {
-		WHOLE(DecorationUtils.getDefaultWoodColor()),
+		WHOLE(Decoration.getDefaultWoodColor()),
 		CUSHION(Color.RED),
 		;
 

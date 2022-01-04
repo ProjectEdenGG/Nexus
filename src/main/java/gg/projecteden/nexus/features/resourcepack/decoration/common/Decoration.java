@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.common;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Seat;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
 import lombok.Data;
@@ -40,6 +41,10 @@ public class Decoration {
 		this.modelData = modelData;
 		this.material = material;
 		this.hitboxes = hitboxes;
+	}
+
+	public static Color getDefaultWoodColor() {
+		return ColorType.hexToBukkit("#F4C57A");
 	}
 
 	public List<Hitbox> getHitboxes(BlockFace rotateAround) {
@@ -113,4 +118,6 @@ public class Decoration {
 		if (this instanceof Seat seat)
 			seat.trySit(player, block, itemFrame.getRotation());
 	}
+
+
 }

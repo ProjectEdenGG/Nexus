@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.decoration;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Bench;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.BlockDecor;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Chair;
@@ -11,6 +12,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public enum Decorations {
@@ -59,4 +65,20 @@ public enum Decorations {
 
 		return true;
 	}
+
+	private static final Set<Material> hitboxTypes = new HashSet<>();
+
+	public static Set<Material> getHitboxTypes() {
+		if (!hitboxTypes.isEmpty())
+			return hitboxTypes;
+
+		Arrays.stream(values()).forEach(decorations ->
+			hitboxTypes.addAll(decorations.getDecoration().getHitboxes()
+				.stream()
+				.map(Hitbox::getMaterial)
+				.collect(Collectors.toList())));
+
+		return hitboxTypes;
+	}
+
 }
