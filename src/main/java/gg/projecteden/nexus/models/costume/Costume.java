@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
 import gg.projecteden.nexus.features.store.StoreCommand;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.MaterialTag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -44,6 +45,10 @@ public class Costume {
 
 	public CustomModel getModel() {
 		return CustomModel.of("costumes/" + id);
+	}
+
+	public boolean isDyeable() {
+		return MaterialTag.DYEABLE.isTagged(item);
 	}
 
 	@Getter

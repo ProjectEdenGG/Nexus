@@ -83,8 +83,12 @@ public class CostumeCommand extends CustomCommand implements Listener {
 		});
 	}
 
+	@Permission(Group.ADMIN)
 	@Path("dye <costume> <color>")
 	void dye(Costume costume, ChatColor color) {
+		if (!costume.isDyeable())
+			error("That costume is not dyeable");
+
 		service.edit(player(), user -> user.dye(costume, ColorType.toBukkitColor(color)));
 		send(PREFIX + "Set costume color to " + color + arg(3));
 	}

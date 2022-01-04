@@ -110,7 +110,7 @@ public class CostumeUser implements PlayerOwnedObject {
 
 	public ItemStack getCostumeItem(Costume costume) {
 		ItemStack item = costume.getItem();
-		if (isDyed(costume))
+		if (costume.isDyeable() && isDyed(costume))
 			item = new ItemBuilder(item).dyeColor(getColor(costume)).build();
 		return item;
 	}
