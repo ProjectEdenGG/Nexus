@@ -416,9 +416,6 @@ public class DyeStation extends CustomBench {
 			if (ItemUtils.isNullOrAir(dyeable))
 				return false;
 
-			if (!CustomModel.exists(dyeable))
-				return false;
-
 			return MaterialTag.DYEABLE.isTagged(dyeable);
 		}
 
