@@ -56,15 +56,14 @@ public class HoursCommand extends CustomCommand {
 		boolean isSelf = isSelf(hours);
 
 		send("");
-		send(PREFIX + (isSelf ? "Your" : "&e" + hours.getName() + "&3's") + " playtime");
+		send(PREFIX + (isSelf ? "Your" : "&e" + hours.getNickname() + "&3's") + " playtime");
 		send("&3Total: &e" + TimespanBuilder.of(hours.getTotal()).noneDisplay(true).format());
 		send("&7- &3Today: &e" + TimespanBuilder.of(hours.getDaily()).noneDisplay(true).format());
 		send("&7- &3This month: &e" + TimespanBuilder.of(hours.getMonthly()).noneDisplay(true).format());
 		send("&7- &3This year: &e" + TimespanBuilder.of(hours.getYearly()).noneDisplay(true).format());
 
 		if (Rank.of(hours) == Rank.GUEST) {
-
-			String who = (isSelf ? "You need" : hours.getName() + " needs") + " ";
+			String who = (isSelf ? "You need" : hours.getNickname() + " needs") + " ";
 			String left = Timespan.of(DAY - hours.getTotal()).format();
 
 			line();

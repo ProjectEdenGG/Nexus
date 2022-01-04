@@ -260,7 +260,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 			paginator(player, contents, items);
 		}
 
-		protected abstract CostumeMenu newMenu(CostumeMenu previousMenu, CustomModelFolder subfolder);
+		abstract protected CostumeMenu newMenu(CostumeMenu previousMenu, CustomModelFolder subfolder);
 
 		protected void init(CostumeUser user, InventoryContents contents) {}
 
