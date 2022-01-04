@@ -13,6 +13,7 @@ import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -415,7 +416,10 @@ public class DyeStation extends CustomBench {
 			if (ItemUtils.isNullOrAir(dyeable))
 				return false;
 
-			return dyeable.getType().equals(Material.LEATHER_HORSE_ARMOR) && CustomModel.exists(dyeable);
+			if (!CustomModel.exists(dyeable))
+				return false;
+
+			return MaterialTag.DYEABLE.isTagged(dyeable);
 		}
 
 		private static void setColor(ItemStack dyeable, Color color) {
