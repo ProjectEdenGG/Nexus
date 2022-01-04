@@ -86,22 +86,22 @@ public class DecorationListener implements Listener {
 		if (!ItemUtils.isNullOrAir(tool))
 			return;
 
-		DataStuff dataStuff = getItemFrame(clicked);
-		if (dataStuff == null) return;
+		HitboxData hitboxData = getItemFrame(clicked);
+		if (hitboxData == null) return;
 
 		event.setCancelled(true);
-		dataStuff.getDecorations().getDecoration().destroy(player, dataStuff.getItemFrame());
+		hitboxData.getDecorations().getDecoration().destroy(player, hitboxData.getItemFrame());
 	}
 
 	private void rightClick(PlayerInteractEvent event, Player player, Block clicked, ItemStack tool) {
 		if (ItemUtils.isNullOrAir(tool)) {
 
-			DataStuff dataStuff = getItemFrame(clicked);
-			if (dataStuff == null) return;
+			HitboxData hitboxData = getItemFrame(clicked);
+			if (hitboxData == null) return;
 
 			// Interact
 			event.setCancelled(true);
-			dataStuff.getDecorations().getDecoration().interact(player, dataStuff.getItemFrame(), clicked);
+			hitboxData.getDecorations().getDecoration().interact(player, hitboxData.getItemFrame(), clicked);
 		} else {
 			// TODO: Remove
 			if (!Dev.WAKKA.is(player)) return;
@@ -117,7 +117,7 @@ public class DecorationListener implements Listener {
 	}
 
 	@Nullable
-	private DataStuff getItemFrame(Block clicked) {
+	private DecorationListener.HitboxData getItemFrame(Block clicked) {
 		if (BlockUtils.isNullOrAir(clicked))
 			return null;
 
@@ -133,7 +133,7 @@ public class DecorationListener implements Listener {
 				Decorations decorations = Decorations.of(itemStack);
 				if (decorations != null) {
 					debug("Single");
-					return new DataStuff(itemFrame, clicked, decorations);
+					return new HitboxData(itemFrame, clicked, decorations);
 				}
 			}
 
@@ -198,10 +198,10 @@ public class DecorationListener implements Listener {
 		return getConnectedHitboxes(maze);
 	}
 
-	private static DataStuff findItemFrame(Set<Block> connectedHitboxes, Block clicked) {
+	private static HitboxData findItemFrame(Set<Block> connectedHitboxes, Block clicked) {
 		Location clickedLoc = clicked.getLocation();
 
-		Map<Location, DataStuff> dataMap = new HashMap<>();
+		Map<Location, HitboxData> dataMap = new HashMap<>();
 		for (Block block : connectedHitboxes) {
 			ItemFrame itemFrame = block.getLocation().toCenterLocation().getNearbyEntitiesByType(ItemFrame.class, 0.5).stream().findFirst().orElse(null);
 			if (itemFrame == null)
@@ -220,18 +220,18 @@ public class DecorationListener implements Listener {
 
 			debugDot(block.getLocation(), Color.PURPLE);
 
-			dataMap.put(block.getLocation(), new DataStuff(itemFrame, block, _decorations));
+			dataMap.put(block.getLocation(), new HitboxData(itemFrame, block, _decorations));
 		}
 
-		for (DataStuff _dataStuff : dataMap.values()) {
-			Decoration decoration = _dataStuff.getDecorations().getDecoration();
-			ItemFrameRotation itemFrameRotation = ItemFrameRotation.of(_dataStuff.getItemFrame());
+		for (HitboxData _Hitbox_data : dataMap.values()) {
+			Decoration decoration = _Hitbox_data.getDecorations().getDecoration();
+			ItemFrameRotation itemFrameRotation = ItemFrameRotation.of(_Hitbox_data.getItemFrame());
 
 			List<Hitbox> hitboxes = decoration.getHitboxes(itemFrameRotation.getBlockFace());
 
-			Block block = _dataStuff.getBlock();
+			Block block = _Hitbox_data.getBlock();
 
-			debug("Checking hitboxes for " + StringUtils.camelCase(_dataStuff.getDecorations()));
+			debug("Checking hitboxes for " + StringUtils.camelCase(_Hitbox_data.getDecorations()));
 			for (Hitbox hitbox : hitboxes) {
 				Block _block = block;
 				Map<BlockFace, Integer> offsets = hitbox.getOffsets();
@@ -246,7 +246,7 @@ public class DecorationListener implements Listener {
 				if (LocationUtils.isFuzzyEqual(_block.getLocation(), clickedLoc)) {
 					debug("found correct decoration");
 					debugDot(_block.getLocation(), Color.AQUA);
-					return _dataStuff;
+					return _Hitbox_data;
 				}
 			}
 		}
@@ -268,7 +268,7 @@ public class DecorationListener implements Listener {
 
 	@Data
 	@AllArgsConstructor
-	private static class DataStuff {
+	private static class HitboxData {
 		ItemFrame itemFrame;
 		Block block;
 		Decorations decorations;
