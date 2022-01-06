@@ -377,6 +377,10 @@ public class RemindersCommand extends CustomCommand implements Listener {
 	private static int interval = TickTime.MINUTE.x(5);
 	private static int taskId = -1;
 
+	static {
+		startTask();
+	}
+
 	public static void startTask() {
 		Tasks.cancel(taskId);
 		taskId = Tasks.repeatAsync(interval, interval, () -> {
