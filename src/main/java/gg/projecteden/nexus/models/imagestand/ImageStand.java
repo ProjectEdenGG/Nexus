@@ -5,6 +5,7 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.interfaces.DatabaseObject;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -25,6 +26,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BoundingBox;
 import org.inventivetalent.boundingbox.BoundingBoxAPI;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
@@ -88,6 +90,22 @@ public class ImageStand implements DatabaseObject {
 		return getArmorStand(this.uuid);
 	}
 
+	@NotNull
+	public ArmorStand getOutlineStandRequired() {
+		final var stand = getOutlineStand();
+		if (stand == null)
+			throw new InvalidInputException("Outline Stand not found");
+		return stand;
+	}
+
+	@NotNull
+	public ArmorStand getImageStandRequired() {
+		final var stand = getImageStand();
+		if (stand == null)
+			throw new InvalidInputException("Image Stand not found");
+		return stand;
+	}
+
 	@Nullable
 	private ArmorStand getArmorStand(UUID outline1) {
 		final var outline = Bukkit.getEntity(outline1);
@@ -97,7 +115,7 @@ public class ImageStand implements DatabaseObject {
 	}
 
 	public void calculateBoundingBox() {
-		boundingBox = size.getBoundingBox(getImageStand().getEyeLocation());
+		boundingBox = size.getBoundingBox(getImageStandRequired().getEyeLocation());
 	}
 
 	public void updateBoundingBoxes() {

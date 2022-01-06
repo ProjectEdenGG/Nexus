@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.commands;
 
 import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -23,6 +24,7 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.util.BoundingBox;
 
 import java.util.UUID;
 
@@ -39,12 +41,25 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 			imageStand = getTargetImageStandRequired();
 	}
 
-	@Path("boundingBox draw [--particle] [--dustSize]")
-	void boundingBox_draw(
+	@Path("boundingBox draw particles [--particle] [--dustSize]")
+	void boundingBox_draw_particles(
 		@Switch @Arg("villager_happy") Particle particle,
 		@Switch @Arg(".5") float dustSize
 	) {
 		imageStand.drawBoundingBox(particle, dustSize);
+	}
+
+	static {
+		Bukkit.getMessenger().registerOutgoingPluginChannel(Nexus.getInstance(), "worldedit:cui");
+	}
+
+	@Path("boundingBox draw wecui")
+	void boundingBox_draw_wecui() {
+		final BoundingBox box = imageStand.getBoundingBox();
+		final String message0 = "p|0|" + box.getMinX() + "|" + box.getMinY() + "|" + box.getMinZ() + "|-1";
+		final String message1 = "p|1|" + (box.getMaxX() - 1) + "|" + (box.getMaxY() - 1) + "|" + (box.getMaxZ() - 1) + "|" + Math.ceil(box.getVolume());
+		player().sendPluginMessage(Nexus.getInstance(), "worldedit:cui", message0.getBytes());
+		player().sendPluginMessage(Nexus.getInstance(), "worldedit:cui", message1.getBytes());
 	}
 
 	private ImageStand getTargetImageStandRequired() {
