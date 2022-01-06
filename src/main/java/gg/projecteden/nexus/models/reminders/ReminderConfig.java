@@ -208,7 +208,7 @@ public class ReminderConfig {
 
 		public void send(Player player) {
 			if (motd) {
-				PlayerUtils.send(player, text);
+				PlayerUtils.send(player, getJson());
 			} else {
 				if (MuteMenuUser.hasMuted(player, MuteMenuItem.REMINDERS))
 					return;
