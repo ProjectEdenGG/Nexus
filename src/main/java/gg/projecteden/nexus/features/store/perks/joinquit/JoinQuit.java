@@ -101,6 +101,10 @@ public class JoinQuit extends Feature implements Listener {
 	}
 
 	public static void quit(Player player, QuitReason reason) {
+		// Denizen Discord: https://discord.com/channels/315163488085475337/315163488085475337/929117355223695360
+		if (!player.isOnline())
+			return;
+
 		if (isDuplicate(player, "quit"))
 			return;
 
