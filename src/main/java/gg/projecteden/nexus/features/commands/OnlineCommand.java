@@ -18,7 +18,7 @@ import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -86,7 +86,7 @@ public class OnlineCommand extends CustomCommand {
 
 		int ping = player.getPing();
 		String onlineFor = Timespan.of(nerd.getLastJoin()).format();
-		WorldGroup world = WorldGroup.of(player);
+		String world = StringUtils.getWorldDisplayName(nerd.getLocation(), nerd.getWorld());
 		ShopGroup shopGroup = ShopGroup.of(player);
 		if (shopGroup == null)
 			shopGroup = ShopGroup.SURVIVAL;
