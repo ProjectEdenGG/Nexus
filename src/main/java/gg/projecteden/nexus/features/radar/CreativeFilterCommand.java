@@ -179,6 +179,9 @@ public class CreativeFilterCommand extends CustomCommand implements Listener {
 	}
 
 	private static final List<Material> disallowedPlacement = Arrays.asList(
+			Material.FURNACE,
+			Material.SMOKER,
+			Material.BLAST_FURNACE,
 			Material.DISPENSER,
 			Material.STICKY_PISTON,
 			Material.PISTON,
