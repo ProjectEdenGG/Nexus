@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Arena;
+import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicGroup;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -174,10 +175,21 @@ public class GameMenu {
 			else
 				item = new ItemBuilder(Material.BARRIER).customModelData(1);
 
+			Match match = MatchManager.get(arena);
+
 			item.name("&ePlay " + arena.getName());
 			item.lore("&3Mechanic: &e" + arena.getMechanic().getName());
-			int currentlyPlayer = MatchManager.get(arena).getPlayers().size();
-			item.lore("&3Players: &e" + currentlyPlayer + "/" + arena.getMaxPlayers());
+			int currentPlayers = match.getPlayers().size();
+			item.lore("&3Players: &e" + currentPlayers + "/" + arena.getMaxPlayers());
+
+			if (currentPlayers > 0 && currentPlayers < arena.getMaxPlayers()) {
+				if (match.isStarted()) {
+					if (arena.canJoinLate())
+						item.glow();
+				} else
+					item.glow();
+			}
+
 			return item.build();
 		}
 

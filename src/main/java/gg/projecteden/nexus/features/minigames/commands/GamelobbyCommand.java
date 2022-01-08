@@ -25,6 +25,8 @@ public class GamelobbyCommand extends CustomCommand {
 	@Permission(Permission.Group.ADMIN)
 	@Path("testMenu <mechanicGroup> [mechanicType]")
 	void testMenu(MechanicGroup group, MechanicType type) {
+		if (group == MechanicGroup.MECHANIC && type == null)
+			error("You must specify a mechanic to see");
 		GameMenu.open(player(), group, type);
 	}
 
