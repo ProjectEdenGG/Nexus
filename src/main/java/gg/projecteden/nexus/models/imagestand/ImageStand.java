@@ -9,7 +9,6 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -29,6 +28,8 @@ import org.inventivetalent.boundingbox.BoundingBoxAPI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -44,14 +45,17 @@ public class ImageStand implements DatabaseObject {
 	@NonNull
 	private UUID uuid;
 	private UUID outline;
+	private String id;
 	private BoundingBox boundingBox;
 	private Map<UUID, BoundingBox> boundingBoxes = new ConcurrentHashMap<>();
 	private ImageSize size;
 
-	public ImageStand(@NonNull UUID uuid, UUID outline, ImageSize size) {
+	public ImageStand(@NonNull UUID uuid, UUID outline, String id, ImageSize size) {
 		this.uuid = uuid;
 		this.outline = outline;
+		this.id = id;
 		this.size = size;
+		this.boundingBox = size.getBoundingBox(getImageStandRequired().getLocation());
 	}
 
 	public boolean isActive() {
@@ -63,8 +67,10 @@ public class ImageStand implements DatabaseObject {
 	}
 
 	public void outlineFor(Player player) {
+		final ImageStandService service = new ImageStandService();
+		service.removeOutlineFor(player);
 		sendOutlineItem(player, size.getOutlineItem());
-		new ImageStandService().getOutlineCache().put(player.getUniqueId(), uuid);
+		service.getOutlineCache().put(player.getUniqueId(), uuid);
 	}
 
 	public void removeOutlineFor(Player player) {
@@ -136,16 +142,15 @@ public class ImageStand implements DatabaseObject {
 		BoundingBoxAPI.setBoundingBox(armorStand, boundingBox);
 	}
 
-	public void drawBoundingBox(Particle particle, float dustSize) {
+	public List<Integer> drawBoundingBox(Particle particle, float dustSize) {
+		List<Integer> taskIds = new ArrayList<>();
 		if (boundingBoxes.isEmpty()) {
-			int taskId = Tasks.repeatAsync(0, 1, BoundingBoxAPI.drawParticleOutline(boundingBox, getImageStand().getWorld(), particle, dustSize));
-			Tasks.wait(TickTime.SECOND.x(5), () -> Tasks.cancel(taskId));
+			taskIds.add(Tasks.repeatAsync(0, 1, BoundingBoxAPI.drawParticleOutline(boundingBox, getImageStand().getWorld(), particle, dustSize)));
 		} else {
-			boundingBoxes.forEach((uuid, boundingBox) -> {
-				int taskId = Tasks.repeatAsync(0, 1, BoundingBoxAPI.drawParticleOutline(boundingBox, getArmorStand(uuid).getWorld(), particle, dustSize));
-				Tasks.wait(TickTime.SECOND.x(5), () -> Tasks.cancel(taskId));
-			});
+			boundingBoxes.forEach((uuid, boundingBox) ->
+				taskIds.add(Tasks.repeatAsync(0, 1, BoundingBoxAPI.drawParticleOutline(boundingBox, getArmorStand(uuid).getWorld(), particle, dustSize))));
 		}
+		return taskIds;
 	}
 
 	@Getter
