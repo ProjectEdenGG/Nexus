@@ -181,7 +181,8 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onEntityAddToWorld(EntityAddToWorldEvent event) {
-		onLoad(event.getEntity().getUniqueId());
+		if (event.getEntity() instanceof ArmorStand armorStand)
+			onLoad(armorStand.getUniqueId());
 	}
 
 	private static void onLoad(UUID uuid) {

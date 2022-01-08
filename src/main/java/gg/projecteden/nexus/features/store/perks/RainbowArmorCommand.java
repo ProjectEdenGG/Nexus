@@ -17,6 +17,8 @@ import gg.projecteden.nexus.models.rainbowarmor.RainbowArmorService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.ArmorSlot;
 import gg.projecteden.nexus.utils.StringUtils.Rainbow;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -26,6 +28,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import static gg.projecteden.nexus.features.store.perks.RainbowArmorCommand.PERMISSION;
+import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
 
 @NoArgsConstructor
 @Permission(PERMISSION)
@@ -44,7 +47,7 @@ public class RainbowArmorCommand extends CustomCommand implements Listener {
 	static {
 		for (RainbowArmor rainbowArmor : new RainbowArmorService().getOnline())
 			if (rainbowArmor.isEnabled())
-				rainbowArmor.start();
+				Tasks.wait(randomInt(0, TickTime.SECOND.x(12)), rainbowArmor::start);
 	}
 
 	@Path

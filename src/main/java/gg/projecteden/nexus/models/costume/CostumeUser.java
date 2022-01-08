@@ -61,8 +61,9 @@ public class CostumeUser implements PlayerOwnedObject {
 	private static final List<GameMode> DISABLED_GAMEMODES = List.of(GameMode.SPECTATOR);
 
 	@PreLoad
-	void fix(DBObject dbObject) {
+	void convert(DBObject dbObject) {
 		List<String> owned = (List<String>) dbObject.get("ownedCostumes");
+		Map<String, DBObject> colors = (Map<String, DBObject>) dbObject.get("colors");
 
 		Map<String, String> converter = new HashMap<>() {{
 			put("old", "new");
@@ -73,7 +74,13 @@ public class CostumeUser implements PlayerOwnedObject {
 				owned.remove(oldId);
 				owned.add(newId);
 			}
+
+			if (colors.containsKey(oldId))
+				colors.put(newId, colors.remove(oldId));
 		});
+
+		// /db cacheAll CostumeUserService
+		// /db saveAll CostumeUserService
 	}
 
 	public void setActiveCostumeId(String activeCostume) {
