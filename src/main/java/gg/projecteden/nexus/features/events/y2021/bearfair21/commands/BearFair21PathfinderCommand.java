@@ -16,6 +16,7 @@ import gg.projecteden.nexus.models.bearfair21.BearFair21WebConfig.Node;
 import gg.projecteden.nexus.models.bearfair21.BearFair21WebConfig.Route;
 import gg.projecteden.nexus.models.bearfair21.BearFair21WebConfig.Web;
 import gg.projecteden.nexus.models.bearfair21.BearFair21WebConfigService;
+import gg.projecteden.nexus.models.particle.ParticleService;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.LocationUtils;
@@ -282,6 +283,7 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 				block.setType(Material.LIGHT_GRAY_CONCRETE_POWDER);
 
 				PathfinderHelper.getLineTasks().add(LineEffect.builder()
+					.owner(new ParticleService().get(player))
 					.entity(player)
 					.startLoc(LocationUtils.getCenteredLocation(currentLoc.clone().add(0, 1, 0)))
 					.endLoc(LocationUtils.getCenteredLocation(block.getLocation()))
