@@ -219,11 +219,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 				if (subfolder.getPath().contains(EXCLUSIVE))
 					continue;
 
-				CustomModel firstModel = subfolder.getIcon(model -> {
-					if (!(this instanceof CostumeInventoryMenu))
-						return true;
-					return user.owns(model);
-				});
+				CustomModel firstModel = subfolder.getIcon(model -> isAvailableCostume(user, Costume.of(model)));
 				ItemStack item = new ItemStack(Material.BARRIER);
 				if (firstModel != null)
 					item = firstModel.getDisplayItem();
@@ -285,7 +281,9 @@ public class CostumeCommand extends CustomCommand implements Listener {
 			return available;
 		}
 
-		abstract protected boolean isAvailableCostume(CostumeUser user, Costume costume);
+		protected boolean isAvailableCostume(CostumeUser user, Costume costume) {
+			return true;
+		}
 
 		abstract protected ClickableItem formatCostume(CostumeUser user, Costume costume, InventoryContents contents);
 	}
@@ -380,7 +378,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 
 		@Override
 		protected boolean isAvailableCostume(CostumeUser user, Costume costume) {
-			return user.getOwnedCostumes().contains(costume.getId());
+			return Rank.of(user).isAdmin() || user.getOwnedCostumes().contains(costume.getId());
 		}
 
 		protected ClickableItem formatCostume(CostumeUser user, Costume costume, InventoryContents contents) {

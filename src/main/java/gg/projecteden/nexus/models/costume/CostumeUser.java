@@ -13,6 +13,8 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.CostumeConverter;
 import gg.projecteden.nexus.models.costume.Costume.CostumeType;
+import gg.projecteden.nexus.models.rainbowarmor.RainbowArmorService;
+import gg.projecteden.nexus.models.rainbowarmor.RainbowArmorTask;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.WorldGroup;
@@ -110,8 +112,17 @@ public class CostumeUser implements PlayerOwnedObject {
 
 	public ItemStack getCostumeItem(Costume costume) {
 		ItemStack item = costume.getItem();
-		if (costume.isDyeable() && isDyed(costume))
+
+		if (!costume.isDyeable())
+			return item;
+
+		if (isDyed(costume))
 			item = new ItemBuilder(item).dyeColor(getColor(costume)).build();
+
+		final RainbowArmorTask rainbowArmorTask = new RainbowArmorService().get(this).getTask();
+		if (rainbowArmorTask != null && rainbowArmorTask.getColor() != null)
+			item = new ItemBuilder(item).dyeColor(rainbowArmorTask.getColor()).build();
+
 		return item;
 	}
 
