@@ -22,7 +22,7 @@ public class GamelobbyCommand extends CustomCommand {
 		runCommand("warp minigames");
 	}
 
-	@Permission(Permission.Group.ADMIN)
+	@Permission(Permission.Group.SENIOR_STAFF)
 	@Path("testMenu <mechanicGroup> [mechanicType]")
 	void testMenu(MechanicGroup group, MechanicType type) {
 		if (group == MechanicGroup.MECHANIC && type == null)
