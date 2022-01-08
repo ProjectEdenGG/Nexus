@@ -105,10 +105,11 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 
 	private static final Map<UUID, List<Integer>> particleTaskIds = new HashMap<>();
 
-	@Path("boundingBox draw particles [--particle] [--dustSize] [--stop]")
+	@Path("boundingBox draw particles [--particle] [--dustSize] [--density] [--stop]")
 	void boundingBox_draw_particles(
 		@Switch @Arg("villager_happy") Particle particle,
 		@Switch @Arg(".5") float dustSize,
+		@Switch @Arg(".1") double density,
 		@Switch boolean stop
 	) {
 		imageStand = getTargetImageStandRequired();
@@ -116,11 +117,10 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 			if (!particleTaskIds.containsKey(imageStand.getUuid()))
 				error("No particle task for that image stand running");
 
-			particleTaskIds.get(imageStand.getUuid()).forEach(Tasks::cancel);
-			particleTaskIds.remove(imageStand.getUuid());
+			particleTaskIds.remove(imageStand.getUuid()).forEach(Tasks::cancel);
 			send(PREFIX + "Particle task cancelled");
 		} else {
-			particleTaskIds.put(imageStand.getUuid(), imageStand.drawBoundingBox(particle, dustSize));
+			particleTaskIds.put(imageStand.getUuid(), imageStand.drawBoundingBox(particle, dustSize, density));
 		}
 	}
 

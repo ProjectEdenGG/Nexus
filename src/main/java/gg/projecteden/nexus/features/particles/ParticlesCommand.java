@@ -80,7 +80,7 @@ public class ParticlesCommand extends CustomCommand implements Listener {
 	@Path("line [distance] [density]")
 	@Permission(Group.ADMIN)
 	void line(@Arg("10") int distance, @Arg("0.1") double density) {
-		LineEffect.builder().player(player()).distance(distance).density(density).rainbow(true).start();
+		LineEffect.builder().entity(player()).distance(distance).density(density).rainbow(true).start();
 	}
 
 	@Path("dot")

@@ -56,7 +56,7 @@ public class Particles {
 				if (!activeLaser) {
 					activeLaser = true;
 					laserTaskId = LineEffect.builder()
-							.player(laserPlayer)
+							.entity(laserPlayer)
 							.startLoc(laserStart)
 							.endLoc(laserEnd)
 							.density(0.1)

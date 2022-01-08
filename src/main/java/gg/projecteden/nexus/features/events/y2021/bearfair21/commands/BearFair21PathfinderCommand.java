@@ -282,7 +282,7 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 				block.setType(Material.LIGHT_GRAY_CONCRETE_POWDER);
 
 				PathfinderHelper.getLineTasks().add(LineEffect.builder()
-					.player(player)
+					.entity(player)
 					.startLoc(LocationUtils.getCenteredLocation(currentLoc.clone().add(0, 1, 0)))
 					.endLoc(LocationUtils.getCenteredLocation(block.getLocation()))
 					.density(0.5)

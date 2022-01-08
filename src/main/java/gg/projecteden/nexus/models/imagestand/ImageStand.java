@@ -5,10 +5,10 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.interfaces.DatabaseObject;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.particles.effects.LineEffect;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PacketUtils;
-import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -19,6 +19,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
@@ -33,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 @Data
 @Entity(value = "image_stand", noClassnameStored = true)
@@ -142,14 +144,73 @@ public class ImageStand implements DatabaseObject {
 		BoundingBoxAPI.setBoundingBox(armorStand, boundingBox);
 	}
 
-	public List<Integer> drawBoundingBox(Particle particle, float dustSize) {
-		List<Integer> taskIds = new ArrayList<>();
-		if (boundingBoxes.isEmpty()) {
-			taskIds.add(Tasks.repeatAsync(0, 1, BoundingBoxAPI.drawParticleOutline(boundingBox, getImageStand().getWorld(), particle, dustSize)));
-		} else {
-			boundingBoxes.forEach((uuid, boundingBox) ->
-				taskIds.add(Tasks.repeatAsync(0, 1, BoundingBoxAPI.drawParticleOutline(boundingBox, getArmorStand(uuid).getWorld(), particle, dustSize))));
+	public List<Integer> drawBoundingBox(Particle particle, float dustSize, double density) {
+		return new ArrayList<>() {{
+			if (boundingBoxes.isEmpty())
+				addAll(draw(boundingBox, particle, dustSize, density));
+			else
+				boundingBoxes.forEach((uuid, boundingBox) -> addAll(draw(boundingBox, particle, dustSize, density)));
+		}};
+	}
+
+	@Getter
+	@AllArgsConstructor
+	private enum CubeVertex {
+		_1(BoundingBox::getMaxX, BoundingBox::getMinY, BoundingBox::getMinZ),
+		_2(BoundingBox::getMaxX, BoundingBox::getMinY, BoundingBox::getMaxZ),
+		_3(BoundingBox::getMinX, BoundingBox::getMinY, BoundingBox::getMaxZ),
+		_4(BoundingBox::getMinX, BoundingBox::getMinY, BoundingBox::getMinZ),
+		_5(BoundingBox::getMaxX, BoundingBox::getMaxY, BoundingBox::getMinZ),
+		_6(BoundingBox::getMaxX, BoundingBox::getMaxY, BoundingBox::getMaxZ),
+		_7(BoundingBox::getMinX, BoundingBox::getMaxY, BoundingBox::getMaxZ),
+		_8(BoundingBox::getMinX, BoundingBox::getMaxY, BoundingBox::getMinZ),
+		;
+
+		private final Function<BoundingBox, Double> x, y, z;
+
+		public Location toLocation(BoundingBox box, World world) {
+			return new Location(world, x.apply(box), y.apply(box), z.apply(box));
 		}
+	}
+
+	@Getter
+	@AllArgsConstructor
+	private enum CubeEdge {
+		_01(CubeVertex._1, CubeVertex._2),
+		_02(CubeVertex._2, CubeVertex._3),
+		_03(CubeVertex._3, CubeVertex._4),
+		_04(CubeVertex._4, CubeVertex._1),
+		_05(CubeVertex._5, CubeVertex._6),
+		_06(CubeVertex._6, CubeVertex._7),
+		_07(CubeVertex._7, CubeVertex._8),
+		_08(CubeVertex._8, CubeVertex._5),
+		_09(CubeVertex._1, CubeVertex._5),
+		_10(CubeVertex._2, CubeVertex._6),
+		_11(CubeVertex._3, CubeVertex._7),
+		_12(CubeVertex._4, CubeVertex._8),
+		;
+
+		private final CubeVertex start, end;
+	}
+
+	public List<Integer> draw(BoundingBox box, Particle particle, float dustSize, double density) {
+		final List<Integer> taskIds = new ArrayList<>();
+		final World world = getImageStandRequired().getWorld();
+
+		for (CubeEdge edge : CubeEdge.values()) {
+			taskIds.add(LineEffect.builder()
+				.startLoc(edge.getStart().toLocation(box, world))
+				.endLoc(edge.getEnd().toLocation(box, world))
+				.particle(particle)
+				.dustSize(dustSize)
+				.density(density)
+				.ticks(-1)
+				.count(0)
+				.speed(0)
+				.start()
+				.getTaskId());
+		}
+
 		return taskIds;
 	}
 

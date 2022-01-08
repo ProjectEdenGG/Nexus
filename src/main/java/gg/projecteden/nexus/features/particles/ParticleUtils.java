@@ -88,9 +88,13 @@ public class ParticleUtils {
 	}
 
 	public static Particle.DustOptions newDustOption(Particle particle, int red, int green, int blue) {
+		return newDustOption(particle, red, green, blue, 1);
+	}
+
+	public static Particle.DustOptions newDustOption(Particle particle, int red, int green, int blue, float dustSize) {
 		if (particle.equals(Particle.REDSTONE)) {
 			org.bukkit.Color color = org.bukkit.Color.fromRGB(red, green, blue);
-			return new Particle.DustOptions(color, 1.0F);
+			return new Particle.DustOptions(color, dustSize);
 		}
 
 		return null;
