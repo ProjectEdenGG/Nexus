@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
 
@@ -65,20 +66,30 @@ public class CostumeUser implements PlayerOwnedObject {
 	void convert(DBObject dbObject) {
 		List<String> owned = (List<String>) dbObject.get("ownedCostumes");
 		Map<String, DBObject> colors = (Map<String, DBObject>) dbObject.get("colors");
+		AtomicInteger vouchers = new AtomicInteger();
 
 		Map<String, String> converter = new HashMap<>() {{
-			put("old", "new");
+			put("hat/lightsabers/red", "hat/misc/lightsaber");
+			put("hat/lightsabers/green", "hat/misc/lightsaber");
+			put("hat/lightsabers/purple", "hat/misc/lightsaber");
+			put("hat/lightsabers/light_blue", "hat/misc/lightsaber");
+			put("hat/lightsabers/dark_blue", "hat/misc/lightsaber");
 		}};
 
 		converter.forEach((oldId, newId) -> {
 			if (owned.contains(oldId)) {
 				owned.remove(oldId);
-				owned.add(newId);
+				if (owned.contains(newId))
+					vouchers.incrementAndGet();
+				else
+					owned.add(newId);
 			}
 
 			if (colors.containsKey(oldId))
 				colors.put(newId, colors.remove(oldId));
 		});
+
+		dbObject.put("vouchers", (int) dbObject.get("vouchers") + vouchers.get());
 
 		// /db cacheAll CostumeUserService
 		// /db saveAll CostumeUserService
