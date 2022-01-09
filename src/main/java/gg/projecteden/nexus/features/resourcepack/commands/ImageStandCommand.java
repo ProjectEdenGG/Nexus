@@ -196,7 +196,7 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 	}
 
 	static {
-		Tasks.repeat(0, 2, () -> {
+		Tasks.repeat(0, 1, () -> {
 			for (Player player : OnlinePlayers.getAll()) {
 				final ImageStandService service = new ImageStandService();
 				final ImageStand imageStand = service.getTargetStand(player);
