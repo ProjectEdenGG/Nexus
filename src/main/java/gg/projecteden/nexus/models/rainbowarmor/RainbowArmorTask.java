@@ -30,12 +30,11 @@ import static gg.projecteden.utils.Utils.isNullOrEmpty;
 @Builder
 public class RainbowArmorTask {
 	@Builder.Default
-	private final int rate = 12;
-	@Builder.Default
 	private Color color = Color.fromRGB(255, 0, 0);
 
 	private final HumanEntity entity;
 	private Set<ArmorSlot> disabledSlots;
+	private final int rate;
 	private Supplier<Boolean> cancelIf;
 	private Runnable onCancel;
 

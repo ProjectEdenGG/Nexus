@@ -10,6 +10,7 @@ import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.ArmorSlot;
+import gg.projecteden.utils.MathUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -35,8 +36,13 @@ public class RainbowArmor implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private boolean enabled;
+	private double speed = 1.0;
 	private Set<ArmorSlot> disabledSlots = new HashSet<>();
 	private transient RainbowArmorTask task;
+
+	public void setSpeed(double speed) {
+		this.speed = MathUtils.clamp(speed, 0.1, 2.0);
+	}
 
 	public void stop() {
 		if (task != null) {
@@ -50,6 +56,7 @@ public class RainbowArmor implements PlayerOwnedObject {
 
 		task = RainbowArmorTask.builder()
 			.entity(getOnlinePlayer())
+			.rate((int) Math.floor(12 * speed))
 			.disabledSlots(disabledSlots)
 			.cancelIf(this::isNotAllowed)
 			.build()

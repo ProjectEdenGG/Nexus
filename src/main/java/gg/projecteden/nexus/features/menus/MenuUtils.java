@@ -114,6 +114,14 @@ public abstract class MenuUtils {
 		return isClickType(e, ClickType.RIGHT);
 	}
 
+	protected boolean isAnyRightClick(ItemClickData e) {
+		return isRightClick(e) || isShiftRightClick(e);
+	}
+
+	protected boolean isAnyLeftClick(ItemClickData e) {
+		return isLeftClick(e) || isShiftLeftClick(e);
+	}
+
 	protected boolean isLeftClick(ItemClickData e) {
 		return isClickType(e, ClickType.LEFT);
 	}
