@@ -10,7 +10,6 @@ import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.ArmorSlot;
-import gg.projecteden.utils.MathUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -39,10 +38,6 @@ public class RainbowArmor implements PlayerOwnedObject {
 	private double speed = 1.0;
 	private Set<ArmorSlot> disabledSlots = new HashSet<>();
 	private transient RainbowArmorTask task;
-
-	public void setSpeed(double speed) {
-		this.speed = MathUtils.clamp(speed, 0.1, 2.0);
-	}
 
 	public void stop() {
 		if (task != null) {

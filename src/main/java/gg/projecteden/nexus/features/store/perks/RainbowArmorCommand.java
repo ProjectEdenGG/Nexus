@@ -14,6 +14,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.rainbowarmor.RainbowArmor;
 import gg.projecteden.nexus.models.rainbowarmor.RainbowArmorService;
@@ -21,6 +22,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.ArmorSlot;
 import gg.projecteden.nexus.utils.StringUtils.Rainbow;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.utils.MathUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import org.bukkit.Material;
@@ -76,7 +78,7 @@ public class RainbowArmorCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("speed <speed>")
-	void speed(@Arg(value = "1.0", min = 0.1, max = 2.0) double speed) {
+	void speed(@Arg(value = "1.0", min = 0.1, max = 2.0, minMaxBypass = Group.ADMIN) double speed) {
 		rainbowArmor.setSpeed(speed);
 		service.save(rainbowArmor);
 
@@ -167,7 +169,7 @@ public class RainbowArmorCommand extends CustomCommand implements Listener {
 				else if (isAnyRightClick(e))
 					userSpeed.getAndAdd(-0.1);
 
-				user.setSpeed(userSpeed.get());
+				user.setSpeed(MathUtils.clamp(userSpeed.get(), 0.1, 2.0));
 				service.save(user);
 				user.start();
 				open(player);
