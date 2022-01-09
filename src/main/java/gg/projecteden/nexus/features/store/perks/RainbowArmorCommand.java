@@ -44,6 +44,8 @@ import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
 public class RainbowArmorCommand extends CustomCommand implements Listener {
 	public static final String PERMISSION = "rainbowarmor.use";
 	private static final DecimalFormat df = new DecimalFormat("0.0");
+	private static final double minSpeed = 0.1;
+	private static final double maxSpeed = 3.0;
 	private final RainbowArmorService service = new RainbowArmorService();
 	private RainbowArmor rainbowArmor;
 
@@ -78,7 +80,7 @@ public class RainbowArmorCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("speed <speed>")
-	void speed(@Arg(value = "1.0", min = 0.1, max = 2.0, minMaxBypass = Group.ADMIN) double speed) {
+	void speed(@Arg(value = "1.0", min = minSpeed, max = maxSpeed, minMaxBypass = Group.ADMIN) double speed) {
 		rainbowArmor.setSpeed(speed);
 		service.save(rainbowArmor);
 
@@ -169,7 +171,7 @@ public class RainbowArmorCommand extends CustomCommand implements Listener {
 				else if (isAnyRightClick(e))
 					userSpeed.getAndAdd(-0.1);
 
-				user.setSpeed(MathUtils.clamp(userSpeed.get(), 0.1, 2.0));
+				user.setSpeed(MathUtils.clamp(userSpeed.get(), minSpeed, maxSpeed));
 				service.save(user);
 				user.start();
 				open(player);
