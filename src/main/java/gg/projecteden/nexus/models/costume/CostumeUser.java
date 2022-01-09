@@ -28,6 +28,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
@@ -134,10 +135,15 @@ public class CostumeUser implements PlayerOwnedObject {
 	}
 
 	public ItemStack getCostumeDisplayItem(Costume costume) {
-		ItemStack item = costume.getModel().getDisplayItem();
+		ItemBuilder item = new ItemBuilder(costume.getModel().getDisplayItem());
+
 		if (isDyed(costume))
-			item = new ItemBuilder(item).dyeColor(getColor(costume)).build();
-		return item;
+			item.dyeColor(getColor(costume));
+
+		if (costume.isDyeable())
+			item.lore("&eDyeable").itemFlags(ItemFlag.HIDE_DYE);
+
+		return item.build();
 	}
 
 	public void sendCostumePacket() {
