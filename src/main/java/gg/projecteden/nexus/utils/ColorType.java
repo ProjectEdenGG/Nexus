@@ -200,7 +200,7 @@ public enum ColorType implements IsColored {
 
 	@Override
 	public @NotNull Colored colored() {
-		return Colored.colored(chatColor);
+		return Colored.of(chatColor);
 	}
 
 	@Nullable

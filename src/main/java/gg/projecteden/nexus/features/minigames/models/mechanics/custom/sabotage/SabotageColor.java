@@ -44,11 +44,11 @@ public enum SabotageColor implements IsColoredAndNamed {
 	private @NotNull @Getter @Accessors(fluent = true) final Colored colored;
 
 	SabotageColor(String headID, int r, int g, int b) {
-		this(headID, Colored.colored(r, g, b));
+		this(headID, Colored.of(r, g, b));
 	}
 
 	SabotageColor(String headID, int hex) {
-		this(headID, Colored.colored(hex));
+		this(headID, Colored.of(hex));
 	}
 
 	public ItemStack getHead() {

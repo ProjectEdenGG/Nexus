@@ -236,7 +236,7 @@ public enum PunishmentType implements IsColoredAndNamed {
 
 	@Override
 	public @NotNull Colored colored() {
-		return Colored.colored(chatColor);
+		return Colored.of(chatColor);
 	}
 
 	@Override

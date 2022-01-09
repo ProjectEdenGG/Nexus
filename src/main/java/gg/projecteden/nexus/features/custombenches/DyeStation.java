@@ -444,6 +444,10 @@ public class DyeStation extends CustomBench {
 				return getButton().getItem(DyeType.STAIN, name);
 			}
 
+			public Color getColor() {
+				return getButton().getColor();
+			}
+
 			StainChoice(String hex) {
 				this.button = new ColoredButton(hex);
 			}
@@ -468,6 +472,10 @@ public class DyeStation extends CustomBench {
 
 			public ItemStack getItem(String name) {
 				return getButton().getItem(DyeType.DYE, name);
+			}
+
+			public Color getColor() {
+				return getButton().getColor();
 			}
 
 			DyeChoice(String hex, List<String> hexes) {

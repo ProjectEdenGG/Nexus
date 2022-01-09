@@ -110,7 +110,7 @@ public enum Rank implements IsColoredAndNamed {
 
 	@Override
 	public @NotNull Colored colored() {
-		return Colored.colored(chatColor);
+		return Colored.of(chatColor);
 	}
 
 	public String getPrefix() {
