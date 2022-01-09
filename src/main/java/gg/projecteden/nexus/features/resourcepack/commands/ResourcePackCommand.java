@@ -80,7 +80,7 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 			send(PREFIX + "The server will now trust that you have the resource pack installed");
 		else {
 			send(PREFIX + "The server will now automatically detect if you accept the resource pack download");
-			if (Status.DECLINED != player().getResourcePackStatus())
+			if (Status.DECLINED == player().getResourcePackStatus())
 				send(PREFIX + "Make sure to enable the resource pack in the server's settings in the multiplayer screen");
 		}
 	}

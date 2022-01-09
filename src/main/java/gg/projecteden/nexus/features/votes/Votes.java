@@ -58,7 +58,7 @@ import static gg.projecteden.nexus.utils.Utils.epochSecond;
 
 @NoArgsConstructor
 public class Votes extends Feature implements Listener {
-	static final int GOAL = 6000;
+	static final int GOAL = 3000;
 
 	@Override
 	public void onStart() {
@@ -121,13 +121,17 @@ public class Votes extends Feature implements Listener {
 		UUID uuid = player != null ? player.getUniqueId() : StringUtils.getUUID0();
 		VoteSite site = VoteSite.getFromId(event.getVote().getServiceName());
 
-		Nexus.log("[Votes] Vote received from " + event.getVote().getServiceName() + ": " + username + " (" + name + " | " + uuid + ")");
+		boolean accepted = true;
+		if (site == null || !site.isActive())
+			accepted = false;
+
+		Nexus.log("[Votes] Vote %s from %s: %s (%s | %s)".formatted(accepted ? "accepted" : "rejected", event.getVote().getServiceName(), username, name, uuid));
 
 		LocalDateTime timestamp = epochSecond(event.getVote().getTimeStamp());
 		if (site == VoteSite.MCBIZ)
 			timestamp = fixTimestamp(timestamp);
 
-		if (site == null)
+		if (!accepted)
 			return;
 
 		final VoterService voterService = new VoterService();
