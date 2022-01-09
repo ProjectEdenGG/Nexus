@@ -9,6 +9,8 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.content.InventoryContents;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Emotes;
+import gg.projecteden.nexus.features.custombenches.DyeStation;
+import gg.projecteden.nexus.features.custombenches.DyeStation.DyeStationMenu;
 import gg.projecteden.nexus.features.particles.providers.EffectSettingProvider;
 import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
 import gg.projecteden.nexus.features.store.Package;
@@ -119,8 +121,12 @@ public enum GalleryPackage {
 					}));
 
 					if (MaterialTag.DYEABLE.isTagged(costume.getItem().getType())) {
-						// TODO Dye Station - user.dye(user.getActiveDisplayCostume(), color); service.save(user);
-//						contents.set(0, 6, );
+						contents.set(0, 6, ClickableItem.from(DyeStation.getDyeStation().build(), e ->
+							new DyeStationMenu().openCostume(user, costume, data -> {
+								user.dye(costume, data.getColor());
+								service.save(user);
+								open(user.getOnlinePlayer());
+							})));
 					}
 				}
 			}

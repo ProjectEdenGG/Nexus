@@ -51,4 +51,16 @@ public class DyeStationCommand extends _WorkbenchCommand {
 		Colored.of(stainChoice.getColor()).apply(item);
 	}
 
+	@Path("get magicDye")
+	@Permission(Group.ADMIN)
+	void get_magicDye() {
+		giveItem(DyeStation.getMagicDye().build());
+	}
+
+	@Path("get magicStain")
+	@Permission(Group.ADMIN)
+	void get_magicStain() {
+		giveItem(DyeStation.getMagicStain().build());
+	}
+
 }

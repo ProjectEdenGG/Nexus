@@ -4,6 +4,8 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
+import gg.projecteden.nexus.features.custombenches.DyeStation;
+import gg.projecteden.nexus.features.custombenches.DyeStation.DyeStationMenu;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
@@ -370,8 +372,12 @@ public class CostumeCommand extends CustomCommand implements Listener {
 				}));
 
 				if (MaterialTag.DYEABLE.isTagged(costume.getItem().getType())) {
-					// TODO Dye Station - user.dye(user.getActiveCostume(), color); service.save(user);
-//					contents.set(0, 6, );
+					contents.set(0, 6, ClickableItem.from(DyeStation.getDyeStation().build(), e ->
+						new DyeStationMenu().openCostume(user, costume, data -> {
+							user.dye(costume, data.getColor());
+							service.save(user);
+							open(user.getOnlinePlayer());
+						})));
 				}
 			}
 		}

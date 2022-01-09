@@ -260,8 +260,15 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 
 	// Leather armor
 
+	public Color dyeColor() {
+		if (itemMeta instanceof LeatherArmorMeta leatherArmorMeta)
+			return leatherArmorMeta.getColor();
+		return null;
+	}
+
 	public ItemBuilder dyeColor(Color color) {
-		((LeatherArmorMeta) itemMeta).setColor(color);
+		if (itemMeta instanceof LeatherArmorMeta leatherArmorMeta)
+			leatherArmorMeta.setColor(color);
 		return this;
 	}
 
