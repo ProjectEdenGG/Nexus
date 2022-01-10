@@ -122,6 +122,7 @@ public class DailyVoteRewardsCommand extends CustomCommand {
 
 			if (yesterdaysVotes >= 2) {
 				voteStreak.setCurrentStreak(streak);
+				voteStreak.getCurrentStreak().incrementStreak();
 				service.save(voteStreak);
 			}
 		}
