@@ -31,7 +31,7 @@ public class HubTreasureHunt implements Listener {
 
 	@EventHandler
 	public void on(PlayerInteractEvent event) {
-		final String prefix = Features.get(Hub.class).getPrefix();
+		final String PREFIX = Features.get(Hub.class).getPrefix();
 		final Player player = event.getPlayer();
 		if (!ActionGroup.CLICK_BLOCK.applies(event))
 			return;
@@ -50,7 +50,7 @@ public class HubTreasureHunt implements Listener {
 		final HubTreasureHunter hunter = service.get(player);
 		Location location = block.getLocation();
 		if (hunter.getFound().contains(location)) {
-			PlayerUtils.send(player, prefix + "&cYou already found that treasure chest");
+			PlayerUtils.send(player, PREFIX + "&cYou already found that treasure chest");
 			new SoundBuilder(Sound.ENTITY_VILLAGER_NO).receiver(player).volume(0.5).play();
 			return;
 		}
@@ -62,12 +62,12 @@ public class HubTreasureHunt implements Listener {
 
 		final int found = hunter.getFound().size();
 		if (found != TOTAL_TREASURE_CHESTS) {
-			PlayerUtils.send(player, prefix + "You found a treasure chest &7(%s/%s)".formatted(found, TOTAL_TREASURE_CHESTS));
+			PlayerUtils.send(player, PREFIX + "You found a treasure chest &7(%s/%s)".formatted(found, TOTAL_TREASURE_CHESTS));
 			new SoundBuilder(Sound.ENTITY_PLAYER_LEVELUP).receiver(player).volume(0.5).pitch(2.0).play();
 			return;
 		}
 
-		PlayerUtils.send(player, prefix + "You found all the treasure chests!");
+		PlayerUtils.send(player, PREFIX + "You found all the treasure chests!");
 		new SoundBuilder(Sound.UI_TOAST_CHALLENGE_COMPLETE).receiver(player).volume(0.5).play();
 		// TODO Reward
 	}

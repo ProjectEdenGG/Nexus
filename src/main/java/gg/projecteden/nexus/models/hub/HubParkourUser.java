@@ -31,6 +31,10 @@ public class HubParkourUser implements PlayerOwnedObject {
 	private UUID uuid;
 	private List<CourseData> courses = new ArrayList<>();
 
+	public CourseData get(HubParkourCourse course) {
+		return get(course.getName());
+	}
+
 	public CourseData get(String name) {
 		return courses.stream()
 			.filter(data -> data.getCourse().equalsIgnoreCase(name))
@@ -47,7 +51,7 @@ public class HubParkourUser implements PlayerOwnedObject {
 	@AllArgsConstructor
 	@RequiredArgsConstructor
 	@Converters({UUIDConverter.class, TimespanConverter.class, LocalDateTimeConverter.class})
-	public static class CourseData {
+	public static class CourseData implements PlayerOwnedObject {
 		@NonNull
 		private UUID uuid;
 		private String course;

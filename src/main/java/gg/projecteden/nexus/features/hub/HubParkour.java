@@ -4,6 +4,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
+import gg.projecteden.nexus.framework.features.Features;
 import gg.projecteden.nexus.models.hub.HubParkourCourse;
 import gg.projecteden.nexus.models.hub.HubParkourCourseService;
 import gg.projecteden.nexus.models.hub.HubParkourUser;
@@ -36,6 +37,7 @@ public class HubParkour implements Listener {
 
 	@EventHandler
 	public void on(PlayerInteractEvent event) {
+		final String PREFIX = Features.get(Hub.class).getPrefix();
 		if (event.getAction() != Action.PHYSICAL)
 			return;
 
@@ -70,7 +72,7 @@ public class HubParkour implements Listener {
 				run.getCurrentRunSplits().clear();
 				run.setLastCheckpoint(0);
 				if (run.isLeftStartRegion() || run.getLastCheckpointTime() == null) {
-					user.sendMessage("Started parkour");
+					user.sendMessage(PREFIX + "Started parkour. Reach the end as fast as you can!");
 					run.setLeftStartRegion(false);
 				}
 				run.setLastCheckpointTime(LocalDateTime.now());
@@ -81,12 +83,12 @@ public class HubParkour implements Listener {
 
 				final Timespan timespan = Timespan.of(run.getLastCheckpointTime());
 				run.getCurrentRunSplits().add(timespan);
-				user.sendMessage("Reached checkpoint " + course.getCheckpoints().size() + " in " + timespan.format(FormatType.SHORT));
-				user.sendMessage("Completed Parkour in " + Timespan.ofMillis(run.getCurrentRunTime()).format(FormatType.SHORT));
+				user.sendMessage(PREFIX + "Reached checkpoint &e#" + course.getCheckpoints().size() + " &3in &e" + timespan.format(FormatType.SHORT));
+				user.sendMessage(PREFIX + "&eCompleted parkour &3in &e" + Timespan.ofMillis(run.getCurrentRunTime()).format(FormatType.SHORT));
 
 				if (run.getBestRunSplits().isEmpty() || run.getCurrentRunTime() < run.getBestRunTime()) {
 					run.setBestRunSplits(new ArrayList<>(run.getCurrentRunSplits()));
-					user.sendMessage("New personal best!");
+					user.sendMessage(PREFIX + "&6New personal best!");
 				}
 
 				run.getCurrentRunSplits().clear();
@@ -117,7 +119,7 @@ public class HubParkour implements Listener {
 					run.getCurrentRunSplits().add(timespan);
 					run.setLastCheckpoint(number);
 					run.setLastCheckpointTime(LocalDateTime.now());
-					user.sendMessage("Reached checkpoint " + number + " in " + timespan.format(FormatType.SHORT));
+					user.sendMessage(PREFIX + "Reached checkpoint &e#" + number + " &3in &e" + timespan.format(FormatType.SHORT));
 				} catch (IndexOutOfBoundsException ignore) {}
 			}
 		}
@@ -127,6 +129,7 @@ public class HubParkour implements Listener {
 
 	@EventHandler
 	public void on(PlayerEnteringRegionEvent event) {
+		final String PREFIX = Features.get(Hub.class).getPrefix();
 		if (!event.getRegion().getId().startsWith("hub_parkour_"))
 			return;
 
@@ -138,10 +141,13 @@ public class HubParkour implements Listener {
 			final String courseName = split[2];
 
 			final HubParkourCourse course = new HubParkourCourseService().get(UUID.nameUUIDFromBytes(courseName.getBytes()));
-			final HubParkourUser user = new HubParkourUserService().get(event.getPlayer());
+			final HubParkourUserService userService = new HubParkourUserService();
+			final HubParkourUser user = userService.get(event.getPlayer());
 			final int checkpoint = user.get(courseName).getLastCheckpoint();
+			user.get(course).setLeftStartRegion(false);
+			userService.save(user);
 			event.getPlayer().teleportAsync(course.getCheckpoints().get(checkpoint));
-			user.sendMessage("Teleported to " + (checkpoint > 0 ? "checkpoint #" + checkpoint : "start"));
+			user.sendMessage(PREFIX + "Teleported to " + (checkpoint > 0 ? "checkpoint #" + checkpoint : "start"));
 		} catch (IndexOutOfBoundsException ignore) {}
 	}
 
