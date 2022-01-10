@@ -85,7 +85,7 @@ public class BoopCommand extends CustomCommand {
 		send(toBooper);
 		JsonBuilder json = new JsonBuilder(toBooped);
 		if (!anonymous)
-			json.next("&3. &eClick to boop back").suggest("/boop " + booper.getName() + " ");
+			json.next("&3. &eClick to boop back").suggest("/boop " + Nickname.of(booper) + " ");
 		booped.sendMessage(booper, json);
 		booped.playSound(booped.getLocation(), Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 10.0F, 0.1F);
 	}
