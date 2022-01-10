@@ -14,6 +14,11 @@ import java.util.List;
 public class HubEffects extends Effects {
 
 	@Override
+	public World getWorld() {
+		return Bukkit.getWorld("server");
+	}
+
+	@Override
 	public void particles() {
 		List<ParticleBuilder> particles = List.of(
 
@@ -39,11 +44,5 @@ public class HubEffects extends Effects {
 			}
 		});
 	}
-
-	@Override
-	public World getWorld() {
-		return Bukkit.getWorld("server");
-	}
-
 
 }
