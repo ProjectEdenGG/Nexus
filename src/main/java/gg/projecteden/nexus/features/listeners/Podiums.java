@@ -141,7 +141,7 @@ public class Podiums implements Listener {
 			@Override
 			Map<UUID, String> getTop() {
 				final Map<UUID, Integer> blocksBroken = new HashMap<>();
-				for (UUID uuid : new ArrayList<>(new HoursService().getActivePlayers().subList(0, 20))) {
+				for (UUID uuid : new ArrayList<>(new HoursService().getActivePlayers().subList(0, 30))) {
 					final OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
 					int total = 0;
 					for (Material material : Material.values())
