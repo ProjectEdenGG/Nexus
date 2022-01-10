@@ -456,14 +456,14 @@ public class DyeStation extends CustomBench {
 		@Getter
 		public enum DyeChoice {
 			RED("#FF0000", List.of("#FF756B", "#FF5E52", "#FF4233", "#FF0000", "#C70F00", "#9C0B00", "#6E0800")),
-			ORANGE("#FF8000", List.of("#FFFFFF", "#FFFFFF", "#FFFFFF", "#FF8000", "#FFFFFF", "#FFFFFF", "#FFFFFF")),
-			YELLOW("#FFFF00", List.of("#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFF00", "#FFFFFF", "#FFFFFF", "#FFFFFF")),
-			PINK("#FF88AA", List.of("#FFFFFF", "#FFFFFF", "#FFFFFF", "#FF88AA", "#FFFFFF", "#FFFFFF", "#FFFFFF")),
+			ORANGE("#FF7F00", List.of("#FFBF6B", "#FFB552", "#FFA833", "#FF7F00", "#C77200", "#9C5900", "#6E3F00")),
+			YELLOW("#FEFF00", List.of("#F5FF6B", "#F2FF52", "#EFFF33", "#FEFF00", "#B7C700", "#909C00", "#656E00")),
+			PINK("#FF54BD", List.of("#FF9CD3", "#FF8BCA", "#FF76C0", "#FF54BD", "#FF2E9F", "#DB3690", "#B33F7E")),
 			WHITE("#FFFFFF", List.of("#FFFFFF", "#C7C7C7", "#8F8F8F", "#6E6E6E", "#525252", "#333333", "#222222")),
-			GREEN("#00FF00", List.of("#FFFFFF", "#FFFFFF", "#FFFFFF", "#00FF00", "#FFFFFF", "#FFFFFF", "#FFFFFF")),
-			PURPLE("#8800AA", List.of("#FFFFFF", "#FFFFFF", "#FFFFFF", "#8800AA", "#FFFFFF", "#FFFFFF", "#FFFFFF")),
-			BLUE("#0000FF", List.of("#FFFFFF", "#FFFFFF", "#FFFFFF", "#0000FF", "#FFFFFF", "#FFFFFF", "#FFFFFF")),
-			LIGHT_BLUE("#00BCFF", List.of("#FFFFFF", "#FFFFFF", "#FFFFFF", "#00BCFF", "#FFFFFF", "#FFFFFF", "#FFFFFF")),
+			GREEN("#7FFF00", List.of("#ABFF6B", "#9CFF52", "#89FF33", "#7FFF00", "#54C700", "#429C00", "#2E6E00")),
+			PURPLE("#A900FF", List.of("#D76BFF", "#D152FF", "#CA33FF", "#A900FF", "#9300C7", "#73009C", "#51006E")),
+			BLUE("#0040FF", List.of("#6B86FF", "#5271FF", "#3357FF", "#0040FF", "#0023C7", "#001C9C", "#004A6E")),
+			LIGHT_BLUE("#00BEFF", List.of("#6BD0FF", "#52C7FF", "#33BCFF", "#00BEFF", "#0086C7", "#00699C", "#004A6E")),
 			;
 
 			private final ColoredButton button;
