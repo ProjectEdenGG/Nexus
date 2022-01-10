@@ -1,6 +1,7 @@
-package gg.projecteden.nexus.features.effects;
+package gg.projecteden.nexus.features.hub;
 
 import com.destroystokyo.paper.ParticleBuilder;
+import gg.projecteden.nexus.features.effects.Effects;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Bukkit;

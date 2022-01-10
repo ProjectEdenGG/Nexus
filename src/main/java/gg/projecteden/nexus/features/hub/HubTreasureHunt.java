@@ -16,11 +16,11 @@ import org.bukkit.inventory.EquipmentSlot;
 
 import static gg.projecteden.nexus.utils.BlockUtils.isNullOrAir;
 
-public class TreasureHunt implements Listener {
+public class HubTreasureHunt implements Listener {
 	private static final String HEAD_ID = "13379";
 	private static final int TOTAL_TREASURE_CHESTS = 16;
 
-	public TreasureHunt() {
+	public HubTreasureHunt() {
 		Nexus.registerListener(this);
 	}
 

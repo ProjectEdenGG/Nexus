@@ -17,8 +17,11 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.models.imagestand.ImageStand;
 import gg.projecteden.nexus.models.imagestand.ImageStand.ImageSize;
 import gg.projecteden.nexus.models.imagestand.ImageStandService;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
@@ -28,8 +31,11 @@ import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.util.BoundingBox;
 
 import java.util.HashMap;
@@ -183,6 +189,39 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 	public void onEntityAddToWorld(EntityAddToWorldEvent event) {
 		if (event.getEntity() instanceof ArmorStand armorStand)
 			onLoad(armorStand.getUniqueId());
+	}
+
+	@EventHandler
+	public void onPlayerInteract(PlayerInteractEvent event) {
+		final Player player = event.getPlayer();
+		if (!Dev.GRIFFIN.is(player))
+			return;
+
+		final ImageStandService service = new ImageStandService();
+		final ImageStand imageStand = service.getTargetStand(player);
+
+		if (imageStand == null)
+			return;
+
+		new ImageStandInteractEvent(player, imageStand).callEvent();
+	}
+
+	@Getter
+	@AllArgsConstructor
+	public static class ImageStandInteractEvent extends Event {
+		private static final HandlerList handlers = new HandlerList();
+		private final Player player;
+		private final ImageStand imageStand;
+
+		public static HandlerList getHandlerList() {
+			return handlers;
+		}
+
+		@Override
+		public HandlerList getHandlers() {
+			return handlers;
+		}
+
 	}
 
 	private static void onLoad(UUID uuid) {
