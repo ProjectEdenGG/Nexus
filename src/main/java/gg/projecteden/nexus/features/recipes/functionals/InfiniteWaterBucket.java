@@ -107,7 +107,11 @@ public class InfiniteWaterBucket extends FunctionalRecipe {
 	}
 
 	private static boolean isInfiniteWaterBucket(ItemStack item) {
-		return getCustomModel().equals(CustomModel.of(item));
+		final CustomModel customModel = getCustomModel();
+		if (customModel == null)
+			return false;
+
+		return customModel.equals(CustomModel.of(item));
 	}
 
 }

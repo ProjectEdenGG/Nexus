@@ -80,7 +80,7 @@ public class VoteCommand extends CustomCommand {
 	@Permission(Group.ADMIN)
 	@Path("extra")
 	void extra() {
-		send("Extra config: " + Votes.getExtras());
+		send("Extra config: " + Votes.getExtraChances());
 	}
 
 	@Path("history [player] [page]")

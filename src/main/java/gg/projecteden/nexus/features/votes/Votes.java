@@ -146,12 +146,12 @@ public class Votes extends Feature implements Listener {
 		if (GOAL > sum)
 			left = GOAL - sum;
 
-		int points = vote.getExtra() + basePoints;
+		int points = vote.getExtra() + BASE_POINTS;
 		voter.givePoints(points);
 		voterService.save(voter);
 
 		if (new CooldownService().check(uuid, "vote-announcement", TickTime.HOUR)) {
-			String message = " &3for the server and received &b" + basePoints + plural(" &3vote point", basePoints) + " per site!";
+			String message = " &3for the server and received &b" + BASE_POINTS + plural(" &3vote point", BASE_POINTS) + " per site!";
 			if (left > 0)
 				message += " &e" + left + " &3more votes needed to hit the goal";
 
@@ -194,26 +194,27 @@ public class Votes extends Feature implements Listener {
 		return timestamp;
 	}
 
-	private static final int basePoints = 1;
-	private static final Map<Integer, Integer> extras = new HashMap<>() {{
-		put(1500, 50);
-		put(500, 25);
-		put(200, 15);
-		put(100, 10);
-		put(50, 5);
+	public static final int BASE_POINTS = 1;
+	public static final Map<Integer, Integer> EXTRA_CHANCES = new HashMap<>() {{
+		final double div = .66;
+		put((int) (1500 * div), 50);
+		put((int) (500 * div), 25);
+		put((int) (200 * div), 15);
+		put((int) (100 * div), 10);
+		put((int) (50 * div), 5);
 	}};
 
 	@NotNull
-	protected static Map<Integer, Integer> getExtras() {
+	protected static Map<Integer, Integer> getExtraChances() {
 		double multiplier = BoostConfig.multiplierOf(Boostable.VOTE_POINTS);
 
 		return new HashMap<>() {{
-			extras.forEach((chance, amount) -> put((int) (chance / multiplier), amount));
+			EXTRA_CHANCES.forEach((chance, amount) -> put((int) (chance / multiplier), amount));
 		}};
 	}
 
 	private int extraVotePoints() {
-		for (Map.Entry<Integer, Integer> pair : getExtras().entrySet())
+		for (Map.Entry<Integer, Integer> pair : getExtraChances().entrySet())
 			if (randomInt(pair.getKey()) == 1)
 				return pair.getValue();
 		return 0;
