@@ -157,7 +157,7 @@ public class Battleship extends TeamMechanic {
 				lines.add("&cWinner: " + matchData.getWinnerTeam().getVanillaColoredName());
 			} else {
 				long turnDuration = matchData.getTurnStarted().until(LocalDateTime.now(), ChronoUnit.SECONDS);
-				String timeLeft = Timespan.of(arena.getTurnTime() - turnDuration).format();
+				String timeLeft = Timespan.ofSeconds(arena.getTurnTime() - turnDuration).format();
 				if (team.equals(matchData.getTurnTeam()))
 					lines.add("&cTurn over in: &e" + timeLeft);
 				else

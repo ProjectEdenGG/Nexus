@@ -91,7 +91,7 @@ public class OnlineCommand extends CustomCommand {
 		if (shopGroup == null)
 			shopGroup = ShopGroup.SURVIVAL;
 		String balance = new BankerService().getBalanceFormatted(player, shopGroup);
-		String totalHours = Timespan.of(hours.getTotal()).format();
+		String totalHours = Timespan.ofSeconds(hours.getTotal()).format();
 		String afk = "";
 
 		if (presence.applies(Modifier.AFK)) {

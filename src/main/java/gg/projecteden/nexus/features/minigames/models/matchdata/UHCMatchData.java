@@ -17,7 +17,7 @@ import java.util.UUID;
 @MatchDataFor(UHC.class)
 public class UHCMatchData extends MatchData {
 	private LocalDateTime startTime = LocalDateTime.now(); // placeholder, is updated on true game start
-	private final Map<UUID, Integer> timeAlive = new HashMap<>();
+	private final Map<UUID, Long> timeAlive = new HashMap<>();
 
 	public UHCMatchData(Match match) {
 		super(match);

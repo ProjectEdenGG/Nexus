@@ -34,16 +34,16 @@ public class WeatherCommand extends CustomCommand {
 		if (duration > 0)
 			world.setWeatherDuration(duration);
 
-		send(PREFIX + "Weather set to &e" + camelCase(weatherType) + (duration > 0 ? " &3for &e" + Timespan.of(duration).format() : ""));
+		send(PREFIX + "Weather set to &e" + camelCase(weatherType) + (duration > 0 ? " &3for &e" + Timespan.ofSeconds(duration).format() : ""));
 	}
 
 	@Permission(Group.ADMIN)
 	@Path("getWeatherDuration [world]")
 	void getWeatherDuration(@Arg("current") World world) {
 		send(PREFIX + "Durations for " + StringUtils.getWorldDisplayName(world));
-		send(" &3Clear Weather: &e" + Timespan.of(world.getClearWeatherDuration() / 20).format());
-		send(" &3Weather: &e" + Timespan.of(world.getWeatherDuration() / 20).format());
-		send(" &3Thunder: &e" + Timespan.of(world.getThunderDuration() / 20).format());
+		send(" &3Clear Weather: &e" + Timespan.ofSeconds(world.getClearWeatherDuration() / 20).format());
+		send(" &3Weather: &e" + Timespan.ofSeconds(world.getWeatherDuration() / 20).format());
+		send(" &3Thunder: &e" + Timespan.ofSeconds(world.getThunderDuration() / 20).format());
 	}
 
 	@Getter

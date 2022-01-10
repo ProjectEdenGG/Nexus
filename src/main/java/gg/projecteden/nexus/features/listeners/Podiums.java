@@ -84,7 +84,7 @@ public class Podiums implements Listener {
 				return new HoursService().getPage().subList(0, 3).stream()
 					.collect(Collectors.toMap(
 						PageResult::getUuid,
-						hours -> Timespan.of(hours.getTotal()).format(),
+						hours -> Timespan.ofSeconds(hours.getTotal()).format(),
 						(h1, h2) -> h1, LinkedHashMap::new
 					));
 			}
@@ -96,7 +96,7 @@ public class Podiums implements Listener {
 				return service.getPage(new HoursTopArguments("monthly")).subList(0, 3).stream()
 					.collect(Collectors.toMap(
 						PageResult::getUuid,
-						hours -> Timespan.of(service.get(hours.getUuid()).getMonthly()).format(),
+						hours -> Timespan.ofSeconds(service.get(hours.getUuid()).getMonthly()).format(),
 						(h1, h2) -> h1, LinkedHashMap::new
 					));
 			}

@@ -10,7 +10,7 @@ import gg.projecteden.nexus.features.mobheads.MobHeadType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.utils.TimeUtils;
+import gg.projecteden.utils.TimeUtils.Timespan;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Statistic;
@@ -248,7 +248,7 @@ public class StatisticsMenuProvider extends MenuUtils implements InventoryProvid
 		ItemStack deathsDamage = new ItemBuilder(Material.TOTEM_OF_UNDYING)
 				.name("&eDeaths and Damage")
 				.lore("&eDeaths: &3" + targetPlayer.getStatistic(Statistic.DEATHS))
-				.lore("&eTime Since Last Death: &3" + TimeUtils.Timespan.of(targetPlayer.getStatistic(Statistic.TIME_SINCE_DEATH) / 20).format())
+				.lore("&eTime Since Last Death: &3" + Timespan.ofSeconds(targetPlayer.getStatistic(Statistic.TIME_SINCE_DEATH) / 20).format())
 				.lore("&eDamage Taken: &3" + targetPlayer.getStatistic(Statistic.DAMAGE_TAKEN))
 				.lore("&eDamage Resisted: &3" + targetPlayer.getStatistic(Statistic.DAMAGE_RESISTED))
 				.lore("&eDamage Absorbed: &3" + targetPlayer.getStatistic(Statistic.DAMAGE_ABSORBED))
@@ -259,8 +259,8 @@ public class StatisticsMenuProvider extends MenuUtils implements InventoryProvid
 
 		ItemStack times = new ItemBuilder(Material.CLOCK)
 				.name("&3Times")
-				.lore("&ePlayed: &3" + TimeUtils.Timespan.of(targetPlayer.getStatistic(Statistic.PLAY_ONE_MINUTE) / 20).format())
-				.lore("&eSince Last Rest: &3" + TimeUtils.Timespan.of(targetPlayer.getStatistic(Statistic.TIME_SINCE_REST) / 20).format())
+				.lore("&ePlayed: &3" + Timespan.ofSeconds(targetPlayer.getStatistic(Statistic.PLAY_ONE_MINUTE) / 20).format())
+				.lore("&eSince Last Rest: &3" + Timespan.ofSeconds(targetPlayer.getStatistic(Statistic.TIME_SINCE_REST) / 20).format())
 				.lore("&eSlept in Bed: &3" + targetPlayer.getStatistic(Statistic.SLEEP_IN_BED))
 				.build();
 

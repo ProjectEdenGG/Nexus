@@ -167,7 +167,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 		service.save(booster);
 
 		send(PREFIX + "Started a server " + boost.getMultiplierFormatted() + " " + camelCase(type)
-				+ " boost for " + Timespan.of(boost.getDuration()).format(FormatType.LONG));
+				+ " boost for " + Timespan.ofSeconds(boost.getDuration()).format(FormatType.LONG));
 	}
 
 	@AllArgsConstructor
@@ -227,7 +227,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 							item.lore("", "&cCannot activate, another boost is already active");
 							items.add(ClickableItem.empty(item.build()));
 						} else {
-							item.lore("&3Duration: &e" + Timespan.of(boost.getDuration()).format(FormatType.LONG), "", "&eClick to activate");
+							item.lore("&3Duration: &e" + Timespan.ofSeconds(boost.getDuration()).format(FormatType.LONG), "", "&eClick to activate");
 							items.add(ClickableItem.from(item.build(), e -> ConfirmationMenu.builder()
 									.title("Activate " + StringUtils.camelCase(boost.getType()) + " Boost")
 									.onConfirm(e2 -> {

@@ -323,7 +323,7 @@ public class TestCommand extends CustomCommand implements Listener {
 
 	@Path("timespanFormatter <seconds> <formatType>")
 	void timespanFormatter(int seconds, FormatType formatType) {
-		send(TimespanBuilder.of(seconds).formatType(formatType).format());
+		send(TimespanBuilder.ofSeconds(seconds).formatType(formatType).format());
 	}
 
 	@Path("setTabListName <text...>")

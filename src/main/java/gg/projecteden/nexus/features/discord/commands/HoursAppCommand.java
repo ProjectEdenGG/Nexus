@@ -20,10 +20,10 @@ public class HoursAppCommand extends NexusAppCommand {
 	@Command(value = "Check a player's playtime", literals = false)
 	void check(@Desc("Player") @Default("self") Hours player) {
 		String message = "**[Hours]** " + player.getNickname() + "'s in-game playtime";
-		message += System.lineSeparator() + "Total: **" + TimespanBuilder.of(player.getTotal()).noneDisplay(true).format() + "**";
-		message += System.lineSeparator() + "- Today: **" + TimespanBuilder.of(player.getDaily()).noneDisplay(true).format() + "**";
-		message += System.lineSeparator() + "- This month: **" + TimespanBuilder.of(player.getMonthly()).noneDisplay(true).format() + "**";
-		message += System.lineSeparator() + "- This year: **" + TimespanBuilder.of(player.getYearly()).noneDisplay(true).format() + "**";
+		message += System.lineSeparator() + "Total: **" + TimespanBuilder.ofSeconds(player.getTotal()).noneDisplay(true).format() + "**";
+		message += System.lineSeparator() + "- Today: **" + TimespanBuilder.ofSeconds(player.getDaily()).noneDisplay(true).format() + "**";
+		message += System.lineSeparator() + "- This month: **" + TimespanBuilder.ofSeconds(player.getMonthly()).noneDisplay(true).format() + "**";
+		message += System.lineSeparator() + "- This year: **" + TimespanBuilder.ofSeconds(player.getYearly()).noneDisplay(true).format() + "**";
 
 		replyEphemeral(message);
 	}

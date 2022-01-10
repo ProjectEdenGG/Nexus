@@ -382,11 +382,11 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 	}
 
 	public static void sendBarWithTimer(@NotNull Minigamer minigamer, @NotNull String message) {
-		sendActionBar(minigamer.getPlayer(), message + "&r (" + Timespan.of(minigamer.getMatch().getTimer().getTime()).format() + ")");
+		sendActionBar(minigamer.getPlayer(), message + "&r (" + Timespan.ofSeconds(minigamer.getMatch().getTimer().getTime()).format() + ")");
 	}
 
 	public static void sendBarWithTimer(@NotNull Minigamer minigamer, @NotNull ComponentLike message) {
-		minigamer.sendActionBar(new JsonBuilder(Timespan.of(minigamer.getMatch().getTimer().getTime()).format()).next(" | ").next(message));
+		minigamer.sendActionBar(new JsonBuilder(Timespan.ofSeconds(minigamer.getMatch().getTimer().getTime()).format()).next(" | ").next(message));
 	}
 
 	public boolean showTeamOnDeath() {

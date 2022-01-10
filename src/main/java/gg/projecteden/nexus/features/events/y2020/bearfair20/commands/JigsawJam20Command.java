@@ -115,7 +115,7 @@ public class JigsawJam20Command extends CustomCommand implements Listener {
 		if (!jammer.isPlaying())
 			error("You have not started a game");
 
-		send(PREFIX + "Your current time: " + Timespan.of(jammer.getTime()).format());
+		send(PREFIX + "Your current time: " + Timespan.ofSeconds(jammer.getTime()).format());
 	}
 
 	@Path("view")
@@ -228,7 +228,7 @@ public class JigsawJam20Command extends CustomCommand implements Listener {
 	}
 
 	private void end(JigsawJammer jammer) {
-		Discord.staffLog("**[JigsawJam]** " + jammer.getName() + " finished in " + Timespan.of(jammer.getTime() / 20).format());
+		Discord.staffLog("**[JigsawJam]** " + jammer.getName() + " finished in " + Timespan.ofSeconds(jammer.getTime() / 20).format());
 		jammer.setPlaying(false);
 		jammer.setTime(0);
 		new JigsawJamService().save(jammer);
@@ -387,7 +387,7 @@ public class JigsawJam20Command extends CustomCommand implements Listener {
 		}
 
 		if (correct == totalMaps) {
-			send(player, PREFIX + "You have finished the Jigsaw Jam! Congratulations! Your final time is " + Timespan.of(jammer.getTime() / 20).format());
+			send(player, PREFIX + "You have finished the Jigsaw Jam! Congratulations! Your final time is " + Timespan.ofSeconds(jammer.getTime() / 20).format());
 
 			BearFair20UserService bearFairService = new BearFair20UserService();
 			BearFair20User user = bearFairService.get(player);

@@ -242,8 +242,8 @@ public class ReferralCommand extends CustomCommand implements Listener {
 
 			return json("&e" + data.getIp())
 					.newline().next("&7  Count: &f" + count)
-					.newline().next("&7  Mean playtime: &f" + Timespan.of((int) data.mean()).format())
-					.newline().next("&7  Median playtime: &f" + Timespan.of((int) data.median()).format())
+					.newline().next("&7  Mean playtime: &f" + Timespan.ofSeconds((long) data.mean()).format())
+					.newline().next("&7  Median playtime: &f" + Timespan.ofSeconds((long) data.median()).format())
 					.newline().next("&7  % Punished: &f" + percentage.apply(data.getPunished().size()))
 					.newline().next("&7  % Trusted: &f" + percentage.apply(data.getTrusted().size()))
 					.newline().next("&7  % Member: &f" + percentage.apply(data.getMember().size()))
@@ -277,7 +277,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 
 	@Path("who has playtime <playtime> from <site> [page]")
 	void whoHasPlaytime(String playtime, @Arg(tabCompleter = ReferralSite.class) String subdomain, @Arg("1") int page) {
-		final int seconds = Timespan.of(playtime).getOriginal();
+		final long seconds = Timespan.of(playtime).getOriginal();
 
 		List<Hours> players = getPlayersFrom(subdomain).stream()
 				.map(uuid -> new HoursService().get(uuid))
@@ -286,7 +286,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 				.toList();
 
 		BiFunction<Hours, String, JsonBuilder> formatter = (hours, index) -> json(index + " &e" + Nerd.of(hours).getColoredName() +
-				" &7- " + Timespan.of(hours.getTotal()).format());
+				" &7- " + Timespan.ofSeconds(hours.getTotal()).format());
 		paginate(players, formatter, "/referral who has playtime " + playtime + " from " + subdomain, page);
 	}
 

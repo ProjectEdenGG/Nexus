@@ -45,7 +45,7 @@ public class NewPlayersAppCommand extends NexusAppCommand {
 			response
 				.append(Nickname.of(player))
 				.append(" - ")
-				.append(Timespan.of(players.get(player)).format())
+				.append(Timespan.ofSeconds(players.get(player)).format())
 				.append(System.lineSeparator()));
 
 		reply(StringUtils.getDiscordPrefix("NewPlayers") + System.lineSeparator() + response);

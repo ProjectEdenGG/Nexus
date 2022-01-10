@@ -118,10 +118,10 @@ public class LightTheTree implements Listener {
 				.onStart(() -> {
 					PlayerUtils.setPlayerTime(player, "14000ticks");
 					user.setLightingTorches(true);
-					String format = TimespanBuilder.of(timerTicks / 20).format(FormatType.LONG);
+					String format = TimespanBuilder.ofSeconds(timerTicks / 20).format(FormatType.LONG);
 					user.sendMessage(PREFIX + "You have begun the Pugmas tree lighting ceremony. You have " + format + " to light all the torches!");
 				})
-				.onSecond(i -> ActionBarUtils.sendActionBar(player, "&3" + Timespan.of(i).format()))
+				.onSecond(i -> ActionBarUtils.sendActionBar(player, "&3" + Timespan.ofSeconds(i).format()))
 				.onComplete(() -> {
 					user.resetLightTheTree();
 					service.save(user);

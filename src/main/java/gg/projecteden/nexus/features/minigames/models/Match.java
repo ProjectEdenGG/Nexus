@@ -548,7 +548,7 @@ public class Match implements ForwardingAudience {
 							match.getPlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, .75F, .6F));
 						}
 						match.getMinigamers().forEach(player -> {
-							MinigamerDisplayTimerEvent event = new MinigamerDisplayTimerEvent(player, Component.text(Timespan.of(time).format()), time);
+							MinigamerDisplayTimerEvent event = new MinigamerDisplayTimerEvent(player, Component.text(Timespan.ofSeconds(time).format()), time);
 							if (event.callEvent())
 								player.sendActionBar(event.getContents());
 						});
@@ -574,7 +574,7 @@ public class Match implements ForwardingAudience {
 		}
 
 		public void broadcastTimeLeft(int time) {
-			match.broadcast("&e" + TimespanBuilder.of(time).format(FormatType.LONG) + " &7left...");
+			match.broadcast("&e" + TimespanBuilder.ofSeconds(time).format(FormatType.LONG) + " &7left...");
 		}
 
 		void stop() {
