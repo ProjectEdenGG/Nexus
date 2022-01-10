@@ -145,7 +145,8 @@ public class Podiums implements Listener {
 					final OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
 					int total = 0;
 					for (Material material : Material.values())
-						total += player.getStatistic(Statistic.MINE_BLOCK, material);
+						if (material.isBlock())
+							total += player.getStatistic(Statistic.MINE_BLOCK, material);
 
 					blocksBroken.put(uuid, total);
 				}
@@ -294,8 +295,8 @@ public class Podiums implements Listener {
 					CitizensUtils.updateName(ids[i.get()], colorize("&e" + entry.getValue()));
 					CitizensUtils.updateSkin(ids[i.get()], nerd.getName());
 					runCommandAsConsole("hd setline podiums_" + name().toLowerCase() + "_" + i.incrementAndGet() + " 1 " + decolorize(colorize(nerd.getColoredName())));
-					runCommandAsConsole("hd reload");
 				});
+				Tasks.wait(3, () -> runCommandAsConsole("hd reload"));
 			});
 		}
 	}
