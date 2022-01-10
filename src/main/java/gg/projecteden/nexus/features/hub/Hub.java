@@ -12,6 +12,7 @@ public class Hub extends Feature implements Listener {
 
 	@Override
 	public void onStart() {
+		new HubParkour();
 		new HubTreasureHunt();
 	}
 
@@ -24,9 +25,12 @@ public class Hub extends Feature implements Listener {
 		id = id.replaceFirst("hub_", "");
 
 		switch (id) {
-			case "survival", "minigames", "creative", "oneblock" -> {
+			case "minigames", "creative", "oneblock" -> {
 				PlayerUtils.send(event.getPlayer(), "/warp " + id);
 //				WarpType.NORMAL.get(id).teleportAsync(event.getPlayer());
+			}
+			case "survival" -> {
+				PlayerUtils.send(event.getPlayer(), "survival menu");
 			}
 		}
 	}
