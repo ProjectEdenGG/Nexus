@@ -17,7 +17,6 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.models.imagestand.ImageStand;
 import gg.projecteden.nexus.models.imagestand.ImageStand.ImageSize;
 import gg.projecteden.nexus.models.imagestand.ImageStandService;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
@@ -194,9 +193,6 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		final Player player = event.getPlayer();
-		if (!Dev.GRIFFIN.is(player))
-			return;
-
 		final ImageStandService service = new ImageStandService();
 		final ImageStand imageStand = service.getTargetStand(player);
 
