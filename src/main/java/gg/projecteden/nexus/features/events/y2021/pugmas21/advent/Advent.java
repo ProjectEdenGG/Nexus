@@ -163,9 +163,8 @@ public class Advent implements Listener {
 		if (block.getType() != Material.BARRIER)
 			return;
 
-		if (Pugmas21.TODAY.isAfter(Pugmas21.END)) {
+		if (Pugmas21.isPastPugmas())
 			return;
-		}
 
 		final Advent21Config adventConfig = new Advent21ConfigService().get0();
 		final AdventPresent present = adventConfig.get(block.getLocation());
