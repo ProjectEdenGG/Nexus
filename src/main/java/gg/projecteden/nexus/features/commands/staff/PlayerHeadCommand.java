@@ -45,14 +45,15 @@ public class PlayerHeadCommand extends CustomCommand {
 		final Block block = getTargetBlock();
 
 		String id = null;
-		if (!isNullOrAir(tool)) {
+		if (!isNullOrAir(tool))
 			id = Nexus.getHeadAPI().getItemID(tool);
-		} else if (!BlockUtils.isNullOrAir(block)) {
+		else if (!BlockUtils.isNullOrAir(block))
 			id = Nexus.getHeadAPI().getBlockID(block);
-		} else
+		else
 			error("You must be holding or looking at a head");
 
-		send(json(PREFIX + "Head ID: &e" + id).copy(id).hover("&eClick to copy"));
+		ItemStack item = Nexus.getHeadAPI().getItemHead(id);
+		send(json(PREFIX + item.getItemMeta().getDisplayName() + " &3head ID: &e" + id).copy(id).hover("&eClick to copy"));
 	}
 
 }

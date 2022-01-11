@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.socialmedia.commands;
 
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.BookBuilder.WrittenBookMenu;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
@@ -17,9 +18,21 @@ import gg.projecteden.nexus.models.socialmedia.SocialMediaUser.Connection;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUserService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.Utils.ActionGroup;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 
-public class SocialMediaCommand extends CustomCommand {
+import static gg.projecteden.nexus.utils.BlockUtils.isNullOrAir;
+
+@NoArgsConstructor
+public class SocialMediaCommand extends CustomCommand implements Listener {
 	private final SocialMediaUserService service = new SocialMediaUserService();
 
 	public SocialMediaCommand(@NonNull CommandEvent event) {
@@ -104,6 +117,26 @@ public class SocialMediaCommand extends CustomCommand {
 					(isSelf(player) ? "your" : player.getNickname() + "'s") + " social media accounts as &c18+ only");
 			})
 			.open(player());
+	}
+
+	@EventHandler
+	public void on(PlayerInteractEvent event) {
+		final Player player = event.getPlayer();
+		if (!ActionGroup.CLICK_BLOCK.applies(event))
+			return;
+
+		if (event.getHand() != EquipmentSlot.HAND)
+			return;
+
+		final Block block = event.getClickedBlock();
+		if (isNullOrAir(block) || block.getType() != Material.PLAYER_HEAD)
+			return;
+
+		EdenSocialMediaSite site = EdenSocialMediaSite.ofHeadId(Nexus.getHeadAPI().getBlockID(block));
+		if (site == null)
+			return;
+
+		PlayerUtils.send(player, new JsonBuilder("&e" + site.getUrl()).url(site.getUrl()));
 	}
 
 }

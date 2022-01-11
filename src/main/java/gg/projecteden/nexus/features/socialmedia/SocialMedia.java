@@ -10,7 +10,6 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.Setter;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
@@ -96,38 +95,47 @@ public class SocialMedia implements Listener {
 
 	}
 
+	@Getter
 	public enum EdenSocialMediaSite {
 		WEBSITE("https://" + Nexus.DOMAIN),
-		DISCORD(null) {
+		DISCORD(null, "29829") {
 			@Override
 			@NotNull
 			public String getUrl() {
 				return Discord.getInvite();
 			}
 		},
-		YOUTUBE("https://youtube." + Nexus.DOMAIN),
-		TWITTER("https://twitter.com/ProjectEdenGG"),
-		INSTAGRAM("https://instagram.com/ProjectEdenGG"),
+		YOUTUBE("https://youtube." + Nexus.DOMAIN, "25156"),
+		TWITTER("https://twitter.com/ProjectEdenGG", "20490"),
+		INSTAGRAM("https://instagram.com/ProjectEdenGG", "3943"),
+		TIKTOK("https://tiktok.com/@ProjectEdenGG", "31380"),
 		REDDIT("https://reddit.com/u/ProjectEdenGG"),
-		STEAM("https://steamcommunity.com/groups/ProjectEdenGG"),
+		STEAM("https://steamcommunity.com/groups/ProjectEdenGG", "12247"),
 		QUEUP("https://queup.net/join/projectedengg"),
 		;
 
-		@Getter
 		private String name = "&3" + camelCase(name());
 		private final String url;
+		private final String headId;
 
 		EdenSocialMediaSite(String url) {
+			this(url, null);
+		}
+
+		EdenSocialMediaSite(String url, String headId) {
 			try {
 				this.name = SocialMediaSite.valueOf(name()).getLabel();
 			} catch (IllegalArgumentException ignore) {}
 
 			this.url = url;
+			this.headId = headId;
 		}
 
-		@NonNull
-		public String getUrl() {
-			return url;
+		public static EdenSocialMediaSite ofHeadId(String id) {
+			for (EdenSocialMediaSite site : EdenSocialMediaSite.values())
+				if (id.equals(site.getHeadId()))
+					return site;
+			return null;
 		}
 	}
 
