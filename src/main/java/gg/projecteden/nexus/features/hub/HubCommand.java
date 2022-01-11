@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.hub;
 
 import gg.projecteden.annotations.Async;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.features.warps.commands._WarpCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -16,6 +16,7 @@ import gg.projecteden.nexus.models.hub.HubParkourCourseService;
 import gg.projecteden.nexus.models.hub.HubParkourUser.CourseData;
 import gg.projecteden.nexus.models.hub.HubParkourUserService;
 import gg.projecteden.nexus.models.warps.WarpType;
+import gg.projecteden.nexus.models.warps.Warps.Warp;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import gg.projecteden.utils.TimeUtils.Timespan.FormatType;
@@ -27,12 +28,17 @@ import java.util.UUID;
 import java.util.function.BiFunction;
 
 @Redirect(from = {"/tphub", "/lobby"}, to = "/hub")
-public class HubCommand extends CustomCommand {
+public class HubCommand extends _WarpCommand {
 	final HubParkourCourseService courseService = new HubParkourCourseService();
 	final HubParkourUserService userService = new HubParkourUserService();
 
 	public HubCommand(@NonNull CommandEvent event) {
 		super(event);
+	}
+
+	@Override
+	public WarpType getWarpType() {
+		return WarpType.HUB;
 	}
 
 	@Path
@@ -41,6 +47,12 @@ public class HubCommand extends CustomCommand {
 			WarpType.STAFF.get("hub").teleportAsync(player());
 		else
 			WarpType.NORMAL.get("hub").teleportAsync(player());
+	}
+
+	@Override
+	@Path("warps [filter]")
+	public void list(@Arg(tabCompleter = Warp.class) String filter) {
+		super.list(filter);
 	}
 
 	@Path("parkour create <course>")

@@ -5,9 +5,6 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 
-import java.time.LocalDate;
-import java.time.Month;
-
 public class GriffinWelcCommand extends CustomCommand {
 
 	public GriffinWelcCommand(CommandEvent event) {
@@ -22,10 +19,6 @@ public class GriffinWelcCommand extends CustomCommand {
 		send(json("&3[+] &eFAQ").command("/faq"));
 		send(json("&3[+] &eRules").command("/rules"));
 		send(json("&3[+] &eWiki").url(WikiType.SERVER.getUrl()));
-		if (LocalDate.now().getMonth() == Month.OCTOBER)
-			runCommandAsConsole("curiosity pumpkin_pie " + name());
-		else
-			runCommandAsConsole("curiosity cookies " + name());
 	}
 
 }
