@@ -6,8 +6,8 @@ import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.models.ambience.AmbienceConfig.Ambience.AmbienceType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import lombok.AllArgsConstructor;
@@ -32,7 +32,7 @@ import java.util.Set;
 
 import static gg.projecteden.nexus.features.recipes.CustomRecipes.choiceOf;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static java.util.stream.Collectors.toSet;
 
 public abstract class Windchimes extends FunctionalRecipe {
@@ -94,7 +94,7 @@ public abstract class Windchimes extends FunctionalRecipe {
 	}
 
 	public static boolean isWindchime(ItemStack item) {
-		if (ItemUtils.isNullOrAir(item))
+		if (Nullables.isNullOrAir(item))
 			return false;
 
 		if (!item.getType().equals(Material.AMETHYST_SHARD))
@@ -124,7 +124,7 @@ public abstract class Windchimes extends FunctionalRecipe {
 				return;
 
 			ItemFrame itemFrame = PlayerUtils.getTargetItemFrame(player, 4, Map.of(BlockFace.UP, 1));
-			if (itemFrame == null || ItemUtils.isNullOrAir(itemFrame.getItem()))
+			if (itemFrame == null || Nullables.isNullOrAir(itemFrame.getItem()))
 				return;
 			if (!isWindchime(itemFrame.getItem()))
 				return;

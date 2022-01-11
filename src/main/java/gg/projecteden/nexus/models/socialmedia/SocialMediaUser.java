@@ -18,8 +18,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static gg.projecteden.utils.StringUtils.camelCase;
-import static gg.projecteden.utils.StringUtils.getDiscordPrefix;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.StringUtils.getDiscordPrefix;
 
 @Data
 @Entity(value = "social_media_user", noClassnameStored = true)

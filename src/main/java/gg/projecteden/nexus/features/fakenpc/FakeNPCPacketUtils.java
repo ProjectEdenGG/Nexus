@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.fakenpc;
 import gg.projecteden.nexus.features.fakenpc.FakeNPC.Hologram;
 import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.Utils;
 import lombok.NonNull;
 import me.lexikiq.HasPlayer;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityHeadRotation;
@@ -20,6 +19,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static gg.projecteden.nexus.utils.PacketUtils.sendPacket;
+import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 public class FakeNPCPacketUtils {
 
@@ -55,10 +55,10 @@ public class FakeNPCPacketUtils {
 
 	public static void updateHologram(@NonNull HasPlayer player, FakeNPC fakeNPC) {
 		Hologram hologram = fakeNPC.getHologram();
-		if (Utils.isNullOrEmpty(hologram.getLines()))
+		if (isNullOrEmpty(hologram.getLines()))
 			return;
 
-		if (!Utils.isNullOrEmpty(hologram.getArmorStandList()))
+		if (!isNullOrEmpty(hologram.getArmorStandList()))
 			despawnHologram(player, hologram);
 
 		spawnHologram(player, fakeNPC, 0.3, hologram.getLines());

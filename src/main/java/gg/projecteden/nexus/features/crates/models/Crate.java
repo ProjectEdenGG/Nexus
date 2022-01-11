@@ -13,6 +13,7 @@ import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CrateOpeningException;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
@@ -321,7 +322,7 @@ public abstract class Crate implements Listener {
 			boolean took = false;
 			ItemStack key = getCrateType().getKey();
 			for (ItemStack item : player.getInventory().getContents()) {
-				if (ItemUtils.isNullOrAir(item)) continue;
+				if (Nullables.isNullOrAir(item)) continue;
 				if (ItemUtils.isFuzzyMatch(key, item)) {
 					item.setAmount(item.getAmount() - 1);
 					took = true;

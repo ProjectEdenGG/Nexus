@@ -35,8 +35,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
 import static gg.projecteden.nexus.features.justice.Justice.PREFIX;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static java.util.stream.Collectors.toList;
 

@@ -21,7 +21,6 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Timer;
 import gg.projecteden.utils.DiscordId.TextChannel;
-import gg.projecteden.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -43,6 +42,7 @@ import java.util.function.Function;
 
 import static gg.projecteden.nexus.utils.AdventureUtils.asLegacyText;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
+import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 public class Chat extends Feature {
 
@@ -197,7 +197,7 @@ public class Chat extends Feature {
 			this.messageFunction = messageFunction;
 			this.muteMenuItem = muteMenuItem == null ? this.channel.getMuteMenuItem() : muteMenuItem;
 			this.messageType = messageType == null ? MessageType.SYSTEM : messageType;
-			this.targets = Utils.isNullOrEmpty(targets) ? List.of(Target.INGAME, Target.DISCORD) : targets;
+			this.targets = isNullOrEmpty(targets) ? List.of(Target.INGAME, Target.DISCORD) : targets;
 
 			for (Target target : this.targets)
 				target.execute(this);

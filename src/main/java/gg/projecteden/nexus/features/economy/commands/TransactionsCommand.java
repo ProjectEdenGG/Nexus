@@ -44,6 +44,8 @@ import static gg.projecteden.nexus.models.banker.Transaction.TransactionCause.sh
 import static gg.projecteden.nexus.models.banker.Transaction.combine;
 import static gg.projecteden.nexus.utils.StringUtils.prettyMoney;
 import static gg.projecteden.utils.TimeUtils.shortishDateTimeFormat;
+import static gg.projecteden.utils.UUIDUtils.isUUID0;
+import static gg.projecteden.utils.UUIDUtils.isV4Uuid;
 
 @NoArgsConstructor
 @Aliases({"transaction", "txn", "txns"})
@@ -175,9 +177,9 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 			};
 		}
 
-		if (StringUtils.isV4Uuid(uuid))
+		if (isV4Uuid(uuid))
 			return Nickname.of(uuid);
-		else if (StringUtils.isUUID0(uuid))
+		else if (isUUID0(uuid))
 			return "Market";
 		else
 			return "Unknown";

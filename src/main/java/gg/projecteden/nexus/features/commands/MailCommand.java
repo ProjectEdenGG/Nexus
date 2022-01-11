@@ -23,7 +23,6 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Data;
@@ -42,6 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
+import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 @NoArgsConstructor
 @Aliases("delivery")
@@ -186,7 +186,7 @@ public class MailCommand extends CustomCommand implements Listener {
 
 		@Override
 		public void open(Player player, int page) {
-			if (Utils.isNullOrEmpty(mailer.getUnreadMail(worldGroup)))
+			if (isNullOrEmpty(mailer.getUnreadMail(worldGroup)))
 				player.sendMessage(JsonBuilder.fromError("Mail", "There is no mail in your " + StringUtils.camelCase(worldGroup) + " mailbox"));
 			else
 				inventory.open(mailer.getOnlinePlayer(), page);
@@ -251,7 +251,7 @@ public class MailCommand extends CustomCommand implements Listener {
 		Mailer mailer = service.get(player);
 
 		List<Mail> mails = new ArrayList<>(mailer.getMail(worldGroup));
-		if (Utils.isNullOrEmpty(mails))
+		if (isNullOrEmpty(mails))
 			return;
 
 		if (!new CooldownService().check(player, "youhavemail", TickTime.MINUTE.x(5)))

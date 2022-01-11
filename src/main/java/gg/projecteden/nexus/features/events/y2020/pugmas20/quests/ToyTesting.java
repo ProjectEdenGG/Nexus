@@ -30,7 +30,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
 import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.location;
-import static gg.projecteden.nexus.utils.BlockUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 // TODO PUGMAS: teleport back to pugmas

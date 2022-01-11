@@ -29,7 +29,6 @@ import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
@@ -66,6 +65,7 @@ import java.util.function.BiFunction;
 import java.util.regex.Pattern;
 
 import static gg.projecteden.nexus.features.discord.Discord.discordize;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static org.apache.commons.lang.StringUtils.countMatches;
 
 @NoArgsConstructor
@@ -185,7 +185,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 	@Path("messages <key> [page]")
 	void list(CustomDeathMessage config, @Arg("1") int page) {
 		final List<String> customMessages = config.getCustom();
-		if (Utils.isNullOrEmpty(customMessages))
+		if (isNullOrEmpty(customMessages))
 			error("No custom messages for key &e" + config.getKey());
 
 		send(PREFIX + "Custom messages for key &e" + config.getKey());

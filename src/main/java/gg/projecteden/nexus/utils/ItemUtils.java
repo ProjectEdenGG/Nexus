@@ -40,7 +40,7 @@ public class ItemUtils {
 
 	@Contract("_, null -> false; null, _ -> false")
 	public static boolean isTypeAndNameEqual(ItemStack itemStack1, ItemStack itemStack2) {
-		if (isNullOrAir(itemStack1) || isNullOrAir(itemStack2)) return false;
+		if (Nullables.isNullOrAir(itemStack1) || Nullables.isNullOrAir(itemStack2)) return false;
 		if (itemStack1.getType() != itemStack2.getType()) return false;
 		Function<ItemStack, String> name = item -> stripColor(item.getItemMeta().getDisplayName());
 		return name.apply(itemStack1).equals(name.apply(itemStack2));
@@ -79,7 +79,7 @@ public class ItemUtils {
 	}
 
 	public static @Nullable ItemStack clone(@Nullable ItemStack itemStack) {
-		if (isNullOrAir(itemStack))
+		if (Nullables.isNullOrAir(itemStack))
 			return null;
 
 		return itemStack.clone();
@@ -91,13 +91,13 @@ public class ItemUtils {
 
 	public static void combine(List<ItemStack> itemStacks, List<ItemStack> newItemStacks) {
 		for (ItemStack newItemStack : newItemStacks) {
-			if (isNullOrAir(newItemStack))
+			if (Nullables.isNullOrAir(newItemStack))
 				continue;
 
 			final Iterator<ItemStack> iterator = itemStacks.iterator();
 			while (iterator.hasNext()) {
 				final ItemStack next = iterator.next();
-				if (isNullOrAir(next))
+				if (Nullables.isNullOrAir(next))
 					continue;
 				if (next.getAmount() >= next.getType().getMaxStackSize())
 					continue;
@@ -118,13 +118,13 @@ public class ItemUtils {
 	}
 
 	public static List<ItemStack> getShulkerContents(ItemStack itemStack) {
-		return getRawShulkerContents(itemStack).stream().filter(content -> !ItemUtils.isNullOrAir(content)).collect(Collectors.toList());
+		return getRawShulkerContents(itemStack).stream().filter(content -> !Nullables.isNullOrAir(content)).collect(Collectors.toList());
 	}
 
 	public static List<ItemStack> getRawShulkerContents(ItemStack itemStack) {
 		List<ItemStack> contents = new ArrayList<>();
 
-		if (ItemUtils.isNullOrAir(itemStack))
+		if (Nullables.isNullOrAir(itemStack))
 			return contents;
 
 		if (!MaterialTag.SHULKER_BOXES.isTagged(itemStack.getType()))
@@ -153,16 +153,16 @@ public class ItemUtils {
 		Player _player = player.getPlayer();
 		ItemStack mainHand = _player.getInventory().getItemInMainHand();
 		ItemStack offHand = _player.getInventory().getItemInOffHand();
-		if (!isNullOrAir(mainHand) && (material == null || mainHand.getType() == material))
+		if (!Nullables.isNullOrAir(mainHand) && (material == null || mainHand.getType() == material))
 			return mainHand;
-		else if (!isNullOrAir(offHand) && (material == null || offHand.getType() == material))
+		else if (!Nullables.isNullOrAir(offHand) && (material == null || offHand.getType() == material))
 			return offHand;
 		return null;
 	}
 
 	public static ItemStack getToolRequired(HasPlayer player) {
 		ItemStack item = getTool(player);
-		if (isNullOrAir(item))
+		if (Nullables.isNullOrAir(item))
 			throw new InvalidInputException("You are not holding anything");
 		return item;
 	}
@@ -175,9 +175,9 @@ public class ItemUtils {
 		Player _player = player.getPlayer();
 		ItemStack mainHand = _player.getInventory().getItemInMainHand();
 		ItemStack offHand = _player.getInventory().getItemInOffHand();
-		if (!isNullOrAir(mainHand) && (material == null || mainHand.getType() == material))
+		if (!Nullables.isNullOrAir(mainHand) && (material == null || mainHand.getType() == material))
 			return EquipmentSlot.HAND;
-		else if (!isNullOrAir(offHand) && (material == null || offHand.getType() == material))
+		else if (!Nullables.isNullOrAir(offHand) && (material == null || offHand.getType() == material))
 			return EquipmentSlot.OFF_HAND;
 		return null;
 	}
@@ -189,51 +189,9 @@ public class ItemUtils {
 		return hand;
 	}
 
-	/**
-	 * Tests if an item is not null or {@link MaterialTag#ALL_AIR air}
-	 * @param itemStack item
-	 * @return if item is not null or air
-	 */
-	// useful for streams
-	@Contract("null -> false; !null -> _")
-	public static boolean isNotNullOrAir(ItemStack itemStack) {
-		return !isNullOrAir(itemStack);
-	}
-
-	/**
-	 * Tests if an item is not null or {@link MaterialTag#ALL_AIR air}
-	 * @param material item
-	 * @return if item is not null or air
-	 */
-	// useful for streams
-	@Contract("null -> false; !null -> _")
-	public static boolean isNotNullOrAir(Material material) {
-		return !isNullOrAir(material);
-	}
-
-	/**
-	 * Tests if an item is null or {@link MaterialTag#ALL_AIR air}
-	 * @param itemStack item
-	 * @return if item is null or air
-	 */
-	@Contract("null -> true; !null -> _")
-	public static boolean isNullOrAir(ItemStack itemStack) {
-		return itemStack == null || itemStack.getType().isEmpty();
-	}
-
-	/**
-	 * Tests if an item is null or {@link MaterialTag#ALL_AIR air}
-	 * @param material item
-	 * @return if item is null or air
-	 */
-	@Contract("null -> true; !null -> _")
-	public static boolean isNullOrAir(Material material) {
-		return material == null || material.isEmpty();
-	}
-
 	public static boolean isInventoryEmpty(Inventory inventory) {
 		for (ItemStack itemStack : inventory.getContents())
-			if (!isNullOrAir(itemStack))
+			if (!Nullables.isNullOrAir(itemStack))
 				return false;
 		return true;
 	}
@@ -275,7 +233,7 @@ public class ItemUtils {
 	}
 
 	public static boolean isSimilar(ItemStack item1, ItemStack item2) {
-		if (isNullOrAir(item1) || isNullOrAir(item2))
+		if (Nullables.isNullOrAir(item1) || Nullables.isNullOrAir(item2))
 			return false;
 
 		if (item1.getType() != item2.getType())
@@ -370,7 +328,7 @@ public class ItemUtils {
 	}
 
 	public static boolean isSameHead(ItemStack itemStack1, ItemStack itemStack2) {
-		if (isNullOrAir(itemStack1) || isNullOrAir(itemStack2)) return false;
+		if (Nullables.isNullOrAir(itemStack1) || Nullables.isNullOrAir(itemStack2)) return false;
 		if (itemStack1.getType() != Material.PLAYER_HEAD || itemStack2.getType() != Material.PLAYER_HEAD) return false;
 		return Nexus.getHeadAPI().getItemID(itemStack1).equals(Nexus.getHeadAPI().getItemID(itemStack2));
 	}

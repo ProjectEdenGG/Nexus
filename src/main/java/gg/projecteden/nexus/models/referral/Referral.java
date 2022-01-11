@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.UUID;
 
-import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Data
 @Entity(value = "referral", noClassnameStored = true)

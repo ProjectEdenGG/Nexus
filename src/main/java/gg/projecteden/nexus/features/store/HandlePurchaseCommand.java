@@ -13,7 +13,6 @@ import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.store.Contributor;
 import gg.projecteden.nexus.models.store.Contributor.Purchase;
 import gg.projecteden.nexus.models.store.ContributorService;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.utils.DiscordId.Role;
 import gg.projecteden.utils.DiscordId.TextChannel;
 import lombok.NonNull;
@@ -22,7 +21,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
-import static gg.projecteden.nexus.utils.StringUtils.uuidFormat;
+import static gg.projecteden.utils.UUIDUtils.isV4Uuid;
+import static gg.projecteden.utils.UUIDUtils.uuidFormat;
 
 public class HandlePurchaseCommand extends CustomCommand {
 	private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm");
@@ -81,7 +81,7 @@ public class HandlePurchaseCommand extends CustomCommand {
 						Koda.say("Thank you for your purchase, " + purchase.getNickname() + "! " +
 								"Enjoy your " + purchase.getPackageName() + " perk!");
 
-				if (StringUtils.isV4Uuid(purchase.getPurchaserUuid())) {
+				if (isV4Uuid(purchase.getPurchaserUuid())) {
 					new BadgeUserService().edit(purchase.getPurchaserUuid(), badgeUser -> badgeUser.give(Badge.SUPPORTER));
 
 					DiscordUser user = new DiscordUserService().get(purchase.getPurchaserUuid());

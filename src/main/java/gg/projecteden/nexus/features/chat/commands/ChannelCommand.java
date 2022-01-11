@@ -18,6 +18,8 @@ import lombok.NonNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
+
 @Aliases({"ch", "chat"})
 @Redirect(from = "/qm", to = "/ch qm")
 public class ChannelCommand extends CustomCommand {

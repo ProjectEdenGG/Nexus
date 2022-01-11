@@ -31,11 +31,11 @@ import java.math.RoundingMode;
 import java.util.List;
 
 import static gg.projecteden.nexus.features.events.Events.STORE_PREFIX;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.PlayerUtils.runCommand;
 import static gg.projecteden.nexus.utils.PlayerUtils.runCommandAsOp;
-import static gg.projecteden.utils.StringUtils.camelCase;
-import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
-import static gg.projecteden.utils.StringUtils.prettyMoney;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.StringUtils.prettyMoney;
 
 @Getter
 @AllArgsConstructor

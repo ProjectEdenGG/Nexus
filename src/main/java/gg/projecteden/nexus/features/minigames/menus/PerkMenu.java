@@ -17,7 +17,7 @@ import org.bukkit.entity.Player;
 
 import java.text.DecimalFormat;
 
-import static gg.projecteden.utils.StringUtils.plural;
+import static gg.projecteden.nexus.utils.StringUtils.plural;
 
 public class PerkMenu extends MenuUtils implements InventoryProvider {
 	private static final DecimalFormat FORMATTER = new DecimalFormat("#,###");

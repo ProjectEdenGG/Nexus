@@ -26,8 +26,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 import java.util.function.Function;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
 import static gg.projecteden.utils.TimeUtils.shortDateTimeFormat;
 
 @Getter

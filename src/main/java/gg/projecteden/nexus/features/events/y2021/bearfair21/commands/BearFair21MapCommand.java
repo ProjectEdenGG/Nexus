@@ -36,7 +36,7 @@ import org.bukkit.map.MapView;
 
 import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.isNotAtBearFair;
 import static gg.projecteden.nexus.features.events.y2021.bearfair21.islands.BearFair21Renderer.getRenderer;
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Aliases("bf21map")
 @NoArgsConstructor

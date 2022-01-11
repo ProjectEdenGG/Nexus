@@ -26,8 +26,8 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
 
-import static gg.projecteden.nexus.utils.BlockUtils.isNullOrAir;
-import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 public class HubParkour implements Listener {
 

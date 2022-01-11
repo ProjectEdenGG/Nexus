@@ -25,6 +25,8 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
+
 @Aliases("trophies")
 public class TrophyCommand extends CustomCommand {
 	private final TrophyHolderService service = new TrophyHolderService();
@@ -116,7 +118,7 @@ public class TrophyCommand extends CustomCommand {
 
 			List<ClickableItem> items = new ArrayList<>();
 
-			if (StringUtils.isNullOrEmpty(event)) {
+			if (isNullOrEmpty(event)) {
 				for (String event : Trophy.getEvents()) {
 					if (Trophy.getEarnedTrophies(holder, event).isEmpty())
 						continue;

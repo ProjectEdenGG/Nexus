@@ -11,7 +11,7 @@ import gg.projecteden.nexus.features.events.y2020.bearfair20.fairgrounds.Reflect
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Timer;
@@ -56,7 +56,7 @@ public class Fairgrounds implements Listener {
 		ItemStack[] items = player.getInventory().getContents();
 		int count = 0;
 		for (ItemStack item : items) {
-			if (item == null || ItemUtils.isNullOrAir(item.getType())) continue;
+			if (item == null || Nullables.isNullOrAir(item.getType())) continue;
 			count++;
 		}
 		return count;

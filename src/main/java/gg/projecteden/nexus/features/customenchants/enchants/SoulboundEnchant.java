@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 public class SoulboundEnchant extends CustomEnchant implements Listener {
 	public static final String NBT_KEY = "soulbound";

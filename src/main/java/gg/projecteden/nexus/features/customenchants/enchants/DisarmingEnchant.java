@@ -14,9 +14,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
 
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.RandomUtils.chanceOf;
 import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
-import static gg.projecteden.utils.RandomUtils.chanceOf;
 
 public class DisarmingEnchant extends CustomEnchant implements Listener {
 

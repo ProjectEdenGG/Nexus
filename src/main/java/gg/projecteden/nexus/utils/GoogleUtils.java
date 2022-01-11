@@ -45,7 +45,7 @@ import java.util.List;
 import java.util.Set;
 
 import static gg.projecteden.nexus.utils.GoogleUtils.SheetsUtils.ValueInputOption.USER_ENTERED;
-import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 /**
  * https://developers.google.com/sheets/api/quickstart/java
@@ -183,7 +183,7 @@ public class GoogleUtils {
 
 		@NotNull
 		public static Object valueOf(Collection<String> strings) {
-			return Utils.isNullOrEmpty(strings) ? "" : valueOf(String.join("\n", strings));
+			return isNullOrEmpty(strings) ? "" : valueOf(String.join("\n", strings));
 		}
 
 		@NotNull

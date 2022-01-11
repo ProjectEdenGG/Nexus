@@ -77,10 +77,10 @@ import java.util.UUID;
 
 import static gg.projecteden.nexus.features.store.BuycraftUtils.ADD_TO_CART_URL;
 import static gg.projecteden.nexus.features.store.BuycraftUtils.CATEGORY_URL;
+import static gg.projecteden.nexus.utils.RandomUtils.randomElement;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.utils.EnumUtils.random;
-import static gg.projecteden.utils.RandomUtils.randomElement;
-import static gg.projecteden.utils.StringUtils.getUUID0;
+import static gg.projecteden.utils.UUIDUtils.UUID0;
 
 @Getter
 @NoArgsConstructor
@@ -615,7 +615,7 @@ public enum GalleryPackage {
 	}
 
 	protected boolean cooldown(int ticks) {
-		return new CooldownService().check(getUUID0(), getRegionId(), ticks);
+		return new CooldownService().check(UUID0, getRegionId(), ticks);
 	}
 
 	public NPC npc() {

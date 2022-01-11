@@ -74,9 +74,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static gg.projecteden.nexus.utils.ItemUtils.fixMaxStackSize;
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.Utils.getMin;
-import static gg.projecteden.utils.StringUtils.isUuid;
+import static gg.projecteden.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.utils.UUIDUtils.isUuid;
 import static java.util.stream.Collectors.toList;
 
 @UtilityClass
@@ -839,7 +840,7 @@ public class PlayerUtils {
 
 	public static void giveItems(HasOfflinePlayer player, Collection<ItemStack> items, String nbt) {
 		List<ItemStack> finalItems = new ArrayList<>(items);
-		finalItems.removeIf(ItemUtils::isNullOrAir);
+		finalItems.removeIf(Nullables::isNullOrAir);
 		finalItems.removeIf(itemStack -> itemStack.getAmount() == 0);
 		if (!Strings.isNullOrEmpty(nbt)) {
 			finalItems.clear();
@@ -889,7 +890,7 @@ public class PlayerUtils {
 	public static void giveItemsAndMailExcess(HasOfflinePlayer player, Collection<ItemStack> items, String message, WorldGroup worldGroup) {
 		OfflinePlayer offlinePlayer = player.getOfflinePlayer();
 		List<ItemStack> finalItems = new ArrayList<>(items);
-		finalItems.removeIf(ItemUtils::isNullOrAir);
+		finalItems.removeIf(Nullables::isNullOrAir);
 
 		List<ItemStack> excess;
 		boolean alwaysMail = offlinePlayer.getPlayer() == null || Nerd.of(offlinePlayer).getWorldGroup() != worldGroup;
@@ -897,7 +898,7 @@ public class PlayerUtils {
 			excess = giveItemsAndGetExcess(offlinePlayer.getPlayer(), finalItems);
 		else
 			excess = Utils.clone(items);
-		if (Utils.isNullOrEmpty(excess)) return;
+		if (isNullOrEmpty(excess)) return;
 
 		mailItems(offlinePlayer, fixMaxStackSize(excess), message, worldGroup);
 		String send = alwaysMail ? "Items have been given to you as &c/mail" : "Your inventory was full. Excess items were given to you as &c/mail";

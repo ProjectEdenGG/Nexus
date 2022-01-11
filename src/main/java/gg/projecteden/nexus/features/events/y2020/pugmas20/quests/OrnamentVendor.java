@@ -10,10 +10,9 @@ import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20User;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20UserService;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.Pugmas20TreeRegenJob;
-import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldEditUtils.Paster;
@@ -53,11 +52,12 @@ import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.isAtP
 import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.questItem;
 import static gg.projecteden.nexus.utils.BlockUtils.createDistanceSortedQueue;
 import static gg.projecteden.nexus.utils.ItemUtils.isFuzzyMatch;
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 import static gg.projecteden.nexus.utils.Utils.getMin;
+import static gg.projecteden.utils.UUIDUtils.UUID0;
 
 @NoArgsConstructor
 public class OrnamentVendor implements Listener {
@@ -91,7 +91,7 @@ public class OrnamentVendor implements Listener {
 
 		private void loadHead() {
 			ItemStack itemStack = AdventMenu.origin.getRelative(relative, 0, 0).getDrops().stream().findFirst().orElse(null);
-			if (ItemUtils.isNullOrAir(itemStack))
+			if (Nullables.isNullOrAir(itemStack))
 				this.skull = null;
 			else
 				this.skull = Pugmas20.item(itemStack).name(camelCase(name() + " Ornament")).build();
@@ -322,7 +322,7 @@ public class OrnamentVendor implements Listener {
 		}
 
 		public void feller(Player player, int id) {
-			if (!new CooldownService().check(StringUtils.getUUID0(), getRegion(id).getId(), TickTime.SECOND.x(3)))
+			if (!new CooldownService().check(UUID0, getRegion(id).getId(), TickTime.SECOND.x(3)))
 				return;
 
 			Pugmas20.setTreeAnimating(true);

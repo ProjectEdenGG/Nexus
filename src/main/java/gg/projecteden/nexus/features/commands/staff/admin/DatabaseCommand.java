@@ -36,7 +36,9 @@ import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.utils.StringUtils.isUuid;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.utils.UUIDUtils.UUID0;
+import static gg.projecteden.utils.UUIDUtils.isUuid;
 
 @Aliases("db")
 @Permission(Group.ADMIN)
@@ -252,7 +254,7 @@ public class DatabaseCommand extends CustomCommand {
 			return null;
 
 		if ("0".equals(value))
-			return StringUtils.getUUID0();
+			return UUID0;
 
 		if ("app".equalsIgnoreCase(value))
 			return EdenAPI.get().getAppUuid();

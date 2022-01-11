@@ -8,12 +8,11 @@ import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20User;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20UserService;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.BlockRegenJob;
-import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.LocationUtils.CardinalDirection;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.MerchantBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -50,7 +49,7 @@ import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.addTo
 import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.isAtPugmas;
 import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.questItem;
 import static gg.projecteden.nexus.utils.ItemUtils.isFuzzyMatch;
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
@@ -77,7 +76,7 @@ public class TheMines implements Listener {
 		if (!Pugmas20.isAtPugmas(player)) return;
 
 		Block block = event.getClickedBlock();
-		if (BlockUtils.isNullOrAir(block)) return;
+		if (Nullables.isNullOrAir(block)) return;
 
 		Material type = block.getType();
 		String crateType = null;
@@ -131,7 +130,7 @@ public class TheMines implements Listener {
 		int profit = 0;
 		OreType key;
 		for (ItemStack item : event.getInventory().getContents()) {
-			if (ItemUtils.isNullOrAir(item)) {
+			if (Nullables.isNullOrAir(item)) {
 				continue;
 			}
 
@@ -142,8 +141,8 @@ public class TheMines implements Listener {
 				List<ItemStack> ingredients = tradeBuilder.getIngredients();
 				if (ingredients.size() != 1) continue;
 				ItemStack ingredient = ingredients.get(0);
-				if (ItemUtils.isNullOrAir(ingredient)) continue;
-				if (ItemUtils.isNullOrAir(result)) continue;
+				if (Nullables.isNullOrAir(ingredient)) continue;
+				if (Nullables.isNullOrAir(result)) continue;
 
 				key = OreType.ofIngot(ingredient.getType());
 				if (key == null) continue;

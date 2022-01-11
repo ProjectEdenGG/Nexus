@@ -6,8 +6,8 @@ import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -46,7 +46,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static gg.projecteden.nexus.utils.BlockUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.PlayerUtils.getAdvancement;
 import static gg.projecteden.nexus.utils.PlayerUtils.isVanished;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
@@ -86,7 +86,7 @@ public class Restrictions implements Listener {
 
 	@EventHandler
 	public void onCommandMinecartInteract(PlayerInteractEvent event) {
-		if (ItemUtils.isNullOrAir(event.getItem()))
+		if (Nullables.isNullOrAir(event.getItem()))
 			return;
 
 		if (event.getItem().getType() == Material.COMMAND_BLOCK_MINECART)
@@ -133,7 +133,7 @@ public class Restrictions implements Listener {
 
 		ItemStack item = event.getCurrentItem();
 
-		if (ItemUtils.isNullOrAir(item))
+		if (Nullables.isNullOrAir(item))
 			return;
 
 		ItemMeta meta = item.getItemMeta();
@@ -212,7 +212,7 @@ public class Restrictions implements Listener {
 
 	@EventHandler
 	public void onInteractHoldingSpawnEgg(PlayerInteractEvent event) {
-		if (ItemUtils.isNullOrAir(event.getItem())) return;
+		if (Nullables.isNullOrAir(event.getItem())) return;
 		if (!MaterialTag.SPAWN_EGGS.isTagged(event.getItem().getType())) return;
 		if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
 		if (isNullOrAir(event.getClickedBlock())) return;

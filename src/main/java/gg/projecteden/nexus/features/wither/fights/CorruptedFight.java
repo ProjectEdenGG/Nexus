@@ -7,7 +7,6 @@ import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.EnumUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -33,6 +32,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 @NoArgsConstructor
 public class CorruptedFight extends WitherFight {
@@ -192,7 +193,7 @@ public class CorruptedFight extends WitherFight {
 			@Override
 			public void execute(Player player) {
 				List<ItemStack> armor = new ArrayList<>(Arrays.asList(player.getInventory().getArmorContents()));
-				if (Utils.isNullOrEmpty(armor))
+				if (isNullOrEmpty(armor))
 					return;
 
 				ItemStack item = RandomUtils.randomElement(armor);

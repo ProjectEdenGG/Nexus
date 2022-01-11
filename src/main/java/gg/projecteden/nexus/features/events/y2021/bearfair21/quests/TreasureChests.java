@@ -5,10 +5,10 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.Quests;
 import gg.projecteden.nexus.models.bearfair21.BearFair21User;
 import gg.projecteden.nexus.models.bearfair21.BearFair21UserService;
-import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -59,7 +59,7 @@ public class TreasureChests implements Listener {
 	public void onClickHead(PlayerInteractEvent event) {
 		Block block = event.getClickedBlock();
 		if (BearFair21.isNotAtBearFair(event)) return;
-		if (BlockUtils.isNullOrAir(block)) return;
+		if (Nullables.isNullOrAir(block)) return;
 		if (!MaterialTag.PLAYER_SKULLS.isTagged(block.getType())) return;
 
 		Location location = block.getLocation();

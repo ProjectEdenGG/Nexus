@@ -26,7 +26,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.utils.RandomUtils.randomElement;
+import static gg.projecteden.nexus.utils.RandomUtils.randomElement;
 
 @Data
 @Entity(value = "player_plushie_config", noClassnameStored = true)

@@ -65,7 +65,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import static gg.projecteden.nexus.features.shops.Market.RESOURCE_WORLD_PRODUCTS;
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.WorldGroup.isResourceWorld;
 
 @NoArgsConstructor

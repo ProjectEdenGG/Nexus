@@ -15,7 +15,7 @@ import java.util.List;
 
 import static gg.projecteden.nexus.features.events.Events.STORE_PREFIX;
 import static gg.projecteden.nexus.utils.PlayerUtils.send;
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @AllArgsConstructor
 public class EventStoreEmojiHatProvider extends EventStoreMenu {

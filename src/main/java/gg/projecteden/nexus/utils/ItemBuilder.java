@@ -68,7 +68,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @SuppressWarnings({"unused", "UnusedReturnValue", "ResultOfMethodCallIgnored", "CopyConstructorMissesField", "deprecation"})
@@ -438,7 +438,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	public List<@Nullable ItemStack> nonAirShulkerBoxContents() {
-		return shulkerBoxContents().stream().filter(ItemUtils::isNotNullOrAir).collect(Collectors.toList());
+		return shulkerBoxContents().stream().filter(Nullables::isNotNullOrAir).collect(Collectors.toList());
 	}
 
 	// Books

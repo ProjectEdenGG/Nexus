@@ -35,6 +35,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.LuckPermsUtils.PermissionChange;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -179,7 +180,7 @@ public class Quests implements Listener {
 			return null;
 
 		Block block = event.getClickedBlock();
-		if (BlockUtils.isNullOrAir(block))
+		if (Nullables.isNullOrAir(block))
 			return null;
 
 		Material type = block.getType();
@@ -201,11 +202,11 @@ public class Quests implements Listener {
 	public static List<ItemStack> getItemsLikeFrom(BearFair21User user, List<ItemBuilder> items) {
 		List<ItemStack> result = new ArrayList<>();
 		for (ItemBuilder item : items) {
-			if (ItemUtils.isNullOrAir(item.build()))
+			if (Nullables.isNullOrAir(item.build()))
 				continue;
 
 			ItemStack itemLike = getItemLikeFrom(user, item);
-			if (!ItemUtils.isNullOrAir(itemLike))
+			if (!Nullables.isNullOrAir(itemLike))
 				result.add(itemLike);
 		}
 
@@ -223,7 +224,7 @@ public class Quests implements Listener {
 	public static ItemStack getItemLikeFrom(BearFair21User user, ItemBuilder itemBuilder) {
 		ItemStack _item = itemBuilder.build();
 		for (ItemStack item : user.getOnlinePlayer().getInventory()) {
-			if (ItemUtils.isNullOrAir(item))
+			if (Nullables.isNullOrAir(item))
 				continue;
 
 			if (ItemUtils.isFuzzyMatch(_item, item) && item.getAmount() >= _item.getAmount())
@@ -254,7 +255,7 @@ public class Quests implements Listener {
 
 	private static void removeItemStacks(Player player, List<ItemStack> items) {
 		for (ItemStack item : items) {
-			if (ItemUtils.isNullOrAir(item))
+			if (Nullables.isNullOrAir(item))
 				continue;
 
 			player.getInventory().removeItemAnySlot(item);

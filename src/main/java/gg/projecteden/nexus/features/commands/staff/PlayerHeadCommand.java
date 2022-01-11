@@ -11,8 +11,8 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
-import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NonNull;
 import org.bukkit.Material;
@@ -20,7 +20,7 @@ import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 
 import static gg.projecteden.nexus.features.commands.staff.PlayerHeadCommand.PERMISSION;
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Aliases("skull")
 @Permission(PERMISSION)
@@ -47,7 +47,7 @@ public class PlayerHeadCommand extends CustomCommand {
 		String id = null;
 		if (!isNullOrAir(tool))
 			id = Nexus.getHeadAPI().getItemID(tool);
-		else if (!BlockUtils.isNullOrAir(block))
+		else if (!Nullables.isNullOrAir(block))
 			id = Nexus.getHeadAPI().getBlockID(block);
 		else
 			error("You must be holding or looking at a head");

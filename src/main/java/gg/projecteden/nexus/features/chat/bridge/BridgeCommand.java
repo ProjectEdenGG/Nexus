@@ -46,6 +46,8 @@ import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
+
 @Permission(Group.ADMIN)
 public class BridgeCommand extends CustomCommand {
 	private final DiscordUserService service;

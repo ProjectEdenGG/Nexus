@@ -5,7 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
@@ -40,7 +40,7 @@ public class StripMetaCommand extends CustomCommand implements Listener {
 		if (!Utils.equalsInvViewTitle(event.getView(), TITLE)) return;
 
 		for (ItemStack item : event.getInventory().getContents()) {
-			if (ItemUtils.isNullOrAir(item))
+			if (Nullables.isNullOrAir(item))
 				continue;
 
 			ItemMeta itemMeta = item.getItemMeta();

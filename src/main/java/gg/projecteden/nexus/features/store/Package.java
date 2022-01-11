@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.store;
 
-import com.google.common.base.Strings;
 import gg.projecteden.nexus.features.chat.commands.EmotesCommand;
 import gg.projecteden.nexus.features.commands.AutoTorchCommand;
 import gg.projecteden.nexus.features.commands.HatCommand;
@@ -49,7 +48,6 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
-import gg.projecteden.utils.Utils;
 import lombok.SneakyThrows;
 import net.luckperms.api.context.ImmutableContextSet;
 import org.bukkit.Bukkit;
@@ -65,8 +63,8 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static java.time.LocalDateTime.now;
 
 public enum Package {
@@ -796,13 +794,13 @@ public enum Package {
 		}
 
 		List<String> permissions = getPermissions();
-		if (!Utils.isNullOrEmpty(permissions)) {
+		if (!isNullOrEmpty(permissions)) {
 			org.bukkit.World world = getWorld();
 			return LuckPermsUtils.hasPermission(player, permissions.get(0), world == null ? ImmutableContextSet.empty() : ImmutableContextSet.of("world", world.getName()));
 		}
 
 		String permissionGroup = getPermissionGroup();
-		if (!StringUtils.isNullOrEmpty(permissionGroup))
+		if (!isNullOrEmpty(permissionGroup))
 			return LuckPermsUtils.hasGroup(player, permissionGroup);
 
 		throw new InvalidInputException("Could not determine if a player has the " + name().toLowerCase() + " package");
@@ -909,7 +907,7 @@ public enum Package {
 		PermissionChange.unset().uuid(uuid).permissions(getPermissions()).runAsync();
 
 		String permissionGroup = getPermissionGroup();
-		if (!Strings.isNullOrEmpty(permissionGroup))
+		if (!isNullOrEmpty(permissionGroup))
 			GroupChange.remove().uuid(uuid).group(permissionGroup).runAsync();
 
 		handleExpire(uuid);

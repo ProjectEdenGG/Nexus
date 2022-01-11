@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.kits;
 
-import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.SerializationUtils.YML;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,7 +25,7 @@ public class Kit implements ConfigurationSerializable {
 	public Kit(Map<String, Object> map) {
 		this.name = (String) map.getOrDefault("name", name);
 		this.items = Arrays.stream(YML.deserializeItems((Map<String, Object>) map.getOrDefault("items", items)))
-				.filter(itemStack -> !ItemUtils.isNullOrAir(itemStack)).toArray(ItemStack[]::new);
+				.filter(itemStack -> !Nullables.isNullOrAir(itemStack)).toArray(ItemStack[]::new);
 		this.delay = (int) map.getOrDefault("delay", delay);
 	}
 

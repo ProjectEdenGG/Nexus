@@ -3,10 +3,9 @@ package gg.projecteden.nexus.features.events.y2020.bearfair20.quests;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.quests.npcs.Merchants;
-import gg.projecteden.nexus.utils.BlockUtils;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.MerchantBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -47,7 +46,7 @@ public class SellCrates implements Listener {
 			return;
 
 		Block block = event.getClickedBlock();
-		if (BlockUtils.isNullOrAir(block)) return;
+		if (Nullables.isNullOrAir(block)) return;
 
 		Material type = block.getType();
 		String crateType = "null";
@@ -113,7 +112,7 @@ public class SellCrates implements Listener {
 
 		List<ItemStack> profit = new ArrayList<>();
 		for (ItemStack item : event.getInventory().getContents()) {
-			if (ItemUtils.isNullOrAir(item)) {
+			if (Nullables.isNullOrAir(item)) {
 				continue;
 			}
 
@@ -124,8 +123,8 @@ public class SellCrates implements Listener {
 				List<ItemStack> ingredients = tradeBuilder.getIngredients();
 				if (ingredients.size() != 1) continue;
 				ItemStack ingredient = ingredients.get(0);
-				if (ItemUtils.isNullOrAir(ingredient)) continue;
-				if (ItemUtils.isNullOrAir(result)) continue;
+				if (Nullables.isNullOrAir(ingredient)) continue;
+				if (Nullables.isNullOrAir(result)) continue;
 
 				if (item.getType().equals(ingredient.getType())) {
 					if (item.getAmount() >= ingredient.getAmount()) {

@@ -32,6 +32,7 @@ import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Name;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -40,6 +41,7 @@ import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.TimeUtils.Timespan;
+import gg.projecteden.utils.UUIDUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -90,7 +92,8 @@ import java.util.function.BiFunction;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import static gg.projecteden.nexus.utils.BlockUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.an;
 import static gg.projecteden.nexus.utils.StringUtils.trimFirst;
 import static gg.projecteden.utils.TimeUtils.parseDate;
@@ -180,7 +183,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	protected Sign getTargetSignRequired() {
 		Block targetBlock = getTargetBlock();
 		Material material = targetBlock.getType();
-		if (ItemUtils.isNullOrAir(material) || !MaterialTag.SIGNS.isTagged(material))
+		if (Nullables.isNullOrAir(material) || !MaterialTag.SIGNS.isTagged(material))
 			error("You must be looking at a sign");
 		return (Sign) targetBlock.getState();
 	}
@@ -420,7 +423,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	protected @NotNull UUID uuid() {
 		if (isPlayer())
 			return player().getUniqueId();
-		return StringUtils.getUUID0();
+		return UUIDUtils.UUID0;
 	}
 
 	protected String name() {
@@ -541,11 +544,6 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	protected boolean isAdmin(OfflinePlayer player) {
 		return isOfflinePlayer(player) && Rank.of(player).isAdmin();
-	}
-
-	@Contract("null -> true")
-	protected boolean isNullOrEmpty(String string) {
-		return StringUtils.isNullOrEmpty(string);
 	}
 
 	protected void runCommand(String commandNoSlash) {

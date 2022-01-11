@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.customenchants;
 import com.destroystokyo.paper.event.inventory.PrepareResultEvent;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.Utils;
 import lombok.NoArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -29,10 +28,10 @@ import java.util.Map;
 
 import static gg.projecteden.nexus.features.customenchants.CustomEnchantsRegistration.register;
 import static gg.projecteden.nexus.features.customenchants.CustomEnchantsRegistration.unregister;
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
-import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
 
 @NoArgsConstructor
 public class CustomEnchants extends Feature implements Listener {
@@ -220,7 +219,7 @@ public class CustomEnchants extends Feature implements Listener {
 		final ItemMeta meta = item.getItemMeta();
 		final List<String> lore = new ArrayList<>();
 
-		if (!Utils.isNullOrEmpty(meta.getLore()))
+		if (!isNullOrEmpty(meta.getLore()))
 			lines: for (String line : meta.getLore()) {
 				if (!isNullOrEmpty(line))
 					for (CustomEnchant enchant : CustomEnchants.getEnchants())

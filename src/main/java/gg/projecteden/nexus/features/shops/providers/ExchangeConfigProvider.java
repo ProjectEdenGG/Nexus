@@ -12,7 +12,7 @@ import gg.projecteden.nexus.models.shop.Shop.ExchangeType;
 import gg.projecteden.nexus.models.shop.Shop.Product;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
-import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Utils;
 import org.bukkit.Material;
@@ -180,7 +180,7 @@ public class ExchangeConfigProvider extends ShopProvider {
 		else {
 			Consumer<ItemClickData> action = e -> {
 				((InventoryClickEvent) e.getEvent()).setCancelled(true);
-				if (!ItemUtils.isNullOrAir(player.getItemOnCursor())) {
+				if (!Nullables.isNullOrAir(player.getItemOnCursor())) {
 					try {
 						ItemStack item = player.getItemOnCursor();
 						if (new ItemBuilder(item).isNot(ItemSetting.TRADEABLE))

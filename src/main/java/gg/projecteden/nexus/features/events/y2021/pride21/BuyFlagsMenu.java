@@ -26,7 +26,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static gg.projecteden.utils.StringUtils.plural;
+import static gg.projecteden.nexus.utils.StringUtils.plural;
 
 public class BuyFlagsMenu extends MenuUtils implements InventoryProvider {
 	private static final Pride21UserService service = new Pride21UserService();

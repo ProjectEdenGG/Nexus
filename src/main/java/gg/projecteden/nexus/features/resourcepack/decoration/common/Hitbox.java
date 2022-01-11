@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.common;
 
-import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -93,7 +93,7 @@ public class Hitbox {
 				offsetBlock = offsetBlock.getRelative(_blockFace, offsets.get(_blockFace));
 			}
 
-			if (ItemUtils.isNullOrAir(material))
+			if (Nullables.isNullOrAir(material))
 				material = Material.AIR;
 
 			offsetBlock.setType(material);

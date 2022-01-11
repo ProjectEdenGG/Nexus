@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static gg.projecteden.nexus.features.itemtags.ItemTagsUtils.updateItem;
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class ItemTagsListener implements Listener {
 

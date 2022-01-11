@@ -47,8 +47,8 @@ import java.util.UUID;
 
 import static gg.projecteden.nexus.features.discord.Discord.discordize;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
-import static gg.projecteden.utils.StringUtils.getDiscordPrefix;
-import static gg.projecteden.utils.StringUtils.prettyMoney;
+import static gg.projecteden.nexus.utils.StringUtils.getDiscordPrefix;
+import static gg.projecteden.nexus.utils.StringUtils.prettyMoney;
 
 @Data
 @Entity(value = "chat_games_config", noClassnameStored = true)

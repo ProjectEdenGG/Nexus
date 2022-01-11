@@ -5,7 +5,6 @@ import gg.projecteden.nexus.features.quests.interactable.instructions.DialogInst
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTaskStep;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.utils.Utils;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 @Data
 @RequiredArgsConstructor
@@ -94,7 +95,7 @@ public class Quester implements PlayerOwnedObject {
 	}
 
 	public void remove(List<ItemStack> items) {
-		if (!Utils.isNullOrEmpty(items))
+		if (!isNullOrEmpty(items))
 			for (ItemStack item : items)
 				PlayerUtils.removeItem(getOnlinePlayer(), item);
 	}

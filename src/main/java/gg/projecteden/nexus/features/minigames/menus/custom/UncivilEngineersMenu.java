@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static gg.projecteden.nexus.features.minigames.Minigames.menus;
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @CustomMechanicSettings(UncivilEngineers.class)
 public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider {

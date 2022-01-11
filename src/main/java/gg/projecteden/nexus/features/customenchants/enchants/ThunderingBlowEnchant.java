@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.customenchants.enchants;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.CustomEnchant;
 import gg.projecteden.nexus.models.pvp.PVPService;
-import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.RandomUtils;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Arrow;
@@ -39,7 +39,7 @@ public class ThunderingBlowEnchant extends CustomEnchant implements Listener {
 			return;
 		if (event.getCause() == DamageCause.THORNS)
 			return;
-		if (ItemUtils.isNullOrAir(player.getInventory().getItemInMainHand()))
+		if (Nullables.isNullOrAir(player.getInventory().getItemInMainHand()))
 			return;
 
 		int level = getLevel(player.getInventory().getItemInMainHand());

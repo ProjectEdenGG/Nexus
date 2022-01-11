@@ -73,7 +73,8 @@ import static com.sk89q.worldedit.extent.clipboard.io.BuiltInClipboardFormat.MCE
 import static com.sk89q.worldedit.extent.clipboard.io.BuiltInClipboardFormat.SPONGE_SCHEMATIC;
 import static gg.projecteden.nexus.utils.BlockUtils.createDistanceSortedQueue;
 import static gg.projecteden.nexus.utils.StringUtils.getFlooredCoordinateString;
-import static gg.projecteden.utils.StringUtils.left;
+import static gg.projecteden.nexus.utils.StringUtils.left;
+import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
 public class WorldEditUtils {
@@ -307,7 +308,7 @@ public class WorldEditUtils {
 			for (int y = region.getMinimumPoint().getBlockY(); y <= region.getMaximumPoint().getBlockY(); y++)
 				for (int z = region.getMinimumPoint().getBlockZ(); z <= region.getMaximumPoint().getBlockZ(); z++) {
 					Block blockAt = world.getBlockAt(x, y, z);
-					if (Utils.isNullOrEmpty(materials) || materials.contains(blockAt.getType()))
+					if (isNullOrEmpty(materials) || materials.contains(blockAt.getType()))
 						blockList.add(blockAt);
 				}
 		return blockList;

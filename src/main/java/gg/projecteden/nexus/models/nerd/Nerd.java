@@ -54,7 +54,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Data
 @Entity(value = "nerd", noClassnameStored = true)
@@ -73,7 +73,7 @@ public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwned
 	@PreLoad
 	void preLoad(DBObject dbObject) {
 		List<String> pronouns = (List<String>) dbObject.get("pronouns");
-		if (!Utils.isNullOrEmpty(pronouns)) {
+		if (!isNullOrEmpty(pronouns)) {
 			List<String> fixed = new ArrayList<>() {{
 				for (String pronoun : pronouns) {
 					final Pronoun of = Pronoun.of(pronoun);
@@ -87,7 +87,7 @@ public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwned
 		}
 
 		List<String> aliases = (List<String>) dbObject.get("aliases");
-		if (!Utils.isNullOrEmpty(aliases))
+		if (!isNullOrEmpty(aliases))
 			dbObject.put("aliases", aliases.stream().map(String::toLowerCase).toList());
 	}
 

@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.customenchants;
 
 import gg.projecteden.nexus.utils.Enchant;
-import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -42,7 +42,7 @@ public class OldCEConverter {
 	}
 
 	public static void convertItem(ItemStack item) {
-		if (ItemUtils.isNullOrAir(item))
+		if (Nullables.isNullOrAir(item))
 			return;
 		if (item.getItemMeta() == null)
 			return;

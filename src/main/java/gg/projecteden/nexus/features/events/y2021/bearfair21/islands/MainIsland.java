@@ -21,13 +21,12 @@ import gg.projecteden.nexus.models.bearfair21.BearFair21UserService;
 import gg.projecteden.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
 import gg.projecteden.nexus.models.trophy.Trophy;
 import gg.projecteden.nexus.utils.AdventureUtils;
-import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
@@ -47,6 +46,7 @@ import java.util.function.Supplier;
 
 import static gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.*;
 import static gg.projecteden.nexus.utils.ItemUtils.isSameHead;
+import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 @Region("main")
 @NPCClass(MainNPCs.class)
@@ -442,7 +442,7 @@ public class MainIsland implements BearFair21Island {
 				} else if (user.getQuestStage_BeeKeeper() == QuestStage.STEPS_DONE) {
 					ItemStack item = null;
 					for (ItemStack itemStack : user.getOnlinePlayer().getInventory().getContents()) {
-						if (ItemUtils.isNullOrAir(itemStack)) continue;
+						if (Nullables.isNullOrAir(itemStack)) continue;
 						if (!Material.PLAYER_HEAD.equals(itemStack.getType())) continue;
 
 						if (isSameHead(queenLarvae.get().build(), itemStack)) {
@@ -726,7 +726,7 @@ public class MainIsland implements BearFair21Island {
 						.toList().forEach(fishingLoot -> required.add(fishingLoot.getItemBuilder()));
 
 					List<ItemStack> items = Quests.getItemsLikeFrom(user, required);
-					if (Utils.isNullOrEmpty(items)) {
+					if (isNullOrEmpty(items)) {
 						script.add("Tell ya what, I spend most of my time up in the skies, but I'll trade you those balloons you want, if you can get me a catch from the depths.");
 					} else {
 						Quests.removeItem(user, RandomUtils.randomElement(items));
@@ -947,7 +947,7 @@ public class MainIsland implements BearFair21Island {
 					return script;
 				} else if (user.getQuestStage_Main() == QuestStage.STEP_FOUR) {
 					ItemStack item = Quests.getItemLikeFrom(user, new ItemBuilder(Material.CAKE));
-					if (!ItemUtils.isNullOrAir(item))
+					if (!Nullables.isNullOrAir(item))
 						return script;
 
 					script.add("Oh my goodness, I totally forgot! Nor do I have the necessary supplies for a cake that size.");
@@ -1082,7 +1082,7 @@ public class MainIsland implements BearFair21Island {
 			if (user.getInvitees().contains(npcId))
 				return false;
 
-			return !ItemUtils.isNullOrAir(tool) && ItemUtils.isFuzzyMatch(tool, invitation.build());
+			return !Nullables.isNullOrAir(tool) && ItemUtils.isFuzzyMatch(tool, invitation.build());
 		}
 
 		private final BearFair21NPC npc;
@@ -1114,7 +1114,7 @@ public class MainIsland implements BearFair21Island {
 		if (BearFair21.isNotAtBearFair(event)) return;
 
 		Block block = event.getClickedBlock();
-		if (BlockUtils.isNullOrAir(block)) return;
+		if (Nullables.isNullOrAir(block)) return;
 		if (!MaterialTag.PLAYER_SKULLS.isTagged(block)) return;
 
 		BearFair21User user = userService.get(event.getPlayer());

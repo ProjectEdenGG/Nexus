@@ -38,7 +38,7 @@ import static gg.projecteden.nexus.features.radio.RadioUtils.isInRangeOfRadiusRa
 import static gg.projecteden.nexus.features.radio.RadioUtils.isListening;
 import static gg.projecteden.nexus.features.radio.RadioUtils.removePlayer;
 import static gg.projecteden.nexus.features.radio.RadioUtils.setRadioDefaults;
-import static gg.projecteden.nexus.utils.Utils.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 // TODO: fix bugs when switching between local and server radios
 // TODO: display what song of the playlist is currently player

@@ -48,7 +48,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.BiFunction;
 
-import static gg.projecteden.utils.StringUtils.prettyMoney;
+import static gg.projecteden.nexus.utils.StringUtils.prettyMoney;
 
 @NoArgsConstructor
 @Aliases({"donate", "buy"})

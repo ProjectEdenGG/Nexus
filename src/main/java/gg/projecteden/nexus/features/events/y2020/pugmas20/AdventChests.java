@@ -9,9 +9,9 @@ import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeavingRegion
 import gg.projecteden.nexus.models.pugmas20.Pugmas20User;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20UserService;
 import gg.projecteden.nexus.utils.ActionBarUtils;
-import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Utils;
@@ -46,6 +46,7 @@ import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.isBef
 import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.isPastPugmas;
 import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.isSecondChance;
 import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.location;
+import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 public class AdventChests implements Listener {
 	public static Map<Integer, Location> adventLootMap = new HashMap<>();
@@ -78,7 +79,7 @@ public class AdventChests implements Listener {
 		for (int z = 0; z <= 6; z++) {         // 0-3 col (Every other)
 			for (int x = 0; x <= 12; x++) {    // 0-6 row (Every other)
 				Block block = lootOrigin.getRelative(x, 0, z);
-				if (ItemUtils.isNullOrAir(block.getType()) || !block.getType().equals(Material.CHEST))
+				if (Nullables.isNullOrAir(block.getType()) || !block.getType().equals(Material.CHEST))
 					continue;
 
 				adventLootMap.put(index++, block.getLocation());
@@ -130,7 +131,7 @@ public class AdventChests implements Listener {
 	public void onAdventChestOpen(PlayerInteractEvent event) {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 		if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
-		if (BlockUtils.isNullOrAir(event.getClickedBlock())) return;
+		if (Nullables.isNullOrAir(event.getClickedBlock())) return;
 
 		Player player = event.getPlayer();
 		if (!Pugmas20.isAtPugmas(player)) return;
@@ -209,8 +210,8 @@ public class AdventChests implements Listener {
 		if (!ActionGroup.RIGHT_CLICK.applies(event)) return;
 
 		ItemStack skull = ItemUtils.getTool(player);
-		if (ItemUtils.isNullOrAir(skull) || !skull.getType().equals(Material.PLAYER_HEAD)) return;
-		if (Utils.isNullOrEmpty(skull.getLore())) return;
+		if (Nullables.isNullOrAir(skull) || !skull.getType().equals(Material.PLAYER_HEAD)) return;
+		if (isNullOrEmpty(skull.getLore())) return;
 
 		UUID skullOwner = ItemUtils.getSkullOwner(skull);
 		if (skullOwner == null) return;
@@ -256,7 +257,7 @@ public class AdventChests implements Listener {
 		if (!Utils.containsInvViewTitle(event.getView(), InvTitle)) return;
 
 		List<ItemStack> leftover = new ArrayList<>(Arrays.asList(event.getInventory().getContents())).stream()
-				.filter(itemStack -> !ItemUtils.isNullOrAir(itemStack)).collect(Collectors.toList());
+				.filter(itemStack -> !Nullables.isNullOrAir(itemStack)).collect(Collectors.toList());
 
 		if (leftover.size() == 0)
 			return;

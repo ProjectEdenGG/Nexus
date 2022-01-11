@@ -7,9 +7,9 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.islands.MainIsland.
 import gg.projecteden.nexus.features.regionapi.events.common.EnteringRegionEvent;
 import gg.projecteden.nexus.models.bearfair21.BearFair21User;
 import gg.projecteden.nexus.models.bearfair21.BearFair21UserService;
-import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -83,7 +83,7 @@ public class Beehive implements Listener {
 		if (BearFair21.isNotAtBearFair(event)) return;
 
 		Block block = event.getClickedBlock();
-		if (BlockUtils.isNullOrAir(block)) return;
+		if (Nullables.isNullOrAir(block)) return;
 
 		if (BearFair21.worldguard().isInRegion(block.getLocation(), queenRg)) {
 			BearFair21User user = userService.get(event.getPlayer());

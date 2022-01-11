@@ -4,9 +4,9 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.store.gallery.annotations.Category.GalleryCategory;
-import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import net.citizensnpcs.api.npc.NPC;
@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class StoreGalleryListener implements Listener {
 
@@ -78,7 +78,7 @@ public class StoreGalleryListener implements Listener {
 			return;
 
 		final Block block = event.getClickedBlock();
-		if (BlockUtils.isNullOrAir(block))
+		if (Nullables.isNullOrAir(block))
 			return;
 
 		if (block.getType() != Material.BLACK_CONCRETE)

@@ -35,6 +35,7 @@ import static gg.projecteden.nexus.features.radio.RadioUtils.addPlayer;
 import static gg.projecteden.nexus.features.radio.RadioUtils.getListenedRadio;
 import static gg.projecteden.nexus.features.radio.RadioUtils.isInRangeOfRadiusRadio;
 import static gg.projecteden.nexus.features.radio.RadioUtils.removePlayer;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 public class RadioCommand extends CustomCommand {
 	RadioConfigService configService = new RadioConfigService();

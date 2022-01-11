@@ -27,7 +27,6 @@ import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
@@ -55,6 +54,7 @@ import static gg.projecteden.nexus.features.discord.Discord.discordize;
 import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
 import static gg.projecteden.nexus.utils.StringUtils.plural;
 import static gg.projecteden.nexus.utils.Utils.epochSecond;
+import static gg.projecteden.utils.UUIDUtils.UUID0;
 
 @NoArgsConstructor
 public class Votes extends Feature implements Listener {
@@ -118,7 +118,7 @@ public class Votes extends Feature implements Listener {
 		OfflinePlayer player = null;
 		try { player = PlayerUtils.getPlayer(username); } catch (PlayerNotFoundException ignore) {}
 		String name = player != null ? Nickname.of(player) : "Unknown";
-		UUID uuid = player != null ? player.getUniqueId() : StringUtils.getUUID0();
+		UUID uuid = player != null ? player.getUniqueId() : UUID0;
 		VoteSite site = VoteSite.getFromId(event.getVote().getServiceName());
 
 		boolean accepted = true;

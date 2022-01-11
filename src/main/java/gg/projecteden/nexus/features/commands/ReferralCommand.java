@@ -53,6 +53,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.Utils.sortByValueReverse;
 
 @NoArgsConstructor
@@ -383,7 +384,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 		new ReferralService().edit(event.getPlayer(), referral -> {
 			referral.setIp(ip);
 
-			if (StringUtils.isNullOrEmpty(referral.getOriginalIp()))
+			if (isNullOrEmpty(referral.getOriginalIp()))
 				referral.setOriginalIp(ip);
 		});
 	}

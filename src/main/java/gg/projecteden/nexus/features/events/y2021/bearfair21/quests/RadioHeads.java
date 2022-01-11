@@ -6,8 +6,8 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
 import gg.projecteden.nexus.models.radio.RadioConfig.Radio;
 import gg.projecteden.nexus.models.radio.RadioUser;
 import gg.projecteden.nexus.models.radio.RadioUserService;
-import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -29,7 +29,7 @@ public class RadioHeads implements Listener {
 		if (WorldGuardEditCommand.canWorldGuardEdit(event.getPlayer())) return;
 
 		Block block = event.getClickedBlock();
-		if (BlockUtils.isNullOrAir(block) || !block.getType().equals(Material.PLAYER_HEAD)) return;
+		if (Nullables.isNullOrAir(block) || !block.getType().equals(Material.PLAYER_HEAD)) return;
 
 		Location radioHeadLoc = new Location(BearFair21.getWorld(), 16, 119, -19);
 		ItemStack item = ItemUtils.getItem(block);

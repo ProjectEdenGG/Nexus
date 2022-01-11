@@ -14,7 +14,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Bukkit;
@@ -89,7 +89,7 @@ public class CustomRecipesCommand extends CustomCommand {
 
 			contents.set(1, 2, ClickableItem.from(new ItemBuilder(Material.LIGHT_GRAY_STAINED_GLASS_PANE).name("Place Item Here").build(), e -> {
 				InventoryClickEvent clickEvent = (InventoryClickEvent) e.getEvent();
-				if (ItemUtils.isNullOrAir(clickEvent.getWhoClicked().getItemOnCursor())) {
+				if (Nullables.isNullOrAir(clickEvent.getWhoClicked().getItemOnCursor())) {
 					for (int uncraftingSlot : uncraftingSlots)
 						contents.set(uncraftingSlot, ClickableItem.NONE);
 					return;
@@ -114,7 +114,7 @@ public class CustomRecipesCommand extends CustomCommand {
 
 			for (int i = 0; i < items.get(index).size(); i++) {
 				ItemStack item = items.get(index).get(i);
-				if (ItemUtils.isNullOrAir(item))
+				if (Nullables.isNullOrAir(item))
 					item = new ItemBuilder(Material.LIGHT_GRAY_STAINED_GLASS_PANE).name("Air").build();
 				contents.set(uncraftingSlots[i], ClickableItem.empty(item));
 			}

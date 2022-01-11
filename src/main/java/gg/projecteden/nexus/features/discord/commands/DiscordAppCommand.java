@@ -14,11 +14,12 @@ import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.setting.Setting;
 import gg.projecteden.nexus.models.setting.SettingService;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.utils.DiscordId;
 import gg.projecteden.utils.DiscordId.User;
 import net.dv8tion.jda.api.entities.Member;
 import org.apache.commons.lang.RandomStringUtils;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Command("General discord commands")
 public class DiscordAppCommand extends NexusAppCommand {
@@ -43,14 +44,14 @@ public class DiscordAppCommand extends NexusAppCommand {
 		DiscordUser author = service.getFromUserId(member().getId());
 		if (author != null)
 			// Author already linked
-			if (!StringUtils.isNullOrEmpty(player.getUserId()))
+			if (!isNullOrEmpty(player.getUserId()))
 				if (author.getUserId().equals(player.getUserId()))
 					throw new InvalidInputException("You are already linked to that minecraft account");
 				else
 					throw new InvalidInputException("That minecraft account is already linked to a different Discord account. Type `/discord unlink` in-game to remove the link.");
 			else
 				throw new InvalidInputException("You are already linked to a different Minecraft account. Use `/discord unlink` in-game to remove the link.");
-		if (!StringUtils.isNullOrEmpty(player.getUserId()))
+		if (!isNullOrEmpty(player.getUserId()))
 			// Provided name is already linked
 			if (player.getUserId().equals(member().getId()))
 				throw new InvalidInputException("This should never happen <@" + User.GRIFFIN.getId() + ">"); // Lookup by user id failed?

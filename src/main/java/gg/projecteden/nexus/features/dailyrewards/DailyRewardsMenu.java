@@ -19,7 +19,6 @@ import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.utils.Utils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -30,6 +29,7 @@ import java.util.List;
 
 import static gg.projecteden.nexus.features.menus.SignMenuFactory.ARROWS;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
+import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 	private final DailyRewardUser user;
@@ -127,7 +127,7 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 				String rewardDescription = "&e" + camelCase(currentReward.getDescription());
 
 				ItemStack item;
-				if (!Utils.isNullOrEmpty(currentReward.getItems()))
+				if (!isNullOrEmpty(currentReward.getItems()))
 					item = nameItem(currentReward.getItems().get(0).clone(), rewardDescription, "&3Click to claim");
 				else
 					item = nameItem(addGlowing(new ItemStack(Material.PAPER)), rewardDescription, "&3Click to claim");
@@ -148,7 +148,7 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 
 			if (user.getCurrentStreak().hasClaimed(day)) return;
 
-			if (!Utils.isNullOrEmpty(items)) {
+			if (!isNullOrEmpty(items)) {
 				for (ItemStack item : items) {
 					ItemStack clone = item.clone();
 					if (Reward.RequiredSubmenu.COLOR.contains(clone.getType())) {

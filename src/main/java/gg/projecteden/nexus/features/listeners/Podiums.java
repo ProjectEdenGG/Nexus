@@ -20,7 +20,6 @@ import gg.projecteden.nexus.models.store.Contributor;
 import gg.projecteden.nexus.models.store.ContributorService;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.utils.EnumUtils;
@@ -53,6 +52,7 @@ import java.util.stream.Collectors;
 import static gg.projecteden.nexus.utils.PlayerUtils.runCommandAsConsole;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.nexus.utils.StringUtils.decolorize;
+import static gg.projecteden.utils.UUIDUtils.UUID0;
 import static java.util.stream.Collectors.toList;
 
 @NoArgsConstructor
@@ -264,7 +264,7 @@ public class Podiums implements Listener {
 				return;
 
 			Tasks.async(() -> {
-				if (!new CooldownService().check(StringUtils.getUUID0(), "podiums_" + name(), TickTime.MINUTE.x(5)))
+				if (!new CooldownService().check(UUID0, "podiums_" + name(), TickTime.MINUTE.x(5)))
 					return;
 
 				updateActual();

@@ -3,9 +3,8 @@ package gg.projecteden.nexus.features.events.y2020.pugmas20.menu;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.SlotPos;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.menu.providers.AdventProvider;
-import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -40,9 +39,9 @@ public class AdventMenu {
 		for (int z = 0; z <= 4; z++) {        // 0-4 col
 			for (int x = 1; x <= 7; x++) {    // 1-7 row
 				Block block = origin.getRelative(x, 0, z);
-				if (!BlockUtils.isNullOrAir(block)) {
+				if (!Nullables.isNullOrAir(block)) {
 					ItemStack drop = block.getDrops().stream().findFirst().orElse(null);
-					if (!ItemUtils.isNullOrAir(drop)) {
+					if (!Nullables.isNullOrAir(drop)) {
 						ItemBuilder skull = new ItemBuilder(drop);
 						int size = adventHeadMap.size();
 						if (size <= 6)

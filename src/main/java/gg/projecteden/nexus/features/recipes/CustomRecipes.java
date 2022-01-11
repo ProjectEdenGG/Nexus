@@ -52,6 +52,7 @@ import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilde
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.smelt;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.surround;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
+import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 @Depends({ResourcePack.class, CustomEnchants.class})
 public class CustomRecipes extends Feature implements Listener {
@@ -338,7 +339,7 @@ public class CustomRecipes extends Feature implements Listener {
 	private List<ItemStack> getInvisPotions() {
 		final YamlConfiguration config = IOUtils.getConfig("plugins/SurvivalInvisiframes/config.yml");
 		List<ItemStack> centerItems = (List<ItemStack>) config.getList("recipe-center-items");
-		if (Utils.isNullOrEmpty(centerItems))
+		if (isNullOrEmpty(centerItems))
 			return null;
 		return centerItems;
 	}

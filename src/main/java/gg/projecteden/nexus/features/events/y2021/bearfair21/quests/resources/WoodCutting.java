@@ -8,10 +8,10 @@ import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.BearFair21TreeRegenJob;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils.Paster;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -39,8 +39,9 @@ import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.utils.BlockUtils.createDistanceSortedQueue;
 import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
-import static gg.projecteden.utils.StringUtils.camelCase;
-import static gg.projecteden.utils.Utils.getMin;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.Utils.getMin;
+import static gg.projecteden.utils.UUIDUtils.UUID0;
 
 public class WoodCutting implements Listener {
 	private static final String tree_region = BearFair21.getRegion() + "_trees";
@@ -118,7 +119,7 @@ public class WoodCutting implements Listener {
 
 		public List<ItemStack> getDrops(ItemStack tool) {
 			List<ItemStack> drops = new ArrayList<>();
-			Material toolType = ItemUtils.isNullOrAir(tool) ? Material.AIR : tool.getType();
+			Material toolType = Nullables.isNullOrAir(tool) ? Material.AIR : tool.getType();
 			boolean chance = Tool.from(toolType).chance();
 			if (chance) {
 				drops.add(new ItemBuilder(logs).name(camelCase(name() + " Logs")).amount(1).build());
@@ -206,7 +207,7 @@ public class WoodCutting implements Listener {
 		}
 
 		public void feller(Player player, int id) {
-			if (!new CooldownService().check(StringUtils.getUUID0(), getRegion(id).getId(), TickTime.SECOND.x(3)))
+			if (!new CooldownService().check(UUID0, getRegion(id).getId(), TickTime.SECOND.x(3)))
 				return;
 
 			treeAnimating = true;

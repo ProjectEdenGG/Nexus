@@ -38,6 +38,7 @@ import java.util.OptionalDouble;
 import java.util.UUID;
 import java.util.function.BiFunction;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 import static gg.projecteden.utils.TimeUtils.dateFormat;
 import static gg.projecteden.utils.TimeUtils.shortDateFormat;

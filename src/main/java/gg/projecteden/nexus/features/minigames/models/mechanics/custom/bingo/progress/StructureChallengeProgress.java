@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static gg.projecteden.nexus.utils.StringUtils.an;
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Data
 @RequiredArgsConstructor

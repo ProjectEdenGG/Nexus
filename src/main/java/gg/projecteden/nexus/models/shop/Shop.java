@@ -55,15 +55,16 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
 import static gg.projecteden.nexus.features.shops.ShopUtils.giveItems;
 import static gg.projecteden.nexus.features.shops.ShopUtils.prettyMoney;
 import static gg.projecteden.nexus.features.shops.Shops.PREFIX;
 import static gg.projecteden.nexus.utils.ItemUtils.getShulkerContents;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.PlayerUtils.hasRoomFor;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.StringUtils.pretty;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.utils.UUIDUtils.UUID0;
 
 @Data
 @Entity(value = "shop", noClassnameStored = true)
@@ -103,7 +104,7 @@ public class Shop implements PlayerOwnedObject {
 	}
 
 	public boolean isMarket() {
-		return uuid.equals(StringUtils.getUUID0());
+		return uuid.equals(UUID0);
 	}
 
 	public String[] getDescriptionArray() {

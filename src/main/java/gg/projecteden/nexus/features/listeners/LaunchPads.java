@@ -34,7 +34,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static gg.projecteden.nexus.utils.LocationUtils.getCenteredLocation;
-import static gg.projecteden.utils.Utils.isDouble;
+import static gg.projecteden.nexus.utils.Utils.isDouble;
 
 public class LaunchPads implements Listener {
 	private static final Map<UUID, Pair<FallingBlock, Integer>> launchPadPlayers = new HashMap<>();

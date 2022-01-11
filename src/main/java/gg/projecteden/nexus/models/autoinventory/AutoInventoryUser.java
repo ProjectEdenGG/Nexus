@@ -40,8 +40,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
-import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
 
 @Data
 @Entity(value = "auto_sort", noClassnameStored = true)

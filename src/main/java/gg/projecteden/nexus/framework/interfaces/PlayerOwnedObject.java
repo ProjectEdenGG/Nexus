@@ -13,7 +13,6 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGroup;
-import gg.projecteden.utils.StringUtils;
 import me.lexikiq.HasUniqueId;
 import me.lexikiq.OptionalPlayerLike;
 import net.kyori.adventure.audience.MessageType;
@@ -27,8 +26,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.AdventureUtils.identityOf;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.utils.UUIDUtils.isUUID0;
 
 /**
  * A mongo database object owned by a player
@@ -139,14 +139,14 @@ public interface PlayerOwnedObject extends gg.projecteden.interfaces.PlayerOwned
 	}
 
 	default void sendMessage(String message) {
-		if (StringUtils.isUUID0(getUuid()))
+		if (isUUID0(getUuid()))
 			Nexus.log(message);
 		else
 			sendMessage(json(message));
 	}
 
 	default void sendOrMail(String message) {
-		if (StringUtils.isUUID0(getUuid())) {
+		if (isUUID0(getUuid())) {
 			Nexus.log(message);
 			return;
 		}
@@ -158,14 +158,14 @@ public interface PlayerOwnedObject extends gg.projecteden.interfaces.PlayerOwned
 	}
 
 	default void sendMessage(UUID sender, ComponentLike component, MessageType type) {
-		if (StringUtils.isUUID0(getUuid()))
+		if (isUUID0(getUuid()))
 			Nexus.log(AdventureUtils.asPlainText(component));
 		else
 			sendMessage(identityOf(sender), component, type);
 	}
 
 	default void sendMessage(UUID sender, ComponentLike component) {
-		if (StringUtils.isUUID0(getUuid()))
+		if (isUUID0(getUuid()))
 			Nexus.log(AdventureUtils.asPlainText(component));
 		else
 			sendMessage(identityOf(sender), component);
@@ -177,7 +177,7 @@ public interface PlayerOwnedObject extends gg.projecteden.interfaces.PlayerOwned
 
 	default void sendMessage(int delay, ComponentLike component) {
 		Tasks.wait(delay, () -> {
-			if (StringUtils.isUUID0(getUuid()))
+			if (isUUID0(getUuid()))
 				Nexus.log(AdventureUtils.asPlainText(component));
 			else
 				sendMessage(component);

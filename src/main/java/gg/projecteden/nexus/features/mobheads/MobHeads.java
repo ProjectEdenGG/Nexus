@@ -47,9 +47,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
-import static gg.projecteden.utils.RandomUtils.randomDouble;
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.RandomUtils.randomDouble;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @NoArgsConstructor
 public class MobHeads extends Feature implements Listener {

@@ -47,7 +47,6 @@ import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.SerializationUtils.Json;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.QueuedTask;
 import gg.projecteden.nexus.utils.Utils;
@@ -95,8 +94,10 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.zip.ZipFile;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 import static gg.projecteden.utils.TimeUtils.shortDateFormat;
+import static gg.projecteden.utils.UUIDUtils.UUID0;
 
 @NoArgsConstructor
 @Permission(Group.ADMIN)
@@ -142,8 +143,8 @@ public class NexusCommand extends CustomCommand implements Listener {
 				new SoundBuilder(Sound.ENTITY_EVOKER_PREPARE_WOLOLO).receiver(player).play();
 
 		CooldownService cooldownService = new CooldownService();
-		if (!cooldownService.check(StringUtils.getUUID0(), "reload", TickTime.SECOND.x(15)))
-			throw new CommandCooldownException(StringUtils.getUUID0(), "reload");
+		if (!cooldownService.check(UUID0, "reload", TickTime.SECOND.x(15)))
+			throw new CommandCooldownException(UUID0, "reload");
 
 		runCommand("plugman reload Nexus");
 	}

@@ -10,7 +10,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.models.shop.Shop;
 import gg.projecteden.nexus.models.shop.ShopService;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
@@ -153,7 +153,7 @@ public class YourShopProvider extends ShopProvider {
 			Shop shop = service.get(player);
 
 			for (ItemStack content : event.getInventory().getContents())
-				if (!ItemUtils.isNullOrAir(content))
+				if (!Nullables.isNullOrAir(content))
 					shop.addHolding(content);
 
 			service.save(shop);

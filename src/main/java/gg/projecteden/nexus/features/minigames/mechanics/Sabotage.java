@@ -32,9 +32,9 @@ import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
@@ -92,8 +92,8 @@ import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
-import static gg.projecteden.utils.StringUtils.camelCase;
 
 // TODO: admin table (imageonmap "api"?)
 // TODO: cams (idfk for this one, could just teleport the player around, it'd be kinda shitty tho)
@@ -412,7 +412,7 @@ public class Sabotage extends TeamMechanic {
 		inventory.setItem(0, ResourcePackNumber.of(1).color(ColorType.RED).get().name("Crouch to Exit").lore("&f" + StringUtils.getFlooredCoordinateString(currentLoc) + " " + container.getCustomName() + " 0").loreize(false).build());
 		int count = 1;
 		for (ItemStack itemStack : container.getInventory()) {
-			if (ItemUtils.isNullOrAir(itemStack)) continue;
+			if (Nullables.isNullOrAir(itemStack)) continue;
 			inventory.setItem(count, ResourcePackNumber.of(1 + count).color(ColorType.RED).get().name("Crouch to Exit").lore(itemStack.getItemMeta().getDisplayName()).loreize(false).build());
 			count += 1;
 			if (count > 8)
@@ -454,7 +454,7 @@ public class Sabotage extends TeamMechanic {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 		ItemStack item = event.getPlayer().getInventory().getItem(event.getNewSlot());
-		if (ItemUtils.isNullOrAir(item)) return;
+		if (Nullables.isNullOrAir(item)) return;
 		if (!item.hasItemMeta()) return;
 		ItemMeta itemMeta = item.getItemMeta();
 		if (!itemMeta.hasLore()) return;
@@ -511,7 +511,7 @@ public class Sabotage extends TeamMechanic {
 		if (!minigamer.isAlive()) return;
 		if (!(event.getRightClicked() instanceof ArmorStand armorStand)) return;
 		ItemStack helmet = armorStand.getEquipment().getHelmet();
-		if (ItemUtils.isNullOrAir(helmet) || helmet.getType() != Material.RED_CONCRETE) return;
+		if (Nullables.isNullOrAir(helmet) || helmet.getType() != Material.RED_CONCRETE) return;
 
 		SabotageMatchData matchData = minigamer.getMatch().getMatchData();
 		SabotageMatchData.ButtonState state = matchData.button(minigamer);

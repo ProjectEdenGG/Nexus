@@ -2,8 +2,8 @@ package gg.projecteden.nexus.features.listeners;
 
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ColorType;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
@@ -48,7 +48,7 @@ public class InvisibleItemFramesListener implements Listener {
 		for (Entity entity : entities) {
 			ItemFrame itemFrame = (ItemFrame) entity;
 			itemFrame.getPersistentDataContainer().set(key, PersistentDataType.BYTE, (byte) 1);
-			if (ItemUtils.isNullOrAir(itemFrame.getItem())) {
+			if (Nullables.isNullOrAir(itemFrame.getItem())) {
 				itemFrame.setVisible(true);
 				itemFrame.setGlowing(true);
 			} else

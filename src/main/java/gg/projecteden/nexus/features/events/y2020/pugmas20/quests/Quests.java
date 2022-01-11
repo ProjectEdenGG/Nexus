@@ -5,7 +5,7 @@ import gg.projecteden.nexus.features.events.models.QuestStage;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.models.QuestNPC;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20User;
-import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.AllArgsConstructor;
@@ -99,7 +99,7 @@ public class Quests {
 	public static boolean hasRoomFor(Player player, ItemStack... items) {
 		List<ItemStack> itemList = new ArrayList<>();
 		for (ItemStack item : new ArrayList<>(Arrays.asList(items))) {
-			if (!ItemUtils.isNullOrAir(item))
+			if (!Nullables.isNullOrAir(item))
 				itemList.add(item);
 		}
 
@@ -110,7 +110,7 @@ public class Quests {
 		ItemStack[] contents = player.getInventory().getContents();
 		int slotsUsed = 0;
 		for (ItemStack content : contents) {
-			if (!ItemUtils.isNullOrAir(content))
+			if (!Nullables.isNullOrAir(content))
 				slotsUsed++;
 		}
 

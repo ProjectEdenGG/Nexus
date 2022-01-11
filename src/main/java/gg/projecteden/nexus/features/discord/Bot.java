@@ -19,8 +19,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 public enum Bot {
 

@@ -9,9 +9,8 @@ import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.mail.Mailer.Mail;
 import gg.projecteden.nexus.models.nerd.Rank;
-import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.utils.Utils;
 import me.arcaniax.hdb.api.PlayerClickHeadEvent;
@@ -25,6 +24,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import java.util.List;
 
 import static gg.projecteden.nexus.features.events.Events.STORE_PREFIX;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.PlayerUtils.send;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
@@ -81,7 +81,7 @@ public class EventStoreListener implements Listener {
 		try {
 			if (!player.getWorld().getName().equalsIgnoreCase("server"))
 				return;
-			if (BlockUtils.isNullOrAir(event.getClickedBlock()))
+			if (Nullables.isNullOrAir(event.getClickedBlock()))
 				return;
 			if (!MaterialTag.SIGNS.isTagged(event.getClickedBlock().getType()))
 				return;
@@ -93,7 +93,7 @@ public class EventStoreListener implements Listener {
 				return;
 
 			final String title = (sign.getLine(2).trim() + " " + sign.getLine(3).trim()).trim();
-			if (StringUtils.isNullOrEmpty(title))
+			if (isNullOrEmpty(title))
 				return;
 
 			final EventStoreImage image = EventStoreImage.of(title);

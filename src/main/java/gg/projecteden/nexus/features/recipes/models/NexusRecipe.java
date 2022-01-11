@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.recipes.models;
 
 import gg.projecteden.nexus.features.recipes.CustomRecipes;
-import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -52,7 +52,7 @@ public class NexusRecipe {
 	@NotNull
 	protected List<ItemStack> getFilteredMatrix(PrepareItemCraftEvent event) {
 		List<ItemStack> matrix = new ArrayList<>(Arrays.asList(event.getInventory().getMatrix().clone()));
-		matrix.removeIf(ItemUtils::isNullOrAir);
+		matrix.removeIf(Nullables::isNullOrAir);
 		return matrix;
 	}
 

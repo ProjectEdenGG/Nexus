@@ -9,9 +9,9 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.BlockUtils;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -107,7 +107,7 @@ public class McMMOListener implements Listener {
 
 	boolean canBootBonemeal(Player player) {
 		// If player is wearing boots
-		if (ItemUtils.isNullOrAir(player.getInventory().getBoots()))
+		if (Nullables.isNullOrAir(player.getInventory().getBoots()))
 			return false;
 
 		// If player is wearing gold boots

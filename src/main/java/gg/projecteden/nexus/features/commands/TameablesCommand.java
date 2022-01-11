@@ -47,6 +47,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.features.listeners.Restrictions.isPerkAllowedAt;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @NoArgsConstructor
 public class TameablesCommand extends CustomCommand implements Listener {

@@ -7,7 +7,7 @@ import gg.projecteden.nexus.features.minigolf.models.MiniGolfUser;
 import gg.projecteden.nexus.features.minigolf.models.blocks.ModifierBlock;
 import gg.projecteden.nexus.features.minigolf.models.blocks.ModifierBlockType;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallModifierBlockEvent;
-import gg.projecteden.nexus.utils.BlockUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -86,7 +86,7 @@ public class ProjectileListener implements Listener {
 		}
 
 		// Bounce off surfaces
-		if (BlockUtils.isNullOrAir(event.getHitBlock())) {
+		if (Nullables.isNullOrAir(event.getHitBlock())) {
 			user.debug("golfball hit null or air block");
 			return;
 		}

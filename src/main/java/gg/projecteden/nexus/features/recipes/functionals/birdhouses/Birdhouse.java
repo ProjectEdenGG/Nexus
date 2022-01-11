@@ -16,7 +16,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 public abstract class Birdhouse extends FunctionalRecipe {
 

@@ -7,8 +7,8 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.striplogs.StripLogs;
 import gg.projecteden.nexus.models.striplogs.StripLogs.Behavior;
 import gg.projecteden.nexus.models.striplogs.StripLogsService;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
@@ -46,7 +46,7 @@ public class StripLogsCommand extends CustomCommand implements Listener {
 		if (!Utils.equalsInvViewTitle(event.getView(), TITLE)) return;
 
 		for (ItemStack item : event.getInventory().getContents()) {
-			if (ItemUtils.isNullOrAir(item))
+			if (Nullables.isNullOrAir(item))
 				continue;
 
 			if (MaterialTag.TREE_LOGS.isTagged(item.getType()) || MaterialTag.TREE_WOOD.isTagged(item.getType()))

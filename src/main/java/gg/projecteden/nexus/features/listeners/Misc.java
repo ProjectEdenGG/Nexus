@@ -22,12 +22,12 @@ import gg.projecteden.nexus.models.tip.Tip.TipType;
 import gg.projecteden.nexus.models.tip.TipService;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.ActionBarUtils;
-import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.FireworkLauncher;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Name;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.FakePlayerInteractEvent;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
@@ -111,7 +111,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static gg.projecteden.nexus.utils.ItemUtils.getTool;
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class Misc implements Listener {
 
@@ -132,7 +132,7 @@ public class Misc implements Listener {
 
 		final ItemStack item = event.getItem();
 		final Block block = event.getClickedBlock();
-		if (isNullOrAir(item) || BlockUtils.isNullOrAir(block))
+		if (isNullOrAir(item) || Nullables.isNullOrAir(block))
 			return;
 
 		if (item.getType() != Material.ENDER_EYE)
@@ -168,11 +168,11 @@ public class Misc implements Listener {
 			return;
 
 		final Block block = event.getClickedBlock();
-		if (BlockUtils.isNullOrAir(block) || block.getType() != Material.LIGHT)
+		if (Nullables.isNullOrAir(block) || block.getType() != Material.LIGHT)
 			return;
 
 		final ItemStack item = event.getItem();
-		if (ItemUtils.isNullOrAir(item) || item.getType() != Material.LIGHT)
+		if (Nullables.isNullOrAir(item) || item.getType() != Material.LIGHT)
 			return;
 
 		if (!new BlockBreakEvent(block, event.getPlayer()).callEvent())
@@ -721,7 +721,7 @@ public class Misc implements Listener {
 			case DROP:
 			case CONTROL_DROP:
 				ItemStack cursor = event.getCursor();
-				if (!ItemUtils.isNullOrAir(cursor))
+				if (!Nullables.isNullOrAir(cursor))
 					recipeAmount = 0;
 				break;
 

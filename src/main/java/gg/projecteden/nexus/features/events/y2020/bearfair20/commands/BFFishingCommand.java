@@ -10,8 +10,8 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import org.bukkit.Location;
@@ -111,7 +111,7 @@ public class BFFishingCommand extends CustomCommand {
 
 		weightedList.forEach(weightedLoot -> itemStacks.add(weightedLoot.getItemStack()));
 		for (ItemStack content : contents) {
-			if (ItemUtils.isNullOrAir(content))
+			if (Nullables.isNullOrAir(content))
 				continue;
 
 			int amount = content.getAmount();
@@ -146,7 +146,7 @@ public class BFFishingCommand extends CustomCommand {
 
 		// Remove fishing rod
 		for (ItemStack content : player.getInventory().getContents()) {
-			if (ItemUtils.isNullOrAir(content)) continue;
+			if (Nullables.isNullOrAir(content)) continue;
 			if (!content.getType().equals(Material.FISHING_ROD)) continue;
 			if (BearFair20.isBFItem(content))
 				player.getInventory().remove(content);

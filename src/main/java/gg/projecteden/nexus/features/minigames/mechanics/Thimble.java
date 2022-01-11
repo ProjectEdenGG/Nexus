@@ -56,7 +56,7 @@ import java.util.List;
 import java.util.Map;
 
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-import static gg.projecteden.utils.StringUtils.plural;
+import static gg.projecteden.nexus.utils.StringUtils.plural;
 
 //TODO: Show turn timer to turn player
 //TODO: Gamemode description messages onm lobby join

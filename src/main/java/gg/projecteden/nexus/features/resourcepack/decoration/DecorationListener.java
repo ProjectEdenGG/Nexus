@@ -6,9 +6,9 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Seat;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.LocationUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
@@ -83,7 +83,7 @@ public class DecorationListener implements Listener {
 		if (!Dev.WAKKA.is(player)) return;
 		//
 
-		if (!ItemUtils.isNullOrAir(tool))
+		if (!Nullables.isNullOrAir(tool))
 			return;
 
 		HitboxData hitboxData = getItemFrame(clicked);
@@ -94,7 +94,7 @@ public class DecorationListener implements Listener {
 	}
 
 	private void rightClick(PlayerInteractEvent event, Player player, Block clicked, ItemStack tool) {
-		if (ItemUtils.isNullOrAir(tool)) {
+		if (Nullables.isNullOrAir(tool)) {
 
 			HitboxData hitboxData = getItemFrame(clicked);
 			if (hitboxData == null) return;
@@ -118,7 +118,7 @@ public class DecorationListener implements Listener {
 
 	@Nullable
 	private DecorationListener.HitboxData getItemFrame(Block clicked) {
-		if (BlockUtils.isNullOrAir(clicked))
+		if (Nullables.isNullOrAir(clicked))
 			return null;
 
 		Set<Material> hitboxTypes = Decorations.getHitboxTypes();
@@ -129,7 +129,7 @@ public class DecorationListener implements Listener {
 		ItemFrame itemFrame = clicked.getLocation().toCenterLocation().getNearbyEntitiesByType(ItemFrame.class, 0.5).stream().findFirst().orElse(null);
 		if (itemFrame != null) {
 			ItemStack itemStack = itemFrame.getItem();
-			if (!ItemUtils.isNullOrAir(itemStack)) {
+			if (!Nullables.isNullOrAir(itemStack)) {
 				Decorations decorations = Decorations.of(itemStack);
 				if (decorations != null) {
 					debug("Single");
@@ -209,7 +209,7 @@ public class DecorationListener implements Listener {
 				continue;
 
 			ItemStack itemStack = itemFrame.getItem();
-			if (ItemUtils.isNullOrAir(itemStack))
+			if (Nullables.isNullOrAir(itemStack))
 				continue;
 
 			Decorations _decorations = Decorations.of(itemStack);

@@ -9,6 +9,8 @@ import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.ChatterService;
 import lombok.NonNull;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
+
 @Aliases("r")
 public class ReplyCommand extends CustomCommand {
 	private final Chatter chatter;

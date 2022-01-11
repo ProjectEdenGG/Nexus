@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import static gg.projecteden.utils.Utils.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Data
 @Builder

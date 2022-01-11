@@ -21,7 +21,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 
-import static gg.projecteden.utils.StringUtils.plural;
+import static gg.projecteden.nexus.utils.StringUtils.plural;
 
 public class MedicalScanTask extends AbstractTaskMenu {
 	public MedicalScanTask(Task task) {

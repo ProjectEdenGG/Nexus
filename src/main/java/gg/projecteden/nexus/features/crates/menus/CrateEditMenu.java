@@ -14,7 +14,7 @@ import gg.projecteden.nexus.features.crates.models.CrateLoot;
 import gg.projecteden.nexus.features.crates.models.CrateType;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -125,7 +125,7 @@ public class CrateEditMenu {
 				contents.set(0, 5, ClickableItem.from(displayItem, e -> {
 					save(player.getOpenInventory().getTopInventory(), editing);
 					InventoryClickEvent event = (InventoryClickEvent) e.getEvent();
-					ItemStack display = ItemUtils.isNullOrAir(event.getCursor()) ? null : event.getCursor();
+					ItemStack display = Nullables.isNullOrAir(event.getCursor()) ? null : event.getCursor();
 					editing.setDisplayItem(display);
 					editing.update();
 					Tasks.wait(1, () -> {
@@ -231,7 +231,7 @@ public class CrateEditMenu {
 			List<ItemStack> items = new ArrayList<>();
 			ItemStack[] contents = inventory.getContents();
 			for (int i = 9; i < 27; i++)
-				if (!ItemUtils.isNullOrAir(contents[i]))
+				if (!Nullables.isNullOrAir(contents[i]))
 					items.add(contents[i]);
 			editing.setItems(items);
 			editing.update();

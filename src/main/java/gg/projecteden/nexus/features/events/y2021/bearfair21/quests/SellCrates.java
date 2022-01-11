@@ -5,8 +5,8 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.Quests;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.Merchants.BFMerchant;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.farming.FarmingLoot;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MerchantBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -84,7 +84,7 @@ public class SellCrates implements Listener {
 
 		List<ItemStack> profit = new ArrayList<>();
 		for (ItemStack item : event.getInventory().getContents()) {
-			if (ItemUtils.isNullOrAir(item))
+			if (Nullables.isNullOrAir(item))
 				continue;
 
 			boolean foundTrade = false;
@@ -95,8 +95,8 @@ public class SellCrates implements Listener {
 				if (ingredients.size() != 1) continue;
 
 				ItemStack ingredient = ingredients.get(0);
-				if (ItemUtils.isNullOrAir(ingredient)) continue;
-				if (ItemUtils.isNullOrAir(result)) continue;
+				if (Nullables.isNullOrAir(ingredient)) continue;
+				if (Nullables.isNullOrAir(result)) continue;
 
 				if (item.getType().equals(ingredient.getType())) {
 					if (item.getAmount() >= ingredient.getAmount()) {

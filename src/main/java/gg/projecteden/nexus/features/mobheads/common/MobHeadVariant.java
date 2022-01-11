@@ -7,8 +7,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 public interface MobHeadVariant extends MobHead {
 

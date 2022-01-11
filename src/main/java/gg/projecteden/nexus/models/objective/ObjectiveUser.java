@@ -8,7 +8,6 @@ import gg.projecteden.nexus.features.resourcepack.commands.ObjectivesCommand.Com
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
-import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,6 +27,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @Data
@@ -135,7 +135,7 @@ public class ObjectiveUser implements PlayerOwnedObject {
 			final Player player = user.getOnlinePlayer();
 
 			if (objectiveBar == null)
-				if (!StringUtils.isNullOrEmpty(description))
+				if (!isNullOrEmpty(description))
 					objectiveBar = Bukkit.createBossBar(colorize(description), BarColor.RED, BarStyle.SOLID);
 
 			if (objectiveBar != null) {

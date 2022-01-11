@@ -23,7 +23,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.HashSet;
 import java.util.Set;
 
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 // TODO Recipe: Sugar + Dye + ?
 public class CandyCaneCannon implements Listener {

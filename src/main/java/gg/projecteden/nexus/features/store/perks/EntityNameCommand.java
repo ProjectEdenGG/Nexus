@@ -25,7 +25,7 @@ import java.util.List;
 
 import static gg.projecteden.nexus.features.listeners.Restrictions.isPerkAllowedAt;
 import static gg.projecteden.nexus.features.store.perks.EntityNameCommand.PERMISSION;
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.applyFormattingToAll;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 

@@ -8,7 +8,6 @@ import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ColorConverter;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.EnumUtils;
-import gg.projecteden.utils.Utils;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,6 +25,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+
+import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 @Data
 @Entity(value = "particle_owner", noClassnameStored = true)
@@ -45,7 +46,7 @@ public class ParticleOwner implements PlayerOwnedObject {
 	public Map<ParticleSetting, Object> getSettings(ParticleType particleType) {
 		Map<ParticleSetting, Object> map = settings.computeIfAbsent(particleType, $ -> new ConcurrentHashMap<>());
 
-		if (!Utils.isNullOrEmpty(map))
+		if (!isNullOrEmpty(map))
 			deserialize(map);
 
 		return map;

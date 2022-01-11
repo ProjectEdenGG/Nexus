@@ -8,8 +8,7 @@ import gg.projecteden.nexus.features.minigolf.models.GolfBall;
 import gg.projecteden.nexus.features.minigolf.models.MiniGolfUser;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallSpawnEvent;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfUserPlaceBallEvent;
-import gg.projecteden.nexus.utils.BlockUtils;
-import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -38,7 +37,7 @@ public class InteractListener implements Listener {
 			return;
 
 		ItemStack item = event.getItem();
-		if (ItemUtils.isNullOrAir(item)) {
+		if (Nullables.isNullOrAir(item)) {
 			user.debug("item is null or air, returning");
 			return;
 		}
@@ -55,7 +54,7 @@ public class InteractListener implements Listener {
 				return;
 			}
 
-			if (BlockUtils.isNullOrAir(block)) {
+			if (Nullables.isNullOrAir(block)) {
 				user.debug("placed on block is air or null");
 				event.setCancelled(true);
 				return;

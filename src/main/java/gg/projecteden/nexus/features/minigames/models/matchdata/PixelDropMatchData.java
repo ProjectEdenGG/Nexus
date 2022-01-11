@@ -10,7 +10,7 @@ import gg.projecteden.nexus.features.minigames.models.annotations.MatchDataFor;
 import gg.projecteden.nexus.features.minigames.models.arenas.PixelDropArena;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.utils.ActionBarUtils;
-import gg.projecteden.nexus.utils.BlockUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -266,7 +266,7 @@ public class PixelDropMatchData extends MatchData {
 
 				Block block = RandomUtils.randomElement(blocks);
 				blocks.remove(block);
-				if (!BlockUtils.isNullOrAir(block))
+				if (!Nullables.isNullOrAir(block))
 					block.setType(Material.AIR);
 			}
 		}));

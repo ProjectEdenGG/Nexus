@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.utils.StringUtils.paste;
+import static gg.projecteden.nexus.utils.StringUtils.paste;
 import static gg.projecteden.utils.TimeUtils.shortDateFormat;
 import static gg.projecteden.utils.TimeUtils.shortDateTimeFormat;
 

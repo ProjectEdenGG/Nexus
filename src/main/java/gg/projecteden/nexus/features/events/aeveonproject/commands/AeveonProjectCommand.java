@@ -15,6 +15,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.aeveonproject.AeveonProjectService;
 import gg.projecteden.nexus.models.aeveonproject.AeveonProjectUser;
 import gg.projecteden.nexus.utils.BlockUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -32,6 +33,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.RandomUtils.getWeightedRandom;
 
 @Aliases("ap")
@@ -148,7 +150,7 @@ public class AeveonProjectCommand extends CustomCommand implements Listener {
 
 		for (Block block : blocks) {
 			Block above = block.getRelative(BlockFace.UP);
-			if (allowedFloraMaterials.contains(block.getType()) && BlockUtils.isNullOrAir(above))
+			if (allowedFloraMaterials.contains(block.getType()) && Nullables.isNullOrAir(above))
 				placeFloraOn.add(above);
 		}
 

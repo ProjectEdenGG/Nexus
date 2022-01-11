@@ -9,7 +9,7 @@ import fr.minuskube.inv.content.SlotIterator;
 import fr.minuskube.inv.content.SlotPos;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -146,7 +146,7 @@ public class KitManagerProvider extends MenuUtils implements InventoryProvider {
 		Inventory inv = player.getOpenInventory().getTopInventory();
 		List<ItemStack> items = new ArrayList<>();
 		for (int i : editableSlots) {
-			if (ItemUtils.isNullOrAir(inv.getItem(i))) continue;
+			if (Nullables.isNullOrAir(inv.getItem(i))) continue;
 			items.add(inv.getItem(i));
 		}
 		Kit kit = KitManager.get(id);

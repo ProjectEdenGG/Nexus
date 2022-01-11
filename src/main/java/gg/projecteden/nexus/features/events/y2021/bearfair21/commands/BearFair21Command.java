@@ -30,15 +30,14 @@ import gg.projecteden.nexus.models.bearfair21.ClientsideContent;
 import gg.projecteden.nexus.models.bearfair21.ClientsideContent.Content;
 import gg.projecteden.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
 import gg.projecteden.nexus.models.bearfair21.ClientsideContentService;
-import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.StringUtils.ProgressBarStyle;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
-import gg.projecteden.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -62,6 +61,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+
+import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 @Aliases({"bf21", "bearfair"})
 public class BearFair21Command extends CustomCommand {
@@ -207,7 +208,7 @@ public class BearFair21Command extends CustomCommand {
 	@Permission(Group.ADMIN)
 	public void metNPCs() {
 		Set<Integer> npcs = userService.get(player()).getMetNPCs();
-		if (Utils.isNullOrEmpty(npcs))
+		if (isNullOrEmpty(npcs))
 			error("User has not met any npcs");
 
 		send("Has met: ");
@@ -222,7 +223,7 @@ public class BearFair21Command extends CustomCommand {
 	@Permission(Group.ADMIN)
 	public void nextStepNPCs() {
 		Set<Integer> npcs = userService.get(player()).getNextStepNPCs();
-		if (Utils.isNullOrEmpty(npcs))
+		if (isNullOrEmpty(npcs))
 			error("User has not have any nextStepNPCs");
 
 		send("Next Step NPCs: ");
@@ -393,7 +394,7 @@ public class BearFair21Command extends CustomCommand {
 		Entity entity = getTargetEntity();
 		if (entity == null) {
 			Block block = getTargetBlock();
-			if (BlockUtils.isNullOrAir(block))
+			if (Nullables.isNullOrAir(block))
 				error("Entity is null && Block is null or air");
 
 			setupBlockContent(block, category);

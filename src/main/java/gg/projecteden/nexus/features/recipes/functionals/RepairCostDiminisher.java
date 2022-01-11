@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.Getter;
@@ -100,7 +101,7 @@ public class RepairCostDiminisher extends FunctionalRecipe {
 	}
 
 	public void lowerRepairCost(Player player, ItemStack diminisher, ItemStack tool) {
-		if (ItemUtils.isNullOrAir(tool)) {
+		if (Nullables.isNullOrAir(tool)) {
 			PlayerUtils.send(player, "&cYou must hold an item in your other hand");
 			return;
 		}

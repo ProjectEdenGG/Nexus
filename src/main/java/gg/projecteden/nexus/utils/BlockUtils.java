@@ -106,7 +106,7 @@ public class BlockUtils {
 		List<Block> relatives = Arrays.asList(north, east, south, west, up, down);
 		List<Block> adjacent = new ArrayList<>();
 		for (Block relative : relatives) {
-			if (!isNullOrAir(relative))
+			if (!Nullables.isNullOrAir(relative))
 				adjacent.add(relative);
 		}
 		return adjacent;
@@ -227,10 +227,6 @@ public class BlockUtils {
 		return null;
 	}
 
-	public static boolean isNullOrAir(Block block) {
-		return block == null || block.getType().equals(Material.AIR);
-	}
-
 	public static void glow(Block block, int ticks, OptionalPlayer viewer) {
 		glow(block, ticks, viewer, Color.RED);
 	}
@@ -243,7 +239,7 @@ public class BlockUtils {
 		List<Player> _viewers = PlayerUtils.getNonNullPlayers(viewers);
 
 		Material material = block.getType();
-		if (ItemUtils.isNullOrAir(material))
+		if (Nullables.isNullOrAir(material))
 			material = Material.WHITE_CONCRETE;
 
 		Location location = block.getLocation();
