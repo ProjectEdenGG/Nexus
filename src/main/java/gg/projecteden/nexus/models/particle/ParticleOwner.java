@@ -98,6 +98,10 @@ public class ParticleOwner implements PlayerOwnedObject {
 		activeParticles.add(particleType);
 		save();
 
+		addTaskIds(particleType, taskIds);
+	}
+
+	public void addTaskIds(ParticleType particleType, int[] taskIds) {
 		for (int taskId : taskIds)
 			tasks.add(new ParticleTask(particleType, taskId));
 	}

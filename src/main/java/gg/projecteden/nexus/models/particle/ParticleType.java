@@ -574,7 +574,10 @@ public enum ParticleType {
 	}
 
 	public void run(ParticleOwner particleOwner, HumanEntity entity) {
-		particleOwner.start(this, start(particleOwner, entity));
+		if (isSelf(particleOwner, entity))
+			particleOwner.start(this, start(particleOwner, entity));
+		else
+			particleOwner.addTaskIds(this, start(particleOwner, entity));
 	}
 
 	public Object builder(ParticleOwner particleOwner, HumanEntity entity) {
