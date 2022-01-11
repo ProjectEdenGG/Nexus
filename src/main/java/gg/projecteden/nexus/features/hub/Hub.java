@@ -25,13 +25,12 @@ public class Hub extends Feature implements Listener {
 		id = id.replaceFirst("hub_", "");
 
 		switch (id) {
-			case "minigames", "creative", "oneblock" -> {
+			case "minigames", "creative" -> {
 				PlayerUtils.send(event.getPlayer(), "/warp " + id);
 //				WarpType.NORMAL.get(id).teleportAsync(event.getPlayer());
 			}
-			case "survival" -> {
-				PlayerUtils.send(event.getPlayer(), "survival menu");
-			}
+			case "oneblock" -> PlayerUtils.send(event.getPlayer(), "/ob");
+			case "survival" -> PlayerUtils.send(event.getPlayer(), "/rtp");
 		}
 	}
 
