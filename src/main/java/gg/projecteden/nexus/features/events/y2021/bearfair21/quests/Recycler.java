@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
@@ -83,7 +84,7 @@ public class Recycler implements Listener {
 		List<ItemStack> trash = new ArrayList<>();
 		List<ItemStack> giveBack = new ArrayList<>();
 		for (ItemStack itemStack : event.getInventory().getContents()) {
-			if (!Nullables.isNullOrAir(itemStack)) {
+			if (!isNullOrAir(itemStack)) {
 				if (FishingLoot.isTrash(itemStack))
 					trash.add(itemStack);
 				else

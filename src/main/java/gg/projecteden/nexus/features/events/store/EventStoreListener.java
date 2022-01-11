@@ -10,7 +10,6 @@ import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.mail.Mailer.Mail;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.utils.Utils;
 import me.arcaniax.hdb.api.PlayerClickHeadEvent;
@@ -24,6 +23,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import java.util.List;
 
 import static gg.projecteden.nexus.features.events.Events.STORE_PREFIX;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.PlayerUtils.send;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
@@ -81,7 +81,7 @@ public class EventStoreListener implements Listener {
 		try {
 			if (!player.getWorld().getName().equalsIgnoreCase("server"))
 				return;
-			if (Nullables.isNullOrAir(event.getClickedBlock()))
+			if (isNullOrAir(event.getClickedBlock()))
 				return;
 			if (!MaterialTag.SIGNS.isTagged(event.getClickedBlock().getType()))
 				return;

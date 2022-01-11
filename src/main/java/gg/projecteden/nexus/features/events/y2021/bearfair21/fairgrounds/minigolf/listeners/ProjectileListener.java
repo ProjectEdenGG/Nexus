@@ -24,6 +24,8 @@ import org.inventivetalent.glow.GlowAPI;
 import java.util.Arrays;
 import java.util.List;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+
 public class ProjectileListener implements Listener {
 	private final List<Material> killMaterial = Arrays.asList(Material.BARRIER, Material.CRIMSON_HYPHAE,
 		Material.PURPLE_STAINED_GLASS, Material.WATER, Material.LAVA);
@@ -90,7 +92,7 @@ public class ProjectileListener implements Listener {
 			}
 
 			// Bounce off surfaces
-			if (!Nullables.isNullOrAir(event.getHitBlock())) {
+			if (!isNullOrAir(event.getHitBlock())) {
 				Material mat = event.getHitBlock().getType();
 				switch (event.getHitBlockFace()) {
 					case NORTH:

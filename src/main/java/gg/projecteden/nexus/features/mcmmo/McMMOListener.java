@@ -41,6 +41,7 @@ import java.util.List;
 
 import static gg.projecteden.nexus.features.mcmmo.McMMO.TIER_ONE;
 import static gg.projecteden.nexus.features.mcmmo.McMMO.TIER_ONE_ALL;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 public class McMMOListener implements Listener {
@@ -107,7 +108,7 @@ public class McMMOListener implements Listener {
 
 	boolean canBootBonemeal(Player player) {
 		// If player is wearing boots
-		if (Nullables.isNullOrAir(player.getInventory().getBoots()))
+		if (isNullOrAir(player.getInventory().getBoots()))
 			return false;
 
 		// If player is wearing gold boots

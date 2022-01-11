@@ -26,6 +26,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineE
 import gg.projecteden.nexus.framework.exceptions.preconfigured.MissingArgumentException;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.NoPermissionException;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -460,14 +461,14 @@ public abstract class ICustomCommand {
 		methods.addAll(overridden.values());
 
 		methods.sort(
-				Comparator.comparing(method ->
-						Arrays.stream(getLiteralWords(getPathString((Method) method)).split(" "))
-								.filter(path -> !isNullOrEmpty(path))
-								.count())
-				.thenComparing(method ->
-						Arrays.stream(getPathString((Method) method).split(" "))
-								.filter(path -> !isNullOrEmpty(path))
-								.count()));
+			Comparator.comparing(method ->
+				Arrays.stream(getLiteralWords(getPathString((Method) method)).split(" "))
+					.filter(Nullables::isNotNullOrEmpty)
+					.count())
+			.thenComparing(method ->
+				Arrays.stream(getPathString((Method) method).split(" "))
+					.filter(Nullables::isNotNullOrEmpty)
+					.count()));
 
 		List<Method> filtered = methods.stream()
 			.filter(method -> method.getAnnotation(Disabled.class) == null)

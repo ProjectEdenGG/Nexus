@@ -16,7 +16,6 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -42,6 +41,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 public class DyeStation extends CustomBench {
@@ -237,14 +237,14 @@ public class DyeStation extends CustomBench {
 
 		private void replaceItem(Player player, InventoryContents contents, ItemClickData e, SlotPos slot) {
 			ItemStack cursorItem = player.getItemOnCursor();
-			boolean emptyCursor = Nullables.isNullOrAir(cursorItem);
+			boolean emptyCursor = isNullOrAir(cursorItem);
 			ItemStack slotItem = e.getItem();
 
-			if (Nullables.isNullOrAir(slotItem) && emptyCursor)
+			if (isNullOrAir(slotItem) && emptyCursor)
 				return;
 
 			// if slot is empty
-			if (Nullables.isNullOrAir(slotItem)) {
+			if (isNullOrAir(slotItem)) {
 				contents.set(slot, ClickableItem.empty(cursorItem));
 				player.setItemOnCursor(null);
 
@@ -403,7 +403,7 @@ public class DyeStation extends CustomBench {
 				return false;
 
 			ItemStack dye = dyeOptional.get().getItem();
-			if (Nullables.isNullOrAir(dye))
+			if (isNullOrAir(dye))
 				return false;
 
 			if (!Material.PAPER.equals(dye.getType()))
@@ -421,7 +421,7 @@ public class DyeStation extends CustomBench {
 				return false;
 
 			ItemStack input = inputOptional.get().getItem();
-			if (Nullables.isNullOrAir(input))
+			if (isNullOrAir(input))
 				return false;
 
 			return MaterialTag.DYEABLE.isTagged(input);

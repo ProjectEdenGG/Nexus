@@ -27,6 +27,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.pretty;
 
 @Redirect(from = "/costumrecipes", to = "/customrecipes") // https://i.imgur.com/Bu1hC64.png
@@ -89,7 +90,7 @@ public class CustomRecipesCommand extends CustomCommand {
 
 			contents.set(1, 2, ClickableItem.from(new ItemBuilder(Material.LIGHT_GRAY_STAINED_GLASS_PANE).name("Place Item Here").build(), e -> {
 				InventoryClickEvent clickEvent = (InventoryClickEvent) e.getEvent();
-				if (Nullables.isNullOrAir(clickEvent.getWhoClicked().getItemOnCursor())) {
+				if (isNullOrAir(clickEvent.getWhoClicked().getItemOnCursor())) {
 					for (int uncraftingSlot : uncraftingSlots)
 						contents.set(uncraftingSlot, ClickableItem.NONE);
 					return;
@@ -114,7 +115,7 @@ public class CustomRecipesCommand extends CustomCommand {
 
 			for (int i = 0; i < items.get(index).size(); i++) {
 				ItemStack item = items.get(index).get(i);
-				if (Nullables.isNullOrAir(item))
+				if (isNullOrAir(item))
 					item = new ItemBuilder(Material.LIGHT_GRAY_STAINED_GLASS_PANE).name("Air").build();
 				contents.set(uncraftingSlots[i], ClickableItem.empty(item));
 			}

@@ -30,6 +30,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Function;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+
 // TODO Lobby
 
 @Regenerating({"board", "guess"})
@@ -163,7 +165,7 @@ public final class Mastermind extends SingleplayerMechanic {
 			}
 
 			Block placed = event.getClickedBlock().getRelative(event.getBlockFace());
-			if (!Nullables.isNullOrAir(event.getItem()) && !canBuild(minigamer, placed))
+			if (!isNullOrAir(event.getItem()) && !canBuild(minigamer, placed))
 				event.setCancelled(true);
 		}
 	}

@@ -19,6 +19,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+
 public class TreasureChests implements Listener {
 	private static final BearFair21UserService userService = new BearFair21UserService();
 	private static final Supplier<ItemBuilder> treasureChest = () -> ItemBuilder.fromHeadId("13379");
@@ -59,7 +61,7 @@ public class TreasureChests implements Listener {
 	public void onClickHead(PlayerInteractEvent event) {
 		Block block = event.getClickedBlock();
 		if (BearFair21.isNotAtBearFair(event)) return;
-		if (Nullables.isNullOrAir(block)) return;
+		if (isNullOrAir(block)) return;
 		if (!MaterialTag.PLAYER_SKULLS.isTagged(block.getType())) return;
 
 		Location location = block.getLocation();

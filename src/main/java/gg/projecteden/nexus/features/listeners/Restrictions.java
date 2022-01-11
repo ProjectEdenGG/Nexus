@@ -86,7 +86,7 @@ public class Restrictions implements Listener {
 
 	@EventHandler
 	public void onCommandMinecartInteract(PlayerInteractEvent event) {
-		if (Nullables.isNullOrAir(event.getItem()))
+		if (isNullOrAir(event.getItem()))
 			return;
 
 		if (event.getItem().getType() == Material.COMMAND_BLOCK_MINECART)
@@ -133,7 +133,7 @@ public class Restrictions implements Listener {
 
 		ItemStack item = event.getCurrentItem();
 
-		if (Nullables.isNullOrAir(item))
+		if (isNullOrAir(item))
 			return;
 
 		ItemMeta meta = item.getItemMeta();
@@ -212,7 +212,7 @@ public class Restrictions implements Listener {
 
 	@EventHandler
 	public void onInteractHoldingSpawnEgg(PlayerInteractEvent event) {
-		if (Nullables.isNullOrAir(event.getItem())) return;
+		if (isNullOrAir(event.getItem())) return;
 		if (!MaterialTag.SPAWN_EGGS.isTagged(event.getItem().getType())) return;
 		if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
 		if (isNullOrAir(event.getClickedBlock())) return;

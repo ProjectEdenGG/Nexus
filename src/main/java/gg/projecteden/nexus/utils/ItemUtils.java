@@ -34,13 +34,14 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 public class ItemUtils {
 
 	@Contract("_, null -> false; null, _ -> false")
 	public static boolean isTypeAndNameEqual(ItemStack itemStack1, ItemStack itemStack2) {
-		if (Nullables.isNullOrAir(itemStack1) || Nullables.isNullOrAir(itemStack2)) return false;
+		if (isNullOrAir(itemStack1) || isNullOrAir(itemStack2)) return false;
 		if (itemStack1.getType() != itemStack2.getType()) return false;
 		Function<ItemStack, String> name = item -> stripColor(item.getItemMeta().getDisplayName());
 		return name.apply(itemStack1).equals(name.apply(itemStack2));
@@ -79,7 +80,7 @@ public class ItemUtils {
 	}
 
 	public static @Nullable ItemStack clone(@Nullable ItemStack itemStack) {
-		if (Nullables.isNullOrAir(itemStack))
+		if (isNullOrAir(itemStack))
 			return null;
 
 		return itemStack.clone();
@@ -91,13 +92,13 @@ public class ItemUtils {
 
 	public static void combine(List<ItemStack> itemStacks, List<ItemStack> newItemStacks) {
 		for (ItemStack newItemStack : newItemStacks) {
-			if (Nullables.isNullOrAir(newItemStack))
+			if (isNullOrAir(newItemStack))
 				continue;
 
 			final Iterator<ItemStack> iterator = itemStacks.iterator();
 			while (iterator.hasNext()) {
 				final ItemStack next = iterator.next();
-				if (Nullables.isNullOrAir(next))
+				if (isNullOrAir(next))
 					continue;
 				if (next.getAmount() >= next.getType().getMaxStackSize())
 					continue;
@@ -118,13 +119,13 @@ public class ItemUtils {
 	}
 
 	public static List<ItemStack> getShulkerContents(ItemStack itemStack) {
-		return getRawShulkerContents(itemStack).stream().filter(content -> !Nullables.isNullOrAir(content)).collect(Collectors.toList());
+		return getRawShulkerContents(itemStack).stream().filter(Nullables::isNotNullOrAir).collect(Collectors.toList());
 	}
 
 	public static List<ItemStack> getRawShulkerContents(ItemStack itemStack) {
 		List<ItemStack> contents = new ArrayList<>();
 
-		if (Nullables.isNullOrAir(itemStack))
+		if (isNullOrAir(itemStack))
 			return contents;
 
 		if (!MaterialTag.SHULKER_BOXES.isTagged(itemStack.getType()))
@@ -153,16 +154,16 @@ public class ItemUtils {
 		Player _player = player.getPlayer();
 		ItemStack mainHand = _player.getInventory().getItemInMainHand();
 		ItemStack offHand = _player.getInventory().getItemInOffHand();
-		if (!Nullables.isNullOrAir(mainHand) && (material == null || mainHand.getType() == material))
+		if (!isNullOrAir(mainHand) && (material == null || mainHand.getType() == material))
 			return mainHand;
-		else if (!Nullables.isNullOrAir(offHand) && (material == null || offHand.getType() == material))
+		else if (!isNullOrAir(offHand) && (material == null || offHand.getType() == material))
 			return offHand;
 		return null;
 	}
 
 	public static ItemStack getToolRequired(HasPlayer player) {
 		ItemStack item = getTool(player);
-		if (Nullables.isNullOrAir(item))
+		if (isNullOrAir(item))
 			throw new InvalidInputException("You are not holding anything");
 		return item;
 	}
@@ -175,9 +176,9 @@ public class ItemUtils {
 		Player _player = player.getPlayer();
 		ItemStack mainHand = _player.getInventory().getItemInMainHand();
 		ItemStack offHand = _player.getInventory().getItemInOffHand();
-		if (!Nullables.isNullOrAir(mainHand) && (material == null || mainHand.getType() == material))
+		if (!isNullOrAir(mainHand) && (material == null || mainHand.getType() == material))
 			return EquipmentSlot.HAND;
-		else if (!Nullables.isNullOrAir(offHand) && (material == null || offHand.getType() == material))
+		else if (!isNullOrAir(offHand) && (material == null || offHand.getType() == material))
 			return EquipmentSlot.OFF_HAND;
 		return null;
 	}
@@ -191,7 +192,7 @@ public class ItemUtils {
 
 	public static boolean isInventoryEmpty(Inventory inventory) {
 		for (ItemStack itemStack : inventory.getContents())
-			if (!Nullables.isNullOrAir(itemStack))
+			if (!isNullOrAir(itemStack))
 				return false;
 		return true;
 	}
@@ -233,7 +234,7 @@ public class ItemUtils {
 	}
 
 	public static boolean isSimilar(ItemStack item1, ItemStack item2) {
-		if (Nullables.isNullOrAir(item1) || Nullables.isNullOrAir(item2))
+		if (isNullOrAir(item1) || isNullOrAir(item2))
 			return false;
 
 		if (item1.getType() != item2.getType())
@@ -328,7 +329,7 @@ public class ItemUtils {
 	}
 
 	public static boolean isSameHead(ItemStack itemStack1, ItemStack itemStack2) {
-		if (Nullables.isNullOrAir(itemStack1) || Nullables.isNullOrAir(itemStack2)) return false;
+		if (isNullOrAir(itemStack1) || isNullOrAir(itemStack2)) return false;
 		if (itemStack1.getType() != Material.PLAYER_HEAD || itemStack2.getType() != Material.PLAYER_HEAD) return false;
 		return Nexus.getHeadAPI().getItemID(itemStack1).equals(Nexus.getHeadAPI().getItemID(itemStack2));
 	}

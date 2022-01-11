@@ -29,6 +29,8 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+
 @Data
 @MatchDataFor(PixelDrop.class)
 public class PixelDropMatchData extends MatchData {
@@ -266,7 +268,7 @@ public class PixelDropMatchData extends MatchData {
 
 				Block block = RandomUtils.randomElement(blocks);
 				blocks.remove(block);
-				if (!Nullables.isNullOrAir(block))
+				if (!isNullOrAir(block))
 					block.setType(Material.AIR);
 			}
 		}));

@@ -28,6 +28,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+
 public class InvisibleItemFramesListener implements Listener {
 
 	@EventHandler
@@ -48,7 +50,7 @@ public class InvisibleItemFramesListener implements Listener {
 		for (Entity entity : entities) {
 			ItemFrame itemFrame = (ItemFrame) entity;
 			itemFrame.getPersistentDataContainer().set(key, PersistentDataType.BYTE, (byte) 1);
-			if (Nullables.isNullOrAir(itemFrame.getItem())) {
+			if (isNullOrAir(itemFrame.getItem())) {
 				itemFrame.setVisible(true);
 				itemFrame.setGlowing(true);
 			} else

@@ -38,6 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.utils.BlockUtils.createDistanceSortedQueue;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.Utils.getMin;
@@ -119,7 +120,7 @@ public class WoodCutting implements Listener {
 
 		public List<ItemStack> getDrops(ItemStack tool) {
 			List<ItemStack> drops = new ArrayList<>();
-			Material toolType = Nullables.isNullOrAir(tool) ? Material.AIR : tool.getType();
+			Material toolType = isNullOrAir(tool) ? Material.AIR : tool.getType();
 			boolean chance = Tool.from(toolType).chance();
 			if (chance) {
 				drops.add(new ItemBuilder(logs).name(camelCase(name() + " Logs")).amount(1).build());

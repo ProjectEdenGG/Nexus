@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.isNotAtBearFair;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class Beehive implements Listener {
 	private final BearFair21UserService userService = new BearFair21UserService();
@@ -83,7 +84,7 @@ public class Beehive implements Listener {
 		if (BearFair21.isNotAtBearFair(event)) return;
 
 		Block block = event.getClickedBlock();
-		if (Nullables.isNullOrAir(block)) return;
+		if (isNullOrAir(block)) return;
 
 		if (BearFair21.worldguard().isInRegion(block.getLocation(), queenRg)) {
 			BearFair21User user = userService.get(event.getPlayer());

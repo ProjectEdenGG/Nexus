@@ -62,6 +62,7 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 @Aliases({"bf21", "bearfair"})
@@ -394,7 +395,7 @@ public class BearFair21Command extends CustomCommand {
 		Entity entity = getTargetEntity();
 		if (entity == null) {
 			Block block = getTargetBlock();
-			if (Nullables.isNullOrAir(block))
+			if (isNullOrAir(block))
 				error("Entity is null && Block is null or air");
 
 			setupBlockContent(block, category);

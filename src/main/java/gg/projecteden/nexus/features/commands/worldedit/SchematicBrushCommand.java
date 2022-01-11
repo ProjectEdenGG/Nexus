@@ -9,7 +9,6 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
@@ -25,6 +24,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 @NoArgsConstructor
@@ -57,7 +57,7 @@ public class SchematicBrushCommand extends CustomCommand implements Listener {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
 		ItemStack tool = ItemUtils.getTool(player);
-		if (Nullables.isNullOrAir(tool)) return;
+		if (isNullOrAir(tool)) return;
 
 		ItemMeta meta = tool.getItemMeta();
 		if (!meta.getDisplayName().equals(brushName)) return;

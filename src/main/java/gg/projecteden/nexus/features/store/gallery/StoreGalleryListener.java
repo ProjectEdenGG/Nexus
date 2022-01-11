@@ -78,7 +78,7 @@ public class StoreGalleryListener implements Listener {
 			return;
 
 		final Block block = event.getClickedBlock();
-		if (Nullables.isNullOrAir(block))
+		if (isNullOrAir(block))
 			return;
 
 		if (block.getType() != Material.BLACK_CONCRETE)

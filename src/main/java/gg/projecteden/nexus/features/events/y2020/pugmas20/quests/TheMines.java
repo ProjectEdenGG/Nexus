@@ -12,7 +12,6 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.LocationUtils.CardinalDirection;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.MerchantBuilder;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -76,7 +75,7 @@ public class TheMines implements Listener {
 		if (!Pugmas20.isAtPugmas(player)) return;
 
 		Block block = event.getClickedBlock();
-		if (Nullables.isNullOrAir(block)) return;
+		if (isNullOrAir(block)) return;
 
 		Material type = block.getType();
 		String crateType = null;
@@ -130,7 +129,7 @@ public class TheMines implements Listener {
 		int profit = 0;
 		OreType key;
 		for (ItemStack item : event.getInventory().getContents()) {
-			if (Nullables.isNullOrAir(item)) {
+			if (isNullOrAir(item)) {
 				continue;
 			}
 
@@ -141,8 +140,8 @@ public class TheMines implements Listener {
 				List<ItemStack> ingredients = tradeBuilder.getIngredients();
 				if (ingredients.size() != 1) continue;
 				ItemStack ingredient = ingredients.get(0);
-				if (Nullables.isNullOrAir(ingredient)) continue;
-				if (Nullables.isNullOrAir(result)) continue;
+				if (isNullOrAir(ingredient)) continue;
+				if (isNullOrAir(result)) continue;
 
 				key = OreType.ofIngot(ingredient.getType());
 				if (key == null) continue;

@@ -14,7 +14,6 @@ import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20User;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20UserService;
 import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -31,6 +30,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
@@ -507,7 +507,7 @@ public enum QuestNPC {
 
 	public ItemStack getItem(Player player, ItemStack item) {
 		for (ItemStack content : player.getInventory().getContents()) {
-			if (Nullables.isNullOrAir(content))
+			if (isNullOrAir(content))
 				continue;
 
 			if (ItemUtils.isFuzzyMatch(item, content))

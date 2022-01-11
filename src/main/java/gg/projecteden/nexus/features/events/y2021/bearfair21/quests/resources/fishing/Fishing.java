@@ -129,7 +129,7 @@ public class Fishing implements Listener {
 		Player player = event.getPlayer();
 
 		ItemStack item = getTool(player);
-		if (Nullables.isNullOrAir(item)) return;
+		if (isNullOrAir(item)) return;
 		if (!ItemUtils.isFuzzyMatch(item, FishingLoot.TREASURE_CHEST.getItem())) return;
 
 		item.setAmount(item.getAmount() - 1);

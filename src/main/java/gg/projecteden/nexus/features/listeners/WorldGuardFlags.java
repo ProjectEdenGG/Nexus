@@ -108,7 +108,7 @@ public class WorldGuardFlags implements Listener {
 		if (event.getDamager() instanceof Player) {
 			if (event.getEntity() instanceof ItemFrame itemFrame) {
 				ItemStack itemStack = itemFrame.getItem();
-				if (Nullables.isNullOrAir(itemStack))
+				if (isNullOrAir(itemStack))
 					return;
 
 				if (CustomModel.exists(itemStack))
@@ -127,7 +127,7 @@ public class WorldGuardFlags implements Listener {
 
 		} else if (event.getEntity() instanceof ItemFrame itemFrame) {
 			ItemStack itemStack = itemFrame.getItem();
-			if (Nullables.isNullOrAir(itemStack))
+			if (isNullOrAir(itemStack))
 				return;
 
 			if (CustomModel.exists(itemStack)) {
@@ -150,7 +150,7 @@ public class WorldGuardFlags implements Listener {
 		if (!Action.RIGHT_CLICK_BLOCK.equals(event.getAction())) return;
 
 		ItemStack item = event.getItem();
-		if (Nullables.isNullOrAir(item)) return;
+		if (isNullOrAir(item)) return;
 		if (!item.getType().equals(Material.BONE_MEAL)) return;
 
 		Block clicked = event.getClickedBlock();

@@ -25,7 +25,7 @@ public class Kit implements ConfigurationSerializable {
 	public Kit(Map<String, Object> map) {
 		this.name = (String) map.getOrDefault("name", name);
 		this.items = Arrays.stream(YML.deserializeItems((Map<String, Object>) map.getOrDefault("items", items)))
-				.filter(itemStack -> !Nullables.isNullOrAir(itemStack)).toArray(ItemStack[]::new);
+				.filter(Nullables::isNotNullOrAir).toArray(ItemStack[]::new);
 		this.delay = (int) map.getOrDefault("delay", delay);
 	}
 

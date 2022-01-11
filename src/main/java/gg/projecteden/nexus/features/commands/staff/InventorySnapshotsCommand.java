@@ -52,6 +52,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiFunction;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.PlayerUtils.getPlayer;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.nexus.utils.StringUtils.getShortLocationString;
@@ -213,7 +214,7 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 		if (!applyingToChest.containsKey(uuid))
 			return;
 
-		if (Nullables.isNullOrAir(block) || !MaterialTag.CHESTS.isTagged(block.getType()))
+		if (isNullOrAir(block) || !MaterialTag.CHESTS.isTagged(block.getType()))
 			return;
 
 		if (!(block.getState() instanceof InventoryHolder holder))
@@ -225,7 +226,7 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 		final long freeSpace = Arrays.stream(inventory.getContents()).filter(Nullables::isNullOrAir).count();
 
 		final InventorySnapshot snapshot = applyingToChest.get(uuid);
-		final List<ItemStack> contents = snapshot.getContents().stream().filter(item -> !Nullables.isNullOrAir(item)).toList();
+		final List<ItemStack> contents = snapshot.getContents().stream().filter(Nullables::isNotNullOrAir).toList();
 
 		if (contents.size() > freeSpace) {
 			PlayerUtils.send(player, PREFIX + "&cSnapshot contents too large for this inventory");

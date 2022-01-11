@@ -183,7 +183,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	protected Sign getTargetSignRequired() {
 		Block targetBlock = getTargetBlock();
 		Material material = targetBlock.getType();
-		if (Nullables.isNullOrAir(material) || !MaterialTag.SIGNS.isTagged(material))
+		if (isNullOrAir(material) || !MaterialTag.SIGNS.isTagged(material))
 			error("You must be looking at a sign");
 		return (Sign) targetBlock.getState();
 	}

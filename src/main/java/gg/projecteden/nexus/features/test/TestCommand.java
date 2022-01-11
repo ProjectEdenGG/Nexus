@@ -231,7 +231,7 @@ public class TestCommand extends CustomCommand implements Listener {
 	@Path("getBlockStandingOn")
 	void getBlockStandingOn() {
 		Block block = BlockUtils.getBlockStandingOn(player());
-		if (Nullables.isNullOrAir(block))
+		if (isNullOrAir(block))
 			send("Nothing");
 		else
 			send(block.getType().name());

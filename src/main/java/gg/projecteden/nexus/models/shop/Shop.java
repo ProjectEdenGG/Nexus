@@ -19,6 +19,7 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SerializationUtils.Json;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -92,7 +93,7 @@ public class Shop implements PlayerOwnedObject {
 	}
 
 	public List<String> getDescription() {
-		return description.stream().filter(line -> !isNullOrEmpty(line)).collect(Collectors.toList());
+		return description.stream().filter(Nullables::isNotNullOrEmpty).collect(Collectors.toList());
 	}
 
 	public void setDescription(List<String> description) {

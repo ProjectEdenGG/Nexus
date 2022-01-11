@@ -24,6 +24,8 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+
 public class KitManagerProvider extends MenuUtils implements InventoryProvider {
 
 	Integer id;
@@ -146,7 +148,7 @@ public class KitManagerProvider extends MenuUtils implements InventoryProvider {
 		Inventory inv = player.getOpenInventory().getTopInventory();
 		List<ItemStack> items = new ArrayList<>();
 		for (int i : editableSlots) {
-			if (Nullables.isNullOrAir(inv.getItem(i))) continue;
+			if (isNullOrAir(inv.getItem(i))) continue;
 			items.add(inv.getItem(i));
 		}
 		Kit kit = KitManager.get(id);

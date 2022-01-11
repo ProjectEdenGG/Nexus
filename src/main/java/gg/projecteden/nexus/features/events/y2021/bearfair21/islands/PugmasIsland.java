@@ -43,6 +43,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+
 @Region("pugmas")
 @NPCClass(PugmasNPCs.class)
 public class PugmasIsland implements BearFair21Island {
@@ -538,7 +540,7 @@ public class PugmasIsland implements BearFair21Island {
 		if (!BearFair21.isInRegion(event.getPlayer(), getRegion())) return;
 
 		Block block = event.getClickedBlock();
-		if (Nullables.isNullOrAir(block)) return;
+		if (isNullOrAir(block)) return;
 
 		BearFair21User user = userService.get(event.getPlayer());
 		if (user.getQuestStage_Pugmas() != QuestStage.STEP_TWO) return;

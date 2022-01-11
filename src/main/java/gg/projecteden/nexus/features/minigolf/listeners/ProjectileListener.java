@@ -22,6 +22,8 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+
 public class ProjectileListener implements Listener {
 
 	public ProjectileListener() {
@@ -86,7 +88,7 @@ public class ProjectileListener implements Listener {
 		}
 
 		// Bounce off surfaces
-		if (Nullables.isNullOrAir(event.getHitBlock())) {
+		if (isNullOrAir(event.getHitBlock())) {
 			user.debug("golfball hit null or air block");
 			return;
 		}

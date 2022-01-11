@@ -21,6 +21,8 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Set;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+
 public class InteractListener implements Listener {
 
 	public InteractListener() {
@@ -37,7 +39,7 @@ public class InteractListener implements Listener {
 			return;
 
 		ItemStack item = event.getItem();
-		if (Nullables.isNullOrAir(item)) {
+		if (isNullOrAir(item)) {
 			user.debug("item is null or air, returning");
 			return;
 		}
@@ -54,7 +56,7 @@ public class InteractListener implements Listener {
 				return;
 			}
 
-			if (Nullables.isNullOrAir(block)) {
+			if (isNullOrAir(block)) {
 				user.debug("placed on block is air or null");
 				event.setCancelled(true);
 				return;

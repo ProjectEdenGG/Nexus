@@ -37,6 +37,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.asOxfordList;
 import static gg.projecteden.utils.UUIDUtils.UUID0;
@@ -186,7 +187,7 @@ public class Mailer implements PlayerOwnedObject {
 		}
 
 		public boolean hasMessage() {
-			return !Nullables.isNullOrAir(message);
+			return !isNullOrAir(message);
 		}
 
 		public boolean hasItems() {

@@ -35,6 +35,8 @@ import org.bukkit.util.Vector;
 
 import java.util.Arrays;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+
 public class WitherArmorListener implements Listener {
 
 	public WitherArmorListener() {
@@ -55,7 +57,7 @@ public class WitherArmorListener implements Listener {
 	}
 
 	public boolean isWitherArmor(ItemStack item) {
-		if (Nullables.isNullOrAir(item)) return false;
+		if (isNullOrAir(item)) return false;
 		NBTItem nbtItem = new NBTItem(item);
 		if (!nbtItem.hasKey("wither-armor"))
 			return false;
@@ -87,7 +89,7 @@ public class WitherArmorListener implements Listener {
 
 	private void handleEvent(Player player) {
 		if (!hasFullSet(player)) return;
-		if (!Nullables.isNullOrAir(player.getInventory().getItemInMainHand())) return;
+		if (!isNullOrAir(player.getInventory().getItemInMainHand())) return;
 		if (new WorldGuardUtils(player).getRegionsAt(player.getLocation()).stream().anyMatch(region -> !region.getId().contains("wither"))) return;
 		if (!new CooldownService().check(player.getUniqueId(), "wither-armor-attack", TimeUtils.TickTime.SECOND.x(3))) return;
 		shootSkull(player, true);

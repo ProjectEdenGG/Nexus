@@ -13,7 +13,6 @@ import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEve
 import gg.projecteden.nexus.models.bearfair20.BearFair20User;
 import gg.projecteden.nexus.models.bearfair20.BearFair20UserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -44,6 +43,7 @@ import java.util.Map;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.worldguard;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.chime;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.itemLore;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Region("halloween")
 @NPCClass(HalloweenNPCs.class)
@@ -160,7 +160,7 @@ public class HalloweenIsland implements Listener, BearFairIsland {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
 		Block clicked = event.getClickedBlock();
-		if (Nullables.isNullOrAir(clicked)) return;
+		if (isNullOrAir(clicked)) return;
 
 		ProtectedRegion skullRegion = worldguard().getProtectedRegion(basketRg);
 		if (!worldguard().getRegionsAt(clicked.getLocation()).contains(skullRegion)) return;

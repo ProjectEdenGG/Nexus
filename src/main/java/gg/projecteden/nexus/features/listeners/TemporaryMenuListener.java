@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.listeners;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.Utils;
+import org.apache.commons.lang.ObjectUtils.Null;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -46,7 +47,7 @@ public interface TemporaryMenuListener extends TemporaryListener {
 		if (!event.getPlayer().equals(getPlayer())) return;
 
 		List<ItemStack> contents = Arrays.stream(event.getInventory().getContents())
-				.filter(item -> !Nullables.isNullOrAir(item))
+				.filter(Nullables::isNotNullOrAir)
 				.collect(Collectors.toList());
 
 		onClose(event, contents);

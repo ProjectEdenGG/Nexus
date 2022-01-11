@@ -11,7 +11,6 @@ import gg.projecteden.nexus.models.bearfair20.BearFair20User;
 import gg.projecteden.nexus.models.bearfair20.BearFair20User.BF20PointSource;
 import gg.projecteden.nexus.models.bearfair20.BearFair20UserService;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -39,6 +38,7 @@ import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.g
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.isInRegion;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.send;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.worldguard;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class Basketball implements Listener {
 
@@ -84,16 +84,16 @@ public class Basketball implements Listener {
 		removeBasketball(inv.getExtraContents(), player);
 		removeBasketball(inv.getArmorContents(), player);
 		removeBasketball(inv.getStorageContents(), player);
-		if (!Nullables.isNullOrAir(inv.getHelmet()) && isBasketball(inv.getHelmet()))
+		if (!isNullOrAir(inv.getHelmet()) && isBasketball(inv.getHelmet()))
 			inv.setHelmet(new ItemStack(Material.AIR));
-		if (!Nullables.isNullOrAir(inv.getItemInOffHand()) && isBasketball(inv.getItemInOffHand()))
+		if (!isNullOrAir(inv.getItemInOffHand()) && isBasketball(inv.getItemInOffHand()))
 			inv.setItemInOffHand(new ItemStack(Material.AIR));
 
 	}
 
 	private static void removeBasketball(ItemStack[] itemStacks, Player player) {
 		for (ItemStack item : itemStacks) {
-			if (Nullables.isNullOrAir(item))
+			if (isNullOrAir(item))
 				continue;
 			if (isBasketball(item)) {
 				player.getInventory().remove(item);

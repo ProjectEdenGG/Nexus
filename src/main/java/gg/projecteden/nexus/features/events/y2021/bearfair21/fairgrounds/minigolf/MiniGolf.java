@@ -62,6 +62,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 public class MiniGolf {
@@ -146,7 +147,7 @@ public class MiniGolf {
 						return;
 
 					ItemStack golfBall = golfBalls.get(index.get());
-					if (!Nullables.isNullOrAir(golfBall))
+					if (!isNullOrAir(golfBall))
 						armorStand.setItem(EquipmentSlot.HAND, golfBall);
 
 					index.getAndIncrement();
@@ -235,7 +236,7 @@ public class MiniGolf {
 
 				Player player = user.getOnlinePlayer();
 				ItemStack tool = ItemUtils.getTool(player);
-				if (Nullables.isNullOrAir(tool))
+				if (isNullOrAir(tool))
 					continue;
 
 				// quick fix

@@ -16,7 +16,6 @@ import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -57,6 +56,7 @@ import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.i
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.isBFItem;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.send;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.worldguard;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class BFQuests implements Listener {
 	public static String itemLore = "BearFair20 Item";
@@ -191,7 +191,7 @@ public class BFQuests implements Listener {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
 		Block clicked = event.getClickedBlock();
-		if (Nullables.isNullOrAir(clicked)) return;
+		if (isNullOrAir(clicked)) return;
 
 		ProtectedRegion beehiveRg = worldguard().getProtectedRegion(Beehive.beehiveRg);
 		if (worldguard().getRegionsAt(clicked.getLocation()).contains(beehiveRg)) {
@@ -215,7 +215,7 @@ public class BFQuests implements Listener {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
 		Block clicked = event.getClickedBlock();
-		if (Nullables.isNullOrAir(clicked)) return;
+		if (isNullOrAir(clicked)) return;
 
 		ProtectedRegion beehiveRg = worldguard().getProtectedRegion(Beehive.beehiveRg);
 		if (worldguard().getRegionsAt(clicked.getLocation()).contains(beehiveRg)) {
@@ -249,7 +249,7 @@ public class BFQuests implements Listener {
 
 		boolean questCrafting = true;
 		for (ItemStack ingredient : ingredients) {
-			if (Nullables.isNullOrAir(ingredient))
+			if (isNullOrAir(ingredient))
 				continue;
 			if (!isBFItem(ingredient))
 				questCrafting = false;
@@ -275,7 +275,7 @@ public class BFQuests implements Listener {
 		// Each item must be a BF20 item, for it to result in a BF20 item
 		boolean questCrafting = true;
 		for (ItemStack ingredient : ingredients) {
-			if (Nullables.isNullOrAir(ingredient))
+			if (isNullOrAir(ingredient))
 				continue;
 			if (!isBFItem(ingredient))
 				questCrafting = false;

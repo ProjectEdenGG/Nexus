@@ -11,7 +11,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import org.bukkit.Location;
@@ -32,6 +31,7 @@ import java.util.UUID;
 
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.itemLore;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Fishing.weightedList;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Permission(Group.STAFF)
 public class BFFishingCommand extends CustomCommand {
@@ -111,7 +111,7 @@ public class BFFishingCommand extends CustomCommand {
 
 		weightedList.forEach(weightedLoot -> itemStacks.add(weightedLoot.getItemStack()));
 		for (ItemStack content : contents) {
-			if (Nullables.isNullOrAir(content))
+			if (isNullOrAir(content))
 				continue;
 
 			int amount = content.getAmount();
@@ -146,7 +146,7 @@ public class BFFishingCommand extends CustomCommand {
 
 		// Remove fishing rod
 		for (ItemStack content : player.getInventory().getContents()) {
-			if (Nullables.isNullOrAir(content)) continue;
+			if (isNullOrAir(content)) continue;
 			if (!content.getType().equals(Material.FISHING_ROD)) continue;
 			if (BearFair20.isBFItem(content))
 				player.getInventory().remove(content);

@@ -5,7 +5,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
@@ -18,6 +17,8 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @NoArgsConstructor
 @Permission(Group.SENIOR_STAFF)
@@ -40,7 +41,7 @@ public class StripMetaCommand extends CustomCommand implements Listener {
 		if (!Utils.equalsInvViewTitle(event.getView(), TITLE)) return;
 
 		for (ItemStack item : event.getInventory().getContents()) {
-			if (Nullables.isNullOrAir(item))
+			if (isNullOrAir(item))
 				continue;
 
 			ItemMeta itemMeta = item.getItemMeta();

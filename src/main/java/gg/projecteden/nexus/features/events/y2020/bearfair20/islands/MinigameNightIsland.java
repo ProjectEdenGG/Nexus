@@ -15,7 +15,6 @@ import gg.projecteden.nexus.models.bearfair20.BearFair20UserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -49,6 +48,7 @@ import java.util.Map;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.worldguard;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.chime;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.itemLore;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Region("minigamenight")
 @NPCClass(MinigameNightNPCs.class)
@@ -205,7 +205,7 @@ public class MinigameNightIsland implements Listener, BearFairIsland {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
 		Block clicked = event.getClickedBlock();
-		if (Nullables.isNullOrAir(clicked)) return;
+		if (isNullOrAir(clicked)) return;
 
 		ProtectedRegion region = worldguard().getProtectedRegion(arcadeRg);
 		if (!worldguard().getRegionsAt(clicked.getLocation()).contains(region)) return;
@@ -306,7 +306,7 @@ public class MinigameNightIsland implements Listener, BearFairIsland {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
 		Block clicked = event.getClickedBlock();
-		if (Nullables.isNullOrAir(clicked)) return;
+		if (isNullOrAir(clicked)) return;
 
 		ProtectedRegion region = worldguard().getProtectedRegion(solderRg);
 		if (!worldguard().getRegionsAt(clicked.getLocation()).contains(region)) return;

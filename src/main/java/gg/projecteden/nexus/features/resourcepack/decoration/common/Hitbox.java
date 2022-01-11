@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+
 @Data
 @RequiredArgsConstructor
 public class Hitbox {
@@ -93,7 +95,7 @@ public class Hitbox {
 				offsetBlock = offsetBlock.getRelative(_blockFace, offsets.get(_blockFace));
 			}
 
-			if (Nullables.isNullOrAir(material))
+			if (isNullOrAir(material))
 				material = Material.AIR;
 
 			offsetBlock.setType(material);

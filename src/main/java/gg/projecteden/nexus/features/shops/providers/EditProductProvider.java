@@ -33,6 +33,7 @@ import java.util.List;
 
 import static gg.projecteden.nexus.features.menus.SignMenuFactory.ARROWS;
 import static gg.projecteden.nexus.utils.ItemUtils.isSimilar;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.nexus.utils.StringUtils.pretty;
 
@@ -166,7 +167,7 @@ public class EditProductProvider extends ShopProvider {
 
 			ItemStack[] contents = event.getInventory().getContents();
 			for (ItemStack content : contents) {
-				if (Nullables.isNullOrAir(content))
+				if (isNullOrAir(content))
 					continue;
 
 				if (isSimilar(product.getItem(), content))
@@ -223,7 +224,7 @@ public class EditProductProvider extends ShopProvider {
 			ItemStack[] contents = event.getInventory().getContents();
 			int itemsLeft = 0;
 			for (ItemStack content : contents) {
-				if (Nullables.isNullOrAir(content))
+				if (isNullOrAir(content))
 					continue;
 
 				if (!isSimilar(product.getItem(), content)) {

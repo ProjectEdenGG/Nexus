@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.Utils.registerListeners;
 
 public class AutoInventory extends Feature {
@@ -120,7 +121,7 @@ public class AutoInventory extends Feature {
 
 		for (int i = sourceInventoryStartIndex; i < sourceInventorySize; i++) {
 			ItemStack sourceStack = source.getItem(i);
-			if (Nullables.isNullOrAir(sourceStack))
+			if (isNullOrAir(sourceStack))
 				continue;
 
 			if (autoInventoryUser.getAutoDepositExclude().contains(sourceStack.getType()))

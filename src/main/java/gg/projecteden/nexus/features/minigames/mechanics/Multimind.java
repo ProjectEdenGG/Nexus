@@ -24,6 +24,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 // TODO Lobby
@@ -138,7 +139,7 @@ public final class Multimind extends SingleplayerMechanic {
 			}
 
 			Block placed = event.getClickedBlock().getRelative(event.getBlockFace());
-			if (!Nullables.isNullOrAir(event.getItem()) && !canBuild(minigamer, placed))
+			if (!isNullOrAir(event.getItem()) && !canBuild(minigamer, placed))
 				event.setCancelled(true);
 		}
 	}

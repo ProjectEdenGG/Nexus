@@ -10,7 +10,6 @@ import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20User;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20UserService;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.Pugmas20TreeRegenJob;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import gg.projecteden.nexus.utils.Tasks;
@@ -91,7 +90,7 @@ public class OrnamentVendor implements Listener {
 
 		private void loadHead() {
 			ItemStack itemStack = AdventMenu.origin.getRelative(relative, 0, 0).getDrops().stream().findFirst().orElse(null);
-			if (Nullables.isNullOrAir(itemStack))
+			if (isNullOrAir(itemStack))
 				this.skull = null;
 			else
 				this.skull = Pugmas20.item(itemStack).name(camelCase(name() + " Ornament")).build();

@@ -244,7 +244,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 		final ObtainChallengeProgress progress = matchData.getProgress(minigamer, ObtainChallengeProgress.class);
 
 		for (ItemStack itemStack : player.getInventory().getContents()) {
-			if (Nullables.isNullOrAir(itemStack))
+			if (isNullOrAir(itemStack))
 				continue;
 
 			progress.getItems().add(itemStack);

@@ -55,6 +55,7 @@ import java.util.List;
 import java.util.Map;
 
 import static gg.projecteden.nexus.utils.LocationUtils.getCenteredLocation;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class Pugmas20 implements Listener {
 	@Getter
@@ -278,7 +279,7 @@ public class Pugmas20 implements Listener {
 	public static void showWaypoint(AdventChest adventChest, Player player) {
 		Location chestLoc = adventChest.getLocation();
 		Block chest = chestLoc.getBlock();
-		if (!Nullables.isNullOrAir(chest)) {
+		if (!isNullOrAir(chest)) {
 			Location blockLoc = getCenteredLocation(chestLoc);
 			World blockWorld = blockLoc.getWorld();
 			FallingBlock fallingBlock = blockWorld.spawnFallingBlock(blockLoc, Material.RED_CONCRETE.createBlockData());

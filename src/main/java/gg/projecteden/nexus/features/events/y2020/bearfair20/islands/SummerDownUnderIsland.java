@@ -12,7 +12,6 @@ import gg.projecteden.nexus.models.bearfair20.BearFair20User;
 import gg.projecteden.nexus.models.bearfair20.BearFair20UserService;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -40,6 +39,7 @@ import java.util.List;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.worldguard;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.chime;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.itemLore;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Region("summerdownunder")
 @NPCClass(SummerDownUnderNPCs.class)
@@ -413,7 +413,7 @@ public class SummerDownUnderIsland implements Listener, BearFairIsland {
 	private static ItemStack hasFoolsGold(Player player) {
 		ItemStack[] contents = player.getInventory().getContents();
 		for (ItemStack content : contents) {
-			if (Nullables.isNullOrAir(content)) continue;
+			if (isNullOrAir(content)) continue;
 			if (!BearFair20.isBFItem(content)) continue;
 			if (!content.getType().equals(Material.GOLD_NUGGET)) continue;
 
@@ -430,7 +430,7 @@ public class SummerDownUnderIsland implements Listener, BearFairIsland {
 	private static ItemStack hasGold(Player player) {
 		ItemStack[] contents = player.getInventory().getContents();
 		for (ItemStack content : contents) {
-			if (Nullables.isNullOrAir(content)) continue;
+			if (isNullOrAir(content)) continue;
 			if (!BearFair20.isBFItem(content)) continue;
 			if (!content.getType().equals(Material.GOLD_NUGGET)) continue;
 			return content;
@@ -453,7 +453,7 @@ public class SummerDownUnderIsland implements Listener, BearFairIsland {
 		boolean peanutsBool = true;
 		boolean syrupBool = true;
 		for (ItemStack content : player.getInventory().getContents()) {
-			if (Nullables.isNullOrAir(content)) continue;
+			if (isNullOrAir(content)) continue;
 
 			ItemStack item = content.clone();
 			item.setAmount(1);
@@ -488,7 +488,7 @@ public class SummerDownUnderIsland implements Listener, BearFairIsland {
 
 		if (!BearFair20.enableQuests) return;
 		Block clicked = event.getClickedBlock();
-		if (Nullables.isNullOrAir(clicked)) return;
+		if (isNullOrAir(clicked)) return;
 
 		Material material = clicked.getType();
 		if (!material.equals(Material.BARREL)) return;
@@ -524,7 +524,7 @@ public class SummerDownUnderIsland implements Listener, BearFairIsland {
 			water = true;
 		else {
 			Block clicked = event.getClickedBlock();
-			if (!Nullables.isNullOrAir(clicked) && clicked.getBlockData() instanceof Waterlogged waterlogged) {
+			if (!isNullOrAir(clicked) && clicked.getBlockData() instanceof Waterlogged waterlogged) {
 				if (waterlogged.isWaterlogged())
 					water = true;
 			}
@@ -533,7 +533,7 @@ public class SummerDownUnderIsland implements Listener, BearFairIsland {
 		if (!water) return;
 
 		ItemStack tool = event.getItem();
-		if (Nullables.isNullOrAir(tool)) return;
+		if (isNullOrAir(tool)) return;
 		if (!tool.equals(sifter)) return;
 
 		// Player is sifting

@@ -46,6 +46,7 @@ import java.util.function.Supplier;
 
 import static gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.*;
 import static gg.projecteden.nexus.utils.ItemUtils.isSameHead;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 @Region("main")
@@ -442,7 +443,7 @@ public class MainIsland implements BearFair21Island {
 				} else if (user.getQuestStage_BeeKeeper() == QuestStage.STEPS_DONE) {
 					ItemStack item = null;
 					for (ItemStack itemStack : user.getOnlinePlayer().getInventory().getContents()) {
-						if (Nullables.isNullOrAir(itemStack)) continue;
+						if (isNullOrAir(itemStack)) continue;
 						if (!Material.PLAYER_HEAD.equals(itemStack.getType())) continue;
 
 						if (isSameHead(queenLarvae.get().build(), itemStack)) {
@@ -947,7 +948,7 @@ public class MainIsland implements BearFair21Island {
 					return script;
 				} else if (user.getQuestStage_Main() == QuestStage.STEP_FOUR) {
 					ItemStack item = Quests.getItemLikeFrom(user, new ItemBuilder(Material.CAKE));
-					if (!Nullables.isNullOrAir(item))
+					if (!isNullOrAir(item))
 						return script;
 
 					script.add("Oh my goodness, I totally forgot! Nor do I have the necessary supplies for a cake that size.");
@@ -1082,7 +1083,7 @@ public class MainIsland implements BearFair21Island {
 			if (user.getInvitees().contains(npcId))
 				return false;
 
-			return !Nullables.isNullOrAir(tool) && ItemUtils.isFuzzyMatch(tool, invitation.build());
+			return !isNullOrAir(tool) && ItemUtils.isFuzzyMatch(tool, invitation.build());
 		}
 
 		private final BearFair21NPC npc;
@@ -1114,7 +1115,7 @@ public class MainIsland implements BearFair21Island {
 		if (BearFair21.isNotAtBearFair(event)) return;
 
 		Block block = event.getClickedBlock();
-		if (Nullables.isNullOrAir(block)) return;
+		if (isNullOrAir(block)) return;
 		if (!MaterialTag.PLAYER_SKULLS.isTagged(block)) return;
 
 		BearFair21User user = userService.get(event.getPlayer());

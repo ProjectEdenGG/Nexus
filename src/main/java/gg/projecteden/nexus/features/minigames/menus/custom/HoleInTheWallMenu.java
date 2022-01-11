@@ -24,6 +24,8 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+
 @CustomMechanicSettings(HoleInTheWall.class)
 public class HoleInTheWallMenu extends MenuUtils implements InventoryProvider {
 
@@ -80,7 +82,7 @@ public class HoleInTheWallMenu extends MenuUtils implements InventoryProvider {
 			contents.set(0, 8, ClickableItem.from(deleteItem, e -> Tasks.wait(2, () -> {
 				if (player.getItemOnCursor().getType().equals(Material.TNT)) {
 					player.setItemOnCursor(new ItemStack(Material.AIR));
-				} else if (Nullables.isNullOrAir(player.getItemOnCursor())) {
+				} else if (isNullOrAir(player.getItemOnCursor())) {
 					player.setItemOnCursor(deleteItem);
 				}
 			})));

@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.function.BiFunction;
 
 import static gg.projecteden.nexus.features.minigames.Minigames.menus;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @CustomMechanicSettings(Murder.class)
 public class MurderMenu extends MenuUtils implements InventoryProvider {
@@ -90,7 +91,7 @@ public class MurderMenu extends MenuUtils implements InventoryProvider {
 			contents.set(0, 8, ClickableItem.from(deleteItem, e -> Tasks.wait(2, () -> {
 				if (player.getItemOnCursor().getType().equals(Material.TNT)) {
 					player.setItemOnCursor(new ItemStack(Material.AIR));
-				} else if (Nullables.isNullOrAir(player.getItemOnCursor())) {
+				} else if (isNullOrAir(player.getItemOnCursor())) {
 					player.setItemOnCursor(deleteItem);
 				}
 			})));

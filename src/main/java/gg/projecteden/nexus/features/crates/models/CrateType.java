@@ -14,7 +14,6 @@ import gg.projecteden.nexus.models.mail.Mailer.Mail;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.WorldGroup;
@@ -25,6 +24,8 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Getter
 public enum CrateType {
@@ -66,7 +67,7 @@ public enum CrateType {
 	}
 
 	public static CrateType fromKey(ItemStack item) {
-		if (Nullables.isNullOrAir(item)) return null;
+		if (isNullOrAir(item)) return null;
 		for (CrateType type : values())
 			if (ItemUtils.isFuzzyMatch(item, type.getKey()))
 				return type;

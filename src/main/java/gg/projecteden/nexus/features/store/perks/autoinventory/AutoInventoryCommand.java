@@ -21,6 +21,7 @@ import gg.projecteden.nexus.models.autoinventory.AutoInventoryUserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils.ItemStackComparator;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.NoArgsConstructor;
@@ -226,7 +227,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 			if (!event.getPlayer().equals(user.getOnlinePlayer())) return;
 
 			Set<Material> materials = Arrays.stream(event.getInventory().getContents())
-				.filter(item -> !isNullOrAir(item))
+				.filter(Nullables::isNotNullOrAir)
 				.map(ItemStack::getType)
 				.collect(Collectors.toSet());
 			user.setAutoTrashInclude(materials);

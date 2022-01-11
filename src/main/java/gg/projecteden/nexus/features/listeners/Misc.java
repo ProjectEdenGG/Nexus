@@ -132,7 +132,7 @@ public class Misc implements Listener {
 
 		final ItemStack item = event.getItem();
 		final Block block = event.getClickedBlock();
-		if (isNullOrAir(item) || Nullables.isNullOrAir(block))
+		if (isNullOrAir(item) || isNullOrAir(block))
 			return;
 
 		if (item.getType() != Material.ENDER_EYE)
@@ -168,11 +168,11 @@ public class Misc implements Listener {
 			return;
 
 		final Block block = event.getClickedBlock();
-		if (Nullables.isNullOrAir(block) || block.getType() != Material.LIGHT)
+		if (isNullOrAir(block) || block.getType() != Material.LIGHT)
 			return;
 
 		final ItemStack item = event.getItem();
-		if (Nullables.isNullOrAir(item) || item.getType() != Material.LIGHT)
+		if (isNullOrAir(item) || item.getType() != Material.LIGHT)
 			return;
 
 		if (!new BlockBreakEvent(block, event.getPlayer()).callEvent())
@@ -721,7 +721,7 @@ public class Misc implements Listener {
 			case DROP:
 			case CONTROL_DROP:
 				ItemStack cursor = event.getCursor();
-				if (!Nullables.isNullOrAir(cursor))
+				if (!isNullOrAir(cursor))
 					recipeAmount = 0;
 				break;
 

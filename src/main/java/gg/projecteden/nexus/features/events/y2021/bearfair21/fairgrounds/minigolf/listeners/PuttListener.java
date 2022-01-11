@@ -34,6 +34,8 @@ import org.inventivetalent.glow.GlowAPI;
 
 import java.util.List;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+
 public class PuttListener implements Listener {
 
 	public PuttListener() {
@@ -59,7 +61,7 @@ public class PuttListener implements Listener {
 		}
 
 		ItemStack item = event.getItem();
-		if (Nullables.isNullOrAir(item)) {
+		if (isNullOrAir(item)) {
 			user.debug("PuttListener > item is null or air, returning");
 			return;
 		}
@@ -182,7 +184,7 @@ public class PuttListener implements Listener {
 				}
 
 				// Is placing on start position
-				if (Nullables.isNullOrAir(block) || block.getType() != Material.GREEN_WOOL) {
+				if (isNullOrAir(block) || block.getType() != Material.GREEN_WOOL) {
 					MiniGolfUtils.error(user, "You can only place golf balls on green wool");
 					return;
 				}

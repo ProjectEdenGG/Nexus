@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 public class YourShopProvider extends ShopProvider {
@@ -153,7 +154,7 @@ public class YourShopProvider extends ShopProvider {
 			Shop shop = service.get(player);
 
 			for (ItemStack content : event.getInventory().getContents())
-				if (!Nullables.isNullOrAir(content))
+				if (!isNullOrAir(content))
 					shop.addHolding(content);
 
 			service.save(shop);

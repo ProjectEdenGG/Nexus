@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.customenchants;
 
 import gg.projecteden.nexus.utils.Enchant;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -15,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 public class OldCEConverter {
@@ -42,7 +42,7 @@ public class OldCEConverter {
 	}
 
 	public static void convertItem(ItemStack item) {
-		if (Nullables.isNullOrAir(item))
+		if (isNullOrAir(item))
 			return;
 		if (item.getItemMeta() == null)
 			return;

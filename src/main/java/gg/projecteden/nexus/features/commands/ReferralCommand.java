@@ -122,7 +122,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 	@Path("extraInputs")
 	void others() {
 		List<Referral> referrals = service.getAll().stream()
-				.filter(_referral -> !isNullOrEmpty(_referral.getExtra()))
+				.filter(referral -> !isNullOrEmpty(referral.getExtra()))
 				.collect(Collectors.toList());
 
 		if (referrals.isEmpty())

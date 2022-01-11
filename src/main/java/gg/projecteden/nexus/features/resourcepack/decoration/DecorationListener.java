@@ -41,6 +41,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+
 public class DecorationListener implements Listener {
 
 	public DecorationListener() {
@@ -83,7 +85,7 @@ public class DecorationListener implements Listener {
 		if (!Dev.WAKKA.is(player)) return;
 		//
 
-		if (!Nullables.isNullOrAir(tool))
+		if (!isNullOrAir(tool))
 			return;
 
 		HitboxData hitboxData = getItemFrame(clicked);
@@ -94,7 +96,7 @@ public class DecorationListener implements Listener {
 	}
 
 	private void rightClick(PlayerInteractEvent event, Player player, Block clicked, ItemStack tool) {
-		if (Nullables.isNullOrAir(tool)) {
+		if (isNullOrAir(tool)) {
 
 			HitboxData hitboxData = getItemFrame(clicked);
 			if (hitboxData == null) return;
@@ -118,7 +120,7 @@ public class DecorationListener implements Listener {
 
 	@Nullable
 	private DecorationListener.HitboxData getItemFrame(Block clicked) {
-		if (Nullables.isNullOrAir(clicked))
+		if (isNullOrAir(clicked))
 			return null;
 
 		Set<Material> hitboxTypes = Decorations.getHitboxTypes();
@@ -129,7 +131,7 @@ public class DecorationListener implements Listener {
 		ItemFrame itemFrame = clicked.getLocation().toCenterLocation().getNearbyEntitiesByType(ItemFrame.class, 0.5).stream().findFirst().orElse(null);
 		if (itemFrame != null) {
 			ItemStack itemStack = itemFrame.getItem();
-			if (!Nullables.isNullOrAir(itemStack)) {
+			if (!isNullOrAir(itemStack)) {
 				Decorations decorations = Decorations.of(itemStack);
 				if (decorations != null) {
 					debug("Single");
@@ -209,7 +211,7 @@ public class DecorationListener implements Listener {
 				continue;
 
 			ItemStack itemStack = itemFrame.getItem();
-			if (Nullables.isNullOrAir(itemStack))
+			if (isNullOrAir(itemStack))
 				continue;
 
 			Decorations _decorations = Decorations.of(itemStack);

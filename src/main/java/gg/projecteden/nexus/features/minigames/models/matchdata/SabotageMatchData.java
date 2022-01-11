@@ -81,6 +81,8 @@ import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 @MatchDataFor(Sabotage.class)
@@ -131,7 +133,7 @@ public class SabotageMatchData extends MatchData {
 		getArena().worldguard().getEntitiesInRegionByClass(getArena().getProtectedRegion(), ArmorStand.class).forEach(armorStand -> {
 			if (armorStand.getEquipment() == null) return;
 			ItemStack item = armorStand.getEquipment().getHelmet();
-			if (Nullables.isNullOrAir(item)) return;
+			if (isNullOrAir(item)) return;
 			TaskPart part = TaskPart.get(item);
 			if (part == null) return;
 			BlockFace facing = armorStand.getFacing();
