@@ -41,7 +41,7 @@ public class CrateLoot implements ConfigurationSerializable {
 	public CrateLoot(Map<String, Object> map) {
 		this.title = (String) map.getOrDefault("title", title);
 		this.items = Arrays.stream(YML.deserializeItems((Map<String, Object>) map.getOrDefault("items", items)))
-				.filter(Nullables::isNullOrAir).collect(Collectors.toList());
+				.filter(Nullables::isNotNullOrAir).collect(Collectors.toList());
 		this.weight = (double) map.getOrDefault("weight", weight);
 		this.active = (boolean) map.getOrDefault("active", active);
 		this.type = CrateType.valueOf((String) map.getOrDefault("type", type.name()));

@@ -119,7 +119,7 @@ public class GiftGiver implements Listener {
 		if (!Utils.containsInvViewTitle(event.getView(), invTitle)) return;
 
 		List<ItemStack> leftover = new ArrayList<>(Arrays.asList(event.getInventory().getContents())).stream()
-				.filter(Nullables::isNullOrAir).collect(Collectors.toList());
+				.filter(Nullables::isNotNullOrAir).collect(Collectors.toList());
 
 		if (leftover.size() == 0)
 			return;
