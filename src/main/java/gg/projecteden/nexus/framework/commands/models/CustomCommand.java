@@ -185,6 +185,7 @@ public abstract class CustomCommand extends ICustomCommand {
 		return (Sign) targetBlock.getState();
 	}
 
+	// Ignores entities in creative or spectator mode
 	protected Entity getTargetEntity() {
 		return player().getTargetEntity(120);
 	}
