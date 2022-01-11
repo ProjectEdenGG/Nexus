@@ -74,6 +74,7 @@ public class CostumeUser implements PlayerOwnedObject {
 			put("hat/lightsabers/purple", "hat/misc/lightsaber");
 			put("hat/lightsabers/light_blue", "hat/misc/lightsaber");
 			put("hat/lightsabers/dark_blue", "hat/misc/lightsaber");
+			put("hand/misc/rainbow_bracelet", "hand/misc/rainbow_bracelet_steve");
 		}};
 
 		converter.forEach((oldId, newId) -> {

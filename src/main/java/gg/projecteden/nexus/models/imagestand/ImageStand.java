@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.particles.effects.LineEffect;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PacketUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -32,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -51,6 +53,8 @@ public class ImageStand implements DatabaseObject {
 	private BoundingBox boundingBox;
 	private Map<UUID, BoundingBox> boundingBoxes = new ConcurrentHashMap<>();
 	private ImageSize size;
+
+	private transient int drawTaskId;
 
 	public ImageStand(@NonNull UUID uuid, UUID outline, String id, ImageSize size) {
 		this.uuid = uuid;
@@ -115,8 +119,10 @@ public class ImageStand implements DatabaseObject {
 	}
 
 	@Nullable
-	private ArmorStand getArmorStand(UUID outline1) {
-		final var outline = Bukkit.getEntity(outline1);
+	private ArmorStand getArmorStand(UUID uuid) {
+		if (uuid == null)
+			return null;
+		final var outline = Bukkit.getEntity(uuid);
 		if (!(outline instanceof ArmorStand outlineStand))
 			return null;
 		return outlineStand;
@@ -144,13 +150,45 @@ public class ImageStand implements DatabaseObject {
 		BoundingBoxAPI.setBoundingBox(armorStand, boundingBox);
 	}
 
-	public List<Integer> drawBoundingBox(Particle particle, float dustSize, double density) {
-		return new ArrayList<>() {{
-			if (boundingBoxes.isEmpty())
-				addAll(draw(boundingBox, particle, dustSize, density));
-			else
-				boundingBoxes.forEach((uuid, boundingBox) -> addAll(draw(boundingBox, particle, dustSize, density)));
+	public List<ArmorStand> getArmorStands() {
+		final List<ArmorStand> armorStands = new ArrayList<>() {{
+			add(getImageStand());
+			add(getOutlineStand());
+			boundingBoxes.keySet().forEach(uuid -> add(getArmorStand(uuid)));
 		}};
+
+		armorStands.removeIf(Objects::isNull);
+		return armorStands;
+	}
+
+	public List<BoundingBox> getBoundingBoxes() {
+		return new ArrayList<>() {{
+			add(boundingBox);
+			addAll(boundingBoxes.values());
+		}};
+	}
+
+	public void draw() {
+		stopDrawing();
+		drawTaskId = Tasks.repeat(0, 1, () -> {
+			final Particle particle = Particle.SMALL_FLAME;
+			final float dustSize = .5f;
+			final double density = .1;
+
+			if (boundingBoxes.isEmpty())
+				draw(boundingBox, particle, dustSize, density);
+			else
+				boundingBoxes.forEach((uuid1, boundingBox1) -> draw(boundingBox1, particle, dustSize, density));
+		});
+	}
+
+	public boolean isDrawing() {
+		return drawTaskId > 0;
+	}
+
+	public void stopDrawing() {
+		Tasks.cancel(drawTaskId);
+		drawTaskId = 0;
 	}
 
 	@Getter
@@ -204,7 +242,7 @@ public class ImageStand implements DatabaseObject {
 				.particle(particle)
 				.dustSize(dustSize)
 				.density(density)
-				.ticks(-1)
+				.ticks(1)
 				.count(0)
 				.speed(0)
 				.start()

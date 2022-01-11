@@ -4,7 +4,6 @@ import com.google.common.util.concurrent.AtomicDouble;
 import gg.projecteden.nexus.features.particles.ParticleUtils;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.particle.ParticleOwner;
-import gg.projecteden.nexus.models.particle.ParticleService;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Builder;
@@ -94,7 +93,10 @@ public class LineEffect {
 
 		taskId = Tasks.repeat(startDelay, pulseDelay, () -> {
 			if (finalTicks != -1 && ticksElapsed.get() >= finalTicks) {
-				new ParticleService().get(entity).cancel(taskId);
+				if (owner == null)
+					Tasks.cancel(taskId);
+				else
+					owner.cancel(taskId);
 				return;
 			}
 

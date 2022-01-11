@@ -84,7 +84,7 @@ public class WingsEffect {
 				if (owner == null)
 					Tasks.cancel(taskId);
 				else
-					new ParticleService().get(owner).cancel(taskId);
+					owner.cancel(taskId);
 				return;
 			}
 
