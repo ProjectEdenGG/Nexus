@@ -36,6 +36,7 @@ public class PlayerAliasesCommand extends CustomCommand {
 	@Path("add <player> <alias>")
 	void add(OfflinePlayer player, String alias) {
 		nerd = Nerd.of(player);
+		alias = alias.toLowerCase();
 		if (nerd.getAliases().contains(alias))
 			error("Alias &e" + alias + " &calready exists for " + player.getName());
 		nerd.getAliases().add(alias);
@@ -46,6 +47,7 @@ public class PlayerAliasesCommand extends CustomCommand {
 	@Path("remove <player> <alias>")
 	void remove(OfflinePlayer player, String alias) {
 		nerd = Nerd.of(player);
+		alias = alias.toLowerCase();
 		if (!nerd.getAliases().contains(alias))
 			error("Alias &e" + alias + " &cdoes not exist for " + player.getName());
 		nerd.getAliases().remove(alias);

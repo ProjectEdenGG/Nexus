@@ -73,19 +73,22 @@ public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwned
 	@PreLoad
 	void preLoad(DBObject dbObject) {
 		List<String> pronouns = (List<String>) dbObject.get("pronouns");
-		if (Utils.isNullOrEmpty(pronouns))
-			return;
+		if (!Utils.isNullOrEmpty(pronouns)) {
+			List<String> fixed = new ArrayList<>() {{
+				for (String pronoun : pronouns) {
+					final Pronoun of = Pronoun.of(pronoun);
+					if (of != null)
+						add(of.name());
+				}
+			}};
 
-		List<String> fixed = new ArrayList<>() {{
-			for (String pronoun : pronouns) {
-				final Pronoun of = Pronoun.of(pronoun);
-				if (of != null)
-					add(of.name());
-			}
-		}};
+			fixed.removeIf(Objects::isNull);
+			dbObject.put("pronouns", fixed);
+		}
 
-		fixed.removeIf(Objects::isNull);
-		dbObject.put("pronouns", fixed);
+		List<String> aliases = (List<String>) dbObject.get("aliases");
+		if (!Utils.isNullOrEmpty(aliases))
+			dbObject.put("aliases", aliases.stream().map(String::toLowerCase).toList());
 	}
 
 	public Nerd(@NonNull UUID uuid) {

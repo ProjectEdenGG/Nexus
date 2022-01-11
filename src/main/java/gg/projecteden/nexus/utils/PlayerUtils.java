@@ -412,10 +412,12 @@ public class PlayerUtils {
 		if (isUuid(partialName))
 			return getPlayer(UUID.fromString(partialName));
 
-		for (Player player : OnlinePlayers.getAll())
+		final List<Player> players = OnlinePlayers.getAll();
+
+		for (Player player : players)
 			if (player.getName().equalsIgnoreCase(partialName))
 				return player;
-		for (Player player : OnlinePlayers.getAll())
+		for (Player player : players)
 			if (Nickname.of(player).equalsIgnoreCase((partialName)))
 				return player;
 
@@ -424,17 +426,17 @@ public class PlayerUtils {
 		if (fromNickname != null)
 			return fromNickname.getOfflinePlayer();
 
-		for (Player player : OnlinePlayers.getAll())
+		for (Player player : players)
 			if (player.getName().toLowerCase().startsWith(partialName))
 				return player;
-		for (Player player : OnlinePlayers.getAll())
+		for (Player player : players)
 			if (Nickname.of(player).toLowerCase().startsWith((partialName)))
 				return player;
 
-		for (Player player : OnlinePlayers.getAll())
+		for (Player player : players)
 			if (player.getName().toLowerCase().contains((partialName)))
 				return player;
-		for (Player player : OnlinePlayers.getAll())
+		for (Player player : players)
 			if (Nickname.of(player).toLowerCase().contains((partialName)))
 				return player;
 
