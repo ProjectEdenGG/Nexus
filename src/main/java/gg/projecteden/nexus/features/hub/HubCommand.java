@@ -37,7 +37,10 @@ public class HubCommand extends CustomCommand {
 
 	@Path
 	void warp() {
-		WarpType.NORMAL.get("hub").teleportAsync(player());
+		if (isStaff())
+			WarpType.STAFF.get("hub").teleportAsync(player());
+		else
+			WarpType.NORMAL.get("hub").teleportAsync(player());
 	}
 
 	@Path("parkour create <course>")
