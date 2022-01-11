@@ -2,7 +2,7 @@ package gg.projecteden.nexus.utils;
 
 import java.util.UUID;
 
-public class UUIDConverter {
+public class UUIDUtils {
 	public static int[] toIntArray(UUID uuid) {
 		return toIntArray(uuid.toString());
 	}
