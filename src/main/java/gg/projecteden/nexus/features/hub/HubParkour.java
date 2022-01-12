@@ -100,6 +100,7 @@ public class HubParkour implements Listener {
 				if (run.getBestRunSplits().isEmpty() || run.getCurrentRunTime() < run.getBestRunTime()) {
 					run.setBestRunSplits(new ArrayList<>(run.getCurrentRunSplits()));
 					user.sendMessage(PREFIX + "&6New personal best!");
+					course.updateHologram();
 				}
 
 				run.quit();
