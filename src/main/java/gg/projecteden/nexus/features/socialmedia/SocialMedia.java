@@ -58,9 +58,9 @@ public class SocialMedia implements Listener {
 		SNAPCHAT("Snapchat", ChatColor.of("#fffc00"), "", "https://snapchat.com", "https://snapchat.com/add/%s"),
 		YOUTUBE("YouTube", ChatColor.of("#ff0000"), "", "https://youtube.com", "https://youtube.com/channel/%s"),
 		TWITCH("Twitch", ChatColor.of("#6441a5"), "", "https://twitch.tv", "https://twitch.tv/%s"),
-		TIKTOK("TikTok", ChatColor.of("#69C9D0"), "", "https://tiktok.com", "https://tiktok.com/@%s"),
+		TIKTOK("TikTok", ChatColor.of("#ffffff"), "", "https://tiktok.com", "https://tiktok.com/@%s"),
 		DISCORD("Discord", ChatColor.of("#7289da"), "", "https://discord.com", "%s"),
-		STEAM("Steam", ChatColor.of("#356d92"), "", "https://store.steampowered.com", "https://steamcommunity.com/id/%s"),
+		STEAM("Steam", ChatColor.of("#00adee"), "", "https://store.steampowered.com", "https://steamcommunity.com/id/%s"),
 		SPOTIFY("Spotify", ChatColor.of("#1ed760"), "", "https://spotify.com", "https://open.spotify.com/user/%s"),
 		QUEUP("QueUp", ChatColor.of("#d42f8a"), "", "https://queup.net", "https://queup.net/user/%s"),
 		REDDIT("Reddit", ChatColor.of("#ff5700"), "", "https://reddit.com", "https://reddit.com/u/%s"),
@@ -136,6 +136,10 @@ public class SocialMedia implements Listener {
 				if (id.equals(site.getHeadId()))
 					return site;
 			return null;
+		}
+
+		public SocialMediaSite getConfig() {
+			return SocialMediaSite.valueOf(name());
 		}
 	}
 

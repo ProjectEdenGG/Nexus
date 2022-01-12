@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NoArgsConstructor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -36,7 +37,8 @@ public class Hub extends Feature implements Listener {
 			case "survival" -> PlayerUtils.send(event.getPlayer(), "/rtp");
 			case "socialmedia" -> {
 				final EdenSocialMediaSite site = EdenSocialMediaSite.valueOf(split[1].toUpperCase());
-				PlayerUtils.send(event.getPlayer(), new JsonBuilder("&e" + site.getUrl()).url(site.getUrl()));
+				final String message =  "&f" + site.getConfig().getEmoji() + " " + site.getName() + " &7- &e" + site.getUrl();
+				PlayerUtils.send(event.getPlayer(), new JsonBuilder(StringUtils.getPrefix("SocialMedia") + message).url(site.getUrl()));
 			}
 		}
 	}
