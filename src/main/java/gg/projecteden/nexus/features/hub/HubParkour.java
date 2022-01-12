@@ -18,12 +18,14 @@ import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import gg.projecteden.utils.TimeUtils.Timespan.FormatType;
 import gg.projecteden.utils.Utils;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -181,6 +183,7 @@ public class HubParkour implements Listener {
 
 	@EventHandler
 	public void on(PlayerLeavingRegionEvent event) {
+		final String PREFIX = Features.get(Hub.class).getPrefix();
 		if (!event.getRegion().getId().startsWith("hub_parkour_"))
 			return;
 
@@ -189,7 +192,13 @@ public class HubParkour implements Listener {
 			final String courseName = split[2];
 
 			if (split.length == 3) {
-				new HubParkourUserService().edit(event.getPlayer(), user -> user.get(courseName).quit());
+				new HubParkourUserService().edit(event.getPlayer(), user -> {
+					final CourseData run = user.get(courseName);
+					if (run.isPlaying()) {
+						run.quit();
+						user.sendMessage(PREFIX + "Parkour quit, you left the parkour area");
+					}
+				});
 				return;
 			}
 
@@ -229,6 +238,21 @@ public class HubParkour implements Listener {
 			return;
 
 		PlayerUtils.send(event.getPlayer(), Features.get(Hub.class).getPrefix() + "Parkour quit, teleporting is not allowed");
+		service.save(user);
+	}
+
+	@EventHandler
+	public void onPlayerGameModeChange(PlayerGameModeChangeEvent event) {
+		if (event.getNewGameMode() != GameMode.SPECTATOR)
+			return;
+
+		final HubParkourUserService service = new HubParkourUserService();
+		final HubParkourUser user = service.get(event.getPlayer());
+
+		if (!user.quitAll(CourseData::reset))
+			return;
+
+		PlayerUtils.send(event.getPlayer(), Features.get(Hub.class).getPrefix() + "Parkour quit, spectator mode is not allowed");
 		service.save(user);
 	}
 

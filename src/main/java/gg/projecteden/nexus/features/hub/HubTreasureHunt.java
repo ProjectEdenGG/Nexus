@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.hub;
 import com.destroystokyo.paper.ParticleBuilder;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.features.Features;
+import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.hub.HubTreasureHunter;
 import gg.projecteden.nexus.models.hub.HubTreasureHunterService;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -67,9 +68,9 @@ public class HubTreasureHunt implements Listener {
 			return;
 		}
 
-		PlayerUtils.send(player, PREFIX + "You found all the treasure chests!");
 		new SoundBuilder(Sound.UI_TOAST_CHALLENGE_COMPLETE).receiver(player).volume(0.5).play();
-		// TODO Reward
+		PlayerUtils.send(player, PREFIX + "You found all the treasure chests!");
+		new EventUserService().edit(player, user -> user.giveTokens(100));
 	}
 
 }
