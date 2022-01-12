@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.hub;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.commands.FlyCommand;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import gg.projecteden.nexus.framework.features.Features;
@@ -10,16 +11,19 @@ import gg.projecteden.nexus.models.hub.HubParkourCourseService;
 import gg.projecteden.nexus.models.hub.HubParkourUser;
 import gg.projecteden.nexus.models.hub.HubParkourUser.CourseData;
 import gg.projecteden.nexus.models.hub.HubParkourUserService;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import gg.projecteden.utils.TimeUtils.Timespan.FormatType;
 import gg.projecteden.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerToggleFlightEvent;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -62,11 +66,13 @@ public class HubParkour implements Listener {
 		if (isNullOrEmpty(courseName) || isNullOrEmpty(checkpoint))
 			return;
 
+		final Player player = event.getPlayer();
 		final HubParkourUserService service = new HubParkourUserService();
-		final HubParkourUser user = service.get(event.getPlayer());
+		final HubParkourUser user = service.get(player);
 		final HubParkourCourse course = new HubParkourCourseService().get(UUID.nameUUIDFromBytes(courseName.getBytes()));
 
 		final CourseData run = user.get(courseName);
+
 		switch (checkpoint) {
 			case "start" -> {
 				run.getCurrentRunSplits().clear();
@@ -75,9 +81,14 @@ public class HubParkour implements Listener {
 					user.sendMessage(PREFIX + "Started parkour. Reach the end as fast as you can!");
 					run.setLeftStartRegion(false);
 				}
+				FlyCommand.off(player);
 				run.setLastCheckpointTime(LocalDateTime.now());
+				run.setPlaying(true);
 			}
 			case "end" -> {
+				if (!run.isPlaying())
+					return;
+
 				if (run.getCurrentRunSplits().size() != course.getCheckpoints().size() - 1)
 					return;
 
@@ -91,12 +102,13 @@ public class HubParkour implements Listener {
 					user.sendMessage(PREFIX + "&6New personal best!");
 				}
 
-				run.getCurrentRunSplits().clear();
-				run.setLastCheckpoint(0);
-				run.setLastCheckpointTime(null);
+				run.quit();
 			}
 			default -> {
 				try {
+					if (!run.isPlaying())
+						return;
+
 					final String[] split = checkpoint.split("_", 2);
 					if (!"checkpoint".equals(split[0]))
 						return;
@@ -127,6 +139,11 @@ public class HubParkour implements Listener {
 		service.save(user);
 	}
 
+	static {
+		for (HubParkourCourse course : new HubParkourCourseService().getAll())
+			course.updateHologram();
+	}
+
 	@EventHandler
 	public void on(PlayerEnteringRegionEvent event) {
 		final String PREFIX = Features.get(Hub.class).getPrefix();
@@ -144,7 +161,12 @@ public class HubParkour implements Listener {
 			final HubParkourUserService userService = new HubParkourUserService();
 			final HubParkourUser user = userService.get(event.getPlayer());
 			final int checkpoint = user.get(courseName).getLastCheckpoint();
-			user.get(course).setLeftStartRegion(false);
+			final CourseData run = user.get(course);
+
+			if (!run.isPlaying())
+				return;
+
+			run.setLeftStartRegion(false);
 			userService.save(user);
 			event.getPlayer().teleportAsync(course.getCheckpoints().get(checkpoint));
 			user.sendMessage(PREFIX + "Teleported to " + (checkpoint > 0 ? "checkpoint #" + checkpoint : "start"));
@@ -158,16 +180,39 @@ public class HubParkour implements Listener {
 
 		try {
 			final String[] split = event.getRegion().getId().split("_", 4);
-			if (!"start".equals(split[3]))
-				return;
-
 			final String courseName = split[2];
 
-			new HubParkourUserService().edit(event.getPlayer(), user -> {
-				if (user.get(courseName).getLastCheckpointTime() != null)
-					user.get(courseName).setLeftStartRegion(true);
-			});
+			if (split.length == 3) {
+				new HubParkourUserService().edit(event.getPlayer(), user -> user.get(courseName).setPlaying(false));
+				return;
+			}
+
+			switch (split[3]) {
+				case "start" -> new HubParkourUserService().edit(event.getPlayer(), user -> {
+					if (user.get(courseName).getLastCheckpointTime() != null)
+						user.get(courseName).setLeftStartRegion(true);
+				});
+			}
 		} catch (IndexOutOfBoundsException ignore) {}
+	}
+
+	@EventHandler
+	public void onPlayerToggleFlight(PlayerToggleFlightEvent event) {
+		if (!event.isFlying())
+			return;
+
+		new HubParkourUserService().edit(event.getPlayer(), user -> {
+			boolean playing = false;
+			for (CourseData courseData : user.getCourses()) {
+				if (courseData.isPlaying()) {
+					playing = true;
+					courseData.reset();
+				}
+			}
+
+			if (playing)
+				PlayerUtils.send(event.getPlayer(), Features.get(Hub.class).getPrefix() + "Parkour quit, flying is not allowed");
+		});
 	}
 
 }

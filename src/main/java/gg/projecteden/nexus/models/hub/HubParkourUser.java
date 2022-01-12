@@ -7,6 +7,8 @@ import gg.projecteden.mongodb.serializers.LocalDateTimeConverter;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.TimespanConverter;
+import gg.projecteden.nexus.models.mode.ModeUser.FlightMode;
+import gg.projecteden.nexus.models.mode.ModeUserService;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -57,6 +59,7 @@ public class HubParkourUser implements PlayerOwnedObject {
 		private String course;
 		private List<Timespan> bestRunSplits = new ArrayList<>();
 		private List<Timespan> currentRunSplits = new ArrayList<>();
+		private boolean playing;
 		private boolean leftStartRegion;
 		private int lastCheckpoint;
 		private LocalDateTime lastCheckpointTime;
@@ -73,6 +76,24 @@ public class HubParkourUser implements PlayerOwnedObject {
 		public long getCurrentRunTime() {
 			return currentRunSplits.stream().mapToLong(Timespan::getOriginal).sum();
 		}
+
+		public void quit() {
+			reset();
+
+			if (isOnline()) {
+				FlightMode flightMode = new ModeUserService().get(this).getFlightMode(getWorldGroup());
+				getOnlinePlayer().setAllowFlight(flightMode.isAllowFlight());
+				getOnlinePlayer().setFlying(flightMode.isFlying());
+			}
+		}
+
+		public void reset() {
+			playing = false;
+			currentRunSplits.clear();
+			lastCheckpoint = 0;
+			lastCheckpointTime = null;
+		}
+
 	}
 
 }

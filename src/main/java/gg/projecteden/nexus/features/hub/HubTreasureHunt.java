@@ -23,7 +23,7 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class HubTreasureHunt implements Listener {
 	private static final String HEAD_ID = "13379";
-	private static final int TOTAL_TREASURE_CHESTS = 25;
+	static final int TOTAL_TREASURE_CHESTS = 25;
 
 	public HubTreasureHunt() {
 		Nexus.registerListener(this);

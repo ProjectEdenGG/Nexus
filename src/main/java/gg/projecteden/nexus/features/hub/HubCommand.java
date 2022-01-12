@@ -15,6 +15,8 @@ import gg.projecteden.nexus.models.hub.HubParkourCourse;
 import gg.projecteden.nexus.models.hub.HubParkourCourseService;
 import gg.projecteden.nexus.models.hub.HubParkourUser.CourseData;
 import gg.projecteden.nexus.models.hub.HubParkourUserService;
+import gg.projecteden.nexus.models.hub.HubTreasureHunter;
+import gg.projecteden.nexus.models.hub.HubTreasureHunterService;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.models.warps.Warps.Warp;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -26,6 +28,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.BiFunction;
+
+import static gg.projecteden.nexus.features.hub.HubTreasureHunt.TOTAL_TREASURE_CHESTS;
 
 @Redirect(from = {"/tphub", "/lobby"}, to = "/hub")
 public class HubCommand extends _WarpCommand {
@@ -53,6 +57,13 @@ public class HubCommand extends _WarpCommand {
 	@Path("warps [filter]")
 	public void list(@Arg(tabCompleter = Warp.class) String filter) {
 		super.list(filter);
+	}
+
+	@Path("parkour quit")
+	void parkour_quit() {
+		userService.edit(player(), user -> user.getCourses().forEach(CourseData::quit));
+		send(PREFIX + "Quit parkour");
+		teleportNearest();
 	}
 
 	@Path("parkour create <course>")
@@ -113,6 +124,23 @@ public class HubCommand extends _WarpCommand {
 			json("&3" + index + " &e" + run.getNickname() + " &7- " + Timespan.ofMillis(run.getBestRunTime()).format(FormatType.SHORT));
 
 		paginate(data, formatter, "/hub parkour top " + course.getName(), page);
+	}
+
+	@Path("parkour hologram update [course]")
+	@Permission(Group.ADMIN)
+	void parkour_hologram_update(HubParkourCourse course) {
+		course.updateHologram();
+	}
+
+	@Path("treasurehunt")
+	void treasurehunt() {
+		final HubTreasureHunterService service = new HubTreasureHunterService();
+		final HubTreasureHunter hunter = service.get(player());
+		final int found = hunter.getFound().size();
+		if (found != TOTAL_TREASURE_CHESTS)
+			send(PREFIX + "You found %s of %s treasure chests".formatted(found, TOTAL_TREASURE_CHESTS));
+		else
+			send(PREFIX + "You found all the treasure chests");
 	}
 
 	@TabCompleterFor(HubParkourCourse.class)
