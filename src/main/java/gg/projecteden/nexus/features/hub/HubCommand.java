@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.hub;
 
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.annotations.Async;
 import gg.projecteden.nexus.features.warps.commands._WarpCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -20,6 +21,7 @@ import gg.projecteden.nexus.models.hub.HubTreasureHunterService;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.models.warps.Warps.Warp;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import gg.projecteden.utils.TimeUtils.Timespan.FormatType;
 import lombok.NonNull;
@@ -27,6 +29,7 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiFunction;
 
@@ -65,6 +68,26 @@ public class HubCommand extends _WarpCommand {
 		userService.edit(player(), user -> user.getCourses().forEach(CourseData::quit));
 		send(PREFIX + "Quit parkour");
 		teleportNearest();
+	}
+
+	@Path("parkour reset")
+	void parkour_reset() {
+		final Set<ProtectedRegion> regions = new WorldGuardUtils(player()).getRegionsLikeAt("hub_parkour_.*", location());
+
+		if (regions.isEmpty())
+			error("You are not in a parkour");
+
+		final String[] split = regions.iterator().next().getId().split("_", 4);
+		final HubParkourCourse course = new HubParkourCourseService().get(UUID.nameUUIDFromBytes(split[2].getBytes()));
+		if (course.getCheckpoints().isEmpty())
+			error("Course has no configured checkpoints");
+
+		new HubParkourUserService().edit(player(), user -> {
+			user.get(course).setLeftStartRegion(false);
+			// No /back
+			player().teleportAsync(course.getCheckpoints().get(0));
+			user.sendMessage(PREFIX + "Teleported to start");
+		});
 	}
 
 	@Path("parkour create <course>")
@@ -107,9 +130,9 @@ public class HubCommand extends _WarpCommand {
 	}
 
 	@Async
-	@Path("parkour top <course> [page]")
+	@Path("parkour leaderboard <course> [page]")
 	@Description("View course leaderboard")
-	void parkour_top(HubParkourCourse course, @Arg("1") int page) {
+	void parkour_leaderboard(HubParkourCourse course, @Arg("1") int page) {
 		final List<CourseData> data = userService.getAll().stream()
 			.map(user -> user.get(course))
 			.filter(courseData -> courseData.getBestRunTime() > 0)

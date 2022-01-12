@@ -173,6 +173,7 @@ public class HubParkour implements Listener {
 
 			run.setLeftStartRegion(false);
 			userService.save(user);
+			// No /back
 			event.getPlayer().teleportAsync(course.getCheckpoints().get(checkpoint));
 			user.sendMessage(PREFIX + "Teleported to " + (checkpoint > 0 ? "checkpoint #" + checkpoint : "start"));
 		} catch (IndexOutOfBoundsException ignore) {}
