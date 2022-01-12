@@ -1,7 +1,9 @@
 package gg.projecteden.nexus.features.hub;
 
 import gg.projecteden.nexus.features.resourcepack.commands.ImageStandCommand.ImageStandInteractEvent;
+import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.framework.features.Feature;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.NoArgsConstructor;
 import org.bukkit.event.EventHandler;
@@ -22,7 +24,8 @@ public class Hub extends Feature implements Listener {
 		if (!id.startsWith("hub_"))
 			return;
 
-		id = id.replaceFirst("hub_", "");
+		final String[] split = id.replaceFirst("hub_", "").split("_");
+		id = split[0];
 
 		switch (id) {
 			case "minigames", "creative" -> {
@@ -31,6 +34,10 @@ public class Hub extends Feature implements Listener {
 			}
 			case "oneblock" -> PlayerUtils.send(event.getPlayer(), "/ob");
 			case "survival" -> PlayerUtils.send(event.getPlayer(), "/rtp");
+			case "socialmedia" -> {
+				final EdenSocialMediaSite site = EdenSocialMediaSite.valueOf(split[1].toUpperCase());
+				PlayerUtils.send(event.getPlayer(), new JsonBuilder("&e" + site.getUrl()).url(site.getUrl()));
+			}
 		}
 	}
 

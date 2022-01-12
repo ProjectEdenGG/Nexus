@@ -32,11 +32,14 @@ import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.util.BoundingBox;
 
 import java.util.List;
 import java.util.UUID;
+
+import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 @NoArgsConstructor
 @Aliases("imagestands")
@@ -49,30 +52,32 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	@Path("create <id> <size>")
-	void create(String id, ImageSize size) {
-		final ArmorStand image = (ArmorStand) getTargetEntityRequired(EntityType.ARMOR_STAND);
-		final ArmorStand outline = ArmorStandEditorCommand.summon(image.getLocation(), armorStand -> {
-			armorStand.setHeadPose(image.getHeadPose());
-		});
+	@Path("create <id> <size> [--outline]")
+	void create(String id, ImageSize size, @Switch boolean outline) {
+		final ArmorStand imageArmorStand = (ArmorStand) getTargetEntityRequired(EntityType.ARMOR_STAND);
+		UUID outlineUuid = null;
+		if (outline)
+			outlineUuid = ArmorStandEditorCommand.summon(imageArmorStand.getLocation(), armorStand ->
+				armorStand.setHeadPose(imageArmorStand.getHeadPose())).getUniqueId();
 
-		final ImageStand imageStand = new ImageStand(image.getUniqueId(), outline.getUniqueId(), id, size);
+		final ImageStand imageStand = new ImageStand(imageArmorStand.getUniqueId(), outlineUuid, id, size);
 		service.save(imageStand);
 		service.cache(imageStand);
 		send(PREFIX + "Created new stand");
 	}
 
-	@Path("delete")
-	void delete() {
-		imageStand = getTargetImageStandRequired();
+	@Path("delete [--id]")
+	void delete(@Switch String id) {
+		getImageStand(id);
 		imageStand.stopDrawing();
 		service.delete(imageStand);
 		send(PREFIX + "Deleted image stand " + imageStand.getId());
 	}
 
-	@Path("shift [--x] [--y] [--z]")
-	void shift(@Switch double x, @Switch double y, @Switch double z) {
-		imageStand = getTargetImageStandRequired();
+	@Path("shift [--id] [--x] [--y] [--z]")
+	void shift(@Switch String id, @Switch double x, @Switch double y, @Switch double z) {
+		getImageStand(id);
+
 		for (ArmorStand armorStand : imageStand.getArmorStands())
 			armorStand.teleport(armorStand.getLocation().add(x, y, z));
 
@@ -84,14 +89,15 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Shifted image stand");
 	}
 
-	@Path("boundingBox modify [--x] [--y] [--z] [--posX] [--posY] [--posZ] [--negX] [--negY] [--negZ] [--all]")
+	@Path("boundingBox modify [--id] [--x] [--y] [--z] [--posX] [--posY] [--posZ] [--negX] [--negY] [--negZ] [--all]")
 	void boundingBox_modify(
+		@Switch String id,
 		@Switch double x, @Switch double y, @Switch double z,
 		@Switch double negX, @Switch double negY, @Switch double negZ,
 		@Switch double posX, @Switch double posY, @Switch double posZ,
 		@Switch double all
 	) {
-		imageStand = getTargetImageStandRequired();
+		getImageStand(id);
 		BoundingBox box = imageStand.getBoundingBox();
 		if (box == null)
 			box = new BoundingBox().shift(imageStand.getImageStandRequired().getEyeLocation());
@@ -122,9 +128,9 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Modified bounding box");
 	}
 
-	@Path("boundingBox draw [--particle] [--dustSize] [--density] [--stop]")
-	void boundingBox_draw(@Switch boolean stop) {
-		imageStand = getTargetImageStandRequired();
+	@Path("boundingBox draw [--id] [--stop]")
+	void boundingBox_draw(@Switch String id, @Switch boolean stop) {
+		getImageStand(id);
 
 		if (stop) {
 			if (!imageStand.isDrawing())
@@ -138,36 +144,46 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 		imageStand.draw();
 	}
 
+	private void getImageStand(String id) {
+		if (isNullOrEmpty(id))
+			imageStand = getTargetImageStandRequired();
+		else
+			imageStand = service.getById(id);
+	}
+
 	static {
 		Bukkit.getMessenger().registerOutgoingPluginChannel(Nexus.getInstance(), "worldedit:cui");
 	}
 
-	@Path("boundingBox update")
-	void boundingBox_update() {
-		imageStand = getTargetImageStandRequired();
+	@Path("boundingBox update [--id]")
+	void boundingBox_update(@Switch String id) {
+		getImageStand(id);
 		imageStand.updateBoundingBoxes();
 	}
 
-	@Path("outline update")
-	void outline_update() {
-		imageStand = getTargetImageStandRequired();
+	@Path("outline update [--id]")
+	void outline_update(@Switch String id) {
+		getImageStand(id);
+
 		final ArmorStand image = imageStand.getImageStandRequired();
 		final ArmorStand outline = imageStand.getOutlineStandRequired();
 		outline.teleport(image);
 		outline.setHeadPose(image.getHeadPose());
 	}
 
-	@Path("stands yaw <yaw>")
-	void stands_yaw(float yaw) {
-		imageStand = getTargetImageStandRequired();
+	@Path("stands yaw <yaw> [--id]")
+	void stands_yaw(float yaw, @Switch String id) {
+		getImageStand(id);
+
 		final ArmorStand image = imageStand.getImageStandRequired();
-		final ArmorStand outline = imageStand.getOutlineStandRequired();
+		final ArmorStand outline = imageStand.getOutlineStand();
 
 		final Location location = image.getLocation();
 		location.setYaw(yaw);
 
 		image.teleport(location);
-		outline.teleport(location);
+		if (outline != null)
+			outline.teleport(location);
 
 		imageStand.updateBoundingBoxes();
 	}
@@ -193,6 +209,18 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
+		final Player player = event.getPlayer();
+		final ImageStandService service = new ImageStandService();
+		final ImageStand imageStand = service.getTargetStand(player);
+
+		if (imageStand == null)
+			return;
+
+		new ImageStandInteractEvent(player, imageStand).callEvent();
+	}
+
+	@EventHandler
+	public void on(PlayerInteractAtEntityEvent event) {
 		final Player player = event.getPlayer();
 		final ImageStandService service = new ImageStandService();
 		final ImageStand imageStand = service.getTargetStand(player);
@@ -236,7 +264,7 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 			for (Player player : OnlinePlayers.getAll()) {
 				final ImageStandService service = new ImageStandService();
 				final ImageStand imageStand = service.getTargetStand(player);
-				if (imageStand != null)
+				if (imageStand != null && imageStand.hasOutline())
 					imageStand.outlineFor(player);
 				else
 					service.removeOutlineFor(player);

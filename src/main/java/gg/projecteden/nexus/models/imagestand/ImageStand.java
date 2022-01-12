@@ -38,6 +38,8 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
+import static gg.projecteden.utils.Nullables.isNullOrEmpty;
+
 @Data
 @Entity(value = "image_stand", noClassnameStored = true)
 @NoArgsConstructor
@@ -65,11 +67,15 @@ public class ImageStand implements DatabaseObject {
 	}
 
 	public boolean isActive() {
+		return !isNullOrEmpty(id);
+	}
+
+	public boolean hasOutline() {
 		return outline != null;
 	}
 
 	public boolean matches(UUID uuid) {
-		return outline.equals(uuid) || boundingBoxes.containsKey(uuid);
+		return (hasOutline() && outline.equals(uuid)) || boundingBoxes.containsKey(uuid);
 	}
 
 	public void outlineFor(Player player) {
@@ -256,6 +262,7 @@ public class ImageStand implements DatabaseObject {
 	@AllArgsConstructor
 	public enum ImageSize {
 		// Height x Width
+		_1x1(Material.PAPER, 1296),
 		_1x2(Material.PAPER, 1297),
 		_3x2(Material.PAPER, 1298),
 		_4x3(Material.PAPER, 1299),

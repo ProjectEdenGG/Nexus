@@ -3,6 +3,7 @@ package gg.projecteden.nexus.models.imagestand;
 
 import gg.projecteden.mongodb.MongoService;
 import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 
@@ -49,6 +50,13 @@ public class ImageStandService extends MongoService<ImageStand> {
 			return;
 
 		get(uuid).removeOutlineFor(player);
+	}
+
+	public ImageStand getById(String id) {
+		return cache.values().stream()
+			.filter(stand -> stand.getId().equals(id))
+			.findFirst()
+			.orElseThrow(() -> new InvalidInputException("Image stand with id &e" + id + " &cnot found"));
 	}
 
 }
