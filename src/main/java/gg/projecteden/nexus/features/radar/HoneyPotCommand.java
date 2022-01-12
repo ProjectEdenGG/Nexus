@@ -52,6 +52,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -165,7 +166,7 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 		if (region == null)
 			error("That is not a valid Honey Pot");
 
-		player().teleportAsync(worldedit.toLocation(region.getCenter()));
+		player().teleportAsync(worldedit.toLocation(region.getCenter()), TeleportCause.COMMAND);
 		send(PREFIX + "You have been teleported to Honey Pot:&e " + honeyPot);
 	}
 

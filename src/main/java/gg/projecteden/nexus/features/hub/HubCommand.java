@@ -23,6 +23,7 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import gg.projecteden.utils.TimeUtils.Timespan.FormatType;
 import lombok.NonNull;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import java.util.Comparator;
 import java.util.List;
@@ -102,7 +103,7 @@ public class HubCommand extends _WarpCommand {
 	@Permission(Group.ADMIN)
 	@Description("Teleport to a parkour course's checkpoints")
 	void parkour_checkpoints_tp(HubParkourCourse course, int checkpoint) {
-		player().teleportAsync(course.getCheckpoints().get(checkpoint));
+		player().teleportAsync(course.getCheckpoints().get(checkpoint), TeleportCause.COMMAND);
 	}
 
 	@Async

@@ -197,7 +197,7 @@ public class TeleportCommand extends CustomCommand implements Listener {
 	@Path("override <player>")
 	@Permission(Group.SENIOR_STAFF)
 	void override(Player player) {
-		player().teleportAsync(player.getLocation());
+		player().teleportAsync(player.getLocation(), TeleportCause.COMMAND);
 		send(PREFIX + "Overriding teleport to &e" + player.getName());
 	}
 

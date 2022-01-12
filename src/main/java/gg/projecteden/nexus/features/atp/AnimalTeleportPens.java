@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -117,7 +118,7 @@ public class AnimalTeleportPens {
 			});
 		}
 		Tasks.wait(4, () -> {
-			player.teleportAsync(toLoc);
+			player.teleportAsync(toLoc, TeleportCause.COMMAND);
 			new BankerService().withdraw(player, price, ShopGroup.SURVIVAL, TransactionCause.ANIMAL_TELEPORT_PEN);
 		});
 	}
