@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 @Data
 @Entity(value = "hub_parkour_user", noClassnameStored = true)
@@ -46,6 +47,18 @@ public class HubParkourUser implements PlayerOwnedObject {
 				courses.add(newData);
 				return newData;
 			});
+	}
+
+	public boolean quitAll(Consumer<CourseData> consumer) {
+		boolean playing = false;
+		for (CourseData courseData : courses) {
+			if (courseData.isPlaying()) {
+				playing = true;
+				consumer.accept(courseData);
+			}
+		}
+
+		return playing;
 	}
 
 	@Data
@@ -80,7 +93,7 @@ public class HubParkourUser implements PlayerOwnedObject {
 		public void quit() {
 			reset();
 
-			if (isOnline()) {
+			if (isOnline() && getRank().isStaff()) {
 				FlightMode flightMode = new ModeUserService().get(this).getFlightMode(getWorldGroup());
 				getOnlinePlayer().setAllowFlight(flightMode.isAllowFlight());
 				getOnlinePlayer().setFlying(flightMode.isFlying());

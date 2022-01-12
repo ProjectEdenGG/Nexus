@@ -4,7 +4,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.FlyCommand;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
-import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
+import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeavingRegionEvent;
 import gg.projecteden.nexus.framework.features.Features;
 import gg.projecteden.nexus.models.hub.HubParkourCourse;
 import gg.projecteden.nexus.models.hub.HubParkourCourseService;
@@ -12,7 +12,9 @@ import gg.projecteden.nexus.models.hub.HubParkourUser;
 import gg.projecteden.nexus.models.hub.HubParkourUser.CourseData;
 import gg.projecteden.nexus.models.hub.HubParkourUserService;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import gg.projecteden.utils.TimeUtils.Timespan.FormatType;
 import gg.projecteden.utils.Utils;
@@ -23,6 +25,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 
 import java.time.LocalDateTime;
@@ -100,7 +104,7 @@ public class HubParkour implements Listener {
 				if (run.getBestRunSplits().isEmpty() || run.getCurrentRunTime() < run.getBestRunTime()) {
 					run.setBestRunSplits(new ArrayList<>(run.getCurrentRunSplits()));
 					user.sendMessage(PREFIX + "&6New personal best!");
-					course.updateHologram();
+					Tasks.wait(TickTime.SECOND, course::updateHologram);
 				}
 
 				run.quit();
@@ -175,7 +179,7 @@ public class HubParkour implements Listener {
 	}
 
 	@EventHandler
-	public void on(PlayerLeftRegionEvent event) {
+	public void on(PlayerLeavingRegionEvent event) {
 		if (!event.getRegion().getId().startsWith("hub_parkour_"))
 			return;
 
@@ -184,7 +188,7 @@ public class HubParkour implements Listener {
 			final String courseName = split[2];
 
 			if (split.length == 3) {
-				new HubParkourUserService().edit(event.getPlayer(), user -> user.get(courseName).setPlaying(false));
+				new HubParkourUserService().edit(event.getPlayer(), user -> user.get(courseName).quit());
 				return;
 			}
 
@@ -202,18 +206,29 @@ public class HubParkour implements Listener {
 		if (!event.isFlying())
 			return;
 
-		new HubParkourUserService().edit(event.getPlayer(), user -> {
-			boolean playing = false;
-			for (CourseData courseData : user.getCourses()) {
-				if (courseData.isPlaying()) {
-					playing = true;
-					courseData.reset();
-				}
-			}
+		final HubParkourUserService service = new HubParkourUserService();
+		final HubParkourUser user = service.get(event.getPlayer());
 
-			if (playing)
-				PlayerUtils.send(event.getPlayer(), Features.get(Hub.class).getPrefix() + "Parkour quit, flying is not allowed");
-		});
+		if (!user.quitAll(CourseData::reset))
+			return;
+
+		PlayerUtils.send(event.getPlayer(), Features.get(Hub.class).getPrefix() + "Parkour quit, flying is not allowed");
+		service.save(user);
+	}
+
+	@EventHandler
+	public void onPlayerTeleport(PlayerTeleportEvent event) {
+		if (event.getCause() == TeleportCause.PLUGIN)
+			return;
+
+		final HubParkourUserService service = new HubParkourUserService();
+		final HubParkourUser user = service.get(event.getPlayer());
+
+		if (!user.quitAll(CourseData::quit))
+			return;
+
+		PlayerUtils.send(event.getPlayer(), Features.get(Hub.class).getPrefix() + "Parkour quit, teleporting is not allowed");
+		service.save(user);
 	}
 
 }
