@@ -16,6 +16,7 @@ import gg.projecteden.nexus.utils.HttpUtils;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
@@ -190,7 +191,22 @@ public class ResourcePack extends Feature implements Listener {
 	}
 
 	public static void send(Player player) {
-		player.setResourcePack(URL, hash);
+		final String LINE = "&8&m                                                      ";
+
+		final JsonBuilder text = new JsonBuilder()
+			.next(LINE)
+			.newline().next("&#f5a138Hey nerd!")
+			.newline()
+			.newline().next("&7To begin your Project Eden journey, you must")
+			.newline().next("&7first accept our server's resource pack!")
+			.newline()
+			.newline().next("&7The pack adds custom items and images to")
+			.newline().next("&7enhance your experience on the server.")
+			.newline()
+			.newline().next("&#3080ffAre you ready?")
+			.newline().next(LINE);
+
+		player.setResourcePack(URL, hash, !new LocalResourcePackUserService().get(player).isEnabled(), text.build());
 	}
 
 	@Data
