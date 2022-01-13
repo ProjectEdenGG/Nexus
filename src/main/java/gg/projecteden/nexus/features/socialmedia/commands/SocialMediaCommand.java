@@ -30,6 +30,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 @NoArgsConstructor
 public class SocialMediaCommand extends CustomCommand implements Listener {
@@ -132,7 +133,11 @@ public class SocialMediaCommand extends CustomCommand implements Listener {
 		if (isNullOrAir(block) || block.getType() != Material.PLAYER_HEAD)
 			return;
 
-		EdenSocialMediaSite site = EdenSocialMediaSite.ofHeadId(Nexus.getHeadAPI().getBlockID(block));
+		final String id = Nexus.getHeadAPI().getBlockID(block);
+		if (isNullOrEmpty(id))
+			return;
+
+		EdenSocialMediaSite site = EdenSocialMediaSite.ofHeadId(id);
 		if (site == null)
 			return;
 
