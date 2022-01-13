@@ -37,7 +37,7 @@ public class Hub extends Feature implements Listener {
 			case "survival" -> PlayerUtils.send(event.getPlayer(), "/rtp");
 			case "socialmedia" -> {
 				final EdenSocialMediaSite site = EdenSocialMediaSite.valueOf(split[1].toUpperCase());
-				final String message =  "&f" + site.getConfig().getEmoji() + " " + site.getName() + " &7- &e" + site.getUrl();
+				final String message =  "&f" + site.getConfig().getEmoji() + " " + site.getName() + " &7- " + site.getUrl();
 				PlayerUtils.send(event.getPlayer(), new JsonBuilder(StringUtils.getPrefix("SocialMedia") + message).url(site.getUrl()));
 			}
 		}

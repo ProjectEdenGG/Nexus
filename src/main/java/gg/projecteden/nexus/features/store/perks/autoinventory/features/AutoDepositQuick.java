@@ -1,10 +1,10 @@
 package gg.projecteden.nexus.features.store.perks.autoinventory.features;
 
+import gg.projecteden.nexus.features.listeners.events.FakePlayerInteractEvent;
 import gg.projecteden.nexus.features.store.perks.autoinventory.AutoInventory;
 import gg.projecteden.nexus.features.store.perks.autoinventory.AutoInventoryFeature;
 import gg.projecteden.nexus.features.store.perks.autoinventory.tasks.FindChestsThread.DepositRecord;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser;
-import gg.projecteden.nexus.utils.PlayerUtils.FakePlayerInteractEvent;
 import lombok.NoArgsConstructor;
 import org.bukkit.Nameable;
 import org.bukkit.block.Block;

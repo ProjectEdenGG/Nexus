@@ -44,8 +44,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -962,15 +960,6 @@ public class PlayerUtils {
 		} catch (IllegalArgumentException ex) {
 			ex.printStackTrace();
 			return "Unknown (ViaVersion error)";
-		}
-	}
-
-	/**
-	 * Extension of {@link PlayerInteractEvent} used to test if a plugin like WorldGuard or LWC will block the event.
-	 */
-	public static class FakePlayerInteractEvent extends PlayerInteractEvent {
-		public FakePlayerInteractEvent(Player player, Action action, ItemStack itemInHand, Block clickedBlock, BlockFace blockFace) {
-			super(player, action, itemInHand, clickedBlock, blockFace);
 		}
 	}
 

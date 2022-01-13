@@ -10,6 +10,14 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.commands.GamemodeCommand;
 import gg.projecteden.nexus.features.commands.SpeedCommand;
+import gg.projecteden.nexus.features.listeners.events.FakePlayerInteractEvent;
+import gg.projecteden.nexus.features.listeners.events.FirstWorldGroupVisitEvent;
+import gg.projecteden.nexus.features.listeners.events.FixedCraftItemEvent;
+import gg.projecteden.nexus.features.listeners.events.GolemBuildEvent.IronGolemBuildEvent;
+import gg.projecteden.nexus.features.listeners.events.GolemBuildEvent.SnowGolemBuildEvent;
+import gg.projecteden.nexus.features.listeners.events.LivingEntityDamageByPlayerEvent;
+import gg.projecteden.nexus.features.listeners.events.PlayerDamageByPlayerEvent;
+import gg.projecteden.nexus.features.listeners.events.WorldGroupChangedEvent;
 import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.warps.Warps;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -17,6 +25,7 @@ import gg.projecteden.nexus.models.mode.ModeUser;
 import gg.projecteden.nexus.models.mode.ModeUser.FlightMode;
 import gg.projecteden.nexus.models.mode.ModeUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.tip.Tip;
 import gg.projecteden.nexus.models.tip.Tip.TipType;
 import gg.projecteden.nexus.models.tip.TipService;
@@ -27,18 +36,13 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Name;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.PlayerUtils.FakePlayerInteractEvent;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.SneakyThrows;
 import me.libraryaddict.disguise.DisguiseAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -55,7 +59,6 @@ import org.bukkit.entity.Bee;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
-import org.bukkit.entity.Golem;
 import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LivingEntity;
@@ -64,7 +67,6 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Snowman;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -74,17 +76,13 @@ import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.CraftItemEvent;
-import org.bukkit.event.inventory.InventoryAction;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
@@ -92,15 +90,12 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.potion.PotionEffectType;
-import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Paths;
 import java.time.YearMonth;
@@ -539,16 +534,13 @@ public class Misc implements Listener {
 					}
 
 					GamemodeCommand.setGameMode(player, gameMode);
-//				PlayerUtils.send(player, "GAMEMODE DEBUG: Setting to " + gameMode);
+//					PlayerUtils.send(player, "GAMEMODE DEBUG: Setting to " + gameMode);
 
 					player.setAllowFlight(flightMode.isAllowFlight());
 					player.setFlying(flightMode.isFlying());
-//				PlayerUtils.send(player, "FLIGHT DEBUG: " + player.getAllowFlight() + " | " + player.isFlying());
+//					PlayerUtils.send(player, "FLIGHT DEBUG: " + player.getAllowFlight() + " | " + player.isFlying());
 				});
 			}
-
-
-
 		}
 
 		if (event.getFrom().getName().equalsIgnoreCase("donortrial"))
@@ -576,68 +568,6 @@ public class Misc implements Listener {
 
 	public void joinCreative(Player player) {
 		PlayerUtils.runCommand(player, "ch join c");
-	}
-
-	public static class PlayerDamageByPlayerEvent extends PlayerEvent {
-		@NonNull
-		@Getter
-		final Player attacker;
-		@NonNull
-		@Getter
-		final EntityDamageByEntityEvent originalEvent;
-
-		@SneakyThrows
-		public PlayerDamageByPlayerEvent(@NotNull Player victim, @NotNull Player attacker, @NotNull EntityDamageByEntityEvent event) {
-			super(victim);
-			this.attacker = attacker;
-			this.originalEvent = event;
-		}
-
-		private static final HandlerList handlers = new HandlerList();
-
-		public static HandlerList getHandlerList() {
-			return handlers;
-		}
-
-		@NotNull
-		@Override
-		public HandlerList getHandlers() {
-			return handlers;
-		}
-
-	}
-
-	public static class LivingEntityDamageByPlayerEvent extends EntityEvent {
-		@NonNull
-		@Getter
-		final LivingEntity entity;
-		@NonNull
-		@Getter
-		final Player attacker;
-		@NonNull
-		@Getter
-		final EntityDamageByEntityEvent originalEvent;
-
-		@SneakyThrows
-		public LivingEntityDamageByPlayerEvent(@NotNull LivingEntity victim, @NotNull Player attacker, @NotNull EntityDamageByEntityEvent event) {
-			super(victim);
-			this.entity = victim;
-			this.attacker = attacker;
-			this.originalEvent = event;
-		}
-
-		private static final HandlerList handlers = new HandlerList();
-
-		public static HandlerList getHandlerList() {
-			return handlers;
-		}
-
-		@NotNull
-		@Override
-		public HandlerList getHandlers() {
-			return handlers;
-		}
-
 	}
 
 	@EventHandler
@@ -684,22 +614,6 @@ public class Misc implements Listener {
 			return;
 
 		itemFrame.setRotation(itemFrame.getRotation().rotateCounterClockwise());
-	}
-
-	@Getter
-	public static class FixedCraftItemEvent extends CraftItemEvent {
-		private final ItemStack resultItemStack;
-
-		public FixedCraftItemEvent(@NotNull ItemStack resultItemStack, @NotNull Recipe recipe, @NotNull InventoryView what, @NotNull InventoryType.SlotType type, int slot, @NotNull ClickType click, @NotNull InventoryAction action) {
-			super(recipe, what, type, slot, click, action);
-			this.resultItemStack = resultItemStack;
-		}
-
-		public FixedCraftItemEvent(@NotNull ItemStack resultItemStack, @NotNull Recipe recipe, @NotNull InventoryView what, @NotNull InventoryType.SlotType type, int slot, @NotNull ClickType click, @NotNull InventoryAction action, int key) {
-			super(recipe, what, type, slot, click, action, key);
-			this.resultItemStack = resultItemStack;
-		}
-
 	}
 
 	// Stolen from https://github.com/ezeiger92/QuestWorld2/blob/70f2be317daee06007f89843c79b3b059515d133/src/main/java/com/questworld/extension/builtin/CraftMission.java
@@ -849,46 +763,6 @@ public class Misc implements Listener {
 					new SnowGolemBuildEvent(player, golem).callEvent();
 			}
 		}
-	}
-
-	public static class GolemBuildEvent extends PlayerEvent {
-		@NonNull
-		@Getter
-		final Golem entity;
-
-		public GolemBuildEvent(@NotNull Player who, @NonNull Golem entity) {
-			super(who);
-			this.entity = entity;
-		}
-
-		private static final HandlerList handlers = new HandlerList();
-
-		public static HandlerList getHandlerList() {
-			return handlers;
-		}
-
-		@NotNull
-		@Override
-		public HandlerList getHandlers() {
-			return handlers;
-		}
-
-	}
-
-	public static class IronGolemBuildEvent extends GolemBuildEvent {
-
-		public IronGolemBuildEvent(@NotNull Player who, @NonNull IronGolem entity) {
-			super(who, entity);
-		}
-
-	}
-
-	public static class SnowGolemBuildEvent extends GolemBuildEvent {
-
-		public SnowGolemBuildEvent(@NotNull Player who, @NonNull Snowman entity) {
-			super(who, entity);
-		}
-
 	}
 
 }
