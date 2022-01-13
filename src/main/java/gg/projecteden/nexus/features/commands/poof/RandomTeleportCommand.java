@@ -42,7 +42,8 @@ public class RandomTeleportCommand extends CustomCommand {
 	@Async
 	@Cooldown(value = TickTime.SECOND, x = 30, bypass = Group.ADMIN)
 	void rtp() {
-		final World world = world().getName().equalsIgnoreCase("world") ? Objects.requireNonNull(Bukkit.getWorld("survival")) : world();
+		final String worldName = world().getName();
+		final World world = List.of("world", "server").contains(worldName) ? Objects.requireNonNull(Bukkit.getWorld("survival")) : world();
 
 		if (world.getEnvironment() != Environment.NORMAL)
 			error("You must be in a survival overworld to run this command");

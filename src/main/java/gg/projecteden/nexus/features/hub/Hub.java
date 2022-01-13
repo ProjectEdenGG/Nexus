@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.hub;
 import gg.projecteden.nexus.features.resourcepack.commands.ImageStandCommand.ImageStandInteractEvent;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.framework.features.Feature;
+import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -29,12 +30,9 @@ public class Hub extends Feature implements Listener {
 		id = split[0];
 
 		switch (id) {
-			case "minigames", "creative" -> {
-				PlayerUtils.send(event.getPlayer(), "/warp " + id);
-//				WarpType.NORMAL.get(id).teleportAsync(event.getPlayer());
-			}
-			case "oneblock" -> PlayerUtils.send(event.getPlayer(), "/ob");
-			case "survival" -> PlayerUtils.send(event.getPlayer(), "/rtp");
+			case "minigames", "creative" -> WarpType.NORMAL.get(id).teleportAsync(event.getPlayer());
+			case "oneblock" -> PlayerUtils.runCommand(event.getPlayer(), "ob");
+			case "survival" -> PlayerUtils.runCommand(event.getPlayer(), "rtp");
 			case "socialmedia" -> {
 				final EdenSocialMediaSite site = EdenSocialMediaSite.valueOf(split[1].toUpperCase());
 				final String message =  "&f" + site.getConfig().getEmoji() + " " + site.getName() + " &7- " + site.getUrl();

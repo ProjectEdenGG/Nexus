@@ -66,7 +66,7 @@ public class SpawnCommand extends CustomCommand implements Listener {
 		if (event.getPlayer().hasPlayedBefore())
 			return;
 
-		Tasks.wait(1, () -> WarpType.NORMAL.get("spawn").teleportAsync(event.getPlayer()));
+		Tasks.wait(1, () -> WarpType.NORMAL.get("hub").teleportAsync(event.getPlayer()));
 	}
 
 }
