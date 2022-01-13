@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.listeners;
 
 import gg.projecteden.nexus.features.minigames.Minigames;
+import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Tasks;
 import kotlin.Pair;
@@ -10,7 +11,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
@@ -167,6 +167,18 @@ public class LaunchPads implements Listener {
 		return new Pair<>(fallingBlock, taskId.get());
 	}
 
+	public boolean isLaunching(Player player) {
+		return launchPadPlayers.containsKey(player.getUniqueId());
+	}
+
+	public void cancelLaunch(Player player) {
+		if (!isLaunching(player))
+			return;
+
+		Pair<FallingBlock, Integer> data = launchPadPlayers.get(player.getUniqueId());
+		cancelLaunch(player, data.getFirst(), data.getSecond());
+	}
+
 	private void cancelLaunch(Player player, FallingBlock fallingBlock, int taskId) {
 		launchPadPlayers.remove(player.getUniqueId());
 		Tasks.cancel(taskId);
@@ -178,7 +190,7 @@ public class LaunchPads implements Listener {
 	}
 
 	@EventHandler
-	public void onEntityChangeBlockEvent(final EntityChangeBlockEvent event) {
+	public void on(final EntityChangeBlockEvent event) {
 		if (event == null) return;
 
 		if (launchPadBlockUUIDs.contains(event.getEntity().getUniqueId()))
@@ -186,24 +198,31 @@ public class LaunchPads implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
-	public void onDamage(final EntityDamageEvent event) {
-		Entity entity = event.getEntity();
-		if (!(entity instanceof Player player)) return;
+	public void on(final EntityDamageEvent event) {
+		if (!(event.getEntity() instanceof Player player)) return;
 
-		if (launchPadPlayers.get(player.getUniqueId()) != null)
+		if (isLaunching(player))
 			event.setCancelled(true);
 	}
 
 	@EventHandler
-	public void onFlightToggle(final PlayerToggleFlightEvent event) {
-		if (launchPadPlayers.get(event.getPlayer().getUniqueId()) != null)
+	public void on(final PlayerToggleFlightEvent event) {
+		if (isLaunching(event.getPlayer()))
 			event.setCancelled(true);
 	}
 
 	@EventHandler
-	public void onTeleport(final PlayerTeleportEvent event) {
-		if (launchPadPlayers.get(event.getPlayer().getUniqueId()) != null)
+	public void on(final PlayerTeleportEvent event) {
+		if (isLaunching(event.getPlayer()))
 			event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void on(PlayerEnteringRegionEvent event) {
+		Player player = event.getPlayer();
+		if (event.getRegion().getId().contains("_kill"))
+			if (isLaunching(player))
+				cancelLaunch(player);
 	}
 
 }
