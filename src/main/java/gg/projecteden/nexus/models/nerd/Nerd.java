@@ -49,8 +49,10 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -65,6 +67,8 @@ public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwned
 	@ToString.Exclude
 	@EqualsAndHashCode.Exclude
 	private Location location;
+
+	private Set<WorldGroup> visitedWorldGroups = new HashSet<>();
 
 	// Set to null after they have moved
 	private Location loginLocation;

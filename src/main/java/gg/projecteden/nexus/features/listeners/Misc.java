@@ -471,24 +471,33 @@ public class Misc implements Listener {
 
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
-		if (toSpawn.contains(event.getPlayer().getUniqueId())) {
-			WarpType.NORMAL.get("spawn").teleportAsync(event.getPlayer());
-			Nexus.log("Teleporting resource world player " + Name.of(event.getPlayer()) + " to spawn");
-			toSpawn.remove(event.getPlayer().getUniqueId());
+		final Player player = event.getPlayer();
+		if (toSpawn.contains(player.getUniqueId())) {
+			WarpType.NORMAL.get("spawn").teleportAsync(player);
+			Nexus.log("Teleporting resource world player " + Name.of(player) + " to spawn");
+			toSpawn.remove(player.getUniqueId());
 		}
 
 		Tasks.wait(5, () -> {
-			if (toSpawn.contains(event.getPlayer().getUniqueId())) {
-				WarpType.NORMAL.get("spawn").teleportAsync(event.getPlayer());
-				Nexus.log("Teleporting resource world player " + Name.of(event.getPlayer()) + " to spawn [2]");
-				toSpawn.remove(event.getPlayer().getUniqueId());
+			if (toSpawn.contains(player.getUniqueId())) {
+				WarpType.NORMAL.get("spawn").teleportAsync(player);
+				Nexus.log("Teleporting resource world player " + Name.of(player) + " to spawn [2]");
+				toSpawn.remove(player.getUniqueId());
 			}
 
-			WorldGroup worldGroup = WorldGroup.of(event.getPlayer());
+			WorldGroup worldGroup = WorldGroup.of(player);
 			if (worldGroup == WorldGroup.MINIGAMES)
-				joinMinigames(event.getPlayer());
+				joinMinigames(player);
 			else if (worldGroup == WorldGroup.CREATIVE)
-				joinCreative(event.getPlayer());
+				joinCreative(player);
+
+			final Nerd nerd = Nerd.of(player);
+			if (!nerd.getVisitedWorldGroups().contains(worldGroup)) {
+				new FirstWorldGroupVisitEvent(player, worldGroup).callEvent();
+
+				nerd.getVisitedWorldGroups().add(worldGroup);
+				new NerdService().save(nerd);
+			}
 		});
 	}
 
@@ -508,6 +517,17 @@ public class Misc implements Listener {
 
 		Nerd nerd = Nerd.of(player);
 		boolean isStaff = nerd.getRank().isStaff();
+
+		if (oldWorldGroup != newWorldGroup) {
+			new WorldGroupChangedEvent(player, oldWorldGroup, newWorldGroup).callEvent();
+
+			if (!nerd.getVisitedWorldGroups().contains(newWorldGroup)) {
+				new FirstWorldGroupVisitEvent(player, newWorldGroup).callEvent();
+
+				nerd.getVisitedWorldGroups().add(newWorldGroup);
+				new NerdService().save(nerd);
+			}
+		}
 
 		if (!isStaff) {
 			SpeedCommand.resetSpeed(player);
