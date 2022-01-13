@@ -150,7 +150,7 @@ public class HubCommand extends _WarpCommand {
 		paginate(data, formatter, "/hub parkour top " + course.getName(), page);
 	}
 
-	@Path("parkour hologram update [course]")
+	@Path("parkour hologram update <course>")
 	@Permission(Group.ADMIN)
 	void parkour_hologram_update(HubParkourCourse course) {
 		course.updateHologram();

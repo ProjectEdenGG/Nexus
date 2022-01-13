@@ -3,11 +3,10 @@ package gg.projecteden.nexus.features.recipes.functionals.armor.wither;
 import com.destroystokyo.paper.event.inventory.PrepareResultEvent;
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import de.tr7zw.nbtapi.NBTItem;
-import gg.projecteden.nexus.features.commands.SpeedCommand;
+import gg.projecteden.nexus.features.commands.SpeedCommand.SpeedType;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -115,7 +114,7 @@ public class WitherArmorListener implements Listener {
 		Player player = event.getPlayer();
 		if (!hasFullSet(player)) return;
 		player.setAllowFlight(true);
-		SpeedCommand.resetSpeed(player, true);
+		SpeedType.FLY.reset(player);
 	}
 
 	@EventHandler
@@ -167,7 +166,7 @@ public class WitherArmorListener implements Listener {
 	public void onJoin(PlayerJoinEvent event) {
 		if (!hasFullSet(event.getPlayer())) return;
 		event.getPlayer().setAllowFlight(true);
-		SpeedCommand.resetSpeed(event.getPlayer(), true);
+		SpeedType.FLY.reset(event.getPlayer());
 	}
 
 	@EventHandler

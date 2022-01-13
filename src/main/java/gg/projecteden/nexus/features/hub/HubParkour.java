@@ -3,6 +3,8 @@ package gg.projecteden.nexus.features.hub;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.FlyCommand;
+import gg.projecteden.nexus.features.commands.SpeedCommand;
+import gg.projecteden.nexus.features.commands.SpeedCommand.SpeedChangeEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeavingRegionEvent;
 import gg.projecteden.nexus.framework.features.Features;
@@ -88,6 +90,7 @@ public class HubParkour implements Listener {
 					run.setLeftStartRegion(false);
 				}
 				FlyCommand.off(player);
+				SpeedCommand.resetSpeed(player);
 				run.setLastCheckpointTime(LocalDateTime.now());
 				run.setPlaying(true);
 			}
@@ -196,7 +199,7 @@ public class HubParkour implements Listener {
 					final CourseData run = user.get(courseName);
 					if (run.isPlaying()) {
 						run.quit();
-						user.sendMessage(PREFIX + "Parkour quit, you left the parkour area");
+						user.sendMessage(PREFIX + "&cParkour quit, you left the parkour area");
 					}
 				});
 				return;
@@ -212,7 +215,7 @@ public class HubParkour implements Listener {
 	}
 
 	@EventHandler
-	public void onPlayerToggleFlight(PlayerToggleFlightEvent event) {
+	public void on(PlayerToggleFlightEvent event) {
 		if (!event.isFlying())
 			return;
 
@@ -222,12 +225,12 @@ public class HubParkour implements Listener {
 		if (!user.quitAll(CourseData::reset))
 			return;
 
-		PlayerUtils.send(event.getPlayer(), Features.get(Hub.class).getPrefix() + "Parkour quit, flying is not allowed");
+		PlayerUtils.send(event.getPlayer(), Features.get(Hub.class).getPrefix() + "&cParkour quit, flying is not allowed");
 		service.save(user);
 	}
 
 	@EventHandler
-	public void onPlayerTeleport(PlayerTeleportEvent event) {
+	public void on(PlayerTeleportEvent event) {
 		if (event.getCause() == TeleportCause.PLUGIN)
 			return;
 
@@ -237,12 +240,12 @@ public class HubParkour implements Listener {
 		if (!user.quitAll(CourseData::quit))
 			return;
 
-		PlayerUtils.send(event.getPlayer(), Features.get(Hub.class).getPrefix() + "Parkour quit, teleporting is not allowed");
+		PlayerUtils.send(event.getPlayer(), Features.get(Hub.class).getPrefix() + "&cParkour quit, teleporting is not allowed");
 		service.save(user);
 	}
 
 	@EventHandler
-	public void onPlayerGameModeChange(PlayerGameModeChangeEvent event) {
+	public void on(PlayerGameModeChangeEvent event) {
 		if (event.getNewGameMode() != GameMode.SPECTATOR)
 			return;
 
@@ -252,7 +255,22 @@ public class HubParkour implements Listener {
 		if (!user.quitAll(CourseData::reset))
 			return;
 
-		PlayerUtils.send(event.getPlayer(), Features.get(Hub.class).getPrefix() + "Parkour quit, spectator mode is not allowed");
+		PlayerUtils.send(event.getPlayer(), Features.get(Hub.class).getPrefix() + "&cParkour quit, spectator mode is not allowed");
+		service.save(user);
+	}
+
+	@EventHandler
+	public void on(SpeedChangeEvent event) {
+		if (event.getNewSpeed() == 1)
+			return;
+
+		final HubParkourUserService service = new HubParkourUserService();
+		final HubParkourUser user = service.get(event.getPlayer());
+
+		if (!user.quitAll(CourseData::quit))
+			return;
+
+		PlayerUtils.send(event.getPlayer(), Features.get(Hub.class).getPrefix() + "&cParkour quit, changing speed is not allowed");
 		service.save(user);
 	}
 

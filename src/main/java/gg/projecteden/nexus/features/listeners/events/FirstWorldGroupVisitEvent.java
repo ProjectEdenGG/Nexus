@@ -7,15 +7,13 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
 public class FirstWorldGroupVisitEvent extends PlayerEvent {
 	private static final HandlerList handlers = new HandlerList();
-	private final Player player;
-	@Getter
 	private final WorldGroup worldGroup;
 
 	public FirstWorldGroupVisitEvent(@NotNull Player player, WorldGroup worldGroup) {
 		super(player);
-		this.player = player;
 		this.worldGroup = worldGroup;
 	}
 

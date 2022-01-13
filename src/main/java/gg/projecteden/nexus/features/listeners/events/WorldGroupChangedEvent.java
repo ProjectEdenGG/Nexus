@@ -7,10 +7,9 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
 public class WorldGroupChangedEvent extends PlayerEvent {
 	private static final HandlerList handlers = new HandlerList();
-	private final Player player;
-	@Getter
 	private final WorldGroup oldWorldGroup, newWorldGroup;
 
 	public WorldGroupChangedEvent(@NotNull Player player, WorldGroup oldWorldGroup, WorldGroup newWorldGroup) {
