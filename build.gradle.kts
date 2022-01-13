@@ -30,6 +30,7 @@ repositories {
 }
 
 dependencies {
+    paperweightDevBundle("me.lexikiq.parchment", "1.18.1-R0.1-SNAPSHOT")
     implementation("io.papermc:paperlib:1.0.2")
     implementation("gg.projecteden:eden-api:1.7.6")
     implementation("org.reflections:reflections:0.10.2")
@@ -94,10 +95,6 @@ publishing {
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(17))
-}
-
-dependencies {
-    paperweightDevBundle("me.lexikiq:parchment", "1.18.1-R0.1-SNAPSHOT")
 }
 
 tasks {
