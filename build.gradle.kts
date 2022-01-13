@@ -30,9 +30,10 @@ repositories {
 }
 
 dependencies {
-    paperweightDevBundle("me.lexikiq.parchment", "1.18.1-R0.1-SNAPSHOT")
+    paperweightDevBundle("gg.projecteden.parchment", "1.18.1-R0.1-SNAPSHOT")
     implementation("io.papermc:paperlib:1.0.2")
-    implementation("gg.projecteden:eden-api:1.7.6")
+    implementation("gg.projecteden:eden-db:2.0.0-SNAPSHOT")
+    implementation("gg.projecteden:eden-discord:2.0.0-SNAPSHOT")
     implementation("org.reflections:reflections:0.10.2")
     implementation("org.objenesis:objenesis:3.2")
     implementation("org.checkerframework:checker-qual:3.20.0")
@@ -105,7 +106,8 @@ tasks {
     compileJava {
         options.encoding = Charsets.UTF_8.name()
         options.release.set(17)
-        options.compilerArgs.add("-parameters")
+//        options.compilerArgs << '-parameters'
+//        options.compilerArgs.add("-parameters")
     }
 
     javadoc { options.encoding = Charsets.UTF_8.name() }
