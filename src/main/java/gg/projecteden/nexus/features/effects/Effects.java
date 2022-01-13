@@ -28,7 +28,7 @@ public abstract class Effects extends Feature {
 		return Bukkit.getWorld("server");
 	}
 
-	public boolean hasNearbyPlayers(double radius, Location origin) {
+	public boolean hasPlayersNearby(Location origin, double radius) {
 		return OnlinePlayers.where().world(getWorld()).radius(origin, radius).get().size() > 0;
 	}
 }

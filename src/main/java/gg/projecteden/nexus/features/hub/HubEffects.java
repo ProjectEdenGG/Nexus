@@ -39,7 +39,7 @@ public class HubEffects extends Effects {
 					continue;
 
 				if (RandomUtils.chanceOf(50))
-					if (hasNearbyPlayers(25, location))
+					if (hasPlayersNearby(location, 25))
 						particleBuilder.spawn();
 			}
 		});
