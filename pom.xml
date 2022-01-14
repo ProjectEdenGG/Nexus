@@ -152,10 +152,6 @@
             <url>https://maven.sk89q.com/repo/</url>
         </repository>
         <repository>
-            <id>fawe-repo</id>
-            <url>https://ci.athion.net/job/FastAsyncWorldEdit/ws/mvn/</url>
-        </repository>
-        <repository>
             <id>aikar-repo</id>
             <url>https://repo.aikar.co/content/groups/aikar/</url>
         </repository>
@@ -345,13 +341,26 @@
             <version>2.2.0</version>
             <scope>provided</scope>
         </dependency>
-        <!-- FaweAPI -->
+        <!-- FAWE Core API -->
         <dependency>
-            <groupId>com.github.IntellectualSites</groupId>
-            <artifactId>FastAsyncWorldEdit</artifactId>
-            <version>1.18-44</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/FastAsyncWorldEdit-1.18-44.jar</systemPath>
+            <groupId>com.fastasyncworldedit</groupId>
+            <artifactId>FastAsyncWorldEdit-Core</artifactId>
+            <version>2.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- FAWE Bukkit API -->
+        <dependency>
+            <groupId>com.fastasyncworldedit</groupId>
+            <artifactId>FastAsyncWorldEdit-Bukkit</artifactId>
+            <version>2.0.0</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>FastAsyncWorldEdit-Core</artifactId>
+                    <groupId>*</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- BuycraftX -->
         <dependency>
