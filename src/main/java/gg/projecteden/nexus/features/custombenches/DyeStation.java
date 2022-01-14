@@ -167,7 +167,10 @@ public class DyeStation extends CustomBench {
 		@Override
 		public void init(Player player, InventoryContents contents) {
 			contents.set(0, ClickableItem.from(closeItem(), e -> {
-				contents.get(data.getInputSlot()).ifPresent(clickableItem -> PlayerUtils.giveItem(player, clickableItem.getItem()));
+				contents.get(data.getInputSlot()).ifPresent(clickableItem -> {
+					if (!SLOT_COSTUME.equals(data.getInputSlot()))
+						PlayerUtils.giveItem(player, clickableItem.getItem());
+				});
 				contents.get(SLOT_DYE).ifPresent(clickableItem -> {
 					if (!data.isCheatMode())
 						PlayerUtils.giveItem(player, clickableItem.getItem());
