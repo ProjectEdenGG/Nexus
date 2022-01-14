@@ -31,7 +31,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spigotmc.event.entity.EntityDismountEvent;
 
@@ -47,6 +46,7 @@ import java.util.Set;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class DecorationListener implements Listener {
+	private static final List<BlockFace> hitboxDirections = Arrays.asList(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN);
 
 	public DecorationListener() {
 		Nexus.registerListener(this);
@@ -133,11 +133,11 @@ public class DecorationListener implements Listener {
 			}
 
 			// Place
-			DecorationType _decorationType = DecorationType.of(tool);
-			if (_decorationType == null) return;
+			DecorationType type = DecorationType.of(tool);
+			if (type == null) return;
 
 			event.setCancelled(true);
-			_decorationType.getDecoration().place(player, clicked, event.getBlockFace(), tool);
+			type.getDecoration().place(player, clicked, event.getBlockFace(), tool);
 		}
 	}
 
@@ -217,14 +217,9 @@ public class DecorationListener implements Listener {
 		debug("Found: " + StringUtils.getShortLocationString(relative.getLocation()));
 		maze.getFound().add(relative);
 		maze.getTried().add(relative);
-		maze.setDirectionsLeft(new ArrayList<>(getDirections()));
+		maze.setDirectionsLeft(new ArrayList<>(hitboxDirections));
 
 		return getConnectedHitboxes(maze);
-	}
-
-	@NotNull
-	private static List<BlockFace> getDirections() {
-		return Arrays.asList(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN);
 	}
 
 	private static HitboxData findItemFrame(Set<Block> connectedHitboxes, Block clicked) {
@@ -240,8 +235,8 @@ public class DecorationListener implements Listener {
 			if (isNullOrAir(itemStack))
 				continue;
 
-			DecorationType _decorationType = DecorationType.of(itemStack);
-			if (_decorationType == null)
+			DecorationType type = DecorationType.of(itemStack);
+			if (type == null)
 				continue;
 
 			if (dataMap.containsKey(block.getLocation()))
@@ -249,16 +244,16 @@ public class DecorationListener implements Listener {
 
 			debugDot(block.getLocation(), Color.PURPLE);
 
-			dataMap.put(block.getLocation(), new HitboxData(itemFrame, block, _decorationType));
+			dataMap.put(block.getLocation(), new HitboxData(itemFrame, block, type));
 		}
 
-		for (HitboxData _Hitbox_data : dataMap.values()) {
-			Decoration decoration = _Hitbox_data.getDecorationType().getDecoration();
-			List<Hitbox> hitboxes = decoration.getHitboxes(_Hitbox_data.getItemFrame());
+		for (HitboxData hitboxData : dataMap.values()) {
+			Decoration decoration = hitboxData.getDecorationType().getDecoration();
+			List<Hitbox> hitboxes = decoration.getHitboxes(hitboxData.getItemFrame());
 
-			Block block = _Hitbox_data.getBlock();
+			Block block = hitboxData.getBlock();
 
-			debug("Checking hitboxes for " + StringUtils.camelCase(_Hitbox_data.getDecorationType()));
+			debug("Checking hitboxes for " + StringUtils.camelCase(hitboxData.getDecorationType()));
 			for (Hitbox hitbox : hitboxes) {
 				Block _block = block;
 				Map<BlockFace, Integer> offsets = hitbox.getOffsets();
@@ -273,7 +268,7 @@ public class DecorationListener implements Listener {
 				if (LocationUtils.isFuzzyEqual(_block.getLocation(), clickedLoc)) {
 					debug("found correct decoration");
 					debugDot(_block.getLocation(), Color.AQUA);
-					return _Hitbox_data;
+					return hitboxData;
 				}
 			}
 		}
@@ -307,7 +302,7 @@ public class DecorationListener implements Listener {
 		Block origin;
 		Block block;
 		BlockFace blockFace;
-		List<BlockFace> directionsLeft = new ArrayList<>(getDirections());
+		List<BlockFace> directionsLeft = new ArrayList<>(hitboxDirections);
 		Set<Block> found = new HashSet<>();
 		LinkedList<Block> path = new LinkedList<>();
 		Set<Block> tried = new HashSet<>();

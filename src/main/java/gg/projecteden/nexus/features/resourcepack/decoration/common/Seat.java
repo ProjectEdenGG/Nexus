@@ -20,6 +20,7 @@ import java.util.List;
 
 public interface Seat {
 	String id = "DecorationSeat";
+	List<BlockFace> radialFaces = Arrays.asList(BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST, BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST);
 
 	default void trySit(Player player, Block block, Rotation rotation) {
 		Location location = block.getLocation().toCenterLocation().clone().subtract(0, 0.2, 0);
@@ -51,8 +52,7 @@ public interface Seat {
 
 	private float getYaw(Rotation rotation) {
 		BlockFace blockFace = ItemFrameRotation.from(rotation).getBlockFace().getOppositeFace();
-		List<BlockFace> radial = Arrays.asList(BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST, BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST);
-		int ndx = radial.indexOf(blockFace);
+		int ndx = radialFaces.indexOf(blockFace);
 		return ndx * 45F;
 	}
 
