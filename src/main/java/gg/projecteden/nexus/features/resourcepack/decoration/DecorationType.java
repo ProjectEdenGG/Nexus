@@ -2,10 +2,10 @@ package gg.projecteden.nexus.features.resourcepack.decoration;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.Seat.DyedPart;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Bench;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.BlockDecor;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Chair;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.Seat.DyedPart;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Table;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import lombok.AllArgsConstructor;
@@ -16,10 +16,9 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @AllArgsConstructor
-public enum Decorations {
+public enum DecorationType {
 	DYE_STATION(new BlockDecor("Dye Station", 1, Material.CRAFTING_TABLE)),
 	// Tables
 	TABLE_WOODEN_1x1(new Table("Wooden Table 1x1", 300, Table.TableSize._1x1)),
@@ -34,14 +33,14 @@ public enum Decorations {
 	;
 
 	@Getter
-	Decoration decoration;
+	final Decoration decoration;
 
 	public ItemStack getItem() {
 		return decoration.getItem().clone();
 	}
 
-	public static Decorations of(ItemStack tool) {
-		for (Decorations decoration : values()) {
+	public static DecorationType of(ItemStack tool) {
+		for (DecorationType decoration : values()) {
 			if (decoration.isFuzzyMatch(tool))
 				return decoration;
 		}
@@ -72,11 +71,11 @@ public enum Decorations {
 		if (!hitboxTypes.isEmpty())
 			return hitboxTypes;
 
-		Arrays.stream(values()).forEach(decorations ->
-			hitboxTypes.addAll(decorations.getDecoration().getHitboxes()
+		Arrays.stream(values()).forEach(decorationType ->
+			hitboxTypes.addAll(decorationType.getDecoration().getHitboxes()
 				.stream()
 				.map(Hitbox::getMaterial)
-				.collect(Collectors.toList())));
+				.toList()));
 
 		return hitboxTypes;
 	}

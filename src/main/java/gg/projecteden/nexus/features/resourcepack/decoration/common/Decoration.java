@@ -1,8 +1,9 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.common;
 
-import gg.projecteden.nexus.features.resourcepack.decoration.types.Seat;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -41,14 +42,25 @@ public class Decoration {
 		this.modelData = modelData;
 		this.material = material;
 		this.hitboxes = hitboxes;
+
+		if (this.isMultiBlock())
+			this.disabledRotation = DisabledRotation.DEGREE_45;
+	}
+
+	public Decoration(String name, int modelData, List<Hitbox> hitboxes) {
+		this(name, modelData, Material.PAPER, hitboxes);
+	}
+
+	public Decoration(String name, int modelData) {
+		this(name, modelData, Hitbox.NONE());
 	}
 
 	public static Color getDefaultWoodColor() {
 		return ColorType.hexToBukkit("#F4C57A");
 	}
 
-	public List<Hitbox> getHitboxes(BlockFace rotateAround) {
-		return Hitbox.rotate(getHitboxes(), rotateAround);
+	public List<Hitbox> getHitboxes(ItemFrame itemFrame) {
+		return Hitbox.getHitboxes(this, itemFrame);
 	}
 
 	public ItemFrameRotation getValidRotation(ItemFrameRotation frameRotation) {
@@ -92,9 +104,13 @@ public class Decoration {
 		return true;
 	}
 
-	public void destroy(Player player, ItemFrame itemFrame) {
-		if (Seat.isOccupied(itemFrame.getLocation()))
-			return;
+	public void destroy(@NonNull Player player, @NonNull ItemFrame itemFrame) {
+		if (this instanceof Seat seat) {
+			if (seat.isOccupied(this, itemFrame)) {
+				PlayerUtils.send(player, StringUtils.getPrefix("Decoration") + "&cSeat is occupied");
+				return;
+			}
+		}
 
 		World world = player.getWorld();
 		ItemStack item = itemFrame.getItem().clone();
@@ -119,5 +135,7 @@ public class Decoration {
 			seat.trySit(player, block, itemFrame.getRotation());
 	}
 
-
+	public boolean isMultiBlock() {
+		return this.getClass().getAnnotation(MultiBlock.class) != null;
+	}
 }

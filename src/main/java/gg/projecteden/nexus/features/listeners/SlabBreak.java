@@ -37,6 +37,8 @@ public class SlabBreak implements Listener {
 		if (data.getType() != Type.DOUBLE || target == null)
 			return;
 
+		event.setCancelled(true);
+
 		Vector direction = player.getLocation().getDirection();
 		Vector blockVector = null;
 		for (double d = 1; d < 16; d += .06) {

@@ -14,14 +14,11 @@ import java.util.Map;
 
 public class Table extends Decoration {
 	@Getter
-	TableSize size;
+	private final TableSize size;
 
 	public Table(String name, int modelData, TableSize size) {
-		this.name = name;
-		this.modelData = modelData;
+		super(name, modelData, Material.LEATHER_HORSE_ARMOR, size.getHitboxes());
 		this.size = size;
-		this.hitboxes = size.getHitboxes();
-		this.material = Material.LEATHER_HORSE_ARMOR;
 		this.disabledRotation = DisabledRotation.DEGREE_45;
 		this.disabledPlacements = List.of(DisabledPlacement.WALL, DisabledPlacement.CEILING);
 		this.defaultColor = getDefaultWoodColor();
@@ -62,6 +59,6 @@ public class Table extends Decoration {
 		;
 
 		@Getter
-		List<Hitbox> hitboxes;
+		final List<Hitbox> hitboxes;
 	}
 }
