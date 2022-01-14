@@ -29,6 +29,10 @@ public enum DecorationType {
 	// Chairs
 	CHAIR_WOODEN_BASIC(new Chair("Wooden Chair", 400, DyedPart.WHOLE)),
 	CHAIR_WOODEN_CUSHION(new Chair("Cushioned Wooden Chair", 401, DyedPart.CUSHION)),
+	// Stools
+	STOOL_WOODEN_BASIC(new Chair("Wooden Stool", 500, DyedPart.CUSHION)),
+	STOOL_WOODEN_CUSHION(new Chair("Cushioned Wooden Stool", 501, DyedPart.CUSHION)),
+	// Benches
 	BENCH_WOODEN(new Bench("Wooden Bench", 450, DyedPart.WHOLE)),
 	;
 
