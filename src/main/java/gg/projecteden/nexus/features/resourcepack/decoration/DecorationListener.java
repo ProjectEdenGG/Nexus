@@ -78,10 +78,8 @@ public class DecorationListener implements Listener {
 
 		ItemStack tool = ItemUtils.getTool(player);
 
-		if (isCancelled(event)) {
-			error(player);
+		if (isCancelled(event))
 			return;
-		}
 
 		if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) rightClick(event, player, clicked, tool);
 		else if (event.getAction().equals(Action.LEFT_CLICK_BLOCK)) leftClick(event, player, clicked, tool);

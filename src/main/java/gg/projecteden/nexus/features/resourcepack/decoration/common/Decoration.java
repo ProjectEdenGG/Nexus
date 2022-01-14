@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Color;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -79,7 +80,8 @@ public class Decoration {
 
 		ItemStack _item = item.clone();
 		_item.setAmount(1);
-		item.subtract();
+		if (!player.getGameMode().equals(GameMode.CREATIVE))
+			item.subtract();
 
 		World world = block.getWorld();
 		Location origin = block.getRelative(blockFace).getLocation().clone();
