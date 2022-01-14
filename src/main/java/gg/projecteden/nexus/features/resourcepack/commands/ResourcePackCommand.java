@@ -184,7 +184,7 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Reloaded");
 	}
 
-	@Path("menu [folder]")
+	@Path("(menu|meny) [folder]")
 	@Permission(Group.STAFF)
 	void menu(CustomModelFolder folder) {
 		if (rank() == Rank.MODERATOR && worldGroup() != WorldGroup.STAFF)

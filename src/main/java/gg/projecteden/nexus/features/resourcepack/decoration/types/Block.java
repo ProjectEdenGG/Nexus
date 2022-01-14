@@ -5,8 +5,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.DisabledRota
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import org.bukkit.Material;
 
-public class BlockDecor extends Decoration {
-	public BlockDecor(String name, int modelData, Material material) {
+public class Block extends Decoration {
+	public Block(String name, int modelData, Material material) {
 		super(name, modelData, material, Hitbox.single(Material.BARRIER));
 		this.disabledRotation = DisabledRotation.DEGREE_45;
 	}
