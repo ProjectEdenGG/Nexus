@@ -94,6 +94,7 @@ public class DecorationListener implements Listener {
 		//
 
 		if (!canEdit(player, clicked.getLocation())) {
+			event.setCancelled(true);
 			error(player);
 			return;
 		}
@@ -128,6 +129,7 @@ public class DecorationListener implements Listener {
 			//
 
 			if (!canEdit(player, clicked.getLocation())) {
+				event.setCancelled(true);
 				error(player);
 				return;
 			}
