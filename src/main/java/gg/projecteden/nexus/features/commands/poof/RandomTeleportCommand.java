@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.commands.poof;
 
-import com.sk89q.worldedit.bukkit.paperlib.PaperLib;
 import gg.projecteden.annotations.Async;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -15,6 +14,7 @@ import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.Env;
 import gg.projecteden.utils.TimeUtils.TickTime;
+import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;

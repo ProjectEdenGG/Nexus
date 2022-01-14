@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer;
 
-import com.sk89q.worldedit.bukkit.paperlib.PaperLib;
 import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
 import gg.projecteden.nexus.features.chat.events.PublicChatEvent;
 import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
@@ -10,6 +9,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartE
 import gg.projecteden.nexus.features.minigames.models.exceptions.MinigameException;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
+import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
 import org.bukkit.GameRule;
 import org.bukkit.Location;
