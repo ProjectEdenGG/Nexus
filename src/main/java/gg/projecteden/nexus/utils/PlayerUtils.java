@@ -5,6 +5,7 @@ import com.viaversion.viaversion.api.Via;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
@@ -533,6 +534,13 @@ public class PlayerUtils {
 		}
 
 		return null;
+	}
+
+	public static boolean canEdit(Player player, Location location) {
+		if (!new WorldGuardUtils(player).getRegionsAt(location).isEmpty())
+			return WorldGuardEditCommand.canWorldGuardEdit(player);
+
+		return true;
 	}
 
 	public static void runCommand(CommandSender sender, String commandNoSlash) {

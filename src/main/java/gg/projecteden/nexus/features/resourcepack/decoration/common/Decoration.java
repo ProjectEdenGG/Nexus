@@ -74,9 +74,9 @@ public class Decoration {
 		return ItemFrameRotation.from(frameRotation.getRotation().rotateClockwise());
 	}
 
-	public void place(Player player, Block block, BlockFace blockFace, ItemStack item) {
+	public boolean place(Player player, Block block, BlockFace blockFace, ItemStack item) {
 		if (!isValidBlockFace(blockFace))
-			return;
+			return false;
 
 		ItemStack _item = item.clone();
 		_item.setAmount(1);
@@ -96,6 +96,7 @@ public class Decoration {
 		itemFrame.setItem(_item, false);
 
 		Hitbox.place(getHitboxes(), origin, frameRotation.getBlockFace());
+		return true;
 	}
 
 	private boolean isValidBlockFace(BlockFace blockFace) {
@@ -106,11 +107,11 @@ public class Decoration {
 		return true;
 	}
 
-	public void destroy(@NonNull Player player, @NonNull ItemFrame itemFrame) {
+	public boolean destroy(@NonNull Player player, @NonNull ItemFrame itemFrame) {
 		if (this instanceof Seat seat) {
 			if (seat.isOccupied(this, itemFrame)) {
 				PlayerUtils.send(player, StringUtils.getPrefix("Decoration") + "&cSeat is occupied");
-				return;
+				return false;
 			}
 		}
 
@@ -122,6 +123,7 @@ public class Decoration {
 		Hitbox.destroy(getHitboxes(), origin, ItemFrameRotation.of(itemFrame).getBlockFace());
 
 		world.dropItemNaturally(origin, item);
+		return true;
 	}
 
 	public ItemStack getItem() {
@@ -132,9 +134,11 @@ public class Decoration {
 		return decor.build();
 	}
 
-	public void interact(Player player, ItemFrame itemFrame, Block block) {
+	public boolean interact(Player player, ItemFrame itemFrame, Block block) {
 		if (this instanceof Seat seat)
 			seat.trySit(player, block, itemFrame.getRotation());
+
+		return true;
 	}
 
 	public boolean isMultiBlock() {

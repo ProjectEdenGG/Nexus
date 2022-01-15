@@ -6,7 +6,9 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.Seat.DyedPar
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Bench;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Block;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Chair;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.PlayerPlushie;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Table;
+import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,6 +29,8 @@ import java.util.Set;
 
 @AllArgsConstructor
 public enum DecorationType {
+	// Player Plushies
+	PLAYER_PLUSHIE_STANDING(new PlayerPlushie("Player Plushie", 1, Pose.STANDING)),
 	// Tables
 	TABLE_WOODEN_1x1(new Table("Wooden Table 1x1", 300, Table.TableSize._1x1)),
 	TABLE_WOODEN_1x2(new Table("Wooden Table 1x2", 301, Table.TableSize._1x2)),
