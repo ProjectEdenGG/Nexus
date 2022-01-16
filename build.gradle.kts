@@ -13,6 +13,7 @@ repositories {
     maven { url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") }
     maven { url = uri("https://papermc.io/repo/repository/maven-public/") }
     maven { url = uri("https://repo.onarandombox.com/content/groups/public/") }
+    maven { url = uri("https://repo.dmulloy2.net/nexus/repository/public/") }
     maven { url = uri("https://ci.ender.zone/plugin/repository/everything/") }
     maven { url = uri("https://maven.sk89q.com/repo/") }
     maven { url = uri("https://ci.athion.net/job/FastAsyncWorldEdit/ws/mvn/") }
@@ -21,7 +22,6 @@ repositories {
     maven { url = uri("https://repo.codemc.io/repository/maven-public/") }
     maven { url = uri("https://repo.codemc.io/repository/maven-snapshots/") }
     maven { url = uri("https://repo.citizensnpcs.co/") }
-    maven { url = uri("https://repo.dmulloy2.net/nexus/repository/public/") }
     maven { url = uri("https://repo.md-5.net/content/groups/public/") }
     maven { url = uri("https://github.com/deanveloper/SkullCreator/raw/mvn-repo/") }
     maven { url = uri("https://mvn.intellectualsites.com/content/repositories/thirdparty/") }
@@ -31,7 +31,8 @@ repositories {
 
 dependencies {
     paperDevBundle("1.18.1-R0.1-SNAPSHOT")
-    compileOnly("gg.projecteden.parchment:parchment-api:1.18.1-R0.1-SNAPSHOT")
+    // TODO don't use a hardcoded snapshot version (temporary measure because sonatype updates are slow)
+    compileOnly("gg.projecteden.parchment:parchment-api:1.18.1-R0.1-20220116.191519-2")
     implementation("io.papermc:paperlib:1.0.2")
     implementation("gg.projecteden:eden-db:2.0.0-SNAPSHOT")
     implementation("gg.projecteden:eden-discord:2.0.0-SNAPSHOT")
@@ -44,15 +45,16 @@ dependencies {
     implementation("it.sauronsoftware.cron4j:cron4j:2.2.5")
     implementation("com.github.JDA-Applications.JDA-Utilities:jda-utilities-command:804d58a5ed")
     implementation("org.twitter4j:twitter4j-core:4.0.7")
-    implementation("com.github.twitch4j:twitch4j:1.6.0")
-    implementation("com.google.api-client:google-api-client:1.32.2")
+    implementation("com.github.twitch4j:twitch4j:1.7.0")
+    implementation("com.google.api-client:google-api-client:1.33.0")
     implementation("com.google.oauth-client:google-oauth-client-jetty:1.32.1")
     implementation("com.google.apis:google-api-services-sheets:v4-rev612-1.25.0")
     implementation("com.comphenix.packetwrapper:PacketWrapper:1.15.2-R0.1-SNAPSHOT")
     implementation("net.wesjd:anvilgui:1.5.1-SNAPSHOT")
     implementation("dev.dbassett:skullcreator:3.0.1")
     implementation("org.inventivetalent:boundingboxapi:1.4.1-SNAPSHOT")
-    compileOnly("me.lucko:helper:5.6.8")
+    implementation("com.vdurmont:emoji-java:5.1.1")
+    compileOnly("me.lucko:helper:5.6.9")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly("com.github.mcMMO-Dev:mcMMO:dc94fedee1")
     compileOnly("net.luckperms:api:5.3")
@@ -66,18 +68,19 @@ dependencies {
     compileOnly("com.dumptruckman.minecraft:JsonConfiguration:1.1")
     compileOnly("net.minidev:json-smart:2.4.7")
     compileOnly("de.tr7zw:item-nbt-api-plugin:2.7.1")
-    compileOnly("com.comphenix.protocol:ProtocolLib:4.7.1-SNAPSHOT")
+    compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
     compileOnly("com.gmail.filoghost.holographicdisplays:holographicdisplays-api:2.4.0")
     compileOnly("net.citizensnpcs:citizens-main:2.0.28-SNAPSHOT")
     compileOnly("com.github.koca2000:NoteBlockAPI:1.4.4")
     compileOnly("com.github.BlueMap-Minecraft:BlueMapAPI:v1.3.1")
     compileOnly("LibsDisguises:LibsDisguises:10.0.24")
-    compileOnly("me.arcaniax:HeadDatabase-API:1.1.0")
+    compileOnly("com.arcaniax:HeadDatabase-API:1.3.1")
     compileOnly("com.viaversion:viaversion-api:4.0.1")
     compileOnly("me.clip:placeholderapi:2.10.10")
     compileOnly("com.github.jikoo.OpenInv:openinvapi:4.1.8")
+    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.0.0")
+    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.0.0") { isTransitive = false }
     compileOnly(files("libs/BuycraftX.jar"))
-    compileOnly(files("libs/FastAsyncWorldEdit-1.18-44.jar"))
     compileOnly(files("libs/GlowAPI.jar"))
     compileOnly(files("libs/nuvotifier-universal-2.3.4.jar"))
     compileOnly(files("libs/SmartInvs-1.3.4.jar"))
