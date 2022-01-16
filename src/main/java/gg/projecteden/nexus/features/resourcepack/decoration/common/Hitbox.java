@@ -35,6 +35,14 @@ public class Hitbox {
 		return new Hitbox(material);
 	}
 
+	public static Hitbox offset(Material material, BlockFace blockFace) {
+		return offset(material, blockFace, 1);
+	}
+
+	public static Hitbox offset(Material material, BlockFace blockFace, int offset) {
+		return new Hitbox(material, Map.of(blockFace, offset));
+	}
+
 	public static List<Hitbox> single(Material material) {
 		return Collections.singletonList(origin(material));
 	}

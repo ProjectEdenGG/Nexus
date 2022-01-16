@@ -56,8 +56,16 @@ public class Decoration {
 		this(name, modelData, Hitbox.NONE());
 	}
 
-	public static Color getDefaultWoodColor() {
+	public Decoration(String name, int modelData, Material material) {
+		this(name, modelData, material, Hitbox.NONE());
+	}
+
+	public static Color getDefaultStain() {
 		return ColorType.hexToBukkit("#F4C57A");
+	}
+
+	public static Color getDefaultColor() {
+		return ColorType.hexToBukkit("#FF5555");
 	}
 
 	public List<Hitbox> getHitboxes(ItemFrame itemFrame) {

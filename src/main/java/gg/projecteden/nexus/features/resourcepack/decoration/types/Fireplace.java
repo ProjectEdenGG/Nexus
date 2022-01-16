@@ -13,12 +13,12 @@ import java.util.Map;
 public class Fireplace extends Decoration {
 	private static final List<Hitbox> hitboxes = List.of(
 		Hitbox.origin(Material.BARRIER),
-		new Hitbox(Material.BARRIER, Map.of(BlockFace.WEST, 1)),
-		new Hitbox(Material.BARRIER, Map.of(BlockFace.EAST, 1)),
-		new Hitbox(Material.BARRIER, Map.of(BlockFace.UP, 1)),
+		Hitbox.offset(Material.BARRIER, BlockFace.WEST),
+		Hitbox.offset(Material.BARRIER, BlockFace.EAST),
+		Hitbox.offset(Material.BARRIER, BlockFace.UP),
 		new Hitbox(Material.BARRIER, Map.of(BlockFace.WEST, 1, BlockFace.UP, 1)),
 		new Hitbox(Material.BARRIER, Map.of(BlockFace.EAST, 1, BlockFace.UP, 1)),
-		new Hitbox(Material.LIGHT, Map.of(BlockFace.SOUTH, 1)));
+		Hitbox.offset(Material.LIGHT, BlockFace.SOUTH));
 
 	public Fireplace(String name, int modelData) {
 		super(name, modelData, hitboxes);

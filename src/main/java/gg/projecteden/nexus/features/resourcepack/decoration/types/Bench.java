@@ -17,6 +17,6 @@ public class Bench extends Chair implements Seat {
 
 	public Bench(String name, int modelData, DyedPart dyedPart) {
 		super(name, modelData, dyedPart, hitboxes);
-		this.defaultColor = getDefaultWoodColor();
+		this.defaultColor = getDefaultStain();
 	}
 }

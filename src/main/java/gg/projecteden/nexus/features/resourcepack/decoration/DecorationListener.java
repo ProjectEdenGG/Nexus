@@ -4,6 +4,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Seat;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
@@ -118,6 +119,11 @@ public class DecorationListener implements Listener {
 		if (hitboxData == null)
 			return false;
 
+		// TODO: Remove
+		if (!Dev.WAKKA.is(hitboxData.getPlayer()))
+			return false;
+		//
+
 		if (!hitboxData.validateItemFrame())
 			return false;
 
@@ -161,6 +167,11 @@ public class DecorationListener implements Listener {
 			}
 
 			case PLACE -> {
+				// TODO: Remove
+				if (!Dev.WAKKA.is(hitboxData.getPlayer()))
+					return false;
+				//
+
 				if (!hitboxData.validateDecoration(hitboxData.getTool()))
 					return false;
 
