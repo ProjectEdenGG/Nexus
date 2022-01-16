@@ -151,10 +151,10 @@ public class DecorationListener implements Listener {
 					return false;
 
 				//
-				if (!hitboxData.playerCanEdit()) {
-					error(hitboxData.getPlayer());
-					return true;
-				}
+//				if (!hitboxData.playerCanEdit()) {
+//					error(hitboxData.getPlayer());
+//					return true;
+//				}
 
 				hitboxData.interact();
 				return true;
