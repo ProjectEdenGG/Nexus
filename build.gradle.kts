@@ -7,6 +7,7 @@ plugins {
 }
 
 repositories {
+    mavenLocal()
     maven { url = uri("https://sonatype.projecteden.gg/repository/maven-public/") }
     maven { url = uri("https://jitpack.io") }
     maven { url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") }
@@ -26,11 +27,11 @@ repositories {
     maven { url = uri("https://mvn.intellectualsites.com/content/repositories/thirdparty/") }
     maven { url = uri("https://repo.viaversion.com") }
     maven { url = uri("https://repo.extendedclip.com/content/repositories/placeholderapi/") }
-    maven { url = uri("https://repo.maven.apache.org/maven2/") }
 }
 
 dependencies {
-    paperweightDevBundle("gg.projecteden.parchment", "1.18.1-R0.1-SNAPSHOT")
+    paperDevBundle("1.18.1-R0.1-SNAPSHOT")
+    compileOnly("gg.projecteden.parchment:parchment-api:1.18.1-R0.1-SNAPSHOT")
     implementation("io.papermc:paperlib:1.0.2")
     implementation("gg.projecteden:eden-db:2.0.0-SNAPSHOT")
     implementation("gg.projecteden:eden-discord:2.0.0-SNAPSHOT")
@@ -94,9 +95,10 @@ publishing {
     }
 }
 
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
-}
+// was throwing errors about "Cannot use new toolchain setting at the project level with release options" or something like that
+//java {
+//    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+//}
 
 tasks {
     assemble {
