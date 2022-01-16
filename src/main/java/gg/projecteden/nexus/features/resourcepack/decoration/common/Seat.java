@@ -99,7 +99,7 @@ public interface Seat {
 
 	@AllArgsConstructor
 	enum DyedPart {
-		WHOLE(Decoration.getDefaultWoodColor()),
+		WHOLE(Decoration.getDefaultStain()),
 		CUSHION(Color.RED),
 		;
 
