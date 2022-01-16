@@ -11,21 +11,30 @@ import gg.projecteden.nexus.features.resourcepack.models.files.FontFile;
 import gg.projecteden.nexus.features.resourcepack.models.files.SoundsFile;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.HttpUtils;
 import gg.projecteden.nexus.utils.IOUtils;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.parchment.OptionalPlayerLike;
 import gg.projecteden.utils.Env;
+import gg.projecteden.utils.MathUtils;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.experimental.Accessors;
+import me.lexikiq.OptionalPlayerLike;
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -182,7 +191,64 @@ public class ResourcePack extends Feature implements Listener {
 	}
 
 	public static void send(Player player) {
-		player.setResourcePack(URL, hash);
+		final String LINE = "&8&m                                                      ";
+
+		final JsonBuilder text = new JsonBuilder()
+			.next(LINE)
+			.newline().next("&#f5a138Hey nerd!")
+			.newline()
+			.newline().next("&7To begin your Project Eden journey, you must")
+			.newline().next("&7first accept our server's resource pack!")
+			.newline()
+			.newline().next("&7The pack adds custom items and images to")
+			.newline().next("&7enhance your experience on the server.")
+			.newline()
+			.newline().next("&#3080ffAre you ready?")
+			.newline().next(LINE);
+
+		player.setResourcePack(URL, hash, !new LocalResourcePackUserService().get(player).isEnabled(), text.build());
+	}
+
+	@Data
+	@Accessors(fluent = true)
+	public static class ResourcePackNumber {
+		private Player player;
+		private boolean hasResourcePack = true;
+		private int number;
+		private Color color;
+
+		public ResourcePackNumber(int number) {
+			this.number = number;
+		}
+
+		public static ResourcePackNumber of(int number) {
+			return new ResourcePackNumber(number);
+		}
+
+		public ResourcePackNumber color(Color color) {
+			this.color = color;
+			return this;
+		}
+
+		public ResourcePackNumber color(ColorType colorType) {
+			this.color = colorType.getBukkitColor();
+			return this;
+		}
+
+		public ResourcePackNumber color(String hex) {
+			this.color = ColorType.hexToBukkit(hex);
+			return this;
+		}
+
+		public ItemBuilder get() {
+			if (!hasResourcePack || (player != null && !ResourcePack.isEnabledFor(player)))
+				return new ItemBuilder(Material.ARROW).amount(MathUtils.clamp(number, 1, 64));
+			else
+				return new ItemBuilder(Material.LEATHER_HORSE_ARMOR)
+					.customModelData(2000 + number)
+					.dyeColor(color)
+					.itemFlags(ItemFlag.HIDE_ATTRIBUTES);
+		}
 	}
 
 }

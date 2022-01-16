@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.particles.effects;
 import com.google.common.util.concurrent.AtomicDouble;
 import gg.projecteden.nexus.features.particles.ParticleUtils;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.models.particle.ParticleService;
+import gg.projecteden.nexus.models.particle.ParticleOwner;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Builder;
@@ -23,23 +23,26 @@ public class LineEffect {
 	private int taskId;
 
 	@Builder(buildMethodName = "start")
-	public LineEffect(HumanEntity player, Location startLoc, Location endLoc, Particle particle, int count, double density, int ticks, double speed,
-					  boolean rainbow, Color color, double disX, double disY, double disZ,
+	public LineEffect(ParticleOwner owner, HumanEntity entity, Location startLoc, Location endLoc, Particle particle, int count, double density, int ticks, double speed,
+					  boolean rainbow, float dustSize, Color color, double disX, double disY, double disZ,
 					  double distance, double maxLength, int startDelay, int pulseDelay) {
 
-		if (player != null && startLoc == null)
-			startLoc = player.getLocation();
-		if (player != null && endLoc == null)
-			endLoc = player.getLocation();
-
-		if (player == null) throw new InvalidInputException("No player was provided");
+		if (entity != null) {
+			if (startLoc == null)
+				startLoc = entity.getLocation();
+			if (endLoc == null)
+				endLoc = entity.getLocation();
+		}
 
 		double maxLineLength = 200;
-		if (distance != 0) {
+		if (startLoc == null && endLoc == null && distance != 0) {
+			if (entity == null)
+				throw new InvalidInputException("You did not provide an entity to start from");
+
 			if (distance > maxLineLength)
 				distance = maxLineLength;
-			Vector direction = player.getEyeLocation().getDirection();
-			startLoc = player.getLocation().add(0, 1.5, 0);
+			Vector direction = entity.getEyeLocation().getDirection();
+			startLoc = entity.getLocation().add(0, 1.5, 0);
 			endLoc = startLoc.clone().add(direction.multiply(distance));
 		}
 
@@ -50,8 +53,8 @@ public class LineEffect {
 		}
 
 		if (pulseDelay < 1) pulseDelay = 1;
-		if (speed <= 0) speed = 0.1;
-		if (count <= 0) count = 1;
+		if (speed < 0) speed = 0;
+		if (count < 0) count = 0;
 		if (ticks == 0) ticks = TickTime.SECOND.x(5);
 		if (maxLength > maxLineLength) maxLength = maxLineLength;
 		if (particle == null) particle = Particle.REDSTONE;
@@ -90,7 +93,10 @@ public class LineEffect {
 
 		taskId = Tasks.repeat(startDelay, pulseDelay, () -> {
 			if (finalTicks != -1 && ticksElapsed.get() >= finalTicks) {
-				new ParticleService().get(player).cancel(taskId);
+				if (owner == null)
+					Tasks.cancel(taskId);
+				else
+					owner.cancel(taskId);
 				return;
 			}
 

@@ -22,11 +22,9 @@ import gg.projecteden.utils.TimeUtils;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import gg.projecteden.utils.Utils;
 import lombok.NonNull;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -61,10 +59,14 @@ public class VoteCommand extends CustomCommand {
 		send(json("&3Support the server by voting daily! Each vote gives you &e1 Vote point &3to spend in the " +
 				"&eVote Point Store, &3and the top voters of each month receive a special reward!"));
 		line();
-		JsonBuilder builder = json("&3 Links");
-		for (VoteSite site : VoteSite.getActiveSites())
-			builder.next(" &3|| &e").next("&e" + site.name()).url(site.getUrl(Nerd.of(player()).getName())).group();
-		send(builder);
+		send("&6&lLinks");
+		for (VoteSite site : VoteSite.getActiveSites()) {
+			Optional<Vote> vote = voter.getActiveVote(site);
+			if (vote.isPresent())
+				send("&e " + site.name() + " &7- &3Vote in &e" + Timespan.of(vote.get().getExpiration()).format());
+			else
+				send(json("&e " + site.name() + " &7- &eClick here to vote").url(site.getUrl(Nerd.of(player()).getName())));
+		}
 		line();
 		send(json("&3Server goal: " + progressBar(sum, GOAL, NONE, 75) + " &e" + sum + "&3/&e" + GOAL)
 				.hover("&eReach the goal together for a monthly reward!"));
@@ -72,28 +74,13 @@ public class VoteCommand extends CustomCommand {
 		send("&e[+] &3" + "You have &e" + voter.getPoints() + " &3vote points");
 		line();
 		send(json("&e[+] &3" + "Visit the &eVote Points Store").command("/vps"));
-		send(json("&e[+] &3" + "View top voters, prizes and more on our &ewebsite").url(EdenSocialMediaSite.WEBSITE.getUrl() + "/vote"));
+		send(json("&e[+] &3" + "View top voters, prizes, and more on our &ewebsite").url(EdenSocialMediaSite.WEBSITE.getUrl() + "/vote"));
 	}
 
 	@Permission(Group.ADMIN)
 	@Path("extra")
 	void extra() {
-		send("Extra config: " + Votes.getExtras());
-	}
-
-	@Path("times [player]")
-	void time(@Arg(value = "self", permission = Group.STAFF) OfflinePlayer player) {
-		voter = service.get(player);
-		line();
-		for (VoteSite site : VoteSite.getActiveSites()) {
-			Optional<Vote> first = voter.getActiveVotes().stream().filter(_vote -> _vote.getSite() == site).findFirst();
-			if (first.isPresent()) {
-				LocalDateTime expirationTime = first.get().getTimestamp().plusHours(site.getExpirationHours());
-				send("&e" + site.name() + " &7- &3You can vote in &e" + Timespan.of(expirationTime).format());
-			} else {
-				send(json("&e" + site.name() + " &7- &3Click here to vote").url(site.getUrl(Nerd.of(player()).getName())));
-			}
-		}
+		send("Extra config: " + Votes.getExtraChances());
 	}
 
 	@Path("history [player] [page]")

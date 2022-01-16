@@ -31,13 +31,7 @@ import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static gg.projecteden.nexus.utils.SerializationUtils.YML.deserializeMaterialSet;
 import static gg.projecteden.nexus.utils.SerializationUtils.YML.serializeMaterialSet;
@@ -119,6 +113,7 @@ public class Arena implements ConfigurationSerializable, Named, ComponentLike {
 		this.blockList = deserializeMaterialSet((List<String>) map.getOrDefault("blockList", new ArrayList<>()));
 		this.isWhitelist = (Boolean) map.getOrDefault("isWhitelist", isWhitelist);
 		this.canJoinLate = (Boolean) map.getOrDefault("canJoinLate", canJoinLate);
+		this.testMode = (Boolean) map.getOrDefault("testMode", testMode);
 	}
 
 	@Override
@@ -146,6 +141,7 @@ public class Arena implements ConfigurationSerializable, Named, ComponentLike {
 			put("blockList", serializeMaterialSet(getBlockList()));
 			put("isWhitelist", isWhitelist());
 			put("canJoinLate", canJoinLate());
+			put("testMode", isTestMode());
 		}};
 	}
 

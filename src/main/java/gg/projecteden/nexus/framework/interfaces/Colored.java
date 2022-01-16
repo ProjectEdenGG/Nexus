@@ -4,6 +4,8 @@ import gg.projecteden.nexus.framework.interfaces.impl.ColoredImpl;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.util.RGBLike;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
@@ -59,33 +61,41 @@ public interface Colored extends TextColor, IsColored {
 		return this;
 	}
 
-	static Colored colored(int rgb) {
+	static Colored of(int rgb) {
 		return new ColoredImpl(rgb);
 	}
 
-	static Colored colored(int r, int g, int b) {
+	static Colored of(int r, int g, int b) {
 		int rgb = r;
 		rgb = (rgb << 8) + g;
 		rgb = (rgb << 8) + b;
-		return colored(rgb);
+		return of(rgb);
 	}
 
-	static Colored colored(Color color) {
-		return colored(color.getRed(), color.getGreen(), color.getBlue());
+	static Colored of(Color color) {
+		return of(color.getRed(), color.getGreen(), color.getBlue());
 	}
 
-	static Colored colored(ChatColor chatColor) {
+	static Colored of(ChatColor chatColor) {
 		Color color = chatColor.getColor();
 		if (color == null)
 			throw new IllegalArgumentException("Cannot create color of formatting type");
-		return colored(color);
+		return of(color);
 	}
 
-	static Colored colored(org.bukkit.Color color) {
-		return colored(color.asRGB());
+	static Colored of(org.bukkit.Color color) {
+		return of(color.asRGB());
 	}
 
-	static Colored colored(RGBLike color) {
-		return colored(color.red(), color.green(), color.blue());
+	static Colored of(RGBLike color) {
+		return of(color.red(), color.green(), color.blue());
+	}
+
+	default void apply(ItemStack itemStack) {
+		if (!(itemStack.getItemMeta() instanceof LeatherArmorMeta armorMeta))
+			return;
+
+		armorMeta.setColor(this.getBukkitColor());
+		itemStack.setItemMeta(armorMeta);
 	}
 }

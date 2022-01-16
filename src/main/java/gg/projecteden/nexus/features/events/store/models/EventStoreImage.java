@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.events.store.models;
 
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,7 +17,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Data
 @AllArgsConstructor
@@ -50,7 +50,7 @@ public class EventStoreImage {
 						continue;
 
 					String id = (sign.getLine(0).trim() + " " + sign.getLine(1).trim()).trim();
-					if (StringUtils.isNullOrEmpty(id))
+					if (isNullOrEmpty(id))
 						continue;
 
 					if (!(block.getBlockData() instanceof WallSign wallSign))

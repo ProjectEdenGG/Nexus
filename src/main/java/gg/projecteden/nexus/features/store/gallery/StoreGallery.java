@@ -3,6 +3,8 @@ package gg.projecteden.nexus.features.store.gallery;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.framework.features.Depends;
 import gg.projecteden.nexus.framework.features.Feature;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -12,10 +14,11 @@ public class StoreGallery extends Feature {
 
 	@Override
 	public void onStart() {
-		new StoreGalleryNPCs();
 		new StoreGalleryListener();
-
-		GalleryPackage.onStart();
+		Tasks.wait(TickTime.SECOND.x(10), () -> {
+			new StoreGalleryNPCs();
+			GalleryPackage.onStart();
+		});
 	}
 
 	@Override

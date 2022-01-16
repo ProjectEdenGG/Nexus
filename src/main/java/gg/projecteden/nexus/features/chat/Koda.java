@@ -38,9 +38,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
+import static gg.projecteden.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.utils.UUIDUtils.UUID0;
 
 public class Koda {
 	@Getter @NotNull
@@ -160,7 +161,7 @@ public class Koda {
 					continue responses;
 
 			if (trigger.getCooldown() != null && trigger.getCooldown() > 0)
-				if (!new CooldownService().check(StringUtils.getUUID0(), "koda_" + trigger.getName(), TickTime.SECOND.x(trigger.getCooldown())))
+				if (!new CooldownService().check(UUID0, "koda_" + trigger.getName(), TickTime.SECOND.x(trigger.getCooldown())))
 					continue;
 
 			if (!isNullOrEmpty(trigger.getRoutine()))

@@ -31,6 +31,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Set;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.getLocationString;
 import static gg.projecteden.utils.TimeUtils.shortDateTimeFormat;
 
@@ -89,7 +90,7 @@ public class WhoIsCommand extends CustomCommand {
 			json.newline().next("&3" + lastJoinQuitLabel + ": &e" + lastJoinQuitDiff + " ago").hover("&e" + lastJoinQuitDate).group();
 
 		if (hours.getTotal() > 0)
-			json.newline().next("&3Hours: &e" + TimespanBuilder.of(hours.getTotal()).noneDisplay(true).format()).group();
+			json.newline().next("&3Hours: &e" + TimespanBuilder.ofSeconds(hours.getTotal()).noneDisplay(true).format()).group();
 
 		if (history)
 			json.newline().next("&3History: &e" + punishments.getPunishments().size()).command("/history " + nerd.getName()).hover("&eClick to view history").group();

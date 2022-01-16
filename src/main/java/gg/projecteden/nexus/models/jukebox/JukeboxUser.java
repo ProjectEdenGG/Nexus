@@ -46,7 +46,7 @@ public class JukeboxUser implements PlayerOwnedObject {
 	private transient List<Integer> taskIds = new ArrayList<>();
 
 	public boolean owns(JukeboxSong song) {
-		return owned.contains(song.getName());
+		return getRank().isAdmin() || owned.contains(song.getName());
 	}
 
 	public void give(JukeboxSong song) {

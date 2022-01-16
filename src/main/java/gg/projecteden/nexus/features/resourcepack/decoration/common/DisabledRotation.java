@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.resourcepack.decoration.common;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.bukkit.Rotation;
 
 import java.util.Arrays;
@@ -14,7 +15,8 @@ public enum DisabledRotation {
 	DEGREE_45(ItemFrameRotation.DEGREE_45, ItemFrameRotation.DEGREE_135, ItemFrameRotation.DEGREE_225, ItemFrameRotation.DEGREE_315),
 	DEGREE_90(ItemFrameRotation.DEGREE_0, ItemFrameRotation.DEGREE_90, ItemFrameRotation.DEGREE_180, ItemFrameRotation.DEGREE_270);
 
-	List<Utils.ItemFrameRotation> frameRotations;
+	@Getter
+	final List<Utils.ItemFrameRotation> frameRotations;
 
 	DisabledRotation(ItemFrameRotation... rotations) {
 		this.frameRotations = Arrays.asList(rotations);

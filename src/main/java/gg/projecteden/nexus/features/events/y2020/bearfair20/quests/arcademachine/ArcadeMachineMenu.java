@@ -8,7 +8,6 @@ import gg.projecteden.nexus.features.events.y2020.bearfair20.islands.MinigameNig
 import gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -18,6 +17,8 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class ArcadeMachineMenu extends MenuUtils implements InventoryProvider, Listener {
 
@@ -93,12 +94,12 @@ public class ArcadeMachineMenu extends MenuUtils implements InventoryProvider, L
 			}
 			contents.set(openSlots[i], ClickableItem.from(item, e -> {
 				if (e.getItem().getType().equals(Material.LIGHT_GRAY_STAINED_GLASS_PANE)) {
-					if (ItemUtils.isNullOrAir(player.getItemOnCursor())) return;
+					if (isNullOrAir(player.getItemOnCursor())) return;
 					contents.set(e.getSlot(), ClickableItem.empty(player.getItemOnCursor()));
 					player.setItemOnCursor(null);
 					getItems(player, contents);
 				} else {
-					if (ItemUtils.isNullOrAir(player.getItemOnCursor()))
+					if (isNullOrAir(player.getItemOnCursor()))
 						contents.set(e.getSlot(), ClickableItem.empty(new ItemBuilder(Material.LIGHT_GRAY_STAINED_GLASS_PANE).name(" ").build()));
 					else {
 						contents.set(e.getSlot(), ClickableItem.empty(player.getItemOnCursor()));

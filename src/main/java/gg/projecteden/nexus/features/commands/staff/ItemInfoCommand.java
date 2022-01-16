@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.SerializationUtils.Json.serialize;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.nexus.utils.StringUtils.paste;

@@ -6,6 +6,7 @@ import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
@@ -44,8 +45,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -74,9 +73,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static gg.projecteden.nexus.utils.ItemUtils.fixMaxStackSize;
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.Utils.getMin;
-import static gg.projecteden.utils.StringUtils.isUuid;
+import static gg.projecteden.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.utils.UUIDUtils.isUuid;
 import static java.util.stream.Collectors.toList;
 
 @UtilityClass
@@ -341,8 +341,9 @@ public class PlayerUtils {
 		return false;
 	}
 
-	public static boolean isSelf(HasUniqueId player1, HasUniqueId player2) {
-		return player1.getUniqueId().equals(player2.getUniqueId());
+	@Contract("null, _ -> false; _, null -> false")
+	public static boolean isSelf(@Nullable HasUniqueId player1, @Nullable HasUniqueId player2) {
+		return player1 != null && player2 != null && player1.getUniqueId().equals(player2.getUniqueId());
 	}
 
 	/**
@@ -411,10 +412,12 @@ public class PlayerUtils {
 		if (isUuid(partialName))
 			return getPlayer(UUID.fromString(partialName));
 
-		for (Player player : OnlinePlayers.getAll())
+		final List<Player> players = OnlinePlayers.getAll();
+
+		for (Player player : players)
 			if (player.getName().equalsIgnoreCase(partialName))
 				return player;
-		for (Player player : OnlinePlayers.getAll())
+		for (Player player : players)
 			if (Nickname.of(player).equalsIgnoreCase((partialName)))
 				return player;
 
@@ -423,17 +426,17 @@ public class PlayerUtils {
 		if (fromNickname != null)
 			return fromNickname.getOfflinePlayer();
 
-		for (Player player : OnlinePlayers.getAll())
+		for (Player player : players)
 			if (player.getName().toLowerCase().startsWith(partialName))
 				return player;
-		for (Player player : OnlinePlayers.getAll())
+		for (Player player : players)
 			if (Nickname.of(player).toLowerCase().startsWith((partialName)))
 				return player;
 
-		for (Player player : OnlinePlayers.getAll())
+		for (Player player : players)
 			if (player.getName().toLowerCase().contains((partialName)))
 				return player;
-		for (Player player : OnlinePlayers.getAll())
+		for (Player player : players)
 			if (Nickname.of(player).toLowerCase().contains((partialName)))
 				return player;
 
@@ -531,6 +534,13 @@ public class PlayerUtils {
 		}
 
 		return null;
+	}
+
+	public static boolean canEdit(Player player, Location location) {
+		if (!new WorldGuardUtils(player).getRegionsAt(location).isEmpty())
+			return WorldGuardEditCommand.canWorldGuardEdit(player);
+
+		return true;
 	}
 
 	public static void runCommand(CommandSender sender, String commandNoSlash) {
@@ -836,7 +846,7 @@ public class PlayerUtils {
 
 	public static void giveItems(HasOfflinePlayer player, Collection<ItemStack> items, String nbt) {
 		List<ItemStack> finalItems = new ArrayList<>(items);
-		finalItems.removeIf(ItemUtils::isNullOrAir);
+		finalItems.removeIf(Nullables::isNullOrAir);
 		finalItems.removeIf(itemStack -> itemStack.getAmount() == 0);
 		if (!Strings.isNullOrEmpty(nbt)) {
 			finalItems.clear();
@@ -886,7 +896,7 @@ public class PlayerUtils {
 	public static void giveItemsAndMailExcess(HasOfflinePlayer player, Collection<ItemStack> items, String message, WorldGroup worldGroup) {
 		OfflinePlayer offlinePlayer = player.getOfflinePlayer();
 		List<ItemStack> finalItems = new ArrayList<>(items);
-		finalItems.removeIf(ItemUtils::isNullOrAir);
+		finalItems.removeIf(Nullables::isNullOrAir);
 
 		List<ItemStack> excess;
 		boolean alwaysMail = offlinePlayer.getPlayer() == null || Nerd.of(offlinePlayer).getWorldGroup() != worldGroup;
@@ -894,7 +904,7 @@ public class PlayerUtils {
 			excess = giveItemsAndGetExcess(offlinePlayer.getPlayer(), finalItems);
 		else
 			excess = Utils.clone(items);
-		if (Utils.isNullOrEmpty(excess)) return;
+		if (isNullOrEmpty(excess)) return;
 
 		mailItems(offlinePlayer, fixMaxStackSize(excess), message, worldGroup);
 		String send = alwaysMail ? "Items have been given to you as &c/mail" : "Your inventory was full. Excess items were given to you as &c/mail";
@@ -941,6 +951,7 @@ public class PlayerUtils {
 	// https://wiki.vg/Protocol_version_numbers
 	// TODO Is this available somewhere besides the wiki?
 	private static final Map<Integer, String> versions = Map.of(
+		757, "1.18/1.18.1",
 		756, "1.17.1",
 		755, "1.17"
 	);
@@ -957,15 +968,6 @@ public class PlayerUtils {
 		} catch (IllegalArgumentException ex) {
 			ex.printStackTrace();
 			return "Unknown (ViaVersion error)";
-		}
-	}
-
-	/**
-	 * Extension of {@link PlayerInteractEvent} used to test if a plugin like WorldGuard or LWC will block the event.
-	 */
-	public static class FakePlayerInteractEvent extends PlayerInteractEvent {
-		public FakePlayerInteractEvent(Player player, Action action, ItemStack itemInHand, Block clickedBlock, BlockFace blockFace) {
-			super(player, action, itemInHand, clickedBlock, blockFace);
 		}
 	}
 

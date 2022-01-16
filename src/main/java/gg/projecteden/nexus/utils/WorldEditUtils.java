@@ -2,10 +2,11 @@ package gg.projecteden.nexus.utils;
 
 import com.fastasyncworldedit.core.extent.processor.lighting.RelightMode;
 import com.fastasyncworldedit.core.regions.RegionWrapper;
-import com.fastasyncworldedit.core.util.EditSessionBuilder;
 import com.fastasyncworldedit.core.wrappers.WorldWrapper;
 import com.sk89q.worldedit.EditSession;
+import com.sk89q.worldedit.EditSessionBuilder;
 import com.sk89q.worldedit.LocalSession;
+import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.WorldEditException;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.bukkit.BukkitPlayer;
@@ -72,7 +73,8 @@ import static com.sk89q.worldedit.extent.clipboard.io.BuiltInClipboardFormat.MCE
 import static com.sk89q.worldedit.extent.clipboard.io.BuiltInClipboardFormat.SPONGE_SCHEMATIC;
 import static gg.projecteden.nexus.utils.BlockUtils.createDistanceSortedQueue;
 import static gg.projecteden.nexus.utils.StringUtils.getFlooredCoordinateString;
-import static gg.projecteden.utils.StringUtils.left;
+import static gg.projecteden.nexus.utils.StringUtils.left;
+import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
 public class WorldEditUtils {
@@ -113,10 +115,11 @@ public class WorldEditUtils {
 	}
 
 	public EditSessionBuilder getEditSessionBuilder() {
-		return new EditSessionBuilder(worldEditWorld)
+		return WorldEdit.getInstance().newEditSessionBuilder()
+			.world(worldEditWorld)
 			.allowedRegionsEverywhere()
 			.relightMode(RelightMode.ALL)
-			.fastmode(true);
+			.fastMode(true);
 	}
 
 	public EditSession getEditSession() {
@@ -305,7 +308,7 @@ public class WorldEditUtils {
 			for (int y = region.getMinimumPoint().getBlockY(); y <= region.getMaximumPoint().getBlockY(); y++)
 				for (int z = region.getMinimumPoint().getBlockZ(); z <= region.getMaximumPoint().getBlockZ(); z++) {
 					Block blockAt = world.getBlockAt(x, y, z);
-					if (Utils.isNullOrEmpty(materials) || materials.contains(blockAt.getType()))
+					if (isNullOrEmpty(materials) || materials.contains(blockAt.getType()))
 						blockList.add(blockAt);
 				}
 		return blockList;

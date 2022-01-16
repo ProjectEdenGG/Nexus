@@ -36,10 +36,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.StringUtils.getShortLocationString;
-import static gg.projecteden.utils.StringUtils.camelCase;
 
 @Data
 @Entity(value = "ambience_config", noClassnameStored = true)

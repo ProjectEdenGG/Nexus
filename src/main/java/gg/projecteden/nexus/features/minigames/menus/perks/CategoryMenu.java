@@ -17,7 +17,7 @@ import org.bukkit.entity.Player;
 
 import java.text.DecimalFormat;
 
-import static gg.projecteden.utils.StringUtils.plural;
+import static gg.projecteden.nexus.utils.StringUtils.plural;
 
 @RequiredArgsConstructor
 public class CategoryMenu<T extends CommonPerksMenu> extends MenuUtils implements InventoryProvider {

@@ -46,7 +46,7 @@ public abstract class CheckpointMechanic extends SingleplayerMechanic {
 
 		Arena arena = minigamer.getMatch().getArena();
 		if (arena.ownsRegion(event.getRegion().getId(), "win")) {
-			Minigames.broadcast("&e" + minigamer.getColoredName() + " &3completed &e" + arena.getDisplayName() + " &3in &e" + Timespan.of(minigamer.getScore()).format());
+			Minigames.broadcast("&e" + minigamer.getColoredName() + " &3completed &e" + arena.getDisplayName() + " &3in &e" + Timespan.ofSeconds(minigamer.getScore()).format());
 			minigamer.quit();
 		}
 	}

@@ -19,5 +19,5 @@ public enum DisabledPlacement {
 	}
 
 	@Getter
-	List<BlockFace> blockFaces;
+	final List<BlockFace> blockFaces;
 }

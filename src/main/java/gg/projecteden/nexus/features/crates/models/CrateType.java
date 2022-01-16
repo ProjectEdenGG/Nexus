@@ -25,6 +25,8 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+
 @Getter
 public enum CrateType {
 	ALL(null, null),
@@ -65,7 +67,7 @@ public enum CrateType {
 	}
 
 	public static CrateType fromKey(ItemStack item) {
-		if (ItemUtils.isNullOrAir(item)) return null;
+		if (isNullOrAir(item)) return null;
 		for (CrateType type : values())
 			if (ItemUtils.isFuzzyMatch(item, type.getKey()))
 				return type;

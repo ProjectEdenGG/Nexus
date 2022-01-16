@@ -29,6 +29,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
+
 @Aliases("away")
 @NoArgsConstructor
 public class AFKCommand extends CustomCommand implements Listener {
@@ -202,7 +204,7 @@ public class AFKCommand extends CustomCommand implements Listener {
 	private static boolean isActivatedEntity(Entity entity) {
 		int mobSpawnRange = (getMobSpawnRange(entity.getLocation().getWorld()) + 1) * 16;
 
-		if (!StringUtils.isNullOrEmpty(entity.getCustomName()))
+		if (!isNullOrEmpty(entity.getCustomName()))
 			return true;
 
 		if (entity.getVehicle() != null)

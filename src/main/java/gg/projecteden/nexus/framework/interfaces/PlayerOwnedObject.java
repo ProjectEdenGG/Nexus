@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.framework.interfaces;
 
-import gg.projecteden.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
@@ -14,8 +13,8 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGroup;
-import gg.projecteden.parchment.OptionalPlayerLike;
-import gg.projecteden.utils.StringUtils;
+import me.lexikiq.HasUniqueId;
+import me.lexikiq.OptionalPlayerLike;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.ComponentLike;
@@ -27,13 +26,14 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.AdventureUtils.identityOf;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.utils.UUIDUtils.isUUID0;
 
 /**
  * A mongo database object owned by a player
  */
-public interface PlayerOwnedObject extends gg.projecteden.mongodb.interfaces.PlayerOwnedObject, OptionalPlayerLike {
+public interface PlayerOwnedObject extends gg.projecteden.interfaces.PlayerOwnedObject, OptionalPlayerLike {
 
 	/**
 	 * Gets the unique ID of this object. Alias for {@link #getUuid()}, for compatibility with {@link HasUniqueId}.
@@ -139,14 +139,14 @@ public interface PlayerOwnedObject extends gg.projecteden.mongodb.interfaces.Pla
 	}
 
 	default void sendMessage(String message) {
-		if (StringUtils.isUUID0(getUuid()))
+		if (isUUID0(getUuid()))
 			Nexus.log(message);
 		else
 			sendMessage(json(message));
 	}
 
 	default void sendOrMail(String message) {
-		if (StringUtils.isUUID0(getUuid())) {
+		if (isUUID0(getUuid())) {
 			Nexus.log(message);
 			return;
 		}
@@ -158,14 +158,14 @@ public interface PlayerOwnedObject extends gg.projecteden.mongodb.interfaces.Pla
 	}
 
 	default void sendMessage(UUID sender, ComponentLike component, MessageType type) {
-		if (StringUtils.isUUID0(getUuid()))
+		if (isUUID0(getUuid()))
 			Nexus.log(AdventureUtils.asPlainText(component));
 		else
 			sendMessage(identityOf(sender), component, type);
 	}
 
 	default void sendMessage(UUID sender, ComponentLike component) {
-		if (StringUtils.isUUID0(getUuid()))
+		if (isUUID0(getUuid()))
 			Nexus.log(AdventureUtils.asPlainText(component));
 		else
 			sendMessage(identityOf(sender), component);
@@ -177,7 +177,7 @@ public interface PlayerOwnedObject extends gg.projecteden.mongodb.interfaces.Pla
 
 	default void sendMessage(int delay, ComponentLike component) {
 		Tasks.wait(delay, () -> {
-			if (StringUtils.isUUID0(getUuid()))
+			if (isUUID0(getUuid()))
 				Nexus.log(AdventureUtils.asPlainText(component));
 			else
 				sendMessage(component);

@@ -9,7 +9,7 @@ import fr.minuskube.inv.content.SlotIterator;
 import fr.minuskube.inv.content.SlotPos;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -23,6 +23,8 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class KitManagerProvider extends MenuUtils implements InventoryProvider {
 
@@ -103,14 +105,14 @@ public class KitManagerProvider extends MenuUtils implements InventoryProvider {
 			}));
 
 			contents.set(0, 5, ClickableItem.from(new ItemBuilder(Material.CLOCK).name("&eDelay").lore("&e" + KitManager.get(id).getDelay())
-					.lore("&e(" + Timespan.of(KitManager.get(id).getDelay() / 20).format() + ")").build(), e -> {
+					.lore("&e(" + Timespan.ofSeconds(KitManager.get(id).getDelay() / 20).format() + ")").build(), e -> {
 				Kit kit = KitManager.get(id);
 				openAnvilMenu(player, "" + kit.getDelay(), (player1, response) -> {
 					try {
 						kit.setDelay(Integer.parseInt(response));
 					} catch (Exception ex) {
 						PlayerUtils.send(player, "&cDelay must be a number written in ticks less than " + Integer.MAX_VALUE +
-								" (" + Timespan.of(Integer.MAX_VALUE / 20).format() + ")");
+								" (" + Timespan.ofSeconds(Integer.MAX_VALUE / 20).format() + ")");
 						return AnvilGUI.Response.close();
 					}
 					KitManager.getConfig().set(id + "", kit);
@@ -146,7 +148,7 @@ public class KitManagerProvider extends MenuUtils implements InventoryProvider {
 		Inventory inv = player.getOpenInventory().getTopInventory();
 		List<ItemStack> items = new ArrayList<>();
 		for (int i : editableSlots) {
-			if (ItemUtils.isNullOrAir(inv.getItem(i))) continue;
+			if (isNullOrAir(inv.getItem(i))) continue;
 			items.add(inv.getItem(i));
 		}
 		Kit kit = KitManager.get(id);

@@ -42,6 +42,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.SoundUtils.getPitch;
 
 @Data
@@ -321,7 +322,7 @@ public abstract class Crate implements Listener {
 			boolean took = false;
 			ItemStack key = getCrateType().getKey();
 			for (ItemStack item : player.getInventory().getContents()) {
-				if (ItemUtils.isNullOrAir(item)) continue;
+				if (isNullOrAir(item)) continue;
 				if (ItemUtils.isFuzzyMatch(key, item)) {
 					item.setAmount(item.getAmount() - 1);
 					took = true;

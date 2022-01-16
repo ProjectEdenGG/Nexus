@@ -16,7 +16,6 @@ import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AccessLevel;
@@ -35,6 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static gg.projecteden.nexus.models.banker.BankerService.rounded;
 import static gg.projecteden.nexus.utils.StringUtils.prettyMoney;
+import static gg.projecteden.utils.UUIDUtils.isUUID0;
 
 @Data
 @Entity(value = "banker", noClassnameStored = true)
@@ -81,7 +81,7 @@ public class Banker implements PlayerOwnedObject {
 	}
 
 	public boolean isMarket() {
-		return StringUtils.isUUID0(uuid);
+		return isUUID0(uuid);
 	}
 
 	public String getBalanceFormatted(ShopGroup shopGroup) {

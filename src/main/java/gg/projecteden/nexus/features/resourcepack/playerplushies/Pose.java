@@ -5,9 +5,13 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
+// Tiers not final
 public enum Pose {
-	SITTING(Tier.TIER_1),
-	STANDING(Tier.TIER_2),
+	STANDING(Tier.TIER_1),
+	WALKING(Tier.TIER_1),
+	SITTING(Tier.TIER_2),
+	DABBING(Tier.TIER_2),
+	HANDSTAND(Tier.TIER_2),
 	;
 
 	private final Tier tier;

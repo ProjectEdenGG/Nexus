@@ -41,8 +41,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.World.Environment;
-import org.bukkit.WorldType;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -60,15 +58,14 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 import static gg.projecteden.nexus.features.shops.Market.RESOURCE_WORLD_PRODUCTS;
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.WorldGroup.isResourceWorld;
 
 @NoArgsConstructor
@@ -78,7 +75,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 
 	public ResourceWorldCommand(@NonNull CommandEvent event) {
 		super(event);
-		if (isPlayerCommandEvent())
+		if (isPlayerCommandEvent() && "logger".equals(arg(1)))
 			logger = getLogger(world());
 	}
 
@@ -89,27 +86,16 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 
 	@Confirm
 	@Permission(Group.ADMIN)
-	@Path("reset <test>")
-	void reset(boolean test) {
-		resetWorlds(test);
+	@Path("reset")
+	void reset() {
+		resetWorlds();
 	}
 
 	@Confirm
 	@Permission(Group.ADMIN)
-	@Path("setup <test>")
-	void setup(boolean test) {
-		setupWorlds(test);
-	}
-
-	private ResourceMarketLogger getLogger(World world) {
-		if (!isResourceWorld(world))
-			throw new InvalidInputException("Not allowed outside of resource world");
-
-		return service.get(world.getUID());
-	}
-
-	private void save(World world) {
-		service.queueSave(TickTime.SECOND.get(), getLogger(world));
+	@Path("setup")
+	void setup() {
+		setupWorlds();
 	}
 
 	@Async
@@ -160,6 +146,17 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 
 		save(world());
 		send(PREFIX + "Added &e" + amount + " &3locations to logger, new size: &e" + getLogger(world()).size());
+	}
+
+	private ResourceMarketLogger getLogger(World world) {
+		if (!isResourceWorld(world))
+			throw new InvalidInputException("Not allowed outside of resource world");
+
+		return service.get(world.getUID());
+	}
+
+	private void save(World world) {
+		service.queueSave(TickTime.SECOND.get(), getLogger(world));
 	}
 
 	@NotNull
@@ -362,82 +359,48 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 	private static final int filidId = 2766;
 	public static final int RADIUS = 7500;
 
-	public static void resetWorlds(boolean test) {
+	public static void resetWorlds() {
 		getFilidNPC().despawn();
 
 		AtomicInteger wait = new AtomicInteger();
-		Tasks.wait(wait.getAndAdd(5), () -> {
-			for (String _worldName : Arrays.asList("resource", "resource_nether", "resource_the_end")) {
-				if (test)
-					_worldName = "test_" + _worldName;
-				final String worldName = _worldName;
+		Tasks.wait(wait.getAndAdd(40), () -> {
+			for (String world : Arrays.asList("resource", "resource_nether", "resource_the_end")) {
+				final Consumer<String> run = command -> Tasks.wait(wait.getAndAdd(5), () -> {
+					Nexus.log("Running /" + command);
+					PlayerUtils.runCommandAsConsole(command);
+				});
 
-				String root = new File(".").getAbsolutePath().replace(".", "");
-				File worldFolder = Paths.get(root + worldName).toFile();
-				File newFolder = Paths.get(root + "old_" + worldName).toFile();
+				run.accept("mv delete " + world);
+				run.accept("mv confirm");
 
-				World world = Bukkit.getWorld(worldName);
-				if (world != null)
-					try {
-						Nexus.getMultiverseCore().getMVWorldManager().unloadWorld(worldName);
-					} catch (Exception ex) {
-						Nexus.severe("Error unloading world " + worldName);
-						ex.printStackTrace();
-						return;
-					}
+				final String args;
+				if (world.contains("nether"))
+					args = "nether";
+				else if (world.contains("the_end"))
+					args = "end";
+				else
+					args = "normal -s -900287747221759";
 
-				if (newFolder.exists())
-					if (!newFolder.delete()) {
-						Nexus.severe("Could not delete " + newFolder.getName() + " folder");
-						return;
-					}
-
-				boolean renameSuccess = worldFolder.renameTo(newFolder);
-				if (!renameSuccess) {
-					Nexus.severe("Could not rename " + worldName + " folder");
-					return;
-				}
-
-				boolean deleteSuccess = Paths.get(newFolder.getAbsolutePath() + "/uid.dat").toFile().delete();
-				if (!deleteSuccess) {
-					Nexus.severe("Could not delete " + worldName + " uid.dat file");
-					return;
-				}
-
-				final Environment env;
-				final String seed;
-				if (worldName.contains("nether")) {
-					env = Environment.NETHER;
-					seed = null;
-				} else if (worldName.contains("the_end")) {
-					env = Environment.THE_END;
-					seed = null;
-				} else {
-					env = Environment.NORMAL;
-					seed = "-460015119172653"; // TODO List of approved seeds
-				}
-
-				Tasks.wait(wait.getAndAdd(5), () ->
-					Nexus.getMultiverseCore().getMVWorldManager().addWorld(worldName, env, seed, WorldType.NORMAL, true, null));
+				run.accept("mv create " + world + " " + args);
 			}
 		});
 	}
 
-	public static void setupWorlds(boolean test) {
-		String worldName = (test ? "test_" : "") + "resource";
+	public static void setupWorlds() {
+		String worldName = "resource";
 
 		new WorldEditUtils(worldName).paster()
 			.file("resource-world-spawn")
 			.at(new Location(Bukkit.getWorld(worldName), 0, 150, 0))
 			.air(false)
-			.pasteAsync();
+			.pasteAsync()
+			.thenRun(() -> getFilidNPC().spawn(new Location(Bukkit.getWorld(worldName), .5, 152, -36.5)));
 
 		HomesFeature.deleteFromWorld(worldName, null);
 		new ResourceMarketLoggerService().deleteAll();
 
 		Warp warp = WarpType.NORMAL.get(worldName);
 		Nexus.getMultiverseCore().getMVWorldManager().getMVWorld(worldName).setSpawnLocation(warp.getLocation());
-		getFilidNPC().spawn(new Location(Bukkit.getWorld(worldName), .5, 151, -36.5, 0F, 0F));
 		new ResourceMarketLoggerService().deleteAll();
 
 		PlayerUtils.runCommandAsConsole("wb " + worldName + " set " + RADIUS + " 0 0");

@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 /**
  * Adds a description to a command which can be seen via the in-game command <i><code>/&lt;command&gt; help</code></i>
  */
-@Target({ElementType.METHOD, ElementType.TYPE})
+@Target({ElementType.METHOD, ElementType.TYPE, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Description {
 	String value();

@@ -30,6 +30,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
+import static gg.projecteden.nexus.features.mcmmo.McMMO.TIER_ONE;
+import static gg.projecteden.nexus.features.mcmmo.McMMO.TIER_ONE_ALL;
+import static gg.projecteden.nexus.features.mcmmo.McMMO.TIER_TWO;
+
 public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 	private static final McMMOService service = new McMMOService();
 	private static final int DEPOSIT = 10000; // eco reward for prestige
@@ -153,10 +157,6 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 
 		abstract void onClick(Player player);
 	}
-
-	private static final int TIER_ONE = 100;
-	private static final int TIER_TWO = 200;
-	private static final int TIER_ONE_ALL = ResetSkillType.values().length * TIER_ONE;
 
 	@Override
 	public void open(Player player) {

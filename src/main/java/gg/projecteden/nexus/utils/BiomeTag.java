@@ -17,7 +17,7 @@ import java.util.EnumSet;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Getter
 @AllArgsConstructor

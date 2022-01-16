@@ -30,7 +30,6 @@ import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -49,6 +48,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @NoArgsConstructor
 @Aliases("coupons")
@@ -107,14 +108,14 @@ public class CouponCommand extends CustomCommand implements Listener {
 			@Override
 			void use(PlayerInteractEvent event) {
 				// TODO
-				PlayerUtils.send(event.getPlayer(), "Make a ticket or ask an admin to claim this coupon.");
+				PlayerUtils.send(event.getPlayer(), "Make a /ticket or post in #questions to claim this coupon.");
 			}
 		},
 		SONG(false) {
 			@Override
 			void use(PlayerInteractEvent event) {
 				// TODO
-				PlayerUtils.send(event.getPlayer(), "Make a ticket or ask an admin to claim this coupon.");
+				PlayerUtils.send(event.getPlayer(), "Make a /ticket or post in #questions to claim this coupon.");
 			}
 		},
 		EXPERIENCE_75(true) {
@@ -279,7 +280,7 @@ public class CouponCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onClick(PlayerInteractEvent event) {
 		if (!ActionGroup.CLICK.applies(event)) return;
-		if (ItemUtils.isNullOrAir(event.getItem())) return;
+		if (isNullOrAir(event.getItem())) return;
 
 		final CouponService service = new CouponService();
 		final Coupons coupons = service.get0();

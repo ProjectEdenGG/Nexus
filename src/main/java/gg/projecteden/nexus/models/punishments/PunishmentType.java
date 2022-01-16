@@ -26,8 +26,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 import java.util.function.Function;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
 import static gg.projecteden.utils.TimeUtils.shortDateTimeFormat;
 
 @Getter
@@ -203,7 +203,7 @@ public enum PunishmentType implements IsColoredAndNamed {
 			json.newline().next("&7   Reason &f" + punishment.getReason());
 
 		if (hasTimespan) {
-			json.newline().next("&7   Duration &f" + (seconds > 0 ? Timespan.of(seconds).format() : "forever"));
+			json.newline().next("&7   Duration &f" + (seconds > 0 ? Timespan.ofSeconds(seconds).format() : "forever"));
 
 			if (seconds > 0 && punishment.isActive())
 				json.newline().next("&7   Time left &f" + punishment.getTimeLeft());
@@ -236,7 +236,7 @@ public enum PunishmentType implements IsColoredAndNamed {
 
 	@Override
 	public @NotNull Colored colored() {
-		return Colored.colored(chatColor);
+		return Colored.of(chatColor);
 	}
 
 	@Override

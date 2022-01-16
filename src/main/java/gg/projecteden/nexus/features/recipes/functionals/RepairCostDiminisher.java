@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.Getter;
@@ -27,6 +28,7 @@ import org.bukkit.inventory.meta.Repairable;
 import org.jetbrains.annotations.NotNull;
 
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class RepairCostDiminisher extends FunctionalRecipe {
 
@@ -100,7 +102,7 @@ public class RepairCostDiminisher extends FunctionalRecipe {
 	}
 
 	public void lowerRepairCost(Player player, ItemStack diminisher, ItemStack tool) {
-		if (ItemUtils.isNullOrAir(tool)) {
+		if (isNullOrAir(tool)) {
 			PlayerUtils.send(player, "&cYou must hold an item in your other hand");
 			return;
 		}

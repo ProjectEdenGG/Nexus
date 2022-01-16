@@ -52,6 +52,7 @@ import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilde
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.smelt;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.surround;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
+import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 @Depends({ResourcePack.class, CustomEnchants.class})
 public class CustomRecipes extends Feature implements Listener {
@@ -276,7 +277,7 @@ public class CustomRecipes extends Feature implements Listener {
 		shapeless().add(Material.MOSS_CARPET, 3).toMake(Material.MOSS_BLOCK, 2).build().type(RecipeType.MISC).register();
 
 		for (ColorType color : ColorType.getDyes()) {
-			shapeless().add(color.getCarpet(), 3).toMake(color.getWool(), 2).build().type(RecipeType.MISC).register();
+			shapeless().add(color.getCarpet(), 3).toMake(color.getWool(), 2).extra("carpet_uncrafting").build().type(RecipeType.MISC).register();
 			shapeless().add(color.getConcrete(), 2).toMake(color.getConcretePowder(), 2).extra("powderize").build().type(RecipeType.MISC).register();
 		}
 
@@ -338,7 +339,7 @@ public class CustomRecipes extends Feature implements Listener {
 	private List<ItemStack> getInvisPotions() {
 		final YamlConfiguration config = IOUtils.getConfig("plugins/SurvivalInvisiframes/config.yml");
 		List<ItemStack> centerItems = (List<ItemStack>) config.getList("recipe-center-items");
-		if (Utils.isNullOrEmpty(centerItems))
+		if (isNullOrEmpty(centerItems))
 			return null;
 		return centerItems;
 	}

@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Getter
 @RequiredArgsConstructor

@@ -121,6 +121,8 @@ public class MaterialTag implements Tag<Material> {
 
 	public static final MaterialTag UNSTACKABLE = new MaterialTag(material -> material.getMaxStackSize() == 1);
 
+	public static final MaterialTag DYEABLE = new MaterialTag(ARMOR_LEATHER).append(LEATHER_HORSE_ARMOR);
+
 	public static final MaterialTag POTIONS = new MaterialTag(POTION, SPLASH_POTION, LINGERING_POTION);
 
 	public static final MaterialTag POTION_MATERIALS = new MaterialTag(POTIONS)
@@ -243,6 +245,8 @@ public class MaterialTag implements Tag<Material> {
 		.exclude(CACTUS, BAMBOO, DRAGON_EGG, TURTLE_EGG, CONDUIT, CAKE)
 		.exclude(SIGNS, ALL_BANNERS, ALL_CORALS)
 		.append(CORAL_BLOCKS);
+
+	public static final MaterialTag ITEMS = new MaterialTag(Material::isItem);
 
 	public static final MaterialTag SKULLS = new MaterialTag("_SKULL", MatchMode.SUFFIX).append("_HEAD", MatchMode.SUFFIX).exclude(PISTON_HEAD);
 	public static final MaterialTag PLAYER_SKULLS = new MaterialTag(PLAYER_HEAD, PLAYER_WALL_HEAD);

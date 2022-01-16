@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.crates.models;
 import gg.projecteden.nexus.features.crates.Crates;
 import gg.projecteden.nexus.models.boost.BoostConfig;
 import gg.projecteden.nexus.models.boost.Boostable;
-import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.SerializationUtils.YML;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
@@ -20,6 +20,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Data
 @NoArgsConstructor
@@ -38,7 +40,7 @@ public class CrateLoot implements ConfigurationSerializable {
 	public CrateLoot(Map<String, Object> map) {
 		this.title = (String) map.getOrDefault("title", title);
 		this.items = Arrays.stream(YML.deserializeItems((Map<String, Object>) map.getOrDefault("items", items)))
-				.filter(itemStack -> !ItemUtils.isNullOrAir(itemStack)).collect(Collectors.toList());
+				.filter(Nullables::isNotNullOrAir).collect(Collectors.toList());
 		this.weight = (double) map.getOrDefault("weight", weight);
 		this.active = (boolean) map.getOrDefault("active", active);
 		this.type = CrateType.valueOf((String) map.getOrDefault("type", type.name()));
@@ -58,7 +60,7 @@ public class CrateLoot implements ConfigurationSerializable {
 	}
 
 	public ItemStack getDisplayItem() {
-		if (!ItemUtils.isNullOrAir(displayItem)) return displayItem;
+		if (!isNullOrAir(displayItem)) return displayItem;
 		if (items.size() == 0) return null;
 		return items.get(0).clone();
 	}

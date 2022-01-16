@@ -13,6 +13,8 @@ import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
 import lombok.NonNull;
 import org.bukkit.OfflinePlayer;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
+
 @Aliases({"m", "msg", "w", "whisper", "t", "tell", "pm", "dm"})
 public class MessageCommand extends CustomCommand {
 	private final Chatter chatter;

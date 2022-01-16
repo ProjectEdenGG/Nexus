@@ -30,7 +30,7 @@ public class ArmorStandEditorCommand extends CustomCommand {
 	void arms(Boolean enabled) {
 		ArmorStand armorStand = (ArmorStand) getTargetEntityRequired(EntityType.ARMOR_STAND);
 
-		if (!isPerkAllowedAt(armorStand.getLocation()))
+		if (!isPerkAllowedAt(player(), armorStand.getLocation()))
 			error("You cannot edit armor stands here");
 
 		if (enabled == null)
@@ -70,7 +70,7 @@ public class ArmorStandEditorCommand extends CustomCommand {
 	void position_arms() {
 		ArmorStand armorStand = (ArmorStand) getTargetEntityRequired(EntityType.ARMOR_STAND);
 
-		if (!isPerkAllowedAt(armorStand.getLocation()))
+		if (!isPerkAllowedAt(player(), armorStand.getLocation()))
 			error("You cannot edit armor stands here");
 
 		float yaw = LocationUtils.normalizeYaw(location());
@@ -106,7 +106,7 @@ public class ArmorStandEditorCommand extends CustomCommand {
 		position_arms();
 		ArmorStand armorStand = (ArmorStand) getTargetEntityRequired(EntityType.ARMOR_STAND);
 
-		if (!isPerkAllowedAt(armorStand.getLocation()))
+		if (!isPerkAllowedAt(player(), armorStand.getLocation()))
 			error("You cannot edit armor stands here");
 
 		EulerAngle ea = new EulerAngle(Math.toRadians(x), Math.toRadians(y), Math.toRadians(z));

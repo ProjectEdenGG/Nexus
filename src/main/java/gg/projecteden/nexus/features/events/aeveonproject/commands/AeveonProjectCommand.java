@@ -32,6 +32,8 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.RandomUtils.getWeightedRandom;
 
 @Aliases("ap")
@@ -148,7 +150,7 @@ public class AeveonProjectCommand extends CustomCommand implements Listener {
 
 		for (Block block : blocks) {
 			Block above = block.getRelative(BlockFace.UP);
-			if (allowedFloraMaterials.contains(block.getType()) && BlockUtils.isNullOrAir(above))
+			if (allowedFloraMaterials.contains(block.getType()) && isNullOrAir(above))
 				placeFloraOn.add(above);
 		}
 

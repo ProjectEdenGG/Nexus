@@ -29,10 +29,10 @@ import gg.projecteden.nexus.models.chat.PublicChannel;
 import gg.projecteden.nexus.utils.BossBarBuilder;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -80,6 +80,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -131,7 +133,7 @@ public class SabotageMatchData extends MatchData {
 		getArena().worldguard().getEntitiesInRegionByClass(getArena().getProtectedRegion(), ArmorStand.class).forEach(armorStand -> {
 			if (armorStand.getEquipment() == null) return;
 			ItemStack item = armorStand.getEquipment().getHelmet();
-			if (ItemUtils.isNullOrAir(item)) return;
+			if (isNullOrAir(item)) return;
 			TaskPart part = TaskPart.get(item);
 			if (part == null) return;
 			BlockFace facing = armorStand.getFacing();

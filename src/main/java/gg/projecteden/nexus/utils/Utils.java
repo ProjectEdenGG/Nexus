@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.utils;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
@@ -40,6 +39,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static org.reflections.ReflectionUtils.getAllMethods;
 import static org.reflections.ReflectionUtils.withAnnotation;
 
@@ -162,7 +162,7 @@ public class Utils extends gg.projecteden.utils.Utils {
 	public static boolean equalsInvViewTitle(InventoryView view, String title) {
 		String viewTitle = getInvTitle(view);
 
-		if (Strings.isNullOrEmpty(viewTitle))
+		if (isNullOrEmpty(viewTitle))
 			return false;
 
 		return viewTitle.equals(title);
@@ -171,7 +171,7 @@ public class Utils extends gg.projecteden.utils.Utils {
 	public static boolean containsInvViewTitle(InventoryView view, String title) {
 		String viewTitle = getInvTitle(view);
 
-		if (Strings.isNullOrEmpty(viewTitle))
+		if (isNullOrEmpty(viewTitle))
 			return false;
 
 		return viewTitle.contains(title);

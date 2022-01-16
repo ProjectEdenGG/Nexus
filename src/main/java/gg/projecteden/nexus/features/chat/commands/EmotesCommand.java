@@ -68,7 +68,7 @@ public class EmotesCommand extends CustomCommand {
 				if (!json.isInitialized())
 					json.initialize();
 				else
-					json.newline();
+					json.group().newline();
 
 				if (user.isEnabled(emote, color))
 					json

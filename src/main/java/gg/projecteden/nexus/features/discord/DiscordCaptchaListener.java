@@ -10,11 +10,12 @@ import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
+import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.PrivateChannel;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
-import net.dv8tion.jda.api.events.message.priv.react.PrivateMessageReactionAddEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import javax.annotation.Nonnull;
@@ -49,8 +50,11 @@ public class DiscordCaptchaListener extends ListenerAdapter {
 	}
 
 	@Override
-	public void onPrivateMessageReactionAdd(@Nonnull PrivateMessageReactionAddEvent event) {
+	public void onMessageReactionAdd(@Nonnull MessageReactionAddEvent event) {
 		Tasks.async(() -> {
+			if (event.getChannelType() != ChannelType.PRIVATE)
+				return;
+
 			if (event.getUser() == null) {
 				Nexus.log("[Captcha] Received reaction from null user");
 				return;

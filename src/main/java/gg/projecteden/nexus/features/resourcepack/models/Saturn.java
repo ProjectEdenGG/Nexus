@@ -8,6 +8,9 @@ import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.utils.Env;
 import lombok.SneakyThrows;
 
+import java.io.File;
+import java.io.OutputStream;
+import java.lang.ProcessBuilder.Redirect;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -19,9 +22,10 @@ import java.util.Objects;
 import static gg.projecteden.nexus.features.resourcepack.ResourcePack.FILE_NAME;
 import static gg.projecteden.nexus.features.resourcepack.ResourcePack.URL;
 import static gg.projecteden.nexus.features.resourcepack.ResourcePack.hash;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.StringUtils.listLast;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
-import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
-import static gg.projecteden.utils.StringUtils.listLast;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class Saturn {
 	public static final String DIRECTORY = "/home/minecraft/git/Saturn" + (Nexus.getEnv() == Env.PROD ? "" : "-" + Nexus.getEnv()) + "/";

@@ -40,7 +40,8 @@ import java.util.List;
 import java.util.Map;
 
 import static gg.projecteden.nexus.features.discord.Discord.discordize;
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @Description("Display an item in chat")
@@ -139,7 +140,7 @@ public class ShowItemCommand extends CustomCommand {
 
 			MessageBuilder content = new MessageBuilder()
 				.setContent(stripColor(user.getBridgeName() + " **>** " + discordize(message)))
-				.setEmbed(embed.build());
+				.setEmbeds(embed.build());
 
 			Discord.send(content, channel.getDiscordTextChannel());
 		}
@@ -207,7 +208,7 @@ public class ShowItemCommand extends CustomCommand {
 			error("Item in " + slot + " not found");
 
 		ItemMeta meta = item.getItemMeta();
-		if (!meta.hasEnchants() && !meta.hasLore() && StringUtils.isNullOrEmpty(meta.getDisplayName()))
+		if (!meta.hasEnchants() && !meta.hasLore() && isNullOrEmpty(meta.getDisplayName()))
 			error("Item must have enchants, lore, or a custom name");
 
 		return item;

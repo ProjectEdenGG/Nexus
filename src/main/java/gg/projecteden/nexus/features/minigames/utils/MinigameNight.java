@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.minigames.utils;
 
+import gg.projecteden.nexus.models.geoip.GeoIP;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
 import lombok.Data;
 import org.bukkit.OfflinePlayer;
@@ -31,7 +32,11 @@ public class MinigameNight {
 		}
 
 		public NextMGN(OfflinePlayer player) {
-			this(new GeoIPService().get(player).getTimezone() == null ? ZoneId.systemDefault() : ZoneId.of((new GeoIPService().get(player).getTimezone().getId())));
+			this(new GeoIPService().get(player));
+		}
+
+		public NextMGN(GeoIP player) {
+			this(!GeoIP.exists(player) ? ZoneId.systemDefault() : ZoneId.of(player.getTimezone().getId()));
 		}
 
 		public NextMGN(ZoneId zoneId) {

@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.events.y2020.halloween20.quest.menus;
 
-import com.mysql.cj.util.StringUtils;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.SmartInvsPlugin;
@@ -23,6 +22,8 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 public class CombinationLockProvider extends MenuUtils implements InventoryProvider {
 
@@ -70,7 +71,7 @@ public class CombinationLockProvider extends MenuUtils implements InventoryProvi
 		boolean[] correct = {false, false, false};
 
 		for (int i = 0; i < groups.length; i++) {
-			if (!StringUtils.isNullOrEmpty(playerCode) && playerCode.length() == CORRECT_CODE.length())
+			if (!isNullOrEmpty(playerCode) && playerCode.length() == CORRECT_CODE.length())
 				for (int j = 0; j < groups[i].length; j++)
 					if (playerCode.charAt(groups[i][j]) == CORRECT_CODE.charAt(groups[i][j]))
 						correct[i] = true;

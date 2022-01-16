@@ -52,8 +52,9 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.utils.TimeUtils.shortDateFormat;
+import static gg.projecteden.utils.UUIDUtils.UUID0;
 
 @NoArgsConstructor
 public class Justice extends Feature implements Listener {
@@ -290,7 +291,7 @@ public class Justice extends Feature implements Listener {
 
 		if (fraudScore >= 75) {
 			punishments.add(Punishment.ofType(PunishmentType.MUTE)
-					.punisher(StringUtils.getUUID0())
+					.punisher(UUID0)
 					.input("Suspected bot")
 					.now(true));
 

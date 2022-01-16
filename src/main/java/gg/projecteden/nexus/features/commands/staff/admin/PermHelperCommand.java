@@ -9,7 +9,6 @@ import gg.projecteden.nexus.models.extraplots.ExtraPlotUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.LuckPermsUtils.PermissionChange;
-import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
@@ -20,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Permission(Group.ADMIN)
 public class PermHelperCommand extends CustomCommand {
@@ -94,7 +95,7 @@ public class PermHelperCommand extends CustomCommand {
 		}
 
 		private boolean hasPermission(UUID uuid, int amount) {
-			if (StringUtils.isNullOrEmpty(world))
+			if (isNullOrEmpty(world))
 				return LuckPermsUtils.hasPermission(uuid, permission + amount);
 			else
 				return LuckPermsUtils.hasPermission(uuid, permission + amount, ImmutableContextSet.of("world", world));

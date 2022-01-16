@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.events.aeveonproject.sets.sialia;
 import com.destroystokyo.paper.ParticleBuilder;
 import gg.projecteden.nexus.features.events.aeveonproject.sets.APSetType;
 import gg.projecteden.nexus.features.particles.effects.LineEffect;
+import gg.projecteden.nexus.models.particle.ParticleService;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -56,7 +57,8 @@ public class Particles {
 				if (!activeLaser) {
 					activeLaser = true;
 					laserTaskId = LineEffect.builder()
-							.player(laserPlayer)
+							.owner(new ParticleService().get(laserPlayer))
+							.entity(laserPlayer)
 							.startLoc(laserStart)
 							.endLoc(laserEnd)
 							.density(0.1)

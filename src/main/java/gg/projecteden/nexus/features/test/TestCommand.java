@@ -7,7 +7,7 @@ import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.models.matchdata.PixelPaintersMatchData;
 import gg.projecteden.nexus.features.store.perks.NPCListener;
-import gg.projecteden.nexus.features.store.perks.autosort.features.AutoTool;
+import gg.projecteden.nexus.features.store.perks.autoinventory.features.AutoTool;
 import gg.projecteden.nexus.features.wither.fights.CorruptedFight.CorruptedCounterAttacks;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -24,6 +24,7 @@ import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -68,7 +69,7 @@ import java.util.function.Consumer;
 
 import static gg.projecteden.nexus.utils.BlockUtils.getBlocksInRadius;
 import static gg.projecteden.nexus.utils.BlockUtils.getDirection;
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.PlayerUtils.getHotbarContents;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
@@ -230,7 +231,7 @@ public class TestCommand extends CustomCommand implements Listener {
 	@Path("getBlockStandingOn")
 	void getBlockStandingOn() {
 		Block block = BlockUtils.getBlockStandingOn(player());
-		if (BlockUtils.isNullOrAir(block))
+		if (isNullOrAir(block))
 			send("Nothing");
 		else
 			send(block.getType().name());
@@ -323,7 +324,7 @@ public class TestCommand extends CustomCommand implements Listener {
 
 	@Path("timespanFormatter <seconds> <formatType>")
 	void timespanFormatter(int seconds, FormatType formatType) {
-		send(TimespanBuilder.of(seconds).formatType(formatType).format());
+		send(TimespanBuilder.ofSeconds(seconds).formatType(formatType).format());
 	}
 
 	@Path("setTabListName <text...>")

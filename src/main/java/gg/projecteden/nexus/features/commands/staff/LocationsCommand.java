@@ -45,7 +45,7 @@ public class LocationsCommand extends CustomCommand {
 						.hover("&fClick to copy UUID")
 						.group()
 						.next(Component.text(getCoordinateString(target.getLocation()), NamedTextColor.YELLOW))
-						.next(Component.text("  " + TimespanBuilder.of(playtimeSeconds).noneDisplay(true).format(), playtimeColor))
+						.next(Component.text("  " + TimespanBuilder.ofSeconds(playtimeSeconds).noneDisplay(true).format(), playtimeColor))
 						.command("/tp " + target.getName()));
 			});
 		});

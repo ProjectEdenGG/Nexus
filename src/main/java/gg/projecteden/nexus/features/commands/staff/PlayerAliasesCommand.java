@@ -29,28 +29,30 @@ public class PlayerAliasesCommand extends CustomCommand {
 	void list(@Arg("self") OfflinePlayer player) {
 		nerd = Nerd.of(player);
 		if (nerd.getAliases().isEmpty())
-			error("No nicknames found");
+			error("No aliases found");
 		send(PREFIX + String.join(", ", nerd.getAliases()));
 	}
 
-	@Path("add <player> <nickname>")
-	void add(OfflinePlayer player, String nickname) {
+	@Path("add <player> <alias>")
+	void add(OfflinePlayer player, String alias) {
 		nerd = Nerd.of(player);
-		if (nerd.getAliases().contains(nickname))
-			error("Nickname &e" + nickname + " &calready exists for " + player.getName());
-		nerd.getAliases().add(nickname);
+		alias = alias.toLowerCase();
+		if (nerd.getAliases().contains(alias))
+			error("Alias &e" + alias + " &calready exists for " + player.getName());
+		nerd.getAliases().add(alias);
 		service.save(nerd);
-		send(PREFIX + "Added nickname '&e" + nickname + "&3' to &e" + player.getName());
+		send(PREFIX + "Added alias '&e" + alias + "&3' to &e" + player.getName());
 	}
 
-	@Path("remove <player> <nickname>")
-	void remove(OfflinePlayer player, String nickname) {
+	@Path("remove <player> <alias>")
+	void remove(OfflinePlayer player, String alias) {
 		nerd = Nerd.of(player);
-		if (!nerd.getAliases().contains(nickname))
-			error("Nickname &e" + nickname + " &cdoes not exist for " + player.getName());
-		nerd.getAliases().remove(nickname);
+		alias = alias.toLowerCase();
+		if (!nerd.getAliases().contains(alias))
+			error("Alias &e" + alias + " &cdoes not exist for " + player.getName());
+		nerd.getAliases().remove(alias);
 		service.save(nerd);
-		send(PREFIX + "Removed nickname '&e" + nickname + "&3' from &e" + player.getName());
+		send(PREFIX + "Removed alias '&e" + alias + "&3' from &e" + player.getName());
 	}
 
 }

@@ -37,7 +37,7 @@ public enum SabotageTeam implements IsColoredAndNamed {
 	private final Colored colored;
 
 	SabotageTeam(ChatColor color) {
-		this(Colored.colored(color));
+		this(Colored.of(color));
 	}
 
 	@Override

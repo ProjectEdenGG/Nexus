@@ -32,6 +32,8 @@ import org.bukkit.inventory.PlayerInventory;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+
 @NoArgsConstructor
 @Permission(Group.ADMIN)
 public class GemCommand extends CustomCommand implements Listener {
@@ -80,7 +82,7 @@ public class GemCommand extends CustomCommand implements Listener {
 	public void addGemEnchantToTool(Player player, ItemStack gem, ItemStack tool) {
 		Enchantment enchantment = gem.getEnchantments().entrySet().stream().findFirst().get().getKey();
 		int level = gem.getEnchantments().entrySet().stream().findFirst().get().getValue();
-		if (ItemUtils.isNullOrAir(tool)) {
+		if (isNullOrAir(tool)) {
 			PlayerUtils.send(player, "&cYou must hold an item in your other hand to apply the enchantment");
 			return;
 		}
@@ -111,7 +113,7 @@ public class GemCommand extends CustomCommand implements Listener {
 	}
 
 	public boolean isGem(ItemStack item) {
-		if (ItemUtils.isNullOrAir(item)) return false;
+		if (isNullOrAir(item)) return false;
 		if (!item.getType().equals(Material.EMERALD)) return false;
 		if (item.getEnchantments().isEmpty()) return false;
 		return CustomModelData.of(item) == 1;

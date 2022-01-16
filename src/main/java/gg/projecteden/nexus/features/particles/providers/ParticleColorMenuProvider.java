@@ -17,7 +17,6 @@ import lombok.Getter;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
@@ -116,21 +115,22 @@ public class ParticleColorMenuProvider extends MenuUtils implements InventoryPro
 								.build(),
 						e -> {
 							Color newColor = null;
+							boolean isLeftClick = isLeftClick(e);
 							switch (RGB.values()[dye.get()]) {
 								case R:
-									if (((InventoryClickEvent) e.getEvent()).isLeftClick())
+									if (isLeftClick)
 										newColor = color.setRed(Math.min(color.getRed() + amount[index.get()], 255));
 									else
 										newColor = color.setRed(Math.max(color.getRed() - amount[index.get()], 0));
 									break;
 								case G:
-									if (((InventoryClickEvent) e.getEvent()).isLeftClick())
+									if (isLeftClick)
 										newColor = color.setGreen(Math.min(color.getGreen() + amount[index.get()], 255));
 									else
 										newColor = color.setGreen(Math.max(color.getGreen() - amount[index.get()], 0));
 									break;
 								case B:
-									if (((InventoryClickEvent) e.getEvent()).isLeftClick())
+									if (isLeftClick)
 										newColor = color.setBlue(Math.min(color.getBlue() + amount[index.get()], 255));
 									else
 										newColor = color.setBlue(Math.max(color.getBlue() - amount[index.get()], 0));

@@ -27,7 +27,6 @@ import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
@@ -55,10 +54,11 @@ import static gg.projecteden.nexus.features.discord.Discord.discordize;
 import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
 import static gg.projecteden.nexus.utils.StringUtils.plural;
 import static gg.projecteden.nexus.utils.Utils.epochSecond;
+import static gg.projecteden.utils.UUIDUtils.UUID0;
 
 @NoArgsConstructor
 public class Votes extends Feature implements Listener {
-	static final int GOAL = 6000;
+	static final int GOAL = 3000;
 
 	@Override
 	public void onStart() {
@@ -107,7 +107,7 @@ public class Votes extends Feature implements Listener {
 		if (user != null && user.getMutualGuilds().size() > 0) {
 			String username = Nerd.of(vote.getUuid()).getName();
 			Nexus.log("[Votes] Sending vote reminder to " + username);
-			MessageBuilder messageBuilder = new MessageBuilder().append("Boop! It's votin' time!").setEmbed(createEmbed(username));
+			MessageBuilder messageBuilder = new MessageBuilder().append("Boop! It's votin' time!").setEmbeds(createEmbed(username));
 			user.openPrivateChannel().complete().sendMessage(messageBuilder.build()).queue();
 		}
 	}
@@ -118,16 +118,20 @@ public class Votes extends Feature implements Listener {
 		OfflinePlayer player = null;
 		try { player = PlayerUtils.getPlayer(username); } catch (PlayerNotFoundException ignore) {}
 		String name = player != null ? Nickname.of(player) : "Unknown";
-		UUID uuid = player != null ? player.getUniqueId() : StringUtils.getUUID0();
+		UUID uuid = player != null ? player.getUniqueId() : UUID0;
 		VoteSite site = VoteSite.getFromId(event.getVote().getServiceName());
 
-		Nexus.log("[Votes] Vote received from " + event.getVote().getServiceName() + ": " + username + " (" + name + " | " + uuid + ")");
+		boolean accepted = true;
+		if (site == null || !site.isActive())
+			accepted = false;
+
+		Nexus.log("[Votes] Vote %s from %s: %s (%s | %s)".formatted(accepted ? "accepted" : "rejected", event.getVote().getServiceName(), username, name, uuid));
 
 		LocalDateTime timestamp = epochSecond(event.getVote().getTimeStamp());
 		if (site == VoteSite.MCBIZ)
 			timestamp = fixTimestamp(timestamp);
 
-		if (site == null)
+		if (!accepted)
 			return;
 
 		final VoterService voterService = new VoterService();
@@ -142,12 +146,12 @@ public class Votes extends Feature implements Listener {
 		if (GOAL > sum)
 			left = GOAL - sum;
 
-		int points = vote.getExtra() + basePoints;
+		int points = vote.getExtra() + BASE_POINTS;
 		voter.givePoints(points);
 		voterService.save(voter);
 
 		if (new CooldownService().check(uuid, "vote-announcement", TickTime.HOUR)) {
-			String message = " &3for the server and received &b" + basePoints + plural(" &3vote point", basePoints) + " per site!";
+			String message = " &3for the server and received &b" + BASE_POINTS + plural(" &3vote point", BASE_POINTS) + " per site!";
 			if (left > 0)
 				message += " &e" + left + " &3more votes needed to hit the goal";
 
@@ -169,7 +173,7 @@ public class Votes extends Feature implements Listener {
 		final int todaysVotes = voter.getTodaysVotes().size();
 
 		Nexus.log("[VoteStreak] " + name + " - Total votes: " + allVotes + " / Today's votes: " + todaysVotes);
-		if (todaysVotes >= 5) {
+		if (todaysVotes >= 2) {
 			final DailyVoteRewardService dailyVoteRewardService = new DailyVoteRewardService();
 			final DailyVoteReward dailyVoteReward = dailyVoteRewardService.get(player);
 			if (!dailyVoteReward.getCurrentStreak().isEarnedToday()) {
@@ -190,26 +194,27 @@ public class Votes extends Feature implements Listener {
 		return timestamp;
 	}
 
-	private static final int basePoints = 1;
-	private static final Map<Integer, Integer> extras = new HashMap<>() {{
-		put(1500, 50);
-		put(500, 25);
-		put(200, 15);
-		put(100, 10);
-		put(50, 5);
+	public static final int BASE_POINTS = 1;
+	public static final Map<Integer, Integer> EXTRA_CHANCES = new HashMap<>() {{
+		final double div = .66;
+		put((int) (1500 * div), 50);
+		put((int) (500 * div), 25);
+		put((int) (200 * div), 15);
+		put((int) (100 * div), 10);
+		put((int) (50 * div), 5);
 	}};
 
 	@NotNull
-	protected static Map<Integer, Integer> getExtras() {
+	protected static Map<Integer, Integer> getExtraChances() {
 		double multiplier = BoostConfig.multiplierOf(Boostable.VOTE_POINTS);
 
 		return new HashMap<>() {{
-			extras.forEach((chance, amount) -> put((int) (chance / multiplier), amount));
+			EXTRA_CHANCES.forEach((chance, amount) -> put((int) (chance / multiplier), amount));
 		}};
 	}
 
 	private int extraVotePoints() {
-		for (Map.Entry<Integer, Integer> pair : getExtras().entrySet())
+		for (Map.Entry<Integer, Integer> pair : getExtraChances().entrySet())
 			if (randomInt(pair.getKey()) == 1)
 				return pair.getValue();
 		return 0;

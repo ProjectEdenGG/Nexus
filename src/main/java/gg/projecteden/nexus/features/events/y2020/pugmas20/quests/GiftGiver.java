@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -34,6 +35,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @NoArgsConstructor
@@ -58,7 +60,7 @@ public class GiftGiver implements Listener {
 
 		for (int i = 0; i < 9; i++) {
 			Block block = AdventChests.lootOrigin.getRelative(-3, 0, i);
-			if (ItemUtils.isNullOrAir(block.getType()) || !block.getType().equals(Material.CHEST))
+			if (isNullOrAir(block.getType()) || !block.getType().equals(Material.CHEST))
 				continue;
 			lootChestList.add(block.getLocation());
 		}
@@ -117,7 +119,7 @@ public class GiftGiver implements Listener {
 		if (!Utils.containsInvViewTitle(event.getView(), invTitle)) return;
 
 		List<ItemStack> leftover = new ArrayList<>(Arrays.asList(event.getInventory().getContents())).stream()
-				.filter(itemStack -> !ItemUtils.isNullOrAir(itemStack)).collect(Collectors.toList());
+				.filter(Nullables::isNotNullOrAir).collect(Collectors.toList());
 
 		if (leftover.size() == 0)
 			return;
@@ -134,7 +136,7 @@ public class GiftGiver implements Listener {
 		Player clicker = event.getPlayer();
 		Player clicked = (Player) event.getRightClicked();
 		ItemStack gift = ItemUtils.getTool(clicker);
-		if (ItemUtils.isNullOrAir(gift)) return;
+		if (isNullOrAir(gift)) return;
 		if (gift_locked == null || gift_unlocked == null) return;
 		if (!ItemUtils.isFuzzyMatch(gift, gift_locked) && !ItemUtils.isFuzzyMatch(gift, gift_unlocked)) return;
 
@@ -145,7 +147,7 @@ public class GiftGiver implements Listener {
 	@EventHandler
 	public void onInteractWithGift(PlayerInteractEvent event) {
 		ItemStack gift = ItemUtils.getTool(event.getPlayer());
-		if (ItemUtils.isNullOrAir(gift)) return;
+		if (isNullOrAir(gift)) return;
 		if (gift_locked == null || gift_unlocked == null) return;
 		if (!ItemUtils.isFuzzyMatch(gift, gift_locked) && !ItemUtils.isFuzzyMatch(gift, gift_unlocked)) return;
 
@@ -159,7 +161,7 @@ public class GiftGiver implements Listener {
 	@EventHandler
 	public void onDropGift(PlayerDropItemEvent event) {
 		ItemStack gift = event.getItemDrop().getItemStack();
-		if (ItemUtils.isNullOrAir(gift)) return;
+		if (isNullOrAir(gift)) return;
 		if (gift_locked == null || gift_unlocked == null) return;
 		if (!ItemUtils.isFuzzyMatch(gift, gift_locked) && !ItemUtils.isFuzzyMatch(gift, gift_unlocked)) return;
 

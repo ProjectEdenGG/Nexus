@@ -2,7 +2,6 @@ package gg.projecteden.nexus.models.chat;
 
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.Name;
-import gg.projecteden.utils.Utils;
 import lombok.Data;
 import lombok.ToString;
 import net.md_5.bungee.api.ChatColor;
@@ -14,18 +13,20 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.utils.Nullables.isNullOrEmpty;
+
 @Data
 public class PrivateChannel implements Channel {
 	@ToString.Exclude
 	private Set<UUID> recipients = new HashSet<>();
 
 	public PrivateChannel(List<String> recipients) {
-		if (!Utils.isNullOrEmpty(recipients))
+		if (!isNullOrEmpty(recipients))
 			this.recipients = recipients.stream().map(UUID::fromString).collect(Collectors.toSet());
 	}
 
 	public PrivateChannel(Set<Chatter> recipients) {
-		if (!Utils.isNullOrEmpty(recipients))
+		if (!isNullOrEmpty(recipients))
 			this.recipients = recipients.stream().map(Chatter::getUuid).collect(Collectors.toSet());
 	}
 

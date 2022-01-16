@@ -67,7 +67,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static gg.projecteden.utils.RandomUtils.randomElement;
+import static gg.projecteden.nexus.utils.RandomUtils.randomElement;
 
 @Getter
 public enum MobHeadType implements MobHead {
@@ -309,7 +309,7 @@ public enum MobHeadType implements MobHead {
 	}
 
 	static void load() {
-		World world = Bukkit.getWorld(Nexus.getEnv() == Env.PROD ? "survival" : "world");
+		World world = Bukkit.getWorld(Nexus.getEnv() == Env.PROD ? "server" : "world");
 		if (world == null)
 			return;
 

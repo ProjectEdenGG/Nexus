@@ -56,16 +56,15 @@ public class HoursCommand extends CustomCommand {
 		boolean isSelf = isSelf(hours);
 
 		send("");
-		send(PREFIX + (isSelf ? "Your" : "&e" + hours.getName() + "&3's") + " playtime");
-		send("&3Total: &e" + TimespanBuilder.of(hours.getTotal()).noneDisplay(true).format());
-		send("&7- &3Today: &e" + TimespanBuilder.of(hours.getDaily()).noneDisplay(true).format());
-		send("&7- &3This month: &e" + TimespanBuilder.of(hours.getMonthly()).noneDisplay(true).format());
-		send("&7- &3This year: &e" + TimespanBuilder.of(hours.getYearly()).noneDisplay(true).format());
+		send(PREFIX + (isSelf ? "Your" : "&e" + hours.getNickname() + "&3's") + " playtime");
+		send("&3Total: &e" + TimespanBuilder.ofSeconds(hours.getTotal()).noneDisplay(true).format());
+		send("&7- &3Today: &e" + TimespanBuilder.ofSeconds(hours.getDaily()).noneDisplay(true).format());
+		send("&7- &3This month: &e" + TimespanBuilder.ofSeconds(hours.getMonthly()).noneDisplay(true).format());
+		send("&7- &3This year: &e" + TimespanBuilder.ofSeconds(hours.getYearly()).noneDisplay(true).format());
 
 		if (Rank.of(hours) == Rank.GUEST) {
-
-			String who = (isSelf ? "You need" : hours.getName() + " needs") + " ";
-			String left = Timespan.of(DAY - hours.getTotal()).format();
+			String who = (isSelf ? "You need" : hours.getNickname() + " needs") + " ";
+			String left = Timespan.ofSeconds(DAY - hours.getTotal()).format();
 
 			line();
 			send("&3" + who + "&e" + left + " more in-game play time &3to achieve &fMember&3.");
@@ -94,10 +93,10 @@ public class HoursCommand extends CustomCommand {
 			totalHours += result.getTotal();
 
 		send("");
-		send(PREFIX + "Total: " + Timespan.of(totalHours).format() + (page > 1 ? "&e  |  &3Page " + page : ""));
+		send(PREFIX + "Total: " + Timespan.ofSeconds(totalHours).format() + (page > 1 ? "&e  |  &3Page " + page : ""));
 
 		BiFunction<PageResult, String, JsonBuilder> formatter = (result, index) ->
-			json(index + " &e" + Nerd.of(result.getUuid()).getColoredName() + " &7- " + Timespan.of(result.getTotal()).format());
+			json(index + " &e" + Nerd.of(result.getUuid()).getColoredName() + " &7- " + Timespan.ofSeconds(result.getTotal()).format());
 
 		paginate(results, formatter, "/hours top " + args.getInput() + onlyStaffSwitch, page);
 	}

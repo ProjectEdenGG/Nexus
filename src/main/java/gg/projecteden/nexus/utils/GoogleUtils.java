@@ -45,7 +45,7 @@ import java.util.List;
 import java.util.Set;
 
 import static gg.projecteden.nexus.utils.GoogleUtils.SheetsUtils.ValueInputOption.USER_ENTERED;
-import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 /**
  * https://developers.google.com/sheets/api/quickstart/java
@@ -61,25 +61,21 @@ public class GoogleUtils {
 	private static LocalServerReceiver receiver;
 	public static Credential USER;
 
-	static {
-		startup();
+	public static boolean hasStarted() {
+		return receiver != null;
 	}
 
 	public static void startup() {
-		try {
-			shutdown();
+		shutdown();
 
-			setup();
-			login();
-			SheetsUtils.startup();
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+		setup();
+		login();
+		SheetsUtils.startup();
 	}
 
 	@SneakyThrows
 	public static void shutdown() {
-		if (receiver != null)
+		if (hasStarted())
 			receiver.stop();
 	}
 
@@ -89,9 +85,8 @@ public class GoogleUtils {
 	}
 
 	/**
-	 * If you are prompted with a link in console, log in with the hi@projecteden.gg google credentials,
-	 * complete the approval process, then change `localhost` to `projecteden.gg` in the redirect url.
-	 * Make sure the port is open on the firewall
+	 * When prompted with an authorization link in console, log in with the hi@projecteden.gg google
+	 * credentials, complete the approval process, then copy the redirect url and curl it on the server
 	 */
 	@SneakyThrows
 	private static void login() {
@@ -188,7 +183,7 @@ public class GoogleUtils {
 
 		@NotNull
 		public static Object valueOf(Collection<String> strings) {
-			return valueOf(String.join("\n", strings));
+			return isNullOrEmpty(strings) ? "" : valueOf(String.join("\n", strings));
 		}
 
 		@NotNull
@@ -234,6 +229,8 @@ public class GoogleUtils {
 			String string = asString(iterator, null);
 			if (string != null)
 				string = string.trim();
+			if (isNullOrEmpty(string))
+				return null;
 			return string;
 		}
 

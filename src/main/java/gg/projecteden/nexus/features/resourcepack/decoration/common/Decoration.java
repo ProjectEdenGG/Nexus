@@ -1,11 +1,15 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.common;
 
-import gg.projecteden.nexus.features.resourcepack.decoration.types.Seat;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.bukkit.Color;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -32,14 +36,41 @@ public class Decoration {
 	protected List<Hitbox> hitboxes = Hitbox.NONE();
 	protected DisabledRotation disabledRotation = DisabledRotation.NONE;
 	protected List<DisabledPlacement> disabledPlacements = new ArrayList<>();
+	protected Color defaultColor;
 
 	public Decoration(String name, int modelData, @NotNull Material material, List<Hitbox> hitboxes) {
 		this.name = name;
 		this.modelData = modelData;
 		this.material = material;
 		this.hitboxes = hitboxes;
+
+		if (this.isMultiBlock())
+			this.disabledRotation = DisabledRotation.DEGREE_45;
 	}
 
+	public Decoration(String name, int modelData, List<Hitbox> hitboxes) {
+		this(name, modelData, Material.PAPER, hitboxes);
+	}
+
+	public Decoration(String name, int modelData) {
+		this(name, modelData, Hitbox.NONE());
+	}
+
+	public Decoration(String name, int modelData, Material material) {
+		this(name, modelData, material, Hitbox.NONE());
+	}
+
+	public static Color getDefaultStain() {
+		return ColorType.hexToBukkit("#F4C57A");
+	}
+
+	public static Color getDefaultColor() {
+		return ColorType.hexToBukkit("#FF5555");
+	}
+
+	public List<Hitbox> getHitboxes(ItemFrame itemFrame) {
+		return Hitbox.getHitboxes(this, itemFrame);
+	}
 
 	public ItemFrameRotation getValidRotation(ItemFrameRotation frameRotation) {
 		if (this.disabledRotation.equals(DisabledRotation.NONE))
@@ -51,13 +82,14 @@ public class Decoration {
 		return ItemFrameRotation.from(frameRotation.getRotation().rotateClockwise());
 	}
 
-	public void place(Player player, Block block, BlockFace blockFace, ItemStack item) {
+	public boolean place(Player player, Block block, BlockFace blockFace, ItemStack item) {
 		if (!isValidBlockFace(blockFace))
-			return;
+			return false;
 
 		ItemStack _item = item.clone();
 		_item.setAmount(1);
-		item.subtract();
+		if (!player.getGameMode().equals(GameMode.CREATIVE))
+			item.subtract();
 
 		World world = block.getWorld();
 		Location origin = block.getRelative(blockFace).getLocation().clone();
@@ -72,6 +104,7 @@ public class Decoration {
 		itemFrame.setItem(_item, false);
 
 		Hitbox.place(getHitboxes(), origin, frameRotation.getBlockFace());
+		return true;
 	}
 
 	private boolean isValidBlockFace(BlockFace blockFace) {
@@ -82,9 +115,13 @@ public class Decoration {
 		return true;
 	}
 
-	public void destroy(Player player, ItemFrame itemFrame) {
-		if (Seat.isOccupied(itemFrame.getLocation()))
-			return;
+	public boolean destroy(@NonNull Player player, @NonNull ItemFrame itemFrame) {
+		if (this instanceof Seat seat) {
+			if (seat.isOccupied(this, itemFrame)) {
+				PlayerUtils.send(player, StringUtils.getPrefix("Decoration") + "&cSeat is occupied");
+				return false;
+			}
+		}
 
 		World world = player.getWorld();
 		ItemStack item = itemFrame.getItem().clone();
@@ -94,14 +131,25 @@ public class Decoration {
 		Hitbox.destroy(getHitboxes(), origin, ItemFrameRotation.of(itemFrame).getBlockFace());
 
 		world.dropItemNaturally(origin, item);
+		return true;
 	}
 
 	public ItemStack getItem() {
-		return new ItemBuilder(material).customModelData(modelData).name(name).lore(lore).build();
+		ItemBuilder decor = new ItemBuilder(material).customModelData(modelData).name(name).lore(lore);
+		if (defaultColor != null)
+			decor.dyeColor(defaultColor);
+
+		return decor.build();
 	}
 
-	public void interact(Player player, ItemFrame itemFrame) {
+	public boolean interact(Player player, ItemFrame itemFrame, Block block) {
 		if (this instanceof Seat seat)
-			seat.trySit(player, itemFrame);
+			seat.trySit(player, block, itemFrame.getRotation());
+
+		return true;
+	}
+
+	public boolean isMultiBlock() {
+		return this.getClass().getAnnotation(MultiBlock.class) != null;
 	}
 }

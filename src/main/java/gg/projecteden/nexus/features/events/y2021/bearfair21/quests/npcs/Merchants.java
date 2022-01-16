@@ -17,7 +17,6 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.MerchantBuilder;
 import gg.projecteden.nexus.utils.MerchantBuilder.TradeBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
@@ -27,6 +26,8 @@ import org.bukkit.potion.PotionType;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 
 public class Merchants {
@@ -42,7 +43,7 @@ public class Merchants {
 			return;
 
 		List<TradeBuilder> trades = bfMerchant.getTrades(player);
-		if (Utils.isNullOrEmpty(trades))
+		if (isNullOrEmpty(trades))
 			return;
 
 		new MerchantBuilder(StringUtils.camelCase(bfMerchant.getBearFair21NPC().name() + " " + bfMerchant.getBearFair21NPC().getNpcName()))
@@ -147,7 +148,7 @@ public class Merchants {
 			@Override
 			public List<TradeBuilder> getTrades(BearFair21User user) {
 				return new ArrayList<>() {{
-					if (!Utils.isNullOrEmpty(Collector.getRandomTrades()))
+					if (!isNullOrEmpty(Collector.getRandomTrades()))
 						this.addAll(Collector.getRandomTrades());
 				}};
 			}

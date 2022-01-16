@@ -49,12 +49,14 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Data
 @Entity(value = "nerd", noClassnameStored = true)
@@ -66,6 +68,8 @@ public class Nerd extends gg.projecteden.mongodb.models.nerd.Nerd implements Pla
 	@EqualsAndHashCode.Exclude
 	private Location location;
 
+	private Set<WorldGroup> visitedWorldGroups = new HashSet<>();
+
 	// Set to null after they have moved
 	private Location loginLocation;
 	private Location teleportOnLogin;
@@ -73,19 +77,22 @@ public class Nerd extends gg.projecteden.mongodb.models.nerd.Nerd implements Pla
 	@PreLoad
 	void preLoad(DBObject dbObject) {
 		List<String> pronouns = (List<String>) dbObject.get("pronouns");
-		if (Utils.isNullOrEmpty(pronouns))
-			return;
+		if (!isNullOrEmpty(pronouns)) {
+			List<String> fixed = new ArrayList<>() {{
+				for (String pronoun : pronouns) {
+					final Pronoun of = Pronoun.of(pronoun);
+					if (of != null)
+						add(of.name());
+				}
+			}};
 
-		List<String> fixed = new ArrayList<>() {{
-			for (String pronoun : pronouns) {
-				final Pronoun of = Pronoun.of(pronoun);
-				if (of != null)
-					add(of.name());
-			}
-		}};
+			fixed.removeIf(Objects::isNull);
+			dbObject.put("pronouns", fixed);
+		}
 
-		fixed.removeIf(Objects::isNull);
-		dbObject.put("pronouns", fixed);
+		List<String> aliases = (List<String>) dbObject.get("aliases");
+		if (!isNullOrEmpty(aliases))
+			dbObject.put("aliases", aliases.stream().map(String::toLowerCase).toList());
 	}
 
 	public Nerd(@NonNull UUID uuid) {

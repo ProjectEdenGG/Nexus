@@ -16,7 +16,7 @@ import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-import static gg.projecteden.utils.StringUtils.plural;
+import static gg.projecteden.nexus.utils.StringUtils.plural;
 
 public abstract class AbstractVoteScreen extends MenuUtils implements InventoryProvider {
 	public abstract SmartInventory getInventory();

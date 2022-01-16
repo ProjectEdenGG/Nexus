@@ -88,7 +88,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 			else
 				return null;
 		}
-		if (member.getVoiceState() == null || !member.getVoiceState().inVoiceChannel())
+		if (member.getVoiceState() == null || !member.getVoiceState().inAudioChannel())
 			return null;
 		return member;
 	}

@@ -12,6 +12,7 @@ import gg.projecteden.nexus.models.mail.Mailer.Mail;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.WorldGroup;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -48,7 +49,9 @@ public class DailyVoteReward implements PlayerOwnedObject {
 	}
 
 	@Data
+	@Builder
 	@NoArgsConstructor
+	@AllArgsConstructor
 	@RequiredArgsConstructor
 	public static class DailyVoteStreak implements PlayerOwnedObject {
 		@NonNull

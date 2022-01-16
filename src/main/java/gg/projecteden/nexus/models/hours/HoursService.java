@@ -39,7 +39,7 @@ import static com.mongodb.client.model.Aggregates.sort;
 import static com.mongodb.client.model.Aggregates.unwind;
 import static com.mongodb.client.model.Filters.regex;
 import static com.mongodb.client.model.Projections.computed;
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @ObjectClass(Hours.class)
 public class HoursService extends MongoPlayerService<Hours> {

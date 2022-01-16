@@ -13,8 +13,8 @@ import gg.projecteden.nexus.models.shop.Shop.ExchangeType;
 import gg.projecteden.nexus.models.shop.Shop.Product;
 import gg.projecteden.nexus.models.shop.ShopService;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
@@ -33,6 +33,7 @@ import java.util.List;
 
 import static gg.projecteden.nexus.features.menus.SignMenuFactory.ARROWS;
 import static gg.projecteden.nexus.utils.ItemUtils.isSimilar;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.nexus.utils.StringUtils.pretty;
 
@@ -166,7 +167,7 @@ public class EditProductProvider extends ShopProvider {
 
 			ItemStack[] contents = event.getInventory().getContents();
 			for (ItemStack content : contents) {
-				if (ItemUtils.isNullOrAir(content))
+				if (isNullOrAir(content))
 					continue;
 
 				if (isSimilar(product.getItem(), content))
@@ -223,7 +224,7 @@ public class EditProductProvider extends ShopProvider {
 			ItemStack[] contents = event.getInventory().getContents();
 			int itemsLeft = 0;
 			for (ItemStack content : contents) {
-				if (ItemUtils.isNullOrAir(content))
+				if (isNullOrAir(content))
 					continue;
 
 				if (!isSimilar(product.getItem(), content)) {

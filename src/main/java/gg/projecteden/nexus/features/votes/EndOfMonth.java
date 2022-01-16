@@ -38,9 +38,10 @@ public class EndOfMonth {
 		Tasks.async(() -> {
 			try {
 				TopVoterData data = new TopVoterData(yearMonth);
-				Nexus.log(data.toString());
 
-				Koda.announce(data.getDiscordMessage());
+				final String discordMessage = data.getDiscordMessage();
+				System.out.println(discordMessage);
+				Koda.announce(discordMessage);
 				Votes.write();
 
 				if (data.getMysteryChestWinner() != null)

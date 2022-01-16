@@ -28,6 +28,8 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+
 public class BlockUtils {
 
 	public static Queue<Location> createDistanceSortedQueue(Location origin) {
@@ -227,10 +229,6 @@ public class BlockUtils {
 		return null;
 	}
 
-	public static boolean isNullOrAir(Block block) {
-		return block == null || block.getType().equals(Material.AIR);
-	}
-
 	public static void glow(Block block, int ticks, OptionalPlayer viewer) {
 		glow(block, ticks, viewer, Color.RED);
 	}
@@ -243,7 +241,7 @@ public class BlockUtils {
 		List<Player> _viewers = PlayerUtils.getNonNullPlayers(viewers);
 
 		Material material = block.getType();
-		if (ItemUtils.isNullOrAir(material))
+		if (isNullOrAir(material))
 			material = Material.WHITE_CONCRETE;
 
 		Location location = block.getLocation();

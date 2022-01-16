@@ -1,8 +1,9 @@
 package gg.projecteden.nexus.features.listeners;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.Utils;
+import org.apache.commons.lang.ObjectUtils.Null;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
+import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 public interface TemporaryMenuListener extends TemporaryListener {
 
@@ -31,7 +33,7 @@ public interface TemporaryMenuListener extends TemporaryListener {
 	default void open(int rows, List<ItemStack> contents) {
 		final int slots = rows * 9;
 		Inventory inv = Bukkit.createInventory(null, slots, colorize(getTitle()));
-		if (!Utils.isNullOrEmpty(contents))
+		if (!isNullOrEmpty(contents))
 			inv.setContents(contents.subList(0, Math.min(contents.size(), slots)).toArray(ItemStack[]::new));
 
 		Nexus.registerTemporaryListener(this);
@@ -45,7 +47,7 @@ public interface TemporaryMenuListener extends TemporaryListener {
 		if (!event.getPlayer().equals(getPlayer())) return;
 
 		List<ItemStack> contents = Arrays.stream(event.getInventory().getContents())
-				.filter(item -> !ItemUtils.isNullOrAir(item))
+				.filter(Nullables::isNotNullOrAir)
 				.collect(Collectors.toList());
 
 		onClose(event, contents);

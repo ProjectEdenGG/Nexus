@@ -23,8 +23,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
-import static gg.projecteden.utils.StringUtils.camelCase;
 
 // this should be called SabotageMenu but there's already a SabotageMenu so oh well
 @Getter

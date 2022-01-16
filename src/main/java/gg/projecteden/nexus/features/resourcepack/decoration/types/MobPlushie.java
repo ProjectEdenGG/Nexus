@@ -1,16 +1,14 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
 public class MobPlushie extends Decoration {
-	double dropChance;
+	@Getter
+	private final double dropChance;
 
 	public MobPlushie(String name, int modelData, double dropChance) {
-		this.name = name;
-		this.modelData = modelData;
+		super(name, modelData);
 		this.dropChance = dropChance;
-
 	}
 }

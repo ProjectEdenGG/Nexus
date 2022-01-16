@@ -7,7 +7,7 @@ import fr.minuskube.inv.content.Pagination;
 import fr.minuskube.inv.content.SlotIterator;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.minigames.models.Arena;
-import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NonNull;
 import org.bukkit.Material;
@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static gg.projecteden.nexus.features.minigames.Minigames.menus;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class BlockListMenu extends MenuUtils implements InventoryProvider {
 	Arena arena;
@@ -41,7 +42,7 @@ public class BlockListMenu extends MenuUtils implements InventoryProvider {
 				"&3Click me with an item||&3in your hand to add it."
 			),
 			e -> Tasks.wait(2, () -> {
-				if (ItemUtils.isNullOrAir(player.getItemOnCursor())) return;
+				if (isNullOrAir(player.getItemOnCursor())) return;
 				arena.getBlockList().add(player.getItemOnCursor().getType());
 				player.setItemOnCursor(new ItemStack(Material.AIR));
 				arena.write();

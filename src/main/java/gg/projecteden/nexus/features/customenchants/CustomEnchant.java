@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.customenchants;
 
-import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import io.papermc.paper.enchantments.EnchantmentRarity;
 import net.kyori.adventure.text.Component;
 import org.bukkit.NamespacedKey;
@@ -18,8 +18,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.StringUtils.toRoman;
-import static gg.projecteden.utils.StringUtils.camelCase;
 
 public abstract class CustomEnchant extends Enchantment {
 
@@ -131,7 +131,7 @@ public abstract class CustomEnchant extends Enchantment {
 			add(inventory.getItemInOffHand());
 		}};
 
-		items.removeIf(ItemUtils::isNullOrAir);
+		items.removeIf(Nullables::isNullOrAir);
 		return items;
 	}
 

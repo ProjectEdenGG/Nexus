@@ -14,6 +14,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
+import static gg.projecteden.utils.UUIDUtils.isUUID0;
+
 public class TicketFeature {
 	public static final String PREFIX = StringUtils.getPrefix("Tickets");
 
@@ -61,7 +63,7 @@ public class TicketFeature {
 				action.sendMessage(_staff.getUniqueId(), ticket, staffNick);
 		}
 
-		if (StringUtils.isUUID0(ticket.getUuid()))
+		if (isUUID0(ticket.getUuid()))
 			return;
 
 		if (Rank.of(ticket.getUuid()).isStaff())

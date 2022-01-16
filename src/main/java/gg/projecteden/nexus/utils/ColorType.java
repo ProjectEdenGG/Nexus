@@ -200,7 +200,7 @@ public enum ColorType implements IsColored {
 
 	@Override
 	public @NotNull Colored colored() {
-		return Colored.colored(chatColor);
+		return Colored.of(chatColor);
 	}
 
 	@Nullable
@@ -414,14 +414,24 @@ public enum ColorType implements IsColored {
 	}
 
 	@Nullable
-	public org.bukkit.ChatColor toBukkit() {
-		return toBukkit(getVanillaChatColor());
+	public org.bukkit.ChatColor toBukkitChatColor() {
+		return toBukkitChatColor(getVanillaChatColor());
 	}
 
 	@Nullable
-	public static org.bukkit.ChatColor toBukkit(@NotNull ChatColor color) {
+	public static org.bukkit.ChatColor toBukkitChatColor(@NotNull ChatColor color) {
 		try {
 			return org.bukkit.ChatColor.valueOf(color.getName().toUpperCase());
+		} catch (IllegalArgumentException e) {
+			return null;
+		}
+	}
+
+	@Nullable
+	public static org.bukkit.Color toBukkitColor(@NotNull ChatColor color) {
+		try {
+			final java.awt.Color awtColor = color.getColor();
+			return Color.fromRGB(awtColor.getRed(), awtColor.getGreen(), awtColor.getBlue());
 		} catch (IllegalArgumentException e) {
 			return null;
 		}

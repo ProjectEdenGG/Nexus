@@ -62,7 +62,7 @@ public class GamemodeCommand extends CustomCommand {
 		player.setGameMode(gamemode);
 		player.setAllowFlight(flight);
 
-		if (gamemode.equals(GameMode.SPECTATOR)) {
+		if (gamemode.equals(GameMode.CREATIVE) || gamemode.equals(GameMode.SPECTATOR)) {
 			player.setAllowFlight(true);
 			player.setFlying(true);
 		}

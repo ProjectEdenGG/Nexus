@@ -28,7 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 public class LocationUtils {
 	/**
@@ -239,7 +239,7 @@ public class LocationUtils {
 		return !(Math.abs(location1.getPitch() - location2.getPitch()) > MathUtils.FLOAT_ROUNDING_ERROR);
 	}
 
-	private static float toDegree(double angle) {
+	public static float toDegree(double angle) {
 		return (float) Math.toDegrees(angle);
 	}
 

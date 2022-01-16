@@ -13,7 +13,7 @@ import gg.projecteden.nexus.features.minigames.mechanics.HoleInTheWall;
 import gg.projecteden.nexus.features.minigames.menus.annotations.CustomMechanicSettings;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.arenas.HoleInTheWallArena;
-import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NonNull;
 import org.bukkit.Location;
@@ -23,6 +23,8 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @CustomMechanicSettings(HoleInTheWall.class)
 public class HoleInTheWallMenu extends MenuUtils implements InventoryProvider {
@@ -80,7 +82,7 @@ public class HoleInTheWallMenu extends MenuUtils implements InventoryProvider {
 			contents.set(0, 8, ClickableItem.from(deleteItem, e -> Tasks.wait(2, () -> {
 				if (player.getItemOnCursor().getType().equals(Material.TNT)) {
 					player.setItemOnCursor(new ItemStack(Material.AIR));
-				} else if (ItemUtils.isNullOrAir(player.getItemOnCursor())) {
+				} else if (isNullOrAir(player.getItemOnCursor())) {
 					player.setItemOnCursor(deleteItem);
 				}
 			})));

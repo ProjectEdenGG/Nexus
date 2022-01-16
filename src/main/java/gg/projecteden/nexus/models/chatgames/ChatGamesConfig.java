@@ -47,8 +47,8 @@ import java.util.UUID;
 
 import static gg.projecteden.nexus.features.discord.Discord.discordize;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
-import static gg.projecteden.utils.StringUtils.getDiscordPrefix;
-import static gg.projecteden.utils.StringUtils.prettyMoney;
+import static gg.projecteden.nexus.utils.StringUtils.getDiscordPrefix;
+import static gg.projecteden.nexus.utils.StringUtils.prettyMoney;
 
 @Data
 @Entity(value = "chat_games_config", noClassnameStored = true)
@@ -221,7 +221,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 						add("&eRankings:");
 						for (int i = 1; i <= completed.size(); i++) {
 							ChatGameUser user = getCompleted().get(i - 1);
-							String timespan = Timespan.of(user.getSeconds()).format();
+							String timespan = Timespan.ofSeconds(user.getSeconds()).format();
 							add("&3" + i + ": &e" + timespan + " &3- &e" + Nickname.of(user.getUuid()));
 						}
 					}});
@@ -248,7 +248,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 					message.setEmbeds(new EmbedBuilder() {{
 						for (int i = 1; i <= completed.size(); i++) {
 							ChatGameUser user = getCompleted().get(i - 1);
-							String timespan = Timespan.of(user.getSeconds()).format();
+							String timespan = Timespan.ofSeconds(user.getSeconds()).format();
 							appendDescription(String.format("**%d**: %s%n", i, timespan + " - " + Nickname.discordOf(user.getUuid())));
 						}
 					}}.setTitle("Rankings").build());

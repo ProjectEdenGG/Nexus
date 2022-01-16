@@ -14,9 +14,11 @@ import gg.projecteden.exceptions.EdenException;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
+import gg.projecteden.nexus.features.resourcepack.ResourcePack.ResourcePackNumber;
 import gg.projecteden.nexus.features.shops.Shops;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -110,6 +112,14 @@ public abstract class MenuUtils {
 
 	protected boolean isRightClick(ItemClickData e) {
 		return isClickType(e, ClickType.RIGHT);
+	}
+
+	protected boolean isAnyRightClick(ItemClickData e) {
+		return isRightClick(e) || isShiftRightClick(e);
+	}
+
+	protected boolean isAnyLeftClick(ItemClickData e) {
+		return isLeftClick(e) || isShiftLeftClick(e);
 	}
 
 	protected boolean isLeftClick(ItemClickData e) {
@@ -320,16 +330,20 @@ public abstract class MenuUtils {
 			int nextPage = currentPage + 1;
 
 			String[] lore = {"&f", "&7Right click to jump to a page"};
-			ItemBuilder previous = new ItemBuilder(Material.ARROW).name("&fPrevious Page").lore(lore);
-			ItemBuilder next = new ItemBuilder(Material.ARROW).name("&fNext Page").lore(lore);
 
-			if (hasResourcePack) {
-				previous.customModelData(4000 + previousPage);
-				next.customModelData(4000 + nextPage);
-			} else {
-				previous.amount(previousPage);
-				next.amount(nextPage);
-			}
+			ItemBuilder previous = ResourcePackNumber.of(previousPage)
+				.hasResourcePack(hasResourcePack)
+				.color(ColorType.CYAN)
+				.get()
+				.name("&fPrevious Page")
+				.lore(lore);
+
+			ItemBuilder next = ResourcePackNumber.of(nextPage)
+				.hasResourcePack(hasResourcePack)
+				.color(ColorType.CYAN)
+				.get()
+				.name("&fNext Page")
+				.lore(lore);
 
 			page.setItemsPerPage(perPage);
 			page.setItems(items.toArray(ClickableItem[]::new));

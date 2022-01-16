@@ -19,7 +19,7 @@ import org.bukkit.inventory.Recipe;
 import org.jetbrains.annotations.NotNull;
 
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shapeless;
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class InfiniteWaterBucket extends FunctionalRecipe {
 
@@ -107,7 +107,11 @@ public class InfiniteWaterBucket extends FunctionalRecipe {
 	}
 
 	private static boolean isInfiniteWaterBucket(ItemStack item) {
-		return getCustomModel().equals(CustomModel.of(item));
+		final CustomModel customModel = getCustomModel();
+		if (customModel == null)
+			return false;
+
+		return customModel.equals(CustomModel.of(item));
 	}
 
 }

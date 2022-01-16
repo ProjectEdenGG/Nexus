@@ -143,7 +143,7 @@ public enum ScoreboardLine {
 	WORLD {
 		@Override
 		public String render(Player player) {
-			return "&3World: &e" + StringUtils.getWorldDisplayName(player.getWorld());
+			return "&3World: &e" + StringUtils.getWorldDisplayName(player.getLocation(), player.getWorld());
 		}
 	},
 
@@ -228,7 +228,7 @@ public enum ScoreboardLine {
 		@Override
 		public String render(Player player) {
 			Hours hours = new HoursService().get(player.getUniqueId());
-			return "&3Hours: &e" + TimespanBuilder.of(hours.getTotal()).noneDisplay(true).format();
+			return "&3Hours: &e" + TimespanBuilder.ofSeconds(hours.getTotal()).noneDisplay(true).format();
 		}
 	},
 

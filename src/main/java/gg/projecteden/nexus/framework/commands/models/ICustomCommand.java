@@ -26,6 +26,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineE
 import gg.projecteden.nexus.framework.exceptions.preconfigured.MissingArgumentException;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.NoPermissionException;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -59,10 +60,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
 import static gg.projecteden.nexus.framework.commands.models.CustomCommand.getSwitchPattern;
 import static gg.projecteden.nexus.framework.commands.models.PathParser.getLiteralWords;
 import static gg.projecteden.nexus.framework.commands.models.PathParser.getPathString;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.COMMA_SPLIT_REGEX;
 import static gg.projecteden.nexus.utils.StringUtils.asParsableDecimal;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
@@ -70,6 +71,7 @@ import static gg.projecteden.nexus.utils.Utils.getDefaultPrimitiveValue;
 import static gg.projecteden.nexus.utils.Utils.getMaxValue;
 import static gg.projecteden.nexus.utils.Utils.getMinValue;
 import static gg.projecteden.nexus.utils.Utils.isBoolean;
+import static gg.projecteden.utils.UUIDUtils.UUID0;
 import static org.reflections.ReflectionUtils.getAllMethods;
 import static org.reflections.ReflectionUtils.withAnnotation;
 
@@ -459,14 +461,14 @@ public abstract class ICustomCommand {
 		methods.addAll(overridden.values());
 
 		methods.sort(
-				Comparator.comparing(method ->
-						Arrays.stream(getLiteralWords(getPathString((Method) method)).split(" "))
-								.filter(path -> !isNullOrEmpty(path))
-								.count())
-				.thenComparing(method ->
-						Arrays.stream(getPathString((Method) method).split(" "))
-								.filter(path -> !isNullOrEmpty(path))
-								.count()));
+			Comparator.comparing(method ->
+				Arrays.stream(getLiteralWords(getPathString((Method) method)).split(" "))
+					.filter(Nullables::isNotNullOrEmpty)
+					.count())
+			.thenComparing(method ->
+				Arrays.stream(getPathString((Method) method).split(" "))
+					.filter(Nullables::isNotNullOrEmpty)
+					.count()));
 
 		List<Method> filtered = methods.stream()
 			.filter(method -> method.getAnnotation(Disabled.class) == null)
@@ -534,7 +536,7 @@ public abstract class ICustomCommand {
 				int ticks = cooldown.value().x(cooldown.x());
 
 				CooldownService service = new CooldownService();
-				UUID uuid = cooldown.global() ? StringUtils.getUUID0() : ((Player) command.getEvent().getSender()).getUniqueId();
+				UUID uuid = cooldown.global() ? UUID0 : ((Player) command.getEvent().getSender()).getUniqueId();
 				String type = "command:" + commandId;
 
 				if (!service.check(uuid, type, ticks))

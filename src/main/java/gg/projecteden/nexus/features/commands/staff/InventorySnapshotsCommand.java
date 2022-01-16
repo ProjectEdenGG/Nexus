@@ -18,11 +18,10 @@ import gg.projecteden.nexus.models.inventoryhistory.InventoryHistory;
 import gg.projecteden.nexus.models.inventoryhistory.InventoryHistory.InventorySnapshot;
 import gg.projecteden.nexus.models.inventoryhistory.InventoryHistory.SnapshotReason;
 import gg.projecteden.nexus.models.inventoryhistory.InventoryHistoryService;
-import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -53,6 +52,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiFunction;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.PlayerUtils.getPlayer;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.nexus.utils.StringUtils.getShortLocationString;
@@ -214,7 +214,7 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 		if (!applyingToChest.containsKey(uuid))
 			return;
 
-		if (BlockUtils.isNullOrAir(block) || !MaterialTag.CHESTS.isTagged(block.getType()))
+		if (isNullOrAir(block) || !MaterialTag.CHESTS.isTagged(block.getType()))
 			return;
 
 		if (!(block.getState() instanceof InventoryHolder holder))
@@ -223,10 +223,10 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 		event.setCancelled(true);
 
 		final Inventory inventory = holder.getInventory();
-		final long freeSpace = Arrays.stream(inventory.getContents()).filter(ItemUtils::isNullOrAir).count();
+		final long freeSpace = Arrays.stream(inventory.getContents()).filter(Nullables::isNullOrAir).count();
 
 		final InventorySnapshot snapshot = applyingToChest.get(uuid);
-		final List<ItemStack> contents = snapshot.getContents().stream().filter(item -> !ItemUtils.isNullOrAir(item)).toList();
+		final List<ItemStack> contents = snapshot.getContents().stream().filter(Nullables::isNotNullOrAir).toList();
 
 		if (contents.size() > freeSpace) {
 			PlayerUtils.send(player, PREFIX + "&cSnapshot contents too large for this inventory");

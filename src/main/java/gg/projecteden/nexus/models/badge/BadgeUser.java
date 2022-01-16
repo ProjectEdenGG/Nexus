@@ -24,7 +24,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 
-import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Data
 @Entity(value = "badge_user", noClassnameStored = true)

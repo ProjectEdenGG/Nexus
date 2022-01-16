@@ -29,8 +29,8 @@ import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.List;
 
-import static gg.projecteden.utils.RandomUtils.chanceOf;
-import static gg.projecteden.utils.StringUtils.right;
+import static gg.projecteden.nexus.utils.RandomUtils.chanceOf;
+import static gg.projecteden.nexus.utils.StringUtils.right;
 
 @Disabled
 public class Halloween21 implements Listener {

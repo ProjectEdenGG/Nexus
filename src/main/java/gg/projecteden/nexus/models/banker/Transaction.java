@@ -5,7 +5,6 @@ import dev.morphia.annotations.PreLoad;
 import gg.projecteden.interfaces.HasUniqueId;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,6 +21,7 @@ import java.util.UUID;
 
 import static gg.projecteden.nexus.models.banker.BankerService.rounded;
 import static gg.projecteden.nexus.models.banker.Transaction.TransactionCause.shopCauses;
+import static gg.projecteden.utils.UUIDUtils.isUUID0;
 
 @Data
 @Builder
@@ -63,13 +63,13 @@ public class Transaction {
 	}
 
 	public Transaction(HasUniqueId sender, HasUniqueId receiver, BigDecimal amount, ShopGroup shopGroup, String description, TransactionCause cause) {
-		if (receiver != null && !StringUtils.isUUID0(receiver.getUniqueId())) {
+		if (receiver != null && !isUUID0(receiver.getUniqueId())) {
 			this.receiver = receiver.getUniqueId();
 			this.receiverOldBalance = rounded(new BankerService().get(receiver).getBalance(shopGroup));
 			this.receiverNewBalance = rounded(this.receiverOldBalance.add(amount));
 		}
 
-		if (sender != null && !StringUtils.isUUID0(sender.getUniqueId())) {
+		if (sender != null && !isUUID0(sender.getUniqueId())) {
 			this.sender = sender.getUniqueId();
 			this.senderOldBalance = rounded(new BankerService().get(sender).getBalance(shopGroup));
 			this.senderNewBalance = rounded(this.senderOldBalance.subtract(amount));

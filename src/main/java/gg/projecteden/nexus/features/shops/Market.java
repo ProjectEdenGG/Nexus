@@ -8,12 +8,13 @@ import gg.projecteden.nexus.models.shop.Shop.ExchangeType;
 import gg.projecteden.nexus.models.shop.Shop.Product;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.models.shop.ShopService;
-import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static gg.projecteden.utils.UUIDUtils.UUID0;
 
 public class Market {
 	private static final ShopService service = new ShopService();
@@ -229,7 +230,7 @@ public class Market {
 	}
 
 	private static void addSellItem(ShopGroup shopGroup, boolean isResourceWorld, ItemStack item, double price) {
-		add(new Product(StringUtils.getUUID0(), shopGroup, isResourceWorld, item, -1, ExchangeType.SELL, price));
+		add(new Product(UUID0, shopGroup, isResourceWorld, item, -1, ExchangeType.SELL, price));
 	}
 
 	private static void addBuyItem(ShopGroup shopGroup, boolean isResourceWorld, Material material, int quantity, double price) {
@@ -237,7 +238,7 @@ public class Market {
 	}
 
 	private static void addBuyItem(ShopGroup shopGroup, boolean isResourceWorld, ItemStack item, double price) {
-		final Product product = new Product(StringUtils.getUUID0(), shopGroup, isResourceWorld, item, -1, ExchangeType.BUY, price * BoostConfig.multiplierOf(Boostable.MARKET_SELL_PRICES));
+		final Product product = new Product(UUID0, shopGroup, isResourceWorld, item, -1, ExchangeType.BUY, price * BoostConfig.multiplierOf(Boostable.MARKET_SELL_PRICES));
 
 		if (product.isResourceWorld())
 			RESOURCE_WORLD_PRODUCTS.add(product);

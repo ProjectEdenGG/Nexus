@@ -8,8 +8,8 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fi
 import gg.projecteden.nexus.features.particles.ParticleUtils;
 import gg.projecteden.nexus.models.bearfair21.BearFair21User;
 import gg.projecteden.nexus.models.bearfair21.BearFair21UserService;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.LocationUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
@@ -83,7 +84,7 @@ public class Recycler implements Listener {
 		List<ItemStack> trash = new ArrayList<>();
 		List<ItemStack> giveBack = new ArrayList<>();
 		for (ItemStack itemStack : event.getInventory().getContents()) {
-			if (!ItemUtils.isNullOrAir(itemStack)) {
+			if (!isNullOrAir(itemStack)) {
 				if (FishingLoot.isTrash(itemStack))
 					trash.add(itemStack);
 				else

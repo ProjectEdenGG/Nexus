@@ -8,8 +8,8 @@ import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegion
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.utils.ActionBarUtils;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -50,9 +50,26 @@ import java.util.List;
 import java.util.Set;
 
 import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
-import static gg.projecteden.nexus.utils.BlockUtils.isNullOrAir;
 import static gg.projecteden.nexus.utils.EntityUtils.isHostile;
-import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.*;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.ACTIONBAR_TICKS;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.ALLOW_SPAWN;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.FAREWELL_ACTIONBAR;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.FAREWELL_SUBTITLE;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.FAREWELL_TITLE;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.GRASS_DECAY;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.GREETING_ACTIONBAR;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.GREETING_SUBTITLE;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.GREETING_TITLE;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.HANGING_BREAK;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.HOSTILE_SPAWN;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.MINIGAMES_WATER_DAMAGE;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.MOB_AGGRESSION;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.TAMING;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.TITLE_FADE;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.TITLE_TICKS;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.USE_NOTE_BLOCKS;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.USE_TRAP_DOORS;
 
 public class WorldGuardFlags implements Listener {
 
@@ -91,7 +108,7 @@ public class WorldGuardFlags implements Listener {
 		if (event.getDamager() instanceof Player) {
 			if (event.getEntity() instanceof ItemFrame itemFrame) {
 				ItemStack itemStack = itemFrame.getItem();
-				if (ItemUtils.isNullOrAir(itemStack))
+				if (isNullOrAir(itemStack))
 					return;
 
 				if (CustomModel.exists(itemStack))
@@ -110,7 +127,7 @@ public class WorldGuardFlags implements Listener {
 
 		} else if (event.getEntity() instanceof ItemFrame itemFrame) {
 			ItemStack itemStack = itemFrame.getItem();
-			if (ItemUtils.isNullOrAir(itemStack))
+			if (isNullOrAir(itemStack))
 				return;
 
 			if (CustomModel.exists(itemStack)) {
@@ -133,7 +150,7 @@ public class WorldGuardFlags implements Listener {
 		if (!Action.RIGHT_CLICK_BLOCK.equals(event.getAction())) return;
 
 		ItemStack item = event.getItem();
-		if (ItemUtils.isNullOrAir(item)) return;
+		if (isNullOrAir(item)) return;
 		if (!item.getType().equals(Material.BONE_MEAL)) return;
 
 		Block clicked = event.getClickedBlock();

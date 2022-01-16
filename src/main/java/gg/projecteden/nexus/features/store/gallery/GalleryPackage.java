@@ -1,15 +1,32 @@
 package gg.projecteden.nexus.features.store.gallery;
 
 
+import com.destroystokyo.paper.ParticleBuilder;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.gmail.filoghost.holographicdisplays.api.line.ItemLine;
+import fr.minuskube.inv.ClickableItem;
+import fr.minuskube.inv.content.InventoryContents;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.chat.Emotes;
+import gg.projecteden.nexus.features.custombenches.DyeStation;
+import gg.projecteden.nexus.features.custombenches.DyeStation.DyeStationMenu;
+import gg.projecteden.nexus.features.particles.providers.EffectSettingProvider;
+import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
+import gg.projecteden.nexus.features.store.Package;
+import gg.projecteden.nexus.features.store.StoreCommand;
+import gg.projecteden.nexus.features.store.annotations.Category.StoreCategory;
 import gg.projecteden.nexus.features.store.gallery.annotations.Category;
 import gg.projecteden.nexus.features.store.gallery.annotations.Category.GalleryCategory;
+import gg.projecteden.nexus.features.store.gallery.annotations.RealCategory;
+import gg.projecteden.nexus.features.store.perks.CostumeCommand.CostumeMenu;
 import gg.projecteden.nexus.features.store.perks.joinquit.JoinQuit;
 import gg.projecteden.nexus.features.store.perks.workbenches.WorkbenchesCommand.WorkbenchesMenu;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.models.costume.Costume;
+import gg.projecteden.nexus.models.costume.CostumeUser;
+import gg.projecteden.nexus.models.particle.ParticleType;
+import gg.projecteden.nexus.models.playerplushie.PlayerPlushieConfig;
 import gg.projecteden.nexus.models.rainbowarmor.RainbowArmorTask;
 import gg.projecteden.nexus.models.rainbowbeacon.RainbowBeacon;
 import gg.projecteden.nexus.models.rainbowbeacon.RainbowBeaconService;
@@ -19,11 +36,10 @@ import gg.projecteden.nexus.utils.FireworkLauncher;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.PlayerUtils.ArmorSlot;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.EnumUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -37,11 +53,16 @@ import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
@@ -54,25 +75,109 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static gg.projecteden.nexus.features.store.BuycraftUtils.ADD_TO_CART_URL;
+import static gg.projecteden.nexus.features.store.BuycraftUtils.CATEGORY_URL;
+import static gg.projecteden.nexus.utils.RandomUtils.randomElement;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
-import static gg.projecteden.utils.RandomUtils.randomElement;
-import static gg.projecteden.utils.StringUtils.getUUID0;
+import static gg.projecteden.utils.EnumUtils.random;
+import static gg.projecteden.utils.UUIDUtils.UUID0;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+// TODO Wakka - Sounds & other feedback
 public enum GalleryPackage {
 	@Category(GalleryCategory.VISUALS)
-	COSTUMES,
+	COSTUMES(4307) {
+		@NoArgsConstructor
+		static class CostumeDisplayMenu extends CostumeMenu {
+
+			public CostumeDisplayMenu(CostumeMenu previousMenu, CustomModelFolder folder) {
+				super(previousMenu, folder);
+			}
+
+			@Override
+			protected CostumeMenu newMenu(CostumeMenu previousMenu, CustomModelFolder subfolder) {
+				return new CostumeDisplayMenu(previousMenu, subfolder);
+			}
+
+			@Override
+			protected boolean isAvailableCostume(CostumeUser user, Costume costume) {
+				return true;
+			}
+
+			@Override
+			protected void init(CostumeUser user, InventoryContents contents) {
+				final Costume costume = Costume.of(user.getActiveDisplayCostume());
+				if (costume != null) {
+					final ItemBuilder builder = new ItemBuilder(user.getCostumeDisplayItem(costume))
+						.lore("", "&a&lActive", "&cClick to deactivate")
+						.glow();
+
+					contents.set(0, 4, ClickableItem.from(builder.build(), e -> {
+						user.setActiveDisplayCostume(null);
+						service.save(user);
+						open(user.getOnlinePlayer(), contents.pagination().getPage());
+					}));
+
+					if (MaterialTag.DYEABLE.isTagged(costume.getItem().getType())) {
+						contents.set(0, 6, ClickableItem.from(DyeStation.getDyeStation().build(), e ->
+							new DyeStationMenu().openCostume(user, costume, data -> {
+								user.dye(costume, data.getColor());
+								service.save(user);
+								open(user.getOnlinePlayer());
+							})));
+					}
+				}
+			}
+
+			@Override
+			protected ClickableItem formatCostume(CostumeUser user, Costume costume, InventoryContents contents) {
+				final ItemBuilder builder = new ItemBuilder(user.getCostumeDisplayItem(costume));
+				if (costume.getId().equals(user.getActiveDisplayCostume()))
+					builder.lore("", "&a&lActive").glow();
+
+				return ClickableItem.from(builder.build(), e -> {
+					user.setActiveDisplayCostume(costume.getId().equals(user.getActiveDisplayCostume()) ? null : costume);
+					service.save(user);
+					open(user.getOnlinePlayer(), contents.pagination().getPage());
+				});
+			}
+		}
+
+		@Override
+		public void onNpcInteract(Player player) {
+			new CostumeDisplayMenu().open(player);
+		}
+	},
 
 	@Category(GalleryCategory.VISUALS)
-	WINGS,
+	PARTICLE_WINGS(4306) {
+		@Override
+		public void onNpcInteract(Player player) {
+			new EffectSettingProvider(ParticleType.WINGS, entity()).open(player);
+		}
+	},
 
 	@Category(GalleryCategory.VISUALS)
 	INVISIBLE_ARMOR,
 
 	@Category(GalleryCategory.VISUALS)
-	PLAYER_PLUSHIES,
+	PLAYER_PLUSHIES {
+		@Override
+		public void onEntityInteract(Player player, Entity entity) {
+			if (!(entity instanceof ItemFrame itemFrame))
+				return;
+
+			itemFrame.setSilent(true);
+			itemFrame.setItem(getRandomPlushie(), false);
+			new SoundBuilder(Sound.ENTITY_ITEM_FRAME_ROTATE_ITEM).location(itemFrame).play();
+		}
+
+		private ItemStack getRandomPlushie() {
+			return new ItemBuilder(PlayerPlushieConfig.MATERIAL).customModelData(PlayerPlushieConfig.randomActive()).build();
+		}
+	},
 
 	@Category(GalleryCategory.VISUALS)
 	NPCS(4531) {
@@ -89,7 +194,7 @@ public enum GalleryPackage {
 	@Category(GalleryCategory.VISUALS)
 	FIREWORKS {
 		public Location getLaunchLocation() {
-			return StoreGallery.location(1057.5, 69, 983.5);
+			return StoreGallery.location(1065.5, 69, 983.5);
 		}
 
 		@Override
@@ -111,6 +216,9 @@ public enum GalleryPackage {
 		@Override
 		public void init() {
 			Tasks.repeat(0, TickTime.SECOND.x(5), () -> {
+				if (npc() == null)
+					return;
+
 				final int nearby = recipients().size();
 
 				if (nearby == 0) {
@@ -135,7 +243,7 @@ public enum GalleryPackage {
 
 		private void start() {
 			task = RainbowArmorTask.builder()
-				.entity((HumanEntity) npc().getEntity())
+				.entity(entity())
 				.build()
 				.start();
 		}
@@ -192,16 +300,23 @@ public enum GalleryPackage {
 	},
 
 	@Category(GalleryCategory.VISUALS)
-	PLAYER_TIME,
-
-	@Category(GalleryCategory.VISUALS)
 	ENTITY_NAME,
 
 	@Category(GalleryCategory.CHAT)
-	PREFIX,
+	PREFIX {
+		@Override
+		public void onImageInteract(Player player) {
+			if (!cooldown(TickTime.MINUTE))
+				return;
+
+			PlayerUtils.send(player, "&c/prefix test <prefix...>");
+			PlayerUtils.send(player, "&c/prefix test gradient <colors> <prefix...>");
+			PlayerUtils.send(player, "&c/prefix test rainbow <prefix...>");
+		}
+	},
 
 	@Category(GalleryCategory.CHAT)
-	NICKNAMES,
+	NICKNAME,
 
 	@Category(GalleryCategory.CHAT)
 	JOIN_QUIT {
@@ -218,9 +333,20 @@ public enum GalleryPackage {
 	},
 
 	@Category(GalleryCategory.CHAT)
-	EMOTES,
+	EMOTES {
+		@Override
+		public void onImageInteract(Player player) {
+			final Emotes emote = random(Emotes.class);
+			String result = emote.getEmote();
+			if (emote.getColors().size() > 0)
+				result = randomElement(emote.getColors()) + result;
+
+			PlayerUtils.send(player, "&6&l[Example] " + result);
+		}
+	},
 
 	@Category(GalleryCategory.PETS_DISGUISES)
+	@RealCategory(StoreCategory.PETS)
 	PETS(4527) {
 		@Override
 		public void onNpcInteract(Player player) {
@@ -233,13 +359,14 @@ public enum GalleryPackage {
 	},
 
 	@Category(GalleryCategory.PETS_DISGUISES)
+	@RealCategory(StoreCategory.DISGUISES)
 	DISGUISES,
 
 	@Category(GalleryCategory.INVENTORY)
-	AUTOSORT,
+	AUTO_INVENTORY,
 
 	@Category(GalleryCategory.INVENTORY)
-	AUTOTORCH {
+	AUTO_TORCH {
 		private static final Map<UUID, ExampleTorcher> torchers = new HashMap<>();
 
 		@Data
@@ -324,10 +451,36 @@ public enum GalleryPackage {
 	},
 
 	@Category(GalleryCategory.INVENTORY)
+	FIREWORK_BOW {
+		public Location getLaunchLocation() {
+			return StoreGallery.location(943.5, 69, 972.5);
+		}
+
+		@Override
+		public void onImageInteract(Player player) {
+			if (!cooldown(TickTime.SECOND.x(5)))
+				return;
+
+			FireworkLauncher.random(getLaunchLocation())
+				.detonateAfter(13)
+				.silent(true)
+				.launch();
+		}
+	},
+
+	@Category(GalleryCategory.INVENTORY)
+	HAT(4546) {
+		@Override
+		public void onNpcInteract(Player player) {
+			inventory().setItem(EquipmentSlot.HEAD, new ItemStack(MaterialTag.ITEMS.random()));
+		}
+	},
+
+	@Category(GalleryCategory.INVENTORY)
 	VAULTS {
 		@Override
 		public void onImageInteract(Player player) {
-			player.openInventory(Bukkit.createInventory(null, 3 * 9, new JsonBuilder("&cVault #1").build()));
+			player.openInventory(Bukkit.createInventory(null, 3 * 9, new JsonBuilder("&4Vault #1").build()));
 		}
 	},
 
@@ -358,12 +511,12 @@ public enum GalleryPackage {
 	},
 
 	@Category(GalleryCategory.INVENTORY)
-	SKULL {
+	PLAYER_HEAD {
 		private Hologram hologram;
 
 		@Override
 		public void init() {
-			final Location location = StoreGallery.location(944.5, 70.25, 964.5);
+			final Location location = StoreGallery.location(1048.5, 70.25, 991.5);
 			hologram = HologramsAPI.createHologram(Nexus.getInstance(), location);
 
 			final ItemBuilder builder = new ItemBuilder(Material.PLAYER_HEAD);
@@ -382,22 +535,46 @@ public enum GalleryPackage {
 		}
 	},
 
-	@Category(GalleryCategory.INVENTORY)
-	HAT,
+	@Category(GalleryCategory.MISC)
+	CUSTOM_DONATION {
+		public Location getLocation() {
+			return StoreGallery.location(967.5, 71.5, 992.5);
+		}
 
-	@Category(GalleryCategory.INVENTORY)
-	FIREWORK_BOW,
+		@Override
+		public void onImageInteract(Player player) {
+			if (!cooldown(TickTime.SECOND))
+				return;
+
+			new ParticleBuilder(Particle.HEART)
+				.receivers(player)
+				.location(getLocation())
+				.offset(1, 0.75, 0.2)
+				.extra(0)
+				.count(15)
+				.spawn();
+		}
+	},
 
 	@Category(GalleryCategory.MISC)
-	CUSTOM_CONTRIBUTION,
+	PLUS_FIVE_HOMES {
+		@Override
+		public void onImageInteract(Player player) {
+			PlayerUtils.runCommand(player, "homes limit");
+		}
+	},
+
+	// TODO Doesn't work (see listener)
+	@Category(GalleryCategory.MISC)
+	CREATIVE_PLOTS {
+		@Override
+		public void onImageInteract(Player player) {
+			PlayerUtils.runCommand(player, "plots limit");
+		}
+	},
 
 	@Category(GalleryCategory.MISC)
-	PLUS_5_HOMES,
-
-	@Category(GalleryCategory.MISC)
-	CREATIVE_PLOTS,
-
-	@Category(GalleryCategory.MISC)
+	@RealCategory(StoreCategory.BOOSTS)
 	BOOSTS,
 	;
 
@@ -408,6 +585,24 @@ public enum GalleryPackage {
 	public void onNpcInteract(Player player) {}
 
 	public void onImageInteract(Player player) {}
+
+	public void onEntityInteract(Player player, Entity entity) {}
+
+	public void onClickCart(Player player) {
+		String url;
+		try {
+			url = ADD_TO_CART_URL.formatted(getStorePackage().getId());
+		} catch (IllegalArgumentException ex) {
+			url = CATEGORY_URL.formatted(getCategoryId());
+		}
+
+		new JsonBuilder(StoreCommand.PREFIX + "&eClick here &3to open the store").url(url).send(player);
+	}
+
+	@NotNull
+	private Package getStorePackage() {
+		return Package.valueOf(name());
+	}
 
 	public void shutdown() {}
 
@@ -420,13 +615,28 @@ public enum GalleryPackage {
 	}
 
 	protected boolean cooldown(int ticks) {
-		return new CooldownService().check(getUUID0(), getRegionId(), ticks);
+		return new CooldownService().check(UUID0, getRegionId(), ticks);
 	}
 
 	public NPC npc() {
 		if (npcId > 0)
 			return CitizensUtils.getNPC(npcId);
 		return null;
+	}
+
+	public <T extends Entity> T entity() {
+		final NPC npc = npc();
+		if (npc == null || npc.getEntity() == null)
+			return null;
+		return (T) npc.getEntity();
+	}
+
+	public HumanEntity humanEntity() {
+		return entity();
+	}
+
+	public PlayerInventory inventory() {
+		return humanEntity().getInventory();
 	}
 
 	@SneakyThrows
@@ -438,6 +648,16 @@ public enum GalleryPackage {
 		return getField().getAnnotation(Category.class).value();
 	}
 
+	public String getCategoryId() {
+		final RealCategory annotation = getField().getAnnotation(RealCategory.class);
+		final GalleryCategory galleryCategory = getCategory();
+		final StoreCategory storeCategory = annotation == null ? null : annotation.value();
+		if (storeCategory == null)
+			return galleryCategory.name().toLowerCase();
+		else
+			return storeCategory.name().toLowerCase();
+	}
+
 	public static void onStop() {
 		for (GalleryPackage galleryPackage : GalleryPackage.values())
 			galleryPackage.shutdown();
@@ -446,6 +666,14 @@ public enum GalleryPackage {
 	public static void onStart() {
 		for (GalleryPackage galleryPackage : GalleryPackage.values())
 			galleryPackage.init();
+	}
+
+	public static GalleryPackage of(NPC npc) {
+		for (GalleryPackage galleryPackage : GalleryPackage.values())
+			if (galleryPackage.getNpcId() == npc.getId())
+				return galleryPackage;
+
+		return null;
 	}
 
 }

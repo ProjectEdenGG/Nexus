@@ -30,6 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static gg.projecteden.nexus.utils.StringUtils.countUpperCase;
+import static gg.projecteden.utils.UUIDUtils.UUID0;
 
 public class Censor {
 	@Getter
@@ -136,7 +137,7 @@ public class Censor {
 								type = PunishmentType.WARN;
 
 							Punishments.of(event.getChatter()).add(Punishment.ofType(type)
-									.punisher(StringUtils.getUUID0())
+									.punisher(UUID0)
 									.input(censorItem.getPunishReason() + ": " + event.getOriginalMessage())
 									.now(true));
 						}

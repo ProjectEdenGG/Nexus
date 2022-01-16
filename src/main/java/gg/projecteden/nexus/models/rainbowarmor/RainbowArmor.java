@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Data
 @Entity(value = "rainbow_armor", noClassnameStored = true)
@@ -35,6 +35,7 @@ public class RainbowArmor implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private boolean enabled;
+	private double speed = 1.0;
 	private Set<ArmorSlot> disabledSlots = new HashSet<>();
 	private transient RainbowArmorTask task;
 
@@ -50,6 +51,7 @@ public class RainbowArmor implements PlayerOwnedObject {
 
 		task = RainbowArmorTask.builder()
 			.entity(getOnlinePlayer())
+			.rate((int) Math.floor(12 * speed))
 			.disabledSlots(disabledSlots)
 			.cancelIf(this::isNotAllowed)
 			.build()

@@ -14,7 +14,6 @@ import org.bukkit.entity.Player;
 
 @Permission("essentials.fly")
 public class FlyCommand extends CustomCommand {
-
 	private final ModeUserService service = new ModeUserService();
 	private ModeUser user;
 
@@ -33,13 +32,12 @@ public class FlyCommand extends CustomCommand {
 			enable = !player.getAllowFlight();
 
 		if (!enable && GameMode.SPECTATOR.equals(player.getGameMode()))
-			error("You can't disable fly in spectator mode");
+			error("You cannot disable fly in spectator mode");
 
-		player.setFallDistance(0);
-		player.setAllowFlight(enable);
-
-		if (!player.getAllowFlight())
-			player.setFlying(false);
+		if (enable)
+			on(player);
+		else
+			off(player);
 
 		send(player, PREFIX + (enable ? "&aEnabled" : "&cDisabled"));
 		if (!isSelf(player))
@@ -49,6 +47,17 @@ public class FlyCommand extends CustomCommand {
 			user.setFlightMode(worldGroup(), player.getAllowFlight(), player.isFlying());
 			service.save(user);
 		}
+	}
+
+	public static void off(Player player) {
+		player.setFallDistance(0);
+		player.setAllowFlight(false);
+		player.setFlying(false);
+	}
+
+	public static void on(Player player) {
+		player.setFallDistance(0);
+		player.setAllowFlight(true);
 	}
 
 }

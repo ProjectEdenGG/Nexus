@@ -10,8 +10,10 @@ import gg.projecteden.nexus.features.particles.effects.SpiralEffect;
 import gg.projecteden.nexus.features.particles.effects.StarEffect;
 import gg.projecteden.nexus.features.particles.effects.StormEffect;
 import gg.projecteden.nexus.features.particles.effects.WingsEffect;
+import gg.projecteden.nexus.features.particles.effects.WingsEffect.WingsEffectBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -23,6 +25,8 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.util.Vector;
 
 import java.util.Arrays;
+
+import static gg.projecteden.nexus.utils.PlayerUtils.isSelf;
 
 @Getter
 public enum ParticleType {
@@ -457,7 +461,6 @@ public enum ParticleType {
 
 			int taskId = DiscoEffect.builder()
 				.player(entity)
-				.ticks(-1)
 				.lineLength(lineLength)
 				.maxLines(4)
 				.sphereRadius(radius)
@@ -468,6 +471,7 @@ public enum ParticleType {
 				.lineRainbow(lineRainbow)
 				.rainbowOption(rainbowOption)
 				.location(loc)
+				.ticks(-1)
 				.start()
 				.getTaskId();
 			return new int[]{taskId};
@@ -476,6 +480,15 @@ public enum ParticleType {
 	WINGS(Material.ELYTRA) {
 		@Override
 		public int[] start(ParticleOwner particleOwner, HumanEntity entity) {
+			int taskId = builder(particleOwner, entity)
+				.ticks(isSelf(particleOwner, entity) ? -1 : TickTime.SECOND.x(15))
+				.start()
+				.getTaskId();
+			return new int[]{taskId};
+		}
+
+		@Override
+		public WingsEffectBuilder builder(ParticleOwner particleOwner, HumanEntity entity) {
 			Boolean flapMode = ParticleSetting.WINGS_FLAP_MODE.get(particleOwner, this);
 			Integer flapSpeed = ParticleSetting.WINGS_FLAP_SPEED.get(particleOwner, this);
 			WingsEffect.WingStyle style = ParticleSetting.WINGS_STYLE.get(particleOwner, this);
@@ -486,8 +499,9 @@ public enum ParticleType {
 			Boolean rainbow2 = ParticleSetting.WINGS_RAINBOW_TWO.get(particleOwner, this);
 			Boolean rainbow3 = ParticleSetting.WINGS_RAINBOW_THREE.get(particleOwner, this);
 
-			int taskId = WingsEffect.builder()
-				.player(entity)
+			return WingsEffect.builder()
+				.owner(particleOwner)
+				.entity(entity)
 				.flapMode(flapMode)
 				.flapSpeed(flapSpeed)
 				.color1(color1)
@@ -496,11 +510,7 @@ public enum ParticleType {
 				.rainbow2(rainbow2)
 				.color3(color3)
 				.rainbow3(rainbow3)
-				.ticks(-1)
-				.wingStyle(style)
-				.start()
-				.getTaskId();
-			return new int[]{taskId};
+				.wingStyle(style);
 		}
 
 		@Override
@@ -555,8 +565,23 @@ public enum ParticleType {
 		run(new ParticleService().get(player));
 	}
 
+	public void run(Player player, HumanEntity entity) {
+		run(new ParticleService().get(player), entity);
+	}
+
 	public void run(ParticleOwner particleOwner) {
 		particleOwner.start(this, start(particleOwner));
+	}
+
+	public void run(ParticleOwner particleOwner, HumanEntity entity) {
+		if (isSelf(particleOwner, entity))
+			particleOwner.start(this, start(particleOwner, entity));
+		else
+			particleOwner.addTaskIds(this, start(particleOwner, entity));
+	}
+
+	public Object builder(ParticleOwner particleOwner, HumanEntity entity) {
+		return null;
 	}
 
 	public boolean canBeUsedBy(Player player) {

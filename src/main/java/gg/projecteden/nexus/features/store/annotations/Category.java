@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.List;
 
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)

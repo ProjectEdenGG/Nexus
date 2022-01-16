@@ -1,13 +1,12 @@
 package gg.projecteden.nexus.features.ambience;
 
-import gg.projecteden.annotations.Environments;
 import gg.projecteden.nexus.features.ambience.managers.common.AmbienceManagers;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.ambience.AmbienceUser;
 import gg.projecteden.nexus.models.ambience.AmbienceUserService;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.Env;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import org.bukkit.event.Listener;
@@ -15,7 +14,6 @@ import org.bukkit.event.Listener;
 import java.util.List;
 
 @NoArgsConstructor
-@Environments(Env.TEST)
 public class Ambience extends Feature implements Listener {
 	private static final AmbienceUserService userService = new AmbienceUserService();
 
@@ -52,7 +50,7 @@ public class Ambience extends Feature implements Listener {
 	}
 
 	public static List<AmbienceUser> getUsers() {
-		return OnlinePlayers.getAll().stream().map(userService::get).toList();
+		return OnlinePlayers.where().rank(Rank.ADMIN).get().stream().map(userService::get).toList();
 	}
 
 }

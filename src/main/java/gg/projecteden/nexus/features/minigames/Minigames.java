@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.minigames;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.minigames.lobby.ActionBar;
 import gg.projecteden.nexus.features.minigames.lobby.Parkour;
@@ -35,7 +36,6 @@ import lombok.Getter;
 import me.lucko.helper.Services;
 import me.lucko.helper.scoreboard.PacketScoreboard;
 import me.lucko.helper.scoreboard.PacketScoreboardProvider;
-import net.dv8tion.jda.api.entities.GuildChannel;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Bukkit;
@@ -101,7 +101,7 @@ public class Minigames extends Feature {
 
 		channelTopic = topic;
 
-		GuildChannel channel = Discord.getGuild().getGuildChannelById(TextChannel.MINIGAMES.getId());
+		var channel = TextChannel.MINIGAMES.get(Bot.KODA.jda());
 		if (channel != null)
 			channel.getManager().setTopic(topic).queue();
 	}

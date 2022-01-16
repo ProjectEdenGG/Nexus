@@ -6,13 +6,14 @@ import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import me.lexikiq.HasUniqueId;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -45,7 +46,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static gg.projecteden.nexus.utils.BlockUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.PlayerUtils.getAdvancement;
 import static gg.projecteden.nexus.utils.PlayerUtils.isVanished;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
@@ -57,7 +58,10 @@ public class Restrictions implements Listener {
 			WorldGroup.SKYBLOCK, WorldGroup.ONEBLOCK);
 	private static final List<String> blockedWorlds = Arrays.asList("safepvp", "events");
 
-	public static boolean isPerkAllowedAt(Location location) {
+	public static boolean isPerkAllowedAt(HasUniqueId player, Location location) {
+		if (Rank.of(player).isAdmin())
+			return true;
+
 		WorldGroup worldGroup = WorldGroup.of(location);
 		if (!allowedWorldGroups.contains(worldGroup))
 			return false;
@@ -82,7 +86,7 @@ public class Restrictions implements Listener {
 
 	@EventHandler
 	public void onCommandMinecartInteract(PlayerInteractEvent event) {
-		if (ItemUtils.isNullOrAir(event.getItem()))
+		if (isNullOrAir(event.getItem()))
 			return;
 
 		if (event.getItem().getType() == Material.COMMAND_BLOCK_MINECART)
@@ -129,7 +133,7 @@ public class Restrictions implements Listener {
 
 		ItemStack item = event.getCurrentItem();
 
-		if (ItemUtils.isNullOrAir(item))
+		if (isNullOrAir(item))
 			return;
 
 		ItemMeta meta = item.getItemMeta();
@@ -208,7 +212,7 @@ public class Restrictions implements Listener {
 
 	@EventHandler
 	public void onInteractHoldingSpawnEgg(PlayerInteractEvent event) {
-		if (ItemUtils.isNullOrAir(event.getItem())) return;
+		if (isNullOrAir(event.getItem())) return;
 		if (!MaterialTag.SPAWN_EGGS.isTagged(event.getItem().getType())) return;
 		if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
 		if (isNullOrAir(event.getClickedBlock())) return;
@@ -271,6 +275,7 @@ public class Restrictions implements Listener {
 			Material.BLACK_CARPET,
 			Material.BLACK_CONCRETE_POWDER,
 			Material.BLACK_WALL_BANNER,
+			Material.BLAST_FURNACE,
 			Material.BLUE_BANNER,
 			Material.BLUE_CARPET,
 			Material.BLUE_CONCRETE_POWDER,
@@ -310,6 +315,7 @@ public class Restrictions implements Listener {
 			Material.END_PORTAL,
 			Material.FERN,
 			Material.FLOWER_POT,
+			Material.FURNACE,
 			Material.GRASS,
 			Material.GRAVEL,
 			Material.GRAY_BANNER,
@@ -397,6 +403,7 @@ public class Restrictions implements Listener {
 			Material.SAND,
 			Material.SEA_PICKLE,
 			Material.SEAGRASS,
+			Material.SMOKER,
 			Material.SNOW,
 			Material.SPRUCE_BUTTON,
 			Material.SPRUCE_DOOR,

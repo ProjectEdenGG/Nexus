@@ -55,7 +55,7 @@ public class Twitter {
 				EmbedBuilder embed = new EmbedBuilder().setTitle("New tweet! <:twitter:829474002586173460>")
 					.appendDescription(tweet.getText() + System.lineSeparator() + System.lineSeparator() + "[View on Twitter](" + Twitter.getUrl(tweet) + ")");
 
-				MessageBuilder content = new MessageBuilder().setEmbed(embed.build());
+				MessageBuilder content = new MessageBuilder().setEmbeds(embed.build());
 
 				Discord.send(content, TextChannel.GENERAL);
 				data.getKnownTweets().add(tweet.getId());

@@ -21,7 +21,7 @@ import org.bukkit.inventory.ShapelessRecipe;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.utils.RandomUtils.randomElement;
+import static gg.projecteden.nexus.utils.RandomUtils.randomElement;
 
 @RequiredArgsConstructor
 public class CustomRecipesMenu extends MenuUtils implements InventoryProvider {

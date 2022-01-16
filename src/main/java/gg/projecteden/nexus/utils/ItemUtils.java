@@ -34,6 +34,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 public class ItemUtils {
@@ -118,13 +119,13 @@ public class ItemUtils {
 	}
 
 	public static List<ItemStack> getShulkerContents(ItemStack itemStack) {
-		return getRawShulkerContents(itemStack).stream().filter(content -> !ItemUtils.isNullOrAir(content)).collect(Collectors.toList());
+		return getRawShulkerContents(itemStack).stream().filter(Nullables::isNotNullOrAir).collect(Collectors.toList());
 	}
 
 	public static List<ItemStack> getRawShulkerContents(ItemStack itemStack) {
 		List<ItemStack> contents = new ArrayList<>();
 
-		if (ItemUtils.isNullOrAir(itemStack))
+		if (isNullOrAir(itemStack))
 			return contents;
 
 		if (!MaterialTag.SHULKER_BOXES.isTagged(itemStack.getType()))
@@ -187,48 +188,6 @@ public class ItemUtils {
 		if (hand == null)
 			throw new InvalidInputException("You are not holding anything");
 		return hand;
-	}
-
-	/**
-	 * Tests if an item is not null or {@link MaterialTag#ALL_AIR air}
-	 * @param itemStack item
-	 * @return if item is not null or air
-	 */
-	// useful for streams
-	@Contract("null -> false; !null -> _")
-	public static boolean isNotNullOrAir(ItemStack itemStack) {
-		return !isNullOrAir(itemStack);
-	}
-
-	/**
-	 * Tests if an item is not null or {@link MaterialTag#ALL_AIR air}
-	 * @param material item
-	 * @return if item is not null or air
-	 */
-	// useful for streams
-	@Contract("null -> false; !null -> _")
-	public static boolean isNotNullOrAir(Material material) {
-		return !isNullOrAir(material);
-	}
-
-	/**
-	 * Tests if an item is null or {@link MaterialTag#ALL_AIR air}
-	 * @param itemStack item
-	 * @return if item is null or air
-	 */
-	@Contract("null -> true; !null -> _")
-	public static boolean isNullOrAir(ItemStack itemStack) {
-		return itemStack == null || itemStack.getType().isEmpty();
-	}
-
-	/**
-	 * Tests if an item is null or {@link MaterialTag#ALL_AIR air}
-	 * @param material item
-	 * @return if item is null or air
-	 */
-	@Contract("null -> true; !null -> _")
-	public static boolean isNullOrAir(Material material) {
-		return material == null || material.isEmpty();
 	}
 
 	public static boolean isInventoryEmpty(Inventory inventory) {

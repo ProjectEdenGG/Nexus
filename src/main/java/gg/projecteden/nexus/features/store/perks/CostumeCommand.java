@@ -4,24 +4,32 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
+import gg.projecteden.nexus.features.custombenches.DyeStation;
+import gg.projecteden.nexus.features.custombenches.DyeStation.DyeStationMenu;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateStartEvent;
 import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
+import gg.projecteden.nexus.features.store.gallery.StoreGallery;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.costume.Costume;
 import gg.projecteden.nexus.models.costume.CostumeUser;
 import gg.projecteden.nexus.models.costume.CostumeUserService;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -30,6 +38,7 @@ import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -42,6 +51,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.features.resourcepack.models.CustomModel.ICON;
 import static gg.projecteden.nexus.models.costume.Costume.EXCLUSIVE;
@@ -70,7 +80,23 @@ public class CostumeCommand extends CustomCommand implements Listener {
 		taskId = Tasks.repeat(TickTime.TICK, TickTime.TICK, () -> {
 			for (Player player : OnlinePlayers.getAll())
 				service.get(player).sendCostumePacket();
+			for (Player player : OnlinePlayers.where().world(StoreGallery.getWorld()).get())
+				service.get(player).sendDisplayCostumePacket();
 		});
+	}
+
+	@Path("dye <color>")
+	void dye(ChatColor color) {
+		final CostumeUser user = service.get(player());
+		final Costume costume = Costume.of(user.getActiveCostume());
+		if (costume == null)
+			error("You do not have an active costume");
+		if (!costume.isDyeable())
+			error("That costume is not dyeable");
+
+		user.dye(costume, ColorType.toBukkitColor(color));
+		service.save(user);
+		send(PREFIX + "Set costume color to " + color + arg(2));
 	}
 
 	@Path
@@ -139,6 +165,22 @@ public class CostumeCommand extends CustomCommand implements Listener {
 		paginate(Utils.sortByValueReverse(counts).keySet(), formatter, "/costume top", page);
 	}
 
+	@TabCompleterFor(Costume.class)
+	List<String> tabCompleteCostume(String filter) {
+		return Costume.values().stream()
+			.map(Costume::getId)
+			.filter(id -> id.toLowerCase().startsWith(filter.toLowerCase()))
+			.collect(Collectors.toList());
+	}
+
+	@ConverterFor(Costume.class)
+	Costume convertToCostume(String value) {
+		final Costume costume = Costume.of(value);
+		if (costume == null)
+			throw new InvalidInputException("Costume &e" + value + " &cnot found");
+		return costume;
+	}
+
 	@EventHandler
 	public void onInventoryClose(InventoryCloseEvent event) {
 		final CostumeUserService service = new CostumeUserService();
@@ -183,11 +225,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 				if (subfolder.getPath().contains(EXCLUSIVE))
 					continue;
 
-				CustomModel firstModel = subfolder.getIcon(model -> {
-					if (this instanceof CostumeStoreMenu)
-						return true;
-					return user.owns(model);
-				});
+				CustomModel firstModel = subfolder.getIcon(model -> isAvailableCostume(user, Costume.of(model)));
 				ItemStack item = new ItemStack(Material.BARRIER);
 				if (firstModel != null)
 					item = firstModel.getDisplayItem();
@@ -228,7 +266,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 			paginator(player, contents, items);
 		}
 
-		protected abstract CostumeMenu newMenu(CostumeMenu previousMenu, CustomModelFolder subfolder);
+		abstract protected CostumeMenu newMenu(CostumeMenu previousMenu, CustomModelFolder subfolder);
 
 		protected void init(CostumeUser user, InventoryContents contents) {}
 
@@ -249,7 +287,9 @@ public class CostumeCommand extends CustomCommand implements Listener {
 			return available;
 		}
 
-		abstract protected boolean isAvailableCostume(CostumeUser user, Costume costume);
+		protected boolean isAvailableCostume(CostumeUser user, Costume costume) {
+			return true;
+		}
 
 		abstract protected ClickableItem formatCostume(CostumeUser user, Costume costume, InventoryContents contents);
 	}
@@ -284,7 +324,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 		}
 
 		protected ClickableItem formatCostume(CostumeUser user, Costume costume, InventoryContents contents) {
-			final ItemBuilder builder = new ItemBuilder(costume.getModel().getDisplayItem());
+			final ItemBuilder builder = new ItemBuilder(user.getCostumeDisplayItem(costume));
 			builder.lore("", "&3Cost: " + (user.getVouchers() <= 0 ? "&c" : "&e") + "1");
 
 			return ClickableItem.from(builder.build(), e -> {
@@ -325,7 +365,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 
 			final Costume costume = Costume.of(user.getActiveCostume());
 			if (costume != null) {
-				final ItemBuilder builder = new ItemBuilder(costume.getModel().getDisplayItem())
+				final ItemBuilder builder = new ItemBuilder(user.getCostumeDisplayItem(costume))
 					.lore("", "&a&lActive", "&cClick to deactivate")
 					.glow();
 
@@ -334,16 +374,25 @@ public class CostumeCommand extends CustomCommand implements Listener {
 					service.save(user);
 					open(user.getOnlinePlayer(), contents.pagination().getPage());
 				}));
+
+				if (MaterialTag.DYEABLE.isTagged(costume.getItem().getType())) {
+					contents.set(0, 6, ClickableItem.from(DyeStation.getDyeStation().build(), e ->
+						new DyeStationMenu().openCostume(user, costume, data -> {
+							user.dye(costume, data.getColor());
+							service.save(user);
+							open(user.getOnlinePlayer());
+						})));
+				}
 			}
 		}
 
 		@Override
 		protected boolean isAvailableCostume(CostumeUser user, Costume costume) {
-			return user.getOwnedCostumes().contains(costume.getId());
+			return Rank.of(user).isAdmin() || user.getOwnedCostumes().contains(costume.getId());
 		}
 
 		protected ClickableItem formatCostume(CostumeUser user, Costume costume, InventoryContents contents) {
-			final ItemBuilder builder = new ItemBuilder(costume.getModel().getDisplayItem());
+			final ItemBuilder builder = new ItemBuilder(user.getCostumeDisplayItem(costume));
 			if (costume.getId().equals(user.getActiveCostume()))
 				builder.lore("", "&a&lActive").glow();
 

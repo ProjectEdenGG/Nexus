@@ -14,11 +14,10 @@ import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.WorldGroup;
-import gg.projecteden.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -38,8 +37,10 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.utils.StringUtils.asOxfordList;
-import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.StringUtils.asOxfordList;
+import static gg.projecteden.utils.UUIDUtils.UUID0;
 
 @Data
 @Entity(value = "mailer", noClassnameStored = true)
@@ -186,11 +187,11 @@ public class Mailer implements PlayerOwnedObject {
 		}
 
 		public boolean hasMessage() {
-			return !ItemUtils.isNullOrAir(message);
+			return !isNullOrAir(message);
 		}
 
 		public boolean hasItems() {
-			return !Utils.isNullOrEmpty(items);
+			return !isNullOrEmpty(items);
 		}
 
 		public void cancel() {
@@ -244,7 +245,7 @@ public class Mailer implements PlayerOwnedObject {
 		}
 
 		public static Mail fromServer(UUID to, WorldGroup worldGroup, String message, List<ItemStack> items) {
-			return new Mail(to, StringUtils.getUUID0(), worldGroup, message, items);
+			return new Mail(to, UUID0, worldGroup, message, items);
 		}
 
 	}

@@ -12,11 +12,10 @@ import gg.projecteden.nexus.models.pugmas21.Advent21ConfigService;
 import gg.projecteden.nexus.models.pugmas21.Pugmas21User;
 import gg.projecteden.nexus.models.pugmas21.Pugmas21UserService;
 import gg.projecteden.nexus.utils.ActionBarUtils;
-import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -34,6 +33,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.utils.Nullables.isNullOrEmpty;
+
 public class Advent implements Listener {
 	private static final Pugmas21UserService userService = new Pugmas21UserService();
 
@@ -49,15 +51,15 @@ public class Advent implements Listener {
 		for (int z = 0; z <= 6; z++) {         // 0-3 col (Every other)
 			for (int x = 0; x <= 12; x++) {    // 0-6 row (Every other)
 				Block block = lootOrigin.getBlock().getRelative(x, 0, z);
-				if (ItemUtils.isNullOrAir(block.getType()) || !block.getType().equals(Material.CHEST))
+				if (isNullOrAir(block.getType()) || !block.getType().equals(Material.CHEST))
 					continue;
 
 				Chest chest = (Chest) block.getState();
 				List<ItemStack> contents = Arrays.stream(chest.getBlockInventory().getContents())
-					.filter(itemStack -> !ItemUtils.isNullOrAir(itemStack))
+					.filter(Nullables::isNotNullOrAir)
 					.collect(Collectors.toList());
 
-				if (Utils.isNullOrEmpty(contents))
+				if (isNullOrEmpty(contents))
 					Nexus.warn("Contents of advent present " + index + " is empty!");
 
 				adventConfig.get(index++).setContents(contents);
@@ -119,7 +121,7 @@ public class Advent implements Listener {
 			return;
 
 		ItemStack item = event.getItem();
-		if (ItemUtils.isNullOrAir(item))
+		if (isNullOrAir(item))
 			return;
 
 		if (!item.getType().equals(Material.TRAPPED_CHEST))
@@ -129,7 +131,7 @@ public class Advent implements Listener {
 			return;
 
 		List<String> lore = item.getItemMeta().getLore();
-		if (Utils.isNullOrEmpty(lore))
+		if (isNullOrEmpty(lore))
 			return;
 
 		for (String line : lore) {
@@ -163,9 +165,8 @@ public class Advent implements Listener {
 		if (block.getType() != Material.BARRIER)
 			return;
 
-		if (Pugmas21.TODAY.isAfter(Pugmas21.END)) {
+		if (Pugmas21.isPastPugmas())
 			return;
-		}
 
 		final Advent21Config adventConfig = new Advent21ConfigService().get0();
 		final AdventPresent present = adventConfig.get(block.getLocation());

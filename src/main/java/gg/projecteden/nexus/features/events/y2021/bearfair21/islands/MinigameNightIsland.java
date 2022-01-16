@@ -30,11 +30,11 @@ import gg.projecteden.nexus.models.bearfair21.ClientsideContent.Content.ContentC
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.trophy.Trophy;
 import gg.projecteden.nexus.utils.ActionBarUtils;
-import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.LocationUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -89,10 +89,10 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.worldguard;
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
 import static gg.projecteden.nexus.utils.ItemUtils.isSameHead;
 import static gg.projecteden.nexus.utils.ItemUtils.isTypeAndNameEqual;
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Region("minigamenight")
 @NPCClass(MinigameNightNPCs.class)
@@ -433,7 +433,7 @@ public class MinigameNightIsland implements BearFair21Island {
 	public void onClickSolder(PlayerInteractEvent event) {
 		if (!BearFair21.canDoBearFairQuest(event.getPlayer())) return;
 		Block clicked = event.getClickedBlock();
-		if (BlockUtils.isNullOrAir(clicked)) return;
+		if (isNullOrAir(clicked)) return;
 		ProtectedRegion region = worldguard().getProtectedRegion(solderRegion);
 		if (!worldguard().isInRegion(clicked.getLocation(), region)) return;
 
@@ -565,7 +565,7 @@ public class MinigameNightIsland implements BearFair21Island {
 		if (BearFair21.isNotAtBearFair(event)) return;
 		if (EquipmentSlot.HAND != event.getHand()) return;
 		Block clicked = event.getClickedBlock();
-		if (BlockUtils.isNullOrAir(clicked) || clicked.getType() != Material.BARRIER) return;
+		if (isNullOrAir(clicked) || clicked.getType() != Material.BARRIER) return;
 		if (!worldguard().isInRegion(clicked.getLocation(), mailboxRegion)) return;
 		final BearFair21User user = userService.get(event.getPlayer());
 		if (user.getQuestStage_MGN() != QuestStage.STEP_TWO) return;
@@ -600,7 +600,7 @@ public class MinigameNightIsland implements BearFair21Island {
 		if (!BearFair21.canDoBearFairQuest(player)) return;
 		if (!ActionGroup.CLICK.applies(event)) return;
 		final Block block = event.getClickedBlock();
-		if (BlockUtils.isNullOrAir(block)) return;
+		if (isNullOrAir(block)) return;
 		if (block.getType() != Material.STONE_BUTTON) return;
 		final Location location = block.getLocation();
 		if (!beaconButtons.contains(location)) return;
@@ -689,7 +689,7 @@ public class MinigameNightIsland implements BearFair21Island {
 		if (!BearFair21.canDoBearFairQuest(player)) return;
 		if (!ActionGroup.CLICK.applies(event) || isNullOrAir(event.getItem())) return;
 		final Block block = event.getClickedBlock();
-		if (BlockUtils.isNullOrAir(block)) return;
+		if (isNullOrAir(block)) return;
 		if (block.getType() != Material.PLAYER_HEAD) return;
 		final Location location = block.getLocation();
 		if (!speakerLocations.contains(location)) return;
@@ -712,7 +712,7 @@ public class MinigameNightIsland implements BearFair21Island {
 		if (!BearFair21.canDoBearFairQuest(player)) return;
 		if (!ActionGroup.CLICK.applies(event)) return;
 		final Block block = event.getClickedBlock();
-		if (BlockUtils.isNullOrAir(block)) return;
+		if (isNullOrAir(block)) return;
 		if (block.getType() != Material.PLAYER_HEAD) return;
 		final Location location = block.getLocation();
 		if (!basementSpeakerLocation.equals(location)) return;
@@ -731,7 +731,7 @@ public class MinigameNightIsland implements BearFair21Island {
 		if (!BearFair21.canDoBearFairQuest(event)) return;
 		final Player player = event.getPlayer();
 		if (WorldGuardEditCommand.canWorldGuardEdit(player)) return;
-		if (BlockUtils.isNullOrAir(event.getClickedBlock())) return;
+		if (isNullOrAir(event.getClickedBlock())) return;
 		Block block = event.getClickedBlock().getRelative(event.getBlockFace());
 
 		final BearFair21User user = new BearFair21UserService().get(event.getPlayer());
@@ -757,7 +757,7 @@ public class MinigameNightIsland implements BearFair21Island {
 		final Player player = event.getPlayer();
 		if (WorldGuardEditCommand.canWorldGuardEdit(player)) return;
 		final Block block = event.getClickedBlock();
-		if (BlockUtils.isNullOrAir(block)) return;
+		if (isNullOrAir(block)) return;
 		if (!worldguard().isInRegion(block.getLocation(), trunkRegion)) return;
 		final BearFair21User user = new BearFair21UserService().get(event.getPlayer());
 		if (user.getQuestStage_MGN() != QuestStage.STEP_EIGHT) return;

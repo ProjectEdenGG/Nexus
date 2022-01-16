@@ -18,8 +18,8 @@ import gg.projecteden.nexus.models.bearfair21.ClientsideContent;
 import gg.projecteden.nexus.models.bearfair21.ClientsideContent.Content;
 import gg.projecteden.nexus.models.bearfair21.ClientsideContentService;
 import gg.projecteden.nexus.utils.ActionBarUtils;
-import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.LocationUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.Countdown;
@@ -42,6 +42,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Region("pugmas")
 @NPCClass(PugmasNPCs.class)
@@ -464,7 +466,7 @@ public class PugmasIsland implements BearFair21Island {
 			.onSecond(i -> {
 				if (user.isOnline()) {
 					ActionBarUtils.sendActionBar(user.getPlayer(),
-						"&3Time Left: &e" + Timespan.of(i).format() + " &3(&e" + (user.getPresentNdx() - 1) + "&3/15)");
+						"&3Time Left: &e" + Timespan.ofSeconds(i).format() + " &3(&e" + (user.getPresentNdx() - 1) + "&3/15)");
 				}
 			})
 				.onComplete(() -> endChallenge(user, false))
@@ -538,7 +540,7 @@ public class PugmasIsland implements BearFair21Island {
 		if (!BearFair21.isInRegion(event.getPlayer(), getRegion())) return;
 
 		Block block = event.getClickedBlock();
-		if (BlockUtils.isNullOrAir(block)) return;
+		if (isNullOrAir(block)) return;
 
 		BearFair21User user = userService.get(event.getPlayer());
 		if (user.getQuestStage_Pugmas() != QuestStage.STEP_TWO) return;

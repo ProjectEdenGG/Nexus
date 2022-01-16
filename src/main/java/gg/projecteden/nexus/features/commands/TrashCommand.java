@@ -8,7 +8,6 @@ import gg.projecteden.nexus.models.dumpster.Dumpster;
 import gg.projecteden.nexus.models.dumpster.DumpsterService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
@@ -22,6 +21,8 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @NoArgsConstructor
 public class TrashCommand extends CustomCommand implements Listener {
@@ -59,7 +60,7 @@ public class TrashCommand extends CustomCommand implements Listener {
 		Dumpster dumpster = service.get0();
 
 		for (ItemStack item : event.getInventory().getContents()) {
-			if (ItemUtils.isNullOrAir(item))
+			if (isNullOrAir(item))
 				continue;
 
 			if (new ItemBuilder(item).isNot(ItemSetting.TRASHABLE)) {

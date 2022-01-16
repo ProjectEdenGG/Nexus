@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.customenchants.enchants;
 
 import gg.projecteden.nexus.features.customenchants.CustomEnchant;
-import gg.projecteden.nexus.features.listeners.Misc.PlayerDamageByPlayerEvent;
+import gg.projecteden.nexus.features.listeners.events.PlayerDamageByPlayerEvent;
 import gg.projecteden.nexus.models.pvp.PVP;
 import gg.projecteden.nexus.models.pvp.PVPService;
 import gg.projecteden.nexus.utils.Enchant;
@@ -14,9 +14,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
 
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.RandomUtils.chanceOf;
 import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
-import static gg.projecteden.utils.RandomUtils.chanceOf;
 
 public class DisarmingEnchant extends CustomEnchant implements Listener {
 

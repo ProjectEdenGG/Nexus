@@ -35,10 +35,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
 import static gg.projecteden.nexus.features.discord.Discord.discordize;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 import static gg.projecteden.utils.TimeUtils.shortishDateTimeFormat;
+import static gg.projecteden.utils.UUIDUtils.isAppUuid;
+import static gg.projecteden.utils.UUIDUtils.isUUID0;
 
 @Data
 @Entity(value = "nickname", noClassnameStored = true)
@@ -105,9 +107,9 @@ public class Nickname extends gg.projecteden.mongodb.models.nickname.Nickname im
 	}
 
 	public @NotNull String getNickname() {
-		if (StringUtils.isAppUuid(uuid))
+		if (isAppUuid(uuid))
 			return EdenAPI.get().getAppName();
-		if (StringUtils.isUUID0(uuid))
+		if (isUUID0(uuid))
 			return "Console";
 		if (isNullOrEmpty(nickname))
 			return getName();
@@ -244,7 +246,7 @@ public class Nickname extends gg.projecteden.mongodb.models.nickname.Nickname im
 
 			return new MessageBuilder()
 					.setContent("@everyone **" + getName() + "** has requested a new nickname: **" + nickname + "**")
-					.setEmbed(embed.build());
+					.setEmbeds(embed.build());
 		}
 	}
 

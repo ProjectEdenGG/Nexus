@@ -37,6 +37,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.getTeleportCommand;
 
 @NoArgsConstructor
@@ -196,7 +197,7 @@ public class TeleportCommand extends CustomCommand implements Listener {
 	@Path("override <player>")
 	@Permission(Group.SENIOR_STAFF)
 	void override(Player player) {
-		player().teleportAsync(player.getLocation());
+		player().teleportAsync(player.getLocation(), TeleportCause.COMMAND);
 		send(PREFIX + "Overriding teleport to &e" + player.getName());
 	}
 

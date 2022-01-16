@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.custombenches;
 
 import gg.projecteden.nexus.framework.features.Feature;
-import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -22,6 +21,8 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Map;
 import java.util.function.Consumer;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 // TODO:
 // 	- optional crafting recipe
@@ -53,7 +54,7 @@ public abstract class CustomBench extends Feature implements Listener {
 	abstract CustomBenchType getBenchType();
 
 	public static CustomBenchType getCustomBench(ItemStack item) {
-		if (ItemUtils.isNullOrAir(item))
+		if (isNullOrAir(item))
 			return null;
 
 		int modelData = CustomModelData.of(item);
@@ -76,19 +77,19 @@ public abstract class CustomBench extends Feature implements Listener {
 			return;
 
 		Block block = event.getClickedBlock();
-		if (BlockUtils.isNullOrAir(block))
+		if (isNullOrAir(block))
 			return;
 
 		if (!block.getType().equals(Material.BARRIER))
 			return;
 
 		Player player = event.getPlayer();
-		if (player.isSneaking() && !ItemUtils.isNullOrAir(ItemUtils.getTool(player)))
+		if (player.isSneaking() && !isNullOrAir(ItemUtils.getTool(player)))
 			return;
 
 		ItemFrame itemFrame = PlayerUtils.getTargetItemFrame(player, 5, Map.of(BlockFace.DOWN, 1));
 
-		if (itemFrame == null || ItemUtils.isNullOrAir(itemFrame.getItem()))
+		if (itemFrame == null || isNullOrAir(itemFrame.getItem()))
 			return;
 
 		CustomBenchType customBenchType = getCustomBench(itemFrame.getItem());
