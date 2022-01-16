@@ -7,7 +7,7 @@ plugins {
 }
 
 repositories {
-    mavenLocal()
+    mavenCentral()
     maven { url = uri("https://sonatype.projecteden.gg/repository/maven-public/") }
     maven { url = uri("https://jitpack.io") }
     maven { url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") }
@@ -37,7 +37,7 @@ dependencies {
     implementation("gg.projecteden:eden-discord:2.0.0-SNAPSHOT")
     implementation("org.reflections:reflections:0.10.2")
     implementation("org.objenesis:objenesis:3.2")
-    implementation("org.checkerframework:checker-qual:3.20.0")
+    implementation("org.checkerframework:checker-qual:3.21.1")
     implementation("com.github.ProjectEdenGG:norm:0843afb4e5")
     implementation("mysql:mysql-connector-java:8.0.25")
     implementation("dev.morphia.morphia:core:1.6.1")
