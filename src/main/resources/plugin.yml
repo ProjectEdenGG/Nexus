@@ -1,29 +1,36 @@
 name: Nexus
-main: me.pugabyte.nexus.Nexus
+main: gg.projecteden.nexus.Nexus
 version: ${project.version}
-api-version: "1.16"
+authors:
+  - GriffinCodes
+  - WakkaFlocka
+  - Blast-MC
+  - lexikiq
+api-version: 1.17
 load: POSTWORLD
+depend:
+  - helper
+  - mcMMO
+  - Multiverse-Core
+  - ProtocolLib
+  - WorldGuard
 softdepend:
+  - BentoBox
   - BlueMap
   - BuycraftX
   - Citizens
-  - Essentials
-  - helper
+  - GlowAPI
+  - HeadDatabase
   - HolographicDisplays
-  - LiteBans
+  - LibsDisguises
   - LWC
-  - mcMMO
-  - Multiverse-Core
   - Multiverse-Inventories
   - NBTAPI
   - NoteBlockAPI
+  - OpenInv
+  - PlaceholderAPI
   - PremiumVanish
-  - ProtocolLib
   - SmartInvs
   - Vault
+  - ViaVersion
   - Votifier
-  - WorldGuard
-  - WorldGuardRegionAPI
-  - GlowAPI
-  - LibsDisguises
-  - BentoBox
