@@ -22,7 +22,7 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.features.chat.Chat;
-import gg.projecteden.nexus.models.chat.ChatService;
+import gg.projecteden.nexus.models.chat.ChatterService;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.PublicChannel;
 import gg.projecteden.nexus.utils.ColorType;
@@ -50,7 +50,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static me.pugabyte.nexus.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 public abstract class TeamMechanic extends MultiplayerMechanic {
 	public static final @NotNull Set<String> TEAM_VOICE_CHANNELS = Set.of(
@@ -138,10 +138,12 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 
 	private PublicChannel getTeamChannel(Minigamer minigamer, boolean createChannel) {
 		Team team = minigamer.getTeam();
+		if (team == null)
+			return null;
 		ColorType colorType = team.getColorType();
 		if (colorType == null)
 			return null;
-		Chatter chatter = new ChatService().get(minigamer.getPlayer());
+		Chatter chatter = new ChatterService().get(minigamer.getPlayer());
 		Optional<PublicChannel> optionalPublicChannel = chatter.getJoinedChannels().stream().filter(publicChannel -> publicChannel.getName().equalsIgnoreCase(colorType.getName())).findFirst();
 		return optionalPublicChannel.orElseGet(() -> getTeamChannel(minigamer.getMatch(), team, createChannel));
 	}
@@ -189,7 +191,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 
 		teamMembers.forEach(minigamer -> {
 			// add user to text channel
-			Chatter chatter = new ChatService().get(minigamer.getPlayer());
+			Chatter chatter = new ChatterService().get(minigamer.getPlayer());
 			if (teamChannel != null)
 				chatter.setActiveChannel(teamChannel);
 
@@ -223,7 +225,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 
 		PublicChannel teamChannel = getTeamChannel(minigamer, false);
 		if (teamChannel == null) return;
-		Chatter chatter = new ChatService().get(minigamer.getPlayer());
+		Chatter chatter = new ChatterService().get(minigamer.getPlayer());
 		if (chatter.getActiveChannel() == teamChannel)
 			chatter.setActiveChannel(Chat.StaticChannel.MINIGAMES.getChannel());
 		chatter.leave(teamChannel);
@@ -402,7 +404,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		match.getScoreboard().update();
 
 		onTurnStart(match, team);
-		tasks.register(MatchTaskType.TURN, tasks.wait(arena.getTurnTime() * TickTime.SECOND.get(), () -> nextTurn(match)));
+		tasks.register(MatchTaskType.TURN, tasks.wait((long) arena.getTurnTime() * TickTime.SECOND.get(), () -> nextTurn(match)));
 	}
 
 	@Override
@@ -498,12 +500,11 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 
 		List<BalanceWrapper> wrappers = getBalanceWrappers(match).stream()
 			.filter(wrapper -> !wrapper.getTeam().equals(minigamer.getTeam()) && // only try to auto-balance to other teams
-					wrapper.percentageDiscrepancy() > 0 &&
-					wrapper.getNeededPlayers() != -1 &&
-					wrapper.extraPlayerPercentDiscrepancy() >= 0)
+				wrapper.percentageDiscrepancy() > 0 &&
+				wrapper.getNeededPlayers() != -1 &&
+				wrapper.extraPlayerPercentDiscrepancy() >= 0)
 			// sort teams by closest to being equal (inverse of natural sort)
-			.sorted(Comparator.reverseOrder())
-			.collect(Collectors.toList());
+			.sorted(Comparator.reverseOrder()).toList();
 		if (wrappers.isEmpty())
 			return;
 		// select randomly if multiple teams are equal
@@ -545,7 +546,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		// add players to teams that need them (i.e. have a minimum player count that is not satisfied)
 		while (!minigamers.isEmpty()) {
 			Optional<BalanceWrapper> needsPlayers = wrappers.stream().filter(wrapper -> wrapper.getNeededPlayers() > 0).findFirst();
-			if (!needsPlayers.isPresent())
+			if (needsPlayers.isEmpty())
 				break;
 			Team team = needsPlayers.get().getTeam();
 			minigamers.remove(0).setTeam(team);

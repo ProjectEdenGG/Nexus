@@ -308,6 +308,10 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 	}
 
 	public void setTeam(@Nullable Team team) {
+		// leave current team channel
+		if (match.getMechanic() instanceof TeamMechanic teamMechanic && this.team != null)
+			teamMechanic.leaveTeamTextChannel(this);
+
 		assert match != null;
 		match.handleGlow(this.team);
 		this.team = team;
