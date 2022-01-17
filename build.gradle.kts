@@ -111,8 +111,7 @@ tasks {
     compileJava {
         options.encoding = Charsets.UTF_8.name()
         options.release.set(17)
-//        options.compilerArgs << '-parameters'
-//        options.compilerArgs.add("-parameters")
+        options.compilerArgs.add("-parameters")
     }
 
     javadoc { options.encoding = Charsets.UTF_8.name() }
