@@ -61,8 +61,6 @@ dependencies {
     compileOnly("com.griefcraft.lwc:LWCX:2.2.0")
     compileOnly("com.sk89q.worldguard:worldguard-core:7.0.6-SNAPSHOT")
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.6-SNAPSHOT")
-    compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.2.0-SNAPSHOT")
-    compileOnly("com.sk89q.worldedit:worldedit-core:7.2.0-SNAPSHOT")
     compileOnly("com.onarandombox.multiversecore:Multiverse-Core:3.0.0")
     compileOnly("com.onarandombox.multiverseinventories:Multiverse-Inventories:3.0.0")
     compileOnly("com.dumptruckman.minecraft:JsonConfiguration:1.1")
