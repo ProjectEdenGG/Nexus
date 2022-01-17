@@ -88,7 +88,6 @@ dependencies {
 group = "gg.projecteden"
 description = "Nexus"
 version = "2.0"
-java.sourceCompatibility = JavaVersion.VERSION_16
 
 publishing {
     publications.create<MavenPublication>("maven") {
