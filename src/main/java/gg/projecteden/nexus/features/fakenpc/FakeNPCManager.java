@@ -5,8 +5,8 @@ import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
-import net.minecraft.server.level.EntityPlayer;
-import net.minecraft.world.entity.decoration.EntityArmorStand;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -76,7 +76,7 @@ public class FakeNPCManager {
 	public static FakeNPC createFakeNPC(Player player) {
 		FakeNPC fakeNPC = new FakeNPC(player.getLocation(), Name.of(player));
 
-		EntityPlayer entityPlayer = NMSUtils.createEntityPlayer(UUID.randomUUID(), fakeNPC.getLocation(), fakeNPC.getName());
+		ServerPlayer entityPlayer = NMSUtils.createEntityPlayer(UUID.randomUUID(), fakeNPC.getLocation(), fakeNPC.getName());
 		fakeNPC.setEntityPlayer(entityPlayer);
 		FakeNPCUtils.setDefaultSkin(fakeNPC, player);
 
@@ -85,9 +85,9 @@ public class FakeNPCManager {
 	}
 
 	public static void createHologram(FakeNPC fakeNPC, List<String> lines) {
-		List<EntityArmorStand> armorStands = new ArrayList<>();
+		List<ArmorStand> armorStands = new ArrayList<>();
 		for (int i = 0; i < lines.size(); i++)
-			armorStands.add(NMSUtils.createHologram(fakeNPC.getEntityPlayer().getWorld()));
+			armorStands.add(NMSUtils.createHologram(fakeNPC.getEntityPlayer().getLevel()));
 
 		fakeNPC.getHologram().setArmorStandList(armorStands);
 	}

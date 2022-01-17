@@ -17,10 +17,10 @@ import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import net.citizensnpcs.api.npc.NPC;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityTypes;
-import net.minecraft.world.entity.decoration.EntityArmorStand;
-import net.minecraft.world.entity.decoration.EntityItemFrame;
-import net.minecraft.world.entity.monster.EntitySlime;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.entity.decoration.ItemFrame;
+import net.minecraft.world.entity.monster.Slime;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.data.BlockData;
@@ -78,8 +78,8 @@ public class ClientsideContentManager implements Listener {
 			Player player = getPlayer(nameTag.getPlayerUuid());
 			if (player == null) continue;
 
-			List<EntityArmorStand> armorStands = nameTag.getArmorStands();
-			for (EntityArmorStand armorStand : armorStands) {
+			List<ArmorStand> armorStands = nameTag.getArmorStands();
+			for (ArmorStand armorStand : armorStands) {
 				PacketUtils.entityDestroy(player, armorStand.getId());
 			}
 		}
@@ -141,7 +141,7 @@ public class ClientsideContentManager implements Listener {
 					if (!hasMet(player, bearFair21NPC)) continue;
 					if (canSee(player, bearFair21NPC)) continue;
 
-					List<EntityArmorStand> armorStands = bearFair21NPC.showName(player);
+					List<ArmorStand> armorStands = bearFair21NPC.showName(player);
 					NPCNameTag nameTag = new NPCNameTag(bearFair21NPC.getId(), player.getUniqueId(), armorStands);
 					playerNPCNameTags.add(nameTag);
 				}
@@ -208,10 +208,10 @@ public class ClientsideContentManager implements Listener {
 		}
 	}
 
-	public static void sendRemoveEntityFrom(Player player, Location location, EntityTypes<?> entityType) {
+	public static void sendRemoveEntityFrom(Player player, Location location, EntityType<?> entityType) {
 		List<Entity> entities = new ArrayList<>(playerEntities.get(player.getUniqueId()));
 		for (Entity entity : entities) {
-			if (!entity.getEntityType().equals(entityType))
+			if (!entity.getType().equals(entityType))
 				continue;
 
 			if (LocationUtils.isFuzzyEqual(entity.getBukkitEntity().getLocation(), location)) {
@@ -223,12 +223,12 @@ public class ClientsideContentManager implements Listener {
 
 	// This spawns the entity, but the player cannot see the entity
 	public static void sendSpawnSlime(Player player, Location location) {
-		EntitySlime slime = PacketUtils.spawnSlime(player, location, 2, false, true);
+		Slime slime = PacketUtils.spawnSlime(player, location, 2, false, true);
 		addClientsideEntity(player, slime);
 	}
 
 	public static void sendSpawnArmorStand(Player player, Location location) {
-		EntityArmorStand armorStand = PacketUtils.spawnBeaconArmorStand(player, location);
+		ArmorStand armorStand = PacketUtils.spawnBeaconArmorStand(player, location);
 		addClientsideEntity(player, armorStand);
 	}
 
@@ -248,7 +248,7 @@ public class ClientsideContentManager implements Listener {
 					continue;
 			}
 
-			EntityItemFrame itemFrame = PacketUtils.spawnItemFrame(player, content.getLocation(), content.getBlockFace(),
+			ItemFrame itemFrame = PacketUtils.spawnItemFrame(player, content.getLocation(), content.getBlockFace(),
 					content.getItemStack(), content.getRotation(), false, true);
 
 
@@ -270,7 +270,7 @@ public class ClientsideContentManager implements Listener {
 		NPCNameTag nameTag = getNPCNameTag(player, npc.getId());
 		if (nameTag == null) return;
 
-		for (EntityArmorStand armorStand : nameTag.getArmorStands())
+		for (ArmorStand armorStand : nameTag.getArmorStands())
 			PacketUtils.entityDestroy(player, armorStand.getId());
 
 		playerNPCNameTags.remove(nameTag);

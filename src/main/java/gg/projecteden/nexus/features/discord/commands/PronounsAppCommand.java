@@ -5,7 +5,7 @@ import gg.projecteden.discord.appcommands.AppCommandRegistry;
 import gg.projecteden.discord.appcommands.annotations.Choices;
 import gg.projecteden.discord.appcommands.annotations.Command;
 import gg.projecteden.discord.appcommands.annotations.Desc;
-import gg.projecteden.models.nerd.Nerd.Pronoun;
+import gg.projecteden.mongodb.models.nerd.Nerd.Pronoun;
 import gg.projecteden.nexus.features.discord.appcommands.NexusAppCommand;
 import gg.projecteden.nexus.features.discord.appcommands.annotations.Verify;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;

@@ -19,7 +19,6 @@ import gg.projecteden.nexus.models.bearfair21.ClientsideContent.Content;
 import gg.projecteden.nexus.models.bearfair21.ClientsideContentService;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.Countdown;
@@ -28,7 +27,7 @@ import gg.projecteden.utils.RandomUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import net.citizensnpcs.api.npc.NPC;
-import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EntityType;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -591,7 +590,7 @@ public class PugmasIsland implements BearFair21Island {
 	private static void removeContent(BearFair21User user, Content content) {
 		ClientsideContentManager.sendRemoveContent(user.getOnlinePlayer(), Collections.singletonList(content));
 		ClientsideContentManager.sendRemoveEntityFrom(user.getOnlinePlayer(),
-				content.getLocation().getBlock().getRelative(0, 1, 0).getLocation(), EntityTypes.c);
+				content.getLocation().getBlock().getRelative(0, 1, 0).getLocation(), EntityType.ARMOR_STAND);
 	}
 
 	@EventHandler

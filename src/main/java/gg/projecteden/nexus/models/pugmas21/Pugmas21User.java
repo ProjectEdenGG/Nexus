@@ -23,7 +23,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import net.minecraft.world.entity.decoration.EntityItemFrame;
+import net.minecraft.world.entity.decoration.ItemFrame;
 import org.bukkit.Sound;
 import org.inventivetalent.glow.GlowAPI;
 
@@ -70,9 +70,9 @@ public class Pugmas21User implements PlayerOwnedObject {
 		private Set<Integer> collected = new HashSet<>();
 		private Set<Integer> found = new HashSet<>();
 
-		public transient final Map<Integer, EntityItemFrame> frames = new HashMap<>();
+		public transient final Map<Integer, ItemFrame> frames = new HashMap<>();
 
-		private EntityItemFrame getItemFrame(AdventPresent present) {
+		private ItemFrame getItemFrame(AdventPresent present) {
 			return frames.get(present.getDay());
 		}
 
@@ -152,7 +152,7 @@ public class Pugmas21User implements PlayerOwnedObject {
 
 		@Deprecated
 		public void glow(AdventPresent present) {
-			EntityItemFrame itemFrame = getItemFrame(present);
+			ItemFrame itemFrame = getItemFrame(present);
 			if (itemFrame == null)
 				itemFrame = show(present);
 
@@ -164,13 +164,13 @@ public class Pugmas21User implements PlayerOwnedObject {
 				.start();
 		}
 
-		public EntityItemFrame show(AdventPresent present) {
+		public ItemFrame show(AdventPresent present) {
 			hide(present);
 			return frames.compute(present.getDay(), ($1, $2) -> present.sendPacket(this));
 		}
 
 		public void hide(AdventPresent present) {
-			EntityItemFrame itemFrame = getItemFrame(present);
+			ItemFrame itemFrame = getItemFrame(present);
 			if (itemFrame == null)
 				return;
 

@@ -15,6 +15,7 @@ import gg.projecteden.nexus.models.mutemenu.MuteMenuService;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -153,7 +154,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 					for (MuteMenuItem item : MuteMenuItem.values()) {
 						if (item.getDefaultVolume() != null)
 							continue;
-						if (!StringUtils.isNullOrEmpty(item.getPermission()) && !player.hasPermission(item.getPermission()))
+						if (!Nullables.isNullOrEmpty(item.getPermission()) && !player.hasPermission(item.getPermission()))
 							continue;
 
 						boolean muted = user.hasMuted(item);
@@ -183,7 +184,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 					for (MuteMenuItem item : MuteMenuItem.values()) {
 						if (item.getDefaultVolume() == null)
 							continue;
-						if (!StringUtils.isNullOrEmpty(item.getPermission()) && !player.hasPermission(item.getPermission()))
+						if (!Nullables.isNullOrEmpty(item.getPermission()) && !player.hasPermission(item.getPermission()))
 							continue;
 
 						boolean muted = user.hasMuted(item);

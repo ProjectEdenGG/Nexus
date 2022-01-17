@@ -77,11 +77,13 @@ public class RadioConfig implements PlayerOwnedObject {
 	public static class Radio {
 		private String id;
 		private RadioType type;
+		@Builder.Default
 		private boolean enabled = false;
+		@Builder.Default
 		private boolean particles = false;
 		private Location location;
 		private int radius;
-		@Embedded
+		@Embedded @Builder.Default
 		private Set<String> songs = new HashSet<>();
 
 		private transient SongPlayer songPlayer;

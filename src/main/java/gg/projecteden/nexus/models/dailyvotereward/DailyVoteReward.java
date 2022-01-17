@@ -58,6 +58,7 @@ public class DailyVoteReward implements PlayerOwnedObject {
 		private UUID uuid;
 		private int streak;
 		private boolean earnedToday;
+		@Builder.Default
 		private LocalDate start = LocalDate.now();
 		private LocalDate end;
 

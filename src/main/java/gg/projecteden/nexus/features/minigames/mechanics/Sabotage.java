@@ -28,24 +28,9 @@ import gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreb
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack.ResourcePackNumber;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
-import gg.projecteden.nexus.utils.ActionBarUtils;
-import gg.projecteden.nexus.utils.AdventureUtils;
-import gg.projecteden.nexus.utils.ColorType;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.PacketUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.PotionEffectBuilder;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.SoundUtils;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.TitleBuilder;
-import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.*;
+import gg.projecteden.parchment.event.sound.LocationNamedSoundEvent;
 import gg.projecteden.utils.TimeUtils;
-import me.lexikiq.event.sound.LocationNamedSoundEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -624,7 +609,7 @@ public class Sabotage extends TeamMechanic {
 	public void onSoundEvent(LocationNamedSoundEvent event) {
 		try {
 			Minigamer minigamer = PlayerManager.get(event.getPlayer());
-			// only acknowledge events inside of a sabotage map
+			// only acknowledge events inside a sabotage map
 			if (!(minigamer != null && minigamer.isPlaying(this)))
 				if (new WorldGuardUtils(event.getWorld()).getRegionsLikeAt("sabotage_\\w+", event.getVector()).isEmpty())
 					return;

@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.features.discord.commands;
 
+import gg.projecteden.discord.DiscordId;
+import gg.projecteden.discord.DiscordId.User;
 import gg.projecteden.discord.appcommands.AppCommandEvent;
 import gg.projecteden.discord.appcommands.annotations.Command;
 import gg.projecteden.discord.appcommands.annotations.Desc;
@@ -14,8 +16,6 @@ import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.setting.Setting;
 import gg.projecteden.nexus.models.setting.SettingService;
-import gg.projecteden.utils.DiscordId;
-import gg.projecteden.utils.DiscordId.User;
 import net.dv8tion.jda.api.entities.Member;
 import org.apache.commons.lang.RandomStringUtils;
 

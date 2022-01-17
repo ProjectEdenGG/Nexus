@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.models.banker;
 
 import com.mongodb.DBObject;
+import com.mysql.cj.util.StringUtils;
 import dev.morphia.annotations.PreLoad;
 import gg.projecteden.interfaces.HasUniqueId;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -28,17 +29,18 @@ import static gg.projecteden.utils.UUIDUtils.isUUID0;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Transaction {
-	private UUID receiver = null;
-	private BigDecimal receiverOldBalance = null;
-	private BigDecimal receiverNewBalance = null;
+	private UUID receiver;
+	private BigDecimal receiverOldBalance;
+	private BigDecimal receiverNewBalance;
 
-	private UUID sender = null;
-	private BigDecimal senderOldBalance = null;
-	private BigDecimal senderNewBalance = null;
+	private UUID sender;
+	private BigDecimal senderOldBalance;
+	private BigDecimal senderNewBalance;
 
 	private BigDecimal amount;
 	private String description;
 	private TransactionCause cause;
+	@Builder.Default
 	private LocalDateTime timestamp = LocalDateTime.now();
 	private ShopGroup shopGroup;
 

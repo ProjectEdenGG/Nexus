@@ -17,7 +17,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import net.minecraft.world.entity.decoration.EntityItemFrame;
+import net.minecraft.world.entity.decoration.ItemFrame;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
@@ -92,7 +92,7 @@ public class Advent21Config implements PlayerOwnedObject {
 			return District.of(getLocation());
 		}
 
-		@NotNull EntityItemFrame sendPacket(Advent21User user) {
+		@NotNull ItemFrame sendPacket(Advent21User user) {
 			return PacketUtils.spawnItemFrame(
 				user.getOnlinePlayer(),
 				getLocation(),

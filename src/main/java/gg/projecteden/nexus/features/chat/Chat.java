@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.features.chat;
 
+import gg.projecteden.discord.DiscordId.TextChannel;
+import gg.projecteden.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.alerts.AlertsListener;
 import gg.projecteden.nexus.features.chat.bridge.IngameBridgeListener;
@@ -20,11 +22,9 @@ import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Timer;
-import gg.projecteden.utils.DiscordId.TextChannel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import me.lexikiq.HasUniqueId;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;

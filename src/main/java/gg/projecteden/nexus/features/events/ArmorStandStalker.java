@@ -96,9 +96,9 @@ public class ArmorStandStalker {
 		private Double minPitch = -30.0;
 		@Builder.Default
 		private Double maxPitch = 30.0;
-		private Double minYaw = null;
-		private Double maxYaw = null;
-		private Double percentage = null;
+		private Double minYaw;
+		private Double maxYaw;
+		private Double percentage;
 
 		private static class StalkerBuilder {
 			public StalkerBuilder uuid(String uuid) {

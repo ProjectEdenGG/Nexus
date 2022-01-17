@@ -63,6 +63,7 @@ public class PowerUpUtils {
 	public static class PowerUp {
 		@NonNull
 		public String name;
+		@SuppressWarnings("NullableProblems") // makes lombok include the field in RequiredArgsConstructor
 		@NonNull
 		boolean isPositive;
 		@NonNull

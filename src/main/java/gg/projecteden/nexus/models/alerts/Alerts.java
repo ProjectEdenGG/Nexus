@@ -87,7 +87,6 @@ public class Alerts implements PlayerOwnedObject {
 	public static class Highlight implements Comparable<Highlight> {
 		@NonNull
 		private String highlight;
-		@NonNull
 		private boolean partialMatching;
 
 		@Override

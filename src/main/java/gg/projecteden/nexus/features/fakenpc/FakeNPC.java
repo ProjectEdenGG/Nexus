@@ -8,8 +8,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import net.minecraft.server.level.EntityPlayer;
-import net.minecraft.world.entity.decoration.EntityArmorStand;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import org.bukkit.Location;
 
 import java.lang.reflect.InvocationTargetException;
@@ -24,7 +24,7 @@ public class FakeNPC {
 	@NonNull UUID uuid;
 	Location location;
 	String name;
-	EntityPlayer entityPlayer;
+	ServerPlayer entityPlayer;
 	SkinProperties skinProperties;
 	boolean visible;
 	Hologram hologram;
@@ -47,17 +47,20 @@ public class FakeNPC {
 	}
 
 	public void applySkin() {
-		EntityPlayer entityPlayer = this.getEntityPlayer();
+		ServerPlayer entityPlayer = this.getEntityPlayer();
 		SkinProperties skinProperties = this.skinProperties;
 
-		GameProfile profile = entityPlayer.getProfile();
+		GameProfile profile = entityPlayer.getGameProfile();
 		Property skinProperty = new Property("textures", skinProperties.getTexture(), skinProperties.getSignature());
 
 		profile.getProperties().removeAll("textures"); // ensure client does not crash due to duplicate properties.
 		profile.getProperties().put("textures", skinProperty);
 
+		// this method is defined in Parchment (which is having issues with its dev bundle atm)
+		// so it will not get obfuscated or anything (i.e. this code should not error)
 		try {
-			EntityPlayer.class.getMethod("setProfile", GameProfile.class).invoke(entityPlayer, profile);
+			//noinspection JavaReflectionMemberAccess
+			ServerPlayer.class.getMethod("setProfile", GameProfile.class).invoke(entityPlayer, profile);
 		} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException err) {
 			Nexus.warn("Could not set profile of FakeNPC " + name + " (" + uuid + ")");
 			err.printStackTrace();
@@ -77,7 +80,7 @@ public class FakeNPC {
 	@Data
 	@NoArgsConstructor
 	static class Hologram {
-		private List<EntityArmorStand> armorStandList = new ArrayList<>();
+		private List<ArmorStand> armorStandList = new ArrayList<>();
 		private List<String> lines;
 		private boolean visible;
 		private boolean localVisibility;

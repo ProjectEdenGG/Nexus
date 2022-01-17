@@ -28,7 +28,7 @@ import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 public class EntityUtils {
 
 	public static void forcePacket(Entity entity) {
-		((CraftEntity) entity).getHandle().af = true; // hasImpulse = true
+		((CraftEntity) entity).getHandle().hasImpulse = true; // hasImpulse = true
 	}
 
 	@NotNull

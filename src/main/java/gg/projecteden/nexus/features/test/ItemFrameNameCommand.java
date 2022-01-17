@@ -18,7 +18,7 @@ import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import net.minecraft.world.entity.decoration.EntityArmorStand;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ItemFrame;
@@ -86,7 +86,7 @@ public class ItemFrameNameCommand extends CustomCommand {
 
 		String name = EnumUtils.random(ColorType.class).getChatColor() + "Item Name Here";
 		double height = RandomUtils.randomDouble(0.0, 0.6);
-		EntityArmorStand armorStand = PacketUtils.entityNameFake(player, itemFrame, height, name, 1);
+		ArmorStand armorStand = PacketUtils.entityNameFake(player, itemFrame, height, name, 1);
 
 		itemFrameName.setId(armorStand.getId());
 		itemFrameName.setLocation(itemFrame.getLocation());

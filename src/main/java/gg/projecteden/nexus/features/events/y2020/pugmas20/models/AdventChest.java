@@ -12,7 +12,7 @@ import org.bukkit.Location;
 
 @Data
 public class AdventChest {
-	@NonNull int day;
+	int day;
 	@NonNull Location location;
 	@NonNull District district;
 

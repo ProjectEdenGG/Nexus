@@ -2,12 +2,10 @@ package gg.projecteden.nexus.features.minigames.models.events.matches;
 
 import gg.projecteden.nexus.features.minigames.models.Match;
 import lombok.Getter;
-import lombok.NonNull;
 import org.bukkit.event.HandlerList;
 
 public class MatchTimerTickEvent extends MatchEvent {
 	@Getter
-	@NonNull
 	private int time;
 
 	public MatchTimerTickEvent(final Match match, int time) {

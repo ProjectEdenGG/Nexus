@@ -70,7 +70,7 @@ public class CrateLoot implements ConfigurationSerializable {
 	}
 
 	public String getTitle() {
-		if (!StringUtils.isNullOrEmpty(title))
+		if (!Nullables.isNullOrEmpty(title))
 			return "&e" + title;
 		if (getDisplayItem() == null)
 			return "";

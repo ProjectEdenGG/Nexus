@@ -8,7 +8,6 @@ import org.bukkit.inventory.ItemStack;
 public class WeightedLoot {
 	@NonNull
 	ItemStack itemStack;
-	@NonNull
 	int weight;
 	String regionCheck;
 	// True = Day, False = Night, Null = Ignored

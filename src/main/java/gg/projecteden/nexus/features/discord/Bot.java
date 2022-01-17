@@ -1,11 +1,11 @@
 package gg.projecteden.nexus.features.discord;
 
+import gg.projecteden.discord.DiscordId.User;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.bridge.DiscordBridgeListener;
 import gg.projecteden.nexus.features.commands.NicknameCommand.NicknameApprovalListener;
 import gg.projecteden.nexus.features.discord.commands.TwitterAppCommand.TweetApprovalListener;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.DiscordId.User;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;

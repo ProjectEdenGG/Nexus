@@ -31,6 +31,7 @@ public class AdventMenu extends MenuUtils implements InventoryProvider {
 	private Pugmas21User user;
 	@NonNull
 	private LocalDate today;
+	@SuppressWarnings("NullableProblems") // makes lombok include the field in RequiredArgsConstructor
 	@NonNull
 	private int frameTicks;
 	private Title title = Title.FRAME_1;

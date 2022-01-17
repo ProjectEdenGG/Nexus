@@ -37,7 +37,6 @@ public class HallOfHistory implements PlayerOwnedObject {
 	public static class RankHistory {
 		@NonNull
 		private Rank rank;
-		@NonNull
 		private boolean current;
 		@NonNull
 		private LocalDate promotionDate;

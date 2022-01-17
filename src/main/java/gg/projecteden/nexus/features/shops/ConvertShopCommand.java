@@ -113,8 +113,8 @@ public class ConvertShopCommand extends CustomCommand {
 		private OfflinePlayer player;
 		private ItemStack item;
 		private double price;
-		private double moneyInSign = 0;
-		private int stock = 0;
+		private double moneyInSign;
+		private int stock;
 	}
 
 	private void convert(Sign sign) {
