@@ -28,7 +28,6 @@ import gg.projecteden.utils.Utils.MinMaxResult;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.annotations.ReplaceWith;
 import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
@@ -79,7 +78,6 @@ import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.utils.UUIDUtils.isUuid;
 import static java.util.stream.Collectors.toList;
 
-@UtilityClass
 public class PlayerUtils {
 
 	public enum Dev implements PlayerOwnedObject {

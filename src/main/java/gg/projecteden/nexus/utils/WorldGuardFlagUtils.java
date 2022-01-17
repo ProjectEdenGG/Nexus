@@ -19,10 +19,9 @@ import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
 import com.sk89q.worldguard.protection.flags.registry.SimpleFlagRegistry;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import gg.projecteden.nexus.Nexus;
-import lombok.AllArgsConstructor;
-import lombok.experimental.UtilityClass;
 import gg.projecteden.parchment.HasPlayer;
 import gg.projecteden.parchment.OptionalPlayer;
+import lombok.AllArgsConstructor;
 import org.apache.commons.lang.Validate;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -32,7 +31,6 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Utilities for getting the state
  */
-@UtilityClass
 public class WorldGuardFlagUtils {
 
 	/**

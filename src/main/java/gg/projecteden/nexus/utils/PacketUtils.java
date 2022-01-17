@@ -10,7 +10,6 @@ import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.parchment.HasPlayer;
 import lombok.NonNull;
-import lombok.experimental.UtilityClass;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
@@ -62,7 +61,6 @@ import java.util.UUID;
          used for that purpose
  */
 
-@UtilityClass
 public class PacketUtils {
 
 	public static BlockPosition toBlockPosition(Location destination) {
@@ -101,7 +99,7 @@ public class PacketUtils {
 	 * @deprecated enum fields are now obfuscated, use {@link #getSlotInt(EnumWrappers.ItemSlot)}
 	 */
 	@Deprecated
-	public int getSlotInt(EquipmentSlot slot) {
+	public static int getSlotInt(EquipmentSlot slot) {
 		return switch (slot) {
 			case MAINHAND -> -1;
 			case OFFHAND -> 45;
@@ -117,7 +115,7 @@ public class PacketUtils {
 	 * @param slot an item slot
 	 * @return integer slot
 	 */
-	public int getSlotInt(EnumWrappers.ItemSlot slot) {
+	public static int getSlotInt(EnumWrappers.ItemSlot slot) {
 		return switch (slot) {
 			case MAINHAND -> -1;
 			case OFFHAND -> 45;
@@ -133,7 +131,7 @@ public class PacketUtils {
 	 * @param slot an item slot
 	 * @return enum item slot
 	 */
-	public EquipmentSlot getEquipmentSlot(EnumWrappers.ItemSlot slot) {
+	public static EquipmentSlot getEquipmentSlot(EnumWrappers.ItemSlot slot) {
 		return switch (slot) {
 			case MAINHAND -> EquipmentSlot.MAINHAND;
 			case OFFHAND -> EquipmentSlot.OFFHAND;
@@ -149,7 +147,7 @@ public class PacketUtils {
 	 * @param slot an item slot
 	 * @return protocol item slot
 	 */
-	public EnumWrappers.ItemSlot getItemSlot(org.bukkit.inventory.EquipmentSlot slot) {
+	public static EnumWrappers.ItemSlot getItemSlot(org.bukkit.inventory.EquipmentSlot slot) {
 		return switch (slot) {
 			case HAND -> EnumWrappers.ItemSlot.MAINHAND;
 			case OFF_HAND -> EnumWrappers.ItemSlot.OFFHAND;
@@ -171,7 +169,7 @@ public class PacketUtils {
 	 * @deprecated enum names are now obfuscated, use {@link #sendFakeItem(org.bukkit.entity.Entity, HasPlayer, ItemStack, EnumWrappers.ItemSlot)}
 	 */
 	@Deprecated
-	public void sendFakeItem(org.bukkit.entity.Entity owner, Collection<? extends HasPlayer> recipients, ItemStack item, EquipmentSlot slot) {
+	public static void sendFakeItem(org.bukkit.entity.Entity owner, Collection<? extends HasPlayer> recipients, ItemStack item, EquipmentSlot slot) {
 		// self packet avoids playing the armor equip sound effect
 		PacketContainer selfPacket = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.SET_SLOT);
 		selfPacket.getIntegers().write(0, 0); // inventory ID (0 = player)
@@ -205,7 +203,7 @@ public class PacketUtils {
 	 * @deprecated enum names are now obfuscated, use {@link #sendFakeItem(org.bukkit.entity.Entity, HasPlayer, ItemStack, EnumWrappers.ItemSlot)}
 	 */
 	@Deprecated
-	public void sendFakeItem(org.bukkit.entity.Entity owner, HasPlayer recipient, ItemStack item, EquipmentSlot slot) {
+	public static void sendFakeItem(org.bukkit.entity.Entity owner, HasPlayer recipient, ItemStack item, EquipmentSlot slot) {
 		sendFakeItem(owner, Collections.singletonList(recipient), item, slot);
 	}
 
@@ -218,7 +216,7 @@ public class PacketUtils {
 	 * @param item item to "give"
 	 * @param slot slot to "set"
 	 */
-	public void sendFakeItem(org.bukkit.entity.Entity owner, Collection<? extends HasPlayer> recipients, ItemStack item, EnumWrappers.ItemSlot slot) {
+	public static void sendFakeItem(org.bukkit.entity.Entity owner, Collection<? extends HasPlayer> recipients, ItemStack item, EnumWrappers.ItemSlot slot) {
 		sendFakeItem(owner, recipients, item, getEquipmentSlot(slot));
 	}
 
@@ -231,7 +229,7 @@ public class PacketUtils {
 	 * @param item item to "give"
 	 * @param slot slot to "set"
 	 */
-	public void sendFakeItem(org.bukkit.entity.Entity owner, HasPlayer recipient, ItemStack item, EnumWrappers.ItemSlot slot) {
+	public static void sendFakeItem(org.bukkit.entity.Entity owner, HasPlayer recipient, ItemStack item, EnumWrappers.ItemSlot slot) {
 		sendFakeItem(owner, Collections.singletonList(recipient), item, slot);
 	}
 
@@ -244,7 +242,7 @@ public class PacketUtils {
 	 * @param item item to "give"
 	 * @param slot slot to "set"
 	 */
-	public void sendFakeItem(org.bukkit.entity.Entity owner, Collection<? extends HasPlayer> recipients, ItemStack item, org.bukkit.inventory.EquipmentSlot slot) {
+	public static void sendFakeItem(org.bukkit.entity.Entity owner, Collection<? extends HasPlayer> recipients, ItemStack item, org.bukkit.inventory.EquipmentSlot slot) {
 		sendFakeItem(owner, recipients, item, getItemSlot(slot));
 	}
 
@@ -257,7 +255,7 @@ public class PacketUtils {
 	 * @param item item to "give"
 	 * @param slot slot to "set"
 	 */
-	public void sendFakeItem(org.bukkit.entity.Entity owner, HasPlayer recipient, ItemStack item, org.bukkit.inventory.EquipmentSlot slot) {
+	public static void sendFakeItem(org.bukkit.entity.Entity owner, HasPlayer recipient, ItemStack item, org.bukkit.inventory.EquipmentSlot slot) {
 		sendFakeItem(owner, Collections.singletonList(recipient), item, slot);
 	}
 
@@ -349,7 +347,7 @@ public class PacketUtils {
 
 
 	/*
-	public void addNPCPacket(ServerPlayer npc, org.bukkit.entity.Player player) {
+	public static void addNPCPacket(ServerPlayer npc, org.bukkit.entity.Player player) {
 		PlayerConnection connection = ((CraftPlayer)player).getHandle().playerConnection;
 		connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, npc)); // "Adds the player data for the client to use when spawning a player" - https://wiki.vg/Protocol#Spawn_Player
 		connection.sendPacket(new PacketPlayOutNamedEntitySpawn(npc)); // Spawns the NPC for the player client.

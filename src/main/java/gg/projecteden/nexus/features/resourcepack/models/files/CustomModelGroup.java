@@ -18,13 +18,12 @@ import java.util.Arrays;
 import java.util.List;
 
 @Data
-public
-class CustomModelGroup {
+public class CustomModelGroup {
 	private Material material;
-	private List<Override> overrides = new ArrayList<>();
+	private List<Override3> overrides = new ArrayList<>();
 
 	@Data
-	public static class Override {
+	public static class Override3 {
 		private Predicate predicate;
 		private String model;
 

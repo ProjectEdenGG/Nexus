@@ -51,7 +51,24 @@ import java.util.Set;
 import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
 import static gg.projecteden.nexus.utils.EntityUtils.isHostile;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.*;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.ACTIONBAR_TICKS;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.ALLOW_SPAWN;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.FAREWELL_ACTIONBAR;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.FAREWELL_SUBTITLE;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.FAREWELL_TITLE;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.GRASS_DECAY;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.GREETING_ACTIONBAR;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.GREETING_SUBTITLE;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.GREETING_TITLE;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.HANGING_BREAK;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.HOSTILE_SPAWN;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.MINIGAMES_WATER_DAMAGE;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.MOB_AGGRESSION;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.TAMING;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.TITLE_FADE;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.TITLE_TICKS;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.USE_NOTE_BLOCKS;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.USE_TRAP_DOORS;
 
 public class WorldGuardFlags implements Listener {
 

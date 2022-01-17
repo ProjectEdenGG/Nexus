@@ -21,7 +21,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.With;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -262,7 +261,6 @@ public class TameablesCommand extends CustomCommand implements Listener {
 	public static class PendingTameblesAction {
 		@NonNull
 		private PendingTameablesActionType type;
-		@With
 		private OfflinePlayer player;
 
 		public enum PendingTameablesActionType {
