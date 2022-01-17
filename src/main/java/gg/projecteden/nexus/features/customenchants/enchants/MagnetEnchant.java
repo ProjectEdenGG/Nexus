@@ -69,8 +69,11 @@ public class MagnetEnchant extends CustomEnchant {
 	private static List<Item> getDroppedItems(Player player, int radius) {
 		return new ArrayList<>() {{
 			for (Entity entity : player.getNearbyEntities(radius, radius, radius)) {
-				if (!(entity instanceof Item item))
+				if (!(entity instanceof Item))
 					continue;
+
+				// https://bugs.java.com/bugdatabase/view_bug.do?bug_id=JDK-8278834
+				Item item = (Item) entity;
 
 				// TODO Metadata check
 
