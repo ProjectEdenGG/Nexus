@@ -31,10 +31,12 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -64,8 +66,8 @@ public class CostumeUser implements PlayerOwnedObject {
 
 	@PreLoad
 	void convert(DBObject dbObject) {
-		List<String> owned = (List<String>) dbObject.get("ownedCostumes");
-		Map<String, DBObject> colors = (Map<String, DBObject>) dbObject.get("colors");
+		List<String> owned = Objects.requireNonNullElseGet((List<String>) dbObject.get("ownedCostumes"), Collections::emptyList);
+		Map<String, DBObject> colors = Objects.requireNonNullElseGet((Map<String, DBObject>) dbObject.get("colors"), Collections::emptyMap);
 		AtomicInteger vouchers = new AtomicInteger();
 
 		Map<String, String> converter = new HashMap<>() {{
