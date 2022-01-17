@@ -96,10 +96,9 @@ publishing {
     }
 }
 
-// was throwing errors about "Cannot use new toolchain setting at the project level with release options" or something like that
-//java {
-//    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
-//}
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+}
 
 tasks {
     assemble {
