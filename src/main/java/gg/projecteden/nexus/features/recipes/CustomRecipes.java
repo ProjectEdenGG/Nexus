@@ -39,7 +39,6 @@ import org.bukkit.inventory.RecipeChoice.ExactChoice;
 import org.bukkit.inventory.RecipeChoice.MaterialChoice;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.reflections.Reflections;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +51,7 @@ import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilde
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.smelt;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.surround;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
+import static gg.projecteden.nexus.utils.Utils.subTypesOf;
 import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 @Depends({ResourcePack.class, CustomEnchants.class})
@@ -77,7 +77,7 @@ public class CustomRecipes extends Feature implements Listener {
 			registerFurnace();
 			misc();
 
-			new Reflections(getClass().getPackage().getName()).getSubTypesOf(FunctionalRecipe.class).stream()
+			subTypesOf(getClass().getPackageName(), FunctionalRecipe.class).stream()
 				.map(clazz -> {
 					try {
 						if (!Utils.canEnable(clazz))

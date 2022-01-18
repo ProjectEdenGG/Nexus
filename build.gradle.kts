@@ -7,6 +7,7 @@ plugins {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
     maven { url = uri("https://sonatype.projecteden.gg/repository/maven-public/") }
     maven { url = uri("https://jitpack.io") }
@@ -87,7 +88,7 @@ dependencies {
 
 group = "gg.projecteden"
 description = "Nexus"
-version = "2.0"
+version = "2.0.0"
 
 publishing {
     publications.create<MavenPublication>("maven") {
@@ -111,5 +112,12 @@ tasks {
     }
 
     javadoc { options.encoding = Charsets.UTF_8.name() }
-    processResources { filteringCharset = Charsets.UTF_8.name() }
+
+    processResources {
+        filteringCharset = Charsets.UTF_8.name()
+
+        filesMatching("plugin.yml") {
+            expand("version" to project.version)
+        }
+    }
 }

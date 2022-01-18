@@ -11,11 +11,12 @@ import gg.projecteden.nexus.utils.SerializationUtils.Json.LocationGsonSerializer
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.Env;
 import org.bukkit.Location;
-import org.reflections.Reflections;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
+
+import static gg.projecteden.nexus.utils.Utils.subTypesOf;
 
 public class API extends EdenDatabaseAPI {
 
@@ -49,7 +50,7 @@ public class API extends EdenDatabaseAPI {
 
 	@Override
 	public Collection<? extends Class<? extends TypeConverter>> getMongoConverters() {
-		return new Reflections(ItemStackConverter.class.getPackage().getName()).getSubTypesOf(TypeConverter.class);
+		return subTypesOf(ItemStackConverter.class.getPackageName(), TypeConverter.class);
 	}
 
 	@Override

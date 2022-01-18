@@ -23,6 +23,7 @@ import org.bukkit.inventory.InventoryView;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
+import org.reflections.util.ConfigurationBuilder;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -34,6 +35,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -45,12 +47,20 @@ import static org.reflections.ReflectionUtils.withAnnotation;
 
 public class Utils extends gg.projecteden.utils.Utils {
 
+	public static Reflections reflectionsOf(String... packageNames) {
+		return new Reflections(new ConfigurationBuilder().forPackages(packageNames));
+	}
+
+	public static <T> Set<Class<? extends T>> subTypesOf(String path, Class<T> clazz) {
+		return reflectionsOf(path).getSubTypesOf(clazz);
+	}
+
 	public static void registerListeners(Package packageObject) {
 		registerListeners(packageObject.getName());
 	}
 
 	public static void registerListeners(String packageName) {
-		new Reflections(packageName).getSubTypesOf(Listener.class).forEach(Utils::tryRegisterListener);
+		subTypesOf(packageName, Listener.class).forEach(Utils::tryRegisterListener);
 	}
 
 	public static void tryRegisterListener(Class<?> clazz) {

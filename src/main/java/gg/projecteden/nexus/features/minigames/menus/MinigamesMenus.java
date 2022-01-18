@@ -14,10 +14,11 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.reflections.Reflections;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static gg.projecteden.nexus.utils.Utils.subTypesOf;
 
 public class MinigamesMenus extends MenuUtils {
 	@Getter
@@ -88,7 +89,7 @@ public class MinigamesMenus extends MenuUtils {
 		Class<? extends InventoryProvider> provider = null;
 
 		customMenus:
-		for (Class<? extends InventoryProvider> menu : new Reflections("gg.projecteden.nexus.features.minigames.menus.custom").getSubTypesOf(InventoryProvider.class)) {
+		for (Class<? extends InventoryProvider> menu : subTypesOf("gg.projecteden.nexus.features.minigames.menus.custom", InventoryProvider.class)) {
 			for (Class<? extends Mechanic> superclass : arena.getMechanic().getSuperclasses()) {
 				if (menu.getAnnotation(CustomMechanicSettings.class) != null) {
 					List<Class<? extends Mechanic>> classes = Arrays.asList(menu.getAnnotation(CustomMechanicSettings.class).value());

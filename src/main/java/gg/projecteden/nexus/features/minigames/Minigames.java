@@ -47,7 +47,6 @@ import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
-import org.reflections.Reflections;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -58,6 +57,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static gg.projecteden.nexus.utils.Utils.reflectionsOf;
+import static gg.projecteden.nexus.utils.Utils.subTypesOf;
 
 public class Minigames extends Feature {
 	public static final String PREFIX = StringUtils.getPrefix("Minigames");
@@ -176,16 +178,16 @@ public class Minigames extends Feature {
 	// Registration
 
 	private String getPath() {
-		return this.getClass().getPackage().getName();
+		return this.getClass().getPackageName();
 	}
 
 	private void registerListeners() {
-		for (Class<? extends Listener> clazz : new Reflections(getPath() + ".listeners").getSubTypesOf(Listener.class))
+		for (Class<? extends Listener> clazz : subTypesOf(getPath() + ".listeners", Listener.class))
 			Utils.tryRegisterListener(clazz);
 	}
 
 	private void registerSerializables() {
-		new Reflections(getPath()).getTypesAnnotatedWith(SerializableAs.class).forEach(clazz -> {
+		reflectionsOf(getPath()).getTypesAnnotatedWith(SerializableAs.class).forEach(clazz -> {
 			String alias = clazz.getAnnotation(SerializableAs.class).value();
 			ConfigurationSerialization.registerClass((Class<? extends ConfigurationSerializable>) clazz, alias);
 		});
@@ -196,9 +198,8 @@ public class Minigames extends Feature {
 
 	public static void registerMatchDatas() {
 		try {
-			String path = Minigames.class.getPackage().getName();
-			Set<Class<? extends MatchData>> matchDataTypes = new Reflections(path + ".models.matchdata")
-					.getSubTypesOf(MatchData.class);
+			String path = Minigames.class.getPackageName();
+			Set<Class<? extends MatchData>> matchDataTypes = subTypesOf(path + ".models.matchdata", MatchData.class);
 
 			for (Class<?> matchDataType : matchDataTypes) {
 				if (matchDataType.getAnnotation(MatchDataFor.class) == null)

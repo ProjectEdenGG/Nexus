@@ -78,7 +78,7 @@ public class Discord extends Feature {
 
 	private static AppCommandRegistry getAppCommandRegistry() {
 		if (appCommandRegistry == null)
-			appCommandRegistry = new AppCommandRegistry(Bot.KODA.jda(), DiscordAppCommand.class.getPackage().getName());
+			appCommandRegistry = new AppCommandRegistry(Bot.KODA.jda(), DiscordAppCommand.class.getPackageName());
 		return appCommandRegistry;
 	}
 

@@ -43,7 +43,7 @@ public class AutoInventory extends Feature {
 
 	@Override
 	public void onStart() {
-		Tasks.async(() -> registerListeners(getClass().getPackage().getName() + ".features"));
+		Tasks.async(() -> registerListeners(getClass().getPackageName() + ".features"));
 	}
 
 	public static boolean isWorldDisabled(World world) {

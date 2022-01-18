@@ -24,7 +24,6 @@ import gg.projecteden.utils.Utils;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
-import org.reflections.Reflections;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -37,6 +36,7 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.Utils.subTypesOf;
 import static gg.projecteden.utils.UUIDUtils.UUID0;
 import static gg.projecteden.utils.UUIDUtils.isUuid;
 
@@ -218,8 +218,7 @@ public class DatabaseCommand extends CustomCommand {
 	public static final Map<String, MongoService<? extends DatabaseObject>> services = new HashMap<>();
 
 	static {
-		Reflections reflections = new Reflections(EdenAPI.class.getPackage().getName());
-		for (var service : reflections.getSubTypesOf(MongoService.class)) {
+		for (var service : subTypesOf(EdenAPI.class.getPackageName(), MongoService.class)) {
 			if (Modifier.isAbstract(service.getModifiers()))
 				continue;
 

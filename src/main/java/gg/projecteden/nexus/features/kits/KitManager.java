@@ -8,12 +8,13 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.configuration.serialization.SerializableAs;
-import org.reflections.Reflections;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+
+import static gg.projecteden.nexus.utils.Utils.reflectionsOf;
 
 public class KitManager {
 
@@ -31,7 +32,7 @@ public class KitManager {
 	}
 
 	private void registerSerializables() {
-		new Reflections(this.getClass().getPackage().getName()).getTypesAnnotatedWith(SerializableAs.class).forEach(clazz -> {
+		reflectionsOf(this.getClass().getPackageName()).getTypesAnnotatedWith(SerializableAs.class).forEach(clazz -> {
 			String alias = clazz.getAnnotation(SerializableAs.class).value();
 			ConfigurationSerialization.registerClass((Class<? extends ConfigurationSerializable>) clazz, alias);
 		});

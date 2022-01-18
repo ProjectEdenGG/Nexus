@@ -7,11 +7,12 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
-import org.reflections.Reflections;
 
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Set;
+
+import static gg.projecteden.nexus.utils.Utils.subTypesOf;
 
 public class CustomEnchantsRegistration {
 
@@ -64,13 +65,12 @@ public class CustomEnchantsRegistration {
 	}
 
 	private static Set<Class<? extends CustomEnchant>> getClasses() {
-		final Reflections reflections = new Reflections(getEnchantsPackage());
-		return reflections.getSubTypesOf(CustomEnchant.class);
+		return subTypesOf(getEnchantsPackage(), CustomEnchant.class);
 	}
 
 	@NotNull
 	private static String getEnchantsPackage() {
-		return CustomEnchants.class.getPackage().getName() + ".enchants";
+		return CustomEnchants.class.getPackageName() + ".enchants";
 	}
 
 	@SneakyThrows

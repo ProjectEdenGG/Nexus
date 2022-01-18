@@ -55,7 +55,6 @@ import org.bukkit.entity.ZombieVillager;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.reflections.Reflections;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,6 +67,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static gg.projecteden.nexus.utils.RandomUtils.randomElement;
+import static gg.projecteden.nexus.utils.Utils.subTypesOf;
 
 @Getter
 public enum MobHeadType implements MobHead {
@@ -354,8 +354,7 @@ public enum MobHeadType implements MobHead {
 			}
 		}
 
-		Reflections reflections = new Reflections(MobHeadType.class.getPackage().getName());
-		for (Class<? extends MobHeadVariant> variant : reflections.getSubTypesOf(MobHeadVariant.class)) {
+		for (Class<? extends MobHeadVariant> variant : subTypesOf(MobHeadType.class.getPackageName(), MobHeadVariant.class)) {
 			for (Block block : worldedit.getBlocks(worldguard.getRegion("mobheads_variant_" + variant.getSimpleName().replace("Variant", "").toLowerCase()))) {
 				try {
 					if (!MaterialTag.SIGNS.isTagged(block.getType()))

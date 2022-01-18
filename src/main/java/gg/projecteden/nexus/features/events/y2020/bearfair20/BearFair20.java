@@ -47,7 +47,7 @@ public class BearFair20 implements Listener {
 	@Getter
 	private static final String region = "bearfair2020";
 	@Getter
-//	private static final Set<Class<? extends BearFairIsland>> islands = new Reflections(BearFair20.class.getPackage().getName() + ".islands").getSubTypesOf(BearFairIsland.class);
+//	private static final Set<Class<? extends BearFairIsland>> islands = subTypesOf(BearFair20.class.getPackageName() + ".islands", BearFairIsland.class);
 	public static String PREFIX = "&8&l[&eBearFair&8&l] &3";
 
 	// TODO: When BF is over, disable these, and disable block break/place on regions
