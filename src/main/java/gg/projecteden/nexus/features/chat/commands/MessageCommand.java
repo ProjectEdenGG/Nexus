@@ -6,6 +6,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.ChatterService;
 import gg.projecteden.nexus.models.chat.PrivateChannel;
@@ -27,6 +28,10 @@ public class MessageCommand extends CustomCommand {
 
 	@Path("<player> [message...]")
 	void message(OfflinePlayer to, String message) {
+		// TODO New class, "HideablePlayer"?
+		if (!to.isOnline())
+			throw new PlayerNotOnlineException(to);
+
 		if (isSelf(to))
 			error("You cannot message yourself");
 
