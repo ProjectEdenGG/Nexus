@@ -7,7 +7,7 @@ plugins {
 }
 
 repositories {
-    mavenLocal()
+    mavenLocal() { content { includeGroup("gg.projecteden") } }
     mavenCentral()
     maven { url = uri("https://sonatype.projecteden.gg/repository/maven-public/") }
     maven { url = uri("https://jitpack.io") }
