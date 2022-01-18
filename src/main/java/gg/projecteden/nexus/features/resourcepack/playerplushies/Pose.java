@@ -9,9 +9,15 @@ import lombok.Getter;
 public enum Pose {
 	STANDING(Tier.TIER_1),
 	WALKING(Tier.TIER_1),
+	T_POSE(Tier.TIER_1),
+	HANDSTAND(Tier.TIER_1),
+
 	SITTING(Tier.TIER_2),
 	DABBING(Tier.TIER_2),
-	HANDSTAND(Tier.TIER_2),
+	RIDING_MINECART(Tier.TIER_2),
+	HOLDING_GLOBE(Tier.TIER_2),
+
+	WAVING(Tier.TIER_3),
 	;
 
 	private final Tier tier;

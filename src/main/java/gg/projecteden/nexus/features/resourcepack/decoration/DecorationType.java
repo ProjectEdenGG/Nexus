@@ -24,7 +24,7 @@ import java.util.Set;
 
 /*
 	TODO:
-		- Add all decoration
+		- Add all decorations
 		- Chair sitability (something blocking the chair/player) detection
 		- When placing decoration, make sure there is nothing in the way of the hitbox
  */
