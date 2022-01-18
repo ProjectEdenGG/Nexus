@@ -6,7 +6,7 @@
     <version>2.0</version>
 
     <properties>
-        <jdk.version>16</jdk.version>
+        <jdk.version>17</jdk.version>
         <lombok.encoding>UTF-8</lombok.encoding>
     </properties>
 
