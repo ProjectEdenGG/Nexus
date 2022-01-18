@@ -65,7 +65,7 @@ dependencies {
     compileOnly("com.onarandombox.multiverseinventories:Multiverse-Inventories:3.0.0")
     compileOnly("com.dumptruckman.minecraft:JsonConfiguration:1.1")
     compileOnly("net.minidev:json-smart:2.4.7")
-    compileOnly("de.tr7zw:item-nbt-api-plugin:2.7.1")
+    compileOnly("de.tr7zw:item-nbt-api-plugin:2.9.0-SNAPSHOT")
     compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
     compileOnly("com.gmail.filoghost.holographicdisplays:holographicdisplays-api:2.4.0")
     compileOnly("net.citizensnpcs:citizens-main:2.0.28-SNAPSHOT")
