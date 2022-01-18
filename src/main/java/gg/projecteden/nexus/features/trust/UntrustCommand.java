@@ -9,10 +9,10 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.home.Home;
 import gg.projecteden.nexus.models.home.HomeService;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.trust.Trust;
 import gg.projecteden.nexus.models.trust.Trust.Type;
 import gg.projecteden.nexus.models.trust.TrustService;
-import gg.projecteden.nexus.utils.Name;
 import lombok.NonNull;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -71,7 +71,7 @@ public class UntrustCommand extends CustomCommand {
 	@Path("admin locks <owner> <players>")
 	void locks(OfflinePlayer owner, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		trust = service.get(owner);
-		send(PREFIX + "Modifying trusts of &e" + Name.of(owner));
+		send(PREFIX + "Modifying trusts of &e" + Nickname.of(owner));
 		process(players, Type.LOCKS);
 	}
 
@@ -79,7 +79,7 @@ public class UntrustCommand extends CustomCommand {
 	@Path("admin homes <owner> <players>")
 	void homes(OfflinePlayer owner, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		trust = service.get(owner);
-		send(PREFIX + "Modifying trusts of &e" + Name.of(owner));
+		send(PREFIX + "Modifying trusts of &e" + Nickname.of(owner));
 		process(players, Type.HOMES);
 	}
 
@@ -87,7 +87,7 @@ public class UntrustCommand extends CustomCommand {
 	@Path("admin teleports <owner> <players>")
 	void teleports(OfflinePlayer owner, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		trust = service.get(owner);
-		send(PREFIX + "Modifying trusts of &e" + Name.of(owner));
+		send(PREFIX + "Modifying trusts of &e" + Nickname.of(owner));
 		process(players, Type.TELEPORTS);
 	}
 
@@ -95,7 +95,7 @@ public class UntrustCommand extends CustomCommand {
 	@Path("admin all <owner> <players>")
 	void all(OfflinePlayer owner, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		trust = service.get(owner);
-		send(PREFIX + "Modifying trusts of &e" + Name.of(owner));
+		send(PREFIX + "Modifying trusts of &e" + Nickname.of(owner));
 		process(players, Type.values());
 	}
 
@@ -109,7 +109,7 @@ public class UntrustCommand extends CustomCommand {
 
 	@NotNull
 	private String names(List<OfflinePlayer> players, String separator) {
-		return players.stream().map(Name::of).collect(Collectors.joining(separator));
+		return players.stream().map(Nickname::of).collect(Collectors.joining(separator));
 	}
 
 }

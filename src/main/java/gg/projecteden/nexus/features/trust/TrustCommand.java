@@ -18,7 +18,6 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.trust.Trust;
 import gg.projecteden.nexus.models.trust.Trust.Type;
 import gg.projecteden.nexus.models.trust.TrustService;
-import gg.projecteden.nexus.utils.Name;
 import lombok.NonNull;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -138,7 +137,7 @@ public class TrustCommand extends CustomCommand {
 
 	@NotNull
 	private String names(List<OfflinePlayer> players, String separator) {
-		return players.stream().map(Name::of).collect(Collectors.joining(separator));
+		return players.stream().map(Nickname::of).collect(Collectors.joining(separator));
 	}
 
 }

@@ -26,6 +26,7 @@ import gg.projecteden.nexus.models.mode.ModeUser.FlightMode;
 import gg.projecteden.nexus.models.mode.ModeUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.NerdService;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.tip.Tip;
 import gg.projecteden.nexus.models.tip.Tip.TipType;
 import gg.projecteden.nexus.models.tip.TipService;
@@ -35,7 +36,6 @@ import gg.projecteden.nexus.utils.FireworkLauncher;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -474,14 +474,14 @@ public class Misc implements Listener {
 		final Player player = event.getPlayer();
 		if (toSpawn.contains(player.getUniqueId())) {
 			WarpType.NORMAL.get("spawn").teleportAsync(player);
-			Nexus.log("Teleporting resource world player " + Name.of(player) + " to spawn");
+			Nexus.log("Teleporting resource world player " + Nickname.of(player) + " to spawn");
 			toSpawn.remove(player.getUniqueId());
 		}
 
 		Tasks.wait(5, () -> {
 			if (toSpawn.contains(player.getUniqueId())) {
 				WarpType.NORMAL.get("spawn").teleportAsync(player);
-				Nexus.log("Teleporting resource world player " + Name.of(player) + " to spawn [2]");
+				Nexus.log("Teleporting resource world player " + Nickname.of(player) + " to spawn [2]");
 				toSpawn.remove(player.getUniqueId());
 			}
 

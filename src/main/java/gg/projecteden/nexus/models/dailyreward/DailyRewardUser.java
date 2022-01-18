@@ -7,8 +7,8 @@ import gg.projecteden.mongodb.serializers.LocalDateConverter;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.Name;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -64,7 +64,7 @@ public class DailyRewardUser implements PlayerOwnedObject {
 		private LocalDate end;
 
 		public void increaseStreak() {
-			Nexus.log("[DailyRewards] Increasing streak for " + Name.of(uuid));
+			Nexus.log("[DailyRewards] Increasing streak for " + Nickname.of(uuid));
 			earnedToday = true;
 			++streak;
 			sendMessage(new JsonBuilder()

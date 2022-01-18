@@ -10,7 +10,7 @@ import gg.projecteden.nexus.features.nameplates.packet.MountPacket;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.nameplates.NameplateUserService;
-import gg.projecteden.nexus.utils.Name;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Data;
@@ -158,7 +158,7 @@ public class NameplateManager {
 		private final Set<UUID> viewedBy = new HashSet<>();
 
 		NameplatePlayer(UUID uuid) {
-			Nameplates.debug("Now managing " + Name.of(uuid));
+			Nameplates.debug("Now managing " + Nickname.of(uuid));
 			this.uuid = uuid;
 			this.entityId = EntitySpawnPacket.ENTITY_ID_COUNTER++;
 			this.spawnPacket = new EntitySpawnPacket(entityId);

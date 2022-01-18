@@ -7,10 +7,10 @@ import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.models.voter.TopVoter;
 import gg.projecteden.nexus.models.voter.VoterService;
-import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -128,7 +128,7 @@ public class EndOfMonth {
 			if (topVoters.size() > 0)
 				names = topVoters.stream()
 						.filter(Objects::nonNull)
-						.map(topVoter -> Name.of(PlayerUtils.getPlayer(topVoter.getVoter())))
+						.map(topVoter -> Nickname.of(PlayerUtils.getPlayer(topVoter.getVoter())))
 						.collect(Collectors.joining(", "));
 			if (names == null || names.length() == 0)
 				return "None :(";
