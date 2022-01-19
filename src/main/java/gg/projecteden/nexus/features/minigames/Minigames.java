@@ -182,7 +182,7 @@ public class Minigames extends Feature {
 	}
 
 	private void registerListeners() {
-		for (Class<? extends Listener> clazz : subTypesOf(getPath() + ".listeners", Listener.class))
+		for (Class<? extends Listener> clazz : subTypesOf(Listener.class, getPath() + ".listeners"))
 			Utils.tryRegisterListener(clazz);
 	}
 
@@ -199,7 +199,7 @@ public class Minigames extends Feature {
 	public static void registerMatchDatas() {
 		try {
 			String path = Minigames.class.getPackageName();
-			Set<Class<? extends MatchData>> matchDataTypes = subTypesOf(path + ".models.matchdata", MatchData.class);
+			Set<Class<? extends MatchData>> matchDataTypes = subTypesOf(MatchData.class, path + ".models.matchdata");
 
 			for (Class<?> matchDataType : matchDataTypes) {
 				if (matchDataType.getAnnotation(MatchDataFor.class) == null)

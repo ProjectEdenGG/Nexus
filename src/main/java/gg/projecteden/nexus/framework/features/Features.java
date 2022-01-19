@@ -26,7 +26,7 @@ public class Features {
 
 	public Features(Plugin plugin, String path) {
 		this.plugin = plugin;
-		this.featureSet = subTypesOf(path, Feature.class);
+		this.featureSet = subTypesOf(Feature.class, path);
 	}
 
 	public static <T extends Feature> T get(Class<T> clazz) {

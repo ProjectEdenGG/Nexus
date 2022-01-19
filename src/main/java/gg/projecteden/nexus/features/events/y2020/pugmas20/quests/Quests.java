@@ -32,7 +32,7 @@ public class Quests {
 	public static final String leftoverItems = Pugmas20.PREFIX + "Giving leftover items...";
 
 	public Quests() {
-		subTypesOf(getClass().getPackageName(), Listener.class).forEach(Utils::tryRegisterListener);
+		subTypesOf(Listener.class, getClass().getPackageName()).forEach(Utils::tryRegisterListener);
 	}
 
 	@Getter

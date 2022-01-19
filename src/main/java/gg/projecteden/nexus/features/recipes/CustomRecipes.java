@@ -77,7 +77,7 @@ public class CustomRecipes extends Feature implements Listener {
 			registerFurnace();
 			misc();
 
-			subTypesOf(getClass().getPackageName(), FunctionalRecipe.class).stream()
+			subTypesOf(FunctionalRecipe.class, getClass().getPackageName()).stream()
 				.map(clazz -> {
 					try {
 						if (!Utils.canEnable(clazz))

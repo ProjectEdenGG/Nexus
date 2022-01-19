@@ -218,7 +218,7 @@ public class DatabaseCommand extends CustomCommand {
 	public static final Map<String, MongoService<? extends DatabaseObject>> services = new HashMap<>();
 
 	static {
-		for (var service : subTypesOf(EdenAPI.class.getPackageName(), MongoService.class)) {
+		for (var service : subTypesOf(MongoService.class, EdenAPI.class.getPackageName())) {
 			if (Modifier.isAbstract(service.getModifiers()))
 				continue;
 

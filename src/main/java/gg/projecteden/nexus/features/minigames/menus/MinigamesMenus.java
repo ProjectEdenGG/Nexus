@@ -89,7 +89,7 @@ public class MinigamesMenus extends MenuUtils {
 		Class<? extends InventoryProvider> provider = null;
 
 		customMenus:
-		for (Class<? extends InventoryProvider> menu : subTypesOf("gg.projecteden.nexus.features.minigames.menus.custom", InventoryProvider.class)) {
+		for (Class<? extends InventoryProvider> menu : subTypesOf(InventoryProvider.class, "gg.projecteden.nexus.features.minigames.menus.custom")) {
 			for (Class<? extends Mechanic> superclass : arena.getMechanic().getSuperclasses()) {
 				if (menu.getAnnotation(CustomMechanicSettings.class) != null) {
 					List<Class<? extends Mechanic>> classes = Arrays.asList(menu.getAnnotation(CustomMechanicSettings.class).value());

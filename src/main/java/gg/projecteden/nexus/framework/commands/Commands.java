@@ -43,7 +43,7 @@ public class Commands {
 	public Commands(Plugin plugin, String path) {
 		this.plugin = plugin;
 		this.mapUtils = new CommandMapUtils(plugin);
-		this.commandSet = subTypesOf(path, CustomCommand.class);
+		this.commandSet = subTypesOf(CustomCommand.class, path);
 		registerConvertersAndTabCompleters();
 		plugin.getServer().getPluginManager().registerEvents(new CommandListener(), plugin);
 	}

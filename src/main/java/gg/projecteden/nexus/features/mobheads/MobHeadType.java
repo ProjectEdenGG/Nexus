@@ -354,7 +354,7 @@ public enum MobHeadType implements MobHead {
 			}
 		}
 
-		for (Class<? extends MobHeadVariant> variant : subTypesOf(MobHeadType.class.getPackageName(), MobHeadVariant.class)) {
+		for (Class<? extends MobHeadVariant> variant : subTypesOf(MobHeadVariant.class, MobHeadType.class.getPackageName())) {
 			for (Block block : worldedit.getBlocks(worldguard.getRegion("mobheads_variant_" + variant.getSimpleName().replace("Variant", "").toLowerCase()))) {
 				try {
 					if (!MaterialTag.SIGNS.isTagged(block.getType()))

@@ -50,7 +50,7 @@ public class API extends EdenDatabaseAPI {
 
 	@Override
 	public Collection<? extends Class<? extends TypeConverter>> getMongoConverters() {
-		return subTypesOf(ItemStackConverter.class.getPackageName(), TypeConverter.class);
+		return subTypesOf(TypeConverter.class, ItemStackConverter.class.getPackageName());
 	}
 
 	@Override

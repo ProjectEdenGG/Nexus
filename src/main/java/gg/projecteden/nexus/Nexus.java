@@ -83,6 +83,10 @@ public class Nexus extends JavaPlugin {
 		});
 	}
 
+	static {
+		Locale.setDefault(Locale.US);
+	}
+
 	public Nexus() {
 		if (instance == null) {
 			instance = this;
@@ -185,8 +189,6 @@ public class Nexus extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
-		Locale.setDefault(Locale.US);
-
 		new Timer("Enable", () -> {
 			new Timer(" Cache Usernames", () -> OnlinePlayers.getAll().forEach(Name::of));
 			new Timer(" Config", this::setupConfig);

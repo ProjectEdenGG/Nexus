@@ -65,7 +65,7 @@ public class CustomEnchantsRegistration {
 	}
 
 	private static Set<Class<? extends CustomEnchant>> getClasses() {
-		return subTypesOf(getEnchantsPackage(), CustomEnchant.class);
+		return subTypesOf(CustomEnchant.class, getEnchantsPackage());
 	}
 
 	@NotNull
