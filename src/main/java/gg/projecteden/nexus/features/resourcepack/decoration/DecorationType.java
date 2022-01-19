@@ -27,6 +27,8 @@ import java.util.Set;
 		- Add all decorations
 		- Chair sitability (something blocking the chair/player) detection
 		- When placing decoration, make sure there is nothing in the way of the hitbox
+		- Prevent putting decorations into itemframes
+		- Can break non-hitbox decorations w/ something in hand
  */
 
 @AllArgsConstructor
@@ -48,6 +50,17 @@ public enum DecorationType {
 	STOOL_WOODEN_CUSHION(new Chair("Cushioned Wooden Stool", 501, DyedPart.CUSHION)),
 	// Benches
 	BENCH_WOODEN(new Bench("Wooden Bench", 450, DyedPart.WHOLE)),
+	// Couches
+	COUCH_WOODEN_END_LEFT(new Chair("Wooden Couch Left End", 525, DyedPart.CUSHION)),
+	COUCH_WOODEN_END_RIGHT(new Chair("Wooden Couch Left Right", 526, DyedPart.CUSHION)),
+	COUCH_WOODEN_MIDDLE(new Chair("Wooden Couch Middle", 527, DyedPart.CUSHION)),
+	COUCH_WOODEN_CORNER(new Chair("Wooden Couch Corner", 528, DyedPart.CUSHION)),
+	COUCH_WOODEN_OTTOMAN(new Chair("Wooden Couch Ottoman", 529, DyedPart.CUSHION)),
+	COUCH_MODERN_END_LEFT(new Chair("Modern Couch Left End", 530, DyedPart.CUSHION)),
+	COUCH_MODERN_END_RIGHT(new Chair("Modern Couch Left Right", 531, DyedPart.CUSHION)),
+	COUCH_MODERN_MIDDLE(new Chair("Modern Couch Middle", 532, DyedPart.CUSHION)),
+	COUCH_MODERN_CORNER(new Chair("Modern Couch Corner", 533, DyedPart.CUSHION)),
+	COUCH_MODERN_OTTOMAN(new Chair("Modern Couch Ottoman", 534, DyedPart.CUSHION)),
 	// Blocks
 	DYE_STATION(new Block("Dye Station", 1, Material.CRAFTING_TABLE)),
 	// Fireplaces: TODO
