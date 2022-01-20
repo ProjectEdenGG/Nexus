@@ -147,6 +147,8 @@ public class ArenaManager {
 					Nexus.warn("File " + file.getName() + " already exists");
 			} catch (IOException ex) {
 				Nexus.severe("An error occurred while trying to create a configuration file: " + ex.getMessage());
+				if (Nexus.isDebug())
+					ex.printStackTrace();
 			}
 		}
 
@@ -170,10 +172,14 @@ public class ArenaManager {
 					read(name.replace(".yml", ""));
 				} catch (Exception ex) {
 					Nexus.severe("An error occurred while trying to read arena configuration file " + filePath.getFileName().toFile() + ": " + ex.getMessage());
+					if (Nexus.isDebug())
+						ex.printStackTrace();
 				}
 			});
 		} catch (Exception ex) {
 			Nexus.severe("An error occurred while trying to read arena configuration files: " + ex.getMessage());
+			if (Nexus.isDebug())
+				ex.printStackTrace();
 		}
 	}
 
@@ -195,6 +201,8 @@ public class ArenaManager {
 				add(arena);
 		} catch (Exception ex) {
 			Nexus.severe("An error occurred while trying to write arena configuration file " + arena.getName() + ": " + ex.getMessage());
+			if (Nexus.isDebug())
+				ex.printStackTrace();
 		}
 	}
 

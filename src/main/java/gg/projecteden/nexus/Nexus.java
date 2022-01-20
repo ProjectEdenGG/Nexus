@@ -4,6 +4,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.lishid.openinv.IOpenInv;
 import com.onarandombox.MultiverseCore.MultiverseCore;
+import gg.projecteden.mongodb.MongoService;
 import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.listeners.TemporaryListener;
@@ -20,6 +21,7 @@ import gg.projecteden.nexus.utils.GoogleUtils;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Timer;
 import gg.projecteden.nexus.utils.WorldGuardFlagUtils;
 import gg.projecteden.utils.EnumUtils;
@@ -34,8 +36,6 @@ import net.luckperms.api.LuckPerms;
 import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -49,6 +49,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -174,14 +175,6 @@ public class Nexus extends JavaPlugin {
 		}
 	}
 
-	public static void registerCommand(String command, CommandExecutor executor) {
-		getInstance().getCommand(command).setExecutor(executor);
-	}
-
-	public static void registerTabCompleter(String command, TabCompleter tabCompleter) {
-		getInstance().getCommand(command).setTabCompleter(tabCompleter);
-	}
-
 	@Override
 	public void onLoad() {
 		WorldGuardFlagUtils.Flags.register();
@@ -207,23 +200,37 @@ public class Nexus extends JavaPlugin {
 	}
 
 	// @formatter:off
+	@SuppressWarnings({"Convert2MethodRef", "CodeBlock2Expr"})
 	@Override
 	public void onDisable() {
-		try { broadcastReload();										} catch (Throwable ex) { ex.printStackTrace(); }
-		try { PlayerUtils.runCommandAsConsole("save-all");				} catch (Throwable ex) { ex.printStackTrace(); }
-		try { cron.stop();												} catch (Throwable ex) { ex.printStackTrace(); }
-		try { protocolManager.removePacketListeners(this);				} catch (Throwable ex) { ex.printStackTrace(); }
-		try { commands.unregisterAll();									} catch (Throwable ex) { ex.printStackTrace(); }
-		try { features.unregisterExcept(Discord.class, Chat.class);		} catch (Throwable ex) { ex.printStackTrace(); }
-		try { features.unregister(Discord.class, Chat.class);			} catch (Throwable ex) { ex.printStackTrace(); }
-		try { Bukkit.getServicesManager().unregisterAll(this);			} catch (Throwable ex) { ex.printStackTrace(); }
-		try { MySQLPersistence.shutdown();								} catch (Throwable ex) { ex.printStackTrace(); }
-		try { GoogleUtils.shutdown();									} catch (Throwable ex) { ex.printStackTrace(); }
-		try { api.shutdown();											} catch (Throwable ex) { ex.printStackTrace(); }
+		List<Runnable> tasks = Arrays.asList(
+			() -> { broadcastReload(); },
+			() -> { PlayerUtils.runCommandAsConsole("save-all"); },
+			() -> { if (cron.isStarted()) cron.stop(); },
+			() -> { if (protocolManager != null) protocolManager.removePacketListeners(this); },
+			() -> { if (commands != null) commands.unregisterAll(); },
+			() -> { if (features != null) features.unregisterExcept(Discord.class, Chat.class); },
+			() -> { if (features != null) features.unregister(Discord.class, Chat.class); },
+			() -> { Bukkit.getServicesManager().unregisterAll(this); },
+			() -> { MySQLPersistence.shutdown(); },
+			() -> { GoogleUtils.shutdown(); },
+			() -> { if (api != null) api.shutdown(); }
+		);
+
+		tasks.forEach(task -> {
+			try {
+				task.run();
+			} catch (Throwable ex) {
+				ex.printStackTrace();
+			}
+		});
 	}
 	// @formatter:on;
 
 	public void broadcastReload() {
+		if (luckPerms == null)
+			return;
+
 		Rank.getOnlineStaff().stream()
 				.map(Nerd::getPlayer)
 				.forEach(player -> {
