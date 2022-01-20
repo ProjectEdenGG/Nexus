@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.common;
 
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Couch;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Couch.CouchPart;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,17 +24,24 @@ public interface Seat {
 	String id = "DecorationSeat";
 	List<BlockFace> radialFaces = Arrays.asList(BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST, BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST);
 
-	default void trySit(Player player, Block block, Rotation rotation) {
+	default void trySit(Player player, Block block, Rotation rotation, Decoration decoration) {
 		Location location = block.getLocation().toCenterLocation().clone().subtract(0, 0.2, 0);
 		if (!canSit(player, location))
 			return;
 
-		makeSit(player, location, rotation);
+		makeSit(player, location, rotation, decoration);
 	}
 
-	default void makeSit(Player player, Location location, Rotation rotation) {
+	default void makeSit(Player player, Location location, Rotation rotation, Decoration decoration) {
 		World world = location.getWorld();
-		location.setYaw(getYaw(rotation));
+		float yaw = getYaw(rotation);
+
+		if (decoration instanceof Couch couch) {
+			if (couch.getCouchPart().equals(CouchPart.CORNER))
+				yaw += 45;
+		}
+
+		location.setYaw(yaw);
 
 		ArmorStand armorStand = world.spawn(location, ArmorStand.class, _armorStand -> {
 			_armorStand.setMarker(true);

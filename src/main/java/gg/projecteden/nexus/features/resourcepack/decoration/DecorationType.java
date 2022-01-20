@@ -6,6 +6,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.Seat.DyedPar
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Bench;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Block;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Chair;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Couch;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Couch.CouchPart;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.PlayerPlushie;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Table;
@@ -51,16 +53,16 @@ public enum DecorationType {
 	// Benches
 	BENCH_WOODEN(new Bench("Wooden Bench", 450, DyedPart.WHOLE)),
 	// Couches
-	COUCH_WOODEN_END_LEFT(new Chair("Wooden Couch Left End", 525, DyedPart.CUSHION)),
-	COUCH_WOODEN_END_RIGHT(new Chair("Wooden Couch Left Right", 526, DyedPart.CUSHION)),
-	COUCH_WOODEN_MIDDLE(new Chair("Wooden Couch Middle", 527, DyedPart.CUSHION)),
-	COUCH_WOODEN_CORNER(new Chair("Wooden Couch Corner", 528, DyedPart.CUSHION)),
-	COUCH_WOODEN_OTTOMAN(new Chair("Wooden Couch Ottoman", 529, DyedPart.CUSHION)),
-	COUCH_MODERN_END_LEFT(new Chair("Modern Couch Left End", 530, DyedPart.CUSHION)),
-	COUCH_MODERN_END_RIGHT(new Chair("Modern Couch Left Right", 531, DyedPart.CUSHION)),
-	COUCH_MODERN_MIDDLE(new Chair("Modern Couch Middle", 532, DyedPart.CUSHION)),
-	COUCH_MODERN_CORNER(new Chair("Modern Couch Corner", 533, DyedPart.CUSHION)),
-	COUCH_MODERN_OTTOMAN(new Chair("Modern Couch Ottoman", 534, DyedPart.CUSHION)),
+	COUCH_WOODEN_END_LEFT(new Couch("Wooden Couch Left End", 525, CouchPart.END)),
+	COUCH_WOODEN_END_RIGHT(new Couch("Wooden Couch Left Right", 526, CouchPart.END)),
+	COUCH_WOODEN_MIDDLE(new Couch("Wooden Couch Middle", 527, CouchPart.STRAIGHT)),
+	COUCH_WOODEN_CORNER(new Couch("Wooden Couch Corner", 528, CouchPart.CORNER)),
+	COUCH_WOODEN_OTTOMAN(new Couch("Wooden Couch Ottoman", 529, CouchPart.STRAIGHT)),
+	COUCH_MODERN_END_LEFT(new Couch("Modern Couch Left End", 530, CouchPart.END)),
+	COUCH_MODERN_END_RIGHT(new Couch("Modern Couch Left Right", 531, CouchPart.END)),
+	COUCH_MODERN_MIDDLE(new Couch("Modern Couch Middle", 532, CouchPart.STRAIGHT)),
+	COUCH_MODERN_CORNER(new Couch("Modern Couch Corner", 533, CouchPart.CORNER)),
+	COUCH_MODERN_OTTOMAN(new Couch("Modern Couch Ottoman", 534, CouchPart.STRAIGHT)),
 	// Blocks
 	DYE_STATION(new Block("Dye Station", 1, Material.CRAFTING_TABLE)),
 	// Fireplaces: TODO

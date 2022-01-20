@@ -144,7 +144,7 @@ public class Decoration {
 
 	public boolean interact(Player player, ItemFrame itemFrame, Block block) {
 		if (this instanceof Seat seat)
-			seat.trySit(player, block, itemFrame.getRotation());
+			seat.trySit(player, block, itemFrame.getRotation(), this);
 
 		return true;
 	}
