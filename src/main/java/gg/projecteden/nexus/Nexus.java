@@ -279,7 +279,10 @@ public class Nexus extends JavaPlugin {
 
 	private void databases() {
 //		new Timer(" MySQL", LWCProtectionService::new);
-		new Timer(" MongoDB", HomeService::new);
+		new Timer(" MongoDB", () -> {
+			Tasks.wait(5, () -> MongoService.loadServices("gg.projecteden.nexus.models"));
+			new HomeService();
+		});
 	}
 
 	private void hooks() {

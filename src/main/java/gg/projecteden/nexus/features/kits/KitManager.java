@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import static gg.projecteden.nexus.utils.Utils.reflectionsOf;
+import static gg.projecteden.utils.Utils.typesAnnotatedWith;
 
 public class KitManager {
 
@@ -32,7 +32,7 @@ public class KitManager {
 	}
 
 	private void registerSerializables() {
-		reflectionsOf(this.getClass().getPackageName()).getTypesAnnotatedWith(SerializableAs.class).forEach(clazz -> {
+		typesAnnotatedWith(SerializableAs.class, this.getClass().getPackageName()).forEach(clazz -> {
 			String alias = clazz.getAnnotation(SerializableAs.class).value();
 			ConfigurationSerialization.registerClass((Class<? extends ConfigurationSerializable>) clazz, alias);
 		});

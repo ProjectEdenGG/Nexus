@@ -18,10 +18,6 @@ import java.util.List;
 
 public abstract class MongoPlayerService<T extends PlayerOwnedObject> extends gg.projecteden.mongodb.MongoPlayerService<T> {
 
-	static {
-		loadServices("gg.projecteden.nexus.models");
-	}
-
 	@Override
 	public void save(T object) {
 		if (Bukkit.isPrimaryThread())

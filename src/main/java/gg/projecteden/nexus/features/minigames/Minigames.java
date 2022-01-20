@@ -58,8 +58,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.nexus.utils.Utils.reflectionsOf;
 import static gg.projecteden.nexus.utils.Utils.subTypesOf;
+import static gg.projecteden.utils.Utils.typesAnnotatedWith;
 
 public class Minigames extends Feature {
 	public static final String PREFIX = StringUtils.getPrefix("Minigames");
@@ -187,7 +187,7 @@ public class Minigames extends Feature {
 	}
 
 	private void registerSerializables() {
-		reflectionsOf(getPath()).getTypesAnnotatedWith(SerializableAs.class).forEach(clazz -> {
+		typesAnnotatedWith(SerializableAs.class, getPath()).forEach(clazz -> {
 			String alias = clazz.getAnnotation(SerializableAs.class).value();
 			ConfigurationSerialization.registerClass((Class<? extends ConfigurationSerializable>) clazz, alias);
 		});
