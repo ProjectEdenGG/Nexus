@@ -11,6 +11,7 @@ import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.ChatterService;
 import gg.projecteden.nexus.models.chat.PrivateChannel;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import lombok.NonNull;
 import org.bukkit.OfflinePlayer;
 
@@ -39,7 +40,7 @@ public class MessageCommand extends CustomCommand {
 			error("You have messages disabled!");
 
 		if (MuteMenuUser.hasMuted(to, MuteMenuItem.MESSAGES))
-			error(to.getName() + " has messages disabled!");
+			error(Nickname.of(to) + " has messages disabled!");
 
 		PrivateChannel dm = new PrivateChannel(chatter, new ChatterService().get(to));
 		if (isNullOrEmpty(message))
