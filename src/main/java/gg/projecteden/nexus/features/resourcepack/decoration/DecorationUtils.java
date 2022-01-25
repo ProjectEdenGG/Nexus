@@ -12,6 +12,7 @@ import gg.projecteden.utils.RandomUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -34,7 +35,6 @@ import java.util.Set;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class DecorationUtils {
-
 	private static final List<BlockFace> hitboxDirections = Arrays.asList(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN);
 	public static boolean debug = false;
 
@@ -164,7 +164,7 @@ public class DecorationUtils {
 
 		for (HitboxData hitboxData : dataMap.values()) {
 			Decoration decoration = hitboxData.getDecorationType().getDecoration();
-			List<Hitbox> hitboxes = decoration.getHitboxes(hitboxData.getItemFrame());
+			List<Hitbox> hitboxes = Hitbox.rotateHitboxes(decoration, hitboxData.getItemFrame());
 
 			Block block = hitboxData.getBlock();
 			if (block == null)
@@ -295,5 +295,20 @@ public class DecorationUtils {
 			this.getDirectionsLeft().remove(this.getBlockFace());
 			debug("Removing Dir: " + this.getBlockFace());
 		}
+	}
+
+	@Getter
+	private static final List<BlockFace> directions = List.of(
+		BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST,
+		BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST);
+
+	public static BlockFace rotateClockwise(BlockFace blockFace) {
+		int size = directions.size() - 1;
+		int index = (directions.indexOf(blockFace) + 1);
+
+		if (index > size)
+			index = 0;
+
+		return directions.get(index);
 	}
 }

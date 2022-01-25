@@ -1,7 +1,9 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.common;
 
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
@@ -20,6 +22,7 @@ import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -60,6 +63,14 @@ public class Decoration {
 		this(name, modelData, material, Hitbox.NONE());
 	}
 
+	public ItemStack getItem() {
+		ItemBuilder decor = new ItemBuilder(material).customModelData(modelData).name(name).lore(lore);
+		if (defaultColor != null)
+			decor.dyeColor(defaultColor);
+
+		return decor.build();
+	}
+
 	public static Color getDefaultStain() {
 		return ColorType.hexToBukkit("#F4C57A");
 	}
@@ -68,22 +79,19 @@ public class Decoration {
 		return ColorType.hexToBukkit("#FF5555");
 	}
 
-	public List<Hitbox> getHitboxes(ItemFrame itemFrame) {
-		return Hitbox.getHitboxes(this, itemFrame);
+	public boolean isMultiBlock() {
+		return this.getClass().getAnnotation(MultiBlock.class) != null;
 	}
 
-	public ItemFrameRotation getValidRotation(ItemFrameRotation frameRotation) {
-		if (this.disabledRotation.equals(DisabledRotation.NONE))
-			return frameRotation;
+	//
 
-		if (!this.disabledRotation.contains(frameRotation))
-			return frameRotation;
+	public boolean place(Player player, Block block, BlockFace clickedFace, ItemStack item) {
+		if (!isValidPlacement(clickedFace))
+			return false;
 
-		return ItemFrameRotation.from(frameRotation.getRotation().rotateClockwise());
-	}
-
-	public boolean place(Player player, Block block, BlockFace blockFace, ItemStack item) {
-		if (!isValidBlockFace(blockFace))
+		Location origin = block.getRelative(clickedFace).getLocation().clone();
+		ItemFrameRotation frameRotation = findValidFrameRotation(origin, ItemFrameRotation.of(player));
+		if (frameRotation == null)
 			return false;
 
 		ItemStack _item = item.clone();
@@ -91,27 +99,15 @@ public class Decoration {
 		if (!player.getGameMode().equals(GameMode.CREATIVE))
 			item.subtract();
 
-		World world = block.getWorld();
-		Location origin = block.getRelative(blockFace).getLocation().clone();
-		ItemFrameRotation frameRotation = getValidRotation(ItemFrameRotation.of(player));
-
-		ItemFrame itemFrame = (ItemFrame) world.spawnEntity(origin, EntityType.ITEM_FRAME);
+		ItemFrame itemFrame = (ItemFrame) block.getWorld().spawnEntity(origin, EntityType.ITEM_FRAME);
+		itemFrame.setFacingDirection(clickedFace, true);
 		itemFrame.setRotation(frameRotation.getRotation());
-		itemFrame.setFacingDirection(blockFace, true);
 //		itemFrame.setVisible(false);
 		itemFrame.setGlowing(false);
 		itemFrame.setSilent(true);
 		itemFrame.setItem(_item, false);
 
 		Hitbox.place(getHitboxes(), origin, frameRotation.getBlockFace());
-		return true;
-	}
-
-	private boolean isValidBlockFace(BlockFace blockFace) {
-		for (DisabledPlacement disabledPlacement : getDisabledPlacements()) {
-			if (disabledPlacement.getBlockFaces().contains(blockFace))
-				return false;
-		}
 		return true;
 	}
 
@@ -134,14 +130,6 @@ public class Decoration {
 		return true;
 	}
 
-	public ItemStack getItem() {
-		ItemBuilder decor = new ItemBuilder(material).customModelData(modelData).name(name).lore(lore);
-		if (defaultColor != null)
-			decor.dyeColor(defaultColor);
-
-		return decor.build();
-	}
-
 	public boolean interact(Player player, ItemFrame itemFrame, Block block) {
 		if (this instanceof Seat seat)
 			seat.trySit(player, block, itemFrame.getRotation(), this);
@@ -149,7 +137,53 @@ public class Decoration {
 		return true;
 	}
 
-	public boolean isMultiBlock() {
-		return this.getClass().getAnnotation(MultiBlock.class) != null;
+	// validation
+
+	private boolean isValidPlacement(BlockFace clickedFace) {
+		for (DisabledPlacement disabledPlacement : getDisabledPlacements()) {
+			if (disabledPlacement.getBlockFaces().contains(clickedFace))
+				return false;
+		}
+
+		return true;
+	}
+
+	private @Nullable ItemFrameRotation findValidFrameRotation(Location origin, ItemFrameRotation frameRotation) {
+		if (isValidLocation(origin, frameRotation))
+			return frameRotation;
+
+		BlockFace rotated = frameRotation.getBlockFace();
+		for (int tries = 0; tries < DecorationUtils.getDirections().size(); tries++) {
+			rotated = DecorationUtils.rotateClockwise(rotated);
+
+			ItemFrameRotation newFrameRotation = ItemFrameRotation.from(rotated);
+			if (isValidLocation(origin, newFrameRotation))
+				return newFrameRotation;
+		}
+
+		return null;
+	}
+
+	private boolean isValidLocation(Location origin, ItemFrameRotation frameRotation) {
+		if (!isValidRotation(frameRotation))
+			return false;
+
+		List<Hitbox> hitboxes = Hitbox.rotateHitboxes(this, frameRotation.getBlockFace());
+		for (Hitbox hitbox : hitboxes) {
+			if (!MaterialTag.ALL_AIR.isTagged(hitbox.getOffsetBlock(origin).getType()))
+				return false;
+		}
+
+		return true;
+	}
+
+	public boolean isValidRotation(ItemFrameRotation frameRotation) {
+		if (this.disabledRotation.equals(DisabledRotation.NONE))
+			return true;
+
+		if (!this.disabledRotation.contains(frameRotation))
+			return true;
+
+		return false;
 	}
 }

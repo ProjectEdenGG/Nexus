@@ -27,10 +27,7 @@ import java.util.Set;
 
 /*
 	TODO:
-		- Add all decorations
-		- Chair sitability (something blocking the chair/player) detection
-		- When placing decoration, make sure there is nothing in the way of the hitbox
-		- Prevent putting decorations into itemframes
+		- Prevent putting decorations into itemframes, and removing them from itemframes
 		- Can break non-hitbox decorations w/ something in hand
  */
 

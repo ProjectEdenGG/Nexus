@@ -64,6 +64,18 @@ public class Hitbox {
 		return directions.get(index);
 	}
 
+	public static List<Hitbox> rotateHitboxes(Decoration decoration, ItemFrame itemFrame) {
+		return rotateHitboxes(decoration, ItemFrameRotation.of(itemFrame).getBlockFace());
+	}
+
+	public static List<Hitbox> rotateHitboxes(Decoration decoration, BlockFace blockFace) {
+		return rotateHitboxes(decoration.getHitboxes(), blockFace);
+	}
+
+	public static List<Hitbox> rotateHitboxes(List<Hitbox> hitboxes, BlockFace blockFace) {
+		return rotate(hitboxes, blockFace);
+	}
+
 	private static List<Hitbox> rotate(List<Hitbox> hitboxes, BlockFace blockFace) {
 		int ndx = directions.indexOf(blockFace);
 		List<Hitbox> result = new ArrayList<>();
@@ -95,7 +107,7 @@ public class Hitbox {
 	}
 
 	public static void place(List<Hitbox> hitboxes, Location origin, BlockFace blockFace) {
-		hitboxes = getHitboxes(hitboxes, blockFace);
+		hitboxes = rotateHitboxes(hitboxes, blockFace);
 
 		for (Hitbox hitbox : hitboxes) {
 			Material material = hitbox.getMaterial();
@@ -107,7 +119,7 @@ public class Hitbox {
 	}
 
 	public static void destroy(List<Hitbox> hitboxes, Location origin, BlockFace blockFace) {
-		hitboxes = getHitboxes(hitboxes, blockFace);
+		hitboxes = rotateHitboxes(hitboxes, blockFace);
 
 		for (Hitbox hitbox : hitboxes)
 			hitbox.getOffsetBlock(origin).setType(Material.AIR);
@@ -120,17 +132,5 @@ public class Hitbox {
 		}
 
 		return offsetBlock;
-	}
-
-	public static List<Hitbox> getHitboxes(Decoration decoration, ItemFrame itemFrame) {
-		return getHitboxes(decoration, ItemFrameRotation.of(itemFrame).getBlockFace());
-	}
-
-	public static List<Hitbox> getHitboxes(Decoration decoration, BlockFace blockFace) {
-		return getHitboxes(decoration.getHitboxes(), blockFace);
-	}
-
-	public static List<Hitbox> getHitboxes(List<Hitbox> hitboxes, BlockFace blockFace) {
-		return rotate(hitboxes, blockFace);
 	}
 }

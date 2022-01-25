@@ -91,9 +91,9 @@ public class Utils extends gg.projecteden.utils.Utils {
 		;
 
 		@Getter
-		Rotation rotation;
+		final Rotation rotation;
 		@Getter
-		BlockFace blockFace;
+		final BlockFace blockFace;
 
 		public static ItemFrameRotation of(Player player) {
 			BlockFace[] radial = {BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST,
@@ -112,6 +112,9 @@ public class Utils extends gg.projecteden.utils.Utils {
 		}
 
 		public static ItemFrameRotation from(BlockFace blockFace) {
+			if (blockFace == null)
+				return null;
+
 			return Arrays.stream(values())
 				.filter(itemFrameRotation -> itemFrameRotation.getBlockFace().equals(blockFace))
 				.findFirst().orElse(null);

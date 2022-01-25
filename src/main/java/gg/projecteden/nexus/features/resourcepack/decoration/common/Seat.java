@@ -2,12 +2,14 @@ package gg.projecteden.nexus.features.resourcepack.decoration.common;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Couch;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Couch.CouchPart;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.Color;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Rotation;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -69,7 +71,11 @@ public interface Seat {
 		if (isSitting(player))
 			return false;
 
-		return !isOccupied(location);
+		if (isOccupied(location))
+			return false;
+
+		Material above = location.getBlock().getRelative(BlockFace.UP).getType();
+		return MaterialTag.ALL_AIR.isTagged(above) || !above.isBlock();
 	}
 
 	default boolean isOccupied(@NonNull Location location) {
@@ -81,7 +87,7 @@ public interface Seat {
 		if (!decoration.isMultiBlock())
 			return isOccupied(itemFrame.getLocation());
 
-		List<Hitbox> hitboxes = Hitbox.getHitboxes(decoration, itemFrame);
+		List<Hitbox> hitboxes = Hitbox.rotateHitboxes(decoration, itemFrame);
 		for (Hitbox hitbox : hitboxes) {
 			Block offsetBlock = hitbox.getOffsetBlock(itemFrame.getLocation());
 			if (isOccupied(offsetBlock.getLocation()))
