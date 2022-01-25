@@ -103,13 +103,7 @@ public class Cooldown implements PlayerOwnedObject {
 	@Contract("_, _ -> this")
 	public Cooldown create(String type, int ticks) {
 		type = checkType(type);
-		LocalDateTime now = LocalDateTime.now();
-		if (ticks < 20)
-			now = now.plus(ticks * 50L, ChronoUnit.MILLIS);
-		else
-			now = now.plusSeconds(ticks / 20L);
-
-		cooldowns.put(type, now);
+		cooldowns.put(type, LocalDateTime.now().plus(ticks * 50L, ChronoUnit.MILLIS));
 		return this;
 	}
 
