@@ -197,6 +197,6 @@ public class DecorationListener implements Listener {
 	}
 
 	private boolean isOnCooldown(Player player) {
-		return !new CooldownService().check(player, "decoration-interact", TickTime.SECOND.x(1));
+		return !new CooldownService().check(player, "decoration-interact", TickTime.TICK.x(10));
 	}
 }

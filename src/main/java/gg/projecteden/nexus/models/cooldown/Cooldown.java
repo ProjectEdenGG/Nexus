@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -93,14 +94,22 @@ public class Cooldown implements PlayerOwnedObject {
 	 * Creates a cooldown.
 	 * <p>
 	 * This method will override existing cooldowns.
-	 * @param type an arbitrary string corresponding to the type of cooldown matching the regex ^[\w:#-]+$
+	 *
+	 * @param type  an arbitrary string corresponding to the type of cooldown matching the regex ^[\w:#-]+$
 	 * @param ticks how long the cooldown should last in ticks
 	 * @return this object
 	 */
-	@NotNull @Contract("_, _ -> this")
-	public Cooldown create(String type, double ticks) {
+	@NotNull
+	@Contract("_, _ -> this")
+	public Cooldown create(String type, int ticks) {
 		type = checkType(type);
-		cooldowns.put(type, LocalDateTime.now().plusSeconds((long) ticks / 20));
+		LocalDateTime now = LocalDateTime.now();
+		if (ticks < 20)
+			now = now.plus(ticks * 50L, ChronoUnit.MILLIS);
+		else
+			now = now.plusSeconds(ticks / 20L);
+
+		cooldowns.put(type, now);
 		return this;
 	}
 
