@@ -61,6 +61,9 @@ public class DecorationListener implements Listener {
 		if (type == null)
 			return;
 
+		if (isOnCooldown(player))
+			return;
+
 		HitboxData hitboxData = new HitboxData.HitboxDataBuilder()
 			.player(player)
 			.decorationType(type)
@@ -89,7 +92,7 @@ public class DecorationListener implements Listener {
 			return;
 		}
 
-		if (!new CooldownService().check(player, "decoration-interact", TickTime.TICK.x(10)))
+		if (isOnCooldown(player))
 			return;
 
 		HitboxData hitboxData = new HitboxData.HitboxDataBuilder()
@@ -129,8 +132,8 @@ public class DecorationListener implements Listener {
 
 		if (!hitboxData.validateDecoration(hitboxData.getItemFrame().getItem()))
 			return false;
+		// ==
 
-		//
 		if (!hitboxData.playerCanEdit()) {
 			error(hitboxData.getPlayer());
 			return false;
@@ -155,12 +158,7 @@ public class DecorationListener implements Listener {
 
 				if (!hitboxData.validateDecoration(hitboxData.getItemFrame().getItem()))
 					return false;
-
-				//
-//				if (!hitboxData.playerCanEdit()) {
-//					error(hitboxData.getPlayer());
-//					return true;
-//				}
+				// ==
 
 				hitboxData.interact();
 				return true;
@@ -174,8 +172,8 @@ public class DecorationListener implements Listener {
 
 				if (!hitboxData.validateDecoration(hitboxData.getTool()))
 					return false;
+				// ==
 
-				//
 				if (!hitboxData.playerCanEdit()) {
 					error(hitboxData.getPlayer());
 					return true;
@@ -196,5 +194,9 @@ public class DecorationListener implements Listener {
 	private enum RightClickAction {
 		INTERACT,
 		PLACE,
+	}
+
+	private boolean isOnCooldown(Player player) {
+		return !new CooldownService().check(player, "decoration-interact", TickTime.SECOND.x(1));
 	}
 }

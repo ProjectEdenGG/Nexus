@@ -13,6 +13,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.PlayerPlushie
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Table;
 import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
+import gg.projecteden.nexus.utils.MaterialTag;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
@@ -207,6 +208,7 @@ public enum DecorationType {
 			hitboxTypes.addAll(decorationType.getDecoration().getHitboxes()
 				.stream()
 				.map(Hitbox::getMaterial)
+				.filter(material -> !MaterialTag.ALL_AIR.isTagged(material))
 				.toList()));
 
 		return hitboxTypes;

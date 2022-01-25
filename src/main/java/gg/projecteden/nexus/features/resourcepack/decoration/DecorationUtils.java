@@ -7,6 +7,9 @@ import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.utils.RandomUtils;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.bukkit.Color;
@@ -43,63 +46,98 @@ public class DecorationUtils {
 		PlayerUtils.send(player, error);
 	}
 
-	// Pathway
-	private static Set<Block> getConnectedHitboxes(HitboxMaze maze) {
-		maze.incrementTries();
-		if (maze.getTries() > 1000) {
-			debug("MAX TRIES");
+	// It isn't pretty, but it works
+	private static Set<Location> getConnectedHitboxes(HitboxMaze maze) {
+		if (maze.getTries() > 50) {
+			debug("returning, MAX TRIES");
+			debug("===");
 			return maze.getFound();
 		}
 
 		if (maze.getDirectionsLeft().isEmpty()) {
-			maze.setBlock(maze.getPath().getLast());
 			if (maze.getBlock().getLocation().equals(maze.getOrigin().getLocation())) {
-				debug("origin == block, ending");
+				debug("returning, origin == block");
+				debug("===");
+				Tasks.wait(maze.incWait(), () -> debugDot(maze.getBlock().getLocation(), Color.ORANGE));
 				return maze.getFound();
 			}
 
+			maze.goBack();
+
+			Location newLoc = maze.getBlock().getLocation();
+			String locStr = StringUtils.getShortLocationString(newLoc);
+			debug("No directions left, going back");
+			debug("New Loc: " + locStr);
+			debug("New Dirs: " + maze.getDirectionsLeft());
+			debug("- - -");
+			Tasks.wait(maze.incWait(), () -> debugDot(newLoc, Color.RED));
+
+
+			maze.incrementTries();
 			return getConnectedHitboxes(maze);
 		}
+
+		maze.setTries(0);
 
 		debug("Dirs Left: " + maze.getDirectionsLeft());
+		maze.nextDirection();
 
-		maze.setBlockFace(maze.getDirectionsLeft().get(0));
-		debug("Dir: " + maze.getBlockFace());
+		Block previousBlock = maze.getBlock();
+		maze.setBlock(previousBlock.getRelative(maze.getBlockFace()));
 
-		maze.getDirectionsLeft().remove(maze.getBlockFace());
+		Block currentBlock = maze.getBlock();
+		Location currentLoc = currentBlock.getLocation().clone();
+		String currentLocStr = StringUtils.getShortLocationString(currentBlock.getLocation());
+		debug("Loc: " + currentLocStr);
 
-		Block relative = maze.getBlock().getRelative(maze.getBlockFace());
-		debug("Type: " + relative.getType());
+		Material currentType = currentBlock.getType();
+		debug("Type: " + currentType);
 
-		double distance = maze.getOrigin().getLocation().distance(relative.getLocation());
+		double distance = maze.getOrigin().getLocation().distance(currentLoc);
 		Set<Material> hitboxTypes = DecorationType.getHitboxTypes();
-		if (maze.getTried().contains(relative) || !hitboxTypes.contains(relative.getType()) || distance > 6) {
+		if (maze.getTried().contains(currentLoc) || !hitboxTypes.contains(currentType) || distance > 6) {
+			if (!hitboxTypes.contains(currentType))
+				debug("  - Not a hitbox type");
+			if (distance > maze.getRadius())
+				debug("  - distance > " + maze.getRadius());
+			if (maze.getTried().contains(currentLoc))
+				debug("  - already tried " + currentLocStr);
 
-			if (!hitboxTypes.contains(relative.getType()))
-				debug("Type not a hitbox");
-			else if (distance > 6)
-				debug("distance > 6");
+			if (!maze.getTried().add(currentLoc))
+				debug("  Adding to tried: " + currentLocStr);
 
-			maze.getTried().add(relative);
-			maze.setBlock(maze.getPath().getLast());
-
-			debug("Removing Dir: " + maze.getBlockFace());
+			debug("- - -");
+			maze.setBlock(previousBlock);
 			return getConnectedHitboxes(maze);
 		}
 
-		debug("Found: " + StringUtils.getShortLocationString(relative.getLocation()));
-		maze.getFound().add(relative);
-		maze.getTried().add(relative);
+		maze.addToPath(previousBlock.getLocation(), maze.getDirectionsLeft());
+
+		debug("Found: " + currentLocStr + "");
+		maze.getFound().add(currentLoc);
+
+		debug("Adding to tried: " + currentLocStr);
+
+		maze.getTried().add(currentLoc);
+
 		maze.setDirectionsLeft(new ArrayList<>(hitboxDirections));
+		maze.getDirectionsLeft().remove(maze.getBlockFace().getOppositeFace());
+		maze.addToPath(currentLoc, maze.getDirectionsLeft());
+
+
+		debug("- - -");
+		debug("");
+		Tasks.wait(maze.incWait(), () -> debugDot(currentBlock.getLocation(), Color.BLACK));
 
 		return getConnectedHitboxes(maze);
 	}
 
-	static ItemFrame findItemFrame(Set<Block> connectedHitboxes, Block clicked) {
+	static ItemFrame findItemFrame(Set<Location> connectedHitboxes, Block clicked) {
 		Location clickedLoc = clicked.getLocation();
 
 		Map<Location, HitboxData> dataMap = new HashMap<>();
-		for (Block block : connectedHitboxes) {
+		for (Location location : connectedHitboxes) {
+			Block block = location.getBlock();
 			ItemFrame itemFrame = block.getLocation().toCenterLocation().getNearbyEntitiesByType(ItemFrame.class, 0.5).stream().findFirst().orElse(null);
 			if (itemFrame == null)
 				continue;
@@ -112,10 +150,8 @@ public class DecorationUtils {
 			if (type == null)
 				continue;
 
-			if (dataMap.containsKey(block.getLocation()))
+			if (dataMap.containsKey(location))
 				continue;
-
-			debugDot(block.getLocation(), Color.PURPLE);
 
 			HitboxData hitboxData = new HitboxData.HitboxDataBuilder()
 				.itemFrame(itemFrame)
@@ -143,13 +179,12 @@ public class DecorationUtils {
 					for (BlockFace blockFace : offsets.keySet())
 						_block = _block.getRelative(blockFace, offsets.get(blockFace));
 
-				debugDot(_block.getLocation(), Color.WHITE);
 				debug(StringUtils.getShortLocationString(_block.getLocation()) + " == "
 					+ StringUtils.getShortLocationString(clickedLoc));
 
 				if (LocationUtils.isFuzzyEqual(_block.getLocation(), clickedLoc)) {
 					debug("found correct decoration");
-					debugDot(_block.getLocation(), Color.AQUA);
+					debugDot(hitboxData.getLocation(), Color.LIME);
 					return hitboxData.getItemFrame();
 				}
 			}
@@ -160,7 +195,13 @@ public class DecorationUtils {
 
 	@Nullable
 	static ItemFrame getItemFrame(Block clicked) {
+		int radius = 4;
+
 		if (isNullOrAir(clicked))
+			return null;
+
+		Location location = clicked.getLocation().toCenterLocation();
+		if (location.getNearbyEntitiesByType(ItemFrame.class, radius).size() == 0)
 			return null;
 
 		Set<Material> hitboxTypes = DecorationType.getHitboxTypes();
@@ -168,7 +209,7 @@ public class DecorationUtils {
 			return null;
 
 		// Single
-		ItemFrame itemFrame = clicked.getLocation().toCenterLocation().getNearbyEntitiesByType(ItemFrame.class, 0.5).stream().findFirst().orElse(null);
+		ItemFrame itemFrame = location.getNearbyEntitiesByType(ItemFrame.class, 0.5).stream().findFirst().orElse(null);
 		if (itemFrame != null) {
 			ItemStack itemStack = itemFrame.getItem();
 			if (!isNullOrAir(itemStack)) {
@@ -181,7 +222,7 @@ public class DecorationUtils {
 		}
 
 		// Multi
-		Set<Block> connectedHitboxes = getConnectedHitboxes(new HitboxMaze(clicked));
+		Set<Location> connectedHitboxes = getConnectedHitboxes(new HitboxMaze(clicked, radius));
 		debug("Connected Hitboxes: " + connectedHitboxes.size());
 
 		return findItemFrame(connectedHitboxes, clicked);
@@ -198,31 +239,78 @@ public class DecorationUtils {
 
 	private static void debugDot(Location location, Color color) {
 		if (debug)
-			DotEffect.debug(Dev.WAKKA.getPlayer(), location.clone().toCenterLocation(), color);
+			DotEffect.debug(Dev.WAKKA.getPlayer(), location.clone().toCenterLocation(), color, TickTime.SECOND.x(1));
 	}
 
 	@Data
 	@AllArgsConstructor
 	static class HitboxMaze {
 		Block origin;
+		int radius;
 		Block block;
 		BlockFace blockFace;
 		List<BlockFace> directionsLeft = new ArrayList<>(hitboxDirections);
-		Set<Block> found = new HashSet<>();
-		LinkedList<Block> path = new LinkedList<>();
-		Set<Block> tried = new HashSet<>();
+		Set<Location> found = new HashSet<>();
+		LinkedList<Location> tempPath = new LinkedList<>();
+		LinkedList<Location> resultPath = new LinkedList<>();
+		HashMap<Location, List<BlockFace>> pathDirs = new HashMap<>();
+		Set<Location> tried = new HashSet<>();
 		int tries = 0;
+		int wait = 0;
 
-		public HitboxMaze(Block clicked) {
-			origin = clicked;
-			block = clicked;
-			blockFace = BlockFace.NORTH;
-			path.add(origin);
 
+		public HitboxMaze(Block clicked, int radius) {
+			this.origin = clicked;
+			this.radius = radius;
+			this.block = this.origin;
+			addToPath(this.origin.getLocation(), this.directionsLeft);
+
+			this.tried.add(this.origin.getLocation());
+			this.found.add(this.origin.getLocation());
 		}
 
 		public void incrementTries() {
 			++this.tries;
 		}
+
+		public void addToPath(Location location, List<BlockFace> directionsLeft) {
+			tempPath.add(location);
+			resultPath.add(location);
+			pathDirs.put(location, directionsLeft);
+		}
+
+		public void goBack() {
+			Location back = tempPath.removeLast();
+			setBlock(back.getBlock());
+			setDirectionsLeft(pathDirs.get(back));
+		}
+
+		public int incWait() {
+			this.wait += 2;
+			return this.wait;
+		}
+
+		public void nextDirection() {
+			this.setBlockFace(RandomUtils.randomElement(this.getDirectionsLeft()));
+			this.getDirectionsLeft().remove(this.getBlockFace());
+			debug("Removing Dir: " + this.getBlockFace());
+		}
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
