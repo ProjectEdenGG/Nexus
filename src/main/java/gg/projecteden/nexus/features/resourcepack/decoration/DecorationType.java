@@ -27,8 +27,9 @@ import java.util.Set;
 
 /*
 	TODO:
-		- Prevent putting decorations into itemframes, and removing them from itemframes
-		- Can break non-hitbox decorations w/ something in hand
+		- add new dyeables, make converter automatic using entity spawn event or something
+		- figure out player plushies
+		- finish adding rest of decorations
  */
 
 @AllArgsConstructor
@@ -103,7 +104,6 @@ public enum DecorationType {
 	CAKE_WHITE_CHOCOLATE(new Decoration("White Chocolate Cake", 122)),
 	CAKE_BUNDT(new Decoration("Bundt Cake", 123)),
 	CAKE_CHOCOLATE_DRIP(new Decoration("Chocolate Drip Cake", 125)),
-	//	CAKE_TRIPLE(), // ???
 //	PIE(new Dyeable("name", -1)), // TODO: Make dyeable
 //	PIE_LATTICED(new Dyeable("name", -1)), // TODO: Make dyeable
 	// Kitchenware

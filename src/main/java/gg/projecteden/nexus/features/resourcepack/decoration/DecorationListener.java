@@ -4,10 +4,12 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Seat;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
@@ -15,6 +17,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -40,6 +43,32 @@ public class DecorationListener implements Listener {
 		}
 	}
 
+	// TODO: allow staff/builders to bypass? Maybe only allow players who are in creative mode?
+	@EventHandler
+	public void on(PlayerInteractEntityEvent event) {
+		EquipmentSlot slot = event.getHand();
+		if (slot != EquipmentSlot.HAND)
+			return;
+
+		DecorationType type = DecorationType.of(ItemUtils.getTool(event.getPlayer()));
+		if (type == null)
+			return;
+
+		// TODO: Remove
+		if (!Dev.WAKKA.is(event.getPlayer()))
+			return;
+		//
+
+		Entity entity = event.getRightClicked();
+		if (entity instanceof ItemFrame itemFrame && !Nullables.isNullOrAir(itemFrame.getItem())) {
+			return;
+		} else if (entity instanceof ArmorStand) {
+			return;
+		}
+
+		event.setCancelled(true);
+	}
+
 	@EventHandler
 	public void on(EntityDamageByEntityEvent event) {
 		if (!(event.getDamager() instanceof Player player))
@@ -61,17 +90,12 @@ public class DecorationListener implements Listener {
 		if (type == null)
 			return;
 
-		if (isOnCooldown(player, DecorationAction.DESTROY)) {
-			debug(player, "slow down");
-			event.setCancelled(true);
-			return;
-		}
-
 		HitboxData hitboxData = new HitboxData.HitboxDataBuilder()
 			.player(player)
 			.decorationType(type)
 			.itemFrame(itemFrame)
 			.decorationType(type)
+			.tool(ItemUtils.getTool(player))
 			.build();
 
 		boolean cancel = leftClick(hitboxData);
