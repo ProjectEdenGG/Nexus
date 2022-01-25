@@ -61,8 +61,11 @@ public class DecorationListener implements Listener {
 		if (type == null)
 			return;
 
-		if (isOnCooldown(player))
+		if (isOnCooldown(player, DecorationAction.DESTROY)) {
+			debug(player, "slow down");
+			event.setCancelled(true);
 			return;
+		}
 
 		HitboxData hitboxData = new HitboxData.HitboxDataBuilder()
 			.player(player)
@@ -92,9 +95,6 @@ public class DecorationListener implements Listener {
 			return;
 		}
 
-		if (isOnCooldown(player))
-			return;
-
 		HitboxData hitboxData = new HitboxData.HitboxDataBuilder()
 			.player(player)
 			.block(clicked)
@@ -106,9 +106,9 @@ public class DecorationListener implements Listener {
 		Action action = event.getAction();
 		if (action.equals(Action.RIGHT_CLICK_BLOCK)) {
 			if (hitboxData.getTool() == null)
-				cancel = rightClick(hitboxData, RightClickAction.INTERACT);
+				cancel = rightClick(hitboxData, DecorationAction.INTERACT);
 			else
-				cancel = rightClick(hitboxData, RightClickAction.PLACE);
+				cancel = rightClick(hitboxData, DecorationAction.PLACE);
 		} else if (action.equals(Action.LEFT_CLICK_BLOCK)) {
 			cancel = leftClick(hitboxData);
 		}
@@ -132,7 +132,6 @@ public class DecorationListener implements Listener {
 
 		if (!hitboxData.validateDecoration(hitboxData.getItemFrame().getItem()))
 			return false;
-		// ==
 
 		if (!hitboxData.playerCanEdit()) {
 			error(hitboxData.getPlayer());
@@ -144,11 +143,16 @@ public class DecorationListener implements Listener {
 			return true;
 		}
 
+		if (isOnCooldown(hitboxData.getPlayer(), DecorationAction.DESTROY)) {
+			debug(hitboxData.getPlayer(), "slow down");
+			return true;
+		}
+
 		hitboxData.destroy();
 		return true;
 	}
 
-	private boolean rightClick(HitboxData hitboxData, RightClickAction action) {
+	private boolean rightClick(HitboxData hitboxData, DecorationAction action) {
 		if (hitboxData == null) return false;
 
 		switch (action) {
@@ -158,7 +162,11 @@ public class DecorationListener implements Listener {
 
 				if (!hitboxData.validateDecoration(hitboxData.getItemFrame().getItem()))
 					return false;
-				// ==
+
+				if (isOnCooldown(hitboxData.getPlayer(), action)) {
+					debug(hitboxData.getPlayer(), "slow down");
+					return true;
+				}
 
 				hitboxData.interact();
 				return true;
@@ -172,7 +180,11 @@ public class DecorationListener implements Listener {
 
 				if (!hitboxData.validateDecoration(hitboxData.getTool()))
 					return false;
-				// ==
+
+				if (isOnCooldown(hitboxData.getPlayer(), action)) {
+					debug(hitboxData.getPlayer(), "slow down");
+					return true;
+				}
 
 				if (!hitboxData.playerCanEdit()) {
 					error(hitboxData.getPlayer());
@@ -191,12 +203,13 @@ public class DecorationListener implements Listener {
 		return event.useInteractedBlock() == Result.DENY || event.useInteractedBlock() == Result.DENY;
 	}
 
-	private enum RightClickAction {
+	private enum DecorationAction {
 		INTERACT,
 		PLACE,
+		DESTROY,
 	}
 
-	private boolean isOnCooldown(Player player) {
-		return !new CooldownService().check(player, "decoration-interact", TickTime.TICK.x(10));
+	private boolean isOnCooldown(Player player, DecorationAction action) {
+		return !new CooldownService().check(player, "decoration-" + action.name().toLowerCase(), TickTime.TICK.x(5));
 	}
 }
