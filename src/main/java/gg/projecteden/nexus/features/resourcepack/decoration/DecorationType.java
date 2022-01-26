@@ -30,6 +30,7 @@ import java.util.Set;
 		- add new dyeables, make converter automatic using entity spawn event or something
 		- figure out player plushies
 		- finish adding rest of decorations
+		- some sort of protection system, nbt
  */
 
 @AllArgsConstructor
@@ -37,6 +38,7 @@ public enum DecorationType {
 	// Player Plushies: TODO
 	PLAYER_PLUSHIE_STANDING(new PlayerPlushie("Player Plushie", 1, Pose.STANDING)),
 	// Mob Plushies: TODO
+	// Trophies: TODO
 	// Tables
 	TABLE_WOODEN_1x1(new Table("Wooden Table 1x1", 300, Table.TableSize._1x1)),
 	TABLE_WOODEN_1x2(new Table("Wooden Table 1x2", 301, Table.TableSize._1x2)),

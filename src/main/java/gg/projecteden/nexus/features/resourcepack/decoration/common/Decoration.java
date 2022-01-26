@@ -90,9 +90,12 @@ public class Decoration {
 			return false;
 
 		Location origin = block.getRelative(clickedFace).getLocation().clone();
+
+		// TODO: maybe add a toggleable to this, allowing for furniture to be placed inside of other blocks-- wouldn't replace
 		ItemFrameRotation frameRotation = findValidFrameRotation(origin, ItemFrameRotation.of(player));
 		if (frameRotation == null)
 			return false;
+		//
 
 		ItemStack _item = item.clone();
 		_item.setAmount(1);

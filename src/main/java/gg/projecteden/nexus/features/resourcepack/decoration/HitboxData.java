@@ -45,7 +45,7 @@ public class HitboxData {
 	}
 
 	boolean validateItemFrame() {
-		itemFrame = itemFrame == null ? DecorationUtils.getItemFrame(block) : itemFrame;
+		itemFrame = itemFrame == null ? DecorationUtils.getItemFrame(block, 4, player) : itemFrame;
 		return itemFrame != null;
 	}
 
