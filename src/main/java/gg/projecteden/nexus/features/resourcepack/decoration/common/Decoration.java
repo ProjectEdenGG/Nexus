@@ -156,23 +156,18 @@ public class Decoration {
 		Rank playerRank = Rank.of(player);
 
 		// TODO: integrate with trusts
-		if (playerUUID.equals(ownerUUID)) {
-//			player.sendMessage("is owner");
+		if (playerUUID.equals(ownerUUID))
 			return true;
-		}
 
 		if (playerRank.isStaff()) {
-			if (playerRank.isSeniorStaff() || playerRank.equals(Rank.ARCHITECT) || player.isOp()) {
+			if (playerRank.isSeniorStaff() || playerRank.equals(Rank.ARCHITECT) || player.isOp())
 				return true;
-			}
 
-			if (WorldGroup.STAFF.equals(WorldGroup.of(player))) {
+			if (WorldGroup.STAFF.equals(WorldGroup.of(player)))
 				return true;
-			}
 
-			if (WorldGuardEditCommand.canWorldGuardEdit(player) && new WorldGuardUtils(player).getRegionsAt(origin).size() > 0) {
+			if (WorldGuardEditCommand.canWorldGuardEdit(player) && new WorldGuardUtils(player).getRegionsAt(origin).size() > 0)
 				return true;
-			}
 		}
 
 		return false;
