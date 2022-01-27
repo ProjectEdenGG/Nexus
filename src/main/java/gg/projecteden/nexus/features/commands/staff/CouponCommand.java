@@ -66,8 +66,7 @@ public class CouponCommand extends CustomCommand implements Listener {
 			void use(PlayerInteractEvent event) {
 				int amount = extractValue(event.getItem());
 				new BankerService().deposit(event.getPlayer(), amount, ShopGroup.of(event.getPlayer()), TransactionCause.COUPON);
-				ItemStack item = event.getItem();
-				item.setAmount(item.getAmount() - 1);
+				event.getItem().subtract();
 				PlayerUtils.send(event.getPlayer(), "&e$" + amount + " &3has been added to your account");
 			}
 		},
@@ -77,8 +76,7 @@ public class CouponCommand extends CustomCommand implements Listener {
 				int amount = extractValue(event.getItem());
 				new VoterService().edit(event.getPlayer(), voter -> voter.givePoints(amount));
 				PlayerUtils.send(event.getPlayer(), "&3You have been given &e" + amount + "&3 vote points");
-				ItemStack item = event.getItem();
-				item.setAmount(item.getAmount() - 1);
+				event.getItem().subtract();
 			}
 		},
 		MCMMO(false) {
@@ -100,8 +98,7 @@ public class CouponCommand extends CustomCommand implements Listener {
 				EventUser user = eventUserService.get(event.getPlayer());
 				user.giveTokens(amount);
 				eventUserService.save(user);
-				ItemStack item = event.getItem();
-				item.setAmount(item.getAmount() - 1);
+				event.getItem().subtract();
 			}
 		},
 		PAINTING(false) {
@@ -294,7 +291,7 @@ public class CouponCommand extends CustomCommand implements Listener {
 	}
 
 	public static class McMMOLevelCouponProvider extends MenuUtils implements InventoryProvider {
-
+		private static final int MAX_LEVEL = 200;
 		int levels;
 
 		public McMMOLevelCouponProvider(int levels) {
@@ -306,14 +303,19 @@ public class CouponCommand extends CustomCommand implements Listener {
 			ItemStack coupon = player.getInventory().getItemInMainHand();
 			McMMOPlayer mcmmoPlayer = UserManager.getPlayer(player);
 			for (McMMOResetProvider.ResetSkillType skill : McMMOResetProvider.ResetSkillType.values()) {
-				ItemStack item = new ItemBuilder(skill.getMaterial()).name("&e" + StringUtils.camelCase(skill.name()))
-						.lore("&3Level: &e" + mcmmoPlayer.getSkillLevel(PrimarySkillType.valueOf(skill.name()))).build();
+				ItemStack item = new ItemBuilder(skill.getMaterial())
+					.name("&e" + StringUtils.camelCase(skill.name()))
+					.lore("&3Level: &e" + mcmmoPlayer.getSkillLevel(PrimarySkillType.valueOf(skill.name())))
+					.build();
+
 				contents.set(skill.getRow(), skill.getColumn(), ClickableItem.from(item, e -> {
 					int mcMMOLevel = mcmmoPlayer.getSkillLevel(PrimarySkillType.valueOf(skill.name()));
-					if (mcMMOLevel >= 100) return;
-					levels = Math.min(100 - mcMMOLevel, levels);
+					if (mcMMOLevel >= MAX_LEVEL)
+						return;
+
+					levels = Math.min(MAX_LEVEL - mcMMOLevel, levels);
 					PlayerUtils.runCommandAsConsole("addlevels " + player.getName() + " " + skill.name().toLowerCase() + " " + levels);
-					coupon.setAmount(coupon.getAmount() - 1);
+					coupon.subtract();
 					player.closeInventory();
 				}));
 			}
