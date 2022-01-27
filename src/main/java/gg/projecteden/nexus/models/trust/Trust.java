@@ -35,12 +35,14 @@ public class Trust implements PlayerOwnedObject {
 	private List<UUID> locks = new ArrayList<>();
 	private List<UUID> homes = new ArrayList<>();
 	private List<UUID> teleports = new ArrayList<>();
+	private List<UUID> decoration = new ArrayList<>();
 
 	public List<UUID> get(Type type) {
 		return switch (type) {
 			case HOMES -> homes;
 			case LOCKS -> locks;
 			case TELEPORTS -> teleports;
+			case DECORATION -> decoration;
 		};
 	}
 
@@ -64,7 +66,8 @@ public class Trust implements PlayerOwnedObject {
 	public enum Type implements IteratableEnum {
 		LOCKS(2, Material.CHEST),
 		HOMES(4, Material.CYAN_BED),
-		TELEPORTS(6, Material.COMPASS);
+		TELEPORTS(6, Material.COMPASS),
+		DECORATION(4, Material.SPRUCE_STAIRS);
 
 		private final int column;
 		private final Material material;

@@ -5,6 +5,7 @@ import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.trust.Trust;
 import gg.projecteden.nexus.models.trust.Trust.Type;
@@ -56,7 +57,17 @@ public class TrustPlayerProvider extends MenuUtils implements InventoryProvider 
 				builder.lore("&cNot trusted");
 			builder.lore("").lore("&fClick to toggle");
 
-			contents.set(2, type.getColumn(), ClickableItem.from(builder.build(), e -> {
+			// temporary
+			int row = 2;
+			if (Type.DECORATION.equals(type)) {
+				if (!Rank.of(player).isStaff())
+					continue;
+
+				row = 3;
+			}
+			//
+
+			contents.set(row, type.getColumn(), ClickableItem.from(builder.build(), e -> {
 				if (list.contains(trusted.getUniqueId()))
 					list.remove(trusted.getUniqueId());
 				else

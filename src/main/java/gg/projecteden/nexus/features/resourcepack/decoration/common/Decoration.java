@@ -3,7 +3,13 @@ package gg.projecteden.nexus.features.resourcepack.decoration.common;
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
+import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationDestroyEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPlaceEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSitEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.models.trust.Trust.Type;
+import gg.projecteden.nexus.models.trust.TrustService;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -31,11 +37,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 public class Decoration {
-	protected static final String nbtOwnerKey = "DecorationOwner";
+	private static final String nbtOwnerKey = "DecorationOwner";
 	protected String name;
 	protected int modelData;
 	protected @NonNull Material material = Material.PAPER;
@@ -88,6 +95,10 @@ public class Decoration {
 		return this.getClass().getAnnotation(MultiBlock.class) != null;
 	}
 
+	private boolean isSeat() {
+		return this instanceof Seat;
+	}
+
 	//
 
 	public boolean place(Player player, Block block, BlockFace clickedFace, ItemStack item) {
@@ -102,10 +113,14 @@ public class Decoration {
 			return false;
 		//
 
-		ItemStack _item = item.clone();
+		DecorationPlaceEvent placeEvent = new DecorationPlaceEvent(player, origin, this, item);
+		if (placeEvent.callEvent())
+			return false;
+
+		ItemStack _item = placeEvent.getItem().clone();
 		_item.setAmount(1);
 		if (!player.getGameMode().equals(GameMode.CREATIVE))
-			item.subtract();
+			placeEvent.getItem().subtract();
 
 		NBTItem nbtItem = new NBTItem(_item);
 		nbtItem.setString(nbtOwnerKey, player.getUniqueId().toString());
@@ -123,6 +138,17 @@ public class Decoration {
 	}
 
 	public boolean destroy(@NonNull Player player, @NonNull ItemFrame itemFrame) {
+		World world = player.getWorld();
+		ItemStack item = itemFrame.getItem().clone();
+		Location origin = itemFrame.getLocation().toBlockLocation().clone();
+
+		NBTItem nbtItem = new NBTItem(item);
+		String ownerUUID = nbtItem.getString(nbtOwnerKey);
+
+		DecorationDestroyEvent destroyEvent = new DecorationDestroyEvent(player, origin, this, item, ownerUUID);
+		if (destroyEvent.callEvent())
+			return false;
+
 		if (this instanceof Seat seat) {
 			if (seat.isOccupied(this, itemFrame)) {
 				PlayerUtils.send(player, DecorationUtils.getPrefix() + "&cSeat is occupied");
@@ -130,24 +156,15 @@ public class Decoration {
 			}
 		}
 
-		World world = player.getWorld();
-		ItemStack item = itemFrame.getItem().clone();
-		Location origin = itemFrame.getLocation().toBlockLocation().clone();
-
-		NBTItem nbtItem = new NBTItem(item);
-
-		if (nbtItem.hasKey(nbtOwnerKey)) {
-			String ownerUUID = nbtItem.getString(nbtOwnerKey);
-			if (!canEdit(player, ownerUUID, origin)) {
-				PlayerUtils.send(player, DecorationUtils.getPrefix() + "&cThis decoration is locked.");
-				return false;
-			}
+		if (!canEdit(player, ownerUUID, origin)) {
+			PlayerUtils.send(player, DecorationUtils.getPrefix() + "&cThis decoration is locked.");
+			return false;
 		}
 
 		itemFrame.remove();
 		Hitbox.destroy(getHitboxes(), origin, ItemFrameRotation.of(itemFrame).getBlockFace());
 
-		world.dropItemNaturally(origin, item);
+		world.dropItemNaturally(origin, destroyEvent.getItem());
 		return true;
 	}
 
@@ -155,8 +172,11 @@ public class Decoration {
 		String playerUUID = player.getUniqueId().toString();
 		Rank playerRank = Rank.of(player);
 
-		// TODO: integrate with trusts
 		if (playerUUID.equals(ownerUUID))
+			return true;
+
+		// TODO: integrate with trusts
+		if (new TrustService().get(ownerUUID).trusts(Type.DECORATION, player))
 			return true;
 
 		if (playerRank.isStaff()) {
@@ -174,8 +194,20 @@ public class Decoration {
 	}
 
 	public boolean interact(Player player, ItemFrame itemFrame, Block block) {
-		if (this instanceof Seat seat)
-			seat.trySit(player, block, itemFrame.getRotation(), this);
+		ItemStack item = itemFrame.getItem().clone();
+		Location origin = itemFrame.getLocation().toBlockLocation().clone();
+
+		DecorationInteractEvent interactEvent = new DecorationInteractEvent(player, origin, this, item);
+		if (interactEvent.callEvent())
+			return false;
+
+		if (this.isSeat()) {
+			Seat seat = (Seat) this;
+			DecorationSitEvent sitEvent = new DecorationSitEvent(player, origin, seat, item, itemFrame.getRotation(), block);
+
+			if (sitEvent.callEvent())
+				seat.trySit(player, block, sitEvent.getRotation(), this);
+		}
 
 		return true;
 	}
@@ -228,5 +260,12 @@ public class Decoration {
 			return true;
 
 		return false;
+	}
+
+	public boolean isOwner(UUID uuid) {
+		NBTItem nbtItem = new NBTItem(this.getItem());
+		String ownerUUID = nbtItem.getString(nbtOwnerKey);
+
+		return uuid.toString().equals(ownerUUID);
 	}
 }
