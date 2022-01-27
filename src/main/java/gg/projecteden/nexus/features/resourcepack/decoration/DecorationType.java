@@ -30,7 +30,6 @@ import java.util.Set;
 		- add new dyeables, make converter automatic using entity spawn event or something
 		- figure out player plushies
 		- finish adding rest of decorations
-		- some sort of protection system, nbt
  */
 
 @AllArgsConstructor

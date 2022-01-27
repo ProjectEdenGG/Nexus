@@ -1,12 +1,16 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.common;
 
+import de.tr7zw.nbtapi.NBTItem;
+import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
+import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -31,6 +35,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class Decoration {
+	protected static final String nbtOwnerKey = "DecorationOwner";
 	protected String name;
 	protected int modelData;
 	protected @NonNull Material material = Material.PAPER;
@@ -102,13 +107,16 @@ public class Decoration {
 		if (!player.getGameMode().equals(GameMode.CREATIVE))
 			item.subtract();
 
+		NBTItem nbtItem = new NBTItem(_item);
+		nbtItem.setString(nbtOwnerKey, player.getUniqueId().toString());
+
 		ItemFrame itemFrame = (ItemFrame) block.getWorld().spawnEntity(origin, EntityType.ITEM_FRAME);
 		itemFrame.setFacingDirection(clickedFace, true);
 		itemFrame.setRotation(frameRotation.getRotation());
 //		itemFrame.setVisible(false);
 		itemFrame.setGlowing(false);
 		itemFrame.setSilent(true);
-		itemFrame.setItem(_item, false);
+		itemFrame.setItem(nbtItem.getItem(), false);
 
 		Hitbox.place(getHitboxes(), origin, frameRotation.getBlockFace());
 		return true;
@@ -117,7 +125,7 @@ public class Decoration {
 	public boolean destroy(@NonNull Player player, @NonNull ItemFrame itemFrame) {
 		if (this instanceof Seat seat) {
 			if (seat.isOccupied(this, itemFrame)) {
-				PlayerUtils.send(player, StringUtils.getPrefix("Decoration") + "&cSeat is occupied");
+				PlayerUtils.send(player, DecorationUtils.getPrefix() + "&cSeat is occupied");
 				return false;
 			}
 		}
@@ -126,11 +134,48 @@ public class Decoration {
 		ItemStack item = itemFrame.getItem().clone();
 		Location origin = itemFrame.getLocation().toBlockLocation().clone();
 
+		NBTItem nbtItem = new NBTItem(item);
+
+		if (nbtItem.hasKey(nbtOwnerKey)) {
+			String ownerUUID = nbtItem.getString(nbtOwnerKey);
+			if (!canEdit(player, ownerUUID, origin)) {
+				PlayerUtils.send(player, DecorationUtils.getPrefix() + "&cThis decoration is locked.");
+				return false;
+			}
+		}
+
 		itemFrame.remove();
 		Hitbox.destroy(getHitboxes(), origin, ItemFrameRotation.of(itemFrame).getBlockFace());
 
 		world.dropItemNaturally(origin, item);
 		return true;
+	}
+
+	private boolean canEdit(Player player, String ownerUUID, Location origin) {
+		String playerUUID = player.getUniqueId().toString();
+		Rank playerRank = Rank.of(player);
+
+		// TODO: integrate with trusts
+		if (playerUUID.equals(ownerUUID)) {
+//			player.sendMessage("is owner");
+			return true;
+		}
+
+		if (playerRank.isStaff()) {
+			if (playerRank.isSeniorStaff() || playerRank.equals(Rank.ARCHITECT) || player.isOp()) {
+				return true;
+			}
+
+			if (WorldGroup.STAFF.equals(WorldGroup.of(player))) {
+				return true;
+			}
+
+			if (WorldGuardEditCommand.canWorldGuardEdit(player) && new WorldGuardUtils(player).getRegionsAt(origin).size() > 0) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	public boolean interact(Player player, ItemFrame itemFrame, Block block) {

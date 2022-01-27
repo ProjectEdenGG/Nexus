@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.Color;
@@ -23,6 +24,8 @@ import java.util.Set;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class DecorationUtils {
+	@Getter
+	public static final String prefix = StringUtils.getPrefix("Decoration");
 	public static boolean debug = false;
 
 	public static void error(Player player) {
@@ -168,5 +171,4 @@ public class DecorationUtils {
 
 		return null;
 	}
-
 }

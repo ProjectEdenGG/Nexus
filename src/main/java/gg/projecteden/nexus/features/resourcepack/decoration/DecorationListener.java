@@ -55,7 +55,7 @@ public class DecorationListener implements Listener {
 			return;
 
 		// TODO: Remove
-		if (!Dev.WAKKA.is(event.getPlayer()))
+		if (!isWakka(event.getPlayer()))
 			return;
 		//
 
@@ -147,7 +147,7 @@ public class DecorationListener implements Listener {
 			return false;
 
 		// TODO: Remove
-		if (!Dev.WAKKA.is(hitboxData.getPlayer()))
+		if (!isWakka(hitboxData.getPlayer()))
 			return false;
 		//
 
@@ -198,7 +198,7 @@ public class DecorationListener implements Listener {
 
 			case PLACE -> {
 				// TODO: Remove
-				if (!Dev.WAKKA.is(hitboxData.getPlayer()))
+				if (!isWakka(hitboxData.getPlayer()))
 					return false;
 				//
 
@@ -235,5 +235,10 @@ public class DecorationListener implements Listener {
 
 	private boolean isOnCooldown(Player player, DecorationAction action) {
 		return !new CooldownService().check(player, "decoration-" + action.name().toLowerCase(), TickTime.TICK.x(5));
+	}
+
+	private boolean isWakka(Player player) {
+//		return true;
+		return Dev.WAKKA.is(player);
 	}
 }
