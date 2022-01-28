@@ -86,13 +86,19 @@ public class FallingLeaves extends ParticleEffect {
 		}
 
 		public Material getBiomeMaterial(Player player) {
-			Biome biome = player.getLocation().getBlock().getBiome();
-			if (biome == Biome.SWAMP) {
-				return this.getSwampMaterial();
-			}
-
-			return this.material;
+			return getMaterial(player.getLocation().getBlock().getBiome());
 		}
+
+		private Material getMaterial(Biome biome) {
+			Material result = null;
+
+			if (biome == Biome.SWAMP)
+				result = this.swampMaterial;
+			//...
+
+			return result == null ? this.material : result;
+		}
+
 	}
 
 }
