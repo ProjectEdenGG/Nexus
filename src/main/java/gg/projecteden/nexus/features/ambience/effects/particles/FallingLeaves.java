@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.ambience.effects.particles.common.ParticleE
 import gg.projecteden.nexus.features.ambience.effects.particles.common.ParticleEffectType;
 import gg.projecteden.nexus.features.particles.effects.DotEffect;
 import gg.projecteden.nexus.models.ambience.AmbienceUser;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
@@ -70,6 +71,7 @@ public class FallingLeaves extends ParticleEffect {
 		;
 
 		@Getter
+		@NonNull
 		private final Material material;
 		@Getter
 		private Material swampMaterial = null;
@@ -96,7 +98,7 @@ public class FallingLeaves extends ParticleEffect {
 				result = this.swampMaterial;
 			//...
 
-			return result == null ? this.material : result;
+			return Nullables.isNullOrAir(result) ? this.material : result;
 		}
 
 	}

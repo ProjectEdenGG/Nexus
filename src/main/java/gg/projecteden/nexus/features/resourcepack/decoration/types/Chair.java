@@ -1,25 +1,31 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types;
 
+import gg.projecteden.nexus.features.resourcepack.decoration.common.Colorable;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DisabledPlacement;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Seat;
-import lombok.Getter;
 import org.bukkit.Material;
 
 import java.util.List;
 
-public class Chair extends Dyeable implements Seat {
-	@Getter
-	private final DyedPart dyedPart;
+public class Chair extends Dyeable implements Seat, Colorable {
+	private final Colorable.Type type;
 
-	public Chair(String name, int modelData, DyedPart dyedPart) {
-		this(name, modelData, dyedPart, Hitbox.single(Material.BARRIER));
+	public Chair(String name, int modelData, Colorable.Type type) {
+		this(name, modelData, type, Hitbox.single(Material.BARRIER));
 	}
 
-	public Chair(String name, int modelData, DyedPart dyedPart, List<Hitbox> hitboxes) {
-		super(name, modelData, dyedPart.getDefaultColor());
+	public Chair(String name, int modelData, Colorable.Type type, List<Hitbox> hitboxes) {
+		super(name, modelData, type);
 		this.hitboxes = hitboxes;
-		this.dyedPart = dyedPart;
+		this.type = type;
 		this.disabledPlacements = List.of(DisabledPlacement.WALL, DisabledPlacement.CEILING);
 	}
+
+	@Override
+	public Type getType() {
+		return this.type;
+	}
+
+
 }

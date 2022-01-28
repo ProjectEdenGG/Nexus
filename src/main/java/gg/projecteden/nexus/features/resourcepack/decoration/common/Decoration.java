@@ -10,7 +10,6 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSi
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.trust.Trust.Type;
 import gg.projecteden.nexus.models.trust.TrustService;
-import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -20,7 +19,6 @@ import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import org.bukkit.Color;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -51,7 +49,6 @@ public class Decoration {
 	protected List<Hitbox> hitboxes = Hitbox.NONE();
 	protected DisabledRotation disabledRotation = DisabledRotation.NONE;
 	protected List<DisabledPlacement> disabledPlacements = new ArrayList<>();
-	protected Color defaultColor;
 
 	public Decoration(String name, int modelData, @NotNull Material material, List<Hitbox> hitboxes) {
 		this.name = name;
@@ -77,18 +74,11 @@ public class Decoration {
 
 	public ItemStack getItem() {
 		ItemBuilder decor = new ItemBuilder(material).customModelData(modelData).name(name).lore(lore);
-		if (defaultColor != null)
-			decor.dyeColor(defaultColor);
+
+		if (this instanceof Colorable colorable && colorable.isColorable())
+			decor.dyeColor(colorable.getType().getColor());
 
 		return decor.build();
-	}
-
-	public static Color getDefaultStain() {
-		return ColorType.hexToBukkit("#F4C57A");
-	}
-
-	public static Color getDefaultColor() {
-		return ColorType.hexToBukkit("#FF5555");
 	}
 
 	public boolean isMultiBlock() {

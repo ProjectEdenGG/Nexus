@@ -4,10 +4,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.Couch;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Couch.CouchPart;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NonNull;
-import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Rotation;
@@ -110,15 +107,5 @@ public interface Seat {
 	static boolean isSeat(ArmorStand armorStand) {
 		String customName = armorStand.getCustomName();
 		return customName != null && armorStand.getCustomName().contains(id);
-	}
-
-	@AllArgsConstructor
-	enum DyedPart {
-		WHOLE(Decoration.getDefaultStain()),
-		CUSHION(Color.RED),
-		;
-
-		@Getter
-		final Color defaultColor;
 	}
 }

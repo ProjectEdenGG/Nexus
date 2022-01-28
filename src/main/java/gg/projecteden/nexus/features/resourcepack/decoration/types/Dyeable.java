@@ -1,18 +1,19 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types;
 
+import gg.projecteden.nexus.features.resourcepack.decoration.common.Colorable;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
-import org.bukkit.Color;
-import org.bukkit.Material;
 
-public class Dyeable extends Decoration {
 
-	public Dyeable(String name, int modelData, Color defaultColor) {
-		super(name, modelData, Material.LEATHER_HORSE_ARMOR);
-		this.defaultColor = defaultColor;
+public class Dyeable extends Decoration implements Colorable {
+	private final Colorable.Type type;
+
+	public Dyeable(String name, int modelData, Colorable.Type type) {
+		super(name, modelData, Colorable.getTypeMaterial(type));
+		this.type = type;
 	}
 
-	public Dyeable(String name, int modelData) {
-		super(name, modelData, Material.LEATHER_HORSE_ARMOR);
-		this.defaultColor = getDefaultColor();
+	@Override
+	public Type getType() {
+		return this.type;
 	}
 }

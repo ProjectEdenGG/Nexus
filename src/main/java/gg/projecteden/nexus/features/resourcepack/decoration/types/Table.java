@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types;
 
+import gg.projecteden.nexus.features.resourcepack.decoration.common.Colorable;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DisabledPlacement;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DisabledRotation;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
@@ -11,17 +12,16 @@ import org.bukkit.block.BlockFace;
 import java.util.List;
 import java.util.Map;
 
-public class Table extends Dyeable {
+public class Table extends Dyeable implements Colorable {
 	@Getter
 	private final TableSize size;
 
-	public Table(String name, int modelData, TableSize size) {
-		super(name, modelData);
+	public Table(String name, int modelData, Colorable.Type type, TableSize size) {
+		super(name, modelData, type);
 		this.size = size;
 		this.hitboxes = size.getHitboxes();
 		this.disabledRotation = DisabledRotation.DEGREE_45;
 		this.disabledPlacements = List.of(DisabledPlacement.WALL, DisabledPlacement.CEILING);
-		this.defaultColor = getDefaultStain();
 	}
 
 	@AllArgsConstructor
