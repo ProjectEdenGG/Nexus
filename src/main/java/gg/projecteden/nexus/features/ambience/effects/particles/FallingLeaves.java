@@ -64,7 +64,7 @@ public class FallingLeaves extends ParticleEffect {
 		BIRCH(Material.GREEN_TERRACOTTA),
 		JUNGLE(Material.GREEN_CONCRETE, Material.GREEN_TERRACOTTA),
 		ACACIA(Material.GREEN_CONCRETE, Material.GREEN_TERRACOTTA),
-		DARK_OAK(Material.GREEN_CONCRETE, Material.GREEN_TERRACOTTA),
+		DARK_OAK(Material.GREEN_TERRACOTTA),
 		AZALEA(Material.GREEN_CONCRETE),
 		FLOWERING_AZALEA(Material.GREEN_CONCRETE),
 		;
