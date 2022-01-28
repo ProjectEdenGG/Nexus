@@ -2,11 +2,17 @@ package gg.projecteden.nexus.features.resourcepack.decoration;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Seat;
+import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationDestroyEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationModifyEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPlaceEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSitEvent;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.utils.TimeUtils.TickTime;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -34,12 +40,37 @@ public class DecorationListener implements Listener {
 	}
 
 	@EventHandler
+	public void on(DecorationPlaceEvent e) {
+		debug(e.getPlayer(), e.getEventName() + " - Place");
+	}
+
+	@EventHandler
+	public void on(DecorationDestroyEvent e) {
+		debug(e.getPlayer(), e.getEventName() + " - Destroy");
+	}
+
+	@EventHandler
+	public void on(DecorationInteractEvent e) {
+		debug(e.getPlayer(), e.getEventName() + " - Interact");
+	}
+
+	@EventHandler
+	public void on(DecorationSitEvent e) {
+		debug(e.getPlayer(), e.getEventName() + " - Sit");
+	}
+
+	@EventHandler
+	public void on(DecorationModifyEvent e) {
+		debug(e.getPlayer(), e.getEventName() + " - Modify");
+	}
+
+	@EventHandler
 	public void on(EntityDismountEvent event) {
 		if (!(event.getEntity() instanceof Player player)) return;
 		if (!(event.getDismounted() instanceof ArmorStand armorStand)) return;
 		if (Seat.isSeat(armorStand)) {
 			event.getDismounted().remove();
-			player.teleport(player.getLocation().add(0, 0.5, 0));
+			player.teleport(player.getLocation().add(0, 1, 0));
 		}
 	}
 
@@ -50,21 +81,48 @@ public class DecorationListener implements Listener {
 		if (slot != EquipmentSlot.HAND)
 			return;
 
-		DecorationType type = DecorationType.of(ItemUtils.getTool(event.getPlayer()));
-		if (type == null)
-			return;
-
 		// TODO: Remove
 		if (!isWakka(event.getPlayer()))
 			return;
 		//
 
+		Player player = event.getPlayer();
+		ItemStack tool = ItemUtils.getTool(player);
+
+		DecorationType toolType = DecorationType.of(tool);
+		boolean playerHoldingDecor = toolType != null;
+
 		Entity entity = event.getRightClicked();
-		if (entity instanceof ItemFrame itemFrame && !Nullables.isNullOrAir(itemFrame.getItem())) {
-			return;
-		} else if (entity instanceof ArmorStand) {
-			return;
+		if (entity instanceof ItemFrame itemFrame) {
+			ItemStack frameItem = itemFrame.getItem();
+			boolean frameHoldingItem = !Nullables.isNullOrAir(frameItem);
+
+			DecorationType frameType = DecorationType.of(frameItem);
+			boolean frameHoldingDecor = frameType != null;
+
+			if (frameHoldingItem && !frameHoldingDecor)
+				return;
+
+			if (!frameHoldingItem) {
+				if (!playerHoldingDecor)
+					return;
+
+				// cancel trying to place decoration into item frame
+				event.setCancelled(true);
+			} else {
+				Location origin = itemFrame.getLocation().toBlockLocation().clone();
+
+				DecorationModifyEvent modifyEvent = new DecorationModifyEvent(player, origin, frameType.getDecoration(), tool);
+				if (!modifyEvent.callEvent())
+					event.setCancelled(true);
+
+				return;
+			}
+
 		}
+
+		if (!playerHoldingDecor)
+			return;
 
 		event.setCancelled(true);
 	}

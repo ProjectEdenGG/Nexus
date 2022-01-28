@@ -114,7 +114,7 @@ public class Decoration {
 		//
 
 		DecorationPlaceEvent placeEvent = new DecorationPlaceEvent(player, origin, this, item);
-		if (placeEvent.callEvent())
+		if (!placeEvent.callEvent())
 			return false;
 
 		ItemStack _item = placeEvent.getItem().clone();
@@ -146,7 +146,7 @@ public class Decoration {
 		String ownerUUID = nbtItem.getString(nbtOwnerKey);
 
 		DecorationDestroyEvent destroyEvent = new DecorationDestroyEvent(player, origin, this, item, ownerUUID);
-		if (destroyEvent.callEvent())
+		if (!destroyEvent.callEvent())
 			return false;
 
 		if (this instanceof Seat seat) {
@@ -198,7 +198,7 @@ public class Decoration {
 		Location origin = itemFrame.getLocation().toBlockLocation().clone();
 
 		DecorationInteractEvent interactEvent = new DecorationInteractEvent(player, origin, this, item);
-		if (interactEvent.callEvent())
+		if (!interactEvent.callEvent())
 			return false;
 
 		if (this.isSeat()) {

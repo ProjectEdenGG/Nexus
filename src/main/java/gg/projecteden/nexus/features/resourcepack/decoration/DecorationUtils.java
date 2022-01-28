@@ -4,7 +4,6 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Getter;
 import lombok.NonNull;
@@ -36,9 +35,9 @@ public class DecorationUtils {
 		PlayerUtils.send(player, error);
 	}
 
-	public static void debug(String message) {
-		debug(Dev.WAKKA.getPlayer(), message);
-	}
+//	public static void debug(String message) {
+//		debug(Dev.WAKKA.getPlayer(), message);
+//	}
 
 	public static void debug(Player player, String message) {
 		if (debug)
@@ -77,10 +76,10 @@ public class DecorationUtils {
 		ItemFrame itemFrame = location.getNearbyEntitiesByType(ItemFrame.class, 0.5).stream().findFirst().orElse(null);
 
 		if (itemFrame != null) {
-			debug("Single");
+			debug(debugger, "Single");
 			return findItemFrame(maze, clicked);
 		} else {
-			debug("Multi");
+			debug(debugger, "Multi");
 			return getConnectedHitboxes(maze);
 		}
 	}

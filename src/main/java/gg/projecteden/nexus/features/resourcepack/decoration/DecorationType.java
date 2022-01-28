@@ -14,6 +14,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.Table;
 import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
@@ -171,6 +172,9 @@ public enum DecorationType {
 	}
 
 	public static DecorationType of(ItemStack tool) {
+		if (Nullables.isNullOrAir(tool))
+			return null;
+
 		for (DecorationType decoration : values()) {
 			if (decoration.isFuzzyMatch(tool))
 				return decoration;
