@@ -37,6 +37,7 @@ public class CheckpointData extends MatchData {
 		CheckpointArena arena = minigamer.getMatch().getArena();
 
 		if (autoresetting.contains(minigamer.getPlayer().getUniqueId())) {
+			clearCheckpoints(minigamer);
 			minigamer.teleportAsync(minigamer.getTeam().getSpawnpoints().get(0));
 			minigamer.setScore(0);
 		} else if (checkpoints.containsKey(minigamer.getPlayer().getUniqueId()))
@@ -46,7 +47,15 @@ public class CheckpointData extends MatchData {
 	}
 
 	public void clearData(Minigamer minigamer) {
+		clearCheckpoints(minigamer);
+		clearAutoreset(minigamer);
+	}
+
+	private void clearCheckpoints(Minigamer minigamer) {
 		checkpoints.remove(minigamer.getPlayer().getUniqueId());
+	}
+
+	private void clearAutoreset(Minigamer minigamer) {
 		autoresetting.remove(minigamer.getPlayer().getUniqueId());
 	}
 
