@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types;
 
-import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import lombok.Getter;
 
-public class MobPlushie extends Decoration {
+public class MobPlushie extends DecorationConfig {
 	@Getter
 	private final double dropChance;
 

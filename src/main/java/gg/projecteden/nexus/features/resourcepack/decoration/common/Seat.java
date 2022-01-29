@@ -23,19 +23,19 @@ public interface Seat {
 	String id = "DecorationSeat";
 	List<BlockFace> radialFaces = Arrays.asList(BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST, BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST);
 
-	default void trySit(Player player, Block block, Rotation rotation, Decoration decoration) {
+	default void trySit(Player player, Block block, Rotation rotation, DecorationConfig decorationConfig) {
 		Location location = block.getLocation().toCenterLocation().clone().subtract(0, 0.2, 0);
 		if (!canSit(player, location))
 			return;
 
-		makeSit(player, location, rotation, decoration);
+		makeSit(player, location, rotation, decorationConfig);
 	}
 
-	default void makeSit(Player player, Location location, Rotation rotation, Decoration decoration) {
+	default void makeSit(Player player, Location location, Rotation rotation, DecorationConfig decorationConfig) {
 		World world = location.getWorld();
 		float yaw = getYaw(rotation);
 
-		if (decoration instanceof Couch couch) {
+		if (decorationConfig instanceof Couch couch) {
 			if (couch.getCouchPart().equals(CouchPart.CORNER))
 				yaw += 45;
 		}
@@ -80,11 +80,11 @@ public interface Seat {
 			.anyMatch(armorStand -> armorStand.getPassengers().size() > 0);
 	}
 
-	default boolean isOccupied(@NonNull Decoration decoration, @NonNull ItemFrame itemFrame) {
-		if (!decoration.isMultiBlock())
+	default boolean isOccupied(@NonNull DecorationConfig decorationConfig, @NonNull ItemFrame itemFrame) {
+		if (!decorationConfig.isMultiBlock())
 			return isOccupied(itemFrame.getLocation());
 
-		List<Hitbox> hitboxes = Hitbox.rotateHitboxes(decoration, itemFrame);
+		List<Hitbox> hitboxes = Hitbox.rotateHitboxes(decorationConfig, itemFrame);
 		for (Hitbox hitbox : hitboxes) {
 			Block offsetBlock = hitbox.getOffsetBlock(itemFrame.getLocation());
 			if (isOccupied(offsetBlock.getLocation()))
