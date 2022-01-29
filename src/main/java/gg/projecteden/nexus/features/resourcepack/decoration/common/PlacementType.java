@@ -8,13 +8,13 @@ import java.util.Arrays;
 import java.util.List;
 
 @AllArgsConstructor
-public enum DisabledPlacement {
+public enum PlacementType {
 	FLOOR(BlockFace.UP),
 	WALL(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST),
 	CEILING(BlockFace.DOWN),
 	;
 
-	DisabledPlacement(BlockFace... blockFaces) {
+	PlacementType(BlockFace... blockFaces) {
 		this.blockFaces = Arrays.asList(blockFaces);
 	}
 
