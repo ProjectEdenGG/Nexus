@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Colorable;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.DisabledPlacement;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.DisabledRotation;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementType;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
@@ -20,8 +20,10 @@ public class Table extends Dyeable implements Colorable {
 		super(name, modelData, type);
 		this.size = size;
 		this.hitboxes = size.getHitboxes();
-		this.disabledRotation = DisabledRotation.DEGREE_45;
-		this.disabledPlacements = List.of(DisabledPlacement.WALL, DisabledPlacement.CEILING);
+		this.disabledPlacements = List.of(PlacementType.WALL, PlacementType.CEILING);
+		if (this.size.equals(TableSize._1x1))
+			this.rotationType = RotationType.DEGREE_45;
+
 	}
 
 	@AllArgsConstructor

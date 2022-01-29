@@ -47,8 +47,8 @@ public class Decoration {
 	protected List<String> lore = Collections.singletonList("Decoration");
 
 	protected List<Hitbox> hitboxes = Hitbox.NONE();
-	protected DisabledRotation disabledRotation = DisabledRotation.NONE;
-	protected List<DisabledPlacement> disabledPlacements = new ArrayList<>();
+	protected RotationType rotationType = RotationType.BOTH;
+	protected List<PlacementType> disabledPlacements = new ArrayList<>();
 
 	public Decoration(String name, int modelData, @NotNull Material material, List<Hitbox> hitboxes) {
 		this.name = name;
@@ -57,7 +57,7 @@ public class Decoration {
 		this.hitboxes = hitboxes;
 
 		if (this.isMultiBlock())
-			this.disabledRotation = DisabledRotation.DEGREE_45;
+			this.rotationType = RotationType.DEGREE_90;
 	}
 
 	public Decoration(String name, int modelData, List<Hitbox> hitboxes) {
@@ -205,12 +205,12 @@ public class Decoration {
 	// validation
 
 	private boolean isValidPlacement(BlockFace clickedFace) {
-		for (DisabledPlacement disabledPlacement : getDisabledPlacements()) {
-			if (disabledPlacement.getBlockFaces().contains(clickedFace))
-				return false;
+		for (PlacementType placementType : getDisabledPlacements()) {
+			if (placementType.getBlockFaces().contains(clickedFace))
+				return true;
 		}
 
-		return true;
+		return false;
 	}
 
 	private @Nullable ItemFrameRotation findValidFrameRotation(Location origin, ItemFrameRotation frameRotation) {
@@ -243,10 +243,10 @@ public class Decoration {
 	}
 
 	public boolean isValidRotation(ItemFrameRotation frameRotation) {
-		if (this.disabledRotation.equals(DisabledRotation.NONE))
+		if (this.rotationType.equals(RotationType.BOTH))
 			return true;
 
-		if (!this.disabledRotation.contains(frameRotation))
+		if (this.rotationType.contains(frameRotation))
 			return true;
 
 		return false;

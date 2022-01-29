@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Colorable;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.DisabledPlacement;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Seat;
 import org.bukkit.Material;
 
@@ -19,7 +19,7 @@ public class Chair extends Dyeable implements Seat, Colorable {
 		super(name, modelData, type);
 		this.hitboxes = hitboxes;
 		this.type = type;
-		this.disabledPlacements = List.of(DisabledPlacement.WALL, DisabledPlacement.CEILING);
+		this.disabledPlacements = List.of(PlacementType.WALL, PlacementType.CEILING);
 	}
 
 	@Override
