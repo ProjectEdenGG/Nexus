@@ -133,7 +133,7 @@ public class Decoration {
 				sitEvent.getSeat().trySit(player, block, sitEvent.getRotation(), config);
 		}
 
-		return true;
+		return false;
 	}
 
 	public boolean isOwner(UUID uuid) {
