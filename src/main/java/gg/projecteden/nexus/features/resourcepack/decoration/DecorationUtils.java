@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.decoration;
 
-import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -34,10 +34,6 @@ public class DecorationUtils {
 	public static void error(Player player, String error) {
 		PlayerUtils.send(player, error);
 	}
-
-//	public static void debug(String message) {
-//		debug(Dev.WAKKA.getPlayer(), message);
-//	}
 
 	public static void debug(Player player, String message) {
 		if (debug)
@@ -151,8 +147,8 @@ public class DecorationUtils {
 		if (type == null)
 			return null;
 
-		Decoration decoration = type.getDecoration();
-		List<Hitbox> hitboxes = Hitbox.rotateHitboxes(decoration, itemFrame);
+		DecorationConfig decorationConfig = type.getConfig();
+		List<Hitbox> hitboxes = Hitbox.rotateHitboxes(decorationConfig, itemFrame);
 
 		Location blockLoc = current.getLocation();
 		maze.debugDot(blockLoc, Color.YELLOW);

@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types;
 
-import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.MultiBlock;
 import org.bukkit.Material;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @MultiBlock
-public class Fireplace extends Decoration {
+public class Fireplace extends DecorationConfig {
 	private static final List<Hitbox> hitboxes = List.of(
 		Hitbox.origin(Material.BARRIER),
 		Hitbox.offset(Material.BARRIER, BlockFace.WEST),
