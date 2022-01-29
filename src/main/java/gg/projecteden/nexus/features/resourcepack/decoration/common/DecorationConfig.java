@@ -83,10 +83,10 @@ public class DecorationConfig {
 	boolean isValidPlacement(BlockFace clickedFace) {
 		for (PlacementType placementType : disabledPlacements) {
 			if (placementType.getBlockFaces().contains(clickedFace))
-				return true;
+				return false;
 		}
 
-		return false;
+		return true;
 	}
 
 	@Nullable

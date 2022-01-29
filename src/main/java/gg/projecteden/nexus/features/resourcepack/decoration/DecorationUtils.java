@@ -81,6 +81,7 @@ public class DecorationUtils {
 	}
 
 	// It isn't pretty, but it works
+	// TODO: optimize by checking nearest neighbors first
 	private static @Nullable ItemFrame getConnectedHitboxes(HitboxMaze maze) {
 		if (maze.getTries() > 10)
 			return null;

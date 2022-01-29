@@ -21,8 +21,9 @@ public class Table extends Dyeable implements Colorable {
 		this.size = size;
 		this.hitboxes = size.getHitboxes();
 		this.disabledPlacements = List.of(PlacementType.WALL, PlacementType.CEILING);
+		this.rotationType = RotationType.DEGREE_90;
 		if (this.size.equals(TableSize._1x1))
-			this.rotationType = RotationType.DEGREE_45;
+			this.rotationType = RotationType.BOTH;
 	}
 
 	@AllArgsConstructor
