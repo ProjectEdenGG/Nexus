@@ -88,6 +88,13 @@ public class TrustCommand extends CustomCommand {
 		process(trust, players, Type.TELEPORTS);
 	}
 
+	@Permission(Group.STAFF) // TODO Decorations
+	@Description("Allow specified player(s) to modify decorations")
+	@Path("decorations <players>")
+	void decorations(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
+		process(trust, players, Type.DECORATIONS);
+	}
+
 	@Description("Allow specified player(s) to everything")
 	@Path("all <players>")
 	void all(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
@@ -113,6 +120,13 @@ public class TrustCommand extends CustomCommand {
 	void teleports(Trust trust, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		send(PREFIX + "Modifying trusts of &e" + trust.getName());
 		process(trust, players, Type.TELEPORTS);
+	}
+
+	@Permission(Group.STAFF)
+	@Path("admin decorations <owner> <players>")
+	void decorations(Trust trust, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
+		send(PREFIX + "Modifying trusts of &e" + trust.getName());
+		process(trust, players, Type.DECORATIONS);
 	}
 
 	@Permission(Group.STAFF)

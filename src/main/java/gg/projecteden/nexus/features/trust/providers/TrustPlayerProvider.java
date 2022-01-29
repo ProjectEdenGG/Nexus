@@ -57,17 +57,16 @@ public class TrustPlayerProvider extends MenuUtils implements InventoryProvider 
 				builder.lore("&cNot trusted");
 			builder.lore("").lore("&fClick to toggle");
 
-			// temporary
-			int row = 2;
-			if (Type.DECORATION.equals(type)) {
-				if (!Rank.of(player).isStaff())
+			// TODO Decorations
+			int column = type.getColumn();
+			if (!Rank.of(player).isStaff()) {
+				++column;
+				if (type == Type.DECORATIONS)
 					continue;
-
-				row = 3;
 			}
 			//
 
-			contents.set(row, type.getColumn(), ClickableItem.from(builder.build(), e -> {
+			contents.set(2, column, ClickableItem.from(builder.build(), e -> {
 				if (list.contains(trusted.getUniqueId()))
 					list.remove(trusted.getUniqueId());
 				else

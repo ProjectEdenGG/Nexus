@@ -62,6 +62,12 @@ public class UntrustCommand extends CustomCommand {
 		process(players, Type.TELEPORTS);
 	}
 
+	@Permission(Group.STAFF) // TODO Decorations
+	@Path("decorations <players>")
+	void decorations(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
+		process(players, Type.DECORATIONS);
+	}
+
 	@Path("all <players>")
 	void all(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		process(players, Type.values());
@@ -89,6 +95,14 @@ public class UntrustCommand extends CustomCommand {
 		trust = service.get(owner);
 		send(PREFIX + "Modifying trusts of &e" + Nickname.of(owner));
 		process(players, Type.TELEPORTS);
+	}
+
+	@Permission(Group.STAFF)
+	@Path("admin decorations <owner> <players>")
+	void decorations(OfflinePlayer owner, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
+		trust = service.get(owner);
+		send(PREFIX + "Modifying trusts of &e" + Nickname.of(owner));
+		process(players, Type.DECORATIONS);
 	}
 
 	@Permission(Group.STAFF)

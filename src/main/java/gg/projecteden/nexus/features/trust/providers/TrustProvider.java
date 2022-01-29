@@ -83,8 +83,8 @@ public class TrustProvider extends MenuUtils implements InventoryProvider {
 						.skullOwner(_player)
 						.name("&e" + Nickname.of(_player));
 					for (Trust.Type type : Trust.Type.values()) {
-						// temp
-						if (type.equals(Type.DECORATION) && !Rank.of(player).isStaff())
+						// TODO Decorations
+						if (type.equals(Type.DECORATIONS) && !Rank.of(player).isStaff())
 							continue;
 						//
 
