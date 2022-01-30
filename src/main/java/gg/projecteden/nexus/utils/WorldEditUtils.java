@@ -366,6 +366,8 @@ public class WorldEditUtils {
 					debug.accept("Done copying");
 				}
 
+				clipboard.setOrigin(region.getMinimumPoint());
+
 				return clipboard;
 			}
 		});
