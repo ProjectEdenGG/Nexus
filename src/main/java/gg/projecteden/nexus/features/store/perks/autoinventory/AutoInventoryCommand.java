@@ -45,7 +45,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static java.util.stream.Collectors.joining;
 
 @NoArgsConstructor
@@ -181,6 +180,16 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 		}
 	}
 
+	@Path("settings tools includeSword [enable]")
+	void settings_tools_includeSword(Boolean enable) {
+		if (enable == null)
+			enable = !user.isAutoToolIncludeSword();
+
+		user.setAutoToolIncludeSword(enable);
+		service.save(user);
+		send(PREFIX + "AutoTool now " + (enable ? "&aincludes" : "&cexcludes") + " &3swords");
+	}
+
 	@Path("settings trash materials")
 	void settings_trash_materials() {
 		new AutoTrashMaterialEditor(user);
@@ -195,11 +204,11 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 
 		user.setAutoTrashBehavior(behavior);
 		service.save(user);
-		send(PREFIX + "Auto Trash behavior set to " + camelCase(behavior));
+		send(PREFIX + "AutoTrash behavior set to " + camelCase(behavior));
 	}
 
 	public static class AutoTrashMaterialEditor implements TemporaryListener {
-		private static final String TITLE = StringUtils.colorize("&eAuto Trash");
+		private static final String TITLE = StringUtils.colorize("&eAutoTrash");
 		private final AutoInventoryUser user;
 
 		@Override

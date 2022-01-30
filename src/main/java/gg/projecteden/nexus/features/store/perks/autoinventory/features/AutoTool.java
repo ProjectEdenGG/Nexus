@@ -48,10 +48,21 @@ public class AutoTool implements Listener {
 			return;
 		if (!(player.hasPermission(AutoInventory.PERMISSION) || player.hasPermission(PERMISSION)))
 			return;
-		if (!AutoInventoryUser.of(player).hasFeatureEnabled(AutoInventoryFeature.AUTOTOOL))
+
+		final AutoInventoryUser user = AutoInventoryUser.of(player);
+
+		if (!user.hasFeatureEnabled(AutoInventoryFeature.AUTOTOOL))
 			return;
-		if (!MaterialTag.TOOLS.isTagged(player.getInventory().getItemInMainHand()))
-			return;
+
+		final ItemStack mainHand = player.getInventory().getItemInMainHand();
+
+		if (!MaterialTag.TOOLS.isTagged(mainHand)) {
+			if (!MaterialTag.SWORDS.isTagged(mainHand))
+				return;
+
+			if (!user.isAutoToolIncludeSword())
+				return;
+		}
 
 		ItemStack[] contents = getHotbarContents(player);
 		ItemStack bestTool = getBestTool(Arrays.asList(contents), block, null);
