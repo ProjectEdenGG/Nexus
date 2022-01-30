@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.store.perks.autoinventory.features;
 
+import gg.projecteden.nexus.features.listeners.events.PlayerBlockDigEvent;
 import gg.projecteden.nexus.features.store.perks.autoinventory.AutoInventory;
 import gg.projecteden.nexus.features.store.perks.autoinventory.AutoInventoryFeature;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser;
@@ -12,9 +13,6 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,17 +32,13 @@ public class AutoTool implements Listener {
 	public static final String PERMISSION = "autotool.use";
 
 	@EventHandler
-	public void onInteract(PlayerInteractEvent event) {
+	public void on(PlayerBlockDigEvent event) {
 		Player player = event.getPlayer();
-		Block block = event.getClickedBlock();
+		Block block = event.getBlock();
 
 		if (player.getTargetEntity(5) != null)
-			return; // could try to find the "best" weapon but that's kinda subjective, given different mcMMO perks, enchants, attack speeds, etc.
-		if (event.getAction() != Action.LEFT_CLICK_BLOCK)
 			return;
 		if (block == null)
-			return;
-		if (event.getHand() != EquipmentSlot.HAND)
 			return;
 		if (!(player.hasPermission(AutoInventory.PERMISSION) || player.hasPermission(PERMISSION)))
 			return;
@@ -69,7 +63,7 @@ public class AutoTool implements Listener {
 
 		if (isNullOrAir(bestTool))
 			return;
-		if (bestTool.equals(event.getItem()))
+		if (bestTool.equals(mainHand))
 			return;
 
 		for (int i = 0; i <= contents.length; i++)
