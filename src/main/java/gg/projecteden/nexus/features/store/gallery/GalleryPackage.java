@@ -24,6 +24,7 @@ import gg.projecteden.nexus.features.store.perks.joinquit.JoinQuit;
 import gg.projecteden.nexus.features.store.perks.workbenches.WorkbenchesCommand.WorkbenchesMenu;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.costume.Costume;
+import gg.projecteden.nexus.models.costume.Costume.CostumeType;
 import gg.projecteden.nexus.models.costume.CostumeUser;
 import gg.projecteden.nexus.models.particle.ParticleType;
 import gg.projecteden.nexus.models.playerplushie.PlayerPlushieConfig;
@@ -108,25 +109,27 @@ public enum GalleryPackage {
 
 			@Override
 			protected void init(CostumeUser user, InventoryContents contents) {
-				final Costume costume = Costume.of(user.getActiveDisplayCostume());
-				if (costume != null) {
-					final ItemBuilder builder = new ItemBuilder(user.getCostumeDisplayItem(costume))
-						.lore("", "&a&lActive", "&cClick to deactivate")
-						.glow();
+				for (CostumeType type : CostumeType.values()) {
+					final Costume costume = user.getActiveDisplayCostume(type);
+					if (costume != null) {
+						final ItemBuilder builder = new ItemBuilder(user.getCostumeDisplayItem(costume))
+							.lore("", "&a&lActive", "&cClick to deactivate")
+							.glow();
 
-					contents.set(0, 4, ClickableItem.from(builder.build(), e -> {
-						user.setActiveDisplayCostume(null);
-						service.save(user);
-						open(user.getOnlinePlayer(), contents.pagination().getPage());
-					}));
+						contents.set(0, type.getMenuHeaderSlot(), ClickableItem.from(builder.build(), e -> {
+							user.setActiveDisplayCostume(type, null);
+							service.save(user);
+							open(user.getOnlinePlayer(), contents.pagination().getPage());
+						}));
 
-					if (MaterialTag.DYEABLE.isTagged(costume.getItem().getType())) {
-						contents.set(0, 6, ClickableItem.from(DyeStation.getDyeStation().build(), e ->
-							new DyeStationMenu().openCostume(user, costume, data -> {
-								user.dye(costume, data.getColor());
-								service.save(user);
-								open(user.getOnlinePlayer());
-							})));
+						if (MaterialTag.DYEABLE.isTagged(costume.getItem().getType())) {
+							contents.set(0, type.getMenuHeaderSlot() + 1, ClickableItem.from(DyeStation.getDyeStation().build(), e ->
+								new DyeStationMenu().openCostume(user, costume, data -> {
+									user.dye(costume, data.getColor());
+									service.save(user);
+									open(user.getOnlinePlayer());
+								})));
+						}
 					}
 				}
 			}
@@ -134,11 +137,11 @@ public enum GalleryPackage {
 			@Override
 			protected ClickableItem formatCostume(CostumeUser user, Costume costume, InventoryContents contents) {
 				final ItemBuilder builder = new ItemBuilder(user.getCostumeDisplayItem(costume));
-				if (costume.getId().equals(user.getActiveDisplayCostume()))
+				if (user.hasDisplayCostumeActivated(costume))
 					builder.lore("", "&a&lActive").glow();
 
 				return ClickableItem.from(builder.build(), e -> {
-					user.setActiveDisplayCostume(costume.getId().equals(user.getActiveDisplayCostume()) ? null : costume);
+					user.setActiveDisplayCostume(costume.getType(), user.hasDisplayCostumeActivated(costume) ? null : costume);
 					service.save(user);
 					open(user.getOnlinePlayer(), contents.pagination().getPage());
 				});

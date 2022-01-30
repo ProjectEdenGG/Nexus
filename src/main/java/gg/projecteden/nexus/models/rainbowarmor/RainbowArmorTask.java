@@ -88,7 +88,7 @@ public class RainbowArmorTask {
 				final InvisibleArmor invisibleArmor = new InvisibleArmorService().get(entity);
 				if (invisibleArmor.isEnabled() && invisibleArmor.isHidden(slot))
 					continue;
-				else if (slot == ArmorSlot.HELMET && new CostumeUserService().get(entity).hasActiveCostume())
+				else if (slot == ArmorSlot.HELMET && new CostumeUserService().get(entity).hasActiveCostumes())
 					continue;
 			}
 
