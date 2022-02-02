@@ -4,9 +4,11 @@ import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
+import lombok.Setter;
 
 public class Wind {
 	@Getter
+	@Setter
 	private static boolean blowing = true;
 	@Getter
 	private static double direction;

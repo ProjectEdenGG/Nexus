@@ -101,13 +101,17 @@ public class DotEffect {
 	}
 
 	public static void debug(Player player, Location location, Color color) {
+		debug(player, location, color, TickTime.SECOND.x(3));
+	}
+
+	public static void debug(Player player, Location location, Color color, int ticks) {
 		DotEffect.builder()
 			.player(player)
 			.location(location)
 			.color(color)
 			.clientSide(true)
 			.speed(.1)
-			.ticks(TickTime.SECOND.x(3))
+			.ticks(ticks)
 			.start();
 	}
 }

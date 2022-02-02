@@ -64,6 +64,18 @@ public class Hitbox {
 		return directions.get(index);
 	}
 
+	public static List<Hitbox> rotateHitboxes(DecorationConfig decorationConfig, ItemFrame itemFrame) {
+		return rotateHitboxes(decorationConfig, ItemFrameRotation.of(itemFrame).getBlockFace());
+	}
+
+	public static List<Hitbox> rotateHitboxes(DecorationConfig decorationConfig, BlockFace blockFace) {
+		return rotateHitboxes(decorationConfig.getHitboxes(), blockFace);
+	}
+
+	public static List<Hitbox> rotateHitboxes(List<Hitbox> hitboxes, BlockFace blockFace) {
+		return rotate(hitboxes, blockFace);
+	}
+
 	private static List<Hitbox> rotate(List<Hitbox> hitboxes, BlockFace blockFace) {
 		int ndx = directions.indexOf(blockFace);
 		List<Hitbox> result = new ArrayList<>();
@@ -95,7 +107,7 @@ public class Hitbox {
 	}
 
 	public static void place(List<Hitbox> hitboxes, Location origin, BlockFace blockFace) {
-		hitboxes = getHitboxes(hitboxes, blockFace);
+		hitboxes = rotateHitboxes(hitboxes, blockFace);
 
 		for (Hitbox hitbox : hitboxes) {
 			Material material = hitbox.getMaterial();
@@ -106,11 +118,11 @@ public class Hitbox {
 		}
 	}
 
-	public static void destroy(List<Hitbox> hitboxes, Location origin, BlockFace blockFace) {
-		hitboxes = getHitboxes(hitboxes, blockFace);
+	public static void destroy(Decoration decoration) {
+		final List<Hitbox> hitboxes = rotateHitboxes(decoration.getConfig().getHitboxes(), decoration.getRotation().getBlockFace());
 
 		for (Hitbox hitbox : hitboxes)
-			hitbox.getOffsetBlock(origin).setType(Material.AIR);
+			hitbox.getOffsetBlock(decoration.getOrigin()).setType(Material.AIR);
 	}
 
 	public Block getOffsetBlock(Location origin) {
@@ -120,17 +132,5 @@ public class Hitbox {
 		}
 
 		return offsetBlock;
-	}
-
-	public static List<Hitbox> getHitboxes(Decoration decoration, ItemFrame itemFrame) {
-		return getHitboxes(decoration, ItemFrameRotation.of(itemFrame).getBlockFace());
-	}
-
-	public static List<Hitbox> getHitboxes(Decoration decoration, BlockFace blockFace) {
-		return getHitboxes(decoration.getHitboxes(), blockFace);
-	}
-
-	public static List<Hitbox> getHitboxes(List<Hitbox> hitboxes, BlockFace blockFace) {
-		return rotate(hitboxes, blockFace);
 	}
 }

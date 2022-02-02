@@ -4,7 +4,6 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.advent.Advent;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.CandyCaneCannon;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Intro;
-import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Train;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.TrainBackground;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -42,8 +41,8 @@ public class Pugmas21 {
 	private static boolean treeAnimating = false;
 
 	public Pugmas21() {
-		new Timer("      Events.Pugmas21.Train", Train::schedule);
-		new Timer("      Events.Pugmas21.TrainBackground", TrainBackground::new);
+//		new Timer("      Events.Pugmas21.Train", Train::schedule);
+//		new Timer("      Events.Pugmas21.TrainBackground", TrainBackground::new);
 		new Timer("      Events.Pugmas21.Intro", Intro::new);
 		new Timer("      Events.Pugmas21.AdventPresents", Advent::new);
 		new Timer("      Events.Pugmas21.CandyCaneCannon", CandyCaneCannon::new);

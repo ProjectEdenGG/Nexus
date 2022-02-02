@@ -8,11 +8,12 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.trust.TrustFeature;
 import gg.projecteden.nexus.framework.features.Features;
+import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.trust.Trust;
 import gg.projecteden.nexus.models.trust.Trust.Type;
 import gg.projecteden.nexus.models.trust.TrustService;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -71,7 +72,7 @@ public class TrustProvider extends MenuUtils implements InventoryProvider {
 
 		trust.getAll().stream()
 				.map(PlayerUtils::getPlayer)
-				.sorted(Comparator.comparing(Name::of))
+				.sorted(Comparator.comparing(Nickname::of))
 				.collect(Collectors.toList())
 				.forEach(_player -> {
 					if (filterType.get() != null)
@@ -79,17 +80,24 @@ public class TrustProvider extends MenuUtils implements InventoryProvider {
 							return;
 
 					ItemBuilder builder = new ItemBuilder(Material.PLAYER_HEAD)
-							.skullOwner(_player)
-							.name("&e" + Name.of(_player));
-					for (Trust.Type type : Trust.Type.values())
+						.skullOwner(_player)
+						.name("&e" + Nickname.of(_player));
+					for (Trust.Type type : Trust.Type.values()) {
+						// TODO Decorations
+						if (type.equals(Type.DECORATIONS) && !Rank.of(player).isStaff())
+							continue;
+						//
+
 						if (trust.trusts(type, _player))
 							builder.lore("&a" + type.camelCase());
 						else
 							builder.lore("&c" + type.camelCase());
+					}
+
 					builder.lore("").lore("&fClick to edit");
 
 					items.add(ClickableItem.from(builder.build(), e ->
-							TrustPlayerProvider.open(player, _player)));
+						TrustPlayerProvider.open(player, _player)));
 				});
 
 		paginator(player, contents, items);

@@ -14,10 +14,10 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MinigamerQu
 import gg.projecteden.nexus.features.minigames.models.matchdata.GrabAJumbuckMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
-import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.utils.EnumUtils;
 import lombok.SneakyThrows;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -91,7 +91,7 @@ public class GrabAJumbuck extends TeamlessMechanic {
 		while (sheepAmount != 0) {
 			Sheep sheep = match.getWorld().spawn(getRandomSheepSpawnLocation(match), Sheep.class);
 			sheep.setInvulnerable(true);
-			DyeColor color = ColorType.values()[RandomUtils.randomInt(1, ColorType.values().length - 1)].getDyeColor();
+			DyeColor color = EnumUtils.random(DyeColor.class);
 			if (RandomUtils.randomInt(0, 100) > 80) sheep.setColor(color);
 			matchData.getSheeps().add(sheep);
 			sheepAmount--;

@@ -55,12 +55,13 @@ public class CooldownService extends MongoPlayerService<Cooldown> {
 	 * Checks if a player is currently off cooldown.
 	 * <p>
 	 * Returns true if the player is not on cooldown. This will also create a new cooldown instance.
+	 *
 	 * @param player player to check
-	 * @param type an arbitrary string corresponding to the type of cooldown matching the regex ^[\w:#-]+$
-	 * @param ticks how long the cooldown should last in ticks
+	 * @param type   an arbitrary string corresponding to the type of cooldown matching the regex ^[\w:#-]+$
+	 * @param ticks  how long the cooldown should last in ticks
 	 * @return true if player is not on cooldown
 	 */
-	public boolean check(OfflinePlayer player, String type, double ticks) {
+	public boolean check(OfflinePlayer player, String type, int ticks) {
 		return check(player.getUniqueId(), type, ticks);
 	}
 
@@ -68,13 +69,14 @@ public class CooldownService extends MongoPlayerService<Cooldown> {
 	 * Checks if a player is currently off cooldown.
 	 * <p>
 	 * Returns true if the player is not on cooldown or if the player bypasses this cooldown. This will also create a new cooldown instance.
-	 * @param uuid player UUID to check (or Nexus.UUID0)
-	 * @param type an arbitrary string corresponding to the type of cooldown matching the regex ^[\w:#-]+$
-	 * @param ticks how long the cooldown should last in ticks
+	 *
+	 * @param uuid             player UUID to check (or Nexus.UUID0)
+	 * @param type             an arbitrary string corresponding to the type of cooldown matching the regex ^[\w:#-]+$
+	 * @param ticks            how long the cooldown should last in ticks
 	 * @param bypassPermission permission the player must have to bypass this cooldown
 	 * @return true if player is not on cooldown
 	 */
-	public boolean check(UUID uuid, String type, double ticks, String bypassPermission) {
+	public boolean check(UUID uuid, String type, int ticks, String bypassPermission) {
 		OfflinePlayer player = PlayerUtils.getPlayer(uuid);
 		if (player.getPlayer() != null && player.getPlayer().hasPermission(bypassPermission))
 			return true;
@@ -86,12 +88,13 @@ public class CooldownService extends MongoPlayerService<Cooldown> {
 	 * Checks if a player is currently off cooldown.
 	 * <p>
 	 * Returns true if the player is not on cooldown. This will also create a new cooldown instance.
-	 * @param uuid player UUID to check (or Nexus.UUID0)
-	 * @param type an arbitrary string corresponding to the type of cooldown matching the regex ^[\w:#-]+$
+	 *
+	 * @param uuid  player UUID to check (or Nexus.UUID0)
+	 * @param type  an arbitrary string corresponding to the type of cooldown matching the regex ^[\w:#-]+$
 	 * @param ticks how long the cooldown should last in ticks
 	 * @return true if player is not on cooldown
 	 */
-	public boolean check(UUID uuid, String type, double ticks) {
+	public boolean check(UUID uuid, String type, int ticks) {
 		Cooldown cooldown = get(uuid);
 		if (cooldown == null) {
 			Nexus.warn("Cooldown object is null? " + uuid.toString() + " / " + type + " / " + ticks);

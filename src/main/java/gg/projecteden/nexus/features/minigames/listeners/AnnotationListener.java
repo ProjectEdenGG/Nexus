@@ -38,13 +38,20 @@ public class AnnotationListener implements Listener {
 	@EventHandler
 	public void onGunShoot(PlayerInteractEvent event) {
 		Minigamer minigamer = PlayerManager.get(event.getPlayer());
-		if (!minigamer.isPlaying()) return;
-		if (!ActionGroup.RIGHT_CLICK.applies(event)) return;
+		if (!minigamer.isPlaying())
+			return;
+		if (!ActionGroup.RIGHT_CLICK.applies(event))
+			return;
 
 		Railgun railgun = minigamer.getMatch().getMechanic().getAnnotation(Railgun.class);
-		if (railgun == null) return;
+		if (railgun == null)
+			return;
 
-		if (!minigamer.getPlayer().getInventory().getItemInMainHand().getType().name().contains("HOE")) return;
+		if (railgun.mustBeGliding() && !minigamer.getPlayer().isGliding())
+			return;
+
+		if (!minigamer.getPlayer().getInventory().getItemInMainHand().getType().name().contains("HOE"))
+			return;
 
 		Gun gun = new Gun(minigamer);
 		gun.setShouldDamageWithConsole(railgun.damageWithConsole());

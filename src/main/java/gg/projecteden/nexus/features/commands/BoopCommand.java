@@ -66,8 +66,9 @@ public class BoopCommand extends CustomCommand {
 		if (Minigames.isMinigameWorld(booper.getWorld()))
 			error("You cannot boop in minigames!");
 
+		String boopedName = Nickname.of(booped);
 		if (Minigames.isMinigameWorld(booped.getWorld()))
-			error("You cannot boop " + booped.getName() + ", they are in minigames");
+			error("You cannot boop " + boopedName + ", they are in minigames");
 
 		String toBooper = PREFIX;
 		String toBooped = PREFIX;
@@ -75,10 +76,10 @@ public class BoopCommand extends CustomCommand {
 			message = " &3and said &e" + message;
 
 		if (anonymous) {
-			toBooper += "&3You anonymously booped &e" + Nickname.of(booped) + message;
+			toBooper += "&3You anonymously booped &e" + boopedName + message;
 			toBooped += "&eSomebody &3booped you" + message;
 		} else {
-			toBooper += "&3You booped &e" + Nickname.of(booped) + message;
+			toBooper += "&3You booped &e" + boopedName + message;
 			toBooped += "&e" + nickname() + " &3booped you" + message;
 		}
 

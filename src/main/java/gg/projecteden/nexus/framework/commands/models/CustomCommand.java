@@ -32,6 +32,7 @@ import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Name;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -1085,7 +1086,7 @@ public abstract class CustomCommand extends ICustomCommand {
 
 		public String format() {
 			boolean self = isSelf(this.self, target);
-			String name = Objects.requireNonNullElse(Name.of(target), "Unknown");
+			String name = Objects.requireNonNullElse(Nickname.of(target), "Unknown");
 
 			if (whoType == WhoType.POSSESSIVE_UPPER || whoType == WhoType.POSSESSIVE_LOWER)
 				return self ? (whoType == WhoType.POSSESSIVE_UPPER ? "Y" : "y") + "our" : name + "'" + (name.endsWith("s") ? "" : "s");

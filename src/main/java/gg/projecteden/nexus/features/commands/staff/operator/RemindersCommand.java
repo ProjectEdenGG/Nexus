@@ -387,6 +387,8 @@ public class RemindersCommand extends CustomCommand implements Listener {
 			for (Player player : OnlinePlayers.getAll()) {
 				Utils.attempt(100, () -> {
 					Reminder reminder = config.getRandomReminder();
+					if (reminder == null)
+						return false;
 
 					if (!reminder.test(player))
 						return false;

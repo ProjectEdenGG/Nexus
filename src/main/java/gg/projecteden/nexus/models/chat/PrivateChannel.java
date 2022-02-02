@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.models.chat;
 
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.utils.Name;
 import lombok.Data;
 import lombok.ToString;
 import net.md_5.bungee.api.ChatColor;
@@ -46,7 +45,7 @@ public class PrivateChannel implements Channel {
 	@ToString.Include
 	public Set<String> getRecipientsNames() {
 		return recipients.stream()
-				.map(Name::of)
+				.map(Nickname::of)
 				.collect(Collectors.toSet());
 	}
 

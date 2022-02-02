@@ -69,6 +69,8 @@ public class AutoInventoryUser implements PlayerOwnedObject {
 		add(Material.GLOWSTONE);
 	}};
 
+	private boolean autoToolIncludeSword;
+
 	private Set<Material> autoTrashInclude = new HashSet<>();
 	private AutoTrashBehavior autoTrashBehavior = AutoTrashBehavior.TRASH;
 

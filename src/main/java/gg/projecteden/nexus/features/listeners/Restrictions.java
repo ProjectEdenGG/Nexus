@@ -35,6 +35,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -73,6 +74,19 @@ public class Restrictions implements Listener {
 			return false;
 
 		return true;
+	}
+
+	@EventHandler
+	public void onPlayerTeleport(PlayerTeleportEvent event) {
+		if (event.getCause() != TeleportCause.SPECTATE)
+			return;
+
+		final Player player = event.getPlayer();
+		if (Rank.of(player).isStaff())
+			return;
+
+		event.setCancelled(true);
+		player.setGameMode(GameMode.SPECTATOR);
 	}
 
 	@EventHandler

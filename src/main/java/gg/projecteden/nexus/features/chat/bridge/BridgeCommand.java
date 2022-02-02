@@ -18,9 +18,9 @@ import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.AllArgsConstructor;
@@ -266,7 +266,7 @@ public class BridgeCommand extends CustomCommand {
 		BiFunction<UUID, String, JsonBuilder> formatter = (uuid, index) -> {
 			OfflinePlayer player = PlayerUtils.getPlayer(uuid);
 			int size = duplicates.get(uuid).size();
-			JsonBuilder json = json(index + " &e" + Name.of(player) + " &7- " + size + " roles")
+			JsonBuilder json = json(index + " &e" + Nickname.of(player) + " &7- " + size + " roles")
 					.newline();
 
 			for (String roleId : duplicates.get(uuid))

@@ -75,6 +75,15 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Particles " + (enable ? "&aEnabled" : "&cDisabled"));
 	}
 
+	@Path("wind [enable]")
+	void toggleWind(Boolean enable) {
+		if (enable == null)
+			enable = !Wind.isBlowing();
+
+		Wind.setBlowing(enable);
+		send(PREFIX + "Wind " + (enable ? "&aEnabled" : "&cDisabled"));
+	}
+
 	@Path("debug [enable]")
 	void toggleDebug(Boolean enable) {
 		if (enable == null)

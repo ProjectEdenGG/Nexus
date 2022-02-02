@@ -21,6 +21,7 @@ import gg.projecteden.nexus.models.badge.BadgeUserService;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.freeze.FreezeService;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -271,9 +272,9 @@ public class Nerd extends gg.projecteden.mongodb.models.nerd.Nerd implements Pla
 			File file = Paths.get(Bukkit.getServer().getWorlds().get(0).getName() + "/playerdata/" + uuid + ".dat").toFile();
 			if (file.exists())
 				return new NBTFile(file);
-			throw new InvalidInputException("[Nerd]" + Name.of(uuid) + "'s data file does not exist");
+			throw new InvalidInputException("[Nerd]" + Nickname.of(uuid) + "'s data file does not exist");
 		} catch (Exception ex) {
-			throw new InvalidInputException("[Nerd] Error opening " + Name.of(uuid) + "'s data file");
+			throw new InvalidInputException("[Nerd] Error opening " + Nickname.of(uuid) + "'s data file");
 		}
 	}
 

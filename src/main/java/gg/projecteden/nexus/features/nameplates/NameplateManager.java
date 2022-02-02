@@ -10,7 +10,7 @@ import gg.projecteden.nexus.features.nameplates.packet.MountPacket;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.nameplates.NameplateUserService;
-import gg.projecteden.nexus.utils.Name;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Data;
@@ -158,7 +158,7 @@ public class NameplateManager {
 		private final Set<UUID> viewedBy = new HashSet<>();
 
 		NameplatePlayer(UUID uuid) {
-			Nameplates.debug("Now managing " + Name.of(uuid));
+			Nameplates.debug("Now managing " + Nickname.of(uuid));
 			this.uuid = uuid;
 			this.entityId = EntitySpawnPacket.ENTITY_ID_COUNTER++;
 			this.spawnPacket = new EntitySpawnPacket(entityId);
@@ -184,6 +184,8 @@ public class NameplateManager {
 				return true;
 			if (player.hasPotionEffect(PotionEffectType.INVISIBILITY))
 				return true;
+			if (!player.getPassengers().isEmpty())
+				return true;
 
 			if (isSelf(this, viewer))
 				if (!new NameplateUserService().get(this).isViewOwnNameplate())
@@ -193,8 +195,10 @@ public class NameplateManager {
 		}
 
 		public void sendSpawnPacket(Player viewer) {
-			if (ignore(viewer))
+			if (ignore(viewer)) {
+				sendDestroyPacket(viewer);
 				return;
+			}
 
 			spawnPacket.at(getOnlinePlayer()).send(viewer);
 
@@ -203,15 +207,19 @@ public class NameplateManager {
 		}
 
 		public void sendMetadataPacket(Player viewer) {
-			if (ignore(viewer))
+			if (ignore(viewer)) {
+				sendDestroyPacket(viewer);
 				return;
+			}
 
 			metadataPacket.setNameJson(Nameplates.of(getOnlinePlayer(), viewer)).send(viewer);
 		}
 
 		public void sendMountPacket(Player viewer) {
-			if (ignore(viewer))
+			if (ignore(viewer)) {
+				sendDestroyPacket(viewer);
 				return;
+			}
 
 			new MountPacket(getOnlinePlayer().getEntityId(), entityId).send(viewer);
 		}

@@ -50,7 +50,7 @@ public class Ambience extends Feature implements Listener {
 	}
 
 	public static List<AmbienceUser> getUsers() {
-		return OnlinePlayers.where().rank(Rank.ADMIN).get().stream().map(userService::get).toList();
+		return OnlinePlayers.where().rank(Rank::isStaff).get().stream().map(userService::get).toList();
 	}
 
 }

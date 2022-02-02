@@ -10,8 +10,8 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Bukkit;
@@ -61,7 +61,7 @@ public class CrateCommand extends CustomCommand {
 					" Crate Key" + (amount == 1 ? "" : "s"));
 		if (!isSelf(player))
 			send(Crates.PREFIX + "You gave &e" + amount + " " + StringUtils.camelCase(type.name()) + " Crate Key" +
-					(amount == 1 ? "" : "s") + "  &3to &e" + Name.of(player));
+					(amount == 1 ? "" : "s") + "  &3to &e" + Nickname.of(player));
 	}
 
 	@Path("animationAndSoundTest")

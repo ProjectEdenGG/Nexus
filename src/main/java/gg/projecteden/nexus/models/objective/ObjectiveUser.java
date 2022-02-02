@@ -136,7 +136,7 @@ public class ObjectiveUser implements PlayerOwnedObject {
 
 			if (objectiveBar == null)
 				if (!isNullOrEmpty(description))
-					objectiveBar = Bukkit.createBossBar(colorize(description), BarColor.RED, BarStyle.SOLID);
+					objectiveBar = Bukkit.createBossBar(colorize(description), BarColor.PINK, BarStyle.SOLID);
 
 			if (objectiveBar != null) {
 				objectiveBar.setVisible(true);

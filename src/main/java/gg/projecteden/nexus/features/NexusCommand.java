@@ -276,9 +276,12 @@ public class NexusCommand extends CustomCommand implements Listener {
 		PlayerUtils.runCommand(player.getPlayer(), "nexus reload");
 	}
 
-	@Path("debug")
-	void debug() {
-		Nexus.setDebug(!Nexus.isDebug());
+	@Path("debug [state]")
+	void debug(Boolean state) {
+		if (state == null)
+			state = !Nexus.isDebug();
+
+		Nexus.setDebug(state);
 		send(PREFIX + "Debugging " + (Nexus.isDebug() ? "&aenabled" : "&cdisabled"));
 	}
 

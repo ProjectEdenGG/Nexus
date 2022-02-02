@@ -5,6 +5,7 @@ import gg.projecteden.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.discord.Discord;
+import gg.projecteden.nexus.features.store.annotations.Category.StoreCategory;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -15,6 +16,7 @@ import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.store.Contributor;
 import gg.projecteden.nexus.models.store.Contributor.Purchase;
 import gg.projecteden.nexus.models.store.ContributorService;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
 
 import java.time.LocalDateTime;
@@ -25,6 +27,7 @@ import static gg.projecteden.utils.UUIDUtils.isV4Uuid;
 import static gg.projecteden.utils.UUIDUtils.uuidFormat;
 
 public class HandlePurchaseCommand extends CustomCommand {
+	private final String PREFIX = StringUtils.getPrefix("Store");
 	private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm");
 
 	public HandlePurchaseCommand(@NonNull CommandEvent event) {
@@ -65,8 +68,8 @@ public class HandlePurchaseCommand extends CustomCommand {
 			discordMessage += "\nPackage not recognized!";
 		else {
 			if (purchase.getPrice() > 0) {
-				send(purchase.getUuid(), ("&eThank you for buying " + purchase.getPackageName() + "! " +
-						"&3Your donation is &3&ogreatly &3appreciated and will be put to good use."));
+				send(purchase.getUuid(), PREFIX + "Thank you for buying &e" + purchase.getPackageName() + "&3! " +
+						"Your contribution is &3&ogreatly &3appreciated and will be put to good use.");
 
 				if (contributor.isBroadcasts())
 					if (packageType == Package.CUSTOM_DONATION) {
@@ -81,6 +84,9 @@ public class HandlePurchaseCommand extends CustomCommand {
 						Koda.say("Thank you for your purchase, " + purchase.getNickname() + "! " +
 								"Enjoy your " + purchase.getPackageName() + " perk!");
 
+				if (packageType.getCategory() == StoreCategory.BOOSTS)
+					send(purchase.getUuid(), PREFIX + "Make sure you activate your boost with &c/boost menu");
+
 				if (isV4Uuid(purchase.getPurchaserUuid())) {
 					new BadgeUserService().edit(purchase.getPurchaserUuid(), badgeUser -> badgeUser.give(Badge.SUPPORTER));
 
@@ -91,7 +97,7 @@ public class HandlePurchaseCommand extends CustomCommand {
 						discordMessage += "\nUser does not have a linked discord account";
 				}
 			} else {
-				send(purchase.getUuid(), "Your free " + purchase.getPackageName() + " has been successfully processed, enjoy!");
+				send(purchase.getUuid(), PREFIX + "Your free " + purchase.getPackageName() + " has been successfully processed, enjoy!");
 			}
 
 			packageType.apply(purchase.getUuid());

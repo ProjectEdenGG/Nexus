@@ -12,6 +12,7 @@ import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.shop.Shop;
 import gg.projecteden.nexus.models.shop.Shop.ExchangeType;
 import gg.projecteden.nexus.models.shop.Shop.Product;
@@ -21,7 +22,6 @@ import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
@@ -126,7 +126,7 @@ public class ConvertShopCommand extends CustomCommand {
 
 		SignData data = read(sign);
 		if (!isSelf(data.getPlayer()) && !isStaff())
-			error("This sign belongs to " + Name.of(data.getPlayer()));
+			error("This sign belongs to " + Nickname.of(data.getPlayer()));
 
 		++signs;
 		Shop shop = service.get(data.getPlayer());

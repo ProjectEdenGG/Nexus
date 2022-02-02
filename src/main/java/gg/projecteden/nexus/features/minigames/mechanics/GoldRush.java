@@ -32,7 +32,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -89,25 +88,25 @@ public final class GoldRush extends TeamlessMechanic {
 		}
 	}
 
-	public void createMineStacks(int mineStackHeight, List<Location> locations) {
-		Map<BlockType, Double> pattern = new HashMap<>() {{
-			put(BlockTypes.COBBLESTONE, 10.0);
-			put(BlockTypes.GOLD_ORE, 40.0);
-			put(BlockTypes.DIRT, 20.0);
-			put(BlockTypes.IRON_ORE, 20.0);
-			put(BlockTypes.OAK_LOG, 10.0);
-		}};
+	private static final Map<BlockType, Double> PILLAR_PATTERN = Map.of(
+		BlockTypes.COBBLESTONE, 10d,
+		BlockTypes.GOLD_ORE, 40d,
+		BlockTypes.DIRT, 20d,
+		BlockTypes.IRON_ORE, 20d,
+		BlockTypes.OAK_LOG, 10d
+	);
 
+	public void createMineStacks(int mineStackHeight, List<Location> locations) {
 		WorldEditUtils worldedit = new WorldEditUtils(locations.get(0));
 
 		BlockVector3 p1 = worldedit.toBlockVector3(locations.get(0).clone().subtract(0, 2, 0));
 		BlockVector3 p2 = worldedit.toBlockVector3(locations.get(0).clone().subtract(0, mineStackHeight, 0));
 		Region region = new CuboidRegion(p1, p2);
-		worldedit.replace(region, Collections.singleton(BlockTypes.AIR), pattern);
-
-		worldedit.copy(locations.get(0).clone().subtract(0, 2, 0), locations.get(0).clone().subtract(0, mineStackHeight, 0)).thenAccept(clipboard -> {
-			for (Location location : locations)
-				worldedit.paster().clipboard(clipboard).at(worldedit.toBlockVector3(location.clone().subtract(0, mineStackHeight, 0))).pasteAsync();
+		worldedit.replace(region, Collections.singleton(BlockTypes.AIR), PILLAR_PATTERN).thenRun(() -> {
+			worldedit.copy(region, worldedit.paster()).thenAccept(clipboard -> {
+				for (Location location : locations)
+					worldedit.paster().clipboard(clipboard).inspect().at(location.clone().subtract(0, mineStackHeight, 0)).pasteAsync();
+			});
 		});
 	}
 
