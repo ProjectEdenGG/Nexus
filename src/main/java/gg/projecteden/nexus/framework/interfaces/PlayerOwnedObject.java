@@ -83,6 +83,10 @@ public interface PlayerOwnedObject extends gg.projecteden.mongodb.interfaces.Pla
 		return getPlayer() != null;
 	}
 
+	default boolean isUuid0() {
+		return isUUID0(getUuid());
+	}
+
 	default boolean isAfk() {
 		return AFK.get(getOnlinePlayer()).isAfk();
 	}

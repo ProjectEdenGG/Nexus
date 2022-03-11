@@ -40,6 +40,7 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.asOxfordList;
 import static gg.projecteden.utils.UUIDUtils.UUID0;
+import static gg.projecteden.utils.UUIDUtils.isUUID0;
 
 @Data
 @Entity(value = "mailer", noClassnameStored = true)
@@ -177,7 +178,7 @@ public class Mailer implements PlayerOwnedObject {
 
 			if (getFromMailer().getPendingMail().containsKey(worldGroup) && getFromMailer().getPendingMail().get(worldGroup).equals(this))
 				getFromMailer().getPendingMail().remove(worldGroup);
-			else
+			else if (!isUUID0(from))
 				Nexus.warn("[Mail] Could not remove pending mail from " + Nickname.of(from));
 
 			getOwner().getMail(worldGroup).add(this);

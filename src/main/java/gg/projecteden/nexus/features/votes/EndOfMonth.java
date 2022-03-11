@@ -40,7 +40,7 @@ public class EndOfMonth {
 				TopVoterData data = new TopVoterData(yearMonth);
 
 				final String discordMessage = data.getDiscordMessage();
-				System.out.println(discordMessage);
+				Nexus.log(discordMessage);
 				Koda.announce(discordMessage);
 				Votes.write();
 
@@ -150,13 +150,13 @@ public class EndOfMonth {
 			msg += "(Note: Rewards are (Store Credit/In-Game Money/# of Mystery Chests) - you can choose only one)";
 			msg += System.lineSeparator();
 			msg += System.lineSeparator();
+			msg += ":man_walking: :speech_balloon:   **NPC or Hologram award:** " + getAsString(npcOrHoloWinners);
+			msg += System.lineSeparator();
+			msg += System.lineSeparator();
+			msg += "Message <@" + User.GRIFFIN.getId() + "> to get your reward if you have won something above! (The below rewards are automatically applied)";
+			msg += System.lineSeparator();
+			msg += System.lineSeparator();
 			msg += ":gift:   **Lucky mystery chest winner:** " + getAsString(mysteryChestWinner) + (mysteryChestWinner == null ? "" : " (" + mysteryChestWinner.getCount() + ")");
-			msg += System.lineSeparator();
-			msg += System.lineSeparator();
-			msg += ":walking: :speech_balloon:   **NPC or Hologram award:** " + getAsString(npcOrHoloWinners);
-			msg += System.lineSeparator();
-			msg += System.lineSeparator();
-			msg += "Message <@" + User.GRIFFIN.getId() + "> to get your reward if you have won something above! (The below economy rewards are automatically applied)";
 			msg += System.lineSeparator();
 			msg += System.lineSeparator();
 			msg += ":gem:   $30,000 bonus: " + getAsString(eco30kWinners);
