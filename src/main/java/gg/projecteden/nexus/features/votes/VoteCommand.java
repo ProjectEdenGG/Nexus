@@ -1,14 +1,18 @@
 package gg.projecteden.nexus.features.votes;
 
 import gg.projecteden.annotations.Async;
+import gg.projecteden.nexus.features.commands.AgeCommand.ServerAge;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.features.votes.vps.VPS;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
+import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -25,6 +29,8 @@ import lombok.NonNull;
 import org.bukkit.entity.Player;
 
 import java.time.LocalDate;
+import java.time.Year;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -179,11 +185,11 @@ public class VoteCommand extends CustomCommand {
 		send("&e" + voter.getNickname() + " &3now has &e" + voter.getPoints() + plural(" &3vote point", voter.getPoints()));
 	}
 
-	@Path("endOfMonth")
+	@Confirm
+	@Path("endOfMonth [month]")
 	@Permission(Group.ADMIN)
-	void endOfMonth() {
-		console();
-		EndOfMonth.run();
+	void endOfMonth(@Arg("previous") YearMonth month) {
+		EndOfMonth.run(month);
 	}
 
 	@Path("write")
@@ -193,4 +199,36 @@ public class VoteCommand extends CustomCommand {
 		send(PREFIX + "Done");
 	}
 
+	@ConverterFor(YearMonth.class)
+	YearMonth convertToYearMonth(String value) {
+		if (value.equals("current"))
+			return YearMonth.now();
+		if (value.equals("previous"))
+			return YearMonth.now().minusMonths(1);
+
+		final String[] split = value.split("-");
+		return YearMonth.of(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
+	}
+
+	@TabCompleterFor(YearMonth.class)
+	List<String> tabCompleteYearMonth(String filter) {
+		List<String> completions = new ArrayList<>();
+
+		if (filter.matches("\\d{4}-.*")) {
+			final String[] split = filter.split("-");
+			for (int i = 1; i <= 12; i++)
+				completions.add(split[0] + "-" + String.format("%02d", i));
+		} else {
+			Year year = Year.of(ServerAge.getEPOCH().getYear());
+			final Year stop = Year.now().plusYears(2);
+			while (year.isBefore(stop)) {
+				completions.add(String.valueOf(year.getValue()));
+				year = year.plusYears(1);
+			}
+		}
+
+		completions.removeIf(completion -> !completion.toLowerCase().startsWith(filter.toLowerCase()));
+
+		return completions;
+	}
 }
