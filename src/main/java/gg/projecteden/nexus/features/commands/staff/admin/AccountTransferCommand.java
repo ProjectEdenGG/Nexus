@@ -16,35 +16,54 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 import gg.projecteden.nexus.models.alerts.Alerts;
+import gg.projecteden.nexus.models.alerts.AlertsService;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.banker.Transactions;
+import gg.projecteden.nexus.models.banker.TransactionsService;
 import gg.projecteden.nexus.models.costume.CostumeUser;
+import gg.projecteden.nexus.models.costume.CostumeUserService;
 import gg.projecteden.nexus.models.dailyreward.DailyRewardUser;
 import gg.projecteden.nexus.models.dailyreward.DailyRewardUser.DailyStreak;
+import gg.projecteden.nexus.models.dailyreward.DailyRewardUserService;
 import gg.projecteden.nexus.models.dailyvotereward.DailyVoteReward;
 import gg.projecteden.nexus.models.dailyvotereward.DailyVoteReward.DailyVoteStreak;
+import gg.projecteden.nexus.models.dailyvotereward.DailyVoteRewardService;
 import gg.projecteden.nexus.models.discord.DiscordUser;
+import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.emoji.EmojiUser;
+import gg.projecteden.nexus.models.emoji.EmojiUserService;
 import gg.projecteden.nexus.models.eventuser.EventUser;
+import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.home.Home;
 import gg.projecteden.nexus.models.home.HomeOwner;
+import gg.projecteden.nexus.models.home.HomeService;
 import gg.projecteden.nexus.models.hours.Hours;
+import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.models.inventoryhistory.InventoryHistory;
+import gg.projecteden.nexus.models.inventoryhistory.InventoryHistoryService;
 import gg.projecteden.nexus.models.lwc.LWCProtection;
 import gg.projecteden.nexus.models.lwc.LWCProtectionService;
 import gg.projecteden.nexus.models.mail.Mailer;
 import gg.projecteden.nexus.models.mail.Mailer.Mail;
+import gg.projecteden.nexus.models.mail.MailerService;
 import gg.projecteden.nexus.models.mobheads.MobHeadUser;
+import gg.projecteden.nexus.models.mobheads.MobHeadUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.perkowner.PerkOwner;
+import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
 import gg.projecteden.nexus.models.punishments.Punishments;
+import gg.projecteden.nexus.models.punishments.PunishmentsService;
 import gg.projecteden.nexus.models.shop.Shop;
 import gg.projecteden.nexus.models.shop.Shop.Product;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
+import gg.projecteden.nexus.models.shop.ShopService;
 import gg.projecteden.nexus.models.store.Contributor;
 import gg.projecteden.nexus.models.store.Contributor.Purchase;
+import gg.projecteden.nexus.models.store.ContributorService;
 import gg.projecteden.nexus.models.trust.Trust;
+import gg.projecteden.nexus.models.trust.TrustService;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGroup;
 import lombok.AllArgsConstructor;
@@ -63,7 +82,7 @@ public class AccountTransferCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("<old> <new> all")
+	@Path("all <old> <new>")
 	void transferAll(OfflinePlayer old, OfflinePlayer target) {
 		transfer(old, target, Arrays.stream(Transferable.values()).collect(Collectors.toList()));
 	}
@@ -95,6 +114,7 @@ public class AccountTransferCommand extends CustomCommand {
 		DAILY_REWARDS(new DailyRewardsTransferer()),
 		DAILY_VOTE_REWARD(new DailyVoteRewardTransferer()),
 		DISCORD(new DiscordUserTransferer()),
+		EMOJI(new EmojiTransferer()),
 		EVENT(new EventUserTransferer()),
 		HOMES(new HomeTransferer()),
 		HOURS(new HoursTransferer()),
@@ -102,14 +122,13 @@ public class AccountTransferCommand extends CustomCommand {
 		LWC(new LWCTransferer()),
 		MAIL(new MailTransferer()),
 		MCMMO(new McMMOTransferer()),
+		MINIGAME_PERKS(new MinigamePerkTransferer()),
 		MOB_HEADS(new MobHeadUserTransferer()),
 		NERD(new NerdTransferer()),
 		PUNISHMENTS(new PunishmentsTransferer()),
 		SHOP(new ShopTransferer()),
 		TRANSACTIONS(new TransactionsTransferer()),
 		TRUSTS(new TrustsTransferer()),
-		EMOJI(new EmojiTransferer()),
-		MINIGAME_PERKS(new MinigamePerkTransferer()),
 		;
 
 		private final Transferer transferer;
@@ -142,6 +161,7 @@ public class AccountTransferCommand extends CustomCommand {
 		protected abstract void transfer(P previous, P current);
 	}
 
+	@Service(AlertsService.class)
 	static class AlertsTransferer extends MongoTransferer<Alerts> {
 		@Override
 		protected void transfer(Alerts previous, Alerts current) {
@@ -163,6 +183,7 @@ public class AccountTransferCommand extends CustomCommand {
 		}
 	}
 
+	@Service(ContributorService.class)
 	static class ContributorTransferer extends MongoTransferer<Contributor> {
 		@Override
 		protected void transfer(Contributor previous, Contributor current) {
@@ -184,6 +205,7 @@ public class AccountTransferCommand extends CustomCommand {
 		}
 	}
 
+	@Service(CostumeUserService.class)
 	static class CostumeUserTransferer extends MongoTransferer<CostumeUser> {
 		@Override
 		public void transfer(CostumeUser previous, CostumeUser current) {
@@ -212,6 +234,7 @@ public class AccountTransferCommand extends CustomCommand {
 		}
 	}
 
+	@Service(DailyRewardUserService.class)
 	static class DailyRewardsTransferer extends MongoTransferer<DailyRewardUser> {
 		@Override
 		public void transfer(DailyRewardUser previous, DailyRewardUser current) {
@@ -223,6 +246,7 @@ public class AccountTransferCommand extends CustomCommand {
 		}
 	}
 
+	@Service(DailyVoteRewardService.class)
 	static class DailyVoteRewardTransferer extends MongoTransferer<DailyVoteReward> {
 		@Override
 		public void transfer(DailyVoteReward previous, DailyVoteReward current) {
@@ -234,6 +258,7 @@ public class AccountTransferCommand extends CustomCommand {
 		}
 	}
 
+	@Service(DiscordUserService.class)
 	static class DiscordUserTransferer extends MongoTransferer<DiscordUser> {
 		@Override
 		protected void transfer(DiscordUser previous, DiscordUser current) {
@@ -245,6 +270,17 @@ public class AccountTransferCommand extends CustomCommand {
 		}
 	}
 
+	@Service(EmojiUserService.class)
+	static class EmojiTransferer extends MongoTransferer<EmojiUser> {
+		@Override
+		public void transfer(EmojiUser previous, EmojiUser current) {
+			current.getOwned().addAll(previous.getOwned());
+
+			previous.getOwned().clear();
+		}
+	}
+
+	@Service(EventUserService.class)
 	static class EventUserTransferer extends MongoTransferer<EventUser> {
 		@Override
 		public void transfer(EventUser previous, EventUser current) {
@@ -254,6 +290,7 @@ public class AccountTransferCommand extends CustomCommand {
 		}
 	}
 
+	@Service(HomeService.class)
 	static class HomeTransferer extends MongoTransferer<HomeOwner> {
 		@Override
 		public void transfer(HomeOwner previous, HomeOwner current) {
@@ -270,6 +307,7 @@ public class AccountTransferCommand extends CustomCommand {
 		}
 	}
 
+	@Service(HoursService.class)
 	static class HoursTransferer extends MongoTransferer<Hours> {
 		@Override
 		public void transfer(Hours previous, Hours current) {
@@ -278,6 +316,7 @@ public class AccountTransferCommand extends CustomCommand {
 		}
 	}
 
+	@Service(InventoryHistoryService.class)
 	static class InventoryHistoryTransferer extends MongoTransferer<InventoryHistory> {
 		@Override
 		public void transfer(InventoryHistory previous, InventoryHistory current) {
@@ -303,6 +342,7 @@ public class AccountTransferCommand extends CustomCommand {
 		}
 	}
 
+	@Service(MailerService.class)
 	static class MailTransferer extends MongoTransferer<Mailer> {
 		@Override
 		public void transfer(Mailer old, Mailer target) {
@@ -334,6 +374,7 @@ public class AccountTransferCommand extends CustomCommand {
 		}
 	}
 
+	@Service(MobHeadUserService.class)
 	static class MobHeadUserTransferer extends MongoTransferer<MobHeadUser> {
 		@Override
 		public void transfer(MobHeadUser previous, MobHeadUser current) {
@@ -342,6 +383,7 @@ public class AccountTransferCommand extends CustomCommand {
 		}
 	}
 
+	@Service(NerdService.class)
 	static class NerdTransferer extends MongoTransferer<Nerd> {
 		@Override
 		protected void transfer(Nerd previous, Nerd current) {
@@ -364,6 +406,22 @@ public class AccountTransferCommand extends CustomCommand {
 		}
 	}
 
+	@Service(PerkOwnerService.class)
+	static class MinigamePerkTransferer extends MongoTransferer<PerkOwner> {
+		@Override
+		public void transfer(PerkOwner previous, PerkOwner current) {
+			current.getPurchasedPerks().putAll(previous.getPurchasedPerks());
+			current.setTokens(current.getTokens() + previous.getTokens());
+			current.setHideParticle(previous.getHideParticle());
+			current.setDailyTokens(previous.getDailyTokens());
+
+			previous.getPurchasedPerks().clear();
+			previous.setTokens(0);
+			previous.setDailyTokens(0);
+		}
+	}
+
+	@Service(PunishmentsService.class)
 	static class PunishmentsTransferer extends MongoTransferer<Punishments> {
 		@Override
 		public void transfer(Punishments previous, Punishments current) {
@@ -372,6 +430,7 @@ public class AccountTransferCommand extends CustomCommand {
 		}
 	}
 
+	@Service(ShopService.class)
 	static class ShopTransferer extends MongoTransferer<Shop> {
 		@Override
 		public void transfer(Shop previous, Shop current) {
@@ -391,6 +450,7 @@ public class AccountTransferCommand extends CustomCommand {
 		}
 	}
 
+	@Service(TransactionsService.class)
 	static class TransactionsTransferer extends MongoTransferer<Transactions> {
 		@Override
 		public void transfer(Transactions previous, Transactions current) {
@@ -399,6 +459,7 @@ public class AccountTransferCommand extends CustomCommand {
 		}
 	}
 
+	@Service(TrustService.class)
 	static class TrustsTransferer extends MongoTransferer<Trust> {
 		@Override
 		public void transfer(Trust previous, Trust current) {
@@ -409,29 +470,6 @@ public class AccountTransferCommand extends CustomCommand {
 			previous.getLocks().clear();
 			previous.getHomes().clear();
 			previous.getTeleports().clear();
-		}
-	}
-
-	static class EmojiTransferer extends MongoTransferer<EmojiUser> {
-		@Override
-		public void transfer(EmojiUser previous, EmojiUser current) {
-			current.getOwned().addAll(previous.getOwned());
-
-			previous.getOwned().clear();
-		}
-	}
-
-	static class MinigamePerkTransferer extends MongoTransferer<PerkOwner> {
-		@Override
-		public void transfer(PerkOwner previous, PerkOwner current) {
-			current.getPurchasedPerks().putAll(previous.getPurchasedPerks());
-			current.setTokens(current.getTokens() + previous.getTokens());
-			current.setHideParticle(previous.getHideParticle());
-			current.setDailyTokens(previous.getDailyTokens());
-
-			previous.getPurchasedPerks().clear();
-			previous.setTokens(0);
-			previous.setDailyTokens(0);
 		}
 	}
 
