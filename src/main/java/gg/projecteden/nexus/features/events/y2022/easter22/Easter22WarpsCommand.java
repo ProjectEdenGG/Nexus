@@ -1,23 +1,21 @@
-package gg.projecteden.nexus.features.events.y2021.easter21;
+package gg.projecteden.nexus.features.events.y2022.easter22;
 
-import gg.projecteden.annotations.Disabled;
 import gg.projecteden.nexus.features.warps.commands._WarpCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.warps.WarpType;
 
-@Disabled
 @Permission(Group.ADMIN)
-public class Easter21WarpsCommand extends _WarpCommand {
+public class Easter22WarpsCommand extends _WarpCommand {
 
-	public Easter21WarpsCommand(CommandEvent event) {
+	public Easter22WarpsCommand(CommandEvent event) {
 		super(event);
 	}
 
 	@Override
 	public WarpType getWarpType() {
-		return WarpType.EASTER21;
+		return WarpType.EASTER22;
 	}
 
 }

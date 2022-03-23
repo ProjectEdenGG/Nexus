@@ -12,6 +12,7 @@ public enum WarpType {
 	BEAR_FAIR20,
 	BEAR_FAIR21,
 	EASTER21,
+	EASTER22,
 	GILIHOUSE,
 	HUB,
 	NORMAL,
