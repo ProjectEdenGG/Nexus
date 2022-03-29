@@ -101,16 +101,14 @@ public class DecorationUtils {
 			return getConnectedHitboxes(maze);
 		}
 
-		maze.setTries(0);
-
 		maze.nextDirection();
+		maze.setTries(0);
 
 		Block previousBlock = maze.getBlock();
 		maze.setBlock(previousBlock.getRelative(maze.getBlockFace()));
 
 		Block currentBlock = maze.getBlock();
 		Location currentLoc = currentBlock.getLocation().clone();
-
 		Material currentType = currentBlock.getType();
 
 		double distance = maze.getOrigin().getLocation().distance(currentLoc);
@@ -123,7 +121,7 @@ public class DecorationUtils {
 		maze.getTried().add(currentLoc);
 		maze.addToPath(previousBlock.getLocation(), maze.getDirectionsLeft());
 
-		// Is correct itemframe?
+		// Is correct item frame?
 		ItemFrame itemFrame = findItemFrame(maze, currentBlock);
 		if (itemFrame != null)
 			return itemFrame;
