@@ -54,11 +54,12 @@ public class Costume {
 	@Getter
 	@AllArgsConstructor
 	public enum CostumeType {
-		HAT(EquipmentSlot.HEAD),
-		HAND(EquipmentSlot.OFF_HAND),
+		HAT(EquipmentSlot.HEAD, 2),
+		HAND(EquipmentSlot.OFF_HAND, 5),
 		;
 
 		private final EquipmentSlot slot;
+		private final int menuHeaderSlot;
 
 		public CustomModelFolder getFolder() {
 			return getRootFolder().getFolder(ROOT_FOLDER + "/" + name().toLowerCase());

@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.y2021.easter21;
 
+import gg.projecteden.annotations.Disabled;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -36,10 +37,12 @@ import static gg.projecteden.nexus.utils.StringUtils.getCoordinateString;
 import static gg.projecteden.nexus.utils.StringUtils.getTeleportCommand;
 import static java.util.stream.Collectors.toList;
 
+@Disabled
 @NoArgsConstructor
-public class EasterCommand extends CustomCommand implements Listener {
+public class Easter21Command extends CustomCommand implements Listener {
+	public static final LocalDateTime END = LocalDate.of(2021, 4, 12).atStartOfDay();
 
-	public EasterCommand(@NonNull CommandEvent event) {
+	public Easter21Command(@NonNull CommandEvent event) {
 		super(event);
 	}
 
@@ -109,8 +112,6 @@ public class EasterCommand extends CustomCommand implements Listener {
 
 		event.setCancelled(true);
 	}
-
-	public static final LocalDateTime END = LocalDate.of(2021, 4, 12).atStartOfDay();
 
 	@EventHandler
 	public void onEggInteract(PlayerInteractEvent event) {

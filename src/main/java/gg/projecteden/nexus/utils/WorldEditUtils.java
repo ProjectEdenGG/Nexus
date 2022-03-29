@@ -366,6 +366,8 @@ public class WorldEditUtils {
 					debug.accept("Done copying");
 				}
 
+				clipboard.setOrigin(region.getMinimumPoint());
+
 				return clipboard;
 			}
 		});
@@ -678,32 +680,42 @@ public class WorldEditUtils {
 		new BlockArrayClipboard(region).save(getSchematicFile(fileName, false), SPONGE_SCHEMATIC);
 	}
 
-	public void set(String region, BlockType blockType) {
-		set(worldguard.convert(worldguard.getProtectedRegion(region)), blockType);
+	public CompletableFuture<Void> set(String region, BlockType blockType) {
+		return set(worldguard.convert(worldguard.getProtectedRegion(region)), blockType);
 	}
 
-	public void set(Region region, BlockType blockType) {
-		EditSession editSession = getEditSession();
-		editSession.setBlocks(region, blockType.getDefaultState().toBaseBlock());
-		editSession.flushQueue();
+	public CompletableFuture<Void> set(Region region, BlockType blockType) {
+		CompletableFuture<Void> future = new CompletableFuture<>();
+		Tasks.async(() -> {
+			EditSession editSession = getEditSession();
+			editSession.setBlocks(region, blockType.getDefaultState().toBaseBlock());
+			editSession.flushQueue();
+			future.complete(null);
+		});
+		return future;
 	}
 
-	public void replace(Region region, BlockType from, BlockType to) {
-		replace(region, Collections.singleton(from), Collections.singleton(to));
+	public CompletableFuture<Void> replace(Region region, BlockType from, BlockType to) {
+		return replace(region, Collections.singleton(from), Collections.singleton(to));
 	}
 
-	public void replace(Region region, Set<BlockType> from, Set<BlockType> to) {
-		replace(region, from, toRandomPattern(to));
+	public CompletableFuture<Void> replace(Region region, Set<BlockType> from, Set<BlockType> to) {
+		return replace(region, from, toRandomPattern(to));
 	}
 
-	public void replace(Region region, Set<BlockType> from, Map<BlockType, Double> pattern) {
-		replace(region, from, toRandomPattern(pattern));
+	public CompletableFuture<Void> replace(Region region, Set<BlockType> from, Map<BlockType, Double> pattern) {
+		return replace(region, from, toRandomPattern(pattern));
 	}
 
-	public void replace(Region region, Set<BlockType> from, Pattern pattern) {
-		EditSession editSession = getEditSession();
-		editSession.replaceBlocks(region, toBaseBlocks(from), pattern);
-		editSession.flushQueue();
+	public CompletableFuture<Void> replace(Region region, Set<BlockType> from, Pattern pattern) {
+		CompletableFuture<Void> future = new CompletableFuture<>();
+		Tasks.async(() -> {
+			EditSession editSession = getEditSession();
+			editSession.replaceBlocks(region, toBaseBlocks(from), pattern);
+			editSession.flushQueue();
+			future.complete(null);
+		});
+		return future;
 	}
 
 	public Region expandAll(Region region, int amount) {

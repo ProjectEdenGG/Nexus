@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.decoration;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Seat;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationDestroyEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
@@ -12,7 +13,6 @@ import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.utils.TimeUtils.TickTime;
-import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -82,7 +82,7 @@ public class DecorationListener implements Listener {
 			return;
 
 		// TODO: Remove
-		if (!isWakka(event.getPlayer()))
+		if (!isWakkaOrGriffin(event.getPlayer()))
 			return;
 		//
 
@@ -110,9 +110,8 @@ public class DecorationListener implements Listener {
 				// cancel trying to place decoration into item frame
 				event.setCancelled(true);
 			} else {
-				Location origin = itemFrame.getLocation().toBlockLocation().clone();
-
-				DecorationModifyEvent modifyEvent = new DecorationModifyEvent(player, origin, frameType.getDecoration(), tool);
+				final Decoration decoration = new Decoration(frameType.getConfig(), itemFrame);
+				DecorationModifyEvent modifyEvent = new DecorationModifyEvent(player, decoration, tool);
 				if (!modifyEvent.callEvent())
 					event.setCancelled(true);
 
@@ -148,15 +147,13 @@ public class DecorationListener implements Listener {
 		if (type == null)
 			return;
 
-		HitboxData hitboxData = new HitboxData.HitboxDataBuilder()
+		DecorationInteractData data = new DecorationInteractData.DecorationInteractDataBuilder()
 			.player(player)
-			.decorationType(type)
-			.itemFrame(itemFrame)
-			.decorationType(type)
+			.decoration(new Decoration(type.getConfig(), itemFrame))
 			.tool(ItemUtils.getTool(player))
 			.build();
 
-		boolean cancel = leftClick(hitboxData);
+		boolean cancel = destroy(data);
 		if (cancel)
 			event.setCancelled(true);
 	}
@@ -177,108 +174,97 @@ public class DecorationListener implements Listener {
 			return;
 		}
 
-		HitboxData hitboxData = new HitboxData.HitboxDataBuilder()
+		final ItemStack tool = ItemUtils.getTool(player);
+		DecorationInteractData data = new DecorationInteractData.DecorationInteractDataBuilder()
 			.player(player)
 			.block(clicked)
 			.blockFace(event.getBlockFace())
-			.tool(ItemUtils.getTool(player))
+			.tool(tool)
 			.build();
 
 		boolean cancel = false;
 		Action action = event.getAction();
 		if (action.equals(Action.RIGHT_CLICK_BLOCK)) {
-			if (hitboxData.getTool() == null)
-				cancel = rightClick(hitboxData, DecorationAction.INTERACT);
+			if (isNullOrAir(tool))
+				cancel = interact(data);
 			else
-				cancel = rightClick(hitboxData, DecorationAction.PLACE);
+				cancel = place(data);
 		} else if (action.equals(Action.LEFT_CLICK_BLOCK)) {
-			cancel = leftClick(hitboxData);
+			cancel = destroy(data);
 		}
 
 		if (cancel)
 			event.setCancelled(true);
-
 	}
 
-	boolean leftClick(HitboxData hitboxData) {
-		if (hitboxData == null)
-			return false;
-
+	boolean destroy(DecorationInteractData data) {
 		// TODO: Remove
-		if (!isWakka(hitboxData.getPlayer()))
+		if (!isWakkaOrGriffin(data.getPlayer()))
 			return false;
 		//
 
-		if (!hitboxData.validateItemFrame())
+		if (!data.validate())
 			return false;
 
-		if (!hitboxData.validateDecoration(hitboxData.getItemFrame().getItem()))
-			return false;
-
-		if (!hitboxData.playerCanEdit()) {
-			error(hitboxData.getPlayer());
+		if (!data.playerCanEdit()) {
+			error(data.getPlayer());
 			return false;
 		}
 
-		if (!isNullOrAir(hitboxData.getTool())) {
-			debug(hitboxData.getPlayer(), "holding something, returning");
+		if (!isNullOrAir(data.getTool())) {
+			debug(data.getPlayer(), "holding something, returning");
 			return true;
 		}
 
-		if (isOnCooldown(hitboxData.getPlayer(), DecorationAction.DESTROY)) {
-			debug(hitboxData.getPlayer(), "slow down");
+		if (isOnCooldown(data.getPlayer(), DecorationAction.DESTROY)) {
+			debug(data.getPlayer(), "slow down");
 			return true;
 		}
 
-		hitboxData.destroy();
+		data.destroy();
 		return true;
 	}
 
-	private boolean rightClick(HitboxData hitboxData, DecorationAction action) {
-		if (hitboxData == null) return false;
+	private boolean interact(DecorationInteractData data) {
+		if (data == null)
+			return false;
 
-		switch (action) {
-			case INTERACT -> {
-				if (!hitboxData.validateItemFrame())
-					return false;
+		if (!data.validate())
+			return false;
 
-				if (!hitboxData.validateDecoration(hitboxData.getItemFrame().getItem()))
-					return false;
-
-				if (isOnCooldown(hitboxData.getPlayer(), action)) {
-					debug(hitboxData.getPlayer(), "slow down");
-					return true;
-				}
-
-				hitboxData.interact();
-				return true;
-			}
-
-			case PLACE -> {
-				// TODO: Remove
-				if (!isWakka(hitboxData.getPlayer()))
-					return false;
-				//
-
-				if (!hitboxData.validateDecoration(hitboxData.getTool()))
-					return false;
-
-				if (isOnCooldown(hitboxData.getPlayer(), action)) {
-					debug(hitboxData.getPlayer(), "slow down");
-					return true;
-				}
-
-				if (!hitboxData.playerCanEdit()) {
-					error(hitboxData.getPlayer());
-					return true;
-				}
-
-				hitboxData.place();
-				return true;
-			}
+		if (isOnCooldown(data.getPlayer(), DecorationAction.INTERACT)) {
+			debug(data.getPlayer(), "slow down");
+			return true;
 		}
 
-		return false;
+		data.interact();
+		return true;
+	}
+
+	private boolean place(DecorationInteractData data) {
+		// TODO: Remove
+		if (!isWakkaOrGriffin(data.getPlayer()))
+			return false;
+		//
+
+		final DecorationType type = DecorationType.of(data.getTool());
+		if (type == null)
+			return false;
+
+		data.setDecoration(new Decoration(type.getConfig(), null));
+
+		if (isOnCooldown(data.getPlayer(), DecorationAction.PLACE)) {
+			debug(data.getPlayer(), "slow down");
+			return true;
+		}
+
+		if (!data.playerCanEdit()) {
+			error(data.getPlayer());
+			return true;
+		}
+
+		data.place();
+		return true;
 	}
 
 	private boolean isCancelled(PlayerInteractEvent event) {
@@ -295,8 +281,8 @@ public class DecorationListener implements Listener {
 		return !new CooldownService().check(player, "decoration-" + action.name().toLowerCase(), TickTime.TICK.x(5));
 	}
 
-	private boolean isWakka(Player player) {
+	private boolean isWakkaOrGriffin(Player player) {
 //		return true;
-		return Dev.WAKKA.is(player);
+		return Dev.WAKKA.is(player) || Dev.GRIFFIN.is(player);
 	}
 }

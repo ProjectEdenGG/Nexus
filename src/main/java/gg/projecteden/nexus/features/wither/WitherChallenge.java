@@ -184,7 +184,7 @@ public class WitherChallenge extends Feature implements Listener {
 		});
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onTeleportIntoArena(PlayerTeleportEvent event) {
 		if (!new WorldGuardUtils("events").isInRegion(event.getTo(), "witherarena"))
 			return;

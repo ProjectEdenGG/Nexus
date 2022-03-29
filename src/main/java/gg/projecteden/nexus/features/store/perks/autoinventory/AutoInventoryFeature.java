@@ -39,6 +39,7 @@ public enum AutoInventoryFeature {
 	@DescriptionExtra("&c/autoinv settings trash < materials | behavior >")
 	AUTOTRASH,
 	@Description("Automatically switch to the correct tool for the block you are breaking")
+	@DescriptionExtra("&c/autoinv settings tools includeSword &7- Allow AutoTool to activate while holding a sword")
 	AUTOTOOL(AutoTool.PERMISSION),
 	;
 

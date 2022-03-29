@@ -184,6 +184,8 @@ public class NameplateManager {
 				return true;
 			if (player.hasPotionEffect(PotionEffectType.INVISIBILITY))
 				return true;
+			if (!player.getPassengers().isEmpty())
+				return true;
 
 			if (isSelf(this, viewer))
 				if (!new NameplateUserService().get(this).isViewOwnNameplate())
@@ -193,8 +195,10 @@ public class NameplateManager {
 		}
 
 		public void sendSpawnPacket(Player viewer) {
-			if (ignore(viewer))
+			if (ignore(viewer)) {
+				sendDestroyPacket(viewer);
 				return;
+			}
 
 			spawnPacket.at(getOnlinePlayer()).send(viewer);
 
@@ -203,15 +207,19 @@ public class NameplateManager {
 		}
 
 		public void sendMetadataPacket(Player viewer) {
-			if (ignore(viewer))
+			if (ignore(viewer)) {
+				sendDestroyPacket(viewer);
 				return;
+			}
 
 			metadataPacket.setNameJson(Nameplates.of(getOnlinePlayer(), viewer)).send(viewer);
 		}
 
 		public void sendMountPacket(Player viewer) {
-			if (ignore(viewer))
+			if (ignore(viewer)) {
+				sendDestroyPacket(viewer);
 				return;
+			}
 
 			new MountPacket(getOnlinePlayer().getEntityId(), entityId).send(viewer);
 		}

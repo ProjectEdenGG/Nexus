@@ -126,7 +126,7 @@ public class InvisibleArmor implements PlayerOwnedObject {
 		if (!isHiddenFromSelf(slot))
 			players.exclude(player);
 
-		if (slot == ArmorSlot.HELMET && new CostumeUserService().get(this).hasActiveCostume())
+		if (slot == ArmorSlot.HELMET && new CostumeUserService().get(this).hasActiveCostumes())
 			return;
 
 		PacketUtils.sendFakeItem(player, players.get(), new ItemStack(Material.AIR), slot.getSlot());

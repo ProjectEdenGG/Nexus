@@ -4,25 +4,24 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Seat;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.Location;
 import org.bukkit.Rotation;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
+@Getter
+@Setter
 public class DecorationSitEvent extends DecorationInteractEvent {
-	@Getter
-	@Setter
-	Rotation rotation;
-	@Getter
-	Seat seat;
-	@Getter
-	Block block;
+	private Rotation rotation;
+	private final Block block;
 
-	public DecorationSitEvent(Player player, Location origin, Seat seat, ItemStack item, Rotation rotation, Block block) {
-		super(player, origin, (Decoration) seat, item);
-		this.seat = seat;
+	public DecorationSitEvent(Player player, Decoration decoration, Rotation rotation, Block block) {
+		super(player, decoration);
 		this.rotation = rotation;
 		this.block = block;
 	}
+
+	public Seat getSeat() {
+		return (Seat) decoration.getConfig();
+	}
+
 }

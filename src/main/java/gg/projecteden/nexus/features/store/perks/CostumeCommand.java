@@ -23,6 +23,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFo
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.costume.Costume;
+import gg.projecteden.nexus.models.costume.Costume.CostumeType;
 import gg.projecteden.nexus.models.costume.CostumeUser;
 import gg.projecteden.nexus.models.costume.CostumeUserService;
 import gg.projecteden.nexus.models.nerd.Rank;
@@ -85,10 +86,10 @@ public class CostumeCommand extends CustomCommand implements Listener {
 		});
 	}
 
-	@Path("dye <color>")
-	void dye(ChatColor color) {
+	@Path("dye <type> <color>")
+	void dye(CostumeType type, ChatColor color) {
 		final CostumeUser user = service.get(player());
-		final Costume costume = Costume.of(user.getActiveCostume());
+		final Costume costume = user.getActiveCostume(type);
 		if (costume == null)
 			error("You do not have an active costume");
 		if (!costume.isDyeable())
@@ -106,7 +107,8 @@ public class CostumeCommand extends CustomCommand implements Listener {
 
 	@Path("off [player]")
 	void off(@Arg(value = "self", permission = Group.STAFF) CostumeUser user) {
-		user.setActiveCostume(null);
+		for (CostumeType type : CostumeType.values())
+			user.setActiveCostume(type, null);
 	}
 
 	@Path("store")
@@ -185,8 +187,9 @@ public class CostumeCommand extends CustomCommand implements Listener {
 	public void onInventoryClose(InventoryCloseEvent event) {
 		final CostumeUserService service = new CostumeUserService();
 		final CostumeUser user = service.get(event.getPlayer());
-		if (user.getActiveCostume() == null)
-			Tasks.wait(1, user::sendResetPackets);
+		for (CostumeType type : CostumeType.values())
+			if (!user.hasActiveCostume(type))
+				Tasks.wait(1, () -> user.sendResetPacket(type));
 	}
 
 	@AllArgsConstructor
@@ -363,25 +366,27 @@ public class CostumeCommand extends CustomCommand implements Listener {
 			contents.set(0, 8, ClickableItem.from(info.build(), e ->
 				new CostumeStoreMenu(this, Costume.getRootFolder()).open(user.getOnlinePlayer())));
 
-			final Costume costume = Costume.of(user.getActiveCostume());
-			if (costume != null) {
-				final ItemBuilder builder = new ItemBuilder(user.getCostumeDisplayItem(costume))
-					.lore("", "&a&lActive", "&cClick to deactivate")
-					.glow();
+			for (CostumeType type : CostumeType.values()) {
+				final Costume costume = user.getActiveCostume(type);
+				if (costume != null) {
+					final ItemBuilder builder = new ItemBuilder(user.getCostumeDisplayItem(costume))
+						.lore("", "&a&lActive", "&cClick to deactivate")
+						.glow();
 
-				contents.set(0, 4, ClickableItem.from(builder.build(), e -> {
-					user.setActiveCostume(null);
-					service.save(user);
-					open(user.getOnlinePlayer(), contents.pagination().getPage());
-				}));
+					contents.set(0, type.getMenuHeaderSlot(), ClickableItem.from(builder.build(), e -> {
+						user.setActiveCostume(type, null);
+						service.save(user);
+						open(user.getOnlinePlayer(), contents.pagination().getPage());
+					}));
 
-				if (MaterialTag.DYEABLE.isTagged(costume.getItem().getType())) {
-					contents.set(0, 6, ClickableItem.from(DyeStation.getDyeStation().build(), e ->
-						new DyeStationMenu().openCostume(user, costume, data -> {
-							user.dye(costume, data.getColor());
-							service.save(user);
-							open(user.getOnlinePlayer());
-						})));
+					if (MaterialTag.DYEABLE.isTagged(costume.getItem().getType())) {
+						contents.set(0, type.getMenuHeaderSlot() + 1, ClickableItem.from(DyeStation.getDyeStation().build(), e ->
+							new DyeStationMenu().openCostume(user, costume, data -> {
+								user.dye(costume, data.getColor());
+								service.save(user);
+								open(user.getOnlinePlayer());
+							})));
+					}
 				}
 			}
 		}
@@ -393,11 +398,11 @@ public class CostumeCommand extends CustomCommand implements Listener {
 
 		protected ClickableItem formatCostume(CostumeUser user, Costume costume, InventoryContents contents) {
 			final ItemBuilder builder = new ItemBuilder(user.getCostumeDisplayItem(costume));
-			if (costume.getId().equals(user.getActiveCostume()))
+			if (user.hasCostumeActivated(costume))
 				builder.lore("", "&a&lActive").glow();
 
 			return ClickableItem.from(builder.build(), e -> {
-				user.setActiveCostume(costume.getId().equals(user.getActiveCostume()) ? null : costume);
+				user.setActiveCostume(costume.getType(), user.hasCostumeActivated(costume) ? null : costume);
 				service.save(user);
 				open(user.getOnlinePlayer(), contents.pagination().getPage());
 			});
