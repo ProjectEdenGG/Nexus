@@ -11,11 +11,19 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event.Result;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.util.Vector;
 import org.inventivetalent.glow.GlowAPI.Color;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -254,14 +262,46 @@ public class BlockUtils {
 
 		GlowTask.builder()
 				.duration(ticks)
-				.entity(fallingBlock)
-				.color(color)
-				.viewers(_viewers)
-				.onComplete(() -> {
-					fallingBlock.remove();
-					for (Player viewer : _viewers)
-						viewer.sendBlockChange(location, block.getType().createBlockData());
-				})
-				.start();
+			.entity(fallingBlock)
+			.color(color)
+			.viewers(_viewers)
+			.onComplete(() -> {
+				fallingBlock.remove();
+				for (Player viewer : _viewers)
+					viewer.sendBlockChange(location, block.getType().createBlockData());
+			})
+			.start();
+	}
+
+	public static boolean tryPlaceEvent(@NotNull Player player, @NotNull Block block, @NotNull Block placedAgainst, Material material) {
+		// copies current data to send in event and to restore if event is cancelled
+		BlockState currentState = block.getState();
+		BlockData currentData = currentState.getBlockData();
+		block.setType(material);
+
+		// ensure no plugins are blocking placing here
+		BlockPlaceEvent event = new BlockPlaceEvent(block, block.getState(), placedAgainst, player.getInventory().getItemInMainHand(), player, true, EquipmentSlot.HAND);
+		if (!event.callEvent() || !event.canBuild()) {
+			block.setBlockData(currentData); // revert block
+			return false;
+		}
+
+		return true;
+	}
+
+	public static boolean tryBreakEvent(@NotNull Player player, @NotNull Block block) {
+		BlockBreakEvent event = new BlockBreakEvent(block, player);
+		if (!event.callEvent() || event.isCancelled())
+			return false;
+
+		return true;
+	}
+
+	public static boolean tryInteractEvent(Player player, Action action, Block block, BlockFace blockFace) {
+		PlayerInteractEvent event = new PlayerInteractEvent(player, action, null, block, blockFace);
+		if (!event.callEvent() || event.useInteractedBlock() == Result.DENY || event.useInteractedBlock() == Result.DENY)
+			return false;
+
+		return true;
 	}
 }

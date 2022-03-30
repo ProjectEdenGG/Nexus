@@ -151,6 +151,7 @@ public class MaterialTag implements Tag<Material> {
 
 	public static final MaterialTag ALL_DEEPSLATE = new MaterialTag("DEEPSLATE", MatchMode.CONTAINS);
 
+	// TODO: Include Blackstone?
 	public static final MaterialTag ALL_STONE = new MaterialTag(STONE, STONE_STAIRS, STONE_SLAB, Material.STONE_BRICKS, SMOOTH_STONE, SMOOTH_STONE_SLAB)
 		.append(ALL_DEEPSLATE).exclude(new MaterialTag("WALL", MatchMode.CONTAINS, ALL_DEEPSLATE))
 		.append(new MaterialTag("STONE_BRICK", MatchMode.PREFIX))

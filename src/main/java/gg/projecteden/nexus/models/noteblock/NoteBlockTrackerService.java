@@ -1,14 +1,14 @@
 package gg.projecteden.nexus.models.noteblock;
 
 import gg.projecteden.mongodb.MongoService;
-import gg.projecteden.nexus.features.noteblocks.NoteBlockData;
+import gg.projecteden.mongodb.annotations.ObjectClass;
 import org.bukkit.Location;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+@ObjectClass(NoteBlockTracker.class)
 public class NoteBlockTrackerService extends MongoService<NoteBlockTracker> {
 	private final static Map<UUID, NoteBlockTracker> cache = new ConcurrentHashMap<>();
 
@@ -16,8 +16,7 @@ public class NoteBlockTrackerService extends MongoService<NoteBlockTracker> {
 		return cache;
 	}
 
-	public @Nullable NoteBlockData getNoteBlockData(Location from) {
-		Map<Location, NoteBlockData> noteBlockMap = get0().getNoteBlockMap();
-		return noteBlockMap.get(from.toBlockLocation());
+	public NoteBlockTracker get(Location location) {
+		return this.get(location.getWorld().getUID());
 	}
 }
