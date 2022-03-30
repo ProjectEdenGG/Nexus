@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.models.noteblock;
 
+import com.destroystokyo.paper.ParticleBuilder;
 import gg.projecteden.nexus.features.noteblocks.NoteBlockInstrument;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.utils.MathUtils;
@@ -7,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.SoundCategory;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -56,8 +58,11 @@ public class NoteBlockData {
 			.category(SoundCategory.RECORDS)
 			.play();
 
-		// TODO: SHOW PARTICLE
-
+		new ParticleBuilder(Particle.NOTE)
+			.location(location.toCenterLocation().add(0, 0.5, 0))
+			.offset(this.step / 24.0, 0, 0)
+			.count(0)
+			.spawn();
 	}
 
 	public boolean exists() {
