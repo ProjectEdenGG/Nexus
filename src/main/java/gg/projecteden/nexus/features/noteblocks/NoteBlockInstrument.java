@@ -37,7 +37,7 @@ public enum NoteBlockInstrument {
 	BIT(getSoundFrom(Instrument.BIT), Material.EMERALD_BLOCK),
 	BANJO(getSoundFrom(Instrument.BANJO), Material.HAY_BLOCK),
 	PLING(getSoundFrom(Instrument.PLING), Material.GLOWSTONE),
-	PARTY_HORN("minecraft:custom.misc.party_horn", Material.COPPER_BLOCK), // testing purposes only
+	MARIMBA(NoteBlocks.customSound("marimba"), MaterialTag.STRIPPED_LOGS.getValues()),
 	;
 
 	@SafeVarargs

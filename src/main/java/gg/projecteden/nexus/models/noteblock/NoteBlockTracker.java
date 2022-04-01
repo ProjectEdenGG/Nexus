@@ -12,8 +12,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -55,5 +59,28 @@ public class NoteBlockTracker implements PlayerOwnedObject {
 
 	public void remove(@NonNull Location location) {
 		put(location, new NoteBlockData());
+	}
+
+	public Map<Location, NoteBlockData> getLocationMap() {
+		Map<Location, NoteBlockData> resultMap = new HashMap<>();
+		World world = getWorld();
+		Map<Integer, Map<Integer, Map<Integer, NoteBlockData>>> noteBlockMap = getNoteBlockMap();
+		for (Integer x : noteBlockMap.keySet()) {
+			for (Integer z : noteBlockMap.get(x).keySet()) {
+				for (Integer y : noteBlockMap.get(x).get(z).keySet()) {
+					NoteBlockData data = noteBlockMap.get(x).get(z).getOrDefault(y, null);
+					if (data != null && data.exists()) {
+						Location location = new Location(world, x, y, z);
+						resultMap.put(location, data);
+					}
+				}
+			}
+		}
+
+		return resultMap;
+	}
+
+	public @Nullable World getWorld() {
+		return Bukkit.getWorld(getUuid());
 	}
 }

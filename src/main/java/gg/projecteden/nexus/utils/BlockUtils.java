@@ -24,6 +24,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.util.Vector;
 import org.inventivetalent.glow.GlowAPI.Color;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -274,14 +275,23 @@ public class BlockUtils {
 	}
 
 	public static boolean tryPlaceEvent(@NotNull Player player, @NotNull Block block, @NotNull Block placedAgainst, Material material) {
+		return tryPlaceEvent(player, block, placedAgainst, material, null);
+	}
+
+	public static boolean tryPlaceEvent(@NotNull Player player, @NotNull Block block, @NotNull Block placedAgainst, @NotNull Material material, @Nullable BlockData data) {
 		// copies current data to send in event and to restore if event is cancelled
 		BlockState currentState = block.getState();
+		Material currentMaterial = block.getType();
 		BlockData currentData = currentState.getBlockData();
+
 		block.setType(material);
+		if (data != null)
+			block.setBlockData(data);
 
 		// ensure no plugins are blocking placing here
 		BlockPlaceEvent event = new BlockPlaceEvent(block, block.getState(), placedAgainst, player.getInventory().getItemInMainHand(), player, true, EquipmentSlot.HAND);
 		if (!event.callEvent() || !event.canBuild()) {
+			block.setType(currentMaterial);
 			block.setBlockData(currentData); // revert block
 			return false;
 		}

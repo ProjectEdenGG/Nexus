@@ -4,30 +4,36 @@ import com.destroystokyo.paper.ParticleBuilder;
 import gg.projecteden.nexus.features.noteblocks.NoteBlockInstrument;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.utils.MathUtils;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.bukkit.Instrument;
 import org.bukkit.Location;
+import org.bukkit.Note;
 import org.bukkit.Particle;
 import org.bukkit.SoundCategory;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Player;
+import org.bukkit.block.data.type.NoteBlock;
 
 import java.util.UUID;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class NoteBlockData {
-	UUID placerUUID;
-	NoteBlockInstrument instrument;
+	UUID placerUUID = null;
+	NoteBlockInstrument instrument = NoteBlockInstrument.PIANO;
 	int step = 0;
 	double volume = 1.0;
+	Instrument blockInstrument;
+	int blockStep;
 
-	public NoteBlockData(Player player, NoteBlockInstrument instrument, int step) {
-		this.placerUUID = player.getUniqueId();
-		this.instrument = instrument;
-		this.step = step;
+	public NoteBlockData(UUID uuid, Block block) {
+		NoteBlock noteBlock = ((NoteBlock) block.getBlockData());
+		this.placerUUID = uuid;
+		this.instrument = NoteBlockInstrument.getInstrument(block);
+		this.step = noteBlock.getNote().getId();
+		this.blockInstrument = noteBlock.getInstrument();
+		this.blockStep = this.step;
 	}
 
 	public void incrementStep() {
@@ -67,5 +73,9 @@ public class NoteBlockData {
 
 	public boolean exists() {
 		return placerUUID != null;
+	}
+
+	public Note getBlockNote() {
+		return new Note(this.getBlockStep());
 	}
 }

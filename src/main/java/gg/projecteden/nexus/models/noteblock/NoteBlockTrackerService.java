@@ -3,6 +3,7 @@ package gg.projecteden.nexus.models.noteblock;
 import gg.projecteden.mongodb.MongoService;
 import gg.projecteden.mongodb.annotations.ObjectClass;
 import org.bukkit.Location;
+import org.bukkit.World;
 
 import java.util.Map;
 import java.util.UUID;
@@ -16,7 +17,11 @@ public class NoteBlockTrackerService extends MongoService<NoteBlockTracker> {
 		return cache;
 	}
 
-	public NoteBlockTracker get(Location location) {
-		return this.get(location.getWorld().getUID());
+	public NoteBlockTracker fromWorld(World world) {
+		return this.get(world.getUID());
+	}
+
+	public NoteBlockTracker fromWorld(Location location) {
+		return this.fromWorld(location.getWorld());
 	}
 }

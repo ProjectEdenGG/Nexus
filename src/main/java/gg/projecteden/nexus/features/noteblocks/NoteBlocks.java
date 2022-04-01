@@ -6,14 +6,18 @@ import gg.projecteden.nexus.models.noteblock.NoteBlockData;
 import gg.projecteden.nexus.models.noteblock.NoteBlockTracker;
 import gg.projecteden.nexus.models.noteblock.NoteBlockTrackerService;
 import gg.projecteden.utils.Env;
-import org.bukkit.Instrument;
 import org.bukkit.Location;
-import org.bukkit.Note;
-import org.bukkit.block.Block;
-import org.bukkit.block.data.type.NoteBlock;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.Action;
+import org.bukkit.event.block.NotePlayEvent;
 
+import java.util.UUID;
+
+/*
+	TODO:
+		Custom Block Handling
+			- Block playing/changing note blocks that aren't Piano 0
+			- When breaking, drop that custom block item instead
+ */
 @Environments(Env.TEST)
 public class NoteBlocks extends Feature {
 	private static final NoteBlockTrackerService trackerService = new NoteBlockTrackerService();
@@ -24,45 +28,50 @@ public class NoteBlocks extends Feature {
 		new NoteBlocksListener();
 	}
 
-	public static void place(Player player, Block block) {
-		Location location = block.getLocation();
-
-		tracker = trackerService.get(location);
-		NoteBlock noteBlock = (NoteBlock) block.getBlockData();
-
-		// correct texture
-		noteBlock.setInstrument(Instrument.PIANO);
-		noteBlock.setNote(new Note(0));
-		block.setBlockData(noteBlock);
-
-		NoteBlockData data = new NoteBlockData(player, NoteBlockInstrument.getInstrument(block), 0);
+	public static NoteBlockData put(UUID uuid, Location location) {
+		tracker = trackerService.fromWorld(location);
+		NoteBlockData data = new NoteBlockData(uuid, location.getBlock());
 		tracker.put(location, data);
 		trackerService.save(tracker);
+
+		return data;
+	}
+
+	public static NoteBlockData put(Player player, Location location) {
+		return put(player.getUniqueId(), location);
 	}
 
 	public static void remove(Location location) {
-		tracker = trackerService.get(location);
+		tracker = trackerService.fromWorld(location);
 		tracker.remove(location);
 		trackerService.save(tracker);
 	}
 
-	public static void changePitch(boolean sneaking, Action action, Location location) {
-		tracker = trackerService.get(location);
-		NoteBlockData data = tracker.get(location);
+	public static void changePitch(boolean sneaking, Location location, NoteBlockData data) {
+		tracker = trackerService.fromWorld(location);
 
-		if (action.equals(Action.RIGHT_CLICK_BLOCK))
+		if (!sneaking)
 			data.incrementStep();
-		else if (action.equals(Action.LEFT_CLICK_BLOCK) && sneaking)
+		else
 			data.decrementStep();
 
 		tracker.put(location, data);
 		trackerService.save(tracker);
 
-		data.play(location);
+		new NotePlayEvent(location.getBlock(), data.getBlockInstrument(), data.getBlockNote()).callEvent();
 	}
 
-	public static void changeVolume(Player player, Location location) {
-		tracker = trackerService.get(location);
-		// TODO
+	public static void changeVolume(Player player, Location location, NoteBlockData data) {
+		tracker = trackerService.fromWorld(location);
+
+		// TODO?
+
+		tracker.put(location, data);
+		trackerService.save(tracker);
+
+	}
+
+	public static String customSound(String instrument) {
+		return "minecraft:custom.noteblock." + instrument;
 	}
 }
