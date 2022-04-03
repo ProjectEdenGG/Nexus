@@ -30,6 +30,7 @@ import static org.bukkit.Material.*;
 public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag ALL_AIR = new MaterialTag("AIR", MatchMode.SUFFIX);
 	public static final MaterialTag WOOL = new MaterialTag("_WOOL", MatchMode.SUFFIX);
+	public static final MaterialTag WOOL_CARPET = new MaterialTag("_CARP", MatchMode.SUFFIX);
 	public static final MaterialTag DYES = new MaterialTag("_DYE", MatchMode.SUFFIX);
 	public static final MaterialTag BEDS = new MaterialTag("_BED", MatchMode.SUFFIX);
 	public static final MaterialTag ALL_BANNERS = new MaterialTag(Tag.BANNERS);

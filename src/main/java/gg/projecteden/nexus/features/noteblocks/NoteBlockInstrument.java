@@ -33,11 +33,12 @@ public enum NoteBlockInstrument {
 	XYLOPHONE(getSoundFrom(Instrument.XYLOPHONE), Material.BONE_BLOCK),
 	IRON_XYLOPHONE(getSoundFrom(Instrument.IRON_XYLOPHONE), Material.IRON_BLOCK),
 	COW_BELL(getSoundFrom(Instrument.COW_BELL), Material.SOUL_SAND),
-	DIDGERIDOO(getSoundFrom(Instrument.DIDGERIDOO), Material.PUMPKIN),
+	DIDGERIDOO(getSoundFrom(Instrument.DIDGERIDOO), Material.PUMPKIN, Material.DRIED_KELP_BLOCK),
 	BIT(getSoundFrom(Instrument.BIT), Material.EMERALD_BLOCK),
 	BANJO(getSoundFrom(Instrument.BANJO), Material.HAY_BLOCK),
 	PLING(getSoundFrom(Instrument.PLING), Material.GLOWSTONE),
 	MARIMBA(NoteBlocks.customSound("marimba"), MaterialTag.STRIPPED_LOGS.getValues()),
+	TRUMPET(NoteBlocks.customSound("trumpet"), Material.COPPER_BLOCK, Material.WAXED_COPPER_BLOCK),
 	;
 
 	@SafeVarargs
