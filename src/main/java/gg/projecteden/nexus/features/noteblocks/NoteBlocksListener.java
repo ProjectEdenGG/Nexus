@@ -9,6 +9,7 @@ import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.utils.UUIDUtils;
 import org.apache.commons.collections4.SetUtils;
@@ -18,6 +19,7 @@ import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.Powerable;
 import org.bukkit.block.data.type.NoteBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
@@ -90,7 +92,7 @@ public class NoteBlocksListener implements Listener {
 		debug("PhysicsEvent: " + noteBlock);
 
 		if (noteBlock.isPowered()) {
-			String powered = "Powered: ";
+			debug(" Powered:");
 			if (eventBlock.isBlockPowered())
 				debug("  Block");
 			if (eventBlock.isBlockIndirectlyPowered())
@@ -98,11 +100,9 @@ public class NoteBlocksListener implements Listener {
 			if (noteBlock.isPowered())
 				debug("  NoteBlock");
 
-			debug(powered);
-
 			// double check
+			debug(" Double Checking:");
 			if (isPowered(eventBlock)) {
-				debug("   double checked");
 				play(eventBlock, getData(eventBlock));
 			}
 		}
@@ -123,8 +123,21 @@ public class NoteBlocksListener implements Listener {
 			if (Nullables.isNullOrAir(block))
 				continue;
 
-			if (block.isBlockPowered() || block.getType().equals(Material.REDSTONE_BLOCK)) {
+			if (block.isBlockPowered()) {
+				Dev.WAKKA.send("  Block Powered");
 				return true;
+			}
+
+			if (block.getType().equals(Material.REDSTONE_BLOCK)) {
+				Dev.WAKKA.send("  Redstone Block");
+				return true;
+			}
+
+			if (block.getBlockData() instanceof Powerable powerable) {
+				if (powerable.isPowered()) {
+					Dev.WAKKA.send("  Is Powered");
+					return true;
+				}
 			}
 		}
 
