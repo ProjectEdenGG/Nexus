@@ -39,6 +39,5 @@ public class NoteBlockCommand extends CustomCommand {
 			NoteBlockData data = locationMap.get(location);
 			send(" " + StringUtils.getCoordinateString(location) + ": " + data.getPlacerUUID());
 		}
-
 	}
 }
