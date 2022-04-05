@@ -9,7 +9,6 @@ import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.utils.UUIDUtils;
 import org.apache.commons.collections4.SetUtils;
@@ -124,18 +123,18 @@ public class NoteBlocksListener implements Listener {
 				continue;
 
 			if (block.isBlockPowered()) {
-				Dev.WAKKA.send("  Block Powered");
+				debug("  Block Powered");
 				return true;
 			}
 
 			if (block.getType().equals(Material.REDSTONE_BLOCK)) {
-				Dev.WAKKA.send("  Redstone Block");
+				debug("  Redstone Block");
 				return true;
 			}
 
 			if (block.getBlockData() instanceof Powerable powerable) {
 				if (powerable.isPowered()) {
-					Dev.WAKKA.send("  Is Powered");
+					debug("  Is Powered");
 					return true;
 				}
 			}

@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.noteblocks;
 
 import gg.projecteden.nexus.framework.features.Feature;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import me.lexikiq.event.sound.LocationNamedSoundEvent;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -30,6 +29,7 @@ public class CustomBlocks extends Feature implements Listener {
 
 		ICustomBlock customBlock = _customBlock.get();
 		String sound = event.getSound().getKey().getKey();
-		Dev.WAKKA.send("SoundEvent: " + customBlock.getName() + " - " + sound);
+		if (event.getPlayer() != null)
+			event.getPlayer().sendMessage("SoundEvent: " + customBlock.getName() + " - " + sound);
 	}
 }
