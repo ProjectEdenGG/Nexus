@@ -82,6 +82,7 @@ public interface ICustomBlock {
 
 	default void place(Location location, Block against, boolean sound) {
 		BlockFace face = location.getBlock().getFace(against);
+		// TODO
 		if (canPlaceSideways())
 			placeBlock(location, sound);
 	}
@@ -102,8 +103,8 @@ public interface ICustomBlock {
 
 	private void placeBlock(Location location, boolean silent) {
 		Block block = location.getBlock();
-		block.setType(material);
-		block.setBlockData(getBlockData());
+		block.setType(material, false);
+		block.setBlockData(getBlockData(), false);
 
 		if (!silent)
 			new SoundBuilder(getPlaceSound()).location(location).play();

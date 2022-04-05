@@ -1,58 +1,35 @@
 package gg.projecteden.nexus.features.noteblocks;
 
-import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Feature;
-import lombok.SneakyThrows;
-import org.bukkit.NamespacedKey;
-import org.jetbrains.annotations.NotNull;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
+import me.lexikiq.event.sound.LocationNamedSoundEvent;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.type.NoteBlock;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+public class CustomBlocks extends Feature implements Listener {
 
-public class CustomBlocks extends Feature {
-	private static final Map<Class<? extends ICustomBlock>, ICustomBlock> blocks = new HashMap<>();
+	@EventHandler
+	public void onSoundEvent(LocationNamedSoundEvent event) {
+		Block block = event.getLocation().getBlock();
+		Block below = block.getRelative(BlockFace.DOWN);
+		Block source;
+		if (block.getType().equals(Material.NOTE_BLOCK))
+			source = block;
+		else if (below.getType().equals(Material.NOTE_BLOCK))
+			source = below;
+		else
+			return;
 
-	@SneakyThrows
-	public static ICustomBlock get(Class<? extends ICustomBlock> clazz) {
-		ICustomBlock block = clazz.getConstructor(NamespacedKey.class).newInstance(getKey(clazz));
-		CustomBlocks.getBlocksMap().put(clazz, block);
-		return blocks.computeIfAbsent(clazz, $ -> blocks.put(clazz, block));
-	}
+		CustomBlock _customBlock = CustomBlock.fromNoteBlock((NoteBlock) source.getBlockData());
+		if (_customBlock == null)
+			return;
 
-	private static final List<ICustomBlock> values = new ArrayList<>();
-
-	static {
-		try {
-			for (Field field : ICustomBlock.class.getDeclaredFields())
-				if (field.get(null) instanceof ICustomBlock ICustomBlock)
-					values.add(ICustomBlock);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-	}
-
-	public static List<ICustomBlock> values() {
-		return values;
-	}
-
-	static Map<Class<? extends ICustomBlock>, ICustomBlock> getBlocksMap() {
-		return blocks;
-	}
-
-	@NotNull
-	private static NamespacedKey getKey(Class<? extends ICustomBlock> block) {
-		return getKey(block.getSimpleName().replace("CustomBlock", "").toLowerCase());
-	}
-
-	@NotNull
-	private static NamespacedKey getKey(String id) {
-		final NamespacedKey key = NamespacedKey.fromString(id, Nexus.getInstance());
-		if (key == null)
-			throw new InvalidInputException("[CustomBlocks] Could not generate NamespacedKey for " + id);
-		return key;
+		ICustomBlock customBlock = _customBlock.get();
+		String sound = event.getSound().getKey().getKey();
+		Dev.WAKKA.send("SoundEvent: " + customBlock.getName() + " - " + sound);
 	}
 }

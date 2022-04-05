@@ -5,7 +5,6 @@ import lombok.NonNull;
 import org.bukkit.Instrument;
 
 public class NoteBlock implements ICustomBlock {
-
 	@Override
 	public @NonNull Instrument getNoteBlockInstrument() {
 		return Instrument.PIANO;

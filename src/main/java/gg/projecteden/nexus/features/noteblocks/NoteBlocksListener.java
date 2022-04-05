@@ -114,7 +114,7 @@ public class NoteBlocksListener implements Listener {
 		noteBlock.setInstrument(data.getBlockInstrument());
 		noteBlock.setNote(new Note(data.getBlockStep()));
 		noteBlock.setPowered(false);
-		event.getBlock().setBlockData(noteBlock);
+		event.getBlock().setBlockData(noteBlock, false);
 	}
 
 	private boolean isPowered(Block eventBlock) {
@@ -264,7 +264,7 @@ public class NoteBlocksListener implements Listener {
 				NoteBlock noteBlock = (NoteBlock) Material.NOTE_BLOCK.createBlockData();
 				noteBlock.setInstrument(Instrument.PIANO);
 				noteBlock.setNote(new Note(0));
-				block.setBlockData(noteBlock);
+				block.setBlockData(noteBlock, false);
 			}
 		}
 

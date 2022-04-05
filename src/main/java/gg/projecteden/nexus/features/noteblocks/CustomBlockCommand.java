@@ -16,8 +16,8 @@ public class CustomBlockCommand extends CustomCommand {
 	@Path("list")
 	void list() {
 		send("Custom Blocks: ");
-		for (ICustomBlock customBlock : CustomBlocks.values()) {
-			send(" - " + customBlock.getName());
+		for (CustomBlock customBlock : CustomBlock.values()) {
+			send(" - " + customBlock.get().getName());
 		}
 	}
 
