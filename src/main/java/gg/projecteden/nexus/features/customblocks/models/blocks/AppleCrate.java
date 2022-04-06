@@ -22,6 +22,6 @@ public class AppleCrate implements ICustomBlock {
 
 	@Override
 	public int getCustomModelData() {
-		return 0; // TODO
+		return 1051;
 	}
 }

@@ -275,24 +275,29 @@ public class BlockUtils {
 	}
 
 	public static boolean tryPlaceEvent(@NotNull Player player, @NotNull Block block, @NotNull Block placedAgainst, Material material) {
-		return tryPlaceEvent(player, block, placedAgainst, material, null);
+		return tryPlaceEvent(player, block, placedAgainst, material, null, true);
 	}
 
-	public static boolean tryPlaceEvent(@NotNull Player player, @NotNull Block block, @NotNull Block placedAgainst, @NotNull Material material, @Nullable BlockData data) {
+	public static boolean tryPlaceEvent(@NotNull Player player, @NotNull Block block, @NotNull Block placedAgainst, Material material, BlockData blockData) {
+		return tryPlaceEvent(player, block, placedAgainst, material, blockData, true);
+	}
+
+	public static boolean tryPlaceEvent(@NotNull Player player, @NotNull Block block, @NotNull Block placedAgainst,
+										@NotNull Material material, @Nullable BlockData data, boolean applyPhysics) {
 		// copies current data to send in event and to restore if event is cancelled
 		BlockState currentState = block.getState();
 		Material currentMaterial = block.getType();
 		BlockData currentData = currentState.getBlockData();
 
-		block.setType(material);
+		block.setType(material, applyPhysics);
 		if (data != null)
-			block.setBlockData(data);
+			block.setBlockData(data, applyPhysics);
 
 		// ensure no plugins are blocking placing here
 		BlockPlaceEvent event = new BlockPlaceEvent(block, block.getState(), placedAgainst, player.getInventory().getItemInMainHand(), player, true, EquipmentSlot.HAND);
 		if (!event.callEvent() || !event.canBuild()) {
-			block.setType(currentMaterial);
-			block.setBlockData(currentData); // revert block
+			block.setType(currentMaterial, false);
+			block.setBlockData(currentData, false); // revert block
 			return false;
 		}
 

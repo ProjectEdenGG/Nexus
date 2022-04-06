@@ -165,18 +165,19 @@ public class CustomBlocksListener implements Listener {
 			return false;
 
 		ICustomBlock customBlock = _customBlock.get();
-		NoteBlock noteBlock = (NoteBlock) Material.NOTE_BLOCK.createBlockData();
 		Instrument instrument = customBlock.getNoteBlockInstrument();
 		int step = customBlock.getNoteBlockStep();
 
 		// TODO: sideways
 
+		// TODO: this is always PIANO | 0, because custom block modelData is not set up yet
 		Dev.WAKKA.send("Placing Custom Block: " + customBlock + " | " + instrument + " | " + step);
 
+		NoteBlock noteBlock = (NoteBlock) Material.NOTE_BLOCK.createBlockData();
 		noteBlock.setInstrument(instrument);
 		noteBlock.setNote(new Note(step));
 
-		if (!BlockUtils.tryPlaceEvent(player, block, clickedBlock, Material.NOTE_BLOCK, noteBlock)) {
+		if (!BlockUtils.tryPlaceEvent(player, block, clickedBlock, Material.NOTE_BLOCK, noteBlock, false)) {
 			Dev.WAKKA.send("tryPlaceEvent = false");
 			return false;
 		}

@@ -22,7 +22,7 @@ public class SugarCaneBundle implements ICustomBlock {
 
 	@Override
 	public int getCustomModelData() {
-		return 0; // TODO
+		return 1069;
 	}
 
 	@Override

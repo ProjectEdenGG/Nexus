@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.customblocks;
 
 import gg.projecteden.nexus.features.customblocks.events.NoteBlockPlayEvent;
+import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.noteblock.NoteBlockData;
 import gg.projecteden.nexus.models.noteblock.NoteBlockTracker;
@@ -10,7 +11,6 @@ import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.UUIDUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.Instrument;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Note;
@@ -128,8 +128,8 @@ public class NoteBlockUtils {
 
 			if (reset) {
 				NoteBlock noteBlock = (NoteBlock) Material.NOTE_BLOCK.createBlockData();
-				noteBlock.setInstrument(Instrument.PIANO);
-				noteBlock.setNote(new Note(0));
+				noteBlock.setInstrument(CustomBlock.NOTE_BLOCK.get().getNoteBlockInstrument());
+				noteBlock.setNote(new Note(CustomBlock.NOTE_BLOCK.get().getNoteBlockStep()));
 				block.setBlockData(noteBlock, false);
 			}
 		}
