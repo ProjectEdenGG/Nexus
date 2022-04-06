@@ -14,10 +14,15 @@ import gg.projecteden.utils.Env;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.UUIDUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Instrument;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Note;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.type.NoteBlock;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.UUID;
@@ -26,8 +31,8 @@ import java.util.UUID;
 	TODO:
 		Bugs:
 			Some redstone interaction with noteblocks causes the noteblock to play multiple times, when it shouldn't
+			*When note blocks play, if they are in a group, it causes a infinite loop of block updates and crashes the server: "recursion depth became negative: -1"
 		Custom Block Handling
-			- Block playing/changing note blocks that aren't Piano 0
 			- When breaking, drop that custom block item instead
  */
 @Environments(Env.TEST)
@@ -40,7 +45,11 @@ public class NoteBlocks extends Feature {
 		new NoteBlocksListener();
 	}
 
-	public static NoteBlockData put(UUID uuid, Location location) {
+	public static void placeBlock(Player player, Location location) {
+		placeBlock(player.getUniqueId(), location);
+	}
+
+	public static NoteBlockData placeBlock(UUID uuid, Location location) {
 		tracker = trackerService.fromWorld(location);
 		NoteBlockData data = new NoteBlockData(uuid, location.getBlock());
 		tracker.put(location, data);
@@ -49,12 +58,12 @@ public class NoteBlocks extends Feature {
 		return data;
 	}
 
-	public static NoteBlockData put(Player player, Location location) {
-		return put(player.getUniqueId(), location);
-	}
-
-	public static void remove(Location location) {
+	public static void breakBlock(Location location) {
 		tracker = trackerService.fromWorld(location);
+		NoteBlockData data = tracker.get(location);
+		if (!data.exists())
+			return;
+
 		tracker.remove(location);
 		trackerService.save(tracker);
 	}
@@ -91,8 +100,8 @@ public class NoteBlocks extends Feature {
 
 	}
 
-	public static String customSound(String instrument) {
-		return "minecraft:custom.noteblock." + instrument;
+	public static void play(Block block) {
+		play(block, getData(block));
 	}
 
 	public static void play(Block block, NoteBlockData data) {
@@ -119,8 +128,6 @@ public class NoteBlocks extends Feature {
 			debug("NotePlayEvent: playing note");
 			data.play(location);
 		}
-
-//		new NotePlayEvent(block, Instrument.PIANO, new Note(0)).callEvent();
 	}
 
 	public static void debug(String message) {
@@ -130,5 +137,33 @@ public class NoteBlocks extends Feature {
 				dev.send(message);
 		}
 
+	}
+
+	public static NoteBlockData getData(Block block) {
+		return getData(block, false);
+	}
+
+	@NotNull
+	public static NoteBlockData getData(Block block, boolean reset) {
+		Location location = block.getLocation();
+		tracker = trackerService.fromWorld(location);
+		NoteBlockData data = tracker.get(location);
+		if (!data.exists()) {
+			debug("No data exists for that location, creating");
+			data = NoteBlocks.placeBlock(UUIDUtils.UUID0, location);
+
+			if (reset) {
+				NoteBlock noteBlock = (NoteBlock) Material.NOTE_BLOCK.createBlockData();
+				noteBlock.setInstrument(Instrument.PIANO);
+				noteBlock.setNote(new Note(0));
+				block.setBlockData(noteBlock, false);
+			}
+		}
+
+		return data;
+	}
+
+	public static String customSound(String instrument) {
+		return "minecraft:custom.noteblock." + instrument;
 	}
 }

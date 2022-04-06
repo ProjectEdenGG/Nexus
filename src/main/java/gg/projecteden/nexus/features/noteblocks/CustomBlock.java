@@ -7,8 +7,12 @@ import gg.projecteden.nexus.features.noteblocks.blocks.CarrotCrate;
 import gg.projecteden.nexus.features.noteblocks.blocks.NoteBlock;
 import gg.projecteden.nexus.features.noteblocks.blocks.PotatoCrate;
 import gg.projecteden.nexus.features.noteblocks.blocks.SugarCaneBundle;
+import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import lombok.SneakyThrows;
 import org.bukkit.Instrument;
+import org.bukkit.block.Block;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +34,21 @@ public enum CustomBlock {
 		this.customBlock = (ICustomBlock) clazz.getDeclaredConstructors()[0].newInstance();
 	}
 
-	public static CustomBlock fromNoteBlock(org.bukkit.block.data.type.NoteBlock noteBlock) {
+	public static @Nullable CustomBlock fromItemstack(ItemStack itemInHand) {
+		int modelData = CustomModelData.of(itemInHand);
+		for (CustomBlock customBlock : values()) {
+			if (customBlock.get().getCustomModelData() == modelData)
+				return customBlock;
+		}
+
+		return null;
+	}
+
+	public static @Nullable CustomBlock fromNoteBlock(Block block) {
+		return fromNoteBlock((org.bukkit.block.data.type.NoteBlock) block.getBlockData());
+	}
+
+	public static @Nullable CustomBlock fromNoteBlock(org.bukkit.block.data.type.NoteBlock noteBlock) {
 		List<CustomBlock> sideWays = new ArrayList<>();
 		for (CustomBlock customBlock : values()) {
 			ICustomBlock block = customBlock.get();

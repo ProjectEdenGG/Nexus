@@ -1,35 +1,38 @@
 package gg.projecteden.nexus.features.noteblocks;
 
+import gg.projecteden.annotations.Environments;
 import gg.projecteden.nexus.framework.features.Feature;
-import me.lexikiq.event.sound.LocationNamedSoundEvent;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.utils.Env;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.type.NoteBlock;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 
-public class CustomBlocks extends Feature implements Listener {
+/*
+	TODO:
+		fix placing & breaking
+ */
+@Environments(Env.TEST)
+public class CustomBlocks extends Feature {
+	@Override
+	public void onStart() {
+		new CustomBlocksListener();
+	}
 
-	@EventHandler
-	public void onSoundEvent(LocationNamedSoundEvent event) {
-		Block block = event.getLocation().getBlock();
-		Block below = block.getRelative(BlockFace.DOWN);
-		Block source;
-		if (block.getType().equals(Material.NOTE_BLOCK))
-			source = block;
-		else if (below.getType().equals(Material.NOTE_BLOCK))
-			source = below;
-		else
-			return;
+	public static boolean isCustom(Block block) {
+		if (Nullables.isNullOrAir(block))
+			return false;
 
-		CustomBlock _customBlock = CustomBlock.fromNoteBlock((NoteBlock) source.getBlockData());
-		if (_customBlock == null)
-			return;
+		return block.getType().equals(Material.NOTE_BLOCK);
+	}
 
-		ICustomBlock customBlock = _customBlock.get();
-		String sound = event.getSound().getKey().getKey();
-		if (event.getPlayer() != null)
-			event.getPlayer().sendMessage("SoundEvent: " + customBlock.getName() + " - " + sound);
+	public static boolean isCustomNoteBlock(Block block) {
+		if (!isCustom(block))
+			return false;
+
+		CustomBlock customBlock = CustomBlock.fromNoteBlock(block);
+		if (customBlock == null)
+			return false;
+
+		return CustomBlock.NOTE_BLOCK.equals(customBlock);
 	}
 }
