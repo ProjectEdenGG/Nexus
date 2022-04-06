@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.models.noteblock;
 
 import com.destroystokyo.paper.ParticleBuilder;
-import gg.projecteden.nexus.features.noteblocks.NoteBlockInstrument;
+import gg.projecteden.nexus.features.customblocks.models.NoteBlockInstrument;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.utils.MathUtils;
 import lombok.Data;

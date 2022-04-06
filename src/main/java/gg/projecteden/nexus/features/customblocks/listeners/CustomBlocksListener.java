@@ -1,6 +1,10 @@
-package gg.projecteden.nexus.features.noteblocks;
+package gg.projecteden.nexus.features.customblocks.listeners;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.customblocks.CustomBlocks;
+import gg.projecteden.nexus.features.customblocks.NoteBlockUtils;
+import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
+import gg.projecteden.nexus.features.customblocks.models.ICustomBlock;
 import gg.projecteden.nexus.models.noteblock.NoteBlockData;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -24,7 +28,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import static gg.projecteden.nexus.features.noteblocks.NoteBlocks.debug;
+import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
 
 public class CustomBlocksListener implements Listener {
 
@@ -72,7 +76,7 @@ public class CustomBlocksListener implements Listener {
 
 		if (_customBlock.equals(CustomBlock.NOTE_BLOCK)) {
 			debug("  breaking custom note block");
-			NoteBlocks.breakBlock(block.getLocation());
+			NoteBlockUtils.breakBlock(block.getLocation());
 		} else {
 			debug("  breaking custom block");
 		}
@@ -178,7 +182,7 @@ public class CustomBlocksListener implements Listener {
 		}
 
 		if (CustomBlock.NOTE_BLOCK.equals(_customBlock)) {
-			NoteBlocks.placeBlock(player, block.getLocation());
+			NoteBlockUtils.placeBlock(player, block.getLocation());
 		}
 
 		ItemUtils.subtract(player, itemInHand);
@@ -189,7 +193,7 @@ public class CustomBlocksListener implements Listener {
 		if (!action.equals(Action.LEFT_CLICK_BLOCK))
 			return false;
 
-		NoteBlocks.play(clickedBlock);
+		NoteBlockUtils.play(clickedBlock);
 		return true;
 	}
 
@@ -202,8 +206,8 @@ public class CustomBlocksListener implements Listener {
 
 	private void changePitch(Block clickedBlock, boolean sneaking) {
 		Location location = clickedBlock.getLocation();
-		NoteBlockData data = NoteBlocks.getData(clickedBlock, true);
+		NoteBlockData data = NoteBlockUtils.getData(clickedBlock, true);
 
-		NoteBlocks.changePitch(sneaking, location, data);
+		NoteBlockUtils.changePitch(sneaking, location, data);
 	}
 }

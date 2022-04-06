@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.noteblocks;
+package gg.projecteden.nexus.features.customblocks.models;
 
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;

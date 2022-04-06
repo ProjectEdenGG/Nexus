@@ -1,5 +1,6 @@
-package gg.projecteden.nexus.features.noteblocks;
+package gg.projecteden.nexus.features.customblocks.commands;
 
+import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;

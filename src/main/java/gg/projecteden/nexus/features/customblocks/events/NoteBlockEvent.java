@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.noteblocks.events;
+package gg.projecteden.nexus.features.customblocks.events;
 
 import lombok.Getter;
 import lombok.Setter;

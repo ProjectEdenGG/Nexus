@@ -1,10 +1,10 @@
-package gg.projecteden.nexus.features.noteblocks.blocks;
+package gg.projecteden.nexus.features.customblocks.models.blocks;
 
-import gg.projecteden.nexus.features.noteblocks.ICustomBlock;
+import gg.projecteden.nexus.features.customblocks.models.ICustomBlock;
 import lombok.NonNull;
 import org.bukkit.Instrument;
 
-public class BerryCrate implements ICustomBlock {
+public class BeetrootCrate implements ICustomBlock {
 	@Override
 	public @NonNull Instrument getNoteBlockInstrument() {
 		return Instrument.BASS_DRUM;
@@ -12,12 +12,12 @@ public class BerryCrate implements ICustomBlock {
 
 	@Override
 	public int getNoteBlockStep() {
-		return 3;
+		return 2;
 	}
 
 	@Override
 	public String getName() {
-		return "Crate of Berries";
+		return "Crate of Beetroot";
 	}
 
 	@Override

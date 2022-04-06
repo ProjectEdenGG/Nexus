@@ -1,16 +1,12 @@
-package gg.projecteden.nexus.features.noteblocks;
+package gg.projecteden.nexus.features.customblocks;
 
-import gg.projecteden.annotations.Environments;
-import gg.projecteden.nexus.features.noteblocks.events.NoteBlockPlayEvent;
-import gg.projecteden.nexus.framework.features.Feature;
+import gg.projecteden.nexus.features.customblocks.events.NoteBlockPlayEvent;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.noteblock.NoteBlockData;
 import gg.projecteden.nexus.models.noteblock.NoteBlockTracker;
 import gg.projecteden.nexus.models.noteblock.NoteBlockTrackerService;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
-import gg.projecteden.utils.Env;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.UUIDUtils;
 import org.bukkit.Bukkit;
@@ -24,26 +20,13 @@ import org.bukkit.block.data.type.NoteBlock;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.UUID;
 
-/*
-	TODO:
-		Bugs:
-			Some redstone interaction with noteblocks causes the noteblock to play multiple times, when it shouldn't
-			*When note blocks play, if they are in a group, it causes a infinite loop of block updates and crashes the server: "recursion depth became negative: -1"
-		Custom Block Handling
-			- When breaking, drop that custom block item instead
- */
-@Environments(Env.TEST)
-public class NoteBlocks extends Feature {
+import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
+
+public class NoteBlockUtils {
 	private static final NoteBlockTrackerService trackerService = new NoteBlockTrackerService();
 	private static NoteBlockTracker tracker;
-
-	@Override
-	public void onStart() {
-		new NoteBlocksListener();
-	}
 
 	public static void placeBlock(Player player, Location location) {
 		placeBlock(player.getUniqueId(), location);
@@ -130,15 +113,6 @@ public class NoteBlocks extends Feature {
 		}
 	}
 
-	public static void debug(String message) {
-		List<Dev> devs = List.of(Dev.WAKKA, Dev.GRIFFIN);
-		for (Dev dev : devs) {
-			if (dev.isOnline())
-				dev.send(message);
-		}
-
-	}
-
 	public static NoteBlockData getData(Block block) {
 		return getData(block, false);
 	}
@@ -150,7 +124,7 @@ public class NoteBlocks extends Feature {
 		NoteBlockData data = tracker.get(location);
 		if (!data.exists()) {
 			debug("No data exists for that location, creating");
-			data = NoteBlocks.placeBlock(UUIDUtils.UUID0, location);
+			data = placeBlock(UUIDUtils.UUID0, location);
 
 			if (reset) {
 				NoteBlock noteBlock = (NoteBlock) Material.NOTE_BLOCK.createBlockData();

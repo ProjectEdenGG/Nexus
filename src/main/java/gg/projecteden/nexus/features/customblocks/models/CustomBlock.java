@@ -1,12 +1,12 @@
-package gg.projecteden.nexus.features.noteblocks;
+package gg.projecteden.nexus.features.customblocks.models;
 
-import gg.projecteden.nexus.features.noteblocks.blocks.AppleCrate;
-import gg.projecteden.nexus.features.noteblocks.blocks.BeetrootCrate;
-import gg.projecteden.nexus.features.noteblocks.blocks.BerryCrate;
-import gg.projecteden.nexus.features.noteblocks.blocks.CarrotCrate;
-import gg.projecteden.nexus.features.noteblocks.blocks.NoteBlock;
-import gg.projecteden.nexus.features.noteblocks.blocks.PotatoCrate;
-import gg.projecteden.nexus.features.noteblocks.blocks.SugarCaneBundle;
+import gg.projecteden.nexus.features.customblocks.models.blocks.AppleCrate;
+import gg.projecteden.nexus.features.customblocks.models.blocks.BeetrootCrate;
+import gg.projecteden.nexus.features.customblocks.models.blocks.BerryCrate;
+import gg.projecteden.nexus.features.customblocks.models.blocks.CarrotCrate;
+import gg.projecteden.nexus.features.customblocks.models.blocks.NoteBlock;
+import gg.projecteden.nexus.features.customblocks.models.blocks.PotatoCrate;
+import gg.projecteden.nexus.features.customblocks.models.blocks.SugarCaneBundle;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import lombok.SneakyThrows;
 import org.bukkit.Instrument;

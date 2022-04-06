@@ -1,5 +1,6 @@
-package gg.projecteden.nexus.features.noteblocks;
+package gg.projecteden.nexus.features.customblocks.models;
 
+import gg.projecteden.nexus.features.customblocks.NoteBlockUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,8 +38,8 @@ public enum NoteBlockInstrument {
 	BIT(getSoundFrom(Instrument.BIT), Material.EMERALD_BLOCK),
 	BANJO(getSoundFrom(Instrument.BANJO), Material.HAY_BLOCK),
 	PLING(getSoundFrom(Instrument.PLING), Material.GLOWSTONE),
-	MARIMBA(NoteBlocks.customSound("marimba"), MaterialTag.STRIPPED_LOGS.getValues()),
-	TRUMPET(NoteBlocks.customSound("trumpet"), Material.COPPER_BLOCK, Material.WAXED_COPPER_BLOCK),
+	MARIMBA(NoteBlockUtils.customSound("marimba"), MaterialTag.STRIPPED_LOGS.getValues()),
+	TRUMPET(NoteBlockUtils.customSound("trumpet"), Material.COPPER_BLOCK, Material.WAXED_COPPER_BLOCK),
 	;
 
 	@SafeVarargs

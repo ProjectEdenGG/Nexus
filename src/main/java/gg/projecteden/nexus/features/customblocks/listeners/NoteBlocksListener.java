@@ -1,6 +1,8 @@
-package gg.projecteden.nexus.features.noteblocks;
+package gg.projecteden.nexus.features.customblocks.listeners;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.customblocks.CustomBlocks;
+import gg.projecteden.nexus.features.customblocks.NoteBlockUtils;
 import gg.projecteden.nexus.models.noteblock.NoteBlockData;
 import gg.projecteden.nexus.models.noteblock.NoteBlockTracker;
 import gg.projecteden.nexus.models.noteblock.NoteBlockTrackerService;
@@ -20,7 +22,8 @@ import org.bukkit.event.block.NotePlayEvent;
 
 import java.util.Set;
 
-import static gg.projecteden.nexus.features.noteblocks.NoteBlocks.debug;
+import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
+
 
 public class NoteBlocksListener implements Listener {
 	private static final NoteBlockTrackerService trackerService = new NoteBlockTrackerService();
@@ -40,7 +43,7 @@ public class NoteBlocksListener implements Listener {
 
 		Block above = event.getBlock().getRelative(BlockFace.UP);
 		if (CustomBlocks.isCustomNoteBlock(above))
-			NoteBlocks.getData(above, true);
+			NoteBlockUtils.getData(above, true);
 	}
 
 //	@EventHandler
@@ -95,11 +98,11 @@ public class NoteBlocksListener implements Listener {
 			// double check
 			debug(" Double Checking:");
 			if (isPowered(eventBlock)) {
-				NoteBlocks.play(eventBlock, NoteBlocks.getData(eventBlock));
+				NoteBlockUtils.play(eventBlock, NoteBlockUtils.getData(eventBlock));
 			}
 		}
 
-		NoteBlockData data = NoteBlocks.getData(eventBlock);
+		NoteBlockData data = NoteBlockUtils.getData(eventBlock);
 		data.setPowered(noteBlock.isPowered());
 
 		// reset eventBlock
