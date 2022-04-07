@@ -22,6 +22,6 @@ public class CarrotCrate implements ICustomBlock {
 
 	@Override
 	public int getCustomModelData() {
-		return 1054;
+		return 20054;
 	}
 }

@@ -22,6 +22,6 @@ public class BerryCrate implements ICustomBlock {
 
 	@Override
 	public int getCustomModelData() {
-		return 1053;
+		return 20053;
 	}
 }

@@ -18,7 +18,8 @@ import org.bukkit.inventory.Recipe;
 import org.jetbrains.annotations.Nullable;
 
 public interface ICustomBlock {
-	Material material = Material.NOTE_BLOCK;
+	Material blockMaterial = Material.NOTE_BLOCK;
+	Material itemMaterial = Material.PAPER;
 
 	@NonNull Instrument getNoteBlockInstrument();
 
@@ -31,7 +32,7 @@ public interface ICustomBlock {
 	int getCustomModelData();
 
 	default ItemBuilder getItemBuilder() {
-		return new ItemBuilder(material).customModelData(getCustomModelData()).name(getName());
+		return new ItemBuilder(itemMaterial).customModelData(getCustomModelData()).name(getName());
 	}
 
 	default ItemStack getItemStack() {
@@ -95,7 +96,7 @@ public interface ICustomBlock {
 	//
 
 	private NoteBlock getBlockData() {
-		NoteBlock noteBlock = (NoteBlock) material.createBlockData();
+		NoteBlock noteBlock = (NoteBlock) blockMaterial.createBlockData();
 		noteBlock.setInstrument(getNoteBlockInstrument());
 		noteBlock.setNote(new Note(getNoteBlockStep()));
 		return noteBlock;
@@ -103,7 +104,7 @@ public interface ICustomBlock {
 
 	private void placeBlock(Location location, boolean silent) {
 		Block block = location.getBlock();
-		block.setType(material, false);
+		block.setType(blockMaterial, false);
 		block.setBlockData(getBlockData(), false);
 
 		if (!silent)

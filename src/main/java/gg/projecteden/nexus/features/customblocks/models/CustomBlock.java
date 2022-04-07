@@ -15,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public enum CustomBlock {
@@ -34,14 +35,16 @@ public enum CustomBlock {
 		this.customBlock = (ICustomBlock) clazz.getDeclaredConstructors()[0].newInstance();
 	}
 
-	public static @Nullable CustomBlock fromItemstack(ItemStack itemInHand) {
-		int modelData = CustomModelData.of(itemInHand);
-		for (CustomBlock customBlock : values()) {
-			if (customBlock.get().getCustomModelData() == modelData)
-				return customBlock;
-		}
+	public static final HashMap<Integer, CustomBlock> modelDataMap = new HashMap<>();
 
-		return null;
+	static {
+		for (CustomBlock customBlock : values()) {
+			modelDataMap.put(customBlock.get().getCustomModelData(), customBlock);
+		}
+	}
+
+	public static @Nullable CustomBlock fromItemstack(ItemStack itemInHand) {
+		return modelDataMap.getOrDefault(CustomModelData.of(itemInHand), null);
 	}
 
 	public static @Nullable CustomBlock fromNoteBlock(Block block) {

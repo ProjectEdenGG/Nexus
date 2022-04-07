@@ -22,6 +22,6 @@ public class BeetrootCrate implements ICustomBlock {
 
 	@Override
 	public int getCustomModelData() {
-		return 1052;
+		return 20052;
 	}
 }

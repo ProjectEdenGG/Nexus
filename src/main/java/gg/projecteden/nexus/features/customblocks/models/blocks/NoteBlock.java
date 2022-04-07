@@ -22,6 +22,6 @@ public class NoteBlock implements ICustomBlock {
 
 	@Override
 	public int getCustomModelData() {
-		return 0;
+		return 20000;
 	}
 }

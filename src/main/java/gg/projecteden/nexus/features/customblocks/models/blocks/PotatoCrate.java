@@ -22,6 +22,6 @@ public class PotatoCrate implements ICustomBlock {
 
 	@Override
 	public int getCustomModelData() {
-		return 1055;
+		return 20055;
 	}
 }
