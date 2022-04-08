@@ -8,6 +8,7 @@ import gg.projecteden.nexus.models.noteblock.NoteBlockTracker;
 import gg.projecteden.nexus.models.noteblock.NoteBlockTrackerService;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.UUIDUtils;
 import org.bukkit.Bukkit;
@@ -91,6 +92,7 @@ public class NoteBlockUtils {
 		Location location = block.getLocation();
 		Block above = block.getRelative(BlockFace.UP);
 
+		// TODO 1.19
 		String version = Bukkit.getMinecraftVersion();
 		if (version.matches("1.19[.]?[0-9]*")) {
 			if (MaterialTag.WOOL.isTagged(above) || MaterialTag.WOOL_CARPET.isTagged(above))
@@ -98,19 +100,26 @@ public class NoteBlockUtils {
 		} else if (!Nullables.isNullOrAir(above))
 			return;
 
-		// TODO: validate data?
+		Tasks.wait(1, () -> {
+			// TODO: validate data?
 
-		String cooldownType = "noteblock_" + block.getWorld().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ();
-		if (!(new CooldownService().check(UUIDUtils.UUID0, cooldownType, TickTime.TICK))) {
-			debug("NotePlayEvent: on cooldown, cancelling");
-			return;
-		}
+			if (!data.isPowered()) {
+				debug("NotePlayEvent: not powered, cancelling");
+				return;
+			}
 
-		NoteBlockPlayEvent event = new NoteBlockPlayEvent(block);
-		if (event.callEvent()) {
-			debug("NotePlayEvent: playing note");
-			data.play(location);
-		}
+			String cooldownType = "noteblock_" + block.getWorld().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ();
+			if (!(new CooldownService().check(UUIDUtils.UUID0, cooldownType, TickTime.TICK))) {
+				debug("NotePlayEvent: on cooldown, cancelling");
+				return;
+			}
+
+			NoteBlockPlayEvent event = new NoteBlockPlayEvent(block);
+			if (event.callEvent()) {
+				debug("NotePlayEvent: playing note");
+				data.play(location);
+			}
+		});
 	}
 
 	public static NoteBlockData getData(Block block) {
