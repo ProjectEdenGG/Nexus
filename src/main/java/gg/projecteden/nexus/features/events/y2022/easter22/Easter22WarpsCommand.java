@@ -6,7 +6,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.warps.WarpType;
 
-@Permission(Group.ADMIN)
+@Permission(Group.STAFF)
 public class Easter22WarpsCommand extends _WarpCommand {
 
 	public Easter22WarpsCommand(CommandEvent event) {

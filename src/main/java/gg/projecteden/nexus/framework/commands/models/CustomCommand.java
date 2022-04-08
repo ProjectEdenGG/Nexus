@@ -256,6 +256,11 @@ public abstract class CustomCommand extends ICustomCommand {
 	public void giveItem(ItemStack item) {
 		PlayerUtils.giveItems(player(), Collections.singletonList(item));
 	}
+
+	public void giveItems(ItemStack item, int amount) {
+		giveItems(Collections.nCopies(amount, item));
+	}
+
 	public void giveItems(Collection<ItemStack> items) {
 		PlayerUtils.giveItems(player(), items, null);
 	}
