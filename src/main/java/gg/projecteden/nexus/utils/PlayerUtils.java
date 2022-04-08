@@ -575,13 +575,16 @@ public class PlayerUtils {
 	 * @param objects used to {@link String#format(String, Object...) String#format} the message if <code>message</code> is a {@link String}
 	 */
 	public static void send(@Nullable Object recipient, @Nullable Object message, @NotNull Object... objects) {
-		if (message instanceof String string && objects.length > 0)
-			message = String.format(string, objects);
-
 		if (recipient == null || message == null)
 			return;
 
+		if (message instanceof String string && objects.length > 0)
+			message = String.format(string, objects);
+
 		if (recipient instanceof CommandSender sender) {
+			if (!(message instanceof String || message instanceof ComponentLike))
+				message = message.toString();
+
 			if (message instanceof String string)
 				sender.sendMessage(Identity.nil(), new JsonBuilder(string));
 			else if (message instanceof ComponentLike componentLike)
