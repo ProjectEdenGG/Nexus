@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.customblocks.models;
 
-import gg.projecteden.nexus.features.customblocks.CustomBlocks;
+import gg.projecteden.nexus.features.customblocks.NoteBlockUtils;
 import gg.projecteden.nexus.features.customblocks.models.blocks.AppleCrate;
 import gg.projecteden.nexus.features.customblocks.models.blocks.BeetrootCrate;
 import gg.projecteden.nexus.features.customblocks.models.blocks.BerryCrate;
@@ -8,12 +8,18 @@ import gg.projecteden.nexus.features.customblocks.models.blocks.CarrotCrate;
 import gg.projecteden.nexus.features.customblocks.models.blocks.NoteBlock;
 import gg.projecteden.nexus.features.customblocks.models.blocks.PotatoCrate;
 import gg.projecteden.nexus.features.customblocks.models.blocks.SugarCaneBundle;
+import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
+import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import lombok.SneakyThrows;
 import org.bukkit.Instrument;
 import org.bukkit.Material;
+import org.bukkit.Note;
 import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -97,32 +103,79 @@ public enum CustomBlock {
 		return this.customBlock;
 	}
 
+	public boolean placeBlock(Player player, Block block, Block placeAgainst, ItemStack itemInHand) {
+		ICustomBlock customBlock = this.get();
+		Instrument instrument = customBlock.getNoteBlockInstrument();
+		int step = customBlock.getNoteBlockStep();
+
+		// TODO: sideways
+
+		org.bukkit.block.data.type.NoteBlock noteBlock = (org.bukkit.block.data.type.NoteBlock) Material.NOTE_BLOCK.createBlockData();
+		noteBlock.setInstrument(instrument);
+		noteBlock.setNote(new Note(step));
+
+		if (!BlockUtils.tryPlaceEvent(player, block, placeAgainst, Material.NOTE_BLOCK, noteBlock, false, new ItemStack(Material.NOTE_BLOCK)))
+			return false;
+
+		if (CustomBlock.NOTE_BLOCK.equals(this))
+			NoteBlockUtils.placeBlock(player, block.getLocation());
+
+		playSound(SoundType.PLACE, block);
+		ItemUtils.subtract(player, itemInHand);
+		return true;
+	}
 
 	public enum SoundType {
 		PLACE,
 		BREAK,
 		STEP,
-		HIT
+		HIT,
+		;
+	}
+
+	public @Nullable SoundType getSoundType(Sound sound) {
+		String soundKey = sound.getKey().getKey();
+		if (soundKey.endsWith(".step"))
+			return SoundType.STEP;
+		else if (soundKey.endsWith(".hit"))
+			return SoundType.HIT;
+		else if (soundKey.endsWith(".place"))
+			return SoundType.PLACE;
+		else if (soundKey.endsWith(".break"))
+			return SoundType.BREAK;
+
+		return null;
+	}
+
+	public @Nullable Sound getSound(SoundType type) {
+		switch (type) {
+			case PLACE -> {
+				return customBlock.getPlaceSound();
+			}
+			case BREAK -> {
+				return customBlock.getBreakSound();
+			}
+			case STEP -> {
+				return customBlock.getStepSound();
+			}
+			case HIT -> {
+				return customBlock.getHitSound();
+			}
+		}
+		return null;
 	}
 
 	public void playSound(SoundType type, Block block) {
-		ICustomBlock customBlock = this.get();
-		Sound sound = null;
-		switch (type) {
-			case PLACE -> sound = customBlock.getPlaceSound();
-			case BREAK -> sound = customBlock.getBreakSound();
-			case STEP -> sound = customBlock.getStepSound();
-			case HIT -> sound = customBlock.getHitSound();
-		}
+		if (true) // TODO: wait until SoundEvents are fixed
+			return;
 
+		Sound sound = getSound(type);
 		if (sound == null)
 			return;
 
-		CustomBlocks.debug(" TODO: playSound type=" + type + " - " + sound.getKey().getKey());
-
-//		new SoundBuilder(sound)
-//			.location(block)
-//			.category(SoundCategory.BLOCKS)
-//			.play();
+		new SoundBuilder(sound)
+			.location(block)
+			.category(SoundCategory.BLOCKS)
+			.play();
 	}
 }

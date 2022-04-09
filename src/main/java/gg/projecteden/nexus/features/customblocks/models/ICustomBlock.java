@@ -1,18 +1,12 @@
 package gg.projecteden.nexus.features.customblocks.models;
 
-import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.SoundBuilder;
 import lombok.NonNull;
 import org.bukkit.Instrument;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.Sound;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.NoteBlock;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.jetbrains.annotations.Nullable;
@@ -32,14 +26,23 @@ public interface ICustomBlock {
 	int getCustomModelData();
 
 	default ItemBuilder getItemBuilder() {
-		return new ItemBuilder(itemMaterial).customModelData(getCustomModelData()).name(getName());
+		ItemBuilder itemBuilder = new ItemBuilder(itemMaterial);
+		if (getCustomModelData() == 20000)
+			return itemBuilder;
+
+		return itemBuilder.customModelData(getCustomModelData()).name(getName());
 	}
 
 	default ItemStack getItemStack() {
+		if (getCustomModelData() == 20000)
+			return new ItemStack(itemMaterial);
 		return getItemBuilder().build();
 	}
 
-	@Nullable Recipe getRecipe = null;
+	@Nullable
+	default Recipe getRecipe() {
+		return null; // TODO: register recipes
+	}
 
 	// Sideways
 
@@ -81,33 +84,10 @@ public interface ICustomBlock {
 		return Sound.BLOCK_WOOD_HIT;
 	}
 
-	default void place(Location location, Block against, boolean sound) {
-		BlockFace face = location.getBlock().getFace(against);
-		// TODO
-		if (canPlaceSideways())
-			placeBlock(location, sound);
-	}
-
-	default void tryPlace(Player player, Location location, Block against) {
-		BlockUtils.tryPlaceEvent(player, location.getBlock(), against, Material.NOTE_BLOCK, getBlockData());
-		// TODO play sound, if event doesn't
-	}
-
-	//
-
 	private NoteBlock getBlockData() {
 		NoteBlock noteBlock = (NoteBlock) blockMaterial.createBlockData();
 		noteBlock.setInstrument(getNoteBlockInstrument());
 		noteBlock.setNote(new Note(getNoteBlockStep()));
 		return noteBlock;
-	}
-
-	private void placeBlock(Location location, boolean silent) {
-		Block block = location.getBlock();
-		block.setType(blockMaterial, false);
-		block.setBlockData(getBlockData(), false);
-
-		if (!silent)
-			new SoundBuilder(getPlaceSound()).location(location).play();
 	}
 }

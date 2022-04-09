@@ -15,10 +15,12 @@ import java.util.List;
 
 /*
 	TODO:
-		- ICustomBlock#place & #tryPlace
-		- Sounds
+		- When placing a noteblock ontop of another noteblock, the above changes instrument, and the below increases pitch
+		- Sounds: Wait until SoundEvents are fixed
 		- Add support for sideways placement
 		- Add & register recipes
+		- appropriate tool/mining speed/block hardness: item digspeed attributes or potion eggects
+		- creative pick block
  */
 @Environments(Env.TEST)
 public class CustomBlocks extends Feature {

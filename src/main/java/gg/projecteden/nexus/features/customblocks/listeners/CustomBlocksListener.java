@@ -7,15 +7,11 @@ import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock.SoundType;
 import gg.projecteden.nexus.features.customblocks.models.ICustomBlock;
 import gg.projecteden.nexus.models.noteblock.NoteBlockData;
-import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.GameModeWrapper;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import me.lexikiq.event.sound.LocationNamedSoundEvent;
-import org.bukkit.Instrument;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Note;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.NoteBlock;
@@ -29,6 +25,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
+import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
+
 public class CustomBlocksListener implements Listener {
 
 	public CustomBlocksListener() {
@@ -37,6 +35,9 @@ public class CustomBlocksListener implements Listener {
 
 	@EventHandler
 	public void onSoundEvent(LocationNamedSoundEvent event) {
+		if (true) // TODO: wait until SoundEvents are fixed
+			return;
+
 		Block block = event.getLocation().getBlock();
 		Block below = block.getRelative(BlockFace.DOWN);
 		Block source;
@@ -51,20 +52,14 @@ public class CustomBlocksListener implements Listener {
 		if (_customBlock == null)
 			return;
 
-		String sound = event.getSound().getKey().getKey();
-		SoundType type;
-		if (sound.endsWith(".step"))
-			type = SoundType.STEP;
-		else if (sound.endsWith(".hit"))
-			type = SoundType.HIT;
-		else if (sound.endsWith(".place"))
-			type = SoundType.PLACE;
-		else if (sound.endsWith(".break"))
-			type = SoundType.BREAK;
-		else
+		debug("SoundEvent: " + _customBlock.name() + " - " + event.getSound().getKey().getKey());
+		SoundType soundType = _customBlock.getSoundType(event.getSound());
+		if (soundType == null)
 			return;
 
-		_customBlock.playSound(type, source);
+		debug(" soundType: " + soundType + ", playing sound...");
+		event.setCancelled(true);
+		_customBlock.playSound(soundType, source);
 	}
 
 	@EventHandler
@@ -96,6 +91,9 @@ public class CustomBlocksListener implements Listener {
 					location.getWorld().dropItemNaturally(location, customBlock.getItemStack());
 			}
 		}
+
+		event.setCancelled(true);
+		block.setType(Material.AIR);
 	}
 
 	@EventHandler
@@ -169,28 +167,7 @@ public class CustomBlocksListener implements Listener {
 			return false;
 		}
 
-		ICustomBlock customBlock = _customBlock.get();
-		Instrument instrument = customBlock.getNoteBlockInstrument();
-		int step = customBlock.getNoteBlockStep();
-
-		// TODO: sideways
-
-		NoteBlock noteBlock = (NoteBlock) Material.NOTE_BLOCK.createBlockData();
-		noteBlock.setInstrument(instrument);
-		noteBlock.setNote(new Note(step));
-
-		if (!BlockUtils.tryPlaceEvent(player, block, clickedBlock, Material.NOTE_BLOCK, noteBlock, false, new ItemStack(Material.NOTE_BLOCK))) {
-			return false;
-		}
-
-		if (CustomBlock.NOTE_BLOCK.equals(_customBlock)) {
-			NoteBlockUtils.placeBlock(player, block.getLocation());
-		}
-
-		_customBlock.playSound(SoundType.PLACE, block);
-
-		ItemUtils.subtract(player, itemInHand);
-		return true;
+		return _customBlock.placeBlock(player, block, clickedBlock, itemInHand);
 	}
 
 	private boolean isInteractingNoteBlock(Block clickedBlock, Action action) {

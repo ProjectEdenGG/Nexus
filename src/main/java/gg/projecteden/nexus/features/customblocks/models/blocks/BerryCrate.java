@@ -3,6 +3,8 @@ package gg.projecteden.nexus.features.customblocks.models.blocks;
 import gg.projecteden.nexus.features.customblocks.models.ICustomBlock;
 import lombok.NonNull;
 import org.bukkit.Instrument;
+import org.bukkit.inventory.Recipe;
+import org.jetbrains.annotations.Nullable;
 
 public class BerryCrate implements ICustomBlock {
 	@Override
@@ -23,5 +25,10 @@ public class BerryCrate implements ICustomBlock {
 	@Override
 	public int getCustomModelData() {
 		return 20053;
+	}
+
+	@Override
+	public @Nullable Recipe getRecipe() {
+		return null; //TODO
 	}
 }
