@@ -15,12 +15,18 @@ import java.util.List;
 
 /*
 	TODO:
-		- When placing a noteblock ontop of another noteblock, the above changes instrument, and the below increases pitch
-		- Sounds: Wait until SoundEvents are fixed
+		- custom blocks database, proper conversions
+		- (while sneaking only) When placing a noteblock ontop of another noteblock, the above changes instrument, and the below increases pitch
 		- Add support for sideways placement
-		- Add & register recipes
+		- creative pick block -> switch active slot
+		- //
+		- Sounds: Wait until SoundEvents are fixed
+
 		- appropriate tool/mining speed/block hardness: item digspeed attributes or potion eggects
-		- creative pick block
+		ItemMeta meta = tool.getItemMeta();
+		UUID SLOW_DIG = UUID.fromString("55FCED67-E92A-486E-9800-B47F202C4386");
+		meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED,
+			new AttributeModifier(SLOW_DIG, "custom_block_mining_speed", 2, Operation.MULTIPLY_SCALAR_1, EquipmentSlot.HAND));
  */
 @Environments(Env.TEST)
 public class CustomBlocks extends Feature {

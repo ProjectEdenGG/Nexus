@@ -10,27 +10,61 @@ import gg.projecteden.nexus.models.noteblock.NoteBlockData;
 import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.Nullables;
 import me.lexikiq.event.sound.LocationNamedSoundEvent;
+import org.bukkit.Instrument;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Note;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.NoteBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPhysicsEvent;
+import org.bukkit.event.inventory.InventoryCreativeEvent;
+import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
+import static gg.projecteden.nexus.features.customblocks.CustomBlocks.isCustomNoteBlock;
 
 public class CustomBlocksListener implements Listener {
 
 	public CustomBlocksListener() {
 		Nexus.registerListener(this);
+	}
+
+	@EventHandler
+	public void onCreativePickBlock(InventoryCreativeEvent event) {
+		SlotType slotType = event.getSlotType();
+		if (!slotType.equals(SlotType.QUICKBAR))
+			return;
+
+		ItemStack item = event.getCursor();
+		if (Nullables.isNullOrAir(item))
+			return;
+
+		if (!item.getType().equals(Material.NOTE_BLOCK))
+			return;
+
+		Player player = (Player) event.getWhoClicked();
+		Block block = player.getTargetBlockExact(5);
+		if (Nullables.isNullOrAir(block))
+			return;
+
+		CustomBlock customBlock = CustomBlock.fromNoteBlock(block);
+		if (customBlock == null || customBlock.equals(CustomBlock.NOTE_BLOCK))
+			return;
+
+		ItemStack newItem = customBlock.get().getItemStack();
+		event.setCursor(newItem);
+
 	}
 
 	@EventHandler
@@ -78,22 +112,60 @@ public class CustomBlocksListener implements Listener {
 
 		if (_customBlock.equals(CustomBlock.NOTE_BLOCK)) {
 			NoteBlockUtils.breakBlock(block.getLocation());
-		}
+		} else {
+			// change drops
+			event.setDropItems(false);
+			ICustomBlock customBlock = _customBlock.get();
+			Location location = block.getLocation();
 
-		// change drops
-		event.setDropItems(false);
-		ICustomBlock customBlock = _customBlock.get();
-		Location location = block.getLocation();
-
-		for (ItemStack drop : block.getDrops()) {
-			if (drop.getType().equals(Material.NOTE_BLOCK)) {
-				if (!GameModeWrapper.of(event.getPlayer()).isCreative())
-					location.getWorld().dropItemNaturally(location, customBlock.getItemStack());
+			for (ItemStack drop : block.getDrops()) {
+				if (drop.getType().equals(Material.NOTE_BLOCK)) {
+					if (!GameModeWrapper.of(event.getPlayer()).isCreative())
+						location.getWorld().dropItemNaturally(location, customBlock.getItemStack());
+				}
 			}
 		}
+	}
 
-		event.setCancelled(true);
-		block.setType(Material.AIR);
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onBlockPhysics(BlockPhysicsEvent event) {
+		Block eventBlock = event.getBlock();
+		Material material = eventBlock.getType();
+		if (material == Material.NOTE_BLOCK) {
+			reset(eventBlock);
+			eventBlock.getState().update(true, false);
+		}
+
+		Block aboveBlock = eventBlock.getRelative(BlockFace.UP);
+		if (aboveBlock.getType().equals(Material.NOTE_BLOCK)) {
+
+			while (aboveBlock.getType() == Material.NOTE_BLOCK) {
+				reset(aboveBlock);
+				aboveBlock.getState().update(true, false);
+				aboveBlock = aboveBlock.getRelative(BlockFace.UP);
+			}
+		}
+	}
+
+	private void reset(Block block) {
+		org.bukkit.block.data.type.NoteBlock noteBlock = (org.bukkit.block.data.type.NoteBlock) block.getBlockData();
+		Instrument instrument = noteBlock.getInstrument();
+		Note note = noteBlock.getNote();
+		boolean powered = false;
+
+		if (isCustomNoteBlock(block)) {
+			NoteBlockData data = NoteBlockUtils.getData(block);
+			data.setPowered(noteBlock.isPowered());
+
+			instrument = data.getBlockInstrument();
+			note = data.getBlockNote();
+			powered = noteBlock.isPowered();
+		}
+
+		noteBlock.setInstrument(instrument);
+		noteBlock.setNote(note);
+		noteBlock.setPowered(powered);
+		block.setBlockData(noteBlock, false);
 	}
 
 	@EventHandler

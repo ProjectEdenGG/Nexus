@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.recipes;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.custombenches.DyeStation;
+import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
@@ -289,6 +290,7 @@ public class CustomRecipes extends Feature implements Listener {
 
 		dyeStation();
 		light();
+		customBlocks();
 
 		invisibleItemFrame();
 	}
@@ -320,6 +322,12 @@ public class CustomRecipes extends Feature implements Listener {
 			return;
 
 		surround(centerItems).with(Material.GLOWSTONE).toMake(Material.LIGHT).build().type(RecipeType.FUNCTIONAL).register();
+	}
+
+	private void customBlocks() {
+		for (CustomBlock customBlock : CustomBlock.values()) {
+			customBlock.registerRecipe();
+		}
 	}
 
 	private void invisibleItemFrame() {

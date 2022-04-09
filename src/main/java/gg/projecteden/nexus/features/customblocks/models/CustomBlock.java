@@ -8,6 +8,8 @@ import gg.projecteden.nexus.features.customblocks.models.blocks.CarrotCrate;
 import gg.projecteden.nexus.features.customblocks.models.blocks.NoteBlock;
 import gg.projecteden.nexus.features.customblocks.models.blocks.PotatoCrate;
 import gg.projecteden.nexus.features.customblocks.models.blocks.SugarCaneBundle;
+import gg.projecteden.nexus.features.recipes.models.RecipeType;
+import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -48,7 +50,9 @@ public enum CustomBlock {
 
 	static {
 		for (CustomBlock customBlock : values()) {
-			modelDataMap.put(customBlock.get().getCustomModelData(), customBlock);
+			ICustomBlock iCustomBlock = customBlock.get();
+
+			modelDataMap.put(iCustomBlock.getCustomModelData(), customBlock);
 		}
 	}
 
@@ -57,6 +61,10 @@ public enum CustomBlock {
 		if (itemInHand.getType().equals(Material.NOTE_BLOCK) && modelData == 0)
 			return CustomBlock.NOTE_BLOCK;
 
+		return fromModelData(modelData);
+	}
+
+	public static @Nullable CustomBlock fromModelData(int modelData) {
 		return modelDataMap.getOrDefault(modelData, null);
 	}
 
@@ -166,9 +174,6 @@ public enum CustomBlock {
 	}
 
 	public void playSound(SoundType type, Block block) {
-		if (true) // TODO: wait until SoundEvents are fixed
-			return;
-
 		Sound sound = getSound(type);
 		if (sound == null)
 			return;
@@ -177,5 +182,14 @@ public enum CustomBlock {
 			.location(block)
 			.category(SoundCategory.BLOCKS)
 			.play();
+	}
+
+	public void registerRecipe() {
+		ICustomBlock customBlock = get();
+		@Nullable RecipeBuilder<?> recipe = customBlock.getRecipe();
+		if (recipe == null)
+			return;
+
+		recipe.toMake(customBlock.getItemStack()).build().type(RecipeType.CUSTOM_BLOCKS).register();
 	}
 }

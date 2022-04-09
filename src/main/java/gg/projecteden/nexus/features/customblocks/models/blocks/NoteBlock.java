@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.customblocks.models.blocks;
 import gg.projecteden.nexus.features.customblocks.models.ICustomBlock;
 import lombok.NonNull;
 import org.bukkit.Instrument;
+import org.jetbrains.annotations.NotNull;
 
 public class NoteBlock implements ICustomBlock {
 	@Override
@@ -16,7 +17,7 @@ public class NoteBlock implements ICustomBlock {
 	}
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Note Block";
 	}
 

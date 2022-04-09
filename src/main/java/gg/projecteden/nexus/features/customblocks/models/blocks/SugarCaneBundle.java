@@ -1,9 +1,11 @@
 package gg.projecteden.nexus.features.customblocks.models.blocks;
 
 import gg.projecteden.nexus.features.customblocks.models.ICustomBlock;
+import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import lombok.NonNull;
 import org.bukkit.Instrument;
-import org.bukkit.inventory.Recipe;
+import org.bukkit.Material;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class SugarCaneBundle implements ICustomBlock {
@@ -18,7 +20,7 @@ public class SugarCaneBundle implements ICustomBlock {
 	}
 
 	@Override
-	public String getName() {
+	public @NotNull String getName() {
 		return "Bundle of Sugar Cane";
 	}
 
@@ -33,8 +35,8 @@ public class SugarCaneBundle implements ICustomBlock {
 	}
 
 	@Override
-	public @Nullable Recipe getRecipe() {
-		return null; //TODO
+	public @Nullable RecipeBuilder<?> getRecipe() {
+		return compacted(Material.SUGAR_CANE);
 	}
 
 	@Override

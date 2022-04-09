@@ -31,7 +31,9 @@ public enum RecipeType {
 	FUNCTIONAL(Material.CHEST, 0, true),
 	DECORATION(Material.AMETHYST_SHARD, 4, true),
 	ARMOR(Material.DIAMOND_CHESTPLATE, 0, true),
-	FURNACE(Material.FURNACE);
+	FURNACE(Material.FURNACE),
+	CUSTOM_BLOCKS(Material.PAPER, 20051, true),
+	;
 
 	private final Material material;
 	private final int customModelData;
