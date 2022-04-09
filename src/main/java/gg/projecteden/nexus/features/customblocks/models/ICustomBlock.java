@@ -65,20 +65,20 @@ public interface ICustomBlock {
 
 	// Sounds
 
-	default String getBreakSound() {
-		return Sound.BLOCK_WOOD_BREAK.getKey().getKey();
+	default Sound getBreakSound() {
+		return Sound.BLOCK_WOOD_BREAK;
 	}
 
-	default String getPlaceSound() {
-		return Sound.BLOCK_WOOD_PLACE.getKey().getKey();
+	default Sound getPlaceSound() {
+		return Sound.BLOCK_WOOD_PLACE;
 	}
 
-	default String getStepSound() {
-		return Sound.BLOCK_WOOD_STEP.getKey().getKey();
+	default Sound getStepSound() {
+		return Sound.BLOCK_WOOD_STEP;
 	}
 
-	default String getHitSound() {
-		return Sound.BLOCK_WOOD_HIT.getKey().getKey();
+	default Sound getHitSound() {
+		return Sound.BLOCK_WOOD_HIT;
 	}
 
 	default void place(Location location, Block against, boolean sound) {

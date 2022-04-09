@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.customblocks.models;
 
+import gg.projecteden.nexus.features.customblocks.CustomBlocks;
 import gg.projecteden.nexus.features.customblocks.models.blocks.AppleCrate;
 import gg.projecteden.nexus.features.customblocks.models.blocks.BeetrootCrate;
 import gg.projecteden.nexus.features.customblocks.models.blocks.BerryCrate;
@@ -10,6 +11,8 @@ import gg.projecteden.nexus.features.customblocks.models.blocks.SugarCaneBundle;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import lombok.SneakyThrows;
 import org.bukkit.Instrument;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -44,7 +47,11 @@ public enum CustomBlock {
 	}
 
 	public static @Nullable CustomBlock fromItemstack(ItemStack itemInHand) {
-		return modelDataMap.getOrDefault(CustomModelData.of(itemInHand), null);
+		int modelData = CustomModelData.of(itemInHand);
+		if (itemInHand.getType().equals(Material.NOTE_BLOCK) && modelData == 0)
+			return CustomBlock.NOTE_BLOCK;
+
+		return modelDataMap.getOrDefault(modelData, null);
 	}
 
 	public static @Nullable CustomBlock fromNoteBlock(Block block) {
@@ -88,5 +95,34 @@ public enum CustomBlock {
 
 	public ICustomBlock get() {
 		return this.customBlock;
+	}
+
+
+	public enum SoundType {
+		PLACE,
+		BREAK,
+		STEP,
+		HIT
+	}
+
+	public void playSound(SoundType type, Block block) {
+		ICustomBlock customBlock = this.get();
+		Sound sound = null;
+		switch (type) {
+			case PLACE -> sound = customBlock.getPlaceSound();
+			case BREAK -> sound = customBlock.getBreakSound();
+			case STEP -> sound = customBlock.getStepSound();
+			case HIT -> sound = customBlock.getHitSound();
+		}
+
+		if (sound == null)
+			return;
+
+		CustomBlocks.debug(" TODO: playSound type=" + type + " - " + sound.getKey().getKey());
+
+//		new SoundBuilder(sound)
+//			.location(block)
+//			.category(SoundCategory.BLOCKS)
+//			.play();
 	}
 }

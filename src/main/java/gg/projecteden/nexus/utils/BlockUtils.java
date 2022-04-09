@@ -21,6 +21,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import org.inventivetalent.glow.GlowAPI.Color;
 import org.jetbrains.annotations.NotNull;
@@ -275,29 +276,29 @@ public class BlockUtils {
 	}
 
 	public static boolean tryPlaceEvent(@NotNull Player player, @NotNull Block block, @NotNull Block placedAgainst, Material material) {
-		return tryPlaceEvent(player, block, placedAgainst, material, null, true);
+		return tryPlaceEvent(player, block, placedAgainst, material, null, true, player.getInventory().getItemInMainHand());
 	}
 
 	public static boolean tryPlaceEvent(@NotNull Player player, @NotNull Block block, @NotNull Block placedAgainst, Material material, BlockData blockData) {
-		return tryPlaceEvent(player, block, placedAgainst, material, blockData, true);
+		return tryPlaceEvent(player, block, placedAgainst, material, blockData, true, player.getInventory().getItemInMainHand());
 	}
 
-	public static boolean tryPlaceEvent(@NotNull Player player, @NotNull Block block, @NotNull Block placedAgainst,
-										@NotNull Material material, @Nullable BlockData data, boolean applyPhysics) {
+	public static boolean tryPlaceEvent(@NotNull Player player, @NotNull Block blockPlacement, @NotNull Block placedAgainst,
+										@NotNull Material material, @Nullable BlockData data, boolean applyPhysics, ItemStack itemInHand) {
 		// copies current data to send in event and to restore if event is cancelled
-		BlockState currentState = block.getState();
-		Material currentMaterial = block.getType();
+		BlockState currentState = blockPlacement.getState();
+		Material currentMaterial = blockPlacement.getType();
 		BlockData currentData = currentState.getBlockData();
 
-		block.setType(material, applyPhysics);
+		blockPlacement.setType(material, applyPhysics);
 		if (data != null)
-			block.setBlockData(data, applyPhysics);
+			blockPlacement.setBlockData(data, applyPhysics);
 
 		// ensure no plugins are blocking placing here
-		BlockPlaceEvent event = new BlockPlaceEvent(block, block.getState(), placedAgainst, player.getInventory().getItemInMainHand(), player, true, EquipmentSlot.HAND);
+		BlockPlaceEvent event = new BlockPlaceEvent(blockPlacement, blockPlacement.getState(), placedAgainst, itemInHand, player, true, EquipmentSlot.HAND);
 		if (!event.callEvent() || !event.canBuild()) {
-			block.setType(currentMaterial, false);
-			block.setBlockData(currentData, false); // revert block
+			blockPlacement.setType(currentMaterial, false);
+			blockPlacement.setBlockData(currentData, false); // revert blockPlacement
 			return false;
 		}
 

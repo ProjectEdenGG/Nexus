@@ -26,7 +26,8 @@ public class NoteBlockData {
 	double volume = 1.0;
 	Instrument blockInstrument;
 	int blockStep;
-	boolean powered = false;
+	boolean powered;
+	boolean interacted;
 
 	public NoteBlockData(UUID uuid, Block block) {
 		NoteBlock noteBlock = ((NoteBlock) block.getBlockData());
@@ -66,12 +67,6 @@ public class NoteBlockData {
 	}
 
 	public void play(Location location) {
-		// if data is not powered, return
-//		if(!this.powered) {
-//			Dev.WAKKA.send("Data Play: Powered=false, returning");
-//			return;
-//		}
-
 		this.instrument = NoteBlockInstrument.getInstrument(location.getBlock().getRelative(BlockFace.DOWN).getType());
 
 		new SoundBuilder(this.instrument.getSound())
@@ -86,6 +81,8 @@ public class NoteBlockData {
 			.offset(this.step / 24.0, 0, 0)
 			.count(0)
 			.spawn();
+
+		this.setInteracted(false);
 	}
 
 	public boolean exists() {

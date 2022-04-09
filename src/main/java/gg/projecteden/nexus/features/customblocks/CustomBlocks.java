@@ -15,11 +15,10 @@ import java.util.List;
 
 /*
 	TODO:
-		Custom Block Bugs:
-			fix placing & breaking
-		Note Block Bugs:
-			Some redstone interaction with noteblocks causes the noteblock to play multiple times, when it shouldn't
-			*When note blocks play, if they are in a group, it causes a infinite loop of block updates and crashes the server: "recursion depth became negative: -1"
+		- ICustomBlock#place & #tryPlace
+		- Sounds
+		- Add support for sideways placement
+		- Add & register recipes
  */
 @Environments(Env.TEST)
 public class CustomBlocks extends Feature {
