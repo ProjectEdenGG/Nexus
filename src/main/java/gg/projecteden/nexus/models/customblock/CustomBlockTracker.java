@@ -33,7 +33,6 @@ public class CustomBlockTracker implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private Map<Integer, Map<Integer, Map<Integer, CustomBlockData>>> customBlockMap = new LinkedHashMap<>();
-	private transient Map<Location, CustomBlockData> locationMap = new HashMap<>();
 
 	private void validate(@NonNull Location location) {
 		if (!location.getWorld().getUID().equals(uuid))
@@ -63,24 +62,22 @@ public class CustomBlockTracker implements PlayerOwnedObject {
 	}
 
 	public Map<Location, CustomBlockData> getLocationMap() {
-		if (this.locationMap == null || this.locationMap.isEmpty()) {
-			this.locationMap = new HashMap<>();
-			World world = getWorld();
-			Map<Integer, Map<Integer, Map<Integer, CustomBlockData>>> locationMap = this.getCustomBlockMap();
-			for (Integer x : locationMap.keySet()) {
-				for (Integer z : locationMap.get(x).keySet()) {
-					for (Integer y : locationMap.get(x).get(z).keySet()) {
-						CustomBlockData data = locationMap.get(x).get(z).getOrDefault(y, null);
-						if (data != null) {
-							Location location = new Location(world, x, y, z);
-							this.locationMap.put(location, data);
-						}
+		Map<Location, CustomBlockData> resultMap = new HashMap<>();
+		World world = getWorld();
+		Map<Integer, Map<Integer, Map<Integer, CustomBlockData>>> locationMap = this.getCustomBlockMap();
+		for (Integer x : locationMap.keySet()) {
+			for (Integer z : locationMap.get(x).keySet()) {
+				for (Integer y : locationMap.get(x).get(z).keySet()) {
+					CustomBlockData data = locationMap.get(x).get(z).getOrDefault(y, null);
+					if (data.exists()) {
+						Location location = new Location(world, x, y, z);
+						resultMap.put(location, data);
 					}
 				}
 			}
 		}
 
-		return this.locationMap;
+		return resultMap;
 	}
 
 	public @Nullable World getWorld() {

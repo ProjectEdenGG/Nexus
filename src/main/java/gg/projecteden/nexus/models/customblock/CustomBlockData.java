@@ -29,7 +29,7 @@ public class CustomBlockData {
 	}
 
 	public boolean exists() {
-		return this.placerUUID != null;
+		return this.placerUUID != null && getCustomBlock() != null;
 	}
 
 	public boolean isNoteBlock() {
@@ -54,15 +54,4 @@ public class CustomBlockData {
 		return this.noteBlockData;
 	}
 
-	public CustomBlockType getType() {
-		if (this.isNoteBlock())
-			return CustomBlockType.NOTE_BLOCK;
-		return CustomBlockType.CUSTOM;
-	}
-
-
-	public enum CustomBlockType {
-		CUSTOM,
-		NOTE_BLOCK;
-	}
 }

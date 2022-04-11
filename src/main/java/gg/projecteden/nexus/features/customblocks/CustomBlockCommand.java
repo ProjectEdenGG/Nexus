@@ -11,11 +11,15 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.models.customblock.CustomBlockData;
 import gg.projecteden.nexus.models.customblock.CustomBlockTracker;
 import gg.projecteden.nexus.models.customblock.CustomBlockTrackerService;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Location;
 import org.bukkit.World;
 
 import java.util.Map;
+import java.util.UUID;
+
+import static gg.projecteden.utils.UUIDUtils.UUID0;
 
 @Permission(Group.ADMIN)
 public class CustomBlockCommand extends CustomCommand {
@@ -33,13 +37,22 @@ public class CustomBlockCommand extends CustomCommand {
 		tracker = trackerService.fromWorld(world);
 		Map<Location, CustomBlockData> locationMap = tracker.getLocationMap();
 		if (locationMap.isEmpty())
-			throw new InvalidInputException("This world has no saved note blocks");
+			throw new InvalidInputException("This world has no saved custom blocks");
 
 		send("World: " + world.getName());
 
 		for (Location location : locationMap.keySet()) {
 			CustomBlockData data = locationMap.get(location);
-			send(" " + StringUtils.getCoordinateString(location) + ": " + data.getPlacerUUID() + " Type: " + data.getType());
+			CustomBlock customBlock = data.getCustomBlock();
+			if (customBlock == null)
+				continue;
+
+			UUID uuid = data.getPlacerUUID();
+			String playerName = "Unknown";
+			if (!UUID0.equals(uuid))
+				playerName = PlayerUtils.getPlayer(uuid).getName();
+
+			send(" " + StringUtils.getCoordinateString(location) + ": " + StringUtils.camelCase(customBlock.name()) + " - " + playerName);
 		}
 	}
 

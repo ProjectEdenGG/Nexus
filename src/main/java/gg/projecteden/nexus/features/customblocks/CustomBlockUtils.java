@@ -20,7 +20,7 @@ public class CustomBlockUtils {
 	private static final CustomBlockTrackerService trackerService = new CustomBlockTrackerService();
 	private static CustomBlockTracker tracker;
 
-	public static void placeBlockDatabase(UUID uuid, CustomBlock customBlock, Location location, BlockFace facing) {
+	public static CustomBlockData placeBlockDatabase(UUID uuid, CustomBlock customBlock, Location location, BlockFace facing) {
 		tracker = trackerService.fromWorld(location);
 		CustomBlockData data = new CustomBlockData(uuid, customBlock.get().getCustomModelData(), facing);
 		if (customBlock.equals(CustomBlock.NOTE_BLOCK))
@@ -28,6 +28,7 @@ public class CustomBlockUtils {
 
 		tracker.put(location, data);
 		trackerService.save(tracker);
+		return data;
 	}
 
 	public static void breakBlockDatabase(Location location) {
@@ -58,9 +59,7 @@ public class CustomBlockUtils {
 				return null;
 			}
 
-			placeBlockDatabase(UUIDUtils.UUID0, customBlock, location, BlockFace.UP);
-			trackerService.save(tracker);
-			return getData(noteBlock, location);
+			data = placeBlockDatabase(UUIDUtils.UUID0, customBlock, location, BlockFace.UP);
 		}
 
 		return data;

@@ -14,8 +14,6 @@ import java.util.List;
 
 /*
 	TODO:
-		- proper conversions -> idr what this means to me
-		- //
 		- Sounds: Wait until SoundEvents are fixed
 		- appropriate tool/mining speed/block hardness: item digspeed attributes or potion eggects
 		ItemMeta meta = tool.getItemMeta();
