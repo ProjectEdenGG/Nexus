@@ -1,9 +1,6 @@
-package gg.projecteden.nexus.features.customblocks.listeners;
+package gg.projecteden.nexus.features.customblocks;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.customblocks.CustomBlockUtils;
-import gg.projecteden.nexus.features.customblocks.CustomBlocks;
-import gg.projecteden.nexus.features.customblocks.NoteBlockUtils;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock.SoundType;
 import gg.projecteden.nexus.features.customblocks.models.ICustomBlock;
@@ -28,6 +25,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.NotePlayEvent;
 import org.bukkit.event.inventory.InventoryCreativeEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -35,11 +34,21 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
-import static gg.projecteden.nexus.features.customblocks.CustomBlocks.isCustomNoteBlock;
 
 public class CustomBlocksListener implements Listener {
 	public CustomBlocksListener() {
 		Nexus.registerListener(this);
+	}
+
+	@EventHandler
+	public void onPlayNote(NotePlayEvent event) {
+		event.setCancelled(true);
+
+		if (!CustomBlocks.isCustomNoteBlock(event.getBlock()))
+			return;
+
+		NoteBlock noteBlock = (NoteBlock) event.getBlock().getBlockData();
+		NoteBlockUtils.play(noteBlock, event.getBlock().getLocation(), true);
 	}
 
 	@EventHandler
@@ -118,6 +127,24 @@ public class CustomBlocksListener implements Listener {
 	}
 
 	@EventHandler
+	public void onPlace(BlockPlaceEvent event) {
+		if (event.isCancelled())
+			return;
+
+		Block block = event.getBlockPlaced();
+		Block above = block.getRelative(BlockFace.UP);
+
+		if (CustomBlocks.isCustomNoteBlock(above)) {
+			NoteBlock noteBlock = (NoteBlock) above.getBlockData();
+			CustomBlockData data = CustomBlockUtils.getData(noteBlock, above.getLocation(), true);
+			if (data == null)
+				return;
+
+			data.getNoteBlockData(above, true);
+		}
+	}
+
+	@EventHandler
 	public void onBreak(BlockBreakEvent event) {
 		if (event.isCancelled())
 			return;
@@ -134,7 +161,8 @@ public class CustomBlocksListener implements Listener {
 		}
 
 		Location location = block.getLocation();
-		CustomBlockUtils.breakBlock(_customBlock, location);
+		debug("BreakBlock: " + _customBlock);
+		CustomBlockUtils.breakBlockDatabase(location);
 		if (!_customBlock.equals(CustomBlock.NOTE_BLOCK)) {
 			// change drops
 			event.setDropItems(false);
@@ -175,19 +203,26 @@ public class CustomBlocksListener implements Listener {
 		Note note;
 		boolean powered = false;
 
-		CustomBlockData customBlockData = CustomBlockUtils.getData(noteBlock, block.getLocation(), false);
-		if (customBlockData == null) {
+		CustomBlockData data = CustomBlockUtils.getData(noteBlock, block.getLocation(), false);
+		if (data == null) {
 			return;
 		}
 
-		instrument = customBlockData.getBlockInstrument();
-		note = customBlockData.getBlockNote();
+		CustomBlock _customBlock = data.getCustomBlock();
+		if (_customBlock == null) {
+			return;
+		}
 
-		if (isCustomNoteBlock(block)) {
-			NoteBlockData noteBlockData = NoteBlockUtils.getData(block);
+		ICustomBlock customBlock = _customBlock.get();
+		BlockFace facing = data.getFacing();
+
+		instrument = customBlock.getNoteBlockInstrument(facing);
+		note = customBlock.getNoteBlockNote(facing);
+
+		NoteBlockData noteBlockData = data.getNoteBlockData();
+		if (data.isNoteBlock()) {
 			powered = noteBlock.isPowered();
 			noteBlockData.setPowered(powered);
-			debug(" Set powered: " + powered);
 		}
 
 		noteBlock.setInstrument(instrument);
@@ -220,23 +255,12 @@ public class CustomBlocksListener implements Listener {
 		}
 
 		if (CustomBlocks.isCustom(clickedBlock)) {
+			NoteBlock noteBlock = (NoteBlock) clickedBlock.getBlockData();
 			boolean isChangingPitch = isChangingPitch(action, sneaking, itemInHand);
 
-			if (CustomBlocks.isCustomNoteBlock(clickedBlock)) {
-				// Interact
-				if (isInteractingNoteBlock(clickedBlock, action)) {
-					return;
-				}
-
-				// Change Pitch
-				if (isChangingPitch) {
-					event.setCancelled(true);
-					changePitch(clickedBlock, sneaking);
-				}
-			} else {
-				if (isChangingPitch)
-					event.setCancelled(true);
-
+			if (isChangingPitch) {
+				event.setCancelled(true);
+				changePitch(noteBlock, clickedBlock.getLocation(), sneaking);
 			}
 		}
 	}
@@ -270,14 +294,6 @@ public class CustomBlocksListener implements Listener {
 		return _customBlock.placeBlock(player, block, clickedBlock, clickedFace, itemInHand);
 	}
 
-	private boolean isInteractingNoteBlock(Block clickedBlock, Action action) {
-		if (!action.equals(Action.LEFT_CLICK_BLOCK))
-			return false;
-
-		NoteBlockUtils.play(clickedBlock, true);
-		return true;
-	}
-
 	private boolean isChangingPitch(Action action, boolean sneaking, ItemStack itemInHand) {
 		if (!action.equals(Action.RIGHT_CLICK_BLOCK))
 			return false;
@@ -285,10 +301,15 @@ public class CustomBlocksListener implements Listener {
 		return !sneaking || Nullables.isNullOrAir(itemInHand) || !itemInHand.getType().isBlock();
 	}
 
-	private void changePitch(Block clickedBlock, boolean sneaking) {
-		Location location = clickedBlock.getLocation();
-		NoteBlockData data = NoteBlockUtils.getData(clickedBlock, true);
+	private void changePitch(NoteBlock noteBlock, Location location, boolean sneaking) {
+		CustomBlockData data = CustomBlockUtils.getData(noteBlock, location, true);
+		if (data == null || !data.isNoteBlock())
+			return;
 
-		NoteBlockUtils.changePitch(sneaking, location, data);
+		NoteBlockData noteBlockData = data.getNoteBlockData(location.getBlock(), true);
+		if (noteBlockData == null)
+			return;
+
+		NoteBlockUtils.changePitch(sneaking, location, noteBlockData);
 	}
 }

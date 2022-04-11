@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.customblocks.models;
 
 import gg.projecteden.nexus.features.customblocks.CustomBlockUtils;
-import gg.projecteden.nexus.features.customblocks.NoteBlockUtils;
 import gg.projecteden.nexus.features.customblocks.models.blocks.AppleCrate;
 import gg.projecteden.nexus.features.customblocks.models.blocks.BeetrootCrate;
 import gg.projecteden.nexus.features.customblocks.models.blocks.BerryCrate;
@@ -131,11 +130,7 @@ public enum CustomBlock {
 
 		UUID uuid = player.getUniqueId();
 		Location location = block.getLocation();
-		if (this.equals(NOTE_BLOCK)) {
-			NoteBlockUtils.placeBlockDatabase(uuid, location);
-		} else {
-			CustomBlockUtils.placeBlockDatabase(uuid, this, location);
-		}
+		CustomBlockUtils.placeBlockDatabase(uuid, this, location, facing);
 
 		playSound(SoundType.PLACE, block);
 		ItemUtils.subtract(player, itemInHand);
@@ -148,7 +143,6 @@ public enum CustomBlock {
 		BREAK,
 		STEP,
 		HIT,
-		;
 	}
 
 	public @Nullable SoundType getSoundType(Sound sound) {

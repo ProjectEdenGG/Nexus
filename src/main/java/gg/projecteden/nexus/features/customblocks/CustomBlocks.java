@@ -1,8 +1,6 @@
 package gg.projecteden.nexus.features.customblocks;
 
 import gg.projecteden.annotations.Environments;
-import gg.projecteden.nexus.features.customblocks.listeners.CustomBlocksListener;
-import gg.projecteden.nexus.features.customblocks.listeners.NoteBlocksListener;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.Nullables;
@@ -17,9 +15,6 @@ import java.util.List;
 /*
 	TODO:
 		- proper conversions -> idr what this means to me
-		- When placing a note block:
-			- on top of another note block, if the player is NOT sneaking, the above changes instrument, and below increases pitch
-			- against another note block, if the player is NOT sneaking, the against changes instrument
 		- //
 		- Sounds: Wait until SoundEvents are fixed
 		- appropriate tool/mining speed/block hardness: item digspeed attributes or potion eggects
@@ -33,7 +28,6 @@ public class CustomBlocks extends Feature {
 	@Override
 	public void onStart() {
 		new CustomBlocksListener();
-		new NoteBlocksListener();
 	}
 
 	public static void debug(String message) {

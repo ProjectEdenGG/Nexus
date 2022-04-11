@@ -13,29 +13,19 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.NoteBlock;
 
-import java.util.UUID;
-
-import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
-
 @Data
 @NoArgsConstructor
 public class NoteBlockData {
-	UUID placerUUID = null;
 	NoteBlockInstrument instrument = NoteBlockInstrument.PIANO;
 	int step = 0;
 	double volume = 1.0;
 	boolean powered;
 	boolean interacted;
 
-	public NoteBlockData(UUID uuid, Block block) {
+	public NoteBlockData(Block block) {
 		NoteBlock noteBlock = ((NoteBlock) block.getBlockData());
-		this.placerUUID = uuid;
 		this.instrument = NoteBlockInstrument.getInstrument(block);
 		this.step = noteBlock.getNote().getId();
-	}
-
-	public boolean exists() {
-		return placerUUID != null;
 	}
 
 	public void incrementStep() {
@@ -67,7 +57,6 @@ public class NoteBlockData {
 	}
 
 	public void play(Location location) {
-		debug("3");
 		this.instrument = NoteBlockInstrument.getInstrument(location.getBlock().getRelative(BlockFace.DOWN).getType());
 
 		new SoundBuilder(this.instrument.getSound())

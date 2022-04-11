@@ -1,13 +1,16 @@
 package gg.projecteden.nexus.models.customblock;
 
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
-import gg.projecteden.nexus.features.customblocks.models.ICustomBlock;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import org.bukkit.Instrument;
+import org.bukkit.Material;
 import org.bukkit.Note;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.type.NoteBlock;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -15,24 +18,51 @@ import java.util.UUID;
 @NoArgsConstructor
 public class CustomBlockData {
 	UUID placerUUID = null;
-	@NonNull CustomBlock customBlock;
-	@NonNull Instrument blockInstrument;
-	int blockStep;
+	int modelData;
+	@NonNull BlockFace facing;
+	NoteBlockData noteBlockData = null;
 
-	public CustomBlockData(UUID uuid, @NotNull CustomBlock customBlock) {
+	public CustomBlockData(UUID uuid, int modelData, @NotNull BlockFace facing) {
 		this.placerUUID = uuid;
-		this.customBlock = customBlock;
+		this.modelData = modelData;
+		this.facing = facing;
 	}
 
 	public boolean exists() {
-		return placerUUID != null;
+		return this.placerUUID != null;
 	}
 
-	public ICustomBlock getCustomBlock() {
-		return customBlock.get();
+	public boolean isNoteBlock() {
+		return this.noteBlockData != null;
 	}
 
-	public Note getBlockNote() {
-		return new Note(this.getBlockStep());
+	public @Nullable CustomBlock getCustomBlock() {
+		return CustomBlock.fromModelData(modelData);
+	}
+
+	public @Nullable NoteBlockData getNoteBlockData(Block block, boolean reset) {
+		if (this.noteBlockData == null) {
+			if (reset) {
+				NoteBlock noteBlock = (NoteBlock) Material.NOTE_BLOCK.createBlockData();
+				noteBlock.setInstrument(CustomBlock.NOTE_BLOCK.get().getNoteBlockInstrument());
+				noteBlock.setNote(new Note(CustomBlock.NOTE_BLOCK.get().getNoteBlockStep()));
+				block.setBlockData(noteBlock, false);
+			}
+			this.noteBlockData = new NoteBlockData(block);
+		}
+
+		return this.noteBlockData;
+	}
+
+	public CustomBlockType getType() {
+		if (this.isNoteBlock())
+			return CustomBlockType.NOTE_BLOCK;
+		return CustomBlockType.CUSTOM;
+	}
+
+
+	public enum CustomBlockType {
+		CUSTOM,
+		NOTE_BLOCK;
 	}
 }

@@ -58,6 +58,10 @@ public interface ICustomBlock {
 		return getNoteBlockStep();
 	}
 
+	default Note getNoteBlockNote(BlockFace facing) {
+		return new Note(this.getNoteBlockStep(facing));
+	}
+
 	// Item
 
 	@NonNull String getName();
