@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.models.noteblock;
+package gg.projecteden.nexus.models.customblock;
 
 import gg.projecteden.mongodb.MongoService;
 import gg.projecteden.mongodb.annotations.ObjectClass;

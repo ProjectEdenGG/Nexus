@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.store.perks.autoinventory.AutoInventoryFeat
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.Tool;
 import lombok.NoArgsConstructor;
@@ -58,19 +59,8 @@ public class AutoTool implements Listener {
 				return;
 		}
 
-		ItemStack[] contents = getHotbarContents(player);
-		ItemStack bestTool = getBestTool(Arrays.asList(contents), block, null);
-
-		if (isNullOrAir(bestTool))
-			return;
-		if (bestTool.equals(mainHand))
-			return;
-
-		for (int i = 0; i <= contents.length; i++)
-			if (bestTool.equals(contents[i])) {
-				player.getInventory().setHeldItemSlot(i);
-				return;
-			}
+		List<ItemStack> contents = Arrays.stream(getHotbarContents(player)).toList();
+		PlayerUtils.selectHotbarItem(player, getBestTool(contents, block, null));
 	}
 
 	@Nullable

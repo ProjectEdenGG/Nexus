@@ -23,7 +23,7 @@ public class NoteBlocksListener implements Listener {
 		if (!CustomBlocks.isCustomNoteBlock(event.getBlock()))
 			return;
 
-		NoteBlockUtils.play(event.getBlock());
+		NoteBlockUtils.play(event.getBlock(), true);
 	}
 
 	@EventHandler

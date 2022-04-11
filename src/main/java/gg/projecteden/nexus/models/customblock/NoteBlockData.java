@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.models.noteblock;
+package gg.projecteden.nexus.models.customblock;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import gg.projecteden.nexus.features.customblocks.models.NoteBlockInstrument;
@@ -6,9 +6,7 @@ import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.utils.MathUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.bukkit.Instrument;
 import org.bukkit.Location;
-import org.bukkit.Note;
 import org.bukkit.Particle;
 import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
@@ -17,6 +15,8 @@ import org.bukkit.block.data.type.NoteBlock;
 
 import java.util.UUID;
 
+import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
+
 @Data
 @NoArgsConstructor
 public class NoteBlockData {
@@ -24,8 +24,6 @@ public class NoteBlockData {
 	NoteBlockInstrument instrument = NoteBlockInstrument.PIANO;
 	int step = 0;
 	double volume = 1.0;
-	Instrument blockInstrument;
-	int blockStep;
 	boolean powered;
 	boolean interacted;
 
@@ -34,8 +32,10 @@ public class NoteBlockData {
 		this.placerUUID = uuid;
 		this.instrument = NoteBlockInstrument.getInstrument(block);
 		this.step = noteBlock.getNote().getId();
-		this.blockInstrument = noteBlock.getInstrument();
-		this.blockStep = this.step;
+	}
+
+	public boolean exists() {
+		return placerUUID != null;
 	}
 
 	public void incrementStep() {
@@ -45,7 +45,7 @@ public class NoteBlockData {
 
 	public void decrementStep() {
 		int _step = (this.step - 1);
-		this.step = _step < 0 ? 25 : _step;
+		this.step = _step < 0 ? 24 : _step;
 	}
 
 	public void setStep(int step) {
@@ -67,6 +67,7 @@ public class NoteBlockData {
 	}
 
 	public void play(Location location) {
+		debug("3");
 		this.instrument = NoteBlockInstrument.getInstrument(location.getBlock().getRelative(BlockFace.DOWN).getType());
 
 		new SoundBuilder(this.instrument.getSound())
@@ -83,13 +84,5 @@ public class NoteBlockData {
 			.spawn();
 
 		this.setInteracted(false);
-	}
-
-	public boolean exists() {
-		return placerUUID != null;
-	}
-
-	public Note getBlockNote() {
-		return new Note(this.getBlockStep());
 	}
 }

@@ -3,9 +3,9 @@ package gg.projecteden.nexus.features.customblocks;
 import gg.projecteden.nexus.features.customblocks.events.NoteBlockPlayEvent;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.models.noteblock.NoteBlockData;
-import gg.projecteden.nexus.models.noteblock.NoteBlockTracker;
-import gg.projecteden.nexus.models.noteblock.NoteBlockTrackerService;
+import gg.projecteden.nexus.models.customblock.NoteBlockData;
+import gg.projecteden.nexus.models.customblock.NoteBlockTracker;
+import gg.projecteden.nexus.models.customblock.NoteBlockTrackerService;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.Tasks;
@@ -19,7 +19,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.NoteBlock;
 import org.bukkit.block.data.type.Observer;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -29,35 +28,31 @@ import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
 
 public class NoteBlockUtils {
 	private static final Set<BlockFace> neighborFaces = Set.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN);
-	private static final NoteBlockTrackerService trackerService = new NoteBlockTrackerService();
-	private static NoteBlockTracker tracker;
+	private static final NoteBlockTrackerService noteBlockTrackerService = new NoteBlockTrackerService();
+	private static NoteBlockTracker noteBlockTracker;
 
-	public static void placeBlock(Player player, Location location) {
-		placeBlock(player.getUniqueId(), location);
-	}
-
-	public static NoteBlockData placeBlock(UUID uuid, Location location) {
-		tracker = trackerService.fromWorld(location);
+	public static NoteBlockData placeBlockDatabase(UUID uuid, Location location) {
+		noteBlockTracker = noteBlockTrackerService.fromWorld(location);
 		NoteBlockData data = new NoteBlockData(uuid, location.getBlock());
-		tracker.put(location, data);
-		trackerService.save(tracker);
 
+		noteBlockTracker.put(location, data);
+		noteBlockTrackerService.save(noteBlockTracker);
 
 		return data;
 	}
 
 	public static void breakBlock(Location location) {
-		tracker = trackerService.fromWorld(location);
-		NoteBlockData data = tracker.get(location);
+		noteBlockTracker = noteBlockTrackerService.fromWorld(location);
+		NoteBlockData data = noteBlockTracker.get(location);
 		if (!data.exists())
 			return;
 
-		tracker.remove(location);
-		trackerService.save(tracker);
+		noteBlockTracker.remove(location);
+		noteBlockTrackerService.save(noteBlockTracker);
 	}
 
 	public static void changePitch(boolean sneaking, Location location, NoteBlockData data) {
-		tracker = trackerService.fromWorld(location);
+		noteBlockTracker = noteBlockTrackerService.fromWorld(location);
 
 		if (!sneaking)
 			data.incrementStep();
@@ -66,8 +61,8 @@ public class NoteBlockUtils {
 
 		data.setInteracted(true);
 
-		tracker.put(location, data);
-		trackerService.save(tracker);
+		noteBlockTracker.put(location, data);
+		noteBlockTrackerService.save(noteBlockTracker);
 
 		Block block = location.getBlock();
 		play(block, data);
@@ -105,7 +100,7 @@ public class NoteBlockUtils {
 	}
 
 	public static void changeVolume(boolean sneaking, Location location, NoteBlockData data) {
-		tracker = trackerService.fromWorld(location);
+		noteBlockTracker = noteBlockTrackerService.fromWorld(location);
 
 		if (!sneaking)
 			data.incrementStep();
@@ -114,8 +109,8 @@ public class NoteBlockUtils {
 
 		data.setInteracted(true);
 
-		tracker.put(location, data);
-		trackerService.save(tracker);
+		noteBlockTracker.put(location, data);
+		noteBlockTrackerService.save(noteBlockTracker);
 
 		play(location.getBlock(), data);
 	}
@@ -127,10 +122,6 @@ public class NoteBlockUtils {
 			data.setInteracted(true);
 
 		play(block, data);
-	}
-
-	public static void play(Block block) {
-		play(block, getData(block));
 	}
 
 	public static void play(Block block, NoteBlockData data) {
@@ -162,18 +153,18 @@ public class NoteBlockUtils {
 		});
 	}
 
-	public static NoteBlockData getData(Block block) {
+	public static @NotNull NoteBlockData getData(Block block) {
 		return getData(block, false);
 	}
 
-	@NotNull
-	public static NoteBlockData getData(Block block, boolean reset) {
+
+	public static @NotNull NoteBlockData getData(Block block, boolean reset) {
 		Location location = block.getLocation();
-		tracker = trackerService.fromWorld(location);
-		NoteBlockData data = tracker.get(location);
+		noteBlockTracker = noteBlockTrackerService.fromWorld(location);
+		NoteBlockData data = noteBlockTracker.get(location);
 		if (!data.exists()) {
-			debug("No data exists for that location, creating");
-			data = placeBlock(UUIDUtils.UUID0, location);
+			debug("No note block data exists for that location, creating");
+			data = placeBlockDatabase(UUIDUtils.UUID0, location);
 
 			if (reset) {
 				NoteBlock noteBlock = (NoteBlock) Material.NOTE_BLOCK.createBlockData();
@@ -183,6 +174,7 @@ public class NoteBlockUtils {
 			}
 		}
 
+		debug("got the data");
 		return data;
 	}
 

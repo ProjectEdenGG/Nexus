@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.customblocks.models;
 
+import gg.projecteden.nexus.features.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.customblocks.NoteBlockUtils;
 import gg.projecteden.nexus.features.customblocks.models.blocks.AppleCrate;
 import gg.projecteden.nexus.features.customblocks.models.blocks.BeetrootCrate;
@@ -14,13 +15,16 @@ import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
+import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.bukkit.Instrument;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -28,6 +32,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
+
+import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
 
 public enum CustomBlock {
 	NOTE_BLOCK(NoteBlock.class),
@@ -68,11 +75,7 @@ public enum CustomBlock {
 		return modelDataMap.getOrDefault(modelData, null);
 	}
 
-	public static @Nullable CustomBlock fromNoteBlock(Block block) {
-		return fromNoteBlock((org.bukkit.block.data.type.NoteBlock) block.getBlockData());
-	}
-
-	public static @Nullable CustomBlock fromNoteBlock(org.bukkit.block.data.type.NoteBlock noteBlock) {
+	public static @Nullable CustomBlock fromNoteBlock(@NonNull org.bukkit.block.data.type.NoteBlock noteBlock) {
 		List<CustomBlock> sideWays = new ArrayList<>();
 		for (CustomBlock customBlock : values()) {
 			ICustomBlock block = customBlock.get();
@@ -86,6 +89,8 @@ public enum CustomBlock {
 				return customBlock;
 		}
 
+		// Sideways checks
+
 		for (CustomBlock customBlock : sideWays) {
 			ICustomBlock block = customBlock.get();
 			if (checkData(block.getNoteBlockInstrument(), block.getNoteBlockStep(), noteBlock))
@@ -98,6 +103,7 @@ public enum CustomBlock {
 				return customBlock;
 		}
 
+		debug("CustomBlock: Couldn't find custom block with: " + noteBlock.getInstrument() + " " + noteBlock.getNote().getId());
 		return null;
 	}
 
@@ -111,12 +117,10 @@ public enum CustomBlock {
 		return this.customBlock;
 	}
 
-	public boolean placeBlock(Player player, Block block, Block placeAgainst, ItemStack itemInHand) {
+	public boolean placeBlock(Player player, Block block, Block placeAgainst, BlockFace facing, ItemStack itemInHand) {
 		ICustomBlock customBlock = this.get();
-		Instrument instrument = customBlock.getNoteBlockInstrument();
-		int step = customBlock.getNoteBlockStep();
-
-		// TODO: sideways
+		Instrument instrument = customBlock.getNoteBlockInstrument(facing);
+		int step = customBlock.getNoteBlockStep(facing);
 
 		org.bukkit.block.data.type.NoteBlock noteBlock = (org.bukkit.block.data.type.NoteBlock) Material.NOTE_BLOCK.createBlockData();
 		noteBlock.setInstrument(instrument);
@@ -125,11 +129,17 @@ public enum CustomBlock {
 		if (!BlockUtils.tryPlaceEvent(player, block, placeAgainst, Material.NOTE_BLOCK, noteBlock, false, new ItemStack(Material.NOTE_BLOCK)))
 			return false;
 
-		if (CustomBlock.NOTE_BLOCK.equals(this))
-			NoteBlockUtils.placeBlock(player, block.getLocation());
+		UUID uuid = player.getUniqueId();
+		Location location = block.getLocation();
+		if (this.equals(NOTE_BLOCK)) {
+			NoteBlockUtils.placeBlockDatabase(uuid, location);
+		} else {
+			CustomBlockUtils.placeBlockDatabase(uuid, this, location);
+		}
 
 		playSound(SoundType.PLACE, block);
 		ItemUtils.subtract(player, itemInHand);
+		player.swingMainHand();
 		return true;
 	}
 

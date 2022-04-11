@@ -10,18 +10,18 @@ import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.utils.Env;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.type.NoteBlock;
 
 import java.util.List;
 
 /*
 	TODO:
-		- custom blocks database, proper conversions
-		- (while sneaking only) When placing a noteblock ontop of another noteblock, the above changes instrument, and the below increases pitch
-		- Add support for sideways placement
-		- creative pick block -> switch active slot
+		- proper conversions -> idr what this means to me
+		- When placing a note block:
+			- on top of another note block, if the player is NOT sneaking, the above changes instrument, and below increases pitch
+			- against another note block, if the player is NOT sneaking, the against changes instrument
 		- //
 		- Sounds: Wait until SoundEvents are fixed
-
 		- appropriate tool/mining speed/block hardness: item digspeed attributes or potion eggects
 		ItemMeta meta = tool.getItemMeta();
 		UUID SLOW_DIG = UUID.fromString("55FCED67-E92A-486E-9800-B47F202C4386");
@@ -55,9 +55,12 @@ public class CustomBlocks extends Feature {
 		if (!isCustom(block))
 			return false;
 
-		CustomBlock customBlock = CustomBlock.fromNoteBlock(block);
-		if (customBlock == null)
+		NoteBlock noteBlock = (NoteBlock) block.getBlockData();
+		CustomBlock customBlock = CustomBlock.fromNoteBlock(noteBlock);
+		if (customBlock == null) {
+			debug("isCustomNoteBlock: CustomBlock == null");
 			return false;
+		}
 
 		return CustomBlock.NOTE_BLOCK.equals(customBlock);
 	}
