@@ -109,8 +109,4 @@ public class NoteBlockUtils {
 			}
 		});
 	}
-
-	public static String customSound(String instrument) {
-		return "minecraft:custom.noteblock." + instrument;
-	}
 }

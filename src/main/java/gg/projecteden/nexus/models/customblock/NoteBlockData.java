@@ -10,7 +10,6 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.NoteBlock;
 
 @Data
@@ -57,7 +56,7 @@ public class NoteBlockData {
 	}
 
 	public void play(Location location) {
-		this.instrument = NoteBlockInstrument.getInstrument(location.getBlock().getRelative(BlockFace.DOWN).getType());
+		this.instrument = NoteBlockInstrument.getInstrument(location.getBlock());
 
 		new SoundBuilder(this.instrument.getSound())
 			.location(location)

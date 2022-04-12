@@ -60,27 +60,17 @@ public class CustomBlockUtils {
 			newLocMap.put(data, blocksToMove.get(data).getSecond());
 		}
 
-//		debug("--- Start");
-
 		// remove
 		for (CustomBlockData data : currentLocMap.keySet()) {
 			Location currentLocation = currentLocMap.get(data);
 			tracker.remove(currentLocation);
-
-//			debug("PistonEvent: " + data.getCustomBlock().name() + " | " + StringUtils.getCoordinateString(currentLocation));
 		}
-
-//		debug("---");
 
 		// place
 		for (CustomBlockData data : newLocMap.keySet()) {
 			Location newLocation = newLocMap.get(data);
 			tracker.put(newLocation, data);
-
-//			debug("Moving Block: " + data.getCustomBlock().name() + " | " + StringUtils.getCoordinateString(newLocation));
 		}
-
-//		debug("--- End");
 
 		trackerService.save(tracker);
 	}
@@ -103,7 +93,7 @@ public class CustomBlockUtils {
 		return data;
 	}
 
-	private static BlockFace getFacing(CustomBlock _customBlock, NoteBlock noteBlock) {
+	public static BlockFace getFacing(CustomBlock _customBlock, NoteBlock noteBlock) {
 		ICustomBlock customBlock = _customBlock.get();
 		if (!customBlock.canPlaceSideways())
 			return BlockFace.UP;

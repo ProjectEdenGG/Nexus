@@ -171,7 +171,6 @@ public class CustomBlocksListener implements Listener {
 		}
 
 		Location location = block.getLocation();
-		debug("BreakBlock: " + _customBlock);
 		CustomBlockUtils.breakBlockDatabase(location);
 		if (!_customBlock.equals(CustomBlock.NOTE_BLOCK)) {
 			// change drops

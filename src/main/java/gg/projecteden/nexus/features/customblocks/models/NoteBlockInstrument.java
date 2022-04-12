@@ -1,13 +1,14 @@
 package gg.projecteden.nexus.features.customblocks.models;
 
-import gg.projecteden.nexus.features.customblocks.NoteBlockUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NonNull;
 import org.bukkit.Instrument;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.type.NoteBlock;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -39,9 +40,12 @@ public enum NoteBlockInstrument {
 	BANJO(getSoundFrom(Instrument.BANJO), Material.HAY_BLOCK),
 	PLING(getSoundFrom(Instrument.PLING), Material.GLOWSTONE),
 	// Custom
-	MARIMBA(NoteBlockUtils.customSound("marimba"), MaterialTag.STRIPPED_LOGS.getValues()),
-	TRUMPET(NoteBlockUtils.customSound("trumpet"), Material.COPPER_BLOCK, Material.WAXED_COPPER_BLOCK),
-	BUZZ(NoteBlockUtils.customSound("buzz"), MaterialTag.BEEHIVES.getValues()),
+	MARIMBA(customSound("marimba"), MaterialTag.STRIPPED_LOGS.getValues()),
+	TRUMPET(customSound("trumpet"), Material.COPPER_BLOCK, Material.WAXED_COPPER_BLOCK),
+	BUZZ(customSound("buzz"), Material.HONEYCOMB_BLOCK),
+	KALIMBA(customSound("kalimba"), Material.REDSTONE_LAMP),
+	KOTO(customSound("koto"), CustomBlock.SUGAR_CANE_BUNDLE), //TODO: better material
+	TAIKO(customSound("taiko"), CustomBlock.APPLE_CRATE), //TODO: better material
 	;
 
 	@SafeVarargs
@@ -57,6 +61,7 @@ public enum NoteBlockInstrument {
 	@Getter
 	private final String sound;
 	private Set<Material> materials = new HashSet<>();
+	private ICustomBlock customBlock = null;
 
 	public Set<Material> getMaterials() {
 		if (this.equals(PIANO)) {
@@ -87,6 +92,12 @@ public enum NoteBlockInstrument {
 		this.materials.addAll(fromTags);
 	}
 
+	NoteBlockInstrument(String sound, @NonNull CustomBlock customBlock) {
+		this.sound = sound;
+		this.materials = Collections.singleton(Material.NOTE_BLOCK);
+		this.customBlock = customBlock.get();
+	}
+
 	private static String getSoundFrom(Instrument instrument) {
 		String name = switch (instrument) {
 			case BASS_DRUM -> "basedrum";
@@ -111,19 +122,31 @@ public enum NoteBlockInstrument {
 		return result;
 	}
 
-	public static NoteBlockInstrument getInstrument(Block noteBlock) {
-		return getInstrument(noteBlock.getRelative(BlockFace.DOWN).getType());
-	}
-
-	public static NoteBlockInstrument getInstrument(Material material) {
+	public static NoteBlockInstrument getInstrument(Block block) {
+		Block below = block.getRelative(BlockFace.DOWN);
+		Material belowType = below.getType();
 		for (NoteBlockInstrument instrument : NoteBlockInstrument.values()) {
 			if (instrument.equals(PIANO))
 				continue;
 
-			if (instrument.getMaterials().contains(material))
-				return instrument;
+			if (instrument.customBlock == null) {
+				if (instrument.getMaterials().contains(belowType))
+					return instrument;
+			} else {
+				if (belowType.equals(Material.NOTE_BLOCK)) {
+					ICustomBlock instrumentCustomBlock = instrument.customBlock;
+					CustomBlock _belowCustomBlock = CustomBlock.fromNoteBlock((NoteBlock) below.getBlockData());
+					if (_belowCustomBlock != null && instrumentCustomBlock.equals(_belowCustomBlock.get())) {
+						return instrument;
+					}
+				}
+			}
 		}
 
 		return PIANO;
+	}
+
+	private static String customSound(String instrument) {
+		return "minecraft:custom.noteblock." + instrument;
 	}
 }
