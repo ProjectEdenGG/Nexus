@@ -38,8 +38,10 @@ public enum NoteBlockInstrument {
 	BIT(getSoundFrom(Instrument.BIT), Material.EMERALD_BLOCK),
 	BANJO(getSoundFrom(Instrument.BANJO), Material.HAY_BLOCK),
 	PLING(getSoundFrom(Instrument.PLING), Material.GLOWSTONE),
+	// Custom
 	MARIMBA(NoteBlockUtils.customSound("marimba"), MaterialTag.STRIPPED_LOGS.getValues()),
 	TRUMPET(NoteBlockUtils.customSound("trumpet"), Material.COPPER_BLOCK, Material.WAXED_COPPER_BLOCK),
+	BUZZ(NoteBlockUtils.customSound("buzz"), MaterialTag.BEEHIVES.getValues()),
 	;
 
 	@SafeVarargs

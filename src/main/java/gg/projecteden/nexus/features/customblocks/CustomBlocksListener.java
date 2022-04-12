@@ -212,12 +212,13 @@ public class CustomBlocksListener implements Listener {
 
 		if (CustomBlocks.isCustom(clickedBlock)) {
 			boolean isChangingPitch = isChangingPitch(action, sneaking, itemInHand);
-			if (isChangingPitch)
+			if (isChangingPitch) {
 				event.setCancelled(true);
 
-			if (CustomBlocks.isCustomNoteBlock(clickedBlock)) {
-				NoteBlock noteBlock = (NoteBlock) clickedBlock.getBlockData();
-				changePitch(noteBlock, clickedBlock.getLocation(), sneaking);
+				if (CustomBlocks.isCustomNoteBlock(clickedBlock)) {
+					NoteBlock noteBlock = (NoteBlock) clickedBlock.getBlockData();
+					changePitch(noteBlock, clickedBlock.getLocation(), sneaking);
+				}
 			}
 		}
 	}
