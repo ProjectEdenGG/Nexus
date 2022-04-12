@@ -98,13 +98,18 @@ public class CustomBlockUtils {
 		if (!customBlock.canPlaceSideways())
 			return BlockFace.UP;
 
+		if (isFacing(BlockFace.NORTH, customBlock, noteBlock))
+			return BlockFace.NORTH;
+		else if (isFacing(BlockFace.EAST, customBlock, noteBlock))
+			return BlockFace.EAST;
+
+		return BlockFace.UP;
+	}
+
+	private static boolean isFacing(BlockFace face, ICustomBlock customBlock, NoteBlock noteBlock) {
 		Instrument instrument = noteBlock.getInstrument();
 		int step = noteBlock.getNote().getId();
 
-		if (customBlock.getNoteBlockInstrument(BlockFace.NORTH) == instrument
-			&& customBlock.getNoteBlockStep(BlockFace.NORTH) == step)
-			return BlockFace.NORTH;
-
-		return BlockFace.EAST;
+		return customBlock.getNoteBlockInstrument(face) == instrument && customBlock.getNoteBlockStep(face) == step;
 	}
 }

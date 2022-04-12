@@ -25,9 +25,6 @@ import java.util.List;
 		- //
 		- Prevent swinging arm on custom blocks --> packets/mod?
 		- Sounds: Wait until SoundEvents are fixed
-
-	Known issues:
-		- If you place a custom block without updating the database (like w/ worldedit), and then try to move it with a piston, it'll change types
  */
 @Environments(Env.TEST)
 public class CustomBlocks extends Feature {
