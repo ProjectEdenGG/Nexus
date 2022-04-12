@@ -67,6 +67,9 @@ public enum CustomBlock {
 		if (itemInHand.getType().equals(Material.NOTE_BLOCK) && modelData == 0)
 			return CustomBlock.NOTE_BLOCK;
 
+		if (!itemInHand.getType().equals(Material.PAPER))
+			return null;
+
 		return fromModelData(modelData);
 	}
 

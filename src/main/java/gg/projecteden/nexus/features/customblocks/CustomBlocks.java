@@ -14,12 +14,20 @@ import java.util.List;
 
 /*
 	TODO:
+		- Crafting
+		- Entity Placement
+		- Block Flash
+		- Appropriate tool & mining speed
+			ItemMeta meta = tool.getItemMeta();
+			UUID SLOW_DIG = UUID.fromString("55FCED67-E92A-486E-9800-B47F202C4386");
+			meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED,
+				new AttributeModifier(SLOW_DIG, "custom_block_mining_speed", 2, Operation.MULTIPLY_SCALAR_1, EquipmentSlot.HAND));
+		- //
+		- Prevent swinging arm on custom blocks --> packets/mod?
 		- Sounds: Wait until SoundEvents are fixed
-		- appropriate tool/mining speed/block hardness: item digspeed attributes or potion eggects
-		ItemMeta meta = tool.getItemMeta();
-		UUID SLOW_DIG = UUID.fromString("55FCED67-E92A-486E-9800-B47F202C4386");
-		meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED,
-			new AttributeModifier(SLOW_DIG, "custom_block_mining_speed", 2, Operation.MULTIPLY_SCALAR_1, EquipmentSlot.HAND));
+
+	Known issues:
+		- If you place a custom block without updating the database (like w/ worldedit), and then try to move it with a piston, it'll change types
  */
 @Environments(Env.TEST)
 public class CustomBlocks extends Feature {
@@ -40,7 +48,14 @@ public class CustomBlocks extends Feature {
 		if (Nullables.isNullOrAir(block))
 			return false;
 
-		return block.getType().equals(Material.NOTE_BLOCK);
+		if (!block.getType().equals(Material.NOTE_BLOCK))
+			return false;
+
+		NoteBlock noteBlock = (NoteBlock) block.getBlockData();
+		if (CustomBlock.fromNoteBlock(noteBlock) == null)
+			return false;
+
+		return true;
 	}
 
 	public static boolean isCustomNoteBlock(Block block) {

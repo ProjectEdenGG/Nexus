@@ -58,7 +58,10 @@ public class CustomBlockTracker implements PlayerOwnedObject {
 	}
 
 	public void remove(@NonNull Location location) {
-		put(location, new CustomBlockData());
+		customBlockMap
+			.computeIfAbsent(location.getBlockX(), $ -> new LinkedHashMap<>())
+			.computeIfAbsent(location.getBlockZ(), $ -> new LinkedHashMap<>())
+			.remove(location.getBlockY());
 	}
 
 	public Map<Location, CustomBlockData> getLocationMap() {
@@ -69,8 +72,8 @@ public class CustomBlockTracker implements PlayerOwnedObject {
 			for (Integer z : locationMap.get(x).keySet()) {
 				for (Integer y : locationMap.get(x).get(z).keySet()) {
 					CustomBlockData data = locationMap.get(x).get(z).getOrDefault(y, null);
-					if (data.exists()) {
-						Location location = new Location(world, x, y, z);
+					if (data != null) {
+						Location location = new Location(world, x, y, z).toBlockLocation();
 						resultMap.put(location, data);
 					}
 				}

@@ -25,7 +25,7 @@ public enum NoteBlockInstrument {
 		Material.NETHERRACK, Material.CRIMSON_NYLIUM, Material.WARPED_NYLIUM, Material.SANDSTONE, Material.BEDROCK,
 		Material.OBSERVER, Material.RESPAWN_ANCHOR, Material.BRICKS, Material.OBSIDIAN),
 	SNARE_DRUM(getSoundFrom(Instrument.SNARE_DRUM), MaterialTag.CONCRETE_POWDERS.getValues(), Material.SAND, Material.GRAVEL, Material.SOUL_SOIL),
-	STICKS(getSoundFrom(Instrument.STICKS), Material.GLASS, Material.SEA_LANTERN, Material.BEACON),
+	STICKS(getSoundFrom(Instrument.STICKS), MaterialTag.STAINED_GLASS.getValues(), Material.GLASS, Material.SEA_LANTERN, Material.BEACON),
 	BASS_GUITAR(getSoundFrom(Instrument.BASS_GUITAR), MaterialTag.PLANKS.getValues()),
 	FLUTE(getSoundFrom(Instrument.FLUTE), Material.CLAY),
 	BELL(getSoundFrom(Instrument.BELL), Material.GOLD_BLOCK),

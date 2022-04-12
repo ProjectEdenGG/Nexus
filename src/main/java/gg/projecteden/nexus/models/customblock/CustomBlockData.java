@@ -36,7 +36,7 @@ public class CustomBlockData {
 		return this.noteBlockData != null;
 	}
 
-	public @Nullable CustomBlock getCustomBlock() {
+	public CustomBlock getCustomBlock() {
 		return CustomBlock.fromModelData(modelData);
 	}
 

@@ -126,6 +126,12 @@ public interface ICustomBlock {
 		return Sound.BLOCK_WOOD_HIT;
 	}
 
+	// Misc
+
+	default boolean isPistonPushable() {
+		return true;
+	}
+
 	//
 
 	private NoteBlock getBlockData() {

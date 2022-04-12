@@ -19,6 +19,8 @@ import org.bukkit.block.data.type.Observer;
 
 import java.util.Set;
 
+import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
+
 public class NoteBlockUtils {
 	private static final Set<BlockFace> neighborFaces = Set.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST,
 		BlockFace.WEST, BlockFace.UP, BlockFace.DOWN);
@@ -68,6 +70,7 @@ public class NoteBlockUtils {
 
 
 	public static void play(NoteBlock noteBlock, Location location, boolean interacted) {
+		debug("PlayNoteEvent: ");
 		CustomBlockData data = CustomBlockUtils.getData(noteBlock, location);
 		if (data == null || !data.isNoteBlock())
 			return;
