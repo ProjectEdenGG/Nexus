@@ -135,7 +135,9 @@ public enum CustomBlock {
 		Location location = block.getLocation();
 		CustomBlockUtils.placeBlockDatabase(uuid, this, location, facing);
 
-		playSound(SoundType.PLACE, block);
+		if (!this.equals(CustomBlock.NOTE_BLOCK))
+			playSound(SoundType.PLACE, block);
+
 		ItemUtils.subtract(player, itemInHand);
 		player.swingMainHand();
 		return true;

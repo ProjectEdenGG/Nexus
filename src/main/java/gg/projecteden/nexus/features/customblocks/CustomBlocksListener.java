@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.customblocks.models.ICustomBlock;
 import gg.projecteden.nexus.models.customblock.CustomBlockData;
 import gg.projecteden.nexus.models.customblock.NoteBlockData;
 import gg.projecteden.nexus.utils.GameModeWrapper;
+import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -33,10 +34,12 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.NotePlayEvent;
 import org.bukkit.event.inventory.InventoryCreativeEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
+import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,7 +64,8 @@ public class CustomBlocksListener implements Listener {
 	}
 
 	@EventHandler
-	public void onCreativePickBlock(InventoryCreativeEvent event) {
+	public void on(InventoryCreativeEvent event) {
+		;
 		SlotType slotType = event.getSlotType();
 		if (!slotType.equals(SlotType.QUICKBAR))
 			return;
@@ -104,7 +108,7 @@ public class CustomBlocksListener implements Listener {
 	}
 
 	@EventHandler
-	public void onSoundEvent(LocationNamedSoundEvent event) {
+	public void on(LocationNamedSoundEvent event) {
 		if (true) // TODO: wait until SoundEvents are fixed
 			return;
 
@@ -204,8 +208,10 @@ public class CustomBlocksListener implements Listener {
 			return;
 
 		// Place
-		if (isPlacingCustomBlock(player, action, itemInHand, clickedBlock, event.getBlockFace())) {
-			event.setCancelled(true);
+		if (isSpawningEntity(event, clickedBlock)) {
+			return;
+		}
+		if (isPlacingBlock(event, clickedBlock)) {
 			return;
 		}
 
@@ -218,6 +224,11 @@ public class CustomBlocksListener implements Listener {
 					NoteBlock noteBlock = (NoteBlock) clickedBlock.getBlockData();
 					changePitch(noteBlock, clickedBlock.getLocation(), sneaking);
 				}
+				return;
+			}
+
+			if (action.equals(Action.RIGHT_CLICK_BLOCK)) {
+				event.setCancelled(true);
 			}
 		}
 	}
@@ -261,6 +272,27 @@ public class CustomBlocksListener implements Listener {
 
 		if (!onPistonEvent(event.getBlock(), event.getBlocks(), event.getDirection()))
 			event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void on(PrepareItemCraftEvent event) {
+		if (!(event.getView().getPlayer() instanceof Player)) return;
+
+		List<ItemStack> ingredients = Arrays.stream(event.getInventory().getMatrix())
+			.filter(itemStack -> !Nullables.isNullOrAir(itemStack))
+			.filter(itemStack -> itemStack.getType().equals(ICustomBlock.itemMaterial))
+			.toList();
+
+		for (ItemStack ingredient : ingredients) {
+			int modelData = CustomModelData.of(ingredient);
+			if (modelData == 0)
+				continue;
+
+			if (CustomBlock.modelDataMap.containsKey(modelData)) {
+				event.getInventory().setResult(null);
+				return;
+			}
+		}
 	}
 
 	//
@@ -331,40 +363,95 @@ public class CustomBlocksListener implements Listener {
 		block.setBlockData(noteBlock, false);
 	}
 
-	private boolean isPlacingCustomBlock(Player player, Action action, ItemStack itemInHand, Block clickedBlock, BlockFace clickedFace) {
-		if (!action.equals(Action.RIGHT_CLICK_BLOCK))
+	private boolean isSpawningEntity(PlayerInteractEvent event, Block clickedBlock) {
+		Action action = event.getAction();
+		if (!action.equals(Action.RIGHT_CLICK_BLOCK)) {
+			return false;
+		}
+
+		Player player = event.getPlayer();
+		BlockFace clickedFace = event.getBlockFace();
+		Block inFront = clickedBlock.getRelative(clickedFace);
+		boolean isInteractable = clickedBlock.getType().isInteractable() || MaterialTag.INTERACTABLES.isTagged(inFront);
+		if (!CustomBlocks.isCustomNoteBlock(clickedBlock)) {
+			isInteractable = false;
+		}
+
+		if (!player.isSneaking() && isInteractable)
 			return false;
 
-		if (Nullables.isNullOrAir(itemInHand))
+		ItemStack itemInHand = event.getItem();
+		if (Nullables.isNullOrAir(itemInHand)) {
 			return false;
+		}
+
+		return MaterialTag.SPAWNS_ENTITY.isTagged(itemInHand.getType());
+	}
+
+	private boolean isPlacingBlock(PlayerInteractEvent event, Block clickedBlock) {
+		Action action = event.getAction();
+		if (!action.equals(Action.RIGHT_CLICK_BLOCK)) {
+			return false;
+		}
+
+		Player player = event.getPlayer();
+		BlockFace clickedFace = event.getBlockFace();
+		Block inFront = clickedBlock.getRelative(clickedFace);
+		boolean isInteractable = clickedBlock.getType().isInteractable() || MaterialTag.INTERACTABLES.isTagged(inFront);
+		if (!CustomBlocks.isCustomNoteBlock(clickedBlock)) {
+			isInteractable = false;
+		}
+
+		if (!player.isSneaking() && isInteractable)
+			return false;
+
+		ItemStack itemInHand = event.getItem();
+		if (Nullables.isNullOrAir(itemInHand)) {
+			return false;
+		}
 
 		Material material = itemInHand.getType();
-		if (!material.equals(Material.NOTE_BLOCK) && !material.equals(Material.PAPER)) {
+		boolean isCustomBlock = false;
+		if (material.equals(ICustomBlock.blockMaterial))
+			isCustomBlock = true;
+		else if (material.equals(ICustomBlock.itemMaterial)) {
+			int modelData = CustomModelData.of(itemInHand);
+			if (!CustomBlock.modelDataMap.containsKey(modelData)) {
+				debug(" unknown modelData: " + modelData);
+				return false;
+			} else
+				isCustomBlock = true;
+		} else if (!material.equals(Material.REDSTONE_WIRE) && !material.isSolid()) {
+			debug(" not solid: " + material);
 			return false;
 		}
 
-		Block block = clickedBlock.getRelative(clickedFace);
-		if (!Nullables.isNullOrAir(block)) {
+		if (!Nullables.isNullOrAir(inFront)) {
+			debug(" block in front is not air");
 			return false;
 		}
 
-		boolean isInteractable = clickedBlock.getType().isInteractable() || MaterialTag.INTERACTABLES.isTagged(block);
-		if (!CustomBlocks.isCustomNoteBlock(clickedBlock))
-			isInteractable = false;
+		if (isCustomBlock) {
+			if (inFront.getLocation().toCenterLocation().getNearbyLivingEntities(0.5).size() > 0) {
+				debug(" entity in way");
+				return false;
+			}
 
-		if (!player.isSneaking() && isInteractable) {
-			return false;
+			CustomBlock _customBlock = CustomBlock.fromItemstack(itemInHand);
+			if (_customBlock == null) {
+				debug(" customBlock == null");
+				return false;
+			}
+
+			debug(" placing custom block...");
+			if (!_customBlock.placeBlock(player, inFront, clickedBlock, clickedFace, itemInHand)) {
+				return false;
+			}
+
+			event.setCancelled(true);
 		}
 
-		CustomBlock _customBlock = CustomBlock.fromItemstack(itemInHand);
-		if (_customBlock == null) {
-			return false;
-		}
-
-		if (block.getLocation().toCenterLocation().getNearbyLivingEntities(0.5).size() > 0)
-			return false;
-
-		return _customBlock.placeBlock(player, block, clickedBlock, clickedFace, itemInHand);
+		return true;
 	}
 
 	private boolean isChangingPitch(Action action, boolean sneaking, ItemStack itemInHand) {

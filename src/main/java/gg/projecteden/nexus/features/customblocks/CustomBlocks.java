@@ -14,17 +14,18 @@ import java.util.List;
 
 /*
 	TODO:
-		- Crafting
-		- Entity Placement
-		- Block Flash
 		- Appropriate tool & mining speed
 			ItemMeta meta = tool.getItemMeta();
 			UUID SLOW_DIG = UUID.fromString("55FCED67-E92A-486E-9800-B47F202C4386");
 			meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED,
 				new AttributeModifier(SLOW_DIG, "custom_block_mining_speed", 2, Operation.MULTIPLY_SCALAR_1, EquipmentSlot.HAND));
-		- //
-		- Prevent swinging arm on custom blocks --> packets/mod?
 		- Sounds: Wait until SoundEvents are fixed
+		- //
+		- Known issues:
+			- CreativePickBlock on a custom block while a note block is in your inventory will always select the note block, and doesn't throw InventoryClickEvent or CreativeClickEvent
+			- Custom blocks may flash when placing blocks near them (clientside only)
+			- Players arm will swing on interact w/ custom blocks
+
  */
 @Environments(Env.TEST)
 public class CustomBlocks extends Feature {
