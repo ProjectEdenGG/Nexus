@@ -14,6 +14,7 @@ import java.util.List;
 
 /*
 	TODO:
+		- allow crafting of custom blocks that are used in recipes
 		- Appropriate tool & mining speed
 			ItemMeta meta = tool.getItemMeta();
 			UUID SLOW_DIG = UUID.fromString("55FCED67-E92A-486E-9800-B47F202C4386");

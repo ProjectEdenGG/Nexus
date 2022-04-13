@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.customblocks.models.blocks;
+package gg.projecteden.nexus.features.customblocks.models.blocks.compacted;
 
 import gg.projecteden.nexus.features.customblocks.models.ICustomBlock;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
@@ -8,7 +8,7 @@ import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class BerryCrate implements ICustomBlock {
+public class ApplyCrate implements ICustomBlock {
 	@Override
 	public @NonNull Instrument getNoteBlockInstrument() {
 		return Instrument.BASS_DRUM;
@@ -16,21 +16,21 @@ public class BerryCrate implements ICustomBlock {
 
 	@Override
 	public int getNoteBlockStep() {
-		return 3;
+		return 1;
 	}
 
 	@Override
 	public @NotNull String getName() {
-		return "Crate of Berries";
+		return "Crate of Apples";
 	}
 
 	@Override
 	public int getCustomModelData() {
-		return 20053;
+		return 20051;
 	}
 
 	@Override
 	public @Nullable RecipeBuilder<?> getRecipe() {
-		return compacted(Material.SWEET_BERRIES);
+		return compacted(Material.APPLE);
 	}
 }

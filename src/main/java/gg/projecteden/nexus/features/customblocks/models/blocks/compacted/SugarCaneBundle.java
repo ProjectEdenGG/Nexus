@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.customblocks.models.blocks;
+package gg.projecteden.nexus.features.customblocks.models.blocks.compacted;
 
 import gg.projecteden.nexus.features.customblocks.models.ICustomBlock;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;

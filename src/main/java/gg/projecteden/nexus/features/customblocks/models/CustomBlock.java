@@ -1,13 +1,13 @@
 package gg.projecteden.nexus.features.customblocks.models;
 
 import gg.projecteden.nexus.features.customblocks.CustomBlockUtils;
-import gg.projecteden.nexus.features.customblocks.models.blocks.AppleCrate;
-import gg.projecteden.nexus.features.customblocks.models.blocks.BeetrootCrate;
-import gg.projecteden.nexus.features.customblocks.models.blocks.BerryCrate;
-import gg.projecteden.nexus.features.customblocks.models.blocks.CarrotCrate;
 import gg.projecteden.nexus.features.customblocks.models.blocks.NoteBlock;
-import gg.projecteden.nexus.features.customblocks.models.blocks.PotatoCrate;
-import gg.projecteden.nexus.features.customblocks.models.blocks.SugarCaneBundle;
+import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.ApplyCrate;
+import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.BeetrootCrate;
+import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.BerryCrate;
+import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.CarrotCrate;
+import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.PotatoCrate;
+import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.SugarCaneBundle;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.utils.BlockUtils;
@@ -36,13 +36,28 @@ import java.util.UUID;
 import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
 
 public enum CustomBlock {
-	NOTE_BLOCK(NoteBlock.class),
-	APPLE_CRATE(AppleCrate.class),
+	// bricks
+
+	// compacted
+	APPLE_CRATE(ApplyCrate.class),
 	BEETROOT_CRATE(BeetrootCrate.class),
 	BERRY_CRATE(BerryCrate.class),
 	CARROT_CRATE(CarrotCrate.class),
 	POTATO_CRATE(PotatoCrate.class),
 	SUGAR_CANE_BUNDLE(SugarCaneBundle.class),
+
+	// lanterns
+
+	// planks
+
+	// quilted wool
+
+	// stones
+
+	// terracotta shingles
+
+	// misc
+	NOTE_BLOCK(NoteBlock.class),
 	;
 
 	private final ICustomBlock customBlock;
