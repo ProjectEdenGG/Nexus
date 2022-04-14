@@ -7,21 +7,21 @@ import org.bukkit.Instrument;
 public class OrangePlanks implements ICustomBlock {
 	@Override
 	public @NonNull Instrument getNoteBlockInstrument() {
-		return null;
+		return Instrument.BELL;
 	}
 
 	@Override
 	public int getNoteBlockStep() {
-		return 0;
+		return 2;
 	}
 
 	@Override
 	public @NonNull String getName() {
-		return null;
+		return "Orange Planks";
 	}
 
 	@Override
 	public int getCustomModelData() {
-		return 0;
+		return 20152;
 	}
 }

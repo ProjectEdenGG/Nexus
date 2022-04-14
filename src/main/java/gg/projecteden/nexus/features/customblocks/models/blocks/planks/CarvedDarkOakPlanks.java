@@ -7,21 +7,21 @@ import org.bukkit.Instrument;
 public class CarvedDarkOakPlanks implements ICustomBlock {
 	@Override
 	public @NonNull Instrument getNoteBlockInstrument() {
-		return null;
+		return Instrument.BANJO;
 	}
 
 	@Override
 	public int getNoteBlockStep() {
-		return 0;
+		return 12;
 	}
 
 	@Override
 	public @NonNull String getName() {
-		return null;
+		return "Carved Dark Oak Planks";
 	}
 
 	@Override
 	public int getCustomModelData() {
-		return 0;
+		return 20012;
 	}
 }

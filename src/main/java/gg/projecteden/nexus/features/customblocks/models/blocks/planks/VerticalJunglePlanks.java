@@ -7,21 +7,21 @@ import org.bukkit.Instrument;
 public class VerticalJunglePlanks implements ICustomBlock {
 	@Override
 	public @NonNull Instrument getNoteBlockInstrument() {
-		return null;
+		return Instrument.BANJO;
 	}
 
 	@Override
 	public int getNoteBlockStep() {
-		return 0;
+		return 7;
 	}
 
 	@Override
 	public @NonNull String getName() {
-		return null;
+		return "Vertical Jungle Planks";
 	}
 
 	@Override
 	public int getCustomModelData() {
-		return 0;
+		return 20007;
 	}
 }
