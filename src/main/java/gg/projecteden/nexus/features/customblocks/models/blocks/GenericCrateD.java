@@ -7,12 +7,12 @@ import org.bukkit.Instrument;
 public class GenericCrateD implements ICustomBlock {
 	@Override
 	public @NonNull Instrument getNoteBlockInstrument() {
-		return null;
+		return Instrument.BASS_GUITAR;
 	}
 
 	@Override
 	public int getNoteBlockStep() {
-		return 0;
+		return 4;
 	}
 
 	@Override
@@ -22,6 +22,6 @@ public class GenericCrateD implements ICustomBlock {
 
 	@Override
 	public int getCustomModelData() {
-		return 0;
+		return 20104;
 	}
 }

@@ -8,41 +8,41 @@ import org.bukkit.Instrument;
 public class ShojiBlock implements ICustomBlock, ISidewaysBlock {
 	@Override
 	public @NonNull Instrument getNoteBlockInstrument() {
-		return null;
+		return Instrument.BASS_GUITAR;
 	}
 
 	@Override
 	public int getNoteBlockStep() {
-		return 0;
+		return 22;
 	}
 
 	@Override
 	public @NonNull String getName() {
-		return "ShojiBlock Block";
+		return "Shoji Block";
 	}
 
 	@Override
 	public int getCustomModelData() {
-		return 0;
+		return 20122;
 	}
 
 	@Override
 	public @NonNull Instrument getNoteBlockInstrument_NS() {
-		return null;
+		return getNoteBlockInstrument();
 	}
 
 	@Override
 	public int getNoteBlockStep_NS() {
-		return 0;
+		return 23;
 	}
 
 	@Override
 	public @NonNull Instrument getNoteBlockInstrument_EW() {
-		return null;
+		return getNoteBlockInstrument();
 	}
 
 	@Override
 	public int getNoteBlockStep_EW() {
-		return 0;
+		return 24;
 	}
 }

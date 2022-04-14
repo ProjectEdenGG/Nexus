@@ -7,21 +7,21 @@ import org.bukkit.Instrument;
 public class BrownTerracottaShingles implements ICustomBlock {
 	@Override
 	public @NonNull Instrument getNoteBlockInstrument() {
-		return null;
+		return Instrument.BIT;
 	}
 
 	@Override
 	public int getNoteBlockStep() {
-		return 0;
+		return 12;
 	}
 
 	@Override
 	public @NonNull String getName() {
-		return null;
+		return "Brown Terracotta Shingles";
 	}
 
 	@Override
 	public int getCustomModelData() {
-		return 0;
+		return 20212;
 	}
 }

@@ -7,21 +7,21 @@ import org.bukkit.Instrument;
 public class YellowQuiltedWool implements ICustomBlock {
 	@Override
 	public @NonNull Instrument getNoteBlockInstrument() {
-		return null;
+		return Instrument.COW_BELL;
 	}
 
 	@Override
 	public int getNoteBlockStep() {
-		return 0;
+		return 3;
 	}
 
 	@Override
 	public @NonNull String getName() {
-		return null;
+		return "Yellow Quilted Wool";
 	}
 
 	@Override
 	public int getCustomModelData() {
-		return 0;
+		return 20303;
 	}
 }

@@ -8,41 +8,41 @@ import org.bukkit.Instrument;
 public class PaperDarkOakLantern implements ICustomBlock, ISidewaysBlock {
 	@Override
 	public @NonNull Instrument getNoteBlockInstrument() {
-		return null;
+		return Instrument.FLUTE;
 	}
 
 	@Override
 	public int getNoteBlockStep() {
-		return 0;
+		return 16;
 	}
 
 	@Override
 	public @NonNull String getName() {
-		return null;
+		return "Paper Dark Oak Lantern";
 	}
 
 	@Override
 	public int getCustomModelData() {
-		return 0;
+		return 20406;
 	}
 
 	@Override
 	public @NonNull Instrument getNoteBlockInstrument_NS() {
-		return null;
+		return getNoteBlockInstrument();
 	}
 
 	@Override
 	public int getNoteBlockStep_NS() {
-		return 0;
+		return 17;
 	}
 
 	@Override
 	public @NonNull Instrument getNoteBlockInstrument_EW() {
-		return null;
+		return getNoteBlockInstrument();
 	}
 
 	@Override
 	public int getNoteBlockStep_EW() {
-		return 0;
+		return 18;
 	}
 }

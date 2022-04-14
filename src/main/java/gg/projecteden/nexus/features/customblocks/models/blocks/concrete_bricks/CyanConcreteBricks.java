@@ -7,21 +7,21 @@ import org.bukkit.Instrument;
 public class CyanConcreteBricks implements ICustomBlock {
 	@Override
 	public @NonNull Instrument getNoteBlockInstrument() {
-		return null;
+		return Instrument.CHIME;
 	}
 
 	@Override
 	public int getNoteBlockStep() {
-		return 0;
+		return 6;
 	}
 
 	@Override
 	public @NonNull String getName() {
-		return null;
+		return "Cyan Concrete Bricks";
 	}
 
 	@Override
 	public int getCustomModelData() {
-		return 0;
+		return 20256;
 	}
 }
