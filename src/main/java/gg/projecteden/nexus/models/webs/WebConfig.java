@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.models.quests;
+package gg.projecteden.nexus.models.webs;
 
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Embedded;

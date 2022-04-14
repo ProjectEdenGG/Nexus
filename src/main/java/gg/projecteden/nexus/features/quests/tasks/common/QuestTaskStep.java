@@ -3,8 +3,8 @@ package gg.projecteden.nexus.features.quests.tasks.common;
 import gg.projecteden.nexus.features.quests.interactable.Interactable;
 import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
 import gg.projecteden.nexus.features.quests.interactable.instructions.DialogInstance;
-import gg.projecteden.nexus.features.quests.users.QuestTaskStepProgress;
-import gg.projecteden.nexus.features.quests.users.Quester;
+import gg.projecteden.nexus.models.quests.QuestTaskStepProgress;
+import gg.projecteden.nexus.models.quests.Quester;
 import lombok.Data;
 
 @Data

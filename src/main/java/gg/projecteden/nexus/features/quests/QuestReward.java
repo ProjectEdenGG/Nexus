@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.quests;
 
-import gg.projecteden.nexus.features.quests.users.Quester;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
+import gg.projecteden.nexus.models.quests.Quester;
 import lombok.AllArgsConstructor;
 
 import java.util.function.BiConsumer;
