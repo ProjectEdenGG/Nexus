@@ -16,7 +16,6 @@ import gg.projecteden.nexus.models.easter22.Easter22User;
 import gg.projecteden.nexus.models.easter22.Easter22UserService;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -139,15 +138,9 @@ public class Easter22Command extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onNPCRightClick(NPCRightClickEvent event) {
-		if (Dev.GRIFFIN.is(event.getClicker()))
-			event.getClicker().sendMessage("npc click");
-
 		final Easter22NPC npc = Easter22NPC.of(event.getNPC());
 		if (npc == null)
 			return;
-
-		if (Dev.GRIFFIN.is(event.getClicker()))
-			event.getClicker().sendMessage("easter npc click");
 
 		Quester.of(event.getClicker()).interact(npc);
 		event.setCancelled(true);
