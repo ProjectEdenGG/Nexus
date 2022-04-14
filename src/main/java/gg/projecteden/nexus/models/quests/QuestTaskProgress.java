@@ -1,9 +1,13 @@
-package gg.projecteden.nexus.features.quests.users;
+package gg.projecteden.nexus.models.quests;
 
+import dev.morphia.annotations.Converters;
+import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.quests.tasks.common.IQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTask;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
+import gg.projecteden.nexus.framework.persistence.serializer.mongodb.IQuestTaskConverter;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -13,7 +17,9 @@ import java.util.Map;
 import java.util.UUID;
 
 @Data
+@NoArgsConstructor
 @RequiredArgsConstructor
+@Converters({UUIDConverter.class, IQuestTaskConverter.class})
 public class QuestTaskProgress implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;

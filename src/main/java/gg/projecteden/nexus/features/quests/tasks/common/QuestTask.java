@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.quests.tasks.common;
 import gg.projecteden.nexus.features.quests.QuestReward;
 import gg.projecteden.nexus.features.quests.interactable.Interactable;
 import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
-import gg.projecteden.nexus.features.quests.users.Quester;
+import gg.projecteden.nexus.models.quests.Quester;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

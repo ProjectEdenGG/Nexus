@@ -8,11 +8,12 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-@ObjectClass(WebConfig.class)
-public class WebConfigService extends MongoPlayerService<WebConfig> {
-	private final static Map<UUID, WebConfig> cache = new ConcurrentHashMap<>();
+@ObjectClass(Quester.class)
+public class QuesterService extends MongoPlayerService<Quester> {
+	private final static Map<UUID, Quester> cache = new ConcurrentHashMap<>();
 
-	public Map<UUID, WebConfig> getCache() {
+	public Map<UUID, Quester> getCache() {
 		return cache;
 	}
+
 }

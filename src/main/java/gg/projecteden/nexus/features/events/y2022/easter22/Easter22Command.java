@@ -3,8 +3,6 @@ package gg.projecteden.nexus.features.events.y2022.easter22;
 import gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22NPC;
 import gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestItem;
 import gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestTask;
-import gg.projecteden.nexus.features.quests.users.Quest;
-import gg.projecteden.nexus.features.quests.users.Quester;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -14,6 +12,8 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.easter22.Easter22User;
 import gg.projecteden.nexus.models.easter22.Easter22UserService;
+import gg.projecteden.nexus.models.quests.Quest;
+import gg.projecteden.nexus.models.quests.QuesterService;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Utils;
@@ -142,7 +142,7 @@ public class Easter22Command extends CustomCommand implements Listener {
 		if (npc == null)
 			return;
 
-		Quester.of(event.getClicker()).interact(npc);
+		new QuesterService().edit(event.getClicker(), quester -> quester.interact(npc));
 		event.setCancelled(true);
 	}
 

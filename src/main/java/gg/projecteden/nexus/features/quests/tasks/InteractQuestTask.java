@@ -4,8 +4,8 @@ import gg.projecteden.nexus.features.quests.interactable.instructions.DialogInst
 import gg.projecteden.nexus.features.quests.tasks.InteractQuestTask.InteractQuestTaskStep;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTaskStep;
-import gg.projecteden.nexus.features.quests.users.QuestTaskStepProgress;
-import gg.projecteden.nexus.features.quests.users.Quester;
+import gg.projecteden.nexus.models.quests.QuestTaskStepProgress;
+import gg.projecteden.nexus.models.quests.Quester;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

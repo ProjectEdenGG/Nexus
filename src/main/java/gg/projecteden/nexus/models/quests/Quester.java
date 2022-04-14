@@ -1,13 +1,17 @@
-package gg.projecteden.nexus.features.quests.users;
+package gg.projecteden.nexus.models.quests;
 
+import dev.morphia.annotations.Converters;
+import dev.morphia.annotations.Entity;
+import dev.morphia.annotations.Id;
+import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.quests.interactable.Interactable;
 import gg.projecteden.nexus.features.quests.interactable.instructions.DialogInstance;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTaskStep;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
@@ -24,25 +28,25 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 @Data
+@Entity(value = "quester", noClassnameStored = true)
+@NoArgsConstructor
 @RequiredArgsConstructor
+@Converters(UUIDConverter.class)
 public class Quester implements PlayerOwnedObject {
+	@Id
 	@NonNull
 	private UUID uuid;
 	private List<Quest> quests = new ArrayList<>();
 
-	private DialogInstance dialog;
-
-	// Temporary
-	private static final Map<UUID, Quester> cache = new HashMap<>();
+	private transient DialogInstance dialog;
 
 	public static Quester of(Player player) {
 		return of(player.getUniqueId());
 	}
 
 	public static Quester of(UUID uuid) {
-		return cache.computeIfAbsent(uuid, $ -> new Quester(uuid));
+		return new QuesterService().get(uuid);
 	}
-	//
 
 	public void interact(Interactable interactable) {
 		if (dialog != null && dialog.getTaskId().get() > 0) {
@@ -73,6 +77,7 @@ public class Quester implements PlayerOwnedObject {
 				}
 
 				step.setFirstInteraction(false);
+
 				return;
 			}
 		}
@@ -100,8 +105,6 @@ public class Quester implements PlayerOwnedObject {
 
 		for (ItemStack item : items)
 			amounts.put(ItemBuilder.oneOf(item).build(), item.getAmount());
-
-		Dev.GRIFFIN.send(amounts);
 
 		for (ItemStack content : getOnlinePlayer().getInventory().getContents()) {
 			if (isNullOrAir(content))

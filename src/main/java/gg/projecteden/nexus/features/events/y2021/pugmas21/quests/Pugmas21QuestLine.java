@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.events.y2021.pugmas21.quests;
 
-import gg.projecteden.nexus.features.quests.users.Quest;
-import gg.projecteden.nexus.features.quests.users.Quester;
 import gg.projecteden.nexus.models.pugmas21.Pugmas21UserService;
+import gg.projecteden.nexus.models.quests.Quest;
+import gg.projecteden.nexus.models.quests.Quester;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 

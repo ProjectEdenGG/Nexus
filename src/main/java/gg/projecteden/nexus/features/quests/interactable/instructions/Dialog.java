@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.quests.interactable.instructions;
 
 import gg.projecteden.nexus.features.quests.interactable.Interactable;
-import gg.projecteden.nexus.features.quests.users.Quester;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import lombok.AllArgsConstructor;
