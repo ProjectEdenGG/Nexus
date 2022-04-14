@@ -20,4 +20,6 @@ public abstract class QuestTaskStep<
 
 	abstract public boolean shouldAdvance(Quester quester, QuestTaskStepProgress stepProgress);
 
+	public void afterComplete(Quester quester) {}
+
 }

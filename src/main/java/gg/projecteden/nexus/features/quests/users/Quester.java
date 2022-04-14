@@ -4,7 +4,9 @@ import gg.projecteden.nexus.features.quests.interactable.Interactable;
 import gg.projecteden.nexus.features.quests.interactable.instructions.DialogInstance;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTaskStep;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +17,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 @Data
@@ -55,6 +59,8 @@ public class Quester implements PlayerOwnedObject {
 				dialog = taskStep.interact(this, step);
 
 				if (taskStep.shouldAdvance(this, step)) {
+					taskStep.afterComplete(this);
+
 					if (questTask.hasNextStep())
 						questTask.incrementStep();
 					else {
@@ -90,8 +96,32 @@ public class Quester implements PlayerOwnedObject {
 	}
 
 	public boolean has(List<ItemStack> items) {
-		// TODO
-		return true;
+		Map<ItemStack, Integer> amounts = new HashMap<>();
+
+		for (ItemStack item : items)
+			amounts.put(ItemBuilder.oneOf(item).build(), item.getAmount());
+
+		Dev.GRIFFIN.send(amounts);
+
+		for (ItemStack content : getOnlinePlayer().getInventory().getContents()) {
+			if (isNullOrAir(content))
+				continue;
+
+			for (ItemStack item : items)
+				if (content.isSimilar(item)) {
+					final Optional<ItemStack> match = amounts.keySet().stream().filter(key -> key.isSimilar(item)).findFirst();
+
+					if (match.isPresent()) {
+						int left = amounts.getOrDefault(match.get(), 0) - content.getAmount();
+						if (left <= 0)
+							amounts.remove(match.get());
+						else
+							amounts.put(match.get(), left);
+					}
+				}
+		}
+
+		return amounts.isEmpty();
 	}
 
 	public void remove(List<ItemStack> items) {
