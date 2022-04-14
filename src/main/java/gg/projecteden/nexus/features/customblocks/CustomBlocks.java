@@ -14,6 +14,7 @@ import java.util.List;
 
 /*
 	TODO:
+		- define all added blocks
 		- allow crafting of custom blocks that are used in recipes
 		- Appropriate tool & mining speed
 			ItemMeta meta = tool.getItemMeta();

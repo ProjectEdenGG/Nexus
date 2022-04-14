@@ -1,6 +1,10 @@
 package gg.projecteden.nexus.features.customblocks.models;
 
 import gg.projecteden.nexus.features.customblocks.CustomBlockUtils;
+import gg.projecteden.nexus.features.customblocks.models.blocks.GenericCrateA;
+import gg.projecteden.nexus.features.customblocks.models.blocks.GenericCrateB;
+import gg.projecteden.nexus.features.customblocks.models.blocks.GenericCrateC;
+import gg.projecteden.nexus.features.customblocks.models.blocks.GenericCrateD;
 import gg.projecteden.nexus.features.customblocks.models.blocks.NoteBlock;
 import gg.projecteden.nexus.features.customblocks.models.blocks.ShojiBlock;
 import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.ApplyCrate;
@@ -187,6 +191,10 @@ public enum CustomBlock {
 	WHITE_TERRACOTTA_SHINGLES(WhiteTerracottaShingles.class),
 
 	// misc
+	GENERIC_CRATE_A(GenericCrateA.class),
+	GENERIC_CRATE_B(GenericCrateB.class),
+	GENERIC_CRATE_C(GenericCrateC.class),
+	GENERIC_CRATE_D(GenericCrateD.class),
 	NOTE_BLOCK(NoteBlock.class),
 	SHOJI_BLOCK(ShojiBlock.class),
 	;

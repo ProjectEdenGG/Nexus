@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.customblocks;
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.interfaces.ICustomBlock;
+import gg.projecteden.nexus.features.customblocks.models.interfaces.ISidewaysBlock;
 import gg.projecteden.nexus.models.customblock.CustomBlockData;
 import gg.projecteden.nexus.models.customblock.CustomBlockTracker;
 import gg.projecteden.nexus.models.customblock.CustomBlockTrackerService;
@@ -95,18 +96,18 @@ public class CustomBlockUtils {
 
 	public static BlockFace getFacing(CustomBlock _customBlock, NoteBlock noteBlock) {
 		ICustomBlock customBlock = _customBlock.get();
-		if (!customBlock.canPlaceSideways())
+		if (customBlock instanceof ISidewaysBlock)
 			return BlockFace.UP;
 
-		if (isFacing(BlockFace.NORTH, customBlock, noteBlock))
+		if (isFacing(BlockFace.NORTH, _customBlock, noteBlock))
 			return BlockFace.NORTH;
-		else if (isFacing(BlockFace.EAST, customBlock, noteBlock))
+		else if (isFacing(BlockFace.EAST, _customBlock, noteBlock))
 			return BlockFace.EAST;
 
 		return BlockFace.UP;
 	}
 
-	private static boolean isFacing(BlockFace face, ICustomBlock customBlock, NoteBlock noteBlock) {
+	private static boolean isFacing(BlockFace face, CustomBlock customBlock, NoteBlock noteBlock) {
 		Instrument instrument = noteBlock.getInstrument();
 		int step = noteBlock.getNote().getId();
 

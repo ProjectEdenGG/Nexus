@@ -397,8 +397,10 @@ public class CustomBlocksListener implements Listener {
 		BlockFace clickedFace = event.getBlockFace();
 		Block inFront = clickedBlock.getRelative(clickedFace);
 		boolean isInteractable = clickedBlock.getType().isInteractable() || MaterialTag.INTERACTABLES.isTagged(inFront);
-		if (!CustomBlocks.isCustomNoteBlock(clickedBlock)) {
-			isInteractable = false;
+		if (CustomBlocks.isCustom(clickedBlock)) {
+			if (!CustomBlocks.isCustomNoteBlock(clickedBlock)) {
+				isInteractable = false;
+			}
 		}
 
 		if (!player.isSneaking() && isInteractable)
