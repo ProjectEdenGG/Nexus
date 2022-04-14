@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 @AllArgsConstructor
 public enum Easter22QuestItem {
 	EASTER_EGG(new ItemBuilder(Material.PAPER).name("Easter Egg")),
-	PAINTBRUSH(new ItemBuilder(Material.PAPER).name("Paintbrush")),
+	PAINTBRUSH(new ItemBuilder(Material.PAPER).customModelData(2000).name("&ePaintbrush")),
 	;
 
 	private final ItemBuilder itemBuilder;
