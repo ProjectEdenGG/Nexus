@@ -41,6 +41,10 @@ public class BrowseShopsProvider extends ShopProvider {
 		for (Shop shop : shops) {
 			int inStock = shop.getInStock(shopGroup).size();
 			int outOfStock = shop.getOutOfStock(shopGroup).size();
+
+			if (inStock == 0 && outOfStock == 0)
+				continue;
+
 			ItemBuilder head = new ItemBuilder(Material.PLAYER_HEAD)
 					.skullOwner(shop)
 					.name(new NerdService().get(shop).getColoredName())
