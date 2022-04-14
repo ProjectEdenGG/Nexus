@@ -7,7 +7,7 @@ import gg.projecteden.nexus.features.customblocks.models.blocks.GenericCrateC;
 import gg.projecteden.nexus.features.customblocks.models.blocks.GenericCrateD;
 import gg.projecteden.nexus.features.customblocks.models.blocks.NoteBlock;
 import gg.projecteden.nexus.features.customblocks.models.blocks.ShojiBlock;
-import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.ApplyCrate;
+import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.AppleCrate;
 import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.BambooBundle;
 import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.BeetrootCrate;
 import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.BerryCrate;
@@ -86,7 +86,7 @@ public enum CustomBlock {
 	WHITE_CONCRETE_BRICKS(WhiteConcreteBricks.class),
 
 	// compacted
-	APPLE_CRATE(ApplyCrate.class),
+	APPLE_CRATE(AppleCrate.class),
 	BEETROOT_CRATE(BeetrootCrate.class),
 	BERRY_CRATE(BerryCrate.class),
 	CARROT_CRATE(CarrotCrate.class),

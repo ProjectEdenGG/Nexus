@@ -8,7 +8,7 @@ import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ApplyCrate implements ICustomBlock {
+public class AppleCrate implements ICustomBlock {
 	@Override
 	public @NonNull Instrument getNoteBlockInstrument() {
 		return Instrument.BASS_DRUM;
@@ -31,6 +31,6 @@ public class ApplyCrate implements ICustomBlock {
 
 	@Override
 	public @Nullable RecipeBuilder<?> getRecipe() {
-		return compacted(Material.APPLE);
+		return getCompactRecipe(Material.APPLE);
 	}
 }

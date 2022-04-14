@@ -1,8 +1,11 @@
 package gg.projecteden.nexus.features.customblocks.models.blocks.concrete_bricks;
 
 import gg.projecteden.nexus.features.customblocks.models.interfaces.ICustomBlock;
+import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import lombok.NonNull;
 import org.bukkit.Instrument;
+import org.bukkit.Material;
+import org.jetbrains.annotations.Nullable;
 
 public class BlueConcreteBricks implements ICustomBlock {
 	@Override
@@ -23,5 +26,10 @@ public class BlueConcreteBricks implements ICustomBlock {
 	@Override
 	public int getCustomModelData() {
 		return 20258;
+	}
+
+	@Override
+	public @Nullable RecipeBuilder<?> getRecipe() {
+		return getBricksRecipe(Material.BLUE_CONCRETE);
 	}
 }

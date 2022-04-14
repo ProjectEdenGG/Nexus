@@ -79,7 +79,11 @@ public interface ICustomBlock {
 		return noteBlock;
 	}
 
-	default ShapedBuilder compacted(Material material) {
+	default ShapedBuilder getCompactRecipe(Material material) {
 		return shaped("111", "111", "111").add('1', material);
+	}
+
+	default ShapedBuilder getBricksRecipe(Material material) {
+		return shaped("11", "11").add('1', material);
 	}
 }

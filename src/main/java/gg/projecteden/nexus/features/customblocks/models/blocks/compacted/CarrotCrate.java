@@ -31,6 +31,6 @@ public class CarrotCrate implements ICustomBlock {
 
 	@Override
 	public @Nullable RecipeBuilder<?> getRecipe() {
-		return compacted(Material.CARROT);
+		return getCompactRecipe(Material.CARROT);
 	}
 }

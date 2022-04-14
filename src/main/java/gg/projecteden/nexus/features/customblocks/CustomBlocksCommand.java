@@ -22,11 +22,11 @@ import java.util.UUID;
 import static gg.projecteden.utils.UUIDUtils.UUID0;
 
 @Permission(Group.ADMIN)
-public class CustomBlockCommand extends CustomCommand {
+public class CustomBlocksCommand extends CustomCommand {
 	private static final CustomBlockTrackerService trackerService = new CustomBlockTrackerService();
 	private static CustomBlockTracker tracker;
 
-	public CustomBlockCommand(CommandEvent event) {
+	public CustomBlocksCommand(CommandEvent event) {
 		super(event);
 		if (isPlayerCommandEvent())
 			tracker = trackerService.fromWorld(location());

@@ -31,7 +31,7 @@ public class CactusBundle implements ICustomBlock, ISidewaysBlock {
 
 	@Override
 	public @Nullable RecipeBuilder<?> getRecipe() {
-		return compacted(Material.CACTUS);
+		return getCompactRecipe(Material.CACTUS);
 	}
 
 	@Override

@@ -31,6 +31,6 @@ public class BeetrootCrate implements ICustomBlock {
 
 	@Override
 	public @Nullable RecipeBuilder<?> getRecipe() {
-		return compacted(Material.BEETROOT);
+		return getCompactRecipe(Material.BEETROOT);
 	}
 }

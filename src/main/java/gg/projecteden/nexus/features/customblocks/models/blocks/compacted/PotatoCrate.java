@@ -31,6 +31,6 @@ public class PotatoCrate implements ICustomBlock {
 
 	@Override
 	public @Nullable RecipeBuilder<?> getRecipe() {
-		return compacted(Material.POTATO);
+		return getCompactRecipe(Material.POTATO);
 	}
 }

@@ -44,9 +44,9 @@ public enum NoteBlockInstrument {
 	MARIMBA(customSound("marimba"), MaterialTag.STRIPPED_LOGS.getValues()),
 	TRUMPET(customSound("trumpet"), Material.COPPER_BLOCK, Material.WAXED_COPPER_BLOCK),
 	BUZZ(customSound("buzz"), Material.HONEYCOMB_BLOCK),
-	KALIMBA(customSound("kalimba"), Material.REDSTONE_LAMP),
-	KOTO(customSound("koto"), CustomBlock.SUGAR_CANE_BUNDLE), //TODO: better material
-	TAIKO(customSound("taiko"), CustomBlock.APPLE_CRATE), //TODO: better material
+	KALIMBA(customSound("kalimba"), Material.AMETHYST_BLOCK),
+	KOTO(customSound("koto"), CustomBlock.BAMBOO_BUNDLE), // TODO: better material?
+	TAIKO(customSound("taiko"), CustomBlock.SHOJI_BLOCK),
 	;
 
 	@SafeVarargs

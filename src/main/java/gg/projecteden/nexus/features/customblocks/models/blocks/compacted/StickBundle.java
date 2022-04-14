@@ -31,7 +31,7 @@ public class StickBundle implements ICustomBlock, ISidewaysBlock {
 
 	@Override
 	public @Nullable RecipeBuilder<?> getRecipe() {
-		return compacted(Material.STICK);
+		return getCompactRecipe(Material.STICK);
 	}
 
 	@Override

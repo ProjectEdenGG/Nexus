@@ -31,6 +31,6 @@ public class BerryCrate implements ICustomBlock {
 
 	@Override
 	public @Nullable RecipeBuilder<?> getRecipe() {
-		return compacted(Material.SWEET_BERRIES);
+		return getCompactRecipe(Material.SWEET_BERRIES);
 	}
 }

@@ -22,7 +22,7 @@ public class SugarCaneBundle implements ICustomBlock, ISidewaysBlock {
 
 	@Override
 	public @NonNull String getName() {
-		return "Bundle of Bamboo";
+		return "Bundle of Sugar Cane";
 	}
 
 	@Override
@@ -32,7 +32,7 @@ public class SugarCaneBundle implements ICustomBlock, ISidewaysBlock {
 
 	@Override
 	public @Nullable RecipeBuilder<?> getRecipe() {
-		return compacted(Material.SUGAR_CANE);
+		return getCompactRecipe(Material.SUGAR_CANE);
 	}
 
 	@Override

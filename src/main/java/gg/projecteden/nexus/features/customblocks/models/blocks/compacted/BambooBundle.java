@@ -32,7 +32,7 @@ public class BambooBundle implements ICustomBlock, ISidewaysBlock {
 
 	@Override
 	public @Nullable RecipeBuilder<?> getRecipe() {
-		return compacted(Material.BAMBOO);
+		return getCompactRecipe(Material.BAMBOO);
 	}
 
 	@Override

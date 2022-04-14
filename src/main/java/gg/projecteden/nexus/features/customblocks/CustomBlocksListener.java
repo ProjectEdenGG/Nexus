@@ -422,8 +422,8 @@ public class CustomBlocksListener implements Listener {
 				return false;
 			} else
 				isCustomBlock = true;
-		} else if (!material.equals(Material.REDSTONE_WIRE) && !material.isSolid()) {
-			debug(" not solid: " + material);
+		} else if (!material.equals(Material.REDSTONE_WIRE) && (!material.isBlock() && !material.isSolid())) {
+			debug(" not a block: " + material);
 			return false;
 		}
 
