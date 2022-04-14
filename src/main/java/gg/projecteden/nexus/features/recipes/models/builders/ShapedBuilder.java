@@ -40,7 +40,8 @@ public class ShapedBuilder extends RecipeBuilder<ShapedBuilder> {
 	@Override
 	public Recipe getRecipe() {
 		ShapedRecipe recipe = new ShapedRecipe(key(), result);
-		recipe.shape(pattern[0], pattern[1], pattern[2]);
+
+		recipe.shape(pattern);
 
 		ingredients.forEach(recipe::setIngredient);
 
