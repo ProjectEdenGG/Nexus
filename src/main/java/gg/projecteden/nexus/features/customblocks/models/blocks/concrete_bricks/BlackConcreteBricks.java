@@ -30,6 +30,6 @@ public class BlackConcreteBricks implements ICustomBlock {
 
 	@Override
 	public @Nullable RecipeBuilder<?> getRecipe() {
-		return getBricksRecipe(Material.BLACK_CONCRETE);
+		return get2x2Recipe(Material.BLACK_CONCRETE);
 	}
 }

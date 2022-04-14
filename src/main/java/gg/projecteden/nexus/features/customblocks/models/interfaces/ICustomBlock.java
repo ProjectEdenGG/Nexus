@@ -83,7 +83,7 @@ public interface ICustomBlock {
 		return shaped("111", "111", "111").add('1', material);
 	}
 
-	default ShapedBuilder getBricksRecipe(Material material) {
+	default ShapedBuilder get2x2Recipe(Material material) {
 		return shaped("11", "11").add('1', material);
 	}
 }
