@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.customblocks.models.blocks.compacted;
 
-import gg.projecteden.nexus.features.customblocks.models.ICustomBlock;
+import gg.projecteden.nexus.features.customblocks.models.interfaces.ICustomBlock;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import lombok.NonNull;
 import org.bukkit.Instrument;

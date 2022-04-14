@@ -1,14 +1,15 @@
 package gg.projecteden.nexus.features.customblocks.models.blocks.compacted;
 
-import gg.projecteden.nexus.features.customblocks.models.ICustomBlock;
+import gg.projecteden.nexus.features.customblocks.models.interfaces.ICustomBlock;
+import gg.projecteden.nexus.features.customblocks.models.interfaces.ISidewaysBlock;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import lombok.NonNull;
 import org.bukkit.Instrument;
 import org.bukkit.Material;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class SugarCaneBundle implements ICustomBlock {
+public class SugarCaneBundle implements ICustomBlock, ISidewaysBlock {
+
 	@Override
 	public @NonNull Instrument getNoteBlockInstrument() {
 		return Instrument.BASS_DRUM;
@@ -16,22 +17,17 @@ public class SugarCaneBundle implements ICustomBlock {
 
 	@Override
 	public int getNoteBlockStep() {
-		return 10;
+		return 19;
 	}
 
 	@Override
-	public @NotNull String getName() {
-		return "Bundle of Sugar Cane";
+	public @NonNull String getName() {
+		return "Bundle of Bamboo";
 	}
 
 	@Override
 	public int getCustomModelData() {
-		return 20069;
-	}
-
-	@Override
-	public boolean canPlaceSideways() {
-		return true;
+		return 20063;
 	}
 
 	@Override
@@ -45,17 +41,17 @@ public class SugarCaneBundle implements ICustomBlock {
 	}
 
 	@Override
+	public int getNoteBlockStep_NS() {
+		return 20;
+	}
+
+	@Override
 	public @NonNull Instrument getNoteBlockInstrument_EW() {
 		return getNoteBlockInstrument();
 	}
 
 	@Override
-	public int getNoteBlockStep_NS() {
-		return 11;
-	}
-
-	@Override
 	public int getNoteBlockStep_EW() {
-		return 12;
+		return 21;
 	}
 }

@@ -4,7 +4,7 @@ import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock.SoundType;
-import gg.projecteden.nexus.features.customblocks.models.ICustomBlock;
+import gg.projecteden.nexus.features.customblocks.models.interfaces.ICustomBlock;
 import gg.projecteden.nexus.models.customblock.CustomBlockData;
 import gg.projecteden.nexus.models.customblock.NoteBlockData;
 import gg.projecteden.nexus.utils.GameModeWrapper;
@@ -345,11 +345,10 @@ public class CustomBlocksListener implements Listener {
 			return;
 		}
 
-		ICustomBlock customBlock = _customBlock.get();
 		BlockFace facing = data.getFacing();
 
-		instrument = customBlock.getNoteBlockInstrument(facing);
-		note = customBlock.getNoteBlockNote(facing);
+		instrument = _customBlock.getNoteBlockInstrument(facing);
+		note = _customBlock.getNoteBlockNote(facing);
 
 		NoteBlockData noteBlockData = data.getNoteBlockData();
 		if (data.isNoteBlock()) {

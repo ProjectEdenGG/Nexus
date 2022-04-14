@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.customblocks.models.blocks;
 
-import gg.projecteden.nexus.features.customblocks.models.ICustomBlock;
+import gg.projecteden.nexus.features.customblocks.models.interfaces.ICustomBlock;
 import lombok.NonNull;
 import org.bukkit.Instrument;
 import org.jetbrains.annotations.NotNull;

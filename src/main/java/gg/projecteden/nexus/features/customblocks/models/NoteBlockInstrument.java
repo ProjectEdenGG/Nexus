@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.customblocks.models;
 
+import gg.projecteden.nexus.features.customblocks.models.interfaces.ICustomBlock;
 import gg.projecteden.nexus.utils.MaterialTag;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
