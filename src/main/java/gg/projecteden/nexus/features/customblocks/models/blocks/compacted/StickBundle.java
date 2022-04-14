@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.customblocks.models.blocks.compacted;
 
+import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.features.customblocks.models.interfaces.ICustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.interfaces.ISidewaysBlock;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
@@ -30,7 +31,7 @@ public class StickBundle implements ICustomBlock, ISidewaysBlock {
 	}
 
 	@Override
-	public @Nullable RecipeBuilder<?> getRecipe() {
+	public @Nullable Pair<RecipeBuilder<?>, Integer> getRecipe() {
 		return getCompactRecipe(Material.STICK);
 	}
 

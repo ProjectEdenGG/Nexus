@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.customblocks.models;
 
+import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.features.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.customblocks.models.blocks.GenericCrateA;
 import gg.projecteden.nexus.features.customblocks.models.blocks.GenericCrateB;
@@ -341,11 +342,16 @@ public enum CustomBlock {
 
 	public void registerRecipe() {
 		ICustomBlock customBlock = get();
-		@Nullable RecipeBuilder<?> recipe = customBlock.getRecipe();
-		if (recipe == null)
+		Pair<RecipeBuilder<?>, Integer> recipePair = customBlock.getRecipe();
+		if (recipePair == null || recipePair.getFirst() == null)
 			return;
 
-		recipe.toMake(customBlock.getItemStack()).build().type(RecipeType.CUSTOM_BLOCKS).register();
+		RecipeBuilder<?> recipeBuilder = recipePair.getFirst();
+
+		ItemStack itemStack = customBlock.getItemStack().clone();
+		itemStack.setAmount(recipePair.getSecond());
+
+		recipeBuilder.toMake(itemStack).build().type(RecipeType.CUSTOM_BLOCKS).register();
 	}
 
 	static final Set<BlockFace> directions = Set.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST);

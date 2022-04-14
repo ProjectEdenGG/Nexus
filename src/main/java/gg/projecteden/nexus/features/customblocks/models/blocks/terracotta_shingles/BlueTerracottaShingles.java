@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.customblocks.models.blocks.terracotta_shingles;
 
+import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.features.customblocks.models.interfaces.ICustomBlock;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import lombok.NonNull;
@@ -29,7 +30,7 @@ public class BlueTerracottaShingles implements ICustomBlock {
 	}
 
 	@Override
-	public @Nullable RecipeBuilder<?> getRecipe() {
+	public @Nullable Pair<RecipeBuilder<?>, Integer> getRecipe() {
 		return get2x2Recipe(Material.BLUE_TERRACOTTA);
 	}
 }

@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.customblocks.models.interfaces;
 
+import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
-import gg.projecteden.nexus.features.recipes.models.builders.ShapedBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.NonNull;
 import org.bukkit.Instrument;
@@ -42,7 +42,7 @@ public interface ICustomBlock {
 		return getItemBuilder().build();
 	}
 
-	default @Nullable RecipeBuilder<?> getRecipe() {
+	default @Nullable Pair<RecipeBuilder<?>, Integer> getRecipe() {
 		return null;
 	}
 
@@ -79,11 +79,11 @@ public interface ICustomBlock {
 		return noteBlock;
 	}
 
-	default ShapedBuilder getCompactRecipe(Material material) {
-		return shaped("111", "111", "111").add('1', material);
+	default Pair<RecipeBuilder<?>, Integer> getCompactRecipe(Material material) {
+		return new Pair<>(shaped("111", "111", "111").add('1', material), 1);
 	}
 
-	default ShapedBuilder get2x2Recipe(Material material) {
-		return shaped("11", "11").add('1', material);
+	default Pair<RecipeBuilder<?>, Integer> get2x2Recipe(Material material) {
+		return new Pair<>(shaped("11", "11").add('1', material), 4);
 	}
 }
