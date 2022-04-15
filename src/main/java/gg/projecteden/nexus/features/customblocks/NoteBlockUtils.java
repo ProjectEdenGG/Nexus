@@ -19,8 +19,6 @@ import org.bukkit.block.data.type.Observer;
 
 import java.util.Set;
 
-import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
-
 public class NoteBlockUtils {
 	private static final Set<BlockFace> neighborFaces = Set.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST,
 		BlockFace.WEST, BlockFace.UP, BlockFace.DOWN);
@@ -70,7 +68,6 @@ public class NoteBlockUtils {
 
 
 	public static void play(NoteBlock noteBlock, Location location, boolean interacted) {
-		debug("PlayNoteEvent: ");
 		CustomBlockData data = CustomBlockUtils.getData(noteBlock, location);
 		if (data == null || !data.isNoteBlock())
 			return;
@@ -85,7 +82,7 @@ public class NoteBlockUtils {
 		Location location = block.getLocation();
 		Block above = block.getRelative(BlockFace.UP);
 
-		// TODO: 1.19
+		// TODO: 1.19, double check that this is still a thing
 		String version = Bukkit.getMinecraftVersion();
 		if (version.matches("1.19[.]?[0-9]*")) {
 			if (MaterialTag.WOOL.isTagged(above) || MaterialTag.WOOL_CARPET.isTagged(above))

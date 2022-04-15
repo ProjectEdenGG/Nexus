@@ -44,7 +44,7 @@ import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.NMSUtils.SoundType;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.bukkit.Instrument;
@@ -52,7 +52,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -281,20 +280,11 @@ public enum CustomBlock {
 		UUID uuid = player.getUniqueId();
 		Location location = block.getLocation();
 		CustomBlockUtils.placeBlockDatabase(uuid, this, location, facing);
-
-		if (!this.equals(CustomBlock.NOTE_BLOCK))
-			playSound(SoundType.PLACE, block);
+		playSound(SoundType.PLACE, location);
 
 		ItemUtils.subtract(player, itemInHand);
 		player.swingMainHand();
 		return true;
-	}
-
-	public enum SoundType {
-		PLACE,
-		BREAK,
-		STEP,
-		HIT,
 	}
 
 	public @Nullable SoundType getSoundType(Sound sound) {
@@ -329,15 +319,9 @@ public enum CustomBlock {
 		return null;
 	}
 
-	public void playSound(SoundType type, Block block) {
+	public void playSound(SoundType type, Location location) {
 		Sound sound = getSound(type);
-		if (sound == null)
-			return;
-
-		new SoundBuilder(sound)
-			.location(block)
-			.category(SoundCategory.BLOCKS)
-			.play();
+		BlockUtils.playSound(sound, location);
 	}
 
 	public void registerRecipe() {

@@ -3,13 +3,14 @@ package gg.projecteden.nexus.features.customblocks;
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
-import gg.projecteden.nexus.features.customblocks.models.CustomBlock.SoundType;
 import gg.projecteden.nexus.features.customblocks.models.interfaces.ICustomBlock;
 import gg.projecteden.nexus.models.customblock.CustomBlockData;
 import gg.projecteden.nexus.models.customblock.NoteBlockData;
+import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.NMSUtils.SoundType;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import me.lexikiq.event.sound.LocationNamedSoundEvent;
@@ -65,7 +66,6 @@ public class CustomBlocksListener implements Listener {
 
 	@EventHandler
 	public void on(InventoryCreativeEvent event) {
-		;
 		SlotType slotType = event.getSlotType();
 		if (!slotType.equals(SlotType.QUICKBAR))
 			return;
@@ -136,7 +136,7 @@ public class CustomBlocksListener implements Listener {
 
 		debug(" soundType: " + soundType + ", playing sound...");
 		event.setCancelled(true);
-		_customBlock.playSound(soundType, source);
+		_customBlock.playSound(soundType, source.getLocation());
 	}
 
 	@EventHandler
@@ -149,7 +149,6 @@ public class CustomBlocksListener implements Listener {
 
 		if (CustomBlocks.isCustomNoteBlock(above)) {
 			NoteBlock noteBlock = (NoteBlock) above.getBlockData();
-			debug("BlcokPlaceEvent:");
 			CustomBlockData data = CustomBlockUtils.getData(noteBlock, above.getLocation());
 			if (data == null)
 				return;
@@ -395,45 +394,48 @@ public class CustomBlocksListener implements Listener {
 
 		Player player = event.getPlayer();
 		BlockFace clickedFace = event.getBlockFace();
-		Block inFront = clickedBlock.getRelative(clickedFace);
-		boolean isInteractable = clickedBlock.getType().isInteractable() || MaterialTag.INTERACTABLES.isTagged(inFront);
+		Block preBlock = clickedBlock.getRelative(clickedFace);
+		boolean isInteractable = clickedBlock.getType().isInteractable() || MaterialTag.INTERACTABLES.isTagged(preBlock);
 		if (CustomBlocks.isCustom(clickedBlock)) {
 			if (!CustomBlocks.isCustomNoteBlock(clickedBlock)) {
 				isInteractable = false;
 			}
 		}
 
-		if (!player.isSneaking() && isInteractable)
+		if (!player.isSneaking() && isInteractable) {
+			debug("not sneaking & isInteractable");
 			return false;
+		}
 
 		ItemStack itemInHand = event.getItem();
 		if (Nullables.isNullOrAir(itemInHand)) {
+			debug("item in hand is null or air");
 			return false;
 		}
 
 		Material material = itemInHand.getType();
-		boolean isCustomBlock = false;
+		boolean isPlacingCustomBlock = false;
 		if (material.equals(ICustomBlock.blockMaterial))
-			isCustomBlock = true;
+			isPlacingCustomBlock = true;
 		else if (material.equals(ICustomBlock.itemMaterial)) {
 			int modelData = CustomModelData.of(itemInHand);
 			if (!CustomBlock.modelDataMap.containsKey(modelData)) {
 				debug(" unknown modelData: " + modelData);
 				return false;
 			} else
-				isCustomBlock = true;
+				isPlacingCustomBlock = true;
 		} else if (!material.equals(Material.REDSTONE_WIRE) && (!material.isBlock() && !material.isSolid())) {
 			debug(" not a block: " + material);
 			return false;
 		}
 
-		if (!Nullables.isNullOrAir(inFront)) {
-			debug(" block in front is not air");
+		if (!Nullables.isNullOrAir(preBlock)) {
+			debug(" preBlock is not air");
 			return false;
 		}
 
-		if (isCustomBlock) {
-			if (inFront.getLocation().toCenterLocation().getNearbyLivingEntities(0.5).size() > 0) {
+		if (isPlacingCustomBlock) {
+			if (preBlock.getLocation().toCenterLocation().getNearbyLivingEntities(0.5).size() > 0) {
 				debug(" entity in way");
 				return false;
 			}
@@ -444,12 +446,16 @@ public class CustomBlocksListener implements Listener {
 				return false;
 			}
 
-			debug(" placing custom block...");
-			if (!_customBlock.placeBlock(player, inFront, clickedBlock, clickedFace, itemInHand)) {
+			if (!_customBlock.placeBlock(player, preBlock, clickedBlock, clickedFace, itemInHand)) {
 				return false;
 			}
 
 			event.setCancelled(true);
+		} else {
+			if (!BlockUtils.tryPlaceEvent(player, preBlock, clickedBlock, material))
+				return false;
+
+			BlockUtils.playSound(SoundType.PLACE, preBlock);
 		}
 
 		return true;
@@ -463,7 +469,6 @@ public class CustomBlocksListener implements Listener {
 	}
 
 	private void changePitch(NoteBlock noteBlock, Location location, boolean sneaking) {
-		debug("ChangePitchEvent: ");
 		CustomBlockData data = CustomBlockUtils.getData(noteBlock, location);
 		if (data == null || !data.isNoteBlock())
 			return;

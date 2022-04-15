@@ -2,12 +2,15 @@ package gg.projecteden.nexus.utils;
 
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.LocationUtils.Axis;
+import gg.projecteden.nexus.utils.NMSUtils.SoundType;
 import gg.projecteden.nexus.utils.Tasks.GlowTask;
 import me.lexikiq.HasPlayer;
 import me.lexikiq.OptionalPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -319,5 +322,19 @@ public class BlockUtils {
 			return false;
 
 		return true;
+	}
+
+	public static void playSound(SoundType soundType, Block block) {
+		playSound(NMSUtils.getSound(soundType, block), block.getLocation());
+	}
+
+	public static void playSound(Sound sound, Location location) {
+		if (sound == null || location == null)
+			return;
+
+		new SoundBuilder(sound)
+			.location(location)
+			.category(SoundCategory.BLOCKS)
+			.play();
 	}
 }

@@ -45,7 +45,7 @@ public enum NoteBlockInstrument {
 	TRUMPET(customSound("trumpet"), Material.COPPER_BLOCK, Material.WAXED_COPPER_BLOCK),
 	BUZZ(customSound("buzz"), Material.HONEYCOMB_BLOCK),
 	KALIMBA(customSound("kalimba"), Material.AMETHYST_BLOCK),
-	KOTO(customSound("koto"), CustomBlock.BAMBOO_BUNDLE), // TODO: better material?
+	KOTO(customSound("koto"), CustomBlock.BAMBOO_BUNDLE),
 	TAIKO(customSound("taiko"), CustomBlock.SHOJI_BLOCK),
 	;
 

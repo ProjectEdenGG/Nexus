@@ -14,8 +14,8 @@ import java.util.List;
 
 /*
 	TODO:
-		- define all added blocks
 		- allow crafting of custom blocks that are used in recipes
+		- un/crafting recipes
 		- Appropriate tool & mining speed
 			ItemMeta meta = tool.getItemMeta();
 			UUID SLOW_DIG = UUID.fromString("55FCED67-E92A-486E-9800-B47F202C4386");
@@ -25,6 +25,7 @@ import java.util.List;
 		- //
 		- Known issues:
 			- CreativePickBlock on a custom block while a note block is in your inventory will always select the note block, and doesn't throw InventoryClickEvent or CreativeClickEvent
+				- get rid of the note block item, and replace it with a paper model
 			- Custom blocks may flash when placing blocks near them (clientside only)
 			- Players arm will swing on interact w/ custom blocks
 
