@@ -79,9 +79,13 @@ public class Quester implements PlayerOwnedObject {
 				step.setFirstInteraction(false);
 
 				return;
+			} else if (taskStep.getOnClick().containsKey(interactable)) {
+				dialog = taskStep.getOnClick().get(interactable).send(this);
+				return;
 			}
 		}
 
+		/*
 		for (Quest quest : quests) {
 			final QuestTaskProgress questTask = quest.getCurrentTaskProgress();
 			if (!questTask.hasPreviousStep())
@@ -96,6 +100,7 @@ public class Quester implements PlayerOwnedObject {
 				return;
 			}
 		}
+		*/
 
 		// TODO Look for quests to start
 	}

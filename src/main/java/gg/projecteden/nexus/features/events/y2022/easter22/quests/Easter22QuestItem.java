@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.y2022.easter22.quests;
 
+import gg.projecteden.nexus.features.quests.QuestItem;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,16 +9,17 @@ import org.bukkit.inventory.ItemStack;
 
 @Getter
 @AllArgsConstructor
-public enum Easter22QuestItem {
+public enum Easter22QuestItem implements QuestItem {
 	EASTER_EGG(new ItemBuilder(Material.PAPER).name("Easter Egg")),
 	PAINTBRUSH(new ItemBuilder(Material.PAPER).customModelData(2000).name("&ePaintbrush")),
+	PAINTED_EGG(new ItemBuilder(Material.PAPER).customModelData(2023).name("&ePainted Egg")),
 	;
 
 	private final ItemBuilder itemBuilder;
 
+	@Override
 	public ItemStack get() {
 		return itemBuilder.build();
 	}
-
 
 }

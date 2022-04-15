@@ -3,11 +3,13 @@ package gg.projecteden.nexus.features.quests.tasks;
 import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
 import gg.projecteden.nexus.features.quests.interactable.instructions.DialogInstance;
 import gg.projecteden.nexus.features.quests.tasks.GatherQuestTask.GatherQuestTaskStep;
+import gg.projecteden.nexus.features.quests.QuestItem;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTaskStep;
 import gg.projecteden.nexus.models.quests.QuestTaskStepProgress;
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bukkit.Material;
@@ -46,7 +48,7 @@ public class GatherQuestTask extends QuestTask<GatherQuestTask, GatherQuestTaskS
 
 		@Override
 		public boolean shouldAdvance(Quester quester, QuestTaskStepProgress stepProgress) {
-			return !stepProgress.isFirstInteraction() && quester.has(items);
+			return Nullables.isNullOrEmpty(items) || (!stepProgress.isFirstInteraction() && quester.has(items));
 		}
 
 		@Override
@@ -84,6 +86,13 @@ public class GatherQuestTask extends QuestTask<GatherQuestTask, GatherQuestTaskS
 
 		public GatherTaskBuilder gather(ItemStack... items) {
 			return gather(List.of(items));
+		}
+
+		public GatherTaskBuilder gather(QuestItem... items) {
+			for (QuestItem item : items)
+				gather(item.get());
+
+			return this;
 		}
 
 		public GatherTaskBuilder gather(ItemStack item, int amount) {
