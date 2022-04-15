@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.y2022.easter22;
 
+import gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22Entity;
 import gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22NPC;
 import gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestItem;
 import gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestTask;
@@ -24,6 +25,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
@@ -137,12 +139,22 @@ public class Easter22Command extends CustomCommand implements Listener {
 	}
 
 	@EventHandler
-	public void onNPCRightClick(NPCRightClickEvent event) {
+	public void on(NPCRightClickEvent event) {
 		final Easter22NPC npc = Easter22NPC.of(event.getNPC());
 		if (npc == null)
 			return;
 
 		new QuesterService().edit(event.getClicker(), quester -> quester.interact(npc));
+		event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void on(PlayerInteractAtEntityEvent event) {
+		final Easter22Entity entity = Easter22Entity.of(event.getRightClicked());
+		if (entity == null)
+			return;
+
+		new QuesterService().edit(event.getPlayer(), quester -> quester.interact(entity));
 		event.setCancelled(true);
 	}
 

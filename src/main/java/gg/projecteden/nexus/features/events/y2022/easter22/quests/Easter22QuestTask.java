@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import static gg.projecteden.nexus.features.events.y2022.easter22.Easter22.TOTAL_EASTER_EGGS;
-import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22NPC.EASTER_BUNNY;
+import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22Entity.EASTER_BUNNY;
 import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestItem.EASTER_EGG;
 import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestItem.PAINTBRUSH;
 
@@ -23,16 +23,16 @@ public enum Easter22QuestTask implements IQuestTask {
 			.npc("I mean it couldn't have just grown legs and walked away... or I suppose it could have?")
 			.npc("nope that's just creepy, we are avoiding that train of thought-")
 			.player("Um, excuse me?")
-			.npc("Its not easy to lose, Its a paintbrush after all")
+			.npc("It's not easy to lose, it's a paintbrush after all")
 			.player("Hello? Can you not hear me or something?")
 			.npc("It has to be around here somewhere, I just know it is.")
 			.player("Okay then, I guess not")
 			.player("Maybe if I find their paintbrush, they'll finally notice I'm trying to talk with them")
 		)
+		.gather(PAINTBRUSH.get())
 		.reminder(dialog -> dialog
 			.player("They still don't seem to notice I'm here, I should really find that paintbrush")
 		)
-		.gather(PAINTBRUSH.get())
 		.complete(dialog -> dialog
 			.player("Hey, is this the paintbrush you're looking for?")
 			.npc("Wait where did you find that?!")
@@ -49,10 +49,10 @@ public enum Easter22QuestTask implements IQuestTask {
 			.player("Definitely!")
 			.npc("Awesome! I would warn you about the difficulty but it seems you have a talent when it comes to finding things...")
 		)
+		.gather(EASTER_EGG.get(), TOTAL_EASTER_EGGS)
 		.reminder(dialog -> dialog
 			.npc("I appreciate your enthusiasm but you haven't found them all yet! Come back when you've gotten all 20.")
 		)
-		.gather(EASTER_EGG.get(), TOTAL_EASTER_EGGS)
 		.complete(dialog -> dialog
 			.npc("good job, here's some bunny ears")
 			.thenRun(task -> new CostumeUserService().edit(task.getUuid(), user -> user.getOwnedCostumes().add("exclusive/hat/bunny_ears")))

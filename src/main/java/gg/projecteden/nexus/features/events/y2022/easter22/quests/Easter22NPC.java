@@ -8,7 +8,6 @@ import net.citizensnpcs.api.npc.NPC;
 @Getter
 @AllArgsConstructor
 public enum Easter22NPC implements InteractableNPC {
-	EASTER_BUNNY("Easter Bunny", 4672),
 	BASIL("Basil", 4673),
 	;
 
