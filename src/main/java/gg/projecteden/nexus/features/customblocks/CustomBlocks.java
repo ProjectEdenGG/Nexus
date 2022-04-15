@@ -14,13 +14,10 @@ import java.util.List;
 
 /*
 	TODO:
+		- remove note block item, use only paper instead, replace recipe/change result item in precraft
 		- allow crafting of custom blocks that are used in recipes
 		- un/crafting recipes
-		- Appropriate tool & mining speed
-			ItemMeta meta = tool.getItemMeta();
-			UUID SLOW_DIG = UUID.fromString("55FCED67-E92A-486E-9800-B47F202C4386");
-			meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED,
-				new AttributeModifier(SLOW_DIG, "custom_block_mining_speed", 2, Operation.MULTIPLY_SCALAR_1, EquipmentSlot.HAND));
+		- Appropriate tool & mining speed --> CustomBlockBreaking
 		- Sounds: Wait until SoundEvents are fixed
 		- //
 		- Known issues:

@@ -325,7 +325,7 @@ public class BlockUtils {
 	}
 
 	public static void playSound(SoundType soundType, Block block) {
-		playSound(NMSUtils.getSound(soundType, block), block.getLocation());
+		playSound(NMSUtils.getSound(soundType, block), block.getLocation().toCenterLocation());
 	}
 
 	public static void playSound(Sound sound, Location location) {

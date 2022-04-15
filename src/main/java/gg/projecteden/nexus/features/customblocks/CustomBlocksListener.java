@@ -395,8 +395,10 @@ public class CustomBlocksListener implements Listener {
 		Player player = event.getPlayer();
 		BlockFace clickedFace = event.getBlockFace();
 		Block preBlock = clickedBlock.getRelative(clickedFace);
+		boolean clickedCustomBlock = false;
 		boolean isInteractable = clickedBlock.getType().isInteractable() || MaterialTag.INTERACTABLES.isTagged(preBlock);
 		if (CustomBlocks.isCustom(clickedBlock)) {
+			clickedCustomBlock = true;
 			if (!CustomBlocks.isCustomNoteBlock(clickedBlock)) {
 				isInteractable = false;
 			}
@@ -452,9 +454,13 @@ public class CustomBlocksListener implements Listener {
 
 			event.setCancelled(true);
 		} else {
+			if (!clickedCustomBlock)
+				return false;
+
 			if (!BlockUtils.tryPlaceEvent(player, preBlock, clickedBlock, material))
 				return false;
 
+			debug("CustomBlocks: playing place sound");
 			BlockUtils.playSound(SoundType.PLACE, preBlock);
 		}
 
