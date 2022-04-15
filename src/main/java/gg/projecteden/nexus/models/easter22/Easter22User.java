@@ -41,39 +41,31 @@ public class Easter22User implements PlayerOwnedObject {
 		}
 
 		found.add(location);
+
 		PlayerUtils.giveItem(getOnlinePlayer(), Easter22QuestItem.EASTER_EGG.get());
 
 		/*
-		EventUserService eventUserService = new EventUserService();
-		EventUser eventUser = eventUserService.get(uuid);
-		eventUser.giveTokens(5);
-		eventUserService.save(eventUser);
+		new EventUserService().edit(uuid, eventUser -> eventUser.giveTokens(15));
 
-		VoterService voterService = new VoterService();
-		Voter voter = voterService.get(uuid);
-
-		BankerService bankerService = new BankerService();
 		switch (found.size()) {
 			case 5 -> {
-				bankerService.deposit(TransactionCause.EVENT.of(null, this, BigDecimal.valueOf(5000), ShopGroup.SURVIVAL, "Found 5 easter eggs"));
+				new BankerService().deposit(TransactionCause.EVENT.of(null, this, BigDecimal.valueOf(5000), ShopGroup.SURVIVAL, "Found 5 easter eggs"));
 				sendMessage(PREFIX + "You have received &e$5,000 &3for finding &e5 easter eggs");
 			}
 			case 10 -> {
-				voter.givePoints(25);
-				voterService.save(voter);
+				new VoterService().edit(uuid, voter -> voter.givePoints(25));
 				sendMessage(PREFIX + "You have received &e25 vote points &3for finding &e10 easter eggs");
 			}
 			case 20 -> {
-				bankerService.deposit(TransactionCause.EVENT.of(null, this, BigDecimal.valueOf(10000), ShopGroup.SURVIVAL, "Found 20 easter eggs"));
+				new BankerService().deposit(TransactionCause.EVENT.of(null, this, BigDecimal.valueOf(10000), ShopGroup.SURVIVAL, "Found 20 easter eggs"));
 				sendMessage(PREFIX + "You have received &e$10,000 &3for finding &e20 easter eggs");
 			}
 			case 30 -> {
-				voter.givePoints(50);
-				voterService.save(voter);
+				new VoterService().edit(uuid, voter -> voter.givePoints(50));
 				sendMessage(PREFIX + "You have received &e50 vote points &3for finding &e30 easter eggs");
 			}
 			case 35 -> {
-				bankerService.deposit(TransactionCause.EVENT.of(null, this, BigDecimal.valueOf(35000), ShopGroup.SURVIVAL, "Found 35 easter eggs"));
+				new BankerService().deposit(TransactionCause.EVENT.of(null, this, BigDecimal.valueOf(35000), ShopGroup.SURVIVAL, "Found 35 easter eggs"));
 				sendMessage(PREFIX + "You have received &e$35,000 &3for finding &e35 easter eggs");
 			}
 		}
