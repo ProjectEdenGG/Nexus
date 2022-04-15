@@ -6,6 +6,10 @@ import gg.projecteden.nexus.features.quests.interactable.instructions.DialogInst
 import gg.projecteden.nexus.models.quests.QuestTaskStepProgress;
 import gg.projecteden.nexus.models.quests.Quester;
 import lombok.Data;
+import net.kyori.adventure.text.ComponentLike;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Data
 public abstract class QuestTaskStep<
@@ -13,8 +17,10 @@ public abstract class QuestTaskStep<
 	TaskStepType extends QuestTaskStep<TaskType, TaskStepType>
 > {
 	protected Interactable interactable;
+	protected ComponentLike objective;
 	protected Dialog dialog;
 	protected Dialog reminder;
+	protected Map<Interactable, Dialog> onClick = new HashMap<>();
 
 	abstract public DialogInstance interact(Quester quester, QuestTaskStepProgress stepProgress);
 

@@ -1,13 +1,16 @@
 package gg.projecteden.nexus.features.quests.interactable.instructions;
 
+import gg.projecteden.nexus.features.quests.QuestReward;
 import gg.projecteden.nexus.features.quests.interactable.Interactable;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.quests.Quester;
+import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -63,6 +66,16 @@ public class Dialog {
 		return this;
 	}
 
+	public Dialog raw(String message) {
+		instruction(quester -> PlayerUtils.send(quester, message), calculateDelay(message));
+		return this;
+	}
+
+	public Dialog raw(ComponentLike message) {
+		instruction(quester -> PlayerUtils.send(quester, message), calculateDelay(AdventureUtils.asPlainText(message)));
+		return this;
+	}
+
 	public Dialog wait(int ticks) {
 		instruction(null, ticks);
 		return this;
@@ -70,6 +83,16 @@ public class Dialog {
 
 	public Dialog thenRun(Consumer<Quester> task) {
 		instruction(task, 0);
+		return this;
+	}
+
+	public Dialog reward(QuestReward reward) {
+		instruction(reward::apply, -1);
+		return this;
+	}
+
+	public Dialog reward(QuestReward reward, int amount) {
+		instruction(quester -> reward.apply(quester, amount), -1);
 		return this;
 	}
 

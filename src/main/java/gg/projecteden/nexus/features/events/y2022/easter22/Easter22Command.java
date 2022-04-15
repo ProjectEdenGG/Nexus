@@ -15,18 +15,26 @@ import gg.projecteden.nexus.models.easter22.Easter22User;
 import gg.projecteden.nexus.models.easter22.Easter22UserService;
 import gg.projecteden.nexus.models.quests.Quest;
 import gg.projecteden.nexus.models.quests.QuesterService;
+import gg.projecteden.nexus.models.scheduledjobs.jobs.BlockRegenJob;
 import gg.projecteden.nexus.utils.CitizensUtils;
+import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.Utils;
+import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 
@@ -37,6 +45,7 @@ import java.util.Map;
 import java.util.function.BiFunction;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
 import static gg.projecteden.nexus.utils.StringUtils.getCoordinateString;
 import static gg.projecteden.nexus.utils.StringUtils.getTeleportCommand;
 
@@ -106,7 +115,11 @@ public class Easter22Command extends CustomCommand implements Listener {
 		if (isNullOrAir(item))
 			return false;
 
-		return false;
+		if (item.getType() != Material.PAPER)
+			return false;
+
+		final int modelId = CustomModelData.of(item);
+		return modelId >= 2001 && modelId <= 2020;
 	}
 
 	@Path("quest debug <task>")
@@ -156,6 +169,25 @@ public class Easter22Command extends CustomCommand implements Listener {
 
 		new QuesterService().edit(event.getPlayer(), quester -> quester.interact(entity));
 		event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void on(PlayerInteractEvent event) {
+		if (!Easter22.isAtEasterIsland(event.getPlayer()))
+			return;
+
+		if (event.getAction() != Action.LEFT_CLICK_BLOCK)
+			return;
+
+		final Block block = event.getClickedBlock();
+		if (Nullables.isNullOrAir(block))
+			return;
+
+		if (block.getType() != Material.OXEYE_DAISY)
+			return;
+
+		block.breakNaturally();
+		new BlockRegenJob(block.getLocation(), Material.OXEYE_DAISY).schedule(randomInt(3 * 60, 6 * 60));
 	}
 
 }

@@ -1,23 +1,19 @@
 package gg.projecteden.nexus.features.quests;
 
-import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.quests.Quester;
-import lombok.AllArgsConstructor;
 
 import java.util.function.BiConsumer;
 
-@AllArgsConstructor
-public enum QuestReward {
-	EVENT_TOKENS((quester, amount) -> new EventUserService().edit(quester, user -> user.giveTokens(amount))),
-	;
+public interface QuestReward {
 
-	private final BiConsumer<Quester, Integer> consumer;
+	BiConsumer<Quester, Integer> getConsumer();
 
-	public void apply(Quester quester) {
+	default void apply(Quester quester) {
 		apply(quester, 1);
 	}
 
-	public void apply(Quester quester, int amount) {
-		consumer.accept(quester, amount);
+	default void apply(Quester quester, int amount) {
+		getConsumer().accept(quester, amount);
 	}
+
 }

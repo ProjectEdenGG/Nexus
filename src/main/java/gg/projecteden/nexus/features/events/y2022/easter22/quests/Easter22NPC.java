@@ -9,6 +9,7 @@ import net.citizensnpcs.api.npc.NPC;
 @AllArgsConstructor
 public enum Easter22NPC implements InteractableNPC {
 	BASIL("Basil", 4673),
+	DAMIEN("Damien", 4674),
 	;
 
 	private final String name;

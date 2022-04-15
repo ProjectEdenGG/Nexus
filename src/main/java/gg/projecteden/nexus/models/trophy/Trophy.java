@@ -48,7 +48,8 @@ public enum Trophy {
 		}
 	},
 
-	PUGMAS_2021(Material.GOLD_INGOT, 3);
+	PUGMAS_2021(Material.GOLD_INGOT, 3),
+	EASTER_2022(Material.GOLD_INGOT, 4);
 
 	@NonNull
 	private final Material material;

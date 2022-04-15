@@ -1,9 +1,11 @@
 package gg.projecteden.nexus.features.quests.tasks.common;
 
+import gg.projecteden.nexus.features.quests.CommonQuestReward;
 import gg.projecteden.nexus.features.quests.QuestReward;
 import gg.projecteden.nexus.features.quests.interactable.Interactable;
 import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
 import gg.projecteden.nexus.models.quests.Quester;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -48,6 +50,15 @@ public abstract class QuestTask<
 			return (TaskBuilderType) this;
 		}
 
+		public TaskBuilderType objective(String message) {
+			return objective(new JsonBuilder(message));
+		}
+
+		public TaskBuilderType objective(JsonBuilder message) {
+			currentStep.objective = message;
+			return (TaskBuilderType) this;
+		}
+
 		public TaskBuilderType dialog(Function<Dialog, Dialog> instructions) {
 			currentStep.dialog = instructions.apply(Dialog.from(currentStep.interactable));
 			return (TaskBuilderType) this;
@@ -65,6 +76,11 @@ public abstract class QuestTask<
 
 		public TaskBuilderType reward(QuestReward reward, int amount) {
 			rewards.add(quester -> reward.apply(quester, amount));
+			return (TaskBuilderType) this;
+		}
+
+		public TaskBuilderType onClick(Interactable interactable, Function<Dialog, Dialog> instructions) {
+			currentStep.onClick.computeIfAbsent(interactable, $ -> instructions.apply(Dialog.from(interactable)));
 			return (TaskBuilderType) this;
 		}
 
