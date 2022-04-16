@@ -190,9 +190,9 @@ public class Easter22Command extends CustomCommand implements Listener {
 		switch (event.getAction()) {
 			case LEFT_CLICK_BLOCK:
 				switch (block.getType()) {
-					case OXEYE_DAISY -> {
+					case OXEYE_DAISY, CORNFLOWER -> {
+						new BlockRegenJob(block.getLocation(), block.getType()).schedule(randomInt(3 * 60, 6 * 60));
 						block.breakNaturally();
-						new BlockRegenJob(block.getLocation(), Material.OXEYE_DAISY).schedule(randomInt(3 * 60, 6 * 60));
 					}
 				}
 				break;
@@ -201,12 +201,13 @@ public class Easter22Command extends CustomCommand implements Listener {
 					case OAK_LEAVES -> {
 						if (!new CooldownService().check(player, "easter22-stick-" + StringUtils.getFlooredCoordinateString(block.getLocation()).replace(" ", "-"), TickTime.MINUTE))
 							return;
+
 						if (chanceOf(20)) {
 							PlayerUtils.giveItem(player, Material.STICK);
 							new SoundBuilder(Sound.ITEM_BONE_MEAL_USE).receiver(player).play();
 						} else {
 							PlayerUtils.send(player, "&7Hmm... no sticks in this bush");
-							new SoundBuilder(Sound.ENTITY_VILLAGER_NO).volume(.15).receiver(player).play();
+							new SoundBuilder(Sound.ENTITY_VILLAGER_NO).receiver(player).volume(.15).play();
 						}
 					}
 				}

@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.features.quests.tasks;
 
+import gg.projecteden.nexus.features.quests.QuestItem;
 import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
 import gg.projecteden.nexus.features.quests.interactable.instructions.DialogInstance;
 import gg.projecteden.nexus.features.quests.tasks.GatherQuestTask.GatherQuestTaskStep;
-import gg.projecteden.nexus.features.quests.QuestItem;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTaskStep;
 import gg.projecteden.nexus.models.quests.QuestTaskStepProgress;
@@ -93,6 +93,10 @@ public class GatherQuestTask extends QuestTask<GatherQuestTask, GatherQuestTaskS
 				gather(item.get());
 
 			return this;
+		}
+
+		public GatherTaskBuilder gather(QuestItem item, int amount) {
+			return gather(item.get(), amount);
 		}
 
 		public GatherTaskBuilder gather(ItemStack item, int amount) {
