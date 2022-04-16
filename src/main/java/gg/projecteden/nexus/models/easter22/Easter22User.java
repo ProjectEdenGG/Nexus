@@ -4,9 +4,13 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
-import gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestItem;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
+import gg.projecteden.nexus.models.banker.BankerService;
+import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
+import gg.projecteden.nexus.models.eventuser.EventUserService;
+import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
+import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
@@ -16,9 +20,12 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+
+import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestItem.EASTER_EGG;
 
 @Data
 @Entity(value = "easter22", noClassnameStored = true)
@@ -42,34 +49,29 @@ public class Easter22User implements PlayerOwnedObject {
 
 		found.add(location);
 
-		PlayerUtils.giveItem(getOnlinePlayer(), Easter22QuestItem.EASTER_EGG.get());
+		PlayerUtils.giveItem(getOnlinePlayer(), EASTER_EGG.get());
 
-		/*
-		new EventUserService().edit(uuid, eventUser -> eventUser.giveTokens(15));
+		if (true) return; // TODO Easter22
 
 		switch (found.size()) {
 			case 5 -> {
 				new BankerService().deposit(TransactionCause.EVENT.of(null, this, BigDecimal.valueOf(5000), ShopGroup.SURVIVAL, "Found 5 easter eggs"));
 				sendMessage(PREFIX + "You have received &e$5,000 &3for finding &e5 easter eggs");
+				new EventUserService().edit(uuid, eventUser -> eventUser.giveTokens(25));
 			}
 			case 10 -> {
 				new VoterService().edit(uuid, voter -> voter.givePoints(25));
 				sendMessage(PREFIX + "You have received &e25 vote points &3for finding &e10 easter eggs");
+				new EventUserService().edit(uuid, eventUser -> eventUser.giveTokens(25));
 			}
-			case 20 -> {
-				new BankerService().deposit(TransactionCause.EVENT.of(null, this, BigDecimal.valueOf(10000), ShopGroup.SURVIVAL, "Found 20 easter eggs"));
-				sendMessage(PREFIX + "You have received &e$10,000 &3for finding &e20 easter eggs");
+			case 15 -> {
+				new BankerService().deposit(TransactionCause.EVENT.of(null, this, BigDecimal.valueOf(15000), ShopGroup.SURVIVAL, "Found 20 easter eggs"));
+				sendMessage(PREFIX + "You have received &e$15,000 &3for finding &e15 easter eggs");
+				new EventUserService().edit(uuid, eventUser -> eventUser.giveTokens(25));
 			}
-			case 30 -> {
-				new VoterService().edit(uuid, voter -> voter.givePoints(50));
-				sendMessage(PREFIX + "You have received &e50 vote points &3for finding &e30 easter eggs");
-			}
-			case 35 -> {
-				new BankerService().deposit(TransactionCause.EVENT.of(null, this, BigDecimal.valueOf(35000), ShopGroup.SURVIVAL, "Found 35 easter eggs"));
-				sendMessage(PREFIX + "You have received &e$35,000 &3for finding &e35 easter eggs");
-			}
+			case 20 -> new EventUserService().edit(uuid, eventUser -> eventUser.giveTokens(125));
+			default -> new EventUserService().edit(uuid, eventUser -> eventUser.giveTokens(15));
 		}
-		*/
 	}
 
 }

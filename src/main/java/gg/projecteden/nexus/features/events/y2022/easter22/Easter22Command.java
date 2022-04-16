@@ -11,6 +11,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.easter22.Easter22User;
 import gg.projecteden.nexus.models.easter22.Easter22UserService;
 import gg.projecteden.nexus.models.quests.Quest;
@@ -20,18 +21,22 @@ import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.nexus.utils.Utils.ActionGroup;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -48,6 +53,7 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
 import static gg.projecteden.nexus.utils.StringUtils.getCoordinateString;
 import static gg.projecteden.nexus.utils.StringUtils.getTeleportCommand;
+import static gg.projecteden.utils.RandomUtils.chanceOf;
 
 @NoArgsConstructor
 @Aliases("easter")
@@ -173,21 +179,40 @@ public class Easter22Command extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void on(PlayerInteractEvent event) {
-		if (!Easter22.isAtEasterIsland(event.getPlayer()))
-			return;
-
-		if (event.getAction() != Action.LEFT_CLICK_BLOCK)
+		final Player player = event.getPlayer();
+		if (!Easter22.isAtEasterIsland(player))
 			return;
 
 		final Block block = event.getClickedBlock();
 		if (Nullables.isNullOrAir(block))
 			return;
 
-		if (block.getType() != Material.OXEYE_DAISY)
-			return;
+		switch (event.getAction()) {
+			case LEFT_CLICK_BLOCK:
+				switch (block.getType()) {
+					case OXEYE_DAISY -> {
+						block.breakNaturally();
+						new BlockRegenJob(block.getLocation(), Material.OXEYE_DAISY).schedule(randomInt(3 * 60, 6 * 60));
+					}
+				}
+				break;
+			case RIGHT_CLICK_BLOCK:
+				switch (block.getType()) {
+					case OAK_LEAVES -> {
+						if (!new CooldownService().check(player, "easter22-stick-" + StringUtils.getFlooredCoordinateString(block.getLocation()).replace(" ", "-"), TickTime.MINUTE))
+							return;
+						if (chanceOf(20)) {
+							PlayerUtils.giveItem(player, Material.STICK);
+							new SoundBuilder(Sound.ITEM_BONE_MEAL_USE).receiver(player).play();
+						} else {
+							PlayerUtils.send(player, "&7Hmm... no sticks in this bush");
+							new SoundBuilder(Sound.ENTITY_VILLAGER_NO).volume(.15).receiver(player).play();
+						}
+					}
+				}
+				break;
+		}
 
-		block.breakNaturally();
-		new BlockRegenJob(block.getLocation(), Material.OXEYE_DAISY).schedule(randomInt(3 * 60, 6 * 60));
 	}
 
 }
