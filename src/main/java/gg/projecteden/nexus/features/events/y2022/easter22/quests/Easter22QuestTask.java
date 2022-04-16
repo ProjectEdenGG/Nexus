@@ -5,7 +5,6 @@ import gg.projecteden.nexus.features.quests.tasks.common.IQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTask;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.bukkit.Material;
 
 import java.util.Map;
 
@@ -69,8 +68,8 @@ public enum Easter22QuestTask implements IQuestTask {
 			.player("So, about that reward?")
 			.npc("Wait, are you telling me you actually found them all?!")
 			.npc("I knew you were good but managing to complete the egg hunt? That's a something else completely!")
-			.npc("Take this Easter basket trophy, you've earned it!")
-			.reward(EASTER_BASKET_TROPHY)
+			.npc("Take this bunny ear headband, its a symbol of your new role as a junior holiday bunny!")
+			.reward(BUNNY_EARS_COSTUME)
 			.npc("Though now that I think about it... are you willing to do one more thing for me?")
 			.player("Uh I guess?")
 			.npc("Don't worry, I've got something extra for you if you manage to pull this off!")
@@ -130,8 +129,8 @@ public enum Easter22QuestTask implements IQuestTask {
 		.complete(dialog -> dialog
 			.npc("Omg it's wonderful!!")
 			.npc("That settles it, I knew there was something special about you!")
-			.npc("Take this bunny ear headband, its a symbol of your new role as a junior holiday bunny!")
-			.reward(BUNNY_EARS_COSTUME)
+			.npc("Take this Easter Basket trophy, you've earned it!")
+			.reward(EASTER_BASKET_TROPHY)
 			.npc("You really have impressed me, you should be proud of yourself.")
 			.npc("Oh also! When you have time you should definitely head over to the general store")
 			.npc("Basil has some really cool holiday decor I think you may be interested in.")

@@ -13,8 +13,8 @@ import java.util.function.BiConsumer;
 @Getter
 @AllArgsConstructor
 public enum Easter22QuestReward implements QuestReward {
-	EASTER_BASKET_TROPHY(((quester, amount) -> new TrophyHolderService().edit(quester, user -> user.earnAndMessage(Trophy.EASTER_2022)))),
 	BUNNY_EARS_COSTUME((quester, amount) -> new CostumeUserService().edit(quester, user -> user.getOwnedCostumes().add("exclusive/hat/bunny_ears"))),
+	EASTER_BASKET_TROPHY(((quester, amount) -> new TrophyHolderService().edit(quester, user -> user.earnAndMessage(Trophy.EASTER_2022)))),
 	;
 
 	private final BiConsumer<Quester, Integer> consumer;
