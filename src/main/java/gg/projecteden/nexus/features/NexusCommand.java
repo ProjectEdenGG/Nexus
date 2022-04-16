@@ -37,6 +37,8 @@ import gg.projecteden.nexus.models.chatgames.ChatGamesConfig;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.models.quests.Quester;
+import gg.projecteden.nexus.models.quests.QuesterService;
 import gg.projecteden.nexus.models.setting.Setting;
 import gg.projecteden.nexus.models.setting.SettingService;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -216,13 +218,17 @@ public class NexusCommand extends CustomCommand implements Listener {
 				for (Train train : new ArrayList<>(Train.getInstances()))
 					train.stop();
 			}
-
 		}),
 		PUGMAS21_TRAIN_BACKGROUND(() -> {
 			if (Nexus.getEnv() == Env.PROD) {
 				if (TrainBackground.isActive())
 					throw new InvalidInputException("Someone is traveling to Pugmas");
 			}
+		}),
+		QUEST_DIALOG(() -> {
+			for (Quester quester : new QuesterService().getOnline())
+				if (quester.getDialog().getTaskId().get() > 0)
+					throw new InvalidInputException("Someone is in a quest dialog");
 		}),
 		;
 
