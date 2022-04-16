@@ -10,9 +10,11 @@ import org.bukkit.inventory.ItemStack;
 @Getter
 @AllArgsConstructor
 public enum Easter22QuestItem implements QuestItem {
-	EASTER_EGG(new ItemBuilder(Material.PAPER).name("Easter Egg")),
-	PAINTBRUSH(new ItemBuilder(Material.PAPER).customModelData(2000).name("&ePaintbrush")),
+	EASTERS_PAINTBRUSH(new ItemBuilder(Material.PAPER).customModelData(2000).name("&eEaster's Paintbrush")),
+	PAINTBRUSH(new ItemBuilder(Material.PAPER).customModelData(2021).name("&ePaintbrush")),
+	PRISTINE_EGG(new ItemBuilder(Material.PAPER).customModelData(2022).name("&ePristine Egg")),
 	PAINTED_EGG(new ItemBuilder(Material.PAPER).customModelData(2023).name("&ePainted Egg")),
+	EASTER_EGG(new ItemBuilder(Material.PAPER).name("&eEaster Egg")),
 	;
 
 	private final ItemBuilder itemBuilder;

@@ -11,11 +11,14 @@ import java.util.Map;
 import static gg.projecteden.nexus.features.events.y2022.easter22.Easter22.TOTAL_EASTER_EGGS;
 import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22Entity.EASTER_BUNNY;
 import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22NPC.DAMIEN;
+import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestItem.EASTERS_PAINTBRUSH;
 import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestItem.EASTER_EGG;
 import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestItem.PAINTBRUSH;
 import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestItem.PAINTED_EGG;
+import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestItem.PRISTINE_EGG;
 import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestReward.BUNNY_EARS_COSTUME;
 import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestReward.EASTER_BASKET_TROPHY;
+import static org.bukkit.Material.CORNFLOWER;
 import static org.bukkit.Material.EGG;
 import static org.bukkit.Material.OXEYE_DAISY;
 import static org.bukkit.Material.STICK;
@@ -38,7 +41,7 @@ public enum Easter22QuestTask implements IQuestTask {
 			.player("Maybe if I find their paintbrush, they'll finally notice I'm trying to talk with them")
 		)
 		.objective("Find the Easter Bunny's paintbrush")
-		.gather(PAINTBRUSH.get())
+		.gather(EASTERS_PAINTBRUSH)
 		.reminder(dialog -> dialog
 			.player("They still don't seem to notice I'm here, I should really find that paintbrush")
 		)
@@ -60,7 +63,7 @@ public enum Easter22QuestTask implements IQuestTask {
 			.npc("Awesome! I would warn you about the difficulty but it seems you have a talent when it comes to finding things...")
 		)
 		.objective("Find all 20 eggs")
-		.gather(EASTER_EGG.get(), TOTAL_EASTER_EGGS)
+		.gather(EASTER_EGG, TOTAL_EASTER_EGGS)
 		.reminder(dialog -> dialog
 			.npc("I appreciate your enthusiasm but you haven't found them all yet! Come back when you've gotten all 20.")
 		)
@@ -76,7 +79,7 @@ public enum Easter22QuestTask implements IQuestTask {
 			.npc("Do you by chance have a paintbrush and pristine egg on you?")
 			.player("No?? Why would I just have those on me?")
 			.npc("Oh that's not good-  you're gonna need those")
-			.npc("Bring me 3 oxeye daisies, a stick, and an egg and ill be able to make them for you!")
+			.npc("Bring me 3 oxeye daisies, 3 cornflowers, a stick, and an egg and ill be able to make them for you!")
 			.player("Okay??")
 		)
 
@@ -105,10 +108,10 @@ public enum Easter22QuestTask implements IQuestTask {
 			.npc("Did you find all the items?")
 		)
 		.reminder(dialog -> dialog
-			.npc("Do you have them yet? Remember you can pick the daisies around the village, get the stick from a tree, " +
+			.npc("Do you have them yet? Remember you can pick the daisies and cornflowers around the village, get the stick from a tree, " +
 				"and I'm sure Damien from the bakery has extra eggs.")
 		)
-		.gather(Map.of(OXEYE_DAISY, 3, STICK, 1, EGG, 1))
+		.gather(Map.of(OXEYE_DAISY, 3, CORNFLOWER, 3, STICK, 1, EGG, 1))
 		.complete(dialog ->  dialog
 			.npc("Perfect! Let me just weave these together with a bit of Easter holiday magic...")
 		)
@@ -116,7 +119,8 @@ public enum Easter22QuestTask implements IQuestTask {
 		.then()
 		.talkTo(EASTER_BUNNY)
 		.dialog(dialog -> dialog
-			.npc("Done! Take these and paint that egg for me okay.")
+			.npc("Done! Take this and paint that egg for me okay.")
+			.give(PAINTBRUSH, PRISTINE_EGG)
 			.player("Why?")
 			.npc("I'm just curious")
 		)
@@ -125,7 +129,7 @@ public enum Easter22QuestTask implements IQuestTask {
 			.npc("Hm you having trouble with inspiration? I promise whatever you do will be great, just combine " +
 				"the paintbrush and the egg in a crafting station!")
 		)
-		.gather(PAINTED_EGG.get())
+		.gather(PAINTED_EGG)
 		.complete(dialog -> dialog
 			.npc("Omg it's wonderful!!")
 			.npc("That settles it, I knew there was something special about you!")

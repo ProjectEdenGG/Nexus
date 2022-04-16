@@ -1,7 +1,9 @@
 package gg.projecteden.nexus.features.quests.interactable.instructions;
 
+import gg.projecteden.nexus.features.quests.QuestItem;
 import gg.projecteden.nexus.features.quests.QuestReward;
 import gg.projecteden.nexus.features.quests.interactable.Interactable;
+import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.utils.AdventureUtils;
@@ -116,6 +118,18 @@ public class Dialog {
 
 	public Dialog give(ItemStack item) {
 		instruction(quester -> PlayerUtils.giveItem(quester, item), -1);
+		return this;
+	}
+
+	public Dialog give(CustomModel... items) {
+		for (CustomModel item : items)
+			give(item.getItem());
+		return this;
+	}
+
+	public Dialog give(QuestItem... items) {
+		for (QuestItem item : items)
+			give(item.get());
 		return this;
 	}
 
