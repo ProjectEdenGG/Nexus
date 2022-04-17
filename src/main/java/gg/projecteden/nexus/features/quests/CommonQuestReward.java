@@ -1,22 +1,25 @@
 package gg.projecteden.nexus.features.quests;
 
+import gg.projecteden.nexus.models.banker.Banker;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
-import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
+import gg.projecteden.nexus.models.voter.VoterService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.UUID;
 import java.util.function.BiConsumer;
 
 @Getter
 @AllArgsConstructor
 public enum CommonQuestReward implements QuestReward {
-	EVENT_TOKENS((quester, amount) -> new EventUserService().edit(quester, user -> user.giveTokens(amount))),
-	SURVIVAL_MONEY((quester, amount) -> new BankerService().deposit(quester, amount, ShopGroup.SURVIVAL, TransactionCause.EVENT)),
+	VOTE_POINTS((uuid, amount) -> new VoterService().edit(uuid, user -> user.givePoints(amount))),
+	EVENT_TOKENS((uuid, amount) -> new EventUserService().edit(uuid, user -> user.giveTokens(amount))),
+	SURVIVAL_MONEY((uuid, amount) -> new BankerService().deposit(Banker.of(uuid), amount, ShopGroup.SURVIVAL, TransactionCause.EVENT)),
 	;
 
-	private final BiConsumer<Quester, Integer> consumer;
+	private final BiConsumer<UUID, Integer> consumer;
 
 }

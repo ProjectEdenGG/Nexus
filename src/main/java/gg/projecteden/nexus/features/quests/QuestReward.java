@@ -1,19 +1,20 @@
 package gg.projecteden.nexus.features.quests;
 
-import gg.projecteden.nexus.models.quests.Quester;
+import me.lexikiq.HasUniqueId;
 
+import java.util.UUID;
 import java.util.function.BiConsumer;
 
 public interface QuestReward {
 
-	BiConsumer<Quester, Integer> getConsumer();
+	BiConsumer<UUID, Integer> getConsumer();
 
-	default void apply(Quester quester) {
+	default void apply(HasUniqueId quester) {
 		apply(quester, 1);
 	}
 
-	default void apply(Quester quester, int amount) {
-		getConsumer().accept(quester, amount);
+	default void apply(HasUniqueId quester, int amount) {
+		getConsumer().accept(quester.getUniqueId(), amount);
 	}
 
 }

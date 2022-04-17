@@ -25,7 +25,6 @@ public class Events extends Feature {
 
 		new Timer("    Events.ArmorStandStalker", ArmorStandStalker::new);
 		new Timer("    Events.BearFair21", BearFair21::new);
-		new Timer("    Events.Pugmas21", Pugmas21::new);
 	}
 
 	@Override

@@ -3,8 +3,11 @@ package gg.projecteden.nexus.features.quests.interactable;
 import lombok.SneakyThrows;
 
 import java.lang.reflect.Field;
+import java.util.function.Predicate;
 
 public interface Interactable {
+
+	Predicate<?> getPredicate();
 
 	String getName();
 
