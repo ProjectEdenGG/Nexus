@@ -5,13 +5,11 @@ import gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22Entity
 import gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22NPC;
 import gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestItem;
 import gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestTask;
-import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.easter22.Easter22User;
 import gg.projecteden.nexus.models.quests.Quest;
-import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.models.quests.QuesterService;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
@@ -46,13 +44,14 @@ public class Easter22 extends Feature implements Listener {
 		return now.isAfter(START) && now.isBefore(END);
 	}
 
+	private boolean isEasterEvent(Player player) {
+		return isActive() && Easter22.isAtEasterIsland(player);
+	}
+
 	@EventHandler
 	public void on(PlayerEnteredRegionEvent event) {
-		if (!isActive())
-			return;
-
 		final Player player = event.getPlayer();
-		if (!isAtEasterIsland(player))
+		if (!isEasterEvent(player))
 			return;
 
 		final Quest quest = Easter22User.of(player).getQuest();
@@ -75,7 +74,8 @@ public class Easter22 extends Feature implements Listener {
 
 	@EventHandler
 	public void on(NPCRightClickEvent event) {
-		if (!isActive())
+		final Player player = event.getClicker();
+		if (!isEasterEvent(player))
 			return;
 
 		final Easter22NPC npc = Easter22NPC.of(event.getNPC());
@@ -87,16 +87,13 @@ public class Easter22 extends Feature implements Listener {
 		if (npc == BASIL)
 			new Easter22StoreProvider().open(event.getClicker());
 		else
-			new QuesterService().edit(event.getClicker(), quester -> {
-				if (!quester.interact(npc, event))
-					if (npc.isAlive())
-						Dialog.genericGreeting(quester, npc);
-			});
+			new QuesterService().edit(event.getClicker(), quester -> quester.interact(npc, event));
 	}
 
 	@EventHandler
 	public void on(PlayerInteractAtEntityEvent event) {
-		if (!isActive())
+		final Player player = event.getPlayer();
+		if (!isEasterEvent(player))
 			return;
 
 		final Easter22Entity entity = Easter22Entity.of(event.getRightClicked());
@@ -104,27 +101,20 @@ public class Easter22 extends Feature implements Listener {
 			return;
 
 		event.setCancelled(true);
-		new QuesterService().edit(event.getPlayer(), quester -> {
-			if (!quester.interact(entity, event))
-				if (entity.isAlive())
-					Dialog.genericGreeting(quester, entity);
-		});
+		new QuesterService().edit(event.getPlayer(), quester -> quester.interact(entity, event));
 	}
 
 	@EventHandler
 	public void on(PlayerInteractEvent event) {
-		if (!isActive())
-			return;
-
 		final Player player = event.getPlayer();
-		if (!Easter22.isAtEasterIsland(player))
+		if (!isEasterEvent(player))
 			return;
 
 		if (!Nullables.isNullOrAir(event.getItem()) && event.getItem().getType() == Material.EGG)
 			event.setCancelled(true);
 
-		Quester.of(player).interact(event);
+		new QuesterService().edit(player, quester -> quester.interact(event));
 	}
-	
+
 
 }
