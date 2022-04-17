@@ -25,6 +25,8 @@ import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
+import static gg.projecteden.nexus.utils.PlayerUtils.playerHas;
+
 @Data
 @RequiredArgsConstructor
 public class Dialog {
@@ -111,6 +113,21 @@ public class Dialog {
 		for (QuestItem item : items)
 			give(item.get());
 		return this;
+	}
+
+	public Dialog giveIfMissing(Material material) {
+		return giveIfMissing(new ItemStack(material));
+	}
+
+	public Dialog giveIfMissing(QuestItem item) {
+		return giveIfMissing(item.get());
+	}
+
+	public Dialog giveIfMissing(ItemStack item) {
+		return instruction(quester -> {
+			if (!playerHas(quester, item))
+				PlayerUtils.giveItem(quester, item);
+		}, -1);
 	}
 
 	public Dialog take(Material material) {

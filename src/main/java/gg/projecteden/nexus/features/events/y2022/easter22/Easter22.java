@@ -9,23 +9,16 @@ import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.framework.features.Feature;
-import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.easter22.Easter22User;
 import gg.projecteden.nexus.models.quests.Quest;
+import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.models.quests.QuesterService;
-import gg.projecteden.nexus.models.scheduledjobs.jobs.BlockRegenJob;
 import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import me.lexikiq.HasLocation;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -37,10 +30,6 @@ import java.time.LocalDateTime;
 
 import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22NPC.BASIL;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shapeless;
-import static gg.projecteden.nexus.utils.PlayerUtils.giveItem;
-import static gg.projecteden.nexus.utils.PlayerUtils.playerHas;
-import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
-import static gg.projecteden.utils.RandomUtils.chanceOf;
 
 @NoArgsConstructor
 public class Easter22 extends Feature implements Listener {
@@ -59,6 +48,9 @@ public class Easter22 extends Feature implements Listener {
 
 	@EventHandler
 	public void on(PlayerEnteredRegionEvent event) {
+		if (!isActive())
+			return;
+
 		final Player player = event.getPlayer();
 		if (!isAtEasterIsland(player))
 			return;
@@ -121,6 +113,9 @@ public class Easter22 extends Feature implements Listener {
 
 	@EventHandler
 	public void on(PlayerInteractEvent event) {
+		if (!isActive())
+			return;
+
 		final Player player = event.getPlayer();
 		if (!Easter22.isAtEasterIsland(player))
 			return;
@@ -128,41 +123,7 @@ public class Easter22 extends Feature implements Listener {
 		if (!Nullables.isNullOrAir(event.getItem()) && event.getItem().getType() == Material.EGG)
 			event.setCancelled(true);
 
-		final Block block = event.getClickedBlock();
-		if (Nullables.isNullOrAir(block))
-			return;
-
-		switch (event.getAction()) {
-			case LEFT_CLICK_BLOCK:
-				switch (block.getType()) {
-					case OXEYE_DAISY, CORNFLOWER -> {
-						new BlockRegenJob(block.getLocation(), block.getType()).schedule(randomInt(3 * 60, 6 * 60));
-						block.breakNaturally();
-					}
-				}
-				break;
-			case RIGHT_CLICK_BLOCK:
-				switch (block.getType()) {
-					case OAK_LEAVES, JUNGLE_LEAVES -> {
-						final Quest quest = Easter22User.of(player).getQuest();
-						final int step = quest.getTaskProgress().getStep();
-						if (quest.getTask() == 0 && (step == 2 || step == 3))
-							if (!playerHas(player, Material.STICK)) {
-								if (!new CooldownService().check(player, "easter22-stick-" + StringUtils.getFlooredCoordinateString(block.getLocation()).replace(" ", "-"), TickTime.MINUTE))
-									return;
-
-								if (chanceOf(20)) {
-									giveItem(player, Material.STICK);
-									new SoundBuilder(Sound.ITEM_BONE_MEAL_USE).receiver(player).play();
-								} else {
-									PlayerUtils.send(player, "&7Hmm... no sticks in this bush");
-									new SoundBuilder(Sound.ENTITY_VILLAGER_NO).receiver(player).volume(.15).play();
-								}
-							}
-					}
-				}
-				break;
-		}
+		Quester.of(player).interact(event);
 	}
 	
 

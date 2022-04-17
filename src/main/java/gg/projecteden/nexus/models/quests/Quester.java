@@ -17,9 +17,11 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.citizensnpcs.api.event.NPCClickEvent;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -51,6 +53,27 @@ public class Quester implements PlayerOwnedObject {
 
 	public static Quester of(UUID uuid) {
 		return new QuesterService().get(uuid);
+	}
+
+	public void interact(PlayerInteractEvent event) {
+		final Block block = event.getClickedBlock();
+		if (isNullOrAir(block))
+			return;
+
+		for (Quest quest : quests) {
+			final QuestTaskProgress questTask = quest.getTaskProgress();
+			final QuestTaskStep<?, ?> taskStep = questTask.get().getSteps().get(questTask.getStep());
+
+			for (var pair : taskStep.getOnBlockInteract().keySet()) {
+				if (!pair.getFirst().contains(block.getType()))
+					continue;
+
+				if (!pair.getSecond().contains(event.getAction()))
+					continue;
+
+				taskStep.getOnBlockInteract().get(pair).accept(event, block);
+			}
+		}
 	}
 
 	public <E extends Event> boolean interact(Interactable interactable, E event) {

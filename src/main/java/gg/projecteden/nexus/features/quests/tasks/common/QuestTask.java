@@ -7,13 +7,19 @@ import gg.projecteden.nexus.features.quests.interactable.InteractableNPC;
 import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import kotlin.Pair;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import net.citizensnpcs.api.event.NPCClickEvent;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -97,11 +103,29 @@ public abstract class QuestTask<
 			return (TaskBuilderType) this;
 		}
 
+		public TaskBuilderType onBlockInteract(Material material, Action action, BiConsumer<PlayerInteractEvent, Block> event) {
+			return onBlockInteract(List.of(material), List.of(action), event);
+		}
+
+		public TaskBuilderType onBlockInteract(List<Material> materials, Action action, BiConsumer<PlayerInteractEvent, Block> event) {
+			return onBlockInteract(materials, List.of(action), event);
+		}
+
+		public TaskBuilderType onBlockInteract(Material material, List<Action> action, BiConsumer<PlayerInteractEvent, Block> event) {
+			return onBlockInteract(List.of(material), action, event);
+		}
+
+		public TaskBuilderType onBlockInteract(List<Material> materials, List<Action> actions, BiConsumer<PlayerInteractEvent, Block> event) {
+			currentStep.onBlockInteract.put(new Pair<>(materials, actions), event);
+			return (TaskBuilderType) this;
+		}
+
 		public TaskBuilderType then() {
 			steps.add(currentStep);
 			currentStep = nextStep();
 			return (TaskBuilderType) this;
 		}
+
 	}
 
 }
