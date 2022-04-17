@@ -5,6 +5,7 @@ import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
@@ -12,6 +13,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.trophy.Trophy;
 import gg.projecteden.nexus.models.trophy.TrophyHolder;
 import gg.projecteden.nexus.models.trophy.TrophyHolderService;
@@ -135,9 +137,14 @@ public class TrophyCommand extends CustomCommand {
 					} else {
 						item.lore("", "&eClick to receive a copy");
 						items.add(ClickableItem.from(item.build(), e -> {
-							holder.claim(trophy);
-							open(player);
-							service.save(holder);
+							try {
+								holder.claim(trophy);
+								service.save(holder);
+							} catch (InvalidInputException ex) {
+								handleException(player, Commands.getPrefix(TrophyCommand.class), ex);
+							} finally {
+								open(player);
+							}
 						}));
 					}
 				}
