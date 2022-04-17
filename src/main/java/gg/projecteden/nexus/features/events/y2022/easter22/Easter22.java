@@ -11,11 +11,9 @@ import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpda
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.easter22.Easter22User;
-import gg.projecteden.nexus.models.easter22.Easter22UserService;
 import gg.projecteden.nexus.models.quests.Quest;
 import gg.projecteden.nexus.models.quests.QuesterService;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.BlockRegenJob;
-import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -23,26 +21,22 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
+import me.lexikiq.HasLocation;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
-import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22NPC.BASIL;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shapeless;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.PlayerUtils.giveItem;
 import static gg.projecteden.nexus.utils.PlayerUtils.playerHas;
 import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
@@ -54,8 +48,13 @@ public class Easter22 extends Feature implements Listener {
 	public static final LocalDateTime START = LocalDate.of(2022, 4, 10).atStartOfDay();
 	public static final LocalDateTime END = LocalDate.of(2022, 4, 25).atStartOfDay();
 
-	public static boolean isAtEasterIsland(Player player) {
-		return new WorldGuardUtils(player).isInRegion(player, "event");
+	public static boolean isAtEasterIsland(HasLocation location) {
+		return new WorldGuardUtils(location.getLocation()).isInRegion(location.getLocation(), "event");
+	}
+
+	public static boolean isActive() {
+		final LocalDateTime now = LocalDateTime.now();
+		return now.isAfter(START) && now.isBefore(END);
 	}
 
 	@EventHandler
@@ -84,6 +83,9 @@ public class Easter22 extends Feature implements Listener {
 
 	@EventHandler
 	public void on(NPCRightClickEvent event) {
+		if (!isActive())
+			return;
+
 		final Easter22NPC npc = Easter22NPC.of(event.getNPC());
 		if (npc == null)
 			return;
@@ -94,21 +96,26 @@ public class Easter22 extends Feature implements Listener {
 			new Easter22StoreProvider().open(event.getClicker());
 		else
 			new QuesterService().edit(event.getClicker(), quester -> {
-				if (!quester.interact(npc))
-					Dialog.genericGreeting(quester, npc);
+				if (!quester.interact(npc, event))
+					if (npc.isAlive())
+						Dialog.genericGreeting(quester, npc);
 			});
 	}
 
 	@EventHandler
 	public void on(PlayerInteractAtEntityEvent event) {
+		if (!isActive())
+			return;
+
 		final Easter22Entity entity = Easter22Entity.of(event.getRightClicked());
 		if (entity == null)
 			return;
 
 		event.setCancelled(true);
 		new QuesterService().edit(event.getPlayer(), quester -> {
-			if (!quester.interact(entity))
-				Dialog.genericGreeting(quester, entity);
+			if (!quester.interact(entity, event))
+				if (entity.isAlive())
+					Dialog.genericGreeting(quester, entity);
 		});
 	}
 
@@ -157,42 +164,6 @@ public class Easter22 extends Feature implements Listener {
 				break;
 		}
 	}
-
-	@EventHandler
-	public void onEggInteract(PlayerInteractEntityEvent event) {
-		if (!isAtEasterIsland(event.getPlayer()))
-			return;
-
-		if (!(event.getRightClicked() instanceof ItemFrame itemFrame))
-			return;
-
-		if (!isEgg(itemFrame.getItem()))
-			return;
-
-		event.setCancelled(true);
-
-		if (LocalDateTime.now().isBefore(START))
-			return;
-
-		if (LocalDateTime.now().isAfter(END))
-			return;
-
-		Location location = itemFrame.getLocation().toBlockLocation();
-
-		new Easter22UserService().edit(event.getPlayer(), user -> user.found(location));
-	}
-
-	private static boolean isEgg(ItemStack item) {
-		if (isNullOrAir(item))
-			return false;
-
-		if (item.getType() != Material.PAPER)
-			return false;
-
-		final int modelId = CustomModelData.of(item);
-		return modelId >= 2001 && modelId <= 2020;
-	}
-
 	
 
 }

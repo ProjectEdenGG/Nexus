@@ -5,6 +5,8 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.quests.interactable.Interactable;
+import gg.projecteden.nexus.features.quests.interactable.InteractableEntity;
+import gg.projecteden.nexus.features.quests.interactable.InteractableNPC;
 import gg.projecteden.nexus.features.quests.interactable.instructions.DialogInstance;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTaskStep;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
@@ -14,7 +16,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import net.citizensnpcs.api.event.NPCClickEvent;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -48,13 +53,13 @@ public class Quester implements PlayerOwnedObject {
 		return new QuesterService().get(uuid);
 	}
 
-	public boolean interact(Interactable interactable) {
+	public <E extends Event> boolean interact(Interactable interactable, E event) {
 		if (dialog != null && dialog.getTaskId().get() > 0) {
 			dialog.advance();
 			return true;
 		}
 
-		for (Quest quest : new ArrayList<>(quests)) {
+		for (Quest quest : quests) {
 			final QuestTaskProgress questTask = quest.getTaskProgress();
 			final QuestTaskStepProgress step = questTask.currentStep();
 			final QuestTaskStep<?, ?> taskStep = questTask.get().getSteps().get(questTask.getStep());
@@ -82,25 +87,22 @@ public class Quester implements PlayerOwnedObject {
 			} else if (taskStep.getOnClick().containsKey(interactable)) {
 				dialog = taskStep.getOnClick().get(interactable).send(this);
 				return true;
+			} else if (interactable instanceof InteractableNPC) {
+				if (event instanceof NPCClickEvent castedEvent) {
+					if (taskStep.getOnNPCInteract().containsKey(interactable)) {
+						taskStep.getOnNPCInteract().get(interactable).accept(castedEvent);
+						return true;
+					}
+				}
+			} else if (interactable instanceof InteractableEntity) {
+				if (event instanceof PlayerInteractEntityEvent castedEvent) {
+					if (taskStep.getOnEntityInteract().containsKey(interactable)) {
+						taskStep.getOnEntityInteract().get(interactable).accept(castedEvent);
+						return true;
+					}
+				}
 			}
 		}
-
-		/*
-		for (Quest quest : quests) {
-			final QuestTaskProgress questTask = quest.getCurrentTaskProgress();
-			if (!questTask.hasPreviousStep())
-				continue;
-
-			final QuestTaskStepProgress step = questTask.previousStep();
-			final QuestTaskStep<?, ?> taskStep = questTask.get().getSteps().get(questTask.getStep() - 1);
-
-			if (taskStep.getInteractable() == interactable) {
-				dialog = taskStep.interact(this, step);
-				step.setFirstInteraction(false);
-				return;
-			}
-		}
-		*/
 
 		// TODO Look for quests to start
 
