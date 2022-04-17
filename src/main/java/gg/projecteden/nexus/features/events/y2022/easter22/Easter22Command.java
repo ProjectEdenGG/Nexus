@@ -155,7 +155,7 @@ public class Easter22Command extends CustomCommand implements Listener {
 							.onConfirm(e2 -> {
 								final String PREFIX = Commands.getPrefix(Easter22Command.class);
 								try {
-									eventUser.checkHasTokens(200);
+									eventUser.charge(200);
 									Mail.fromServer(player.getUniqueId(), WorldGroup.SURVIVAL, egg).send();
 									PlayerUtils.send(player, PREFIX + "Your egg has been mailed to you in Survival");
 								} catch (InvalidInputException ex) {
