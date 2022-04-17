@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22NPC;
 import gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestItem;
 import gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestTask;
 import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -15,6 +16,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.easter22.Easter22User;
 import gg.projecteden.nexus.models.easter22.Easter22UserService;
 import gg.projecteden.nexus.models.eventuser.EventUser;
@@ -24,6 +26,7 @@ import gg.projecteden.nexus.models.quests.Quest;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldGroup;
@@ -140,12 +143,21 @@ public class Easter22Command extends CustomCommand implements Listener {
 				final ItemStack egg = new ItemBuilder(Material.PAPER).customModelData(i).name("&eEgg #" + (i - 2000)).build();
 				final ItemStack display = new ItemBuilder(egg).lore("", "&" + (eventUser.getTokens() >= 200 ? "e" : "c") + "200 Event Tokens").build();
 				items.add(ClickableItem.from(display, e -> {
-					if (!eventUser.hasTokens(2000)) {
+					if (!eventUser.hasTokens(200)) {
 						eventUser.sendMessage(StringUtils.getPrefix(Easter22.class) + "&cYou cannot afford that egg");
 						open(player, contents.pagination().getPage());
 					} else
 						ConfirmationMenu.builder()
-							.onConfirm(e2 -> Mail.fromServer(player.getUniqueId(), WorldGroup.SURVIVAL, egg).send())
+							.onConfirm(e2 -> {
+								final String PREFIX = Commands.getPrefix(Easter22Command.class);
+								try {
+									eventUser.checkHasTokens(200);
+									Mail.fromServer(player.getUniqueId(), WorldGroup.SURVIVAL, egg).send();
+									PlayerUtils.send(player, PREFIX + "Your egg has been mailed to you in Survival");
+								} catch (InvalidInputException ex) {
+									handleException(player, PREFIX, ex);
+								}
+							})
 							.onFinally(e2 -> open(player, contents.pagination().getPage()))
 							.open(player);
 				}));
