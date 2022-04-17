@@ -30,7 +30,7 @@ public class Quest implements PlayerOwnedObject {
 		return Quester.of(uuid);
 	}
 
-	public QuestTaskProgress getCurrentTaskProgress() {
+	public QuestTaskProgress getTaskProgress() {
 		return tasks.get(task);
 	}
 

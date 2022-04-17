@@ -5,11 +5,14 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.events.y2022.easter22.Easter22;
+import gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestTask;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
+import gg.projecteden.nexus.models.quests.Quest;
+import gg.projecteden.nexus.models.quests.QuesterService;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -20,6 +23,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
@@ -41,6 +45,17 @@ public class Easter22User implements PlayerOwnedObject {
 	private Set<Location> found = new HashSet<>();
 
 	private static transient final String PREFIX = StringUtils.getPrefix("Easter22");
+
+	public static Easter22User of(Player player) {
+		return new Easter22UserService().get(player);
+	}
+
+	public Quest getQuest() {
+		for (Quest quest : new QuesterService().get(this).getQuests())
+			if (quest.getTaskProgress().getTask() == Easter22QuestTask.MAIN)
+				return quest;
+		return null;
+	}
 
 	public void found(Location location) {
 		if (found.contains(location)) {

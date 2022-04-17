@@ -663,6 +663,10 @@ public class PlayerUtils {
 	/**
 	 * Tests if a player has an item in their inventory
 	 */
+	public static boolean playerHas(OptionalPlayer player, Material material) {
+		return playerHas(player, new ItemStack(material));
+	}
+
 	public static boolean playerHas(OptionalPlayer player, ItemStack itemStack) {
 		if (player.getPlayer() == null) return false;
 		return Arrays.asList(player.getPlayer().getInventory().getContents()).contains(itemStack);
