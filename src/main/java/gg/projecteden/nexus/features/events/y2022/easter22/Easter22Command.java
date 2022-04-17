@@ -84,11 +84,13 @@ public class Easter22Command extends CustomCommand implements Listener {
 		paginate(Utils.sortByValueReverse(counts).keySet(), formatter, "/easter topLocations", page);
 	}
 
+	@Permission(Group.ADMIN)
 	@Path("quest debug <task>")
 	void quest_debug(Easter22QuestTask task) {
 		send(String.valueOf(task.get()));
 	}
 
+	@Permission(Group.ADMIN)
 	@Path("quest start")
 	void quest_start() {
 		Quest.builder()
@@ -99,6 +101,7 @@ public class Easter22Command extends CustomCommand implements Listener {
 		send(PREFIX + "Quest activated");
 	}
 
+	@Permission(Group.ADMIN)
 	@Path("quest npc tp <quest>")
 	void quest_npc_tp(Easter22NPC npc) {
 		final Location location = CitizensUtils.locationOf(npc.getNpcId());
@@ -108,6 +111,7 @@ public class Easter22Command extends CustomCommand implements Listener {
 		player().teleportAsync(location, TeleportCause.COMMAND);
 	}
 
+	@Permission(Group.ADMIN)
 	@Path("quest item <item> [amount]")
 	void quest_item(Easter22QuestItem item, @Arg("1") int amount) {
 		giveItems(item.get(), amount);
