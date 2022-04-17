@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.events.y2022.easter22.quests;
 import gg.projecteden.nexus.features.quests.tasks.GatherQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.IQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTask.TaskBuilder;
+import gg.projecteden.nexus.models.easter22.Easter22User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -13,7 +14,6 @@ import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter2
 import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22NPC.BASIL;
 import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22NPC.DAMIEN;
 import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestItem.EASTERS_PAINTBRUSH;
-import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestItem.EASTER_EGG;
 import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestItem.PAINTBRUSH;
 import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestItem.PAINTED_EGG;
 import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestItem.PRISTINE_EGG;
@@ -70,7 +70,7 @@ public enum Easter22QuestTask implements IQuestTask {
 			.npc("Awesome! I would warn you about the difficulty but it seems you have a talent when it comes to finding things...")
 		)
 		.objective("Find all 20 eggs")
-		.gather(EASTER_EGG, TOTAL_EASTER_EGGS)
+		.gather(quester -> Easter22User.of(quester).getFound().size() == TOTAL_EASTER_EGGS)
 		.reminder(dialog -> dialog
 			.npc("I appreciate your enthusiasm but you haven't found them all yet! Come back when you've gotten all 20.")
 		)

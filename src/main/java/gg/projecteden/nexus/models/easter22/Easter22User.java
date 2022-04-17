@@ -15,22 +15,19 @@ import gg.projecteden.nexus.models.quests.Quest;
 import gg.projecteden.nexus.models.quests.QuesterService;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.models.voter.VoterService;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.lexikiq.HasUniqueId;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-
-import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestItem.EASTER_EGG;
 
 @Data
 @Entity(value = "easter22", noClassnameStored = true)
@@ -46,7 +43,7 @@ public class Easter22User implements PlayerOwnedObject {
 
 	private static transient final String PREFIX = StringUtils.getPrefix("Easter22");
 
-	public static Easter22User of(Player player) {
+	public static Easter22User of(HasUniqueId player) {
 		return new Easter22UserService().get(player);
 	}
 
@@ -66,9 +63,6 @@ public class Easter22User implements PlayerOwnedObject {
 		found.add(location);
 
 		sendMessage(PREFIX + "You found an egg! &7(" + found.size() + "/" + Easter22.TOTAL_EASTER_EGGS + ")");
-		PlayerUtils.giveItem(getOnlinePlayer(), EASTER_EGG.get());
-
-		if (true) return; // TODO Easter22
 
 		switch (found.size()) {
 			case 5 -> {

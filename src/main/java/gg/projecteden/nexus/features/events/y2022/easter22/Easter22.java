@@ -105,8 +105,11 @@ public class Easter22 extends Feature implements Listener {
 		if (entity == null)
 			return;
 
-		new QuesterService().edit(event.getPlayer(), quester -> quester.interact(entity));
 		event.setCancelled(true);
+		new QuesterService().edit(event.getPlayer(), quester -> {
+			if (!quester.interact(entity))
+				Dialog.genericGreeting(quester, entity);
+		});
 	}
 
 	@EventHandler
@@ -133,7 +136,7 @@ public class Easter22 extends Feature implements Listener {
 				break;
 			case RIGHT_CLICK_BLOCK:
 				switch (block.getType()) {
-					case OAK_LEAVES -> {
+					case OAK_LEAVES, JUNGLE_LEAVES -> {
 						final Quest quest = Easter22User.of(player).getQuest();
 						final int step = quest.getTaskProgress().getStep();
 						if (quest.getTask() == 0 && (step == 2 || step == 3))
