@@ -7,6 +7,7 @@ import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.quests.interactable.Interactable;
 import gg.projecteden.nexus.features.quests.interactable.InteractableEntity;
 import gg.projecteden.nexus.features.quests.interactable.InteractableNPC;
+import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
 import gg.projecteden.nexus.features.quests.interactable.instructions.DialogInstance;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTaskStep;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
@@ -76,10 +77,10 @@ public class Quester implements PlayerOwnedObject {
 		}
 	}
 
-	public <E extends Event> boolean interact(Interactable interactable, E event) {
+	public <E extends Event> void interact(Interactable interactable, E event) {
 		if (dialog != null && dialog.getTaskId().get() > 0) {
 			dialog.advance();
-			return true;
+			return;
 		}
 
 		for (Quest quest : quests) {
@@ -106,22 +107,22 @@ public class Quester implements PlayerOwnedObject {
 
 				step.setFirstInteraction(false);
 
-				return true;
+				return;
 			} else if (taskStep.getOnClick().containsKey(interactable)) {
 				dialog = taskStep.getOnClick().get(interactable).send(this);
-				return true;
+				return;
 			} else if (interactable instanceof InteractableNPC) {
 				if (event instanceof NPCClickEvent castedEvent) {
 					if (taskStep.getOnNPCInteract().containsKey(interactable)) {
 						taskStep.getOnNPCInteract().get(interactable).accept(castedEvent);
-						return true;
+						return;
 					}
 				}
 			} else if (interactable instanceof InteractableEntity) {
 				if (event instanceof PlayerInteractEntityEvent castedEvent) {
 					if (taskStep.getOnEntityInteract().containsKey(interactable)) {
 						taskStep.getOnEntityInteract().get(interactable).accept(castedEvent);
-						return true;
+						return;
 					}
 				}
 			}
@@ -129,7 +130,8 @@ public class Quester implements PlayerOwnedObject {
 
 		// TODO Look for quests to start
 
-		return false;
+		if (interactable.isAlive())
+			Dialog.genericGreeting(this, interactable);
 	}
 
 	public boolean has(List<ItemStack> items) {
