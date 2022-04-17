@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 @Data
 public class GatherQuestTask extends QuestTask<GatherQuestTask, GatherQuestTaskStep> {
@@ -28,6 +29,7 @@ public class GatherQuestTask extends QuestTask<GatherQuestTask, GatherQuestTaskS
 	}
 
 	public static class GatherQuestTaskStep extends QuestTaskStep<GatherQuestTask, GatherQuestTaskStep> {
+		private Predicate<Quester> predicate;
 		private List<ItemStack> items;
 		private boolean take = true;
 		private Dialog complete;
@@ -48,7 +50,17 @@ public class GatherQuestTask extends QuestTask<GatherQuestTask, GatherQuestTaskS
 
 		@Override
 		public boolean shouldAdvance(Quester quester, QuestTaskStepProgress stepProgress) {
-			return Nullables.isNullOrEmpty(items) || (!stepProgress.isFirstInteraction() && quester.has(items));
+			if (predicate != null)
+				if (!predicate.test(quester))
+					return false;
+
+			if (Nullables.isNullOrEmpty(items))
+				return true;
+
+			if (!stepProgress.isFirstInteraction() && quester.has(items))
+				return true;
+
+			return false;
 		}
 
 		@Override
@@ -105,6 +117,11 @@ public class GatherQuestTask extends QuestTask<GatherQuestTask, GatherQuestTaskS
 
 		public GatherTaskBuilder gather(List<ItemStack> items) {
 			currentStep.items = items;
+			return this;
+		}
+
+		public GatherTaskBuilder gather(Predicate<Quester> predicate) {
+			currentStep.predicate = predicate;
 			return this;
 		}
 
