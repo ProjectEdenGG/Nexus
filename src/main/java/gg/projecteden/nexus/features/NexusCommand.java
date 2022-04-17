@@ -227,8 +227,9 @@ public class NexusCommand extends CustomCommand implements Listener {
 		}),
 		QUEST_DIALOG(() -> {
 			for (Quester quester : new QuesterService().getOnline())
-				if (quester.getDialog().getTaskId().get() > 0)
-					throw new InvalidInputException("Someone is in a quest dialog");
+				if (quester.getDialog() != null)
+					if (quester.getDialog().getTaskId().get() > 0)
+						throw new InvalidInputException("Someone is in a quest dialog");
 		}),
 		;
 

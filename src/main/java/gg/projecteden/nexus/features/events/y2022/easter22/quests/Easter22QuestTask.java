@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.events.y2022.easter22.quests;
 
 import gg.projecteden.nexus.features.quests.tasks.GatherQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.IQuestTask;
-import gg.projecteden.nexus.features.quests.tasks.common.QuestTask;
+import gg.projecteden.nexus.features.quests.tasks.common.QuestTask.TaskBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -10,6 +10,7 @@ import java.util.Map;
 
 import static gg.projecteden.nexus.features.events.y2022.easter22.Easter22.TOTAL_EASTER_EGGS;
 import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22Entity.EASTER_BUNNY;
+import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22NPC.BASIL;
 import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22NPC.DAMIEN;
 import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestItem.EASTERS_PAINTBRUSH;
 import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestItem.EASTER_EGG;
@@ -142,14 +143,15 @@ public enum Easter22QuestTask implements IQuestTask {
 			.npc("I think it's I who should be thanking you after all you've done for me!")
 			.npc("Enjoy the rest of your time here!")
 		)
-		.build()
+		.then()
+		.talkTo(BASIL)
 	),
 	;
 
-	private final QuestTask<?, ?> task;
+	private final TaskBuilder<?, ?, ?> task;
 
 	@Override
-	public QuestTask<?, ?> get() {
+	public TaskBuilder<?, ?, ?> get() {
 		return task;
 	}
 }

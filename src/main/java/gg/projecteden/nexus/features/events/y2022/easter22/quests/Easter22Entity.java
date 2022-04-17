@@ -11,6 +11,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public enum Easter22Entity implements InteractableEntity {
 	EASTER_BUNNY("Easter Bunny", "b061f485-969f-4294-984b-c4f4be95a724"),
+	EASTERS_PAINTBRUSH("Easter's Paintbrush", "b0041dee-f1a3-4bb7-b77f-24ff89feb49b"),
 	;
 
 	Easter22Entity(String name, String entityId) {

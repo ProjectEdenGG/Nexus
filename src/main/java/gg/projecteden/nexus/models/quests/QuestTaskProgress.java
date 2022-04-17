@@ -34,7 +34,7 @@ public class QuestTaskProgress implements PlayerOwnedObject {
 
 	@ToString.Include
 	public QuestTask<?, ?> get() {
-		return task.get();
+		return task.get().build();
 	}
 
 	public boolean hasPreviousStep() {
@@ -58,7 +58,6 @@ public class QuestTaskProgress implements PlayerOwnedObject {
 	}
 
 	public void incrementStep() {
-		sendMessage("&c=== Moving to next step");
 		++step;
 	}
 
