@@ -8,12 +8,14 @@ import gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestI
 import gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestReward;
 import gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestTask;
 import gg.projecteden.nexus.features.quests.QuestConfig;
+import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.framework.annotations.Date;
 import gg.projecteden.nexus.framework.features.Features;
 import gg.projecteden.nexus.models.easter22.Easter22User;
 import gg.projecteden.nexus.models.quests.Quest;
+import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.Nullables;
 import lombok.NoArgsConstructor;
@@ -86,6 +88,7 @@ public class Easter22 extends EdenEvent {
 
 		event.setCancelled(true);
 		new Easter22StoreProvider().open(event.getClicker());
+		Dialog.genericGreeting(Quester.of(player), npc);
 	}
 
 	@EventHandler(priority = EventPriority.HIGH)
@@ -97,6 +100,5 @@ public class Easter22 extends EdenEvent {
 		if (!Nullables.isNullOrAir(event.getItem()) && event.getItem().getType() == Material.EGG)
 			event.setCancelled(true);
 	}
-
 
 }

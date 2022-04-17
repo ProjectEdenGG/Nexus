@@ -84,7 +84,7 @@ public abstract class EdenEvent extends Feature implements Listener {
 		return null;
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void _onNPCRightClick(NPCRightClickEvent event) {
 		final Player player = event.getClicker();
 		if (!shouldHandle(player))
@@ -98,7 +98,7 @@ public abstract class EdenEvent extends Feature implements Listener {
 		new QuesterService().edit(event.getClicker(), quester -> quester.interact(npc, event));
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void _onPlayerInteractAtEntity(PlayerInteractAtEntityEvent event) {
 		final Player player = event.getPlayer();
 		if (!shouldHandle(player))
@@ -112,7 +112,7 @@ public abstract class EdenEvent extends Feature implements Listener {
 		new QuesterService().edit(event.getPlayer(), quester -> quester.interact(entity, event));
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void _onPlayerInteract(PlayerInteractEvent event) {
 		final Player player = event.getPlayer();
 		if (!shouldHandle(player))
