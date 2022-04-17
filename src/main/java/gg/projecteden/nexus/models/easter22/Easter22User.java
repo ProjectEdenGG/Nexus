@@ -6,15 +6,11 @@ import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.events.y2022.easter22.Easter22;
 import gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestTask;
+import gg.projecteden.nexus.features.quests.CommonQuestReward;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
-import gg.projecteden.nexus.models.banker.BankerService;
-import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
-import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.quests.Quest;
 import gg.projecteden.nexus.models.quests.QuesterService;
-import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
-import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 import me.lexikiq.HasUniqueId;
 import org.bukkit.Location;
 
-import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -66,22 +61,22 @@ public class Easter22User implements PlayerOwnedObject {
 
 		switch (found.size()) {
 			case 5 -> {
-				new BankerService().deposit(TransactionCause.EVENT.of(null, this, BigDecimal.valueOf(5000), ShopGroup.SURVIVAL, "Found 5 easter eggs"));
+				CommonQuestReward.SURVIVAL_MONEY.apply(this, 5000);
 				sendMessage(PREFIX + "You have received &e$5,000 &3for finding &e5 easter eggs");
-				new EventUserService().edit(uuid, eventUser -> eventUser.giveTokens(25));
+				CommonQuestReward.EVENT_TOKENS.apply(this, 25);
 			}
 			case 10 -> {
-				new VoterService().edit(uuid, voter -> voter.givePoints(25));
+				CommonQuestReward.VOTE_POINTS.apply(this, 25);
 				sendMessage(PREFIX + "You have received &e25 vote points &3for finding &e10 easter eggs");
-				new EventUserService().edit(uuid, eventUser -> eventUser.giveTokens(25));
+				CommonQuestReward.EVENT_TOKENS.apply(this, 25);
 			}
 			case 15 -> {
-				new BankerService().deposit(TransactionCause.EVENT.of(null, this, BigDecimal.valueOf(15000), ShopGroup.SURVIVAL, "Found 20 easter eggs"));
+				CommonQuestReward.SURVIVAL_MONEY.apply(this, 15000);
 				sendMessage(PREFIX + "You have received &e$15,000 &3for finding &e15 easter eggs");
-				new EventUserService().edit(uuid, eventUser -> eventUser.giveTokens(25));
+				CommonQuestReward.EVENT_TOKENS.apply(this, 25);
 			}
-			case 20 -> new EventUserService().edit(uuid, eventUser -> eventUser.giveTokens(125));
-			default -> new EventUserService().edit(uuid, eventUser -> eventUser.giveTokens(15));
+			case 20 -> CommonQuestReward.EVENT_TOKENS.apply(this, 125);
+			default -> CommonQuestReward.EVENT_TOKENS.apply(this, 15);
 		}
 	}
 

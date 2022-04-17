@@ -10,7 +10,6 @@ import gg.projecteden.nexus.features.events.y2021.pugmas21.models.MultiModelStru
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.MultiModelStructure.Model;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Train;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.TrainBackground;
-import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21Entity;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21NPC;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestItem;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestLine;
@@ -33,7 +32,6 @@ import gg.projecteden.nexus.models.pugmas21.Pugmas21User;
 import gg.projecteden.nexus.models.pugmas21.Pugmas21UserService;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.EntityUtils;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.utils.RandomUtils;
@@ -41,7 +39,6 @@ import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Instrument;
 import org.bukkit.Material;
@@ -51,9 +48,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.NoteBlock;
 import org.bukkit.entity.Entity;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.util.Vector;
 
@@ -425,13 +420,14 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 		giveItem(item.get());
 	}
 
+	/*
 	@EventHandler
 	public void onNPCRightClick(NPCRightClickEvent event) {
 		final Pugmas21NPC npc = Pugmas21NPC.of(event.getNPC());
 		if (npc == null)
 			return;
 
-//		Quester.of(event.getClicker()).interact(npc);
+		Quester.of(event.getClicker()).interact(npc);
 		event.setCancelled(true);
 
 		String npcName = npc.getName();
@@ -445,9 +441,10 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 		if (entity == null)
 			return;
 
-//		Quester.of(event.getPlayer()).interact(entity);
+		Quester.of(event.getPlayer()).interact(entity);
 		event.setCancelled(true);
 	}
+	*/
 
 	private void verifyDate() {
 		if (!isAdmin()) {

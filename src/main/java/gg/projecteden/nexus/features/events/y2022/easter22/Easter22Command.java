@@ -4,12 +4,10 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
-import gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22NPC;
-import gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestItem;
-import gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestTask;
+import gg.projecteden.nexus.features.events.EdenEvent;
+import gg.projecteden.nexus.features.events.IEventCommand;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.framework.commands.Commands;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -22,8 +20,6 @@ import gg.projecteden.nexus.models.easter22.Easter22UserService;
 import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.mail.Mailer.Mail;
-import gg.projecteden.nexus.models.quests.Quest;
-import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -35,8 +31,6 @@ import lombok.NonNull;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -50,10 +44,15 @@ import static gg.projecteden.nexus.utils.StringUtils.getTeleportCommand;
 
 @NoArgsConstructor
 @Aliases("easter")
-public class Easter22Command extends CustomCommand implements Listener {
+public class Easter22Command extends IEventCommand {
 
 	public Easter22Command(@NonNull CommandEvent event) {
 		super(event);
+	}
+
+	@Override
+	public EdenEvent getEdenEvent() {
+		return Easter22.get();
 	}
 
 	@Path("[player]")
@@ -82,39 +81,6 @@ public class Easter22Command extends CustomCommand implements Listener {
 						.command(getTeleportCommand(location))
 						.hover("&eClick to teleport");
 		paginate(Utils.sortByValueReverse(counts).keySet(), formatter, "/easter topLocations", page);
-	}
-
-	@Permission(Group.ADMIN)
-	@Path("quest debug <task>")
-	void quest_debug(Easter22QuestTask task) {
-		send(String.valueOf(task.get()));
-	}
-
-	@Permission(Group.ADMIN)
-	@Path("quest start")
-	void quest_start() {
-		Quest.builder()
-			.tasks(Easter22QuestTask.MAIN)
-			.assign(player())
-			.start();
-
-		send(PREFIX + "Quest activated");
-	}
-
-	@Permission(Group.ADMIN)
-	@Path("quest npc tp <quest>")
-	void quest_npc_tp(Easter22NPC npc) {
-		final Location location = CitizensUtils.locationOf(npc.getNpcId());
-		if (location == null)
-			error("Could not determine location of NPC");
-
-		player().teleportAsync(location, TeleportCause.COMMAND);
-	}
-
-	@Permission(Group.ADMIN)
-	@Path("quest item <item> [amount]")
-	void quest_item(Easter22QuestItem item, @Arg("1") int amount) {
-		giveItems(item.get(), amount);
 	}
 
 	@Path("store")

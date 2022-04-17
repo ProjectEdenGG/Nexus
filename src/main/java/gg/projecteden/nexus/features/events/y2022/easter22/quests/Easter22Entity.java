@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.y2022.easter22.quests;
 
+import gg.projecteden.nexus.features.events.y2022.easter22.Easter22;
 import gg.projecteden.nexus.features.quests.interactable.Inanimate;
 import gg.projecteden.nexus.features.quests.interactable.InteractableEntity;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
@@ -13,7 +14,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.UUID;
 import java.util.function.Predicate;
 
-import static gg.projecteden.nexus.features.events.y2022.easter22.Easter22.isAtEasterIsland;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
@@ -25,7 +25,7 @@ public enum Easter22Entity implements InteractableEntity {
 	EASTERS_PAINTBRUSH("Easter's Paintbrush", "b0041dee-f1a3-4bb7-b77f-24ff89feb49b"),
 	@Inanimate
 	EASTER_EGG("Easter Egg", entity -> {
-		if (!isAtEasterIsland(entity))
+		if (!Easter22.get().isAtEvent(entity))
 			return false;
 
 		if (!(entity instanceof ItemFrame itemFrame))
@@ -43,20 +43,16 @@ public enum Easter22Entity implements InteractableEntity {
 	}),
 	;
 
-	Easter22Entity(String name, String entityId) {
-		this(name, isNullOrEmpty(entityId) ? null : entity -> entity.getUniqueId().equals(UUID.fromString(entityId)));
-	}
-
 	private final String name;
+	private final UUID uuid;
 	private final Predicate<Entity> predicate;
 
-	public static Easter22Entity of(Entity entity) {
-		for (Easter22Entity easter22Entity : values())
-			if (easter22Entity.getPredicate() != null)
-				if (easter22Entity.getPredicate().test(entity))
-					return easter22Entity;
+	Easter22Entity(String name, String uuid) {
+		this(name, UUID.fromString(uuid), isNullOrEmpty(uuid) ? null : entity -> entity.getUniqueId().equals(UUID.fromString(uuid)));
+	}
 
-		return null;
+	Easter22Entity(String name, Predicate<Entity> predicate) {
+		this(name, null, predicate);
 	}
 
 }
