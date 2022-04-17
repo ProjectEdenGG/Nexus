@@ -4,13 +4,16 @@ import gg.projecteden.nexus.features.quests.tasks.GatherQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.IQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTask.TaskBuilder;
 import gg.projecteden.nexus.models.easter22.Easter22User;
+import gg.projecteden.nexus.models.easter22.Easter22UserService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.bukkit.Location;
 
 import java.util.Map;
 
 import static gg.projecteden.nexus.features.events.y2022.easter22.Easter22.TOTAL_EASTER_EGGS;
 import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22Entity.EASTER_BUNNY;
+import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22Entity.EASTER_EGG;
 import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22NPC.BASIL;
 import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22NPC.DAMIEN;
 import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestItem.EASTERS_PAINTBRUSH;
@@ -71,6 +74,11 @@ public enum Easter22QuestTask implements IQuestTask {
 		)
 		.objective("Find all 20 eggs")
 		.gather(quester -> Easter22User.of(quester).getFound().size() == TOTAL_EASTER_EGGS)
+		.onEntityInteract(EASTER_EGG, event -> {
+			event.setCancelled(true);
+			Location location = event.getRightClicked().getLocation().toBlockLocation();
+			new Easter22UserService().edit(event.getPlayer(), user -> user.found(location));
+		})
 		.reminder(dialog -> dialog
 			.npc("I appreciate your enthusiasm but you haven't found them all yet! Come back when you've gotten all 20.")
 		)

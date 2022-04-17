@@ -1,13 +1,16 @@
 package gg.projecteden.nexus.features.quests.tasks.common;
 
-import gg.projecteden.nexus.features.quests.CommonQuestReward;
 import gg.projecteden.nexus.features.quests.QuestReward;
 import gg.projecteden.nexus.features.quests.interactable.Interactable;
+import gg.projecteden.nexus.features.quests.interactable.InteractableEntity;
+import gg.projecteden.nexus.features.quests.interactable.InteractableNPC;
 import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import net.citizensnpcs.api.event.NPCClickEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,6 +84,16 @@ public abstract class QuestTask<
 
 		public TaskBuilderType onClick(Interactable interactable, Function<Dialog, Dialog> instructions) {
 			currentStep.onClick.computeIfAbsent(interactable, $ -> instructions.apply(Dialog.from(interactable)));
+			return (TaskBuilderType) this;
+		}
+
+		public TaskBuilderType onNPCInteract(InteractableNPC interactable, Consumer<NPCClickEvent> consumer) {
+			currentStep.onNPCInteract.computeIfAbsent(interactable, $ -> consumer);
+			return (TaskBuilderType) this;
+		}
+
+		public TaskBuilderType onEntityInteract(InteractableEntity interactable, Consumer<PlayerInteractEntityEvent> consumer) {
+			currentStep.onEntityInteract.computeIfAbsent(interactable, $ -> consumer);
 			return (TaskBuilderType) this;
 		}
 
