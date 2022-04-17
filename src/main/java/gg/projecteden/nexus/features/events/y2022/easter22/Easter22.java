@@ -160,6 +160,9 @@ public class Easter22 extends Feature implements Listener {
 
 	@EventHandler
 	public void onEggInteract(PlayerInteractEntityEvent event) {
+		if (!isAtEasterIsland(event.getPlayer()))
+			return;
+
 		if (!(event.getRightClicked() instanceof ItemFrame itemFrame))
 			return;
 
