@@ -10,9 +10,9 @@ import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegion
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.models.easter22.Easter22User;
 import gg.projecteden.nexus.models.easter22.Easter22UserService;
 import gg.projecteden.nexus.models.quests.Quest;
-import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.models.quests.QuesterService;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.BlockRegenJob;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
@@ -41,7 +41,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22NPC.BASIL;
-import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestItem.EASTERS_PAINTBRUSH;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shapeless;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.PlayerUtils.giveItem;
@@ -65,15 +64,12 @@ public class Easter22 extends Feature implements Listener {
 		if (!isAtEasterIsland(player))
 			return;
 
-		final Quester quester = new QuesterService().get(player);
-		for (Quest quest : quester.getQuests())
-			if (quest.getCurrentTaskProgress().getTask() == Easter22QuestTask.MAIN)
-				return;
-
-		Quest.builder()
-			.tasks(Easter22QuestTask.MAIN)
-			.assign(player)
-			.start();
+		final Quest quest = Easter22User.of(player).getQuest();
+		if (quest == null)
+			Quest.builder()
+				.tasks(Easter22QuestTask.MAIN)
+				.assign(player)
+				.start();
 	}
 	
 	@EventHandler
@@ -109,14 +105,8 @@ public class Easter22 extends Feature implements Listener {
 		if (entity == null)
 			return;
 
-		final Player player = event.getPlayer();
-		if (entity == Easter22Entity.EASTERS_PAINTBRUSH) {
-			if (!playerHas(player, EASTERS_PAINTBRUSH.get()))
-				giveItem(player, EASTERS_PAINTBRUSH.get());
-		} else {
-			new QuesterService().edit(player, quester -> quester.interact(entity));
-			event.setCancelled(true);
-		}
+		new QuesterService().edit(event.getPlayer(), quester -> quester.interact(entity));
+		event.setCancelled(true);
 	}
 
 	@EventHandler
@@ -144,16 +134,21 @@ public class Easter22 extends Feature implements Listener {
 			case RIGHT_CLICK_BLOCK:
 				switch (block.getType()) {
 					case OAK_LEAVES -> {
-						if (!new CooldownService().check(player, "easter22-stick-" + StringUtils.getFlooredCoordinateString(block.getLocation()).replace(" ", "-"), TickTime.MINUTE))
-							return;
+						final Quest quest = Easter22User.of(player).getQuest();
+						final int step = quest.getTaskProgress().getStep();
+						if (quest.getTask() == 0 && (step == 2 || step == 3))
+							if (!playerHas(player, Material.STICK)) {
+								if (!new CooldownService().check(player, "easter22-stick-" + StringUtils.getFlooredCoordinateString(block.getLocation()).replace(" ", "-"), TickTime.MINUTE))
+									return;
 
-						if (chanceOf(20)) {
-							giveItem(player, Material.STICK);
-							new SoundBuilder(Sound.ITEM_BONE_MEAL_USE).receiver(player).play();
-						} else {
-							PlayerUtils.send(player, "&7Hmm... no sticks in this bush");
-							new SoundBuilder(Sound.ENTITY_VILLAGER_NO).receiver(player).volume(.15).play();
-						}
+								if (chanceOf(20)) {
+									giveItem(player, Material.STICK);
+									new SoundBuilder(Sound.ITEM_BONE_MEAL_USE).receiver(player).play();
+								} else {
+									PlayerUtils.send(player, "&7Hmm... no sticks in this bush");
+									new SoundBuilder(Sound.ENTITY_VILLAGER_NO).receiver(player).volume(.15).play();
+								}
+							}
 					}
 				}
 				break;
@@ -176,7 +171,7 @@ public class Easter22 extends Feature implements Listener {
 		if (LocalDateTime.now().isAfter(END))
 			return;
 
-		Location location = itemFrame.getLocation();
+		Location location = itemFrame.getLocation().toBlockLocation();
 
 		new Easter22UserService().edit(event.getPlayer(), user -> user.found(location));
 	}

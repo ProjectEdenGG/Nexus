@@ -19,6 +19,8 @@ import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter2
 import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestItem.PRISTINE_EGG;
 import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestReward.BUNNY_EARS_COSTUME;
 import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestReward.EASTER_BASKET_TROPHY;
+import static gg.projecteden.nexus.utils.PlayerUtils.giveItem;
+import static gg.projecteden.nexus.utils.PlayerUtils.playerHas;
 import static org.bukkit.Material.CORNFLOWER;
 import static org.bukkit.Material.EGG;
 import static org.bukkit.Material.OXEYE_DAISY;
@@ -43,6 +45,10 @@ public enum Easter22QuestTask implements IQuestTask {
 		)
 		.objective("Find the Easter Bunny's paintbrush")
 		.gather(EASTERS_PAINTBRUSH)
+		.onClick(Easter22Entity.EASTERS_PAINTBRUSH, dialog -> dialog.thenRun(quester -> {
+			if (!playerHas(quester, EASTERS_PAINTBRUSH.get()))
+				giveItem(quester, EASTERS_PAINTBRUSH.get());
+		}))
 		.reminder(dialog -> dialog
 			.player("They still don't seem to notice I'm here, I should really find that paintbrush")
 		)

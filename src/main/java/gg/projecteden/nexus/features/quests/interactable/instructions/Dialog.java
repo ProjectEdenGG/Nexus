@@ -24,14 +24,12 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 @Data
 @RequiredArgsConstructor
 public class Dialog {
 	private final Interactable interactable;
 	private final List<Instruction> instructions = new ArrayList<>();
-	private boolean condition = true;
 
 	private static final Map<UUID, DialogInstance> instances = new HashMap<>();
 
@@ -39,8 +37,9 @@ public class Dialog {
 		return new Dialog(interactable);
 	}
 
-	private void instruction(Consumer<Quester> task, int delay) {
+	private Dialog instruction(Consumer<Quester> task, int delay) {
 		instructions.add(new Instruction(task, delay));
+		return this;
 	}
 
 	@Data
@@ -59,53 +58,35 @@ public class Dialog {
 	}
 
 	public Dialog npc(String npcName, String message) {
-		instruction(quester -> PlayerUtils.send(quester, "&3" + npcName + " &7> &f" + interpolate(message, quester)), calculateDelay(message));
-		return this;
+		return instruction(quester -> PlayerUtils.send(quester, "&3" + npcName + " &7> &f" + interpolate(message, quester)), calculateDelay(message));
 	}
 
 	public Dialog player(String message) {
-		instruction(quester -> PlayerUtils.send(quester, "&b&lYOU &7> &f" + interpolate(message, quester)), calculateDelay(message));
-		return this;
+		return instruction(quester -> PlayerUtils.send(quester, "&b&lYOU &7> &f" + interpolate(message, quester)), calculateDelay(message));
 	}
 
 	public Dialog raw(String message) {
-		instruction(quester -> PlayerUtils.send(quester, message), calculateDelay(message));
-		return this;
+		return instruction(quester -> PlayerUtils.send(quester, message), calculateDelay(message));
 	}
 
 	public Dialog raw(ComponentLike message) {
-		instruction(quester -> PlayerUtils.send(quester, message), calculateDelay(AdventureUtils.asPlainText(message)));
-		return this;
+		return instruction(quester -> PlayerUtils.send(quester, message), calculateDelay(AdventureUtils.asPlainText(message)));
 	}
 
 	public Dialog wait(int ticks) {
-		instruction(null, ticks);
-		return this;
+		return instruction(null, ticks);
 	}
 
 	public Dialog thenRun(Consumer<Quester> task) {
-		instruction(task, 0);
-		return this;
+		return instruction(task, 0);
 	}
 
 	public Dialog reward(QuestReward reward) {
-		instruction(reward::apply, -1);
-		return this;
+		return instruction(reward::apply, -1);
 	}
 
 	public Dialog reward(QuestReward reward, int amount) {
-		instruction(quester -> reward.apply(quester, amount), -1);
-		return this;
-	}
-
-	public Dialog condition(Predicate<Quester> predicate) {
-		instruction(quester -> condition = predicate.test(quester), -1);
-		return this;
-	}
-
-	public Dialog endCondition() {
-		instruction(quester -> condition = true, -1);
-		return this;
+		return instruction(quester -> reward.apply(quester, amount), -1);
 	}
 
 	public Dialog give(Material material) {
@@ -117,8 +98,7 @@ public class Dialog {
 	}
 
 	public Dialog give(ItemStack item) {
-		instruction(quester -> PlayerUtils.giveItem(quester, item), -1);
-		return this;
+		return instruction(quester -> PlayerUtils.giveItem(quester, item), -1);
 	}
 
 	public Dialog give(CustomModel... items) {
@@ -142,8 +122,7 @@ public class Dialog {
 	}
 
 	public Dialog take(ItemStack item) {
-		instruction(quester -> PlayerUtils.removeItem(quester.getOnlinePlayer(), item), -1);
-		return this;
+		return instruction(quester -> PlayerUtils.removeItem(quester.getOnlinePlayer(), item), -1);
 	}
 
 	public DialogInstance send(Quester quester) {
