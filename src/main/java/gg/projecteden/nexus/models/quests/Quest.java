@@ -58,13 +58,15 @@ public class Quest implements PlayerOwnedObject {
 	}
 
 	public void incrementTask() {
-		sendMessage("&c=== Moving to next task");
 		++task;
 	}
 
 	public void complete() {
-		sendMessage("&c=== Complete");
-		quester().getQuests().remove(this);
+		incrementTask();
+	}
+
+	public boolean isComplete() {
+		return task > tasks.size();
 	}
 
 	public static class QuestBuilder {

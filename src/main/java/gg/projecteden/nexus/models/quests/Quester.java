@@ -48,10 +48,10 @@ public class Quester implements PlayerOwnedObject {
 		return new QuesterService().get(uuid);
 	}
 
-	public void interact(Interactable interactable) {
+	public boolean interact(Interactable interactable) {
 		if (dialog != null && dialog.getTaskId().get() > 0) {
 			dialog.advance();
-			return;
+			return true;
 		}
 
 		for (Quest quest : new ArrayList<>(quests)) {
@@ -72,16 +72,16 @@ public class Quester implements PlayerOwnedObject {
 						if (quest.hasNextTask())
 							quest.incrementTask();
 						else
-							quest.complete();
+							quest.isComplete();
 					}
 				}
 
 				step.setFirstInteraction(false);
 
-				return;
+				return true;
 			} else if (taskStep.getOnClick().containsKey(interactable)) {
 				dialog = taskStep.getOnClick().get(interactable).send(this);
-				return;
+				return true;
 			}
 		}
 
@@ -103,6 +103,8 @@ public class Quester implements PlayerOwnedObject {
 		*/
 
 		// TODO Look for quests to start
+
+		return false;
 	}
 
 	public boolean has(List<ItemStack> items) {

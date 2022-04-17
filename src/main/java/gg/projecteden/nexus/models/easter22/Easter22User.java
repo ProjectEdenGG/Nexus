@@ -4,6 +4,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.events.y2022.easter22.Easter22;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.banker.BankerService;
@@ -49,6 +50,7 @@ public class Easter22User implements PlayerOwnedObject {
 
 		found.add(location);
 
+		sendMessage(PREFIX + "You found an egg! &7(" + found.size() + "/" + Easter22.TOTAL_EASTER_EGGS + ")");
 		PlayerUtils.giveItem(getOnlinePlayer(), EASTER_EGG.get());
 
 		if (true) return; // TODO Easter22

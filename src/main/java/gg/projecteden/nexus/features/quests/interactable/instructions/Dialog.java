@@ -185,8 +185,24 @@ public class Dialog {
 		return 200;
 	}
 
+	private static final List<String> genericGreetings = List.of("Hello!", "Hi!", "Greetings", "Hey there", "Hey!",
+		"Hi there!", "G'day", "Good to see you", "Nice to see you");
+
 	public static DialogInstance genericGreeting(Quester quester, Interactable interactable) {
-		final String message = RandomUtils.randomElement("Hello!", "Hi!", "Greetings", "Hey there");
+		List<String> genericGreetings = new ArrayList<>(Dialog.genericGreetings);
+
+		if (quester.getLocation() != null) {
+			final long time = quester.getLocation().getWorld().getTime();
+			if (time < 6000 || time > 18000)
+				genericGreetings.add("Good morning");
+			else if (time <= 12000)
+				genericGreetings.add("Good afternoon");
+			else
+				genericGreetings.add("Good evening");
+		}
+
+		final String message = RandomUtils.randomElement(genericGreetings);
+
 		return new DialogInstance(quester, new Dialog(interactable).npc(message));
 	}
 
