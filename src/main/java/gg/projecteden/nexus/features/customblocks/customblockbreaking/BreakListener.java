@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.customblocks.customblockbreaking;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
+import gg.projecteden.nexus.utils.NMSUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -44,7 +44,7 @@ public class BreakListener implements Listener {
 		if (!isValid(event.getPlayer()))
 			return;
 
-		CustomBlockBreaking.getManager().createBrokenBlock(event.getBlock(), 30);
+		CustomBlockBreaking.getManager().createBrokenBlock(event.getBlock());
 	}
 
 	@EventHandler
@@ -59,11 +59,18 @@ public class BreakListener implements Listener {
 
 		Location blockLoc = block.getLocation();
 		if (!CustomBlockBreaking.getManager().isTracking(blockLoc)) {
-			Dev.WAKKA.send("already being tracked");
 			return;
 		}
 
 		ItemStack itemStack = player.getInventory().getItemInMainHand();
+
+		float damage = NMSUtils.getBlockDamage(player, block, itemStack);
+		if (damage < 0)
+			return;
+		else if (damage == 0)
+			damage = NMSUtils.getBlockHardness(block);
+
+		double multiplier = damage;
 
 		Location playerLoc = player.getLocation();
 		double distanceX = blockLoc.getX() - playerLoc.getX();
@@ -74,6 +81,6 @@ public class BreakListener implements Listener {
 			return;
 
 		BlockBreakingUtils.addSlowDig(event.getPlayer(), 200);
-		CustomBlockBreaking.getManager().getBrokenBlock(blockLoc).incrementDamage(player, 1);
+		CustomBlockBreaking.getManager().getBrokenBlock(blockLoc).incrementDamage(player, multiplier);
 	}
 }

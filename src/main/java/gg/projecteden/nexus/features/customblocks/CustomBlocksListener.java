@@ -483,6 +483,7 @@ public class CustomBlocksListener implements Listener {
 		if (noteBlockData == null)
 			return;
 
+		// TODO: throw event
 		NoteBlockUtils.changePitch(sneaking, location, noteBlockData);
 	}
 }

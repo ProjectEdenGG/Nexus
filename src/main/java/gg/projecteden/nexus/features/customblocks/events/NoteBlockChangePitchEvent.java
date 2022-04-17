@@ -5,6 +5,7 @@ import lombok.Setter;
 import org.bukkit.block.Block;
 import org.bukkit.event.Cancellable;
 
+// TODO: implement
 public class NoteBlockChangePitchEvent extends NoteBlockEvent implements Cancellable {
 	@Getter
 	@Setter

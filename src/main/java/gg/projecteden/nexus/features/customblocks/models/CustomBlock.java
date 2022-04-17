@@ -18,14 +18,14 @@ import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.Potato
 import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.StickBundle;
 import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.SugarCaneBundle;
 import gg.projecteden.nexus.features.customblocks.models.blocks.concrete_bricks.*;
-import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.CrimsonLantern;
 import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.PaperAcaciaLantern;
 import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.PaperBirchLantern;
 import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.PaperDarkOakLantern;
 import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.PaperJungleLantern;
 import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.PaperOakLantern;
 import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.PaperSpruceLantern;
-import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.WarpedLantern;
+import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.ShroomCrimsonLantern;
+import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.ShroomWarpedLantern;
 import gg.projecteden.nexus.features.customblocks.models.blocks.planks.*;
 import gg.projecteden.nexus.features.customblocks.models.blocks.planks.colored.*;
 import gg.projecteden.nexus.features.customblocks.models.blocks.quilted_wool.*;
@@ -104,8 +104,8 @@ public enum CustomBlock {
 	PAPER_JUNGLE_LANTERN(PaperJungleLantern.class),
 	PAPER_ACACIA_LANTERN(PaperAcaciaLantern.class),
 	PAPER_DARK_OAK_LANTERN(PaperDarkOakLantern.class),
-	CRIMSON_LANTERN(CrimsonLantern.class),
-	WARPED_LANTERN(WarpedLantern.class),
+	CRIMSON_LANTERN(ShroomCrimsonLantern.class),
+	WARPED_LANTERN(ShroomWarpedLantern.class),
 
 	// colored planks
 	RED_PLANKS(RedPlanks.class),

@@ -25,8 +25,8 @@ import java.util.List;
 				- get rid of the note block item, and replace it with a paper model
 			- Custom blocks may flash when placing blocks near them (clientside only)
 			- Players arm will swing on interact w/ custom blocks
-
  */
+
 @Environments(Env.TEST)
 public class CustomBlocks extends Feature {
 	@Override

@@ -11,10 +11,14 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.models.customblock.CustomBlockData;
 import gg.projecteden.nexus.models.customblock.CustomBlockTracker;
 import gg.projecteden.nexus.models.customblock.CustomBlockTrackerService;
+import gg.projecteden.nexus.utils.NMSUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Map;
 import java.util.UUID;
@@ -74,5 +78,35 @@ public class CustomBlocksCommand extends CustomCommand {
 		for (CustomBlock customBlock : CustomBlock.values()) {
 			giveItem(customBlock.get().getItemStack());
 		}
+	}
+
+	/*
+		https://minecraft.fandom.com/wiki/Breaking
+
+		If the tool and enchantments immediately equal or exceeds the hardness times 30, the block
+		breaks with no delay; otherwise a 6 tick (3⁄10 second) delay occurs before the next block begins to break.
+	 */
+	@Path("getBlockHardness")
+	void hardness() {
+		Block block = getTargetBlockRequired();
+		ItemStack itemStack = getTool();
+
+		Material blockType = block.getType();
+		Material itemType = itemStack == null ? Material.AIR : itemStack.getType();
+		float blockDurability = NMSUtils.getBlockDurability(block);
+		float blockHardness = NMSUtils.getBlockHardness(block);
+		float destroySpeedItem = NMSUtils.getDestroySpeed(block, itemStack);
+		float destroySpeedItem1 = -1;
+		if (itemType != Material.AIR)
+			destroySpeedItem1 = block.getDestroySpeed(itemStack, true);
+
+		send("Tool: " + itemType);
+		send("Block: " + blockType);
+		send("Block Hardness: " + blockHardness);
+		send("Block Durability: " + blockDurability);
+		send("Item Destroy Speed: " + destroySpeedItem);
+		send("Item Destroy Speed Alt: " + destroySpeedItem1);
+		send("");
+		send("Block Damage: " + NMSUtils.getBlockDamage(player(), block, itemStack));
 	}
 }

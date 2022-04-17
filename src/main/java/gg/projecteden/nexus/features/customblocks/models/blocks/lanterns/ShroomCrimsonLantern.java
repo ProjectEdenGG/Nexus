@@ -1,11 +1,15 @@
 package gg.projecteden.nexus.features.customblocks.models.blocks.lanterns;
 
+import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.features.customblocks.models.interfaces.ICustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.interfaces.ISidewaysBlock;
+import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import lombok.NonNull;
 import org.bukkit.Instrument;
+import org.bukkit.Material;
+import org.jetbrains.annotations.Nullable;
 
-public class CrimsonLantern implements ICustomBlock, ISidewaysBlock {
+public class ShroomCrimsonLantern implements ICustomBlock, ISidewaysBlock {
 	@Override
 	public @NonNull Instrument getNoteBlockInstrument() {
 		return Instrument.FLUTE;
@@ -18,12 +22,17 @@ public class CrimsonLantern implements ICustomBlock, ISidewaysBlock {
 
 	@Override
 	public @NonNull String getName() {
-		return "Crimson Lantern";
+		return "Crimson Shroom Lantern";
 	}
 
 	@Override
 	public int getCustomModelData() {
 		return 20407;
+	}
+
+	@Override
+	public @Nullable Pair<RecipeBuilder<?>, Integer> getRecipe() {
+		return getShroomLanternRecipe(Material.CRIMSON_PLANKS);
 	}
 
 	@Override

@@ -155,8 +155,8 @@ public class CustomRecipes extends Feature implements Listener {
 	}
 
 	@NotNull
-	public static RecipeChoice choiceOf(MaterialTag tag) {
-		return new MaterialChoice(tag.toArray());
+	public static RecipeChoice choiceOf(Tag<Material> tag) {
+		return new MaterialChoice(tag.getValues().toArray(new Material[0]));
 	}
 
 	@NotNull

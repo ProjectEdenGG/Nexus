@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.recipes.models.builders;
 
-import gg.projecteden.nexus.utils.MaterialTag;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
@@ -17,7 +17,7 @@ public class SurroundBuilder extends RecipeBuilder<SurroundBuilder> {
 		this.center = center;
 	}
 
-	public SurroundBuilder with(MaterialTag surround) {
+	public SurroundBuilder with(Tag<Material> surround) {
 		return with(choiceOf(surround));
 	}
 

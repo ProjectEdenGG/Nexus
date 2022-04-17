@@ -8,11 +8,14 @@ import org.bukkit.Instrument;
 import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.Sound;
+import org.bukkit.Tag;
 import org.bukkit.block.data.type.NoteBlock;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
+import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.surround;
 
 public interface ICustomBlock {
 	Material blockMaterial = Material.NOTE_BLOCK;
@@ -79,11 +82,44 @@ public interface ICustomBlock {
 		return noteBlock;
 	}
 
-	default Pair<RecipeBuilder<?>, Integer> getCompactRecipe(Material material) {
+	default Pair<RecipeBuilder<?>, Integer> getCompactRecipe(@NotNull Material material) {
 		return new Pair<>(shaped("111", "111", "111").add('1', material), 1);
 	}
 
-	default Pair<RecipeBuilder<?>, Integer> get2x2Recipe(Material material) {
+	default Pair<RecipeBuilder<?>, Integer> get2x2Recipe(@NotNull Material material) {
 		return new Pair<>(shaped("11", "11").add('1', material), 4);
+	}
+
+	default Pair<RecipeBuilder<?>, Integer> getCombineSlabsRecipe(@NotNull Material material) {
+		return new Pair<>(shaped("1", "1").add('1', material), 1);
+	}
+
+	default Pair<RecipeBuilder<?>, Integer> getVerticalRecipe(@NotNull Material material) {
+		return new Pair<>(shaped("1", "1", "1").add('1', material), 1);
+	}
+
+	default Pair<RecipeBuilder<?>, Integer> getPaperLanternRecipe(@NotNull Material material) {
+		return new Pair<>(shaped("121", "343", "121")
+				.add('1', Material.STICK)
+				.add('2', material)
+				.add('3', Material.PAPER)
+				.add('4', Material.TORCH)
+				, 1);
+	}
+
+	default Pair<RecipeBuilder<?>, Integer> getShroomLanternRecipe(@NotNull Material material) {
+		return new Pair<>(shaped("121", "333", "121")
+				.add('1', Material.STICK)
+				.add('2', material)
+				.add('3', Material.SHROOMLIGHT)
+				, 1);
+	}
+
+	default Pair<RecipeBuilder<?>, Integer> getChiseledRecipe(@NotNull Material material) {
+		return new Pair<>(shaped("11").add('1', material), 1);
+	}
+
+	default Pair<RecipeBuilder<?>, Integer> getSurroundRecipe(@NonNull Material center, @NotNull Tag<Material> surround) {
+		return new Pair<>(surround(center).with(surround), 8);
 	}
 }
