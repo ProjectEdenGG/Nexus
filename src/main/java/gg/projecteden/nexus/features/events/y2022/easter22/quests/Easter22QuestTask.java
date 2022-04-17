@@ -71,23 +71,23 @@ public enum Easter22QuestTask implements IQuestTask {
 		.complete(dialog -> dialog
 			.player("So, about that reward?")
 			.npc("Wait, are you telling me you actually found them all?!")
-			.npc("I knew you were good but managing to complete the egg hunt? That's a something else completely!")
+			.npc("I knew you were good but managing to complete the egg hunt? That's something else!")
 			.npc("Take this bunny ear headband, its a symbol of your new role as a junior holiday bunny!")
 			.reward(BUNNY_EARS_COSTUME)
 			.npc("Though now that I think about it... are you willing to do one more thing for me?")
-			.player("Uh I guess?")
+			.player("Sure")
 			.npc("Don't worry, I've got something extra for you if you manage to pull this off!")
 			.npc("Do you by chance have a paintbrush and pristine egg on you?")
-			.player("No?? Why would I just have those on me?")
+			.player("I do not unfortunately")
 			.npc("Oh that's not good-  you're gonna need those")
 			.npc("Bring me 3 oxeye daisies, 3 cornflowers, a stick, and an egg and ill be able to make them for you!")
-			.player("Okay??")
+			.player("You got it!")
 		)
 
 		.then()
 		.talkTo(DAMIEN)
 		.onClick(EASTER_BUNNY, dialog -> dialog
-			.npc("Do you have them yet? Remember you can pick the daisies around the village, get the stick from a tree, " +
+			.npc("Do you have them yet? Remember you can pick the daisies around the village, get the stick from a bush, " +
 				"and I'm sure Damien from the bakery has extra eggs.")
 		)
 		.complete(dialog -> dialog
@@ -109,7 +109,7 @@ public enum Easter22QuestTask implements IQuestTask {
 			.npc("Did you find all the items?")
 		)
 		.reminder(dialog -> dialog
-			.npc("Do you have them yet? Remember you can pick the daisies and cornflowers around the village, get the stick from a tree, " +
+			.npc("Do you have them yet? Remember you can pick the daisies and cornflowers around the village, get the stick from a bush, " +
 				"and I'm sure Damien from the bakery has extra eggs.")
 		)
 		.gather(Map.of(OXEYE_DAISY, 3, CORNFLOWER, 3, STICK, 1, EGG, 1))
@@ -122,8 +122,7 @@ public enum Easter22QuestTask implements IQuestTask {
 		.dialog(dialog -> dialog
 			.npc("Done! Take this and paint that egg for me okay.")
 			.give(PAINTBRUSH, PRISTINE_EGG)
-			.player("Why?")
-			.npc("I'm just curious")
+			.player("Alright!")
 		)
 		.objective("Paint the egg")
 		.reminder(dialog ->  dialog
