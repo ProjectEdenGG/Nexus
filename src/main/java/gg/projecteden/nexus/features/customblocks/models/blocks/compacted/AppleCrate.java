@@ -31,7 +31,9 @@ public class AppleCrate implements ICustomBlock {
 	}
 
 	@Override
-	public @Nullable Pair<RecipeBuilder<?>, Integer> getRecipe() {
+	public @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
 		return getCompactRecipe(Material.APPLE);
 	}
+
+	// TODO: UNCRAFT RECIPE
 }

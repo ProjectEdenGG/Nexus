@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.customblocks.models.interfaces;
 import lombok.NonNull;
 import org.bukkit.Instrument;
 
-public interface ISidewaysBlock {
+public interface IDirectional {
 	@NonNull Instrument getNoteBlockInstrument_NS();
 
 	int getNoteBlockStep_NS();

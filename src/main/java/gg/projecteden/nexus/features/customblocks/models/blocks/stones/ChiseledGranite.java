@@ -30,7 +30,12 @@ public class ChiseledGranite implements ICustomBlock {
 	}
 
 	@Override
-	public @Nullable Pair<RecipeBuilder<?>, Integer> getRecipe() {
-		return getChiseledRecipe(Material.POLISHED_GRANITE);
+	public @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
+		return getChiseledRecipe(Material.POLISHED_GRANITE_SLAB);
+	}
+
+	@Override
+	public @Nullable RecipeBuilder<?> getUncraftRecipe() {
+		return getUncraftRecipe(Material.POLISHED_GRANITE_SLAB, 2);
 	}
 }

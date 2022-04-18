@@ -30,7 +30,7 @@ public class VerticalSprucePlanks implements ICustomBlock {
 	}
 
 	@Override
-	public @Nullable Pair<RecipeBuilder<?>, Integer> getRecipe() {
+	public @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
 		return getVerticalRecipe(Material.SPRUCE_PLANKS);
 	}
 }

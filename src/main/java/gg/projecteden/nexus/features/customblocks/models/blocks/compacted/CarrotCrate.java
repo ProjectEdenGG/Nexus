@@ -31,7 +31,9 @@ public class CarrotCrate implements ICustomBlock {
 	}
 
 	@Override
-	public @Nullable Pair<RecipeBuilder<?>, Integer> getRecipe() {
+	public @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
 		return getCompactRecipe(Material.CARROT);
 	}
+
+	// TODO: UNCRAFT RECIPE
 }

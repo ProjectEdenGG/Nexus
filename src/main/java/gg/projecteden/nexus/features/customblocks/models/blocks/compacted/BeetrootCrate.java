@@ -31,7 +31,9 @@ public class BeetrootCrate implements ICustomBlock {
 	}
 
 	@Override
-	public @Nullable Pair<RecipeBuilder<?>, Integer> getRecipe() {
+	public @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
 		return getCompactRecipe(Material.BEETROOT);
 	}
+
+	// TODO: UNCRAFT RECIPE
 }

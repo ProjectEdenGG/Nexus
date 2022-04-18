@@ -30,7 +30,12 @@ public class TerracottaShingles implements ICustomBlock {
 	}
 
 	@Override
-	public @Nullable Pair<RecipeBuilder<?>, Integer> getRecipe() {
+	public @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
 		return get2x2Recipe(Material.TERRACOTTA);
+	}
+
+	@Override
+	public @Nullable RecipeBuilder<?> getUncraftRecipe() {
+		return getUncraftRecipe(Material.TERRACOTTA, 1);
 	}
 }

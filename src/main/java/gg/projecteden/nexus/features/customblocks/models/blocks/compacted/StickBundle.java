@@ -2,14 +2,14 @@ package gg.projecteden.nexus.features.customblocks.models.blocks.compacted;
 
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.features.customblocks.models.interfaces.ICustomBlock;
-import gg.projecteden.nexus.features.customblocks.models.interfaces.ISidewaysBlock;
+import gg.projecteden.nexus.features.customblocks.models.interfaces.IDirectional;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import lombok.NonNull;
 import org.bukkit.Instrument;
 import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
 
-public class StickBundle implements ICustomBlock, ISidewaysBlock {
+public class StickBundle implements ICustomBlock, IDirectional {
 	@Override
 	public @NonNull Instrument getNoteBlockInstrument() {
 		return Instrument.BASS_DRUM;
@@ -31,11 +31,6 @@ public class StickBundle implements ICustomBlock, ISidewaysBlock {
 	}
 
 	@Override
-	public @Nullable Pair<RecipeBuilder<?>, Integer> getRecipe() {
-		return getCompactRecipe(Material.STICK);
-	}
-
-	@Override
 	public @NonNull Instrument getNoteBlockInstrument_NS() {
 		return getNoteBlockInstrument();
 	}
@@ -54,4 +49,11 @@ public class StickBundle implements ICustomBlock, ISidewaysBlock {
 	public int getNoteBlockStep_EW() {
 		return 18;
 	}
+
+	@Override
+	public @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
+		return getCompactRecipe(Material.STICK);
+	}
+
+	// TODO: UNCRAFT RECIPE
 }

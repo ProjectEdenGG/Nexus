@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.customblocks.models.blocks;
 
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.features.customblocks.models.interfaces.ICustomBlock;
-import gg.projecteden.nexus.features.customblocks.models.interfaces.ISidewaysBlock;
+import gg.projecteden.nexus.features.customblocks.models.interfaces.IDirectional;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import lombok.NonNull;
 import org.bukkit.Instrument;
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
 
-public class ShojiBlock implements ICustomBlock, ISidewaysBlock {
+public class ShojiBlock implements ICustomBlock, IDirectional {
 	@Override
 	public @NonNull Instrument getNoteBlockInstrument() {
 		return Instrument.BASS_GUITAR;
@@ -33,13 +33,6 @@ public class ShojiBlock implements ICustomBlock, ISidewaysBlock {
 	}
 
 	@Override
-	public @Nullable Pair<RecipeBuilder<?>, Integer> getRecipe() {
-		return new Pair<>(shaped("121", "212", "121")
-			.add('1', Material.STICK)
-			.add('2', Material.PAPER), 4);
-	}
-
-	@Override
 	public @NonNull Instrument getNoteBlockInstrument_NS() {
 		return getNoteBlockInstrument();
 	}
@@ -57,5 +50,12 @@ public class ShojiBlock implements ICustomBlock, ISidewaysBlock {
 	@Override
 	public int getNoteBlockStep_EW() {
 		return 24;
+	}
+
+	@Override
+	public @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
+		return new Pair<>(shaped("121", "212", "121")
+			.add('1', Material.STICK)
+			.add('2', Material.PAPER), 4);
 	}
 }

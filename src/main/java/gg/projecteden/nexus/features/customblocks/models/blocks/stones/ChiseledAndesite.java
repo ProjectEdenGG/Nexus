@@ -30,7 +30,12 @@ public class ChiseledAndesite implements ICustomBlock {
 	}
 
 	@Override
-	public @Nullable Pair<RecipeBuilder<?>, Integer> getRecipe() {
-		return getChiseledRecipe(Material.POLISHED_ANDESITE);
+	public @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
+		return getChiseledRecipe(Material.POLISHED_ANDESITE_SLAB);
+	}
+
+	@Override
+	public @Nullable RecipeBuilder<?> getUncraftRecipe() {
+		return getUncraftRecipe(Material.POLISHED_ANDESITE_SLAB, 2);
 	}
 }

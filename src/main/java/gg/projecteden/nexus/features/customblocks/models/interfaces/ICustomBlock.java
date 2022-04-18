@@ -45,7 +45,11 @@ public interface ICustomBlock {
 		return getItemBuilder().build();
 	}
 
-	default @Nullable Pair<RecipeBuilder<?>, Integer> getRecipe() {
+	default @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
+		return null;
+	}
+
+	default @Nullable RecipeBuilder<?> getUncraftRecipe() {
 		return null;
 	}
 
@@ -80,6 +84,11 @@ public interface ICustomBlock {
 		noteBlock.setInstrument(getNoteBlockInstrument());
 		noteBlock.setNote(new Note(getNoteBlockStep()));
 		return noteBlock;
+	}
+
+	default RecipeBuilder<?> getUncraftRecipe(@NotNull Material toMake, int count) {
+		ItemStack toMakeItem = new ItemBuilder(toMake).amount(count).build();
+		return RecipeBuilder.shapeless().add(getItemStack()).toMake(toMakeItem);
 	}
 
 	default Pair<RecipeBuilder<?>, Integer> getCompactRecipe(@NotNull Material material) {

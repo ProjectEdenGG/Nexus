@@ -30,7 +30,12 @@ public class AndesiteBricks implements ICustomBlock {
 	}
 
 	@Override
-	public @Nullable Pair<RecipeBuilder<?>, Integer> getRecipe() {
+	public @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
 		return get2x2Recipe(Material.POLISHED_ANDESITE);
+	}
+
+	@Override
+	public @Nullable RecipeBuilder<?> getUncraftRecipe() {
+		return getUncraftRecipe(Material.POLISHED_ANDESITE, 1);
 	}
 }

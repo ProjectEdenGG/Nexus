@@ -30,7 +30,12 @@ public class GraniteBricks implements ICustomBlock {
 	}
 
 	@Override
-	public @Nullable Pair<RecipeBuilder<?>, Integer> getRecipe() {
+	public @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
 		return get2x2Recipe(Material.POLISHED_GRANITE);
+	}
+
+	@Override
+	public @Nullable RecipeBuilder<?> getUncraftRecipe() {
+		return getUncraftRecipe(Material.POLISHED_GRANITE, 1);
 	}
 }

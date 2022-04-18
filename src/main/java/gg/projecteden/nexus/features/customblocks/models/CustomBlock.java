@@ -38,10 +38,11 @@ import gg.projecteden.nexus.features.customblocks.models.blocks.stones.DioriteBr
 import gg.projecteden.nexus.features.customblocks.models.blocks.stones.GraniteBricks;
 import gg.projecteden.nexus.features.customblocks.models.blocks.terracotta_shingles.*;
 import gg.projecteden.nexus.features.customblocks.models.interfaces.ICustomBlock;
-import gg.projecteden.nexus.features.customblocks.models.interfaces.ISidewaysBlock;
+import gg.projecteden.nexus.features.customblocks.models.interfaces.IDirectional;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.utils.BlockUtils;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.NMSUtils.SoundType;
@@ -232,23 +233,23 @@ public enum CustomBlock {
 	}
 
 	public static @Nullable CustomBlock fromNoteBlock(@NonNull org.bukkit.block.data.type.NoteBlock noteBlock) {
-		List<CustomBlock> sideWays = new ArrayList<>();
+		List<CustomBlock> directional = new ArrayList<>();
 		for (CustomBlock _customBlock : values()) {
 			ICustomBlock customBlock = _customBlock.get();
 			if (checkData(customBlock.getNoteBlockInstrument(), customBlock.getNoteBlockStep(), noteBlock))
 				return _customBlock;
-			else if (customBlock instanceof ISidewaysBlock)
-				sideWays.add(_customBlock);
+			else if (customBlock instanceof IDirectional)
+				directional.add(_customBlock);
 		}
 
-		// Sideways checks
+		// Directional checks
 
-		for (CustomBlock _customBlock : sideWays) {
-			ISidewaysBlock sidewaysBlock = (ISidewaysBlock) _customBlock.get();
-			if (checkData(sidewaysBlock.getNoteBlockInstrument_NS(), sidewaysBlock.getNoteBlockStep_NS(), noteBlock))
+		for (CustomBlock _customBlock : directional) {
+			IDirectional directionalBlock = (IDirectional) _customBlock.get();
+			if (checkData(directionalBlock.getNoteBlockInstrument_NS(), directionalBlock.getNoteBlockStep_NS(), noteBlock))
 				return _customBlock;
 
-			if (checkData(sidewaysBlock.getNoteBlockInstrument_EW(), sidewaysBlock.getNoteBlockStep_EW(), noteBlock))
+			if (checkData(directionalBlock.getNoteBlockInstrument_EW(), directionalBlock.getNoteBlockStep_EW(), noteBlock))
 				return _customBlock;
 		}
 
@@ -325,32 +326,38 @@ public enum CustomBlock {
 	}
 
 	public void registerRecipe() {
+		// TODO: IDyeable recipes
 		ICustomBlock customBlock = get();
-		Pair<RecipeBuilder<?>, Integer> recipePair = customBlock.getRecipe();
-		if (recipePair == null || recipePair.getFirst() == null)
-			return;
+		RecipeBuilder<?> recipeBuilder;
 
-		RecipeBuilder<?> recipeBuilder = recipePair.getFirst();
+		// craft recipe
+		Pair<RecipeBuilder<?>, Integer> recipePair = customBlock.getCraftRecipe();
+		if (recipePair != null && recipePair.getFirst() == null) {
+			ItemStack toMakeItem = new ItemBuilder(customBlock.getItemStack()).amount(recipePair.getSecond()).build();
+			recipeBuilder = recipePair.getFirst();
+			recipeBuilder.toMake(toMakeItem).build().type(RecipeType.CUSTOM_BLOCKS).register();
+		}
 
-		ItemStack itemStack = customBlock.getItemStack().clone();
-		itemStack.setAmount(recipePair.getSecond());
-
-		recipeBuilder.toMake(itemStack).build().type(RecipeType.CUSTOM_BLOCKS).register();
+		// uncraft recipe
+		recipeBuilder = customBlock.getUncraftRecipe();
+		if (recipeBuilder != null) {
+			recipeBuilder.build().type(RecipeType.CUSTOM_BLOCKS).register();
+		}
 	}
 
 	static final Set<BlockFace> directions = Set.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST);
 
 	public Instrument getNoteBlockInstrument(@Nullable BlockFace facing) {
 		ICustomBlock customBlock = this.get();
-		if (facing == null || !directions.contains(facing) || !(customBlock instanceof ISidewaysBlock sidewaysBlock))
+		if (facing == null || !directions.contains(facing) || !(customBlock instanceof IDirectional directional))
 			return customBlock.getNoteBlockInstrument();
 
 		switch (facing) {
 			case NORTH, SOUTH -> {
-				return sidewaysBlock.getNoteBlockInstrument_NS();
+				return directional.getNoteBlockInstrument_NS();
 			}
 			case EAST, WEST -> {
-				return sidewaysBlock.getNoteBlockInstrument_EW();
+				return directional.getNoteBlockInstrument_EW();
 			}
 		}
 
@@ -359,15 +366,15 @@ public enum CustomBlock {
 
 	public int getNoteBlockStep(@Nullable BlockFace facing) {
 		ICustomBlock customBlock = this.get();
-		if (facing == null || !directions.contains(facing) || !(customBlock instanceof ISidewaysBlock sidewaysBlock))
+		if (facing == null || !directions.contains(facing) || !(customBlock instanceof IDirectional directional))
 			return customBlock.getNoteBlockStep();
 
 		switch (facing) {
 			case NORTH, SOUTH -> {
-				return sidewaysBlock.getNoteBlockStep_NS();
+				return directional.getNoteBlockStep_NS();
 			}
 			case EAST, WEST -> {
-				return sidewaysBlock.getNoteBlockStep_EW();
+				return directional.getNoteBlockStep_EW();
 			}
 		}
 

@@ -2,14 +2,14 @@ package gg.projecteden.nexus.features.customblocks.models.blocks.lanterns;
 
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.features.customblocks.models.interfaces.ICustomBlock;
-import gg.projecteden.nexus.features.customblocks.models.interfaces.ISidewaysBlock;
+import gg.projecteden.nexus.features.customblocks.models.interfaces.IDirectional;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import lombok.NonNull;
 import org.bukkit.Instrument;
 import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
 
-public class PaperSpruceLantern implements ICustomBlock, ISidewaysBlock {
+public class PaperSpruceLantern implements ICustomBlock, IDirectional {
 	@Override
 	public @NonNull Instrument getNoteBlockInstrument() {
 		return Instrument.FLUTE;
@@ -31,7 +31,7 @@ public class PaperSpruceLantern implements ICustomBlock, ISidewaysBlock {
 	}
 
 	@Override
-	public @Nullable Pair<RecipeBuilder<?>, Integer> getRecipe() {
+	public @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
 		return getPaperLanternRecipe(Material.SPRUCE_PLANKS);
 	}
 

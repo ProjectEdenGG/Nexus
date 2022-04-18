@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.customblocks;
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.interfaces.ICustomBlock;
-import gg.projecteden.nexus.features.customblocks.models.interfaces.ISidewaysBlock;
+import gg.projecteden.nexus.features.customblocks.models.interfaces.IDirectional;
 import gg.projecteden.nexus.models.customblock.CustomBlockData;
 import gg.projecteden.nexus.models.customblock.CustomBlockTracker;
 import gg.projecteden.nexus.models.customblock.CustomBlockTrackerService;
@@ -96,7 +96,7 @@ public class CustomBlockUtils {
 
 	public static BlockFace getFacing(CustomBlock _customBlock, NoteBlock noteBlock) {
 		ICustomBlock customBlock = _customBlock.get();
-		if (customBlock instanceof ISidewaysBlock)
+		if (customBlock instanceof IDirectional)
 			return BlockFace.UP;
 
 		if (isFacing(BlockFace.NORTH, _customBlock, noteBlock))

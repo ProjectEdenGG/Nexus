@@ -30,7 +30,7 @@ public class CarvedBirchPlanks implements ICustomBlock {
 	}
 
 	@Override
-	public @Nullable Pair<RecipeBuilder<?>, Integer> getRecipe() {
+	public @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
 		return getCombineSlabsRecipe(Material.BIRCH_SLAB);
 	}
 }

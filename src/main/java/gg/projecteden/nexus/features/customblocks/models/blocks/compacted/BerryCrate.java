@@ -31,7 +31,9 @@ public class BerryCrate implements ICustomBlock {
 	}
 
 	@Override
-	public @Nullable Pair<RecipeBuilder<?>, Integer> getRecipe() {
+	public @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
 		return getCompactRecipe(Material.SWEET_BERRIES);
 	}
+
+	// TODO: UNCRAFT RECIPE
 }

@@ -30,8 +30,12 @@ public class ChiseledStone implements ICustomBlock {
 	}
 
 	@Override
-	public @Nullable Pair<RecipeBuilder<?>, Integer> getRecipe() {
-		// Don't use normal ChiseledRecipe, it would override the stone pressure plate recipe
-		return getCombineSlabsRecipe(Material.STONE_SLAB);
+	public @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
+		return getChiseledRecipe(Material.STONE_SLAB);
+	}
+
+	@Override
+	public @Nullable RecipeBuilder<?> getUncraftRecipe() {
+		return getUncraftRecipe(Material.STONE_SLAB, 2);
 	}
 }

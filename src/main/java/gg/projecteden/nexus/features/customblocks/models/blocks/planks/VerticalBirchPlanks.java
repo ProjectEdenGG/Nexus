@@ -30,7 +30,7 @@ public class VerticalBirchPlanks implements ICustomBlock {
 	}
 
 	@Override
-	public @Nullable Pair<RecipeBuilder<?>, Integer> getRecipe() {
+	public @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
 		return getVerticalRecipe(Material.BIRCH_PLANKS);
 	}
 }
