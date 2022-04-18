@@ -19,7 +19,7 @@ import gg.projecteden.nexus.models.warps.WarpType;
 	rewards = Pride22QuestReward.class,
 	start = @Date(m = 6, d = 1, y = 2022),
 	end = @Date(m = 6, d = 30, y = 2022),
-	world = "pride22",
+	world = "events",
 	region = "pride22",
 	warpType = WarpType.PRIDE22
 )

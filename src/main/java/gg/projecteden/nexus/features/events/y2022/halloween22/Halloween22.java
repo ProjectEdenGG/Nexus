@@ -19,7 +19,7 @@ import gg.projecteden.nexus.models.warps.WarpType;
 	rewards = Halloween22QuestReward.class,
 	start = @Date(m = 10, d = 15, y = 2022),
 	end = @Date(m = 11, d = 10, y = 2022),
-	world = "halloween22",
+	world = "events",
 	region = "halloween22",
 	warpType = WarpType.HALLOWEEN22
 )
