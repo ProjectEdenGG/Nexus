@@ -51,8 +51,8 @@ public class GatherQuestTask extends QuestTask<GatherQuestTask, GatherQuestTaskS
 		@Override
 		public boolean shouldAdvance(Quester quester, QuestTaskStepProgress stepProgress) {
 			if (predicate != null)
-				if (!predicate.test(quester))
-					return false;
+				if (!stepProgress.isFirstInteraction() && predicate.test(quester))
+					return true;
 
 			if (Nullables.isNullOrEmpty(items))
 				return true;
