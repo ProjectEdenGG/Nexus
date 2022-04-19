@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.shops.providers;
 
-import fr.minuskube.inv.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.shops.Market;
 import gg.projecteden.nexus.features.shops.providers.common.ShopProvider;
 import gg.projecteden.nexus.models.shop.ShopService;

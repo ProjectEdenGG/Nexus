@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.menus.itemeditor;
 
-import fr.minuskube.inv.SmartInventory;
+import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.itemeditor.providers.ItemEditorProvider;
 import org.bukkit.entity.Player;
 

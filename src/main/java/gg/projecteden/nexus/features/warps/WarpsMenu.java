@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.warps;
 
-import fr.minuskube.inv.SmartInventory;
+import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.warps.providers.WarpsMenuProvider;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
