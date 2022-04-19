@@ -83,7 +83,7 @@ public class EditProductProvider extends ShopProvider {
 			));
 		} else {
 			contents.set(1, 3, ClickableItem.of(new ItemBuilder(Material.LIME_CONCRETE_POWDER).name("&6Add Stock").lore("&f", "&7Right click to add in bulk").build(), e -> {
-				if (isRightClick(e)) {
+				if (e.isRightClick()) {
 					player.closeInventory();
 					ShopCommand.getInteractStockMap().put(player.getUniqueId(), product);
 					PlayerUtils.send(player, new JsonBuilder(Shops.PREFIX + "Right click any container (ie chest, shulker box, etc) to stock &e"
@@ -92,7 +92,7 @@ public class EditProductProvider extends ShopProvider {
 					new AddStockProvider(this, product).open(player);
 				}
 			}));
-			contents.set(1, 5, ClickableItem.of(nameItem(Material.RED_CONCRETE_POWDER, "&6Remove Stock"), e -> new RemoveStockProvider(this, product).open(player)));
+			contents.set(1, 5, ClickableItem.of(Material.RED_CONCRETE_POWDER, "&6Remove Stock", e -> new RemoveStockProvider(this, product).open(player)));
 		}
 
 		ItemBuilder purchasable = new ItemBuilder(Material.WHITE_STAINED_GLASS);

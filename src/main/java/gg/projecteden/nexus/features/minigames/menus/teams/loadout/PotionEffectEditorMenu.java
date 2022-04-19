@@ -44,80 +44,76 @@ public class PotionEffectEditorMenu extends MenuUtils implements InventoryProvid
 	public void init(Player player, InventoryContents contents) {
 		addBackItem(contents, e -> menus.getTeamMenus().openPotionEffectsMenu(player, arena, team));
 
-		contents.set(0, 3, ClickableItem.of(nameItem(
-					Material.REDSTONE,
-					"&eDuration",
-					"||&eCurrent value: &3" + potionEffect.getDuration()
-				),
-				e -> openAnvilMenu(player, arena, team, potionEffect, String.valueOf(potionEffect.getDuration()), (p, text) -> {
-					if (Utils.isInt(text)) {
-						team.getLoadout().getEffects().remove(potionEffect);
-						potionEffect = new PotionEffectBuilder(potionEffect).duration(Integer.parseInt(text)).build();
-						team.getLoadout().getEffects().add(potionEffect);
-						arena.write();
-						Tasks.wait(1, () -> {
-							// Since potion effects don't have setters, pass-by-reference is broken, so we
-							// have to do some hacky waits to get the menu to open with the correct object
-							player.closeInventory();
-							Tasks.wait(1, () -> menus.getTeamMenus().openPotionEffectEditorMenu(player, arena, team, potionEffect));
-						});
-						return AnvilGUI.Response.text(text);
-					} else {
-						PlayerUtils.send(player, PREFIX + "You must use an integer for the duration.");
-						return AnvilGUI.Response.close();
-					}
-				})));
+		contents.set(0, 3, ClickableItem.of(new ItemBuilder(Material.REDSTONE)
+				.name("&eDuration")
+				.lore("", "&eCurrent value: &3" + potionEffect.getDuration()),
+			e -> openAnvilMenu(player, arena, team, potionEffect, String.valueOf(potionEffect.getDuration()), (p, text) -> {
+				if (Utils.isInt(text)) {
+					team.getLoadout().getEffects().remove(potionEffect);
+					potionEffect = new PotionEffectBuilder(potionEffect).duration(Integer.parseInt(text)).build();
+					team.getLoadout().getEffects().add(potionEffect);
+					arena.write();
+					Tasks.wait(1, () -> {
+						// Since potion effects don't have setters, pass-by-reference is broken, so we
+						// have to do some hacky waits to get the menu to open with the correct object
+						player.closeInventory();
+						Tasks.wait(1, () -> menus.getTeamMenus().openPotionEffectEditorMenu(player, arena, team, potionEffect));
+					});
+					return AnvilGUI.Response.text(text);
+				} else {
+					PlayerUtils.send(player, PREFIX + "You must use an integer for the duration.");
+					return AnvilGUI.Response.close();
+				}
+			})));
 
-		contents.set(0, 5, ClickableItem.of(nameItem(
-					Material.GLOWSTONE_DUST,
-					"&eAmplifier",
-					"||&eCurrent value: &3" + (potionEffect.getAmplifier() + 1)
-				),
-				e -> openAnvilMenu(player, arena, team, potionEffect, String.valueOf(potionEffect.getAmplifier()), (p, text) -> {
-					if (Utils.isInt(text)) {
-						team.getLoadout().getEffects().remove(potionEffect);
-						potionEffect = new PotionEffectBuilder(potionEffect).amplifier(Integer.parseInt(text) - 1).build();
-						team.getLoadout().getEffects().add(potionEffect);
-						arena.write();
-						Tasks.wait(1, () -> {
-							player.closeInventory();
-							Tasks.wait(1, () -> menus.getTeamMenus().openPotionEffectEditorMenu(player, arena, team, potionEffect));
-						});
-						return AnvilGUI.Response.text(text);
-					} else {
-						PlayerUtils.send(player, PREFIX + "You must use an integer for the amplifier.");
-						return AnvilGUI.Response.close();
-					}
-				})));
+		contents.set(0, 5, ClickableItem.of(new ItemBuilder(Material.GLOWSTONE_DUST)
+				.name("&eAmplifier")
+				.lore("", "&eCurrent value: &3" + (potionEffect.getAmplifier() + 1)),
+			e -> openAnvilMenu(player, arena, team, potionEffect, String.valueOf(potionEffect.getAmplifier()), (p, text) -> {
+				if (Utils.isInt(text)) {
+					team.getLoadout().getEffects().remove(potionEffect);
+					potionEffect = new PotionEffectBuilder(potionEffect).amplifier(Integer.parseInt(text) - 1).build();
+					team.getLoadout().getEffects().add(potionEffect);
+					arena.write();
+					Tasks.wait(1, () -> {
+						player.closeInventory();
+						Tasks.wait(1, () -> menus.getTeamMenus().openPotionEffectEditorMenu(player, arena, team, potionEffect));
+					});
+					return AnvilGUI.Response.text(text);
+				} else {
+					PlayerUtils.send(player, PREFIX + "You must use an integer for the amplifier.");
+					return AnvilGUI.Response.close();
+				}
+			})));
 
-		contents.set(0, 8, ClickableItem.of(nameItem(Material.END_CRYSTAL, "&eSave"), e-> arena.write()));
+		contents.set(0, 8, ClickableItem.of(Material.END_CRYSTAL, "&eSave", e -> arena.write()));
 
 		int row = 2;
 		int column = 0;
-		for(PotionEffectType effect : PotionEffectType.values()){
-			if(effect == null) continue;
+		for (PotionEffectType effect : PotionEffectType.values()) {
+			if (effect == null) continue;
 
 			ItemStack potionItem = new ItemBuilder(Material.POTION)
-					.name("&e" + StringUtils.camelCase(effect.getName().replace("_", " ")))
-					.potionEffect(new PotionEffectBuilder(effect).duration(5).amplifier(0))
-					.potionEffectColor(effect.getColor())
-					.build();
+				.name("&e" + StringUtils.camelCase(effect.getName().replace("_", " ")))
+				.potionEffect(new PotionEffectBuilder(effect).duration(5).amplifier(0))
+				.potionEffectColor(effect.getColor())
+				.build();
 
-			if(effect == potionEffect.getType()) potionItem.setType(Material.SPLASH_POTION);
+			if (effect == potionEffect.getType()) potionItem.setType(Material.SPLASH_POTION);
 
 			contents.set(row, column, ClickableItem.of(potionItem,
-					e-> {
-						team.getLoadout().getEffects().remove(potionEffect);
-						potionEffect = new PotionEffectBuilder(potionEffect).type(effect).build();
-						team.getLoadout().getEffects().add(potionEffect);
-						arena.write();
-						Tasks.wait(1, () -> {
-							player.closeInventory();
-							Tasks.wait(1, () -> menus.getTeamMenus().openPotionEffectEditorMenu(player, arena, team, potionEffect));
-						});
-					}));
+				e -> {
+					team.getLoadout().getEffects().remove(potionEffect);
+					potionEffect = new PotionEffectBuilder(potionEffect).type(effect).build();
+					team.getLoadout().getEffects().add(potionEffect);
+					arena.write();
+					Tasks.wait(1, () -> {
+						player.closeInventory();
+						Tasks.wait(1, () -> menus.getTeamMenus().openPotionEffectEditorMenu(player, arena, team, potionEffect));
+					});
+				}));
 
-			if(column == 8){
+			if (column == 8) {
 				column = 0;
 				row++;
 			} else {

@@ -166,9 +166,9 @@ public class RainbowArmorCommand extends CustomCommand implements Listener {
 			AtomicDouble userSpeed = new AtomicDouble(user.getSpeed());
 			ItemBuilder speed = new ItemBuilder(Material.RABBIT_FOOT).name("&3Speed: &e" + df.format(userSpeed)).lore("&a+&f/&c-");
 			contents.set(new SlotPos(1, 6), ClickableItem.of(speed.build(), e -> {
-				if (isAnyLeftClick(e))
+				if (e.isAnyLeftClick())
 					userSpeed.getAndAdd(0.1);
-				else if (isAnyRightClick(e))
+				else if (e.isAnyRightClick())
 					userSpeed.getAndAdd(-0.1);
 
 				user.setSpeed(MathUtils.clamp(userSpeed.get(), minSpeed, maxSpeed));

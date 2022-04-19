@@ -21,7 +21,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Arrays;
 
 @Data
 @AllArgsConstructor
@@ -31,5 +35,37 @@ public class ItemClickData {
 	private final Player player;
 	private final ItemStack item;
 	private final SlotPos slot;
+
+	public boolean isRightClick() {
+		return isClickType(ClickType.RIGHT);
+	}
+
+	public boolean isAnyRightClick() {
+		return isRightClick() || isShiftRightClick();
+	}
+
+	public boolean isAnyLeftClick() {
+		return isLeftClick() || isShiftLeftClick();
+	}
+
+	public boolean isLeftClick() {
+		return isClickType(ClickType.LEFT);
+	}
+
+	public boolean isShiftClick() {
+		return isClickType(ClickType.SHIFT_LEFT, ClickType.SHIFT_RIGHT);
+	}
+
+	public boolean isShiftLeftClick() {
+		return isClickType(ClickType.SHIFT_LEFT);
+	}
+
+	public boolean isShiftRightClick() {
+		return isClickType(ClickType.SHIFT_RIGHT);
+	}
+
+	public boolean isClickType(ClickType... clickTypes) {
+		return event instanceof InventoryClickEvent clickEvent && Arrays.asList(clickTypes).contains(clickEvent.getClick());
+	}
 
 }

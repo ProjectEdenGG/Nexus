@@ -34,16 +34,11 @@ import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -54,7 +49,6 @@ import java.util.function.Supplier;
 
 import static gg.projecteden.nexus.features.menus.SignMenuFactory.ARROWS;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
-import static gg.projecteden.nexus.utils.StringUtils.loreize;
 
 public abstract class MenuUtils {
 
@@ -110,75 +104,6 @@ public abstract class MenuUtils {
 		open(player.getPlayer(), page);
 	}
 
-	protected boolean isRightClick(ItemClickData e) {
-		return isClickType(e, ClickType.RIGHT);
-	}
-
-	protected boolean isAnyRightClick(ItemClickData e) {
-		return isRightClick(e) || isShiftRightClick(e);
-	}
-
-	protected boolean isAnyLeftClick(ItemClickData e) {
-		return isLeftClick(e) || isShiftLeftClick(e);
-	}
-
-	protected boolean isLeftClick(ItemClickData e) {
-		return isClickType(e, ClickType.LEFT);
-	}
-
-	protected boolean isShiftClick(ItemClickData e) {
-		return isClickType(e, ClickType.SHIFT_LEFT, ClickType.SHIFT_RIGHT);
-	}
-
-	protected boolean isShiftLeftClick(ItemClickData e) {
-		return isClickType(e, ClickType.SHIFT_LEFT);
-	}
-
-	protected boolean isShiftRightClick(ItemClickData e) {
-		return isClickType(e, ClickType.SHIFT_RIGHT);
-	}
-
-	protected boolean isClickType(ItemClickData e, ClickType... clickTypes) {
-		return e.getEvent() instanceof InventoryClickEvent && Arrays.asList(clickTypes).contains(((InventoryClickEvent) e.getEvent()).getClick());
-	}
-
-	protected ItemStack addGlowing(ItemStack itemStack) {
-		return ItemBuilder.glow(itemStack);
-	}
-
-	protected ItemStack nameItem(Material material, String name) {
-		return nameItem(new ItemStack(material), name, (List<String>) null);
-	}
-
-	protected ItemStack nameItem(Material material, String name, String lore) {
-		return nameItem(new ItemStack(material), name, lore);
-	}
-
-	protected ItemStack nameItem(ItemStack item, String name) {
-		return nameItem(item, name, (List<String>) null);
-	}
-
-	protected ItemStack nameItem(ItemStack item, String name, String lore) {
-		return nameItem(item, name, lore == null ? null : Arrays.asList(loreize(colorize(lore)).split("\\|\\|")));
-	}
-
-	protected ItemStack nameItem(ItemStack item, String name, List<String> lore) {
-		if (item == null)
-			item = new ItemStack(Material.BARRIER);
-		else
-			item = item.clone();
-
-		ItemMeta meta = item.getItemMeta();
-		if (name != null)
-			meta.setDisplayName(colorize("&f" + name));
-		if (lore != null)
-			meta.setLore(lore);
-
-		meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-		item.setItemMeta(meta);
-		return item;
-	}
-
 	protected void warp(Player player, String warp) {
 		PlayerUtils.runCommand(player, "warp " + warp);
 	}
@@ -187,9 +112,9 @@ public abstract class MenuUtils {
 		PlayerUtils.runCommand(player, command);
 	}
 
-	public static String getLocationLore(Location location) {
+	public static List<String> getLocationLore(Location location) {
 		if (location == null) return null;
-		return "&3X:&e " + (int) location.getX() + "||&3Y:&e " + (int) location.getY() + "||&3Z:&e " + (int) location.getZ();
+		return List.of("&3X:&e " + (int) location.getX(), "&3Y:&e " + (int) location.getY(), "&3Z:&e " + (int) location.getZ());
 	}
 
 	protected void addBackItem(InventoryContents contents, Consumer<ItemClickData> consumer) {
@@ -353,7 +278,7 @@ public abstract class MenuUtils {
 
 			if (!page.isFirst())
 				contents.set(previousSlot, ClickableItem.of(previous.build(), e -> {
-					if (isRightClick(e))
+					if (e.isRightClick())
 						jumpToPage(player, page.getPage());
 					else
 						open(player, page.previous().getPage());
@@ -361,7 +286,7 @@ public abstract class MenuUtils {
 
 			if (!page.isLast())
 				contents.set(nextSlot, ClickableItem.of(next.build(), e -> {
-					if (isRightClick(e))
+					if (e.isRightClick())
 						jumpToPage(player, page.getPage());
 					else
 						open(player, page.next().getPage());
@@ -550,9 +475,9 @@ public abstract class MenuUtils {
 
 	public void formatInventoryContents(InventoryContents contents, ItemStack[] inventory, boolean editable) {
 		ItemStack redPane = new ItemStack(Material.RED_STAINED_GLASS_PANE);
-		contents.set(4, 4, ClickableItem.empty(nameItem(redPane.clone(), "&eArmor ➝")));
-		contents.set(4, 1, ClickableItem.empty(nameItem(redPane.clone(), "&e← Offhand")));
-		contents.fillRect(4, 2, 4, 3, ClickableItem.empty(nameItem(redPane.clone(), "&e⬇ Hot Bar ⬇")));
+		contents.set(4, 4, ClickableItem.empty(redPane.clone(), "&eArmor ➝"));
+		contents.set(4, 1, ClickableItem.empty(redPane.clone(), "&e← Offhand"));
+		contents.fillRect(4, 2, 4, 3, ClickableItem.empty(redPane.clone(), "&e⬇ Hot Bar ⬇"));
 
 		if (inventory == null || inventory.length == 0)
 			return;

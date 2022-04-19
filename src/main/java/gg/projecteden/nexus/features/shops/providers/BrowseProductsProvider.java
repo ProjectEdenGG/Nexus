@@ -99,7 +99,7 @@ public class BrowseProductsProvider extends ShopProvider {
 				open(player, contents.pagination().getPage());
 			}));
 		} else
-			contents.set(0, 4, ClickableItem.of(nameItem(Material.COMPASS, "&6Filter Items"), e -> new SearchProductsProvider(this).open(player)));
+			contents.set(0, 4, ClickableItem.of(Material.COMPASS, "&6Filter Items", e -> new SearchProductsProvider(this).open(player)));
 	}
 
 	public void addStockFilter(Player player, InventoryContents contents) {
@@ -182,9 +182,9 @@ public class BrowseProductsProvider extends ShopProvider {
 							if (handleRightClick(product, e))
 								return;
 
-							if (isLeftClick(e))
+							if (e.isLeftClick())
 								product.process(player);
-							else if (isShiftLeftClick(e))
+							else if (e.isShiftLeftClick())
 								processAll(player, page, product);
 							open(player, page);
 						} catch (Exception ex) {

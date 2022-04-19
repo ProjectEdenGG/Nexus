@@ -17,8 +17,6 @@ import lombok.Getter;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -85,10 +83,10 @@ public class ParticleColorMenuProvider extends MenuUtils implements InventoryPro
 		ParticleOwner owner = service.get(player);
 		Color color = setting.get(owner, type);
 
-		ItemStack chestplate = nameItem(new ItemStack(Material.LEATHER_CHESTPLATE), "&fCurrent Color", setting.getLore(player, type));
-		LeatherArmorMeta meta = (LeatherArmorMeta) chestplate.getItemMeta();
-		meta.setColor(color);
-		chestplate.setItemMeta(meta);
+		ItemBuilder chestplate = new ItemBuilder(Material.LEATHER_CHESTPLATE)
+			.name("&fCurrent Color")
+			.lore(setting.getLore(player, type))
+			.dyeColor(color);
 
 		contents.set(2, 4, ClickableItem.empty(chestplate));
 
@@ -115,7 +113,7 @@ public class ParticleColorMenuProvider extends MenuUtils implements InventoryPro
 								.build(),
 						e -> {
 							Color newColor = null;
-							boolean isLeftClick = isLeftClick(e);
+							boolean isLeftClick = e.isLeftClick();
 							switch (RGB.values()[dye.get()]) {
 								case R:
 									if (isLeftClick)

@@ -116,10 +116,10 @@ public class AdventProvider extends MenuUtils implements InventoryProvider {
 
 	private void locked25(InventoryContents contents, SlotPos slotPos, AdventChest adventChest, String name, boolean located) {
 		if (located)
-			contents.set(slotPos, ClickableItem.of(locked.clone().name(name).lore(showWaypoint("&7Locked", "", "&cOpen all previous||&cchests to unlock")).build(),
+			contents.set(slotPos, ClickableItem.of(locked.clone().name(name).lore(showWaypoint("&7Locked", "", "&cOpen all previous", "&cchests to unlock")).build(),
 					e -> Pugmas20.showWaypoint(adventChest, user.getOnlinePlayer())));
 		else
-			contents.set(slotPos, ClickableItem.empty(locked.clone().name(name).lore("&7Locked", "", "&cOpen all previous||&cchests to unlock").build()));
+			contents.set(slotPos, ClickableItem.empty(locked.clone().name(name).lore("&7Locked", "", "&cOpen all previous", "&cchests to unlock").build()));
 	}
 
 	private void missed(InventoryContents contents, SlotPos slotPos, AdventChest adventChest, String name, boolean located) {
@@ -132,8 +132,10 @@ public class AdventProvider extends MenuUtils implements InventoryProvider {
 
 	@NotNull
 	private List<String> showWaypoint(String... lines) {
-		return new ArrayList<>(Arrays.asList(lines)) {{
-			add("&f||&aClick to show waypoint");
+		return new ArrayList<>() {{
+			addAll(Arrays.asList(lines));
+			add("&f");
+			add("&aClick to show waypoint");
 		}};
 	}
 }

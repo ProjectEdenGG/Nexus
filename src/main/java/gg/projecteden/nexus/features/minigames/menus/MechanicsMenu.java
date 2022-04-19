@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -26,12 +27,10 @@ public class MechanicsMenu extends MenuUtils implements InventoryProvider {
 		int column = 0;
 		for (MechanicType mechanic : MechanicType.values()) {
 			ItemStack menuItem = mechanic.get().getMenuItem();
-			if (menuItem == null) continue;
 
-			ItemStack item = nameItem(menuItem.clone(), "&e" + mechanic.get().getName());
-
-			if (arena.getMechanicType() == mechanic)
-				addGlowing(item);
+			ItemBuilder item = new ItemBuilder(menuItem.clone())
+				.name("&e" + mechanic.get().getName())
+				.glow(arena.getMechanicType() == mechanic);
 
 			contents.set(row, column, ClickableItem.of(item, e -> {
 				arena.setMechanicType(mechanic);

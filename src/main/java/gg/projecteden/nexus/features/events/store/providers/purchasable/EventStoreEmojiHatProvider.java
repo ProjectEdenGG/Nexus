@@ -43,7 +43,7 @@ public class EventStoreEmojiHatProvider extends EventStoreMenu {
 
 			items.add(ClickableItem.of(item.build(), e -> {
 				try {
-					if (isShiftClick(e)) {
+					if (e.isShiftClick()) {
 						chargeAndAddPermissions(player, price, type.getPermission());
 						send(player, STORE_PREFIX + "Purchased &e" + camelCase(type) + "&3, use with &c/emojihats " + type.name().toLowerCase());
 						open(player);

@@ -104,12 +104,14 @@ public class StringUtils extends gg.projecteden.utils.StringUtils {
 	// TODO This will break with hex
 	// TODO replace with https://canary.discord.com/channels/132680070480396288/421474915930079232/827394245522096158
 	// 		- needs to strip color when measuring max length and carry colors over to next line
-	public static String loreize(String string) {
+	public static List<String> loreize(String string) {
 		if (string == null) return null;
 
 		int i = 0, lineLength = 0;
 		boolean watchForNewLine = false, watchForColor = false;
 		string = colorize(string);
+
+		List<String> lore = new ArrayList<>();
 
 		for (String character : string.split("")) {
 			if (character.contains("\n")) {
@@ -140,15 +142,14 @@ public class StringUtils extends gg.projecteden.utils.StringUtils {
 					if (excess.length() > 5) {
 						excess = excess.trim();
 						boolean doSplit = true;
-						if (excess.contains("||") && excess.indexOf("||") <= 5)
-							doSplit = false;
 						if (excess.contains(" ") && excess.indexOf(" ") <= 5)
 							doSplit = false;
 						if (lineLength >= 38)
 							doSplit = true;
 
 						if (doSplit) {
-							string = before + "||" + getLastColor(before) + excess.trim();
+							lore.add(before);
+							string = getLastColor(before) + excess.trim();
 							lineLength = 0;
 							i += 4;
 						}
@@ -158,11 +159,7 @@ public class StringUtils extends gg.projecteden.utils.StringUtils {
 			++i;
 		}
 
-		return string;
-	}
-
-	public static List<String> splitLore(String lore) {
-		return new ArrayList<>(Arrays.asList(lore.split("\\|\\|")));
+		return lore;
 	}
 
 	public static String getLastColor(String text) {

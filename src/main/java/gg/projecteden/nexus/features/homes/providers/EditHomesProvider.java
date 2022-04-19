@@ -74,7 +74,7 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 		ItemBuilder item = new ItemBuilder(Material.REDSTONE);
 
 		if (Rank.of(homeOwner).isStaff()) {
-			item.name("&eAuto Lock &f| &aON").lore("&fAny new homes you set will be automatically locked||&f||&cRequired for staff members").glow();
+			item.name("&eAuto Lock &f| &aON").lore("&fAny new homes you set will be automatically locked", "", "&cRequired for staff members").glow();
 			contents.set(0, 3, ClickableItem.empty(item.build()));
 		} else {
 			if (homeOwner.isAutoLock())
@@ -91,13 +91,13 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 	}
 
 	public void format_LockAndUnlockAll(InventoryContents contents) {
-		contents.set(0, 5, ClickableItem.of(nameItem(Material.IRON_BARS, "&eLock all homes"), e -> {
+		contents.set(0, 5, ClickableItem.of(Material.IRON_BARS, "&eLock all homes", e -> {
 			homeOwner.getHomes().forEach(home -> home.setLocked(true));
 			service.save(homeOwner);
 			refresh();
 		}));
 
-		contents.set(0, 6, ClickableItem.of(nameItem(Material.OAK_FENCE_GATE, "&eUnlock all homes"), e -> {
+		contents.set(0, 6, ClickableItem.of(Material.OAK_FENCE_GATE, "&eUnlock all homes", e -> {
 			homeOwner.getHomes().forEach(home -> home.setLocked(false));
 			service.save(homeOwner);
 			refresh();
@@ -108,7 +108,7 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 		contents.set(0, 8, ClickableItem.of(new ItemBuilder(Material.LEVER)
 						.name("&eEdit Trusts")
 						.loreize(false)
-						.lore("&fManage access to||&fall your homes").build(),
+						.lore("&fManage access to", "&fall your homes").build(),
 				e -> TrustProvider.openMenu(homeOwner.getOnlinePlayer(), this::refresh)
 		));
 	}

@@ -221,10 +221,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 
 					item.lore("", "&fOwned: " + (owned == 0 ? "&c0" : owned == count ? "&a" + owned : "&e" + owned));
 
-					if (owned == count)
-						item.glow();
-
-					items.add(ClickableItem.of(item.build(), e -> new StoreProvider(this, category, player).open(viewer)));
+					items.add(ClickableItem.of(item.glow(owned == count), e -> new StoreProvider(this, category, player).open(viewer)));
 				}
 			else
 				for (Package storePackage : category.getPackages()) {
@@ -233,10 +230,8 @@ public class StoreCommand extends CustomCommand implements Listener {
 					int count = storePackage.count(player);
 
 					item.lore("", "&fOwned: " + (has ? "&aYes" + (count == 1 ? "" : " &f(" + count + ")") : "&cNo"));
-					if (has)
-						item.glow();
 
-					items.add(ClickableItem.empty(item.build()));
+					items.add(ClickableItem.empty(item.glow(has)));
 				}
 
 			paginator(viewer, contents, items);

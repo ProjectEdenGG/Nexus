@@ -45,13 +45,13 @@ public class EffectSettingProvider extends MenuUtils implements InventoryProvide
 		if (displayEntity == null)
 			displayEntity = player;
 
-		contents.set(0, 4, ClickableItem.of(nameItem(Material.TNT, "&cCancel Effect"), e -> {
+		contents.set(0, 4, ClickableItem.of(Material.TNT, "&cCancel Effect", e -> {
 			ParticleOwner owner = service.get(player);
 			owner.cancel(type);
 			player.closeInventory();
 		}));
 
-		contents.set(0, 8, ClickableItem.of(nameItem(Material.END_CRYSTAL, "&eUpdate Effect"), e -> {
+		contents.set(0, 8, ClickableItem.of(Material.END_CRYSTAL, "&eUpdate Effect", e -> {
 			ParticleOwner owner = service.get(player);
 			owner.cancel(type);
 			type.run(owner, displayEntity);

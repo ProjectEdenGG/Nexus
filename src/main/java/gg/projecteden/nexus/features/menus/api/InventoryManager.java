@@ -23,6 +23,8 @@ import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.menus.api.opener.ChestInventoryOpener;
 import gg.projecteden.nexus.features.menus.api.opener.InventoryOpener;
 import gg.projecteden.nexus.features.menus.api.opener.SpecialInventoryOpener;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -44,7 +46,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 @SuppressWarnings("unused")
@@ -266,11 +267,11 @@ public class InventoryManager {
 		}
 
 		@EventHandler(priority = EventPriority.LOW)
-		public void onPluginDisable(PluginDisableEvent e) {
+		public void onPluginDisable(PluginDisableEvent event) {
 			new HashMap<>(inventories).forEach((player, inv) -> {
 				inv.getListeners().stream()
 					.filter(listener -> listener.getType() == PluginDisableEvent.class)
-					.forEach(listener -> ((InventoryListener<PluginDisableEvent>) listener).accept(e));
+					.forEach(listener -> ((InventoryListener<PluginDisableEvent>) listener).accept(event));
 
 				inv.close(player);
 			});
@@ -290,17 +291,15 @@ public class InventoryManager {
 
 	}
 
+	@RequiredArgsConstructor
 	static class PlayerInvTask extends BukkitRunnable {
 
+		@NonNull
 		private final Player player;
+		@NonNull
 		private final InventoryProvider provider;
+		@NonNull
 		private final InventoryContents contents;
-
-		public PlayerInvTask(Player player, InventoryProvider provider, InventoryContents contents) {
-			this.player = Objects.requireNonNull(player);
-			this.provider = Objects.requireNonNull(provider);
-			this.contents = Objects.requireNonNull(contents);
-		}
 
 		@Override
 		public void run() {

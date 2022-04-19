@@ -10,9 +10,9 @@ import gg.projecteden.nexus.models.particle.ParticleOwner;
 import gg.projecteden.nexus.models.particle.ParticleService;
 import gg.projecteden.nexus.models.particle.ParticleSetting;
 import gg.projecteden.nexus.models.particle.ParticleType;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 public class WingsTypeProvider extends MenuUtils implements InventoryProvider {
 
@@ -40,10 +40,7 @@ public class WingsTypeProvider extends MenuUtils implements InventoryProvider {
 			if (!style.canBeUsedBy(player))
 				continue;
 
-			ItemStack item = style.getDisplayItem().build();
-
-			if (ParticleSetting.WINGS_STYLE.get(owner, ParticleType.WINGS).equals(style))
-				addGlowing(item);
+			ItemBuilder item = style.getDisplayItem().glow(ParticleSetting.WINGS_STYLE.get(owner, ParticleType.WINGS).equals(style));
 
 			contents.set(row, column, ClickableItem.of(item, e -> {
 				owner.getSettings(ParticleType.WINGS).put(ParticleSetting.WINGS_STYLE, style);

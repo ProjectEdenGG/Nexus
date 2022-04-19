@@ -16,7 +16,6 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.NoArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
@@ -57,7 +56,7 @@ public class ATPMenu extends MenuUtils implements InventoryProvider {
 				}));
 			}
 
-			ItemStack newWorld = nameItem(Material.GRASS, "&3Survival", "&eClick to view the||&enew Survival warps");
+			ItemBuilder newWorld = new ItemBuilder(Material.GRASS).name("&3Survival").lore("&eClick to view the", "&enew Survival warps");
 			contents.set(3, 7, ClickableItem.of(newWorld, e -> new ATPMenu(ATPGroup.SURVIVAL).open(player)));
 
 		} else {
@@ -69,17 +68,17 @@ public class ATPMenu extends MenuUtils implements InventoryProvider {
 				}));
 			}
 
-			ItemStack legacy = nameItem(Material.MOSSY_COBBLESTONE, "&3Legacy World", "&eClick to view the||&ewarps of the legacy world");
+			ItemBuilder legacy = new ItemBuilder(Material.MOSSY_COBBLESTONE).name("&3Legacy World").lore("&eClick to view the", "&ewarps of the legacy world");
 			contents.set(3, 7, ClickableItem.of(legacy, e -> new ATPMenu(ATPGroup.LEGACY).open(player)));
 		}
 
-		contents.set(1, 7, ClickableItem.of(nameItem(Material.OAK_SIGN, "&3Homes", "&eClick to teleport to||&eone of your homes."), e -> {
+		contents.set(1, 7, ClickableItem.of(new ItemBuilder(Material.OAK_SIGN).name("&3Homes").lore("&eClick to teleport to", "&eone of your homes."), e -> {
 			SmartInventory.builder()
-					.title("ATP Homes")
-					.maxSize()
-					.provider(new ATPHomesMenuProvider())
-					.build()
-					.open(player);
+				.title("ATP Homes")
+				.maxSize()
+				.provider(new ATPHomesMenuProvider())
+				.build()
+				.open(player);
 		}));
 
 	}

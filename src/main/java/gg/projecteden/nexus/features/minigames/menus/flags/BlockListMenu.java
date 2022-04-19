@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.Pagination;
 import gg.projecteden.nexus.features.menus.api.content.SlotIterator;
 import gg.projecteden.nexus.features.minigames.models.Arena;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NonNull;
 import org.bukkit.Material;
@@ -35,11 +36,9 @@ public class BlockListMenu extends MenuUtils implements InventoryProvider {
 
 		contents.set(0, 0, ClickableItem.of(backItem(), e -> menus.openArenaMenu(player, arena)));
 
-		contents.set(5, 8, ClickableItem.of(nameItem(
-				Material.ITEM_FRAME,
-				"&eAdd Item",
-				"&3Click me with an item||&3in your hand to add it."
-			),
+		contents.set(5, 8, ClickableItem.of(new ItemBuilder(Material.ITEM_FRAME)
+				.name("&eAdd Item")
+				.lore("&3Click me with an item", "&3in your hand to add it."),
 			e -> Tasks.wait(2, () -> {
 				if (isNullOrAir(player.getItemOnCursor())) return;
 				arena.getBlockList().add(player.getItemOnCursor().getType());
@@ -50,11 +49,9 @@ public class BlockListMenu extends MenuUtils implements InventoryProvider {
 		));
 
 		if (arena.isWhitelist()) {
-			contents.set(5, 7, ClickableItem.of(nameItem(
-					Material.WHITE_DYE,
-					"&eWhitelisted",
-					"&3Click to set the block||&3list mode to &eblacklist."
-				),
+			contents.set(5, 7, ClickableItem.of(new ItemBuilder(Material.WHITE_DYE)
+					.name("&eWhitelisted")
+					.lore("&3Click to set the block", "&3list mode to &eblacklist."),
 				e -> {
 					arena.isWhitelist(false);
 					arena.write();
@@ -62,16 +59,14 @@ public class BlockListMenu extends MenuUtils implements InventoryProvider {
 				}
 			));
 		} else {
-			contents.set(5, 7, ClickableItem.of(nameItem(
-					Material.BLACK_DYE,
-					"&eBlacklisted",
-					"&3Click to set the block||&3list mode to &ewhitelist."
-					),
-					e -> {
-						arena.isWhitelist(true);
-						arena.write();
-						menus.blockListMenu(arena).open(player, page.getPage());
-					}
+			contents.set(5, 7, ClickableItem.of(new ItemBuilder(Material.BLACK_DYE)
+					.name("&eBlacklisted")
+					.lore("&3Click to set the block", "&3list mode to &ewhitelist."),
+				e -> {
+					arena.isWhitelist(true);
+					arena.write();
+					menus.blockListMenu(arena).open(player, page.getPage());
+				}
 			));
 		}
 
@@ -83,11 +78,9 @@ public class BlockListMenu extends MenuUtils implements InventoryProvider {
 
 		ClickableItem[] clickableItems = new ClickableItem[arena.getBlockList().size()];
 		for (int i = 0; i < clickableItems.length; i++) {
-			clickableItems[i] = ClickableItem.of(nameItem(
-					new ItemStack(sortedList.get(i)),
-					"&e" + sortedList.get(i).name(),
-					"&3Click me to remove this||&3material from the list."
-					),
+			clickableItems[i] = ClickableItem.of(new ItemBuilder(new ItemStack(sortedList.get(i)))
+					.name("&e" + sortedList.get(i).name())
+					.lore("&3Click me to remove this", "&3material from the list."),
 				e -> {
 					arena.getBlockList().remove(((InventoryClickEvent) e.getEvent()).getCurrentItem().getType());
 					arena.write();
@@ -100,11 +93,11 @@ public class BlockListMenu extends MenuUtils implements InventoryProvider {
 		page.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 1, 0));
 
 		if (!page.isLast())
-			contents.set(0, 8, ClickableItem.of(new ItemStack(nameItem(Material.ARROW, "&fNext Page")),
-					e -> menus.blockListMenu(arena).open(player, page.next().getPage())));
+			contents.set(0, 8, ClickableItem.of(Material.ARROW, "&fNext Page", e ->
+				menus.blockListMenu(arena).open(player, page.next().getPage())));
 		if (!page.isFirst())
-			contents.set(0, 7, ClickableItem.of(new ItemStack(nameItem(Material.BARRIER, "&fPrevious Page")),
-					e -> menus.blockListMenu(arena).open(player, page.previous().getPage())));
+			contents.set(0, 7, ClickableItem.of(Material.BARRIER, "&fPrevious Page", e ->
+				menus.blockListMenu(arena).open(player, page.previous().getPage())));
 
 	}
 

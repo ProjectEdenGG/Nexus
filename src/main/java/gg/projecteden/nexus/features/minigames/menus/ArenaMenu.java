@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 import net.wesjd.anvilgui.AnvilGUI;
@@ -20,10 +21,12 @@ import org.bukkit.inventory.ItemStack;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.features.minigames.Minigames.menus;
+import static java.util.Collections.singletonList;
 
 public class ArenaMenu extends MenuUtils implements InventoryProvider {
 	private final Arena arena;
@@ -36,6 +39,8 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 		openAnvilMenu(player, text, onComplete, p -> Tasks.wait(1, () -> menus.openArenaMenu(player, arena)));
 	}
 
+	@Getter
+	@AllArgsConstructor
 	private enum ArenaMenuItem {
 		DELETE_ARENA(1, 9, Material.TNT) {
 			@Override
@@ -49,8 +54,8 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 			}
 
 			@Override
-			String getLore(Player player, Arena arena) {
-				return "&7You will need to confirm||&7deleting an arena.|| ||&7&lTHIS CANNOT BE UNDONE.";
+			List<String> getLore(Player player, Arena arena) {
+				return List.of("&7You will need to confirm", "&7deleting an arena.", "", "&7&lTHIS CANNOT BE UNDONE.");
 			}
 		},
 		NAME(1, 1, Material.NAME_TAG),
@@ -63,9 +68,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 
 			@Override
 			String getter(Player player, Arena arena) {
-				if (arena.getMechanic() != null)
-					return arena.getMechanic().getName();
-				return "";
+				return arena.getMechanic().getName();
 			}
 		},
 		CUSTOM_MECHANIC_SETTINGS(1, 5, Material.WRITABLE_BOOK) {
@@ -75,7 +78,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 			}
 
 			@Override
-			String getLore(Player player, Arena arena) {
+			List<String> getLore(Player player, Arena arena) {
 				return null;
 			}
 		},
@@ -88,8 +91,8 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 			}
 
 			@Override
-			String getLore(Player player, Arena arena) {
-				return "||&eCurrent value: &3" + (arena.isTestMode() ? "&cEnabled" : "&aDisabled");
+			List<String> getLore(Player player, Arena arena) {
+				return List.of("", "&eCurrent value: &3" + (arena.isTestMode() ? "&cEnabled" : "&aDisabled"));
 			}
 		},
 		TEAMS(2, 1, Material.WHITE_WOOL) {
@@ -99,8 +102,8 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 			}
 
 			@Override
-			String getLore(Player player, Arena arena) {
-				return "||&eCurrent Teams: " + arena.getTeams().stream().map(Team::getColoredName).collect(Collectors.joining("&f, "));
+			List<String> getLore(Player player, Arena arena) {
+				return List.of("", "&eCurrent Teams: " + arena.getTeams().stream().map(Team::getColoredName).collect(Collectors.joining("&f, ")));
 			}
 		},
 		LOBBY(2, 2, Material.OAK_DOOR) {
@@ -110,7 +113,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 			}
 
 			@Override
-			String getLore(Player player, Arena arena) {
+			List<String> getLore(Player player, Arena arena) {
 				return null;
 			}
 		},
@@ -121,7 +124,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 			}
 
 			@Override
-			String getLore(Player player, Arena arena) {
+			List<String> getLore(Player player, Arena arena) {
 				return null;
 			}
 		},
@@ -147,8 +150,9 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 			}
 
 			@Override
-			String getLore(Player player, Arena arena){
-				if(arena.getSpectateLocation() == null) return "null";
+			List<String> getLore(Player player, Arena arena) {
+				if (arena.getSpectateLocation() == null)
+					return singletonList("null");
 				return getLocationLore(arena.getSpectateLocation());
 			}
 
@@ -162,8 +166,9 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 			}
 
 			@Override
-			String getLore(Player player, Arena arena) {
-				if(arena.getRespawnLocation() == null) return "null";
+			List<String> getLore(Player player, Arena arena) {
+				if (arena.getRespawnLocation() == null)
+					return singletonList("null");
 				return getLocationLore(arena.getRespawnLocation());
 			}
 		},
@@ -175,34 +180,25 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 			}
 
 			@Override
-			String getLore(Player player, Arena arena) {
+			List<String> getLore(Player player, Arena arena) {
 				return null;
 			}
 		};
 
-		@Getter
-		private int row;
-		@Getter
-		private int column;
-		@Getter
-		private ItemStack item;
+		private final int row;
+		private final int column;
+		private final ItemStack item;
 
 		ArenaMenuItem(int row, int column, Material material) {
 			this(row, column, new ItemStack(material));
-		}
-
-		ArenaMenuItem(int row, int column, ItemStack item) {
-			this.row = row;
-			this.column = column;
-			this.item = item;
 		}
 
 		public String getTitle() {
 			return StringUtils.camelCase(name());
 		}
 
-		String getLore(Player player, Arena arena) {
-			return "||&eCurrent value: &3" + getter(player, arena);
+		List<String> getLore(Player player, Arena arena) {
+			return List.of("", "&eCurrent value: &3" + getter(player, arena));
 		}
 
 		void onClick(Player player, Arena arena) {
@@ -220,7 +216,8 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 			try {
 				PropertyDescriptor propertyDescriptor = getPropertyDescriptor();
 				return String.valueOf(propertyDescriptor.getReadMethod().invoke(arena));
-			} catch (Exception ignore) {}
+			} catch (Exception ignore) {
+			}
 			return "";
 		}
 
@@ -231,7 +228,8 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 				if (propertyDescriptor.getPropertyType() == Integer.TYPE)
 					value = Integer.valueOf(text);
 				propertyDescriptor.getWriteMethod().invoke(arena, value);
-			} catch (Exception ignore) {}
+			} catch (Exception ignore) {
+			}
 
 			arena.write();
 		}
@@ -241,12 +239,11 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 	public void init(Player player, InventoryContents contents) {
 		Arrays.asList(ArenaMenuItem.values()).forEach(menuItem ->
 			contents.set(
-					(menuItem.getRow() - 1),
-					(menuItem.getColumn() - 1),
-					ClickableItem.of(
-							nameItem(menuItem.getItem(), "&e" + menuItem.getTitle(), menuItem.getLore(player, arena)),
-							e -> menuItem.onClick(player, arena)
-					)
+				(menuItem.getRow() - 1),
+				(menuItem.getColumn() - 1),
+				ClickableItem.of(menuItem.getItem(), "&e" + menuItem.getTitle(), menuItem.getLore(player, arena), e ->
+					menuItem.onClick(player, arena)
+				)
 			)
 		);
 	}

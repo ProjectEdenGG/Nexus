@@ -102,13 +102,10 @@ public class BingoCommand extends CustomCommand {
 				for (Challenge challenge : array) {
 					final ItemBuilder builder = challenge.getDisplayItem();
 					final IChallengeProgress progress = matchData.getProgress(minigamer, challenge);
-					if (progress.isCompleted(challenge)) {
-						builder.glow();
-						builder.lore("&aCompleted");
-					} else {
-						builder.lore("&cRemaining Tasks");
-						builder.lore(progress.getRemainingTasks(challenge).stream().map(task -> "&7☐ " + task).collect(Collectors.toSet()));
-					}
+					if (progress.isCompleted(challenge))
+						builder.glow().lore("&aCompleted");
+					else
+						builder.lore("&cRemaining Tasks").lore(progress.getRemainingTasks(challenge).stream().map(task -> "&7☐ " + task).collect(Collectors.toSet()));
 
 					contents.set(row, column, ClickableItem.empty(builder.build()));
 					++column;

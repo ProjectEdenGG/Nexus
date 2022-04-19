@@ -6,11 +6,11 @@ import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Team;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.NonNull;
 import me.lucko.helper.scoreboard.ScoreboardTeam.NameTagVisibility;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
@@ -39,9 +39,9 @@ public class TeamVisibilityMenu extends MenuUtils implements InventoryProvider {
 
 		int column = 0;
 		for (NameTagVisibility visibility : NameTagVisibility.values()) {
-			ItemStack item = nameItem(getIcon(visibility), "&e"+camelCase(visibility));
-			if (team.getNameTagVisibility() == visibility)
-				addGlowing(item);
+			ItemBuilder item = new ItemBuilder(getIcon(visibility))
+				.name("&e" + camelCase(visibility))
+				.glow(team.getNameTagVisibility() == visibility);
 			contents.set(1, column, ClickableItem.of(item, e -> {
 				team.setNameTagVisibility(visibility);
 				arena.write();

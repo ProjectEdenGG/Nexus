@@ -14,7 +14,6 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -68,7 +67,7 @@ public class BuyPerksMenu extends CommonPerksMenu implements InventoryProvider {
 			if (lore.size() > 2)
 				lore.add(2, "");
 
-			ItemStack item = getItem(perk, lore);
+			ItemBuilder item = getItem(perk, lore);
 			clickableItems.add(ClickableItem.of(item, e -> buyItem(player, perkType, contents)));
 		});
 		paginator(player, contents, clickableItems);

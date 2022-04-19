@@ -33,32 +33,32 @@ public class SetHomeProvider extends MenuUtils implements InventoryProvider {
 	@Override
 	public void open(Player player, int page) {
 		SmartInventory.builder()
-				.provider(this)
-				.rows(5)
-				.title("&3Set a new home")
-				.build()
-				.open(homeOwner.getOnlinePlayer(), page);
+			.provider(this)
+			.rows(5)
+			.title("&3Set a new home")
+			.build()
+			.open(homeOwner.getOnlinePlayer(), page);
 	}
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
 		addBackItem(contents, e -> HomesMenu.edit(homeOwner));
 
-		contents.set(0, 8, ClickableItem.empty(nameItem(Material.BOOK, "&eInfo", "&fChoose one of the pre-set homes to " +
-				"automatically set the display item, or set your own home, and manually set the display item later")));
+		contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.BOOK)
+			.name("&eInfo")
+			.lore("&fChoose one of the pre-set homes to automatically set the display item, or set your own home, and manually set the display item later")));
 
-		contents.set(3, 4, ClickableItem.of(nameItem(
-				Material.NAME_TAG,
-				"&eCustom name",
-				"&fNone of these names fit?||&fNo worries, you can still name it anything you'd like!"
-			), e -> HomesMenu.create(homeOwner, response ->
+		contents.set(3, 4, ClickableItem.of(new ItemBuilder(Material.NAME_TAG)
+				.name("&eCustom name")
+				.lore("&fNone of these names fit?", "&fNo worries, you can still name it anything you'd like!"),
+			e -> HomesMenu.create(homeOwner, response ->
 				homeOwner.getHome(response[0]).ifPresent(HomesMenu::edit))));
 
 		Map<String, ItemStack> options = new LinkedHashMap<>() {{
 			put("home", new ItemBuilder(Material.CYAN_BED)
-					.loreize(false)
-					.lore("&fThis is your main home. You can teleport to it with &c/h &for &c/home")
-					.build());
+				.loreize(false)
+				.lore("&fThis is your main home. You can teleport to it with &c/h &for &c/home")
+				.build());
 
 			put("spawner", new ItemStack(Material.SPAWNER));
 			put("farm", new ItemStack(Material.WHEAT));
@@ -76,13 +76,13 @@ public class SetHomeProvider extends MenuUtils implements InventoryProvider {
 
 		AtomicInteger column = new AtomicInteger(1);
 		options.forEach((name, item) ->
-				contents.set(1, column.getAndIncrement(), ClickableItem.of(nameItem(item, "&e" + camelCase(name)), e -> {
-					try {
-						HomesMenu.edit(addHome(name, item));
-					} catch (Exception ex) {
-						MenuUtils.handleException(homeOwner.getOnlinePlayer(), HomesFeature.PREFIX, ex);
-					}
-				})));
+			contents.set(1, column.getAndIncrement(), ClickableItem.of(item, "&e" + camelCase(name), e -> {
+				try {
+					HomesMenu.edit(addHome(name, item));
+				} catch (Exception ex) {
+					MenuUtils.handleException(homeOwner.getOnlinePlayer(), HomesFeature.PREFIX, ex);
+				}
+			})));
 	}
 
 	private Home addHome(String homeName, ItemStack itemStack) {
@@ -90,11 +90,11 @@ public class SetHomeProvider extends MenuUtils implements InventoryProvider {
 			homeOwner.checkHomesLimit();
 
 		Home home = Home.builder()
-				.uuid(homeOwner.getUuid())
-				.name(homeName)
-				.location(homeOwner.getOnlinePlayer().getLocation())
-				.item(itemStack)
-				.build();
+			.uuid(homeOwner.getUuid())
+			.name(homeName)
+			.location(homeOwner.getOnlinePlayer().getLocation())
+			.item(itemStack)
+			.build();
 
 		homeOwner.add(home);
 		new HomeService().save(homeOwner);
