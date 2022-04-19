@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.minigames.menus.perks;
 
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -20,7 +19,7 @@ import java.text.DecimalFormat;
 import static gg.projecteden.nexus.utils.StringUtils.plural;
 
 @RequiredArgsConstructor
-public class CategoryMenu<T extends CommonPerksMenu> extends MenuUtils implements InventoryProvider {
+public class CategoryMenu<T extends CommonPerksMenu> extends InventoryProvider {
 	private static final DecimalFormat FORMATTER = new DecimalFormat("#,###");
 
 	private final Class<T> menu;

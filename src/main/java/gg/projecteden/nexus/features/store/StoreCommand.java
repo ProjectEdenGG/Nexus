@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.store;
 
 import gg.projecteden.annotations.Async;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -173,7 +172,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 	}
 
 	@AllArgsConstructor
-	private static class StoreProvider extends MenuUtils implements InventoryProvider {
+	private static class StoreProvider extends InventoryProvider {
 		private final StoreProvider previousMenu;
 		private final StoreCategory category;
 		private final OfflinePlayer player;
@@ -234,7 +233,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 					items.add(ClickableItem.empty(item.glow(has)));
 				}
 
-			paginator(viewer, contents, items);
+			paginator(viewer, contents, items).build();
 		}
 
 	}

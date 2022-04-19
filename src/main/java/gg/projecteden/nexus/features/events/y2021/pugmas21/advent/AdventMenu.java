@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.events.y2021.pugmas21.advent;
 
 import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -23,10 +22,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
 
+import static gg.projecteden.nexus.features.menus.MenuUtils.innerSlotIterator;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @RequiredArgsConstructor
-public class AdventMenu extends MenuUtils implements InventoryProvider {
+public class AdventMenu extends InventoryProvider {
 	@NonNull
 	private Pugmas21User user;
 	@NonNull

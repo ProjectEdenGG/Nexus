@@ -61,7 +61,7 @@ public class KitCommand extends CustomCommand implements Listener {
 	@Path("edit")
 	@Permission(Group.STAFF)
 	void edit() {
-		KitManagerProvider.getInv(null).open(player());
+		new KitManagerProvider().open(player());
 	}
 
 	@Path("<kit>")

@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -57,7 +56,7 @@ public class MaterialTagCommand extends CustomCommand {
 			.toList();
 	}
 
-	public static class MaterialTagMaterialsMenu extends MenuUtils implements InventoryProvider {
+	public static class MaterialTagMaterialsMenu extends InventoryProvider {
 		private final Tag<Material> materialTag;
 
 		public MaterialTagMaterialsMenu(Tag<Material> materialTag) {
@@ -89,7 +88,7 @@ public class MaterialTagCommand extends CustomCommand {
 				items.add(ClickableItem.empty(item));
 			});
 
-			paginator(player, contents, items);
+			paginator(player, contents, items).build();
 		}
 
 	}

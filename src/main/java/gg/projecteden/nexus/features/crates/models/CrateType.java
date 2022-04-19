@@ -8,8 +8,6 @@ import gg.projecteden.nexus.features.crates.crates.MysteryCrate;
 import gg.projecteden.nexus.features.crates.crates.Pugmas21Crate;
 import gg.projecteden.nexus.features.crates.crates.VoteCrate;
 import gg.projecteden.nexus.features.crates.crates.WeeklyWakkaCrate;
-import gg.projecteden.nexus.features.crates.menus.CratePreviewProvider;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.models.mail.Mailer.Mail;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -72,14 +70,6 @@ public enum CrateType {
 			if (ItemUtils.isFuzzyMatch(item, type.getKey()))
 				return type;
 		return null;
-	}
-
-	public SmartInventory previewDrops(CrateLoot loot) {
-		return SmartInventory.builder()
-				.maxSize()
-				.provider(new CratePreviewProvider(this, loot))
-				.title(StringUtils.camelCase(name()) + " Crate Rewards")
-				.build();
 	}
 
 	public void give(OfflinePlayer player) {

@@ -2,8 +2,8 @@ package gg.projecteden.nexus.features.events.y2020.halloween20.quest.menus;
 
 import gg.projecteden.nexus.features.events.y2020.halloween20.Halloween20;
 import gg.projecteden.nexus.features.events.y2020.halloween20.models.ComboLockNumber;
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.models.halloween20.Halloween20Service;
@@ -13,6 +13,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -22,17 +23,22 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class FlashCardPuzzleProvider extends MenuUtils implements InventoryProvider {
+@RequiredArgsConstructor
+public class FlashCardPuzzleProvider extends InventoryProvider {
+	private final ComboLockNumber number;
+	private static final List<Material> validMaterials = Arrays.asList(Material.OAK_PLANKS, Material.STONE, Material.WHITE_TERRACOTTA,
+		Material.DIAMOND_ORE, Material.IRON_ORE, Material.DIRT, Material.WHITE_WOOL, Material.GRASS_BLOCK,
+		Material.OAK_LOG, Material.OAK_LEAVES);
 
-	public ComboLockNumber number;
-
-	public FlashCardPuzzleProvider(ComboLockNumber number) {
-		this.number = number;
+	@Override
+	public void open(Player player, int page) {
+		SmartInventory.builder()
+			.provider(new FlashCardPuzzleProvider(number))
+			.title("Flash Card Puzzle")
+			.rows(3)
+			.build()
+			.open(player, page);
 	}
-
-	List<Material> validMaterials = Arrays.asList(Material.OAK_PLANKS, Material.STONE, Material.WHITE_TERRACOTTA,
-			Material.DIAMOND_ORE, Material.IRON_ORE, Material.DIRT, Material.WHITE_WOOL, Material.GRASS_BLOCK,
-			Material.OAK_LOG, Material.OAK_LEAVES);
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
@@ -60,7 +66,7 @@ public class FlashCardPuzzleProvider extends MenuUtils implements InventoryProvi
 				contents.set(1, i++, ClickableItem.of(new ItemBuilder(mat).name(" ").build(), e -> {
 					if (e.getItem().getType() != correctOrder.get(index.getAndIncrement())) {
 						contents.fill(ClickableItem.empty(new ItemBuilder(Material.RED_WOOL).name("&cIncorrect").build()));
-						Tasks.wait(TickTime.SECOND.x(2), () -> Halloween20Menus.openFlashCardPuzzle(player, number));
+						Tasks.wait(TickTime.SECOND.x(2), () -> new FlashCardPuzzleProvider(number).open(player));
 					} else {
 						new ItemBuilder(e.getItem(), true).glow().build();
 						if (index.get() == 5)

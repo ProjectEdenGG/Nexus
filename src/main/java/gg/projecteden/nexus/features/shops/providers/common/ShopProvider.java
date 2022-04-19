@@ -23,7 +23,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import static gg.projecteden.nexus.utils.ItemUtils.getShulkerContents;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
-public abstract class ShopProvider extends MenuUtils implements InventoryProvider {
+public abstract class ShopProvider extends InventoryProvider {
 	protected final ShopService service = new ShopService();
 	protected ShopGroup shopGroup;
 	@Getter

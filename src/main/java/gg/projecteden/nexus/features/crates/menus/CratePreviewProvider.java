@@ -6,13 +6,14 @@ import gg.projecteden.nexus.features.crates.models.CrateLoot;
 import gg.projecteden.nexus.features.crates.models.CrateType;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.Pagination;
-import gg.projecteden.nexus.features.menus.api.content.SlotIterator;
 import gg.projecteden.nexus.models.voter.Voter;
 import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -23,9 +24,19 @@ import java.util.Comparator;
 import java.util.List;
 
 @AllArgsConstructor
-public class CratePreviewProvider extends MenuUtils implements InventoryProvider {
+public class CratePreviewProvider extends InventoryProvider {
 	private final CrateType type;
 	private final CrateLoot loot;
+
+	@Override
+	public void open(Player player, int page) {
+		SmartInventory.builder()
+			.provider(this)
+			.title(StringUtils.camelCase(type.name()) + " Crate Rewards")
+			.maxSize()
+			.build()
+			.open(player, page);
+	}
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
@@ -46,7 +57,7 @@ public class CratePreviewProvider extends MenuUtils implements InventoryProvider
 						voter.takePoints(2);
 						voterService.save(voter);
 						type.giveVPS(player, 1);
-						type.previewDrops(null).open(player, page.getPage());
+						new CratePreviewProvider(type, null).open(player, page.getPage());
 					}
 			));
 		}
@@ -72,27 +83,23 @@ public class CratePreviewProvider extends MenuUtils implements InventoryProvider
 						.amount(1)
 						.lore("&3Chance: &e" + format.format(((crateLoot.getWeight() / weightSum.get()) * 100)) + "%")
 						.lore("&7&oClick for more");
-					items.add(ClickableItem.of(builder.build(), e ->
-						type.previewDrops(crateLoot).open(player)));
+					items.add(ClickableItem.of(builder.build(), e -> new CratePreviewProvider(type, crateLoot).open(player)));
 				});
 		} else {
 			loot.getItems().forEach(itemStack -> items.add(ClickableItem.empty(itemStack)));
-			addBackItem(contents, e -> type.previewDrops(null).open(player));
+			addBackItem(contents, e -> new CratePreviewProvider(type, null).open(player));
 		}
 
-		page.setItems(items.toArray(ClickableItem[]::new));
-		page.setItemsPerPage(28);
-		SlotIterator.Impl iterator = new SlotIterator.Impl(contents, type.previewDrops(loot), SlotIterator.Type.HORIZONTAL, 1, 1);
-		for (int c = 0; c < 2; c++)
-			for (int r = 0; r < 6; r++)
-				iterator.blacklist(r, c * 8);
-		page.addToIterator(iterator);
+		paginator(player, contents, items)
+			.perPage(28)
+			.iterator(MenuUtils.innerSlotIterator(contents))
+			.build();
 
 		if (!page.isFirst())
 			contents.set(0, 3, ClickableItem.of(new ItemBuilder(Material.ARROW).name("<-- Back").build(), e ->
-					type.previewDrops(loot).open(player, page.previous().getPage())));
+				new CratePreviewProvider(type, loot).open(player, page.previous())));
 		if (!page.isLast())
 			contents.set(5, 3, ClickableItem.of(new ItemBuilder(Material.ARROW).name("Next -->").build(), e ->
-					type.previewDrops(loot).open(player, page.next().getPage())));
+				new CratePreviewProvider(type, loot).open(player, page.next())));
 	}
 }

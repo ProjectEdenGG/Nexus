@@ -1,15 +1,16 @@
 package gg.projecteden.nexus.features.minigames.menus.flags;
 
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.Pagination;
 import gg.projecteden.nexus.features.menus.api.content.SlotIterator;
+import gg.projecteden.nexus.features.minigames.menus.ArenaMenu;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Tasks;
-import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -20,21 +21,27 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import static gg.projecteden.nexus.features.minigames.Minigames.menus;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
-public class BlockListMenu extends MenuUtils implements InventoryProvider {
-	Arena arena;
+@RequiredArgsConstructor
+public class BlockListMenu extends InventoryProvider {
+	private final Arena arena;
 
-	public BlockListMenu(@NonNull Arena arena) {
-		this.arena = arena;
+	@Override
+	public void open(Player player, int page) {
+		SmartInventory.builder()
+			.provider(this)
+			.title("Block List Menu")
+			.maxSize()
+			.build()
+			.open(player, page);
 	}
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
 		Pagination page = contents.pagination();
 
-		contents.set(0, 0, ClickableItem.of(backItem(), e -> menus.openArenaMenu(player, arena)));
+		contents.set(0, 0, ClickableItem.of(backItem(), e -> new ArenaMenu(arena).open(player)));
 
 		contents.set(5, 8, ClickableItem.of(new ItemBuilder(Material.ITEM_FRAME)
 				.name("&eAdd Item")
@@ -44,7 +51,7 @@ public class BlockListMenu extends MenuUtils implements InventoryProvider {
 				arena.getBlockList().add(player.getItemOnCursor().getType());
 				player.setItemOnCursor(new ItemStack(Material.AIR));
 				arena.write();
-				menus.blockListMenu(arena).open(player);
+				new BlockListMenu(arena).open(player);
 			})
 		));
 
@@ -55,7 +62,7 @@ public class BlockListMenu extends MenuUtils implements InventoryProvider {
 				e -> {
 					arena.isWhitelist(false);
 					arena.write();
-					menus.blockListMenu(arena).open(player, page.getPage());
+					new BlockListMenu(arena).open(player, page.getPage());
 				}
 			));
 		} else {
@@ -65,7 +72,7 @@ public class BlockListMenu extends MenuUtils implements InventoryProvider {
 				e -> {
 					arena.isWhitelist(true);
 					arena.write();
-					menus.blockListMenu(arena).open(player, page.getPage());
+					new BlockListMenu(arena).open(player, page.getPage());
 				}
 			));
 		}
@@ -84,7 +91,7 @@ public class BlockListMenu extends MenuUtils implements InventoryProvider {
 				e -> {
 					arena.getBlockList().remove(((InventoryClickEvent) e.getEvent()).getCurrentItem().getType());
 					arena.write();
-					menus.blockListMenu(arena).open(player);
+					new BlockListMenu(arena).open(player);
 				});
 		}
 
@@ -94,10 +101,10 @@ public class BlockListMenu extends MenuUtils implements InventoryProvider {
 
 		if (!page.isLast())
 			contents.set(0, 8, ClickableItem.of(Material.ARROW, "&fNext Page", e ->
-				menus.blockListMenu(arena).open(player, page.next().getPage())));
+				new BlockListMenu(arena).open(player, page.next().getPage())));
 		if (!page.isFirst())
 			contents.set(0, 7, ClickableItem.of(Material.BARRIER, "&fPrevious Page", e ->
-				menus.blockListMenu(arena).open(player, page.previous().getPage())));
+				new BlockListMenu(arena).open(player, page.previous().getPage())));
 
 	}
 

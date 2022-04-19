@@ -19,7 +19,7 @@ import org.bukkit.entity.Player;
 
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class EffectSettingProvider extends MenuUtils implements InventoryProvider {
+public class EffectSettingProvider extends InventoryProvider {
 	private final ParticleService service = new ParticleService();
 	private final ParticleType type;
 	private HumanEntity displayEntity;

@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.shops.providers;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.listeners.TemporaryListener;
+import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.shops.ShopCommand;
@@ -57,29 +58,29 @@ public class EditProductProvider extends ShopProvider {
 		contents.set(0, 4, ClickableItem.of(product.getItemWithOwnLore().build(), e -> new ExchangeConfigProvider(this, product).open(player)));
 		if (product.getExchangeType() == ExchangeType.BUY) {
 			ItemBuilder builder = new ItemBuilder(Material.GOLD_INGOT)
-					.name("&6Edit Stock")
-					.lore("&7Enter the dollar amount you are")
-					.lore("&7willing to spend on this item, or")
-					.lore("&7enter -1 to allow unlimited purchases")
-					.loreize(false);
+				.name("&6Edit Stock")
+				.lore("&7Enter the dollar amount you are")
+				.lore("&7willing to spend on this item, or")
+				.lore("&7enter -1 to allow unlimited purchases")
+				.loreize(false);
 
 			contents.set(1, 4, ClickableItem.of(builder.build(), e -> Nexus.getSignMenuFactory()
-					.lines("", ARROWS, "Enter an amount", "or -1 for no limit")
-					.prefix(Shops.PREFIX)
-					.onError(() -> open(player))
-					.response(lines -> {
-						if (lines[0].length() > 0) {
-							String input = lines[0].replaceAll("[^\\d.-]+", "");
-							if (!Utils.isDouble(input))
-								throw new InvalidInputException("Could not parse &e" + lines[0] + " &cas a dollar amount");
-							double stock = new BigDecimal(input).setScale(2, RoundingMode.HALF_UP).doubleValue();
-							if (!(stock == -1 || stock >= 0))
-								throw new InvalidInputException("Stock must be -1 (unlimited), or $0 or greater");
-							product.setStock(stock);
-							service.save(product.getShop());
-						}
-						open(player);
-					}).open(player)
+				.lines("", ARROWS, "Enter an amount", "or -1 for no limit")
+				.prefix(Shops.PREFIX)
+				.onError(() -> open(player))
+				.response(lines -> {
+					if (lines[0].length() > 0) {
+						String input = lines[0].replaceAll("[^\\d.-]+", "");
+						if (!Utils.isDouble(input))
+							throw new InvalidInputException("Could not parse &e" + lines[0] + " &cas a dollar amount");
+						double stock = new BigDecimal(input).setScale(2, RoundingMode.HALF_UP).doubleValue();
+						if (!(stock == -1 || stock >= 0))
+							throw new InvalidInputException("Stock must be -1 (unlimited), or $0 or greater");
+						product.setStock(stock);
+						service.save(product.getShop());
+					}
+					open(player);
+				}).open(player)
 			));
 		} else {
 			contents.set(1, 3, ClickableItem.of(new ItemBuilder(Material.LIME_CONCRETE_POWDER).name("&6Add Stock").lore("&f", "&7Right click to add in bulk").build(), e -> {
@@ -87,7 +88,7 @@ public class EditProductProvider extends ShopProvider {
 					player.closeInventory();
 					ShopCommand.getInteractStockMap().put(player.getUniqueId(), product);
 					PlayerUtils.send(player, new JsonBuilder(Shops.PREFIX + "Right click any container (ie chest, shulker box, etc) to stock &e"
-							+ pretty(product.getItem()) + "&3. &eClick here to end").command("/shop cancelInteractStock"));
+						+ pretty(product.getItem()) + "&3. &eClick here to end").command("/shop cancelInteractStock"));
 				} else {
 					new AddStockProvider(this, product).open(player);
 				}
@@ -98,11 +99,11 @@ public class EditProductProvider extends ShopProvider {
 		ItemBuilder purchasable = new ItemBuilder(Material.WHITE_STAINED_GLASS);
 		if (product.isPurchasable())
 			purchasable.name("&aPurchasable")
-					.lore("&7Click to &cdisable &7purchases")
-					.lore("&7Item will still show in your shop,")
-					.lore("&7but players cannot purchase it.")
-					.lore("&7Can be used for shop organization")
-					.loreize(false);
+				.lore("&7Click to &cdisable &7purchases")
+				.lore("&7Item will still show in your shop,")
+				.lore("&7but players cannot purchase it.")
+				.lore("&7Can be used for shop organization")
+				.loreize(false);
 		else
 			purchasable.name("&cNot purchasable").lore("&7Click to &aenable &7purchases");
 
@@ -125,15 +126,15 @@ public class EditProductProvider extends ShopProvider {
 		}));
 
 		contents.set(3, 6, ClickableItem.of(new ItemBuilder(Material.LAVA_BUCKET).name("&cDelete").build(), e ->
-				ConfirmationMenu.builder()
-						.onConfirm(e2 -> {
-							Shop shop = service.get(player);
-							shop.removeProduct(product);
-							service.save(shop);
-							previousMenu.open(player);
-						})
-						.onCancel(e2 -> open(player))
-						.open(player)));
+			ConfirmationMenu.builder()
+				.onConfirm(e2 -> {
+					Shop shop = service.get(player);
+					shop.removeProduct(product);
+					service.save(shop);
+					previousMenu.open(player);
+				})
+				.onCancel(e2 -> open(player))
+				.open(player)));
 
 	}
 
@@ -182,6 +183,7 @@ public class EditProductProvider extends ShopProvider {
 			event.getPlayer().closeInventory();
 			Tasks.wait(1, () -> previousMenu.open(player));
 		}
+
 	}
 
 	public static class RemoveStockProvider extends ShopProvider implements TemporaryListener {
@@ -242,6 +244,7 @@ public class EditProductProvider extends ShopProvider {
 			event.getPlayer().closeInventory();
 			Tasks.wait(1, () -> previousMenu.open(player));
 		}
+
 	}
 
 }

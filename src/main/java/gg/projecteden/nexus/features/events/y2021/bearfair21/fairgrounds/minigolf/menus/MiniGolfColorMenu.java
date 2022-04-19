@@ -4,7 +4,6 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigol
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.MiniGolfUtils;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfColor;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfHole;
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -13,28 +12,27 @@ import gg.projecteden.nexus.models.bearfair21.MiniGolf21User;
 import gg.projecteden.nexus.models.bearfair21.MiniGolf21UserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class MiniGolfColorMenu extends MenuUtils implements InventoryProvider {
-	MiniGolf21UserService service = new MiniGolf21UserService();
-	MiniGolf21User user;
+import static gg.projecteden.nexus.features.menus.MenuUtils.getRows;
 
-	public static SmartInventory getInv() {
-		return SmartInventory.builder()
-				.provider(new MiniGolfColorMenu())
-				.rows(getRows(MiniGolfColor.values().length))
-				.title(ChatColor.DARK_AQUA + "Select a color:")
-				.closeable(true)
-				.build();
-	}
+public class MiniGolfColorMenu extends InventoryProvider {
+	private final MiniGolf21UserService service = new MiniGolf21UserService();
+	private MiniGolf21User user;
 
-	public void open(Player player) {
-		getInv().open(player);
+	@Override
+	public void open(Player player, int apge) {
+		SmartInventory.builder()
+			.provider(this)
+			.title("&3Select a color:")
+			.rows(getRows(MiniGolfColor.values().length))
+			.closeable(true)
+			.build()
+			.open(player);
 	}
 
 	@Override
@@ -66,7 +64,7 @@ public class MiniGolfColorMenu extends MenuUtils implements InventoryProvider {
 			clickableItems.add(ClickableItem.of(item.build(), e -> setColor(user, miniGolfColor)));
 		}
 
-		paginator(player, contents, clickableItems);
+		paginator(player, contents, clickableItems).build();
 	}
 
 	private void setColor(MiniGolf21User user, MiniGolfColor color) {

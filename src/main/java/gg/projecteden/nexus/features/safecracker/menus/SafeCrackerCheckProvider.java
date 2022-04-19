@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.safecracker.menus;
 import gg.projecteden.annotations.Disabled;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.models.safecracker.SafeCrackerEvent;
@@ -18,10 +19,19 @@ import org.bukkit.inventory.ItemStack;
 import static gg.projecteden.utils.TimeUtils.shortDateTimeFormat;
 
 @Disabled
-public class SafeCrackerCheckProvider extends MenuUtils implements InventoryProvider {
+public class SafeCrackerCheckProvider extends InventoryProvider {
+	private final SafeCrackerPlayerService service = new SafeCrackerPlayerService();
+	private final SafeCrackerEvent.SafeCrackerGame game = new SafeCrackerEventService().getActiveEvent();
 
-	SafeCrackerPlayerService service = new SafeCrackerPlayerService();
-	SafeCrackerEvent.SafeCrackerGame game = new SafeCrackerEventService().getActiveEvent();
+	@Override
+	public void open(Player player, int page) {
+		SmartInventory.builder()
+			.provider(this)
+			.title("SafeCracker")
+			.maxSize()
+			.build()
+			.open(player, page);
+	}
 
 	@Override
 	public void init(Player player, InventoryContents contents) {

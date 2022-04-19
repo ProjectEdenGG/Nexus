@@ -2,9 +2,11 @@ package gg.projecteden.nexus.features.minigames.menus;
 
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.features.minigames.menus.teams.TeamMenus;
+import gg.projecteden.nexus.features.minigames.menus.flags.FlagsMenu;
+import gg.projecteden.nexus.features.minigames.menus.teams.TeamsMenu;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -25,18 +27,29 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.features.menus.MenuUtils.getLocationLore;
 import static gg.projecteden.nexus.features.minigames.Minigames.menus;
 import static java.util.Collections.singletonList;
 
-public class ArenaMenu extends MenuUtils implements InventoryProvider {
+public class ArenaMenu extends InventoryProvider {
 	private final Arena arena;
 
 	public ArenaMenu(@NonNull Arena arena) {
 		this.arena = arena;
 	}
 
+	@Override
+	public void open(Player player, int page) {
+		SmartInventory.builder()
+			.title(arena.getDisplayName())
+			.provider(new ArenaMenu(arena))
+			.rows(5)
+			.build()
+			.open(player, page);
+	}
+
 	static void openAnvilMenu(Player player, Arena arena, String text, BiFunction<Player, String, AnvilGUI.Response> onComplete) {
-		openAnvilMenu(player, text, onComplete, p -> Tasks.wait(1, () -> menus.openArenaMenu(player, arena)));
+		MenuUtils.openAnvilMenu(player, text, onComplete, p -> Tasks.wait(1, () -> new ArenaMenu(arena).open(player)));
 	}
 
 	@Getter
@@ -45,7 +58,8 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 		DELETE_ARENA(1, 9, Material.TNT) {
 			@Override
 			void onClick(Player player, Arena arena) {
-				menus.openDeleteMenu(player, arena);
+				new DeleteArenaMenu(arena).open(player);
+
 			}
 
 			@Override
@@ -63,7 +77,8 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 		MECHANIC_TYPE(1, 4, Material.REDSTONE) {
 			@Override
 			void onClick(Player player, Arena arena) {
-				menus.openMechanicsMenu(player, arena);
+				new MechanicsMenu(arena).open(player);
+
 			}
 
 			@Override
@@ -87,7 +102,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 			void onClick(Player player, Arena arena) {
 				arena.setTestMode(!arena.isTestMode());
 				arena.write();
-				menus.openArenaMenu(player, arena);
+				new ArenaMenu(arena).open(player);
 			}
 
 			@Override
@@ -98,7 +113,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 		TEAMS(2, 1, Material.WHITE_WOOL) {
 			@Override
 			void onClick(Player player, Arena arena) {
-				new TeamMenus().openTeamsMenu(player, arena);
+				new TeamsMenu(arena).open(player);
 			}
 
 			@Override
@@ -109,7 +124,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 		LOBBY(2, 2, Material.OAK_DOOR) {
 			@Override
 			void onClick(Player player, Arena arena) {
-				menus.openLobbyMenu(player, arena);
+				new LobbyMenu(arena).open(player);
 			}
 
 			@Override
@@ -120,7 +135,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 		FLAGS(2, 3, new ItemStack(Material.CYAN_BANNER, 1)) {
 			@Override
 			void onClick(Player player, Arena arena) {
-				menus.openFlagsMenu(player, arena);
+				new FlagsMenu(arena).open(player);
 			}
 
 			@Override
@@ -146,7 +161,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 			void onClick(Player player, Arena arena) {
 				arena.setSpectateLocation(player.getLocation());
 				arena.write();
-				menus.openArenaMenu(player, arena);
+				new ArenaMenu(arena).open(player);
 			}
 
 			@Override
@@ -162,7 +177,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 			void onClick(Player player, Arena arena) {
 				arena.setRespawnLocation(player.getLocation());
 				arena.write();
-				menus.openArenaMenu(player, arena);
+				new ArenaMenu(arena).open(player);
 			}
 
 			@Override

@@ -1,16 +1,20 @@
 package gg.projecteden.nexus.features.statistics;
 
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.Pagination;
 import gg.projecteden.nexus.features.menus.api.content.SlotIterator;
 import gg.projecteden.nexus.features.mobheads.MobHeadType;
+import gg.projecteden.nexus.features.statistics.StatisticsMenu.StatsMenus;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.utils.TimeUtils.Timespan;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Statistic;
@@ -26,22 +30,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class StatisticsMenuProvider extends MenuUtils implements InventoryProvider {
+import static gg.projecteden.utils.StringUtils.camelCase;
 
-	final int itemsPerPage = 36;
-	StatisticsMenu.StatsMenus menu;
-	OfflinePlayer targetPlayer;
-	int startIndex;
+@RequiredArgsConstructor
+@AllArgsConstructor
+public class StatisticsMenuProvider extends InventoryProvider {
+	private final int itemsPerPage = 36;
+	private final StatisticsMenu.StatsMenus menu;
+	private final OfflinePlayer targetPlayer;
+	private int startIndex;
 
-	public StatisticsMenuProvider(StatisticsMenu.StatsMenus menu, OfflinePlayer targetPlayer) {
-		this.menu = menu;
-		this.targetPlayer = targetPlayer;
-	}
-
-	public StatisticsMenuProvider(StatisticsMenu.StatsMenus menu, OfflinePlayer targetPlayer, int startIndex) {
-		this.menu = menu;
-		this.targetPlayer = targetPlayer;
-		this.startIndex = startIndex;
+	@Override
+	public void open(Player player, int page) {
+		SmartInventory.builder()
+			.provider(this)
+			.title(Nickname.of(targetPlayer) + "'s Statistics - " + camelCase(menu.name()))
+			.rows(menu.getSize())
+			.build()
+			.open(player, page);
 	}
 
 	@Override
@@ -50,7 +56,7 @@ public class StatisticsMenuProvider extends MenuUtils implements InventoryProvid
 
 		switch (menu) {
 			case MAIN -> addCloseItem(contents);
-			default -> addBackItem(contents, e -> StatisticsMenu.open(player, StatisticsMenu.StatsMenus.MAIN, 0, targetPlayer));
+			default -> addBackItem(contents, e -> new StatisticsMenuProvider(StatsMenus.MAIN, targetPlayer).open(player, 0));
 		}
 
 		switch (menu) {
@@ -59,17 +65,17 @@ public class StatisticsMenuProvider extends MenuUtils implements InventoryProvid
 				ItemBuilder blocks = new ItemBuilder(Material.GRASS_BLOCK).name("&3Blocks").lore("&eView stats for blocks like", "&etimes mined, placed, and crafted");
 				ItemBuilder items = new ItemBuilder(Material.TOTEM_OF_UNDYING).name("&3Items").lore("&eView stats for items like", "&etimes crafted, used, and picked up");
 				ItemBuilder mobs = new ItemBuilder(Material.ZOMBIE_HEAD).name("&3Mobs").lore("&eView stats for mobs like", "&etimes killed and times killed by");
-				contents.set(1, 1, ClickableItem.of(general, e -> StatisticsMenu.open(player, StatisticsMenu.StatsMenus.GENERAL, 0, targetPlayer)));
-				contents.set(1, 3, ClickableItem.of(blocks, e -> StatisticsMenu.open(player, StatisticsMenu.StatsMenus.BLOCKS, 0, targetPlayer)));
-				contents.set(1, 5, ClickableItem.of(items, e -> StatisticsMenu.open(player, StatisticsMenu.StatsMenus.ITEMS, 0, targetPlayer)));
-				contents.set(1, 7, ClickableItem.of(mobs, e -> StatisticsMenu.open(player, StatisticsMenu.StatsMenus.MOBS, 0, targetPlayer)));
+				contents.set(1, 1, ClickableItem.of(general, e -> new StatisticsMenuProvider(StatsMenus.GENERAL, targetPlayer).open(player, 0)));
+				contents.set(1, 3, ClickableItem.of(blocks, e -> new StatisticsMenuProvider(StatsMenus.BLOCKS, targetPlayer).open(player, 0)));
+				contents.set(1, 5, ClickableItem.of(items, e -> new StatisticsMenuProvider(StatsMenus.ITEMS, targetPlayer).open(player, 0)));
+				contents.set(1, 7, ClickableItem.of(mobs, e -> new StatisticsMenuProvider(StatsMenus.MOBS, targetPlayer).open(player, 0)));
 				return;
 			}
 			case GENERAL -> {
 				getGeneralStats(contents);
 				return;
 			}
-			case MOBS -> page.setItems(getMobStats());
+			case MOBS -> paginator(player, contents, getMobStats()).build();
 			case BLOCKS, ITEMS -> {
 				List<Material> materials;
 				if (menu == StatisticsMenu.StatsMenus.BLOCKS)
@@ -127,28 +133,15 @@ public class StatisticsMenuProvider extends MenuUtils implements InventoryProvid
 						column++;
 				}
 				if (startIndex > 0)
-					contents.set(5, 0, ClickableItem.of(Material.ARROW, "<- Page", e ->
-							StatisticsMenu.open(player, menu, targetPlayer, Math.max(0, startIndex - itemsPerPage))));
+					contents.set(5, 0, ClickableItem.of(Material.ARROW, "<- Page", e -> new StatisticsMenuProvider(menu, targetPlayer, Math.max(0, startIndex - itemsPerPage)).open(player)));
 				if (startIndex + itemsPerPage < materials.size())
-					contents.set(5, 8, ClickableItem.of(Material.ARROW, "Page ->", e ->
-							StatisticsMenu.open(player, menu, targetPlayer, startIndex + itemsPerPage)));
-				return;
+					contents.set(5, 8, ClickableItem.of(Material.ARROW, "Page ->", e -> new StatisticsMenuProvider(menu, targetPlayer, startIndex + itemsPerPage).open(player)));
 			}
 		}
-
-		page.setItemsPerPage(36);
-		page.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 1, 0));
-
-		if (!page.isFirst())
-			contents.set(5, 0, ClickableItem.of(Material.ARROW, "<- Page", e ->
-					StatisticsMenu.open(player, menu, page.previous().getPage(), targetPlayer)));
-		if (!page.isLast())
-			contents.set(5, 8, ClickableItem.of(Material.ARROW, "Page ->", e ->
-					StatisticsMenu.open(player, menu, page.next().getPage(), targetPlayer)));
 	}
 
-	public ClickableItem[] getMobStats() {
-		List<EntityType> entities = Arrays.stream(EntityType.values()).filter(EntityType::isAlive).collect(Collectors.toList());
+	public List<ClickableItem> getMobStats() {
+		List<EntityType> entities = Arrays.stream(EntityType.values()).filter(EntityType::isAlive).toList();
 		LinkedHashMap<ItemStack, Integer> stats = new LinkedHashMap<>();
 		List<ClickableItem> items = new ArrayList<>();
 
@@ -179,12 +172,12 @@ public class StatisticsMenuProvider extends MenuUtils implements InventoryProvid
 				stats.put(item, total);
 			}
 		});
+
 		stats.entrySet().stream()
-				.sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-				.forEachOrdered(x -> items.add(ClickableItem.empty(x.getKey())));
-		ClickableItem[] clickableItems = new ClickableItem[items.size()];
-		clickableItems = items.toArray(clickableItems);
-		return clickableItems;
+			.sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+			.forEachOrdered(x -> items.add(ClickableItem.empty(x.getKey())));
+
+		return items;
 	}
 
 	public void getGeneralStats(InventoryContents contents) {

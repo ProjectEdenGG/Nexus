@@ -70,12 +70,7 @@ public class InvisibleArmorCommand extends CustomCommand implements Listener {
 
 	@Path("menu")
 	void menu() {
-		SmartInventory.builder()
-				.provider(new InvisibleArmorProvider(invisibleArmor))
-				.maxSize()
-				.title(ChatColor.DARK_AQUA + "Invisible Armour")
-				.build()
-				.open(player());
+		new InvisibleArmorProvider(invisibleArmor).open(player());
 	}
 
 	@EventHandler
@@ -98,9 +93,19 @@ public class InvisibleArmorCommand extends CustomCommand implements Listener {
 	}
 
 	@RequiredArgsConstructor
-	private class InvisibleArmorProvider extends MenuUtils implements InventoryProvider {
+	private class InvisibleArmorProvider extends InventoryProvider {
 		private final InvisibleArmorService service = new InvisibleArmorService();
 		private final InvisibleArmor user;
+
+		@Override
+		public void open(Player player, int page) {
+			SmartInventory.builder()
+				.provider(this)
+				.maxSize()
+				.title(ChatColor.DARK_AQUA + "Invisible Armour")
+				.build()
+				.open(player, page);
+		}
 
 		@Override
 		public void init(Player player, InventoryContents contents) {

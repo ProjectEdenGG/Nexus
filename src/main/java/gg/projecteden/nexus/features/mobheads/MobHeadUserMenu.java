@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.mobheads;
 
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -23,7 +22,7 @@ import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 
-public class MobHeadUserMenu extends MenuUtils implements InventoryProvider {
+public class MobHeadUserMenu extends InventoryProvider {
 	private final MobHeadUserService service = new MobHeadUserService();
 
 	private KillsFilterType killsFilter = KillsFilterType.OFF;
@@ -73,7 +72,7 @@ public class MobHeadUserMenu extends MenuUtils implements InventoryProvider {
 				addItem.accept(mobHeadType);
 		}
 
-		paginator(player, contents, items);
+		paginator(player, contents, items).build();
 
 		formatKillsFilter(player, contents);
 		formatHeadsFilter(player, contents);

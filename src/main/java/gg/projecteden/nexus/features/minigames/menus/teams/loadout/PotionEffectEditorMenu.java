@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.minigames.menus.teams.loadout;
 
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.minigames.models.Arena;
@@ -12,7 +13,7 @@ import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
-import lombok.NonNull;
+import lombok.AllArgsConstructor;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -23,26 +24,30 @@ import org.bukkit.potion.PotionEffectType;
 import java.util.function.BiFunction;
 
 import static gg.projecteden.nexus.features.minigames.Minigames.PREFIX;
-import static gg.projecteden.nexus.features.minigames.Minigames.menus;
 
-public class PotionEffectEditorMenu extends MenuUtils implements InventoryProvider {
-	Arena arena;
-	Team team;
-	PotionEffect potionEffect;
+@AllArgsConstructor
+public class PotionEffectEditorMenu extends InventoryProvider {
+	private final Arena arena;
+	private final Team team;
+	private PotionEffect potionEffect;
 
-	public PotionEffectEditorMenu(@NonNull Arena arena, @NonNull Team team, @NonNull PotionEffect potionEffect) {
-		this.arena = arena;
-		this.team = team;
-		this.potionEffect = potionEffect;
+	@Override
+	public void open(Player player, int page) {
+		SmartInventory.builder()
+			.provider(this)
+			.title("Potion Effect Editor Menu")
+			.maxSize()
+			.build()
+			.open(player, page);
 	}
 
 	static void openAnvilMenu(Player player, Arena arena, Team team, PotionEffect potionEffect, String text, BiFunction<Player, String, AnvilGUI.Response> onComplete) {
-		openAnvilMenu(player, text, onComplete, p -> Tasks.wait(1, () -> menus.getTeamMenus().openPotionEffectEditorMenu(player, arena, team, potionEffect)));
+		MenuUtils.openAnvilMenu(player, text, onComplete, p -> Tasks.wait(1, () -> new PotionEffectEditorMenu(arena, team, potionEffect).open(player)));
 	}
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
-		addBackItem(contents, e -> menus.getTeamMenus().openPotionEffectsMenu(player, arena, team));
+		addBackItem(contents, e -> new PotionEffectsMenu(arena, team).open(player));
 
 		contents.set(0, 3, ClickableItem.of(new ItemBuilder(Material.REDSTONE)
 				.name("&eDuration")
@@ -57,7 +62,7 @@ public class PotionEffectEditorMenu extends MenuUtils implements InventoryProvid
 						// Since potion effects don't have setters, pass-by-reference is broken, so we
 						// have to do some hacky waits to get the menu to open with the correct object
 						player.closeInventory();
-						Tasks.wait(1, () -> menus.getTeamMenus().openPotionEffectEditorMenu(player, arena, team, potionEffect));
+						Tasks.wait(1, () -> new PotionEffectEditorMenu(arena, team, potionEffect).open(player));
 					});
 					return AnvilGUI.Response.text(text);
 				} else {
@@ -77,7 +82,7 @@ public class PotionEffectEditorMenu extends MenuUtils implements InventoryProvid
 					arena.write();
 					Tasks.wait(1, () -> {
 						player.closeInventory();
-						Tasks.wait(1, () -> menus.getTeamMenus().openPotionEffectEditorMenu(player, arena, team, potionEffect));
+						Tasks.wait(1, () -> new PotionEffectEditorMenu(arena, team, potionEffect).open(player));
 					});
 					return AnvilGUI.Response.text(text);
 				} else {
@@ -109,7 +114,7 @@ public class PotionEffectEditorMenu extends MenuUtils implements InventoryProvid
 					arena.write();
 					Tasks.wait(1, () -> {
 						player.closeInventory();
-						Tasks.wait(1, () -> menus.getTeamMenus().openPotionEffectEditorMenu(player, arena, team, potionEffect));
+						Tasks.wait(1, () -> new PotionEffectEditorMenu(arena, team, potionEffect).open(player));
 					});
 				}));
 

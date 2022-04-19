@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.events;
 
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -27,6 +26,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
+import static gg.projecteden.nexus.features.menus.MenuUtils.handleException;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Aliases("trophies")
@@ -86,7 +86,7 @@ public class TrophyCommand extends CustomCommand {
 	}
 
 	@AllArgsConstructor
-	private static class TrophyMenu extends MenuUtils implements InventoryProvider {
+	private static class TrophyMenu extends InventoryProvider {
 		private final String event;
 		private final TrophyMenu previousMenu;
 
@@ -150,7 +150,7 @@ public class TrophyCommand extends CustomCommand {
 				}
 			}
 
-			paginator(player, contents, items);
+			paginator(player, contents, items).build();
 		}
 
 	}

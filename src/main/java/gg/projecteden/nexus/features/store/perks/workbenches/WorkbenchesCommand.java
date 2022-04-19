@@ -37,7 +37,7 @@ public class WorkbenchesCommand extends CustomCommand {
 		workbench.open(player());
 	}
 
-	public static class WorkbenchesMenu extends MenuUtils implements InventoryProvider {
+	public static class WorkbenchesMenu extends InventoryProvider {
 
 		@Override
 		public void open(Player player, int page) {

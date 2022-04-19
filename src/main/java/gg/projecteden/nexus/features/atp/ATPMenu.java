@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.atp;
 
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -20,7 +19,7 @@ import org.bukkit.entity.Player;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @NoArgsConstructor
-public class ATPMenu extends MenuUtils implements InventoryProvider {
+public class ATPMenu extends InventoryProvider {
 	private ATPGroup group;
 
 	public ATPMenu(ATPGroup group) {
@@ -72,20 +71,23 @@ public class ATPMenu extends MenuUtils implements InventoryProvider {
 			contents.set(3, 7, ClickableItem.of(legacy, e -> new ATPMenu(ATPGroup.LEGACY).open(player)));
 		}
 
-		contents.set(1, 7, ClickableItem.of(new ItemBuilder(Material.OAK_SIGN).name("&3Homes").lore("&eClick to teleport to", "&eone of your homes."), e -> {
-			SmartInventory.builder()
-				.title("ATP Homes")
-				.maxSize()
-				.provider(new ATPHomesMenuProvider())
-				.build()
-				.open(player);
-		}));
+		contents.set(1, 7, ClickableItem.of(new ItemBuilder(Material.OAK_SIGN).name("&3Homes").lore("&eClick to teleport to", "&eone of your homes."), e ->
+			new ATPHomesMenuProvider().open(player)));
 
 	}
 
-	public class ATPHomesMenuProvider extends MenuUtils implements InventoryProvider {
+	public class ATPHomesMenuProvider extends InventoryProvider {
+		private final HomeService service = new HomeService();
 
-		HomeService service = new HomeService();
+		@Override
+		public void open(Player player, int page) {
+			SmartInventory.builder()
+				.provider(this)
+				.title("ATP Homes")
+				.maxSize()
+				.build()
+				.open(player);
+		}
 
 		@Override
 		public void init(Player player, InventoryContents contents) {
@@ -117,6 +119,7 @@ public class ATPMenu extends MenuUtils implements InventoryProvider {
 			}
 
 		}
+
 	}
 
 }

@@ -4,8 +4,8 @@ import gg.projecteden.nexus.features.events.y2020.pugmas20.AdventChests;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.models.AdventChest;
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
@@ -28,7 +28,7 @@ import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.isSec
 
 @NoArgsConstructor
 @RequiredArgsConstructor
-public class AdventProvider extends MenuUtils implements InventoryProvider {
+public class AdventProvider extends InventoryProvider {
 	private static final ItemBuilder locked = AdventMenu.lockedHead.clone();
 	private static final ItemBuilder missed = AdventMenu.missedHead.clone();
 	private static final ItemBuilder toFind = AdventMenu.toFindHead.clone();
@@ -39,6 +39,16 @@ public class AdventProvider extends MenuUtils implements InventoryProvider {
 	private Pugmas20User user;
 	private AdventChest adventChest;
 	private boolean located;
+
+	@Override
+	public void open(Player player, int page) {
+		SmartInventory.builder()
+			.provider(new AdventProvider(date))
+			.title("Advent")
+			.maxSize()
+			.build()
+			.open(player, page);
+	}
 
 	@Override
 	public void init(Player player, InventoryContents contents) {

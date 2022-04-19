@@ -1,12 +1,11 @@
 package gg.projecteden.nexus.features.minigames.menus.custom;
 
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
-import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.mechanics.GrabAJumbuck;
+import gg.projecteden.nexus.features.minigames.menus.ArenaMenu;
 import gg.projecteden.nexus.features.minigames.menus.annotations.CustomMechanicSettings;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.arenas.GrabAJumbuckArena;
@@ -26,7 +25,7 @@ import static gg.projecteden.nexus.features.minigames.Minigames.menus;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @CustomMechanicSettings(GrabAJumbuck.class)
-public class GrabAJumbuckMenu extends MenuUtils implements InventoryProvider {
+public class GrabAJumbuckMenu extends ICustomMechanicMenu {
 
 	GrabAJumbuckArena arena;
 
@@ -36,7 +35,7 @@ public class GrabAJumbuckMenu extends MenuUtils implements InventoryProvider {
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
-		contents.set(0, 0, ClickableItem.of(backItem(), e -> menus.openArenaMenu(player, arena)));
+		contents.set(0, 0, ClickableItem.of(backItem(), e -> new ArenaMenu(arena).open(player)));
 
 		contents.set(2, 8, ClickableItem.of(new ItemBuilder(Material.ITEM_FRAME)
 				.name("&eAdd Item")

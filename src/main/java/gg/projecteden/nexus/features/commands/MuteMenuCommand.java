@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -54,7 +53,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 		new MuteMenuProvider().open(player());
 	}
 
-	public static class MuteMenuProvider extends MenuUtils implements InventoryProvider {
+	public static class MuteMenuProvider extends InventoryProvider {
 		private final MuteMenuService service = new MuteMenuService();
 		private PageType pageType = PageType.MESSAGES;
 
@@ -231,7 +230,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 				}
 			}
 
-			paginator(player, contents, items);
+			paginator(player, contents, items).build();
 		}
 
 		private int increaseVolume(int volume) {

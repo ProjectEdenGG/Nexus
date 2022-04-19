@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.trust.providers;
 
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -18,32 +18,27 @@ import org.bukkit.entity.Player;
 import java.util.List;
 import java.util.UUID;
 
-public class TrustPlayerProvider extends MenuUtils implements InventoryProvider {
-	private final Trust trust;
+public class TrustPlayerProvider extends InventoryProvider {
 	private final OfflinePlayer trusted;
 	private final TrustService service = new TrustService();
 
-	public TrustPlayerProvider(Trust trust, OfflinePlayer trusted) {
-		this.trust = trust;
+	public TrustPlayerProvider(OfflinePlayer trusted) {
 		this.trusted = trusted;
 	}
 
-	public static void open(Player player, OfflinePlayer trusted) {
+	public void open(Player player, int page) {
 		SmartInventory.builder()
-				.provider(new TrustPlayerProvider(new TrustService().get(player), trusted))
-				.rows(4)
-				.title(Nickname.of(trusted))
-				.build()
-				.open(player);
-	}
-
-	public void refresh() {
-		open(trust.getOnlinePlayer(), trusted);
+			.provider(this)
+			.title(Nickname.of(trusted))
+			.rows(4)
+			.build()
+			.open(player);
 	}
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
-		addBackItem(contents, e -> TrustProvider.openMenu(player));
+		Trust trust = service.get(player);
+		addBackItem(contents, e -> new TrustProvider().open(player));
 
 		contents.set(0, 4, ClickableItem.empty(new ItemBuilder(Material.PLAYER_HEAD).skullOwner(trusted).name("&f" + Nickname.of(trusted)).build()));
 
@@ -72,21 +67,21 @@ public class TrustPlayerProvider extends MenuUtils implements InventoryProvider 
 				else
 					list.add(trusted.getUniqueId());
 				service.save(trust);
-				refresh();
+				open(player, contents.pagination());
 			}));
 		}
 
 		contents.set(0, 8, ClickableItem.of(new ItemBuilder(Material.TNT).name("&cUntrust from all").build(), e ->
-				ConfirmationMenu.builder()
-						.onConfirm(e2 -> {
-							for (Type type : Type.values()) {
-								trust.get(type).remove(trusted.getUniqueId());
-								service.save(trust);
-								TrustProvider.openMenu(player);
-							}
-						})
-						.onCancel(e2 -> refresh())
-						.open(player)));
+			ConfirmationMenu.builder()
+				.onConfirm(e2 -> {
+					for (Type type : Type.values()) {
+						trust.get(type).remove(trusted.getUniqueId());
+						service.save(trust);
+						new TrustProvider().open(player);
+					}
+				})
+				.onCancel(e2 -> open(player, contents.pagination()))
+				.open(player)));
 	}
 
 }

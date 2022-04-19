@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigo
 
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.MiniGolfUtils;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfParticle;
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -18,21 +17,21 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MiniGolfParticleMenu extends MenuUtils implements InventoryProvider {
-	MiniGolf21UserService service = new MiniGolf21UserService();
-	MiniGolf21User user;
+import static gg.projecteden.nexus.features.menus.MenuUtils.getRows;
 
-	public static SmartInventory getInv() {
-		return SmartInventory.builder()
-				.provider(new MiniGolfParticleMenu())
-				.rows(getRows(MiniGolfParticle.values().length))
-				.title(ChatColor.DARK_AQUA + "Select a particle:")
-				.closeable(true)
-				.build();
-	}
+public class MiniGolfParticleMenu extends InventoryProvider {
+	private final MiniGolf21UserService service = new MiniGolf21UserService();
+	private MiniGolf21User user;
 
-	public void open(Player player) {
-		getInv().open(player);
+	@Override
+	public void open(Player player, int page) {
+		SmartInventory.builder()
+			.provider(this)
+			.title(ChatColor.DARK_AQUA + "Select a particle:")
+			.rows(getRows(MiniGolfParticle.values().length))
+			.closeable(true)
+			.build()
+			.open(player, page);
 	}
 
 	@Override
@@ -47,7 +46,7 @@ public class MiniGolfParticleMenu extends MenuUtils implements InventoryProvider
 			clickableItems.add(ClickableItem.of(item, e -> setParticle(user, miniGolfParticle)));
 		}
 
-		paginator(player, contents, clickableItems);
+		paginator(player, contents, clickableItems).build();
 	}
 
 	private void setParticle(MiniGolf21User user, MiniGolfParticle particle) {

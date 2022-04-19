@@ -16,13 +16,7 @@ public class VPS {
 	}
 
 	public static void open(Player player, VPSMenu menu, int page) {
-		VPSPage vpsPage = menu.getPage(page);
-		SmartInventory.builder()
-				.provider(new VPSProvider(menu, vpsPage))
-				.rows(vpsPage.getRows())
-				.title(ChatColor.DARK_AQUA + "Vote Point Store")
-				.build()
-				.open(player);
+		new VPSProvider(menu, menu.getPage(page)).open(player, page);
 	}
 
 	public static VPSMenu getMenu(Player player) {

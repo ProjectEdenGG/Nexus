@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.menus.sabotage;
 
 import gg.projecteden.interfaces.Nicknamed;
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -18,7 +17,7 @@ import org.bukkit.entity.Player;
 
 import static gg.projecteden.nexus.utils.StringUtils.plural;
 
-public abstract class AbstractVoteScreen extends MenuUtils implements InventoryProvider {
+public abstract class AbstractVoteScreen extends InventoryProvider {
 	public abstract SmartInventory getInventory();
 
 	@Override

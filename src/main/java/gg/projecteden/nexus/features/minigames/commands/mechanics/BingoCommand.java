@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.minigames.commands.mechanics;
 
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -69,7 +68,7 @@ public class BingoCommand extends CustomCommand {
 		matchData.getData(minigamer).setCompleted(challenge, false);
 	}
 
-	private static class BingoMenu extends MenuUtils implements InventoryProvider {
+	private static class BingoMenu extends InventoryProvider {
 		private final Minigamer minigamer;
 		private final BingoMatchData matchData;
 

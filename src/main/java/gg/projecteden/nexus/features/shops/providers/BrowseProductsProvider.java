@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.shops.providers;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.Pagination;
@@ -200,7 +201,7 @@ public class BrowseProductsProvider extends ShopProvider {
 		if (end < products.size())
 			items.add(empty);
 
-		paginator(player, contents, items);
+		paginator(player, contents, items).build();
 	}
 
 	private void processAll(Player player, Pagination page, Product product) {

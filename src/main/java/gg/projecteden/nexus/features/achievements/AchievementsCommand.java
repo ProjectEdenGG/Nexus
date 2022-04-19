@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.achievements;
 
 import gg.projecteden.annotations.Disabled;
-import gg.projecteden.nexus.features.achievements.menu.AchievementProvider;
+import gg.projecteden.nexus.features.achievements.menu.AchievementGroupProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -20,7 +20,7 @@ public class AchievementsCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		AchievementProvider.open(player());
+		new AchievementGroupProvider().open(player());
 	}
 
 }

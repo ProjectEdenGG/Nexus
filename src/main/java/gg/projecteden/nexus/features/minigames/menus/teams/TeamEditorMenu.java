@@ -2,9 +2,11 @@ package gg.projecteden.nexus.features.minigames.menus.teams;
 
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.minigames.Minigames;
+import gg.projecteden.nexus.features.minigames.menus.teams.loadout.LoadoutMenu;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.utils.ColorType;
@@ -13,39 +15,43 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.utils.MathUtils;
-import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.util.function.BiFunction;
 
-import static gg.projecteden.nexus.features.minigames.Minigames.menus;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
-public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
-	Arena arena;
-	Team team;
-	TeamMenus teamMenus = new TeamMenus();
+@RequiredArgsConstructor
+public class TeamEditorMenu extends InventoryProvider {
+	private final Arena arena;
+	private final Team team;
 
-	public TeamEditorMenu(@NonNull Arena arena, @NonNull Team team) {
-		this.arena = arena;
-		this.team = team;
+	@Override
+	public void open(Player player, int page) {
+		SmartInventory.builder()
+			.provider(this)
+			.title("Team Editor Menu")
+			.rows(3)
+			.build()
+			.open(player, page);
 	}
 
 	static void openAnvilMenu(Player player, Arena arena, Team team, String text, BiFunction<Player, String, AnvilGUI.Response> onComplete) {
-		openAnvilMenu(player, text, onComplete, p -> Tasks.wait(1, () -> menus.getTeamMenus().openTeamsEditorMenu(player, arena, team)));
+		MenuUtils.openAnvilMenu(player, text, onComplete, p -> Tasks.wait(1, () -> new TeamEditorMenu(arena, team).open(player)));
 	}
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
-		addBackItem(contents, e -> teamMenus.openTeamsMenu(player, arena));
+		addBackItem(contents, e -> new TeamsMenu(arena).open(player));
 
 		contents.set(0, 8, ClickableItem.of(new ItemBuilder(Material.TNT)
 				.name("&c&lDelete Team")
 				.lore("&7You will need to confirm", "&7deleting a team.", "", "&7&lTHIS CANNOT BE UNDONE."),
-			e -> teamMenus.openDeleteTeamMenu(player, arena, team)));
+			e -> new DeleteTeamMenu(arena, team).open(player)));
 
 		contents.set(1, 0, ClickableItem.of(new ItemBuilder(Material.BOOK)
 				.name("&eTeam Name")
@@ -53,7 +59,8 @@ public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
 			e -> openAnvilMenu(player, arena, team, (isNullOrEmpty(team.getName())) ? "Default" : team.getName(), (p, text) -> {
 				team.setName(text);
 				arena.write();
-				teamMenus.openTeamsEditorMenu(player, arena, team);
+				new TeamEditorMenu(arena, team).open(player);
+
 				return AnvilGUI.Response.text(text);
 			})));
 
@@ -63,19 +70,20 @@ public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
 			e -> openAnvilMenu(player, arena, team, (team.getObjective() == null) ? "Objective" : team.getObjective(), (p, text) -> {
 				team.setObjective(text);
 				arena.write();
-				teamMenus.openTeamsEditorMenu(player, arena, team);
+				new TeamEditorMenu(arena, team).open(player);
+
 				return AnvilGUI.Response.text(text);
 			})));
 
 		contents.set(1, 4, ClickableItem.of(new ItemBuilder(ColorType.of(team.getChatColor()).getWool())
 				.name("&eTeam Color")
 				.lore("&7Set the color of the team"),
-			e -> teamMenus.openTeamsColorMenu(player, arena, team)));
+			e -> new TeamColorMenu(arena, team).open(player)));
 
 		contents.set(1, 6, ClickableItem.of(new ItemBuilder(Material.COMPASS)
 				.name("&eSpawnpoint Locations")
 				.lore("&7Set locations the players", "&7on the team can spawn."),
-			e -> teamMenus.openSpawnpointMenu(arena, team).open(player)));
+			e -> new SpawnpointLocationsMenu(arena, team).open(player)));
 
 		contents.set(1, 8, ClickableItem.of(new ItemBuilder(Material.HEAVY_WEIGHTED_PRESSURE_PLATE)
 				.name("&eBalance Percentage")
@@ -84,7 +92,8 @@ public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
 				if (Utils.isInt(text)) {
 					team.setBalancePercentage(MathUtils.clamp(Integer.parseInt(text), -1, 100));
 					arena.write();
-					teamMenus.openTeamsEditorMenu(player, arena, team);
+					new TeamEditorMenu(arena, team).open(player);
+
 					return AnvilGUI.Response.text(text);
 				} else {
 					PlayerUtils.send(player, Minigames.PREFIX + "The balance percentage must be an integer.");
@@ -99,7 +108,8 @@ public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
 				if (Utils.isInt(text)) {
 					team.setLives(Math.max(Integer.parseInt(text), 0));
 					arena.write();
-					teamMenus.openTeamsEditorMenu(player, arena, team);
+					new TeamEditorMenu(arena, team).open(player);
+
 					return AnvilGUI.Response.text(text);
 				} else {
 					PlayerUtils.send(player, Minigames.PREFIX + "The lives value must be an integer.");
@@ -114,7 +124,8 @@ public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
 				if (Utils.isInt(text)) {
 					team.setMinPlayers(Math.max(Integer.parseInt(text), 0));
 					arena.write();
-					teamMenus.openTeamsEditorMenu(player, arena, team);
+					new TeamEditorMenu(arena, team).open(player);
+
 					return AnvilGUI.Response.text(text);
 				} else {
 					PlayerUtils.send(player, Minigames.PREFIX + "The minimum players value must be an integer.");
@@ -122,7 +133,7 @@ public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
 				}
 			})));
 
-		contents.set(2, 4, ClickableItem.of(Material.CHEST, "&eLoadout", e -> teamMenus.openLoadoutMenu(player, arena, team)));
+		contents.set(2, 4, ClickableItem.of(Material.CHEST, "&eLoadout", e -> new LoadoutMenu(arena, team).open(player)));
 
 		contents.set(2, 6, ClickableItem.of(new ItemBuilder(Material.PLAYER_HEAD)
 				.name("&eMaximum Players")
@@ -131,7 +142,8 @@ public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
 				if (Utils.isInt(text)) {
 					team.setMaxPlayers(Math.max(Integer.parseInt(text), -1));
 					arena.write();
-					teamMenus.openTeamsEditorMenu(player, arena, team);
+					new TeamEditorMenu(arena, team).open(player);
+
 					return AnvilGUI.Response.text(text);
 				} else {
 					PlayerUtils.send(player, Minigames.PREFIX + "The minimum players value must be an integer.");
@@ -142,7 +154,7 @@ public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
 		contents.set(2, 8, ClickableItem.of(new ItemBuilder(Material.GLASS)
 				.name("&eVisibility")
 				.lore("&7Sets the visibility of", "&7the team's name tags", "", "&3Current Value:", "&e" + camelCase(team.getNameTagVisibility())),
-			e -> teamMenus.openTeamsVisibilityMenu(player, arena, team)));
+			e -> new TeamVisibilityMenu(arena, team).open(player)));
 	}
 
 }

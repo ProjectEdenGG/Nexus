@@ -2,8 +2,10 @@ package gg.projecteden.nexus.features.minigames.menus.teams;
 
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.minigames.menus.ArenaMenu;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.utils.ColorType;
@@ -16,28 +18,37 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.function.BiFunction;
 
-import static gg.projecteden.nexus.features.minigames.Minigames.menus;
-
-public class TeamsMenu extends MenuUtils implements InventoryProvider {
+public class TeamsMenu extends InventoryProvider {
 	Arena arena;
 
 	public TeamsMenu(@NonNull Arena arena) {
 		this.arena = arena;
 	}
 
+	@Override
+	public void open(Player player, int page) {
+		SmartInventory.builder()
+			.provider(this)
+			.title("Teams Menu")
+			.rows(2)
+			.build()
+			.open(player, page);
+	}
+
 	static void openAnvilMenu(Player player, Arena arena, String text, BiFunction<Player, String, AnvilGUI.Response> onComplete) {
-		openAnvilMenu(player, text, onComplete, p -> Tasks.wait(1, () -> menus.getTeamMenus().openTeamsMenu(player, arena)));
+		MenuUtils.openAnvilMenu(player, text, onComplete, p -> Tasks.wait(1, () -> new TeamsMenu(arena).open(player)));
 	}
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
-		addBackItem(contents, e -> menus.openArenaMenu(player, arena));
+		addBackItem(contents, e -> new ArenaMenu(arena).open(player));
 
 		contents.set(0, 4, ClickableItem.of(Material.EMERALD_BLOCK, "&aAdd Team",
 			e -> openAnvilMenu(player, arena, "Default", (p, text) -> {
 				arena.getTeams().add(new Team(text));
 				arena.write();
-				menus.getTeamMenus().openTeamsMenu(player, arena);
+				new TeamsMenu(arena).open(player);
+
 				return AnvilGUI.Response.text(text);
 			})));
 
@@ -46,7 +57,7 @@ public class TeamsMenu extends MenuUtils implements InventoryProvider {
 		for (Team team : arena.getTeams()) {
 			ItemStack item = new ItemStack(ColorType.of(team.getChatColor()).getWool());
 			contents.set(row, column, ClickableItem.of(item, "&e" + team.getColoredName(),
-					e -> menus.getTeamMenus().openTeamsEditorMenu(player, arena, team)));
+				e -> new TeamEditorMenu(arena, team).open(player)));
 
 			if (column != 8) {
 				column++;

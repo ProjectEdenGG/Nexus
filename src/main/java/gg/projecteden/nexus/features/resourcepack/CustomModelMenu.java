@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.resourcepack;
 
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -26,7 +25,7 @@ import java.util.TreeSet;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @RequiredArgsConstructor
-public class CustomModelMenu extends MenuUtils implements InventoryProvider {
+public class CustomModelMenu extends InventoryProvider {
 	@NonNull
 	private final CustomModelFolder folder;
 	private final CustomModelMenu previousMenu;
@@ -92,7 +91,7 @@ public class CustomModelMenu extends MenuUtils implements InventoryProvider {
 			items.add(ClickableItem.of(item.build(), e -> PlayerUtils.giveItem(player, e.isShiftClick() ? model.getDisplayItem() : model.getItem())));
 		}
 
-		paginator(player, contents, items);
+		paginator(player, contents, items).build();
 	}
 
 	public static void load() {

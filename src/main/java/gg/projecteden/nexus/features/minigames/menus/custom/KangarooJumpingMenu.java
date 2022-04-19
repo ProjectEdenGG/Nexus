@@ -1,21 +1,19 @@
 package gg.projecteden.nexus.features.minigames.menus.custom;
 
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.Pagination;
-import gg.projecteden.nexus.features.menus.api.content.SlotIterator;
-import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.mechanics.KangarooJumping;
+import gg.projecteden.nexus.features.minigames.menus.ArenaMenu;
 import gg.projecteden.nexus.features.minigames.menus.annotations.CustomMechanicSettings;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.arenas.KangarooJumpingArena;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Tasks;
-import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -24,47 +22,45 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
+import static gg.projecteden.nexus.features.menus.MenuUtils.getLocationLore;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @CustomMechanicSettings(KangarooJumping.class)
-public class KangarooJumpingMenu extends MenuUtils implements InventoryProvider {
-
-	KangarooJumpingArena arena;
+public class KangarooJumpingMenu extends ICustomMechanicMenu {
+	private final KangarooJumpingArena arena;
 
 	public KangarooJumpingMenu(Arena arena) {
 		this.arena = ArenaManager.convert(arena, KangarooJumpingArena.class);
 	}
 
-	public SmartInventory openPowerUpLocationsMenu(Arena arena){
-		SmartInventory INV = SmartInventory.builder()
+	@Override
+	public void init(Player player, InventoryContents contents) {
+		contents.set(0, 0, ClickableItem.of(backItem(), e -> new ArenaMenu(arena).open(player)));
+
+		contents.set(1, 0, ClickableItem.of(new ItemBuilder(Material.POTION).name("&ePower Up Locations"),
+				e -> new KangarooJumpingSubMenu(arena).open(player)));
+	}
+
+	@RequiredArgsConstructor
+	public static class KangarooJumpingSubMenu extends InventoryProvider {
+		private final KangarooJumpingArena arena;
+
+		@Override
+		public void open(Player player, int page) {
+			SmartInventory.builder()
 				.id("powerUpLocationsMenu")
 				.maxSize()
 				.provider(new KangarooJumpingSubMenu(arena))
 				.title("Power Up Locations Menu")
-				.build();
-		return INV;
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
-		contents.set(0, 0, ClickableItem.of(backItem(), e -> Minigames.menus.openArenaMenu(player, arena)));
-
-		contents.set(1, 0, ClickableItem.of(new ItemBuilder(Material.POTION).name("&ePower Up Locations"),
-				e -> openPowerUpLocationsMenu(arena).open(player)));
-	}
-
-	public static class KangarooJumpingSubMenu extends MenuUtils implements InventoryProvider {
-		KangarooJumpingArena arena;
-
-		public KangarooJumpingSubMenu(@NonNull Arena arena) {
-			this.arena = ArenaManager.convert(arena, KangarooJumpingArena.class);
+				.build()
+				.open(player, page);
 		}
 
 		@Override
 		public void init(Player player, InventoryContents contents) {
 			KangarooJumpingMenu kangarooJumpingMenu = new KangarooJumpingMenu(arena);
 
-			addBackItem(contents, e -> Minigames.menus.openArenaMenu(player, arena));
+			addBackItem(contents, e -> new ArenaMenu(arena).open(player));
 
 			Pagination page = contents.pagination();
 
@@ -74,7 +70,7 @@ public class KangarooJumpingMenu extends MenuUtils implements InventoryProvider 
 				e -> {
 					arena.getPowerUpLocations().add(player.getLocation());
 					arena.write();
-					kangarooJumpingMenu.openPowerUpLocationsMenu(arena).open(player, page.getPage());
+					new KangarooJumpingSubMenu(arena).open(player, page.getPage());
 				}));
 
 			ItemBuilder deleteItem = new ItemBuilder(Material.TNT)
@@ -88,38 +84,32 @@ public class KangarooJumpingMenu extends MenuUtils implements InventoryProvider 
 				}
 			})));
 
-			if (arena.getPowerUpLocations() == null) return;
+			if (arena.getPowerUpLocations() == null)
+				return;
 
-			ClickableItem[] clickableItems = new ClickableItem[arena.getPowerUpLocations().size()];
-			List<Location> powerUpLocations = new ArrayList<>(arena.getPowerUpLocations());
-			for (int i = 0; i < powerUpLocations.size(); i++) {
-				Location powerUpLocation = powerUpLocations.get(i);
-				ItemBuilder item = new ItemBuilder(Material.COMPASS).name("&ePower Up #" + (i + 1))
-					.lore(getLocationLore(powerUpLocations.get(i)))
-					.lore("", "&7Click to Teleport");
+			paginator(player, contents, new ArrayList<>() {{
+				List<Location> powerUpLocations = new ArrayList<>(arena.getPowerUpLocations());
+				for (int i = 0; i < powerUpLocations.size(); i++) {
+					Location powerUpLocation = powerUpLocations.get(i);
 
-				clickableItems[i] = ClickableItem.of(item, e -> {
-					if (player.getItemOnCursor().getType().equals(Material.TNT)) {
-						Tasks.wait(2, () -> {
-							arena.getPowerUpLocations().remove(powerUpLocation);
-							arena.write();
-							player.setItemOnCursor(new ItemStack(Material.AIR));
-							kangarooJumpingMenu.openPowerUpLocationsMenu(arena).open(player, page.getPage());
-						});
-					} else {
-						player.teleportAsync(powerUpLocation);
-					}
-				});
-			}
+					ItemBuilder item = new ItemBuilder(Material.COMPASS).name("&ePower Up #" + (i + 1))
+						.lore(getLocationLore(powerUpLocation))
+						.lore("", "&7Click to Teleport");
 
-			page.setItems(clickableItems);
-			page.setItemsPerPage(36);
-			page.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 1, 0));
-
-			if (!page.isLast())
-				contents.set(0, 8, ClickableItem.of(new ItemBuilder(Material.ARROW).name("&fNext Page"), e -> kangarooJumpingMenu.openPowerUpLocationsMenu(arena).open(player, page.next().getPage())));
-			if (!page.isFirst())
-				contents.set(0, 7, ClickableItem.of(new ItemBuilder(Material.BARRIER).name("&fPrevious Page"), e -> kangarooJumpingMenu.openPowerUpLocationsMenu(arena).open(player, page.previous().getPage())));
+					add(ClickableItem.of(item, e -> {
+						if (player.getItemOnCursor().getType().equals(Material.TNT)) {
+							Tasks.wait(2, () -> {
+								arena.getPowerUpLocations().remove(powerUpLocation);
+								arena.write();
+								player.setItemOnCursor(new ItemStack(Material.AIR));
+								open(player, page.getPage());
+							});
+						} else {
+							player.teleportAsync(powerUpLocation);
+						}
+					}));
+				}
+			}}).build();
 		}
 
 	}

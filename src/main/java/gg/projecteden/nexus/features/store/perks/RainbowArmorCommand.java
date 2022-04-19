@@ -130,7 +130,7 @@ public class RainbowArmorCommand extends CustomCommand implements Listener {
 		new RainbowArmorService().get(player).stop();
 	}
 
-	private static class RainbowArmorProvider extends MenuUtils implements InventoryProvider {
+	private static class RainbowArmorProvider extends InventoryProvider {
 		private final RainbowArmorService service = new RainbowArmorService();
 
 		@Override

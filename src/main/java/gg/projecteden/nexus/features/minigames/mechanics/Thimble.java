@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
 import com.sk89q.worldedit.world.block.BlockTypes;
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -363,12 +362,7 @@ public final class Thimble extends TeamlessMechanic {
 		Match match = minigamer.getMatch();
 		if (match.isStarted()) return;
 
-		SmartInventory.builder()
-				.provider(new ThimbleMenu())
-				.title("Select Your Concrete Block")
-				.rows(2)
-				.build()
-				.open(event.getPlayer());
+		new ThimbleMenu().open(event.getPlayer());
 	}
 
 	@SuppressWarnings("deprecation")
@@ -625,8 +619,18 @@ public final class Thimble extends TeamlessMechanic {
 
 	}
 
-	class ThimbleMenu extends MenuUtils implements InventoryProvider {
+	private static class ThimbleMenu extends InventoryProvider {
 		final Material[] CONCRETE_IDS = ((Thimble) MechanicType.THIMBLE.get()).getCONCRETE_IDS();
+
+		@Override
+		public void open(Player player, int page) {
+			SmartInventory.builder()
+				.provider(this)
+				.title("Select Your Concrete Block")
+				.rows(2)
+				.build()
+				.open(player, page);
+		}
 
 		@Override
 		public void init(Player player, InventoryContents contents) {

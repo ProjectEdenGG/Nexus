@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.commands;
 
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -26,6 +25,8 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static gg.projecteden.nexus.features.menus.MenuUtils.handleException;
 
 @NoArgsConstructor
 @Permission(Group.STAFF)
@@ -63,12 +64,12 @@ public class DumpsterDivingCommand extends CustomCommand implements Listener {
 	}
 
 	@NoArgsConstructor
-	private static class DumpsterProvider extends MenuUtils implements InventoryProvider {
+	private static class DumpsterProvider extends InventoryProvider {
 		private final DumpsterService service = new DumpsterService();
 		private final Dumpster dumpster = service.get0();
 		private final String PREFIX = Commands.get(DumpsterDivingCommand.class).getPrefix();
 
-		public void open(Player player) {
+		public void open(Player player, int page) {
 			if (new DumpsterService().get0().getItems().size() == 0)
 				throw new InvalidInputException("Dumpster is empty");
 

@@ -16,7 +16,6 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.BearFair21Ta
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.clientside.ClientsideContentManager;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot;
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
@@ -769,7 +768,7 @@ public class MinigameNightIsland implements BearFair21Island {
 
 	private static final Supplier<ItemBuilder> slightlyDamagedSpeaker = () -> ItemBuilder.fromHeadId("2126").name("&cSlightly Damaged Speaker").undroppable().unplaceable();
 
-	private static class TrunkMenu extends MenuUtils implements InventoryProvider {
+	private static class TrunkMenu extends InventoryProvider {
 
 		@Override
 		public void open(Player player, int page) {
@@ -893,7 +892,7 @@ public class MinigameNightIsland implements BearFair21Island {
 
 	// Menus
 
-	public static class XboxMenu extends MenuUtils implements InventoryProvider {
+	public static class XboxMenu extends InventoryProvider {
 
 		@Override
 		public void open(Player player, int page) {
@@ -917,7 +916,7 @@ public class MinigameNightIsland implements BearFair21Island {
 
 	}
 
-	public static class LaptopMenu extends MenuUtils implements InventoryProvider {
+	public static class LaptopMenu extends InventoryProvider {
 
 		@Override
 		public void open(Player player, int page) {
@@ -943,7 +942,7 @@ public class MinigameNightIsland implements BearFair21Island {
 
 	}
 
-	public static class ScrambledCablesMenu extends MenuUtils implements InventoryProvider {
+	public static class ScrambledCablesMenu extends InventoryProvider {
 
 		@Override
 		public void open(Player player, int page) {
@@ -1052,7 +1051,7 @@ public class MinigameNightIsland implements BearFair21Island {
 
 	}
 
-	public static class RouterMenu extends MenuUtils implements InventoryProvider {
+	public static class RouterMenu extends InventoryProvider {
 
 		@Override
 		public void open(Player player, int page) {

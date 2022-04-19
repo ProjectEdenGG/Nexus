@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.store.perks;
 
 import gg.projecteden.nexus.features.custombenches.DyeStation;
 import gg.projecteden.nexus.features.custombenches.DyeStation.DyeStationMenu;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -193,7 +193,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 	}
 
 	@AllArgsConstructor
-	public abstract static class CostumeMenu extends MenuUtils implements InventoryProvider {
+	public abstract static class CostumeMenu extends InventoryProvider {
 		protected final CostumeUserService service = new CostumeUserService();
 		protected final CostumeMenu previousMenu;
 		protected final CustomModelFolder folder;
@@ -266,7 +266,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 					items.add(formatCostume(user, costume, contents));
 			}
 
-			paginator(player, contents, items);
+			paginator(player, contents, items).build();
 		}
 
 		abstract protected CostumeMenu newMenu(CostumeMenu previousMenu, CustomModelFolder subfolder);

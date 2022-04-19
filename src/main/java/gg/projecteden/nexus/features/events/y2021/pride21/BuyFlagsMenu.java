@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.events.y2021.pride21;
 
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -26,9 +25,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static gg.projecteden.nexus.features.menus.MenuUtils.getRows;
 import static gg.projecteden.nexus.utils.StringUtils.plural;
 
-public class BuyFlagsMenu extends MenuUtils implements InventoryProvider {
+public class BuyFlagsMenu extends InventoryProvider {
 	private static final Pride21UserService service = new Pride21UserService();
 	private static final EventUserService eventService = new EventUserService();
 	private static final int COST = 10;
