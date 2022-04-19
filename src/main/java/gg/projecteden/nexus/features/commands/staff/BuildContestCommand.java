@@ -155,11 +155,13 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 	@Path("setup item <theme...>")
 	@Permission(Group.ADMIN)
 	void item(String theme) {
-		ItemStack item = getToolRequired();
-		item.setAmount(1);
-		ItemBuilder.setName(item, "&6&lBuild Contest");
-		ItemBuilder.addLore(item, "&e&lJoin our latest build contest!");
-		ItemBuilder.addLore(item, "&e&lTheme: &6&l" + theme);
+		ItemStack item = new ItemBuilder(getToolRequired(), true)
+			.amount(1)
+			.name("&6&lBuild Contest")
+			.lore("&e&lJoin our latest build contest!")
+			.lore("&e&lTheme: &6&l" + theme)
+			.build();
+
 		buildContest.setItemStack(item);
 		buildContest.setTheme(theme);
 		save();

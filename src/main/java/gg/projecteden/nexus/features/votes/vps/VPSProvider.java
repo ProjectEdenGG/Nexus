@@ -49,12 +49,12 @@ public class VPSProvider extends MenuUtils implements InventoryProvider {
 		contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.BOOK).name("&3You have &e" + voter.getPoints() + " &3vote points").build()));
 
 		page.getItems().forEach((slot, item) -> {
-			ItemStack display = item.getDisplay().clone();
+			ItemBuilder display = new ItemBuilder(item.getDisplay());
 			if (item.getPrice() > 0)
 				if (voter.getPoints() >= item.getPrice())
-					ItemBuilder.addLore(display, "", "&6Price: &e" + item.getPrice());
+					display.lore("", "&6Price: &e" + item.getPrice());
 				else
-					ItemBuilder.addLore(display, "", "&6Price: &c" + item.getPrice());
+					display.lore("", "&6Price: &c" + item.getPrice());
 
 			contents.set(slot, ClickableItem.of(display, e -> {
 				if (voter.getPoints() < item.getPrice()) {

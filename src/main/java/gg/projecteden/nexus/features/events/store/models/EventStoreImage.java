@@ -70,8 +70,10 @@ public class EventStoreImage {
 					if (map.getItemMeta().hasLore()) {
 						String[] split = map.getItemMeta().getDisplayName().split("-");
 						String name = String.join("-", Arrays.copyOfRange(split, 1, split.length));
-						ItemBuilder.setName(map, "&6" + id + " &8-" + name);
-						ItemBuilder.removeLoreLine(map, 1);
+						new ItemBuilder(map, true)
+							.name("&6" + id + " &8-" + name)
+							.loreRemove(1)
+							.build();
 					}
 
 					IMAGES.put(id, new EventStoreImage(id, map));
