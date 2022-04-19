@@ -42,7 +42,7 @@ public class TeamVisibilityMenu extends MenuUtils implements InventoryProvider {
 			ItemStack item = nameItem(getIcon(visibility), "&e"+camelCase(visibility));
 			if (team.getNameTagVisibility() == visibility)
 				addGlowing(item);
-			contents.set(1, column, ClickableItem.from(item, e -> {
+			contents.set(1, column, ClickableItem.of(item, e -> {
 				team.setNameTagVisibility(visibility);
 				arena.write();
 				teamMenus.openTeamsVisibilityMenu(player, arena, team);

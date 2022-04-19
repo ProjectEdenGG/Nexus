@@ -30,15 +30,13 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
-
 @NoArgsConstructor
 @Getter
 public class ResultsScreen extends AbstractVoteScreen {
 	private final SmartInventory inventory = SmartInventory.builder()
 			.provider(this)
-			.title(colorize("&3Voting Results"))
-			.size(6, 9)
+			.title("&3Voting Results")
+			.maxSize()
 			.closeable(false)
 			.build();
 

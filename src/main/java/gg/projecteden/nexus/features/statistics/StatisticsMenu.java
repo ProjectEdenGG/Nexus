@@ -25,7 +25,7 @@ public class StatisticsMenu {
 	public static void open(Player player, StatsMenus menu, int page, OfflinePlayer targetPlayer) {
 		SmartInventory.builder()
 				.provider(new StatisticsMenuProvider(menu, targetPlayer))
-				.size(menu.getSize(), 9)
+				.rows(menu.getSize())
 				.title(StringUtils.colorize(Nickname.of(targetPlayer) + "'s Statistics - " + StringUtils.camelCase(menu.name())))
 				.build().open(player, page);
 	}
@@ -33,7 +33,7 @@ public class StatisticsMenu {
 	public static void open(Player player, StatsMenus menu, OfflinePlayer targetPlayer, int startIndex) {
 		SmartInventory.builder()
 				.provider(new StatisticsMenuProvider(menu, targetPlayer, startIndex))
-				.size(menu.getSize(), 9)
+				.rows(menu.getSize())
 				.title(StringUtils.colorize(Nickname.of(targetPlayer) + "'s Statistics - " + StringUtils.camelCase(menu.name())))
 				.build().open(player);
 	}

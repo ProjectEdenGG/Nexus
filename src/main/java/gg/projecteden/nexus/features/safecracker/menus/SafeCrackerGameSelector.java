@@ -27,7 +27,7 @@ public class SafeCrackerGameSelector extends MenuUtils implements InventoryProvi
 	public void init(Player player, InventoryContents contents) {
 		addBackItem(contents, e -> SafeCrackerInventories.openAdminMenu(player));
 
-		contents.set(0, 4, ClickableItem.from(new ItemBuilder(Material.EMERALD_BLOCK).name("&aNew Event").build(), e -> {
+		contents.set(0, 4, ClickableItem.of(new ItemBuilder(Material.EMERALD_BLOCK).name("&aNew Event").build(), e -> {
 			openAnvilMenu(player, "New Game...", (player1, response) -> {
 				service.getActiveEvent().setActive(false);
 				service.get0().getGames().put(response, new SafeCrackerEvent.SafeCrackerGame(response, true, LocalDateTime.now(), "", "", new HashMap<>()));
@@ -43,7 +43,7 @@ public class SafeCrackerGameSelector extends MenuUtils implements InventoryProvi
 		for (SafeCrackerEvent.SafeCrackerGame game : event.getGames().values()) {
 			ItemStack item = new ItemBuilder(game.isActive() ? Material.ENCHANTED_BOOK : Material.BOOK).name("&e" + game.getName())
 					.lore("&7Click to set me as").lore("&7the active game").build();
-			contents.set(row, column, ClickableItem.from(item, e -> {
+			contents.set(row, column, ClickableItem.of(item, e -> {
 				service.setActiveGame(game);
 				SafeCrackerInventories.openGameSelectorMenu(player);
 			}));

@@ -1,10 +1,10 @@
 package gg.projecteden.nexus.features.wither;
 
+import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.wither.models.WitherFight;
 import gg.projecteden.nexus.models.witherarena.WitherArenaConfigService;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -21,7 +21,7 @@ public class DifficultySelectionMenu extends MenuUtils implements InventoryProvi
 	@Override
 	public void open(Player player) {
 		SmartInventory.builder()
-			.size(3, 9)
+			.rows(3)
 			.provider(this)
 			.title("Select Difficulty")
 			.build()
@@ -34,7 +34,7 @@ public class DifficultySelectionMenu extends MenuUtils implements InventoryProvi
 		int column = 1;
 		for (WitherChallenge.Difficulty difficulty : WitherChallenge.Difficulty.values()) {
 			ItemStack item = new ItemBuilder(difficulty.getMenuMaterial()).name(difficulty.getTitle()).lore(difficulty.getDescription()).build();
-			contents.set(row, column, ClickableItem.from(item, e -> {
+			contents.set(row, column, ClickableItem.of(item, e -> {
 				WitherFight fight;
 				try {
 					fight = difficulty.getWitherFightClass().getConstructor().newInstance();

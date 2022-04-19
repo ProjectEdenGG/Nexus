@@ -9,7 +9,6 @@ import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Material;
@@ -24,9 +23,9 @@ public class ArcadeMachineMenu extends MenuUtils implements InventoryProvider, L
 
 	public SmartInventory getInv(ItemStack[] items) {
 		return SmartInventory.builder()
-				.title(StringUtils.colorize("&3Arcade Machine"))
+				.title("&3Arcade Machine")
 				.provider(new ArcadeMachineMenu(items))
-				.size(5, 9)
+				.rows(5)
 				.closeable(false)
 				.build();
 	}
@@ -56,7 +55,7 @@ public class ArcadeMachineMenu extends MenuUtils implements InventoryProvider, L
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
-		contents.set(40, ClickableItem.from(closeItem(), e -> {
+		contents.set(40, ClickableItem.of(closeItem(), e -> {
 			for (int i : openSlots) {
 				if (!contents.get(i).get().getItem().getType().equals(Material.LIGHT_GRAY_STAINED_GLASS_PANE))
 					PlayerUtils.giveItem(player, contents.get(i).get().getItem());
@@ -68,7 +67,7 @@ public class ArcadeMachineMenu extends MenuUtils implements InventoryProvider, L
 		for (int i : blackSlots)
 			contents.set(i, ClickableItem.empty(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).name(" ").build()));
 
-		contents.set(36, ClickableItem.from(new ItemBuilder(Material.STONE_BUTTON).name("Power Button").build(), e -> {
+		contents.set(36, ClickableItem.of(new ItemBuilder(Material.STONE_BUTTON).name("Power Button").build(), e -> {
 			process(contents);
 			boolean complete = true;
 			for (int i = 0; i < openSlots.length; i++) {
@@ -92,7 +91,7 @@ public class ArcadeMachineMenu extends MenuUtils implements InventoryProvider, L
 				for (int j : wireGroups[i])
 					contents.set(j, ClickableItem.empty(new ItemBuilder(Material.YELLOW_STAINED_GLASS_PANE).name(" ").build()));
 			}
-			contents.set(openSlots[i], ClickableItem.from(item, e -> {
+			contents.set(openSlots[i], ClickableItem.of(item, e -> {
 				if (e.getItem().getType().equals(Material.LIGHT_GRAY_STAINED_GLASS_PANE)) {
 					if (isNullOrAir(player.getItemOnCursor())) return;
 					contents.set(e.getSlot(), ClickableItem.empty(player.getItemOnCursor()));

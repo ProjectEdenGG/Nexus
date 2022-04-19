@@ -19,7 +19,7 @@ public class LightsTask extends AbstractTaskMenu {
 	@Getter
 	private final SmartInventory inventory = SmartInventory.builder()
 			.title("")
-			.size(3, 9)
+			.rows(3)
 			.provider(this)
 			.build();
 
@@ -42,7 +42,7 @@ public class LightsTask extends AbstractTaskMenu {
 			int index = 0;
 			for (boolean swtch : data.getSwitches()) {
 				final int thisIndex = index;
-				contents.set(1, (index * 2) - 1, ClickableItem.from(new ItemBuilder(swtch ? Material.LIME_CONCRETE : Material.GREEN_TERRACOTTA).name(swtch ? "&aON" : "&2OFF").build(), $ -> {
+				contents.set(1, (index * 2) - 1, ClickableItem.of(new ItemBuilder(swtch ? Material.LIME_CONCRETE : Material.GREEN_TERRACOTTA).name(swtch ? "&aON" : "&2OFF").build(), $ -> {
 					if (data.toggle(thisIndex))
 						matchData.endSabotage();
 				}));

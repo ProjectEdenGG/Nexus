@@ -95,7 +95,7 @@ public class TrophyCommand extends CustomCommand {
 			SmartInventory.builder()
 					.provider(this)
 					.title("Trophies")
-					.size(6, 9)
+					.maxSize()
 					.build()
 					.open(player, page);
 		}
@@ -126,7 +126,7 @@ public class TrophyCommand extends CustomCommand {
 						continue;
 
 					ItemBuilder item = Trophy.getDisplayItem(holder, event).name(StringUtils.camelCase(event));
-					items.add(ClickableItem.from(item.build(), e -> new TrophyMenu(event, this).open(player)));
+					items.add(ClickableItem.of(item.build(), e -> new TrophyMenu(event, this).open(player)));
 				}
 			} else {
 				for (Trophy trophy : Trophy.getEarnedTrophies(holder, event)) {
@@ -136,7 +136,7 @@ public class TrophyCommand extends CustomCommand {
 						items.add(ClickableItem.empty(item.build()));
 					} else {
 						item.lore("", "&eClick to receive a copy");
-						items.add(ClickableItem.from(item.build(), e -> {
+						items.add(ClickableItem.of(item.build(), e -> {
 							try {
 								holder.claim(trophy);
 								service.save(holder);

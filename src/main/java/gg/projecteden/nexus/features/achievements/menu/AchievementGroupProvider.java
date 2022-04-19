@@ -27,7 +27,7 @@ public class AchievementGroupProvider implements InventoryProvider {
 
 		SmartInventory inv = SmartInventory.builder()
 				.provider(new AchievementProvider(player, group))
-				.size((int) (Math.ceil(achievements.size() / 9) + 2), 9)
+				.rows((int) (Math.ceil(achievements.size() / 9) + 2))
 				.title(group.toString())
 				.build();
 
@@ -37,7 +37,7 @@ public class AchievementGroupProvider implements InventoryProvider {
 	@Override
 	public void init(Player player, InventoryContents contents) {
 		contents.fillRow(0, ClickableItem.empty(new ItemStack(Material.AIR)));
-		contents.set(0, 0, ClickableItem.from(new ItemStack(Material.BARRIER), e -> contents.inventory().close(player)));
+		contents.set(0, 0, ClickableItem.of(new ItemStack(Material.BARRIER), e -> contents.inventory().close(player)));
 
 		for (AchievementGroup group : AchievementGroup.values()) {
 			ItemStack itemStack = group.getItemStack();

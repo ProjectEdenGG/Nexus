@@ -11,7 +11,6 @@ import gg.projecteden.nexus.models.home.Home;
 import gg.projecteden.nexus.models.home.HomeOwner;
 import gg.projecteden.nexus.models.home.HomeService;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.Player;
@@ -35,8 +34,8 @@ public class SetHomeProvider extends MenuUtils implements InventoryProvider {
 	public void open(Player player, int page) {
 		SmartInventory.builder()
 				.provider(this)
-				.size(5, 9)
-				.title(StringUtils.colorize("&3Set a new home"))
+				.rows(5)
+				.title("&3Set a new home")
 				.build()
 				.open(homeOwner.getOnlinePlayer(), page);
 	}
@@ -48,7 +47,7 @@ public class SetHomeProvider extends MenuUtils implements InventoryProvider {
 		contents.set(0, 8, ClickableItem.empty(nameItem(Material.BOOK, "&eInfo", "&fChoose one of the pre-set homes to " +
 				"automatically set the display item, or set your own home, and manually set the display item later")));
 
-		contents.set(3, 4, ClickableItem.from(nameItem(
+		contents.set(3, 4, ClickableItem.of(nameItem(
 				Material.NAME_TAG,
 				"&eCustom name",
 				"&fNone of these names fit?||&fNo worries, you can still name it anything you'd like!"
@@ -77,7 +76,7 @@ public class SetHomeProvider extends MenuUtils implements InventoryProvider {
 
 		AtomicInteger column = new AtomicInteger(1);
 		options.forEach((name, item) ->
-				contents.set(1, column.getAndIncrement(), ClickableItem.from(nameItem(item, "&e" + camelCase(name)), e -> {
+				contents.set(1, column.getAndIncrement(), ClickableItem.of(nameItem(item, "&e" + camelCase(name)), e -> {
 					try {
 						HomesMenu.edit(addHome(name, item));
 					} catch (Exception ex) {

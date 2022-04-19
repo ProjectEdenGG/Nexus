@@ -36,7 +36,7 @@ public class ParticleColorMenuProvider extends MenuUtils implements InventoryPro
 	public void open(Player player, int page) {
 		SmartInventory.builder()
 				.title("Set RGB Color")
-				.size(5, 9)
+				.rows(5)
 				.provider(this)
 				.build()
 				.open(player);
@@ -94,7 +94,7 @@ public class ParticleColorMenuProvider extends MenuUtils implements InventoryPro
 
 		for (ColorItem colorItem : ColorItem.values()) {
 			String name = colorItem.getColorType().getChatColor() + StringUtils.camelCase(colorItem.name().replace("_", " "));
-			contents.set(colorItem.getColumn(), colorItem.getRow(), ClickableItem.from(
+			contents.set(colorItem.getColumn(), colorItem.getRow(), ClickableItem.of(
 					new ItemBuilder(colorItem.getColorType().getDye()).name(name).build(),
 					e -> {
 						owner.getSettings(type).put(setting, colorItem.getColorType().getBukkitColor());
@@ -109,7 +109,7 @@ public class ParticleColorMenuProvider extends MenuUtils implements InventoryPro
 			for (int j = 0; j < 3; j++) {
 				AtomicInteger dye = new AtomicInteger(i);
 				AtomicInteger index = new AtomicInteger(j);
-				contents.set(i + 1, slots[j], ClickableItem.from(new ItemBuilder(RGB.values()[i].getColorType().getDye())
+				contents.set(i + 1, slots[j], ClickableItem.of(new ItemBuilder(RGB.values()[i].getColorType().getDye())
 								.amount(amount[index.get()])
 								.name("+/- " + amount[j])
 								.build(),

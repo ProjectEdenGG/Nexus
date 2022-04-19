@@ -17,7 +17,7 @@ public class DivertPower2Task extends AbstractTaskMenu {
 
 	@Getter
 	private final SmartInventory inventory = SmartInventory.builder()
-		.size(3, 9)
+		.rows(3)
 		.title("Divert Power")
 		.provider(this)
 		.listener(handleInvClose)
@@ -25,7 +25,7 @@ public class DivertPower2Task extends AbstractTaskMenu {
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
-		contents.set(1, 4, ClickableItem.from(new ItemBuilder(Material.ORANGE_CONCRETE).name(" ").build(), $ -> {
+		contents.set(1, 4, ClickableItem.of(new ItemBuilder(Material.ORANGE_CONCRETE).name(" ").build(), $ -> {
 			contents.set(1, 4, ClickableItem.empty(new ItemBuilder(Material.YELLOW_CONCRETE).name(" ").build()));
 			task.partCompleted(player);
 			scheduleInvClose(player);

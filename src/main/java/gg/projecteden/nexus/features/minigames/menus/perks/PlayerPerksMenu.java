@@ -27,7 +27,7 @@ public class PlayerPerksMenu extends CommonPerksMenu implements InventoryProvide
 		SmartInventory.builder()
 				.provider(this)
 				.title("Your Collectibles")
-				.size(Math.max(3, getRows(perkOwner.getPurchasedPerkTypesByCategory(category).size(), 1)), 9)
+				.rows(Math.max(3, getRows(perkOwner.getPurchasedPerkTypesByCategory(category).size(), 1)))
 				.build()
 				.open(player, page);
 	}
@@ -59,7 +59,7 @@ public class PlayerPerksMenu extends CommonPerksMenu implements InventoryProvide
 			if (enabled)
 				addGlowing(item);
 
-			clickableItems.add(ClickableItem.from(item, e -> toggleBoolean(player, perkType, contents)));
+			clickableItems.add(ClickableItem.of(item, e -> toggleBoolean(player, perkType, contents)));
 		});
 		paginator(player, contents, clickableItems);
 	}

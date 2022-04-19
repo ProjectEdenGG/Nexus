@@ -86,7 +86,7 @@ public class CouponCommand extends CustomCommand implements Listener {
 				SmartInventory.builder()
 						.title("Select McMMO Skill")
 						.provider(new McMMOLevelCouponProvider(amount))
-						.size(6, 9)
+						.maxSize()
 						.build().open(event.getPlayer());
 			}
 		},
@@ -308,7 +308,7 @@ public class CouponCommand extends CustomCommand implements Listener {
 					.lore("&3Level: &e" + mcmmoPlayer.getSkillLevel(PrimarySkillType.valueOf(skill.name())))
 					.build();
 
-				contents.set(skill.getRow(), skill.getColumn(), ClickableItem.from(item, e -> {
+				contents.set(skill.getRow(), skill.getColumn(), ClickableItem.of(item, e -> {
 					int mcMMOLevel = mcmmoPlayer.getSkillLevel(PrimarySkillType.valueOf(skill.name()));
 					if (mcMMOLevel >= MAX_LEVEL)
 						return;

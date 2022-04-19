@@ -41,7 +41,7 @@ public class TeamColorMenu extends MenuUtils implements InventoryProvider {
 			if (colorType.getChatColor() == team.getChatColor())
 				addGlowing(item);
 
-			contents.set(row, column, ClickableItem.from(item, e -> {
+			contents.set(row, column, ClickableItem.of(item, e -> {
 				team.setChatColor(colorType.getChatColor());
 				arena.write();
 				teamMenus.openTeamsColorMenu(player, arena, team);

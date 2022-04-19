@@ -40,14 +40,14 @@ public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
 	public void init(Player player, InventoryContents contents) {
 		addBackItem(contents, e -> teamMenus.openTeamsMenu(player, arena));
 
-		contents.set(0, 8, ClickableItem.from(nameItem(
+		contents.set(0, 8, ClickableItem.of(nameItem(
 				Material.TNT,
 				"&c&lDelete Team",
 				"&7You will need to confirm||&7deleting a team.|| ||&7&lTHIS CANNOT BE UNDONE."
 			),
 			e -> teamMenus.openDeleteTeamMenu(player, arena, team)));
 
-		contents.set(1, 0, ClickableItem.from(nameItem(
+		contents.set(1, 0, ClickableItem.of(nameItem(
 				Material.BOOK,
 				"&eTeam Name",
 				"||&3Current Name:||&e" + team.getName()
@@ -59,7 +59,7 @@ public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
 				return AnvilGUI.Response.text(text);
 			})));
 
-		contents.set(1, 2, ClickableItem.from(nameItem(
+		contents.set(1, 2, ClickableItem.of(nameItem(
 				Material.OAK_SIGN,
 				"&eTeam Objective",
 				"||&3Current Objective:||&e" + team.getObjective()
@@ -71,21 +71,21 @@ public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
 				return AnvilGUI.Response.text(text);
 			})));
 
-		contents.set(1, 4, ClickableItem.from(nameItem(
+		contents.set(1, 4, ClickableItem.of(nameItem(
 				ColorType.of(team.getChatColor()).getWool(),
 				"&eTeam Color",
 				"&7Set the color of the team"
 			),
 			e -> teamMenus.openTeamsColorMenu(player, arena, team)));
 
-		contents.set(1, 6, ClickableItem.from(nameItem(
+		contents.set(1, 6, ClickableItem.of(nameItem(
 				Material.COMPASS,
 				"&eSpawnpoint Locations",
 				"&7Set locations the players||&7on the team can spawn."
 			),
 			e -> teamMenus.openSpawnpointMenu(arena, team).open(player)));
 
-		contents.set(1, 8, ClickableItem.from(nameItem(
+		contents.set(1, 8, ClickableItem.of(nameItem(
 				Material.HEAVY_WEIGHTED_PRESSURE_PLATE,
 				"&eBalance Percentage",
 				"&7Set to -1 to disable||&7team balancing.|| ||&3Current Percentage:||&e" + team.getBalancePercentage()
@@ -102,7 +102,7 @@ public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
 				}
 			})));
 
-		contents.set(2, 0, ClickableItem.from(nameItem(
+		contents.set(2, 0, ClickableItem.of(nameItem(
 				Material.RED_TULIP,
 				"&eLives",
 				"&7Set to 0 to disable||&7lives.|| ||&3Current Value:||&e" + team.getLives()
@@ -119,7 +119,7 @@ public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
 					}
 				})));
 
-		contents.set(2, 2, ClickableItem.from(nameItem(
+		contents.set(2, 2, ClickableItem.of(nameItem(
 				Material.SKELETON_SKULL,
 				"&eMinimum Players",
 				"&7Set to 0 to disable||&7minimum players.|| ||&3Current Value:||&e" + team.getMinPlayers()
@@ -136,13 +136,13 @@ public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
 					}
 				})));
 
-		contents.set(2, 4, ClickableItem.from(nameItem(
+		contents.set(2, 4, ClickableItem.of(nameItem(
 					Material.CHEST,
 					"&eLoadout"
 				),
 				e -> teamMenus.openLoadoutMenu(player, arena, team)));
 
-		contents.set(2, 6, ClickableItem.from(nameItem(
+		contents.set(2, 6, ClickableItem.of(nameItem(
 				Material.PLAYER_HEAD,
 				"&eMaximum Players",
 				"&7Set to -1 to disable||&7maximum players.|| ||&3Current Value:||&e" + team.getMaxPlayers()
@@ -159,7 +159,7 @@ public class TeamEditorMenu extends MenuUtils implements InventoryProvider {
 					}
 				})));
 
-		contents.set(2, 8, ClickableItem.from(nameItem(
+		contents.set(2, 8, ClickableItem.of(nameItem(
 				Material.GLASS,
 				"&eVisibility",
 				"&7Sets the visibility of||&7the team's name tags|| ||&3Current Value:||&e" + camelCase(team.getNameTagVisibility())

@@ -35,9 +35,9 @@ public class GrabAJumbuckMenu extends MenuUtils implements InventoryProvider {
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
-		contents.set(0, 0, ClickableItem.from(backItem(), e -> menus.openArenaMenu(player, arena)));
+		contents.set(0, 0, ClickableItem.of(backItem(), e -> menus.openArenaMenu(player, arena)));
 
-		contents.set(2, 8, ClickableItem.from(nameItem(
+		contents.set(2, 8, ClickableItem.of(nameItem(
 				Material.ITEM_FRAME,
 				"&eAdd Item",
 				"&3Click me with an item||&3in your hand to add it."
@@ -59,7 +59,7 @@ public class GrabAJumbuckMenu extends MenuUtils implements InventoryProvider {
 		Collections.sort(sortedList);
 		int column = 0;
 		for (int i = 0; i < sortedList.size(); i++) {
-			contents.set(1, column, ClickableItem.from(nameItem(new ItemStack(sortedList.get(i)),
+			contents.set(1, column, ClickableItem.of(nameItem(new ItemStack(sortedList.get(i)),
 					"&e" + sortedList.get(i).name(),
 					"&3Click me to remove this||&3material from the list."
 					),

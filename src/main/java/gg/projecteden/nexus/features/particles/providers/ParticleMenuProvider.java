@@ -19,7 +19,7 @@ public class ParticleMenuProvider extends MenuUtils implements InventoryProvider
 	public void open(Player player, int page) {
 		SmartInventory.builder()
 				.title("Particles")
-				.size(6, 9)
+				.maxSize()
 				.provider(this)
 				.build()
 				.open(player);
@@ -31,7 +31,7 @@ public class ParticleMenuProvider extends MenuUtils implements InventoryProvider
 
 		addCloseItem(contents);
 
-		contents.set(0, 8, ClickableItem.from(nameItem(Material.TNT, "&cStop All Effects"), e -> {
+		contents.set(0, 8, ClickableItem.of(nameItem(Material.TNT, "&cStop All Effects"), e -> {
 			owner.cancel();
 			owner.getActiveParticles().clear();
 			new ParticleService().save(owner);
@@ -51,7 +51,7 @@ public class ParticleMenuProvider extends MenuUtils implements InventoryProvider
 			if (active)
 				addGlowing(item);
 
-			contents.set(row, column, ClickableItem.from(item, e -> {
+			contents.set(row, column, ClickableItem.of(item, e -> {
 				if (isLeftClick(e)) {
 					if (active)
 						owner.cancel(type);

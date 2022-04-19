@@ -1,11 +1,11 @@
 package gg.projecteden.nexus.features.trust.providers;
 
+import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.trust.TrustFeature;
 import gg.projecteden.nexus.framework.features.Features;
 import gg.projecteden.nexus.models.nerd.Rank;
@@ -51,7 +51,7 @@ public class TrustProvider extends MenuUtils implements InventoryProvider {
 		int rows = (int) Math.min(6, Math.ceil(trust.getAll().size() / 9) + 3);
 		SmartInventory.builder()
 				.provider(provider == null ? new TrustProvider(trust, back) : provider)
-				.size(rows, 9)
+				.rows(rows)
 				.title("Trusts")
 				.build()
 				.open(player, page);
@@ -96,14 +96,14 @@ public class TrustProvider extends MenuUtils implements InventoryProvider {
 
 					builder.lore("").lore("&fClick to edit");
 
-					items.add(ClickableItem.from(builder.build(), e ->
+					items.add(ClickableItem.of(builder.build(), e ->
 						TrustPlayerProvider.open(player, _player)));
 				});
 
 		paginator(player, contents, items);
 
 		ItemBuilder add = new ItemBuilder(Material.LIME_CONCRETE_POWDER).name("&aAdd Trust");
-		contents.set(0, 8, ClickableItem.from(add.build(), e ->
+		contents.set(0, 8, ClickableItem.of(add.build(), e ->
 				Nexus.getSignMenuFactory().lines("", ARROWS, "Enter a", "player's name")
 						.prefix(Features.get(TrustFeature.class).getPrefix())
 						.response(lines -> {
@@ -127,7 +127,7 @@ public class TrustProvider extends MenuUtils implements InventoryProvider {
 				.lore("&7⬇ " + (next == null ? "All" : next.camelCase()));
 
 		Trust.Type finalNext = next;
-		contents.set(contents.inventory().getRows() - 1, 4, ClickableItem.from(item.build(), e -> {
+		contents.set(contents.inventory().getRows() - 1, 4, ClickableItem.of(item.build(), e -> {
 			filterType.set(finalNext);
 			refresh();
 		}));

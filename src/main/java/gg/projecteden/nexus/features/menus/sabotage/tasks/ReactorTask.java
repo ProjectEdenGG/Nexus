@@ -21,7 +21,7 @@ public class ReactorTask extends AbstractTaskMenu {
 	private final SmartInventory inventory = SmartInventory.builder()
 			.title(TITLE)
 			.provider(this)
-			.size(3, 9)
+			.rows(3)
 			.build();
 
 	@Override

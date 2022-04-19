@@ -33,7 +33,7 @@ public class LobbyMenu extends MenuUtils implements InventoryProvider {
 	public void init(Player player, InventoryContents contents) {
 		addBackItem(contents, e -> menus.openArenaMenu(player, arena));
 
-		contents.set(1, 2, ClickableItem.from(nameItem(
+		contents.set(1, 2, ClickableItem.of(nameItem(
 				Material.OAK_DOOR,
 				"&eLobby Location",
 				"&3Current Lobby Location:" + "||" + getLocationLore(arena.getLobby().getLocation()) + "|| ||&eClick to set to current location"
@@ -44,7 +44,7 @@ public class LobbyMenu extends MenuUtils implements InventoryProvider {
 				menus.openLobbyMenu(player, arena);
 			}));
 
-		contents.set(1, 6, ClickableItem.from(nameItem(
+		contents.set(1, 6, ClickableItem.of(nameItem(
 				Material.CLOCK,
 				"&eWait Time",
 				"&3Current Wait Time:||&e" + arena.getLobby().getWaitTime()

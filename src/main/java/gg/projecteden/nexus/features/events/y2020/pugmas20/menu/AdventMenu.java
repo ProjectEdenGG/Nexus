@@ -57,7 +57,7 @@ public class AdventMenu {
 	public static void openAdvent(Player player, LocalDate date) {
 		SmartInventory.builder()
 				.title("Advent")
-				.size(6, 9)
+				.maxSize()
 				.provider(new AdventProvider(date))
 				.build()
 				.open(player);

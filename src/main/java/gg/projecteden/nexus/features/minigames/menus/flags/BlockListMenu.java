@@ -33,9 +33,9 @@ public class BlockListMenu extends MenuUtils implements InventoryProvider {
 	public void init(Player player, InventoryContents contents) {
 		Pagination page = contents.pagination();
 
-		contents.set(0, 0, ClickableItem.from(backItem(), e -> menus.openArenaMenu(player, arena)));
+		contents.set(0, 0, ClickableItem.of(backItem(), e -> menus.openArenaMenu(player, arena)));
 
-		contents.set(5, 8, ClickableItem.from(nameItem(
+		contents.set(5, 8, ClickableItem.of(nameItem(
 				Material.ITEM_FRAME,
 				"&eAdd Item",
 				"&3Click me with an item||&3in your hand to add it."
@@ -50,7 +50,7 @@ public class BlockListMenu extends MenuUtils implements InventoryProvider {
 		));
 
 		if (arena.isWhitelist()) {
-			contents.set(5, 7, ClickableItem.from(nameItem(
+			contents.set(5, 7, ClickableItem.of(nameItem(
 					Material.WHITE_DYE,
 					"&eWhitelisted",
 					"&3Click to set the block||&3list mode to &eblacklist."
@@ -62,7 +62,7 @@ public class BlockListMenu extends MenuUtils implements InventoryProvider {
 				}
 			));
 		} else {
-			contents.set(5, 7, ClickableItem.from(nameItem(
+			contents.set(5, 7, ClickableItem.of(nameItem(
 					Material.BLACK_DYE,
 					"&eBlacklisted",
 					"&3Click to set the block||&3list mode to &ewhitelist."
@@ -83,7 +83,7 @@ public class BlockListMenu extends MenuUtils implements InventoryProvider {
 
 		ClickableItem[] clickableItems = new ClickableItem[arena.getBlockList().size()];
 		for (int i = 0; i < clickableItems.length; i++) {
-			clickableItems[i] = ClickableItem.from(nameItem(
+			clickableItems[i] = ClickableItem.of(nameItem(
 					new ItemStack(sortedList.get(i)),
 					"&e" + sortedList.get(i).name(),
 					"&3Click me to remove this||&3material from the list."
@@ -100,10 +100,10 @@ public class BlockListMenu extends MenuUtils implements InventoryProvider {
 		page.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 1, 0));
 
 		if (!page.isLast())
-			contents.set(0, 8, ClickableItem.from(new ItemStack(nameItem(Material.ARROW, "&fNext Page")),
+			contents.set(0, 8, ClickableItem.of(new ItemStack(nameItem(Material.ARROW, "&fNext Page")),
 					e -> menus.blockListMenu(arena).open(player, page.next().getPage())));
 		if (!page.isFirst())
-			contents.set(0, 7, ClickableItem.from(new ItemStack(nameItem(Material.BARRIER, "&fPrevious Page")),
+			contents.set(0, 7, ClickableItem.of(new ItemStack(nameItem(Material.BARRIER, "&fPrevious Page")),
 					e -> menus.blockListMenu(arena).open(player, page.previous().getPage())));
 
 	}

@@ -22,10 +22,10 @@ public class FlagsMenu extends MenuUtils implements InventoryProvider {
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
-		contents.set(0, 0, ClickableItem.from(backItem(), e -> menus.openArenaMenu(player, arena)));
+		contents.set(0, 0, ClickableItem.of(backItem(), e -> menus.openArenaMenu(player, arena)));
 
 		ColorType color = arena.isWhitelist() ? ColorType.WHITE : ColorType.BLACK;
-		contents.set(1, 0, ClickableItem.from(nameItem(color.getWool(), "&eUsable Block List",
+		contents.set(1, 0, ClickableItem.of(nameItem(color.getWool(), "&eUsable Block List",
 				"&7Click me to set the block list||&7that players can use|| ||&3Current Setting: &e" + color), e -> {
 			menus.blockListMenu(arena).open(player);
 		}));
@@ -35,7 +35,7 @@ public class FlagsMenu extends MenuUtils implements InventoryProvider {
 		if (arena.canJoinLate())
 			addGlowing(lateJoinItem);
 
-		contents.set(1, 1, ClickableItem.from(lateJoinItem, e -> {
+		contents.set(1, 1, ClickableItem.of(lateJoinItem, e -> {
 			arena.canJoinLate(!arena.canJoinLate());
 			arena.write();
 			menus.openFlagsMenu(player, arena);

@@ -17,38 +17,19 @@
 package gg.projecteden.nexus.features.menus.api;
 
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 
+@Data
+@AllArgsConstructor
 public class ItemClickData {
 
 	private final Event event;
 	private final Player player;
 	private final ItemStack item;
 	private final SlotPos slot;
-
-	public ItemClickData(Event event, Player player, ItemStack item, SlotPos slot) {
-		this.event = event;
-		this.player = player;
-		this.item = item;
-		this.slot = slot;
-	}
-
-	public Event getEvent() {
-		return event;
-	}
-
-	public Player getPlayer() {
-		return player;
-	}
-
-	public ItemStack getItem() {
-		return item;
-	}
-
-	public SlotPos getSlot() {
-		return slot;
-	}
 
 }

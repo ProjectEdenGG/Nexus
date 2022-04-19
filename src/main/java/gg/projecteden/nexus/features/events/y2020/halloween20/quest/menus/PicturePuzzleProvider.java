@@ -29,7 +29,7 @@ public class PicturePuzzleProvider extends MenuUtils implements InventoryProvide
 	}
 
 	public void setYellow(SlotPos pos, InventoryContents contents, Player player) {
-		contents.set(pos, ClickableItem.from(new ItemBuilder(Material.YELLOW_WOOL).name(" ").build(), e -> {
+		contents.set(pos, ClickableItem.of(new ItemBuilder(Material.YELLOW_WOOL).name(" ").build(), e -> {
 			setLime(pos, contents, player);
 			if (parse(contents))
 				complete(player);
@@ -37,7 +37,7 @@ public class PicturePuzzleProvider extends MenuUtils implements InventoryProvide
 	}
 
 	public void setLime(SlotPos pos, InventoryContents contents, Player player) {
-		contents.set(pos, ClickableItem.from(new ItemBuilder(Material.LIME_WOOL).name(" ").build(), e -> {
+		contents.set(pos, ClickableItem.of(new ItemBuilder(Material.LIME_WOOL).name(" ").build(), e -> {
 			setYellow(pos, contents, player);
 			if (parse(contents))
 				complete(player);

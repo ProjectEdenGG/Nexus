@@ -33,7 +33,7 @@ public abstract class EventStoreMenu extends MenuUtils implements InventoryProvi
 	public void open(Player player, int page) {
 		SmartInventory.builder()
 				.title(getTitle())
-				.size(getRows(), 9)
+				.rows(getRows())
 				.provider(this)
 				.build()
 				.open(player, page);

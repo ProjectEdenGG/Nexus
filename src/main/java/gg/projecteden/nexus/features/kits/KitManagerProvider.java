@@ -37,7 +37,7 @@ public class KitManagerProvider extends MenuUtils implements InventoryProvider {
 		return SmartInventory.builder()
 				.title("Kit Manager")
 				.provider(new KitManagerProvider(id))
-				.size(3, 9)
+				.rows(3)
 				.build();
 	}
 
@@ -47,7 +47,7 @@ public class KitManagerProvider extends MenuUtils implements InventoryProvider {
 
 			addCloseItem(contents);
 
-			contents.set(0, 4, ClickableItem.from(new ItemBuilder(Material.EMERALD_BLOCK).name("&aNew Kit").build(), e -> {
+			contents.set(0, 4, ClickableItem.of(new ItemBuilder(Material.EMERALD_BLOCK).name("&aNew Kit").build(), e -> {
 				int newId = KitManager.getNextId();
 				KitManager.getConfig().set(newId + "", new Kit());
 				KitManager.saveConfig();
@@ -62,7 +62,7 @@ public class KitManagerProvider extends MenuUtils implements InventoryProvider {
 			for (int i = 0; i < kits.length; i++) {
 				Kit kit = kits[i];
 				ItemStack item = new ItemBuilder(Material.CHEST).name("&e" + StringUtils.camelCase(kit.getName())).lore(" ").lore("&7Shift-Right Click to delete").build();
-				items[i] = ClickableItem.from(item, e -> {
+				items[i] = ClickableItem.of(item, e -> {
 					if (((InventoryClickEvent) e.getEvent()).isRightClick() && ((InventoryClickEvent) e.getEvent()).isShiftClick()) {
 						ConfirmationMenu.builder().onCancel(itemClickData -> getInv(null).open(player))
 								.onConfirm(itemClickData -> {
@@ -80,10 +80,10 @@ public class KitManagerProvider extends MenuUtils implements InventoryProvider {
 			page.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 1, 0));
 
 			if (!page.isFirst())
-				contents.set(2, 0, ClickableItem.from(new ItemBuilder(Material.ARROW).name("<-- Back").build(),
+				contents.set(2, 0, ClickableItem.of(new ItemBuilder(Material.ARROW).name("<-- Back").build(),
 						e -> getInv(null).open(player, page.previous().getPage())));
 			if (!page.isLast())
-				contents.set(2, 8, ClickableItem.from(new ItemBuilder(Material.ARROW).name("Next -->").build(),
+				contents.set(2, 8, ClickableItem.of(new ItemBuilder(Material.ARROW).name("Next -->").build(),
 						e -> getInv(null).open(player, page.next().getPage())));
 
 		} else {
@@ -92,7 +92,7 @@ public class KitManagerProvider extends MenuUtils implements InventoryProvider {
 				getInv(null).open(player);
 			});
 
-			contents.set(0, 3, ClickableItem.from(new ItemBuilder(Material.BOOK).name("&e" + KitManager.get(id).getName()).lore("&3Click to set the").lore("&3name of the kit").build(), e -> {
+			contents.set(0, 3, ClickableItem.of(new ItemBuilder(Material.BOOK).name("&e" + KitManager.get(id).getName()).lore("&3Click to set the").lore("&3name of the kit").build(), e -> {
 				Kit kit = KitManager.get(id);
 				openAnvilMenu(player, kit.getName(), (player1, response) -> {
 					kit.setName(response);
@@ -103,7 +103,7 @@ public class KitManagerProvider extends MenuUtils implements InventoryProvider {
 				}, player1 -> getInv(id).open(player));
 			}));
 
-			contents.set(0, 5, ClickableItem.from(new ItemBuilder(Material.CLOCK).name("&eDelay").lore("&e" + KitManager.get(id).getDelay())
+			contents.set(0, 5, ClickableItem.of(new ItemBuilder(Material.CLOCK).name("&eDelay").lore("&e" + KitManager.get(id).getDelay())
 					.lore("&e(" + Timespan.ofSeconds(KitManager.get(id).getDelay() / 20).format() + ")").build(), e -> {
 				Kit kit = KitManager.get(id);
 				openAnvilMenu(player, "" + kit.getDelay(), (player1, response) -> {
@@ -121,7 +121,7 @@ public class KitManagerProvider extends MenuUtils implements InventoryProvider {
 				}, player1 -> getInv(id).open(player));
 			}));
 
-			contents.set(0, 8, ClickableItem.from(new ItemBuilder(Material.END_CRYSTAL).name("&eSave").build(), e -> saveItems(player)));
+			contents.set(0, 8, ClickableItem.of(new ItemBuilder(Material.END_CRYSTAL).name("&eSave").build(), e -> saveItems(player)));
 
 			int row = 1;
 			int column = 0;

@@ -25,8 +25,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
-
 @Permission(Group.ADMIN)
 public class MaterialTagCommand extends CustomCommand {
 
@@ -70,8 +68,8 @@ public class MaterialTagCommand extends CustomCommand {
 		public void open(Player player, int page) {
 			SmartInventory.builder()
 					.provider(this)
-					.title(colorize("&3" + StringUtils.camelCase(materialTag.getKey().getKey())))
-					.size(6, 9)
+					.title("&3" + StringUtils.camelCase(materialTag.getKey().getKey()))
+					.maxSize()
 					.build()
 					.open(player, page);
 		}

@@ -32,23 +32,23 @@ public class SabotageMenu extends MenuUtils implements InventoryProvider {
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
-		contents.set(0, 0, ClickableItem.from(backItem(), e -> menus.openArenaMenu(player, arena)));
+		contents.set(0, 0, ClickableItem.of(backItem(), e -> menus.openArenaMenu(player, arena)));
 
-		contents.set(1, 0, ClickableItem.from(new ItemBuilder(Material.CLOCK).name("&eKill Cooldown").lore("", "&eCurrent value: &3" + arena.getKillCooldown() + " seconds").build(),
+		contents.set(1, 0, ClickableItem.of(new ItemBuilder(Material.CLOCK).name("&eKill Cooldown").lore("", "&eCurrent value: &3" + arena.getKillCooldown() + " seconds").build(),
 				click -> new AnvilMenu.IntegerBuilder().positiveChecker().click(click).getter(arena::getKillCooldown).setter(arena::setKillCooldown).writer(arena::write).open()));
 
-		contents.set(1, 1, ClickableItem.from(new ItemBuilder(Material.CLOCK).name("&eMeeting Cooldown").lore("", "&eCurrent value: &3" + arena.getMeetingCooldown() + " seconds").build(),
+		contents.set(1, 1, ClickableItem.of(new ItemBuilder(Material.CLOCK).name("&eMeeting Cooldown").lore("", "&eCurrent value: &3" + arena.getMeetingCooldown() + " seconds").build(),
 				click -> new AnvilMenu.IntegerBuilder().positiveChecker().click(click).getter(arena::getMeetingCooldown).setter(arena::setMeetingCooldown).writer(arena::write).open()));
 
-		contents.set(1, 2, ClickableItem.from(new ItemBuilder(Material.PAPER).name("&eShort Tasks").lore("", "&eCurrent value: &3" + arena.getShortTasks()).build(),
+		contents.set(1, 2, ClickableItem.of(new ItemBuilder(Material.PAPER).name("&eShort Tasks").lore("", "&eCurrent value: &3" + arena.getShortTasks()).build(),
 				click -> new AnvilMenu.IntegerBuilder().nonNegativeChecker().click(click).getter(arena::getShortTasks).setter(arena::setShortTasks).writer(arena::write).open()));
 
-		contents.set(1, 3, ClickableItem.from(new ItemBuilder(Material.PAPER).name("&eLong Tasks").lore("", "&eCurrent value: &3" + arena.getLongTasks()).build(),
+		contents.set(1, 3, ClickableItem.of(new ItemBuilder(Material.PAPER).name("&eLong Tasks").lore("", "&eCurrent value: &3" + arena.getLongTasks()).build(),
 				click -> new AnvilMenu.IntegerBuilder().nonNegativeChecker().click(click).getter(arena::getLongTasks).setter(arena::setLongTasks).writer(arena::write).open()));
 
-		contents.set(1, 4, ClickableItem.from(new ItemBuilder(Material.PAPER).name("&eCommon Tasks").lore("", "&eCurrent value: &3" + arena.getCommonTasks()).build(),
+		contents.set(1, 4, ClickableItem.of(new ItemBuilder(Material.PAPER).name("&eCommon Tasks").lore("", "&eCurrent value: &3" + arena.getCommonTasks()).build(),
 				click -> new AnvilMenu.IntegerBuilder().nonNegativeChecker().click(click).getter(arena::getCommonTasks).setter(arena::setCommonTasks).writer(arena::write).open()));
 
-		contents.set(1, 5, ClickableItem.from(new ItemBuilder(Material.REDSTONE).name("&eEnabled Tasks").build(), $ -> new ArenaTasksMenu(arena).open(player)));
+		contents.set(1, 5, ClickableItem.of(new ItemBuilder(Material.REDSTONE).name("&eEnabled Tasks").build(), $ -> new ArenaTasksMenu(arena).open(player)));
 	}
 }

@@ -22,6 +22,8 @@ import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.menus.api.opener.InventoryOpener;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import lombok.Getter;
+import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.md_5.bungee.api.ChatColor;
@@ -38,6 +40,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @SuppressWarnings("unused")
+@Getter
 public class SmartInventory {
 
 	private final InventoryManager manager;
@@ -45,6 +48,7 @@ public class SmartInventory {
 	private Component title;
 	private InventoryType type;
 	private int rows, columns;
+	@Setter
 	private boolean closeable;
 	private int updateFrequency;
 	private InventoryProvider provider;
@@ -132,54 +136,6 @@ public class SmartInventory {
 		return row < this.rows && col < this.columns;
 	}
 
-	public String getId() {
-		return id;
-	}
-
-	public Component getTitle() {
-		return title;
-	}
-
-	public InventoryType getType() {
-		return type;
-	}
-
-	public int getRows() {
-		return rows;
-	}
-
-	public int getColumns() {
-		return columns;
-	}
-
-	public boolean isCloseable() {
-		return closeable;
-	}
-
-	public void setCloseable(boolean closeable) {
-		this.closeable = closeable;
-	}
-
-	public int getUpdateFrequency() {
-		return updateFrequency;
-	}
-
-	public InventoryProvider getProvider() {
-		return provider;
-	}
-
-	public Optional<SmartInventory> getParent() {
-		return Optional.ofNullable(parent);
-	}
-
-	public InventoryManager getManager() {
-		return manager;
-	}
-
-	List<InventoryListener<? extends Event>> getListeners() {
-		return listeners;
-	}
-
 	public static final class Builder {
 
 		private String id = "unknown";
@@ -224,10 +180,12 @@ public class SmartInventory {
 			return this;
 		}
 
+		public Builder rows(int rows) {
+			return size(rows, 9);
+		}
+
 		public Builder maxSize() {
-			this.rows = Optional.of(6);
-			this.columns = Optional.of(9);
-			return this;
+			return rows(6);
 		}
 
 		public Builder closeable(boolean closeable) {

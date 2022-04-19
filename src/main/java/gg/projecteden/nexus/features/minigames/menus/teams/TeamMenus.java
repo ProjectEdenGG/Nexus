@@ -17,7 +17,7 @@ public class TeamMenus {
 				.id("teamsMenu")
 				.title("Teams Menu")
 				.provider(new TeamsMenu(arena))
-				.size(2, 9)
+				.rows(2)
 				.build();
 		INV.open(player);
 	}
@@ -27,7 +27,7 @@ public class TeamMenus {
 				.id("teamEditorMenu")
 				.title("Team Editor Menu")
 				.provider(new TeamEditorMenu(arena, team))
-				.size(3, 9)
+				.rows(3)
 				.build();
 		INV.open(player);
 	}
@@ -37,7 +37,7 @@ public class TeamMenus {
 				.id("teamColorMenu")
 				.title("Team Color Menu")
 				.provider(new TeamColorMenu(arena, team))
-				.size(3, 9)
+				.rows(3)
 				.build();
 		INV.open(player);
 	}
@@ -47,7 +47,7 @@ public class TeamMenus {
 				.id("teamDeleteMenu")
 				.title("Delete Team?")
 				.provider(new DeleteTeamMenu(arena, team))
-				.size(3, 9)
+				.rows(3)
 				.build();
 		INV.open(player);
 	}
@@ -57,7 +57,7 @@ public class TeamMenus {
 				.id("teamLoadoutMenu")
 				.title("Loadout Menu")
 				.provider(new LoadoutMenu(arena, team))
-				.size(6, 9)
+				.maxSize()
 				.build();
 		INV.open(player);
 	}
@@ -67,7 +67,7 @@ public class TeamMenus {
 				.id("teamPotionMenu")
 				.title("Potion Effects Menu")
 				.provider(new PotionEffectsMenu(arena, team))
-				.size(3, 9)
+				.rows(3)
 				.build();
 		INV.open(player);
 	}
@@ -77,7 +77,7 @@ public class TeamMenus {
 				.id("teamDeleteLoadoutMenu")
 				.title("Delete Loadout?")
 				.provider(new DeleteLoadoutMenu(arena, team))
-				.size(3, 9)
+				.rows(3)
 				.build();
 		INV.open(player);
 	}
@@ -87,7 +87,7 @@ public class TeamMenus {
 				.id("teamPotionEffectEditorMenu")
 				.title("Potion Effect Editor Menu")
 				.provider(new PotionEffectEditorMenu(arena, team, potionEffect))
-				.size(6, 9)
+				.maxSize()
 				.build();
 		INV.open(player);
 	}
@@ -97,7 +97,7 @@ public class TeamMenus {
 				.id("teamSpawnpointLocationsMenu")
 				.title("Spawnpoint Location Menus")
 				.provider(new SpawnpointLocationsMenu(arena, team))
-				.size(6, 9)
+				.maxSize()
 				.build();
 		return INV;
 	}
@@ -107,7 +107,7 @@ public class TeamMenus {
 				.id("teamVisibilityMenu")
 				.title("Team Visibility Menu")
 				.provider(new TeamVisibilityMenu(arena, team))
-				.size(2, 9)
+				.rows(2)
 				.build();
 		INV.open(player);
 	}

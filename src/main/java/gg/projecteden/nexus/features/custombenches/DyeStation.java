@@ -158,7 +158,7 @@ public class DyeStation extends CustomBench {
 		private SmartInventory getInv(DyeStationData data) {
 			return SmartInventory.builder()
 				.title(StringUtils.colorize("&fꈉ" + data.getTitle()))
-				.size(6, 9)
+				.maxSize()
 				.provider(new DyeStationMenu(data))
 				.closeable(false)
 				.build();
@@ -166,7 +166,7 @@ public class DyeStation extends CustomBench {
 
 		@Override
 		public void init(Player player, InventoryContents contents) {
-			contents.set(0, ClickableItem.from(closeItem(), e -> {
+			contents.set(0, ClickableItem.of(closeItem(), e -> {
 				contents.get(data.getInputSlot()).ifPresent(clickableItem -> {
 					if (!SLOT_COSTUME.equals(data.getInputSlot()))
 						PlayerUtils.giveItem(player, clickableItem.getItem());
@@ -179,8 +179,8 @@ public class DyeStation extends CustomBench {
 				getInv(data).close(player);
 			}));
 
-			contents.set(data.getInputSlot(), ClickableItem.from(data.getInput(), e -> replaceItem(player, contents, e, data.getInputSlot())));
-			contents.set(SLOT_DYE, ClickableItem.from(data.getDye(), e -> replaceItem(player, contents, e, SLOT_DYE)));
+			contents.set(data.getInputSlot(), ClickableItem.of(data.getInput(), e -> replaceItem(player, contents, e, data.getInputSlot())));
+			contents.set(SLOT_DYE, ClickableItem.of(data.getDye(), e -> replaceItem(player, contents, e, SLOT_DYE)));
 
 			if (data.getColor() != null)
 				setResultItem(data.getColor(), contents);
@@ -191,9 +191,9 @@ public class DyeStation extends CustomBench {
 				fillChoices(data.getDyeChoice(), contents);
 
 			if (data.isCheatMode() && data.isShowButtons()) {
-				contents.set(SLOT_CHEAT_DYE, ClickableItem.from(getMagicDye().resetLore().build(),
+				contents.set(SLOT_CHEAT_DYE, ClickableItem.of(getMagicDye().resetLore().build(),
 					e -> setDyeItem(contents, getMagicDye().build())));
-				contents.set(SLOT_CHEAT_STAIN, ClickableItem.from(getMagicStain().resetLore().build(),
+				contents.set(SLOT_CHEAT_STAIN, ClickableItem.of(getMagicStain().resetLore().build(),
 					e -> setDyeItem(contents, getMagicStain().build())));
 			}
 		}
@@ -212,7 +212,7 @@ public class DyeStation extends CustomBench {
 				case DYE -> {
 					for (DyeChoice dyeChoice : DyeChoice.values()) {
 						String itemName = StringUtils.camelCase(dyeChoice) + "s";
-						contents.set(row, col++, ClickableItem.from(dyeChoice.getItem(itemName), e -> fillChoices(dyeChoice, contents)));
+						contents.set(row, col++, ClickableItem.of(dyeChoice.getItem(itemName), e -> fillChoices(dyeChoice, contents)));
 
 						if (++count == 3) {
 							++row;
@@ -226,7 +226,7 @@ public class DyeStation extends CustomBench {
 					for (StainChoice stainChoice : StainChoice.values()) {
 						String itemName = StringUtils.camelCase(stainChoice);
 						Color color = stainChoice.getButton().getColor();
-						contents.set(row, col++, ClickableItem.from(stainChoice.getItem(itemName), e -> setResultItem(color, contents)));
+						contents.set(row, col++, ClickableItem.of(stainChoice.getItem(itemName), e -> setResultItem(color, contents)));
 
 						if (++count == 3) {
 							++row;
@@ -299,7 +299,7 @@ public class DyeStation extends CustomBench {
 					break;
 
 				ColoredButton button = choices.get(i);
-				contents.set(5, col, ClickableItem.from(button.getItem(data.getDyeType(), "Select Shade"),
+				contents.set(5, col, ClickableItem.of(button.getItem(data.getDyeType(), "Select Shade"),
 					e -> setResultItem(button.getColor(), contents)));
 				++col;
 			}
@@ -319,7 +319,7 @@ public class DyeStation extends CustomBench {
 
 			data.setColor(color);
 			data.setResult(result);
-			contents.set(SLOT_RESULT, ClickableItem.from(result, e -> confirm(contents)));
+			contents.set(SLOT_RESULT, ClickableItem.of(result, e -> confirm(contents)));
 		}
 
 		private void confirm(InventoryContents contents) {

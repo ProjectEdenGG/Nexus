@@ -27,8 +27,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
-
 @NoArgsConstructor
 @Permission(Group.STAFF)
 public class DumpsterDivingCommand extends CustomCommand implements Listener {
@@ -76,8 +74,8 @@ public class DumpsterDivingCommand extends CustomCommand implements Listener {
 
 			SmartInventory.builder()
 					.provider(new DumpsterProvider())
-					.size(6, 9)
-					.title(colorize("&2Dumpster"))
+					.maxSize()
+					.title("&2Dumpster")
 					.build()
 					.open(player);
 		}
@@ -86,7 +84,7 @@ public class DumpsterDivingCommand extends CustomCommand implements Listener {
 		public void init(Player player, InventoryContents contents) {
 			addCloseItem(contents);
 
-			contents.set(0, 8, ClickableItem.from(nameItem(Material.IRON_SHOVEL, "Refresh"), e -> {
+			contents.set(0, 8, ClickableItem.of(nameItem(Material.IRON_SHOVEL, "Refresh"), e -> {
 				try {
 					open(player);
 				} catch (Exception ex) {
@@ -100,7 +98,7 @@ public class DumpsterDivingCommand extends CustomCommand implements Listener {
 			for (int row = 1; row <= 5; row++) {
 				for (int column = 0; column <= 8; column++) {
 					ItemStack item = items.remove(0);
-					contents.set(row, column, ClickableItem.from(item, e -> {
+					contents.set(row, column, ClickableItem.of(item, e -> {
 						try {
 							contents.set(e.getSlot(), ClickableItem.NONE);
 							dumpster.getItems().remove(item);

@@ -76,7 +76,7 @@ public enum CrateType {
 
 	public SmartInventory previewDrops(CrateLoot loot) {
 		return SmartInventory.builder()
-				.size(6, 9)
+				.maxSize()
 				.provider(new CratePreviewProvider(this, loot))
 				.title(StringUtils.camelCase(name()) + " Crate Rewards")
 				.build();

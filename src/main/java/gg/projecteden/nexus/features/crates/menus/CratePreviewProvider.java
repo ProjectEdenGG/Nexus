@@ -36,7 +36,7 @@ public class CratePreviewProvider extends MenuUtils implements InventoryProvider
 		if (type == CrateType.VOTE) {
 			final VoterService voterService = new VoterService();
 			final Voter voter = voterService.get(player);
-			contents.set(0, 4, ClickableItem.from(
+			contents.set(0, 4, ClickableItem.of(
 					new ItemBuilder(Material.TRIPWIRE_HOOK).glow().name("&eBuy 1 Key for 2 Vote Points")
 							.lore("&3Your Points: &e" + voter.getPoints()).build(),
 					e -> {
@@ -72,7 +72,7 @@ public class CratePreviewProvider extends MenuUtils implements InventoryProvider
 						.amount(1)
 						.lore("&3Chance: &e" + format.format(((crateLoot.getWeight() / weightSum.get()) * 100)) + "%")
 						.lore("&7&oClick for more");
-					items.add(ClickableItem.from(builder.build(), e ->
+					items.add(ClickableItem.of(builder.build(), e ->
 						type.previewDrops(crateLoot).open(player)));
 				});
 		} else {
@@ -89,10 +89,10 @@ public class CratePreviewProvider extends MenuUtils implements InventoryProvider
 		page.addToIterator(iterator);
 
 		if (!page.isFirst())
-			contents.set(0, 3, ClickableItem.from(new ItemBuilder(Material.ARROW).name("<-- Back").build(), e ->
+			contents.set(0, 3, ClickableItem.of(new ItemBuilder(Material.ARROW).name("<-- Back").build(), e ->
 					type.previewDrops(loot).open(player, page.previous().getPage())));
 		if (!page.isLast())
-			contents.set(5, 3, ClickableItem.from(new ItemBuilder(Material.ARROW).name("Next -->").build(), e ->
+			contents.set(5, 3, ClickableItem.of(new ItemBuilder(Material.ARROW).name("Next -->").build(), e ->
 					type.previewDrops(loot).open(player, page.next().getPage())));
 	}
 }

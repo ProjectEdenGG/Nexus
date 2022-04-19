@@ -34,7 +34,7 @@ public class EventStoreProvider extends EventStoreMenu {
 				continue;
 
 			ItemBuilder item = eventStoreItem.getDisplayItem();
-			items.add(ClickableItem.from(item.build(), e -> eventStoreItem.onClick(player, this)));
+			items.add(ClickableItem.of(item.build(), e -> eventStoreItem.onClick(player, this)));
 		}
 
 		return items;

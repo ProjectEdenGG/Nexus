@@ -41,7 +41,7 @@ public class CrateEditMenu {
 		return SmartInventory.builder()
 				.title("Crate Editing")
 				.provider(new CrateEditProvider(filter, editing))
-				.size(editing == null ? 6 : 3, 9)
+				.rows(editing == null ? 6 : 3)
 				.build();
 	}
 
@@ -61,14 +61,14 @@ public class CrateEditMenu {
 				});
 
 				// Save Item
-				contents.set(0, 8, ClickableItem.from(new ItemBuilder(Material.NETHER_STAR).name("&eSave").build(),
+				contents.set(0, 8, ClickableItem.of(new ItemBuilder(Material.NETHER_STAR).name("&eSave").build(),
 						e -> {
 							save(player.getOpenInventory().getTopInventory(), editing);
 							CrateEditMenu.getMenu(filter, editing).open(player);
 						}));
 
 				// Weight Item
-				contents.set(0, 2, ClickableItem.from(new ItemBuilder(Material.ANVIL).name("&eWeight")
+				contents.set(0, 2, ClickableItem.of(new ItemBuilder(Material.ANVIL).name("&eWeight")
 						.lore("&3Current Value: &e" + editing.getWeight()).build(), e -> {
 					save(player.getOpenInventory().getTopInventory(), editing);
 					new AnvilGUI.Builder()
@@ -90,7 +90,7 @@ public class CrateEditMenu {
 				}));
 
 				// CrateType Item
-				contents.set(0, 3, ClickableItem.from(new ItemBuilder(Material.PAPER).name("&eCrate Type")
+				contents.set(0, 3, ClickableItem.of(new ItemBuilder(Material.PAPER).name("&eCrate Type")
 						.lore("&3" + StringUtils.camelCase(editing.getType().name())).build(), e -> {
 					save(player.getOpenInventory().getTopInventory(), editing);
 					editing.setType(EnumUtils.nextWithLoop(CrateType.class, filter.ordinal()));
@@ -99,7 +99,7 @@ public class CrateEditMenu {
 				}));
 
 				// Title Item
-				contents.set(0, 4, ClickableItem.from(new ItemBuilder(Material.WRITABLE_BOOK).name("&eDisplay Name")
+				contents.set(0, 4, ClickableItem.of(new ItemBuilder(Material.WRITABLE_BOOK).name("&eDisplay Name")
 						.lore("&3" + editing.getTitle()).build(), e -> {
 					save(player.getOpenInventory().getTopInventory(), editing);
 					new AnvilGUI.Builder()
@@ -123,7 +123,7 @@ public class CrateEditMenu {
 							.lore("&3click with it. It will be the")
 							.lore("&3item that spawns on crate opening")
 							.build();
-				contents.set(0, 5, ClickableItem.from(displayItem, e -> {
+				contents.set(0, 5, ClickableItem.of(displayItem, e -> {
 					save(player.getOpenInventory().getTopInventory(), editing);
 					InventoryClickEvent event = (InventoryClickEvent) e.getEvent();
 					ItemStack display = isNullOrAir(event.getCursor()) ? null : event.getCursor();
@@ -138,7 +138,7 @@ public class CrateEditMenu {
 				}));
 
 				// Toggle Active Item
-				contents.set(0, 6, ClickableItem.from(new ItemBuilder(editing.isActive() ? Material.ENDER_CHEST : Material.CHEST)
+				contents.set(0, 6, ClickableItem.of(new ItemBuilder(editing.isActive() ? Material.ENDER_CHEST : Material.CHEST)
 						.name("&eToggle Active").lore("&3" + editing.isActive()).build(), e -> {
 					save(player.getOpenInventory().getTopInventory(), editing);
 					editing.setActive(!editing.isActive());
@@ -164,13 +164,13 @@ public class CrateEditMenu {
 				addCloseItem(contents);
 
 				// Filter Item
-				contents.set(0, 8, ClickableItem.from(
+				contents.set(0, 8, ClickableItem.of(
 						new ItemBuilder(Material.BOOK).name("&eFilter").lore("&3" + StringUtils.camelCase(filter.name()))
 								.build(), e -> CrateEditMenu.getMenu(EnumUtils.nextWithLoop(CrateType.class, filter.ordinal()), null)
 								.open(player)));
 
 				// New Button
-				contents.set(0, 4, ClickableItem.from(new ItemBuilder(Material.EMERALD_BLOCK).name("&aCreate New").build(),
+				contents.set(0, 4, ClickableItem.of(new ItemBuilder(Material.EMERALD_BLOCK).name("&aCreate New").build(),
 						e -> {
 							CrateLoot loot = new CrateLoot(null, new ArrayList<>(), 20, filter, null);
 							loot.setId(Crates.getNextId());
@@ -192,7 +192,7 @@ public class CrateEditMenu {
 							.lore("&eRight-Click &3to enable/disable")
 							.lore("&cShift-Click to Delete")
 							.build();
-					items.add(ClickableItem.from(item, e -> {
+					items.add(ClickableItem.of(item, e -> {
 						InventoryClickEvent event = (InventoryClickEvent) e.getEvent();
 						if (event.isShiftClick()) {
 							ConfirmationMenu.builder()
@@ -220,10 +220,10 @@ public class CrateEditMenu {
 
 				// Arrows
 				if (!page.isFirst())
-					contents.set(5, 0, ClickableItem.from(new ItemBuilder(Material.ARROW).name("<-- Back").build(), e ->
+					contents.set(5, 0, ClickableItem.of(new ItemBuilder(Material.ARROW).name("<-- Back").build(), e ->
 							CrateEditMenu.getMenu(filter, null).open(player, page.previous().getPage())));
 				if (!page.isLast())
-					contents.set(5, 8, ClickableItem.from(new ItemBuilder(Material.ARROW).name("Next -->").build(), e ->
+					contents.set(5, 8, ClickableItem.of(new ItemBuilder(Material.ARROW).name("Next -->").build(), e ->
 							CrateEditMenu.getMenu(filter, null).open(player, page.next().getPage())));
 			}
 		}

@@ -9,7 +9,7 @@ public class Halloween20Menus {
 	public static void openPicturePuzzle(Player player, ComboLockNumber number) {
 		SmartInventory.builder()
 				.title("Picture Puzzle")
-				.size(6, 9)
+				.maxSize()
 				.provider(new PicturePuzzleProvider(number))
 				.build().open(player);
 	}
@@ -17,7 +17,7 @@ public class Halloween20Menus {
 	public static void openFlashCardPuzzle(Player player, ComboLockNumber number) {
 		SmartInventory.builder()
 				.title("Flash Card Puzzle")
-				.size(3, 9)
+				.rows(3)
 				.provider(new FlashCardPuzzleProvider(number))
 				.build().open(player);
 	}
@@ -25,7 +25,7 @@ public class Halloween20Menus {
 	public static void openComboLock(Player player) {
 		SmartInventory.builder()
 				.title("Combination Lock")
-				.size(6, 9)
+				.maxSize()
 				.provider(new CombinationLockProvider())
 				.build().open(player);
 	}

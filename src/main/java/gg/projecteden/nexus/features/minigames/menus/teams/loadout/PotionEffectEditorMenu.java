@@ -44,7 +44,7 @@ public class PotionEffectEditorMenu extends MenuUtils implements InventoryProvid
 	public void init(Player player, InventoryContents contents) {
 		addBackItem(contents, e -> menus.getTeamMenus().openPotionEffectsMenu(player, arena, team));
 
-		contents.set(0, 3, ClickableItem.from(nameItem(
+		contents.set(0, 3, ClickableItem.of(nameItem(
 					Material.REDSTONE,
 					"&eDuration",
 					"||&eCurrent value: &3" + potionEffect.getDuration()
@@ -68,7 +68,7 @@ public class PotionEffectEditorMenu extends MenuUtils implements InventoryProvid
 					}
 				})));
 
-		contents.set(0, 5, ClickableItem.from(nameItem(
+		contents.set(0, 5, ClickableItem.of(nameItem(
 					Material.GLOWSTONE_DUST,
 					"&eAmplifier",
 					"||&eCurrent value: &3" + (potionEffect.getAmplifier() + 1)
@@ -90,7 +90,7 @@ public class PotionEffectEditorMenu extends MenuUtils implements InventoryProvid
 					}
 				})));
 
-		contents.set(0, 8, ClickableItem.from(nameItem(Material.END_CRYSTAL, "&eSave"), e-> arena.write()));
+		contents.set(0, 8, ClickableItem.of(nameItem(Material.END_CRYSTAL, "&eSave"), e-> arena.write()));
 
 		int row = 2;
 		int column = 0;
@@ -105,7 +105,7 @@ public class PotionEffectEditorMenu extends MenuUtils implements InventoryProvid
 
 			if(effect == potionEffect.getType()) potionItem.setType(Material.SPLASH_POTION);
 
-			contents.set(row, column, ClickableItem.from(potionItem,
+			contents.set(row, column, ClickableItem.of(potionItem,
 					e-> {
 						team.getLoadout().getEffects().remove(potionEffect);
 						potionEffect = new PotionEffectBuilder(potionEffect).type(effect).build();

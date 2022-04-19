@@ -21,7 +21,7 @@ public class MechanicsMenu extends MenuUtils implements InventoryProvider {
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
-		contents.set(0, 0, ClickableItem.from(backItem(), e -> menus.openArenaMenu(player, arena)));
+		contents.set(0, 0, ClickableItem.of(backItem(), e -> menus.openArenaMenu(player, arena)));
 		int row = 1;
 		int column = 0;
 		for (MechanicType mechanic : MechanicType.values()) {
@@ -33,7 +33,7 @@ public class MechanicsMenu extends MenuUtils implements InventoryProvider {
 			if (arena.getMechanicType() == mechanic)
 				addGlowing(item);
 
-			contents.set(row, column, ClickableItem.from(item, e -> {
+			contents.set(row, column, ClickableItem.of(item, e -> {
 				arena.setMechanicType(mechanic);
 				arena.write();
 				menus.openMechanicsMenu(player, arena);

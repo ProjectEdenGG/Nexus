@@ -42,26 +42,26 @@ public class SafeCrackerAdminProvider extends MenuUtils implements InventoryProv
 
 		addCloseItem(contents);
 
-		contents.set(0, 8, ClickableItem.from(new ItemBuilder(Material.ENCHANTED_BOOK).name("&e" + game.getName())
+		contents.set(0, 8, ClickableItem.of(new ItemBuilder(Material.ENCHANTED_BOOK).name("&e" + game.getName())
 				.lore("&7Click to change the").lore("&7active game").build(), e -> {
 			SafeCrackerInventories.openGameSelectorMenu(player);
 		}));
 
-		contents.set(0, 6, ClickableItem.from(new ItemBuilder(Material.POLAR_BEAR_SPAWN_EGG).name("&eSpawn NPCs").build(), e -> {
+		contents.set(0, 6, ClickableItem.of(new ItemBuilder(Material.POLAR_BEAR_SPAWN_EGG).name("&eSpawn NPCs").build(), e -> {
 			for (SafeCrackerEvent.SafeCrackerNPC npc : game.getNpcs().values()) {
 				NPC npcEntity = CitizensAPI.getNPCRegistry().getById(npc.getId());
 				npcEntity.spawn(npcEntity.getStoredLocation());
 			}
 		}));
 
-		contents.set(0, 7, ClickableItem.from(new ItemBuilder(Material.LAVA_BUCKET).name("&eDespawn NPCs").build(), e -> {
+		contents.set(0, 7, ClickableItem.of(new ItemBuilder(Material.LAVA_BUCKET).name("&eDespawn NPCs").build(), e -> {
 			for (SafeCrackerEvent.SafeCrackerNPC npc : game.getNpcs().values()) {
 				NPC npcEntity = CitizensAPI.getNPCRegistry().getById(npc.getId());
 				npcEntity.despawn(DespawnReason.PLUGIN);
 			}
 		}));
 
-		contents.set(0, 4, ClickableItem.from(new ItemBuilder(Material.EMERALD_BLOCK).name("&aNew NPC").build(), e -> {
+		contents.set(0, 4, ClickableItem.of(new ItemBuilder(Material.EMERALD_BLOCK).name("&aNew NPC").build(), e -> {
 			openAnvilMenu(player, "New NPC...", (player1, response) -> {
 				int id = NPCHandler.createNPC(response, player.getLocation());
 				SafeCrackerEvent.SafeCrackerNPC npc = new SafeCrackerEvent.SafeCrackerNPC(id, response, "", new ArrayList<>(), "");
@@ -72,7 +72,7 @@ public class SafeCrackerAdminProvider extends MenuUtils implements InventoryProv
 			}, (player1) -> SafeCrackerInventories.openAdminMenu(player));
 		}));
 
-		contents.set(0, 3, ClickableItem.from(new ItemBuilder(Material.PAPER).name("&eRiddle Answer").lore("&3" + game.getAnswer()).build(), e -> {
+		contents.set(0, 3, ClickableItem.of(new ItemBuilder(Material.PAPER).name("&eRiddle Answer").lore("&3" + game.getAnswer()).build(), e -> {
 			openAnvilMenu(player, game.getAnswer(), (player1, response) -> {
 				game.setAnswer(response);
 				service.save(service.get0());
@@ -81,7 +81,7 @@ public class SafeCrackerAdminProvider extends MenuUtils implements InventoryProv
 			}, (player1) -> SafeCrackerInventories.openAdminMenu(player));
 		}));
 
-		contents.set(0, 2, ClickableItem.from(new ItemBuilder(Material.BOOK).name("&eFinal Riddle").lore("&3" + game.getRiddle()).build(), e -> {
+		contents.set(0, 2, ClickableItem.of(new ItemBuilder(Material.BOOK).name("&eFinal Riddle").lore("&3" + game.getRiddle()).build(), e -> {
 			player.closeInventory();
 			PlayerUtils.send(player, new JsonBuilder("&e&lClick here to set the Final Riddle").suggest("/safecracker riddle "));
 		}));
@@ -114,7 +114,7 @@ public class SafeCrackerAdminProvider extends MenuUtils implements InventoryProv
 				}
 			}
 			builder.lore("&3Hint: &e" + npc.getRiddle()).lore("").lore("&7&oClick me to Edit");
-			contents.set(row, column, ClickableItem.from(builder.build(),
+			contents.set(row, column, ClickableItem.of(builder.build(),
 					e -> SafeCrackerInventories.openNPCEditMenu(player, npc)));
 
 			if (column == 8) {

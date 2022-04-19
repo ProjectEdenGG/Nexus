@@ -36,7 +36,7 @@ public class BuyPerksMenu extends CommonPerksMenu implements InventoryProvider {
 		SmartInventory.builder()
 				.provider(this)
 				.title("Purchase Collectibles")
-				.size(Math.max(3, getRows(PerkType.getByCategory(category).size(), 1)), 9)
+				.rows(Math.max(3, getRows(PerkType.getByCategory(category).size(), 1)))
 				.build()
 				.open(player, page);
 	}
@@ -69,7 +69,7 @@ public class BuyPerksMenu extends CommonPerksMenu implements InventoryProvider {
 				lore.add(2, "");
 
 			ItemStack item = getItem(perk, lore);
-			clickableItems.add(ClickableItem.from(item, e -> buyItem(player, perkType, contents)));
+			clickableItems.add(ClickableItem.of(item, e -> buyItem(player, perkType, contents)));
 		});
 		paginator(player, contents, clickableItems);
 	}

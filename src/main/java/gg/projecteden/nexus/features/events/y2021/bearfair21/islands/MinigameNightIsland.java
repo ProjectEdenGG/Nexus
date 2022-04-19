@@ -776,7 +776,7 @@ public class MinigameNightIsland implements BearFair21Island {
 			SmartInventory.builder()
 				.provider(this)
 				.title("Car Trunk")
-				.size(3, 9)
+				.rows(3)
 				.build()
 				.open(player, page);
 		}
@@ -900,7 +900,7 @@ public class MinigameNightIsland implements BearFair21Island {
 			SmartInventory.builder()
 				.provider(this)
 				.title("Xbox Parts")
-				.size(3, 9)
+				.rows(3)
 				.build()
 				.open(player, page);
 		}
@@ -924,7 +924,7 @@ public class MinigameNightIsland implements BearFair21Island {
 			SmartInventory.builder()
 				.provider(this)
 				.title("Laptop Parts")
-				.size(3, 9)
+				.rows(3)
 				.build()
 				.open(player, page);
 		}
@@ -950,7 +950,7 @@ public class MinigameNightIsland implements BearFair21Island {
 			SmartInventory.builder()
 				.provider(this)
 				.title("Scrambled Cables")
-				.size(3, 9)
+				.rows(3)
 				.build()
 				.open(player, page);
 		}
@@ -1042,7 +1042,7 @@ public class MinigameNightIsland implements BearFair21Island {
 							return false;
 
 						final SlotPos slot = SlotPos.of(row, column);
-						contents.set(slot, ClickableItem.from(item, e -> validate.run()));
+						contents.set(slot, ClickableItem.of(item, e -> validate.run()));
 						contents.setEditable(slot, true);
 					}
 				}
@@ -1059,7 +1059,7 @@ public class MinigameNightIsland implements BearFair21Island {
 			SmartInventory.builder()
 				.provider(this)
 				.title("Router Parts")
-				.size(3, 9)
+				.rows(3)
 				.build()
 				.open(player, page);
 		}
@@ -1090,7 +1090,7 @@ public class MinigameNightIsland implements BearFair21Island {
 				contents.set(part.getFrom(), ClickableItem.empty(item));
 				contents.setEditable(part.getFrom(), true);
 
-				contents.set(part.getTo(), ClickableItem.from(new ItemStack(Material.BARRIER), e -> {
+				contents.set(part.getTo(), ClickableItem.of(new ItemStack(Material.BARRIER), e -> {
 					if (item.equals(player.getItemOnCursor())) {
 						player.setItemOnCursor(new ItemStack(Material.AIR));
 						contents.set(part.getTo(), ClickableItem.empty(item));
@@ -1247,7 +1247,7 @@ public class MinigameNightIsland implements BearFair21Island {
 		if (item.getAlreadyFixedPredicate() != null && item.getAlreadyFixedPredicate().test(user))
 			contents.set(slot, ClickableItem.empty(fixed));
 		else if (item.hasBroken(player) || item.hasFixed(player)) {
-			contents.set(slot, ClickableItem.from(new ItemBuilder(Material.BARRIER).name("&f" + camelCase(item)).build(), e -> {
+			contents.set(slot, ClickableItem.of(new ItemBuilder(Material.BARRIER).name("&f" + camelCase(item)).build(), e -> {
 				if (fixed.equals(player.getItemOnCursor())) {
 					player.setItemOnCursor(new ItemStack(Material.AIR));
 					contents.set(slot, ClickableItem.empty(fixed));

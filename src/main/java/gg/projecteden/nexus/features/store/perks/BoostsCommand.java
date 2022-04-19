@@ -2,11 +2,11 @@ package gg.projecteden.nexus.features.store.perks;
 
 import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
 import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
+import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -180,7 +180,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 			SmartInventory.builder()
 					.provider(this)
 					.title("Boosts")
-					.size(6, 9)
+					.maxSize()
 					.build()
 					.open(player, page);
 		}
@@ -213,7 +213,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 					int boosts = booster.getNonExpiredBoosts(boostable).size();
 					if (boosts > 0) {
 						ItemBuilder item = boostable.getDisplayItem().lore("&3" + StringUtils.plural(boosts + " boost", boosts) + " available");
-						items.add(ClickableItem.from(item.build(), e -> new BoostMenu(boostable, this).open(player)));
+						items.add(ClickableItem.of(item.build(), e -> new BoostMenu(boostable, this).open(player)));
 					}
 				}
 			else
@@ -228,7 +228,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 							items.add(ClickableItem.empty(item.build()));
 						} else {
 							item.lore("&3Duration: &e" + Timespan.ofSeconds(boost.getDuration()).format(FormatType.LONG), "", "&eClick to activate");
-							items.add(ClickableItem.from(item.build(), e -> ConfirmationMenu.builder()
+							items.add(ClickableItem.of(item.build(), e -> ConfirmationMenu.builder()
 									.title("Activate " + StringUtils.camelCase(boost.getType()) + " Boost")
 									.onConfirm(e2 -> {
 										boost.activate();

@@ -36,7 +36,7 @@ public class SpawnpointLocationsMenu extends MenuUtils implements InventoryProvi
 
 		Pagination page = contents.pagination();
 
-		contents.set(0, 4, ClickableItem.from(nameItem(
+		contents.set(0, 4, ClickableItem.of(nameItem(
 				Material.EMERALD_BLOCK,
 				"&eAdd Spawnpoint",
 				"&3Click to add a spawnpoint||&3at your current location."
@@ -48,7 +48,7 @@ public class SpawnpointLocationsMenu extends MenuUtils implements InventoryProvi
 			}));
 
 		ItemStack deleteItem = nameItem(Material.TNT, "&cDelete Item", "&7Click me to enter deletion mode.||&7Then, click a spawnpoint with me to||&7delete the spawnpoint.");
-		contents.set(0, 8, ClickableItem.from(deleteItem, e -> Tasks.wait(2, () -> {
+		contents.set(0, 8, ClickableItem.of(deleteItem, e -> Tasks.wait(2, () -> {
 			if (player.getItemOnCursor().getType().equals(Material.TNT)) {
 				player.setItemOnCursor(new ItemStack(Material.AIR));
 			} else if (isNullOrAir(player.getItemOnCursor())) {
@@ -65,7 +65,7 @@ public class SpawnpointLocationsMenu extends MenuUtils implements InventoryProvi
 			ItemStack item = nameItem(Material.COMPASS, "&eSpawnpoint #" + (i + 1),
 					getLocationLore(spawnpoints.get(i)) + "|| ||&7Click to Teleport");
 
-			clickableItems[i] = ClickableItem.from(item, e -> {
+			clickableItems[i] = ClickableItem.of(item, e -> {
 				if (player.getItemOnCursor().getType().equals(Material.TNT)) {
 					Tasks.wait(2, () -> {
 						team.getSpawnpoints().remove(spawnpoint);
@@ -83,9 +83,9 @@ public class SpawnpointLocationsMenu extends MenuUtils implements InventoryProvi
 			page.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 1, 0));
 
 			if (!page.isLast())
-				contents.set(0, 8, ClickableItem.from(nameItem(Material.ARROW, "&fNext Page"), e -> teamMenus.openSpawnpointMenu(arena, team).open(player, page.next().getPage())));
+				contents.set(0, 8, ClickableItem.of(nameItem(Material.ARROW, "&fNext Page"), e -> teamMenus.openSpawnpointMenu(arena, team).open(player, page.next().getPage())));
 			if (!page.isFirst())
-				contents.set(0, 7, ClickableItem.from(nameItem(Material.BARRIER, "&fPrevious Page"), e -> teamMenus.openSpawnpointMenu(arena, team).open(player, page.previous().getPage())));
+				contents.set(0, 7, ClickableItem.of(nameItem(Material.BARRIER, "&fPrevious Page"), e -> teamMenus.openSpawnpointMenu(arena, team).open(player, page.previous().getPage())));
 
 		}
 	}

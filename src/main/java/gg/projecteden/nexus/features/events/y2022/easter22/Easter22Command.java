@@ -38,7 +38,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.nexus.utils.StringUtils.getCoordinateString;
 import static gg.projecteden.nexus.utils.StringUtils.getTeleportCommand;
 
@@ -94,8 +93,8 @@ public class Easter22Command extends IEventCommand {
 		public void open(Player player, int page) {
 			SmartInventory.builder()
 				.provider(this)
-				.title(colorize("&3Easter 2022 Store"))
-				.size(6, 9)
+				.title("&3Easter 2022 Store")
+				.maxSize()
 				.build()
 				.open(player, page);
 		}
@@ -112,7 +111,7 @@ public class Easter22Command extends IEventCommand {
 			for (int i = 2001; i <= 2020; i++) {
 				final ItemStack egg = new ItemBuilder(Material.PAPER).customModelData(i).name("&eEgg #" + (i - 2000)).build();
 				final ItemStack display = new ItemBuilder(egg).lore("", "&" + (eventUser.getTokens() >= 200 ? "e" : "c") + "200 Event Tokens").build();
-				items.add(ClickableItem.from(display, e -> {
+				items.add(ClickableItem.of(display, e -> {
 					if (!eventUser.hasTokens(200)) {
 						eventUser.sendMessage(StringUtils.getPrefix(Easter22.class) + "&cYou cannot afford that egg");
 						open(player, contents.pagination().getPage());

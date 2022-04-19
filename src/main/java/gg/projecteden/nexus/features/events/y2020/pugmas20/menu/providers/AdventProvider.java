@@ -92,7 +92,7 @@ public class AdventProvider extends MenuUtils implements InventoryProvider {
 
 	private void found(InventoryContents contents, SlotPos slotPos, AdventChest adventChest, ItemBuilder skull, String name, String district, boolean located) {
 		if (located)
-			contents.set(slotPos, ClickableItem.from(skull.clone().name(name).lore(showWaypoint(district)).build(),
+			contents.set(slotPos, ClickableItem.of(skull.clone().name(name).lore(showWaypoint(district)).build(),
 					e -> Pugmas20.showWaypoint(adventChest, user.getOnlinePlayer())));
 		else
 			contents.set(slotPos, ClickableItem.empty(skull.clone().name(name).lore(district).build()));
@@ -100,7 +100,7 @@ public class AdventProvider extends MenuUtils implements InventoryProvider {
 
 	private void find(InventoryContents contents, SlotPos slotPos, AdventChest adventChest, String name, String district, boolean located) {
 		if (located)
-			contents.set(slotPos, ClickableItem.from(toFind.clone().name(name).lore(showWaypoint("&aFind me!", district)).build(),
+			contents.set(slotPos, ClickableItem.of(toFind.clone().name(name).lore(showWaypoint("&aFind me!", district)).build(),
 					e -> Pugmas20.showWaypoint(adventChest, user.getOnlinePlayer())));
 		else
 			contents.set(slotPos, ClickableItem.empty(toFind.clone().name(name).lore("&aFind me!", district).build()));
@@ -108,7 +108,7 @@ public class AdventProvider extends MenuUtils implements InventoryProvider {
 
 	private void locked(InventoryContents contents, SlotPos slotPos, AdventChest adventChest, String name, String district, boolean located) {
 		if (located)
-			contents.set(slotPos, ClickableItem.from(locked.clone().name(name).lore(showWaypoint("&7Locked", district)).build(),
+			contents.set(slotPos, ClickableItem.of(locked.clone().name(name).lore(showWaypoint("&7Locked", district)).build(),
 					e -> Pugmas20.showWaypoint(adventChest, user.getOnlinePlayer())));
 		else
 			contents.set(slotPos, ClickableItem.empty(locked.clone().name(name).lore("&7Locked").build()));
@@ -116,7 +116,7 @@ public class AdventProvider extends MenuUtils implements InventoryProvider {
 
 	private void locked25(InventoryContents contents, SlotPos slotPos, AdventChest adventChest, String name, boolean located) {
 		if (located)
-			contents.set(slotPos, ClickableItem.from(locked.clone().name(name).lore(showWaypoint("&7Locked", "", "&cOpen all previous||&cchests to unlock")).build(),
+			contents.set(slotPos, ClickableItem.of(locked.clone().name(name).lore(showWaypoint("&7Locked", "", "&cOpen all previous||&cchests to unlock")).build(),
 					e -> Pugmas20.showWaypoint(adventChest, user.getOnlinePlayer())));
 		else
 			contents.set(slotPos, ClickableItem.empty(locked.clone().name(name).lore("&7Locked", "", "&cOpen all previous||&cchests to unlock").build()));
@@ -124,7 +124,7 @@ public class AdventProvider extends MenuUtils implements InventoryProvider {
 
 	private void missed(InventoryContents contents, SlotPos slotPos, AdventChest adventChest, String name, boolean located) {
 		if (located)
-			contents.set(slotPos, ClickableItem.from(missed.clone().name(name).lore(showWaypoint("&cMissed")).build(),
+			contents.set(slotPos, ClickableItem.of(missed.clone().name(name).lore(showWaypoint("&cMissed")).build(),
 					e -> Pugmas20.showWaypoint(adventChest, user.getOnlinePlayer())));
 		else
 			contents.set(slotPos, ClickableItem.empty(missed.clone().name(name).lore("&cMissed").build()));

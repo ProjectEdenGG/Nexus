@@ -24,7 +24,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 // this should be called SabotageMenu but there's already a SabotageMenu so oh well
 @Getter
@@ -37,8 +36,8 @@ public class ImpostorMenu extends MenuUtils implements InventoryProvider {
         this.arena = arena;
         sabotages = arena.getTasks().stream().filter(task -> task.getTaskType() == Tasks.TaskType.SABOTAGE).collect(Collectors.toCollection(LinkedHashSet::new));
         inventory = SmartInventory.builder()
-                .title(colorize("&4Sabotage"))
-                .size(getRows(sabotages.size(), 0), 9)
+                .title("&4Sabotage")
+                .rows(getRows(sabotages.size(), 0))
                 .provider(this)
                 .build();
     }
@@ -60,7 +59,7 @@ public class ImpostorMenu extends MenuUtils implements InventoryProvider {
             boolean canSabotage = matchData.getSabotage() == null;
             ItemBuilder builder = new ItemBuilder(canSabotage ? Material.WHITE_CONCRETE : Material.BLACK_CONCRETE);
             for (Tasks tasks : sabotages) {
-                inventoryContents.set(row, col, ClickableItem.from(builder.clone().name(camelCase(tasks.name())).build(), $ -> sabotage(minigamer, tasks)));
+                inventoryContents.set(row, col, ClickableItem.of(builder.clone().name(camelCase(tasks.name())).build(), $ -> sabotage(minigamer, tasks)));
                 row += 1;
                 if (row == 9) {
                     row = 0;

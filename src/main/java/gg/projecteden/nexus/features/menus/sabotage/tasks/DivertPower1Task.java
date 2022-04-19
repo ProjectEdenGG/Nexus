@@ -22,7 +22,7 @@ public class DivertPower1Task extends AbstractTaskMenu {
 
 	@Getter
 	private final SmartInventory inventory = SmartInventory.builder()
-		.size(6, 9)
+		.maxSize()
 		.title("Divert Power")
 		.listener(handleInvClose)
 		.provider(this)
@@ -33,7 +33,7 @@ public class DivertPower1Task extends AbstractTaskMenu {
 		int leverCol = task.<DivertPower1TaskPartData>getData().getLever();
 		for (int i = 0; i < 9; i++) {
 			ClickableItem item = i == leverCol
-				? ClickableItem.from(LEVER_ITEM, $ -> {
+				? ClickableItem.of(LEVER_ITEM, $ -> {
 					contents.set(5, leverCol, ClickableItem.empty(CLICKED_LEVER_ITEM));
 					task.partCompleted(player);
 					scheduleInvClose(player);

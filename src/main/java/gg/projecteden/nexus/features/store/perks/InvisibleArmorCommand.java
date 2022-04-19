@@ -1,10 +1,10 @@
 package gg.projecteden.nexus.features.store.perks;
 
+import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -72,7 +72,7 @@ public class InvisibleArmorCommand extends CustomCommand implements Listener {
 	void menu() {
 		SmartInventory.builder()
 				.provider(new InvisibleArmorProvider(invisibleArmor))
-				.size(6, 9)
+				.maxSize()
 				.title(ChatColor.DARK_AQUA + "Invisible Armour")
 				.build()
 				.open(player());
@@ -124,13 +124,13 @@ public class InvisibleArmorCommand extends CustomCommand implements Listener {
 				else
 					self = new ItemBuilder(user.getShownIcon(slot)).name("&aSelf: Shown").lore("&cClick to hide", "", lore);
 
-				contents.set(row, 4, ClickableItem.from(other.build(), e -> {
+				contents.set(row, 4, ClickableItem.of(other.build(), e -> {
 					user.toggleHide(slot);
 					service.save(user);
 					menu();
 				}));
 
-				contents.set(row, 6, ClickableItem.from(self.build(), e -> {
+				contents.set(row, 6, ClickableItem.of(self.build(), e -> {
 					user.toggleHideSelf(slot);
 					service.save(user);
 					menu();
@@ -142,13 +142,13 @@ public class InvisibleArmorCommand extends CustomCommand implements Listener {
 				toggle.name("&cArmor hidden").lore("&eClick to show");
 			else
 				toggle.name("&aArmor shown").lore("&eClick to hide");
-			contents.set(4, 8, ClickableItem.from(toggle.build(), e -> {
+			contents.set(4, 8, ClickableItem.of(toggle.build(), e -> {
 				run(null);
 				menu();
 			}));
 
 			ItemBuilder save = new ItemBuilder(Material.NETHER_STAR).name("&eSave & Close");
-			contents.set(5, 8, ClickableItem.from(save.build(), e -> e.getPlayer().closeInventory()));
+			contents.set(5, 8, ClickableItem.of(save.build(), e -> e.getPlayer().closeInventory()));
 		}
 	}
 

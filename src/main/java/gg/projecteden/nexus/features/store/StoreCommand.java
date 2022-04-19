@@ -1,12 +1,12 @@
 package gg.projecteden.nexus.features.store;
 
+import gg.projecteden.annotations.Async;
+import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.annotations.Async;
-import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.store.BuycraftUtils.CouponCreator;
 import gg.projecteden.nexus.features.store.annotations.Category.StoreCategory;
 import gg.projecteden.nexus.features.store.gallery.StoreGalleryNPCs;
@@ -189,7 +189,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 			SmartInventory.builder()
 					.provider(this)
 					.title("Store" + (category == null ? "" : " - " + StringUtils.camelCase(category)))
-					.size(6, 9)
+					.maxSize()
 					.build()
 					.open(player, page);
 		}
@@ -202,7 +202,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 				addBackItem(contents, e -> previousMenu.open(viewer));
 
 			ItemBuilder info = new ItemBuilder(Material.BOOK).name("&eVisit Store").lore("&f" + URL);
-			contents.set(0, 8, ClickableItem.from(info.build(), e -> {
+			contents.set(0, 8, ClickableItem.of(info.build(), e -> {
 				viewer.closeInventory();
 				PlayerUtils.send(player, new JsonBuilder(StringUtils.getPrefix("Store") + "Click me to open the &estore").url(URL));
 			}));
@@ -224,7 +224,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 					if (owned == count)
 						item.glow();
 
-					items.add(ClickableItem.from(item.build(), e -> new StoreProvider(this, category, player).open(viewer)));
+					items.add(ClickableItem.of(item.build(), e -> new StoreProvider(this, category, player).open(viewer)));
 				}
 			else
 				for (Package storePackage : category.getPackages()) {

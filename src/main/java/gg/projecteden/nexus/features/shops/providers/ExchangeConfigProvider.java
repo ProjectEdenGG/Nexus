@@ -118,7 +118,7 @@ public class ExchangeConfigProvider extends ShopProvider {
 				}
 
 			if (product != null)
-				contents.set(5, 4, ClickableItem.from(confirm.build(), e -> {
+				contents.set(5, 4, ClickableItem.of(confirm.build(), e -> {
 					Shop shop = service.get(player);
 					if (allowEditItem)
 						shop.getProducts().add(product);
@@ -139,7 +139,7 @@ public class ExchangeConfigProvider extends ShopProvider {
 		else
 			item.name("&e" + camelCase(prettyMoney(price)));
 
-		contents.set(3, 4, ClickableItem.from(item.build(), e -> Nexus.getSignMenuFactory()
+		contents.set(3, 4, ClickableItem.of(item.build(), e -> Nexus.getSignMenuFactory()
 				.lines("", "^ ^ ^ ^ ^ ^", "Enter a", "dollar amount")
 				.prefix(Shops.PREFIX)
 				.onError(() -> open(player))
@@ -162,7 +162,7 @@ public class ExchangeConfigProvider extends ShopProvider {
 				.lore("&7⬇ " + camelCase(exchangeType.previousWithLoop().name()))
 				.lore("&e⬇ " + camelCase(exchangeType.name()))
 				.lore("&7⬇ " + camelCase(exchangeType.nextWithLoop().name()));
-		contents.set(2, 4, ClickableItem.from(item.build(), e -> {
+		contents.set(2, 4, ClickableItem.of(item.build(), e -> {
 			exchangeType = exchangeType.nextWithLoop();
 			open(player);
 		}));
@@ -216,9 +216,9 @@ public class ExchangeConfigProvider extends ShopProvider {
 			};
 
 			if (itemStack.get() != null)
-				contents.set(row, 4, ClickableItem.from(itemStack.get(), action));
+				contents.set(row, 4, ClickableItem.of(itemStack.get(), action));
 			else
-				contents.set(row, 4, ClickableItem.from(placeholder, action));
+				contents.set(row, 4, ClickableItem.of(placeholder, action));
 		}
 
 		if (contents.get(row, 4).isPresent() && contents.get(row, 4).get().getItem() != null && contents.get(row, 4).get().getItem().equals(placeholder)) {
@@ -227,22 +227,22 @@ public class ExchangeConfigProvider extends ShopProvider {
 			contents.set(row, 5, ClickableItem.empty(more1));
 			contents.set(row, 6, ClickableItem.empty(more8));
 		} else {
-			contents.set(row, 2, ClickableItem.from(less8, e2 -> contents.get(row, 4).ifPresent(i -> {
+			contents.set(row, 2, ClickableItem.of(less8, e2 -> contents.get(row, 4).ifPresent(i -> {
 				ItemStack item = i.getItem();
 				item.setAmount(Math.max(1, Math.min(item.getType().getMaxStackSize(), item.getAmount() == 64 ? 56 : item.getAmount() - 8)));
 				open(player);
 			})));
-			contents.set(row, 3, ClickableItem.from(less1, e2 -> contents.get(row, 4).ifPresent(i -> {
+			contents.set(row, 3, ClickableItem.of(less1, e2 -> contents.get(row, 4).ifPresent(i -> {
 				ItemStack item = i.getItem();
 				item.setAmount(Math.max(1, Math.min(item.getType().getMaxStackSize(), item.getAmount() - 1)));
 				open(player);
 			})));
-			contents.set(row, 5, ClickableItem.from(more1, e2 -> contents.get(row, 4).ifPresent(i -> {
+			contents.set(row, 5, ClickableItem.of(more1, e2 -> contents.get(row, 4).ifPresent(i -> {
 				ItemStack item = i.getItem();
 				item.setAmount(Math.min(64, Math.min(item.getType().getMaxStackSize(), item.getAmount() + 1)));
 				open(player);
 			})));
-			contents.set(row, 6, ClickableItem.from(more8, e2 -> contents.get(row, 4).ifPresent(i -> {
+			contents.set(row, 6, ClickableItem.of(more8, e2 -> contents.get(row, 4).ifPresent(i -> {
 				ItemStack item = i.getItem();
 				item.setAmount(Math.min(64, Math.min(item.getType().getMaxStackSize(), item.getAmount() == 1 ? 8 : item.getAmount() + 8)));
 				open(player);

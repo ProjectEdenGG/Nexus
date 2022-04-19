@@ -58,7 +58,6 @@ import java.util.UUID;
 import static gg.projecteden.nexus.utils.LocationUtils.blockLocationsEqual;
 import static gg.projecteden.nexus.utils.LocationUtils.getCenteredLocation;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.nexus.utils.StringUtils.plural;
 
 public class HideAndSeek extends Infection {
@@ -347,8 +346,8 @@ public class HideAndSeek extends Infection {
 		public void open(Player player, int page) {
 			SmartInventory.builder()
 					.provider(this)
-					.title(colorize("&3&lSelect your Block"))
-					.size(getRows(match.getArena().getBlockList().size(), 1), 9)
+					.title("&3&lSelect your Block")
+					.rows(getRows(match.getArena().getBlockList().size(), 1))
 					.build()
 					.open(player, page);
 		}
@@ -361,7 +360,7 @@ public class HideAndSeek extends Infection {
 			List<ClickableItem> clickableItems = new ArrayList<>();
 			materials.forEach(material -> {
 				ItemStack itemStack = new ItemStack(material);
-				clickableItems.add(ClickableItem.from(itemStack, e -> {
+				clickableItems.add(ClickableItem.of(itemStack, e -> {
 					matchData.getBlockChoices().put(player.getUniqueId(), material);
 					player.closeInventory();
 					PlayerUtils.send(player, new JsonBuilder("&3You have selected ").next(Component.translatable(material.getTranslationKey(), NamedTextColor.YELLOW)));

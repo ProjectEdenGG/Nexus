@@ -55,7 +55,7 @@ public class BrowseShopsProvider extends ShopProvider {
 			if (!description.isEmpty())
 				head.lore("&f").lore(description);
 
-			items.add(ClickableItem.from(head.build(), e -> new PlayerShopProvider(this, shop).open(player)));
+			items.add(ClickableItem.of(head.build(), e -> new PlayerShopProvider(this, shop).open(player)));
 		}
 
 		paginator(player, contents, items);

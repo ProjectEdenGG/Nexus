@@ -366,7 +366,7 @@ public final class Thimble extends TeamlessMechanic {
 		SmartInventory.builder()
 				.provider(new ThimbleMenu())
 				.title("Select Your Concrete Block")
-				.size(2, 9)
+				.rows(2)
 				.build()
 				.open(event.getPlayer());
 	}
@@ -645,7 +645,7 @@ public final class Thimble extends TeamlessMechanic {
 						col = 0;
 					}
 
-					contents.set(new SlotPos(row, col++), ClickableItem.from(concrete, e -> pickColor(concrete, player)));
+					contents.set(new SlotPos(row, col++), ClickableItem.of(concrete, e -> pickColor(concrete, player)));
 				}
 			}
 		}

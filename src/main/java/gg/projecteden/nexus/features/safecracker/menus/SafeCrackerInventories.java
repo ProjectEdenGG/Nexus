@@ -10,7 +10,7 @@ public class SafeCrackerInventories {
 
 	public static void openCheckMenu(Player player) {
 		SmartInventory.builder()
-				.size(6, 9)
+				.maxSize()
 				.title("SafeCracker")
 				.provider(new SafeCrackerCheckProvider())
 				.build().open(player);
@@ -18,7 +18,7 @@ public class SafeCrackerInventories {
 
 	public static void openAdminMenu(Player player) {
 		SmartInventory.builder()
-				.size(6, 9)
+				.maxSize()
 				.title("SafeCracker Admin")
 				.provider(new SafeCrackerAdminProvider())
 				.build().open(player);
@@ -26,7 +26,7 @@ public class SafeCrackerInventories {
 
 	public static void openNPCEditMenu(Player player, SafeCrackerEvent.SafeCrackerNPC npc) {
 		SmartInventory.builder()
-				.size(3, 9)
+				.rows(3)
 				.title("SafeCracker Admin - " + npc.getName())
 				.provider(new SafeCrackerNPCEditProvider(npc))
 				.build().open(player);
@@ -34,7 +34,7 @@ public class SafeCrackerInventories {
 
 	public static void openGameSelectorMenu(Player player) {
 		SmartInventory.builder()
-				.size(6, 9)
+				.maxSize()
 				.title("SafeCracker Game Selector")
 				.provider(new SafeCrackerGameSelector())
 				.build().open(player);

@@ -197,7 +197,7 @@ public abstract class MenuUtils {
 	}
 
 	protected void addBackItem(InventoryContents contents, int row, int col, Consumer<ItemClickData> consumer) {
-		contents.set(row, col, ClickableItem.from(backItem(), consumer));
+		contents.set(row, col, ClickableItem.of(backItem(), consumer));
 	}
 
 	protected void addCloseItem(InventoryContents contents) {
@@ -205,7 +205,7 @@ public abstract class MenuUtils {
 	}
 
 	protected void addCloseItem(InventoryContents contents, int row, int col) {
-		contents.set(row, col, ClickableItem.from(closeItem(), e -> e.getPlayer().closeInventory()));
+		contents.set(row, col, ClickableItem.of(closeItem(), e -> e.getPlayer().closeInventory()));
 	}
 
 	protected ItemStack backItem() {
@@ -352,7 +352,7 @@ public abstract class MenuUtils {
 				page.page(items.size() / perPage);
 
 			if (!page.isFirst())
-				contents.set(previousSlot, ClickableItem.from(previous.build(), e -> {
+				contents.set(previousSlot, ClickableItem.of(previous.build(), e -> {
 					if (isRightClick(e))
 						jumpToPage(player, page.getPage());
 					else
@@ -360,7 +360,7 @@ public abstract class MenuUtils {
 				}));
 
 			if (!page.isLast())
-				contents.set(nextSlot, ClickableItem.from(next.build(), e -> {
+				contents.set(nextSlot, ClickableItem.of(next.build(), e -> {
 					if (isRightClick(e))
 						jumpToPage(player, page.getPage());
 					else
@@ -463,7 +463,7 @@ public abstract class MenuUtils {
 
 	public static void colorSelectMenu(Player player, Material type, Consumer<ItemClickData> onClick) {
 		SmartInventory.builder()
-				.size(3, 9)
+				.rows(3)
 				.title("Select Color")
 				.provider(new ColorSelectMenu(type, onClick))
 				.build().open(player);
@@ -493,9 +493,9 @@ public abstract class MenuUtils {
 				Tasks.sync(() -> {
 					ConfirmationMenu build = _build();
 					SmartInventory.builder()
-							.title(colorize(build.getTitle()))
+							.title(build.getTitle())
 							.provider(build)
-							.size(3, 9)
+							.rows(3)
 							.build()
 							.open(player);
 				});
@@ -513,7 +513,7 @@ public abstract class MenuUtils {
 			ItemBuilder cancelItem = new ItemBuilder(Material.RED_CONCRETE).name(cancelText).lore(cancelLore);
 			ItemBuilder confirmItem = new ItemBuilder(Material.LIME_CONCRETE).name(confirmText).lore(confirmLore);
 
-			contents.set(1, 2, ClickableItem.from(cancelItem.build(), e -> {
+			contents.set(1, 2, ClickableItem.of(cancelItem.build(), e -> {
 				try {
 					if (onCancel != null)
 						onCancel.accept(e);
@@ -528,7 +528,7 @@ public abstract class MenuUtils {
 				}
 			}));
 
-			contents.set(1, 6, ClickableItem.from(confirmItem.build(), e -> {
+			contents.set(1, 6, ClickableItem.of(confirmItem.build(), e -> {
 				try {
 					onConfirm.accept(e);
 
