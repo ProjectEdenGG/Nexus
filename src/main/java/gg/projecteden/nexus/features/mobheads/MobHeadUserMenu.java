@@ -33,7 +33,7 @@ public class MobHeadUserMenu extends MenuUtils implements InventoryProvider {
 	public void open(Player player, int page) {
 		SmartInventory.builder()
 			.provider(this)
-			.size(6, 9)
+			.maxSize()
 			.title("Mob Heads")
 			.build()
 			.open(player, page);
@@ -95,7 +95,7 @@ public class MobHeadUserMenu extends MenuUtils implements InventoryProvider {
 
 	private void formatKillsFilter(Player player, InventoryContents contents) {
 		final ItemBuilder item = getFilterItem(Material.NETHERITE_SWORD, killsFilter);
-		contents.set(5, 3, ClickableItem.from(item.build(), e -> {
+		contents.set(5, 3, ClickableItem.of(item.build(), e -> {
 			killsFilter = killsFilter.nextWithLoop();
 			open(player, contents.pagination().getPage());
 		}));
@@ -103,7 +103,7 @@ public class MobHeadUserMenu extends MenuUtils implements InventoryProvider {
 
 	private void formatHeadsFilter(Player player, InventoryContents contents) {
 		final ItemBuilder item = getFilterItem(Material.HOPPER, headsFilter);
-		contents.set(5, 5, ClickableItem.from(item.build(), e -> {
+		contents.set(5, 5, ClickableItem.of(item.build(), e -> {
 			headsFilter = headsFilter.nextWithLoop();
 			open(player, contents.pagination().getPage());
 		}));

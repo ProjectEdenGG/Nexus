@@ -32,7 +32,7 @@ public class ColorSelectMenu extends MenuUtils implements InventoryProvider {
 		for (ColorType color : ColorType.values()) {
 			if (color.getDyeColor() == null) continue;
 			ItemStack item = nameItem(color.switchColor(type), "&e" + StringUtils.camelCase(color.getName()));
-			contents.set(row, column, ClickableItem.from(item, e -> onClick.accept(e)));
+			contents.set(row, column, ClickableItem.of(item, e -> onClick.accept(e)));
 			if (column == 8) {
 				column = 0;
 				row++;

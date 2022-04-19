@@ -54,7 +54,6 @@ import java.util.function.BiFunction;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.PlayerUtils.getPlayer;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.nexus.utils.StringUtils.getShortLocationString;
 import static gg.projecteden.utils.TimeUtils.shortDateTimeFormat;
 import static gg.projecteden.utils.TimeUtils.shortishDateTimeFormat;
@@ -165,8 +164,8 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 		public void open(Player player, int page) {
 			SmartInventory.builder()
 					.provider(this)
-					.title(colorize("&fInv Snapshot - " + getPlayer(snapshot.getUuid()).getName()))
-					.size(6, 9)
+					.title("&fInv Snapshot - " + getPlayer(snapshot.getUuid()).getName())
+					.maxSize()
 					.build()
 					.open(player, page);
 		}
@@ -186,20 +185,20 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 					.loreize(false)
 					.build();
 
-			contents.set(0, 3, ClickableItem.from(applyToSelf, e -> snapshot.apply(player, player)));
+			contents.set(0, 3, ClickableItem.of(applyToSelf, e -> snapshot.apply(player, player)));
 			if (!owner.equals(player))
-				contents.set(0, 4, ClickableItem.from(applyToOwner, e -> {
+				contents.set(0, 4, ClickableItem.of(applyToOwner, e -> {
 					if (!owner.isOnline() || owner.getPlayer() == null)
 						PlayerUtils.send(player, new PlayerNotOnlineException(owner).getMessage());
 					else
 						snapshot.apply(player, owner.getPlayer());
 				}));
-			contents.set(0, 5, ClickableItem.from(applyToChest, e -> {
+			contents.set(0, 5, ClickableItem.of(applyToChest, e -> {
 				player.closeInventory();
 				applyingToChest.put(player.getUniqueId(), snapshot);
 				PlayerUtils.send(player, PREFIX + "Click on a chest to apply the inventory to it");
 			}));
-			contents.set(0, 7, ClickableItem.from(teleport, e -> player.teleportAsync(snapshot.getLocation(), TeleportCause.COMMAND)));
+			contents.set(0, 7, ClickableItem.of(teleport, e -> player.teleportAsync(snapshot.getLocation(), TeleportCause.COMMAND)));
 			contents.set(0, 8, ClickableItem.empty(info));
 			formatInventoryContents(contents, snapshot.getContents().toArray(ItemStack[]::new));
 		}

@@ -28,8 +28,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
-
 @RequiredArgsConstructor
 @Getter
 public class VotingScreen extends AbstractVoteScreen {
@@ -37,8 +35,8 @@ public class VotingScreen extends AbstractVoteScreen {
 	private final @Nullable SabotageColor body;
 	private final SmartInventory inventory = SmartInventory.builder()
 			.provider(this)
-			.title(colorize("&cWho Is The Impostor?"))
-			.size(6, 9)
+			.title("&cWho Is The Impostor?")
+			.maxSize()
 			.build();
 
 	@Override
@@ -60,7 +58,7 @@ public class VotingScreen extends AbstractVoteScreen {
 				setClock(inventoryContents, "Voting ends", votingEndsIn);
 			}
 
-			inventoryContents.set(0, 2, ClickableItem.from(new ItemBuilder(Material.BARRIER).name("&eSkip Vote").build(), $ -> matchData.vote(voter, null)));
+			inventoryContents.set(0, 2, ClickableItem.of(new ItemBuilder(Material.BARRIER).name("&eSkip Vote").build(), $ -> matchData.vote(voter, null)));
 			if (!reporter.getUniqueId().equals(voter.getUniqueId()))
 				inventoryContents.set(0, 4, votingItem(voter, reporter, matchData));
 			inventoryContents.set(0, 6, votingItem(voter, voter, matchData));
@@ -95,6 +93,6 @@ public class VotingScreen extends AbstractVoteScreen {
 				components.add(new JsonBuilder("Reporting ", NamedTextColor.YELLOW).next(body).next("'s body"));
 		if (matchData.hasVoted(target))
 			components.add(new JsonBuilder("&cVoted"));
-		return ClickableItem.from(builder.componentLore(components).build(), $ -> matchData.vote(voter, target));
+		return ClickableItem.of(builder.componentLore(components).build(), $ -> matchData.vote(voter, target));
 	}
 }

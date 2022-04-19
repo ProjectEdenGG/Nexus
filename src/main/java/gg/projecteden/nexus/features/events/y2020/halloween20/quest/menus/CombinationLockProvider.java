@@ -41,11 +41,11 @@ public class CombinationLockProvider extends MenuUtils implements InventoryProvi
 		contents.set(2, 3, ClickableItem.empty(new ItemStack(Material.AIR)));
 		contents.set(2, 5, ClickableItem.empty(new ItemStack(Material.AIR)));
 
-		contents.set(5, 7, ClickableItem.from(new ItemBuilder(Material.LIME_WOOL).name("&aSubmit Code").build(), e -> {
+		contents.set(5, 7, ClickableItem.of(new ItemBuilder(Material.LIME_WOOL).name("&aSubmit Code").build(), e -> {
 			parseCode(player, contents);
 		}));
 
-		contents.set(5, 8, ClickableItem.from(new ItemBuilder(Material.RED_WOOL).name("&cReset").build(), e -> Halloween20Menus.openComboLock(player)));
+		contents.set(5, 8, ClickableItem.of(new ItemBuilder(Material.RED_WOOL).name("&cReset").build(), e -> Halloween20Menus.openComboLock(player)));
 
 		int[] numberSlots = {9, 10, 11, 12, 13, 14, 15, 16, 17, 21, 23};
 
@@ -54,7 +54,7 @@ public class CombinationLockProvider extends MenuUtils implements InventoryProvi
 
 		for (int i = 0; i < user.getFoundComboLockNumbers().size(); i++) {
 			int j = i;
-			contents.set(numberSlots[i], ClickableItem.from(new ItemBuilder(user.getFoundComboLockNumbers().get(i).getItem())
+			contents.set(numberSlots[i], ClickableItem.of(new ItemBuilder(user.getFoundComboLockNumbers().get(i).getItem())
 					.name("&e" + user.getFoundComboLockNumbers().get(i).getNumericalValue()).build(), e -> {
 				if (foundIndex == 9) return;
 				contents.set(numberSlots[j], ClickableItem.empty(new ItemStack(Material.AIR)));

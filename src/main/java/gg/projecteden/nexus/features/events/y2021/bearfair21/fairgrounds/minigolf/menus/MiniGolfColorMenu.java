@@ -27,7 +27,7 @@ public class MiniGolfColorMenu extends MenuUtils implements InventoryProvider {
 	public static SmartInventory getInv() {
 		return SmartInventory.builder()
 				.provider(new MiniGolfColorMenu())
-				.size(getRows(MiniGolfColor.values().length), 9)
+				.rows(getRows(MiniGolfColor.values().length))
 				.title(ChatColor.DARK_AQUA + "Select a color:")
 				.closeable(true)
 				.build();
@@ -63,7 +63,7 @@ public class MiniGolfColorMenu extends MenuUtils implements InventoryProvider {
 			} else
 				item.name(miniGolfColor.getColorType().getChatColor() + StringUtils.camelCase(miniGolfColor));
 
-			clickableItems.add(ClickableItem.from(item.build(), e -> setColor(user, miniGolfColor)));
+			clickableItems.add(ClickableItem.of(item.build(), e -> setColor(user, miniGolfColor)));
 		}
 
 		paginator(player, contents, clickableItems);

@@ -44,7 +44,7 @@ public class AdventMenu extends MenuUtils implements InventoryProvider {
 	public void open(Player player, int page) {
 		SmartInventory.builder()
 			.provider(this)
-			.size(6, 9)
+			.maxSize()
 			.title(title.getTitle())
 			.build()
 			.open(player);
@@ -67,7 +67,7 @@ public class AdventMenu extends MenuUtils implements InventoryProvider {
 			if (user.advent().hasFound(_day)) {
 				item.lore("", "&aShow Waypoint");
 
-				clickableItem = ClickableItem.from(item.build(), e -> {
+				clickableItem = ClickableItem.of(item.build(), e -> {
 					player.closeInventory();
 					Advent.glow(user, _day);
 				});

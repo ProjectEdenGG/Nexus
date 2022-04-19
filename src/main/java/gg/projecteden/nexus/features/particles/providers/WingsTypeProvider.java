@@ -21,7 +21,7 @@ public class WingsTypeProvider extends MenuUtils implements InventoryProvider {
 	public void open(Player player, int page) {
 		SmartInventory.builder()
 				.title("Wings Style")
-				.size(5, 9)
+				.rows(5)
 				.provider(this)
 				.build()
 				.open(player);
@@ -45,7 +45,7 @@ public class WingsTypeProvider extends MenuUtils implements InventoryProvider {
 			if (ParticleSetting.WINGS_STYLE.get(owner, ParticleType.WINGS).equals(style))
 				addGlowing(item);
 
-			contents.set(row, column, ClickableItem.from(item, e -> {
+			contents.set(row, column, ClickableItem.of(item, e -> {
 				owner.getSettings(ParticleType.WINGS).put(ParticleSetting.WINGS_STYLE, style);
 				service.save(owner);
 				Tasks.wait(5, () -> new WingsTypeProvider().open(player));

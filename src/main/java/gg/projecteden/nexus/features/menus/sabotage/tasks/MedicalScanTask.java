@@ -33,7 +33,7 @@ public class MedicalScanTask extends AbstractTaskMenu {
 	@Getter
 	private final SmartInventory inventory = SmartInventory.builder()
 			.title("Submit Scan")
-			.size(2, 9)
+			.rows(2)
 			.provider(this)
 			.listener(new InventoryListener<>(InventoryCloseEvent.class, this::onClose))
 			.build();

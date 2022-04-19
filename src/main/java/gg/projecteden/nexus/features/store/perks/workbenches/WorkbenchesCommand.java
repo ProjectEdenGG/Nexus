@@ -1,10 +1,10 @@
 package gg.projecteden.nexus.features.store.perks.workbenches;
 
+import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.store.perks.workbenches._WorkbenchCommand.Workbench;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -44,7 +44,7 @@ public class WorkbenchesCommand extends CustomCommand {
 			SmartInventory.builder()
 				.title("Workbenches")
 				.provider(this)
-				.size(1, 9)
+				.rows(1)
 				.build()
 				.open(player, page);
 		}
@@ -57,7 +57,7 @@ public class WorkbenchesCommand extends CustomCommand {
 					.name(StringUtils.camelCase(workbench))
 					.customModelData(workbench.getCustomModelData());
 
-				contents.set(index++, ClickableItem.from(builder.build(), e -> workbench.open(player)));
+				contents.set(index++, ClickableItem.of(builder.build(), e -> workbench.open(player)));
 			}
 		}
 

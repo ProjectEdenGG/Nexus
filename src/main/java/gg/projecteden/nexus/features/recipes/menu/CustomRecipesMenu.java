@@ -42,7 +42,7 @@ public class CustomRecipesMenu extends MenuUtils implements InventoryProvider {
 	public void open(Player player, int page) {
 		SmartInventory.builder()
 			.title("Custom Recipes")
-			.size(3, 9)
+			.rows(3)
 			.provider(this)
 			.build()
 			.open(player, page);
@@ -59,7 +59,7 @@ public class CustomRecipesMenu extends MenuUtils implements InventoryProvider {
 					if (type == RecipeType.MAIN || type == RecipeType.FURNACE) // TODO Support furnace recipes in menu
 						continue;
 
-					contents.set(row, column, ClickableItem.from(type.getItem(), e -> new CustomRecipesMenu(type).open(player)));
+					contents.set(row, column, ClickableItem.of(type.getItem(), e -> new CustomRecipesMenu(type).open(player)));
 
 					if (column == 7) {
 						column = 3;
@@ -94,7 +94,7 @@ public class CustomRecipesMenu extends MenuUtils implements InventoryProvider {
 								return player.hasPermission(nexusRecipe.getPermission());
 							return true;
 						})
-						.map(recipe -> ClickableItem.from(recipe.getResult(), e -> new CustomRecipesMenu(recipe).open(player)))
+						.map(recipe -> ClickableItem.of(recipe.getResult(), e -> new CustomRecipesMenu(recipe).open(player)))
 						.collect(Collectors.toList()))
 					.previousSlot(0, 2)
 					.nextSlot(0, 6)

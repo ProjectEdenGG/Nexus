@@ -47,7 +47,7 @@ public class EventStoreWingsProvider extends EventStoreMenu {
 			ItemBuilder item = style.getDisplayItem();
 			lore(player, item, price);
 
-			items.add(ClickableItem.from(item.build(), e -> {
+			items.add(ClickableItem.of(item.build(), e -> {
 				try {
 					if (isShiftClick(e)) {
 						chargeAndAddPermissions(player, price, "wings.use", style.getPermission());

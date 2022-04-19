@@ -73,7 +73,7 @@ public class CustomRecipesCommand extends CustomCommand {
 	@Path("uncraft")
 	@Permission(Group.ADMIN)
 	void uncraft() {
-		SmartInventory.builder().title("Uncraft Menu").size(3, 9).provider(new UncraftMenu()).build().open(player());
+		SmartInventory.builder().title("Uncraft Menu").rows(3).provider(new UncraftMenu()).build().open(player());
 	}
 
 	public static class UncraftMenu extends MenuUtils implements InventoryProvider {
@@ -87,7 +87,7 @@ public class CustomRecipesCommand extends CustomCommand {
 			for (int i = 0; i < uncraftingSlots.length; i++)
 				contents.set(uncraftingSlots[i], ClickableItem.NONE);
 
-			contents.set(1, 2, ClickableItem.from(new ItemBuilder(Material.LIGHT_GRAY_STAINED_GLASS_PANE).name("Place Item Here").build(), e -> {
+			contents.set(1, 2, ClickableItem.of(new ItemBuilder(Material.LIGHT_GRAY_STAINED_GLASS_PANE).name("Place Item Here").build(), e -> {
 				InventoryClickEvent clickEvent = (InventoryClickEvent) e.getEvent();
 				if (isNullOrAir(clickEvent.getWhoClicked().getItemOnCursor())) {
 					for (int uncraftingSlot : uncraftingSlots)
@@ -120,12 +120,12 @@ public class CustomRecipesCommand extends CustomCommand {
 			}
 
 			if (index != 0) {
-				contents.set(2, 3, ClickableItem.from(new ItemBuilder(Material.ARROW).name("Previous").build(), e -> {
+				contents.set(2, 3, ClickableItem.of(new ItemBuilder(Material.ARROW).name("Previous").build(), e -> {
 					getIndex(items, index - 1, contents);
 				}));
 			}
 			if (index != items.size() - 1) {
-				contents.set(2, 7, ClickableItem.from(new ItemBuilder(Material.ARROW).name("Next").build(), e -> {
+				contents.set(2, 7, ClickableItem.of(new ItemBuilder(Material.ARROW).name("Next").build(), e -> {
 					getIndex(items, index + 1, contents);
 				}));
 			}

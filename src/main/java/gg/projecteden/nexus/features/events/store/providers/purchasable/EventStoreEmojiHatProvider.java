@@ -41,7 +41,7 @@ public class EventStoreEmojiHatProvider extends EventStoreMenu {
 			ItemBuilder item = type.getDisplayItem();
 			lore(player, item, price);
 
-			items.add(ClickableItem.from(item.build(), e -> {
+			items.add(ClickableItem.of(item.build(), e -> {
 				try {
 					if (isShiftClick(e)) {
 						chargeAndAddPermissions(player, price, type.getPermission());

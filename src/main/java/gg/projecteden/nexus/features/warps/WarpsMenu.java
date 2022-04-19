@@ -9,7 +9,7 @@ public class WarpsMenu {
 	public static void open(Player player, WarpMenu menu) {
 		SmartInventory inv = SmartInventory.builder()
 				.provider(new WarpsMenuProvider(menu))
-				.size(menu.getSize(), 9)
+				.rows(menu.getSize())
 				.title(ChatColor.DARK_AQUA + "Warps")
 				.build();
 

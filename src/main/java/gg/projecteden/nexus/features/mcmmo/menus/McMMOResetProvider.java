@@ -162,8 +162,8 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 	public void open(Player player) {
 		SmartInventory.builder()
 				.provider(this)
-				.size(6, 9)
-				.title(StringUtils.colorize("McMMO Reset"))
+				.maxSize()
+				.title("McMMO Reset")
 				.build().open(player);
 	}
 
@@ -192,7 +192,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 		if (mcmmoPlayer.getPowerLevel() >= TIER_ONE_ALL) addGlowing(all);
 		ItemStack reset = new ItemBuilder(Material.BARRIER).name("&cReset all with &lno reward").build();
 
-		contents.set(0, 4, ClickableItem.from(all, (e) -> {
+		contents.set(0, 4, ClickableItem.of(all, (e) -> {
 			if (!canPrestigeAll) return;
 
 			ConfirmationMenu.builder()
@@ -204,7 +204,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 					.open(player);
 		}));
 
-		contents.set(5, 4, ClickableItem.from(reset, (e) ->
+		contents.set(5, 4, ClickableItem.of(reset, (e) ->
 				ConfirmationMenu.builder()
 						.title("&4Confirm Reset All? (No Rewards)")
 						.onConfirm((e2) -> {
@@ -227,7 +227,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 			if (mcmmoPlayer.getSkillLevel(PrimarySkillType.valueOf(skill.name())) >= TIER_ONE)
 				addGlowing(item);
 
-			contents.set(skill.getRow(), skill.getColumn(), ClickableItem.from(item, (e) -> {
+			contents.set(skill.getRow(), skill.getColumn(), ClickableItem.of(item, (e) -> {
 				if (mcmmoPlayer.getSkillLevel(PrimarySkillType.valueOf(skill.name())) < TIER_ONE)
 					return;
 

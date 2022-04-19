@@ -39,7 +39,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static java.util.stream.Collectors.toList;
 
 @NoArgsConstructor
@@ -122,8 +121,8 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 		@Override
 		public void open(Player viewer, int page) {
 			SmartInventory.builder()
-				.title(colorize("&3" + StringUtils.camelCase(pageType.name())))
-				.size(6, 9)
+				.title("&3" + StringUtils.camelCase(pageType.name()))
+				.maxSize()
 				.provider(this)
 				.build()
 				.open(viewer, page);
@@ -150,7 +149,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 			switch (pageType) {
 				case MESSAGES -> {
 					addCloseItem(contents);
-					contents.set(0, 8, ClickableItem.from(nameItem(Material.COMMAND_BLOCK, "&dSounds"), e -> open(player, PageType.SOUNDS)));
+					contents.set(0, 8, ClickableItem.of(nameItem(Material.COMMAND_BLOCK, "&dSounds"), e -> open(player, PageType.SOUNDS)));
 					for (MuteMenuItem item : MuteMenuItem.values()) {
 						if (item.getDefaultVolume() != null)
 							continue;
@@ -165,7 +164,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 							.itemFlags(ItemFlag.HIDE_ATTRIBUTES)
 							.build();
 
-						items.add(ClickableItem.from(stack, e -> {
+						items.add(ClickableItem.of(stack, e -> {
 							toggleMute(user, item);
 							reopen(player, contents);
 						}));
@@ -179,7 +178,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 						.build()));
 
 					if (Rank.of(player).isAdmin())
-						items.add(ClickableItem.from(nameItem(Material.ZOMBIE_HEAD, "Mob Sounds"), e -> open(player, PageType.MOB_SOUNDS)));
+						items.add(ClickableItem.of(nameItem(Material.ZOMBIE_HEAD, "Mob Sounds"), e -> open(player, PageType.MOB_SOUNDS)));
 
 					for (MuteMenuItem item : MuteMenuItem.values()) {
 						if (item.getDefaultVolume() == null)
@@ -193,7 +192,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 						if (muted)
 							addGlowing(stack);
 
-						items.add(ClickableItem.from(stack, e -> {
+						items.add(ClickableItem.of(stack, e -> {
 							if (isRightClick(e))
 								decreaseVolume(user, item);
 							else if (isLeftClick(e))
@@ -219,7 +218,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 
 						int volume = user.getVolume(mobHeadType.getEntityType());
 						final ItemBuilder skull = new ItemBuilder(mobHeadType.getSkull()).lore(volume == 0 ? "&c0%" : "&a" + volume + "%");
-						items.add(ClickableItem.from(skull.build(), e -> {
+						items.add(ClickableItem.of(skull.build(), e -> {
 							if (isRightClick(e))
 								decreaseVolume(user, mobHeadType.getEntityType());
 							else if (isLeftClick(e))

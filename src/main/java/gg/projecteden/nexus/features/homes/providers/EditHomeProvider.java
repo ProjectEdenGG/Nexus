@@ -34,7 +34,7 @@ public class EditHomeProvider extends MenuUtils implements InventoryProvider {
 	public void open(Player player, int page) {
 		SmartInventory.builder()
 				.provider(this)
-				.size(6, 9)
+				.maxSize()
 				.title(StringUtils.colorize((home.isLocked() ? "&4" : "&a") + StringUtils.camelCase(home.getName())))
 				.build()
 				.open(home.getOwner().getOnlinePlayer(), page);
@@ -48,14 +48,14 @@ public class EditHomeProvider extends MenuUtils implements InventoryProvider {
 		String name = home.isLocked() ? "&cLocked" : "&aUnlocked";
 		String lore = "||" + (home.isLocked() ? "&eClick to unlock" : "&eClick to lock");
 
-		contents.set(0, 4, ClickableItem.from(nameItem(material, name, lore), e -> {
+		contents.set(0, 4, ClickableItem.of(nameItem(material, name, lore), e -> {
 			home.setLocked(!home.isLocked());
 			service.save(homeOwner);
 			refresh();
 		}));
 
 		if (home.isLocked()) {
-			contents.set(0, 7, ClickableItem.from(nameItem(
+			contents.set(0, 7, ClickableItem.of(nameItem(
 					Material.LIME_CONCRETE_POWDER,
 					"&eGive a player access",
 					"&eto this home||&f||&fThey will be able to teleport to this home even if it is locked" + getAccessListNames(home.getAccessList())
@@ -63,7 +63,7 @@ public class EditHomeProvider extends MenuUtils implements InventoryProvider {
 				e -> HomesMenu.allow(home, response -> refresh())
 			));
 
-			contents.set(0, 8, ClickableItem.from(nameItem(
+			contents.set(0, 8, ClickableItem.of(nameItem(
 					Material.RED_CONCRETE_POWDER,
 					"&eRemove a player's",
 					"&eaccess to this home||&f||&fThey will only be able to teleport to this home if it is unlocked"
@@ -72,7 +72,7 @@ public class EditHomeProvider extends MenuUtils implements InventoryProvider {
 			));
 		}
 
-		contents.set(2, 1, ClickableItem.from(nameItem(
+		contents.set(2, 1, ClickableItem.of(nameItem(
 				Material.PAINTING,
 				"&eSet display item",
 				"&fWish it was easier to find this home in the menu? Change what item it displays as to distinguish it from the rest!"
@@ -80,10 +80,10 @@ public class EditHomeProvider extends MenuUtils implements InventoryProvider {
 			e -> HomesMenu.displayItem(home, response -> refresh())
 		));
 
-		contents.set(2, 2, ClickableItem.from(nameItem(Material.NAME_TAG, "&eRename"), e -> HomesMenu.rename(home, response -> refresh())));
-		contents.set(2, 4, ClickableItem.from(nameItem(Material.COMPASS, "&eTeleport"), e -> home.teleportAsync(player)));
+		contents.set(2, 2, ClickableItem.of(nameItem(Material.NAME_TAG, "&eRename"), e -> HomesMenu.rename(home, response -> refresh())));
+		contents.set(2, 4, ClickableItem.of(nameItem(Material.COMPASS, "&eTeleport"), e -> home.teleportAsync(player)));
 
-		contents.set(2, 6, ClickableItem.from(nameItem(Material.FILLED_MAP, "&eSet to current location"),
+		contents.set(2, 6, ClickableItem.of(nameItem(Material.FILLED_MAP, "&eSet to current location"),
 				e -> ConfirmationMenu.builder()
 						.onCancel(e2 -> refresh())
 						.onConfirm(e2 -> {
@@ -98,13 +98,13 @@ public class EditHomeProvider extends MenuUtils implements InventoryProvider {
 			respawn = new ItemBuilder(Material.ORANGE_BED).name("&eCurrent respawn location").glow();
 		else
 			respawn = new ItemBuilder(Material.CYAN_BED).name("&eSet as respawn location");
-		contents.set(2, 7, ClickableItem.from(respawn.build(), e -> {
+		contents.set(2, 7, ClickableItem.of(respawn.build(), e -> {
 			home.setRespawn(true);
 			service.save(homeOwner);
 			refresh();
 		}));
 
-		contents.set(4, 4, ClickableItem.from(nameItem(Material.LAVA_BUCKET, "&eDelete"),
+		contents.set(4, 4, ClickableItem.of(nameItem(Material.LAVA_BUCKET, "&eDelete"),
 				e -> ConfirmationMenu.builder()
 						.onCancel(e2 -> refresh())
 						.onConfirm(e2 -> {

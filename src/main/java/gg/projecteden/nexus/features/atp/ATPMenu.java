@@ -19,7 +19,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @NoArgsConstructor
 public class ATPMenu extends MenuUtils implements InventoryProvider {
@@ -38,8 +37,8 @@ public class ATPMenu extends MenuUtils implements InventoryProvider {
 	@Override
 	public void open(Player player, int page) {
 		SmartInventory.builder()
-				.size(5, 9)
-				.title(colorize("&3Animal Teleport Pens"))
+				.rows(5)
+				.title("&3Animal Teleport Pens")
 				.provider(this)
 				.build()
 				.open(player);
@@ -47,37 +46,37 @@ public class ATPMenu extends MenuUtils implements InventoryProvider {
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
-		contents.set(0, 0, ClickableItem.from(closeItem(), e -> player.closeInventory()));
+		contents.set(0, 0, ClickableItem.of(closeItem(), e -> player.closeInventory()));
 
 		if (group.equals(ATPGroup.LEGACY)) {
 			for (LegacySurvivalWarp warp : LegacySurvivalWarp.values()) {
 				if (warp.name().equalsIgnoreCase("nether")) continue;
-				contents.set(warp.getColumn(), warp.getRow(), ClickableItem.from(warp.getMenuItem(), e -> {
+				contents.set(warp.getColumn(), warp.getRow(), ClickableItem.of(warp.getMenuItem(), e -> {
 					Warp toWarp = WarpType.ATP.get("legacy_" + warp.name().replace("_", ""));
 					new AnimalTeleportPens(player).confirm(player, toWarp.getLocation());
 				}));
 			}
 
 			ItemStack newWorld = nameItem(Material.GRASS, "&3Survival", "&eClick to view the||&enew Survival warps");
-			contents.set(3, 7, ClickableItem.from(newWorld, e -> new ATPMenu(ATPGroup.SURVIVAL).open(player)));
+			contents.set(3, 7, ClickableItem.of(newWorld, e -> new ATPMenu(ATPGroup.SURVIVAL).open(player)));
 
 		} else {
 			for (SurvivalWarp warp : SurvivalWarp.values()) {
 				if (warp.name().equalsIgnoreCase("nether")) continue;
-				contents.set(warp.getColumn(), warp.getRow(), ClickableItem.from(warp.getMenuItem(), e -> {
+				contents.set(warp.getColumn(), warp.getRow(), ClickableItem.of(warp.getMenuItem(), e -> {
 					Warp toWarp = WarpType.ATP.get(warp.name().replace("_", ""));
 					new AnimalTeleportPens(player).confirm(player, toWarp.getLocation());
 				}));
 			}
 
 			ItemStack legacy = nameItem(Material.MOSSY_COBBLESTONE, "&3Legacy World", "&eClick to view the||&ewarps of the legacy world");
-			contents.set(3, 7, ClickableItem.from(legacy, e -> new ATPMenu(ATPGroup.LEGACY).open(player)));
+			contents.set(3, 7, ClickableItem.of(legacy, e -> new ATPMenu(ATPGroup.LEGACY).open(player)));
 		}
 
-		contents.set(1, 7, ClickableItem.from(nameItem(Material.OAK_SIGN, "&3Homes", "&eClick to teleport to||&eone of your homes."), e -> {
+		contents.set(1, 7, ClickableItem.of(nameItem(Material.OAK_SIGN, "&3Homes", "&eClick to teleport to||&eone of your homes."), e -> {
 			SmartInventory.builder()
 					.title("ATP Homes")
-					.size(6, 9)
+					.maxSize()
 					.provider(new ATPHomesMenuProvider())
 					.build()
 					.open(player);
@@ -93,7 +92,7 @@ public class ATPMenu extends MenuUtils implements InventoryProvider {
 		public void init(Player player, InventoryContents contents) {
 			HomeOwner owner = service.get(player.getUniqueId());
 
-			contents.set(0, 0, ClickableItem.from(backItem(), e -> new ATPMenu(group).open(player)));
+			contents.set(0, 0, ClickableItem.of(backItem(), e -> new ATPMenu(group).open(player)));
 
 			int row = 1;
 			int column = 0;
@@ -107,7 +106,7 @@ public class ATPMenu extends MenuUtils implements InventoryProvider {
 					item = new ItemBuilder(Material.LIME_CONCRETE);
 				item.name("&f" + camelCase(home.getName()));
 
-				contents.set(row, column, ClickableItem.from(item.build(), e ->
+				contents.set(row, column, ClickableItem.of(item.build(), e ->
 						new AnimalTeleportPens(player).confirm(player, home.getLocation())));
 
 				if (column == 8) {

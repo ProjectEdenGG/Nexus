@@ -48,7 +48,7 @@ public class CustomModelMenu extends MenuUtils implements InventoryProvider {
 		SmartInventory.builder()
 				.provider(this)
 				.title(colorize("&0" + title))
-				.size(6, 9)
+				.maxSize()
 				.build()
 				.open(player, page);
 	}
@@ -69,7 +69,7 @@ public class CustomModelMenu extends MenuUtils implements InventoryProvider {
 				item = firstModel.getDisplayItem();
 
 			ItemBuilder builder = new ItemBuilder(item).name(folder.getDisplayPath()).glow();
-			items.add(ClickableItem.from(builder.build(), e -> new CustomModelMenu(folder, this).open(player)));
+			items.add(ClickableItem.of(builder.build(), e -> new CustomModelMenu(folder, this).open(player)));
 		}
 
 		if (!items.isEmpty()) {
@@ -89,7 +89,7 @@ public class CustomModelMenu extends MenuUtils implements InventoryProvider {
 					.lore("&7Click to obtain item")
 					.lore("&7Shift+Click to obtain item with name");
 
-			items.add(ClickableItem.from(item.build(), e ->
+			items.add(ClickableItem.of(item.build(), e ->
 					PlayerUtils.giveItem(player, isShiftClick(e) ? model.getDisplayItem() : model.getItem())));
 		}
 

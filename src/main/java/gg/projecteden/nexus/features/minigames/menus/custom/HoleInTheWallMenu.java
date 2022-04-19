@@ -36,7 +36,7 @@ public class HoleInTheWallMenu extends MenuUtils implements InventoryProvider {
 
 	public SmartInventory openDesignStartLocationsMenu(Arena arena){
 		return SmartInventory.builder()
-				.size(6, 9)
+				.maxSize()
 				.provider(new HoleInTheWallSubMenu(arena))
 				.title("Design Start Locations Menu")
 				.build();
@@ -44,9 +44,9 @@ public class HoleInTheWallMenu extends MenuUtils implements InventoryProvider {
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
-		contents.set(0, 0, ClickableItem.from(backItem(), e -> Minigames.menus.openArenaMenu(player, arena)));
+		contents.set(0, 0, ClickableItem.of(backItem(), e -> Minigames.menus.openArenaMenu(player, arena)));
 
-		contents.set(1, 0, ClickableItem.from(nameItem(new ItemStack(Material.POTION), "&eDesign Start Locations"),
+		contents.set(1, 0, ClickableItem.of(nameItem(new ItemStack(Material.POTION), "&eDesign Start Locations"),
 				e -> openDesignStartLocationsMenu(arena).open(player)));
 	}
 
@@ -65,7 +65,7 @@ public class HoleInTheWallMenu extends MenuUtils implements InventoryProvider {
 
 			Pagination page = contents.pagination();
 
-			contents.set(0, 4, ClickableItem.from(nameItem(
+			contents.set(0, 4, ClickableItem.of(nameItem(
 					Material.EMERALD_BLOCK,
 					"&eAdd Power Up Location",
 					"&3Click to add a Power Up||&3at your current location."
@@ -78,7 +78,7 @@ public class HoleInTheWallMenu extends MenuUtils implements InventoryProvider {
 
 			ItemStack deleteItem = nameItem(Material.TNT, "&cDelete Item", "&7Click me to enter deletion mode." +
 					"||&7Then, click a location with||&7me to delete the location.");
-			contents.set(0, 8, ClickableItem.from(deleteItem, e -> Tasks.wait(2, () -> {
+			contents.set(0, 8, ClickableItem.of(deleteItem, e -> Tasks.wait(2, () -> {
 				if (player.getItemOnCursor().getType().equals(Material.TNT)) {
 					player.setItemOnCursor(new ItemStack(Material.AIR));
 				} else if (isNullOrAir(player.getItemOnCursor())) {
@@ -95,7 +95,7 @@ public class HoleInTheWallMenu extends MenuUtils implements InventoryProvider {
 				ItemStack item = nameItem(Material.COMPASS, "&eDesign Start Location #" + (i + 1),
 						getLocationLore(designStartLocations.get(i)) + "|| ||&7Click to Teleport");
 
-				clickableItems[i] = ClickableItem.from(item, e -> {
+				clickableItems[i] = ClickableItem.of(item, e -> {
 					if (player.getItemOnCursor().getType().equals(Material.TNT)) {
 						Tasks.wait(2, () -> {
 							arena.getDesignHangerLocation().remove(designStartLocation);
@@ -114,10 +114,10 @@ public class HoleInTheWallMenu extends MenuUtils implements InventoryProvider {
 			page.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 1, 0));
 
 			if (!page.isLast())
-				contents.set(0, 8, ClickableItem.from(nameItem(new ItemStack(Material.ARROW), "&fNext Page"), e ->
+				contents.set(0, 8, ClickableItem.of(nameItem(new ItemStack(Material.ARROW), "&fNext Page"), e ->
 						holeInTheWallMenu.openDesignStartLocationsMenu(arena).open(player, page.next().getPage())));
 			if (!page.isFirst())
-				contents.set(0, 7, ClickableItem.from(nameItem(new ItemStack(Material.BARRIER), "&fPrevious Page"), e ->
+				contents.set(0, 7, ClickableItem.of(nameItem(new ItemStack(Material.BARRIER), "&fPrevious Page"), e ->
 						holeInTheWallMenu.openDesignStartLocationsMenu(arena).open(player, page.previous().getPage())));
 		}
 

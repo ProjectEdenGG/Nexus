@@ -50,7 +50,7 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 	public void open(Player player, int page) {
 		SmartInventory.builder()
 				.provider(this)
-				.size(6, 9)
+				.maxSize()
 				.title(ChatColor.DARK_AQUA + "Daily Rewards")
 				.build()
 				.open(player, page);
@@ -74,7 +74,7 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 						.lore("&3Claimed")
 						.build()));
 				else
-					items.add(ClickableItem.from(ResourcePackNumber.of(day)
+					items.add(ClickableItem.of(ResourcePackNumber.of(day)
 						.player(player)
 						.color(ColorType.GREEN)
 						.get()
@@ -109,7 +109,7 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 		public void open(Player player, int page) {
 			SmartInventory.builder()
 					.provider(this)
-					.size(3, 9)
+					.rows(3)
 					.title(ChatColor.DARK_AQUA + "Daily Rewards")
 					.build()
 					.open(player);
@@ -132,7 +132,7 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 				else
 					item = nameItem(addGlowing(new ItemStack(Material.PAPER)), rewardDescription, "&3Click to claim");
 
-				contents.set(1, (2 + i * 2), ClickableItem.from(item, e -> applyReward(day, option)));
+				contents.set(1, (2 + i * 2), ClickableItem.of(item, e -> applyReward(day, option)));
 			}
 		}
 

@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.features.votes.vps;
 
+import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.votes.vps.VPSMenu.VPSPage;
 import gg.projecteden.nexus.features.votes.vps.VPSMenu.VPSPage.VPSSlot;
 import gg.projecteden.nexus.models.banker.BankerService;
@@ -56,7 +56,7 @@ public class VPSProvider extends MenuUtils implements InventoryProvider {
 				else
 					ItemBuilder.addLore(display, "", "&6Price: &c" + item.getPrice());
 
-			contents.set(slot, ClickableItem.from(display, e -> {
+			contents.set(slot, ClickableItem.of(display, e -> {
 				if (voter.getPoints() < item.getPrice()) {
 					PlayerUtils.send(player, PREFIX + "&cYou do not have enough vote points! &3Use &c/vote &3to vote!");
 					return;
@@ -95,11 +95,11 @@ public class VPSProvider extends MenuUtils implements InventoryProvider {
 	public void addPagination(InventoryContents contents, Player player) {
 		if (!menu.isFirst(page)) {
 			ItemStack back = new ItemBuilder(Material.PAPER).amount(index - 1).name("&6<-").build();
-			contents.set(5, 0, ClickableItem.from(back, e -> VPS.open(player, menu, index - 1)));
+			contents.set(5, 0, ClickableItem.of(back, e -> VPS.open(player, menu, index - 1)));
 		}
 		if (!menu.isLast(page)) {
 			ItemStack forward = new ItemBuilder(Material.PAPER).amount(index + 1).name("&6->").build();
-			contents.set(5, 8, ClickableItem.from(forward, e -> VPS.open(player, menu, index + 1)));
+			contents.set(5, 8, ClickableItem.of(forward, e -> VPS.open(player, menu, index + 1)));
 		}
 	}
 

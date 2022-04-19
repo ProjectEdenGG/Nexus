@@ -37,11 +37,11 @@ public class GoldRushMenu extends MenuUtils implements InventoryProvider {
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
-		contents.set(0, 0, ClickableItem.from(backItem(), e-> Minigames.getMenus().openArenaMenu(player, arena)));
+		contents.set(0, 0, ClickableItem.of(backItem(), e-> Minigames.getMenus().openArenaMenu(player, arena)));
 
 		String currentValue = (arena.getMineStackHeight() > 0) ? "" + arena.getMineStackHeight() : "null";
 
-		contents.set(1, 4, ClickableItem.from(nameItem(Material.LADDER, "&eMine Stack Height", "&eCurrent value:||&3"),
+		contents.set(1, 4, ClickableItem.of(nameItem(Material.LADDER, "&eMine Stack Height", "&eCurrent value:||&3"),
 				e -> {
 					openAnvilMenu(player, arena, currentValue, (Player p, String text) -> {
 						if(!Utils.isInt(text)) {

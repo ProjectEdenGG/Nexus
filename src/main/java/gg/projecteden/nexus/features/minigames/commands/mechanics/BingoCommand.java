@@ -86,7 +86,7 @@ public class BingoCommand extends CustomCommand {
 			SmartInventory.builder()
 					.provider(this)
 					.title("Bingo")
-					.size(6, 9)
+					.maxSize()
 					.build()
 					.open(player, page);
 		}

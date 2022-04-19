@@ -38,7 +38,7 @@ public class BuyFlagsMenu extends MenuUtils implements InventoryProvider {
 		SmartInventory.builder()
 				.provider(this)
 				.title("Pride Shop")
-				.size(getRows(Flags.values().length*2, 0), 9)
+				.rows(getRows(Flags.values().length*2, 0))
 				.build()
 				.open(player, page);
 	}
@@ -57,8 +57,8 @@ public class BuyFlagsMenu extends MenuUtils implements InventoryProvider {
 			List<Component> itemLore = Collections.singletonList(new JsonBuilder(lore).decorate(false, TextDecoration.ITALIC).build());
 			flagItem.lore(itemLore);
 			buntingItem.lore(itemLore);
-			inventoryContents.add(ClickableItem.from(flagItem, $ -> purchase(flag, player, false)));
-			inventoryContents.add(ClickableItem.from(buntingItem, $ -> purchase(flag, player, true)));
+			inventoryContents.add(ClickableItem.of(flagItem, $ -> purchase(flag, player, false)));
+			inventoryContents.add(ClickableItem.of(buntingItem, $ -> purchase(flag, player, true)));
 		});
 		inventoryContents.set(5, 8, ClickableItem.empty(new ItemBuilder(Material.PAPER).name("&3Your balance: &e" + eventService.get(player).getTokens() + " tokens").build()));
 	}

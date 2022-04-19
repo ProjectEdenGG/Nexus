@@ -54,7 +54,7 @@ public class EditProductProvider extends ShopProvider {
 	public void init(Player player, InventoryContents contents) {
 		super.init(player, contents);
 
-		contents.set(0, 4, ClickableItem.from(product.getItemWithOwnLore().build(), e -> new ExchangeConfigProvider(this, product).open(player)));
+		contents.set(0, 4, ClickableItem.of(product.getItemWithOwnLore().build(), e -> new ExchangeConfigProvider(this, product).open(player)));
 		if (product.getExchangeType() == ExchangeType.BUY) {
 			ItemBuilder builder = new ItemBuilder(Material.GOLD_INGOT)
 					.name("&6Edit Stock")
@@ -63,7 +63,7 @@ public class EditProductProvider extends ShopProvider {
 					.lore("&7enter -1 to allow unlimited purchases")
 					.loreize(false);
 
-			contents.set(1, 4, ClickableItem.from(builder.build(), e -> Nexus.getSignMenuFactory()
+			contents.set(1, 4, ClickableItem.of(builder.build(), e -> Nexus.getSignMenuFactory()
 					.lines("", ARROWS, "Enter an amount", "or -1 for no limit")
 					.prefix(Shops.PREFIX)
 					.onError(() -> open(player))
@@ -82,7 +82,7 @@ public class EditProductProvider extends ShopProvider {
 					}).open(player)
 			));
 		} else {
-			contents.set(1, 3, ClickableItem.from(new ItemBuilder(Material.LIME_CONCRETE_POWDER).name("&6Add Stock").lore("&f", "&7Right click to add in bulk").build(), e -> {
+			contents.set(1, 3, ClickableItem.of(new ItemBuilder(Material.LIME_CONCRETE_POWDER).name("&6Add Stock").lore("&f", "&7Right click to add in bulk").build(), e -> {
 				if (isRightClick(e)) {
 					player.closeInventory();
 					ShopCommand.getInteractStockMap().put(player.getUniqueId(), product);
@@ -92,7 +92,7 @@ public class EditProductProvider extends ShopProvider {
 					new AddStockProvider(this, product).open(player);
 				}
 			}));
-			contents.set(1, 5, ClickableItem.from(nameItem(Material.RED_CONCRETE_POWDER, "&6Remove Stock"), e -> new RemoveStockProvider(this, product).open(player)));
+			contents.set(1, 5, ClickableItem.of(nameItem(Material.RED_CONCRETE_POWDER, "&6Remove Stock"), e -> new RemoveStockProvider(this, product).open(player)));
 		}
 
 		ItemBuilder purchasable = new ItemBuilder(Material.WHITE_STAINED_GLASS);
@@ -112,19 +112,19 @@ public class EditProductProvider extends ShopProvider {
 		else
 			enabled.name("&cDisabled").lore("&7Click to &aenable&7, allowing others").lore("&7to view and purchase the item");
 
-		contents.set(3, 2, ClickableItem.from(purchasable.build(), e -> {
+		contents.set(3, 2, ClickableItem.of(purchasable.build(), e -> {
 			product.setPurchasable(!product.isPurchasable());
 			service.save(product.getShop());
 			open(player);
 		}));
 
-		contents.set(3, 4, ClickableItem.from(enabled.build(), e -> {
+		contents.set(3, 4, ClickableItem.of(enabled.build(), e -> {
 			product.setEnabled(!product.isEnabled());
 			service.save(product.getShop());
 			open(player);
 		}));
 
-		contents.set(3, 6, ClickableItem.from(new ItemBuilder(Material.LAVA_BUCKET).name("&cDelete").build(), e ->
+		contents.set(3, 6, ClickableItem.of(new ItemBuilder(Material.LAVA_BUCKET).name("&cDelete").build(), e ->
 				ConfirmationMenu.builder()
 						.onConfirm(e2 -> {
 							Shop shop = service.get(player);

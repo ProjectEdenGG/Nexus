@@ -57,7 +57,7 @@ public class FlashCardPuzzleProvider extends MenuUtils implements InventoryProvi
 			int i = 1;
 			AtomicInteger index = new AtomicInteger(0);
 			for (Material mat : usedCards)
-				contents.set(1, i++, ClickableItem.from(new ItemBuilder(mat).name(" ").build(), e -> {
+				contents.set(1, i++, ClickableItem.of(new ItemBuilder(mat).name(" ").build(), e -> {
 					if (e.getItem().getType() != correctOrder.get(index.getAndIncrement())) {
 						contents.fill(ClickableItem.empty(new ItemBuilder(Material.RED_WOOL).name("&cIncorrect").build()));
 						Tasks.wait(TickTime.SECOND.x(2), () -> Halloween20Menus.openFlashCardPuzzle(player, number));

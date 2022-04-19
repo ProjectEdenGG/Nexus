@@ -94,12 +94,12 @@ public class BrowseProductsProvider extends ShopProvider {
 		if (searchFilter != null) {
 			ItemStack search = new ItemBuilder(Material.COMPASS).name("&6Current filter: &e" + searchFilter.getMessage())
 				.lore("").lore("&7Click to remove filter").glow().build();
-			contents.set(0, 4, ClickableItem.from(search, e -> {
+			contents.set(0, 4, ClickableItem.of(search, e -> {
 				filters.remove(searchFilter);
 				open(player, contents.pagination().getPage());
 			}));
 		} else
-			contents.set(0, 4, ClickableItem.from(nameItem(Material.COMPASS, "&6Filter Items"), e -> new SearchProductsProvider(this).open(player)));
+			contents.set(0, 4, ClickableItem.of(nameItem(Material.COMPASS, "&6Filter Items"), e -> new SearchProductsProvider(this).open(player)));
 	}
 
 	public void addStockFilter(Player player, InventoryContents contents) {
@@ -110,7 +110,7 @@ public class BrowseProductsProvider extends ShopProvider {
 		ItemBuilder item = new ItemBuilder(Material.BUCKET).name("&6Empty Stock:")
 			.lore("&e⬇ " + camelCase(filter.name()))
 			.lore("&7⬇ " + camelCase(next.name()));
-		contents.set(5, 3, ClickableItem.from(item.build(), e -> {
+		contents.set(5, 3, ClickableItem.of(item.build(), e -> {
 			formatFilter(stockFilter, next);
 			open(player, contents.pagination().getPage());
 		}));
@@ -125,7 +125,7 @@ public class BrowseProductsProvider extends ShopProvider {
 			.lore("&7⬇ " + camelCase(filter.previousWithLoop().name()))
 			.lore("&e⬇ " + camelCase(filter.name()))
 			.lore("&7⬇ " + camelCase(next.name()));
-		contents.set(5, 4, ClickableItem.from(item.build(), e -> {
+		contents.set(5, 4, ClickableItem.of(item.build(), e -> {
 			formatFilter(exchangeFilter, next);
 			open(player, contents.pagination().getPage());
 		}));
@@ -139,7 +139,7 @@ public class BrowseProductsProvider extends ShopProvider {
 		ItemBuilder item = new ItemBuilder(Material.OAK_SIGN).name("&6Market Items:")
 			.lore("&e⬇ " + camelCase(filter.name()))
 			.lore("&7⬇ " + camelCase(next.name()));
-		contents.set(5, 5, ClickableItem.from(item.build(), e -> {
+		contents.set(5, 5, ClickableItem.of(item.build(), e -> {
 			formatFilter(marketFilter, next);
 			open(player, contents.pagination().getPage());
 		}));
@@ -174,7 +174,7 @@ public class BrowseProductsProvider extends ShopProvider {
 		products.subList(start, Math.min(end, products.size()))
 			.forEach(product -> {
 				try {
-					items.add(ClickableItem.from(product.getItemWithCustomerLore().build(), e -> {
+					items.add(ClickableItem.of(product.getItemWithCustomerLore().build(), e -> {
 						if (!product.isPurchasable())
 							return;
 

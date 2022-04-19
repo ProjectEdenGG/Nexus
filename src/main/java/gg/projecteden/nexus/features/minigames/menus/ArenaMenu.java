@@ -243,7 +243,7 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 			contents.set(
 					(menuItem.getRow() - 1),
 					(menuItem.getColumn() - 1),
-					ClickableItem.from(
+					ClickableItem.of(
 							nameItem(menuItem.getItem(), "&e" + menuItem.getTitle(), menuItem.getLore(player, arena)),
 							e -> menuItem.onClick(player, arena)
 					)

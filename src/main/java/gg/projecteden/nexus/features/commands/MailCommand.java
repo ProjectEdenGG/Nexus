@@ -40,7 +40,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 @NoArgsConstructor
@@ -180,8 +179,8 @@ public class MailCommand extends CustomCommand implements Listener {
 
 		private final SmartInventory inventory = SmartInventory.builder()
 				.provider(this)
-				.size(6, 9)
-				.title(colorize("&3Your Deliveries"))
+				.maxSize()
+				.title("&3Your Deliveries")
 				.build();
 
 		@Override
@@ -208,7 +207,7 @@ public class MailCommand extends CustomCommand implements Listener {
 			List<Mail> mails = mailer.getUnreadMail(worldGroup);
 
 			for (Mail mail : mails)
-				items.add(ClickableItem.from(mail.getDisplayItem().build(), e -> new OpenMailMenu(mail)));
+				items.add(ClickableItem.of(mail.getDisplayItem().build(), e -> new OpenMailMenu(mail)));
 
 			paginator(player, contents, items);
 		}

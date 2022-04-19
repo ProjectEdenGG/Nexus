@@ -168,7 +168,7 @@ public class ItemInfoCommand extends CustomCommand {
 		public void open(Player player, int page) {
 			SmartInventory.builder()
 				.provider(this)
-				.size(6, 9)
+				.maxSize()
 				.title("Enchanted Items")
 				.build()
 				.open(player, page);

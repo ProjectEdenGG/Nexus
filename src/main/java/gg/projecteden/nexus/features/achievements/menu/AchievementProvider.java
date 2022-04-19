@@ -19,8 +19,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.List;
 
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
-
 public class AchievementProvider implements InventoryProvider {
 	private final AchievementPlayer achievementPlayer;
 	private final AchievementGroup group;
@@ -33,8 +31,8 @@ public class AchievementProvider implements InventoryProvider {
 	public static void open(Player player) {
 		SmartInventory inv = SmartInventory.builder()
 				.provider(new AchievementGroupProvider())
-				.size((int) ((Math.ceil(AchievementGroup.values().length / 9)) + 2), 9)
-				.title(colorize("&3Achievements"))
+				.rows((int) ((Math.ceil(AchievementGroup.values().length / 9)) + 2))
+				.title("&3Achievements")
 				.build();
 
 		inv.open(player);
@@ -44,7 +42,7 @@ public class AchievementProvider implements InventoryProvider {
 	public void init(Player player, InventoryContents contents) {
 
 		contents.fillRow(0, ClickableItem.empty(new ItemStack(Material.AIR)));
-		contents.set(0, 0, ClickableItem.from(new ItemStack(Material.BARRIER), e -> AchievementProvider.open(player)));
+		contents.set(0, 0, ClickableItem.of(new ItemStack(Material.BARRIER), e -> AchievementProvider.open(player)));
 
 		for (Achievement achievement : Achievement.values()) {
 			if (achievement.getGroup().equals(group)) {

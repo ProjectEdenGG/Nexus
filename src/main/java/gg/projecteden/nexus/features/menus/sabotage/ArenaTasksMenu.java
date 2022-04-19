@@ -23,7 +23,7 @@ public class ArenaTasksMenu extends MenuUtils implements InventoryProvider {
 	private final SabotageArena arena;
 
 	private final SmartInventory inventory = SmartInventory.builder()
-			.size(getRows(Tasks.crewmateTasks().size(), 1), 9)
+			.rows(getRows(Tasks.crewmateTasks().size(), 1))
 			.provider(this)
 			.title("Enabled Tasks")
 			.build();
@@ -40,7 +40,7 @@ public class ArenaTasksMenu extends MenuUtils implements InventoryProvider {
 		int col = 0;
 		for (Tasks task : Tasks.values()) {
 			boolean enabled = arena.getTasks().contains(task);
-			contents.set(row, col, ClickableItem.from(
+			contents.set(row, col, ClickableItem.of(
 					new ItemBuilder(enabled ? Material.WHITE_CONCRETE : Material.BLACK_CONCRETE)
 							.name("&e" + task.name())
 							.lore("&e" + camelCase(task.getTaskType()) + "&3 task")

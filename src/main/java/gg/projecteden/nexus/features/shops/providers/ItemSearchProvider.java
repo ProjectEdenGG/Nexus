@@ -49,7 +49,7 @@ public class ItemSearchProvider extends ShopProvider {
 			ItemStack item = new ItemBuilder(material)
 					.itemFlags(ItemFlag.HIDE_ATTRIBUTES)
 					.build();
-			items.add(ClickableItem.from(item, onChoose));
+			items.add(ClickableItem.of(item, onChoose));
 		}
 
 		paginator(player, contents, items);

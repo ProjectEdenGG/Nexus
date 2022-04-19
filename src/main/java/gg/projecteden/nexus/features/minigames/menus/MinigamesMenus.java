@@ -29,7 +29,7 @@ public class MinigamesMenus extends MenuUtils {
 				.id("minigameManager")
 				.title(arena.getDisplayName())
 				.provider(new ArenaMenu(arena))
-				.size(5, 9)
+				.rows(5)
 				.build();
 		inv.open(player);
 	}
@@ -39,7 +39,7 @@ public class MinigamesMenus extends MenuUtils {
 				.id("deleteArenaMenu")
 				.title("Delete Arena?")
 				.provider(new DeleteArenaMenu(arena))
-				.size(3, 9)
+				.rows(3)
 				.build();
 		INV.open(player);
 	}
@@ -48,7 +48,7 @@ public class MinigamesMenus extends MenuUtils {
 		SmartInventory INV = SmartInventory.builder()
 				.id("mechanicMenu")
 				.title("Game Mechanic Type")
-				.size(getRows(MechanicType.values().length, 1), 9)
+				.rows(getRows(MechanicType.values().length, 1))
 				.provider(new MechanicsMenu(arena))
 				.build();
 		INV.open(player);
@@ -59,7 +59,7 @@ public class MinigamesMenus extends MenuUtils {
 				.id("lobbyMenu")
 				.title("Lobby Menu")
 				.provider(new LobbyMenu(arena))
-				.size(2, 9)
+				.rows(2)
 				.build();
 		INV.open(player);
 	}
@@ -69,7 +69,7 @@ public class MinigamesMenus extends MenuUtils {
 				.id("flagsMenu")
 				.title("Flags Menu")
 				.provider(new FlagsMenu(arena))
-				.size(3, 9)
+				.rows(3)
 				.build();
 		INV.open(player);
 	}
@@ -79,7 +79,7 @@ public class MinigamesMenus extends MenuUtils {
 				.id("blockListMenu")
 				.title("Block List Menu")
 				.provider(new BlockListMenu(arena))
-				.size(6, 9)
+				.maxSize()
 				.build();
 		return INV;
 	}
@@ -110,7 +110,7 @@ public class MinigamesMenus extends MenuUtils {
 				.id("customSettingsMenu")
 				.provider(provider.getDeclaredConstructor(Arena.class).newInstance(arena))
 				.title("Custom Settings Menu")
-				.size(3, 9)
+				.rows(3)
 				.build();
 		INV.open(player);
 	}

@@ -27,7 +27,7 @@ public class CategoryMenu<T extends CommonPerksMenu> extends MenuUtils implement
 	@Getter
 	private final SmartInventory inventory = SmartInventory.builder()
 		.title("Category Selection")
-		.size(3, 9)
+		.rows(3)
 		.provider(this)
 		.build();
 
@@ -49,7 +49,7 @@ public class CategoryMenu<T extends CommonPerksMenu> extends MenuUtils implement
 
 		int col = 2;
 		for (PerkCategory perkCategory : PerkCategory.values()) {
-			contents.set(1, col, ClickableItem.from(perkCategory.getMenuItem(), $ -> {
+			contents.set(1, col, ClickableItem.of(perkCategory.getMenuItem(), $ -> {
 				try {
 					menu.getConstructor(PerkCategory.class).newInstance(perkCategory).open(player);
 				} catch (Exception e) {

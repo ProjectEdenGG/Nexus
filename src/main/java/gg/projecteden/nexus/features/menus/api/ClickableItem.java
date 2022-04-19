@@ -32,17 +32,14 @@ public class ClickableItem {
 	 */
 	public static final ClickableItem NONE = empty(null);
 
-
 	private final ItemStack item;
 	private final Consumer<?> consumer;
-	private final boolean legacy;
 	private Predicate<Player> canSee = null, canClick = null;
 	private ItemStack notVisibleFallBackItem = null;
 
-	private ClickableItem(ItemStack item, Consumer<?> consumer, boolean legacy) {
+	private ClickableItem(ItemStack item, Consumer<?> consumer) {
 		this.item = item;
 		this.consumer = consumer;
-		this.legacy = legacy;
 	}
 
 	/**
@@ -53,21 +50,7 @@ public class ClickableItem {
 	 * @return the created ClickableItem
 	 */
 	public static ClickableItem empty(ItemStack item) {
-		return from(item, data -> {
-		});
-	}
-
-	/**
-	 * Creates a ClickableItem made of a given item and a given InventoryClickEvent's consumer.
-	 *
-	 * @param item     the item
-	 * @param consumer the consumer which will be called when the item is clicked
-	 * @return the created ClickableItem
-	 * @deprecated Replaced by {@link ClickableItem#from(ItemStack, Consumer)}
-	 */
-	@Deprecated
-	public static ClickableItem of(ItemStack item, Consumer<InventoryClickEvent> consumer) {
-		return new ClickableItem(item, consumer, true);
+		return of(item, data -> {});
 	}
 
 	/**
@@ -77,8 +60,8 @@ public class ClickableItem {
 	 * @param consumer the consumer which will be called when the item is clicked
 	 * @return the created ClickableItem
 	 */
-	public static ClickableItem from(ItemStack item, Consumer<ItemClickData> consumer) {
-		return new ClickableItem(item, consumer, false);
+	public static ClickableItem of(ItemStack item, Consumer<ItemClickData> consumer) {
+		return new ClickableItem(item, consumer);
 	}
 
 	/**
@@ -91,9 +74,6 @@ public class ClickableItem {
 	@Deprecated
 	public void run(InventoryClickEvent e) {
 		if ((canSee == null || canSee.test((Player) e.getWhoClicked())) && (canClick == null || canClick.test((Player) e.getWhoClicked()))) {
-			if (!this.legacy)
-				return;
-
 			Consumer<InventoryClickEvent> legacyConsumer = (Consumer<InventoryClickEvent>) this.consumer;
 			legacyConsumer.accept(e);
 		}
@@ -106,7 +86,7 @@ public class ClickableItem {
 	 * @return the created ClickableItem
 	 */
 	public ClickableItem clone(ItemStack newItem) {
-		return new ClickableItem(newItem, this.consumer, this.legacy);
+		return new ClickableItem(newItem, this.consumer);
 	}
 
 	/**
@@ -116,18 +96,13 @@ public class ClickableItem {
 	 */
 	public void run(ItemClickData data) {
 		if ((canSee == null || canSee.test(data.getPlayer())) && (canClick == null || canClick.test(data.getPlayer()))) {
-			if (this.legacy) {
-				if (data.getEvent() instanceof InventoryClickEvent event)
-					this.run(event);
-			} else {
-				Consumer<ItemClickData> newConsumer = (Consumer<ItemClickData>) this.consumer;
-				try {
-					newConsumer.accept(data);
-				} catch (Exception ex) {
-					ex.printStackTrace();
-					data.getPlayer().closeInventory();
-					data.getPlayer().sendMessage(ChatColor.RED + "An unknown error occurred while trying to process your request");
-				}
+			Consumer<ItemClickData> newConsumer = (Consumer<ItemClickData>) this.consumer;
+			try {
+				newConsumer.accept(data);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				data.getPlayer().closeInventory();
+				data.getPlayer().sendMessage(ChatColor.RED + "An unknown error occurred while trying to process your request");
 			}
 		}
 	}

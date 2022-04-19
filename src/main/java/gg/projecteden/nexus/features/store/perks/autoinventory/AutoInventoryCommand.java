@@ -138,7 +138,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 			SmartInventory.builder()
 					.provider(this)
 					.title("AutoSort Inventory Editor")
-					.size(6, 9)
+					.maxSize()
 					.build()
 					.open(player, page);
 		}
@@ -164,7 +164,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 				else
 					item.lore("&cDisabled");
 
-				items.add(ClickableItem.from(item.build(), e -> {
+				items.add(ClickableItem.of(item.build(), e -> {
 					if (user.getDisabledInventoryTypes().contains(inventoryType))
 						user.getDisabledInventoryTypes().remove(inventoryType);
 					else
@@ -262,7 +262,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 			SmartInventory.builder()
 				.provider(this)
 				.title("AutoCraft Editor")
-				.size(6, 9)
+				.maxSize()
 				.build()
 				.open(player, page);
 		}
@@ -287,7 +287,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 					.map(StringUtils::pretty)
 					.collect(joining(", ")));
 
-				items.add(ClickableItem.from(item.build(), e -> {
+				items.add(ClickableItem.of(item.build(), e -> {
 					if (user.getAutoCraftExclude().contains(material))
 						user.getAutoCraftExclude().remove(material);
 					else

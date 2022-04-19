@@ -11,6 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -58,7 +59,7 @@ public class ItemEditorProvider extends MenuUtils implements InventoryProvider {
 			levelItem.setItemMeta(meta);
 
 			// Set the item with the new amount
-			contents.set(row, col, ClickableItem.of(levelItem, e -> handleLevelChange(player, contents, slot, e.getClick(), row, col, apply, vanilla, applyRow, applyCol)));
+			contents.set(row, col, ClickableItem.of(levelItem, e -> handleLevelChange(player, contents, slot, ((InventoryClickEvent) e.getEvent()).getClick(), row, col, apply, vanilla, applyRow, applyCol)));
 
 			// Set the level lore of the apply item
 			meta = apply.getItemMeta();
@@ -167,7 +168,7 @@ public class ItemEditorProvider extends MenuUtils implements InventoryProvider {
 				// TODO: Edit Name --> via chat?
 				contents.set(1, 1, ClickableItem.of(editName, e ->  openItemEditor(player, ItemEditMenu.EDIT_NAME)));
 				// TODO: Edit Lore --> via chat?
-//				contents.set(1, 2, ClickableItem.of(editLore, e ->  openItemEditor(player, ItemEditMenu.EDIT_LORE)));
+//				contents.set(1, 2, ClickableItem.from(editLore, e ->  openItemEditor(player, ItemEditMenu.EDIT_LORE)));
 
 				// TODO: Toggle Spam --> NMS, or use a library
 				contents.set(1, 4, ClickableItem.of(toggleSpam, e ->  toggleSpamClick(player, heldItem, slot)));
@@ -207,7 +208,7 @@ public class ItemEditorProvider extends MenuUtils implements InventoryProvider {
 //					enchantItem = nameItem(new ItemStack(Material.ENCHANTED_BOOK),enchantName);
 					int finalBookRow = bookRow;
 					int finalBookCol = bookCol;
-//					contents.set(bookRow, bookCol, ClickableItem.of(enchantItem, e -> handleEnchantChange(player, contents, slot, finalBookRow, finalBookCol, enchantName, apply, true, 2, 7)));
+//					contents.set(bookRow, bookCol, ClickableItem.from(enchantItem, e -> handleEnchantChange(player, contents, slot, finalBookRow, finalBookCol, enchantName, apply, true, 2, 7)));
 					bookCol++;
 					if(bookCol>5) {
 						bookCol = 1;
@@ -215,7 +216,7 @@ public class ItemEditorProvider extends MenuUtils implements InventoryProvider {
 					}
 				}
 
-//				contents.set(1, 7, ClickableItem.of(level, e -> handleLevelChange(player, contents, slot, e.getClick(), 1, 7, apply, true, 2, 7)));
+//				contents.set(1, 7, ClickableItem.from(level, e -> handleLevelChange(player, contents, slot, e.getClick(), 1, 7, apply, true, 2, 7)));
 				contents.set(2, 7, ClickableItem.of(apply, e -> setEnchantAndLevel(player, contents, slot, 2, 7, true)));
 				break;
 			case VANILLA_REMOVE:
@@ -230,7 +231,7 @@ public class ItemEditorProvider extends MenuUtils implements InventoryProvider {
 						Enchantment itemEnchantment = entry.getKey();
 //						String enchantName = ShowEnchants.getPrettyName(entry.getKey().getKey().getKey().toLowerCase());
 //						book = nameItem(new ItemStack(Material.ENCHANTED_BOOK), "&b" + enchantName,"&cClick to remove");
-//						contents.set(bookRow, bookCol, ClickableItem.of(book, e -> removeVanillaEnchant(player, slot, heldItem, itemEnchantment)));
+//						contents.set(bookRow, bookCol, ClickableItem.from(book, e -> removeVanillaEnchant(player, slot, heldItem, itemEnchantment)));
 						bookCol++;
 						if(bookCol>7) {
 							bookCol = 1;

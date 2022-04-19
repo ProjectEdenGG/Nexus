@@ -24,7 +24,7 @@ public class ShipColorMenu extends MenuUtils implements InventoryProvider {
 	public static SmartInventory getInv() {
 		return SmartInventory.builder()
 				.provider(new ShipColorMenu())
-				.size(5, 9)
+				.rows(5)
 				.title(ChatColor.DARK_AQUA + "Customize your ship color:")
 				.closeable(true)
 				.build();
@@ -49,7 +49,7 @@ public class ShipColorMenu extends MenuUtils implements InventoryProvider {
 			Material concrete = colorType.getConcrete();
 			if (concrete != null) {
 				ItemStack color = new ItemBuilder(concrete).name(StringUtils.camelCase(colorType.name())).build();
-				contents.set(new SlotPos(row, col), ClickableItem.from(color, e -> {
+				contents.set(new SlotPos(row, col), ClickableItem.of(color, e -> {
 					user.setShipColor(colorType.getBukkitColor());
 					service.save(user);
 					e.getPlayer().closeInventory();

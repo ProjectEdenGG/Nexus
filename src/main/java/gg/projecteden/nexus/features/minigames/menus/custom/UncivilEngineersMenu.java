@@ -39,16 +39,16 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 		SmartInventory.builder()
 			.provider(new MobPointsMenu())
 			.title("Mob Points")
-			.size(6, 9)
+			.maxSize()
 			.build()
 			.open(player);
 	}
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
-		contents.set(0, 0, ClickableItem.from(backItem(), e -> menus.openArenaMenu(player, arena)));
+		contents.set(0, 0, ClickableItem.of(backItem(), e -> menus.openArenaMenu(player, arena)));
 
-		contents.set(1, 0, ClickableItem.from(nameItem(new ItemStack(Material.ZOMBIE_SPAWN_EGG), "&eMob Points"), e -> new MobPointsMenu().open(player)));
+		contents.set(1, 0, ClickableItem.of(nameItem(new ItemStack(Material.ZOMBIE_SPAWN_EGG), "&eMob Points"), e -> new MobPointsMenu().open(player)));
 	}
 
 	public class MobPointsMenu extends MenuUtils implements InventoryProvider {
@@ -58,16 +58,16 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 			SmartInventory.builder()
 				.provider(this)
 				.title("Mob Points")
-				.size(6, 9)
+				.maxSize()
 				.build()
 				.open(player);
 		}
 
 		@Override
 		public void init(Player player, InventoryContents contents) {
-			contents.set(0, 0, ClickableItem.from(backItem(), e -> menus.openCustomSettingsMenu(player, arena)));
+			contents.set(0, 0, ClickableItem.of(backItem(), e -> menus.openCustomSettingsMenu(player, arena)));
 
-			contents.set(0, 4, ClickableItem.from(nameItem(Material.EMERALD_BLOCK, "&aAdd Mob Point"), e -> new AddMobPointMenu().open(player)));
+			contents.set(0, 4, ClickableItem.of(nameItem(Material.EMERALD_BLOCK, "&aAdd Mob Point"), e -> new AddMobPointMenu().open(player)));
 
 			List<ClickableItem> items = new ArrayList<>();
 
@@ -85,7 +85,7 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 				final String lore = getLocationLore(mobPoint.getLocation()) + "|| ||&7Click to remove";
 				final ItemStack item = nameItem(skull, "&3" + camelCase(mobPoint.getType()), lore);
 
-				items.add(ClickableItem.from(item, e -> {
+				items.add(ClickableItem.of(item, e -> {
 					arena.getMobPoints().remove(mobPoint);
 					arena.write();
 					new MobPointsMenu().open(player);
@@ -104,14 +104,14 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 			SmartInventory.builder()
 				.provider(this)
 				.title("Add Mob Point")
-				.size(6, 9)
+				.maxSize()
 				.build()
 				.open(player, page);
 		}
 
 		@Override
 		public void init(Player player, InventoryContents contents) {
-			contents.set(0, 0, ClickableItem.from(backItem(), e -> menus.openCustomSettingsMenu(player, arena)));
+			contents.set(0, 0, ClickableItem.of(backItem(), e -> menus.openCustomSettingsMenu(player, arena)));
 
 			List<ClickableItem> items = new ArrayList<>();
 
@@ -130,7 +130,7 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 
 				final ItemStack item = new ItemBuilder(skull).name("&e" + camelCase(type)).build();
 
-				items.add(ClickableItem.from(item, e -> {
+				items.add(ClickableItem.of(item, e -> {
 					arena.getMobPoints().add(new MobPoint(player.getLocation(), type));
 					arena.write();
 					new MobPointsMenu().open(player);

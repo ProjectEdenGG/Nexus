@@ -25,7 +25,7 @@ public class MiniGolfParticleMenu extends MenuUtils implements InventoryProvider
 	public static SmartInventory getInv() {
 		return SmartInventory.builder()
 				.provider(new MiniGolfParticleMenu())
-				.size(getRows(MiniGolfParticle.values().length), 9)
+				.rows(getRows(MiniGolfParticle.values().length))
 				.title(ChatColor.DARK_AQUA + "Select a particle:")
 				.closeable(true)
 				.build();
@@ -44,7 +44,7 @@ public class MiniGolfParticleMenu extends MenuUtils implements InventoryProvider
 		List<ClickableItem> clickableItems = new ArrayList<>();
 		for (MiniGolfParticle miniGolfParticle : MiniGolfParticle.values()) {
 			ItemStack item = new ItemBuilder(miniGolfParticle.getDisplay()).name(StringUtils.camelCase(miniGolfParticle)).build();
-			clickableItems.add(ClickableItem.from(item, e -> setParticle(user, miniGolfParticle)));
+			clickableItems.add(ClickableItem.of(item, e -> setParticle(user, miniGolfParticle)));
 		}
 
 		paginator(player, contents, clickableItems);

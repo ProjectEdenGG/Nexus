@@ -55,7 +55,7 @@ public class ResourceWorldMarketProvider extends ShopProvider {
 			}
 
 			final ItemStack item = builder.build();
-			items.add(ClickableItem.from(item, e -> {
+			items.add(ClickableItem.of(item, e -> {
 				toggle.run();
 				service.save(shop);
 				open(player, contents.pagination().getPage());

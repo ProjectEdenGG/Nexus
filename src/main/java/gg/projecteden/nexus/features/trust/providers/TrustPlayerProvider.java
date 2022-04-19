@@ -1,10 +1,10 @@
 package gg.projecteden.nexus.features.trust.providers;
 
+import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.trust.Trust;
@@ -31,7 +31,7 @@ public class TrustPlayerProvider extends MenuUtils implements InventoryProvider 
 	public static void open(Player player, OfflinePlayer trusted) {
 		SmartInventory.builder()
 				.provider(new TrustPlayerProvider(new TrustService().get(player), trusted))
-				.size(4, 9)
+				.rows(4)
 				.title(Nickname.of(trusted))
 				.build()
 				.open(player);
@@ -66,7 +66,7 @@ public class TrustPlayerProvider extends MenuUtils implements InventoryProvider 
 			}
 			//
 
-			contents.set(2, column, ClickableItem.from(builder.build(), e -> {
+			contents.set(2, column, ClickableItem.of(builder.build(), e -> {
 				if (list.contains(trusted.getUniqueId()))
 					list.remove(trusted.getUniqueId());
 				else
@@ -76,7 +76,7 @@ public class TrustPlayerProvider extends MenuUtils implements InventoryProvider 
 			}));
 		}
 
-		contents.set(0, 8, ClickableItem.from(new ItemBuilder(Material.TNT).name("&cUntrust from all").build(), e ->
+		contents.set(0, 8, ClickableItem.of(new ItemBuilder(Material.TNT).name("&cUntrust from all").build(), e ->
 				ConfirmationMenu.builder()
 						.onConfirm(e2 -> {
 							for (Type type : Type.values()) {

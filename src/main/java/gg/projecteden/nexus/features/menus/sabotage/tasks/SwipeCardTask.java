@@ -30,7 +30,7 @@ public class SwipeCardTask extends AbstractTaskMenu {
 	private final SmartInventory inventory = SmartInventory.builder()
 			.title("Swipe Card")
 			.provider(this)
-			.size(3, 9)
+			.rows(3)
 			.build();
 
 	@Override
@@ -43,7 +43,7 @@ public class SwipeCardTask extends AbstractTaskMenu {
 		inventoryContents.fill(ClickableItem.empty(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).name(" ").build()));
 
 		AtomicReference<LocalDateTime> time = new AtomicReference<>();
-		inventoryContents.set(cardPos, ClickableItem.from(KEY_CARD.get(), click -> {
+		inventoryContents.set(cardPos, ClickableItem.of(KEY_CARD.get(), click -> {
 			if (!isLeftClick(click) || !KEY_CARD.get().isSimilar(click.getItem()) || !(click.getPlayer().getItemOnCursor().getType() == Material.AIR || click.getPlayer().getItemOnCursor().isSimilar(KEY_CARD.get()))) {
 				reset.run();
 			} else {
@@ -55,7 +55,7 @@ public class SwipeCardTask extends AbstractTaskMenu {
 			}
 		}));
 		SlotPos destination = SlotPos.of(1, 7);
-		inventoryContents.set(destination, ClickableItem.from(new ItemBuilder(Material.GREEN_STAINED_GLASS_PANE).name(" ").build(), click -> {
+		inventoryContents.set(destination, ClickableItem.of(new ItemBuilder(Material.GREEN_STAINED_GLASS_PANE).name(" ").build(), click -> {
 			if (time.get() == null || !KEY_CARD.get().isSimilar(click.getPlayer().getItemOnCursor())) {
 				reset.run();
 				return;

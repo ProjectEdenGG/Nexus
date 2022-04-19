@@ -40,7 +40,7 @@ public class MurderMenu extends MenuUtils implements InventoryProvider {
 	public SmartInventory openScrapPointsMenu(Arena arena) {
 		SmartInventory INV = SmartInventory.builder()
 				.id("ScrapPointsLocationsMenu")
-				.size(6, 9)
+				.maxSize()
 				.provider(new MurderSubMenu(arena))
 				.title("Scrap Points Locations Menu")
 				.build();
@@ -55,7 +55,7 @@ public class MurderMenu extends MenuUtils implements InventoryProvider {
 	public void init(Player player, InventoryContents contents) {
 		addBackItem(contents, e -> Minigames.menus.openArenaMenu(player, arena));
 
-		contents.set(1, 4, ClickableItem.from(nameItem(new ItemStack(Material.IRON_INGOT), "&eScrap Points"),
+		contents.set(1, 4, ClickableItem.of(nameItem(new ItemStack(Material.IRON_INGOT), "&eScrap Points"),
 				e -> openScrapPointsMenu(arena).open(player)));
 	}
 
@@ -75,7 +75,7 @@ public class MurderMenu extends MenuUtils implements InventoryProvider {
 
 			Pagination page = contents.pagination();
 
-			contents.set(0, 4, ClickableItem.from(nameItem(
+			contents.set(0, 4, ClickableItem.of(nameItem(
 					Material.EMERALD_BLOCK,
 					"&eAdd Scrap Point Location",
 					"&3Click to add a Scrap Point||&3at your current location."
@@ -87,7 +87,7 @@ public class MurderMenu extends MenuUtils implements InventoryProvider {
 				}));
 
 			ItemStack deleteItem = nameItem(Material.TNT, "&cDelete Item", "&7Click me to enter deletion mode.||&7Then, click a Scrap Point location with||&7me to delete the location.");
-			contents.set(0, 8, ClickableItem.from(deleteItem, e -> Tasks.wait(2, () -> {
+			contents.set(0, 8, ClickableItem.of(deleteItem, e -> Tasks.wait(2, () -> {
 				if (player.getItemOnCursor().getType().equals(Material.TNT)) {
 					player.setItemOnCursor(new ItemStack(Material.AIR));
 				} else if (isNullOrAir(player.getItemOnCursor())) {
@@ -104,7 +104,7 @@ public class MurderMenu extends MenuUtils implements InventoryProvider {
 				ItemStack item = nameItem(Material.COMPASS, "&eScrap Point #" + (i + 1),
 						getLocationLore(scrapPointsLocations.get(i)) + "|| ||&7Click to Teleport");
 
-				clickableItems[i] = ClickableItem.from(item, e -> {
+				clickableItems[i] = ClickableItem.of(item, e -> {
 					if (player.getItemOnCursor().getType().equals(Material.TNT)) {
 						Tasks.wait(2, () -> {
 							arena.getScrapPoints().remove(scrapPointsLocation);
@@ -123,9 +123,9 @@ public class MurderMenu extends MenuUtils implements InventoryProvider {
 			page.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 1, 0));
 
 			if (!page.isLast())
-				contents.set(5, 8, ClickableItem.from(nameItem(new ItemStack(Material.ARROW), "&fNext Page"), e -> MurderMenu.openScrapPointsMenu(arena).open(player, page.next().getPage())));
+				contents.set(5, 8, ClickableItem.of(nameItem(new ItemStack(Material.ARROW), "&fNext Page"), e -> MurderMenu.openScrapPointsMenu(arena).open(player, page.next().getPage())));
 			if (!page.isFirst())
-				contents.set(5, 0, ClickableItem.from(nameItem(new ItemStack(Material.BARRIER), "&fPrevious Page"), e -> MurderMenu.openScrapPointsMenu(arena).open(player, page.previous().getPage())));
+				contents.set(5, 0, ClickableItem.of(nameItem(new ItemStack(Material.BARRIER), "&fPrevious Page"), e -> MurderMenu.openScrapPointsMenu(arena).open(player, page.previous().getPage())));
 		}
 
 	}
