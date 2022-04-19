@@ -145,6 +145,7 @@ public abstract class ICustomCommand {
 				Object[] objects = getMethodParameters(method, event, true);
 				method.setAccessible(true);
 				method.invoke(this, objects);
+				postProcess();
 			} catch (Exception ex) {
 				event.handleException(ex);
 			}
@@ -166,6 +167,8 @@ public abstract class ICustomCommand {
 		} else
 			run.run();
 	}
+
+	public void postProcess() {}
 
 	Object[] getMethodParameters(Method method, CommandEvent event, boolean doValidation) {
 		Parameter[] allParameters = method.getParameters();
