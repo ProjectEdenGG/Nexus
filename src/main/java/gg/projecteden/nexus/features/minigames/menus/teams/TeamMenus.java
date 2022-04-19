@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.minigames.menus.teams;
 
-import fr.minuskube.inv.SmartInventory;
+import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.minigames.menus.teams.loadout.DeleteLoadoutMenu;
 import gg.projecteden.nexus.features.minigames.menus.teams.loadout.LoadoutMenu;
 import gg.projecteden.nexus.features.minigames.menus.teams.loadout.PotionEffectEditorMenu;

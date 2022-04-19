@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.events.y2020.pugmas20.menu;
 
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.SlotPos;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.menu.providers.AdventProvider;
+import gg.projecteden.nexus.features.menus.api.SmartInventory;
+import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.Getter;
 import org.bukkit.Location;

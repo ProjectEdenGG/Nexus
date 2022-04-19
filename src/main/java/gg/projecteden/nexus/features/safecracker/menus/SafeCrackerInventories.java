@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.safecracker.menus;
 
-import fr.minuskube.inv.SmartInventory;
 import gg.projecteden.annotations.Disabled;
+import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.models.safecracker.SafeCrackerEvent;
 import org.bukkit.entity.Player;
 

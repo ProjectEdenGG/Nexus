@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.minigames.menus;
 
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.SmartInventory;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.minigames.menus.annotations.CustomMechanicSettings;
 import gg.projecteden.nexus.features.minigames.menus.flags.BlockListMenu;
 import gg.projecteden.nexus.features.minigames.menus.flags.FlagsMenu;

@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.events.store.providers.purchasable;
 
-import fr.minuskube.inv.ClickableItem;
 import gg.projecteden.nexus.features.events.store.EventStoreItem;
 import gg.projecteden.nexus.features.events.store.providers.EventStoreMenu;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.particles.effects.WingsEffect.WingStyle;
 import gg.projecteden.nexus.models.particle.ParticleOwner;
 import gg.projecteden.nexus.models.particle.ParticleService;

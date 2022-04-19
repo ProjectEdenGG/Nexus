@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.statistics;
 
-import fr.minuskube.inv.SmartInventory;
+import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.OfflinePlayer;

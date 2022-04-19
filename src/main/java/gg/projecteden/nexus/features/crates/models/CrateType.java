@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.crates.models;
 
-import fr.minuskube.inv.SmartInventory;
 import gg.projecteden.nexus.features.crates.Crates;
 import gg.projecteden.nexus.features.crates.crates.BearFair21Crate;
 import gg.projecteden.nexus.features.crates.crates.BossCrate;
@@ -10,6 +9,7 @@ import gg.projecteden.nexus.features.crates.crates.Pugmas21Crate;
 import gg.projecteden.nexus.features.crates.crates.VoteCrate;
 import gg.projecteden.nexus.features.crates.crates.WeeklyWakkaCrate;
 import gg.projecteden.nexus.features.crates.menus.CratePreviewProvider;
+import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.models.mail.Mailer.Mail;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;

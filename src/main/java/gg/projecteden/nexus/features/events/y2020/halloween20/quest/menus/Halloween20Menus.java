@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.events.y2020.halloween20.quest.menus;
 
-import fr.minuskube.inv.SmartInventory;
 import gg.projecteden.nexus.features.events.y2020.halloween20.models.ComboLockNumber;
+import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import org.bukkit.entity.Player;
 
 public class Halloween20Menus {
