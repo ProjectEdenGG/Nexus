@@ -47,7 +47,7 @@ public class YourShopProvider extends ShopProvider {
 
 		Shop shop = new ShopService().get(player);
 
-		contents.set(0, 1, ClickableItem.of(nameItem(Material.ENDER_EYE, "&6Preview your shop"), e -> new PlayerShopProvider(this, shop).open(player)));
+		contents.set(0, 1, ClickableItem.of(Material.ENDER_EYE, "&6Preview your shop", e -> new PlayerShopProvider(this, shop).open(player)));
 
 		ItemBuilder description = new ItemBuilder(Material.OAK_SIGN).name("&6Set shop description");
 		if (!shop.getDescription().isEmpty())
@@ -63,34 +63,32 @@ public class YourShopProvider extends ShopProvider {
 					open(player);
 				}).open(player)));
 
-		contents.set(0, 4, ClickableItem.of(nameItem(Material.LIME_CONCRETE_POWDER, "&6Add item"), e -> new ExchangeConfigProvider(this).open(player)));
+		contents.set(0, 4, ClickableItem.of(Material.LIME_CONCRETE_POWDER, "&6Add item", e -> new ExchangeConfigProvider(this).open(player)));
 
-		contents.set(0, 6, ClickableItem.of(nameItem(Material.WRITABLE_BOOK, "&6Shop history"), e -> {
+		contents.set(0, 6, ClickableItem.of(Material.WRITABLE_BOOK, "&6Shop history", e -> {
 			PlayerUtils.runCommand(player, "shop history");
 			player.closeInventory();
 		}));
-		contents.set(0, 7, ClickableItem.of(nameItem(Material.CYAN_SHULKER_BOX, "&6Collect items"), e -> new CollectItemsProvider(this).open(player)));
+		contents.set(0, 7, ClickableItem.of(Material.CYAN_SHULKER_BOX, "&6Collect items", e -> new CollectItemsProvider(this).open(player)));
 
-		contents.set(5, 3, ClickableItem.of(nameItem(Material.RED_CONCRETE_POWDER, "&cDisable all", "&f||&7Click to disable all items"), e -> {
+		contents.set(5, 3, ClickableItem.of(new ItemBuilder(Material.RED_CONCRETE_POWDER).name("&cDisable all").lore("", "&7Click to disable all items"), e3 ->
 			ConfirmationMenu.builder()
-					.onConfirm(e2 -> {
-						shop.getProducts().forEach(product -> product.setEnabled(false));
-						service.save(shop);
-						open(player, page);
-					})
-					.onCancel(e2 -> open(player, page))
-					.open(player);
-		}));
-		contents.set(5, 5, ClickableItem.of(nameItem(Material.LIME_CONCRETE_POWDER, "&aEnable all", "&f||&7Click to enable all items"), e -> {
+				.onConfirm(e21 -> {
+					shop.getProducts().forEach(product2 -> product2.setEnabled(false));
+					service.save(shop);
+					open(player, page);
+				})
+				.onCancel(e21 -> open(player, page))
+				.open(player)));
+		contents.set(5, 5, ClickableItem.of(new ItemBuilder(Material.LIME_CONCRETE_POWDER).name("&aEnable all").lore("", "&7Click to enable all items"), e1 ->
 			ConfirmationMenu.builder()
-					.onConfirm(e2 -> {
-						shop.getProducts().forEach(product -> product.setEnabled(true));
-						service.save(shop);
-						open(player, page);
-					})
-					.onCancel(e2 -> open(player, page))
-					.open(player);
-		}));
+				.onConfirm(e2 -> {
+					shop.getProducts().forEach(product1 -> product1.setEnabled(true));
+					service.save(shop);
+					open(player, page);
+				})
+				.onCancel(e2 -> open(player, page))
+				.open(player)));
 
 		if (shop.getProducts() == null || shop.getProducts().size() == 0) return;
 		List<ClickableItem> items = new ArrayList<>();

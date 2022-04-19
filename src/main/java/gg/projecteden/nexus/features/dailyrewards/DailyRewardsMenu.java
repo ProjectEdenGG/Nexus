@@ -126,11 +126,11 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 				Reward currentReward = rewards.get(i);
 				String rewardDescription = "&e" + camelCase(currentReward.getDescription());
 
-				ItemStack item;
+				ItemBuilder item;
 				if (!isNullOrEmpty(currentReward.getItems()))
-					item = nameItem(currentReward.getItems().get(0).clone(), rewardDescription, "&3Click to claim");
+					item = new ItemBuilder(currentReward.getItems().get(0).clone()).name(rewardDescription).lore("&3Click to claim");
 				else
-					item = nameItem(addGlowing(new ItemStack(Material.PAPER)), rewardDescription, "&3Click to claim");
+					item = new ItemBuilder(Material.PAPER).name(rewardDescription).lore("&3Click to claim").glow();
 
 				contents.set(1, (2 + i * 2), ClickableItem.of(item, e -> applyReward(day, option)));
 			}

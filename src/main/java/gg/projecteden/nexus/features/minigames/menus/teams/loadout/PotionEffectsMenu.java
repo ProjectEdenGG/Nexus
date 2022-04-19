@@ -43,13 +43,13 @@ public class PotionEffectsMenu extends MenuUtils implements InventoryProvider {
 	public void init(Player player, InventoryContents contents) {
 		addBackItem(contents, e -> menus.getTeamMenus().openLoadoutMenu(player, arena, team));
 
-		contents.set(0, 2, ClickableItem.of(nameItem(Material.ANVIL, "&eCopy Potions", "&3This will copy all the||&3potion effects you have||&3into the team's loadout."), e -> {
+		contents.set(0, 2, ClickableItem.of(new ItemBuilder(Material.ANVIL).name("&eCopy Potions").lore("&3This will copy all the", "&3potion effects you have", "&3into the team's loadout."), e2 -> {
 			team.getLoadout().getEffects().addAll(player.getActivePotionEffects());
 			arena.write();
 			menus.getTeamMenus().openPotionEffectsMenu(player, arena, team);
 		}));
 
-		contents.set(0, 6, ClickableItem.of(nameItem(Material.BOOK, "&eList Potion Effects", "&3Click me to get a list of||&3all valid potion effect||&3names that can be added."), e -> {
+		contents.set(0, 6, ClickableItem.of(new ItemBuilder(Material.BOOK).name("&eList Potion Effects").lore("&3Click me to get a list of", "&3all valid potion effect", "&3names that can be added."), e1 -> {
 			StringBuilder potions = new StringBuilder();
 			ArrayList<PotionEffectType> potionList = new ArrayList<>(Arrays.asList(PotionEffectType.values()));
 			potionList.remove(0);
@@ -61,7 +61,7 @@ public class PotionEffectsMenu extends MenuUtils implements InventoryProvider {
 			PlayerUtils.send(player, PREFIX + "&e" + potions);
 		}));
 
-		contents.set(0, 4, ClickableItem.of(nameItem(Material.EMERALD_BLOCK, "&eAdd Potion Effect"),
+		contents.set(0, 4, ClickableItem.of(Material.EMERALD_BLOCK, "&eAdd Potion Effect",
 			e -> {
 					PotionEffect potionEffect = new PotionEffectBuilder(PotionEffectType.SPEED).duration(5).amplifier(5).ambient(true).build();
 					team.getLoadout().getEffects().add(potionEffect);
@@ -69,12 +69,14 @@ public class PotionEffectsMenu extends MenuUtils implements InventoryProvider {
 					menus.getTeamMenus().openPotionEffectEditorMenu(player, arena, team, potionEffect);
 			}));
 
-		ItemStack deleteItem = nameItem(Material.TNT, "&cDelete Item", "&7Click me to enter deletion mode.||&7Then, click a potion effect with ||&7me to delete it.");
+		ItemBuilder deleteItem = new ItemBuilder(Material.TNT)
+			.name("&cDelete Item")
+			.lore("&7Click me to enter deletion mode.", "&7Then, click a potion effect with ", "&7me to delete it.");
 		contents.set(0, 8, ClickableItem.of(deleteItem, e -> Tasks.wait(2, () -> {
 			if (player.getItemOnCursor().getType().equals(Material.TNT)) {
 				player.setItemOnCursor(new ItemStack(Material.AIR));
 			} else if (isNullOrAir(player.getItemOnCursor())) {
-				player.setItemOnCursor(deleteItem);
+				player.setItemOnCursor(deleteItem.build());
 			}
 		})));
 

@@ -136,6 +136,7 @@ public class SmartInventory {
 		return row < this.rows && col < this.columns;
 	}
 
+	@Getter
 	public static final class Builder {
 
 		private String id = "unknown";
@@ -224,50 +225,6 @@ public class SmartInventory {
 		public Builder manager(InventoryManager manager) {
 			this.manager = manager;
 			return this;
-		}
-
-		public String getId() {
-			return id;
-		}
-
-		public Component getTitle() {
-			return title;
-		}
-
-		public InventoryType getType() {
-			return type;
-		}
-
-		public Optional<Integer> getRows() {
-			return rows;
-		}
-
-		public Optional<Integer> getColumns() {
-			return columns;
-		}
-
-		public boolean isCloseable() {
-			return closeable;
-		}
-
-		public int getUpdateFrequency() {
-			return updateFrequency;
-		}
-
-		public InventoryManager getManager() {
-			return manager;
-		}
-
-		public InventoryProvider getProvider() {
-			return provider;
-		}
-
-		public SmartInventory getParent() {
-			return parent;
-		}
-
-		public List<InventoryListener<? extends Event>> getListeners() {
-			return Collections.unmodifiableList(listeners);
 		}
 
 		public SmartInventory build() {

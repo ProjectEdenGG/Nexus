@@ -62,7 +62,7 @@ public class FlashCardPuzzleProvider extends MenuUtils implements InventoryProvi
 						contents.fill(ClickableItem.empty(new ItemBuilder(Material.RED_WOOL).name("&cIncorrect").build()));
 						Tasks.wait(TickTime.SECOND.x(2), () -> Halloween20Menus.openFlashCardPuzzle(player, number));
 					} else {
-						addGlowing(e.getItem());
+						ItemBuilder.glow(e.getItem());
 						if (index.get() == 5)
 							complete(player);
 					}

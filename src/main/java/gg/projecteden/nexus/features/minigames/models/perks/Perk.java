@@ -1,14 +1,16 @@
 package gg.projecteden.nexus.features.minigames.models.perks;
 
 import gg.projecteden.interfaces.Named;
-import gg.projecteden.nexus.framework.interfaces.HasDescription;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public interface Perk extends IHasPerkCategory, HasDescription, Named {
+import java.util.List;
+
+public interface Perk extends IHasPerkCategory, Named {
 	@NotNull ItemStack getMenuItem();
 	@NotNull PerkCategory getPerkCategory();
 	int getPrice();
+	@NotNull List<String> getDescription();
 
 	default boolean equals(Perk other) {
 		if (this == other)

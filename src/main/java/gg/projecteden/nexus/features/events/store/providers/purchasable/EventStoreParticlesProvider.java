@@ -49,7 +49,7 @@ public class EventStoreParticlesProvider extends EventStoreMenu {
 
 			items.add(ClickableItem.of(item.build(), e -> {
 				try {
-					if (isShiftClick(e)) {
+					if (e.isShiftClick()) {
 						chargeAndAddPermissions(player, price, type.getPermission());
 						PlayerUtils.send(player, STORE_PREFIX + "Purchased " + camelCase(type) + " particle, manage with &c/particles");
 						open(player);

@@ -89,8 +89,7 @@ public class CustomModelMenu extends MenuUtils implements InventoryProvider {
 					.lore("&7Click to obtain item")
 					.lore("&7Shift+Click to obtain item with name");
 
-			items.add(ClickableItem.of(item.build(), e ->
-					PlayerUtils.giveItem(player, isShiftClick(e) ? model.getDisplayItem() : model.getItem())));
+			items.add(ClickableItem.of(item.build(), e -> PlayerUtils.giveItem(player, e.isShiftClick() ? model.getDisplayItem() : model.getItem())));
 		}
 
 		paginator(player, contents, items);

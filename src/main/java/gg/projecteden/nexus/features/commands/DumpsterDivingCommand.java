@@ -84,7 +84,7 @@ public class DumpsterDivingCommand extends CustomCommand implements Listener {
 		public void init(Player player, InventoryContents contents) {
 			addCloseItem(contents);
 
-			contents.set(0, 8, ClickableItem.of(nameItem(Material.IRON_SHOVEL, "Refresh"), e -> {
+			contents.set(0, 8, ClickableItem.of(Material.IRON_SHOVEL, "Refresh", e -> {
 				try {
 					open(player);
 				} catch (Exception ex) {

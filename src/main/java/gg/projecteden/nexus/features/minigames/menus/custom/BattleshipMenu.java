@@ -26,7 +26,7 @@ public class BattleshipMenu extends MenuUtils implements InventoryProvider {
 	public void init(Player player, InventoryContents contents) {
 		contents.set(0, 0, ClickableItem.of(backItem(), e -> Minigames.menus.openArenaMenu(player, arena)));
 
-		contents.set(1, 0, ClickableItem.empty(nameItem(Material.BLACK_CONCRETE, "")));
+		contents.set(1, 0, ClickableItem.empty(Material.BLACK_CONCRETE));
 	}
 
 }

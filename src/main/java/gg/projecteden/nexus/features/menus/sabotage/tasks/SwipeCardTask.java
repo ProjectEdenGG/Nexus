@@ -44,7 +44,7 @@ public class SwipeCardTask extends AbstractTaskMenu {
 
 		AtomicReference<LocalDateTime> time = new AtomicReference<>();
 		inventoryContents.set(cardPos, ClickableItem.of(KEY_CARD.get(), click -> {
-			if (!isLeftClick(click) || !KEY_CARD.get().isSimilar(click.getItem()) || !(click.getPlayer().getItemOnCursor().getType() == Material.AIR || click.getPlayer().getItemOnCursor().isSimilar(KEY_CARD.get()))) {
+			if (!click.isLeftClick() || !KEY_CARD.get().isSimilar(click.getItem()) || !(click.getPlayer().getItemOnCursor().getType() == Material.AIR || click.getPlayer().getItemOnCursor().isSimilar(KEY_CARD.get()))) {
 				reset.run();
 			} else {
 				time.set(LocalDateTime.now());

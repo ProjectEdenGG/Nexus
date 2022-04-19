@@ -89,8 +89,8 @@ public class HorsePickerCommand extends CustomCommand {
 		public void init(Player player, InventoryContents contents) {
 			int column = 1;
 			for (HorseColor color : HorseColor.values()) {
-				contents.set(1, column++, ClickableItem.of(nameItem(color.getItem(),
-					color.getColor() + StringUtils.camelCase(color.getName())),
+				contents.set(1, column++, ClickableItem.of(color.getItem(),
+					color.getColor() + StringUtils.camelCase(color.getName()),
 					e -> getMarkingPicker(color).open(player)));
 			}
 		}
@@ -104,7 +104,7 @@ public class HorsePickerCommand extends CustomCommand {
 		public void init(Player player, InventoryContents contents) {
 			int column = 2;
 			for (HorseMarking marking : HorseMarking.values()) {
-				contents.set(1, column++, ClickableItem.of(nameItem(marking.getItem(), marking.getName()), e -> {
+				contents.set(1, column++, ClickableItem.of(marking.getItem(), marking.getName(), e -> {
 					spawnHorse(player, color, Horse.Style.valueOf(marking.name()));
 					LuckPermsUtils.PermissionChange.unset().permissions("horsepicker.pick").player(player).runAsync();
 					player.closeInventory();

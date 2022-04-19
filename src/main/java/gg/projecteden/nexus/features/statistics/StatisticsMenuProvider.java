@@ -55,10 +55,10 @@ public class StatisticsMenuProvider extends MenuUtils implements InventoryProvid
 
 		switch (menu) {
 			case MAIN -> {
-				ItemStack general = nameItem(Material.DIAMOND, "&3General", "&eView stats like movement,||&einteractions, and more");
-				ItemStack blocks = nameItem(Material.GRASS_BLOCK, "&3Blocks", "&eView stats for blocks like||&etimes mined, placed, and crafted");
-				ItemStack items = nameItem(Material.TOTEM_OF_UNDYING, "&3Items", "&eView stats for items like||&etimes crafted, used, and picked up");
-				ItemStack mobs = nameItem(Material.ZOMBIE_HEAD, "&3Mobs", "&eView stats for mobs like||&etimes killed and times killed by");
+				ItemBuilder general = new ItemBuilder(Material.DIAMOND).name("&3General").lore("&eView stats like movement,", "&einteractions, and more");
+				ItemBuilder blocks = new ItemBuilder(Material.GRASS_BLOCK).name("&3Blocks").lore("&eView stats for blocks like", "&etimes mined, placed, and crafted");
+				ItemBuilder items = new ItemBuilder(Material.TOTEM_OF_UNDYING).name("&3Items").lore("&eView stats for items like", "&etimes crafted, used, and picked up");
+				ItemBuilder mobs = new ItemBuilder(Material.ZOMBIE_HEAD).name("&3Mobs").lore("&eView stats for mobs like", "&etimes killed and times killed by");
 				contents.set(1, 1, ClickableItem.of(general, e -> StatisticsMenu.open(player, StatisticsMenu.StatsMenus.GENERAL, 0, targetPlayer)));
 				contents.set(1, 3, ClickableItem.of(blocks, e -> StatisticsMenu.open(player, StatisticsMenu.StatsMenus.BLOCKS, 0, targetPlayer)));
 				contents.set(1, 5, ClickableItem.of(items, e -> StatisticsMenu.open(player, StatisticsMenu.StatsMenus.ITEMS, 0, targetPlayer)));
@@ -127,10 +127,10 @@ public class StatisticsMenuProvider extends MenuUtils implements InventoryProvid
 						column++;
 				}
 				if (startIndex > 0)
-					contents.set(5, 0, ClickableItem.of(nameItem(Material.ARROW, "<- Page"), e ->
+					contents.set(5, 0, ClickableItem.of(Material.ARROW, "<- Page", e ->
 							StatisticsMenu.open(player, menu, targetPlayer, Math.max(0, startIndex - itemsPerPage))));
 				if (startIndex + itemsPerPage < materials.size())
-					contents.set(5, 8, ClickableItem.of(nameItem(Material.ARROW, "Page ->"), e ->
+					contents.set(5, 8, ClickableItem.of(Material.ARROW, "Page ->", e ->
 							StatisticsMenu.open(player, menu, targetPlayer, startIndex + itemsPerPage)));
 				return;
 			}
@@ -140,10 +140,10 @@ public class StatisticsMenuProvider extends MenuUtils implements InventoryProvid
 		page.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 1, 0));
 
 		if (!page.isFirst())
-			contents.set(5, 0, ClickableItem.of(nameItem(Material.ARROW, "<- Page"), e ->
+			contents.set(5, 0, ClickableItem.of(Material.ARROW, "<- Page", e ->
 					StatisticsMenu.open(player, menu, page.previous().getPage(), targetPlayer)));
 		if (!page.isLast())
-			contents.set(5, 8, ClickableItem.of(nameItem(Material.ARROW, "Page ->"), e ->
+			contents.set(5, 8, ClickableItem.of(Material.ARROW, "Page ->", e ->
 					StatisticsMenu.open(player, menu, page.next().getPage(), targetPlayer)));
 	}
 

@@ -19,7 +19,9 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -334,24 +336,32 @@ public enum ParticleSetting {
 		return StringUtils.camelCase(name());
 	}
 
-	public String getLore(Player player, ParticleType type) {
+	public List<String> getLore(Player player, ParticleType type) {
 		if (this.value == Boolean.class) {
 			Boolean bool = get(new ParticleService().get(player), type);
 			if (bool == null)
-				return null;
-			return bool ? "&aEnabled" : "&cDisabled";
+				return Collections.emptyList();
+			return Collections.singletonList(bool ? "&aEnabled" : "&cDisabled");
 		} if (this.value == Color.class) {
 			Color color = get(new ParticleService().get(player), type);
 			if (color == null)
-				return null;
-			return "||&cR: " + color.getRed() + "||&aG: " + color.getGreen() + "||&bB: " + color.getBlue();
+				return Collections.emptyList();
+			return List.of(
+				"&cR: " + color.getRed(),
+				"&aG: " + color.getGreen(),
+				"&bB: " + color.getBlue()
+			);
 		}
 		Object min = 0.0;
 		Object max = 10.0;
-		return "||&eCurrent value: &3" + getter(player, type) +
-				((validate(type, min).equals(min)) ? "" : "|| ||&eMin Value:&3 " + validate(type, min)) +
-				((validate(type, max).equals(max)) ? "" : "||&eMax Value:&3 " + validate(type, max));
-
+		return new ArrayList<>() {{
+			add("&eCurrent value: &3" + getter(player, type));
+			add("");
+			if (!validate(type, min).equals(min))
+				add("&eMin Value:&3 " + validate(type, min));
+			if (!validate(type, max).equals(max))
+				add("&eMax Value:&3 " + validate(type, max));
+		}};
 	}
 
 	public void onClick(Player player, ParticleType type) {

@@ -11,6 +11,7 @@ import gg.projecteden.nexus.features.minigames.menus.annotations.CustomMechanicS
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.arenas.GoldRushArena;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import net.wesjd.anvilgui.AnvilGUI;
@@ -41,18 +42,17 @@ public class GoldRushMenu extends MenuUtils implements InventoryProvider {
 
 		String currentValue = (arena.getMineStackHeight() > 0) ? "" + arena.getMineStackHeight() : "null";
 
-		contents.set(1, 4, ClickableItem.of(nameItem(Material.LADDER, "&eMine Stack Height", "&eCurrent value:||&3"),
-				e -> {
-					openAnvilMenu(player, arena, currentValue, (Player p, String text) -> {
-						if(!Utils.isInt(text)) {
-							AnvilGUI.Response.close();
-							throw new InvalidInputException(PREFIX + "You must use an integer for Mine Stack Height.");
-						}
-						arena.setMineStackHeight(Integer.parseInt(text));
-						ArenaManager.write(arena);
-						menus.openCustomSettingsMenu(player, arena);
-						return AnvilGUI.Response.text(text);
-				});
+		contents.set(1, 4, ClickableItem.of(new ItemBuilder(Material.LADDER).name("&eMine Stack Height").lore("&eCurrent value:", ""), e -> {
+			openAnvilMenu(player, arena, currentValue, (Player p, String text) -> {
+				if (!Utils.isInt(text)) {
+					AnvilGUI.Response.close();
+					throw new InvalidInputException(PREFIX + "You must use an integer for Mine Stack Height.");
+				}
+				arena.setMineStackHeight(Integer.parseInt(text));
+				ArenaManager.write(arena);
+				menus.openCustomSettingsMenu(player, arena);
+				return AnvilGUI.Response.text(text);
+			});
 		}));
 	}
 }

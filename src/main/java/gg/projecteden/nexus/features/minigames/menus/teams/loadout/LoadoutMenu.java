@@ -66,31 +66,27 @@ public class LoadoutMenu extends MenuUtils implements InventoryProvider {
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
-		contents.set(0, 0, ClickableItem.of(nameItem(
-				backItem(),
-				backItem().getItemMeta().getDisplayName(),
-				"&7Escape to discard changes"
-			),
+		contents.set(0, 0, ClickableItem.of(new ItemBuilder(backItem())
+				.name(backItem().getItemMeta().getDisplayName())
+				.lore("&7Escape to discard changes"),
 			e -> {
 				save(player);
 				menus.getTeamMenus().openTeamsEditorMenu(player, arena, team);
 			}));
 
-		contents.set(0, 1, ClickableItem.of(nameItem(
-				Material.ANVIL,
-				"&eCopy From Inventory",
-				"&3This will copy all the||&3contents of your inventory||&3into the team's loadout."
-			), e -> {
+		contents.set(0, 1, ClickableItem.of(new ItemBuilder(Material.ANVIL)
+				.name("&eCopy From Inventory")
+				.lore("&3This will copy all the", "&3contents of your inventory", "&3into the team's loadout."),
+			e -> {
 				team.getLoadout().setInventory(player.getInventory().getContents().clone());
 				arena.write();
 				menus.getTeamMenus().openLoadoutMenu(player, arena, team);
 			}));
 
-		contents.set(0, 2, ClickableItem.of(nameItem(
-				Material.ANVIL,
-				"&eCopy To Inventory",
-				"&3This will copy all the||&3contents of the loadout||&3into your inventory."
-			), e -> {
+		contents.set(0, 2, ClickableItem.of(new ItemBuilder(Material.ANVIL)
+				.name("&eCopy To Inventory")
+				.lore("&3This will copy all the", "&3contents of the loadout", "&3into your inventory."),
+			e -> {
 				player.getInventory().setContents(team.getLoadout().getInventory().clone());
 				arena.write();
 				menus.getTeamMenus().openLoadoutMenu(player, arena, team);
@@ -98,16 +94,14 @@ public class LoadoutMenu extends MenuUtils implements InventoryProvider {
 
 		contents.set(0, 4, ClickableItem.of(
 			new ItemBuilder(Material.POTION)
-					.name("&ePotion Effects")
-					.itemFlags(ItemFlag.HIDE_POTION_EFFECTS)
-					.build(),
+				.name("&ePotion Effects")
+				.itemFlags(ItemFlag.HIDE_POTION_EFFECTS)
+				.build(),
 			e -> menus.getTeamMenus().openPotionEffectsMenu(player, arena, team)));
 
-		contents.set(0, 8, ClickableItem.of(nameItem(
-				Material.TNT,
-				"&c&lDelete Loadout",
-				"&7You will need to confirm||&7deleting a loadout.|| ||&7&lTHIS CANNOT BE UNDONE."
-			),
+		contents.set(0, 8, ClickableItem.of(new ItemBuilder(Material.TNT)
+				.name("&c&lDelete Loadout")
+				.lore("&7You will need to confirm", "&7deleting a loadout.", "", "&7&lTHIS CANNOT BE UNDONE."),
 			e -> menus.getTeamMenus().openDeleteLoadoutMenu(player, arena, team)));
 
 		formatInventoryContents(contents, team.getLoadout().getInventory());

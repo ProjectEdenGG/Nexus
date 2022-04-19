@@ -36,7 +36,7 @@ public class AchievementGroupProvider implements InventoryProvider {
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
-		contents.fillRow(0, ClickableItem.empty(new ItemStack(Material.AIR)));
+		contents.fillRow(0, ClickableItem.AIR);
 		contents.set(0, 0, ClickableItem.of(new ItemStack(Material.BARRIER), e -> contents.inventory().close(player)));
 
 		for (AchievementGroup group : AchievementGroup.values()) {

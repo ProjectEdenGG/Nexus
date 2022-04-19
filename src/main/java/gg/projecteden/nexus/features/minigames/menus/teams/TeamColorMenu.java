@@ -7,9 +7,9 @@ import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -36,10 +36,9 @@ public class TeamColorMenu extends MenuUtils implements InventoryProvider {
 		int column = 0;
 		int row = 1;
 		for (ColorType colorType : COLOR_TYPES) {
-			ItemStack item = nameItem(colorType.getWool(), colorType.getDisplayName());
-
-			if (colorType.getChatColor() == team.getChatColor())
-				addGlowing(item);
+			ItemBuilder item = new ItemBuilder(colorType.getWool())
+				.name(colorType.getDisplayName())
+				.glow(colorType.getChatColor() == team.getChatColor());
 
 			contents.set(row, column, ClickableItem.of(item, e -> {
 				team.setChatColor(colorType.getChatColor());

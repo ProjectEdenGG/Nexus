@@ -48,7 +48,7 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 	public void init(Player player, InventoryContents contents) {
 		contents.set(0, 0, ClickableItem.of(backItem(), e -> menus.openArenaMenu(player, arena)));
 
-		contents.set(1, 0, ClickableItem.of(nameItem(new ItemStack(Material.ZOMBIE_SPAWN_EGG), "&eMob Points"), e -> new MobPointsMenu().open(player)));
+		contents.set(1, 0, ClickableItem.of(new ItemBuilder(Material.ZOMBIE_SPAWN_EGG).name("&eMob Points"), e -> new MobPointsMenu().open(player)));
 	}
 
 	public class MobPointsMenu extends MenuUtils implements InventoryProvider {
@@ -67,7 +67,7 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 		public void init(Player player, InventoryContents contents) {
 			contents.set(0, 0, ClickableItem.of(backItem(), e -> menus.openCustomSettingsMenu(player, arena)));
 
-			contents.set(0, 4, ClickableItem.of(nameItem(Material.EMERALD_BLOCK, "&aAdd Mob Point"), e -> new AddMobPointMenu().open(player)));
+			contents.set(0, 4, ClickableItem.of(Material.EMERALD_BLOCK, "&aAdd Mob Point", e -> new AddMobPointMenu().open(player)));
 
 			List<ClickableItem> items = new ArrayList<>();
 
@@ -82,8 +82,10 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 						skull = new ItemStack(Material.BARRIER);
 				}
 
-				final String lore = getLocationLore(mobPoint.getLocation()) + "|| ||&7Click to remove";
-				final ItemStack item = nameItem(skull, "&3" + camelCase(mobPoint.getType()), lore);
+				final ItemBuilder item = new ItemBuilder(skull)
+					.name("&3" + camelCase(mobPoint.getType()))
+					.lore(getLocationLore(mobPoint.getLocation()))
+					.lore("", "&7Click to remove");
 
 				items.add(ClickableItem.of(item, e -> {
 					arena.getMobPoints().remove(mobPoint);

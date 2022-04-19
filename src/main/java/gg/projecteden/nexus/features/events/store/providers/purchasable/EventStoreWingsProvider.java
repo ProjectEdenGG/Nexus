@@ -49,7 +49,7 @@ public class EventStoreWingsProvider extends EventStoreMenu {
 
 			items.add(ClickableItem.of(item.build(), e -> {
 				try {
-					if (isShiftClick(e)) {
+					if (e.isShiftClick()) {
 						chargeAndAddPermissions(player, price, "wings.use", style.getPermission());
 						PlayerUtils.send(player, STORE_PREFIX + "Purchased wing style #" + (style.ordinal() + 1) + ", manage with &c/wings");
 						open(player);

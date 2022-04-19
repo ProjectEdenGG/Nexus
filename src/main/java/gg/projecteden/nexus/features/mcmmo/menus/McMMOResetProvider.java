@@ -181,33 +181,35 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 		}
 		final boolean canPrestigeAll = _canPrestigeAll;
 
-		ItemStack all = new ItemBuilder(Material.BEACON)
-				.name("&eAll Skills")
-				.lore("&3Power Level: &e" + totalPowerLevel + "/" + TIER_ONE_ALL +
-						"|| ||&3&lReward:" +
-						"||&f- " + DEPOSIT_PRETTY + " per level " + TIER_ONE + " skill (x" + MAX_DEPOSIT_MULTIPLIER + " if level " + TIER_TWO + ")" +
-						"||&f- " + DEPOSIT_ALL_PRETTY + " bonus (x" + MAX_DEPOSIT_ALL_MULTIPLIER + " if every skill is level " + TIER_TWO + ")" +
-						"||&f- All normal rewards" +
-						"||&f- When your health gets low, this breastplate will give you the strength of an angry barbarian!").build();
-		if (mcmmoPlayer.getPowerLevel() >= TIER_ONE_ALL) addGlowing(all);
+		ItemBuilder all = new ItemBuilder(Material.BEACON)
+			.name("&eAll Skills")
+			.lore("&3Power Level: &e" + totalPowerLevel + "/" + TIER_ONE_ALL +
+				"",
+				"&3&lReward:",
+				"&f- " + DEPOSIT_PRETTY + " per level " + TIER_ONE + " skill (x" + MAX_DEPOSIT_MULTIPLIER + " if level " + TIER_TWO + ")",
+				"&f- " + DEPOSIT_ALL_PRETTY + " bonus (x" + MAX_DEPOSIT_ALL_MULTIPLIER + " if every skill is level " + TIER_TWO + ")",
+				"&f- All normal rewards",
+				"&f- When your health gets low, this breastplate will give you the strength of an angry barbarian!")
+			.glow(mcmmoPlayer.getPowerLevel() >= TIER_ONE_ALL);
+
 		ItemStack reset = new ItemBuilder(Material.BARRIER).name("&cReset all with &lno reward").build();
 
-		contents.set(0, 4, ClickableItem.of(all, (e) -> {
+		contents.set(0, 4, ClickableItem.of(all, e -> {
 			if (!canPrestigeAll) return;
 
 			ConfirmationMenu.builder()
 					.title("&4Confirm Prestige All?")
-					.onConfirm((e2) -> {
+					.onConfirm(e2 -> {
 						player.closeInventory();
 						prestigeAll(player);
 					})
 					.open(player);
 		}));
 
-		contents.set(5, 4, ClickableItem.of(reset, (e) ->
+		contents.set(5, 4, ClickableItem.of(reset, e ->
 				ConfirmationMenu.builder()
 						.title("&4Confirm Reset All? (No Rewards)")
-						.onConfirm((e2) -> {
+						.onConfirm(e2 -> {
 							player.closeInventory();
 							resetAll(mcmmoPlayer);
 						})
@@ -215,17 +217,17 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 
 		McMMOPrestige mcMMOPrestige = service.getPrestige(player.getUniqueId().toString());
 		for (ResetSkillType skill : ResetSkillType.values()) {
-			ItemStack item = new ItemBuilder(skill.getMaterial()).itemFlags(ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_ATTRIBUTES)
-					.name("&e" + StringUtils.camelCase(skill.name()))
-					.lore("&3Level: &e" + mcmmoPlayer.getSkillLevel(PrimarySkillType.valueOf(skill.name())) +
-							"|| ||&3&lReward:" +
-							"||&f" + DEPOSIT_PRETTY + " (x" + MAX_DEPOSIT_MULTIPLIER + " for level " + TIER_TWO + ")" +
-							"||&f" + skill.getRewardDescription() +
-							"|| ||&3Number of Prestieges: &e" + mcMMOPrestige.getPrestige(skill.name()))
-					.build();
-
-			if (mcmmoPlayer.getSkillLevel(PrimarySkillType.valueOf(skill.name())) >= TIER_ONE)
-				addGlowing(item);
+			ItemBuilder item = new ItemBuilder(skill.getMaterial()).itemFlags(ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_ATTRIBUTES)
+				.name("&e" + StringUtils.camelCase(skill.name()))
+				.lore(
+					"&3Level: &e" + mcmmoPlayer.getSkillLevel(PrimarySkillType.valueOf(skill.name())),
+					"",
+					"&3&lReward:",
+					"&f" + DEPOSIT_PRETTY + " (x" + MAX_DEPOSIT_MULTIPLIER + " for level " + TIER_TWO + ")",
+					"&f" + skill.getRewardDescription(),
+					"",
+					"&3Number of Prestieges: &e" + mcMMOPrestige.getPrestige(skill.name()))
+				.glow(mcmmoPlayer.getSkillLevel(PrimarySkillType.valueOf(skill.name())) >= TIER_ONE);
 
 			contents.set(skill.getRow(), skill.getColumn(), ClickableItem.of(item, (e) -> {
 				if (mcmmoPlayer.getSkillLevel(PrimarySkillType.valueOf(skill.name())) < TIER_ONE)

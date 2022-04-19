@@ -9,7 +9,6 @@ import gg.projecteden.nexus.features.minigames.models.perks.PerkCategory;
 import gg.projecteden.nexus.features.minigames.models.perks.PerkType;
 import gg.projecteden.nexus.models.perkowner.PerkOwner;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -55,11 +54,7 @@ public class PlayerPerksMenu extends CommonPerksMenu implements InventoryProvide
 			if (lore.size() > 2)
 				lore.add(2, "");
 
-			ItemStack item = getItem(perk, lore);
-			if (enabled)
-				addGlowing(item);
-
-			clickableItems.add(ClickableItem.of(item, e -> toggleBoolean(player, perkType, contents)));
+			clickableItems.add(ClickableItem.of(getItem(perk, lore).glow(enabled), e -> toggleBoolean(player, perkType, contents)));
 		});
 		paginator(player, contents, clickableItems);
 	}

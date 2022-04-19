@@ -16,17 +16,15 @@
 
 package gg.projecteden.nexus.features.menus.api;
 
+import lombok.AllArgsConstructor;
+
 import java.util.function.Consumer;
 
+@AllArgsConstructor
 public class InventoryListener<T> {
 
 	private final Class<T> type;
 	private final Consumer<T> consumer;
-
-	public InventoryListener(Class<T> type, Consumer<T> consumer) {
-		this.type = type;
-		this.consumer = consumer;
-	}
 
 	public void accept(T t) {
 		consumer.accept(t);

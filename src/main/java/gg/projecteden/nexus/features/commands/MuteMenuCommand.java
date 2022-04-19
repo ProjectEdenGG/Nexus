@@ -149,7 +149,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 			switch (pageType) {
 				case MESSAGES -> {
 					addCloseItem(contents);
-					contents.set(0, 8, ClickableItem.of(nameItem(Material.COMMAND_BLOCK, "&dSounds"), e -> open(player, PageType.SOUNDS)));
+					contents.set(0, 8, ClickableItem.of(Material.COMMAND_BLOCK, "&dSounds", e -> open(player, PageType.SOUNDS)));
 					for (MuteMenuItem item : MuteMenuItem.values()) {
 						if (item.getDefaultVolume() != null)
 							continue;
@@ -178,7 +178,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 						.build()));
 
 					if (Rank.of(player).isAdmin())
-						items.add(ClickableItem.of(nameItem(Material.ZOMBIE_HEAD, "Mob Sounds"), e -> open(player, PageType.MOB_SOUNDS)));
+						items.add(ClickableItem.of(Material.ZOMBIE_HEAD, "Mob Sounds", e -> open(player, PageType.MOB_SOUNDS)));
 
 					for (MuteMenuItem item : MuteMenuItem.values()) {
 						if (item.getDefaultVolume() == null)
@@ -188,14 +188,15 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 
 						boolean muted = user.hasMuted(item);
 						int volume = user.getVolume(item);
-						ItemStack stack = nameItem(item.getMaterial(), "&e" + item.getTitle(), muted ? "&c0%" : "&a" + volume + "%");
+
+						ItemBuilder stack = new ItemBuilder(item.getMaterial()).name("&e" + item.getTitle()).lore(muted ? "&c0%" : "&a" + volume + "%");
 						if (muted)
-							addGlowing(stack);
+							stack.glow();
 
 						items.add(ClickableItem.of(stack, e -> {
-							if (isRightClick(e))
+							if (e.isRightClick())
 								decreaseVolume(user, item);
-							else if (isLeftClick(e))
+							else if (e.isLeftClick())
 								increaseVolume(user, item);
 							service.save(user);
 							reopen(player, contents);
@@ -219,9 +220,9 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 						int volume = user.getVolume(mobHeadType.getEntityType());
 						final ItemBuilder skull = new ItemBuilder(mobHeadType.getSkull()).lore(volume == 0 ? "&c0%" : "&a" + volume + "%");
 						items.add(ClickableItem.of(skull.build(), e -> {
-							if (isRightClick(e))
+							if (e.isRightClick())
 								decreaseVolume(user, mobHeadType.getEntityType());
-							else if (isLeftClick(e))
+							else if (e.isLeftClick())
 								increaseVolume(user, mobHeadType.getEntityType());
 							service.save(user);
 							reopen(player, contents);

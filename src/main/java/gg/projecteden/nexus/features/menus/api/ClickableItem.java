@@ -16,13 +16,21 @@
 
 package gg.projecteden.nexus.features.menus.api;
 
+import gg.projecteden.nexus.utils.ItemBuilder;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+
+import static gg.projecteden.nexus.utils.StringUtils.colorize;
+import static gg.projecteden.nexus.utils.StringUtils.loreize;
 
 @SuppressWarnings("unused")
 public class ClickableItem {
@@ -30,7 +38,8 @@ public class ClickableItem {
 	/**
 	 * ClickableItem constant with no item and empty consumer.
 	 */
-	public static final ClickableItem NONE = empty(null);
+	public static final ClickableItem NONE = empty((ItemStack) null);
+	public static final ClickableItem AIR = empty(Material.AIR);
 
 	private final ItemStack item;
 	private final Consumer<?> consumer;
@@ -53,6 +62,22 @@ public class ClickableItem {
 		return of(item, data -> {});
 	}
 
+	public static ClickableItem empty(ItemStack item, String name) {
+		return of(new ItemBuilder(item).name(name), data -> {});
+	}
+
+	public static ClickableItem empty(ItemBuilder item) {
+		return of(item.build(), data -> {});
+	}
+
+	public static ClickableItem empty(Material material) {
+		return of(new ItemStack(material), data -> {});
+	}
+
+	public static ClickableItem empty(Material material, String name) {
+		return of(new ItemBuilder(material).name(name), data -> {});
+	}
+
 	/**
 	 * Creates a ClickableItem made of a given item and a given ItemClickData's consumer.
 	 *
@@ -62,6 +87,43 @@ public class ClickableItem {
 	 */
 	public static ClickableItem of(ItemStack item, Consumer<ItemClickData> consumer) {
 		return new ClickableItem(item, consumer);
+	}
+
+	public static ClickableItem of(ItemBuilder item, Consumer<ItemClickData> consumer) {
+		return of(item.build(), consumer);
+	}
+
+	public static ClickableItem of(Material material, String name, Consumer<ItemClickData> consumer) {
+		return of(new ItemStack(material), name, (List<String>) null, consumer);
+	}
+
+	public static ClickableItem of(Material material, String name, String lore, Consumer<ItemClickData> consumer) {
+		return of(new ItemStack(material), name, lore, consumer);
+	}
+
+	public static ClickableItem of(ItemStack item, String name, Consumer<ItemClickData> consumer) {
+		return of(item, name, (List<String>) null, consumer);
+	}
+
+	public static ClickableItem of(ItemStack item, String name, String lore, Consumer<ItemClickData> consumer) {
+		return of(item, name, lore == null ? null : loreize(colorize(lore)), consumer);
+	}
+
+	public static ClickableItem of(ItemStack item, String name, List<String> lore, Consumer<ItemClickData> consumer) {
+		if (item == null)
+			item = new ItemStack(Material.BARRIER);
+		else
+			item = item.clone();
+
+		ItemMeta meta = item.getItemMeta();
+		if (name != null)
+			meta.setDisplayName(colorize("&f" + name));
+		if (lore != null)
+			meta.setLore(lore);
+
+		meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+		item.setItemMeta(meta);
+		return of(item, consumer);
 	}
 
 	/**

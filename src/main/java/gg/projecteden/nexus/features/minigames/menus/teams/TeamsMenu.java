@@ -33,7 +33,7 @@ public class TeamsMenu extends MenuUtils implements InventoryProvider {
 	public void init(Player player, InventoryContents contents) {
 		addBackItem(contents, e -> menus.openArenaMenu(player, arena));
 
-		contents.set(0, 4, ClickableItem.of(nameItem(Material.EMERALD_BLOCK, "&aAdd Team"),
+		contents.set(0, 4, ClickableItem.of(Material.EMERALD_BLOCK, "&aAdd Team",
 			e -> openAnvilMenu(player, arena, "Default", (p, text) -> {
 				arena.getTeams().add(new Team(text));
 				arena.write();
@@ -45,7 +45,7 @@ public class TeamsMenu extends MenuUtils implements InventoryProvider {
 		int column = 0;
 		for (Team team : arena.getTeams()) {
 			ItemStack item = new ItemStack(ColorType.of(team.getChatColor()).getWool());
-			contents.set(row, column, ClickableItem.of(nameItem(item, "&e" + team.getColoredName()),
+			contents.set(row, column, ClickableItem.of(item, "&e" + team.getColoredName(),
 					e -> menus.getTeamMenus().openTeamsEditorMenu(player, arena, team)));
 
 			if (column != 8) {

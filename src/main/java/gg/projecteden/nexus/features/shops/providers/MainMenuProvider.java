@@ -28,11 +28,11 @@ public class MainMenuProvider extends ShopProvider {
 	public void init(Player player, InventoryContents contents) {
 		super.init(player, contents);
 
-		contents.set(1, 2, ClickableItem.of(nameItem(Material.OAK_SIGN, "&6&lBrowse Market"), e -> new BrowseMarketProvider(this).open(player)));
-		contents.set(1, 4, ClickableItem.of(nameItem(Material.CHEST, "&6&lBrowse Shops"), e -> new BrowseShopsProvider(this).open(player)));
-		contents.set(1, 6, ClickableItem.of(nameItem(Material.CHEST, "&6&lBrowse Items"), e -> new BrowseProductsProvider(this).open(player)));
+		contents.set(1, 2, ClickableItem.of(Material.OAK_SIGN, "&6&lBrowse Market", e -> new BrowseMarketProvider(this).open(player)));
+		contents.set(1, 4, ClickableItem.of(Material.CHEST, "&6&lBrowse Shops", e -> new BrowseShopsProvider(this).open(player)));
+		contents.set(1, 6, ClickableItem.of(Material.CHEST, "&6&lBrowse Items", e -> new BrowseProductsProvider(this).open(player)));
 
-		contents.set(3, 3, ClickableItem.of(nameItem(Material.COMPASS, "&6&lSearch Items"), e -> new SearchProductsProvider(this).open(player)));
+		contents.set(3, 3, ClickableItem.of(Material.COMPASS, "&6&lSearch Items", e -> new SearchProductsProvider(this).open(player)));
 		ItemStack head = new ItemBuilder(Material.PLAYER_HEAD).skullOwner(player).name("&6&lYour Shop").build();
 		contents.set(3, 5, ClickableItem.of(head, e -> new YourShopProvider(this).open(player)));
 

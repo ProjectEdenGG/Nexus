@@ -8,9 +8,9 @@ import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.models.particle.ParticleOwner;
 import gg.projecteden.nexus.models.particle.ParticleService;
 import gg.projecteden.nexus.models.particle.ParticleType;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 public class ParticleMenuProvider extends MenuUtils implements InventoryProvider {
 	private final ParticleService particleService = new ParticleService();
@@ -31,7 +31,7 @@ public class ParticleMenuProvider extends MenuUtils implements InventoryProvider
 
 		addCloseItem(contents);
 
-		contents.set(0, 8, ClickableItem.of(nameItem(Material.TNT, "&cStop All Effects"), e -> {
+		contents.set(0, 8, ClickableItem.of(Material.TNT, "&cStop All Effects", e -> {
 			owner.cancel();
 			owner.getActiveParticles().clear();
 			new ParticleService().save(owner);
@@ -45,14 +45,11 @@ public class ParticleMenuProvider extends MenuUtils implements InventoryProvider
 			if (!owner.canUse(type))
 				continue;
 
-			ItemStack item = type.getDisplayItem().lore("&eLeft click to toggle||&7Right click to edit settings").build();
 			boolean active = owner.isActive(type);
-
-			if (active)
-				addGlowing(item);
+			ItemBuilder item = type.getDisplayItem().lore("&eLeft click to toggle", "&7Right click to edit settings").glow(active);
 
 			contents.set(row, column, ClickableItem.of(item, e -> {
-				if (isLeftClick(e)) {
+				if (e.isLeftClick()) {
 					if (active)
 						owner.cancel(type);
 					else
