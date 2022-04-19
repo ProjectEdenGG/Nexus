@@ -6,6 +6,8 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public interface TeamHatMaterialPerk extends TeamHatPerk, HatMaterialPerk {
 	@Override
 	default Material getMaterial() {
@@ -29,7 +31,7 @@ public interface TeamHatMaterialPerk extends TeamHatPerk, HatMaterialPerk {
 
 	@Override
 	@NotNull
-	String getDescription();
+	List<String> getDescription();
 
 	@Override
 	default @NotNull PerkCategory getPerkCategory() {

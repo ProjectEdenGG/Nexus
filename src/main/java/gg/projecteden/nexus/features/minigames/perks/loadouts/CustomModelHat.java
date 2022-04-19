@@ -8,6 +8,9 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
+import java.util.List;
+
 @Getter
 @RequiredArgsConstructor
 public class CustomModelHat implements HatPerk {
@@ -15,7 +18,11 @@ public class CustomModelHat implements HatPerk {
 	private final int modelID;
 	private final String name;
 	private final int price;
-	private final String description;
+	private final List<String> description;
+
+	public CustomModelHat(Material material, int modelId, String name, int price, String description) {
+		this(material, modelId, name, price, Collections.singletonList(description));
+	}
 
 	@Override
 	public @NotNull ItemStack getItem() {
