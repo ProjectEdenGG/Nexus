@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.shops.providers;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.listeners.TemporaryListener;
+import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.shops.Shops;
@@ -102,7 +103,7 @@ public class YourShopProvider extends ShopProvider {
 			}));
 		});
 
-		paginator(player, contents, items);
+		paginator(player, contents, items).build();
 	}
 
 	public static class CollectItemsProvider extends ShopProvider implements TemporaryListener {

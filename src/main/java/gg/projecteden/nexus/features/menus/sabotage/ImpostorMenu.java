@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.menus.sabotage;
 
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -23,11 +22,12 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.features.menus.MenuUtils.getRows;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 // this should be called SabotageMenu but there's already a SabotageMenu so oh well
 @Getter
-public class ImpostorMenu extends MenuUtils implements InventoryProvider {
+public class ImpostorMenu extends InventoryProvider {
     private final SabotageArena arena;
     private final Set<Tasks> sabotages;
     private final SmartInventory inventory;

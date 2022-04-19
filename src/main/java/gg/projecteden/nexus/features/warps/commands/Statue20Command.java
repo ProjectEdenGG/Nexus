@@ -182,10 +182,15 @@ public class Statue20Command extends _WarpCommand implements Listener {
 		Discord.staffBridge(message);
 	}
 
-	public class StatueHuntPrizeMenu extends MenuUtils implements InventoryProvider {
+	public class StatueHuntPrizeMenu extends InventoryProvider {
 
-		public void open(Player player) {
-			SmartInventory.builder().rows(3).title("Statue Hunt Reward").provider(this).build().open(player);
+		public void open(Player player, int page) {
+			SmartInventory.builder()
+				.provider(this)
+				.title("Statue Hunt Reward")
+				.rows(3)
+				.build()
+				.open(player, page);
 		}
 
 		@Override

@@ -52,7 +52,7 @@ public class ItemSearchProvider extends ShopProvider {
 			items.add(ClickableItem.of(item, onChoose));
 		}
 
-		paginator(player, contents, items);
+		paginator(player, contents, items).build();
 	}
 
 }

@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.events.y2020.bearfair20.quests.arcademachi
 
 import gg.projecteden.nexus.features.events.y2020.bearfair20.islands.MinigameNightIsland;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests;
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -11,6 +10,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
+import lombok.NoArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -19,38 +19,23 @@ import org.bukkit.inventory.ItemStack;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
-public class ArcadeMachineMenu extends MenuUtils implements InventoryProvider, Listener {
+@NoArgsConstructor
+public class ArcadeMachineMenu extends InventoryProvider implements Listener {
+	private ItemStack[] items;
+	private static final int[] openSlots = {0, 2, 4, 8, 20, 22, 26, 38, 44};
+	private static final Material[] correct = {Material.IRON_TRAPDOOR, Material.DAYLIGHT_DETECTOR, Material.IRON_INGOT, Material.NOTE_BLOCK,
+		Material.GREEN_CARPET, Material.REPEATER, Material.HOPPER_MINECART, Material.BLAST_FURNACE, Material.LEVER};
+	private static final int[][] wireGroups = {{9, 18, 19}, {11}, {13}, {6, 7, 15}, {29}, {21}, {23, 24, 25}, {37}, {33, 42, 43}};
 
-	public SmartInventory getInv(ItemStack[] items) {
-		return SmartInventory.builder()
-				.title("&3Arcade Machine")
-				.provider(new ArcadeMachineMenu(items))
-				.rows(5)
-				.closeable(false)
-				.build();
-	}
-
-	public void open(Player player, ItemStack[] items) {
-		getInv(items).open(player);
-	}
-
-	public void close(Player player, ItemStack[] items) {
-		getInv(items).close(player);
-	}
-
-	ItemStack[] items;
-	int[] openSlots = {0, 2, 4, 8, 20, 22, 26, 38, 44};
-	Material[] correct = {Material.IRON_TRAPDOOR, Material.DAYLIGHT_DETECTOR, Material.IRON_INGOT, Material.NOTE_BLOCK,
-			Material.GREEN_CARPET, Material.REPEATER, Material.HOPPER_MINECART, Material.BLAST_FURNACE, Material.LEVER};
-	int[][] wireGroups = {{9, 18, 19}, {11}, {13}, {6, 7, 15}, {29}, {21}, {23, 24, 25}, {37}, {33, 42, 43}};
-
-	public ArcadeMachineMenu() {
-	}
-
-	public ArcadeMachineMenu(ItemStack... items) {
-		this.items = items;
-		if (items == null || items.length < openSlots.length)
-			this.items = new ItemStack[openSlots.length];
+	@Override
+	public void open(Player player, int page) {
+		SmartInventory.builder()
+			.title("&3Arcade Machine")
+			.provider(this)
+			.rows(5)
+			.closeable(false)
+			.build()
+			.open(player);
 	}
 
 	@Override
@@ -60,7 +45,7 @@ public class ArcadeMachineMenu extends MenuUtils implements InventoryProvider, L
 				if (!contents.get(i).get().getItem().getType().equals(Material.LIGHT_GRAY_STAINED_GLASS_PANE))
 					PlayerUtils.giveItem(player, contents.get(i).get().getItem());
 			}
-			close(player, items);
+			player.closeInventory();
 		}));
 
 		int[] blackSlots = {1, 3, 5, 10, 12, 14, 16, 17, 27, 28, 30, 31, 32, 34, 35, 39, 41};
@@ -119,7 +104,7 @@ public class ArcadeMachineMenu extends MenuUtils implements InventoryProvider, L
 
 	public void complete(Player player) {
 		player.playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1.0f, 1.0f);
-		Tasks.wait(TickTime.SECOND.x(5), () -> close(player, items));
+		Tasks.wait(TickTime.SECOND.x(5), player::closeInventory);
 
 		MinigameNightIsland.nextStep(player); // 2
 	}
@@ -134,7 +119,8 @@ public class ArcadeMachineMenu extends MenuUtils implements InventoryProvider, L
 			else
 				items[i] = item;
 		}
-		open(player, items);
+		this.items = items;
+		open(player);
 	}
 
 	public void process(InventoryContents contents) {

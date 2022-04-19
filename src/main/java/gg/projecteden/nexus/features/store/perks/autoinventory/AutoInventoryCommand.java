@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.store.perks.autoinventory;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.listeners.TemporaryListener;
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -131,7 +130,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 		new AutoSortInventoryTypeEditor().open(player());
 	}
 
-	private static class AutoSortInventoryTypeEditor extends MenuUtils implements InventoryProvider {
+	private static class AutoSortInventoryTypeEditor extends InventoryProvider {
 
 		@Override
 		public void open(Player player, int page) {
@@ -176,7 +175,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 				}));
 			}
 
-			paginator(player, contents, items);
+			paginator(player, contents, items).build();
 		}
 	}
 
@@ -255,7 +254,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 		new AutoCraftEditor().open(player());
 	}
 
-	private static class AutoCraftEditor extends MenuUtils implements InventoryProvider {
+	private static class AutoCraftEditor extends InventoryProvider {
 
 		@Override
 		public void open(Player player, int page) {
@@ -299,7 +298,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 				}));
 			}
 
-			paginator(player, contents, items);
+			paginator(player, contents, items).build();
 		}
 
 	}

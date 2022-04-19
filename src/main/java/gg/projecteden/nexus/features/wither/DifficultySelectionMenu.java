@@ -16,16 +16,16 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DifficultySelectionMenu extends MenuUtils implements InventoryProvider {
+public class DifficultySelectionMenu extends InventoryProvider {
 
 	@Override
-	public void open(Player player) {
+	public void open(Player player, int page) {
 		SmartInventory.builder()
-			.rows(3)
 			.provider(this)
 			.title("Select Difficulty")
+			.rows(3)
 			.build()
-			.open(player);
+			.open(player, page);
 	}
 
 	@Override

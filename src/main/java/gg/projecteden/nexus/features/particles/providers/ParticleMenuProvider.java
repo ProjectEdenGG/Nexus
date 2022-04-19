@@ -12,7 +12,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-public class ParticleMenuProvider extends MenuUtils implements InventoryProvider {
+public class ParticleMenuProvider extends InventoryProvider {
 	private final ParticleService particleService = new ParticleService();
 
 	@Override

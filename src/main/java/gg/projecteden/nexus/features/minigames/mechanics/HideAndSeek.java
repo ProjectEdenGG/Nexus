@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
 import com.destroystokyo.paper.block.TargetBlockInfo;
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -55,6 +54,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static gg.projecteden.nexus.features.menus.MenuUtils.getRows;
 import static gg.projecteden.nexus.utils.LocationUtils.blockLocationsEqual;
 import static gg.projecteden.nexus.utils.LocationUtils.getCenteredLocation;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
@@ -336,7 +336,7 @@ public class HideAndSeek extends Infection {
 		return false;
 	}
 
-	public static class HideAndSeekMenu extends MenuUtils implements InventoryProvider {
+	public static class HideAndSeekMenu extends InventoryProvider {
 		private final Match match;
 		public HideAndSeekMenu(Match match) {
 			this.match = match;
@@ -366,7 +366,7 @@ public class HideAndSeek extends Infection {
 					PlayerUtils.send(player, new JsonBuilder("&3You have selected ").next(Component.translatable(material.getTranslationKey(), NamedTextColor.YELLOW)));
 				}));
 			});
-			paginator(player, contents, clickableItems);
+			paginator(player, contents, clickableItems).build();
 		}
 	}
 }

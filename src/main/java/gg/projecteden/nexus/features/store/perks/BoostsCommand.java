@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.store.perks;
 
 import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
 import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -171,7 +171,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 	}
 
 	@AllArgsConstructor
-	private static class BoostMenu extends MenuUtils implements InventoryProvider {
+	private static class BoostMenu extends InventoryProvider {
 		private final Boostable type;
 		private final BoostMenu previousMenu;
 
@@ -241,7 +241,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 				}
 
 
-			paginator(player, contents, items);
+			paginator(player, contents, items).build();
 		}
 
 	}

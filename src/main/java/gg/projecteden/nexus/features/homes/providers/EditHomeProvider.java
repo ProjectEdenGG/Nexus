@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.homes.providers;
 
 import gg.projecteden.nexus.features.homes.HomesMenu;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -16,7 +16,7 @@ import org.bukkit.entity.Player;
 
 import static gg.projecteden.nexus.features.homes.HomesMenu.getAccessListNames;
 
-public class EditHomeProvider extends MenuUtils implements InventoryProvider {
+public class EditHomeProvider extends InventoryProvider {
 	private Home home;
 	private HomeOwner homeOwner;
 	private HomeService service = new HomeService();

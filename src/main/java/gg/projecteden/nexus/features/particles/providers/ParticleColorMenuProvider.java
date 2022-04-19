@@ -20,7 +20,7 @@ import org.bukkit.entity.Player;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ParticleColorMenuProvider extends MenuUtils implements InventoryProvider {
+public class ParticleColorMenuProvider extends InventoryProvider {
 	private final ParticleService service = new ParticleService();
 	private final ParticleType type;
 	private final ParticleSetting setting;

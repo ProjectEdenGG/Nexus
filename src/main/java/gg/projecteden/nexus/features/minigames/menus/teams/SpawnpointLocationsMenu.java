@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.minigames.menus.teams;
 
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.Pagination;
@@ -10,7 +10,7 @@ import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Tasks;
-import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -19,21 +19,27 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
+import static gg.projecteden.nexus.features.menus.MenuUtils.getLocationLore;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
-public class SpawnpointLocationsMenu extends MenuUtils implements InventoryProvider {
-	Arena arena;
-	Team team;
-	TeamMenus teamMenus = new TeamMenus();
+@RequiredArgsConstructor
+public class SpawnpointLocationsMenu extends InventoryProvider {
+	private final Arena arena;
+	private final Team team;
 
-	public SpawnpointLocationsMenu(@NonNull Arena arena, @NonNull Team team) {
-		this.arena = arena;
-		this.team = team;
+	@Override
+	public void open(Player player, int page) {
+		SmartInventory.builder()
+			.provider(this)
+			.title("Spawnpoint Location Menus")
+			.maxSize()
+			.build()
+			.open(player, page);
 	}
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
-		addBackItem(contents, e -> teamMenus.openTeamsEditorMenu(player, arena, team));
+		addBackItem(contents, e -> new TeamEditorMenu(arena, team).open(player));
 
 		Pagination page = contents.pagination();
 
@@ -43,7 +49,7 @@ public class SpawnpointLocationsMenu extends MenuUtils implements InventoryProvi
 			e -> {
 				team.getSpawnpoints().add(player.getLocation());
 				arena.write();
-				teamMenus.openSpawnpointMenu(arena, team).open(player, page.getPage());
+				new SpawnpointLocationsMenu(arena, team).open(player, page.getPage());
 			}));
 
 		contents.set(0, 8, ClickableItem.of(new ItemBuilder(Material.TNT)
@@ -81,7 +87,7 @@ public class SpawnpointLocationsMenu extends MenuUtils implements InventoryProvi
 							team.getSpawnpoints().remove(spawnpoint);
 							arena.write();
 							player.setItemOnCursor(new ItemStack(Material.AIR));
-							teamMenus.openSpawnpointMenu(arena, team).open(player, page.getPage());
+							new SpawnpointLocationsMenu(arena, team).open(player, page.getPage());
 						});
 					} else {
 						player.teleport(spawnpoint);
@@ -93,9 +99,9 @@ public class SpawnpointLocationsMenu extends MenuUtils implements InventoryProvi
 			page.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 1, 0));
 
 			if (!page.isLast())
-				contents.set(0, 8, ClickableItem.of(Material.ARROW, "&fNext Page", e -> teamMenus.openSpawnpointMenu(arena, team).open(player, page.next().getPage())));
+				contents.set(0, 8, ClickableItem.of(Material.ARROW, "&fNext Page", e -> new SpawnpointLocationsMenu(arena, team).open(player, page.next().getPage())));
 			if (!page.isFirst())
-				contents.set(0, 7, ClickableItem.of(Material.BARRIER, "&fPrevious Page", e -> teamMenus.openSpawnpointMenu(arena, team).open(player, page.previous().getPage())));
+				contents.set(0, 7, ClickableItem.of(Material.BARRIER, "&fPrevious Page", e -> new SpawnpointLocationsMenu(arena, team).open(player, page.previous().getPage())));
 
 		}
 	}

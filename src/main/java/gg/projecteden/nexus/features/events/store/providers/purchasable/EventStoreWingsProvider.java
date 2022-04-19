@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static gg.projecteden.nexus.features.events.Events.STORE_PREFIX;
+import static gg.projecteden.nexus.features.menus.MenuUtils.handleException;
 
 @AllArgsConstructor
 public class EventStoreWingsProvider extends EventStoreMenu {

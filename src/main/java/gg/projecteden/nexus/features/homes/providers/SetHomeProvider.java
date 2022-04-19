@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
-public class SetHomeProvider extends MenuUtils implements InventoryProvider {
+public class SetHomeProvider extends InventoryProvider {
 	private HomeOwner homeOwner;
 
 	public SetHomeProvider(HomeOwner homeOwner) {

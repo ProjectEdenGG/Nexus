@@ -5,11 +5,8 @@ import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.minigames.menus.annotations.CustomMechanicSettings;
 import gg.projecteden.nexus.features.minigames.menus.flags.BlockListMenu;
-import gg.projecteden.nexus.features.minigames.menus.flags.FlagsMenu;
-import gg.projecteden.nexus.features.minigames.menus.teams.TeamMenus;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
-import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.Sound;
@@ -19,68 +16,15 @@ import org.reflections.Reflections;
 import java.util.Arrays;
 import java.util.List;
 
+@Getter
 public class MinigamesMenus extends MenuUtils {
-	@Getter
-	private TeamMenus teamMenus = new TeamMenus();
-
-	public void openArenaMenu(Player player, Arena arena) {
-		SmartInventory inv = SmartInventory.builder()
-				.id("minigameManager")
-				.title(arena.getDisplayName())
-				.provider(new ArenaMenu(arena))
-				.rows(5)
-				.build();
-		inv.open(player);
-	}
-
-	public void openDeleteMenu(Player player, Arena arena) {
-		SmartInventory INV = SmartInventory.builder()
-				.id("deleteArenaMenu")
-				.title("Delete Arena?")
-				.provider(new DeleteArenaMenu(arena))
-				.rows(3)
-				.build();
-		INV.open(player);
-	}
-
-	public void openMechanicsMenu(Player player, Arena arena) {
-		SmartInventory INV = SmartInventory.builder()
-				.id("mechanicMenu")
-				.title("Game Mechanic Type")
-				.rows(getRows(MechanicType.values().length, 1))
-				.provider(new MechanicsMenu(arena))
-				.build();
-		INV.open(player);
-	}
-
-	public void openLobbyMenu(Player player, Arena arena) {
-		SmartInventory INV = SmartInventory.builder()
-				.id("lobbyMenu")
-				.title("Lobby Menu")
-				.provider(new LobbyMenu(arena))
-				.rows(2)
-				.build();
-		INV.open(player);
-	}
-
-	public void openFlagsMenu(Player player, Arena arena) {
-		SmartInventory INV = SmartInventory.builder()
-				.id("flagsMenu")
-				.title("Flags Menu")
-				.provider(new FlagsMenu(arena))
-				.rows(3)
-				.build();
-		INV.open(player);
-	}
 
 	public SmartInventory blockListMenu(Arena arena) {
-		SmartInventory INV = SmartInventory.builder()
-				.id("blockListMenu")
-				.title("Block List Menu")
-				.provider(new BlockListMenu(arena))
-				.maxSize()
-				.build();
-		return INV;
+		return SmartInventory.builder()
+			.provider(new BlockListMenu(arena))
+			.title("Block List Menu")
+			.maxSize()
+			.build();
 	}
 
 	@SneakyThrows
@@ -105,13 +49,7 @@ public class MinigamesMenus extends MenuUtils {
 			return;
 		}
 
-		SmartInventory INV = SmartInventory.builder()
-				.id("customSettingsMenu")
-				.provider(provider.getDeclaredConstructor(Arena.class).newInstance(arena))
-				.title("Custom Settings Menu")
-				.rows(3)
-				.build();
-		INV.open(player);
+		provider.getDeclaredConstructor(Arena.class).newInstance(arena).open(player);
 	}
 
 }

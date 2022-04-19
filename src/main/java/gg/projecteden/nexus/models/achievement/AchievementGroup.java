@@ -5,6 +5,10 @@ import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public enum AchievementGroup {
 	COMBAT(new ItemStack(Material.DIAMOND_SWORD)),
 	SOCIAL(new ItemStack(Material.WRITABLE_BOOK)),
@@ -26,4 +30,11 @@ public enum AchievementGroup {
 	public String toString() {
 		return EnumUtils.prettyName(name());
 	}
+
+	public List<Achievement> getAchievements() {
+		return Arrays.stream(Achievement.values())
+			.filter(ach -> ach.getGroup().equals(this))
+			.toList();
+	}
+
 }

@@ -5,7 +5,7 @@ import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
 import com.gmail.nossr50.util.player.UserManager;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.crates.GemCommand;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -34,7 +34,7 @@ import static gg.projecteden.nexus.features.mcmmo.McMMO.TIER_ONE;
 import static gg.projecteden.nexus.features.mcmmo.McMMO.TIER_ONE_ALL;
 import static gg.projecteden.nexus.features.mcmmo.McMMO.TIER_TWO;
 
-public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
+public class McMMOResetProvider extends InventoryProvider {
 	private static final McMMOService service = new McMMOService();
 	private static final int DEPOSIT = 10000; // eco reward for prestige
 	private static final String DEPOSIT_PRETTY = StringUtils.prettyMoney(DEPOSIT);
@@ -159,12 +159,13 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 	}
 
 	@Override
-	public void open(Player player) {
+	public void open(Player player, int page) {
 		SmartInventory.builder()
-				.provider(this)
-				.maxSize()
-				.title("McMMO Reset")
-				.build().open(player);
+			.provider(this)
+			.title("McMMO Reset")
+			.maxSize()
+			.build()
+			.open(player, page);
 	}
 
 	@Override

@@ -3,10 +3,9 @@ package gg.projecteden.nexus.features.minigames.menus.custom;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
-import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.mechanics.GoldRush;
+import gg.projecteden.nexus.features.minigames.menus.ArenaMenu;
 import gg.projecteden.nexus.features.minigames.menus.annotations.CustomMechanicSettings;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.arenas.GoldRushArena;
@@ -24,7 +23,7 @@ import static gg.projecteden.nexus.features.minigames.Minigames.PREFIX;
 import static gg.projecteden.nexus.features.minigames.Minigames.menus;
 
 @CustomMechanicSettings(GoldRush.class)
-public class GoldRushMenu extends MenuUtils implements InventoryProvider {
+public class GoldRushMenu extends ICustomMechanicMenu {
 	GoldRushArena arena;
 
 	public GoldRushMenu(Arena arena){
@@ -33,12 +32,12 @@ public class GoldRushMenu extends MenuUtils implements InventoryProvider {
 	}
 
 	static void openAnvilMenu(Player player, Arena arena, String text, BiFunction<Player, String, AnvilGUI.Response> onComplete) {
-		openAnvilMenu(player, text, onComplete, p -> Tasks.wait(1, () -> menus.openCustomSettingsMenu(player, arena)));
+		MenuUtils.openAnvilMenu(player, text, onComplete, p -> Tasks.wait(1, () -> menus.openCustomSettingsMenu(player, arena)));
 	}
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
-		contents.set(0, 0, ClickableItem.of(backItem(), e-> Minigames.getMenus().openArenaMenu(player, arena)));
+		contents.set(0, 0, ClickableItem.of(backItem(), e -> new ArenaMenu(arena).open(player)));
 
 		String currentValue = (arena.getMineStackHeight() > 0) ? "" + arena.getMineStackHeight() : "null";
 

@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.minigames.menus.perks;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
-import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.minigames.models.perks.Perk;
 import gg.projecteden.nexus.features.minigames.models.perks.PerkCategory;
 import gg.projecteden.nexus.features.minigames.models.perks.PerkType;
@@ -21,9 +20,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.features.menus.MenuUtils.getRows;
 import static gg.projecteden.nexus.utils.StringUtils.plural;
 
-public class BuyPerksMenu extends CommonPerksMenu implements InventoryProvider {
+public class BuyPerksMenu extends CommonPerksMenu {
 	private static final DecimalFormat FORMATTER = new DecimalFormat("#,###");
 
 	public BuyPerksMenu(PerkCategory category) {
@@ -57,20 +57,20 @@ public class BuyPerksMenu extends CommonPerksMenu implements InventoryProvider {
 		List<PerkType> perks = perkSortWrappers.stream().map(PerkSortWrapper::getPerkType).collect(Collectors.toList());
 
 		// create the items
-		List<ClickableItem> clickableItems = new ArrayList<>();
-		perks.forEach(perkType -> {
-			Perk perk = perkType.getPerk();
-			boolean userOwned = perkOwner.getPurchasedPerks().containsKey(perkType);
+		paginator(player, contents, new ArrayList<>() {{
+			perks.forEach(perkType -> {
+				Perk perk = perkType.getPerk();
+				boolean userOwned = perkOwner.getPurchasedPerks().containsKey(perkType);
 
-			List<String> lore = getLore(player, perk);
-			lore.add(1, userOwned ? "&cPurchased" : ("&aPurchase for &e" + perk.getPrice() + "&a " + plural("token", perk.getPrice())));
-			if (lore.size() > 2)
-				lore.add(2, "");
+				List<String> lore = getLore(player, perk);
+				lore.add(1, userOwned ? "&cPurchased" : ("&aPurchase for &e" + perk.getPrice() + "&a " + plural("token", perk.getPrice())));
+				if (lore.size() > 2)
+					lore.add(2, "");
 
-			ItemBuilder item = getItem(perk, lore);
-			clickableItems.add(ClickableItem.of(item, e -> buyItem(player, perkType, contents)));
-		});
-		paginator(player, contents, clickableItems);
+				ItemBuilder item = getItem(perk, lore);
+				add(ClickableItem.of(item, e -> buyItem(player, perkType, contents)));
+			});
+		}}).build();
 	}
 
 	protected void buyItem(Player player, PerkType perkType, InventoryContents contents) {

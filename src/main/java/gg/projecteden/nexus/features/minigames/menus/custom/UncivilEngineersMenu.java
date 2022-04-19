@@ -1,12 +1,12 @@
 package gg.projecteden.nexus.features.minigames.menus.custom;
 
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.mechanics.UncivilEngineers;
+import gg.projecteden.nexus.features.minigames.menus.ArenaMenu;
 import gg.projecteden.nexus.features.minigames.menus.annotations.CustomMechanicSettings;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.arenas.UncivilEngineersArena;
@@ -22,12 +22,13 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
+import static gg.projecteden.nexus.features.menus.MenuUtils.getLocationLore;
 import static gg.projecteden.nexus.features.minigames.Minigames.menus;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @CustomMechanicSettings(UncivilEngineers.class)
-public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider {
+public class UncivilEngineersMenu extends ICustomMechanicMenu {
 	private final UncivilEngineersArena arena;
 
 	public UncivilEngineersMenu(Arena arena) {
@@ -35,23 +36,13 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 	}
 
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-			.provider(new MobPointsMenu())
-			.title("Mob Points")
-			.maxSize()
-			.build()
-			.open(player);
-	}
-
-	@Override
 	public void init(Player player, InventoryContents contents) {
-		contents.set(0, 0, ClickableItem.of(backItem(), e -> menus.openArenaMenu(player, arena)));
+		contents.set(0, 0, ClickableItem.of(backItem(), e -> new ArenaMenu(arena).open(player)));
 
 		contents.set(1, 0, ClickableItem.of(new ItemBuilder(Material.ZOMBIE_SPAWN_EGG).name("&eMob Points"), e -> new MobPointsMenu().open(player)));
 	}
 
-	public class MobPointsMenu extends MenuUtils implements InventoryProvider {
+	public class MobPointsMenu extends ICustomMechanicMenu {
 
 		@Override
 		public void open(Player player, int page) {
@@ -94,12 +85,12 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 				}));
 			}
 
-			paginator(player, contents, items);
+			paginator(player, contents, items).build();
 		}
 
 	}
 
-	public class AddMobPointMenu extends MenuUtils implements InventoryProvider {
+	public class AddMobPointMenu extends InventoryProvider {
 
 		@Override
 		public void open(Player player, int page) {
@@ -139,7 +130,7 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 				}));
 			}
 
-			paginator(player, contents, items);
+			paginator(player, contents, items).build();
 		}
 
 	}

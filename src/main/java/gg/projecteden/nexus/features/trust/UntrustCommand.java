@@ -32,7 +32,7 @@ public class UntrustCommand extends CustomCommand {
 
 	@Path
 	void menu() {
-		TrustProvider.openMenu(player());
+		new TrustProvider().open(player());
 	}
 
 	@Path("lock <players>")

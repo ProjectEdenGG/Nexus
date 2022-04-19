@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.events.y2020.halloween20.quest.menus;
 import gg.projecteden.nexus.features.events.y2020.halloween20.Halloween20;
 import gg.projecteden.nexus.features.events.y2020.halloween20.models.QuestStage;
 import gg.projecteden.nexus.features.events.y2020.halloween20.quest.Gate;
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
@@ -25,11 +24,20 @@ import org.bukkit.inventory.ItemStack;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
-public class CombinationLockProvider extends MenuUtils implements InventoryProvider {
+public class CombinationLockProvider extends InventoryProvider {
+	private final String CORRECT_CODE = "186710318";
+	private int foundIndex = 0;
+	private String playerCode = "";
 
-	final String CORRECT_CODE = "186710318";
-	int foundIndex = 0;
-	String playerCode = "";
+	@Override
+	public void open(Player player, int page) {
+		SmartInventory.builder()
+			.provider(this)
+			.title("Combination Lock")
+			.maxSize()
+			.build()
+			.open(player, page);
+	}
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
@@ -45,7 +53,7 @@ public class CombinationLockProvider extends MenuUtils implements InventoryProvi
 			parseCode(player, contents);
 		}));
 
-		contents.set(5, 8, ClickableItem.of(new ItemBuilder(Material.RED_WOOL).name("&cReset").build(), e -> Halloween20Menus.openComboLock(player)));
+		contents.set(5, 8, ClickableItem.of(new ItemBuilder(Material.RED_WOOL).name("&cReset").build(), e -> new CombinationLockProvider().open(player)));
 
 		int[] numberSlots = {9, 10, 11, 12, 13, 14, 15, 16, 17, 21, 23};
 
@@ -90,7 +98,7 @@ public class CombinationLockProvider extends MenuUtils implements InventoryProvi
 			else {
 				SmartInventory inv = SmartInvsPlugin.manager().getInventory(player).orElse(null);
 				if (inv != null && inv.getProvider() == this)
-					Halloween20Menus.openComboLock(player);
+					new CombinationLockProvider().open(player);
 			}
 		});
 	}

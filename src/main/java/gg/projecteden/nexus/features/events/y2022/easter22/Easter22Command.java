@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.events.y2022.easter22;
 
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.IEventCommand;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 
+import static gg.projecteden.nexus.features.menus.MenuUtils.handleException;
 import static gg.projecteden.nexus.utils.StringUtils.getCoordinateString;
 import static gg.projecteden.nexus.utils.StringUtils.getTeleportCommand;
 
@@ -87,7 +88,7 @@ public class Easter22Command extends IEventCommand {
 		new Easter22StoreProvider().open(player());
 	}
 
-	public static class Easter22StoreProvider extends MenuUtils implements InventoryProvider {
+	public static class Easter22StoreProvider extends InventoryProvider {
 
 		@Override
 		public void open(Player player, int page) {
@@ -132,7 +133,7 @@ public class Easter22Command extends IEventCommand {
 				}));
 			}
 
-			paginator(player, contents, items);
+			paginator(player, contents, items).build();
 		}
 
 	}

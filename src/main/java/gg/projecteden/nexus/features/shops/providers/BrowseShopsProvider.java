@@ -58,7 +58,7 @@ public class BrowseShopsProvider extends ShopProvider {
 			items.add(ClickableItem.of(head.build(), e -> new PlayerShopProvider(this, shop).open(player)));
 		}
 
-		paginator(player, contents, items);
+		paginator(player, contents, items).build();
 	}
 
 }

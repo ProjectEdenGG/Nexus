@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 import static gg.projecteden.nexus.utils.RandomUtils.randomElement;
 
 @RequiredArgsConstructor
-public class CustomRecipesMenu extends MenuUtils implements InventoryProvider {
+public class CustomRecipesMenu extends InventoryProvider {
 	private final RecipeType type;
 	private final NexusRecipe recipe;
 

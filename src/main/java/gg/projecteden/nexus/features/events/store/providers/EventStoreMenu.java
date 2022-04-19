@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.events.store.providers;
 
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -16,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public abstract class EventStoreMenu extends MenuUtils implements InventoryProvider {
+public abstract class EventStoreMenu extends InventoryProvider {
 
 	abstract protected EventStoreMenu getPreviousMenu();
 
@@ -49,7 +48,7 @@ public abstract class EventStoreMenu extends MenuUtils implements InventoryProvi
 		ItemStack tokens = new ItemBuilder(Material.GOLD_INGOT).customModelData(100).name("&e&lEvent Tokens").lore("&f" + getUser(player).getTokens()).build();
 		contents.set(0, 8, ClickableItem.empty(tokens));
 
-		paginator(player, contents, getItems(player));
+		paginator(player, contents, getItems(player)).build();
 	}
 
 	protected EventUser getUser(Player player) {

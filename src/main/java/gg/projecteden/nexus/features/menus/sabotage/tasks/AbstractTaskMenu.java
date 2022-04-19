@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.menus.sabotage.tasks;
 
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.InventoryListener;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -22,7 +21,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RequiredArgsConstructor
-public abstract class AbstractTaskMenu extends MenuUtils implements InventoryProvider {
+public abstract class AbstractTaskMenu extends InventoryProvider {
     @Getter
     protected final Task task;
 

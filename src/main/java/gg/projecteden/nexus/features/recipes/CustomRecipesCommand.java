@@ -73,12 +73,22 @@ public class CustomRecipesCommand extends CustomCommand {
 	@Path("uncraft")
 	@Permission(Group.ADMIN)
 	void uncraft() {
-		SmartInventory.builder().title("Uncraft Menu").rows(3).provider(new UncraftMenu()).build().open(player());
+		new UncraftMenu().open(player());
 	}
 
-	public static class UncraftMenu extends MenuUtils implements InventoryProvider {
+	public static class UncraftMenu extends InventoryProvider {
 
-		public int[] uncraftingSlots = {4, 5, 6, 13, 14, 15, 22, 23, 24};
+		public static final int[] uncraftingSlots = {4, 5, 6, 13, 14, 15, 22, 23, 24};
+
+		@Override
+		public void open(Player player, int page) {
+			SmartInventory.builder()
+				.provider(this)
+				.title("Uncraft Menu")
+				.rows(3)
+				.build()
+				.open(player, page);
+		}
 
 		@Override
 		public void init(Player player, InventoryContents contents) {

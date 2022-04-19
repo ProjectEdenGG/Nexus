@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.commands.staff;
 
 import gg.projecteden.annotations.Async;
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -52,6 +51,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiFunction;
 
+import static gg.projecteden.nexus.features.menus.MenuUtils.formatInventoryContents;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.PlayerUtils.getPlayer;
 import static gg.projecteden.nexus.utils.StringUtils.getShortLocationString;
@@ -151,7 +151,7 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 		});
 	}
 
-	public static class InventorySnapshotMenu extends MenuUtils implements InventoryProvider {
+	public static class InventorySnapshotMenu extends InventoryProvider {
 		private final InventorySnapshot snapshot;
 		private final OfflinePlayer owner;
 

@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.events.aeveonproject.menus;
 
 import gg.projecteden.nexus.features.events.aeveonproject.effects.ClientsideBlocks;
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -17,21 +16,18 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class ShipColorMenu extends MenuUtils implements InventoryProvider {
-	AeveonProjectService service = new AeveonProjectService();
-	AeveonProjectUser user;
+public class ShipColorMenu extends InventoryProvider {
+	private final AeveonProjectService service = new AeveonProjectService();
+	private AeveonProjectUser user;
 
-	public static SmartInventory getInv() {
-		return SmartInventory.builder()
-				.provider(new ShipColorMenu())
-				.rows(5)
-				.title(ChatColor.DARK_AQUA + "Customize your ship color:")
-				.closeable(true)
-				.build();
-	}
-
-	public void open(Player player) {
-		getInv().open(player);
+	public void open(Player player, int page) {
+		SmartInventory.builder()
+			.provider(new ShipColorMenu())
+			.title(ChatColor.DARK_AQUA + "Customize your ship color:")
+			.rows(5)
+			.closeable(true)
+			.build()
+			.open(player, page);
 	}
 
 	@Override

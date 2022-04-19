@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.votes.vps;
 
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.votes.vps.VPSMenu.VPSPage;
@@ -14,6 +15,7 @@ import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -28,7 +30,7 @@ import static gg.projecteden.nexus.features.votes.vps.VPS.PREFIX;
 import static gg.projecteden.nexus.utils.StringUtils.plural;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
-public class VPSProvider extends MenuUtils implements InventoryProvider {
+public class VPSProvider extends InventoryProvider {
 	private final VPSMenu menu;
 	private final VPSPage page;
 	private final int index;
@@ -37,6 +39,17 @@ public class VPSProvider extends MenuUtils implements InventoryProvider {
 		this.menu = menu;
 		this.page = page;
 		this.index = menu.indexOf(page) + 1;
+	}
+
+	@Override
+	public void open(Player player, int page) {
+		VPSPage vpsPage = menu.getPage(page);
+		SmartInventory.builder()
+			.provider(this)
+			.title(ChatColor.DARK_AQUA + "Vote Point Store")
+			.rows(vpsPage.getRows())
+			.build()
+			.open(player, page);
 	}
 
 	@Override

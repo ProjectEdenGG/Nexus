@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.dailyrewards;
 
 import com.google.common.base.Strings;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.ColorSelectMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -31,7 +31,7 @@ import static gg.projecteden.nexus.features.menus.SignMenuFactory.ARROWS;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
-public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
+public class DailyRewardsMenu extends InventoryProvider {
 	private final DailyRewardUser user;
 
 	private static final int MAX_DAY = DailyRewardsFeature.getMaxDays();
@@ -91,10 +91,10 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 					.build()));
 		}
 
-		paginator(player, contents, items);
+		paginator(player, contents, items).build();
 	}
 
-	public static class SelectItemMenu extends MenuUtils implements InventoryProvider {
+	public static class SelectItemMenu extends InventoryProvider {
 		private final DailyRewardUser user;
 		private final int day;
 		private final int page;
@@ -152,11 +152,11 @@ public class DailyRewardsMenu extends MenuUtils implements InventoryProvider {
 				for (ItemStack item : items) {
 					ItemStack clone = item.clone();
 					if (Reward.RequiredSubmenu.COLOR.contains(clone.getType())) {
-						MenuUtils.colorSelectMenu(player, clone.getType(), itemClickData -> {
-							PlayerUtils.giveItem(player, new ItemStack(itemClickData.getItem().getType(), clone.getAmount()));
-							saveAndReturn(day);
-							player.closeInventory();
-						});
+						new ColorSelectMenu(clone.getType(), itemClickData -> {
+											PlayerUtils.giveItem(player, new ItemStack(itemClickData.getItem().getType(), clone.getAmount()));
+											saveAndReturn(day);
+											player.closeInventory();
+										}).open(player);
 					} else if (Reward.RequiredSubmenu.NAME.contains(clone.getType())) {
 						Nexus.getSignMenuFactory().lines("", ARROWS, "Enter a", "player's name").prefix(PREFIX).response(lines -> {
 							PlayerUtils.giveItem(player, new ItemBuilder(Material.PLAYER_HEAD).skullOwner(lines[0]).amount(clone.getAmount()).build());

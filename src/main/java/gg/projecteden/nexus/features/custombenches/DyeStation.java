@@ -1,10 +1,10 @@
 package gg.projecteden.nexus.features.custombenches;
 
 import gg.projecteden.nexus.features.custombenches.DyeStation.DyeStationMenu.DyeChoice;
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.ItemClickData;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
+import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
@@ -87,7 +87,7 @@ public class DyeStation extends CustomBench {
 	}
 
 	public static void openCheat(Player player) {
-		new DyeStationMenu().openCheat(player);
+		new DyeStationMenu(DyeStationMode.CHEAT).open(player);
 	}
 
 	@Getter
@@ -109,10 +109,23 @@ public class DyeStation extends CustomBench {
 		}
 	}
 
+	public enum DyeStationMode {
+		NORMAL,
+		CHEAT,
+		COSTUME,
+		;
+
+	}
+
 	@NoArgsConstructor
 	@AllArgsConstructor
-	public static class DyeStationMenu extends MenuUtils implements InventoryProvider, Listener {
+	public static class DyeStationMenu extends InventoryProvider implements Listener {
+		private DyeStationMode mode;
 		private DyeStationData data;
+
+		public DyeStationMenu(DyeStationMode mode) {
+			this.mode = mode;
+		}
 
 		private static final SlotPos SLOT_INPUT = new SlotPos(1, 1);
 		private static final SlotPos SLOT_COSTUME = new SlotPos(2, 1);
@@ -121,23 +134,16 @@ public class DyeStation extends CustomBench {
 		private static final SlotPos SLOT_CHEAT_DYE = new SlotPos(0, 3);
 		private static final SlotPos SLOT_CHEAT_STAIN = new SlotPos(0, 5);
 
-		public void open(Player player) {
-			open(getData(player, false));
-		}
-
-		public void openCheat(Player player) {
-			open(getData(player, true));
-		}
-
-		private DyeStationData getData(Player player, boolean cheatMode) {
-			return DyeStationData.builder()
+		@Override
+		public void open(Player player, int page) {
+			open(DyeStationData.builder()
 				.player(player)
-				.cheatMode(cheatMode)
+				.cheatMode(mode != DyeStationMode.NORMAL)
 				.showButtons(true)
 				.inputSlot(SLOT_INPUT)
 				.title("섈")
-				.onConfirm(data -> PlayerUtils.giveItems(player, data.getReturnItems()))
-				.build();
+				.onConfirm(data1 -> PlayerUtils.giveItems(player, data1.getReturnItems()))
+				.build());
 		}
 
 		public void openCostume(CostumeUser user, Costume costume, Consumer<DyeStationData> onConfirm) {
@@ -151,17 +157,14 @@ public class DyeStation extends CustomBench {
 				.build());
 		}
 
-		public void open(DyeStationData data) {
-			getInv(data).open(data.getPlayer());
-		}
-
-		private SmartInventory getInv(DyeStationData data) {
-			return SmartInventory.builder()
-				.title(StringUtils.colorize("&fꈉ" + data.getTitle()))
+		private void open(DyeStationData data) {
+			this.data = data;
+			SmartInventory.builder()
+				.provider(this)
+				.title("&fꈉ" + data.getTitle())
 				.maxSize()
-				.provider(new DyeStationMenu(data))
 				.closeable(false)
-				.build();
+				.build().open(data.getPlayer());
 		}
 
 		@Override
@@ -176,7 +179,7 @@ public class DyeStation extends CustomBench {
 						PlayerUtils.giveItem(player, clickableItem.getItem());
 				});
 
-				getInv(data).close(player);
+				SmartInvsPlugin.manager().getInventory(player).ifPresent(inv -> inv.close(player));
 			}));
 
 			contents.set(data.getInputSlot(), ClickableItem.of(data.getInput(), e -> replaceItem(player, contents, e, data.getInputSlot())));
@@ -365,7 +368,7 @@ public class DyeStation extends CustomBench {
 			data.setResult(result);
 			data.onConfirm(returnItems);
 
-			getInv(data).close(player);
+			SmartInvsPlugin.manager().getInventory(player).ifPresent(inv -> inv.close(player));
 		}
 
 		private ItemBuilder handleDye(ItemStack dye) {

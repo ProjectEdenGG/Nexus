@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.minigames.menus.perks;
 
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.models.perks.Perk;
 import gg.projecteden.nexus.features.minigames.models.perks.PerkCategory;
@@ -19,7 +19,7 @@ import java.util.List;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @RequiredArgsConstructor
-public abstract class CommonPerksMenu extends MenuUtils {
+public abstract class CommonPerksMenu extends InventoryProvider {
 	public static final PerkOwnerService service = new PerkOwnerService();
 	protected final PerkCategory category;
 

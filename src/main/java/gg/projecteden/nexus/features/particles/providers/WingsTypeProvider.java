@@ -14,7 +14,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.entity.Player;
 
-public class WingsTypeProvider extends MenuUtils implements InventoryProvider {
+public class WingsTypeProvider extends InventoryProvider {
 
 
 	@Override

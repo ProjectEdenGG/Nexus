@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.homes.providers;
 
 import gg.projecteden.nexus.features.homes.HomesMenu;
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -20,7 +19,7 @@ import java.util.List;
 import static gg.projecteden.nexus.features.homes.HomesMenu.getAccessListNames;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
-public class EditHomesProvider extends MenuUtils implements InventoryProvider {
+public class EditHomesProvider extends InventoryProvider {
 	private HomeOwner homeOwner;
 	private HomeService service = new HomeService();
 
@@ -109,7 +108,7 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 						.name("&eEdit Trusts")
 						.loreize(false)
 						.lore("&fManage access to", "&fall your homes").build(),
-				e -> TrustProvider.openMenu(homeOwner.getOnlinePlayer(), this::refresh)
+				e -> new TrustProvider(this).open(homeOwner.getOnlinePlayer())
 		));
 	}
 
@@ -139,7 +138,7 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 			items.add(ClickableItem.of(item.build(), e -> HomesMenu.edit(home)));
 		});
 
-		paginator(homeOwner.getOnlinePlayer(), contents, items);
+		paginator(homeOwner.getOnlinePlayer(), contents, items).build();
 	}
 
 }

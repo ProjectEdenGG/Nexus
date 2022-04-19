@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.safecracker.menus;
 import gg.projecteden.annotations.Disabled;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.safecracker.SafeCracker;
@@ -11,6 +12,7 @@ import gg.projecteden.nexus.models.safecracker.SafeCrackerEventService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import lombok.RequiredArgsConstructor;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.wesjd.anvilgui.AnvilGUI;
@@ -19,19 +21,27 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 
+import static gg.projecteden.nexus.features.menus.MenuUtils.openAnvilMenu;
+
 @Disabled
-public class SafeCrackerNPCEditProvider extends MenuUtils implements InventoryProvider {
+@RequiredArgsConstructor
+public class SafeCrackerNPCEditProvider extends InventoryProvider {
+	private final SafeCrackerEventService service = new SafeCrackerEventService();
+	private final SafeCrackerEvent.SafeCrackerNPC npc;
 
-	SafeCrackerEventService service = new SafeCrackerEventService();
-	SafeCrackerEvent.SafeCrackerNPC npc;
-
-	public SafeCrackerNPCEditProvider(SafeCrackerEvent.SafeCrackerNPC npc) {
-		this.npc = npc;
+	@Override
+	public void open(Player player, int page) {
+		SmartInventory.builder()
+			.provider(this)
+			.title("SafeCracker Admin - " + npc.getName())
+			.rows(3)
+			.build()
+			.open(player, page);
 	}
 
 	@Override
 	public void init(Player player, InventoryContents contents) {
-		addBackItem(contents, e -> SafeCrackerInventories.openAdminMenu(player));
+		addBackItem(contents, e -> new SafeCrackerAdminProvider().open(player));
 
 		contents.set(0, 4, ClickableItem.empty(new ItemBuilder(Material.BOOK).name("&e" + npc.getName()).lore("&3Id: &e" + npc.getId()).build()));
 
@@ -43,9 +53,10 @@ public class SafeCrackerNPCEditProvider extends MenuUtils implements InventoryPr
 						npcEntity.destroy();
 						game.getNpcs().remove(npc.getName());
 						service.save(service.get0());
-						SafeCrackerInventories.openAdminMenu(player);
+						new SafeCrackerAdminProvider().open(player);
+
 					})
-					.onCancel(event -> SafeCrackerInventories.openNPCEditMenu(player, npc))
+					.onCancel(event -> new SafeCrackerNPCEditProvider(npc).open(player))
 					.open(player);
 		}));
 
@@ -66,18 +77,20 @@ public class SafeCrackerNPCEditProvider extends MenuUtils implements InventoryPr
 					npc.setAnswers(new ArrayList<>());
 				npc.getAnswers().add(response);
 				service.save(service.get0());
-				SafeCrackerInventories.openNPCEditMenu(player, npc);
+				new SafeCrackerNPCEditProvider(npc).open(player);
+
 				return AnvilGUI.Response.text(response);
-			}, (player1) -> SafeCrackerInventories.openNPCEditMenu(player, npc));
+			}, (player1) -> new SafeCrackerNPCEditProvider(npc).open(player));
 		}));
 
 		contents.set(1, 6, ClickableItem.of(new ItemBuilder(Material.DIAMOND).name("&eRiddle").loreize(true).lore("&3" + npc.getRiddle()).build(), e -> {
 			openAnvilMenu(player, npc.getRiddle(), (player1, response) -> {
 				npc.setRiddle(response);
 				service.save(service.get0());
-				SafeCrackerInventories.openNPCEditMenu(player, npc);
+				new SafeCrackerNPCEditProvider(npc).open(player);
+
 				return AnvilGUI.Response.text(response);
-			}, (player1) -> SafeCrackerInventories.openNPCEditMenu(player, npc));
+			}, (player1) -> new SafeCrackerNPCEditProvider(npc).open(player));
 		}));
 
 	}

@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.nexus.features.listeners.TemporaryMenuListener;
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -168,7 +167,7 @@ public class MailCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	public static class MailBoxMenu extends MenuUtils implements InventoryProvider {
+	public static class MailBoxMenu extends InventoryProvider {
 		private final Mailer mailer;
 		private final WorldGroup worldGroup;
 
@@ -209,7 +208,7 @@ public class MailCommand extends CustomCommand implements Listener {
 			for (Mail mail : mails)
 				items.add(ClickableItem.of(mail.getDisplayItem().build(), e -> new OpenMailMenu(mail)));
 
-			paginator(player, contents, items);
+			paginator(player, contents, items).build();
 		}
 	}
 

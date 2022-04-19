@@ -4,6 +4,7 @@ import gg.projecteden.annotations.Environments;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.admin.RebootCommand;
 import gg.projecteden.nexus.features.crates.menus.CrateEditMenu.CrateEditProvider;
+import gg.projecteden.nexus.features.crates.menus.CratePreviewProvider;
 import gg.projecteden.nexus.features.crates.models.CrateLoot;
 import gg.projecteden.nexus.features.crates.models.CrateType;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
@@ -154,7 +155,7 @@ public class Crates extends Feature implements Listener {
 				if (Crates.getLootByType(locationType).stream().filter(CrateLoot::isActive).toArray().length == 0)
 					throw new CrateOpeningException("&3Coming soon...");
 				else
-					locationType.previewDrops(null).open(event.getPlayer());
+					new CratePreviewProvider(locationType, null).open(event.getPlayer());
 			else if (keyType != null)
 				try {
 					if (event.getPlayer().isSneaking() && event.getItem().getAmount() > 1)

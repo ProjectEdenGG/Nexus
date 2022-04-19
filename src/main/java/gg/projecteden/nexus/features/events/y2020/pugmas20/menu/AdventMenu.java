@@ -1,17 +1,13 @@
 package gg.projecteden.nexus.features.events.y2020.pugmas20.menu;
 
-import gg.projecteden.nexus.features.events.y2020.pugmas20.menu.providers.AdventProvider;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.time.LocalDate;
 import java.util.LinkedHashMap;
 
 import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.location;
@@ -54,12 +50,4 @@ public class AdventMenu {
 		}
 	}
 
-	public static void openAdvent(Player player, LocalDate date) {
-		SmartInventory.builder()
-				.title("Advent")
-				.maxSize()
-				.provider(new AdventProvider(date))
-				.build()
-				.open(player);
-	}
 }

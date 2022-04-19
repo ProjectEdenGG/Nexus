@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.commands.staff;
 
 import de.tr7zw.nbtapi.NBTItem;
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -162,7 +161,7 @@ public class ItemInfoCommand extends CustomCommand {
 		new EnchantedItemsMenu().open(player());
 	}
 
-	private static class EnchantedItemsMenu extends MenuUtils implements InventoryProvider {
+	private static class EnchantedItemsMenu extends InventoryProvider {
 
 		@Override
 		public void open(Player player, int page) {
@@ -181,7 +180,7 @@ public class ItemInfoCommand extends CustomCommand {
 					if (!material.isLegacy() && material.isItem())
 						if (new ItemStack(material).getItemMeta() != null)
 							add(ClickableItem.empty(new ItemBuilder(material).enchant(Enchant.INFINITY).build()));
-			}});
+			}}).build();
 		}
 
 	}
