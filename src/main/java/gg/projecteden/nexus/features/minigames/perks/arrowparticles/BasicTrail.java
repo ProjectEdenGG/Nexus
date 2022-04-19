@@ -6,6 +6,9 @@ import org.bukkit.Particle;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
+import java.util.List;
+
 public class BasicTrail implements ParticleProjectilePerk {
     @Override
     public Particle getParticle() {
@@ -23,8 +26,8 @@ public class BasicTrail implements ParticleProjectilePerk {
     }
 
     @Override
-    public @NotNull String getDescription() {
-        return "Give your arrows some sparkles with this simple trail";
+    public @NotNull List<String> getDescription() {
+        return Collections.singletonList("Give your arrows some sparkles with this simple trail");
     }
 
     @Override

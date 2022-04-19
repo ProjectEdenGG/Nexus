@@ -6,6 +6,9 @@ import org.bukkit.Particle;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
+import java.util.List;
+
 public class SoulFlameParticle implements PlayerParticlePerk {
 	@Override
 	public @NotNull String getName() {
@@ -18,8 +21,8 @@ public class SoulFlameParticle implements PlayerParticlePerk {
 	}
 
 	@Override
-	public @NotNull String getDescription() {
-		return "Burn like the flames of the nether wastes";
+	public @NotNull List<String> getDescription() {
+		return Collections.singletonList("Burn like the flames of the nether wastes");
 	}
 
 	@Override

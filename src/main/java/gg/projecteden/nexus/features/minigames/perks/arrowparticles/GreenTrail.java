@@ -6,6 +6,9 @@ import org.bukkit.Particle;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
+import java.util.List;
+
 public class GreenTrail implements ParticleProjectilePerk {
 	@Override
 	public @NotNull String getName() {
@@ -18,8 +21,8 @@ public class GreenTrail implements ParticleProjectilePerk {
 	}
 
 	@Override
-	public @NotNull String getDescription() {
-		return "A brief green trail for your arrows";
+	public @NotNull List<String> getDescription() {
+		return Collections.singletonList("A brief green trail for your arrows");
 	}
 
 	@Override

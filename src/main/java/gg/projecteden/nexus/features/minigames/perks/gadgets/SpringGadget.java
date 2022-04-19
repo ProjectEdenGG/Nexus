@@ -9,6 +9,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
+import java.util.List;
+
 public class SpringGadget implements GadgetPerk {
 	@Override
 	public @NotNull String getName() {
@@ -16,8 +19,8 @@ public class SpringGadget implements GadgetPerk {
 	}
 
 	@Override
-	public @NotNull String getDescription() {
-		return "Launch into the air with this portable spring";
+	public @NotNull List<String> getDescription() {
+		return Collections.singletonList("Launch into the air with this portable spring");
 	}
 
 	@Override

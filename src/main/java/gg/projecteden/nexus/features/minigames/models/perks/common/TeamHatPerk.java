@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -54,7 +55,7 @@ public interface TeamHatPerk extends TeamLoadoutPerk, HatPerk {
 
 	@Override
 	@NotNull
-	String getDescription();
+	List<String> getDescription();
 
 	@Override
 	default @NotNull ItemStack getMenuItem() {

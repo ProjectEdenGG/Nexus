@@ -6,6 +6,9 @@ import org.bukkit.Particle;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
+import java.util.List;
+
 public class CloudParticle implements PlayerParticlePerk {
 	@Override
 	public @NotNull String getName() {
@@ -18,8 +21,8 @@ public class CloudParticle implements PlayerParticlePerk {
 	}
 
 	@Override
-	public @NotNull String getDescription() {
-		return "Hide yourself in a cloud of smoke";
+	public @NotNull List<String> getDescription() {
+		return Collections.singletonList("Hide yourself in a cloud of smoke");
 	}
 
 	@Override

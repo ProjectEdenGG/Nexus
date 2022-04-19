@@ -6,6 +6,9 @@ import org.bukkit.Particle;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
+import java.util.List;
+
 public class HeartParticle implements PlayerParticlePerk {
 	@Override
 	public @NotNull String getName() {
@@ -18,8 +21,8 @@ public class HeartParticle implements PlayerParticlePerk {
 	}
 
 	@Override
-	public @NotNull String getDescription() {
-		return "Someone's falling madly in love with that enemy team...";
+	public @NotNull List<String> getDescription() {
+		return Collections.singletonList("Someone's falling madly in love with that enemy team...");
 	}
 
 	@Override

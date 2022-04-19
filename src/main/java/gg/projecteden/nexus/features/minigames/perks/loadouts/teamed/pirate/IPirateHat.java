@@ -9,6 +9,8 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 public interface IPirateHat extends TeamHatPerk {
@@ -55,8 +57,8 @@ public interface IPirateHat extends TeamHatPerk {
 	}
 
 	@Override
-	default @NotNull String getDescription() {
-		return "Show off your love for the seven seas with this pirate hat";
+	default @NotNull List<String> getDescription() {
+		return Collections.singletonList("Show off your love for the seven seas with this pirate hat");
 	}
 
 	@Override
