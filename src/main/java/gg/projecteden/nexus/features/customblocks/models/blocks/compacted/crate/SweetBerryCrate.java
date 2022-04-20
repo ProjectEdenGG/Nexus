@@ -1,21 +1,22 @@
-package gg.projecteden.nexus.features.customblocks.models.blocks.compacted;
+package gg.projecteden.nexus.features.customblocks.models.blocks.compacted.crate;
 
 import gg.projecteden.nexus.features.customblocks.models.annotations.CustomBlockConfig;
-import gg.projecteden.nexus.features.customblocks.models.interfaces.ICompacted;
+import gg.projecteden.nexus.features.customblocks.models.interfaces.ICrate;
 import org.bukkit.Instrument;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
 @CustomBlockConfig(
-	name = "Crate of Apples",
-	modelId = 20051,
+	name = "Crate of Berries",
+	modelId = 20053,
 	instrument = Instrument.BASS_DRUM,
-	step = 1
+	step = 3
 )
-public class AppleCrate implements ICompacted {
+public class SweetBerryCrate implements ICrate {
 
 	@Override
 	public @NotNull Material getMaterial() {
-		return Material.APPLE;
+		return Material.SWEET_BERRIES;
 	}
+
 }

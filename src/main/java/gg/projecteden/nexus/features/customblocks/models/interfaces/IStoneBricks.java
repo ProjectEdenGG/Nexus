@@ -6,20 +6,20 @@ import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
+public interface IStoneBricks extends ICustomBlock {
 
-public interface ICompacted extends ICustomBlock {
+	@NotNull
+	private Material getMaterial() {
+		return Material.valueOf("POLISHED_" + getClass().getSimpleName().replace("Bricks", "").toUpperCase());
+	}
 
 	@Override
 	default @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
-		return new Pair<>(shaped("111", "111", "111").add('1', getMaterial()), 1);
+		return get2x2Recipe(getMaterial());
 	}
 
 	@Override
-	default RecipeBuilder<?> getUncraftRecipe() {
-		return getUncraftRecipe(getMaterial(), 9);
+	default @Nullable RecipeBuilder<?> getUncraftRecipe() {
+		return getUncraftRecipe(getMaterial(), 1);
 	}
-
-	@NotNull Material getMaterial();
-
 }

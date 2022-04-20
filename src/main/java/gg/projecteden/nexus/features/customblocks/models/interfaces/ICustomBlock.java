@@ -112,10 +112,6 @@ public interface ICustomBlock {
 		return new Pair<>(shaped("1", "1").add('1', material), 1);
 	}
 
-	default Pair<RecipeBuilder<?>, Integer> getChiseledRecipe(@NotNull Material material) {
-		return new Pair<>(shaped("11").add('1', material), 1);
-	}
-
 	default Pair<RecipeBuilder<?>, Integer> getSurroundRecipe(@NonNull Material center, @NotNull Tag<Material> surround) {
 		return new Pair<>(surround(center).with(surround), 8);
 	}

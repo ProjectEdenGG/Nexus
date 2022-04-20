@@ -14,8 +14,7 @@ public interface IShroomLantern extends ILantern {
 		return new Pair<>(shaped("121", "333", "121")
 			.add('1', Material.STICK)
 			.add('2', getMaterial())
-			.add('3', Material.SHROOMLIGHT)
-			, 1);
+			.add('3', Material.SHROOMLIGHT), 1);
 	}
 
 }

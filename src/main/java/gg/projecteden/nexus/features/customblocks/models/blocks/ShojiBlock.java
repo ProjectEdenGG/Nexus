@@ -30,4 +30,5 @@ public class ShojiBlock implements ICustomBlock, IDirectional {
 			.add('1', Material.STICK)
 			.add('2', Material.PAPER), 4);
 	}
+
 }

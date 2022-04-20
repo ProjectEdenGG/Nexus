@@ -15,8 +15,7 @@ public interface IPaperLantern extends ILantern {
 			.add('1', Material.STICK)
 			.add('2', getMaterial())
 			.add('3', Material.PAPER)
-			.add('4', Material.TORCH)
-			, 1);
+			.add('4', Material.TORCH), 1);
 	}
 
 }

@@ -8,18 +8,21 @@ import org.jetbrains.annotations.Nullable;
 
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
 
-public interface ICompacted extends ICustomBlock {
+public interface IChiseledBricks extends ICustomBlock {
+
+	@NotNull
+	default Material getMaterial() {
+		return Material.valueOf(("POLISHED_" + getClass().getSimpleName().replace("Chiseled", "") + "_SLAB").toUpperCase());
+	}
 
 	@Override
 	default @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
-		return new Pair<>(shaped("111", "111", "111").add('1', getMaterial()), 1);
+		return new Pair<>(shaped("11").add('1', Material.POLISHED_GRANITE_SLAB), 1);
 	}
 
 	@Override
-	default RecipeBuilder<?> getUncraftRecipe() {
-		return getUncraftRecipe(getMaterial(), 9);
+	default @Nullable RecipeBuilder<?> getUncraftRecipe() {
+		return getUncraftRecipe(getMaterial(), 2);
 	}
-
-	@NotNull Material getMaterial();
 
 }

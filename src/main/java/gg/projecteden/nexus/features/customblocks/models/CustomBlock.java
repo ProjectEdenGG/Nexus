@@ -9,15 +9,15 @@ import gg.projecteden.nexus.features.customblocks.models.blocks.GenericCrateC;
 import gg.projecteden.nexus.features.customblocks.models.blocks.GenericCrateD;
 import gg.projecteden.nexus.features.customblocks.models.blocks.NoteBlock;
 import gg.projecteden.nexus.features.customblocks.models.blocks.ShojiBlock;
-import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.AppleCrate;
-import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.BambooBundle;
-import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.BeetrootCrate;
-import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.BerryCrate;
-import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.CactusBundle;
-import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.CarrotCrate;
-import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.PotatoCrate;
-import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.StickBundle;
-import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.SugarCaneBundle;
+import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.bundle.BambooBundle;
+import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.bundle.CactusBundle;
+import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.bundle.StickBundle;
+import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.bundle.SugarCaneBundle;
+import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.crate.AppleCrate;
+import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.crate.BeetrootCrate;
+import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.crate.CarrotCrate;
+import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.crate.PotatoCrate;
+import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.crate.SweetBerryCrate;
 import gg.projecteden.nexus.features.customblocks.models.blocks.concretebricks.BlackConcreteBricks;
 import gg.projecteden.nexus.features.customblocks.models.blocks.concretebricks.BlueConcreteBricks;
 import gg.projecteden.nexus.features.customblocks.models.blocks.concretebricks.BrownConcreteBricks;
@@ -90,13 +90,13 @@ import gg.projecteden.nexus.features.customblocks.models.blocks.quiltedwool.Purp
 import gg.projecteden.nexus.features.customblocks.models.blocks.quiltedwool.RedQuiltedWool;
 import gg.projecteden.nexus.features.customblocks.models.blocks.quiltedwool.WhiteQuiltedWool;
 import gg.projecteden.nexus.features.customblocks.models.blocks.quiltedwool.YellowQuiltedWool;
-import gg.projecteden.nexus.features.customblocks.models.blocks.stones.AndesiteBricks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.stones.ChiseledAndesite;
-import gg.projecteden.nexus.features.customblocks.models.blocks.stones.ChiseledDiorite;
-import gg.projecteden.nexus.features.customblocks.models.blocks.stones.ChiseledGranite;
-import gg.projecteden.nexus.features.customblocks.models.blocks.stones.ChiseledStone;
-import gg.projecteden.nexus.features.customblocks.models.blocks.stones.DioriteBricks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.stones.GraniteBricks;
+import gg.projecteden.nexus.features.customblocks.models.blocks.stones.bricks.AndesiteBricks;
+import gg.projecteden.nexus.features.customblocks.models.blocks.stones.bricks.DioriteBricks;
+import gg.projecteden.nexus.features.customblocks.models.blocks.stones.bricks.GraniteBricks;
+import gg.projecteden.nexus.features.customblocks.models.blocks.stones.chiseled.ChiseledAndesite;
+import gg.projecteden.nexus.features.customblocks.models.blocks.stones.chiseled.ChiseledDiorite;
+import gg.projecteden.nexus.features.customblocks.models.blocks.stones.chiseled.ChiseledGranite;
+import gg.projecteden.nexus.features.customblocks.models.blocks.stones.chiseled.ChiseledStone;
 import gg.projecteden.nexus.features.customblocks.models.blocks.terracottashingles.BlackTerracottaShingles;
 import gg.projecteden.nexus.features.customblocks.models.blocks.terracottashingles.BlueTerracottaShingles;
 import gg.projecteden.nexus.features.customblocks.models.blocks.terracottashingles.BrownTerracottaShingles;
@@ -174,7 +174,7 @@ public enum CustomBlock implements Keyed {
 	// compacted
 	APPLE_CRATE(AppleCrate.class),
 	BEETROOT_CRATE(BeetrootCrate.class),
-	BERRY_CRATE(BerryCrate.class),
+	BERRY_CRATE(SweetBerryCrate.class),
 	CARROT_CRATE(CarrotCrate.class),
 	POTATO_CRATE(PotatoCrate.class),
 	//
