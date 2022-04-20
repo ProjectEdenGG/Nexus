@@ -19,8 +19,7 @@ public class BattleshipMenu extends ICustomMechanicMenu {
 
 	@Override
 	public void init() {
-		contents.set(0, 0, ClickableItem.of(backItem(), e -> new ArenaMenu(arena).open(player)));
-
+		addBackItem(e -> new ArenaMenu(arena).open(player));
 		contents.set(1, 0, ClickableItem.empty(Material.BLACK_CONCRETE));
 	}
 

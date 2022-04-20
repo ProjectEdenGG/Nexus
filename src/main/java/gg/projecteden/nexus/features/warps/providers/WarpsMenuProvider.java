@@ -27,8 +27,8 @@ public class WarpsMenuProvider extends InventoryProvider {
 	public void init() {
 		switch (menu) {
 			case MAIN -> addCloseItem();
-			case SURVIVAL, LEGACY, MINIGAMES, OTHER -> contents.set(0, 0, ClickableItem.of(backItem(), e -> new WarpsMenuProvider(WarpMenu.MAIN).open(player)));
-			case BUILD_CONTESTS -> contents.set(0, 0, ClickableItem.of(backItem(), e -> new WarpsMenuProvider(WarpMenu.OTHER).open(player)));
+			case SURVIVAL, LEGACY, MINIGAMES, OTHER -> addBackItem(e -> new WarpsMenuProvider(WarpMenu.MAIN).open(player));
+			case BUILD_CONTESTS -> addBackItem(e -> new WarpsMenuProvider(WarpMenu.OTHER).open(player));
 		}
 
 		switch (menu) {

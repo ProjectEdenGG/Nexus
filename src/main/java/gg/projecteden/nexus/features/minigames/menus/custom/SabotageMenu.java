@@ -22,7 +22,7 @@ public class SabotageMenu extends ICustomMechanicMenu {
 
 	@Override
 	public void init() {
-		contents.set(0, 0, ClickableItem.of(backItem(), e -> new ArenaMenu(arena).open(player)));
+		addBackItem(e -> new ArenaMenu(arena).open(player));
 
 		contents.set(1, 0, ClickableItem.of(new ItemBuilder(Material.CLOCK).name("&eKill Cooldown").lore("", "&eCurrent value: &3" + arena.getKillCooldown() + " seconds").build(),
 				click -> new AnvilMenu.IntegerBuilder().positiveChecker().click(click).getter(arena::getKillCooldown).setter(arena::setKillCooldown).writer(arena::write).open()));

@@ -32,7 +32,7 @@ public class MechanicsMenu extends InventoryProvider {
 
 	@Override
 	public void init() {
-		contents.set(0, 0, ClickableItem.of(backItem(), e -> new ArenaMenu(arena).open(player)));
+		addBackItem(e -> new ArenaMenu(arena).open(player));
 		int row = 1;
 		int column = 0;
 		for (MechanicType mechanic : MechanicType.values()) {

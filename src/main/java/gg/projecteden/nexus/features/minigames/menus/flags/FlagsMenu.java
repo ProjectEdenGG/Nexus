@@ -19,7 +19,7 @@ public class FlagsMenu extends InventoryProvider {
 
 	@Override
 	public void init() {
-		contents.set(0, 0, ClickableItem.of(backItem(), e -> new ArenaMenu(arena).open(player)));
+		addBackItem(e -> new ArenaMenu(arena).open(player));
 
 		ColorType color = arena.isWhitelist() ? ColorType.WHITE : ColorType.BLACK;
 		contents.set(1, 0, ClickableItem.of(new ItemBuilder(color.getWool()).name("&eUsable Block List").lore(
