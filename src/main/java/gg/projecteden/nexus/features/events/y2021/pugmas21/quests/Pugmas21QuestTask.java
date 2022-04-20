@@ -4,7 +4,7 @@ import gg.projecteden.nexus.features.events.y2021.pugmas21.models.TreeType;
 import gg.projecteden.nexus.features.quests.tasks.GatherQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.InteractQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.IQuestTask;
-import gg.projecteden.nexus.features.quests.tasks.common.QuestTask;
+import gg.projecteden.nexus.features.quests.tasks.common.QuestTask.TaskBuilder;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -114,7 +114,6 @@ public enum Pugmas21QuestTask implements IQuestTask {
 			.player("Ok, who should I help first?")
 			.npc("In the distance, I can hear the sound of an elf singing. You may find them on the bridge leading to the crystal. Go and help them out, then return here.")
 		)
-		.build()
 	),
 	CLEAR_SKIES(GatherQuestTask.builder()
 		.talkTo(JUNIPER)
@@ -346,14 +345,13 @@ public enum Pugmas21QuestTask implements IQuestTask {
 			.npc("But eventually they began to grow distant and eventually faded into myth...")
 			.player("Wow, that's amazing! What happened to them? Why did they disappear?")
 			.npc("If you wish to hear more, bring me the second piece of the crystal.")
-			.condition(quester -> Pugmas21QuestLine.of(quester) == Pugmas21QuestLine.PIRATES)
-				.npc("To find it, help out the Captain with their troubles. You can find them at the dock.")
-			.endCondition()
-			.condition(quester -> Pugmas21QuestLine.of(quester) == Pugmas21QuestLine.ELVES)
-				.npc("To find it, head to Santa's Manor where you will find a troubled young elf.")
-			.endCondition()
+//			.condition(quester -> Pugmas21QuestLine.of(quester) == Pugmas21QuestLine.PIRATES)
+//				.npc("To find it, help out the Captain with their troubles. You can find them at the dock.")
+//			.endCondition()
+//			.condition(quester -> Pugmas21QuestLine.of(quester) == Pugmas21QuestLine.ELVES)
+//				.npc("To find it, head to Santa's Manor where you will find a troubled young elf.")
+//			.endCondition()
 		)
-		.build()
 	),
 	HOLIDAY_HEIST_PIRATES(GatherQuestTask.builder()
 		.talkTo(CAPTAIN_NERISSA)
@@ -454,7 +452,6 @@ public enum Pugmas21QuestTask implements IQuestTask {
 			.give(CRYSTAL_PIECE.get())
 			// TODO Thanks
 		)
-		.build()
 	),
 	HOLIDAY_HEIST_ELVES(GatherQuestTask.builder()
 		.talkTo(CASSIA)
@@ -551,7 +548,6 @@ public enum Pugmas21QuestTask implements IQuestTask {
 			.give(CRYSTAL_PIECE.get())
 			// TODO Thanks
 		)
-		.build()
 	),
 	CRYSTAL_REPAIR_2(GatherQuestTask.builder()
 		.talkTo(MYSTERIOUS_WOMAN)
@@ -601,7 +597,6 @@ public enum Pugmas21QuestTask implements IQuestTask {
 			.give(CRYSTAL.get())
 			// Player is given a Repaired Crystal and now must travel to the central island. Once there, the player should be able to interact with something here, allowing the crystal to be used. The skies will clear up and everything will be as it once was!
 		)
-		.build()
 	),
 	PARTY_PANIC(GatherQuestTask.builder()
 		.talkTo(GLORIA)
@@ -729,7 +724,6 @@ public enum Pugmas21QuestTask implements IQuestTask {
 			.npc("Aww, it's really no big deal compared to everything you've done for us.")
 			.npc("I hope you have an amazing pugmas! Relax and enjoy the party, you did put a lot of work into it after all.")
 		)
-		.build()
 	),
 	PENGUIN_MAFIA(InteractQuestTask.builder()
 		.talkTo(FISH_VENDOR)
@@ -805,14 +799,13 @@ public enum Pugmas21QuestTask implements IQuestTask {
 			.player("No more fish stealing? Just regular fishing?")
 			.npc("If fishing is what will incite Pugmas cheer then.. Yes! All penguins on duty, get your fishing rods! Eve can handle the cafe.")
 		)
-		.build()
 	)
 	;
 
-	private final QuestTask<?, ?> task;
+	private final TaskBuilder<?, ?, ?> task;
 
 	@Override
-	public QuestTask<?, ?> get() {
+	public TaskBuilder<?, ?, ?> get() {
 		return task;
 	}
 }

@@ -1,10 +1,15 @@
 package gg.projecteden.nexus.utils;
 
+import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.itemtags.Condition;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import me.lexikiq.HasPlayer;
+import org.apache.logging.log4j.util.TriConsumer;
 import org.bukkit.Material;
 import org.bukkit.StructureType;
 import org.bukkit.World.Environment;
@@ -30,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -521,6 +527,103 @@ public class ItemUtils {
 
 	public static String getFixedPotionName(PotionEffectType effect) {
 		return fixedPotionNames.getOrDefault(effect, effect.getName());
+	}
+
+	@Getter
+	@AllArgsConstructor
+	@NoArgsConstructor
+	public static abstract class NBTDataType<T> {
+
+		private BiFunction<NBTItem, String, T> getter;
+		private TriConsumer<NBTItem, String, T> setter;
+		private Function<String, T> converter;
+
+		@Getter
+		@AllArgsConstructor
+		public enum NBTDataTypeType {
+			STRING(StringType.class),
+			UUID(UuidType.class),
+			BOOLEAN(BooleanType.class),
+			BYTE(ByteType.class),
+			SHORT(ShortType.class),
+			INTEGER(IntegerType.class),
+			LONG(LongType.class),
+			FLOAT(FloatType.class),
+			DOUBLE(DoubleType.class),
+//			BYTE_ARRAY(ByteArrayType.class),
+			INT_ARRAY(IntArrayType.class),
+			;
+
+			private final Class<? extends NBTDataType> clazz;
+		}
+
+		public static class StringType extends NBTDataType<String> {
+			public StringType() {
+				super(NBTItem::getString, NBTItem::setString, String::valueOf);;
+			}
+		}
+
+		public static class UuidType extends NBTDataType<UUID> {
+			public UuidType() {
+				super(NBTItem::getUUID, NBTItem::setUUID, java.util.UUID::fromString);
+			}
+		}
+
+		public static class BooleanType extends NBTDataType<Boolean> {
+			public BooleanType() {
+				super(NBTItem::getBoolean, NBTItem::setBoolean, Boolean::valueOf);
+			}
+		}
+
+		public static class ByteType extends NBTDataType<Byte> {
+			public ByteType() {
+				super(NBTItem::getByte, NBTItem::setByte, Byte::valueOf);
+			}
+		}
+
+		public static class ShortType extends NBTDataType<Short> {
+			public ShortType() {
+				super(NBTItem::getShort, NBTItem::setShort, Short::valueOf);
+			}
+		}
+
+		public static class IntegerType extends NBTDataType<Integer> {
+			public IntegerType() {
+				super(NBTItem::getInteger, NBTItem::setInteger, Integer::valueOf);
+			}
+		}
+
+		public static class LongType extends NBTDataType<Long> {
+			public LongType() {
+				super(NBTItem::getLong, NBTItem::setLong, Long::valueOf);
+			}
+		}
+
+		public static class FloatType extends NBTDataType<Float> {
+			public FloatType() {
+				super(NBTItem::getFloat, NBTItem::setFloat, Float::valueOf);
+			}
+		}
+
+		public static class DoubleType extends NBTDataType<Double> {
+			public DoubleType() {
+				super(NBTItem::getDouble, NBTItem::setDouble, Double::valueOf);
+			}
+		}
+
+		/* // TODO Java doesnt include support for Byte arrays in streams
+		public static class ByteArrayType extends NBTDataType<byte[]> {
+			public ByteArrayType() {
+				super(NBTItem::getByteArray, NBTItem::setByteArray, string -> Arrays.stream(string.split(",")).map(Byte::valueOf).toArray());
+			}
+		}
+		*/
+
+		public static class IntArrayType extends NBTDataType<int[]> {
+			public IntArrayType() {
+				super(NBTItem::getIntArray, NBTItem::setIntArray, string -> Arrays.stream(string.split(",")).mapToInt(Integer::valueOf).toArray());
+			}
+		}
 	}
 
 }

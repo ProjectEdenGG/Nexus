@@ -1,11 +1,9 @@
 package gg.projecteden.nexus.features.commands;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
 import gg.projecteden.nexus.features.listeners.TemporaryMenuListener;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
@@ -40,7 +38,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 @NoArgsConstructor
@@ -169,7 +166,8 @@ public class MailCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	public static class MailBoxMenu extends MenuUtils implements InventoryProvider {
+	@Title("&3Your Deliveries")
+	public static class MailBoxMenu extends InventoryProvider {
 		private final Mailer mailer;
 		private final WorldGroup worldGroup;
 
@@ -178,23 +176,17 @@ public class MailCommand extends CustomCommand implements Listener {
 			this.worldGroup = mailer.getWorldGroup();
 		}
 
-		private final SmartInventory inventory = SmartInventory.builder()
-				.provider(this)
-				.size(6, 9)
-				.title(colorize("&3Your Deliveries"))
-				.build();
-
 		@Override
 		public void open(Player player, int page) {
 			if (isNullOrEmpty(mailer.getUnreadMail(worldGroup)))
 				player.sendMessage(JsonBuilder.fromError("Mail", "There is no mail in your " + StringUtils.camelCase(worldGroup) + " mailbox"));
 			else
-				inventory.open(mailer.getOnlinePlayer(), page);
+				super.open(player, page);
 		}
 
 		@Override
-		public void init(Player player, InventoryContents contents) {
-			addCloseItem(contents);
+		public void init() {
+			addCloseItem();
 
 			ItemStack info = new ItemBuilder(Material.BOOK).name("&3Info")
 					.lore("&eOpened mail cannot be closed", "&eAny items left over, will be", "&egiven to you, or dropped")
@@ -208,9 +200,9 @@ public class MailCommand extends CustomCommand implements Listener {
 			List<Mail> mails = mailer.getUnreadMail(worldGroup);
 
 			for (Mail mail : mails)
-				items.add(ClickableItem.from(mail.getDisplayItem().build(), e -> new OpenMailMenu(mail)));
+				items.add(ClickableItem.of(mail.getDisplayItem().build(), e -> new OpenMailMenu(mail)));
 
-			paginator(player, contents, items);
+			paginator().items(items).build();
 		}
 	}
 

@@ -15,6 +15,8 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -148,15 +150,18 @@ public class HomesMenu {
 				.open(homeOwner.getOnlinePlayer());
 	}
 
-	public static String getAccessListNames(Set<UUID> accessList) {
-		String lore = "";
+	public static List<String> getAccessListNames(Set<UUID> accessList) {
+		List<String> lore = new ArrayList<>();
 		if (accessList.size() > 0) {
-			lore += "||&f&m                         ||&f||&eAccess List||&f";
+			lore.add("&f&m                         ");
+			lore.add("");
+			lore.add("&eAccess List");
+
 			Supplier<Stream<String>> names = () -> accessList.stream().map(Nickname::of);
 			if (names.get().count() > 10)
-				lore += loreize(names.get().collect(Collectors.joining(", ")));
+				lore.addAll(loreize(names.get().collect(Collectors.joining(", "))));
 			else
-				lore += names.get().collect(Collectors.joining("||&f"));
+				lore.addAll(names.get().map(name -> "&f" + name).toList());
 		}
 		return lore;
 	}

@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.crates;
 
-import gg.projecteden.nexus.features.crates.menus.CrateEditMenu;
+import gg.projecteden.nexus.features.crates.menus.CrateEditMenu.CrateEditProvider;
 import gg.projecteden.nexus.features.crates.models.CrateType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -76,7 +76,7 @@ public class CrateCommand extends CustomCommand {
 	@Path("edit [filter]")
 	@Permission(Group.ADMIN)
 	void edit(@Arg("ALL") CrateType filter) {
-		CrateEditMenu.getMenu(filter, null).open(player());
+		new CrateEditProvider(filter, null).open(player());
 	}
 
 	@Path("reset [crate]")

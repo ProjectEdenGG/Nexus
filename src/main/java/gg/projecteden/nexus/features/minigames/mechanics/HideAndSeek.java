@@ -1,11 +1,10 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
 import com.destroystokyo.paper.block.TargetBlockInfo;
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
@@ -25,6 +24,7 @@ import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.utils.TimeUtils.TickTime;
+import lombok.RequiredArgsConstructor;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.MiscDisguise;
@@ -58,7 +58,6 @@ import java.util.UUID;
 import static gg.projecteden.nexus.utils.LocationUtils.blockLocationsEqual;
 import static gg.projecteden.nexus.utils.LocationUtils.getCenteredLocation;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.nexus.utils.StringUtils.plural;
 
 public class HideAndSeek extends Infection {
@@ -337,37 +336,31 @@ public class HideAndSeek extends Infection {
 		return false;
 	}
 
-	public static class HideAndSeekMenu extends MenuUtils implements InventoryProvider {
+	@RequiredArgsConstructor
+	@Title("&3&lSelect your Block")
+	public static class HideAndSeekMenu extends InventoryProvider {
 		private final Match match;
-		public HideAndSeekMenu(Match match) {
-			this.match = match;
+
+		@Override
+		protected int getRows() {
+			return MenuUtils.calculateRows(match.getArena().getBlockList().size(), 1);
 		}
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-					.provider(this)
-					.title(colorize("&3&lSelect your Block"))
-					.size(getRows(match.getArena().getBlockList().size(), 1), 9)
-					.build()
-					.open(player, page);
-		}
-
-		@Override
-		public void init(Player player, InventoryContents contents) {
-			addCloseItem(contents);
+		public void init() {
+			addCloseItem();
 			HideAndSeekMatchData matchData = match.getMatchData();
 			List<Material> materials = matchData.getMapMaterials();
 			List<ClickableItem> clickableItems = new ArrayList<>();
 			materials.forEach(material -> {
 				ItemStack itemStack = new ItemStack(material);
-				clickableItems.add(ClickableItem.from(itemStack, e -> {
+				clickableItems.add(ClickableItem.of(itemStack, e -> {
 					matchData.getBlockChoices().put(player.getUniqueId(), material);
 					player.closeInventory();
 					PlayerUtils.send(player, new JsonBuilder("&3You have selected ").next(Component.translatable(material.getTranslationKey(), NamedTextColor.YELLOW)));
 				}));
 			});
-			paginator(player, contents, clickableItems);
+			paginator().items(clickableItems).build();
 		}
 	}
 }

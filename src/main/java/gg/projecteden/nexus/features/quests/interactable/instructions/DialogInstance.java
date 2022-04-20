@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.quests.interactable.instructions;
 
 import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog.Instruction;
-import gg.projecteden.nexus.features.quests.users.Quester;
+import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Data;
 

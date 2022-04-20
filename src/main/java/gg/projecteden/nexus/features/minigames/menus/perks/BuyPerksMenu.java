@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.features.minigames.menus.perks;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
+import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.minigames.models.perks.Perk;
 import gg.projecteden.nexus.features.minigames.models.perks.PerkCategory;
 import gg.projecteden.nexus.features.minigames.models.perks.PerkType;
@@ -14,7 +14,6 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -24,7 +23,8 @@ import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.utils.StringUtils.plural;
 
-public class BuyPerksMenu extends CommonPerksMenu implements InventoryProvider {
+@Title("Purchase Collectibles")
+public class BuyPerksMenu extends CommonPerksMenu {
 	private static final DecimalFormat FORMATTER = new DecimalFormat("#,###");
 
 	public BuyPerksMenu(PerkCategory category) {
@@ -32,18 +32,13 @@ public class BuyPerksMenu extends CommonPerksMenu implements InventoryProvider {
 	}
 
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-				.provider(this)
-				.title("Purchase Collectibles")
-				.size(Math.max(3, getRows(PerkType.getByCategory(category).size(), 1)), 9)
-				.build()
-				.open(player, page);
+	protected int getRows() {
+		return Math.max(3, MenuUtils.calculateRows(PerkType.getByCategory(category).size(), 1));
 	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
-		addBackItem(contents, $ -> new CategoryMenu<>(getClass()).open(player));
+	public void init() {
+		addBackItem($ -> new CategoryMenu<>(getClass()).open(player));
 
 		PerkOwner perkOwner = service.get(player);
 
@@ -58,20 +53,20 @@ public class BuyPerksMenu extends CommonPerksMenu implements InventoryProvider {
 		List<PerkType> perks = perkSortWrappers.stream().map(PerkSortWrapper::getPerkType).collect(Collectors.toList());
 
 		// create the items
-		List<ClickableItem> clickableItems = new ArrayList<>();
-		perks.forEach(perkType -> {
-			Perk perk = perkType.getPerk();
-			boolean userOwned = perkOwner.getPurchasedPerks().containsKey(perkType);
+		paginator().items(new ArrayList<ClickableItem>() {{
+			perks.forEach(perkType -> {
+				Perk perk = perkType.getPerk();
+				boolean userOwned = perkOwner.getPurchasedPerks().containsKey(perkType);
 
-			List<String> lore = getLore(player, perk);
-			lore.add(1, userOwned ? "&cPurchased" : ("&aPurchase for &e" + perk.getPrice() + "&a " + plural("token", perk.getPrice())));
-			if (lore.size() > 2)
-				lore.add(2, "");
+				List<String> lore = getLore(player, perk);
+				lore.add(1, userOwned ? "&cPurchased" : ("&aPurchase for &e" + perk.getPrice() + "&a " + plural("token", perk.getPrice())));
+				if (lore.size() > 2)
+					lore.add(2, "");
 
-			ItemStack item = getItem(perk, lore);
-			clickableItems.add(ClickableItem.from(item, e -> buyItem(player, perkType, contents)));
-		});
-		paginator(player, contents, clickableItems);
+				ItemBuilder item = getItem(perk, lore);
+				add(ClickableItem.of(item, e -> buyItem(player, perkType, contents)));
+			});
+		}}).build();
 	}
 
 	protected void buyItem(Player player, PerkType perkType, InventoryContents contents) {

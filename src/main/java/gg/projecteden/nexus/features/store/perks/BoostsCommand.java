@@ -2,11 +2,10 @@ package gg.projecteden.nexus.features.store.perks;
 
 import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
 import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -38,7 +37,6 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.entity.ExperienceOrb;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -170,20 +168,11 @@ public class BoostsCommand extends CustomCommand implements Listener {
 				+ " boost for " + Timespan.ofSeconds(boost.getDuration()).format(FormatType.LONG));
 	}
 
+	@Title("Boosts")
 	@AllArgsConstructor
-	private static class BoostMenu extends MenuUtils implements InventoryProvider {
+	private static class BoostMenu extends InventoryProvider {
 		private final Boostable type;
 		private final BoostMenu previousMenu;
-
-		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-					.provider(this)
-					.title("Boosts")
-					.size(6, 9)
-					.build()
-					.open(player, page);
-		}
 
 		public BoostMenu() {
 			this(null);
@@ -195,16 +184,16 @@ public class BoostsCommand extends CustomCommand implements Listener {
 		}
 
 		@Override
-		public void init(Player player, InventoryContents contents) {
+		public void init() {
 			final BoostConfigService configService = new BoostConfigService();
 			final BoostConfig config = configService.get0();
 			final BoosterService service = new BoosterService();
 			final Booster booster = service.get(player);
 
 			if (previousMenu == null)
-				addCloseItem(contents);
+				addCloseItem();
 			else
-				addBackItem(contents, e -> previousMenu.open(player));
+				addBackItem(e -> previousMenu.open(player));
 
 			List<ClickableItem> items = new ArrayList<>();
 
@@ -213,7 +202,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 					int boosts = booster.getNonExpiredBoosts(boostable).size();
 					if (boosts > 0) {
 						ItemBuilder item = boostable.getDisplayItem().lore("&3" + StringUtils.plural(boosts + " boost", boosts) + " available");
-						items.add(ClickableItem.from(item.build(), e -> new BoostMenu(boostable, this).open(player)));
+						items.add(ClickableItem.of(item.build(), e -> new BoostMenu(boostable, this).open(player)));
 					}
 				}
 			else
@@ -228,7 +217,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 							items.add(ClickableItem.empty(item.build()));
 						} else {
 							item.lore("&3Duration: &e" + Timespan.ofSeconds(boost.getDuration()).format(FormatType.LONG), "", "&eClick to activate");
-							items.add(ClickableItem.from(item.build(), e -> ConfirmationMenu.builder()
+							items.add(ClickableItem.of(item.build(), e -> ConfirmationMenu.builder()
 									.title("Activate " + StringUtils.camelCase(boost.getType()) + " Boost")
 									.onConfirm(e2 -> {
 										boost.activate();
@@ -241,7 +230,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 				}
 
 
-			paginator(player, contents, items);
+			paginator().items(items).build();
 		}
 
 	}

@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.recipes.models.builders;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.recipes.CustomRecipes;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
+import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.utils.MaterialTag;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -30,6 +31,11 @@ public abstract class RecipeBuilder<T extends RecipeBuilder<?>> {
 
 	public T toMake(ItemStack result) {
 		this.result = result;
+		return (T) this;
+	}
+
+	public T toMake(CustomModel result) {
+		this.result = result.getItem();
 		return (T) this;
 	}
 

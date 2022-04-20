@@ -3,13 +3,12 @@ package gg.projecteden.nexus.features.mcmmo.menus;
 import com.gmail.nossr50.datatypes.player.McMMOPlayer;
 import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
 import com.gmail.nossr50.util.player.UserManager;
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.crates.GemCommand;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.mcmmo.McMMOPrestige;
@@ -34,7 +33,8 @@ import static gg.projecteden.nexus.features.mcmmo.McMMO.TIER_ONE;
 import static gg.projecteden.nexus.features.mcmmo.McMMO.TIER_ONE_ALL;
 import static gg.projecteden.nexus.features.mcmmo.McMMO.TIER_TWO;
 
-public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
+@Title("McMMO Reset")
+public class McMMOResetProvider extends InventoryProvider {
 	private static final McMMOService service = new McMMOService();
 	private static final int DEPOSIT = 10000; // eco reward for prestige
 	private static final String DEPOSIT_PRETTY = StringUtils.prettyMoney(DEPOSIT);
@@ -159,16 +159,7 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 	}
 
 	@Override
-	public void open(Player player) {
-		SmartInventory.builder()
-				.provider(this)
-				.size(6, 9)
-				.title(StringUtils.colorize("McMMO Reset"))
-				.build().open(player);
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 		McMMOPlayer mcmmoPlayer = UserManager.getPlayer(player);
 
 		int totalPowerLevel = 0;
@@ -181,33 +172,35 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 		}
 		final boolean canPrestigeAll = _canPrestigeAll;
 
-		ItemStack all = new ItemBuilder(Material.BEACON)
-				.name("&eAll Skills")
-				.lore("&3Power Level: &e" + totalPowerLevel + "/" + TIER_ONE_ALL +
-						"|| ||&3&lReward:" +
-						"||&f- " + DEPOSIT_PRETTY + " per level " + TIER_ONE + " skill (x" + MAX_DEPOSIT_MULTIPLIER + " if level " + TIER_TWO + ")" +
-						"||&f- " + DEPOSIT_ALL_PRETTY + " bonus (x" + MAX_DEPOSIT_ALL_MULTIPLIER + " if every skill is level " + TIER_TWO + ")" +
-						"||&f- All normal rewards" +
-						"||&f- When your health gets low, this breastplate will give you the strength of an angry barbarian!").build();
-		if (mcmmoPlayer.getPowerLevel() >= TIER_ONE_ALL) addGlowing(all);
+		ItemBuilder all = new ItemBuilder(Material.BEACON)
+			.name("&eAll Skills")
+			.lore("&3Power Level: &e" + totalPowerLevel + "/" + TIER_ONE_ALL +
+				"",
+				"&3&lReward:",
+				"&f- " + DEPOSIT_PRETTY + " per level " + TIER_ONE + " skill (x" + MAX_DEPOSIT_MULTIPLIER + " if level " + TIER_TWO + ")",
+				"&f- " + DEPOSIT_ALL_PRETTY + " bonus (x" + MAX_DEPOSIT_ALL_MULTIPLIER + " if every skill is level " + TIER_TWO + ")",
+				"&f- All normal rewards",
+				"&f- When your health gets low, this breastplate will give you the strength of an angry barbarian!")
+			.glow(mcmmoPlayer.getPowerLevel() >= TIER_ONE_ALL);
+
 		ItemStack reset = new ItemBuilder(Material.BARRIER).name("&cReset all with &lno reward").build();
 
-		contents.set(0, 4, ClickableItem.from(all, (e) -> {
+		contents.set(0, 4, ClickableItem.of(all, e -> {
 			if (!canPrestigeAll) return;
 
 			ConfirmationMenu.builder()
 					.title("&4Confirm Prestige All?")
-					.onConfirm((e2) -> {
+					.onConfirm(e2 -> {
 						player.closeInventory();
 						prestigeAll(player);
 					})
 					.open(player);
 		}));
 
-		contents.set(5, 4, ClickableItem.from(reset, (e) ->
+		contents.set(5, 4, ClickableItem.of(reset, e ->
 				ConfirmationMenu.builder()
 						.title("&4Confirm Reset All? (No Rewards)")
-						.onConfirm((e2) -> {
+						.onConfirm(e2 -> {
 							player.closeInventory();
 							resetAll(mcmmoPlayer);
 						})
@@ -215,19 +208,19 @@ public class McMMOResetProvider extends MenuUtils implements InventoryProvider {
 
 		McMMOPrestige mcMMOPrestige = service.getPrestige(player.getUniqueId().toString());
 		for (ResetSkillType skill : ResetSkillType.values()) {
-			ItemStack item = new ItemBuilder(skill.getMaterial()).itemFlags(ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_ATTRIBUTES)
-					.name("&e" + StringUtils.camelCase(skill.name()))
-					.lore("&3Level: &e" + mcmmoPlayer.getSkillLevel(PrimarySkillType.valueOf(skill.name())) +
-							"|| ||&3&lReward:" +
-							"||&f" + DEPOSIT_PRETTY + " (x" + MAX_DEPOSIT_MULTIPLIER + " for level " + TIER_TWO + ")" +
-							"||&f" + skill.getRewardDescription() +
-							"|| ||&3Number of Prestieges: &e" + mcMMOPrestige.getPrestige(skill.name()))
-					.build();
+			ItemBuilder item = new ItemBuilder(skill.getMaterial()).itemFlags(ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_ATTRIBUTES)
+				.name("&e" + StringUtils.camelCase(skill.name()))
+				.lore(
+					"&3Level: &e" + mcmmoPlayer.getSkillLevel(PrimarySkillType.valueOf(skill.name())),
+					"",
+					"&3&lReward:",
+					"&f" + DEPOSIT_PRETTY + " (x" + MAX_DEPOSIT_MULTIPLIER + " for level " + TIER_TWO + ")",
+					"&f" + skill.getRewardDescription(),
+					"",
+					"&3Number of Prestieges: &e" + mcMMOPrestige.getPrestige(skill.name()))
+				.glow(mcmmoPlayer.getSkillLevel(PrimarySkillType.valueOf(skill.name())) >= TIER_ONE);
 
-			if (mcmmoPlayer.getSkillLevel(PrimarySkillType.valueOf(skill.name())) >= TIER_ONE)
-				addGlowing(item);
-
-			contents.set(skill.getRow(), skill.getColumn(), ClickableItem.from(item, (e) -> {
+			contents.set(skill.getRow(), skill.getColumn(), ClickableItem.of(item, (e) -> {
 				if (mcmmoPlayer.getSkillLevel(PrimarySkillType.valueOf(skill.name())) < TIER_ONE)
 					return;
 

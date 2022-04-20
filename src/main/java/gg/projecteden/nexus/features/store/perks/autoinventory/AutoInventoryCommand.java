@@ -1,12 +1,10 @@
 package gg.projecteden.nexus.features.store.perks.autoinventory;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.listeners.TemporaryListener;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.store.perks.autoinventory.features.AutoCraft;
 import gg.projecteden.nexus.features.store.perks.autoinventory.tasks.FindChestsThread;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -131,24 +129,15 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 		new AutoSortInventoryTypeEditor().open(player());
 	}
 
-	private static class AutoSortInventoryTypeEditor extends MenuUtils implements InventoryProvider {
+	@Title("AutoSort Inventory Editor")
+	private static class AutoSortInventoryTypeEditor extends InventoryProvider {
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-					.provider(this)
-					.title("AutoSort Inventory Editor")
-					.size(6, 9)
-					.build()
-					.open(player, page);
-		}
-
-		@Override
-		public void init(Player player, InventoryContents contents) {
+		public void init() {
 			final AutoInventoryUserService service = new AutoInventoryUserService();
 			final AutoInventoryUser user = service.get(player);
 
-			addCloseItem(contents);
+			addCloseItem();
 
 			List<ClickableItem> items = new ArrayList<>();
 			for (AutoSortInventoryType inventoryType : AutoSortInventoryType.values()) {
@@ -164,7 +153,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 				else
 					item.lore("&cDisabled");
 
-				items.add(ClickableItem.from(item.build(), e -> {
+				items.add(ClickableItem.of(item.build(), e -> {
 					if (user.getDisabledInventoryTypes().contains(inventoryType))
 						user.getDisabledInventoryTypes().remove(inventoryType);
 					else
@@ -176,7 +165,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 				}));
 			}
 
-			paginator(player, contents, items);
+			paginator().items(items).build();
 		}
 	}
 
@@ -255,24 +244,15 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 		new AutoCraftEditor().open(player());
 	}
 
-	private static class AutoCraftEditor extends MenuUtils implements InventoryProvider {
+	@Title("AutoCraft Editor")
+	private static class AutoCraftEditor extends InventoryProvider {
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-				.provider(this)
-				.title("AutoCraft Editor")
-				.size(6, 9)
-				.build()
-				.open(player, page);
-		}
-
-		@Override
-		public void init(Player player, InventoryContents contents) {
+		public void init() {
 			final AutoInventoryUserService service = new AutoInventoryUserService();
 			final AutoInventoryUser user = service.get(player);
 
-			addCloseItem(contents);
+			addCloseItem();
 
 			List<ClickableItem> items = new ArrayList<>();
 			for (Material material : AutoCraft.getAutoCraftable().keySet()) {
@@ -287,7 +267,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 					.map(StringUtils::pretty)
 					.collect(joining(", ")));
 
-				items.add(ClickableItem.from(item.build(), e -> {
+				items.add(ClickableItem.of(item.build(), e -> {
 					if (user.getAutoCraftExclude().contains(material))
 						user.getAutoCraftExclude().remove(material);
 					else
@@ -299,7 +279,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 				}));
 			}
 
-			paginator(player, contents, items);
+			paginator().items(items).build();
 		}
 
 	}

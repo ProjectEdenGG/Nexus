@@ -31,7 +31,6 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -379,7 +378,7 @@ public class SabotageMatchData extends MatchData {
 			InventoryView openInv = minigamer.getPlayer().getOpenInventory();
 			if (LocationUtils.blockLocationsEqual(minigamer.getPlayer().getLocation(), getArena().getRespawnLocation())) {
 				if (openInv.getType() == InventoryType.CRAFTING) return;
-				if (openInv.getTitle().equals(votingScreen.getInventory().getTitle())) return;
+				if (openInv.getTitle().equals(votingScreen.getTitle())) return;
 			} else
 				minigamer.teleportAsync(getArena().getRespawnLocation());
 			openInv.close();

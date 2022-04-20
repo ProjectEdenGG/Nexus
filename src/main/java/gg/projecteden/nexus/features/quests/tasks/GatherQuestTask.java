@@ -1,13 +1,15 @@
 package gg.projecteden.nexus.features.quests.tasks;
 
+import gg.projecteden.nexus.features.quests.QuestItem;
 import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
 import gg.projecteden.nexus.features.quests.interactable.instructions.DialogInstance;
 import gg.projecteden.nexus.features.quests.tasks.GatherQuestTask.GatherQuestTaskStep;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTaskStep;
-import gg.projecteden.nexus.features.quests.users.QuestTaskStepProgress;
-import gg.projecteden.nexus.features.quests.users.Quester;
+import gg.projecteden.nexus.models.quests.QuestTaskStepProgress;
+import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bukkit.Material;
@@ -17,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 @Data
 public class GatherQuestTask extends QuestTask<GatherQuestTask, GatherQuestTaskStep> {
@@ -26,6 +29,7 @@ public class GatherQuestTask extends QuestTask<GatherQuestTask, GatherQuestTaskS
 	}
 
 	public static class GatherQuestTaskStep extends QuestTaskStep<GatherQuestTask, GatherQuestTaskStep> {
+		private Predicate<Quester> predicate;
 		private List<ItemStack> items;
 		private boolean take = true;
 		private Dialog complete;
@@ -46,7 +50,17 @@ public class GatherQuestTask extends QuestTask<GatherQuestTask, GatherQuestTaskS
 
 		@Override
 		public boolean shouldAdvance(Quester quester, QuestTaskStepProgress stepProgress) {
-			return !stepProgress.isFirstInteraction() && quester.has(items);
+			if (predicate != null)
+				if (!stepProgress.isFirstInteraction() && predicate.test(quester))
+					return true;
+
+			if (Nullables.isNullOrEmpty(items))
+				return true;
+
+			if (!stepProgress.isFirstInteraction() && quester.has(items))
+				return true;
+
+			return false;
 		}
 
 		@Override
@@ -86,12 +100,28 @@ public class GatherQuestTask extends QuestTask<GatherQuestTask, GatherQuestTaskS
 			return gather(List.of(items));
 		}
 
+		public GatherTaskBuilder gather(QuestItem... items) {
+			for (QuestItem item : items)
+				gather(item.get());
+
+			return this;
+		}
+
+		public GatherTaskBuilder gather(QuestItem item, int amount) {
+			return gather(item.get(), amount);
+		}
+
 		public GatherTaskBuilder gather(ItemStack item, int amount) {
 			return gather(new ItemBuilder(item).amount(amount).build());
 		}
 
 		public GatherTaskBuilder gather(List<ItemStack> items) {
 			currentStep.items = items;
+			return this;
+		}
+
+		public GatherTaskBuilder gather(Predicate<Quester> predicate) {
+			currentStep.predicate = predicate;
 			return this;
 		}
 

@@ -1,7 +1,8 @@
 package gg.projecteden.nexus.features.shops.providers;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.shops.providers.common.ShopProvider;
 import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.shop.Shop;
@@ -14,6 +15,7 @@ import java.util.List;
 
 import static gg.projecteden.nexus.utils.StringUtils.plural;
 
+@Title("&0Browse Shops")
 public class BrowseShopsProvider extends ShopProvider {
 
 	public BrowseShopsProvider(ShopProvider previousMenu) {
@@ -21,13 +23,8 @@ public class BrowseShopsProvider extends ShopProvider {
 	}
 
 	@Override
-	public void open(Player player, int page) {
-		open(player, page, this, "&0Browse Shops");
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
-		super.init(player, contents);
+	public void init() {
+		super.init();
 		addItems(player, contents);
 	}
 
@@ -41,6 +38,10 @@ public class BrowseShopsProvider extends ShopProvider {
 		for (Shop shop : shops) {
 			int inStock = shop.getInStock(shopGroup).size();
 			int outOfStock = shop.getOutOfStock(shopGroup).size();
+
+			if (inStock == 0 && outOfStock == 0)
+				continue;
+
 			ItemBuilder head = new ItemBuilder(Material.PLAYER_HEAD)
 					.skullOwner(shop)
 					.name(new NerdService().get(shop).getColoredName())
@@ -51,10 +52,10 @@ public class BrowseShopsProvider extends ShopProvider {
 			if (!description.isEmpty())
 				head.lore("&f").lore(description);
 
-			items.add(ClickableItem.from(head.build(), e -> new PlayerShopProvider(this, shop).open(player)));
+			items.add(ClickableItem.of(head.build(), e -> new PlayerShopProvider(this, shop).open(player)));
 		}
 
-		paginator(player, contents, items);
+		paginator().items(items).build();
 	}
 
 }

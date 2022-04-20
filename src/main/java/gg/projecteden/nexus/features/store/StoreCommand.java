@@ -1,12 +1,10 @@
 package gg.projecteden.nexus.features.store;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
 import gg.projecteden.annotations.Async;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.SmartInventory;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.store.BuycraftUtils.CouponCreator;
 import gg.projecteden.nexus.features.store.annotations.Category.StoreCategory;
 import gg.projecteden.nexus.features.store.gallery.StoreGalleryNPCs;
@@ -81,8 +79,8 @@ public class StoreCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("packages [player]")
-	void packages(@Arg("self") OfflinePlayer player) {
-		new StoreProvider(player).open(player());
+	void packages(@Arg("self") Contributor player) {
+		new StoreProvider(null, null, player).open(player());
 	}
 
 	@Async
@@ -173,37 +171,26 @@ public class StoreCommand extends CustomCommand implements Listener {
 	}
 
 	@AllArgsConstructor
-	private static class StoreProvider extends MenuUtils implements InventoryProvider {
+	private static class StoreProvider extends InventoryProvider {
 		private final StoreProvider previousMenu;
 		private final StoreCategory category;
-		private final OfflinePlayer player;
+		private final Contributor contributor;
 
-		public StoreProvider(OfflinePlayer player) {
-			this.previousMenu = null;
-			this.category = null;
-			this.player = player;
+		@Override
+		public String getTitle() {
+			return "Store" + (category == null ? "" : " - " + StringUtils.camelCase(category));
 		}
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-					.provider(this)
-					.title("Store" + (category == null ? "" : " - " + StringUtils.camelCase(category)))
-					.size(6, 9)
-					.build()
-					.open(player, page);
-		}
-
-		@Override
-		public void init(Player viewer, InventoryContents contents) {
+		public void init() {
 			if (previousMenu == null)
-				addCloseItem(contents);
+				addCloseItem();
 			else
-				addBackItem(contents, e -> previousMenu.open(viewer));
+				addBackItem(e -> previousMenu.open(player));
 
 			ItemBuilder info = new ItemBuilder(Material.BOOK).name("&eVisit Store").lore("&f" + URL);
-			contents.set(0, 8, ClickableItem.from(info.build(), e -> {
-				viewer.closeInventory();
+			contents.set(0, 8, ClickableItem.of(info.build(), e -> {
+				player.closeInventory();
 				PlayerUtils.send(player, new JsonBuilder(StringUtils.getPrefix("Store") + "Click me to open the &estore").url(URL));
 			}));
 
@@ -216,30 +203,25 @@ public class StoreCommand extends CustomCommand implements Listener {
 					int owned = 0;
 					int count = category.getPackages().size();
 					for (Package storePackage : category.getPackages())
-						if (storePackage.has(player))
+						if (storePackage.has(contributor))
 							++owned;
 
 					item.lore("", "&fOwned: " + (owned == 0 ? "&c0" : owned == count ? "&a" + owned : "&e" + owned));
 
-					if (owned == count)
-						item.glow();
-
-					items.add(ClickableItem.from(item.build(), e -> new StoreProvider(this, category, player).open(viewer)));
+					items.add(ClickableItem.of(item.glow(owned == count), e -> new StoreProvider(this, category, contributor).open(player)));
 				}
 			else
 				for (Package storePackage : category.getPackages()) {
 					ItemBuilder item = storePackage.getDisplayItem();
-					boolean has = storePackage.has(player);
-					int count = storePackage.count(player);
+					boolean has = storePackage.has(contributor);
+					int count = storePackage.count(contributor);
 
 					item.lore("", "&fOwned: " + (has ? "&aYes" + (count == 1 ? "" : " &f(" + count + ")") : "&cNo"));
-					if (has)
-						item.glow();
 
-					items.add(ClickableItem.empty(item.build()));
+					items.add(ClickableItem.empty(item.glow(has)));
 				}
 
-			paginator(viewer, contents, items);
+			paginator().items(items).build();
 		}
 
 	}

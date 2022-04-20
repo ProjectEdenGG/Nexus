@@ -1,10 +1,9 @@
 package gg.projecteden.nexus.features.events.y2021.pride21;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.pride21.Pride21User;
@@ -28,23 +27,19 @@ import java.util.List;
 
 import static gg.projecteden.nexus.utils.StringUtils.plural;
 
-public class BuyFlagsMenu extends MenuUtils implements InventoryProvider {
+@Title("Pride Shop")
+public class BuyFlagsMenu extends InventoryProvider {
 	private static final Pride21UserService service = new Pride21UserService();
 	private static final EventUserService eventService = new EventUserService();
 	private static final int COST = 10;
 
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-				.provider(this)
-				.title("Pride Shop")
-				.size(getRows(Flags.values().length*2, 0), 9)
-				.build()
-				.open(player, page);
+	protected int getRows() {
+		return MenuUtils.calculateRows(Flags.values().length * 2, 0);
 	}
 
 	@Override
-	public void init(Player player, InventoryContents inventoryContents) {
+	public void init() {
 		int freebies = service.get(player).rewardsLeft();
 		Arrays.stream(Flags.values()).forEach(flag -> {
 			ItemStack flagItem = flag.getFlag();
@@ -57,10 +52,10 @@ public class BuyFlagsMenu extends MenuUtils implements InventoryProvider {
 			List<Component> itemLore = Collections.singletonList(new JsonBuilder(lore).decorate(false, TextDecoration.ITALIC).build());
 			flagItem.lore(itemLore);
 			buntingItem.lore(itemLore);
-			inventoryContents.add(ClickableItem.from(flagItem, $ -> purchase(flag, player, false)));
-			inventoryContents.add(ClickableItem.from(buntingItem, $ -> purchase(flag, player, true)));
+			contents.add(ClickableItem.of(flagItem, $ -> purchase(flag, player, false)));
+			contents.add(ClickableItem.of(buntingItem, $ -> purchase(flag, player, true)));
 		});
-		inventoryContents.set(5, 8, ClickableItem.empty(new ItemBuilder(Material.PAPER).name("&3Your balance: &e" + eventService.get(player).getTokens() + " tokens").build()));
+		contents.set(5, 8, ClickableItem.empty(new ItemBuilder(Material.PAPER).name("&3Your balance: &e" + eventService.get(player).getTokens() + " tokens").build()));
 	}
 
 	private void purchase(Flags flag, Player player, boolean bunting) {

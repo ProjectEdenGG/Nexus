@@ -6,6 +6,9 @@ import lombok.Getter;
 import org.bukkit.entity.Entity;
 
 import java.util.UUID;
+import java.util.function.Predicate;
+
+import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 @Getter
 @AllArgsConstructor
@@ -16,12 +19,17 @@ public enum Pugmas21Entity implements InteractableEntity {
 	FISH_PILE("Fish Pile", ""),
 	;
 
-	Pugmas21Entity(String name, String entityId) {
-		this(name, entityId.equals("") ? null : UUID.fromString(entityId));
+	Pugmas21Entity(String name, String uuid) {
+		this(name, UUID.fromString(uuid), isNullOrEmpty(uuid) ? null : entity -> entity.getUniqueId().equals(UUID.fromString(uuid)));
+	}
+
+	Pugmas21Entity(String name, Predicate<Entity> predicate) {
+		this(name, null, predicate);
 	}
 
 	private final String name;
-	private final UUID entityId;
+	private final UUID uuid;
+	private final Predicate<Entity> predicate;
 
 	public static Pugmas21Entity of(Entity entity) {
 		if (entity == null)
@@ -32,10 +40,10 @@ public enum Pugmas21Entity implements InteractableEntity {
 
 	public static Pugmas21Entity of(UUID uuid) {
 		for (Pugmas21Entity entity : values()) {
-			if (entity.getEntityId() == null)
+			if (entity.getUuid() == null)
 				continue;
 
-			if (entity.getEntityId().equals(uuid))
+			if (entity.getUuid().equals(uuid))
 				return entity;
 		}
 

@@ -3,13 +3,12 @@ package gg.projecteden.nexus.features.commands.staff;
 import com.gmail.nossr50.datatypes.player.McMMOPlayer;
 import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
 import com.gmail.nossr50.util.player.UserManager;
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
+import com.mongodb.lang.Nullable;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.mcmmo.menus.McMMOResetProvider;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -25,7 +24,6 @@ import gg.projecteden.nexus.models.costume.CostumeUserService;
 import gg.projecteden.nexus.models.coupon.CouponService;
 import gg.projecteden.nexus.models.coupon.Coupons;
 import gg.projecteden.nexus.models.coupon.Coupons.Coupon;
-import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.models.voter.VoterService;
@@ -43,9 +41,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
@@ -63,74 +63,65 @@ public class CouponCommand extends CustomCommand implements Listener {
 	public enum CouponEvent {
 		ECO(false) {
 			@Override
-			void use(PlayerInteractEvent event) {
-				int amount = extractValue(event.getItem());
+			void use(PlayerInteractEvent event, @NotNull ItemStack item) {
+				int amount = extractValue(item);
 				new BankerService().deposit(event.getPlayer(), amount, ShopGroup.of(event.getPlayer()), TransactionCause.COUPON);
-				event.getItem().subtract();
+				item.subtract();
 				PlayerUtils.send(event.getPlayer(), "&e$" + amount + " &3has been added to your account");
 			}
 		},
 		VPS(false) {
 			@Override
-			void use(PlayerInteractEvent event) {
-				int amount = extractValue(event.getItem());
+			void use(PlayerInteractEvent event, @NotNull ItemStack item) {
+				int amount = extractValue(item);
 				new VoterService().edit(event.getPlayer(), voter -> voter.givePoints(amount));
 				PlayerUtils.send(event.getPlayer(), "&3You have been given &e" + amount + "&3 vote points");
-				event.getItem().subtract();
+				item.subtract();
 			}
 		},
 		MCMMO(false) {
 			@Override
-			void use(PlayerInteractEvent event) {
-				int amount = extractValue(event.getItem());
-				SmartInventory.builder()
-						.title("Select McMMO Skill")
-						.provider(new McMMOLevelCouponProvider(amount))
-						.size(6, 9)
-						.build().open(event.getPlayer());
+			void use(PlayerInteractEvent event, @NotNull ItemStack item) {
+				new McMMOLevelCouponProvider(extractValue(item)).open(event.getPlayer());
 			}
 		},
 		EVENT_TOKENS(false) {
 			@Override
-			void use(PlayerInteractEvent event) {
-				int amount = extractValue(event.getItem());
-				EventUserService eventUserService = new EventUserService();
-				EventUser user = eventUserService.get(event.getPlayer());
-				user.giveTokens(amount);
-				eventUserService.save(user);
-				event.getItem().subtract();
+			void use(PlayerInteractEvent event, @NotNull ItemStack item) {
+				new EventUserService().edit(event.getPlayer(), user -> user.giveTokens(extractValue(item)));
+				item.subtract();
 			}
 		},
 		PAINTING(false) {
 			@Override
-			void use(PlayerInteractEvent event) {
+			void use(PlayerInteractEvent event, @NotNull ItemStack item) {
 				// TODO
 				PlayerUtils.send(event.getPlayer(), "Make a /ticket or post in #questions to claim this coupon.");
 			}
 		},
 		SONG(false) {
 			@Override
-			void use(PlayerInteractEvent event) {
+			void use(PlayerInteractEvent event, @NotNull ItemStack item) {
 				// TODO
 				PlayerUtils.send(event.getPlayer(), "Make a /ticket or post in #questions to claim this coupon.");
 			}
 		},
 		EXPERIENCE_75(true) {
 			@Override
-			void use(PlayerInteractEvent event) {
+			void use(PlayerInteractEvent event, @NotNull ItemStack item) {
 				event.getPlayer().giveExpLevels(75);
 			}
 		},
 		COSTUME(true) {
 			@Override
-			void use(PlayerInteractEvent event) {
+			void use(PlayerInteractEvent event, @NotNull ItemStack item) {
 				new CostumeUserService().edit(event.getPlayer(), user -> user.addVouchers(1));
 				PlayerUtils.runCommand(event.getPlayer(), "costumes store");
 			}
 		},
 		COSTUMES_5(true) {
 			@Override
-			void use(PlayerInteractEvent event) {
+			void use(PlayerInteractEvent event, @NotNull ItemStack item) {
 				new CostumeUserService().edit(event.getPlayer(), user -> user.addVouchers(5));
 				PlayerUtils.runCommand(event.getPlayer(), "costumes store");
 			}
@@ -158,7 +149,7 @@ public class CouponCommand extends CustomCommand implements Listener {
 		}
 
 		public void handle(PlayerInteractEvent event) {
-			use(event);
+			use(event, Objects.requireNonNull(event.getItem()));
 			if (autoremove) {
 				getCoupon().use();
 				new CouponService().save(getCoupons());
@@ -166,7 +157,7 @@ public class CouponCommand extends CustomCommand implements Listener {
 			}
 		}
 
-		abstract void use(PlayerInteractEvent event);
+		abstract void use(PlayerInteractEvent event, @NotNull ItemStack item);
 
 		public static CouponEvent of(String id) {
 			try {
@@ -176,7 +167,9 @@ public class CouponCommand extends CustomCommand implements Listener {
 			}
 		}
 
-		public int extractValue(ItemStack item) {
+		public int extractValue(@Nullable ItemStack item) {
+			if (item == null)
+				return 0;
 			List<String> lore = item.getLore();
 			return Integer.parseInt(lore.get(0).split(StringUtils.colorize(": &e"))[1]);
 		}
@@ -290,16 +283,14 @@ public class CouponCommand extends CustomCommand implements Listener {
 			couponEvent.handle(event);
 	}
 
-	public static class McMMOLevelCouponProvider extends MenuUtils implements InventoryProvider {
+	@Title("Select McMMO Skill")
+	@AllArgsConstructor
+	public static class McMMOLevelCouponProvider extends InventoryProvider {
 		private static final int MAX_LEVEL = 200;
-		int levels;
-
-		public McMMOLevelCouponProvider(int levels) {
-			this.levels = levels;
-		}
+		private int levels;
 
 		@Override
-		public void init(Player player, InventoryContents contents) {
+		public void init() {
 			ItemStack coupon = player.getInventory().getItemInMainHand();
 			McMMOPlayer mcmmoPlayer = UserManager.getPlayer(player);
 			for (McMMOResetProvider.ResetSkillType skill : McMMOResetProvider.ResetSkillType.values()) {
@@ -308,7 +299,7 @@ public class CouponCommand extends CustomCommand implements Listener {
 					.lore("&3Level: &e" + mcmmoPlayer.getSkillLevel(PrimarySkillType.valueOf(skill.name())))
 					.build();
 
-				contents.set(skill.getRow(), skill.getColumn(), ClickableItem.from(item, e -> {
+				contents.set(skill.getRow(), skill.getColumn(), ClickableItem.of(item, e -> {
 					int mcMMOLevel = mcmmoPlayer.getSkillLevel(PrimarySkillType.valueOf(skill.name()));
 					if (mcMMOLevel >= MAX_LEVEL)
 						return;

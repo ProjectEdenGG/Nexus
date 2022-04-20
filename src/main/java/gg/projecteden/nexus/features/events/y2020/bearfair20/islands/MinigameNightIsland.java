@@ -218,7 +218,7 @@ public class MinigameNightIsland implements Listener, BearFairIsland {
 
 		if (!user.isQuest_MGN_Start()) return;
 
-		new ArcadeMachineMenu().open(player, (ItemStack[]) null);
+		new ArcadeMachineMenu().open(player);
 	}
 
 	@EventHandler

@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.warps.commands;
 import gg.projecteden.nexus.features.warps.WarpMenu;
 import gg.projecteden.nexus.features.warps.Warps.LegacySurvivalWarp;
 import gg.projecteden.nexus.features.warps.Warps.SurvivalWarp;
-import gg.projecteden.nexus.features.warps.WarpsMenu;
+import gg.projecteden.nexus.features.warps.providers.WarpsMenuProvider;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
@@ -28,7 +28,7 @@ public class WarpsCommand extends _WarpCommand {
 
 	@Path
 	void menu() {
-		WarpsMenu.open(player(), WarpMenu.MAIN);
+		new WarpsMenuProvider(WarpMenu.MAIN).open(player());
 	}
 
 	@Path("types")

@@ -1,12 +1,11 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
 import com.sk89q.worldedit.world.block.BlockTypes;
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
-import fr.minuskube.inv.content.SlotPos;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
@@ -363,12 +362,7 @@ public final class Thimble extends TeamlessMechanic {
 		Match match = minigamer.getMatch();
 		if (match.isStarted()) return;
 
-		SmartInventory.builder()
-				.provider(new ThimbleMenu())
-				.title("Select Your Concrete Block")
-				.size(2, 9)
-				.build()
-				.open(event.getPlayer());
+		new ThimbleMenu().open(event.getPlayer());
 	}
 
 	@SuppressWarnings("deprecation")
@@ -625,11 +619,13 @@ public final class Thimble extends TeamlessMechanic {
 
 	}
 
-	class ThimbleMenu extends MenuUtils implements InventoryProvider {
-		final Material[] CONCRETE_IDS = ((Thimble) MechanicType.THIMBLE.get()).getCONCRETE_IDS();
+	@Rows(2)
+	@Title("Select Your Concrete Block")
+	private static class ThimbleMenu extends InventoryProvider {
+		private static final Material[] CONCRETE_IDS = ((Thimble) MechanicType.THIMBLE.get()).getCONCRETE_IDS();
 
 		@Override
-		public void init(Player player, InventoryContents contents) {
+		public void init() {
 			Minigamer minigamer = PlayerManager.get(player);
 			Match match = minigamer.getMatch();
 			ThimbleMatchData matchData = match.getMatchData();
@@ -645,7 +641,7 @@ public final class Thimble extends TeamlessMechanic {
 						col = 0;
 					}
 
-					contents.set(new SlotPos(row, col++), ClickableItem.from(concrete, e -> pickColor(concrete, player)));
+					contents.set(new SlotPos(row, col++), ClickableItem.of(concrete, e -> pickColor(concrete, player)));
 				}
 			}
 		}

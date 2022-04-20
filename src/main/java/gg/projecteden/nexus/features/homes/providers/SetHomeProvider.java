@@ -1,20 +1,19 @@
 package gg.projecteden.nexus.features.homes.providers;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
 import gg.projecteden.nexus.features.homes.HomesFeature;
 import gg.projecteden.nexus.features.homes.HomesMenu;
 import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.models.home.Home;
 import gg.projecteden.nexus.models.home.HomeOwner;
 import gg.projecteden.nexus.models.home.HomeService;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.World.Environment;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
@@ -24,42 +23,31 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
-public class SetHomeProvider extends MenuUtils implements InventoryProvider {
-	private HomeOwner homeOwner;
-
-	public SetHomeProvider(HomeOwner homeOwner) {
-		this.homeOwner = homeOwner;
-	}
-
-	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-				.provider(this)
-				.size(5, 9)
-				.title(StringUtils.colorize("&3Set a new home"))
-				.build()
-				.open(homeOwner.getOnlinePlayer(), page);
-	}
+@Rows(5)
+@Title("&3Set a new home")
+@RequiredArgsConstructor
+public class SetHomeProvider extends InventoryProvider {
+	private final HomeOwner homeOwner;
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
-		addBackItem(contents, e -> HomesMenu.edit(homeOwner));
+	public void init() {
+		addBackItem(e -> HomesMenu.edit(homeOwner));
 
-		contents.set(0, 8, ClickableItem.empty(nameItem(Material.BOOK, "&eInfo", "&fChoose one of the pre-set homes to " +
-				"automatically set the display item, or set your own home, and manually set the display item later")));
+		contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.BOOK)
+			.name("&eInfo")
+			.lore("&fChoose one of the pre-set homes to automatically set the display item, or set your own home, and manually set the display item later")));
 
-		contents.set(3, 4, ClickableItem.from(nameItem(
-				Material.NAME_TAG,
-				"&eCustom name",
-				"&fNone of these names fit?||&fNo worries, you can still name it anything you'd like!"
-			), e -> HomesMenu.create(homeOwner, response ->
+		contents.set(3, 4, ClickableItem.of(new ItemBuilder(Material.NAME_TAG)
+				.name("&eCustom name")
+				.lore("&fNone of these names fit?", "&fNo worries, you can still name it anything you'd like!"),
+			e -> HomesMenu.create(homeOwner, response ->
 				homeOwner.getHome(response[0]).ifPresent(HomesMenu::edit))));
 
 		Map<String, ItemStack> options = new LinkedHashMap<>() {{
 			put("home", new ItemBuilder(Material.CYAN_BED)
-					.loreize(false)
-					.lore("&fThis is your main home. You can teleport to it with &c/h &for &c/home")
-					.build());
+				.loreize(false)
+				.lore("&fThis is your main home. You can teleport to it with &c/h &for &c/home")
+				.build());
 
 			put("spawner", new ItemStack(Material.SPAWNER));
 			put("farm", new ItemStack(Material.WHEAT));
@@ -77,13 +65,13 @@ public class SetHomeProvider extends MenuUtils implements InventoryProvider {
 
 		AtomicInteger column = new AtomicInteger(1);
 		options.forEach((name, item) ->
-				contents.set(1, column.getAndIncrement(), ClickableItem.from(nameItem(item, "&e" + camelCase(name)), e -> {
-					try {
-						HomesMenu.edit(addHome(name, item));
-					} catch (Exception ex) {
-						MenuUtils.handleException(homeOwner.getOnlinePlayer(), HomesFeature.PREFIX, ex);
-					}
-				})));
+			contents.set(1, column.getAndIncrement(), ClickableItem.of(item, "&e" + camelCase(name), e -> {
+				try {
+					HomesMenu.edit(addHome(name, item));
+				} catch (Exception ex) {
+					MenuUtils.handleException(homeOwner.getOnlinePlayer(), HomesFeature.PREFIX, ex);
+				}
+			})));
 	}
 
 	private Home addHome(String homeName, ItemStack itemStack) {
@@ -91,11 +79,11 @@ public class SetHomeProvider extends MenuUtils implements InventoryProvider {
 			homeOwner.checkHomesLimit();
 
 		Home home = Home.builder()
-				.uuid(homeOwner.getUuid())
-				.name(homeName)
-				.location(homeOwner.getOnlinePlayer().getLocation())
-				.item(itemStack)
-				.build();
+			.uuid(homeOwner.getUuid())
+			.name(homeName)
+			.location(homeOwner.getOnlinePlayer().getLocation())
+			.item(itemStack)
+			.build();
 
 		homeOwner.add(home);
 		new HomeService().save(homeOwner);

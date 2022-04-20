@@ -1,52 +1,56 @@
 package gg.projecteden.nexus.features.events.y2022.easter22;
 
-import gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22NPC;
-import gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestItem;
-import gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestTask;
-import gg.projecteden.nexus.features.quests.users.Quest;
-import gg.projecteden.nexus.features.quests.users.Quester;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.features.events.EdenEvent;
+import gg.projecteden.nexus.features.events.IEventCommand;
+import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.easter22.Easter22User;
 import gg.projecteden.nexus.models.easter22.Easter22UserService;
-import gg.projecteden.nexus.utils.CitizensUtils;
+import gg.projecteden.nexus.models.eventuser.EventUser;
+import gg.projecteden.nexus.models.eventuser.EventUserService;
+import gg.projecteden.nexus.models.mail.Mailer.Mail;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
+import gg.projecteden.nexus.utils.WorldGroup;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.Location;
-import org.bukkit.entity.ItemFrame;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.features.menus.MenuUtils.handleException;
 import static gg.projecteden.nexus.utils.StringUtils.getCoordinateString;
 import static gg.projecteden.nexus.utils.StringUtils.getTeleportCommand;
 
 @NoArgsConstructor
 @Aliases("easter")
-public class Easter22Command extends CustomCommand implements Listener {
-	public static final LocalDateTime START = LocalDate.of(2021, 4, 10).atStartOfDay();
-	public static final LocalDateTime END = LocalDate.of(2021, 4, 25).atStartOfDay();
+public class Easter22Command extends IEventCommand {
 
 	public Easter22Command(@NonNull CommandEvent event) {
 		super(event);
+	}
+
+	@Override
+	public EdenEvent getEdenEvent() {
+		return Easter22.get();
 	}
 
 	@Path("[player]")
@@ -77,80 +81,50 @@ public class Easter22Command extends CustomCommand implements Listener {
 		paginate(Utils.sortByValueReverse(counts).keySet(), formatter, "/easter topLocations", page);
 	}
 
-	@EventHandler
-	public void onEggInteract(PlayerInteractEntityEvent event) {
-		if (!(event.getRightClicked() instanceof ItemFrame itemFrame))
-			return;
-
-		if (!isEgg(itemFrame.getItem()))
-			return;
-
-		event.setCancelled(true);
-
-		if (LocalDateTime.now().isBefore(START))
-			return;
-
-		if (LocalDateTime.now().isAfter(END))
-			return;
-
-		Location location = itemFrame.getLocation();
-
-		Easter22UserService service = new Easter22UserService();
-		Easter22User user = service.get(event.getPlayer());
-		user.found(location);
-		service.save(user);
+	@Path("store")
+	void store() {
+		new Easter22StoreProvider().open(player());
 	}
 
-	private static boolean isEgg(ItemStack item) {
-		if (isNullOrAir(item))
-			return false;
+	@Title("&3Easter 2022 Store")
+	public static class Easter22StoreProvider extends InventoryProvider {
 
-		return false;
-	}
+		@Override
+		public void init() {
+			addCloseItem();
 
-	@Path("quest debug <task>")
-	void quest_debug(Easter22QuestTask task) {
-		send(String.valueOf(task.get()));
-	}
+			final List<ClickableItem> items = new ArrayList<>();
 
-	@Path("quest start")
-	void quest_start() {
-		Quest.builder()
-			.tasks(Easter22QuestTask.MAIN)
-			.assign(player())
-			.start();
+			final EventUser eventUser = new EventUserService().get(player);
+			contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.BOOK).name("&e" + eventUser.getTokens() + " Event Tokens").build()));
 
-		send(PREFIX + "Quest activated");
-	}
+			for (int i = 2001; i <= 2020; i++) {
+				final ItemStack egg = new ItemBuilder(Material.PAPER).customModelData(i).name("&eEgg #" + (i - 2000)).build();
+				final ItemStack display = new ItemBuilder(egg).lore("", "&" + (eventUser.getTokens() >= 200 ? "e" : "c") + "200 Event Tokens").build();
+				items.add(ClickableItem.of(display, e -> {
+					if (!eventUser.hasTokens(200)) {
+						eventUser.sendMessage(StringUtils.getPrefix(Easter22.class) + "&cYou cannot afford that egg");
+						open(player, contents.pagination().getPage());
+					} else
+						ConfirmationMenu.builder()
+							.onConfirm(e2 -> {
+								final String PREFIX = Commands.getPrefix(Easter22Command.class);
+								try {
+									eventUser.charge(200);
+									Mail.fromServer(player.getUniqueId(), WorldGroup.SURVIVAL, egg).send();
+									PlayerUtils.send(player, PREFIX + "Your egg has been mailed to you in Survival");
+								} catch (InvalidInputException ex) {
+									handleException(player, PREFIX, ex);
+								}
+							})
+							.onFinally(e2 -> open(player, contents.pagination().getPage()))
+							.open(player);
+				}));
+			}
 
-	@Path("quest npc tp <quest>")
-	void quest_npc_tp(Easter22NPC npc) {
-		final Location location = CitizensUtils.locationOf(npc.getNpcId());
-		if (location == null)
-			error("Could not determine location of NPC");
+			paginator().items(items).build();
+		}
 
-		player().teleportAsync(location, TeleportCause.COMMAND);
-	}
-
-	@Path("quest item <item> [amount]")
-	void quest_item(Easter22QuestItem item, @Arg("1") int amount) {
-		giveItems(item.get(), amount);
-	}
-
-	@EventHandler
-	public void onNPCRightClick(NPCRightClickEvent event) {
-		if (Dev.GRIFFIN.is(event.getClicker()))
-			event.getClicker().sendMessage("npc click");
-
-		final Easter22NPC npc = Easter22NPC.of(event.getNPC());
-		if (npc == null)
-			return;
-
-		if (Dev.GRIFFIN.is(event.getClicker()))
-			event.getClicker().sendMessage("easter npc click");
-
-		Quester.of(event.getClicker()).interact(npc);
-		event.setCancelled(true);
 	}
 
 }

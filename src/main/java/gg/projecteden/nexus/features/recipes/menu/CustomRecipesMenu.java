@@ -1,16 +1,15 @@
 package gg.projecteden.nexus.features.recipes.menu;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.RecipeChoice.ExactChoice;
@@ -23,8 +22,10 @@ import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.utils.RandomUtils.randomElement;
 
+@Rows(3)
+@Title("Custom Recipes")
 @RequiredArgsConstructor
-public class CustomRecipesMenu extends MenuUtils implements InventoryProvider {
+public class CustomRecipesMenu extends InventoryProvider {
 	private final RecipeType type;
 	private final NexusRecipe recipe;
 
@@ -39,27 +40,17 @@ public class CustomRecipesMenu extends MenuUtils implements InventoryProvider {
 	}
 
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-			.title("Custom Recipes")
-			.size(3, 9)
-			.provider(this)
-			.build()
-			.open(player, page);
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 		switch (type) {
 			case MAIN -> {
-				addCloseItem(contents);
+				addCloseItem();
 				int row = 1;
 				int column = 1;
 				for (RecipeType type : RecipeType.values()) {
 					if (type == RecipeType.MAIN || type == RecipeType.FURNACE) // TODO Support furnace recipes in menu
 						continue;
 
-					contents.set(row, column, ClickableItem.from(type.getItem(), e -> new CustomRecipesMenu(type).open(player)));
+					contents.set(row, column, ClickableItem.of(type.getItem(), e -> new CustomRecipesMenu(type).open(player)));
 
 					if (column == 7) {
 						column = 3;
@@ -77,30 +68,28 @@ public class CustomRecipesMenu extends MenuUtils implements InventoryProvider {
 				for (int slot : MATRIX_SLOTS)
 					contents.set(slot, ClickableItem.NONE);
 
-				addBackItem(contents, e -> new CustomRecipesMenu(RecipeType.MAIN).open(player));
+				addBackItem(e -> new CustomRecipesMenu(RecipeType.MAIN).open(player));
 			}
 		}
 
 		if (type.isFolder()) {
 			if (recipe == null) {
-				addBackItem(contents, e -> new CustomRecipesMenu(RecipeType.MAIN).open(player));
+				addBackItem(e -> new CustomRecipesMenu(RecipeType.MAIN).open(player));
 
 				paginator()
-					.player(player)
-					.contents(contents)
 					.items(type.getRecipes().stream()
 						.filter(nexusRecipe -> {
 							if (nexusRecipe.getPermission() != null)
 								return player.hasPermission(nexusRecipe.getPermission());
 							return true;
 						})
-						.map(recipe -> ClickableItem.from(recipe.getResult(), e -> new CustomRecipesMenu(recipe).open(player)))
+						.map(recipe -> ClickableItem.of(recipe.getResult(), e -> new CustomRecipesMenu(recipe).open(player)))
 						.collect(Collectors.toList()))
 					.previousSlot(0, 2)
 					.nextSlot(0, 6)
 					.build();
 			} else {
-				addBackItem(contents, e -> new CustomRecipesMenu(type).open(player));
+				addBackItem(e -> new CustomRecipesMenu(type).open(player));
 				addRecipeToMenu(contents, recipe);
 			}
 		}
@@ -110,7 +99,7 @@ public class CustomRecipesMenu extends MenuUtils implements InventoryProvider {
 	private int index = 0;
 
 	@Override
-	public void update(Player player, InventoryContents contents) {
+	public void update() {
 		if (type == RecipeType.MAIN || type.isFolder()) return;
 
 		ticks++;

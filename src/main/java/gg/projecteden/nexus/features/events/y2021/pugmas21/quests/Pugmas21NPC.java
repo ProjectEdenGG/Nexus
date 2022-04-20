@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.citizensnpcs.api.npc.NPC;
 
+import java.util.function.Predicate;
+
 @Getter
 @AllArgsConstructor
 public enum Pugmas21NPC implements InteractableNPC {
@@ -28,9 +30,17 @@ public enum Pugmas21NPC implements InteractableNPC {
 	WARREN("Warren", 4400),
 	;
 
-
 	private final String name;
 	private final int npcId;
+	private final Predicate<NPC> predicate;
+
+	Pugmas21NPC(String name, int npcId) {
+		this(name, npcId, npcId <= 0 ? null : npc -> npc.getId() == npcId);
+	}
+
+	Pugmas21NPC(String name, Predicate<NPC> predicate) {
+		this(name, -1, predicate);
+	}
 
 	public static Pugmas21NPC of(NPC npc) {
 		return of(npc.getId());

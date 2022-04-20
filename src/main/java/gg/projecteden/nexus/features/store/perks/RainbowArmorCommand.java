@@ -1,12 +1,11 @@
 package gg.projecteden.nexus.features.store.perks;
 
 import com.google.common.util.concurrent.AtomicDouble;
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
-import fr.minuskube.inv.content.SlotPos;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.SmartInventory;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MinigamerQuitEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -130,24 +129,20 @@ public class RainbowArmorCommand extends CustomCommand implements Listener {
 		new RainbowArmorService().get(player).stop();
 	}
 
-	private static class RainbowArmorProvider extends MenuUtils implements InventoryProvider {
+	@Rows(3)
+	private static class RainbowArmorProvider extends InventoryProvider {
 		private final RainbowArmorService service = new RainbowArmorService();
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-				.provider(this)
-				.size(3, 9)
-				.title(Rainbow.apply("Rainbow Armor"))
-				.build()
-				.open(player, page);
+		public String getTitle() {
+			return Rainbow.apply("Rainbow Armor");
 		}
 
 		@Override
-		public void init(Player player, InventoryContents contents) {
+		public void init() {
 			final RainbowArmor user = service.get(player);
 
-			addCloseItem(contents);
+			addCloseItem();
 
 			for (ArmorSlot slot : ArmorSlot.values()) {
 				final ItemBuilder other;
@@ -156,7 +151,7 @@ public class RainbowArmorCommand extends CustomCommand implements Listener {
 				else
 					other = new ItemBuilder(user.getHiddenIcon(slot)).name("&cHidden").lore("&aClick to show");
 
-				contents.set(new SlotPos(1, slot.ordinal() + 1), ClickableItem.from(other.build(), e -> {
+				contents.set(new SlotPos(1, slot.ordinal() + 1), ClickableItem.of(other.build(), e -> {
 					user.toggleSlot(slot);
 					service.save(user);
 					open(player);
@@ -165,10 +160,10 @@ public class RainbowArmorCommand extends CustomCommand implements Listener {
 
 			AtomicDouble userSpeed = new AtomicDouble(user.getSpeed());
 			ItemBuilder speed = new ItemBuilder(Material.RABBIT_FOOT).name("&3Speed: &e" + df.format(userSpeed)).lore("&a+&f/&c-");
-			contents.set(new SlotPos(1, 6), ClickableItem.from(speed.build(), e -> {
-				if (isAnyLeftClick(e))
+			contents.set(new SlotPos(1, 6), ClickableItem.of(speed.build(), e -> {
+				if (e.isAnyLeftClick())
 					userSpeed.getAndAdd(0.1);
-				else if (isAnyRightClick(e))
+				else if (e.isAnyRightClick())
 					userSpeed.getAndAdd(-0.1);
 
 				user.setSpeed(MathUtils.clamp(userSpeed.get(), minSpeed, maxSpeed));

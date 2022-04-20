@@ -1,7 +1,8 @@
 package gg.projecteden.nexus.features.events.y2020.halloween20.models;
 
 import gg.projecteden.nexus.features.events.y2020.halloween20.Halloween20;
-import gg.projecteden.nexus.features.events.y2020.halloween20.quest.menus.Halloween20Menus;
+import gg.projecteden.nexus.features.events.y2020.halloween20.quest.menus.FlashCardPuzzleProvider;
+import gg.projecteden.nexus.features.events.y2020.halloween20.quest.menus.PicturePuzzleProvider;
 import gg.projecteden.nexus.models.halloween20.Halloween20Service;
 import gg.projecteden.nexus.models.halloween20.Halloween20User;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -20,7 +21,7 @@ public enum ComboLockNumber {
 		@Override
 		public void onFind(Player player) {
 			if (new Halloween20Service().get(player).getCombinationStage() == QuestStage.Combination.STARTED)
-				Halloween20Menus.openPicturePuzzle(player, this);
+				new PicturePuzzleProvider(this).open(player);
 		}
 	},
 	ZERO(0, new Location(Bukkit.getWorld("safepvp"), 319.00, 60.00, -1924.00, .00F, .00F), 0),
@@ -29,7 +30,7 @@ public enum ComboLockNumber {
 		@Override
 		public void onFind(Player player) {
 			if (new Halloween20Service().get(player).getCombinationStage() == QuestStage.Combination.STARTED)
-				Halloween20Menus.openPicturePuzzle(player, this);
+				new PicturePuzzleProvider(this).open(player);
 		}
 	},
 	ONE(1, new Location(Bukkit.getWorld("safepvp"), 374.00, 112.00, -1963.00, .00F, .00F), 1),
@@ -37,7 +38,7 @@ public enum ComboLockNumber {
 		@Override
 		public void onFind(Player player) {
 			if (new Halloween20Service().get(player).getCombinationStage() == QuestStage.Combination.STARTED)
-				Halloween20Menus.openFlashCardPuzzle(player, this);
+				new FlashCardPuzzleProvider(this).open(player);
 		}
 	},
 	ONE_2(1, new Location(Bukkit.getWorld("safepvp"), 329.00, 163.00, -1949.00, .00F, .00F), 1),
@@ -48,7 +49,7 @@ public enum ComboLockNumber {
 		@Override
 		public void onFind(Player player) {
 			if (new Halloween20Service().get(player).getCombinationStage() == QuestStage.Combination.STARTED)
-				Halloween20Menus.openFlashCardPuzzle(player, this);
+				new FlashCardPuzzleProvider(this).open(player);
 		}
 	};
 

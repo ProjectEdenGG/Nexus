@@ -52,7 +52,6 @@ import lombok.SneakyThrows;
 import net.luckperms.api.context.ImmutableContextSet;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -138,12 +137,12 @@ public enum Package {
 		}
 
 		@Override
-		public int count(OfflinePlayer player) {
+		public int count(Contributor player) {
 			return new BoosterService().get(player).count(getType());
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			return count(player) > 0;
 		}
 	},
@@ -166,12 +165,12 @@ public enum Package {
 		}
 
 		@Override
-		public int count(OfflinePlayer player) {
+		public int count(Contributor player) {
 			return new BoosterService().get(player).count(getType());
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			return count(player) > 0;
 		}
 	},
@@ -194,12 +193,12 @@ public enum Package {
 		}
 
 		@Override
-		public int count(OfflinePlayer player) {
+		public int count(Contributor player) {
 			return new BoosterService().get(player).count(getType());
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			return count(player) > 0;
 		}
 	},
@@ -222,12 +221,12 @@ public enum Package {
 		}
 
 		@Override
-		public int count(OfflinePlayer player) {
+		public int count(Contributor player) {
 			return new BoosterService().get(player).count(getType());
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			return count(player) > 0;
 		}
 	},
@@ -250,12 +249,12 @@ public enum Package {
 		}
 
 		@Override
-		public int count(OfflinePlayer player) {
+		public int count(Contributor player) {
 			return new BoosterService().get(player).count(getType());
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			return count(player) > 0;
 		}
 	},
@@ -278,12 +277,12 @@ public enum Package {
 		}
 
 		@Override
-		public int count(OfflinePlayer player) {
+		public int count(Contributor player) {
 			return new BoosterService().get(player).count(getType());
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			return count(player) > 0;
 		}
 	},
@@ -306,12 +305,12 @@ public enum Package {
 		}
 
 		@Override
-		public int count(OfflinePlayer player) {
+		public int count(Contributor player) {
 			return new BoosterService().get(player).count(getType());
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			return count(player) > 0;
 		}
 	},
@@ -334,12 +333,12 @@ public enum Package {
 		}
 
 		@Override
-		public int count(OfflinePlayer player) {
+		public int count(Contributor player) {
 			return new BoosterService().get(player).count(getType());
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			return count(player) > 0;
 		}
 	},
@@ -362,12 +361,12 @@ public enum Package {
 		}
 
 		@Override
-		public int count(OfflinePlayer player) {
+		public int count(Contributor player) {
 			return new BoosterService().get(player).count(getType());
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			return count(player) > 0;
 		}
 	},
@@ -382,7 +381,7 @@ public enum Package {
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			final CostumeUser user = new CostumeUserService().get(player);
 			return user.getOwnedCostumes().size() + user.getVouchers() >= 1;
 		}
@@ -398,7 +397,7 @@ public enum Package {
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			final CostumeUser user = new CostumeUserService().get(player);
 			return user.getOwnedCostumes().size() + user.getVouchers() >= 5;
 		}
@@ -418,12 +417,12 @@ public enum Package {
 	@Display(Material.ARMOR_STAND)
 	NPCS {
 		@Override
-		public int count(OfflinePlayer player) {
+		public int count(Contributor player) {
 			return NumericPermission.NPCS.getLimit(player.getUniqueId());
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			return count(player) > 0;
 		}
 	},
@@ -527,12 +526,12 @@ public enum Package {
 	@Display(Material.ENDER_CHEST)
 	VAULTS {
 		@Override
-		public int count(OfflinePlayer player) {
+		public int count(Contributor player) {
 			return NumericPermission.VAULTS.getLimit(player.getUniqueId());
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			return count(player) > 0;
 		}
 	},
@@ -571,12 +570,12 @@ public enum Package {
 		}
 
 		@Override
-		public int count(OfflinePlayer player) {
+		public int count(Contributor player) {
 			return new HomeService().get(player).getExtraHomes();
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			return count(player) > 0;
 		}
 	},
@@ -593,12 +592,12 @@ public enum Package {
 		}
 
 		@Override
-		public int count(OfflinePlayer player) {
+		public int count(Contributor player) {
 			return NumericPermission.PLOTS.getLimit(player.getUniqueId());
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			return count(player) > 0;
 		}
 	},
@@ -782,11 +781,11 @@ public enum Package {
 
 	public void handleExpire(UUID uuid) {}
 
-	public int count(OfflinePlayer player) {
+	public int count(Contributor player) {
 		return has(player) ? 1 : 0;
 	}
 
-	public boolean has(OfflinePlayer player) {
+	public boolean has(Contributor player) {
 		if (this == CUSTOM_DONATION) {
 			ContributorService contributorService = new ContributorService();
 			Contributor contributor = contributorService.get(player);

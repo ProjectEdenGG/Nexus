@@ -773,8 +773,10 @@ public enum VPSMenu {
 				}
 
 				public VPSSlot build() {
-					ItemBuilder.setName(this.display, "&3&l" + this.name);
-					ItemBuilder.addItemFlags(this.display, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);
+					this.display = new ItemBuilder(this.display)
+						.name("&3&l" + this.name)
+						.itemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS)
+						.build();
 					return new VPSSlot(this.display, this.price, this.takePoints, this.close, this.money, this.items, this.command, this.consoleCommand, this.onPurchase);
 				}
 			}

@@ -1,13 +1,11 @@
 package gg.projecteden.nexus.features.events.y2021.pugmas21.advent;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
-import fr.minuskube.inv.content.SlotIterator;
-import fr.minuskube.inv.content.SlotPos;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.menus.api.content.SlotIterator;
+import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.models.pugmas21.Advent21Config;
 import gg.projecteden.nexus.models.pugmas21.Advent21Config.AdventPresent;
 import gg.projecteden.nexus.models.pugmas21.Pugmas21User;
@@ -23,10 +21,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
 
+import static gg.projecteden.nexus.features.menus.MenuUtils.innerSlotIterator;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @RequiredArgsConstructor
-public class AdventMenu extends MenuUtils implements InventoryProvider {
+public class AdventMenu extends InventoryProvider {
 	@NonNull
 	private Pugmas21User user;
 	@NonNull
@@ -36,17 +35,12 @@ public class AdventMenu extends MenuUtils implements InventoryProvider {
 	private Title title = Title.FRAME_1;
 
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-			.provider(this)
-			.size(6, 9)
-			.title(title.getTitle())
-			.build()
-			.open(player);
+	public String getTitle() {
+		return title.getTitle();
 	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 		int row = 1;
 		int column = Pugmas21.EPOCH.getDayOfWeek().getValue() + 1;
 
@@ -62,7 +56,7 @@ public class AdventMenu extends MenuUtils implements InventoryProvider {
 			if (user.advent().hasFound(_day)) {
 				item.lore("", "&aShow Waypoint");
 
-				clickableItem = ClickableItem.from(item.build(), e -> {
+				clickableItem = ClickableItem.of(item.build(), e -> {
 					player.closeInventory();
 					Advent.glow(user, _day);
 				});
@@ -91,7 +85,7 @@ public class AdventMenu extends MenuUtils implements InventoryProvider {
 
 	private void updateTask(Player player, InventoryContents contents) {
 		Tasks.wait(frameTicks, () -> {
-			if (!isOpen(player))
+			if (!isOpen())
 				return;
 
 			title = title.nextWithLoop();

@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.events.y2020.pugmas20.AdventChests;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.Train;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
+import gg.projecteden.nexus.features.events.y2020.pugmas20.menu.providers.AdventProvider;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.models.AdventChest;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.models.AdventChest.District;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.models.Merchants.MerchantNPC;
@@ -261,7 +262,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 				now = now.withYear(2020).withMonth(12).withDayOfMonth(25);
 		}
 
-		AdventMenu.openAdvent(player(), now);
+		new AdventProvider(now).open(player());
 	}
 
 	@Permission(Group.ADMIN)

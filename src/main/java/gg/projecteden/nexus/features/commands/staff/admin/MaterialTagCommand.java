@@ -1,10 +1,7 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -19,13 +16,10 @@ import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
 import org.bukkit.Material;
 import org.bukkit.Tag;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @Permission(Group.ADMIN)
 public class MaterialTagCommand extends CustomCommand {
@@ -59,7 +53,7 @@ public class MaterialTagCommand extends CustomCommand {
 			.toList();
 	}
 
-	public static class MaterialTagMaterialsMenu extends MenuUtils implements InventoryProvider {
+	public static class MaterialTagMaterialsMenu extends InventoryProvider {
 		private final Tag<Material> materialTag;
 
 		public MaterialTagMaterialsMenu(Tag<Material> materialTag) {
@@ -67,18 +61,13 @@ public class MaterialTagCommand extends CustomCommand {
 		}
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-					.provider(this)
-					.title(colorize("&3" + StringUtils.camelCase(materialTag.getKey().getKey())))
-					.size(6, 9)
-					.build()
-					.open(player, page);
+		public String getTitle() {
+			return "&3" + StringUtils.camelCase(materialTag.getKey().getKey());
 		}
 
 		@Override
-		public void init(Player player, InventoryContents contents) {
-			addCloseItem(contents);
+		public void init() {
+			addCloseItem();
 
 			List<ClickableItem> items = new ArrayList<>();
 			materialTag.getValues().forEach(material -> {
@@ -91,7 +80,7 @@ public class MaterialTagCommand extends CustomCommand {
 				items.add(ClickableItem.empty(item));
 			});
 
-			paginator(player, contents, items);
+			paginator().items(items).build();
 		}
 
 	}

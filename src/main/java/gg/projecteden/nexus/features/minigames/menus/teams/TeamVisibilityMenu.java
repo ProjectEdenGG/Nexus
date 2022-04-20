@@ -1,28 +1,24 @@
 package gg.projecteden.nexus.features.minigames.menus.teams;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Team;
-import lombok.NonNull;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import lombok.RequiredArgsConstructor;
 import me.lucko.helper.scoreboard.ScoreboardTeam.NameTagVisibility;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
-public class TeamVisibilityMenu extends MenuUtils implements InventoryProvider {
-	Arena arena;
-	Team team;
-	TeamMenus teamMenus = new TeamMenus();
-
-	public TeamVisibilityMenu(@NonNull Arena arena, @NonNull Team team) {
-		this.arena = arena;
-		this.team = team;
-	}
+@Rows(2)
+@Title("Team Visibility Menu")
+@RequiredArgsConstructor
+public class TeamVisibilityMenu extends InventoryProvider {
+	private final Arena arena;
+	private final Team team;
 
 	private Material getIcon(NameTagVisibility nameTagVisibility) {
 		return switch (nameTagVisibility) {
@@ -34,18 +30,19 @@ public class TeamVisibilityMenu extends MenuUtils implements InventoryProvider {
 	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
-		addBackItem(contents, e -> teamMenus.openTeamsEditorMenu(player, arena, team));
+	public void init() {
+		addBackItem(e -> new TeamEditorMenu(arena, team).open(player));
 
 		int column = 0;
 		for (NameTagVisibility visibility : NameTagVisibility.values()) {
-			ItemStack item = nameItem(getIcon(visibility), "&e"+camelCase(visibility));
-			if (team.getNameTagVisibility() == visibility)
-				addGlowing(item);
-			contents.set(1, column, ClickableItem.from(item, e -> {
+			ItemBuilder item = new ItemBuilder(getIcon(visibility))
+				.name("&e" + camelCase(visibility))
+				.glow(team.getNameTagVisibility() == visibility);
+			contents.set(1, column, ClickableItem.of(item, e -> {
 				team.setNameTagVisibility(visibility);
 				arena.write();
-				teamMenus.openTeamsVisibilityMenu(player, arena, team);
+				new TeamVisibilityMenu(arena, team).open(player);
+
 			}));
 			column++;
 		}

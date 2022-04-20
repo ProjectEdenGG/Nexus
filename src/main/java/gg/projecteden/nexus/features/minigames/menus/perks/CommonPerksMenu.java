@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.minigames.menus.perks;
 
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.models.perks.Perk;
 import gg.projecteden.nexus.features.minigames.models.perks.PerkCategory;
@@ -12,29 +12,26 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
-import static gg.projecteden.nexus.utils.StringUtils.loreize;
-import static gg.projecteden.nexus.utils.StringUtils.splitLore;
 
 @RequiredArgsConstructor
-public abstract class CommonPerksMenu extends MenuUtils {
+public abstract class CommonPerksMenu extends InventoryProvider {
 	public static final PerkOwnerService service = new PerkOwnerService();
 	protected final PerkCategory category;
 
 	protected static List<String> getLore(Player player, Perk perk) {
 		List<String> lore = new ArrayList<>();
 		lore.add("&e" + perk.getPerkCategory());
-		lore.addAll(splitLore(loreize("&3" + String.format(perk.getDescription(), Nickname.of(player)))));
+		lore.addAll(perk.getDescription().stream().map(line -> line.formatted(Nickname.of(player))).toList());
 		return lore;
 	}
 
-	protected static ItemStack getItem(Perk perk, List<String> lore) {
-		return new ItemBuilder(perk.getMenuItem()).name("&b" + perk.getName()).lore(lore).build();
+	protected static ItemBuilder getItem(Perk perk, List<String> lore) {
+		return new ItemBuilder(perk.getMenuItem()).name("&b" + perk.getName()).lore(lore);
 	}
 
 	protected static void send(Player player, String message) {

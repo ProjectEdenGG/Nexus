@@ -436,14 +436,6 @@
             <version>2.4.7</version>
             <scope>provided</scope>
         </dependency>
-        <!-- SmartInvs -->
-        <dependency>
-            <groupId>fr.minuskube.inv</groupId>
-            <artifactId>SmartInvs</artifactId>
-            <version>1.3.4</version>
-            <systemPath>${project.basedir}/libs/SmartInvs-1.3.4.jar</systemPath>
-            <scope>system</scope>
-        </dependency>
         <!-- Item NBT API -->
         <dependency>
             <groupId>de.tr7zw</groupId>

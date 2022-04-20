@@ -5,12 +5,12 @@ import com.destroystokyo.paper.ParticleBuilder;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.gmail.filoghost.holographicdisplays.api.line.ItemLine;
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.content.InventoryContents;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Emotes;
 import gg.projecteden.nexus.features.custombenches.DyeStation;
 import gg.projecteden.nexus.features.custombenches.DyeStation.DyeStationMenu;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.particles.providers.EffectSettingProvider;
 import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
 import gg.projecteden.nexus.features.store.Package;
@@ -116,14 +116,14 @@ public enum GalleryPackage {
 							.lore("", "&a&lActive", "&cClick to deactivate")
 							.glow();
 
-						contents.set(0, type.getMenuHeaderSlot(), ClickableItem.from(builder.build(), e -> {
+						contents.set(0, type.getMenuHeaderSlot(), ClickableItem.of(builder.build(), e -> {
 							user.setActiveDisplayCostume(type, null);
 							service.save(user);
 							open(user.getOnlinePlayer(), contents.pagination().getPage());
 						}));
 
 						if (MaterialTag.DYEABLE.isTagged(costume.getItem().getType())) {
-							contents.set(0, type.getMenuHeaderSlot() + 1, ClickableItem.from(DyeStation.getDyeStation().build(), e ->
+							contents.set(0, type.getMenuHeaderSlot() + 1, ClickableItem.of(DyeStation.getDyeStation().build(), e ->
 								new DyeStationMenu().openCostume(user, costume, data -> {
 									user.dye(costume, data.getColor());
 									service.save(user);
@@ -140,7 +140,7 @@ public enum GalleryPackage {
 				if (user.hasDisplayCostumeActivated(costume))
 					builder.lore("", "&a&lActive").glow();
 
-				return ClickableItem.from(builder.build(), e -> {
+				return ClickableItem.of(builder.build(), e -> {
 					user.setActiveDisplayCostume(costume.getType(), user.hasDisplayCostumeActivated(costume) ? null : costume);
 					service.save(user);
 					open(user.getOnlinePlayer(), contents.pagination().getPage());

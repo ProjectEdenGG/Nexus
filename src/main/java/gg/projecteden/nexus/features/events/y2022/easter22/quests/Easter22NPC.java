@@ -5,29 +5,30 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.citizensnpcs.api.npc.NPC;
 
+import java.util.function.Predicate;
+
 @Getter
 @AllArgsConstructor
 public enum Easter22NPC implements InteractableNPC {
-	EASTER_BUNNY("Easter Bunny", 4672),
 	BASIL("Basil", 4673),
+	DAMIEN("Damien", 4674),
 	;
 
 	private final String name;
 	private final int npcId;
+	private final Predicate<NPC> predicate;
 
-	public static Easter22NPC of(NPC npc) {
-		return of(npc.getId());
+	Easter22NPC(String name, int npcId) {
+		this(name, npcId, npcId <= 0 ? null : npc -> npc.getId() == npcId);
 	}
 
-	public static Easter22NPC of(int id) {
-		for (Easter22NPC npc : values())
-			if (npc.getNpcId() == id)
-				return npc;
-		return null;
+	Easter22NPC(String name, Predicate<NPC> predicate) {
+		this(name, -1, predicate);
 	}
 
 	@Override
 	public String toString() {
 		return getName();
 	}
+
 }

@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.mechanics.Mastermind;
 import gg.projecteden.nexus.features.minigames.mechanics.common.CheckpointMechanic;
+import gg.projecteden.nexus.features.minigames.menus.ArenaMenu;
 import gg.projecteden.nexus.features.minigames.menus.PerkMenu;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
@@ -23,6 +24,7 @@ import gg.projecteden.nexus.features.minigames.utils.MinigameNight.NextMGN;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -297,7 +299,7 @@ public class MinigamesCommand extends CustomCommand {
 			send(PREFIX + "Creating arena &e" + name + "&3");
 		}
 
-		Minigames.getMenus().openArenaMenu(player(), ArenaManager.get(name));
+		new ArenaMenu(ArenaManager.get(name)).open(player());
 
 	}
 	@Path("copy <from> <to>")
@@ -313,13 +315,13 @@ public class MinigamesCommand extends CustomCommand {
 		copy.write();
 		send(PREFIX + "Creating arena &e" + name + "&3");
 		send(PREFIX + "&cRecommended: &3Edit .yml file to remove locations");
-		Minigames.getMenus().openArenaMenu(player(), ArenaManager.get(name));
+		new ArenaMenu(ArenaManager.get(name)).open(player());
 	}
 
 	@Path("edit <arena>")
 	@Permission(PERMISSION_MANAGE)
 	void edit(Arena arena) {
-		Minigames.getMenus().openArenaMenu(player(), arena);
+		new ArenaMenu(arena).open(player());
 	}
 
 	@Path("warp <arena>")
@@ -345,10 +347,12 @@ public class MinigamesCommand extends CustomCommand {
 		minigamer.teleportAsync(location);
 	}
 
+	@Confirm
 	@Path("(delete|remove) <arena>")
 	@Permission(PERMISSION_MANAGE)
 	void remove(Arena arena) {
-		Minigames.getMenus().openDeleteMenu(player(), arena);
+		arena.delete();
+		send(PREFIX + "Arena &e" + arena.getName() + " &3deleted");
 	}
 
 	@Path("(reload|read) [arena]")

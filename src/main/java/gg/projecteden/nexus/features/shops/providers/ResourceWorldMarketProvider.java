@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.shops.providers;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.shops.Market;
 import gg.projecteden.nexus.features.shops.providers.common.ShopProvider;
 import gg.projecteden.nexus.models.shop.Shop;
@@ -9,12 +9,12 @@ import gg.projecteden.nexus.models.shop.Shop.Product;
 import gg.projecteden.nexus.models.shop.ShopService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Title("Resource World Market")
 public class ResourceWorldMarketProvider extends ShopProvider {
 	private static final ShopService service = new ShopService();
 	private static final Shop market = service.getMarket();
@@ -24,13 +24,8 @@ public class ResourceWorldMarketProvider extends ShopProvider {
 	}
 
 	@Override
-	public void open(Player player, int page) {
-		open(player, page, this, "Resource World Market");
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
-		super.init(player, contents);
+	public void init() {
+		super.init();
 
 		final Shop shop = service.get(player);
 		final List<Product> products = Market.RESOURCE_WORLD_PRODUCTS;
@@ -55,14 +50,14 @@ public class ResourceWorldMarketProvider extends ShopProvider {
 			}
 
 			final ItemStack item = builder.build();
-			items.add(ClickableItem.from(item, e -> {
+			items.add(ClickableItem.of(item, e -> {
 				toggle.run();
 				service.save(shop);
 				open(player, contents.pagination().getPage());
 			}));
 		});
 
-		paginator(player, contents, items);
+		paginator().items(items).build();
 	}
 
 }

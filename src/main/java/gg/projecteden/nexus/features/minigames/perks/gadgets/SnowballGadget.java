@@ -6,6 +6,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
+import java.util.List;
+
 public class SnowballGadget implements GadgetPerk {
 	@Override
 	public @NotNull String getName() {
@@ -13,8 +16,8 @@ public class SnowballGadget implements GadgetPerk {
 	}
 
 	@Override
-	public @NotNull String getDescription() {
-		return "An endless supply of snowballs to toss at your friends";
+	public @NotNull List<String> getDescription() {
+		return Collections.singletonList("An endless supply of snowballs to toss at your friends");
 	}
 
 	@Override

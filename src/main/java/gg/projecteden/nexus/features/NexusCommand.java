@@ -3,8 +3,8 @@ package gg.projecteden.nexus.features;
 import de.tr7zw.nbtapi.NBTCompound;
 import de.tr7zw.nbtapi.NBTEntity;
 import de.tr7zw.nbtapi.NBTFile;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.SmartInvsPlugin;
+import gg.projecteden.nexus.features.menus.api.SmartInventory;
+import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.crates.models.CrateType;
@@ -37,8 +37,11 @@ import gg.projecteden.nexus.models.chatgames.ChatGamesConfig;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.models.quests.Quester;
+import gg.projecteden.nexus.models.quests.QuesterService;
 import gg.projecteden.nexus.models.setting.Setting;
 import gg.projecteden.nexus.models.setting.SettingService;
+import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -216,13 +219,18 @@ public class NexusCommand extends CustomCommand implements Listener {
 				for (Train train : new ArrayList<>(Train.getInstances()))
 					train.stop();
 			}
-
 		}),
 		PUGMAS21_TRAIN_BACKGROUND(() -> {
 			if (Nexus.getEnv() == Env.PROD) {
 				if (TrainBackground.isActive())
 					throw new InvalidInputException("Someone is traveling to Pugmas");
 			}
+		}),
+		QUEST_DIALOG(() -> {
+			for (Quester quester : new QuesterService().getOnline())
+				if (quester.getDialog() != null)
+					if (quester.getDialog().getTaskId().get() > 0)
+						throw new InvalidInputException("Someone is in a quest dialog");
 		}),
 		;
 
@@ -298,7 +306,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 		OnlinePlayers.getAll().stream()
 				.filter(player -> SmartInvsPlugin.manager().getInventory(player).isPresent())
 				.forEach(player -> playerInventoryMap.put(player.getName(),
-						SmartInvsPlugin.manager().getInventory(player).map(SmartInventory::getTitle).orElse(null)));
+						SmartInvsPlugin.manager().getInventory(player).map(SmartInventory::getTitle).map(AdventureUtils::asLegacyText).orElse(null)));
 
 		if (playerInventoryMap.isEmpty())
 			error("No SmartInvs open");

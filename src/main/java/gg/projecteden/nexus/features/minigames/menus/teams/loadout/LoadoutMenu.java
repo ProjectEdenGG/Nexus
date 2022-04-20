@@ -1,29 +1,28 @@
 package gg.projecteden.nexus.features.minigames.menus.teams.loadout;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.minigames.menus.teams.TeamEditorMenu;
 import gg.projecteden.nexus.features.minigames.models.Arena;
+import gg.projecteden.nexus.features.minigames.models.Loadout;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
-import static gg.projecteden.nexus.features.minigames.Minigames.menus;
+import static gg.projecteden.nexus.features.menus.MenuUtils.formatInventoryContents;
 
-public class LoadoutMenu extends MenuUtils implements InventoryProvider {
-	Arena arena;
-	Team team;
-
-	public LoadoutMenu(@NonNull Arena arena, @NonNull Team team) {
-		this.arena = arena;
-		this.team = team;
-	}
+@Title("Loadout Menu")
+@RequiredArgsConstructor
+public class LoadoutMenu extends InventoryProvider {
+	private final Arena arena;
+	private final Team team;
 
 	private void save(Player player) {
 		Inventory inventory = player.getOpenInventory().getTopInventory();
@@ -65,50 +64,54 @@ public class LoadoutMenu extends MenuUtils implements InventoryProvider {
 	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
-		contents.set(0, 0, ClickableItem.from(nameItem(
-				backItem(),
-				backItem().getItemMeta().getDisplayName(),
-				"&7Escape to discard changes"
-			),
+	public void init() {
+		contents.set(0, 0, ClickableItem.of(new ItemBuilder(backItem())
+				.name(backItem().getItemMeta().getDisplayName())
+				.lore("&7Escape to discard changes"),
 			e -> {
 				save(player);
-				menus.getTeamMenus().openTeamsEditorMenu(player, arena, team);
+				new TeamEditorMenu(arena, team).open(player);
+
 			}));
 
-		contents.set(0, 1, ClickableItem.from(nameItem(
-				Material.ANVIL,
-				"&eCopy From Inventory",
-				"&3This will copy all the||&3contents of your inventory||&3into the team's loadout."
-			), e -> {
+		contents.set(0, 1, ClickableItem.of(new ItemBuilder(Material.ANVIL)
+				.name("&eCopy From Inventory")
+				.lore("&3This will copy all the", "&3contents of your inventory", "&3into the team's loadout."),
+			e -> {
 				team.getLoadout().setInventory(player.getInventory().getContents().clone());
 				arena.write();
-				menus.getTeamMenus().openLoadoutMenu(player, arena, team);
+				new LoadoutMenu(arena, team).open(player);
+
 			}));
 
-		contents.set(0, 2, ClickableItem.from(nameItem(
-				Material.ANVIL,
-				"&eCopy To Inventory",
-				"&3This will copy all the||&3contents of the loadout||&3into your inventory."
-			), e -> {
+		contents.set(0, 2, ClickableItem.of(new ItemBuilder(Material.ANVIL)
+				.name("&eCopy To Inventory")
+				.lore("&3This will copy all the", "&3contents of the loadout", "&3into your inventory."),
+			e -> {
 				player.getInventory().setContents(team.getLoadout().getInventory().clone());
 				arena.write();
-				menus.getTeamMenus().openLoadoutMenu(player, arena, team);
+				new LoadoutMenu(arena, team).open(player);
+
 			}));
 
-		contents.set(0, 4, ClickableItem.from(
+		contents.set(0, 4, ClickableItem.of(
 			new ItemBuilder(Material.POTION)
-					.name("&ePotion Effects")
-					.itemFlags(ItemFlag.HIDE_POTION_EFFECTS)
-					.build(),
-			e -> menus.getTeamMenus().openPotionEffectsMenu(player, arena, team)));
+				.name("&ePotion Effects")
+				.itemFlags(ItemFlag.HIDE_POTION_EFFECTS)
+				.build(),
+			e -> new PotionEffectsMenu(arena, team).open(player)));
 
-		contents.set(0, 8, ClickableItem.from(nameItem(
-				Material.TNT,
-				"&c&lDelete Loadout",
-				"&7You will need to confirm||&7deleting a loadout.|| ||&7&lTHIS CANNOT BE UNDONE."
-			),
-			e -> menus.getTeamMenus().openDeleteLoadoutMenu(player, arena, team)));
+		contents.set(0, 8, ClickableItem.of(new ItemBuilder(Material.TNT)
+				.name("&c&lDelete Loadout")
+				.lore("&7You will need to confirm", "&7deleting a loadout.", "", "&7&lTHIS CANNOT BE UNDONE."),
+			e -> ConfirmationMenu.builder()
+				.onCancel(e2 -> open(player))
+				.onConfirm(e2 -> {
+					team.setLoadout(new Loadout());
+					arena.write();
+					new LoadoutMenu(arena, team).open(player);
+				})
+				.open(player)));
 
 		formatInventoryContents(contents, team.getLoadout().getInventory());
 	}

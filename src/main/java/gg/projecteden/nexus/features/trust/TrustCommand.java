@@ -40,20 +40,20 @@ public class TrustCommand extends CustomCommand {
 	@Description("Open the trust menu")
 	@Path
 	void run() {
-		TrustProvider.openMenu(player());
+		new TrustProvider().open(player());
 	}
 
 	@HideFromHelp
 	@TabCompleteIgnore
 	@Path("edit")
 	void edit() {
-		TrustProvider.openMenu(player());
+		new TrustProvider().open(player());
 	}
 
 	@Description("Open the trust menu for the specified player")
 	@Path("<player>")
 	void menu(OfflinePlayer player) {
-		TrustPlayerProvider.open(player(), player);
+		new TrustPlayerProvider(player).open(player());
 	}
 
 	@Description("Allow specified player(s) to a specific lock")

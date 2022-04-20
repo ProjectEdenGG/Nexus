@@ -1,14 +1,14 @@
 package gg.projecteden.nexus.features.events.y2020.halloween20.quest.menus;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.SmartInvsPlugin;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
 import gg.projecteden.nexus.features.events.y2020.halloween20.Halloween20;
 import gg.projecteden.nexus.features.events.y2020.halloween20.models.QuestStage;
 import gg.projecteden.nexus.features.events.y2020.halloween20.quest.Gate;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.SmartInventory;
+import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.halloween20.Halloween20Service;
@@ -25,14 +25,14 @@ import org.bukkit.inventory.ItemStack;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
-public class CombinationLockProvider extends MenuUtils implements InventoryProvider {
-
-	final String CORRECT_CODE = "186710318";
-	int foundIndex = 0;
-	String playerCode = "";
+@Title("Combination Lock")
+public class CombinationLockProvider extends InventoryProvider {
+	private final String CORRECT_CODE = "186710318";
+	private int foundIndex = 0;
+	private String playerCode = "";
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 
 		contents.fill(ClickableItem.empty(new ItemBuilder(Material.YELLOW_STAINED_GLASS_PANE).name(" ").build()));
 
@@ -41,11 +41,11 @@ public class CombinationLockProvider extends MenuUtils implements InventoryProvi
 		contents.set(2, 3, ClickableItem.empty(new ItemStack(Material.AIR)));
 		contents.set(2, 5, ClickableItem.empty(new ItemStack(Material.AIR)));
 
-		contents.set(5, 7, ClickableItem.from(new ItemBuilder(Material.LIME_WOOL).name("&aSubmit Code").build(), e -> {
+		contents.set(5, 7, ClickableItem.of(new ItemBuilder(Material.LIME_WOOL).name("&aSubmit Code").build(), e -> {
 			parseCode(player, contents);
 		}));
 
-		contents.set(5, 8, ClickableItem.from(new ItemBuilder(Material.RED_WOOL).name("&cReset").build(), e -> Halloween20Menus.openComboLock(player)));
+		contents.set(5, 8, ClickableItem.of(new ItemBuilder(Material.RED_WOOL).name("&cReset").build(), e -> new CombinationLockProvider().open(player)));
 
 		int[] numberSlots = {9, 10, 11, 12, 13, 14, 15, 16, 17, 21, 23};
 
@@ -54,7 +54,7 @@ public class CombinationLockProvider extends MenuUtils implements InventoryProvi
 
 		for (int i = 0; i < user.getFoundComboLockNumbers().size(); i++) {
 			int j = i;
-			contents.set(numberSlots[i], ClickableItem.from(new ItemBuilder(user.getFoundComboLockNumbers().get(i).getItem())
+			contents.set(numberSlots[i], ClickableItem.of(new ItemBuilder(user.getFoundComboLockNumbers().get(i).getItem())
 					.name("&e" + user.getFoundComboLockNumbers().get(i).getNumericalValue()).build(), e -> {
 				if (foundIndex == 9) return;
 				contents.set(numberSlots[j], ClickableItem.empty(new ItemStack(Material.AIR)));
@@ -90,7 +90,7 @@ public class CombinationLockProvider extends MenuUtils implements InventoryProvi
 			else {
 				SmartInventory inv = SmartInvsPlugin.manager().getInventory(player).orElse(null);
 				if (inv != null && inv.getProvider() == this)
-					Halloween20Menus.openComboLock(player);
+					new CombinationLockProvider().open(player);
 			}
 		});
 	}
