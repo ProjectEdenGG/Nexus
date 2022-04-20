@@ -1,42 +1,13 @@
 package gg.projecteden.nexus.features.customblocks.models.blocks.terracotta_shingles;
 
-import com.mojang.datafixers.util.Pair;
-import gg.projecteden.nexus.features.customblocks.models.interfaces.ICustomBlock;
-import gg.projecteden.nexus.features.customblocks.models.interfaces.IDyeable;
-import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
-import lombok.NonNull;
+import gg.projecteden.nexus.features.customblocks.models.annotations.CustomBlockConfig;
+import gg.projecteden.nexus.features.customblocks.models.interfaces.ITerracottaShingles;
 import org.bukkit.Instrument;
-import org.bukkit.Material;
-import org.jetbrains.annotations.Nullable;
 
-public class RedTerracottaShingles implements ICustomBlock, IDyeable {
-	@Override
-	public @NonNull Instrument getNoteBlockInstrument() {
-		return Instrument.BIT;
-	}
-
-	@Override
-	public int getNoteBlockStep() {
-		return 1;
-	}
-
-	@Override
-	public @NonNull String getName() {
-		return "Red Terracotta Shingles";
-	}
-
-	@Override
-	public int getCustomModelData() {
-		return 20201;
-	}
-
-	@Override
-	public @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
-		return get2x2Recipe(Material.RED_TERRACOTTA);
-	}
-
-	@Override
-	public @Nullable RecipeBuilder<?> getUncraftRecipe() {
-		return getUncraftRecipe(Material.RED_TERRACOTTA, 1);
-	}
-}
+@CustomBlockConfig(
+	name = "Red Terracotta Shingles",
+	modelId = 20201,
+	instrument = Instrument.BIT,
+	step = 1
+)
+public class RedTerracottaShingles implements ITerracottaShingles {}

@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.customblocks.models.interfaces.IColoredPlan
 import gg.projecteden.nexus.features.customblocks.models.interfaces.IConcreteBricks;
 import gg.projecteden.nexus.features.customblocks.models.interfaces.ICustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.interfaces.IQuiltedWool;
+import gg.projecteden.nexus.features.customblocks.models.interfaces.ITerracottaShingles;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.RandomUtils;
 import lombok.Getter;
@@ -36,6 +37,7 @@ public class CustomBlockTag implements Tag<CustomBlock> {
 	public static final CustomBlockTag CONCRETE_BRICKS = new CustomBlockTag(IConcreteBricks.class);
 	public static final CustomBlockTag QUILTED_WOOL = new CustomBlockTag(IQuiltedWool.class);
 	public static final CustomBlockTag COLORED_PLANKS = new CustomBlockTag(IColoredPlanks.class);
+	public static final CustomBlockTag TERRACOTTA_SHINGLES = new CustomBlockTag(ITerracottaShingles.class);
 
 	@SneakyThrows
 	public static Map<String, Tag<CustomBlock>> getApplicable(CustomBlock customBlock) {

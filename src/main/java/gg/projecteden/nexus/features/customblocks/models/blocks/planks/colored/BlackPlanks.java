@@ -1,38 +1,13 @@
 package gg.projecteden.nexus.features.customblocks.models.blocks.planks.colored;
 
-import com.mojang.datafixers.util.Pair;
-import gg.projecteden.nexus.features.customblocks.models.interfaces.ICustomBlock;
-import gg.projecteden.nexus.features.customblocks.models.interfaces.IDyeable;
-import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
-import gg.projecteden.nexus.utils.MaterialTag;
-import lombok.NonNull;
+import gg.projecteden.nexus.features.customblocks.models.annotations.CustomBlockConfig;
+import gg.projecteden.nexus.features.customblocks.models.interfaces.IColoredPlanks;
 import org.bukkit.Instrument;
-import org.bukkit.Material;
-import org.jetbrains.annotations.Nullable;
 
-public class BlackPlanks implements ICustomBlock, IDyeable {
-	@Override
-	public @NonNull Instrument getNoteBlockInstrument() {
-		return Instrument.BELL;
-	}
-
-	@Override
-	public int getNoteBlockStep() {
-		return 13;
-	}
-
-	@Override
-	public @NonNull String getName() {
-		return "Black Planks";
-	}
-
-	@Override
-	public int getCustomModelData() {
-		return 20163;
-	}
-
-	@Override
-	public @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
-		return getSurroundRecipe(Material.BLACK_DYE, MaterialTag.PLANKS);
-	}
-}
+@CustomBlockConfig(
+	name = "Black Planks",
+	modelId = 20163,
+	instrument = Instrument.BELL,
+	step = 13
+)
+public class BlackPlanks implements IColoredPlanks {}
