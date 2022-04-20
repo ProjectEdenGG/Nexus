@@ -8,6 +8,8 @@ import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static gg.projecteden.nexus.utils.StringUtils.camelToSnake;
+
 public interface IColoredPlanks extends IDyeable {
 
 	@Override
@@ -16,7 +18,7 @@ public interface IColoredPlanks extends IDyeable {
 	}
 
 	default @NotNull Material getMaterial() {
-		return Material.valueOf(getClass().getSimpleName().replace("Planks", "").toUpperCase() + "_DYE");
+		return Material.valueOf(camelToSnake(getClass().getSimpleName().replace("Planks", "")).toUpperCase() + "_DYE");
 	}
 
 	@Override

@@ -7,6 +7,8 @@ import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static gg.projecteden.nexus.utils.StringUtils.camelToSnake;
+
 public interface IQuiltedWool extends IDyeable{
 	@Override
 	default CustomBlockTag getRedyeTag(){
@@ -14,7 +16,7 @@ public interface IQuiltedWool extends IDyeable{
 	}
 
 	default @NotNull Material getMaterial() {
-		return Material.valueOf(getClass().getSimpleName().replace("QuiltedWool", "").toUpperCase() + "_WOOL");
+		return Material.valueOf(camelToSnake(getClass().getSimpleName().replace("QuiltedWool", "")).toUpperCase() + "_WOOL");
 	}
 
 	@Override

@@ -6,10 +6,13 @@ import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
+
 public interface ICompacted extends ICustomBlock {
+
 	@Override
 	default @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
-		return getCompactRecipe(getMaterial());
+		return new Pair<>(shaped("111", "111", "111").add('1', getMaterial()), 1);
 	}
 
 	@Override

@@ -104,37 +104,12 @@ public interface ICustomBlock {
 		return RecipeBuilder.shapeless().add(getItemStack()).toMake(toMakeItem);
 	}
 
-	default Pair<RecipeBuilder<?>, Integer> getCompactRecipe(@NotNull Material material) {
-		return new Pair<>(shaped("111", "111", "111").add('1', material), 1);
-	}
-
 	default Pair<RecipeBuilder<?>, Integer> get2x2Recipe(@NotNull Material material) {
 		return new Pair<>(shaped("11", "11").add('1', material), 4);
 	}
 
 	default Pair<RecipeBuilder<?>, Integer> getCombineSlabsRecipe(@NotNull Material material) {
 		return new Pair<>(shaped("1", "1").add('1', material), 1);
-	}
-
-	default Pair<RecipeBuilder<?>, Integer> getVerticalRecipe(@NotNull Material material) {
-		return new Pair<>(shaped("1", "1", "1").add('1', material), 1);
-	}
-
-	default Pair<RecipeBuilder<?>, Integer> getPaperLanternRecipe(@NotNull Material material) {
-		return new Pair<>(shaped("121", "343", "121")
-				.add('1', Material.STICK)
-				.add('2', material)
-				.add('3', Material.PAPER)
-				.add('4', Material.TORCH)
-				, 1);
-	}
-
-	default Pair<RecipeBuilder<?>, Integer> getShroomLanternRecipe(@NotNull Material material) {
-		return new Pair<>(shaped("121", "333", "121")
-				.add('1', Material.STICK)
-				.add('2', material)
-				.add('3', Material.SHROOMLIGHT)
-				, 1);
 	}
 
 	default Pair<RecipeBuilder<?>, Integer> getChiseledRecipe(@NotNull Material material) {

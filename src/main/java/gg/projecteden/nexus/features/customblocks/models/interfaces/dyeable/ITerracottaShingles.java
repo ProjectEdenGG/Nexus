@@ -6,6 +6,8 @@ import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
 
+import static gg.projecteden.nexus.utils.StringUtils.camelToSnake;
+
 public interface ITerracottaShingles extends IDyeable {
 
 	@Override
@@ -14,7 +16,7 @@ public interface ITerracottaShingles extends IDyeable {
 	}
 
 	default Material getMaterial() {
-		return Material.valueOf(getClass().getSimpleName().replace("TerracottaShingles", "").toUpperCase() + "_TERRACOTTA");
+		return Material.valueOf(camelToSnake(getClass().getSimpleName().replace("TerracottaShingles", "")).toUpperCase() + "_TERRACOTTA");
 	}
 
 	@Override
