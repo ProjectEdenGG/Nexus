@@ -33,7 +33,7 @@ public class HoleInTheWallMenu extends ICustomMechanicMenu {
 
 	@Override
 	public void init() {
-		contents.set(0, 0, ClickableItem.of(backItem(), e -> new ArenaMenu(arena).open(player)));
+		addBackItem(e -> new ArenaMenu(arena).open(player));
 
 		contents.set(1, 0, ClickableItem.of(new ItemBuilder(Material.POTION).name("&eDesign Start Locations"),
 			e -> new HoleInTheWallSubMenu(arena).open(player)));

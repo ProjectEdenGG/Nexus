@@ -35,7 +35,7 @@ public class ATPMenu extends InventoryProvider {
 
 	@Override
 	public void init() {
-		contents.set(0, 0, ClickableItem.of(closeItem(), e -> player.closeInventory()));
+		addCloseItem();
 
 		if (group.equals(ATPGroup.LEGACY)) {
 			for (LegacySurvivalWarp warp : LegacySurvivalWarp.values()) {
@@ -74,7 +74,7 @@ public class ATPMenu extends InventoryProvider {
 		public void init() {
 			HomeOwner owner = service.get(player.getUniqueId());
 
-			contents.set(0, 0, ClickableItem.of(backItem(), e -> new ATPMenu(group).open(player)));
+			addBackItem(e -> new ATPMenu(group).open(player));
 
 			int row = 1;
 			int column = 0;

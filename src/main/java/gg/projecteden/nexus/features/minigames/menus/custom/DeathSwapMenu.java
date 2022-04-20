@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.minigames.menus.custom;
 
-import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.mechanics.DeathSwap;
 import gg.projecteden.nexus.features.minigames.menus.ArenaMenu;
@@ -18,10 +17,7 @@ public class DeathSwapMenu extends ICustomMechanicMenu {
 
 	@Override
 	public void init() {
-		//contents
-		contents.set(0, 0, ClickableItem.of(backItem(), e -> new ArenaMenu(arena).open(player)));
-
-		//
+		addBackItem(e -> new ArenaMenu(arena).open(player));
 	}
 
 }

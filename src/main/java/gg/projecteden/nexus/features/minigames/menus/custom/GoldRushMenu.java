@@ -35,7 +35,7 @@ public class GoldRushMenu extends ICustomMechanicMenu {
 
 	@Override
 	public void init() {
-		contents.set(0, 0, ClickableItem.of(backItem(), e -> new ArenaMenu(arena).open(player)));
+		addBackItem(e -> new ArenaMenu(arena).open(player));
 
 		String currentValue = (arena.getMineStackHeight() > 0) ? "" + arena.getMineStackHeight() : "null";
 

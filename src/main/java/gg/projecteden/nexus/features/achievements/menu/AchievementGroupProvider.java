@@ -7,8 +7,6 @@ import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.models.achievement.AchievementGroup;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.NoArgsConstructor;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 
 @NoArgsConstructor
 @Title("&3Achievements")
@@ -22,7 +20,7 @@ public class AchievementGroupProvider extends InventoryProvider {
 	@Override
 	public void init() {
 		contents.fillRow(0, ClickableItem.AIR);
-		contents.set(0, 0, ClickableItem.of(new ItemStack(Material.BARRIER), e -> contents.inventory().close(player)));
+		addCloseItem();
 
 		for (AchievementGroup group : AchievementGroup.values()) {
 			ItemBuilder item = new ItemBuilder(group.getItemStack()).name("&e" + group);

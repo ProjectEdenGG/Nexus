@@ -35,7 +35,7 @@ public class UncivilEngineersMenu extends ICustomMechanicMenu {
 
 	@Override
 	public void init() {
-		contents.set(0, 0, ClickableItem.of(backItem(), e -> new ArenaMenu(arena).open(player)));
+		addBackItem(e -> new ArenaMenu(arena).open(player));
 
 		contents.set(1, 0, ClickableItem.of(new ItemBuilder(Material.ZOMBIE_SPAWN_EGG).name("&eMob Points"), e -> new MobPointsMenu().open(player)));
 	}
@@ -45,7 +45,7 @@ public class UncivilEngineersMenu extends ICustomMechanicMenu {
 
 		@Override
 		public void init() {
-			contents.set(0, 0, ClickableItem.of(backItem(), e -> MechanicsMenu.openCustomSettingsMenu(player, arena)));
+			addBackItem(e -> MechanicsMenu.openCustomSettingsMenu(player, arena));
 
 			contents.set(0, 4, ClickableItem.of(Material.EMERALD_BLOCK, "&aAdd Mob Point", e -> new AddMobPointMenu().open(player)));
 
@@ -84,7 +84,7 @@ public class UncivilEngineersMenu extends ICustomMechanicMenu {
 
 		@Override
 		public void init() {
-			contents.set(0, 0, ClickableItem.of(backItem(), e -> MechanicsMenu.openCustomSettingsMenu(player, arena)));
+			addBackItem(e -> MechanicsMenu.openCustomSettingsMenu(player, arena));
 
 			List<ClickableItem> items = new ArrayList<>();
 

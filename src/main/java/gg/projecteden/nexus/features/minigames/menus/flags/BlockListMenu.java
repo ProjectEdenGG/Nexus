@@ -30,7 +30,7 @@ public class BlockListMenu extends InventoryProvider {
 	public void init() {
 		Pagination page = contents.pagination();
 
-		contents.set(0, 0, ClickableItem.of(backItem(), e -> new ArenaMenu(arena).open(player)));
+		addBackItem(e -> new ArenaMenu(arena).open(player));
 
 		contents.set(5, 8, ClickableItem.of(new ItemBuilder(Material.ITEM_FRAME)
 				.name("&eAdd Item")
