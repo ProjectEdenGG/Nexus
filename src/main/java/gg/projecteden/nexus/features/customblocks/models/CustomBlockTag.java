@@ -1,6 +1,10 @@
 package gg.projecteden.nexus.features.customblocks.models;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.customblocks.models.interfaces.IColoredPlanks;
+import gg.projecteden.nexus.features.customblocks.models.interfaces.IConcreteBricks;
+import gg.projecteden.nexus.features.customblocks.models.interfaces.ICustomBlock;
+import gg.projecteden.nexus.features.customblocks.models.interfaces.IQuiltedWool;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.RandomUtils;
 import lombok.Getter;
@@ -29,8 +33,9 @@ import static gg.projecteden.utils.Utils.collect;
 
 public class CustomBlockTag implements Tag<CustomBlock> {
 
-	public static final CustomBlockTag CONCRETE_BRICKS = new CustomBlockTag("_CONCRETE_BRICKS", MatchMode.SUFFIX);
-	public static final CustomBlockTag QUILTED_WOOL = new CustomBlockTag("_QUILTED_WOOL", MatchMode.SUFFIX);
+	public static final CustomBlockTag CONCRETE_BRICKS = new CustomBlockTag(IConcreteBricks.class);
+	public static final CustomBlockTag QUILTED_WOOL = new CustomBlockTag(IQuiltedWool.class);
+	public static final CustomBlockTag COLORED_PLANKS = new CustomBlockTag(IColoredPlanks.class);
 
 	@SneakyThrows
 	public static Map<String, Tag<CustomBlock>> getApplicable(CustomBlock customBlock) {
@@ -123,6 +128,10 @@ public class CustomBlockTag implements Tag<CustomBlock> {
 	public CustomBlockTag(Predicate<CustomBlock> predicate) {
 		this.customBlocks = EnumSet.noneOf(CustomBlock.class);
 		append(predicate);
+	}
+
+	public CustomBlockTag(Class<? extends ICustomBlock> clazz) {
+		this(customBlock -> clazz.isAssignableFrom(customBlock.get().getClass()));
 	}
 
 	@Override
