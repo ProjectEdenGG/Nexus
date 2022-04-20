@@ -29,7 +29,7 @@ public class Costume {
 
 	public Costume(CustomModel model, CostumeType type) {
 		this.id = getId(model);
-		this.type = type;
+		this.type = model.getItem().getType() == Material.PLAYER_HEAD ? CostumeType.HAND : type;
 		this.item = new ItemBuilder(model.getItem())
 			.undroppable()
 			.unframeable()
