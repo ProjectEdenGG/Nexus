@@ -3,8 +3,7 @@ package gg.projecteden.nexus.features.store.perks.autoinventory;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.listeners.TemporaryListener;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.store.perks.autoinventory.features.AutoCraft;
 import gg.projecteden.nexus.features.store.perks.autoinventory.tasks.FindChestsThread;
@@ -130,24 +129,15 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 		new AutoSortInventoryTypeEditor().open(player());
 	}
 
+	@Title("AutoSort Inventory Editor")
 	private static class AutoSortInventoryTypeEditor extends InventoryProvider {
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-					.provider(this)
-					.title("AutoSort Inventory Editor")
-					.maxSize()
-					.build()
-					.open(player, page);
-		}
-
-		@Override
-		public void init(Player player, InventoryContents contents) {
+		public void init() {
 			final AutoInventoryUserService service = new AutoInventoryUserService();
 			final AutoInventoryUser user = service.get(player);
 
-			addCloseItem(contents);
+			addCloseItem();
 
 			List<ClickableItem> items = new ArrayList<>();
 			for (AutoSortInventoryType inventoryType : AutoSortInventoryType.values()) {
@@ -175,7 +165,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 				}));
 			}
 
-			paginator(player, contents, items).build();
+			paginator().items(items).build();
 		}
 	}
 
@@ -254,24 +244,15 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 		new AutoCraftEditor().open(player());
 	}
 
+	@Title("AutoCraft Editor")
 	private static class AutoCraftEditor extends InventoryProvider {
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-				.provider(this)
-				.title("AutoCraft Editor")
-				.maxSize()
-				.build()
-				.open(player, page);
-		}
-
-		@Override
-		public void init(Player player, InventoryContents contents) {
+		public void init() {
 			final AutoInventoryUserService service = new AutoInventoryUserService();
 			final AutoInventoryUser user = service.get(player);
 
-			addCloseItem(contents);
+			addCloseItem();
 
 			List<ClickableItem> items = new ArrayList<>();
 			for (Material material : AutoCraft.getAutoCraftable().keySet()) {
@@ -298,7 +279,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 				}));
 			}
 
-			paginator(player, contents, items).build();
+			paginator().items(items).build();
 		}
 
 	}

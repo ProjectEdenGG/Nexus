@@ -1,9 +1,11 @@
 package gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.taskpartdata;
 
+import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
 import gg.projecteden.nexus.features.menus.sabotage.tasks.ReactorTask;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.matchdata.SabotageMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.TaskPart;
+import me.lexikiq.HasPlayer;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -26,7 +28,7 @@ public class ReactorTaskPartData extends SabotageTaskPartData {
 
 	@Override
 	public void runnable(Match match) {
-		List<Player> players = match.getAlivePlayers().stream().filter(ReactorTask::isOpen).collect(Collectors.toList());
+		List<Player> players = match.getAlivePlayers().stream().filter(player -> SmartInvsPlugin.isOpen(ReactorTask.class, ((HasPlayer) player).getPlayer())).collect(Collectors.toList());
 		if (players.size() == 2) {
 			players.forEach(Player::closeInventory);
 			match.<SabotageMatchData>getMatchData().endSabotage();

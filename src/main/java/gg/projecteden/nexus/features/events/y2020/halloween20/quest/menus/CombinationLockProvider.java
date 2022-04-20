@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.events.y2020.halloween20.quest.Gate;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.models.banker.BankerService;
@@ -24,23 +25,14 @@ import org.bukkit.inventory.ItemStack;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
+@Title("Combination Lock")
 public class CombinationLockProvider extends InventoryProvider {
 	private final String CORRECT_CODE = "186710318";
 	private int foundIndex = 0;
 	private String playerCode = "";
 
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-			.provider(this)
-			.title("Combination Lock")
-			.maxSize()
-			.build()
-			.open(player, page);
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 
 		contents.fill(ClickableItem.empty(new ItemBuilder(Material.YELLOW_STAINED_GLASS_PANE).name(" ").build()));
 

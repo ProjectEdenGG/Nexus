@@ -1,8 +1,7 @@
 package gg.projecteden.nexus.features.events;
 
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -21,7 +20,6 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,20 +83,11 @@ public class TrophyCommand extends CustomCommand {
 		send(PREFIX + "Gave " + camelCase(trophy) + " trophy");
 	}
 
+	@Title("Trophies")
 	@AllArgsConstructor
 	private static class TrophyMenu extends InventoryProvider {
 		private final String event;
 		private final TrophyMenu previousMenu;
-
-		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-					.provider(this)
-					.title("Trophies")
-					.maxSize()
-					.build()
-					.open(player, page);
-		}
 
 		public TrophyMenu() {
 			this(null);
@@ -109,14 +98,14 @@ public class TrophyCommand extends CustomCommand {
 		}
 
 		@Override
-		public void init(Player player, InventoryContents contents) {
+		public void init() {
 			final TrophyHolderService service = new TrophyHolderService();
 			final TrophyHolder holder = service.get(player);
 
 			if (previousMenu == null)
-				addCloseItem(contents);
+				addCloseItem();
 			else
-				addBackItem(contents, e -> previousMenu.open(player));
+				addBackItem(e -> previousMenu.open(player));
 
 			List<ClickableItem> items = new ArrayList<>();
 
@@ -150,7 +139,7 @@ public class TrophyCommand extends CustomCommand {
 				}
 			}
 
-			paginator(player, contents, items).build();
+			paginator().items(items).build();
 		}
 
 	}

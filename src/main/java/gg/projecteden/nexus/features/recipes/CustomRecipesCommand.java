@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.recipes;
 
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.recipes.menu.CustomRecipesMenu;
@@ -19,7 +19,6 @@ import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -76,22 +75,13 @@ public class CustomRecipesCommand extends CustomCommand {
 		new UncraftMenu().open(player());
 	}
 
+	@Rows(3)
+	@Title("Uncraft Menu")
 	public static class UncraftMenu extends InventoryProvider {
-
 		public static final int[] uncraftingSlots = {4, 5, 6, 13, 14, 15, 22, 23, 24};
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-				.provider(this)
-				.title("Uncraft Menu")
-				.rows(3)
-				.build()
-				.open(player, page);
-		}
-
-		@Override
-		public void init(Player player, InventoryContents contents) {
+		public void init() {
 			contents.fill(ClickableItem.empty(new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).name(" ").build()));
 
 			for (int i = 0; i < uncraftingSlots.length; i++)

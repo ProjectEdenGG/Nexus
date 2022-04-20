@@ -1,9 +1,10 @@
 package gg.projecteden.nexus.features.minigames.menus.teams;
 
 import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.menus.teams.loadout.LoadoutMenu;
@@ -25,33 +26,32 @@ import java.util.function.BiFunction;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
+@Rows(3)
+@Title("Team Editor Menu")
 @RequiredArgsConstructor
 public class TeamEditorMenu extends InventoryProvider {
 	private final Arena arena;
 	private final Team team;
-
-	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-			.provider(this)
-			.title("Team Editor Menu")
-			.rows(3)
-			.build()
-			.open(player, page);
-	}
 
 	static void openAnvilMenu(Player player, Arena arena, Team team, String text, BiFunction<Player, String, AnvilGUI.Response> onComplete) {
 		MenuUtils.openAnvilMenu(player, text, onComplete, p -> Tasks.wait(1, () -> new TeamEditorMenu(arena, team).open(player)));
 	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
-		addBackItem(contents, e -> new TeamsMenu(arena).open(player));
+	public void init() {
+		addBackItem(e -> new TeamsMenu(arena).open(player));
 
 		contents.set(0, 8, ClickableItem.of(new ItemBuilder(Material.TNT)
 				.name("&c&lDelete Team")
 				.lore("&7You will need to confirm", "&7deleting a team.", "", "&7&lTHIS CANNOT BE UNDONE."),
-			e -> new DeleteTeamMenu(arena, team).open(player)));
+			e -> ConfirmationMenu.builder()
+				.onCancel(e2 -> open(player))
+				.onConfirm(e2 -> {
+					arena.getTeams().remove(team);
+					arena.write();
+					new TeamsMenu(arena).open(player);
+				})
+				.open(player)));
 
 		contents.set(1, 0, ClickableItem.of(new ItemBuilder(Material.BOOK)
 				.name("&eTeam Name")

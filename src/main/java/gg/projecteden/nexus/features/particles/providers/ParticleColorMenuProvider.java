@@ -1,9 +1,8 @@
 package gg.projecteden.nexus.features.particles.providers;
 
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.models.particle.ParticleOwner;
 import gg.projecteden.nexus.models.particle.ParticleService;
@@ -16,10 +15,11 @@ import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
 import org.bukkit.Color;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Rows(5)
+@Title("Set RGB Color")
 public class ParticleColorMenuProvider extends InventoryProvider {
 	private final ParticleService service = new ParticleService();
 	private final ParticleType type;
@@ -28,16 +28,6 @@ public class ParticleColorMenuProvider extends InventoryProvider {
 	public ParticleColorMenuProvider(ParticleType type, ParticleSetting setting) {
 		this.type = type;
 		this.setting = setting;
-	}
-
-	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-				.title("Set RGB Color")
-				.rows(5)
-				.provider(this)
-				.build()
-				.open(player);
 	}
 
 	@Getter
@@ -77,8 +67,8 @@ public class ParticleColorMenuProvider extends InventoryProvider {
 	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
-		addBackItem(contents, e -> new EffectSettingProvider(type).open(player));
+	public void init() {
+		addBackItem(e -> new EffectSettingProvider(type).open(player));
 
 		ParticleOwner owner = service.get(player);
 		Color color = setting.get(owner, type);

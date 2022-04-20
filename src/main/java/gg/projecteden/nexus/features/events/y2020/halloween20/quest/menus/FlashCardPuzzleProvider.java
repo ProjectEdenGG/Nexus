@@ -3,8 +3,8 @@ package gg.projecteden.nexus.features.events.y2020.halloween20.quest.menus;
 import gg.projecteden.nexus.features.events.y2020.halloween20.Halloween20;
 import gg.projecteden.nexus.features.events.y2020.halloween20.models.ComboLockNumber;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.models.halloween20.Halloween20Service;
 import gg.projecteden.nexus.models.halloween20.Halloween20User;
@@ -23,6 +23,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Rows(3)
+@Title("Flash Card Puzzle")
 @RequiredArgsConstructor
 public class FlashCardPuzzleProvider extends InventoryProvider {
 	private final ComboLockNumber number;
@@ -31,17 +33,7 @@ public class FlashCardPuzzleProvider extends InventoryProvider {
 		Material.OAK_LOG, Material.OAK_LEAVES);
 
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-			.provider(new FlashCardPuzzleProvider(number))
-			.title("Flash Card Puzzle")
-			.rows(3)
-			.build()
-			.open(player, page);
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 		List<Material> usedCards = new ArrayList<>();
 		List<Material> correctOrder = new ArrayList<>();
 		for (int i = 0; i < 7; i++) {

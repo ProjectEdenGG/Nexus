@@ -1,8 +1,7 @@
 package gg.projecteden.nexus.features.warps.providers;
 
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.shops.providers.MainMenuProvider;
 import gg.projecteden.nexus.features.warps.WarpMenu;
@@ -11,30 +10,23 @@ import gg.projecteden.nexus.models.buildcontest.BuildContest;
 import gg.projecteden.nexus.models.buildcontest.BuildContestService;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 
+@Title("&3Warps")
+@RequiredArgsConstructor
 public class WarpsMenuProvider extends InventoryProvider {
 	private final WarpMenu menu;
 
-	public WarpsMenuProvider(WarpMenu menu) {
-		this.menu = menu;
+	@Override
+	protected int getRows() {
+		return menu.getSize();
 	}
 
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-			.provider(this)
-			.rows(menu.getSize())
-			.title("&3Warps")
-			.build()
-			.open(player, page);
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 		switch (menu) {
-			case MAIN -> addCloseItem(contents);
+			case MAIN -> addCloseItem();
 			case SURVIVAL, LEGACY, MINIGAMES, OTHER -> contents.set(0, 0, ClickableItem.of(backItem(), e -> new WarpsMenuProvider(WarpMenu.MAIN).open(player)));
 			case BUILD_CONTESTS -> contents.set(0, 0, ClickableItem.of(backItem(), e -> new WarpsMenuProvider(WarpMenu.OTHER).open(player)));
 		}
@@ -53,12 +45,12 @@ public class WarpsMenuProvider extends InventoryProvider {
 						new WarpsMenuProvider(WarpMenu.SURVIVAL).open(player);
 				}));
 				contents.set(1, 3, ClickableItem.of(minigames, e -> new WarpsMenuProvider(WarpMenu.MINIGAMES).open(player)));
-				contents.set(1, 5, ClickableItem.of(creative, e -> warp(player, "creative")));
-				contents.set(1, 7, ClickableItem.of(skyblock, e -> command(player, "ob")));
+				contents.set(1, 5, ClickableItem.of(creative, e -> warp("creative")));
+				contents.set(1, 7, ClickableItem.of(skyblock, e -> command("ob")));
 				contents.set(2, 4, ClickableItem.of(other, e -> new WarpsMenuProvider(WarpMenu.OTHER).open(player)));
 				BuildContest buildContest = new BuildContestService().get0();
 				if (buildContest.isActive() && buildContest.getItemStack() != null)
-					contents.set(4, 4, ClickableItem.of(buildContest.getItemStack(), e -> warp(player, "buildcontest")));
+					contents.set(4, 4, ClickableItem.of(buildContest.getItemStack(), e -> warp("buildcontest")));
 			}
 			case SURVIVAL -> {
 				for (Warps.SurvivalWarp warp : Warps.SurvivalWarp.values()) {
@@ -92,9 +84,9 @@ public class WarpsMenuProvider extends InventoryProvider {
 				ItemBuilder parkour = new ItemBuilder(Material.IRON_BOOTS).name("&3Parkour");
 				ItemBuilder lobby = new ItemBuilder(Material.DIAMOND_SWORD).name("&3Minigame Lobby");
 				ItemBuilder arcade = new ItemBuilder(Material.LEVER).name("&3Arcade");
-				contents.set(1, 4, ClickableItem.of(lobby, e -> warp(player, "minigames")));
-				contents.set(1, 2, ClickableItem.of(parkour, e -> warp(player, "parkour")));
-				contents.set(1, 6, ClickableItem.of(arcade, e -> warp(player, "arcade")));
+				contents.set(1, 4, ClickableItem.of(lobby, e -> warp("minigames")));
+				contents.set(1, 2, ClickableItem.of(parkour, e -> warp("parkour")));
+				contents.set(1, 6, ClickableItem.of(arcade, e -> warp("arcade")));
 			}
 			case OTHER -> {
 				ItemBuilder leaderboards = new ItemBuilder(Material.QUARTZ_STAIRS).name("&3Podiums");
@@ -106,15 +98,15 @@ public class WarpsMenuProvider extends InventoryProvider {
 				ItemBuilder walkthrough = new ItemBuilder(Material.NETHER_STAR).name("&3Two Year Anniversary").lore("&e&lHistory Walkthrough", "&eCelebrating 2 years", "&eof Project Eden");
 				ItemBuilder bearfair = new ItemBuilder(Material.FIREWORK_ROCKET).name("&3Six Year Anniversary").lore("&e&lBear Fair", "&eCelebrating 6 years", "&eof Project Eden");
 				ItemBuilder buildcontests = new ItemBuilder(Material.CHEST).name("&3Past Build Contests");
-				contents.set(1, 1, ClickableItem.of(leaderboards, e -> warp(player, "podiums")));
-				contents.set(1, 3, ClickableItem.of(staffhall, e -> warp(player, "staffhall")));
-				contents.set(1, 5, ClickableItem.of(hoh, e -> command(player, "hallofhistory")));
-				contents.set(1, 7, ClickableItem.of(wog, e -> command(player, "wog")));
-				contents.set(2, 2, ClickableItem.of(banners, e -> warp(player, "banners")));
-				contents.set(2, 4, ClickableItem.of(storetesting, e -> warp(player, "store")));
+				contents.set(1, 1, ClickableItem.of(leaderboards, e -> warp("podiums")));
+				contents.set(1, 3, ClickableItem.of(staffhall, e -> warp("staffhall")));
+				contents.set(1, 5, ClickableItem.of(hoh, e -> command("hallofhistory")));
+				contents.set(1, 7, ClickableItem.of(wog, e -> command("wog")));
+				contents.set(2, 2, ClickableItem.of(banners, e -> warp("banners")));
+				contents.set(2, 4, ClickableItem.of(storetesting, e -> warp("store")));
 				contents.set(2, 6, ClickableItem.of(buildcontests, e -> new WarpsMenuProvider(WarpMenu.BUILD_CONTESTS).open(player)));
-				contents.set(3, 3, ClickableItem.of(walkthrough, e -> warp(player, "2y")));
-				contents.set(3, 5, ClickableItem.of(bearfair, e -> command(player, "bearfair21")));
+				contents.set(3, 3, ClickableItem.of(walkthrough, e -> warp("2y")));
+				contents.set(3, 5, ClickableItem.of(bearfair, e -> command("bearfair21")));
 			}
 			case BUILD_CONTESTS -> {
 				ItemBuilder contest0 = new ItemBuilder(Material.JACK_O_LANTERN).name("&3Halloween - 2015");
@@ -127,16 +119,16 @@ public class WarpsMenuProvider extends InventoryProvider {
 				ItemBuilder contest7 = new ItemBuilder(Material.PINK_WOOL).name("&3Valentine''s Day - 2019");
 				ItemBuilder contest8 = new ItemBuilder(Material.PINK_WOOL).name("&3Pirates - 2020");
 				ItemBuilder contest9 = new ItemBuilder(Material.PINK_WOOL).name("&3Pastry - 2021");
-				contents.set(1, 0, ClickableItem.of(contest0, e -> warp(player, "buildcontest0")));
-				contents.set(1, 1, ClickableItem.of(contest1, e -> warp(player, "buildcontest1")));
-				contents.set(1, 2, ClickableItem.of(contest2, e -> warp(player, "buildcontest2")));
-				contents.set(1, 3, ClickableItem.of(contest3, e -> warp(player, "buildcontest3")));
-				contents.set(1, 4, ClickableItem.of(contest4, e -> warp(player, "buildcontest4")));
-				contents.set(1, 5, ClickableItem.of(contest5, e -> warp(player, "buildcontest5")));
-				contents.set(1, 6, ClickableItem.of(contest6, e -> warp(player, "buildcontest6")));
-				contents.set(1, 7, ClickableItem.of(contest7, e -> warp(player, "buildcontest7")));
-				contents.set(1, 8, ClickableItem.of(contest8, e -> warp(player, "buildcontest8")));
-				contents.set(2, 0, ClickableItem.of(contest9, e -> warp(player, "buildcontest9")));
+				contents.set(1, 0, ClickableItem.of(contest0, e -> warp("buildcontest0")));
+				contents.set(1, 1, ClickableItem.of(contest1, e -> warp("buildcontest1")));
+				contents.set(1, 2, ClickableItem.of(contest2, e -> warp("buildcontest2")));
+				contents.set(1, 3, ClickableItem.of(contest3, e -> warp("buildcontest3")));
+				contents.set(1, 4, ClickableItem.of(contest4, e -> warp("buildcontest4")));
+				contents.set(1, 5, ClickableItem.of(contest5, e -> warp("buildcontest5")));
+				contents.set(1, 6, ClickableItem.of(contest6, e -> warp("buildcontest6")));
+				contents.set(1, 7, ClickableItem.of(contest7, e -> warp("buildcontest7")));
+				contents.set(1, 8, ClickableItem.of(contest8, e -> warp("buildcontest8")));
+				contents.set(2, 0, ClickableItem.of(contest9, e -> warp("buildcontest9")));
 			}
 		}
 	}

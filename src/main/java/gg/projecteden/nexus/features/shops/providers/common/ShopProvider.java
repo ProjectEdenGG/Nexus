@@ -3,10 +3,7 @@ package gg.projecteden.nexus.features.shops.providers.common;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.ItemClickData;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.features.menus.api.content.Pagination;
 import gg.projecteden.nexus.features.shops.Shops;
 import gg.projecteden.nexus.features.shops.providers.BrowseProductsProvider.ShulkerContentsProvider;
 import gg.projecteden.nexus.models.banker.BankerService;
@@ -21,7 +18,6 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
 import static gg.projecteden.nexus.utils.ItemUtils.getShulkerContents;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 public abstract class ShopProvider extends InventoryProvider {
 	protected final ShopService service = new ShopService();
@@ -31,44 +27,27 @@ public abstract class ShopProvider extends InventoryProvider {
 	@Getter
 	protected int page = 0;
 
-	protected int rows = 6;
-	protected int columns = 9;
-
-	public void open(Player viewer) {
+	@Override
+	public void open(Player player) {
 		try {
-			open(viewer, page);
+			open(player, page);
 		} catch (Exception ex) {
-			MenuUtils.handleException(viewer, Shops.PREFIX, ex);
+			MenuUtils.handleException(player, Shops.PREFIX, ex);
 		}
 	}
 
-	public void open(Player viewer, Pagination pagination) {
-		open(viewer, pagination.getPage());
-	}
-
-	abstract public void open(Player player, int page);
-
-	public void open(Player viewer, int page, ShopProvider provider, String title) {
+	public void open(Player player, int page) {
 		this.page = page;
-		this.shopGroup = ShopGroup.of(viewer);
-		try {
-			SmartInventory.builder()
-					.provider(provider)
-					.title(colorize(title))
-					.size(rows, columns)
-					.build()
-					.open(viewer, page);
-		} catch (Exception ex) {
-			MenuUtils.handleException(viewer, Shops.PREFIX, ex);
-		}
+		this.shopGroup = ShopGroup.of(player);
+		super.open(player, page);
 	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 		if (previousMenu == null)
-			addCloseItem(contents);
+			addCloseItem();
 		else
-			addBackItem(contents, e -> previousMenu.open(player));
+			addBackItem(e -> previousMenu.open(player));
 
 		contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.GOLD_INGOT).name("&e&lBalance")
 				.lore("&f" + new BankerService().getBalanceFormatted(player, shopGroup)).build()));

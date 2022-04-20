@@ -5,7 +5,7 @@ import gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.models.AdventChest;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
@@ -15,7 +15,6 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
@@ -26,6 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.isSecondChance;
 
+@Title("Advent")
 @NoArgsConstructor
 @RequiredArgsConstructor
 public class AdventProvider extends InventoryProvider {
@@ -41,18 +41,8 @@ public class AdventProvider extends InventoryProvider {
 	private boolean located;
 
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-			.provider(new AdventProvider(date))
-			.title("Advent")
-			.maxSize()
-			.build()
-			.open(player, page);
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
-		addCloseItem(contents);
+	public void init() {
+		addCloseItem();
 
 		user = service.get(player);
 		int day = date.getDayOfMonth();

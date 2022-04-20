@@ -3,7 +3,9 @@ package gg.projecteden.nexus.features.events.y2020.bearfair20.quests.arcademachi
 import gg.projecteden.nexus.features.events.y2020.bearfair20.islands.MinigameNightIsland;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.annotations.Uncloseable;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -19,6 +21,9 @@ import org.bukkit.inventory.ItemStack;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
+@Rows(5)
+@Uncloseable
+@Title("&3Arcade Machine")
 @NoArgsConstructor
 public class ArcadeMachineMenu extends InventoryProvider implements Listener {
 	private ItemStack[] items;
@@ -28,18 +33,7 @@ public class ArcadeMachineMenu extends InventoryProvider implements Listener {
 	private static final int[][] wireGroups = {{9, 18, 19}, {11}, {13}, {6, 7, 15}, {29}, {21}, {23, 24, 25}, {37}, {33, 42, 43}};
 
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-			.title("&3Arcade Machine")
-			.provider(this)
-			.rows(5)
-			.closeable(false)
-			.build()
-			.open(player);
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 		contents.set(40, ClickableItem.of(closeItem(), e -> {
 			for (int i : openSlots) {
 				if (!contents.get(i).get().getItem().getType().equals(Material.LIGHT_GRAY_STAINED_GLASS_PANE))

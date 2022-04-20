@@ -2,8 +2,8 @@ package gg.projecteden.nexus.features.minigames.mechanics;
 
 import com.sk89q.worldedit.world.block.BlockTypes;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.minigames.Minigames;
@@ -619,21 +619,13 @@ public final class Thimble extends TeamlessMechanic {
 
 	}
 
+	@Rows(2)
+	@Title("Select Your Concrete Block")
 	private static class ThimbleMenu extends InventoryProvider {
-		final Material[] CONCRETE_IDS = ((Thimble) MechanicType.THIMBLE.get()).getCONCRETE_IDS();
+		private static final Material[] CONCRETE_IDS = ((Thimble) MechanicType.THIMBLE.get()).getCONCRETE_IDS();
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-				.provider(this)
-				.title("Select Your Concrete Block")
-				.rows(2)
-				.build()
-				.open(player, page);
-		}
-
-		@Override
-		public void init(Player player, InventoryContents contents) {
+		public void init() {
 			Minigamer minigamer = PlayerManager.get(player);
 			Match match = minigamer.getMatch();
 			ThimbleMatchData matchData = match.getMatchData();

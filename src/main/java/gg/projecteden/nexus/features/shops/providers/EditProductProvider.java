@@ -4,7 +4,8 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.listeners.TemporaryListener;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.shops.ShopCommand;
 import gg.projecteden.nexus.features.shops.Shops;
 import gg.projecteden.nexus.features.shops.providers.common.ShopProvider;
@@ -37,23 +38,19 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.nexus.utils.StringUtils.pretty;
 
+@Rows(4)
+@Title("&0Edit Item")
 public class EditProductProvider extends ShopProvider {
 	private final Product product;
 
 	public EditProductProvider(ShopProvider previousMenu, Product product) {
 		this.previousMenu = previousMenu;
 		this.product = product;
-		this.rows = 4;
 	}
 
 	@Override
-	public void open(Player player, int page) {
-		open(player, page, this, "&0Edit Item");
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
-		super.init(player, contents);
+	public void init() {
+		super.init();
 
 		contents.set(0, 4, ClickableItem.of(product.getItemWithOwnLore().build(), e -> new ExchangeConfigProvider(this, product).open(player)));
 		if (product.getExchangeType() == ExchangeType.BUY) {

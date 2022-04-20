@@ -10,7 +10,6 @@ import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.mechanics.Mastermind;
 import gg.projecteden.nexus.features.minigames.mechanics.common.CheckpointMechanic;
 import gg.projecteden.nexus.features.minigames.menus.ArenaMenu;
-import gg.projecteden.nexus.features.minigames.menus.DeleteArenaMenu;
 import gg.projecteden.nexus.features.minigames.menus.PerkMenu;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
@@ -25,6 +24,7 @@ import gg.projecteden.nexus.features.minigames.utils.MinigameNight.NextMGN;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -347,11 +347,12 @@ public class MinigamesCommand extends CustomCommand {
 		minigamer.teleportAsync(location);
 	}
 
+	@Confirm
 	@Path("(delete|remove) <arena>")
 	@Permission(PERMISSION_MANAGE)
 	void remove(Arena arena) {
-		new DeleteArenaMenu(arena).open(player());
-
+		arena.delete();
+		send(PREFIX + "Arena &e" + arena.getName() + " &3deleted");
 	}
 
 	@Path("(reload|read) [arena]")

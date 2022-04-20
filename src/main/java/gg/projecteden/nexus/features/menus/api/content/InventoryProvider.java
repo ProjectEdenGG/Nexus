@@ -21,6 +21,9 @@ import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.ItemClickData;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.annotations.Uncloseable;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack.ResourcePackNumber;
 import gg.projecteden.nexus.features.shops.Shops;
@@ -29,6 +32,7 @@ import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Utils;
+import lombok.Setter;
 import me.lexikiq.HasPlayer;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -42,48 +46,91 @@ import java.util.function.Consumer;
 import static gg.projecteden.nexus.features.menus.SignMenuFactory.ARROWS;
 
 public abstract class InventoryProvider {
+	protected Player player;
+	@Setter
+	protected InventoryContents contents;
 
-	public abstract void init(Player player, InventoryContents contents);
+	public abstract void init();
 
 	@SuppressWarnings("unused")
-	public void update(Player player, InventoryContents contents) {}
+	public void update() {}
 
-	protected boolean isOpen(Player player) {
+	protected boolean isOpen() {
 		Optional<SmartInventory> inventory = SmartInvsPlugin.manager().getInventory(player);
 		return inventory.isPresent() && this.equals(inventory.get().getProvider());
+	}
+
+	public void close() {
+		SmartInvsPlugin.close(player);
+	}
+
+	public void refresh() {
+		open(player, contents.pagination());
 	}
 
 	public void open(Player player) {
 		open(player, 0);
 	}
 
-	public abstract void open(Player player, int page);
+	public void open(Player player, int page) {
+		this.player = player;
+		getInventory().build().open(player, page);
+	}
 
 	public final void open(HasPlayer player) {
 		open(player.getPlayer());
 	}
 
-	public final void open(HasPlayer player, Pagination page) {
-		open(player.getPlayer(), page.getPage());
+	public final void open(HasPlayer player, Pagination pagination) {
+		open(player.getPlayer(), pagination.getPage());
 	}
 
 	public final void open(HasPlayer player, int page) {
 		open(player.getPlayer(), page);
 	}
 
-	protected void addBackItem(InventoryContents contents, Consumer<ItemClickData> consumer) {
-		addBackItem(contents, 0, 0, consumer);
+	public SmartInventory.Builder getInventory() {
+		return SmartInventory.builder()
+			.provider(this)
+			.title(getTitle())
+			.rows(getRows())
+			.closeable(isCloseable());
 	}
 
-	protected void addBackItem(InventoryContents contents, int row, int col, Consumer<ItemClickData> consumer) {
+	public String getTitle() {
+		final Title annotation = Utils.getAnnotation(getClass(), Title.class);
+		if (annotation != null)
+			return annotation.value();
+
+		return "";
+	}
+
+	protected int getRows() {
+		final Rows annotation = Utils.getAnnotation(getClass(), Rows.class);
+		if (annotation != null)
+			return annotation.value();
+
+		return 6;
+	}
+
+	protected boolean isCloseable() {
+		final Uncloseable annotation = Utils.getAnnotation(getClass(), Uncloseable.class);
+		return annotation == null;
+	}
+
+	protected void addBackItem(Consumer<ItemClickData> consumer) {
+		addBackItem(0, 0, consumer);
+	}
+
+	protected void addBackItem(int row, int col, Consumer<ItemClickData> consumer) {
 		contents.set(row, col, ClickableItem.of(backItem(), consumer));
 	}
 
-	protected void addCloseItem(InventoryContents contents) {
-		addCloseItem(contents, 0, 0);
+	protected void addCloseItem() {
+		addCloseItem(0, 0);
 	}
 
-	protected void addCloseItem(InventoryContents contents, int row, int col) {
+	protected void addCloseItem(int row, int col) {
 		contents.set(row, col, ClickableItem.of(closeItem(), e -> e.getPlayer().closeInventory()));
 	}
 
@@ -95,83 +142,77 @@ public abstract class InventoryProvider {
 		return new ItemBuilder(Material.BARRIER).name("&cClose").build();
 	}
 
-	protected void warp(Player player, String warp) {
+	protected void warp(String warp) {
 		PlayerUtils.runCommand(player, "warp " + warp);
 	}
 
-	public void command(Player player, String command) {
+	public void command(String command) {
 		PlayerUtils.runCommand(player, command);
 	}
 
 	@CheckReturnValue
-	public final Paginator paginator(Player player, InventoryContents contents, List<ClickableItem> items) {
-		return paginator().player(player).contents(contents).items(items);
-	}
-
 	public final Paginator paginator() {
 		return new Paginator();
 	}
 
 	public class Paginator {
-		private Player player;
-		private boolean hasResourcePack;
-		private InventoryContents contents;
+		private Boolean hasResourcePack;
 		private List<ClickableItem> items;
 		private int perPage = 36;
 		private SlotPos previousSlot;
 		private SlotPos nextSlot;
 		private SlotIterator iterator;
 
-		public Paginator player(Player player) {
-			this.player = player;
-			this.hasResourcePack = ResourcePack.isEnabledFor(player);
-			return this;
-		}
-
+		@CheckReturnValue
 		public Paginator hasResourcePack(boolean hasResourcePack) {
 			this.hasResourcePack = hasResourcePack;
 			return this;
 		}
 
-		public Paginator contents(InventoryContents contents) {
-			this.contents = contents;
-			return this;
-		}
-
+		@CheckReturnValue
 		public Paginator items(List<ClickableItem> items) {
 			this.items = items;
 			return this;
 		}
 
+		@CheckReturnValue
 		public Paginator perPage(int perPage) {
 			this.perPage = perPage;
 			return this;
 		}
 
+		@CheckReturnValue
 		public Paginator previousSlot(int row, int column) {
 			return previousSlot(SlotPos.of(row, column));
 		}
 
+		@CheckReturnValue
 		public Paginator previousSlot(SlotPos slot) {
 			this.previousSlot = slot;
 			return this;
 		}
 
+		@CheckReturnValue
 		public Paginator nextSlot(int row, int column) {
 			return nextSlot(SlotPos.of(row, column));
 		}
 
+		@CheckReturnValue
 		public Paginator nextSlot(SlotPos slot) {
 			this.nextSlot = slot;
 			return this;
 		}
 
+		@CheckReturnValue
 		public Paginator iterator(SlotIterator iterator) {
 			this.iterator = iterator;
 			return this;
 		}
 
 		public void build() {
+			if (hasResourcePack == null)
+				this.hasResourcePack = ResourcePack.isEnabledFor(player);
+
 			if (previousSlot == null)
 				previousSlot = SlotPos.of(contents.inventory().getRows() - 1, 0);
 			if (nextSlot == null)
@@ -215,7 +256,7 @@ public abstract class InventoryProvider {
 			if (!page.isFirst())
 				contents.set(previousSlot, ClickableItem.of(previous.build(), e -> {
 					if (e.isRightClick())
-						jumpToPage(player, page.getPage());
+						jumpToPage(page.getPage());
 					else
 						open(player, page.previous().getPage());
 				}));
@@ -223,13 +264,13 @@ public abstract class InventoryProvider {
 			if (!page.isLast())
 				contents.set(nextSlot, ClickableItem.of(next.build(), e -> {
 					if (e.isRightClick())
-						jumpToPage(player, page.getPage());
+						jumpToPage(page.getPage());
 					else
 						open(player, page.next().getPage());
 				}));
 		}
 
-		private void jumpToPage(Player player, int currentPage) {
+		private void jumpToPage(int currentPage) {
 			Nexus.getSignMenuFactory()
 				.lines("", ARROWS, "Enter a", "page number")
 				.prefix(Shops.PREFIX)

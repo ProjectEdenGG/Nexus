@@ -3,8 +3,7 @@ package gg.projecteden.nexus.features.safecracker.menus;
 import gg.projecteden.annotations.Disabled;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.safecracker.SafeCracker;
 import gg.projecteden.nexus.models.safecracker.SafeCrackerEvent;
@@ -17,12 +16,12 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 
 import static gg.projecteden.nexus.features.menus.MenuUtils.openAnvilMenu;
 
+@Rows(3)
 @Disabled
 @RequiredArgsConstructor
 public class SafeCrackerNPCEditProvider extends InventoryProvider {
@@ -30,18 +29,13 @@ public class SafeCrackerNPCEditProvider extends InventoryProvider {
 	private final SafeCrackerEvent.SafeCrackerNPC npc;
 
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-			.provider(this)
-			.title("SafeCracker Admin - " + npc.getName())
-			.rows(3)
-			.build()
-			.open(player, page);
+	public String getTitle() {
+		return "SafeCracker Admin - " + npc.getName();
 	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
-		addBackItem(contents, e -> new SafeCrackerAdminProvider().open(player));
+	public void init() {
+		addBackItem(e -> new SafeCrackerAdminProvider().open(player));
 
 		contents.set(0, 4, ClickableItem.empty(new ItemBuilder(Material.BOOK).name("&e" + npc.getName()).lore("&3Id: &e" + npc.getId()).build()));
 

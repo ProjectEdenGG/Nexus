@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.recipes.menu;
 
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
@@ -10,7 +10,6 @@ import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.RecipeChoice.ExactChoice;
@@ -23,6 +22,8 @@ import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.utils.RandomUtils.randomElement;
 
+@Rows(3)
+@Title("Custom Recipes")
 @RequiredArgsConstructor
 public class CustomRecipesMenu extends InventoryProvider {
 	private final RecipeType type;
@@ -39,20 +40,10 @@ public class CustomRecipesMenu extends InventoryProvider {
 	}
 
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-			.title("Custom Recipes")
-			.rows(3)
-			.provider(this)
-			.build()
-			.open(player, page);
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 		switch (type) {
 			case MAIN -> {
-				addCloseItem(contents);
+				addCloseItem();
 				int row = 1;
 				int column = 1;
 				for (RecipeType type : RecipeType.values()) {
@@ -77,17 +68,15 @@ public class CustomRecipesMenu extends InventoryProvider {
 				for (int slot : MATRIX_SLOTS)
 					contents.set(slot, ClickableItem.NONE);
 
-				addBackItem(contents, e -> new CustomRecipesMenu(RecipeType.MAIN).open(player));
+				addBackItem(e -> new CustomRecipesMenu(RecipeType.MAIN).open(player));
 			}
 		}
 
 		if (type.isFolder()) {
 			if (recipe == null) {
-				addBackItem(contents, e -> new CustomRecipesMenu(RecipeType.MAIN).open(player));
+				addBackItem(e -> new CustomRecipesMenu(RecipeType.MAIN).open(player));
 
 				paginator()
-					.player(player)
-					.contents(contents)
 					.items(type.getRecipes().stream()
 						.filter(nexusRecipe -> {
 							if (nexusRecipe.getPermission() != null)
@@ -100,7 +89,7 @@ public class CustomRecipesMenu extends InventoryProvider {
 					.nextSlot(0, 6)
 					.build();
 			} else {
-				addBackItem(contents, e -> new CustomRecipesMenu(type).open(player));
+				addBackItem(e -> new CustomRecipesMenu(type).open(player));
 				addRecipeToMenu(contents, recipe);
 			}
 		}
@@ -110,7 +99,7 @@ public class CustomRecipesMenu extends InventoryProvider {
 	private int index = 0;
 
 	@Override
-	public void update(Player player, InventoryContents contents) {
+	public void update() {
 		if (type == RecipeType.MAIN || type.isFolder()) return;
 
 		ticks++;

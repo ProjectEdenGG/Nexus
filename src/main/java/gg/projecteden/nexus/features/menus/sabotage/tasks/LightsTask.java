@@ -1,29 +1,21 @@
 package gg.projecteden.nexus.features.menus.sabotage.tasks;
 
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.matchdata.SabotageMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.Task;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.taskpartdata.LightsTaskPartData;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import lombok.Getter;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Rows(3)
 public class LightsTask extends AbstractTaskMenu {
-	@Getter
-	private final SmartInventory inventory = SmartInventory.builder()
-			.title("")
-			.rows(3)
-			.provider(this)
-			.build();
-
 	private final LightsTaskPartData data;
+
 	public LightsTask(Task task) {
 		super(task);
 		task.nextPart();
@@ -31,7 +23,7 @@ public class LightsTask extends AbstractTaskMenu {
 	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 		AtomicInteger taskId = new AtomicInteger();
 		Match match = PlayerManager.get(player).getMatch();
 		SabotageMatchData matchData = match.getMatchData();
@@ -50,4 +42,5 @@ public class LightsTask extends AbstractTaskMenu {
 			}
 		}));
 	}
+
 }

@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.custombenches.DyeStation.DyeStationMenu;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
@@ -192,6 +193,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 				Tasks.wait(1, () -> user.sendResetPacket(type));
 	}
 
+	@Title("Costumes")
 	@AllArgsConstructor
 	public abstract static class CostumeMenu extends InventoryProvider {
 		protected final CostumeUserService service = new CostumeUserService();
@@ -203,21 +205,11 @@ public class CostumeCommand extends CustomCommand implements Listener {
 		}
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-				.provider(this)
-				.maxSize()
-				.title("Costumes")
-				.build()
-				.open(player, page);
-		}
-
-		@Override
-		public void init(Player player, InventoryContents contents) {
+		public void init() {
 			if (previousMenu == null)
-				addCloseItem(contents);
+				addCloseItem();
 			else
-				addBackItem(contents, e -> previousMenu.open(player));
+				addBackItem(e -> previousMenu.open(player));
 			final CostumeUser user = service.get(player);
 
 			init(user, contents);
@@ -266,7 +258,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 					items.add(formatCostume(user, costume, contents));
 			}
 
-			paginator(player, contents, items).build();
+			paginator().items(items).build();
 		}
 
 		abstract protected CostumeMenu newMenu(CostumeMenu previousMenu, CustomModelFolder subfolder);

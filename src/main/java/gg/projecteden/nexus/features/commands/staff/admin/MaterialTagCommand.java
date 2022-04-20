@@ -1,8 +1,6 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
@@ -18,7 +16,6 @@ import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
 import org.bukkit.Material;
 import org.bukkit.Tag;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -64,18 +61,13 @@ public class MaterialTagCommand extends CustomCommand {
 		}
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-					.provider(this)
-					.title("&3" + StringUtils.camelCase(materialTag.getKey().getKey()))
-					.maxSize()
-					.build()
-					.open(player, page);
+		public String getTitle() {
+			return "&3" + StringUtils.camelCase(materialTag.getKey().getKey());
 		}
 
 		@Override
-		public void init(Player player, InventoryContents contents) {
-			addCloseItem(contents);
+		public void init() {
+			addCloseItem();
 
 			List<ClickableItem> items = new ArrayList<>();
 			materialTag.getValues().forEach(material -> {
@@ -88,7 +80,7 @@ public class MaterialTagCommand extends CustomCommand {
 				items.add(ClickableItem.empty(item));
 			});
 
-			paginator(player, contents, items).build();
+			paginator().items(items).build();
 		}
 
 	}

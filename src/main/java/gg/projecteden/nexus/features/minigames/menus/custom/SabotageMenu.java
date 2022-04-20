@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.minigames.menus.custom;
 
 import gg.projecteden.nexus.features.menus.MenuUtils.AnvilMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.sabotage.ArenaTasksMenu;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.mechanics.Sabotage;
@@ -12,7 +11,6 @@ import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.arenas.SabotageArena;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 
 @CustomMechanicSettings(Sabotage.class)
 public class SabotageMenu extends ICustomMechanicMenu {
@@ -23,7 +21,7 @@ public class SabotageMenu extends ICustomMechanicMenu {
 	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 		contents.set(0, 0, ClickableItem.of(backItem(), e -> new ArenaMenu(arena).open(player)));
 
 		contents.set(1, 0, ClickableItem.of(new ItemBuilder(Material.CLOCK).name("&eKill Cooldown").lore("", "&eCurrent value: &3" + arena.getKillCooldown() + " seconds").build(),

@@ -1,9 +1,8 @@
 package gg.projecteden.nexus.features.store.perks;
 
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -93,23 +92,14 @@ public class InvisibleArmorCommand extends CustomCommand implements Listener {
 	}
 
 	@RequiredArgsConstructor
+	@Title("&3Invisible Armour")
 	private class InvisibleArmorProvider extends InventoryProvider {
 		private final InvisibleArmorService service = new InvisibleArmorService();
 		private final InvisibleArmor user;
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-				.provider(this)
-				.maxSize()
-				.title(ChatColor.DARK_AQUA + "Invisible Armour")
-				.build()
-				.open(player, page);
-		}
-
-		@Override
-		public void init(Player player, InventoryContents contents) {
-			addCloseItem(contents);
+		public void init() {
+			addCloseItem();
 
 			for (ArmorSlot slot : ArmorSlot.values()) {
 				final int row = slot.ordinal() + 1;

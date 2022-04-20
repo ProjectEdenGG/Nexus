@@ -4,7 +4,7 @@ import gg.projecteden.exceptions.EdenException;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.ItemClickData;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotIterator;
@@ -59,15 +59,15 @@ public abstract class MenuUtils {
 		return slotIterator;
 	}
 
-	public static int getRows(int items) {
-		return getRows(items, 2, 9);
+	public static int calculateRows(int items) {
+		return calculateRows(items, 2, 9);
 	}
 
-	public static int getRows(int items, int extraRows) {
-		return getRows(items, extraRows, 9);
+	public static int calculateRows(int items, int extraRows) {
+		return calculateRows(items, extraRows, 9);
 	}
 
-	public static int getRows(int items, int extraRows, int itemsAcross) {
+	public static int calculateRows(int items, int extraRows, int itemsAcross) {
 		return (int) Math.min(6, Math.ceil(Integer.valueOf(items).doubleValue() / itemsAcross) + extraRows);
 	}
 
@@ -190,6 +190,7 @@ public abstract class MenuUtils {
 		}
 	}
 
+	@Rows(3)
 	@Builder(buildMethodName = "_build")
 	@AllArgsConstructor
 	public static class ConfirmationMenu extends InventoryProvider {
@@ -222,7 +223,7 @@ public abstract class MenuUtils {
 		}
 
 		@Override
-		public void init(Player player, InventoryContents contents) {
+		public void init() {
 			ItemBuilder cancelItem = new ItemBuilder(Material.RED_CONCRETE).name(cancelText).lore(cancelLore);
 			ItemBuilder confirmItem = new ItemBuilder(Material.LIME_CONCRETE).name(confirmText).lore(confirmLore);
 
@@ -255,17 +256,6 @@ public abstract class MenuUtils {
 				}
 			}));
 		}
-
-		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-				.title(title)
-				.provider(this)
-				.rows(3)
-				.build()
-				.open(player);
-		}
-
 	}
 
 	public static void formatInventoryContents(InventoryContents contents, ItemStack[] inventory) {

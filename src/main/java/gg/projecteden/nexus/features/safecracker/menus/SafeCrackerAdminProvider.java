@@ -2,8 +2,7 @@ package gg.projecteden.nexus.features.safecracker.menus;
 
 import gg.projecteden.annotations.Disabled;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.safecracker.NPCHandler;
 import gg.projecteden.nexus.models.safecracker.SafeCrackerEvent;
@@ -16,7 +15,6 @@ import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -26,22 +24,13 @@ import java.util.Map;
 import static gg.projecteden.nexus.features.menus.MenuUtils.openAnvilMenu;
 
 @Disabled
+@Title("SafeCracker Admin")
 public class SafeCrackerAdminProvider extends InventoryProvider {
 	private final SafeCrackerEventService service = new SafeCrackerEventService();
 	private final SafeCrackerEvent.SafeCrackerGame game = service.getActiveEvent();
 
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-			.provider(this)
-			.title("SafeCracker Admin")
-			.maxSize()
-			.build()
-			.open(player, page);
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 		if (game == null) {
 			openAnvilMenu(player, "New Game...", (player1, response) -> {
 				service.get0().getGames().put(response, new SafeCrackerEvent.SafeCrackerGame(response, true, LocalDateTime.now(), "", "", new HashMap<>()));
@@ -52,7 +41,7 @@ public class SafeCrackerAdminProvider extends InventoryProvider {
 			}, (player1) -> player.closeInventory());
 		}
 
-		addCloseItem(contents);
+		addCloseItem();
 
 		contents.set(0, 8, ClickableItem.of(new ItemBuilder(Material.ENCHANTED_BOOK).name("&e" + game.getName())
 				.lore("&7Click to change the").lore("&7active game").build(), e -> {

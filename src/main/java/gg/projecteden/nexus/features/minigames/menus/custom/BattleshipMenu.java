@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.minigames.menus.custom;
 
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.mechanics.Battleship;
 import gg.projecteden.nexus.features.minigames.menus.ArenaMenu;
@@ -9,7 +8,6 @@ import gg.projecteden.nexus.features.minigames.menus.annotations.CustomMechanicS
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.arenas.BattleshipArena;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 
 @CustomMechanicSettings(Battleship.class)
 public class BattleshipMenu extends ICustomMechanicMenu {
@@ -20,7 +18,7 @@ public class BattleshipMenu extends ICustomMechanicMenu {
 	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 		contents.set(0, 0, ClickableItem.of(backItem(), e -> new ArenaMenu(arena).open(player)));
 
 		contents.set(1, 0, ClickableItem.empty(Material.BLACK_CONCRETE));

@@ -4,7 +4,8 @@ import com.google.common.util.concurrent.AtomicDouble;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.InventoryListener;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -15,31 +16,30 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.utils.MathUtils;
-import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.jetbrains.annotations.NotNull;
 
 import static gg.projecteden.nexus.utils.StringUtils.plural;
 
+@Rows(2)
+@Title("Submit Scan")
 public class MedicalScanTask extends AbstractTaskMenu {
-	public MedicalScanTask(Task task) {
-		super(task);
-	}
 	private int taskId = -1;
 	private Match.MatchTasks tasks;
 
-	@Getter
-	private final SmartInventory inventory = SmartInventory.builder()
-			.title("Submit Scan")
-			.rows(2)
-			.provider(this)
-			.listener(new InventoryListener<>(InventoryCloseEvent.class, this::onClose))
-			.build();
+	public MedicalScanTask(Task task) {
+		super(task);
+	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
+	public @NotNull SmartInventory.Builder getInventory() {
+		return super.getInventory().listener(new InventoryListener<>(InventoryCloseEvent.class, this::onClose));
+	}
+
+	@Override
+	public void init() {
 		Minigamer minigamer = PlayerManager.get(player);
 		Match match = minigamer.getMatch();
 		SabotageMatchData data = match.getMatchData();
@@ -93,4 +93,5 @@ public class MedicalScanTask extends AbstractTaskMenu {
 		if (taskId != -1)
 			tasks.cancel(taskId);
 	}
+
 }

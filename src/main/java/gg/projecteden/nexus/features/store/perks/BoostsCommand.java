@@ -4,8 +4,7 @@ import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
 import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -38,7 +37,6 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.entity.ExperienceOrb;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -170,20 +168,11 @@ public class BoostsCommand extends CustomCommand implements Listener {
 				+ " boost for " + Timespan.ofSeconds(boost.getDuration()).format(FormatType.LONG));
 	}
 
+	@Title("Boosts")
 	@AllArgsConstructor
 	private static class BoostMenu extends InventoryProvider {
 		private final Boostable type;
 		private final BoostMenu previousMenu;
-
-		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-					.provider(this)
-					.title("Boosts")
-					.maxSize()
-					.build()
-					.open(player, page);
-		}
 
 		public BoostMenu() {
 			this(null);
@@ -195,16 +184,16 @@ public class BoostsCommand extends CustomCommand implements Listener {
 		}
 
 		@Override
-		public void init(Player player, InventoryContents contents) {
+		public void init() {
 			final BoostConfigService configService = new BoostConfigService();
 			final BoostConfig config = configService.get0();
 			final BoosterService service = new BoosterService();
 			final Booster booster = service.get(player);
 
 			if (previousMenu == null)
-				addCloseItem(contents);
+				addCloseItem();
 			else
-				addBackItem(contents, e -> previousMenu.open(player));
+				addBackItem(e -> previousMenu.open(player));
 
 			List<ClickableItem> items = new ArrayList<>();
 
@@ -241,7 +230,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 				}
 
 
-			paginator(player, contents, items).build();
+			paginator().items(items).build();
 		}
 
 	}

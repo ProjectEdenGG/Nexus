@@ -7,8 +7,7 @@ import com.mongodb.lang.Nullable;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.mcmmo.menus.McMMOResetProvider;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -284,26 +283,14 @@ public class CouponCommand extends CustomCommand implements Listener {
 			couponEvent.handle(event);
 	}
 
+	@Title("Select McMMO Skill")
+	@AllArgsConstructor
 	public static class McMMOLevelCouponProvider extends InventoryProvider {
 		private static final int MAX_LEVEL = 200;
-		int levels;
-
-		public McMMOLevelCouponProvider(int levels) {
-			this.levels = levels;
-		}
+		private int levels;
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-				.provider(this)
-				.title("Select McMMO Skill")
-				.maxSize()
-				.build()
-				.open(player, page);
-		}
-
-		@Override
-		public void init(Player player, InventoryContents contents) {
+		public void init() {
 			ItemStack coupon = player.getInventory().getItemInMainHand();
 			McMMOPlayer mcmmoPlayer = UserManager.getPlayer(player);
 			for (McMMOResetProvider.ResetSkillType skill : McMMOResetProvider.ResetSkillType.values()) {

@@ -4,7 +4,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.listeners.TemporaryListener;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.shops.Shops;
 import gg.projecteden.nexus.features.shops.providers.common.ShopProvider;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -29,8 +29,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
+@Title("&0Your shop")
 public class YourShopProvider extends ShopProvider {
 
 	public YourShopProvider(ShopProvider previousMenu) {
@@ -38,13 +38,8 @@ public class YourShopProvider extends ShopProvider {
 	}
 
 	@Override
-	public void open(Player player, int page) {
-		open(player, page, this, "&0Your shop");
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
-		super.init(player, contents);
+	public void init() {
+		super.init();
 
 		Shop shop = new ShopService().get(player);
 
@@ -103,24 +98,24 @@ public class YourShopProvider extends ShopProvider {
 			}));
 		});
 
-		paginator(player, contents, items).build();
+		paginator().items(items).build();
 	}
 
+	@Title("Collect Items")
 	public static class CollectItemsProvider extends ShopProvider implements TemporaryListener {
-		private final static String TITLE = colorize("&0Collect Items");
 		@Getter
 		private Player player;
-		private final ShopProvider previousMenu;
 
 		public CollectItemsProvider(ShopProvider previousMenu) {
 			this.previousMenu = previousMenu;
 		}
 
+		@Override
 		public void open(Player player, int page) {
 			this.player = player;
 
 			final int size = 54;
-			Inventory inv = Bukkit.createInventory(null, size, TITLE);
+			Inventory inv = Bukkit.createInventory(null, size, getTitle());
 
 			ShopService service = new ShopService();
 			Shop shop = service.get(player);
@@ -145,7 +140,7 @@ public class YourShopProvider extends ShopProvider {
 		@EventHandler
 		public void onChestClose(InventoryCloseEvent event) {
 			if (event.getInventory().getHolder() != null) return;
-			if (!Utils.equalsInvViewTitle(event.getView(), TITLE)) return;
+			if (!Utils.equalsInvViewTitle(event.getView(), getTitle())) return;
 			if (!event.getPlayer().equals(player)) return;
 
 			ShopService service = new ShopService();

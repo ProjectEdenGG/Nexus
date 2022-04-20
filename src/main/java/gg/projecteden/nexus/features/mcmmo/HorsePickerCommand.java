@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.mcmmo;
 
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -67,20 +67,11 @@ public class HorsePickerCommand extends CustomCommand {
 		private final String name;
 	}
 
+	@Title("&3Color Picker")
+	@Rows(3)
 	public class HorsePickerColorProvider extends InventoryProvider {
-
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-				.provider(this)
-				.title("&3Color Picker")
-				.rows(3)
-				.build()
-				.open(player, page);
-		}
-
-		@Override
-		public void init(Player player, InventoryContents contents) {
+		public void init() {
 			int column = 1;
 			for (HorseColor color : HorseColor.values()) {
 				contents.set(1, column++, ClickableItem.of(color.getMaterial(), color.getColor() + camelCase(color.getName()), e ->
@@ -89,22 +80,18 @@ public class HorsePickerCommand extends CustomCommand {
 		}
 	}
 
+	@Rows(3)
 	@AllArgsConstructor
 	public class HorsePickerMarkingsProvider extends InventoryProvider {
 		private final HorseColor color;
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-				.provider(this)
-				.title("&3Markings Picker (" + color.getColor() + StringUtils.camelCase(color.getName()) + "&3)")
-				.rows(3)
-				.build()
-				.open(player, page);
+		public String getTitle() {
+			return "&3Markings Picker (" + color.getColor() + StringUtils.camelCase(color.getName()) + "&3)";
 		}
 
 		@Override
-		public void init(Player player, InventoryContents contents) {
+		public void init() {
 			int column = 2;
 			for (HorseMarking marking : HorseMarking.values()) {
 				contents.set(1, column++, ClickableItem.of(marking.getMaterial(), marking.getName(), e -> {

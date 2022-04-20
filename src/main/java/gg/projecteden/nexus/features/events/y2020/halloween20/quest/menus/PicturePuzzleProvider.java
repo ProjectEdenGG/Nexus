@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.events.y2020.halloween20.quest.menus;
 import gg.projecteden.nexus.features.events.y2020.halloween20.Halloween20;
 import gg.projecteden.nexus.features.events.y2020.halloween20.models.ComboLockNumber;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
+@Title("Picture Puzzle")
 public class PicturePuzzleProvider extends InventoryProvider {
 
 	private final List<Integer> correct = new ArrayList<>();
@@ -26,16 +27,6 @@ public class PicturePuzzleProvider extends InventoryProvider {
 
 	public PicturePuzzleProvider(ComboLockNumber number) {
 		this.number = number;
-	}
-
-	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-			.provider(new PicturePuzzleProvider(number))
-			.title("Picture Puzzle")
-			.maxSize()
-			.build()
-			.open(player, page);
 	}
 
 	public void setYellow(SlotPos pos, InventoryContents contents, Player player) {
@@ -82,7 +73,7 @@ public class PicturePuzzleProvider extends InventoryProvider {
 	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 		for (int i = 0; i < 10; i++) {
 			int random;
 			do {

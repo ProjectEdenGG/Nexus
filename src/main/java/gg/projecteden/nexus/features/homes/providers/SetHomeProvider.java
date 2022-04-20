@@ -4,16 +4,16 @@ import gg.projecteden.nexus.features.homes.HomesFeature;
 import gg.projecteden.nexus.features.homes.HomesMenu;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.models.home.Home;
 import gg.projecteden.nexus.models.home.HomeOwner;
 import gg.projecteden.nexus.models.home.HomeService;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.World.Environment;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
@@ -23,26 +23,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
+@Rows(5)
+@Title("&3Set a new home")
+@RequiredArgsConstructor
 public class SetHomeProvider extends InventoryProvider {
-	private HomeOwner homeOwner;
-
-	public SetHomeProvider(HomeOwner homeOwner) {
-		this.homeOwner = homeOwner;
-	}
+	private final HomeOwner homeOwner;
 
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-			.provider(this)
-			.rows(5)
-			.title("&3Set a new home")
-			.build()
-			.open(homeOwner.getOnlinePlayer(), page);
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
-		addBackItem(contents, e -> HomesMenu.edit(homeOwner));
+	public void init() {
+		addBackItem(e -> HomesMenu.edit(homeOwner));
 
 		contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.BOOK)
 			.name("&eInfo")

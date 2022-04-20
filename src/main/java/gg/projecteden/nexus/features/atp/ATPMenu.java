@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.atp;
 
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.warps.Warps.LegacySurvivalWarp;
 import gg.projecteden.nexus.features.warps.Warps.SurvivalWarp;
@@ -14,10 +14,11 @@ import gg.projecteden.nexus.models.warps.Warps.Warp;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.NoArgsConstructor;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
+@Rows(5)
+@Title("&3Animal Teleport Pens")
 @NoArgsConstructor
 public class ATPMenu extends InventoryProvider {
 	private ATPGroup group;
@@ -33,17 +34,7 @@ public class ATPMenu extends InventoryProvider {
 	}
 
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-				.rows(5)
-				.title("&3Animal Teleport Pens")
-				.provider(this)
-				.build()
-				.open(player);
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 		contents.set(0, 0, ClickableItem.of(closeItem(), e -> player.closeInventory()));
 
 		if (group.equals(ATPGroup.LEGACY)) {
@@ -73,24 +64,14 @@ public class ATPMenu extends InventoryProvider {
 
 		contents.set(1, 7, ClickableItem.of(new ItemBuilder(Material.OAK_SIGN).name("&3Homes").lore("&eClick to teleport to", "&eone of your homes."), e ->
 			new ATPHomesMenuProvider().open(player)));
-
 	}
 
+	@Title("ATP Homes")
 	public class ATPHomesMenuProvider extends InventoryProvider {
 		private final HomeService service = new HomeService();
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-				.provider(this)
-				.title("ATP Homes")
-				.maxSize()
-				.build()
-				.open(player);
-		}
-
-		@Override
-		public void init(Player player, InventoryContents contents) {
+		public void init() {
 			HomeOwner owner = service.get(player.getUniqueId());
 
 			contents.set(0, 0, ClickableItem.of(backItem(), e -> new ATPMenu(group).open(player)));

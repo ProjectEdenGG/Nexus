@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.events.store.providers.purchasable;
 import gg.projecteden.nexus.features.events.store.EventStoreItem;
 import gg.projecteden.nexus.features.events.store.providers.EventStoreMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.particles.effects.WingsEffect.WingStyle;
 import gg.projecteden.nexus.models.particle.ParticleOwner;
 import gg.projecteden.nexus.models.particle.ParticleService;
@@ -23,14 +24,10 @@ import static gg.projecteden.nexus.features.events.Events.STORE_PREFIX;
 import static gg.projecteden.nexus.features.menus.MenuUtils.handleException;
 
 @AllArgsConstructor
+@Title("Event Store - Wings")
 public class EventStoreWingsProvider extends EventStoreMenu {
 	@Getter
 	private final EventStoreMenu previousMenu;
-
-	@Override
-	protected String getTitle() {
-		return "Event Store - Wings";
-	}
 
 	@NotNull
 	@Override

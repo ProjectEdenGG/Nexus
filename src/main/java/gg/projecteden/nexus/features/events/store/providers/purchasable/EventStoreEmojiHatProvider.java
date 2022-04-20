@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.events.store.providers.purchasable;
 import gg.projecteden.nexus.features.events.store.EventStoreItem;
 import gg.projecteden.nexus.features.events.store.providers.EventStoreMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.store.perks.emojihats.EmojiHat;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.AllArgsConstructor;
@@ -19,14 +20,10 @@ import static gg.projecteden.nexus.utils.PlayerUtils.send;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @AllArgsConstructor
+@Title("Event Store - Emoji Hats")
 public class EventStoreEmojiHatProvider extends EventStoreMenu {
 	@Getter
 	private final EventStoreMenu previousMenu;
-
-	@Override
-	protected String getTitle() {
-		return "Event Store - Emoji Hats";
-	}
 
 	@NotNull
 	@Override

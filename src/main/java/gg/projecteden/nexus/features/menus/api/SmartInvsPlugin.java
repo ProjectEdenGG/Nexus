@@ -16,15 +16,31 @@
 
 package gg.projecteden.nexus.features.menus.api;
 
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.framework.features.Feature;
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import org.bukkit.entity.Player;
+
+import java.util.Optional;
 
 public class SmartInvsPlugin extends Feature {
 
 	@Getter
 	@Accessors(fluent = true)
 	private static InventoryManager manager;
+
+	public static void close(Player player) {
+		manager().getInventory(player).ifPresent(inv -> inv.close(player));
+	}
+
+	public static boolean isOpen(Class<? extends InventoryProvider> menu, Player player) {
+		final Optional<SmartInventory> inv = manager().getInventory(player);
+		if (inv.isEmpty())
+			return false;
+
+		return menu.equals(inv.get().getProvider().getClass());
+	}
 
 	@Override
 	public void onStart() {

@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.minigames.menus.perks;
 
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.minigames.models.perks.Perk;
 import gg.projecteden.nexus.features.minigames.models.perks.PerkCategory;
@@ -13,26 +13,23 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import static gg.projecteden.nexus.features.menus.MenuUtils.getRows;
+import static gg.projecteden.nexus.features.menus.MenuUtils.calculateRows;
 
+@Title("Your Collectibles")
 public class PlayerPerksMenu extends CommonPerksMenu {
+
 	public PlayerPerksMenu(PerkCategory category) {
 		super(category);
 	}
 
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-			.provider(this)
-			.title("Your Collectibles")
-			.rows(Math.max(3, getRows(service.get(player).getPurchasedPerkTypesByCategory(category).size(), 1)))
-			.build()
-			.open(player, page);
+	protected int getRows() {
+		return Math.max(3, calculateRows(service.get(player).getPurchasedPerkTypesByCategory(category).size(), 1));
 	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
-		addBackItem(contents, $ -> new CategoryMenu<>(getClass()).open(player));
+	public void init() {
+		addBackItem($ -> new CategoryMenu<>(getClass()).open(player));
 
 		PerkOwner perkOwner = service.get(player);
 
@@ -42,7 +39,8 @@ public class PlayerPerksMenu extends CommonPerksMenu {
 		perkSortWrappers.sort(Comparator.comparing(PerkSortWrapper::getPrice).thenComparing(PerkSortWrapper::getName));
 		List<PerkType> perks = perkSortWrappers.stream().map(PerkSortWrapper::getPerkType).toList();
 
-		paginator(player, contents, new ArrayList<>() {{
+		// insert whitespace
+		paginator().items(new ArrayList<ClickableItem>() {{
 			perks.forEach(perkType -> {
 				boolean enabled = perkOwner.getPurchasedPerks().get(perkType);
 				Perk perk = perkType.getPerk();

@@ -1,8 +1,9 @@
 package gg.projecteden.nexus.features.homes.providers;
 
 import gg.projecteden.nexus.features.homes.HomesMenu;
+import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.trust.providers.TrustProvider;
@@ -10,8 +11,8 @@ import gg.projecteden.nexus.models.home.HomeOwner;
 import gg.projecteden.nexus.models.home.HomeService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,31 +20,20 @@ import java.util.List;
 import static gg.projecteden.nexus.features.homes.HomesMenu.getAccessListNames;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
+@Title("&3Home Editor")
+@RequiredArgsConstructor
 public class EditHomesProvider extends InventoryProvider {
-	private HomeOwner homeOwner;
-	private HomeService service = new HomeService();
+	private final HomeOwner homeOwner;
+	private final HomeService service = new HomeService();
 
-	public EditHomesProvider(HomeOwner homeOwner) {
-		this.homeOwner = homeOwner;
-	}
-
-	private void refresh() {
-		HomesMenu.edit(homeOwner);
+	@Override
+	protected int getRows() {
+		return MenuUtils.calculateRows(homeOwner.getHomes().size(), 2);
 	}
 
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-				.provider(this)
-				.rows((int) Math.min(6, Math.ceil(Integer.valueOf(homeOwner.getHomes().size()).doubleValue() / 9) + 2))
-				.title("&3Home Editor")
-				.build()
-				.open(homeOwner.getOnlinePlayer(), page);
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
-		addCloseItem(contents);
+	public void init() {
+		addCloseItem();
 
 		format_SetNewHome(contents);
 		format_AutoLock(contents);
@@ -138,7 +128,7 @@ public class EditHomesProvider extends InventoryProvider {
 			items.add(ClickableItem.of(item.build(), e -> HomesMenu.edit(home)));
 		});
 
-		paginator(homeOwner.getOnlinePlayer(), contents, items).build();
+		paginator().items(items).build();
 	}
 
 }

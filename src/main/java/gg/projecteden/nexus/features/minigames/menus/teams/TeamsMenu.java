@@ -2,15 +2,15 @@ package gg.projecteden.nexus.features.minigames.menus.teams;
 
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.minigames.menus.ArenaMenu;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.Tasks;
-import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -18,30 +18,19 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.function.BiFunction;
 
+@Rows(2)
+@Title("Teams Menu")
+@RequiredArgsConstructor
 public class TeamsMenu extends InventoryProvider {
-	Arena arena;
-
-	public TeamsMenu(@NonNull Arena arena) {
-		this.arena = arena;
-	}
-
-	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-			.provider(this)
-			.title("Teams Menu")
-			.rows(2)
-			.build()
-			.open(player, page);
-	}
+	private final Arena arena;
 
 	static void openAnvilMenu(Player player, Arena arena, String text, BiFunction<Player, String, AnvilGUI.Response> onComplete) {
 		MenuUtils.openAnvilMenu(player, text, onComplete, p -> Tasks.wait(1, () -> new TeamsMenu(arena).open(player)));
 	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
-		addBackItem(contents, e -> new ArenaMenu(arena).open(player));
+	public void init() {
+		addBackItem(e -> new ArenaMenu(arena).open(player));
 
 		contents.set(0, 4, ClickableItem.of(Material.EMERALD_BLOCK, "&aAdd Team",
 			e -> openAnvilMenu(player, arena, "Default", (p, text) -> {
