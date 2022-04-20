@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.customblocks.models.blocks.compacted;
 
 import com.mojang.datafixers.util.Pair;
-import gg.projecteden.nexus.features.customblocks.models.interfaces.ICustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.interfaces.IDirectional;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import lombok.NonNull;
@@ -10,7 +9,7 @@ import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class BambooBundle implements ICustomBlock, IDirectional {
+public class BambooBundle implements IDirectional {
 	@Override
 	public @NonNull Instrument getNoteBlockInstrument() {
 		return Instrument.BASS_DRUM;
@@ -56,5 +55,8 @@ public class BambooBundle implements ICustomBlock, IDirectional {
 		return getCompactRecipe(Material.BAMBOO);
 	}
 
-	// TODO: UNCRAFT RECIPE
+	@Override
+	public RecipeBuilder<?> getUncraftRecipe() {
+		return getUncraftRecipe(Material.BAMBOO, 9);
+	}
 }

@@ -19,6 +19,7 @@ import java.util.List;
 		- un/crafting recipes
 		- Appropriate tool & mining speed --> CustomBlockBreaking
 		- Sounds: Wait until SoundEvents are fixed
+		- Add colored blocks to ColorType
 		- //
 		- Known issues:
 			- CreativePickBlock on a custom block while a note block is in your inventory will always select the note block, and doesn't throw InventoryClickEvent or CreativeClickEvent

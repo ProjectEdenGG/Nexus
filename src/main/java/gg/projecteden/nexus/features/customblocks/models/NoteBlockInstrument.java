@@ -84,7 +84,7 @@ public enum NoteBlockInstrument {
 	}
 
 	@NotNull
-	private Instrument getInstrument() {
+	public Instrument getInstrument() {
 		return Instrument.valueOf(name());
 	}
 

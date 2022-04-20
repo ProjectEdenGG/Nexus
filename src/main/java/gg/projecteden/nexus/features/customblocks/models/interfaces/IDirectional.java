@@ -1,14 +1,36 @@
 package gg.projecteden.nexus.features.customblocks.models.interfaces;
 
+import gg.projecteden.nexus.features.customblocks.models.NoteBlockInstrument;
+import gg.projecteden.nexus.features.customblocks.models.annotations.DirectionalConfig;
 import lombok.NonNull;
 import org.bukkit.Instrument;
 
-public interface IDirectional {
-	@NonNull Instrument getNoteBlockInstrument_NS();
+public interface IDirectional extends ICustomBlock {
+	default DirectionalConfig getDirectionalConfig() {
+		return getClass().getAnnotation(DirectionalConfig.class);
+	}
 
-	int getNoteBlockStep_NS();
+	default @NonNull Instrument getNoteBlockInstrument_NS(){
+		NoteBlockInstrument instrument = getDirectionalConfig().instrument_NS();
+		if(instrument == NoteBlockInstrument.NONE || instrument.isCustom())
+			return getConfig().instrument();
 
-	@NonNull Instrument getNoteBlockInstrument_EW();
+		return instrument.getInstrument();
+	}
 
-	int getNoteBlockStep_EW();
+	default int getNoteBlockStep_NS(){
+		return getDirectionalConfig().step_NS();
+	}
+
+	default @NonNull Instrument getNoteBlockInstrument_EW(){
+		NoteBlockInstrument instrument = getDirectionalConfig().instrument_NS();
+		if(instrument == NoteBlockInstrument.NONE || instrument.isCustom())
+			return getConfig().instrument();
+
+		return instrument.getInstrument();
+	}
+
+	default int getNoteBlockStep_EW(){
+		return getDirectionalConfig().step_EW();
+	}
 }

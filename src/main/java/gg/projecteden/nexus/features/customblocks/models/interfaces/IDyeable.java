@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.customblocks.models.interfaces;
 
-// TODO: change dye color recipes
-public interface IDyeable {
+import gg.projecteden.nexus.features.customblocks.models.CustomBlockTag;
 
+public interface IDyeable extends ICustomBlock{
+	CustomBlockTag getRedyeTag();
 }

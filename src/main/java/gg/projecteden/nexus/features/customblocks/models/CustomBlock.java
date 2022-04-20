@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.customblocks.models;
 
 import com.mojang.datafixers.util.Pair;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.customblocks.models.blocks.GenericCrateA;
 import gg.projecteden.nexus.features.customblocks.models.blocks.GenericCrateB;
@@ -39,9 +40,12 @@ import gg.projecteden.nexus.features.customblocks.models.blocks.stones.GraniteBr
 import gg.projecteden.nexus.features.customblocks.models.blocks.terracotta_shingles.*;
 import gg.projecteden.nexus.features.customblocks.models.interfaces.ICustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.interfaces.IDirectional;
+import gg.projecteden.nexus.features.customblocks.models.interfaces.IDyeable;
+import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.utils.BlockUtils;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -49,14 +53,17 @@ import gg.projecteden.nexus.utils.NMSUtils.SoundType;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.bukkit.Instrument;
+import org.bukkit.Keyed;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Note;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -64,10 +71,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.BiConsumer;
 
 import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
+import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.surround;
 
-public enum CustomBlock {
+public enum CustomBlock implements Keyed {
 	// concrete bricks
 	RED_CONCRETE_BRICKS(RedConcreteBricks.class),
 	ORANGE_CONCRETE_BRICKS(OrangeConcreteBricks.class),
@@ -217,6 +226,11 @@ public enum CustomBlock {
 		}
 	}
 
+	@Override
+	public @NotNull NamespacedKey getKey() {
+		return new NamespacedKey(Nexus.getInstance(), name().toLowerCase());
+	}
+
 	public static @Nullable CustomBlock fromItemstack(ItemStack itemInHand) {
 		int modelData = CustomModelData.of(itemInHand);
 		if (itemInHand.getType().equals(Material.NOTE_BLOCK) && modelData == 0)
@@ -325,8 +339,7 @@ public enum CustomBlock {
 		BlockUtils.playSound(sound, location);
 	}
 
-	public void registerRecipe() {
-		// TODO: IDyeable recipes
+	public void registerRecipes() {
 		ICustomBlock customBlock = get();
 		RecipeBuilder<?> recipeBuilder;
 
@@ -342,6 +355,19 @@ public enum CustomBlock {
 		recipeBuilder = customBlock.getUncraftRecipe();
 		if (recipeBuilder != null) {
 			recipeBuilder.build().type(RecipeType.CUSTOM_BLOCKS).register();
+		}
+
+		// redye recipes
+		if(customBlock instanceof IDyeable Idyeable){
+			CustomBlockTag tag = Idyeable.getRedyeTag();
+
+			for (ColorType color : ColorType.getDyes()) {
+				final Material dye = color.switchColor(Material.WHITE_DYE);
+
+				BiConsumer<NexusRecipe, RecipeType> register = (recipe, type) -> recipe.type(type).register();
+
+				register.accept(surround(dye).with(tag).toMake(color.switchColor(tag.first()), 8).build(), RecipeType.DYES);
+			}
 		}
 	}
 

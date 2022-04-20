@@ -1,57 +1,27 @@
 package gg.projecteden.nexus.features.customblocks.models.blocks.lanterns;
 
 import com.mojang.datafixers.util.Pair;
-import gg.projecteden.nexus.features.customblocks.models.interfaces.ICustomBlock;
+import gg.projecteden.nexus.features.customblocks.models.annotations.CustomBlockConfig;
+import gg.projecteden.nexus.features.customblocks.models.annotations.DirectionalConfig;
 import gg.projecteden.nexus.features.customblocks.models.interfaces.IDirectional;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
-import lombok.NonNull;
 import org.bukkit.Instrument;
 import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
 
-public class PaperAcaciaLantern implements ICustomBlock, IDirectional {
-	@Override
-	public @NonNull Instrument getNoteBlockInstrument() {
-		return Instrument.FLUTE;
-	}
-
-	@Override
-	public int getNoteBlockStep() {
-		return 13;
-	}
-
-	@Override
-	public @NonNull String getName() {
-		return "Acacia Paper Lantern";
-	}
-
-	@Override
-	public int getCustomModelData() {
-		return 20405;
-	}
-
+@CustomBlockConfig(
+	name = "Acacia Paper Lantern",
+	modelId = 20405,
+	instrument = Instrument.FLUTE,
+	step = 13
+)
+@DirectionalConfig(
+	step_NS = 14,
+	step_EW = 15
+)
+public class PaperAcaciaLantern implements IDirectional {
 	@Override
 	public @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
 		return getPaperLanternRecipe(Material.ACACIA_PLANKS);
-	}
-
-	@Override
-	public @NonNull Instrument getNoteBlockInstrument_NS() {
-		return getNoteBlockInstrument();
-	}
-
-	@Override
-	public int getNoteBlockStep_NS() {
-		return 14;
-	}
-
-	@Override
-	public @NonNull Instrument getNoteBlockInstrument_EW() {
-		return getNoteBlockInstrument();
-	}
-
-	@Override
-	public int getNoteBlockStep_EW() {
-		return 15;
 	}
 }

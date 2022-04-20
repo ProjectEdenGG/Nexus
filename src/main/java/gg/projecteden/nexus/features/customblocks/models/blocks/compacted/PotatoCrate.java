@@ -35,5 +35,8 @@ public class PotatoCrate implements ICustomBlock {
 		return getCompactRecipe(Material.POTATO);
 	}
 
-	// TODO: UNCRAFT RECIPE
+	@Override
+	public RecipeBuilder<?> getUncraftRecipe() {
+		return getUncraftRecipe(Material.POTATO, 9);
+	}
 }

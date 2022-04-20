@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.framework.interfaces.IsColored;
@@ -245,14 +246,38 @@ public enum ColorType implements IsColored {
 		return of(Arrays.stream(DyeColor.values()).filter(dyeColor -> material.name().startsWith(dyeColor.name())).findFirst().orElse(null));
 	}
 
+	@Nullable
+	public static ColorType of(@Nullable CustomBlock customBlock) {
+		if (customBlock == null) return null;
+		return of(Arrays.stream(DyeColor.values()).filter(dyeColor -> customBlock.name().startsWith(dyeColor.name())).findFirst().orElse(null));
+	}
+
+	@NotNull
+	public CustomBlock switchColor(@NotNull CustomBlock customBlock) {
+		return switchColor(customBlock, this);
+	}
+
 	@NotNull
 	public Material switchColor(@NotNull Material material) {
 		return switchColor(material, this);
 	}
 
 	@NotNull
+	public static CustomBlock switchColor(@NotNull CustomBlock customBlock, @NotNull ColorType colorType) {
+		return switchColor(customBlock, colorType.getSimilarDyeColor());
+	}
+
+	@NotNull
 	public static Material switchColor(@NotNull Material material, @NotNull ColorType colorType) {
 		return switchColor(material, colorType.getSimilarDyeColor());
+	}
+
+	@NotNull
+	public static CustomBlock switchColor(@NotNull CustomBlock customBlock, @NotNull DyeColor dyeColor) {
+		ColorType colorType = of(customBlock);
+		if (colorType == null)
+			throw new InvalidInputException("Could not determine color of " + customBlock);
+		return CustomBlock.valueOf(customBlock.name().replace(colorType.getSimilarDyeColor().name(), dyeColor.name()));
 	}
 
 	@NotNull

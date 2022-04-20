@@ -1,9 +1,12 @@
 package gg.projecteden.nexus.features.recipes.models.builders;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
+import gg.projecteden.nexus.features.customblocks.models.CustomBlockTag;
 import gg.projecteden.nexus.features.recipes.CustomRecipes;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -21,8 +24,16 @@ public abstract class RecipeBuilder<T extends RecipeBuilder<?>> {
 	protected String id;
 	protected String extra;
 
+	public T toMake(CustomBlock result) {
+		return toMake(result.get().getItemStack());
+	}
+
 	public T toMake(Material result) {
 		return toMake(new ItemStack(result));
+	}
+
+	public T toMake(CustomBlock result, int amount) {
+		return toMake(result.get().getItemStack(), amount);
 	}
 
 	public T toMake(Material result, int amount) {
@@ -31,6 +42,11 @@ public abstract class RecipeBuilder<T extends RecipeBuilder<?>> {
 
 	public T toMake(ItemStack result) {
 		this.result = result;
+		return (T) this;
+	}
+
+	public T toMake(ItemStack result, int amount) {
+		this.result = new ItemBuilder(result).amount(amount).build();
 		return (T) this;
 	}
 
@@ -77,6 +93,10 @@ public abstract class RecipeBuilder<T extends RecipeBuilder<?>> {
 
 	public static ShapelessBuilder shapeless() {
 		return new ShapelessBuilder();
+	}
+
+	public static SurroundBuilder surround(CustomBlockTag center) {
+		return surround(choiceOf(center));
 	}
 
 	public static SurroundBuilder surround(MaterialTag center) {

@@ -4,6 +4,7 @@ import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.interfaces.ICustomBlock;
+import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.models.customblock.CustomBlockData;
 import gg.projecteden.nexus.models.customblock.NoteBlockData;
 import gg.projecteden.nexus.utils.BlockUtils;
@@ -51,6 +52,13 @@ import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
 public class CustomBlocksListener implements Listener {
 	public CustomBlocksListener() {
 		Nexus.registerListener(this);
+	}
+
+	@EventHandler
+	public void on(ResourcePackUpdateCompleteEvent ignored) {
+		for (CustomBlock customBlock : CustomBlock.values()) {
+			customBlock.registerRecipes();
+		}
 	}
 
 	@EventHandler

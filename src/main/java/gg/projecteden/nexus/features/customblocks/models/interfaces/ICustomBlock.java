@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.customblocks.models.interfaces;
 
 import com.mojang.datafixers.util.Pair;
+import gg.projecteden.nexus.features.customblocks.models.annotations.CustomBlockConfig;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.NonNull;
@@ -21,15 +22,27 @@ public interface ICustomBlock {
 	Material blockMaterial = Material.NOTE_BLOCK;
 	Material itemMaterial = Material.PAPER;
 
-	@NonNull Instrument getNoteBlockInstrument();
+	default CustomBlockConfig getConfig() {
+		return getClass().getAnnotation(CustomBlockConfig.class);
+	}
 
-	int getNoteBlockStep();
+	default @NonNull Instrument getNoteBlockInstrument(){
+		return getConfig().instrument();
+	}
+
+	default int getNoteBlockStep(){
+		return getConfig().step();
+	}
 
 	// Item
 
-	@NonNull String getName();
+	default @NonNull String getName(){
+		return getConfig().name();
+	}
 
-	int getCustomModelData();
+	default int getCustomModelData(){
+		return getConfig().modelId();
+	}
 
 	default @NonNull ItemBuilder getItemBuilder() {
 		ItemBuilder itemBuilder = new ItemBuilder(itemMaterial);

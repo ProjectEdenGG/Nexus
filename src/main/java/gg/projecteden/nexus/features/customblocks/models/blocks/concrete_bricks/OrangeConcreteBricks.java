@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.customblocks.models.blocks.concrete_bricks;
 
 import com.mojang.datafixers.util.Pair;
+import gg.projecteden.nexus.features.customblocks.models.CustomBlockTag;
 import gg.projecteden.nexus.features.customblocks.models.interfaces.ICustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.interfaces.IDyeable;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
@@ -33,5 +34,10 @@ public class OrangeConcreteBricks implements ICustomBlock, IDyeable {
 	@Override
 	public @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
 		return get2x2Recipe(Material.ORANGE_CONCRETE);
+	}
+
+	@Override
+	public CustomBlockTag getRedyeTag(){
+		return CustomBlockTag.CONCRETE_BRICKS;
 	}
 }

@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.features.recipes.models.builders;
 
+import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
+import gg.projecteden.nexus.features.customblocks.models.CustomBlockTag;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.inventory.ItemStack;
@@ -17,7 +19,15 @@ public class SurroundBuilder extends RecipeBuilder<SurroundBuilder> {
 		this.center = center;
 	}
 
+	public SurroundBuilder with(CustomBlockTag surround) {
+		return with(choiceOf(surround));
+	}
+
 	public SurroundBuilder with(Tag<Material> surround) {
+		return with(choiceOf(surround));
+	}
+
+	public SurroundBuilder with(CustomBlock surround) {
 		return with(choiceOf(surround));
 	}
 

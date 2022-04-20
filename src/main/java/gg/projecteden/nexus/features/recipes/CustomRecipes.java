@@ -3,12 +3,14 @@ package gg.projecteden.nexus.features.recipes;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.custombenches.DyeStation;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
+import gg.projecteden.nexus.features.customblocks.models.CustomBlockTag;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Depends;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.ColorType;
@@ -17,10 +19,12 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.ItemUtils.ItemStackComparator;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WoodType;
 import gg.projecteden.utils.Utils;
 import lombok.Getter;
+import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
@@ -155,6 +159,11 @@ public class CustomRecipes extends Feature implements Listener {
 	}
 
 	@NotNull
+	public static RecipeChoice choiceOf(CustomBlockTag tag) {
+		return choiceOf(tag.getValues().stream().map(customBlock -> customBlock.get().getItemStack()).toList());
+	}
+
+	@NotNull
 	public static RecipeChoice choiceOf(Tag<Material> tag) {
 		return new MaterialChoice(tag.getValues().toArray(new Material[0]));
 	}
@@ -165,13 +174,19 @@ public class CustomRecipes extends Feature implements Listener {
 	}
 
 	@NotNull
+	public static RecipeChoice choiceOf(CustomBlock customBlock) {
+		return new ExactChoice(customBlock.get().getItemStack());
+	}
+
+	@NotNull
 	public static RecipeChoice choiceOf(ItemStack... items) {
 		return new ExactChoice(items);
 	}
 
+	@NonNull
 	public static RecipeChoice choiceOf(List<?> choices) {
-		if (choices.isEmpty())
-			return null;
+		if (Nullables.isNullOrEmpty(choices))
+			throw new InvalidInputException("Recipe choices cannot be empty");
 
 		final Object object = choices.get(0);
 		if (object instanceof Material)
@@ -179,7 +194,7 @@ public class CustomRecipes extends Feature implements Listener {
 		else if (object instanceof ItemStack)
 			return new ExactChoice((List<ItemStack>) choices);
 		else
-			return null;
+			throw new InvalidInputException("Recipe choices must be either material or itemstack");
 	}
 
 	public void registerDyes() {
@@ -290,7 +305,6 @@ public class CustomRecipes extends Feature implements Listener {
 
 		dyeStation();
 		light();
-		customBlocks();
 
 		invisibleItemFrame();
 	}
@@ -322,12 +336,6 @@ public class CustomRecipes extends Feature implements Listener {
 			return;
 
 		surround(centerItems).with(Material.GLOWSTONE).toMake(Material.LIGHT).build().type(RecipeType.FUNCTIONAL).register();
-	}
-
-	private void customBlocks() {
-		for (CustomBlock customBlock : CustomBlock.values()) {
-			customBlock.registerRecipe();
-		}
 	}
 
 	private void invisibleItemFrame() {
