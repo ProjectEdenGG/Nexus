@@ -68,7 +68,7 @@ public enum NoteBlockInstrument {
 		this.customBlock = customBlock;
 	}
 
-	private String getSound() {
+	public String getSound() {
 		try {
 			return "minecraft:block.note_block." + switch (getInstrument()) {
 				case BASS_DRUM -> "basedrum";
