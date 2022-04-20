@@ -64,20 +64,20 @@ public class CostumeUser implements PlayerOwnedObject {
 	private static final List<WorldGroup> DISABLED_WORLDS = List.of(WorldGroup.MINIGAMES);
 	private static final List<GameMode> DISABLED_GAMEMODES = List.of(GameMode.SPECTATOR);
 
+	private static final Map<String, String> converter = new HashMap<>() {{
+		put("hat/lightsabers/red", "hat/misc/lightsaber");
+		put("hat/lightsabers/green", "hat/misc/lightsaber");
+		put("hat/lightsabers/purple", "hat/misc/lightsaber");
+		put("hat/lightsabers/light_blue", "hat/misc/lightsaber");
+		put("hat/lightsabers/dark_blue", "hat/misc/lightsaber");
+		put("hand/misc/rainbow_bracelet", "hand/misc/rainbow_bracelet_steve");
+	}};
+
 	@PreLoad
 	void convert(DBObject dbObject) {
 		List<String> owned = Objects.requireNonNullElseGet((List<String>) dbObject.get("ownedCostumes"), Collections::emptyList);
 		Map<String, DBObject> colors = Objects.requireNonNullElseGet((Map<String, DBObject>) dbObject.get("colors"), Collections::emptyMap);
 		AtomicInteger vouchers = new AtomicInteger();
-
-		Map<String, String> converter = new HashMap<>() {{
-			put("hat/lightsabers/red", "hat/misc/lightsaber");
-			put("hat/lightsabers/green", "hat/misc/lightsaber");
-			put("hat/lightsabers/purple", "hat/misc/lightsaber");
-			put("hat/lightsabers/light_blue", "hat/misc/lightsaber");
-			put("hat/lightsabers/dark_blue", "hat/misc/lightsaber");
-			put("hand/misc/rainbow_bracelet", "hand/misc/rainbow_bracelet_steve");
-		}};
 
 		converter.forEach((oldId, newId) -> {
 			if (owned.contains(oldId)) {
@@ -146,29 +146,35 @@ public class CostumeUser implements PlayerOwnedObject {
 	}
 
 	public ItemStack getCostumeItem(Costume costume) {
-		ItemStack item = costume.getItem();
+		ItemBuilder item = new ItemBuilder(costume.getItem());
 
-		if (!costume.isDyeable())
-			return item;
+		if (costume.getItem().getType() == Material.PLAYER_HEAD)
+			item.skullOwner(this);
 
-		if (isDyed(costume))
-			item = new ItemBuilder(item).dyeColor(getColor(costume)).build();
+		else if (costume.isDyeable()) {
+			if (isDyed(costume))
+				item.dyeColor(getColor(costume));
 
-		final RainbowArmorTask rainbowArmorTask = new RainbowArmorService().get(this).getTask();
-		if (rainbowArmorTask != null && rainbowArmorTask.getColor() != null)
-			item = new ItemBuilder(item).dyeColor(rainbowArmorTask.getColor()).build();
+			final RainbowArmorTask rainbowArmorTask = new RainbowArmorService().get(this).getTask();
+			if (rainbowArmorTask != null && rainbowArmorTask.getColor() != null)
+				item.dyeColor(rainbowArmorTask.getColor());
+		}
 
-		return item;
+		return item.build();
 	}
 
 	public ItemStack getCostumeDisplayItem(Costume costume) {
 		ItemBuilder item = new ItemBuilder(costume.getModel().getDisplayItem());
 
-		if (isDyed(costume))
-			item.dyeColor(getColor(costume));
+		if (costume.getItem().getType() == Material.PLAYER_HEAD)
+			item.skullOwner(this);
 
-		if (costume.isDyeable())
+		else if (costume.isDyeable()) {
+			if (isDyed(costume))
+				item.dyeColor(getColor(costume));
+
 			item.lore("&eDyeable").itemFlags(ItemFlag.HIDE_DYE);
+		}
 
 		return item.build();
 	}
