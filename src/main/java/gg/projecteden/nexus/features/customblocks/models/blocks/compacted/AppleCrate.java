@@ -1,42 +1,21 @@
 package gg.projecteden.nexus.features.customblocks.models.blocks.compacted;
 
-import com.mojang.datafixers.util.Pair;
-import gg.projecteden.nexus.features.customblocks.models.interfaces.ICustomBlock;
-import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
-import lombok.NonNull;
+import gg.projecteden.nexus.features.customblocks.models.annotations.CustomBlockConfig;
+import gg.projecteden.nexus.features.customblocks.models.interfaces.ICompacted;
 import org.bukkit.Instrument;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public class AppleCrate implements ICustomBlock {
-	@Override
-	public @NonNull Instrument getNoteBlockInstrument() {
-		return Instrument.BASS_DRUM;
-	}
-
-	@Override
-	public int getNoteBlockStep() {
-		return 1;
-	}
+@CustomBlockConfig(
+	name = "Crate of Apples",
+	modelId = 20051,
+	instrument = Instrument.BASS_DRUM,
+	step = 1
+)
+public class AppleCrate implements ICompacted {
 
 	@Override
-	public @NotNull String getName() {
-		return "Crate of Apples";
-	}
-
-	@Override
-	public int getCustomModelData() {
-		return 20051;
-	}
-
-	@Override
-	public @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
-		return getCompactRecipe(Material.APPLE);
-	}
-
-	@Override
-	public RecipeBuilder<?> getUncraftRecipe() {
-		return getUncraftRecipe(Material.APPLE, 9);
+	public @NotNull Material getMaterial() {
+		return Material.APPLE;
 	}
 }

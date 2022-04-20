@@ -1,43 +1,13 @@
 package gg.projecteden.nexus.features.customblocks.models.blocks.concrete_bricks;
 
-import com.mojang.datafixers.util.Pair;
-import gg.projecteden.nexus.features.customblocks.models.CustomBlockTag;
-import gg.projecteden.nexus.features.customblocks.models.interfaces.ICustomBlock;
-import gg.projecteden.nexus.features.customblocks.models.interfaces.IDyeable;
-import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
-import lombok.NonNull;
+import gg.projecteden.nexus.features.customblocks.models.annotations.CustomBlockConfig;
+import gg.projecteden.nexus.features.customblocks.models.interfaces.dyeable.IConcreteBricks;
 import org.bukkit.Instrument;
-import org.bukkit.Material;
-import org.jetbrains.annotations.Nullable;
 
-public class LightGrayConcreteBricks implements ICustomBlock, IDyeable {
-	@Override
-	public @NonNull Instrument getNoteBlockInstrument() {
-		return Instrument.CHIME;
-	}
-
-	@Override
-	public int getNoteBlockStep() {
-		return 15;
-	}
-
-	@Override
-	public @NonNull String getName() {
-		return "Light Gray Concrete Bricks";
-	}
-
-	@Override
-	public int getCustomModelData() {
-		return 20265;
-	}
-
-	@Override
-	public @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
-		return get2x2Recipe(Material.LIGHT_GRAY_CONCRETE);
-	}
-
-	@Override
-	public CustomBlockTag getRedyeTag(){
-		return CustomBlockTag.CONCRETE_BRICKS;
-	}
-}
+@CustomBlockConfig(
+	name = "Light Gray Concrete Bricks",
+	modelId = 20265,
+	instrument = Instrument.CHIME,
+	step = 15
+)
+public class LightGrayConcreteBricks implements IConcreteBricks {}

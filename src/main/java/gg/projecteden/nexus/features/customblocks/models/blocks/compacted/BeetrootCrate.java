@@ -1,42 +1,21 @@
 package gg.projecteden.nexus.features.customblocks.models.blocks.compacted;
 
-import com.mojang.datafixers.util.Pair;
-import gg.projecteden.nexus.features.customblocks.models.interfaces.ICustomBlock;
-import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
-import lombok.NonNull;
+import gg.projecteden.nexus.features.customblocks.models.annotations.CustomBlockConfig;
+import gg.projecteden.nexus.features.customblocks.models.interfaces.ICompacted;
 import org.bukkit.Instrument;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public class BeetrootCrate implements ICustomBlock {
-	@Override
-	public @NonNull Instrument getNoteBlockInstrument() {
-		return Instrument.BASS_DRUM;
-	}
-
-	@Override
-	public int getNoteBlockStep() {
-		return 2;
-	}
+@CustomBlockConfig(
+	name = "Crate of Beetroot",
+	modelId = 20052,
+	instrument = Instrument.BASS_DRUM,
+	step = 2
+)
+public class BeetrootCrate implements ICompacted {
 
 	@Override
-	public @NotNull String getName() {
-		return "Crate of Beetroot";
-	}
-
-	@Override
-	public int getCustomModelData() {
-		return 20052;
-	}
-
-	@Override
-	public @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
-		return getCompactRecipe(Material.BEETROOT);
-	}
-
-	@Override
-	public RecipeBuilder<?> getUncraftRecipe() {
-		return getUncraftRecipe(Material.BEETROOT, 9);
+	public @NotNull Material getMaterial() {
+		return Material.BEETROOT;
 	}
 }

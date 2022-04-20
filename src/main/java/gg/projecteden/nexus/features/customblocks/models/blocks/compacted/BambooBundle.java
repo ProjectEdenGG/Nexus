@@ -1,62 +1,27 @@
 package gg.projecteden.nexus.features.customblocks.models.blocks.compacted;
 
-import com.mojang.datafixers.util.Pair;
+import gg.projecteden.nexus.features.customblocks.models.annotations.CustomBlockConfig;
+import gg.projecteden.nexus.features.customblocks.models.annotations.DirectionalConfig;
+import gg.projecteden.nexus.features.customblocks.models.interfaces.ICompacted;
 import gg.projecteden.nexus.features.customblocks.models.interfaces.IDirectional;
-import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
-import lombok.NonNull;
 import org.bukkit.Instrument;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public class BambooBundle implements IDirectional {
-	@Override
-	public @NonNull Instrument getNoteBlockInstrument() {
-		return Instrument.BASS_DRUM;
-	}
-
-	@Override
-	public int getNoteBlockStep() {
-		return 10;
-	}
-
-	@Override
-	public @NotNull String getName() {
-		return "Bundle of Bamboo";
-	}
+@CustomBlockConfig(
+	name = "Bundle of Bamboo",
+	modelId = 20060,
+	instrument = Instrument.BASS_DRUM,
+	step = 10
+)
+@DirectionalConfig(
+	step_NS = 11,
+	step_EW = 12
+)
+public class BambooBundle implements ICompacted, IDirectional {
 
 	@Override
-	public int getCustomModelData() {
-		return 20060;
-	}
-
-	@Override
-	public @NonNull Instrument getNoteBlockInstrument_NS() {
-		return getNoteBlockInstrument();
-	}
-
-	@Override
-	public int getNoteBlockStep_NS() {
-		return 11;
-	}
-
-	@Override
-	public @NonNull Instrument getNoteBlockInstrument_EW() {
-		return getNoteBlockInstrument();
-	}
-
-	@Override
-	public int getNoteBlockStep_EW() {
-		return 12;
-	}
-
-	@Override
-	public @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
-		return getCompactRecipe(Material.BAMBOO);
-	}
-
-	@Override
-	public RecipeBuilder<?> getUncraftRecipe() {
-		return getUncraftRecipe(Material.BAMBOO, 9);
+	public @NotNull Material getMaterial() {
+		return Material.BAMBOO;
 	}
 }

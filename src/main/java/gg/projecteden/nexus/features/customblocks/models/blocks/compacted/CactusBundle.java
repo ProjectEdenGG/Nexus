@@ -1,61 +1,27 @@
 package gg.projecteden.nexus.features.customblocks.models.blocks.compacted;
 
-import com.mojang.datafixers.util.Pair;
+import gg.projecteden.nexus.features.customblocks.models.annotations.CustomBlockConfig;
+import gg.projecteden.nexus.features.customblocks.models.annotations.DirectionalConfig;
+import gg.projecteden.nexus.features.customblocks.models.interfaces.ICompacted;
 import gg.projecteden.nexus.features.customblocks.models.interfaces.IDirectional;
-import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
-import lombok.NonNull;
 import org.bukkit.Instrument;
 import org.bukkit.Material;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
-public class CactusBundle implements IDirectional {
-	@Override
-	public @NonNull Instrument getNoteBlockInstrument() {
-		return Instrument.BASS_DRUM;
-	}
-
-	@Override
-	public int getNoteBlockStep() {
-		return 13;
-	}
-
-	@Override
-	public @NonNull String getName() {
-		return "Bundle of Cactus";
-	}
+@CustomBlockConfig(
+	name = "Bundle of Cactus",
+	modelId = 20061,
+	instrument = Instrument.BASS_DRUM,
+	step = 13
+)
+@DirectionalConfig(
+	step_NS = 14,
+	step_EW = 15
+)
+public class CactusBundle implements ICompacted, IDirectional {
 
 	@Override
-	public int getCustomModelData() {
-		return 20061;
-	}
-
-	@Override
-	public @NonNull Instrument getNoteBlockInstrument_NS() {
-		return getNoteBlockInstrument();
-	}
-
-	@Override
-	public int getNoteBlockStep_NS() {
-		return 14;
-	}
-
-	@Override
-	public @NonNull Instrument getNoteBlockInstrument_EW() {
-		return getNoteBlockInstrument();
-	}
-
-	@Override
-	public int getNoteBlockStep_EW() {
-		return 15;
-	}
-
-	@Override
-	public @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
-		return getCompactRecipe(Material.CACTUS);
-	}
-
-	@Override
-	public RecipeBuilder<?> getUncraftRecipe() {
-		return getUncraftRecipe(Material.CACTUS, 9);
+	public @NotNull Material getMaterial() {
+		return Material.CACTUS;
 	}
 }

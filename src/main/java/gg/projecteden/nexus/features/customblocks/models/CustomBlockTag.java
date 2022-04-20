@@ -1,11 +1,11 @@
 package gg.projecteden.nexus.features.customblocks.models;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.customblocks.models.interfaces.IColoredPlanks;
-import gg.projecteden.nexus.features.customblocks.models.interfaces.IConcreteBricks;
 import gg.projecteden.nexus.features.customblocks.models.interfaces.ICustomBlock;
-import gg.projecteden.nexus.features.customblocks.models.interfaces.IQuiltedWool;
-import gg.projecteden.nexus.features.customblocks.models.interfaces.ITerracottaShingles;
+import gg.projecteden.nexus.features.customblocks.models.interfaces.dyeable.IColoredPlanks;
+import gg.projecteden.nexus.features.customblocks.models.interfaces.dyeable.IConcreteBricks;
+import gg.projecteden.nexus.features.customblocks.models.interfaces.dyeable.IQuiltedWool;
+import gg.projecteden.nexus.features.customblocks.models.interfaces.dyeable.ITerracottaShingles;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.RandomUtils;
 import lombok.Getter;

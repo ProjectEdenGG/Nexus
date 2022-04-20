@@ -1,56 +1,28 @@
 package gg.projecteden.nexus.features.customblocks.models.blocks;
 
 import com.mojang.datafixers.util.Pair;
+import gg.projecteden.nexus.features.customblocks.models.annotations.CustomBlockConfig;
+import gg.projecteden.nexus.features.customblocks.models.annotations.DirectionalConfig;
 import gg.projecteden.nexus.features.customblocks.models.interfaces.ICustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.interfaces.IDirectional;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
-import lombok.NonNull;
 import org.bukkit.Instrument;
 import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
 
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
 
+@CustomBlockConfig(
+	name = "Shoji Block",
+	modelId = 20122,
+	instrument = Instrument.BASS_GUITAR,
+	step = 22
+)
+@DirectionalConfig(
+	step_NS = 23,
+	step_EW = 24
+)
 public class ShojiBlock implements ICustomBlock, IDirectional {
-	@Override
-	public @NonNull Instrument getNoteBlockInstrument() {
-		return Instrument.BASS_GUITAR;
-	}
-
-	@Override
-	public int getNoteBlockStep() {
-		return 22;
-	}
-
-	@Override
-	public @NonNull String getName() {
-		return "Shoji Block";
-	}
-
-	@Override
-	public int getCustomModelData() {
-		return 20122;
-	}
-
-	@Override
-	public @NonNull Instrument getNoteBlockInstrument_NS() {
-		return getNoteBlockInstrument();
-	}
-
-	@Override
-	public int getNoteBlockStep_NS() {
-		return 23;
-	}
-
-	@Override
-	public @NonNull Instrument getNoteBlockInstrument_EW() {
-		return getNoteBlockInstrument();
-	}
-
-	@Override
-	public int getNoteBlockStep_EW() {
-		return 24;
-	}
 
 	@Override
 	public @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {

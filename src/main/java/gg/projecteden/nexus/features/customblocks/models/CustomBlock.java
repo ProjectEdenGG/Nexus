@@ -40,7 +40,7 @@ import gg.projecteden.nexus.features.customblocks.models.blocks.stones.GraniteBr
 import gg.projecteden.nexus.features.customblocks.models.blocks.terracotta_shingles.*;
 import gg.projecteden.nexus.features.customblocks.models.interfaces.ICustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.interfaces.IDirectional;
-import gg.projecteden.nexus.features.customblocks.models.interfaces.IDyeable;
+import gg.projecteden.nexus.features.customblocks.models.interfaces.dyeable.IDyeable;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;

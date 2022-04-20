@@ -1,10 +1,8 @@
 package gg.projecteden.nexus.features.customblocks.models.blocks.quilted_wool;
 
 import gg.projecteden.nexus.features.customblocks.models.annotations.CustomBlockConfig;
-import gg.projecteden.nexus.features.customblocks.models.interfaces.IQuiltedWool;
+import gg.projecteden.nexus.features.customblocks.models.interfaces.dyeable.IQuiltedWool;
 import org.bukkit.Instrument;
-import org.bukkit.Material;
-import org.jetbrains.annotations.NotNull;
 
 @CustomBlockConfig(
 	name = "Orange Quilted Wool",
@@ -12,10 +10,4 @@ import org.jetbrains.annotations.NotNull;
 	instrument = Instrument.COW_BELL,
 	step = 2
 )
-public class OrangeQuiltedWool implements IQuiltedWool {
-
-	@Override
-	public @NotNull Material getWool() {
-		return Material.ORANGE_WOOL;
-	}
-}
+public class OrangeQuiltedWool implements IQuiltedWool { }

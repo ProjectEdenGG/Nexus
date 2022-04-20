@@ -1,42 +1,21 @@
 package gg.projecteden.nexus.features.customblocks.models.blocks.compacted;
 
-import com.mojang.datafixers.util.Pair;
-import gg.projecteden.nexus.features.customblocks.models.interfaces.ICustomBlock;
-import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
-import lombok.NonNull;
+import gg.projecteden.nexus.features.customblocks.models.annotations.CustomBlockConfig;
+import gg.projecteden.nexus.features.customblocks.models.interfaces.ICompacted;
 import org.bukkit.Instrument;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public class PotatoCrate implements ICustomBlock {
-	@Override
-	public @NonNull Instrument getNoteBlockInstrument() {
-		return Instrument.BASS_DRUM;
-	}
-
-	@Override
-	public int getNoteBlockStep() {
-		return 5;
-	}
+@CustomBlockConfig(
+	name = "Crate of Potatoes",
+	modelId = 20055,
+	instrument = Instrument.BASS_DRUM,
+	step = 5
+)
+public class PotatoCrate implements ICompacted {
 
 	@Override
-	public @NotNull String getName() {
-		return "Crate of Potatoes";
-	}
-
-	@Override
-	public int getCustomModelData() {
-		return 20055;
-	}
-
-	@Override
-	public @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
-		return getCompactRecipe(Material.POTATO);
-	}
-
-	@Override
-	public RecipeBuilder<?> getUncraftRecipe() {
-		return getUncraftRecipe(Material.POTATO, 9);
+	public @NotNull Material getMaterial() {
+		return Material.POTATO;
 	}
 }
