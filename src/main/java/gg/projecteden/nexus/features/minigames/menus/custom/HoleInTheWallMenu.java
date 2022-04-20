@@ -1,8 +1,7 @@
 package gg.projecteden.nexus.features.minigames.menus.custom;
 
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.Pagination;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
@@ -16,7 +15,6 @@ import gg.projecteden.nexus.utils.Tasks;
 import lombok.NonNull;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -27,21 +25,21 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @CustomMechanicSettings(HoleInTheWall.class)
 public class HoleInTheWallMenu extends ICustomMechanicMenu {
-
-	HoleInTheWallArena arena;
+	private final HoleInTheWallArena arena;
 
 	public HoleInTheWallMenu(Arena arena) {
 		this.arena = ArenaManager.convert(arena, HoleInTheWallArena.class);
 	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 		contents.set(0, 0, ClickableItem.of(backItem(), e -> new ArenaMenu(arena).open(player)));
 
 		contents.set(1, 0, ClickableItem.of(new ItemBuilder(Material.POTION).name("&eDesign Start Locations"),
 			e -> new HoleInTheWallSubMenu(arena).open(player)));
 	}
 
+	@Title("Design Start Locations Menu")
 	public static class HoleInTheWallSubMenu extends InventoryProvider {
 		private final HoleInTheWallArena arena;
 
@@ -50,20 +48,10 @@ public class HoleInTheWallMenu extends ICustomMechanicMenu {
 		}
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-				.maxSize()
-				.provider(this)
-				.title("Design Start Locations Menu")
-				.build()
-				.open(player, page);
-		}
-
-		@Override
-		public void init(Player player, InventoryContents contents) {
+		public void init() {
 			HoleInTheWallMenu holeInTheWallMenu = new HoleInTheWallMenu(arena);
 
-			addBackItem(contents, e -> new ArenaMenu(arena).open(player));
+			addBackItem(e -> new ArenaMenu(arena).open(player));
 
 			Pagination page = contents.pagination();
 
@@ -90,7 +78,7 @@ public class HoleInTheWallMenu extends ICustomMechanicMenu {
 			if (arena.getDesignHangerLocation() == null)
 				return;
 
-			paginator(player, contents, new ArrayList<>() {{
+			paginator().items(new ArrayList<ClickableItem>() {{
 				List<Location> designStartLocations = new ArrayList<>(arena.getDesignHangerLocation());
 				for (int i = 0; i < designStartLocations.size(); i++) {
 					Location designStartLocation = designStartLocations.get(i);

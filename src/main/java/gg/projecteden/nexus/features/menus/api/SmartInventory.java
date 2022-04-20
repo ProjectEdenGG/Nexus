@@ -93,7 +93,8 @@ public class SmartInventory {
 
 		this.manager.setContents(player, contents);
 		try {
-			this.provider.init(player, contents);
+			this.provider.setContents(contents);
+			this.provider.init();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			player.closeInventory();
@@ -142,8 +143,8 @@ public class SmartInventory {
 		private String id = "unknown";
 		private Component title = Component.text("");
 		private InventoryType type = InventoryType.CHEST;
-		private Optional<Integer> rows = Optional.empty();
-		private Optional<Integer> columns = Optional.empty();
+		private Optional<Integer> rows = Optional.of(6);
+		private Optional<Integer> columns = Optional.of(9);
 		private boolean closeable = true;
 		private int updateFrequency = 1;
 
@@ -185,17 +186,13 @@ public class SmartInventory {
 			return size(rows, 9);
 		}
 
-		public Builder maxSize() {
-			return rows(6);
-		}
-
 		public Builder closeable(boolean closeable) {
 			this.closeable = closeable;
 			return this;
 		}
 
 		/**
-		 * This method is used to configure the frequency at which the {@link InventoryProvider#update(Player, InventoryContents)}
+		 * This method is used to configure the frequency at which the {@link InventoryProvider#update()}
 		 * method is called. Defaults to 1
 		 *
 		 * @param frequency The inventory update frequency, in ticks

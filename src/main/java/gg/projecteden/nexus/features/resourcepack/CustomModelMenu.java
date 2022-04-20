@@ -1,8 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack;
 
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
@@ -13,7 +11,6 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -21,8 +18,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @RequiredArgsConstructor
 public class CustomModelMenu extends InventoryProvider {
@@ -39,25 +34,20 @@ public class CustomModelMenu extends InventoryProvider {
 	}
 
 	@Override
-	public void open(Player player, int page) {
+	public String getTitle() {
 		String title = "Custom Models";
 		if (!folder.getPath().equals("/"))
 			title = folder.getDisplayPath();
 
-		SmartInventory.builder()
-				.provider(this)
-				.title(colorize("&0" + title))
-				.maxSize()
-				.build()
-				.open(player, page);
+		return "&0" + title;
 	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 		if (previousMenu == null)
-			addCloseItem(contents);
+			addCloseItem();
 		else
-			addBackItem(contents, e -> previousMenu.open(player));
+			addBackItem(e -> previousMenu.open(player));
 
 		List<ClickableItem> items = new ArrayList<>();
 
@@ -91,7 +81,7 @@ public class CustomModelMenu extends InventoryProvider {
 			items.add(ClickableItem.of(item.build(), e -> PlayerUtils.giveItem(player, e.isShiftClick() ? model.getDisplayItem() : model.getItem())));
 		}
 
-		paginator(player, contents, items).build();
+		paginator().items(items).build();
 	}
 
 	public static void load() {

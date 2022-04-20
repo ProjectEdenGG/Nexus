@@ -11,7 +11,6 @@ import gg.projecteden.nexus.features.minigames.lobby.TickPerks;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
-import gg.projecteden.nexus.features.minigames.menus.MinigamesMenus;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.MatchData;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -65,8 +64,6 @@ public class Minigames extends Feature {
 	public static final String PREFIX = StringUtils.getPrefix("Minigames");
 	public static final Component COMPONENT_PREFIX = AdventureUtils.getPrefix("Minigames");
 	public static final int PERK_TICK_DELAY = 4;
-	@Getter
-	public static final MinigamesMenus menus = new MinigamesMenus();
 	@Getter
 	public static final PacketScoreboard scoreboard = Services.load(PacketScoreboardProvider.class).getScoreboard();
 	@Getter

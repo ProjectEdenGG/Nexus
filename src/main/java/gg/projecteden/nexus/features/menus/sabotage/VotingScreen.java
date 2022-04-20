@@ -1,8 +1,7 @@
 package gg.projecteden.nexus.features.menus.sabotage;
 
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.mechanics.Sabotage;
 import gg.projecteden.nexus.features.minigames.models.Match;
@@ -17,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,19 +26,15 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@RequiredArgsConstructor
 @Getter
+@RequiredArgsConstructor
+@Title("&cWho Is The Impostor?")
 public class VotingScreen extends AbstractVoteScreen {
 	private final @NotNull Minigamer reporter;
 	private final @Nullable SabotageColor body;
-	private final SmartInventory inventory = SmartInventory.builder()
-			.provider(this)
-			.title("&cWho Is The Impostor?")
-			.maxSize()
-			.build();
 
 	@Override
-	public void init(Player player, InventoryContents inventoryContents) {
+	public void init() {
 		Minigamer voter = PlayerManager.get(player);
 		Match match = voter.getMatch();
 		SabotageMatchData matchData = match.getMatchData();
@@ -51,17 +45,16 @@ public class VotingScreen extends AbstractVoteScreen {
 				match.getTasks().cancel(taskId.get());
 
 			if (matchData.waitingToVote()) {
-				setClock(inventoryContents, "Voting starts", matchData.votingStartsIn());
-			}
-			else {
+				setClock("Voting starts", matchData.votingStartsIn());
+			} else {
 				int votingEndsIn = 1 + (int) Duration.between(LocalDateTime.now(), matchData.getMeetingStarted().plusSeconds(Sabotage.MEETING_LENGTH)).getSeconds();
-				setClock(inventoryContents, "Voting ends", votingEndsIn);
+				setClock("Voting ends", votingEndsIn);
 			}
 
-			inventoryContents.set(0, 2, ClickableItem.of(new ItemBuilder(Material.BARRIER).name("&eSkip Vote").build(), $ -> matchData.vote(voter, null)));
+			contents.set(0, 2, ClickableItem.of(new ItemBuilder(Material.BARRIER).name("&eSkip Vote").build(), $ -> matchData.vote(voter, null)));
 			if (!reporter.getUniqueId().equals(voter.getUniqueId()))
-				inventoryContents.set(0, 4, votingItem(voter, reporter, matchData));
-			inventoryContents.set(0, 6, votingItem(voter, voter, matchData));
+				contents.set(0, 4, votingItem(voter, reporter, matchData));
+			contents.set(0, 6, votingItem(voter, voter, matchData));
 
 			int row = 1;
 			int col = 0;
@@ -70,7 +63,7 @@ public class VotingScreen extends AbstractVoteScreen {
 			for (Minigamer target : minigamers) {
 				if (target.equals(voter) || target.equals(reporter))
 					continue;
-				inventoryContents.set(row, col, votingItem(voter, target, matchData));
+				contents.set(row, col, votingItem(voter, target, matchData));
 				col += 1;
 				if (col == 9) {
 					col = 0;
@@ -95,4 +88,5 @@ public class VotingScreen extends AbstractVoteScreen {
 			components.add(new JsonBuilder("&cVoted"));
 		return ClickableItem.of(builder.componentLore(components).build(), $ -> matchData.vote(voter, target));
 	}
+
 }

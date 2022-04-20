@@ -1,35 +1,23 @@
 package gg.projecteden.nexus.features.particles.providers;
 
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.models.particle.ParticleOwner;
 import gg.projecteden.nexus.models.particle.ParticleService;
 import gg.projecteden.nexus.models.particle.ParticleType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 
+@Title("Particles")
 public class ParticleMenuProvider extends InventoryProvider {
 	private final ParticleService particleService = new ParticleService();
 
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-				.title("Particles")
-				.maxSize()
-				.provider(this)
-				.build()
-				.open(player);
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 		ParticleOwner owner = particleService.get(player);
 
-		addCloseItem(contents);
+		addCloseItem();
 
 		contents.set(0, 8, ClickableItem.of(Material.TNT, "&cStop All Effects", e -> {
 			owner.cancel();

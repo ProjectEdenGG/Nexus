@@ -1,9 +1,8 @@
 package gg.projecteden.nexus.features.particles.providers;
 
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.particles.effects.WingsEffect;
 import gg.projecteden.nexus.models.particle.ParticleOwner;
@@ -12,24 +11,14 @@ import gg.projecteden.nexus.models.particle.ParticleSetting;
 import gg.projecteden.nexus.models.particle.ParticleType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Tasks;
-import org.bukkit.entity.Player;
 
+@Rows(5)
+@Title("Wings Style")
 public class WingsTypeProvider extends InventoryProvider {
 
-
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-				.title("Wings Style")
-				.rows(5)
-				.provider(this)
-				.build()
-				.open(player);
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
-		addBackItem(contents, e -> new EffectSettingProvider(ParticleType.WINGS).open(player));
+	public void init() {
+		addBackItem(e -> new EffectSettingProvider(ParticleType.WINGS).open(player));
 
 		ParticleService service = new ParticleService();
 		ParticleOwner owner = service.get(player);

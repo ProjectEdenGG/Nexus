@@ -8,7 +8,7 @@ import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.Pagination;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
@@ -34,6 +34,7 @@ import java.util.List;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
+@Title("Crate Editing")
 public class CrateEditMenu {
 
 	@NoArgsConstructor
@@ -43,20 +44,15 @@ public class CrateEditMenu {
 		private CrateLoot editing;
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-				.title("Crate Editing")
-				.provider(this)
-				.rows(editing == null ? 6 : 3)
-				.build()
-				.open(player, page);
+		protected int getRows() {
+			return editing == null ? 6 : 3;
 		}
 
 		@Override
-		public void init(Player player, InventoryContents contents) {
+		public void init() {
 			if (editing != null) {
 				// Back Item
-				addBackItem(contents, e -> {
+				addBackItem(e -> {
 					save(player.getOpenInventory().getTopInventory(), editing);
 					new CrateEditProvider(filter, null).open(player);
 				});
@@ -161,7 +157,7 @@ public class CrateEditMenu {
 						contents.setEditable(SlotPos.of(row, column), true);
 			} else {
 				// Close Item
-				addCloseItem(contents);
+				addCloseItem();
 
 				// Filter Item
 				contents.set(0, 8, ClickableItem.of(
@@ -215,7 +211,7 @@ public class CrateEditMenu {
 					}));
 				});
 
-				paginator(player, contents, items).build();
+				paginator().items(items).build();
 			}
 		}
 

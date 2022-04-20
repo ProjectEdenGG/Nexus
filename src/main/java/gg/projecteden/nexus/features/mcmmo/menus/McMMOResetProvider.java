@@ -7,8 +7,7 @@ import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.crates.GemCommand;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
@@ -34,6 +33,7 @@ import static gg.projecteden.nexus.features.mcmmo.McMMO.TIER_ONE;
 import static gg.projecteden.nexus.features.mcmmo.McMMO.TIER_ONE_ALL;
 import static gg.projecteden.nexus.features.mcmmo.McMMO.TIER_TWO;
 
+@Title("McMMO Reset")
 public class McMMOResetProvider extends InventoryProvider {
 	private static final McMMOService service = new McMMOService();
 	private static final int DEPOSIT = 10000; // eco reward for prestige
@@ -159,17 +159,7 @@ public class McMMOResetProvider extends InventoryProvider {
 	}
 
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-			.provider(this)
-			.title("McMMO Reset")
-			.maxSize()
-			.build()
-			.open(player, page);
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 		McMMOPlayer mcmmoPlayer = UserManager.getPlayer(player);
 
 		int totalPowerLevel = 0;

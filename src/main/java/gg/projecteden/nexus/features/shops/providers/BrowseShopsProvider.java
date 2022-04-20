@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.shops.providers;
 
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.shops.providers.common.ShopProvider;
 import gg.projecteden.nexus.models.nerd.NerdService;
@@ -14,6 +15,7 @@ import java.util.List;
 
 import static gg.projecteden.nexus.utils.StringUtils.plural;
 
+@Title("&0Browse Shops")
 public class BrowseShopsProvider extends ShopProvider {
 
 	public BrowseShopsProvider(ShopProvider previousMenu) {
@@ -21,13 +23,8 @@ public class BrowseShopsProvider extends ShopProvider {
 	}
 
 	@Override
-	public void open(Player player, int page) {
-		open(player, page, this, "&0Browse Shops");
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
-		super.init(player, contents);
+	public void init() {
+		super.init();
 		addItems(player, contents);
 	}
 
@@ -58,7 +55,7 @@ public class BrowseShopsProvider extends ShopProvider {
 			items.add(ClickableItem.of(head.build(), e -> new PlayerShopProvider(this, shop).open(player)));
 		}
 
-		paginator(player, contents, items).build();
+		paginator().items(items).build();
 	}
 
 }

@@ -1,10 +1,10 @@
 package gg.projecteden.nexus.features.warps.commands;
 
 import gg.projecteden.nexus.features.discord.Discord;
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -182,19 +182,12 @@ public class Statue20Command extends _WarpCommand implements Listener {
 		Discord.staffBridge(message);
 	}
 
+	@Rows(3)
+	@Title("Statue Hunt Reward")
 	public class StatueHuntPrizeMenu extends InventoryProvider {
 
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-				.provider(this)
-				.title("Statue Hunt Reward")
-				.rows(3)
-				.build()
-				.open(player, page);
-		}
-
 		@Override
-		public void init(Player player, InventoryContents contents) {
+		public void init() {
 
 			ItemStack beePet = new ItemBuilder(Material.PLAYER_HEAD).skullOwner("MHF_Bee").name("&eBee Pet").lore("&3Click here to receive")
 					.lore("&3the bee pet: &c/pets").build();

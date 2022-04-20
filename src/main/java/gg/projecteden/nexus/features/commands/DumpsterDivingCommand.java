@@ -1,8 +1,7 @@
 package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -64,26 +63,22 @@ public class DumpsterDivingCommand extends CustomCommand implements Listener {
 	}
 
 	@NoArgsConstructor
+	@Title("&2Dumpster")
 	private static class DumpsterProvider extends InventoryProvider {
 		private final DumpsterService service = new DumpsterService();
 		private final Dumpster dumpster = service.get0();
 		private final String PREFIX = Commands.get(DumpsterDivingCommand.class).getPrefix();
 
 		public void open(Player player, int page) {
-			if (new DumpsterService().get0().getItems().size() == 0)
+			if (dumpster.getItems().size() == 0)
 				throw new InvalidInputException("Dumpster is empty");
 
-			SmartInventory.builder()
-					.provider(new DumpsterProvider())
-					.maxSize()
-					.title("&2Dumpster")
-					.build()
-					.open(player);
+			super.open(player, page);
 		}
 
 		@Override
-		public void init(Player player, InventoryContents contents) {
-			addCloseItem(contents);
+		public void init() {
+			addCloseItem();
 
 			contents.set(0, 8, ClickableItem.of(Material.IRON_SHOVEL, "Refresh", e -> {
 				try {

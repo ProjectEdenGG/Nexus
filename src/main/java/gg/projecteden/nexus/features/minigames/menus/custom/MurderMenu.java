@@ -2,13 +2,13 @@ package gg.projecteden.nexus.features.minigames.menus.custom;
 
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.Pagination;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.mechanics.Murder;
 import gg.projecteden.nexus.features.minigames.menus.ArenaMenu;
+import gg.projecteden.nexus.features.minigames.menus.MechanicsMenu;
 import gg.projecteden.nexus.features.minigames.menus.annotations.CustomMechanicSettings;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.arenas.MurderArena;
@@ -26,50 +26,36 @@ import java.util.List;
 import java.util.function.BiFunction;
 
 import static gg.projecteden.nexus.features.menus.MenuUtils.getLocationLore;
-import static gg.projecteden.nexus.features.minigames.Minigames.menus;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @CustomMechanicSettings(Murder.class)
 public class MurderMenu extends ICustomMechanicMenu {
-
-	MurderArena arena;
+	private final MurderArena arena;
 
 	public MurderMenu(Arena arena) {
 		this.arena = ArenaManager.convert(arena, MurderArena.class);
 	}
 
 	static void openAnvilMenu(Player player, Arena arena, String text, BiFunction<Player, String, AnvilGUI.Response> onComplete) {
-		MenuUtils.openAnvilMenu(player, text, onComplete, p -> Tasks.wait(1, () -> menus.openCustomSettingsMenu(player, arena)));
+		MenuUtils.openAnvilMenu(player, text, onComplete, p -> Tasks.wait(1, () -> MechanicsMenu.openCustomSettingsMenu(player, arena)));
 	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
-		addBackItem(contents, e -> new ArenaMenu(arena).open(player));
+	public void init() {
+		addBackItem(e -> new ArenaMenu(arena).open(player));
 
 		contents.set(1, 4, ClickableItem.of(new ItemBuilder(Material.IRON_INGOT).name("&eScrap Points"),
 			e -> new MurderScrapsMenu(arena).open(player)));
 	}
 
 	@RequiredArgsConstructor
+	@Title("Scrap Points Locations Menu")
 	public static class MurderScrapsMenu extends InventoryProvider {
 		private final MurderArena arena;
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-				.id("ScrapPointsLocationsMenu")
-				.maxSize()
-				.provider(new MurderScrapsMenu(arena))
-				.title("Scrap Points Locations Menu")
-				.build()
-				.open(player, page);
-		}
-
-		@Override
-		public void init(Player player, InventoryContents contents) {
-			MurderMenu MurderMenu = new MurderMenu(arena);
-
-			addBackItem(contents, e -> new ArenaMenu(arena).open(player));
+		public void init() {
+			addBackItem(e -> new ArenaMenu(arena).open(player));
 
 			Pagination page = contents.pagination();
 
@@ -97,7 +83,7 @@ public class MurderMenu extends ICustomMechanicMenu {
 			if (arena.getScrapPoints() == null)
 				return;
 
-			paginator(player, contents, new ArrayList<>() {{
+			paginator().items(new ArrayList<ClickableItem>() {{
 				List<Location> scrapPointsLocations = new ArrayList<>(arena.getScrapPoints());
 				for (int i = 0; i < scrapPointsLocations.size(); i++) {
 					Location scrapPointsLocation = scrapPointsLocations.get(i);

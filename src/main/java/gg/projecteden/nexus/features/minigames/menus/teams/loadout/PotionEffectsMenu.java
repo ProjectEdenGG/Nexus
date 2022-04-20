@@ -2,8 +2,8 @@ package gg.projecteden.nexus.features.minigames.menus.teams.loadout;
 
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Team;
@@ -26,28 +26,20 @@ import java.util.function.BiFunction;
 import static gg.projecteden.nexus.features.minigames.Minigames.PREFIX;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
+@Rows(3)
+@Title("Potion Effects Menu")
 @RequiredArgsConstructor
 public class PotionEffectsMenu extends InventoryProvider {
 	private final Arena arena;
 	private final Team team;
-
-	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-			.provider(this)
-			.title("Potion Effects Menu")
-			.rows(3)
-			.build()
-			.open(player, page);
-	}
 
 	static void openAnvilMenu(Player player, Arena arena, Team team, String text, BiFunction<Player, String, AnvilGUI.Response> onComplete) {
 		MenuUtils.openAnvilMenu(player, text, onComplete, p -> Tasks.wait(1, () -> new PotionEffectsMenu(arena, team).open(player)));
 	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
-		addBackItem(contents, e -> new LoadoutMenu(arena, team).open(player));
+	public void init() {
+		addBackItem(e -> new LoadoutMenu(arena, team).open(player));
 
 		contents.set(0, 2, ClickableItem.of(new ItemBuilder(Material.ANVIL).name("&eCopy Potions").lore("&3This will copy all the", "&3potion effects you have", "&3into the team's loadout."), e2 -> {
 			team.getLoadout().getEffects().addAll(player.getActivePotionEffects());

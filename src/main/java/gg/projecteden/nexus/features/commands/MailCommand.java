@@ -2,8 +2,7 @@ package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.nexus.features.listeners.TemporaryMenuListener;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -167,6 +166,7 @@ public class MailCommand extends CustomCommand implements Listener {
 		}
 	}
 
+	@Title("&3Your Deliveries")
 	public static class MailBoxMenu extends InventoryProvider {
 		private final Mailer mailer;
 		private final WorldGroup worldGroup;
@@ -176,23 +176,17 @@ public class MailCommand extends CustomCommand implements Listener {
 			this.worldGroup = mailer.getWorldGroup();
 		}
 
-		private final SmartInventory inventory = SmartInventory.builder()
-				.provider(this)
-				.maxSize()
-				.title("&3Your Deliveries")
-				.build();
-
 		@Override
 		public void open(Player player, int page) {
 			if (isNullOrEmpty(mailer.getUnreadMail(worldGroup)))
 				player.sendMessage(JsonBuilder.fromError("Mail", "There is no mail in your " + StringUtils.camelCase(worldGroup) + " mailbox"));
 			else
-				inventory.open(mailer.getOnlinePlayer(), page);
+				super.open(player, page);
 		}
 
 		@Override
-		public void init(Player player, InventoryContents contents) {
-			addCloseItem(contents);
+		public void init() {
+			addCloseItem();
 
 			ItemStack info = new ItemBuilder(Material.BOOK).name("&3Info")
 					.lore("&eOpened mail cannot be closed", "&eAny items left over, will be", "&egiven to you, or dropped")
@@ -208,7 +202,7 @@ public class MailCommand extends CustomCommand implements Listener {
 			for (Mail mail : mails)
 				items.add(ClickableItem.of(mail.getDisplayItem().build(), e -> new OpenMailMenu(mail)));
 
-			paginator(player, contents, items).build();
+			paginator().items(items).build();
 		}
 	}
 

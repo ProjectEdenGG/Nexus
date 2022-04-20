@@ -6,8 +6,6 @@ import gg.projecteden.nexus.features.crates.models.CrateLoot;
 import gg.projecteden.nexus.features.crates.models.CrateType;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.Pagination;
 import gg.projecteden.nexus.models.voter.Voter;
@@ -16,7 +14,6 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -29,17 +26,12 @@ public class CratePreviewProvider extends InventoryProvider {
 	private final CrateLoot loot;
 
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-			.provider(this)
-			.title(StringUtils.camelCase(type.name()) + " Crate Rewards")
-			.maxSize()
-			.build()
-			.open(player, page);
+	public String getTitle() {
+		return StringUtils.camelCase(type.name()) + " Crate Rewards";
 	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 		contents.fillBorders(ClickableItem.empty(new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).name(" ").build()));
 
 		Pagination page = contents.pagination();
@@ -87,10 +79,10 @@ public class CratePreviewProvider extends InventoryProvider {
 				});
 		} else {
 			loot.getItems().forEach(itemStack -> items.add(ClickableItem.empty(itemStack)));
-			addBackItem(contents, e -> new CratePreviewProvider(type, null).open(player));
+			addBackItem(e -> new CratePreviewProvider(type, null).open(player));
 		}
 
-		paginator(player, contents, items)
+		paginator().items(items)
 			.perPage(28)
 			.iterator(MenuUtils.innerSlotIterator(contents))
 			.build();

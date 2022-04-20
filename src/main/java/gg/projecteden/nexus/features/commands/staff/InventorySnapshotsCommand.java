@@ -2,8 +2,6 @@ package gg.projecteden.nexus.features.commands.staff;
 
 import gg.projecteden.annotations.Async;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -161,18 +159,13 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 		}
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-					.provider(this)
-					.title("&fInv Snapshot - " + getPlayer(snapshot.getUuid()).getName())
-					.maxSize()
-					.build()
-					.open(player, page);
+		public String getTitle() {
+			return "&fInv Snapshot - " + getPlayer(snapshot.getUuid()).getName();
 		}
 
 		@Override
-		public void init(Player player, InventoryContents contents) {
-			addCloseItem(contents);
+		public void init() {
+			addCloseItem();
 			ItemStack applyToSelf = new ItemBuilder(Material.PLAYER_HEAD).name("&eApply to self").skullOwner(player).build();
 			ItemStack applyToOwner = new ItemBuilder(Material.PLAYER_HEAD).name("&eApply to " + owner.getName()).skullOwner(owner).build();
 			ItemStack applyToChest = new ItemBuilder(Material.CHEST).name("&eApply to chest").build();

@@ -1,8 +1,7 @@
 package gg.projecteden.nexus.features.minigames.menus.custom;
 
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.Pagination;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
@@ -16,7 +15,6 @@ import gg.projecteden.nexus.utils.Tasks;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -34,7 +32,7 @@ public class KangarooJumpingMenu extends ICustomMechanicMenu {
 	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 		contents.set(0, 0, ClickableItem.of(backItem(), e -> new ArenaMenu(arena).open(player)));
 
 		contents.set(1, 0, ClickableItem.of(new ItemBuilder(Material.POTION).name("&ePower Up Locations"),
@@ -42,25 +40,13 @@ public class KangarooJumpingMenu extends ICustomMechanicMenu {
 	}
 
 	@RequiredArgsConstructor
+	@Title("Power Up Locations Menu")
 	public static class KangarooJumpingSubMenu extends InventoryProvider {
 		private final KangarooJumpingArena arena;
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-				.id("powerUpLocationsMenu")
-				.maxSize()
-				.provider(new KangarooJumpingSubMenu(arena))
-				.title("Power Up Locations Menu")
-				.build()
-				.open(player, page);
-		}
-
-		@Override
-		public void init(Player player, InventoryContents contents) {
-			KangarooJumpingMenu kangarooJumpingMenu = new KangarooJumpingMenu(arena);
-
-			addBackItem(contents, e -> new ArenaMenu(arena).open(player));
+		public void init() {
+			addBackItem(e -> new ArenaMenu(arena).open(player));
 
 			Pagination page = contents.pagination();
 
@@ -87,7 +73,7 @@ public class KangarooJumpingMenu extends ICustomMechanicMenu {
 			if (arena.getPowerUpLocations() == null)
 				return;
 
-			paginator(player, contents, new ArrayList<>() {{
+			paginator().items(new ArrayList<ClickableItem>() {{
 				List<Location> powerUpLocations = new ArrayList<>(arena.getPowerUpLocations());
 				for (int i = 0; i < powerUpLocations.size(); i++) {
 					Location powerUpLocation = powerUpLocations.get(i);

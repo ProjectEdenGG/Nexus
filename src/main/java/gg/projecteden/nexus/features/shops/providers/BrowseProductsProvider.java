@@ -3,6 +3,8 @@ package gg.projecteden.nexus.features.shops.providers;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.Pagination;
 import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.Filter;
@@ -31,6 +33,7 @@ import static gg.projecteden.nexus.utils.ItemUtils.getRawShulkerContents;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static java.util.stream.Collectors.toList;
 
+@Title("&0Browse Items")
 public class BrowseProductsProvider extends ShopProvider {
 	@Getter
 	protected List<Filter> filters;
@@ -70,13 +73,8 @@ public class BrowseProductsProvider extends ShopProvider {
 	}
 
 	@Override
-	public void open(Player player, int page) {
-		open(player, page, this, "&0Browse Items");
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
-		super.init(player, contents);
+	public void init() {
+		super.init();
 
 		filters.add(FilterRequiredType.REQUIRED.of("No resource world items", product -> !product.isResourceWorld()));
 		addFilters(player, contents);
@@ -201,7 +199,7 @@ public class BrowseProductsProvider extends ShopProvider {
 		if (end < products.size())
 			items.add(empty);
 
-		paginator(player, contents, items).build();
+		paginator().items(items).build();
 	}
 
 	private void processAll(Player player, Pagination page, Product product) {
@@ -249,23 +247,19 @@ public class BrowseProductsProvider extends ShopProvider {
 		return null;
 	}
 
+	@Rows(4)
+	@Title("&0Shulker Contents")
 	public static class ShulkerContentsProvider extends ShopProvider {
 		private final Product product;
 
 		public ShulkerContentsProvider(ShopProvider previousMenu, Product product) {
 			this.previousMenu = previousMenu;
 			this.product = product;
-			this.rows = 4;
 		}
 
 		@Override
-		public void open(Player player, int page) {
-			open(player, page, this, "&0Shulker Contents");
-		}
-
-		@Override
-		public void init(Player player, InventoryContents contents) {
-			super.init(player, contents);
+		public void init() {
+			super.init();
 
 			contents.set(0, 4, ClickableItem.empty(product.getItemWithCustomerLore().build()));
 

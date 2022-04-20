@@ -2,8 +2,8 @@ package gg.projecteden.nexus.features.minigames.menus;
 
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -20,27 +20,19 @@ import java.util.function.BiFunction;
 import static gg.projecteden.nexus.features.menus.MenuUtils.getLocationLore;
 import static gg.projecteden.nexus.features.minigames.Minigames.PREFIX;
 
+@Rows(2)
+@Title("Lobby Menu")
 @RequiredArgsConstructor
 public class LobbyMenu extends InventoryProvider {
 	private final Arena arena;
-
-	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-			.provider(this)
-			.title("Lobby Menu")
-			.rows(2)
-			.build()
-			.open(player, page);
-	}
 
 	static void openAnvilMenu(Player player, Arena arena, String text, BiFunction<Player, String, AnvilGUI.Response> onComplete) {
 		MenuUtils.openAnvilMenu(player, text, onComplete, p -> Tasks.wait(1, () -> new LobbyMenu(arena).open(player)));
 	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
-		addBackItem(contents, e -> new ArenaMenu(arena).open(player));
+	public void init() {
+		addBackItem(e -> new ArenaMenu(arena).open(player));
 
 		contents.set(1, 2, ClickableItem.of(new ItemBuilder(Material.OAK_DOOR)
 				.name("&eLobby Location")

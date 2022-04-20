@@ -1,15 +1,17 @@
 package gg.projecteden.nexus.features.minigames.menus;
 
 import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.menus.flags.FlagsMenu;
 import gg.projecteden.nexus.features.minigames.menus.teams.TeamsMenu;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
@@ -28,9 +30,9 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.features.menus.MenuUtils.getLocationLore;
-import static gg.projecteden.nexus.features.minigames.Minigames.menus;
 import static java.util.Collections.singletonList;
 
+@Rows(5)
 public class ArenaMenu extends InventoryProvider {
 	private final Arena arena;
 
@@ -39,13 +41,8 @@ public class ArenaMenu extends InventoryProvider {
 	}
 
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-			.title(arena.getDisplayName())
-			.provider(new ArenaMenu(arena))
-			.rows(5)
-			.build()
-			.open(player, page);
+	public String getTitle() {
+		return arena.getDisplayName();
 	}
 
 	static void openAnvilMenu(Player player, Arena arena, String text, BiFunction<Player, String, AnvilGUI.Response> onComplete) {
@@ -58,8 +55,13 @@ public class ArenaMenu extends InventoryProvider {
 		DELETE_ARENA(1, 9, Material.TNT) {
 			@Override
 			void onClick(Player player, Arena arena) {
-				new DeleteArenaMenu(arena).open(player);
-
+				ConfirmationMenu.builder()
+					.onCancel(e -> new ArenaMenu(arena).open(player))
+					.onConfirm(e -> {
+						arena.delete();
+						PlayerUtils.send(player, Minigames.PREFIX + "Arena &e" + arena.getName() + " &3deleted");
+					})
+					.open(player);
 			}
 
 			@Override
@@ -89,7 +91,7 @@ public class ArenaMenu extends InventoryProvider {
 		CUSTOM_MECHANIC_SETTINGS(1, 5, Material.WRITABLE_BOOK) {
 			@Override
 			void onClick(Player player, Arena arena) {
-				menus.openCustomSettingsMenu(player, arena);
+				MechanicsMenu.openCustomSettingsMenu(player, arena);
 			}
 
 			@Override
@@ -251,7 +253,7 @@ public class ArenaMenu extends InventoryProvider {
 	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 		Arrays.asList(ArenaMenuItem.values()).forEach(menuItem ->
 			contents.set(
 				(menuItem.getRow() - 1),

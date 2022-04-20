@@ -1,8 +1,7 @@
 package gg.projecteden.nexus.features.minigames.menus.flags;
 
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.Pagination;
 import gg.projecteden.nexus.features.menus.api.content.SlotIterator;
@@ -12,7 +11,6 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -23,22 +21,13 @@ import java.util.Objects;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
+@Title("Block List Menu")
 @RequiredArgsConstructor
 public class BlockListMenu extends InventoryProvider {
 	private final Arena arena;
 
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-			.provider(this)
-			.title("Block List Menu")
-			.maxSize()
-			.build()
-			.open(player, page);
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 		Pagination page = contents.pagination();
 
 		contents.set(0, 0, ClickableItem.of(backItem(), e -> new ArenaMenu(arena).open(player)));

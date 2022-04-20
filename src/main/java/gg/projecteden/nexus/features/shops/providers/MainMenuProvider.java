@@ -1,18 +1,18 @@
 package gg.projecteden.nexus.features.shops.providers;
 
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.shops.providers.common.ShopProvider;
 import gg.projecteden.nexus.models.shop.Shop;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Title("&0Shops")
 public class MainMenuProvider extends ShopProvider {
 
 	public MainMenuProvider(ShopProvider previousMenu) {
@@ -20,13 +20,8 @@ public class MainMenuProvider extends ShopProvider {
 	}
 
 	@Override
-	public void open(Player player, int page) {
-		open(player, page, this, "&0Shops");
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
-		super.init(player, contents);
+	public void init() {
+		super.init();
 
 		contents.set(1, 2, ClickableItem.of(Material.OAK_SIGN, "&6&lBrowse Market", e -> new BrowseMarketProvider(this).open(player)));
 		contents.set(1, 4, ClickableItem.of(Material.CHEST, "&6&lBrowse Shops", e -> new BrowseShopsProvider(this).open(player)));
@@ -36,17 +31,17 @@ public class MainMenuProvider extends ShopProvider {
 		ItemStack head = new ItemBuilder(Material.PLAYER_HEAD).skullOwner(player).name("&6&lYour Shop").build();
 		contents.set(3, 5, ClickableItem.of(head, e -> new YourShopProvider(this).open(player)));
 
-		updateTask(player, contents);
+		updateTask();
 	}
 
-	private void updateTask(Player player, InventoryContents contents) {
+	private void updateTask() {
 		final AtomicInteger index = new AtomicInteger();
 		final AtomicInteger taskId = new AtomicInteger();
 
 		final List<Shop> shops = service.getShopsSorted(shopGroup);
 
 		taskId.set(Tasks.repeat(0, 30, () -> {
-			if (!isOpen(player)) {
+			if (!isOpen()) {
 				Tasks.cancel(taskId.get());
 				return;
 			}

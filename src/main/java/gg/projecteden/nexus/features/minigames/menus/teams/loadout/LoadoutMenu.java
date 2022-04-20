@@ -1,11 +1,12 @@
 package gg.projecteden.nexus.features.minigames.menus.teams.loadout;
 
+import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.minigames.menus.teams.TeamEditorMenu;
 import gg.projecteden.nexus.features.minigames.models.Arena;
+import gg.projecteden.nexus.features.minigames.models.Loadout;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.RequiredArgsConstructor;
@@ -17,20 +18,11 @@ import org.bukkit.inventory.ItemStack;
 
 import static gg.projecteden.nexus.features.menus.MenuUtils.formatInventoryContents;
 
+@Title("Loadout Menu")
 @RequiredArgsConstructor
 public class LoadoutMenu extends InventoryProvider {
 	private final Arena arena;
 	private final Team team;
-
-	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-			.provider(this)
-			.title("Loadout Menu")
-			.maxSize()
-			.build()
-			.open(player, page);
-	}
 
 	private void save(Player player) {
 		Inventory inventory = player.getOpenInventory().getTopInventory();
@@ -72,7 +64,7 @@ public class LoadoutMenu extends InventoryProvider {
 	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 		contents.set(0, 0, ClickableItem.of(new ItemBuilder(backItem())
 				.name(backItem().getItemMeta().getDisplayName())
 				.lore("&7Escape to discard changes"),
@@ -112,7 +104,14 @@ public class LoadoutMenu extends InventoryProvider {
 		contents.set(0, 8, ClickableItem.of(new ItemBuilder(Material.TNT)
 				.name("&c&lDelete Loadout")
 				.lore("&7You will need to confirm", "&7deleting a loadout.", "", "&7&lTHIS CANNOT BE UNDONE."),
-			e -> new DeleteLoadoutMenu(arena, team).open(player)));
+			e -> ConfirmationMenu.builder()
+				.onCancel(e2 -> open(player))
+				.onConfirm(e2 -> {
+					team.setLoadout(new Loadout());
+					arena.write();
+					new LoadoutMenu(arena, team).open(player);
+				})
+				.open(player)));
 
 		formatInventoryContents(contents, team.getLoadout().getInventory());
 	}

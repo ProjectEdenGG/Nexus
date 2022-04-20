@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.shops.providers;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.ItemClickData;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.shops.Shops;
 import gg.projecteden.nexus.features.shops.providers.common.ShopProvider;
@@ -31,6 +32,7 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.StringUtils.pretty;
 
+@Title("&0Add Item")
 public class ExchangeConfigProvider extends ShopProvider {
 	private Product product;
 	private final AtomicReference<ItemStack> item = new AtomicReference<>();
@@ -65,13 +67,8 @@ public class ExchangeConfigProvider extends ShopProvider {
 	}
 
 	@Override
-	public void open(Player player, int page) {
-		open(player, page, this, "&0Add Item");
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
-		super.init(player, contents);
+	public void init() {
+		super.init();
 
 		addItemSelector(player, contents, 1, item, allowEditItem);
 		addExchangeControl(player, contents);

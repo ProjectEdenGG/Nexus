@@ -19,6 +19,8 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fi
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
@@ -768,20 +770,12 @@ public class MinigameNightIsland implements BearFair21Island {
 
 	private static final Supplier<ItemBuilder> slightlyDamagedSpeaker = () -> ItemBuilder.fromHeadId("2126").name("&cSlightly Damaged Speaker").undroppable().unplaceable();
 
+	@Rows(3)
+	@Title("Car Trunk")
 	private static class TrunkMenu extends InventoryProvider {
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-				.provider(this)
-				.title("Car Trunk")
-				.rows(3)
-				.build()
-				.open(player, page);
-		}
-
-		@Override
-		public void init(Player player, InventoryContents contents) {
+		public void init() {
 			contents.set(0, 3, ClickableItem.empty(slightlyDamagedSpeaker.get().build()));
 			contents.set(2, 5, ClickableItem.empty(slightlyDamagedSpeaker.get().build()));
 			contents.set(1, 2, ClickableItem.empty(FishingLoot.BROKEN_CD.getItem()));
@@ -892,21 +886,13 @@ public class MinigameNightIsland implements BearFair21Island {
 
 	// Menus
 
+	@Rows(3)
+	@Title("Xbox Parts")
 	public static class XboxMenu extends InventoryProvider {
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-				.provider(this)
-				.title("Xbox Parts")
-				.rows(3)
-				.build()
-				.open(player, page);
-		}
-
-		@Override
-		public void init(Player player, InventoryContents contents) {
-			addCloseItem(contents);
+		public void init() {
+			addCloseItem();
 			contents.set(1, 1, ClickableItem.empty(new ItemBuilder(Material.GREEN_CARPET).name("Motherboard").customModelData(1).undroppable().unplaceable().build()));
 			contents.set(1, 5, ClickableItem.empty(new ItemBuilder(Material.LIGHT_GRAY_CARPET).name("CPU").customModelData(1).undroppable().unplaceable().build()));
 			contents.set(1, 7, ClickableItem.empty(new ItemBuilder(Material.LIGHT_GRAY_CARPET).name("Hard Drive").customModelData(2).undroppable().unplaceable().build()));
@@ -916,21 +902,13 @@ public class MinigameNightIsland implements BearFair21Island {
 
 	}
 
+	@Rows(3)
+	@Title("Laptop Parts")
 	public static class LaptopMenu extends InventoryProvider {
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-				.provider(this)
-				.title("Laptop Parts")
-				.rows(3)
-				.build()
-				.open(player, page);
-		}
-
-		@Override
-		public void init(Player player, InventoryContents contents) {
-			addCloseItem(contents);
+		public void init() {
+			addCloseItem();
 			contents.set(0, 3, ClickableItem.empty(new ItemBuilder(Material.NETHERITE_INGOT).name("Battery").customModelData(1).undroppable().unplaceable().build()));
 			contents.set(1, 7, ClickableItem.empty(new ItemBuilder(Material.LIGHT_GRAY_CARPET).name("CPU").customModelData(1).undroppable().unplaceable().build()));
 			contents.set(2, 3, ClickableItem.empty(new ItemBuilder(Material.IRON_TRAPDOOR).name("Keyboard").customModelData(0).undroppable().unplaceable().build()));
@@ -942,17 +920,9 @@ public class MinigameNightIsland implements BearFair21Island {
 
 	}
 
+	@Rows(3)
+	@Title("Scrambled Cables")
 	public static class ScrambledCablesMenu extends InventoryProvider {
-
-		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-				.provider(this)
-				.title("Scrambled Cables")
-				.rows(3)
-				.build()
-				.open(player, page);
-		}
 
 		@Getter
 		@AllArgsConstructor
@@ -990,8 +960,8 @@ public class MinigameNightIsland implements BearFair21Island {
 		}
 
 		@Override
-		public void init(Player player, InventoryContents contents) {
-			addCloseItem(contents);
+		public void init() {
+			addCloseItem();
 
 			Runnable validate = () -> Tasks.wait(2, () -> {
 				final Inventory inventory = player.getOpenInventory().getTopInventory();
@@ -1051,17 +1021,9 @@ public class MinigameNightIsland implements BearFair21Island {
 
 	}
 
+	@Rows(3)
+	@Title("Router Parts")
 	public static class RouterMenu extends InventoryProvider {
-
-		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-				.provider(this)
-				.title("Router Parts")
-				.rows(3)
-				.build()
-				.open(player, page);
-		}
 
 		@Getter
 		@AllArgsConstructor
@@ -1081,8 +1043,8 @@ public class MinigameNightIsland implements BearFair21Island {
 		}
 
 		@Override
-		public void init(Player player, InventoryContents contents) {
-			addCloseItem(contents);
+		public void init() {
+			addCloseItem();
 
 			for (RouterParts part : RouterParts.values()) {
 				ItemStack item = part.getDisplayItem();

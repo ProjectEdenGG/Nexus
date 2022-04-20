@@ -2,14 +2,13 @@ package gg.projecteden.nexus.features.shops.providers;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.shops.Shops;
 import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.FilterSearchType;
 import gg.projecteden.nexus.features.shops.providers.common.ShopProvider;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 
@@ -18,6 +17,7 @@ import java.util.function.Predicate;
 import static gg.projecteden.nexus.features.menus.SignMenuFactory.ARROWS;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
+@Title("&0Search Items")
 public class SearchProductsProvider extends ShopProvider {
 
 	public SearchProductsProvider(ShopProvider previousMenu) {
@@ -25,13 +25,8 @@ public class SearchProductsProvider extends ShopProvider {
 	}
 
 	@Override
-	public void open(Player player, int page) {
-		open(player, page, this, "&0Search Items");
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
-		super.init(player, contents);
+	public void init() {
+		super.init();
 
 		BrowseProductsProvider browseItemsMenu;
 		if (previousMenu instanceof BrowseProductsProvider)

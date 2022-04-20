@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.mobheads;
 
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.mobheads.common.MobHead;
@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 
+@Title("Mob Heads")
 public class MobHeadUserMenu extends InventoryProvider {
 	private final MobHeadUserService service = new MobHeadUserService();
 
@@ -29,20 +30,10 @@ public class MobHeadUserMenu extends InventoryProvider {
 	private HeadsFilterType headsFilter = HeadsFilterType.OFF;
 
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-			.provider(this)
-			.maxSize()
-			.title("Mob Heads")
-			.build()
-			.open(player, page);
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 		final MobHeadUser user = service.get(player);
 
-		addCloseItem(contents);
+		addCloseItem();
 
 		List<ClickableItem> items = new ArrayList<>();
 
@@ -72,7 +63,7 @@ public class MobHeadUserMenu extends InventoryProvider {
 				addItem.accept(mobHeadType);
 		}
 
-		paginator(player, contents, items).build();
+		paginator().items(items).build();
 
 		formatKillsFilter(player, contents);
 		formatHeadsFilter(player, contents);

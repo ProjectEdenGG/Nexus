@@ -1,8 +1,7 @@
 package gg.projecteden.nexus.features.minigames.menus.teams;
 
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.Pagination;
 import gg.projecteden.nexus.features.menus.api.content.SlotIterator;
@@ -13,7 +12,6 @@ import gg.projecteden.nexus.utils.Tasks;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -23,23 +21,14 @@ import static gg.projecteden.nexus.features.menus.MenuUtils.getLocationLore;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @RequiredArgsConstructor
+@Title("Spawnpoint Location Menus")
 public class SpawnpointLocationsMenu extends InventoryProvider {
 	private final Arena arena;
 	private final Team team;
 
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-			.provider(this)
-			.title("Spawnpoint Location Menus")
-			.maxSize()
-			.build()
-			.open(player, page);
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
-		addBackItem(contents, e -> new TeamEditorMenu(arena, team).open(player));
+	public void init() {
+		addBackItem(e -> new TeamEditorMenu(arena, team).open(player));
 
 		Pagination page = contents.pagination();
 

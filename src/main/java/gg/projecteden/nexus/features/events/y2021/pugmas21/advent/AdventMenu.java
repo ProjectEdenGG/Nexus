@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.events.y2021.pugmas21.advent;
 
 import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotIterator;
@@ -41,17 +40,12 @@ public class AdventMenu extends InventoryProvider {
 	}
 
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-			.provider(this)
-			.maxSize()
-			.title(title.getTitle())
-			.build()
-			.open(player);
+	public String getTitle() {
+		return title.getTitle();
 	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 		int row = 1;
 		int column = Pugmas21.EPOCH.getDayOfWeek().getValue() + 1;
 
@@ -96,7 +90,7 @@ public class AdventMenu extends InventoryProvider {
 
 	private void updateTask(Player player, InventoryContents contents) {
 		Tasks.wait(frameTicks, () -> {
-			if (!isOpen(player))
+			if (!isOpen())
 				return;
 
 			title = title.nextWithLoop();

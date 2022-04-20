@@ -5,7 +5,6 @@ import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.Pagination;
-import gg.projecteden.nexus.features.menus.api.content.SlotIterator;
 import gg.projecteden.nexus.features.mobheads.MobHeadType;
 import gg.projecteden.nexus.features.statistics.StatisticsMenu.StatsMenus;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -32,8 +31,8 @@ import java.util.stream.Collectors;
 
 import static gg.projecteden.utils.StringUtils.camelCase;
 
-@RequiredArgsConstructor
 @AllArgsConstructor
+@RequiredArgsConstructor
 public class StatisticsMenuProvider extends InventoryProvider {
 	private final int itemsPerPage = 36;
 	private final StatisticsMenu.StatsMenus menu;
@@ -41,22 +40,20 @@ public class StatisticsMenuProvider extends InventoryProvider {
 	private int startIndex;
 
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-			.provider(this)
-			.title(Nickname.of(targetPlayer) + "'s Statistics - " + camelCase(menu.name()))
-			.rows(menu.getSize())
-			.build()
-			.open(player, page);
+	public String getTitle() {
+		return Nickname.of(targetPlayer) + "'s Statistics - " + camelCase(menu.name());
 	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
-		Pagination page = contents.pagination();
+	protected int getRows() {
+		return menu.getSize();
+	}
 
+	@Override
+	public void init() {
 		switch (menu) {
-			case MAIN -> addCloseItem(contents);
-			default -> addBackItem(contents, e -> new StatisticsMenuProvider(StatsMenus.MAIN, targetPlayer).open(player, 0));
+			case MAIN -> addCloseItem();
+			default -> addBackItem(e -> new StatisticsMenuProvider(StatsMenus.MAIN, targetPlayer).open(player, 0));
 		}
 
 		switch (menu) {
@@ -69,13 +66,9 @@ public class StatisticsMenuProvider extends InventoryProvider {
 				contents.set(1, 3, ClickableItem.of(blocks, e -> new StatisticsMenuProvider(StatsMenus.BLOCKS, targetPlayer).open(player, 0)));
 				contents.set(1, 5, ClickableItem.of(items, e -> new StatisticsMenuProvider(StatsMenus.ITEMS, targetPlayer).open(player, 0)));
 				contents.set(1, 7, ClickableItem.of(mobs, e -> new StatisticsMenuProvider(StatsMenus.MOBS, targetPlayer).open(player, 0)));
-				return;
 			}
-			case GENERAL -> {
-				getGeneralStats(contents);
-				return;
-			}
-			case MOBS -> paginator(player, contents, getMobStats()).build();
+			case GENERAL -> getGeneralStats(contents);
+			case MOBS -> paginator().items(getMobStats()).build();
 			case BLOCKS, ITEMS -> {
 				List<Material> materials;
 				if (menu == StatisticsMenu.StatsMenus.BLOCKS)
@@ -124,8 +117,8 @@ public class StatisticsMenuProvider extends InventoryProvider {
 				}
 				int row = 1;
 				int column = 0;
-				for (int i = 0; i < menuItems.size(); i++) {
-					contents.set(row, column, menuItems.get(i));
+				for (ClickableItem menuItem : menuItems) {
+					contents.set(row, column, menuItem);
 					if (column == 8) {
 						column = 0;
 						row++;

@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.trust.providers;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -18,6 +18,7 @@ import org.bukkit.entity.Player;
 import java.util.List;
 import java.util.UUID;
 
+@Rows(4)
 public class TrustPlayerProvider extends InventoryProvider {
 	private final OfflinePlayer trusted;
 	private final TrustService service = new TrustService();
@@ -26,19 +27,15 @@ public class TrustPlayerProvider extends InventoryProvider {
 		this.trusted = trusted;
 	}
 
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-			.provider(this)
-			.title(Nickname.of(trusted))
-			.rows(4)
-			.build()
-			.open(player);
+	@Override
+	public String getTitle() {
+		return Nickname.of(trusted);
 	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 		Trust trust = service.get(player);
-		addBackItem(contents, e -> new TrustProvider().open(player));
+		addBackItem(e -> new TrustProvider().open(player));
 
 		contents.set(0, 4, ClickableItem.empty(new ItemBuilder(Material.PLAYER_HEAD).skullOwner(trusted).name("&f" + Nickname.of(trusted)).build()));
 

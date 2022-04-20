@@ -286,7 +286,7 @@ public class InventoryManager {
 
 		@Override
 		public void run() {
-			new HashMap<>(inventories).forEach((player, inv) -> inv.getProvider().update(player, contents.get(player)));
+			new HashMap<>(inventories).forEach((player, inv) -> inv.getProvider().update());
 		}
 
 	}
@@ -303,7 +303,7 @@ public class InventoryManager {
 
 		@Override
 		public void run() {
-			provider.update(this.player, this.contents);
+			provider.update();
 		}
 
 	}

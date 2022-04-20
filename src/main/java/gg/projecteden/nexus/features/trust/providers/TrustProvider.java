@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.features.trust.providers;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.trust.TrustFeature;
 import gg.projecteden.nexus.framework.features.Features;
@@ -14,20 +14,18 @@ import gg.projecteden.nexus.models.trust.Trust.Type;
 import gg.projecteden.nexus.models.trust.TrustService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static gg.projecteden.nexus.features.menus.MenuUtils.getRows;
 import static gg.projecteden.nexus.features.menus.SignMenuFactory.ARROWS;
 
+@Title("Trusts")
 @RequiredArgsConstructor
 public class TrustProvider extends InventoryProvider {
 	private final InventoryProvider back;
@@ -38,23 +36,17 @@ public class TrustProvider extends InventoryProvider {
 	}
 
 	@Override
-	public void open(Player player, int page) {
-		Trust trust = new TrustService().get(player);
-		SmartInventory.builder()
-			.provider(this)
-			.title("Trusts")
-			.rows(getRows(trust.getAll().size(), 3))
-			.build()
-			.open(player, page);
+	protected int getRows() {
+		return MenuUtils.calculateRows(new TrustService().get(player).getAll().size(), 3);
 	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 		Trust trust = new TrustService().get(player);
 		if (back == null)
-			addCloseItem(contents);
+			addCloseItem();
 		else
-			addBackItem(contents, e -> back.open(player));
+			addBackItem(e -> back.open(player));
 
 		List<ClickableItem> items = new ArrayList<>();
 
@@ -88,7 +80,7 @@ public class TrustProvider extends InventoryProvider {
 					new TrustPlayerProvider(trusted).open(player)));
 			});
 
-		paginator(player, contents, items).build();
+		paginator().items(items).build();
 
 		ItemBuilder add = new ItemBuilder(Material.LIME_CONCRETE_POWDER).name("&aAdd Trust");
 		contents.set(0, 8, ClickableItem.of(add.build(), e ->

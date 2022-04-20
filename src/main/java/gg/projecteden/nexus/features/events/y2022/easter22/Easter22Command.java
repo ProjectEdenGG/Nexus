@@ -4,8 +4,7 @@ import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.IEventCommand;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -30,7 +29,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -88,21 +86,12 @@ public class Easter22Command extends IEventCommand {
 		new Easter22StoreProvider().open(player());
 	}
 
+	@Title("&3Easter 2022 Store")
 	public static class Easter22StoreProvider extends InventoryProvider {
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-				.provider(this)
-				.title("&3Easter 2022 Store")
-				.maxSize()
-				.build()
-				.open(player, page);
-		}
-
-		@Override
-		public void init(Player player, InventoryContents contents) {
-			addCloseItem(contents);
+		public void init() {
+			addCloseItem();
 
 			final List<ClickableItem> items = new ArrayList<>();
 
@@ -133,7 +122,7 @@ public class Easter22Command extends IEventCommand {
 				}));
 			}
 
-			paginator(player, contents, items).build();
+			paginator().items(items).build();
 		}
 
 	}

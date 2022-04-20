@@ -350,17 +350,10 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		return Utils.getSuperclasses(this.getClass());
 	}
 
-	@Contract("null -> null; !null -> _") @Nullable
+	@Nullable
+	@Contract("null -> null; !null -> _")
 	public final <T> T getAnnotation(@Nullable Class<? extends Annotation> annotation) {
-		if (annotation == null) return null;
-		for (Class<? extends Mechanic> mechanic : getSuperclasses()) {
-			Annotation result = mechanic.getAnnotation(annotation);
-			if (result != null) {
-				return (T) result;
-			}
-		}
-
-		return null;
+		return (T) Utils.getAnnotation(getClass(), annotation);
 	}
 
 	public boolean canOpenInventoryBlocks() {

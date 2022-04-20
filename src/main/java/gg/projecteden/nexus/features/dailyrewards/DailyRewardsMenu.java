@@ -4,8 +4,8 @@ import com.google.common.base.Strings;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.ColorSelectMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack.ResourcePackNumber;
 import gg.projecteden.nexus.models.banker.BankerService;
@@ -19,7 +19,7 @@ import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
-import net.md_5.bungee.api.ChatColor;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -31,34 +31,17 @@ import static gg.projecteden.nexus.features.menus.SignMenuFactory.ARROWS;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
+@Title("&3Daily Rewards")
+@RequiredArgsConstructor
 public class DailyRewardsMenu extends InventoryProvider {
-	private final DailyRewardUser user;
-
+	private static final String PREFIX = StringUtils.getPrefix("DailyRewards");
 	private static final int MAX_DAY = DailyRewardsFeature.getMaxDays();
 
-	private static final ItemStack claimed = new ItemStack(Material.WHITE_WOOL);
-	private static final ItemStack unclaimed = new ItemStack(Material.WHITE_WOOL);
-	private static final ItemStack locked = new ItemStack(Material.BLACK_WOOL);
-
-	private static final String PREFIX = StringUtils.getPrefix("DailyRewards");
-
-	DailyRewardsMenu(DailyRewardUser user) {
-		this.user = user;
-	}
+	private final DailyRewardUser user;
 
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-				.provider(this)
-				.maxSize()
-				.title(ChatColor.DARK_AQUA + "Daily Rewards")
-				.build()
-				.open(player, page);
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
-		addCloseItem(contents);
+	public void init() {
+		addCloseItem();
 
 		List<ClickableItem> items = new ArrayList<>();
 
@@ -91,9 +74,11 @@ public class DailyRewardsMenu extends InventoryProvider {
 					.build()));
 		}
 
-		paginator(player, contents, items).build();
+		paginator().items(items).build();
 	}
 
+	@Rows(3)
+	@Title("&3Daily Rewards")
 	public static class SelectItemMenu extends InventoryProvider {
 		private final DailyRewardUser user;
 		private final int day;
@@ -106,18 +91,8 @@ public class DailyRewardsMenu extends InventoryProvider {
 		}
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-					.provider(this)
-					.rows(3)
-					.title(ChatColor.DARK_AQUA + "Daily Rewards")
-					.build()
-					.open(player);
-		}
-
-		@Override
-		public void init(Player player, InventoryContents contents) {
-			addBackItem(contents, e -> new DailyRewardsMenu(user).open(user.getOnlinePlayer(), page));
+		public void init() {
+			addBackItem(e -> new DailyRewardsMenu(user).open(user.getOnlinePlayer(), page));
 
 			List<Reward> rewards = DailyRewardsFeature.getRewards(day);
 

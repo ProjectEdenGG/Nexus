@@ -2,8 +2,8 @@ package gg.projecteden.nexus.features.events.aeveonproject.menus;
 
 import gg.projecteden.nexus.features.events.aeveonproject.effects.ClientsideBlocks;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.models.aeveonproject.AeveonProjectService;
@@ -11,33 +11,23 @@ import gg.projecteden.nexus.models.aeveonproject.AeveonProjectUser;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+@Rows(5)
+@Title("Customize your ship color:")
 public class ShipColorMenu extends InventoryProvider {
 	private final AeveonProjectService service = new AeveonProjectService();
 	private AeveonProjectUser user;
 
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-			.provider(new ShipColorMenu())
-			.title(ChatColor.DARK_AQUA + "Customize your ship color:")
-			.rows(5)
-			.closeable(true)
-			.build()
-			.open(player, page);
-	}
-
 	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 		user = service.get(player);
 
 		int row = 1;
 		int col = 1;
 
-		addCloseItem(contents);
+		addCloseItem();
 
 		for (ColorType colorType : ColorType.values()) {
 			if (colorType.getDyeColor() == null) continue;

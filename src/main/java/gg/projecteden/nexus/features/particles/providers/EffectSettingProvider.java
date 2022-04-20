@@ -1,9 +1,8 @@
 package gg.projecteden.nexus.features.particles.providers;
 
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.models.particle.ParticleOwner;
 import gg.projecteden.nexus.models.particle.ParticleService;
@@ -15,8 +14,9 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Player;
 
+@Rows(5)
+@Title("Particle Settings")
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class EffectSettingProvider extends InventoryProvider {
@@ -25,22 +25,12 @@ public class EffectSettingProvider extends InventoryProvider {
 	private HumanEntity displayEntity;
 
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-				.title("Particle Settings")
-				.rows(5)
-				.provider(this)
-				.build()
-				.open(player);
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 		// TODO Should receive previousMenu
 		if (displayEntity != null)
-			addCloseItem(contents);
+			addCloseItem();
 		else
-			addBackItem(contents, e -> new ParticleMenuProvider().open(player));
+			addBackItem(e -> new ParticleMenuProvider().open(player));
 
 		if (displayEntity == null)
 			displayEntity = player;

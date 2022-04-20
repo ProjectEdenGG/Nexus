@@ -2,22 +2,18 @@ package gg.projecteden.nexus.features.kits;
 
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.features.menus.api.content.Pagination;
-import gg.projecteden.nexus.features.menus.api.content.SlotIterator;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import lombok.RequiredArgsConstructor;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -26,7 +22,10 @@ import java.util.List;
 
 import static gg.projecteden.nexus.features.menus.MenuUtils.openAnvilMenu;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.utils.StringUtils.camelCase;
 
+@Title("Kit Manager")
+@Rows(3)
 @RequiredArgsConstructor
 public class KitManagerProvider extends InventoryProvider {
 	private final Integer id;
@@ -36,20 +35,9 @@ public class KitManagerProvider extends InventoryProvider {
 	}
 
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-			.title("Kit Manager")
-			.provider(this)
-			.rows(3)
-			.build()
-			.open(player, page);
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 		if (id == null) {
-
-			addCloseItem(contents);
+			addCloseItem();
 
 			contents.set(0, 4, ClickableItem.of(new ItemBuilder(Material.EMERALD_BLOCK).name("&aNew Kit").build(), e -> {
 				int newId = KitManager.getNextId();
@@ -60,38 +48,26 @@ public class KitManagerProvider extends InventoryProvider {
 
 			Kit[] kits = KitManager.getAllKits();
 
-			Pagination page = contents.pagination();
-			ClickableItem[] items = new ClickableItem[kits.length];
+			List<ClickableItem> items = new ArrayList<>();
 
-			for (int i = 0; i < kits.length; i++) {
-				Kit kit = kits[i];
-				ItemStack item = new ItemBuilder(Material.CHEST).name("&e" + StringUtils.camelCase(kit.getName())).lore(" ").lore("&7Shift-Right Click to delete").build();
-				items[i] = ClickableItem.of(item, e -> {
-					if (((InventoryClickEvent) e.getEvent()).isRightClick() && ((InventoryClickEvent) e.getEvent()).isShiftClick()) {
+			for (Kit kit : kits) {
+				ItemStack item = new ItemBuilder(Material.CHEST).name("&e" + camelCase(kit.getName())).lore(" ").lore("&7Shift-Right Click to delete").build();
+				items.add(ClickableItem.of(item, e -> {
+					if (e.isShiftClick())
 						ConfirmationMenu.builder().onCancel(itemClickData -> new KitManagerProvider().open(player))
-								.onConfirm(itemClickData -> {
-									KitManager.getConfig().set(kit.getId() + "", null);
-									KitManager.saveConfig();
-									Tasks.wait(1, () -> new KitManagerProvider().open(player));
-								}).open(player);
-					} else
+							.onConfirm(itemClickData -> {
+								KitManager.getConfig().set(kit.getId() + "", null);
+								KitManager.saveConfig();
+								Tasks.wait(1, () -> new KitManagerProvider().open(player));
+							}).open(player);
+					else
 						new KitManagerProvider(kit.getId()).open(player);
-				});
+				}));
 			}
 
-			page.setItems(items);
-			page.setItemsPerPage(9);
-			page.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 1, 0));
-
-			if (!page.isFirst())
-				contents.set(2, 0, ClickableItem.of(new ItemBuilder(Material.ARROW).name("<-- Back").build(),
-					e -> new KitManagerProvider().open(player, page.previous().getPage())));
-			if (!page.isLast())
-				contents.set(2, 8, ClickableItem.of(new ItemBuilder(Material.ARROW).name("Next -->").build(),
-					e -> new KitManagerProvider().open(player, page.next().getPage())));
-
+			paginator().items(items).perPage(9).build();
 		} else {
-			addBackItem(contents, e -> {
+			addBackItem(e -> {
 				saveItems(player);
 				new KitManagerProvider().open(player);
 			});

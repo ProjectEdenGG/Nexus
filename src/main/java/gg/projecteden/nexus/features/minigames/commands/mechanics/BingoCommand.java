@@ -1,8 +1,7 @@
 package gg.projecteden.nexus.features.minigames.commands.mechanics;
 
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.mechanics.Bingo;
@@ -21,7 +20,6 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.NonNull;
-import org.bukkit.entity.Player;
 
 import java.util.stream.Collectors;
 
@@ -68,6 +66,7 @@ public class BingoCommand extends CustomCommand {
 		matchData.getData(minigamer).setCompleted(challenge, false);
 	}
 
+	@Title("Bingo")
 	private static class BingoMenu extends InventoryProvider {
 		private final Minigamer minigamer;
 		private final BingoMatchData matchData;
@@ -81,18 +80,8 @@ public class BingoCommand extends CustomCommand {
 		}
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-					.provider(this)
-					.title("Bingo")
-					.maxSize()
-					.build()
-					.open(player, page);
-		}
-
-		@Override
-		public void init(Player player, InventoryContents contents) {
-			addCloseItem(contents);
+		public void init() {
+			addCloseItem();
 
 			int row = 1;
 			int column = 2;

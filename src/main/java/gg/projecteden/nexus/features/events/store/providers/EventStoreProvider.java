@@ -21,7 +21,7 @@ public class EventStoreProvider extends EventStoreMenu {
 	}
 
 	@Override
-	protected String getTitle() {
+	public String getTitle() {
 		return "Event Store";
 	}
 

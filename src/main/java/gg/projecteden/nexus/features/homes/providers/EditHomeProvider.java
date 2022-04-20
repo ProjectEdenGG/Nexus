@@ -3,46 +3,34 @@ package gg.projecteden.nexus.features.homes.providers;
 import gg.projecteden.nexus.features.homes.HomesMenu;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.models.home.Home;
 import gg.projecteden.nexus.models.home.HomeOwner;
 import gg.projecteden.nexus.models.home.HomeService;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 
 import static gg.projecteden.nexus.features.homes.HomesMenu.getAccessListNames;
+import static gg.projecteden.utils.StringUtils.camelCase;
 
 public class EditHomeProvider extends InventoryProvider {
-	private Home home;
-	private HomeOwner homeOwner;
-	private HomeService service = new HomeService();
+	private final Home home;
+	private final HomeOwner homeOwner;
+	private final HomeService service = new HomeService();
 
 	public EditHomeProvider(Home home) {
 		this.home = home;
 		this.homeOwner = home.getOwner();
 	}
 
-	private void refresh() {
-		HomesMenu.edit(home);
+	@Override
+	public String getTitle() {
+		return (home.isLocked() ? "&4" : "&a") + camelCase(home.getName());
 	}
 
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-			.provider(this)
-			.maxSize()
-			.title(StringUtils.colorize((home.isLocked() ? "&4" : "&a") + StringUtils.camelCase(home.getName())))
-			.build()
-			.open(home.getOwner().getOnlinePlayer(), page);
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
-		addBackItem(contents, e -> HomesMenu.edit(homeOwner));
+	public void init() {
+		addBackItem(e -> HomesMenu.edit(homeOwner));
 
 		Material material = home.isLocked() ? Material.IRON_BARS : Material.OAK_FENCE_GATE;
 		String name = home.isLocked() ? "&cLocked" : "&aUnlocked";

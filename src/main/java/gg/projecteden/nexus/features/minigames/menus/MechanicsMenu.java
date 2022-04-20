@@ -1,34 +1,37 @@
 package gg.projecteden.nexus.features.minigames.menus;
 
+import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.minigames.menus.annotations.CustomMechanicSettings;
+import gg.projecteden.nexus.features.minigames.menus.custom.ICustomMechanicMenu;
 import gg.projecteden.nexus.features.minigames.models.Arena;
+import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.reflections.Reflections;
 
-import static gg.projecteden.nexus.features.menus.MenuUtils.getRows;
+import java.util.Arrays;
+import java.util.List;
 
+@Title("Game Mechanic Type")
 @RequiredArgsConstructor
 public class MechanicsMenu extends InventoryProvider {
 	private final Arena arena;
 
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-			.provider(this)
-			.title("Game Mechanic Type")
-			.rows(getRows(MechanicType.values().length, 1))
-			.build()
-			.open(player, page);
+	protected int getRows() {
+		return MenuUtils.calculateRows(MechanicType.values().length, 1);
 	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 		contents.set(0, 0, ClickableItem.of(backItem(), e -> new ArenaMenu(arena).open(player)));
 		int row = 1;
 		int column = 0;
@@ -54,6 +57,33 @@ public class MechanicsMenu extends InventoryProvider {
 			}
 		}
 
+	}
+
+	@SneakyThrows
+	public static void openCustomSettingsMenu(Player player, Arena arena) {
+		Class<? extends InventoryProvider> provider = null;
+
+		customMenus:
+		for (Class<? extends InventoryProvider> menu : new Reflections(ICustomMechanicMenu.class.getPackageName()).getSubTypesOf(InventoryProvider.class)) {
+			for (Class<? extends Mechanic> superclass : arena.getMechanic().getSuperclasses()) {
+				if (menu.getAnnotation(CustomMechanicSettings.class) != null) {
+					List<Class<? extends Mechanic>> classes = Arrays.asList(menu.getAnnotation(CustomMechanicSettings.class).value());
+					if (classes.contains(superclass)) {
+						provider = menu;
+						break customMenus;
+					}
+				}
+			}
+		}
+
+		if (provider == null) {
+			player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1, 1);
+			return;
+		}
+
+		final InventoryProvider menu = provider.getDeclaredConstructor(Arena.class).newInstance(arena);
+		arena.write();
+		menu.open(player);
 	}
 
 }

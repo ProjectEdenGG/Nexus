@@ -2,15 +2,13 @@ package gg.projecteden.nexus.features.safecracker.menus;
 
 import gg.projecteden.annotations.Disabled;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.models.safecracker.SafeCrackerEvent;
 import gg.projecteden.nexus.models.safecracker.SafeCrackerEventService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDateTime;
@@ -18,24 +16,16 @@ import java.util.HashMap;
 
 import static gg.projecteden.nexus.features.menus.MenuUtils.openAnvilMenu;
 
+
 @Disabled
+@Title("SafeCracker Game Selector")
 public class SafeCrackerGameSelector extends InventoryProvider {
 	private final SafeCrackerEventService service = new SafeCrackerEventService();
 	private final SafeCrackerEvent event = service.get0();
 
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-			.provider(this)
-			.title("SafeCracker Game Selector")
-			.maxSize()
-			.build()
-			.open(player, page);
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
-		addBackItem(contents, e -> new SafeCrackerAdminProvider().open(player));
+	public void init() {
+		addBackItem(e -> new SafeCrackerAdminProvider().open(player));
 
 		contents.set(0, 4, ClickableItem.of(new ItemBuilder(Material.EMERALD_BLOCK).name("&aNew Event").build(), e -> {
 			openAnvilMenu(player, "New Game...", (player1, response) -> {

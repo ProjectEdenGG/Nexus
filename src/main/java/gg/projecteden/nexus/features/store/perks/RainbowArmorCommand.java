@@ -1,10 +1,9 @@
 package gg.projecteden.nexus.features.store.perks;
 
 import com.google.common.util.concurrent.AtomicDouble;
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEvent;
@@ -130,24 +129,20 @@ public class RainbowArmorCommand extends CustomCommand implements Listener {
 		new RainbowArmorService().get(player).stop();
 	}
 
+	@Rows(3)
 	private static class RainbowArmorProvider extends InventoryProvider {
 		private final RainbowArmorService service = new RainbowArmorService();
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-				.provider(this)
-				.rows(3)
-				.title(Rainbow.apply("Rainbow Armor"))
-				.build()
-				.open(player, page);
+		public String getTitle() {
+			return Rainbow.apply("Rainbow Armor");
 		}
 
 		@Override
-		public void init(Player player, InventoryContents contents) {
+		public void init() {
 			final RainbowArmor user = service.get(player);
 
-			addCloseItem(contents);
+			addCloseItem();
 
 			for (ArmorSlot slot : ArmorSlot.values()) {
 				final ItemBuilder other;

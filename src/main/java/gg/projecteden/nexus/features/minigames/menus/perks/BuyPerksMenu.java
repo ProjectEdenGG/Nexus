@@ -1,7 +1,8 @@
 package gg.projecteden.nexus.features.minigames.menus.perks;
 
+import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.minigames.models.perks.Perk;
 import gg.projecteden.nexus.features.minigames.models.perks.PerkCategory;
@@ -20,9 +21,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.nexus.features.menus.MenuUtils.getRows;
 import static gg.projecteden.nexus.utils.StringUtils.plural;
 
+@Title("Purchase Collectibles")
 public class BuyPerksMenu extends CommonPerksMenu {
 	private static final DecimalFormat FORMATTER = new DecimalFormat("#,###");
 
@@ -31,18 +32,13 @@ public class BuyPerksMenu extends CommonPerksMenu {
 	}
 
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-				.provider(this)
-				.title("Purchase Collectibles")
-				.rows(Math.max(3, getRows(PerkType.getByCategory(category).size(), 1)))
-				.build()
-				.open(player, page);
+	protected int getRows() {
+		return Math.max(3, MenuUtils.calculateRows(PerkType.getByCategory(category).size(), 1));
 	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
-		addBackItem(contents, $ -> new CategoryMenu<>(getClass()).open(player));
+	public void init() {
+		addBackItem($ -> new CategoryMenu<>(getClass()).open(player));
 
 		PerkOwner perkOwner = service.get(player);
 
@@ -57,7 +53,7 @@ public class BuyPerksMenu extends CommonPerksMenu {
 		List<PerkType> perks = perkSortWrappers.stream().map(PerkSortWrapper::getPerkType).collect(Collectors.toList());
 
 		// create the items
-		paginator(player, contents, new ArrayList<>() {{
+		paginator().items(new ArrayList<ClickableItem>() {{
 			perks.forEach(perkType -> {
 				Perk perk = perkType.getPerk();
 				boolean userOwned = perkOwner.getPurchasedPerks().containsKey(perkType);

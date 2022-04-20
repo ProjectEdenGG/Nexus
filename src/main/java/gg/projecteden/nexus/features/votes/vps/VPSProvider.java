@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.votes.vps;
 
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.votes.vps.VPSMenu.VPSPage;
@@ -30,6 +30,7 @@ import static gg.projecteden.nexus.features.votes.vps.VPS.PREFIX;
 import static gg.projecteden.nexus.utils.StringUtils.plural;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
+@Title("&3Vote Point Store")
 public class VPSProvider extends InventoryProvider {
 	private final VPSMenu menu;
 	private final VPSPage page;
@@ -42,22 +43,16 @@ public class VPSProvider extends InventoryProvider {
 	}
 
 	@Override
-	public void open(Player player, int page) {
-		VPSPage vpsPage = menu.getPage(page);
-		SmartInventory.builder()
-			.provider(this)
-			.title(ChatColor.DARK_AQUA + "Vote Point Store")
-			.rows(vpsPage.getRows())
-			.build()
-			.open(player, page);
+	protected int getRows() {
+		return menu.getPage(contents.pagination().getPage()).getRows();
 	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 		VoterService service = new VoterService();
 		Voter voter = service.get(player);
 
-		addCloseItem(contents);
+		addCloseItem();
 		addPagination(contents, player);
 		contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.BOOK).name("&3You have &e" + voter.getPoints() + " &3vote points").build()));
 

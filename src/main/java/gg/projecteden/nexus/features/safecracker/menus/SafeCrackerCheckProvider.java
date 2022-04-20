@@ -1,10 +1,8 @@
 package gg.projecteden.nexus.features.safecracker.menus;
 
 import gg.projecteden.annotations.Disabled;
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.models.safecracker.SafeCrackerEvent;
 import gg.projecteden.nexus.models.safecracker.SafeCrackerEventService;
@@ -13,29 +11,19 @@ import gg.projecteden.nexus.models.safecracker.SafeCrackerPlayerService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import static gg.projecteden.utils.TimeUtils.shortDateTimeFormat;
 
 @Disabled
+@Title("SafeCracker")
 public class SafeCrackerCheckProvider extends InventoryProvider {
 	private final SafeCrackerPlayerService service = new SafeCrackerPlayerService();
 	private final SafeCrackerEvent.SafeCrackerGame game = new SafeCrackerEventService().getActiveEvent();
 
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-			.provider(this)
-			.title("SafeCracker")
-			.maxSize()
-			.build()
-			.open(player, page);
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
-		addCloseItem(contents);
+	public void init() {
+		addCloseItem();
 
 		SafeCrackerPlayer safeCrackerPlayer = service.get(player);
 

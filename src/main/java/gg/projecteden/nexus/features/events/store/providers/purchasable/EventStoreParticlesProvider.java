@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.events.store.providers.purchasable;
 import gg.projecteden.nexus.features.events.store.EventStoreItem;
 import gg.projecteden.nexus.features.events.store.providers.EventStoreMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.models.particle.ParticleOwner;
 import gg.projecteden.nexus.models.particle.ParticleService;
 import gg.projecteden.nexus.models.particle.ParticleType;
@@ -24,14 +25,10 @@ import static gg.projecteden.nexus.features.menus.MenuUtils.handleException;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @AllArgsConstructor
+@Title("Event Store - Particles")
 public class EventStoreParticlesProvider extends EventStoreMenu {
 	@Getter
 	private final EventStoreMenu previousMenu;
-
-	@Override
-	protected String getTitle() {
-		return "Event Store - Particles";
-	}
 
 	@NotNull
 	@Override
