@@ -341,13 +341,11 @@ public class Shop implements PlayerOwnedObject {
 			if (!purchasable)
 				return new ItemBuilder(item).lore("&f").lore("&cNot Purchasable");
 
-			ItemBuilder builder = getItemWithLore().lore(getExchange().getLore());
-
-			builder.lore("")
+			return getItemWithLore()
+				.lore(getExchange().getLore())
+				.lore("")
 				.lore("&7Left click to " + getExchange().getCustomerAction().toLowerCase())
 				.lore("&7Shift+Left click to " + getExchange().getCustomerAction().toLowerCase() + " all");
-
-			return builder;
 		}
 
 		public ItemBuilder getItemWithOwnLore() {
