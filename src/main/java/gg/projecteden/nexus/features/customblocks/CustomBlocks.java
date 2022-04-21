@@ -16,10 +16,8 @@ import java.util.List;
 	TODO:
 		- remove note block item, use only paper instead, replace recipe/change result item in precraft
 		- allow crafting of custom blocks that are used in recipes
-		- un/crafting recipes
 		- Appropriate tool & mining speed --> CustomBlockBreaking
 		- Sounds: Wait until SoundEvents are fixed
-		- Add colored blocks to ColorType
 		- Bug: if looking at a custom block, and you move a note block around in your hotbar, it will change the note block to that custom block type
 		- //
 		- Known issues:

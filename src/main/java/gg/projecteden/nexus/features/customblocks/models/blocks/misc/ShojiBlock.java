@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.customblocks.models.blocks.misc;
 
 import com.mojang.datafixers.util.Pair;
-import gg.projecteden.nexus.features.customblocks.models.blocks.common.ICustomBlock;
+import gg.projecteden.nexus.features.customblocks.models.blocks.common.ICraftable;
 import gg.projecteden.nexus.features.customblocks.models.blocks.common.IDirectional;
 import gg.projecteden.nexus.features.customblocks.models.blocks.common.annotations.CustomBlockConfig;
 import gg.projecteden.nexus.features.customblocks.models.blocks.common.annotations.DirectionalConfig;
@@ -22,7 +22,7 @@ import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilde
 	step_NS = 23,
 	step_EW = 24
 )
-public class ShojiBlock implements ICustomBlock, IDirectional {
+public class ShojiBlock implements ICraftable, IDirectional {
 
 	@Override
 	public @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {

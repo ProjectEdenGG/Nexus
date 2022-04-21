@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.customblocks.models;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.customblocks.models.blocks.common.ICraftable;
 import gg.projecteden.nexus.features.customblocks.models.blocks.common.ICustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.blocks.common.IDirectional;
 import gg.projecteden.nexus.features.customblocks.models.blocks.common.IDyeable;
@@ -56,6 +57,9 @@ public class CustomBlockTag implements Tag<CustomBlock> {
 
 	public static final CustomBlockTag DIRECTIONAL = new CustomBlockTag(IDirectional.class);
 	public static final CustomBlockTag DYEABLE = new CustomBlockTag(IDyeable.class);
+	public static final CustomBlockTag CRAFTABLE = new CustomBlockTag(ICraftable.class);
+
+	public static final CustomBlockTag ALL = new CustomBlockTag(ICustomBlock.class);
 
 	@SneakyThrows
 	public static Map<String, Tag<CustomBlock>> getApplicable(CustomBlock customBlock) {
