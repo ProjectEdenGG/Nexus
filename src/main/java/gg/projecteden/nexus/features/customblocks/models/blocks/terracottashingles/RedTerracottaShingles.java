@@ -9,4 +9,5 @@ import org.bukkit.Instrument;
 	instrument = Instrument.BIT,
 	step = 1
 )
-public class RedTerracottaShingles implements ITerracottaShingles {}
+public class RedTerracottaShingles implements IColoredTerracottaShingles {
+}

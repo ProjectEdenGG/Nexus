@@ -15,6 +15,7 @@ import gg.projecteden.nexus.features.customblocks.models.blocks.planks.vertical.
 import gg.projecteden.nexus.features.customblocks.models.blocks.quiltedwool.IQuiltedWool;
 import gg.projecteden.nexus.features.customblocks.models.blocks.stones.bricks.IStoneBricks;
 import gg.projecteden.nexus.features.customblocks.models.blocks.stones.chiseled.IChiseledStone;
+import gg.projecteden.nexus.features.customblocks.models.blocks.terracottashingles.IColoredTerracottaShingles;
 import gg.projecteden.nexus.features.customblocks.models.blocks.terracottashingles.ITerracottaShingles;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -54,6 +55,7 @@ public class CustomBlockTag implements Tag<CustomBlock> {
 	public static final CustomBlockTag STONE_BRICKS = new CustomBlockTag(IStoneBricks.class);
 	public static final CustomBlockTag CHISELED_STONE = new CustomBlockTag(IChiseledStone.class);
 	public static final CustomBlockTag TERRACOTTA_SHINGLES = new CustomBlockTag(ITerracottaShingles.class);
+	public static final CustomBlockTag COLORED_TERRACOTTA_SHINGLES = new CustomBlockTag(IColoredTerracottaShingles.class);
 
 	public static final CustomBlockTag DIRECTIONAL = new CustomBlockTag(IDirectional.class);
 	public static final CustomBlockTag DYEABLE = new CustomBlockTag(IDyeable.class);
