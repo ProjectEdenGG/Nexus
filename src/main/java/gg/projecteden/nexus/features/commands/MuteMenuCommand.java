@@ -40,7 +40,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
 
@@ -304,15 +306,24 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 		modifySound(event.getSound(), event.getVolume(), event.getLocation(), entityType);
 	}
 
-	private EntityType getEntityType(Sound sound) {
-		final String[] entityTypes = Arrays.stream(EntityType.values()).map(EntityType::name).toArray(String[]::new);
+	private static final String[] entityTypes = Arrays.stream(EntityType.values())
+		.map(EntityType::name)
+		.toArray(String[]::new);
+
+	private static final Map<Sound, EntityType> cache = new HashMap<>();
+
+	static {
 		Arrays.sort(entityTypes, Comparator.comparingInt(String::length).reversed());
+	}
 
-		for (String entityType : entityTypes)
-			if (sound.name().matches("^ENTITY_" + entityType + "_.*"))
-				return EntityType.valueOf(entityType);
+	private EntityType getEntityType(Sound sound) {
+		return cache.computeIfAbsent(sound, $ -> {
+			for (String entityType : entityTypes)
+				if (sound.name().matches("^ENTITY_" + entityType + "_.*"))
+					return EntityType.valueOf(entityType);
 
-		return null;
+			return null;
+		});
 	}
 
 	public void modifySound(Sound sound, float originalVolume, Location location, EntityType entityType) {
