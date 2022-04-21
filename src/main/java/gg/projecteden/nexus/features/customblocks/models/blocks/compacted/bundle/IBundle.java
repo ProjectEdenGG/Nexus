@@ -12,5 +12,4 @@ public interface IBundle extends ICompacted, IDirectional {
 	default @NotNull Material getMaterial() {
 		return Material.valueOf(camelToSnake(getClass().getSimpleName().replace("Bundle", "")).toUpperCase());
 	}
-
 }

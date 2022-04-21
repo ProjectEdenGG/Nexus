@@ -2,19 +2,25 @@ package gg.projecteden.nexus.features.customblocks;
 
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
+import gg.projecteden.nexus.features.customblocks.models.blocks.common.ICraftable;
 import gg.projecteden.nexus.features.customblocks.models.blocks.common.ICustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.blocks.common.IDirectional;
+import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.models.customblock.CustomBlockData;
 import gg.projecteden.nexus.models.customblock.CustomBlockTracker;
 import gg.projecteden.nexus.models.customblock.CustomBlockTrackerService;
 import gg.projecteden.nexus.models.customblock.NoteBlockData;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.utils.UUIDUtils;
 import lombok.NonNull;
 import org.bukkit.Instrument;
+import org.bukkit.Keyed;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.NoteBlock;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -112,5 +118,26 @@ public class CustomBlockUtils {
 		int step = noteBlock.getNote().getId();
 
 		return customBlock.getNoteBlockInstrument(face) == instrument && customBlock.getNoteBlockStep(face) == step;
+	}
+
+	public static void unlockRecipe(Player player, Material material) {
+		if (Nullables.isNullOrAir(material))
+			return;
+
+		for (CustomBlock customBlock : CustomBlock.values()) {
+			if (!(customBlock.get() instanceof ICraftable craftable))
+				continue;
+
+			Material unlockMaterial = craftable.getRecipeUnlockMaterial();
+			if (Nullables.isNullOrAir(unlockMaterial))
+				continue;
+
+			if (unlockMaterial.equals(material)) {
+				for (NexusRecipe recipe : customBlock.getRecipes()) {
+					Keyed keyedRecipe = (Keyed) recipe;
+					player.discoverRecipe(keyedRecipe.getKey());
+				}
+			}
+		}
 	}
 }

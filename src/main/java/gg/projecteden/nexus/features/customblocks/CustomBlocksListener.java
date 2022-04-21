@@ -34,25 +34,31 @@ import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.NotePlayEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCreativeEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class CustomBlocksListener implements Listener {
 	public CustomBlocksListener() {
 		Nexus.registerListener(this);
 	}
+
+	// Recipe Stuff
 
 	@EventHandler
 	public void on(ResourcePackUpdateCompleteEvent ignored) {
@@ -60,6 +66,46 @@ public class CustomBlocksListener implements Listener {
 			customBlock.registerRecipes();
 		}
 	}
+
+	@EventHandler
+	public void on(PrepareItemCraftEvent event) {
+		if (!(event.getView().getPlayer() instanceof Player player)) return;
+
+		ItemStack result = event.getInventory().getResult();
+		if (Nullables.isNullOrAir(result))
+			return;
+
+		CustomBlock customBlock = CustomBlock.fromItemstack(result);
+		if (customBlock != null && customBlock.equals(CustomBlock.NOTE_BLOCK))
+			event.getInventory().setResult(customBlock.get().getItemStack());
+
+		CustomBlockUtils.unlockRecipe(player, result.getType());
+	}
+
+	@EventHandler
+	public void on(EntityPickupItemEvent event) {
+		if (!(event.getEntity() instanceof Player player))
+			return;
+
+		CustomBlockUtils.unlockRecipe(player, event.getItem().getItemStack().getType());
+	}
+
+	@EventHandler
+	public void on(InventoryClickEvent event) {
+		if (!(event.getView().getPlayer() instanceof Player player)) return;
+
+		final Inventory inventory = event.getClickedInventory();
+		if (inventory == null || inventory.getType() == InventoryType.PLAYER)
+			return;
+
+		final ItemStack item = player.getItemOnCursor();
+		if (isNullOrAir(item))
+			return;
+
+		CustomBlockUtils.unlockRecipe(player, item.getType());
+	}
+
+	//
 
 	@EventHandler
 	public void on(NotePlayEvent event) {
@@ -90,7 +136,7 @@ public class CustomBlocksListener implements Listener {
 		if (Nullables.isNullOrAir(block))
 			return;
 
-		if (!CustomBlocks.isCustom(block) || CustomBlocks.isCustomNoteBlock(block))
+		if (!CustomBlocks.isCustom(block))
 			return;
 
 		NoteBlock noteBlock = (NoteBlock) block.getBlockData();
@@ -278,27 +324,6 @@ public class CustomBlocksListener implements Listener {
 
 		if (!onPistonEvent(event.getBlock(), event.getBlocks(), event.getDirection()))
 			event.setCancelled(true);
-	}
-
-	@EventHandler
-	public void on(PrepareItemCraftEvent event) {
-		if (!(event.getView().getPlayer() instanceof Player)) return;
-
-		List<ItemStack> ingredients = Arrays.stream(event.getInventory().getMatrix())
-			.filter(itemStack -> !Nullables.isNullOrAir(itemStack))
-			.filter(itemStack -> itemStack.getType().equals(ICustomBlock.itemMaterial))
-			.toList();
-
-		for (ItemStack ingredient : ingredients) {
-			int modelData = CustomModelData.of(ingredient);
-			if (modelData == 0)
-				continue;
-
-			if (CustomBlock.modelDataMap.containsKey(modelData)) {
-				event.getInventory().setResult(null);
-				return;
-			}
-		}
 	}
 
 	//

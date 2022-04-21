@@ -15,6 +15,8 @@ import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilde
 
 public interface ICraftable extends ICustomBlock {
 
+	@NonNull Material getRecipeUnlockMaterial();
+
 	default @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
 		return null;
 	}

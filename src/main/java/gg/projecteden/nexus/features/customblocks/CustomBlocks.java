@@ -14,7 +14,6 @@ import java.util.List;
 
 /*
 	TODO:
-		- remove note block item, use only paper instead, replace recipe/change result item in precraft
 		- allow crafting of custom blocks that are used in recipes
 		- Appropriate tool & mining speed --> CustomBlockBreaking
 		- Sounds: Wait until SoundEvents are fixed

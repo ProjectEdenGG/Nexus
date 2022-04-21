@@ -66,6 +66,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.NMSUtils.SoundType;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.bukkit.Instrument;
@@ -357,24 +358,29 @@ public enum CustomBlock implements Keyed {
 		BlockUtils.playSound(sound, location);
 	}
 
+	@Getter
+	final List<NexusRecipe> recipes = new ArrayList<>();
+
 	public void registerRecipes() {
 		if (!(get() instanceof ICraftable craftable))
 			return;
-
-		RecipeBuilder<?> recipeBuilder;
 
 		// craft recipe
 		Pair<RecipeBuilder<?>, Integer> recipePair = craftable.getCraftRecipe();
 		if (recipePair != null && recipePair.getFirst() == null) {
 			ItemStack toMakeItem = new ItemBuilder(craftable.getItemStack()).amount(recipePair.getSecond()).build();
-			recipeBuilder = recipePair.getFirst();
-			recipeBuilder.toMake(toMakeItem).build().type(RecipeType.CUSTOM_BLOCKS).register();
+			NexusRecipe recipe = recipePair.getFirst().toMake(toMakeItem).build().type(RecipeType.CUSTOM_BLOCKS);
+			recipe.register();
+
+			recipes.add(recipe);
 		}
 
 		// uncraft recipe
-		recipeBuilder = craftable.getUncraftRecipe();
-		if (recipeBuilder != null) {
-			recipeBuilder.build().type(RecipeType.CUSTOM_BLOCKS).register();
+		if (craftable.getUncraftRecipe() != null) {
+			NexusRecipe recipe = craftable.getUncraftRecipe().build().type(RecipeType.CUSTOM_BLOCKS);
+			recipe.register();
+
+			recipes.add(recipe);
 		}
 
 		// redye recipes
@@ -386,7 +392,10 @@ public enum CustomBlock implements Keyed {
 
 				BiConsumer<NexusRecipe, RecipeType> register = (recipe, type) -> recipe.type(type).register();
 
-				register.accept(surround(dye).with(tag).toMake(color.switchColor(tag.first()), 8).build(), RecipeType.DYES);
+				NexusRecipe recipe = surround(dye).with(tag).toMake(color.switchColor(tag.first()), 8).build();
+				register.accept(recipe, RecipeType.DYES);
+
+				recipes.add(recipe);
 			}
 		}
 	}
