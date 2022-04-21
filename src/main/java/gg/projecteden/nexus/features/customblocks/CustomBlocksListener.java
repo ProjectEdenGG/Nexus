@@ -183,16 +183,15 @@ public class CustomBlocksListener implements Listener {
 
 		Location location = block.getLocation();
 		CustomBlockUtils.breakBlockDatabase(location);
-		if (!_customBlock.equals(CustomBlock.NOTE_BLOCK)) {
-			// change drops
-			event.setDropItems(false);
-			ICustomBlock customBlock = _customBlock.get();
 
-			for (ItemStack drop : block.getDrops()) {
-				if (drop.getType().equals(Material.NOTE_BLOCK)) {
-					if (!GameModeWrapper.of(event.getPlayer()).isCreative())
-						location.getWorld().dropItemNaturally(location, customBlock.getItemStack());
-				}
+		// change drops
+		event.setDropItems(false);
+		ICustomBlock customBlock = _customBlock.get();
+
+		for (ItemStack drop : block.getDrops()) {
+			if (drop.getType().equals(Material.NOTE_BLOCK)) {
+				if (!GameModeWrapper.of(event.getPlayer()).isCreative())
+					location.getWorld().dropItemNaturally(location, customBlock.getItemStack());
 			}
 		}
 	}

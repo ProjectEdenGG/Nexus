@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.customblocks.models.blocks.planks.colored;
 
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlockTag;
+import gg.projecteden.nexus.features.customblocks.models.blocks.common.ICraftable;
 import gg.projecteden.nexus.features.customblocks.models.blocks.common.IDyeable;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -11,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import static gg.projecteden.nexus.utils.StringUtils.camelToSnake;
 
-public interface IColoredPlanks extends IDyeable {
+public interface IColoredPlanks extends IDyeable, ICraftable {
 
 	@Override
 	default CustomBlockTag getRedyeTag() {

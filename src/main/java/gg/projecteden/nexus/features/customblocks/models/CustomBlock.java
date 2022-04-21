@@ -3,12 +3,7 @@ package gg.projecteden.nexus.features.customblocks.models;
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customblocks.CustomBlockUtils;
-import gg.projecteden.nexus.features.customblocks.models.blocks.GenericCrateA;
-import gg.projecteden.nexus.features.customblocks.models.blocks.GenericCrateB;
-import gg.projecteden.nexus.features.customblocks.models.blocks.GenericCrateC;
-import gg.projecteden.nexus.features.customblocks.models.blocks.GenericCrateD;
-import gg.projecteden.nexus.features.customblocks.models.blocks.NoteBlock;
-import gg.projecteden.nexus.features.customblocks.models.blocks.ShojiBlock;
+import gg.projecteden.nexus.features.customblocks.models.blocks.common.ICraftable;
 import gg.projecteden.nexus.features.customblocks.models.blocks.common.ICustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.blocks.common.IDirectional;
 import gg.projecteden.nexus.features.customblocks.models.blocks.common.IDyeable;
@@ -22,6 +17,10 @@ import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.crate.
 import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.crate.PotatoCrate;
 import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.crate.SweetBerryCrate;
 import gg.projecteden.nexus.features.customblocks.models.blocks.concretebricks.*;
+import gg.projecteden.nexus.features.customblocks.models.blocks.genericcrate.GenericCrateA;
+import gg.projecteden.nexus.features.customblocks.models.blocks.genericcrate.GenericCrateB;
+import gg.projecteden.nexus.features.customblocks.models.blocks.genericcrate.GenericCrateC;
+import gg.projecteden.nexus.features.customblocks.models.blocks.genericcrate.GenericCrateD;
 import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.PaperAcaciaLantern;
 import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.PaperBirchLantern;
 import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.PaperDarkOakLantern;
@@ -30,6 +29,8 @@ import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.PaperOa
 import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.PaperSpruceLantern;
 import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.ShroomCrimsonLantern;
 import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.ShroomWarpedLantern;
+import gg.projecteden.nexus.features.customblocks.models.blocks.misc.NoteBlock;
+import gg.projecteden.nexus.features.customblocks.models.blocks.misc.ShojiBlock;
 import gg.projecteden.nexus.features.customblocks.models.blocks.planks.carved.CarvedAcaciaPlanks;
 import gg.projecteden.nexus.features.customblocks.models.blocks.planks.carved.CarvedBirchPlanks;
 import gg.projecteden.nexus.features.customblocks.models.blocks.planks.carved.CarvedCrimsonPlanks;
@@ -215,11 +216,13 @@ public enum CustomBlock implements Keyed {
 	LIGHT_GRAY_TERRACOTTA_SHINGLES(LightGrayTerracottaShingles.class),
 	WHITE_TERRACOTTA_SHINGLES(WhiteTerracottaShingles.class),
 
-	// misc
+	// generic crates
 	GENERIC_CRATE_A(GenericCrateA.class),
 	GENERIC_CRATE_B(GenericCrateB.class),
 	GENERIC_CRATE_C(GenericCrateC.class),
 	GENERIC_CRATE_D(GenericCrateD.class),
+
+	// misc
 	NOTE_BLOCK(NoteBlock.class),
 	SHOJI_BLOCK(ShojiBlock.class),
 	;
@@ -355,25 +358,27 @@ public enum CustomBlock implements Keyed {
 	}
 
 	public void registerRecipes() {
-		ICustomBlock customBlock = get();
+		if (!(get() instanceof ICraftable craftable))
+			return;
+
 		RecipeBuilder<?> recipeBuilder;
 
 		// craft recipe
-		Pair<RecipeBuilder<?>, Integer> recipePair = customBlock.getCraftRecipe();
+		Pair<RecipeBuilder<?>, Integer> recipePair = craftable.getCraftRecipe();
 		if (recipePair != null && recipePair.getFirst() == null) {
-			ItemStack toMakeItem = new ItemBuilder(customBlock.getItemStack()).amount(recipePair.getSecond()).build();
+			ItemStack toMakeItem = new ItemBuilder(craftable.getItemStack()).amount(recipePair.getSecond()).build();
 			recipeBuilder = recipePair.getFirst();
 			recipeBuilder.toMake(toMakeItem).build().type(RecipeType.CUSTOM_BLOCKS).register();
 		}
 
 		// uncraft recipe
-		recipeBuilder = customBlock.getUncraftRecipe();
+		recipeBuilder = craftable.getUncraftRecipe();
 		if (recipeBuilder != null) {
 			recipeBuilder.build().type(RecipeType.CUSTOM_BLOCKS).register();
 		}
 
 		// redye recipes
-		if(customBlock instanceof IDyeable Idyeable){
+		if (craftable instanceof IDyeable Idyeable) {
 			CustomBlockTag tag = Idyeable.getRedyeTag();
 
 			for (ColorType color : ColorType.getDyes()) {

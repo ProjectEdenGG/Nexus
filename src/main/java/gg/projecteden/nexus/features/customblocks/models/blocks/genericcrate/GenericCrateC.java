@@ -1,6 +1,5 @@
-package gg.projecteden.nexus.features.customblocks.models.blocks;
+package gg.projecteden.nexus.features.customblocks.models.blocks.genericcrate;
 
-import gg.projecteden.nexus.features.customblocks.models.blocks.common.ICustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.blocks.common.annotations.CustomBlockConfig;
 import org.bukkit.Instrument;
 
@@ -10,4 +9,5 @@ import org.bukkit.Instrument;
 	instrument = Instrument.BASS_GUITAR,
 	step = 3
 )
-public class GenericCrateC implements ICustomBlock {}
+public class GenericCrateC implements IGenericCrate {
+}

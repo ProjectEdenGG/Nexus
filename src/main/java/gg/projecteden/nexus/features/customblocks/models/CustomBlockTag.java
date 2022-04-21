@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.customblocks.models.blocks.common.IDirectio
 import gg.projecteden.nexus.features.customblocks.models.blocks.common.IDyeable;
 import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.ICompacted;
 import gg.projecteden.nexus.features.customblocks.models.blocks.concretebricks.IConcreteBricks;
+import gg.projecteden.nexus.features.customblocks.models.blocks.genericcrate.IGenericCrate;
 import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.ILantern;
 import gg.projecteden.nexus.features.customblocks.models.blocks.planks.carved.ICarvedPlanks;
 import gg.projecteden.nexus.features.customblocks.models.blocks.planks.colored.IColoredPlanks;
@@ -41,17 +42,17 @@ import java.util.function.Predicate;
 import static gg.projecteden.utils.Utils.collect;
 
 public class CustomBlockTag implements Tag<CustomBlock> {
-
-	public static final CustomBlockTag CONCRETE_BRICKS = new CustomBlockTag(IConcreteBricks.class);
-	public static final CustomBlockTag QUILTED_WOOL = new CustomBlockTag(IQuiltedWool.class);
-	public static final CustomBlockTag COLORED_PLANKS = new CustomBlockTag(IColoredPlanks.class);
-	public static final CustomBlockTag TERRACOTTA_SHINGLES = new CustomBlockTag(ITerracottaShingles.class);
 	public static final CustomBlockTag COMPACTED = new CustomBlockTag(ICompacted.class);
+	public static final CustomBlockTag CONCRETE_BRICKS = new CustomBlockTag(IConcreteBricks.class);
+	public static final CustomBlockTag GENERIC_CRATES = new CustomBlockTag(IGenericCrate.class);
 	public static final CustomBlockTag LANTERNS = new CustomBlockTag(ILantern.class);
+	public static final CustomBlockTag COLORED_PLANKS = new CustomBlockTag(IColoredPlanks.class);
 	public static final CustomBlockTag CARVED_PLANKS = new CustomBlockTag(ICarvedPlanks.class);
 	public static final CustomBlockTag VERTICAL_PLANKS = new CustomBlockTag(IVerticalPlanks.class);
+	public static final CustomBlockTag QUILTED_WOOL = new CustomBlockTag(IQuiltedWool.class);
 	public static final CustomBlockTag STONE_BRICKS = new CustomBlockTag(IStoneBricks.class);
 	public static final CustomBlockTag CHISELED_STONE = new CustomBlockTag(IChiseledStone.class);
+	public static final CustomBlockTag TERRACOTTA_SHINGLES = new CustomBlockTag(ITerracottaShingles.class);
 
 	public static final CustomBlockTag DIRECTIONAL = new CustomBlockTag(IDirectional.class);
 	public static final CustomBlockTag DYEABLE = new CustomBlockTag(IDyeable.class);
