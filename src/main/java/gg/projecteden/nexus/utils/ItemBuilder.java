@@ -35,6 +35,7 @@ import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Axolotl;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.AxolotlBucketMeta;
@@ -564,6 +565,10 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		bucketMeta.setVariant(variant);
 		customModelData(variant.ordinal());
 		return this;
+	}
+
+	public ItemBuilder spawnEgg(EntityType entityType) {
+		return material(Material.valueOf(entityType.toString() + "_SPAWN_EGG"));
 	}
 
 	// NBT
