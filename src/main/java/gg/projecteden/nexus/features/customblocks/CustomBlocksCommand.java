@@ -67,15 +67,7 @@ public class CustomBlocksCommand extends CustomCommand {
 		}
 	}
 
-	@Path("types")
-	void list() {
-		send("Custom Blocks: ");
-		for (CustomBlock customBlock : CustomBlock.values()) {
-			send(" - " + customBlock.get().getName());
-		}
-	}
-
-	@Path("getItem <block>")
+	@Path("get <block>")
 	void get(CustomBlock block) {
 		giveItem(block.get().getItemStack());
 	}
