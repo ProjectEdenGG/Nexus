@@ -94,6 +94,25 @@ import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.surround;
 
 public enum CustomBlock implements Keyed {
+	// terracotta shingles
+	TERRACOTTA_SHINGLES(TerracottaShingles.class),
+	RED_TERRACOTTA_SHINGLES(RedTerracottaShingles.class),
+	ORANGE_TERRACOTTA_SHINGLES(OrangeTerracottaShingles.class),
+	YELLOW_TERRACOTTA_SHINGLES(YellowTerracottaShingles.class),
+	LIME_TERRACOTTA_SHINGLES(LimeTerracottaShingles.class),
+	GREEN_TERRACOTTA_SHINGLES(GreenTerracottaShingles.class),
+	CYAN_TERRACOTTA_SHINGLES(CyanTerracottaShingles.class),
+	LIGHT_BLUE_TERRACOTTA_SHINGLES(LightBlueTerracottaShingles.class),
+	BLUE_TERRACOTTA_SHINGLES(BlueTerracottaShingles.class),
+	PURPLE_TERRACOTTA_SHINGLES(PurpleTerracottaShingles.class),
+	MAGENTA_TERRACOTTA_SHINGLES(MagentaTerracottaShingles.class),
+	PINK_TERRACOTTA_SHINGLES(PinkTerracottaShingles.class),
+	BROWN_TERRACOTTA_SHINGLES(BrownTerracottaShingles.class),
+	BLACK_TERRACOTTA_SHINGLES(BlackTerracottaShingles.class),
+	GRAY_TERRACOTTA_SHINGLES(GrayTerracottaShingles.class),
+	LIGHT_GRAY_TERRACOTTA_SHINGLES(LightGrayTerracottaShingles.class),
+	WHITE_TERRACOTTA_SHINGLES(WhiteTerracottaShingles.class),
+
 	// concrete bricks
 	RED_CONCRETE_BRICKS(RedConcreteBricks.class),
 	ORANGE_CONCRETE_BRICKS(OrangeConcreteBricks.class),
@@ -112,28 +131,6 @@ public enum CustomBlock implements Keyed {
 	LIGHT_GRAY_CONCRETE_BRICKS(LightGrayConcreteBricks.class),
 	WHITE_CONCRETE_BRICKS(WhiteConcreteBricks.class),
 
-	// compacted
-	APPLE_CRATE(AppleCrate.class),
-	BEETROOT_CRATE(BeetrootCrate.class),
-	BERRY_CRATE(SweetBerryCrate.class),
-	CARROT_CRATE(CarrotCrate.class),
-	POTATO_CRATE(PotatoCrate.class),
-	//
-	BAMBOO_BUNDLE(BambooBundle.class),
-	CACTUS_BUNDLE(CactusBundle.class),
-	STICK_BUNDLE(StickBundle.class),
-	SUGAR_CANE_BUNDLE(SugarCaneBundle.class),
-
-	// lanterns
-	PAPER_OAK_LANTERN(PaperOakLantern.class),
-	PAPER_SPRUCE_LANTERN(PaperSpruceLantern.class),
-	PAPER_BIRCH_LANTERN(PaperBirchLantern.class),
-	PAPER_JUNGLE_LANTERN(PaperJungleLantern.class),
-	PAPER_ACACIA_LANTERN(PaperAcaciaLantern.class),
-	PAPER_DARK_OAK_LANTERN(PaperDarkOakLantern.class),
-	CRIMSON_LANTERN(ShroomCrimsonLantern.class),
-	WARPED_LANTERN(ShroomWarpedLantern.class),
-
 	// colored planks
 	RED_PLANKS(RedPlanks.class),
 	ORANGE_PLANKS(OrangePlanks.class),
@@ -151,24 +148,6 @@ public enum CustomBlock implements Keyed {
 	GRAY_PLANKS(GrayPlanks.class),
 	LIGHT_GRAY_PLANKS(LightGrayPlanks.class),
 	WHITE_PLANKS(WhitePlanks.class),
-	// vertical planks
-	VERTICAL_OAK_PLANKS(VerticalOakPlanks.class),
-	VERTICAL_SPRUCE_PLANKS(VerticalSprucePlanks.class),
-	VERTICAL_BIRCH_PLANKS(VerticalBirchPlanks.class),
-	VERTICAL_JUNGLE_PLANKS(VerticalJunglePlanks.class),
-	VERTICAL_ACACIA_PLANKS(VerticalAcaciaPlanks.class),
-	VERTICAL_DARK_OAK_PLANKS(VerticalDarkOakPlanks.class),
-	VERTICAL_CRIMSON_PLANKS(VerticalCrimsonPlanks.class),
-	VERTICAL_WARPED_PLANKS(VerticalWarpedPlanks.class),
-	// carved planks
-	CARVED_OAK_PLANKS(CarvedOakPlanks.class),
-	CARVED_SPRUCE_PLANKS(CarvedSprucePlanks.class),
-	CARVED_BIRCH_PLANKS(CarvedBirchPlanks.class),
-	CARVED_JUNGLE_PLANKS(CarvedJunglePlanks.class),
-	CARVED_ACACIA_PLANKS(CarvedAcaciaPlanks.class),
-	CARVED_DARK_OAK_PLANKS(CarvedDarkOakPlanks.class),
-	CARVED_CRIMSON_PLANKS(CarvedCrimsonPlanks.class),
-	CARVED_WARPED_PLANKS(CarvedWarpedPlanks.class),
 
 	// quilted wool
 	RED_QUILTED_WOOL(RedQuiltedWool.class),
@@ -188,34 +167,59 @@ public enum CustomBlock implements Keyed {
 	LIGHT_GRAY_QUILTED_WOOL(LightGrayQuiltedWool.class),
 	WHITE_QUILTED_WOOL(WhiteQuiltedWool.class),
 
+	// crates
+	APPLE_CRATE(AppleCrate.class),
+	BEETROOT_CRATE(BeetrootCrate.class),
+	BERRY_CRATE(SweetBerryCrate.class),
+	CARROT_CRATE(CarrotCrate.class),
+	POTATO_CRATE(PotatoCrate.class),
+
+	// bundles
+	BAMBOO_BUNDLE(BambooBundle.class),
+	CACTUS_BUNDLE(CactusBundle.class),
+	STICK_BUNDLE(StickBundle.class),
+	SUGAR_CANE_BUNDLE(SugarCaneBundle.class),
+
+	// lanterns
+	PAPER_OAK_LANTERN(PaperOakLantern.class),
+	PAPER_SPRUCE_LANTERN(PaperSpruceLantern.class),
+	PAPER_BIRCH_LANTERN(PaperBirchLantern.class),
+	PAPER_JUNGLE_LANTERN(PaperJungleLantern.class),
+	PAPER_ACACIA_LANTERN(PaperAcaciaLantern.class),
+	PAPER_DARK_OAK_LANTERN(PaperDarkOakLantern.class),
+	CRIMSON_LANTERN(ShroomCrimsonLantern.class),
+	WARPED_LANTERN(ShroomWarpedLantern.class),
+
+	// vertical planks
+	VERTICAL_OAK_PLANKS(VerticalOakPlanks.class),
+	VERTICAL_SPRUCE_PLANKS(VerticalSprucePlanks.class),
+	VERTICAL_BIRCH_PLANKS(VerticalBirchPlanks.class),
+	VERTICAL_JUNGLE_PLANKS(VerticalJunglePlanks.class),
+	VERTICAL_ACACIA_PLANKS(VerticalAcaciaPlanks.class),
+	VERTICAL_DARK_OAK_PLANKS(VerticalDarkOakPlanks.class),
+	VERTICAL_CRIMSON_PLANKS(VerticalCrimsonPlanks.class),
+	VERTICAL_WARPED_PLANKS(VerticalWarpedPlanks.class),
+
+	// carved planks
+	CARVED_OAK_PLANKS(CarvedOakPlanks.class),
+	CARVED_SPRUCE_PLANKS(CarvedSprucePlanks.class),
+	CARVED_BIRCH_PLANKS(CarvedBirchPlanks.class),
+	CARVED_JUNGLE_PLANKS(CarvedJunglePlanks.class),
+	CARVED_ACACIA_PLANKS(CarvedAcaciaPlanks.class),
+	CARVED_DARK_OAK_PLANKS(CarvedDarkOakPlanks.class),
+	CARVED_CRIMSON_PLANKS(CarvedCrimsonPlanks.class),
+	CARVED_WARPED_PLANKS(CarvedWarpedPlanks.class),
+
 	// stone bricks
 	ANDESITE_BRICKS(AndesiteBricks.class),
 	DIORITE_BRICKS(DioriteBricks.class),
 	GRANITE_BRICKS(GraniteBricks.class),
+
 	// chiseled stone
 	CHISELED_STONE(ChiseledStone.class),
 	CHISELED_ANDESITE(ChiseledAndesite.class),
 	CHISELED_DIORITE(ChiseledDiorite.class),
 	CHISELED_GRANITE(ChiseledGranite.class),
-
-	// terracotta shingles
-	TERRACOTTA_SHINGLES(TerracottaShingles.class),
-	RED_TERRACOTTA_SHINGLES(RedTerracottaShingles.class),
-	ORANGE_TERRACOTTA_SHINGLES(OrangeTerracottaShingles.class),
-	YELLOW_TERRACOTTA_SHINGLES(YellowTerracottaShingles.class),
-	LIME_TERRACOTTA_SHINGLES(LimeTerracottaShingles.class),
-	GREEN_TERRACOTTA_SHINGLES(GreenTerracottaShingles.class),
-	CYAN_TERRACOTTA_SHINGLES(CyanTerracottaShingles.class),
-	LIGHT_BLUE_TERRACOTTA_SHINGLES(LightBlueTerracottaShingles.class),
-	BLUE_TERRACOTTA_SHINGLES(BlueTerracottaShingles.class),
-	PURPLE_TERRACOTTA_SHINGLES(PurpleTerracottaShingles.class),
-	MAGENTA_TERRACOTTA_SHINGLES(MagentaTerracottaShingles.class),
-	PINK_TERRACOTTA_SHINGLES(PinkTerracottaShingles.class),
-	BROWN_TERRACOTTA_SHINGLES(BrownTerracottaShingles.class),
-	BLACK_TERRACOTTA_SHINGLES(BlackTerracottaShingles.class),
-	GRAY_TERRACOTTA_SHINGLES(GrayTerracottaShingles.class),
-	LIGHT_GRAY_TERRACOTTA_SHINGLES(LightGrayTerracottaShingles.class),
-	WHITE_TERRACOTTA_SHINGLES(WhiteTerracottaShingles.class),
 
 	// generic crates
 	GENERIC_CRATE_A(GenericCrateA.class),

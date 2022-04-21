@@ -14,16 +14,12 @@ import java.util.List;
 
 /*
 	TODO:
-		- allow crafting of custom blocks that are used in recipes
 		- Appropriate tool & mining speed --> CustomBlockBreaking
-		- Sounds: Wait until SoundEvents are fixed
-		- Bug: if looking at a custom block, and you move a note block around in your hotbar, it will change the note block to that custom block type
+		- Sounds --> Wait until SoundEvents are fixed
 		- //
 		- Known issues:
-			- CreativePickBlock on a custom block while a note block is in your inventory will always select the note block, and doesn't throw InventoryClickEvent or CreativeClickEvent
-				- get rid of the note block item, and replace it with a paper model
-			- Custom blocks may flash when placing blocks near them (clientside only)
-			- Players arm will swing on interact w/ custom blocks
+			- Custom blocks may flash when placing blocks near them (clientside only) --> Titan
+			- Players arm will swing on interact w/ custom blocks --> Titan
  */
 
 @Environments(Env.TEST)

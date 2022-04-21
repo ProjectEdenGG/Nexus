@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.customblocks.models.blocks.common.IDirectio
 import gg.projecteden.nexus.features.customblocks.models.blocks.common.annotations.CustomBlockConfig;
 import gg.projecteden.nexus.features.customblocks.models.blocks.common.annotations.DirectionalConfig;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
+import lombok.NonNull;
 import org.bukkit.Instrument;
 import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
@@ -23,6 +24,11 @@ import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilde
 	step_EW = 24
 )
 public class ShojiBlock implements ICraftable, IDirectional {
+
+	@Override
+	public @NonNull Material getRecipeUnlockMaterial() {
+		return Material.PAPER;
+	}
 
 	@Override
 	public @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
