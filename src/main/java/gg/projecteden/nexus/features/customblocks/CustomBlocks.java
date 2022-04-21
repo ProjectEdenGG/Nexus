@@ -20,6 +20,7 @@ import java.util.List;
 		- Appropriate tool & mining speed --> CustomBlockBreaking
 		- Sounds: Wait until SoundEvents are fixed
 		- Add colored blocks to ColorType
+		- Bug: if looking at a custom block, and you move a note block around in your hotbar, it will change the note block to that custom block type
 		- //
 		- Known issues:
 			- CreativePickBlock on a custom block while a note block is in your inventory will always select the note block, and doesn't throw InventoryClickEvent or CreativeClickEvent

@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.customblocks;
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
-import gg.projecteden.nexus.features.customblocks.models.interfaces.ICustomBlock;
+import gg.projecteden.nexus.features.customblocks.models.blocks.common.ICustomBlock;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.models.customblock.CustomBlockData;
 import gg.projecteden.nexus.models.customblock.NoteBlockData;

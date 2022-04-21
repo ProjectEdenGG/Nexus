@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.customblocks.models.blocks.stones.bricks;
 
-import gg.projecteden.nexus.features.customblocks.models.annotations.CustomBlockConfig;
-import gg.projecteden.nexus.features.customblocks.models.interfaces.IStoneBricks;
+import gg.projecteden.nexus.features.customblocks.models.blocks.common.annotations.CustomBlockConfig;
 import org.bukkit.Instrument;
 
 @CustomBlockConfig(

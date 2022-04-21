@@ -1,10 +1,10 @@
 package gg.projecteden.nexus.features.customblocks.models.blocks;
 
 import com.mojang.datafixers.util.Pair;
-import gg.projecteden.nexus.features.customblocks.models.annotations.CustomBlockConfig;
-import gg.projecteden.nexus.features.customblocks.models.annotations.DirectionalConfig;
-import gg.projecteden.nexus.features.customblocks.models.interfaces.ICustomBlock;
-import gg.projecteden.nexus.features.customblocks.models.interfaces.IDirectional;
+import gg.projecteden.nexus.features.customblocks.models.blocks.common.ICustomBlock;
+import gg.projecteden.nexus.features.customblocks.models.blocks.common.IDirectional;
+import gg.projecteden.nexus.features.customblocks.models.blocks.common.annotations.CustomBlockConfig;
+import gg.projecteden.nexus.features.customblocks.models.blocks.common.annotations.DirectionalConfig;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import org.bukkit.Instrument;
 import org.bukkit.Material;

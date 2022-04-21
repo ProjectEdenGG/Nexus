@@ -1,8 +1,7 @@
 package gg.projecteden.nexus.features.customblocks.models.blocks.lanterns;
 
-import gg.projecteden.nexus.features.customblocks.models.annotations.CustomBlockConfig;
-import gg.projecteden.nexus.features.customblocks.models.annotations.DirectionalConfig;
-import gg.projecteden.nexus.features.customblocks.models.interfaces.IShroomLantern;
+import gg.projecteden.nexus.features.customblocks.models.blocks.common.annotations.CustomBlockConfig;
+import gg.projecteden.nexus.features.customblocks.models.blocks.common.annotations.DirectionalConfig;
 import org.bukkit.Instrument;
 
 @CustomBlockConfig(

@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.customblocks.models.blocks.stones.chiseled;
 
-import gg.projecteden.nexus.features.customblocks.models.annotations.CustomBlockConfig;
-import gg.projecteden.nexus.features.customblocks.models.interfaces.IChiseledBricks;
+import gg.projecteden.nexus.features.customblocks.models.blocks.common.annotations.CustomBlockConfig;
 import org.bukkit.Instrument;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
@@ -12,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 	instrument = Instrument.DIDGERIDOO,
 	step = 1
 )
-public class ChiseledStone implements IChiseledBricks {
+public class ChiseledStone implements IChiseledStone {
 
 	@Override
 	public @NotNull Material getMaterial() {

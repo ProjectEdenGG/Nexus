@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.customblocks.models.blocks.stones.chiseled;
 
-import gg.projecteden.nexus.features.customblocks.models.annotations.CustomBlockConfig;
-import gg.projecteden.nexus.features.customblocks.models.interfaces.IChiseledBricks;
+import gg.projecteden.nexus.features.customblocks.models.blocks.common.annotations.CustomBlockConfig;
 import org.bukkit.Instrument;
 
 @CustomBlockConfig(
@@ -10,4 +9,5 @@ import org.bukkit.Instrument;
 	instrument = Instrument.DIDGERIDOO,
 	step = 5
 )
-public class ChiseledDiorite implements IChiseledBricks {}
+public class ChiseledDiorite implements IChiseledStone {
+}
