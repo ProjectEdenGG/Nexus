@@ -17,6 +17,11 @@ public interface ICarvedPlanks extends ICraftable {
 		return getCombineSlabsRecipe(getMaterial());
 	}
 
+	@Override
+	default @Nullable RecipeBuilder<?> getUncraftRecipe() {
+		return getUncraftRecipe(getMaterial(), 2);
+	}
+
 	@NotNull
 	private Material getMaterial() {
 		final String woodType = getClass().getSimpleName().replace("Carved", "").replace("Planks", "");

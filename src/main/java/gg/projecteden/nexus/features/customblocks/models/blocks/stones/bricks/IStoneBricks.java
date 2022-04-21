@@ -21,8 +21,8 @@ public interface IStoneBricks extends ICraftable {
 	}
 
 	@Override
-	default Pair<RecipeBuilder<?>, Integer> getUncraftRecipe() {
-		return getUncraftRecipe(getMaterial(), 1);
+	default @Nullable RecipeBuilder<?> getUncraftRecipe() {
+		return getUncraftRecipe(getMaterial(), 4);
 	}
 
 	@Override

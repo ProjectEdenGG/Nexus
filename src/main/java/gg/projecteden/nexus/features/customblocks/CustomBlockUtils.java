@@ -134,7 +134,7 @@ public class CustomBlockUtils {
 
 			if (unlockMaterial.equals(material)) {
 				for (NexusRecipe recipe : customBlock.getRecipes()) {
-					Keyed keyedRecipe = (Keyed) recipe;
+					Keyed keyedRecipe = (Keyed) recipe.getRecipe();
 					player.discoverRecipe(keyedRecipe.getKey());
 				}
 			}

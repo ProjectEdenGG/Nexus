@@ -27,6 +27,11 @@ public interface IConcreteBricks extends IDyeable, ICraftable {
 	}
 
 	@Override
+	default @Nullable RecipeBuilder<?> getUncraftRecipe() {
+		return getUncraftRecipe(getMaterial(), 4);
+	}
+
+	@Override
 	default @NonNull Material getRecipeUnlockMaterial() {
 		return getMaterial();
 	}

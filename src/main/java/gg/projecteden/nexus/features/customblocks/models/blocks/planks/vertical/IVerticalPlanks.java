@@ -18,6 +18,11 @@ public interface IVerticalPlanks extends ICraftable {
 		return new Pair<>(shaped("1", "1", "1").add('1', getMaterial()), 1);
 	}
 
+	@Override
+	default @Nullable RecipeBuilder<?> getUncraftRecipe() {
+		return getUncraftRecipe(getMaterial(), 3);
+	}
+
 	@NotNull
 	private Material getMaterial() {
 		final String woodType = getClass().getSimpleName().replace("Vertical", "").replace("Planks", "");

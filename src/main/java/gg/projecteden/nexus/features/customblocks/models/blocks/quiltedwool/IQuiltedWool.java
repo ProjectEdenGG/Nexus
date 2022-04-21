@@ -28,8 +28,8 @@ public interface IQuiltedWool extends IDyeable, ICraftable {
 	}
 
 	@Override
-	default Pair<RecipeBuilder<?>, Integer> getUncraftRecipe() {
-		return get2x2Recipe(this.getItemStack(), 1);
+	default @Nullable RecipeBuilder<?> getUncraftRecipe() {
+		return getUncraftRecipe(getMaterial(), 4);
 	}
 
 	@Override

@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.customblocks.models.blocks.common;
 
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.NonNull;
 import org.bukkit.Material;
 import org.bukkit.Tag;
@@ -21,12 +22,13 @@ public interface ICraftable extends ICustomBlock {
 		return null;
 	}
 
-	default @Nullable Pair<RecipeBuilder<?>, Integer> getUncraftRecipe() {
+	default @Nullable RecipeBuilder<?> getUncraftRecipe() {
 		return null;
 	}
 
-	default @Nullable Pair<RecipeBuilder<?>, Integer> getUncraftRecipe(@NotNull Material toMake, int count) {
-		return new Pair<>(shapeless().add(getItemStack()).toMake(new ItemStack(toMake)), count);
+	default @Nullable RecipeBuilder<?> getUncraftRecipe(@NotNull Material toMake, int count) {
+		ItemStack toMakeItem = new ItemBuilder(toMake).amount(count).build();
+		return shapeless().add(getItemStack()).toMake(toMakeItem);
 	}
 
 	default Pair<RecipeBuilder<?>, Integer> get2x2Recipe(@NotNull Material material) {

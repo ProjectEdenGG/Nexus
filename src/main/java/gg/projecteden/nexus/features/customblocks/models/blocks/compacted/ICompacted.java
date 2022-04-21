@@ -18,7 +18,7 @@ public interface ICompacted extends ICraftable {
 	}
 
 	@Override
-	default @Nullable Pair<RecipeBuilder<?>, Integer> getUncraftRecipe() {
+	default @Nullable RecipeBuilder<?> getUncraftRecipe() {
 		return getUncraftRecipe(getMaterial(), 9);
 	}
 
