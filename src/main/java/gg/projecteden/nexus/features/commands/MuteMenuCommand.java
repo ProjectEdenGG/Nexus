@@ -10,7 +10,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuService;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
-import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
@@ -115,11 +114,10 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 						.lore("&eLeft Click - Increase volume", "&eRight Click - Decrease volume")
 						.build()));
 
-					if (Rank.of(player).isAdmin())
-						items.add(ClickableItem.of(Material.ZOMBIE_HEAD, "Mob Sounds", e -> {
-							pageType = PageType.MOB_SOUNDS;
-							open(player);
-						}));
+					items.add(ClickableItem.of(Material.ZOMBIE_HEAD, "Mob Sounds", e -> {
+						pageType = PageType.MOB_SOUNDS;
+						open(player);
+					}));
 
 					for (MuteMenuItem item : MuteMenuItem.values()) {
 						if (item.getDefaultVolume() == null)
