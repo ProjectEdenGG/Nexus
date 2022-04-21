@@ -5,13 +5,13 @@ import gg.projecteden.nexus.features.customblocks.models.blocks.common.annotatio
 import org.bukkit.Instrument;
 
 @CustomBlockConfig(
-	name = "Spruce Paper Lantern",
-	modelId = 20402,
+	name = "Dark Oak Paper Lantern",
+	modelId = 20406,
 	instrument = Instrument.FLUTE,
-	step = 4
+	step = 16
 )
 @DirectionalConfig(
-	step_NS = 5,
-	step_EW = 6
+	step_NS = 17,
+	step_EW = 18
 )
-public class PaperSpruceLantern implements IPaperLantern {}
+public class DarkOakPaperLantern implements IPaperLantern {}

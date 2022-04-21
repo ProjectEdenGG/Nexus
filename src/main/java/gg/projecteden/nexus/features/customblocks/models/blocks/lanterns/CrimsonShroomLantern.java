@@ -14,4 +14,4 @@ import org.bukkit.Instrument;
 	step_NS = 20,
 	step_EW = 21
 )
-public class ShroomCrimsonLantern implements IShroomLantern {}
+public class CrimsonShroomLantern implements IShroomLantern {}

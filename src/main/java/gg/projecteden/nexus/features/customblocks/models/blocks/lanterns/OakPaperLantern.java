@@ -14,4 +14,4 @@ import org.bukkit.Instrument;
 	step_NS = 2,
 	step_EW = 3
 )
-public class PaperOakLantern implements IPaperLantern {}
+public class OakPaperLantern implements IPaperLantern {}

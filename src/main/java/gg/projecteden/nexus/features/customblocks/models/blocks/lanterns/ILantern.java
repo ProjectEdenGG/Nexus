@@ -10,7 +10,10 @@ public interface ILantern extends IDirectional {
 
 	@NotNull
 	default Material getMaterial() {
-		final String woodType = getClass().getSimpleName().replace("Paper", "").replace("Shroom", "").replace("Lantern", "");
+		final String woodType = getClass().getSimpleName()
+			.replace("Paper", "")
+			.replace("Shroom", "")
+			.replace("Lantern", "");
 		return Material.valueOf(camelToSnake(woodType).toUpperCase() + "_PLANKS");
 	}
 

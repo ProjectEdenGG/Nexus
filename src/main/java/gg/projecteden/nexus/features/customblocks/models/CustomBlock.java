@@ -36,14 +36,14 @@ import gg.projecteden.nexus.features.customblocks.models.blocks.genericcrate.Gen
 import gg.projecteden.nexus.features.customblocks.models.blocks.genericcrate.GenericCrateB;
 import gg.projecteden.nexus.features.customblocks.models.blocks.genericcrate.GenericCrateC;
 import gg.projecteden.nexus.features.customblocks.models.blocks.genericcrate.GenericCrateD;
-import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.PaperAcaciaLantern;
-import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.PaperBirchLantern;
-import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.PaperDarkOakLantern;
-import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.PaperJungleLantern;
-import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.PaperOakLantern;
-import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.PaperSpruceLantern;
-import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.ShroomCrimsonLantern;
-import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.ShroomWarpedLantern;
+import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.AcaciaPaperLantern;
+import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.BirchPaperLantern;
+import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.CrimsonShroomLantern;
+import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.DarkOakPaperLantern;
+import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.JunglePaperLantern;
+import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.OakPaperLantern;
+import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.SprucePaperLantern;
+import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.WarpedShroomLantern;
 import gg.projecteden.nexus.features.customblocks.models.blocks.misc.NoteBlock;
 import gg.projecteden.nexus.features.customblocks.models.blocks.misc.ShojiBlock;
 import gg.projecteden.nexus.features.customblocks.models.blocks.planks.carved.CarvedAcaciaPlanks;
@@ -241,14 +241,14 @@ public enum CustomBlock implements Keyed {
 	SUGAR_CANE_BUNDLE(SugarCaneBundle.class),
 
 	// lanterns
-	PAPER_OAK_LANTERN(PaperOakLantern.class),
-	PAPER_SPRUCE_LANTERN(PaperSpruceLantern.class),
-	PAPER_BIRCH_LANTERN(PaperBirchLantern.class),
-	PAPER_JUNGLE_LANTERN(PaperJungleLantern.class),
-	PAPER_ACACIA_LANTERN(PaperAcaciaLantern.class),
-	PAPER_DARK_OAK_LANTERN(PaperDarkOakLantern.class),
-	CRIMSON_LANTERN(ShroomCrimsonLantern.class),
-	WARPED_LANTERN(ShroomWarpedLantern.class),
+	OAK_PAPER_LANTERN(OakPaperLantern.class),
+	SPRUCE_PAPER_LANTERN(SprucePaperLantern.class),
+	BIRCH_PAPER_LANTERN(BirchPaperLantern.class),
+	JUNGLE_PAPER_LANTERN(JunglePaperLantern.class),
+	ACACIA_PAPER_LANTERN(AcaciaPaperLantern.class),
+	DARK_OAK_PAPER_LANTERN(DarkOakPaperLantern.class),
+	CRIMSON_SHROOM_LANTERN(CrimsonShroomLantern.class),
+	WARPED_SHROOM_LANTERN(WarpedShroomLantern.class),
 
 	// vertical planks
 	VERTICAL_OAK_PLANKS(VerticalOakPlanks.class),
