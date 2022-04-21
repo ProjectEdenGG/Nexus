@@ -369,25 +369,9 @@ public enum CustomBlock implements Keyed {
 		if (!(get() instanceof ICraftable craftable))
 			return;
 
-		// craft recipe
-		Pair<RecipeBuilder<?>, Integer> recipePair = craftable.getCraftRecipe();
-		if (recipePair != null && recipePair.getFirst() == null) {
-			ItemStack toMakeItem = new ItemBuilder(craftable.getItemStack()).amount(recipePair.getSecond()).build();
-			NexusRecipe recipe = recipePair.getFirst().toMake(toMakeItem).build().type(RecipeType.CUSTOM_BLOCKS);
-			recipe.register();
+		registerRecipe(craftable, craftable.getCraftRecipe());
+		registerRecipe(craftable, craftable.getUncraftRecipe());
 
-			recipes.add(recipe);
-		}
-
-		// uncraft recipe
-		if (craftable.getUncraftRecipe() != null) {
-			NexusRecipe recipe = craftable.getUncraftRecipe().build().type(RecipeType.CUSTOM_BLOCKS);
-			recipe.register();
-
-			recipes.add(recipe);
-		}
-
-		// redye recipes
 		if (craftable instanceof IDyeable Idyeable) {
 			CustomBlockTag tag = Idyeable.getRedyeTag();
 
@@ -401,6 +385,16 @@ public enum CustomBlock implements Keyed {
 
 				recipes.add(recipe);
 			}
+		}
+	}
+
+	private void registerRecipe(ICraftable craftable, Pair<RecipeBuilder<?>, Integer> uncraftRecipePair) {
+		if (uncraftRecipePair != null && uncraftRecipePair.getFirst() != null) {
+			ItemStack toMakeItem = new ItemBuilder(craftable.getItemStack()).amount(uncraftRecipePair.getSecond()).build();
+			NexusRecipe recipe = uncraftRecipePair.getFirst().toMake(toMakeItem).build().type(RecipeType.CUSTOM_BLOCKS);
+			recipe.register();
+
+			recipes.add(recipe);
 		}
 	}
 

@@ -23,7 +23,7 @@ public interface IChiseledStone extends ICraftable {
 	}
 
 	@Override
-	default @Nullable RecipeBuilder<?> getUncraftRecipe() {
+	default @Nullable Pair<RecipeBuilder<?>, Integer> getUncraftRecipe() {
 		return getUncraftRecipe(getMaterial(), 2);
 	}
 

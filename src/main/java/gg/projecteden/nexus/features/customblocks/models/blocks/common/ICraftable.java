@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.customblocks.models.blocks.common;
 
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.NonNull;
 import org.bukkit.Material;
 import org.bukkit.Tag;
@@ -11,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
+import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shapeless;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.surround;
 
 public interface ICraftable extends ICustomBlock {
@@ -21,17 +21,24 @@ public interface ICraftable extends ICustomBlock {
 		return null;
 	}
 
-	default @Nullable RecipeBuilder<?> getUncraftRecipe() {
+	default @Nullable Pair<RecipeBuilder<?>, Integer> getUncraftRecipe() {
 		return null;
 	}
 
-	default RecipeBuilder<?> getUncraftRecipe(@NotNull Material toMake, int count) {
-		ItemStack toMakeItem = new ItemBuilder(toMake).amount(count).build();
-		return RecipeBuilder.shapeless().add(getItemStack()).toMake(toMakeItem);
+	default @Nullable Pair<RecipeBuilder<?>, Integer> getUncraftRecipe(@NotNull Material toMake, int count) {
+		return new Pair<>(shapeless().add(getItemStack()).toMake(new ItemStack(toMake)), count);
 	}
 
 	default Pair<RecipeBuilder<?>, Integer> get2x2Recipe(@NotNull Material material) {
-		return new Pair<>(shaped("11", "11").add('1', material), 4);
+		return get2x2Recipe(material, 4);
+	}
+
+	default Pair<RecipeBuilder<?>, Integer> get2x2Recipe(@NotNull Material material, int amount) {
+		return get2x2Recipe(new ItemStack(material), amount);
+	}
+
+	default Pair<RecipeBuilder<?>, Integer> get2x2Recipe(@NotNull ItemStack itemStack, int amount) {
+		return new Pair<>(shaped("11", "11").add('1', itemStack), amount);
 	}
 
 	default Pair<RecipeBuilder<?>, Integer> getCombineSlabsRecipe(@NotNull Material material) {
