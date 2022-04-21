@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.utils;
 
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
+import gg.projecteden.nexus.features.customblocks.models.CustomBlockTag;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.framework.interfaces.IsColored;
@@ -12,6 +13,7 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.inventivetalent.glow.GlowAPI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -258,8 +260,18 @@ public enum ColorType implements IsColored {
 	}
 
 	@NotNull
+	public CustomBlock switchColor(@NotNull CustomBlockTag customBlockTag) {
+		return switchColor(customBlockTag.first(), this);
+	}
+
+	@NotNull
 	public Material switchColor(@NotNull Material material) {
 		return switchColor(material, this);
+	}
+
+	@NotNull
+	public Material switchColor(@NotNull Tag<Material> materialTag) {
+		return switchColor(materialTag.getValues().iterator().next(), this);
 	}
 
 	@NotNull

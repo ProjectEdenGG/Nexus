@@ -62,9 +62,8 @@ public class CustomBlocksListener implements Listener {
 
 	@EventHandler
 	public void on(ResourcePackUpdateCompleteEvent ignored) {
-		for (CustomBlock customBlock : CustomBlock.values()) {
+		for (CustomBlock customBlock : CustomBlock.values())
 			customBlock.registerRecipes();
-		}
 	}
 
 	@EventHandler
@@ -125,7 +124,7 @@ public class CustomBlocksListener implements Listener {
 			return;
 
 		ItemStack item = event.getCursor();
-		if (Nullables.isNullOrAir(item))
+		if (isNullOrAir(item))
 			return;
 
 		if (!item.getType().equals(Material.NOTE_BLOCK))
@@ -133,7 +132,7 @@ public class CustomBlocksListener implements Listener {
 
 		Player player = (Player) event.getWhoClicked();
 		Block block = player.getTargetBlockExact(5);
-		if (Nullables.isNullOrAir(block))
+		if (isNullOrAir(block))
 			return;
 
 		if (!CustomBlocks.isCustom(block))
@@ -256,7 +255,7 @@ public class CustomBlocksListener implements Listener {
 		boolean sneaking = player.isSneaking();
 		Block clickedBlock = event.getClickedBlock();
 
-		if (Nullables.isNullOrAir(clickedBlock))
+		if (isNullOrAir(clickedBlock))
 			return;
 
 		// Place
@@ -411,7 +410,7 @@ public class CustomBlocksListener implements Listener {
 			return false;
 
 		ItemStack itemInHand = event.getItem();
-		if (Nullables.isNullOrAir(itemInHand)) {
+		if (isNullOrAir(itemInHand)) {
 			return false;
 		}
 
@@ -442,7 +441,7 @@ public class CustomBlocksListener implements Listener {
 		}
 
 		ItemStack itemInHand = event.getItem();
-		if (Nullables.isNullOrAir(itemInHand)) {
+		if (isNullOrAir(itemInHand)) {
 			debug("item in hand is null or air");
 			return false;
 		}
@@ -463,7 +462,7 @@ public class CustomBlocksListener implements Listener {
 			return false;
 		}
 
-		if (!Nullables.isNullOrAir(preBlock)) {
+		if (!isNullOrAir(preBlock)) {
 			debug(" preBlock is not air");
 			return false;
 		}
@@ -503,7 +502,7 @@ public class CustomBlocksListener implements Listener {
 		if (!action.equals(Action.RIGHT_CLICK_BLOCK))
 			return false;
 
-		return !sneaking || Nullables.isNullOrAir(itemInHand) || !itemInHand.getType().isBlock();
+		return !sneaking || isNullOrAir(itemInHand) || !itemInHand.getType().isBlock();
 	}
 
 	private void changePitch(NoteBlock noteBlock, Location location, boolean sneaking) {

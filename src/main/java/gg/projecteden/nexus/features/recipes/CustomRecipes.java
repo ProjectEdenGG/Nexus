@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
+import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Depends;
@@ -16,6 +17,7 @@ import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.ItemUtils.ItemStackComparator;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -56,6 +58,7 @@ import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilde
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shapeless;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.smelt;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.surround;
+import static gg.projecteden.nexus.utils.StringUtils.pretty;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
@@ -197,6 +200,26 @@ public class CustomRecipes extends Feature implements Listener {
 			throw new InvalidInputException("Recipe choices must be either material or itemstack");
 	}
 
+	public static String keyOf(Keyed keyed) {
+		return keyed.getKey().getKey();
+	}
+
+	public static String keyOf(Material material) {
+		return material.name();
+	}
+
+	public static String keyOf(ItemStack item) {
+		return pretty(item);
+	}
+
+	public static String keyOf(ItemStack item, int amount) {
+		return pretty(item, amount);
+	}
+
+	public static String keyOf(CustomModel item) {
+		return pretty(item.getItem());
+	}
+
 	public void registerDyes() {
 		final List<MaterialTag> surround = List.of(
 			MaterialTag.CONCRETE_POWDERS,
@@ -218,7 +241,7 @@ public class CustomRecipes extends Feature implements Listener {
 			surround.forEach(tag ->
 				register.accept(surround(dye).with(tag).toMake(color.switchColor(tag.first()), 8).build(), RecipeType.DYES));
 
-			shapeless.forEach(tag -> register.accept(shapeless().add(dye).add(choiceOf(tag)).toMake(color.switchColor(tag.first())).build(), RecipeType.BEDS_BANNERS));
+			shapeless.forEach(tag -> register.accept(shapeless().add(dye).add(tag).toMake(color.switchColor(tag.first())).build(), RecipeType.BEDS_BANNERS));
 		}
 	}
 
@@ -241,28 +264,25 @@ public class CustomRecipes extends Feature implements Listener {
 
 			if (blockMaterial == null) continue;
 
-			List<Material> slabsGroup = new ArrayList<>();
-			for (int i = 0; i < 4; i++)
-				slabsGroup.add(slab);
-			shapeless().add(slabsGroup.toArray(Material[]::new)).toMake(blockMaterial, 2).extra("slabs").build().type(RecipeType.SLABS).register();
+			shaped("11", "11").add('1', slab).toMake(blockMaterial, 2).build().type(RecipeType.SLABS).register();
 		}
 	}
 
 	public void registerQuartz() {
-		shapeless().add(Material.QUARTZ_BLOCK).toMake(Material.QUARTZ, 4).extra("quartz_uncrafting").build().type(RecipeType.QUARTZ).register();
-		shapeless().add(Material.QUARTZ_PILLAR).toMake(Material.QUARTZ_BLOCK, 1).extra("quartz_uncrafting").build().type(RecipeType.QUARTZ).register();
-		shapeless().add(Material.CHISELED_QUARTZ_BLOCK).toMake(Material.QUARTZ_SLAB, 2).extra("quartz_uncrafting").build().type(RecipeType.QUARTZ).register();
-		shapeless().add(Material.QUARTZ_BRICKS).toMake(Material.QUARTZ_BLOCK, 4).extra("quartz_uncrafting_bricks").build().type(RecipeType.QUARTZ).register();
+		shapeless().add(Material.QUARTZ_BLOCK).toMake(Material.QUARTZ, 4).build().type(RecipeType.QUARTZ).register();
+		shapeless().add(Material.QUARTZ_PILLAR).toMake(Material.QUARTZ_BLOCK, 1).build().type(RecipeType.QUARTZ).register();
+		shapeless().add(Material.CHISELED_QUARTZ_BLOCK).toMake(Material.QUARTZ_SLAB, 2).build().type(RecipeType.QUARTZ).register();
+		shapeless().add(Material.QUARTZ_BRICKS).toMake(Material.QUARTZ_BLOCK, 4).build().type(RecipeType.QUARTZ).register();
 	}
 
 	public void registerStoneBricks() {
-		shapeless().add(Material.STONE_BRICKS).toMake(Material.STONE, 1).extra("stonebrick_uncrafting").build().type(RecipeType.STONE_BRICK).register();
-		shapeless().add(Material.CHISELED_STONE_BRICKS).toMake(Material.STONE_BRICK_SLAB, 2).extra("stonebrick_uncrafting").build().type(RecipeType.STONE_BRICK).register();
-		shapeless().add(Material.MOSSY_STONE_BRICKS).toMake(Material.STONE_BRICKS).extra("stonebrick_uncrafting").build().type(RecipeType.STONE_BRICK).register();
-		shapeless().add(Material.CHISELED_DEEPSLATE).toMake(Material.COBBLED_DEEPSLATE_SLAB, 2).extra("stonebrick_uncrafting").build().type(RecipeType.STONE_BRICK).register();
-		shapeless().add(Material.DEEPSLATE_TILES).toMake(Material.DEEPSLATE_BRICKS).extra("stonebrick_uncrafting").build().type(RecipeType.STONE_BRICK).register();
-		shapeless().add(Material.DEEPSLATE_BRICKS).toMake(Material.POLISHED_DEEPSLATE).extra("stonebrick_uncrafting").build().type(RecipeType.STONE_BRICK).register();
-		shapeless().add(Material.POLISHED_DEEPSLATE).toMake(Material.COBBLED_DEEPSLATE).extra("stonebrick_uncrafting").build().type(RecipeType.STONE_BRICK).register();
+		shapeless().add(Material.STONE_BRICKS).toMake(Material.STONE, 1).build().type(RecipeType.STONE_BRICK).register();
+		shapeless().add(Material.CHISELED_STONE_BRICKS).toMake(Material.STONE_BRICK_SLAB, 2).build().type(RecipeType.STONE_BRICK).register();
+		shapeless().add(Material.MOSSY_STONE_BRICKS).toMake(Material.STONE_BRICKS).build().type(RecipeType.STONE_BRICK).register();
+		shapeless().add(Material.CHISELED_DEEPSLATE).toMake(Material.COBBLED_DEEPSLATE_SLAB, 2).build().type(RecipeType.STONE_BRICK).register();
+		shapeless().add(Material.DEEPSLATE_TILES).toMake(Material.DEEPSLATE_BRICKS).build().type(RecipeType.STONE_BRICK).register();
+		shapeless().add(Material.DEEPSLATE_BRICKS).toMake(Material.POLISHED_DEEPSLATE).build().type(RecipeType.STONE_BRICK).register();
+		shapeless().add(Material.POLISHED_DEEPSLATE).toMake(Material.COBBLED_DEEPSLATE).build().type(RecipeType.STONE_BRICK).register();
 	}
 
 	private void registerFurnace() {
@@ -287,14 +307,14 @@ public class CustomRecipes extends Feature implements Listener {
 		shapeless().add(Material.DRIPSTONE_BLOCK).toMake(Material.POINTED_DRIPSTONE, 4).build().type(RecipeType.MISC).register();
 		shapeless().add(Material.HONEYCOMB_BLOCK).toMake(Material.HONEYCOMB, 4).build().type(RecipeType.MISC).register();
 		shapeless().add(Material.MELON).toMake(Material.MELON_SLICE, 5).build().type(RecipeType.MISC).register();
-		shapeless().add(choiceOf(MaterialTag.WOOL)).toMake(Material.STRING, 4).build().type(RecipeType.MISC).register();
+		shapeless().add(MaterialTag.WOOL).toMake(Material.STRING, 4).build().type(RecipeType.MISC).register();
 		shapeless().add(Material.PRISMARINE).toMake(Material.PRISMARINE_SHARD, 4).build().type(RecipeType.MISC).register();
 		shapeless().add(Material.PRISMARINE_BRICKS).toMake(Material.PRISMARINE_SHARD, 9).build().type(RecipeType.MISC).register();
 		shapeless().add(Material.MOSS_CARPET, 3).toMake(Material.MOSS_BLOCK, 2).build().type(RecipeType.MISC).register();
 
 		for (ColorType color : ColorType.getDyes()) {
-			shapeless().add(color.getCarpet(), 3).toMake(color.getWool(), 2).extra("carpet_uncrafting").build().type(RecipeType.MISC).register();
-			shapeless().add(color.getConcrete(), 2).toMake(color.getConcretePowder(), 2).extra("powderize").build().type(RecipeType.MISC).register();
+			shapeless().add(color.getCarpet(), 3).toMake(color.getWool(), 2).build().type(RecipeType.MISC).register();
+			shapeless().add(color.getConcrete(), 2).toMake(color.getConcretePowder(), 2).build().type(RecipeType.MISC).register();
 		}
 
 		for (WoodType wood : WoodType.values()) {
@@ -323,7 +343,7 @@ public class CustomRecipes extends Feature implements Listener {
 		// Dye Station
 		shaped("111", "232", "242")
 			.add('1', Material.WHITE_WOOL)
-			.add('2', new RecipeChoice.MaterialChoice(Tag.PLANKS))
+			.add('2', Tag.PLANKS)
 			.add('3', DyeStation.getMagicDye().build())
 			.add('4', DyeStation.getMagicStain().build())
 			.toMake(DyeStation.getDyeStation().build())

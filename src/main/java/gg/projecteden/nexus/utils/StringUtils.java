@@ -195,7 +195,11 @@ public class StringUtils extends gg.projecteden.utils.StringUtils {
 	}
 
 	public static String pretty(ItemStack item, int amount) {
-		return item.getAmount() * amount + " " + camelCase(item.getType().name());
+		String name = camelCase(item.getType().name());
+		if (item.getItemMeta().hasDisplayName())
+			return item.getItemMeta().getDisplayName();
+
+		return item.getAmount() * amount + " " + name;
 	}
 
 	@NotNull

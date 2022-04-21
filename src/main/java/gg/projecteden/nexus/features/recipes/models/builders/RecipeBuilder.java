@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
+import org.bukkit.Keyed;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -15,54 +16,63 @@ import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static gg.projecteden.nexus.features.recipes.CustomRecipes.choiceOf;
+import static gg.projecteden.nexus.features.recipes.CustomRecipes.keyOf;
+import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 public abstract class RecipeBuilder<T extends RecipeBuilder<?>> {
 	protected ItemStack result;
-	protected String id;
-	protected String extra;
+
+	protected List<String> ingredientIds = new ArrayList<>();
+	protected String resultId = "__to_make__";
 
 	public T toMake(CustomBlock result) {
-		return toMake(result.get().getItemStack());
-	}
-
-	public T toMake(Material result) {
-		return toMake(new ItemStack(result));
+		this.resultId += keyOf(result);
+		this.result = result.get().getItemStack();
+		return (T) this;
 	}
 
 	public T toMake(CustomBlock result, int amount) {
-		return toMake(result.get().getItemStack(), amount);
+		this.resultId += amount + "_" + keyOf(result);
+		this.result = new ItemBuilder(result.get().getItemStack()).amount(amount).build();
+		return (T) this;
+	}
+
+	public T toMake(Material result) {
+		this.resultId += keyOf(result);
+		this.result = new ItemStack(result);
+		return (T) this;
 	}
 
 	public T toMake(Material result, int amount) {
-		return toMake(new ItemStack(result, amount));
+		this.resultId += amount + "_" + keyOf(result);
+		this.result = new ItemStack(result, amount);
+		return (T) this;
 	}
 
 	public T toMake(ItemStack result) {
+		this.resultId += keyOf(result);
 		this.result = result;
 		return (T) this;
 	}
 
 	public T toMake(ItemStack result, int amount) {
+		this.resultId += keyOf(result, amount);
 		this.result = new ItemBuilder(result).amount(amount).build();
 		return (T) this;
 	}
 
 	public T toMake(CustomModel result) {
+		this.resultId += keyOf(result);
 		this.result = result.getItem();
 		return (T) this;
 	}
 
-	public T id(String id) {
-		this.id = id;
-		return (T) this;
-	}
-
-	public T extra(String extra) {
-		this.extra = extra;
-		return (T) this;
+	protected String getKey() {
+		return String.join("__and__", ingredientIds) + resultId;
 	}
 
 	@NotNull
@@ -75,16 +85,8 @@ public abstract class RecipeBuilder<T extends RecipeBuilder<?>> {
 	}
 
 	@NotNull
-	protected String getKey() {
-		if (id == null)
-			id = CustomRecipes.getItemName(result);
-
-		return id + (extra == null ? "" : "_" + extra);
-	}
-
-	@NotNull
 	protected NamespacedKey key() {
-		return new NamespacedKey(Nexus.getInstance(), "custom_" + getKey());
+		return new NamespacedKey(Nexus.getInstance(), "custom__" + stripColor(getKey()).trim().replaceAll(" ", "_").toLowerCase());
 	}
 
 	public static ShapedBuilder shaped(String... pattern) {
@@ -96,26 +98,49 @@ public abstract class RecipeBuilder<T extends RecipeBuilder<?>> {
 	}
 
 	public static SurroundBuilder surround(CustomBlockTag center) {
-		return surround(choiceOf(center));
+		final SurroundBuilder builder = surround(choiceOf(center));
+		builder.ingredientIds.add(keyOf(center));
+		return builder;
 	}
 
 	public static SurroundBuilder surround(MaterialTag center) {
-		return surround(choiceOf(center));
+		final SurroundBuilder builder = surround(choiceOf(center));
+		builder.ingredientIds.add(keyOf(center));
+		return builder;
 	}
 
 	public static SurroundBuilder surround(Material center) {
-		return surround(choiceOf(center));
+		final SurroundBuilder builder = surround(choiceOf(center));
+		builder.ingredientIds.add(keyOf(center));
+		return builder;
 	}
 
 	public static SurroundBuilder surround(ItemStack center) {
-		return surround(choiceOf(center));
+		final SurroundBuilder builder = surround(choiceOf(center));
+		builder.ingredientIds.add(keyOf(center));
+		return builder;
 	}
 
 	public static SurroundBuilder surround(List<?> choices) {
-		return surround(choiceOf(choices));
+		final SurroundBuilder builder = surround(choiceOf(choices));
+
+		for (Object choice : choices) {
+			if (choice instanceof ItemStack item)
+				builder.ingredientIds.add(keyOf(item));
+			else if (choice instanceof Material material)
+				builder.ingredientIds.add(keyOf(material));
+			else if (choice instanceof Keyed keyed)
+				builder.ingredientIds.add(keyOf(keyed));
+			else {
+				Nexus.warn("[SurroundRecipeBuilder] Unsupported type " + choice.getClass().getSimpleName());
+				builder.ingredientIds.add("unknown");
+			}
+		}
+
+		return builder;
 	}
 
-	public static SurroundBuilder surround(RecipeChoice center) {
+	protected static SurroundBuilder surround(RecipeChoice center) {
 		return new SurroundBuilder(center);
 	}
 
