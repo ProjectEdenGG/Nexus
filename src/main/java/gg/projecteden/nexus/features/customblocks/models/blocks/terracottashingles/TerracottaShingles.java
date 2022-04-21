@@ -16,4 +16,5 @@ public class TerracottaShingles implements ITerracottaShingles {
 	public Material getMaterial() {
 		return Material.TERRACOTTA;
 	}
+
 }
