@@ -100,12 +100,11 @@ public class CustomRecipes extends Feature implements Listener {
 				.forEach(recipe -> {
 					recipe.setType(recipe.getRecipeType());
 					recipe.register();
-					recipes.add(recipe);
 				});
 		});
 	}
 
-	public static void register(Recipe recipe) {
+	public static void register(NexusRecipe recipe) {
 		if (recipe == null)
 			return;
 
@@ -113,12 +112,13 @@ public class CustomRecipes extends Feature implements Listener {
 
 		try {
 			for (Recipe recipe1 : Bukkit.getServer().getRecipesFor(recipe.getResult()))
-				if (RecipeUtils.areEqual(recipe, recipe1))
+				if (RecipeUtils.areEqual(recipe.getRecipe(), recipe1))
 					return;
 
 			Tasks.sync(() -> {
 				try {
-					Bukkit.addRecipe(recipe);
+					Bukkit.addRecipe(recipe.getRecipe());
+					recipes.add(recipe);
 				} catch (IllegalStateException duplicate) {
 					Nexus.log(duplicate.getMessage());
 				} catch (Exception ex) {

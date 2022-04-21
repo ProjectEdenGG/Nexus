@@ -39,7 +39,7 @@ public class NexusRecipe {
 	}
 
 	public void register() {
-		CustomRecipes.register(getRecipe());
+		CustomRecipes.register(this);
 	}
 
 	public boolean hasPermission(Player player) {
