@@ -108,7 +108,7 @@ public class CustomRecipes extends Feature implements Listener {
 		if (recipe == null)
 			return;
 
-		final NamespacedKey key = ((Keyed) recipe).getKey();
+		final NamespacedKey key = ((Keyed) recipe.getRecipe()).getKey();
 
 		try {
 			for (Recipe recipe1 : Bukkit.getServer().getRecipesFor(recipe.getResult()))
