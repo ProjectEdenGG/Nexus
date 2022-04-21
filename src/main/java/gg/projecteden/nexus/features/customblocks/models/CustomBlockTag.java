@@ -270,6 +270,19 @@ public class CustomBlockTag implements Tag<CustomBlock> {
 		});
 	}
 
+	public CustomBlockTag key(CustomBlockTag tag) {
+		return key(tag.getKey());
+	}
+
+	public CustomBlockTag key(NamespacedKey key) {
+		return key(key.getKey());
+	}
+
+	public CustomBlockTag key(String key) {
+		this.key = new NamespacedKey(Nexus.getInstance(), key);
+		return this;
+	}
+
 	@Override
 	public EnumSet<CustomBlock> getValues() {
 		return locked ? EnumSet.copyOf(customBlocks) : customBlocks;
