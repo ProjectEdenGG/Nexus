@@ -31,7 +31,6 @@ import java.util.List;
 import static gg.projecteden.nexus.features.shops.Shops.PREFIX;
 import static gg.projecteden.nexus.utils.ItemUtils.getRawShulkerContents;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-import static java.util.stream.Collectors.toList;
 
 @Title("&0Browse Items")
 public class BrowseProductsProvider extends ShopProvider {
@@ -156,7 +155,7 @@ public class BrowseProductsProvider extends ShopProvider {
 		}}.stream()
 			.filter(product -> !isFiltered(product))
 			.sorted(Product::compareTo)
-			.collect(toList());
+			.toList();
 
 		ClickableItem empty = ClickableItem.empty(new ItemStack(Material.BARRIER));
 
@@ -173,7 +172,7 @@ public class BrowseProductsProvider extends ShopProvider {
 		products.subList(start, Math.min(end, products.size()))
 			.forEach(product -> {
 				try {
-					items.add(ClickableItem.of(product.getItemWithCustomerLore().build(), e -> {
+					items.add(ClickableItem.of(product.getItemWithCustomerLore(), e -> {
 						if (!product.isPurchasable())
 							return;
 

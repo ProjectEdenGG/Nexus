@@ -159,6 +159,8 @@ public class StringUtils extends gg.projecteden.utils.StringUtils {
 			++i;
 		}
 
+		lore.add(string);
+
 		return lore;
 	}
 
