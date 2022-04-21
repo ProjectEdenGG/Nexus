@@ -384,4 +384,17 @@ public class CustomRecipes extends Feature implements Listener {
 		return stripColor(ItemUtils.getName(result).replaceAll(" ", "_").trim().toLowerCase());
 	}
 
+	@EventHandler
+	public void on(PrepareItemCraftEvent event) {
+		if (!(event.getRecipe() instanceof Keyed keyed))
+			return;
+
+		if (!keyed.getKey().getNamespace().equalsIgnoreCase("minecraft"))
+			return;
+
+		for (ItemStack item : event.getInventory().getMatrix())
+			if (CustomModelData.of(item) != 0)
+				event.getInventory().setResult(new ItemStack(Material.AIR));
+	}
+
 }
