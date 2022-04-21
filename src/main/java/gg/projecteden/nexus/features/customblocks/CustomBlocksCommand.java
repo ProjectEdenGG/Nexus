@@ -67,16 +67,10 @@ public class CustomBlocksCommand extends CustomCommand {
 		}
 	}
 
-	@Path("get <block>")
-	void get(CustomBlock block) {
-		giveItem(block.get().getItemStack());
-	}
-
 	@Path("getAll")
 	void getAll() {
-		for (CustomBlock customBlock : CustomBlock.values()) {
+		for (CustomBlock customBlock : CustomBlock.values())
 			giveItem(customBlock.get().getItemStack());
-		}
 	}
 
 	@Path("tags list <tag>")
