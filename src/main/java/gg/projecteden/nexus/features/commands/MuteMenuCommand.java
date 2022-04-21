@@ -23,17 +23,23 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.lexikiq.event.sound.EntitySoundEvent;
+import me.lexikiq.event.sound.LocationNamedSoundEvent;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -278,28 +284,51 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	// TODO 1.18
-//	@EventHandler
+	@EventHandler
 	public void onEntitySound(EntitySoundEvent event) {
 		final Entity origin = event.getOrigin();
 		if (!(origin instanceof LivingEntity))
 			return;
 
 		event.setCancelled(true);
+		modifySound(event.getSound(), event.getVolume(), origin.getLocation(), origin.getType());
+	}
 
+	@EventHandler
+	public void on(LocationNamedSoundEvent event) {
+		final EntityType entityType = getEntityType(event.getSound());
+		if (entityType == null || !entityType.isAlive())
+			return;
+
+		event.setCancelled(true);
+		modifySound(event.getSound(), event.getVolume(), event.getLocation(), entityType);
+	}
+
+	private EntityType getEntityType(Sound sound) {
+		final String[] entityTypes = Arrays.stream(EntityType.values()).map(EntityType::name).toArray(String[]::new);
+		Arrays.sort(entityTypes, Comparator.comparingInt(String::length).reversed());
+
+		for (String entityType : entityTypes)
+			if (sound.name().matches("^ENTITY_" + entityType + "_.*"))
+				return EntityType.valueOf(entityType);
+
+		return null;
+	}
+
+	public void modifySound(Sound sound, float originalVolume, Location location, EntityType entityType) {
 		OnlinePlayers.where()
-			.world(origin.getWorld())
-			.radius(origin.getLocation(), 16 * event.getVolume())
+			.world(location.getWorld())
+			.radius(location, 16 * originalVolume)
 			.get().forEach(player -> {
 				final MuteMenuUser user = new MuteMenuService().get(player);
-				final int volume = user.getVolume(origin.getType());
-				new SoundBuilder(event.getSound())
-					.location(origin.getLocation())
+				final int volume = user.getVolume(entityType);
+				new SoundBuilder(sound)
+					.location(location)
 					.volume(volume)
 					.receiver(player)
 					.play();
 
-				Nexus.debug("Played sound " + event.getSound() + " to " + player.getName() + " at volume " + volume);
+				Nexus.debug("Played sound " + sound + " to " + player.getName() + " at volume " + volume);
 			});
 	}
 
