@@ -111,7 +111,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 					});
 					contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.BOOK)
 						.name("&3Info")
-						.lore("&eLeft Click - Increase volume", "&eRight Click - Decrease volume")
+						.lore("&eRight Click - Increase volume", "&eLeft Click - Decrease volume")
 						.build()));
 
 					items.add(ClickableItem.of(Material.ZOMBIE_HEAD, "Mob Sounds", e -> {
@@ -133,9 +133,9 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 							stack.glow();
 
 						items.add(ClickableItem.of(stack, e -> {
-							if (e.isRightClick())
+							if (e.isLeftClick())
 								decreaseVolume(user, item);
-							else if (e.isLeftClick())
+							else if (e.isRightClick())
 								increaseVolume(user, item);
 							service.save(user);
 							refresh();
@@ -149,7 +149,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 					});
 					contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.BOOK)
 						.name("&3Info")
-						.lore("&eLeft Click - Increase volume", "&eRight Click - Decrease volume")
+						.lore("&eRight Click - Increase volume", "&eLeft Click - Decrease volume")
 						.build()));
 
 					for (MobHeadType mobHeadType : MobHeadType.values()) {
@@ -162,9 +162,9 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 						int volume = user.getVolume(mobHeadType.getEntityType());
 						final ItemBuilder skull = new ItemBuilder(mobHeadType.getSkull()).lore(volume == 0 ? "&c0%" : "&a" + volume + "%");
 						items.add(ClickableItem.of(skull.build(), e -> {
-							if (e.isRightClick())
+							if (e.isLeftClick())
 								decreaseVolume(user, mobHeadType.getEntityType());
-							else if (e.isLeftClick())
+							else if (e.isRightClick())
 								increaseVolume(user, mobHeadType.getEntityType());
 							service.save(user);
 							refresh();
