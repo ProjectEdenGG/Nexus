@@ -10,7 +10,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuService;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
-import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
@@ -23,18 +22,26 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.lexikiq.event.sound.EntitySoundEvent;
+import me.lexikiq.event.sound.LocationNamedSoundEvent;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
 
@@ -104,14 +111,13 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 					});
 					contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.BOOK)
 						.name("&3Info")
-						.lore("&eLeft Click - Increase volume", "&eRight Click - Decrease volume")
+						.lore("&eRight Click - Increase volume", "&eLeft Click - Decrease volume")
 						.build()));
 
-					if (Rank.of(player).isAdmin())
-						items.add(ClickableItem.of(Material.ZOMBIE_HEAD, "Mob Sounds", e -> {
-							pageType = PageType.MOB_SOUNDS;
-							open(player);
-						}));
+					items.add(ClickableItem.of(Material.ZOMBIE_HEAD, "Mob Sounds", e -> {
+						pageType = PageType.MOB_SOUNDS;
+						open(player);
+					}));
 
 					for (MuteMenuItem item : MuteMenuItem.values()) {
 						if (item.getDefaultVolume() == null)
@@ -127,9 +133,9 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 							stack.glow();
 
 						items.add(ClickableItem.of(stack, e -> {
-							if (e.isRightClick())
+							if (e.isLeftClick())
 								decreaseVolume(user, item);
-							else if (e.isLeftClick())
+							else if (e.isRightClick())
 								increaseVolume(user, item);
 							service.save(user);
 							refresh();
@@ -143,7 +149,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 					});
 					contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.BOOK)
 						.name("&3Info")
-						.lore("&eLeft Click - Increase volume", "&eRight Click - Decrease volume")
+						.lore("&eRight Click - Increase volume", "&eLeft Click - Decrease volume")
 						.build()));
 
 					for (MobHeadType mobHeadType : MobHeadType.values()) {
@@ -156,9 +162,9 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 						int volume = user.getVolume(mobHeadType.getEntityType());
 						final ItemBuilder skull = new ItemBuilder(mobHeadType.getSkull()).lore(volume == 0 ? "&c0%" : "&a" + volume + "%");
 						items.add(ClickableItem.of(skull.build(), e -> {
-							if (e.isRightClick())
+							if (e.isLeftClick())
 								decreaseVolume(user, mobHeadType.getEntityType());
-							else if (e.isLeftClick())
+							else if (e.isRightClick())
 								increaseVolume(user, mobHeadType.getEntityType());
 							service.save(user);
 							refresh();
@@ -278,28 +284,60 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	// TODO 1.18
-//	@EventHandler
+	@EventHandler
 	public void onEntitySound(EntitySoundEvent event) {
 		final Entity origin = event.getOrigin();
 		if (!(origin instanceof LivingEntity))
 			return;
 
 		event.setCancelled(true);
+		modifySound(event.getSound(), event.getVolume(), origin.getLocation(), origin.getType());
+	}
 
+	@EventHandler
+	public void on(LocationNamedSoundEvent event) {
+		final EntityType entityType = getEntityType(event.getSound());
+		if (entityType == null || !entityType.isAlive())
+			return;
+
+		event.setCancelled(true);
+		modifySound(event.getSound(), event.getVolume(), event.getLocation(), entityType);
+	}
+
+	private static final String[] entityTypes = Arrays.stream(EntityType.values())
+		.map(EntityType::name)
+		.toArray(String[]::new);
+
+	private static final Map<Sound, EntityType> cache = new HashMap<>();
+
+	static {
+		Arrays.sort(entityTypes, Comparator.comparingInt(String::length).reversed());
+	}
+
+	private EntityType getEntityType(Sound sound) {
+		return cache.computeIfAbsent(sound, $ -> {
+			for (String entityType : entityTypes)
+				if (sound.name().matches("^ENTITY_" + entityType + "_.*"))
+					return EntityType.valueOf(entityType);
+
+			return null;
+		});
+	}
+
+	public void modifySound(Sound sound, float originalVolume, Location location, EntityType entityType) {
 		OnlinePlayers.where()
-			.world(origin.getWorld())
-			.radius(origin.getLocation(), 16 * event.getVolume())
+			.world(location.getWorld())
+			.radius(location, 16 * originalVolume)
 			.get().forEach(player -> {
 				final MuteMenuUser user = new MuteMenuService().get(player);
-				final int volume = user.getVolume(origin.getType());
-				new SoundBuilder(event.getSound())
-					.location(origin.getLocation())
+				final int volume = user.getVolume(entityType);
+				new SoundBuilder(sound)
+					.location(location)
 					.volume(volume)
 					.receiver(player)
 					.play();
 
-				Nexus.debug("Played sound " + event.getSound() + " to " + player.getName() + " at volume " + volume);
+				Nexus.debug("Played sound " + sound + " to " + player.getName() + " at volume " + volume);
 			});
 	}
 

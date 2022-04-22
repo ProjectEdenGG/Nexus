@@ -15,11 +15,10 @@ import gg.projecteden.nexus.framework.exceptions.preconfigured.NoPermissionExcep
 import gg.projecteden.nexus.framework.features.Features;
 import gg.projecteden.nexus.models.discord.DiscordCaptcha;
 import gg.projecteden.nexus.models.discord.DiscordCaptchaService;
+import gg.projecteden.nexus.models.discord.DiscordConfigService;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.models.setting.Setting;
-import gg.projecteden.nexus.models.setting.SettingService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.utils.DiscordId;
 import gg.projecteden.utils.DiscordId.VoiceChannel;
@@ -284,12 +283,10 @@ public class DiscordCommand extends CustomCommand {
 	@Path("lockdown")
 	@Permission(Group.STAFF)
 	void lockdown() {
-		SettingService service = new SettingService();
-		Setting setting = service.get("discord", "lockdown");
-		setting.setBoolean(!setting.getBoolean());
-		service.save(setting);
-
-		send(PREFIX + "Lockdown " + (setting.getBoolean() ? "enabled, new members will be automatically kicked" : "disabled"));
+		new DiscordConfigService().edit0(config -> {
+			config.toggleLockdown();
+			send(PREFIX + "Lockdown " + (config.isLockdown() ? "enabled, new members will be automatically kicked" : "disabled"));
+		});
 	}
 
 	@Async
