@@ -27,7 +27,7 @@ public class TeleportHereRequestCommand extends ITeleportRequestCommand {
 
 		removeDuplicateRequests(target.getUniqueId());
 
-		final TeleportRequest request = new TeleportRequest(player(), target, RequestType.TELEPORT_HERE);
+		final TeleportRequest request = new TeleportRequest(player(), target, RequestType.SUMMON);
 		requests.getPending().add(request);
 
 		send(json("&eSummon &3request sent to " + Nickname.of(target) + ". ").next("&eClick to cancel").command("tprhere cancel " + request.getId()));
