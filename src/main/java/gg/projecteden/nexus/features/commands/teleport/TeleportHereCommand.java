@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.commands.poof;
+package gg.projecteden.nexus.features.commands.teleport;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;

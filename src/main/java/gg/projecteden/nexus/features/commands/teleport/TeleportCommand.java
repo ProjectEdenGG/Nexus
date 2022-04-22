@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.commands.poof;
+package gg.projecteden.nexus.features.commands.teleport;
 
 import de.bluecolored.bluemap.api.BlueMapAPI;
 import gg.projecteden.nexus.Nexus;
@@ -14,8 +14,8 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineE
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.models.poof.TeleportUser;
-import gg.projecteden.nexus.models.poof.TeleportUserService;
+import gg.projecteden.nexus.models.teleport.TeleportUser;
+import gg.projecteden.nexus.models.teleport.TeleportUserService;
 import gg.projecteden.nexus.utils.LocationUtils.RelativeLocation;
 import gg.projecteden.nexus.utils.LocationUtils.RelativeLocation.Modify;
 import gg.projecteden.nexus.utils.PlayerUtils;
