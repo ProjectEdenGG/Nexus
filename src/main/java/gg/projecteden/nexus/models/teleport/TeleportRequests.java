@@ -77,7 +77,7 @@ public class TeleportRequests implements DatabaseObject {
 			this.receiver = receiver.getUniqueId();
 			this.type = type;
 
-			if (type == RequestType.TELEPORT_TO)
+			if (type == RequestType.TELEPORT)
 				this.teleportLocation = receiver.getLocation();
 			else
 				this.teleportLocation = sender.getLocation();
@@ -92,8 +92,8 @@ public class TeleportRequests implements DatabaseObject {
 		}
 
 		public enum RequestType {
-			TELEPORT_TO,
-			TELEPORT_HERE
+			TELEPORT,
+			SUMMON
 		}
 	}
 

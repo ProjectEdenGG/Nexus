@@ -91,7 +91,7 @@ public class TeleportRequestCommand extends ITeleportRequestCommand {
 
 		removeDuplicateRequests(target.getUniqueId());
 
-		final TeleportRequest request = new TeleportRequest(player(), targetPlayer, RequestType.TELEPORT_TO);
+		final TeleportRequest request = new TeleportRequest(player(), targetPlayer, RequestType.TELEPORT);
 		requests.getPending().add(request);
 
 		send(json("&eTeleport &3request sent to " + Nickname.of(targetPlayer) + ". ").next("&eClick to cancel").command("tpr cancel " + request.getId()));

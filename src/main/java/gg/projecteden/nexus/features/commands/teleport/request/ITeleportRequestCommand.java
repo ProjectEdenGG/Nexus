@@ -30,31 +30,16 @@ public class ITeleportRequestCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("accept [id]")
-	void accept(Integer id) {
-		accept(player(), id);
-	}
-
-	@Path("deny [id]")
-	void deny(Integer id) {
-		deny(player(), id);
-	}
-
-	@Path("cancel [id]")
-	void cancel(Integer id) {
-		cancel(player(), id);
-	}
-
 	protected void removeDuplicateRequests(UUID receiver) {
 		requests.removeDuplicates(uuid(), receiver);
 	}
 
 	@NotNull
-	private TeleportRequest getTeleportRequest(Integer id, Player player, String action, Function<Player, List<TeleportRequest>> getter) {
+	private TeleportRequest getTeleportRequest(Integer id, String action, Function<Player, List<TeleportRequest>> getter) {
 		TeleportRequest request = null;
 
 		if (id == null) {
-			final List<TeleportRequest> pending = getter.apply(player);
+			final List<TeleportRequest> pending = getter.apply(player());
 			switch (pending.size()) {
 				case 0 -> error("You do not have any pending teleport requests");
 				case 1 -> request = pending.get(0);
@@ -71,7 +56,7 @@ public class ITeleportRequestCommand extends CustomCommand {
 						}
 
 						String type = "Teleport";
-						if (_request.getType() == RequestType.TELEPORT_HERE)
+						if (_request.getType() == RequestType.SUMMON)
 							type = "Summon";
 
 						error.next("&e " + type + " &3request " + tofrom + " &e" + otherPlayer)
@@ -96,12 +81,13 @@ public class ITeleportRequestCommand extends CustomCommand {
 		return request;
 	}
 
-	public void accept(Player receiver, Integer id) {
-		TeleportRequest request = getTeleportRequest(id, receiver, "accept", requests::getByReceiver);
+	@Path("accept [id]")
+	public void accept(Integer id) {
+		TeleportRequest request = getTeleportRequest(id, "accept", requests::getByReceiver);
 
 		OfflinePlayer toPlayer = request.getReceiverPlayer();
 		OfflinePlayer fromPlayer = request.getSenderPlayer();
-		if (request.getType() == RequestType.TELEPORT_HERE) {
+		if (request.getType() == RequestType.SUMMON) {
 			toPlayer = request.getSenderPlayer();
 			fromPlayer = request.getReceiverPlayer();
 		}
@@ -109,12 +95,12 @@ public class ITeleportRequestCommand extends CustomCommand {
 		if (!fromPlayer.isOnline() || fromPlayer.getPlayer() == null)
 			throw new PlayerNotOnlineException(fromPlayer);
 
-		if (request.getType() == RequestType.TELEPORT_TO)
+		if (request.getType() == RequestType.TELEPORT)
 			fromPlayer.getPlayer().teleportAsync(Nerd.of(toPlayer).getLocation(), TeleportCause.COMMAND);
 		else
 			fromPlayer.getPlayer().teleportAsync(request.getTeleportLocation(), TeleportCause.COMMAND);
 
-		if (request.getType() == RequestType.TELEPORT_TO) {
+		if (request.getType() == RequestType.TELEPORT) {
 			send(toPlayer.getPlayer(), "&3You accepted &e" + Nickname.of(fromPlayer) + "'s &3teleport request");
 			send(fromPlayer.getPlayer(), "&e" + Nickname.of(toPlayer) + " &3accepted your teleport request");
 		} else {
@@ -124,12 +110,13 @@ public class ITeleportRequestCommand extends CustomCommand {
 		}
 	}
 
-	public void deny(Player receiver, Integer id) {
-		TeleportRequest request = getTeleportRequest(id, receiver, "deny", requests::getByReceiver);
+	@Path("deny [id]")
+	public void deny(Integer id) {
+		TeleportRequest request = getTeleportRequest(id, "deny", requests::getByReceiver);
 
 		OfflinePlayer toPlayer = request.getReceiverPlayer();
 		OfflinePlayer fromPlayer = request.getSenderPlayer();
-		if (request.getType() == RequestType.TELEPORT_HERE) {
+		if (request.getType() == RequestType.SUMMON) {
 			toPlayer = request.getSenderPlayer();
 			fromPlayer = request.getReceiverPlayer();
 		}
@@ -137,7 +124,7 @@ public class ITeleportRequestCommand extends CustomCommand {
 		if (!fromPlayer.isOnline())
 			throw new PlayerNotOnlineException(fromPlayer);
 
-		if (request.getType() == RequestType.TELEPORT_TO) {
+		if (request.getType() == RequestType.TELEPORT) {
 			send(toPlayer.getPlayer(), "&3You denied &e" + Nickname.of(fromPlayer) + "'s &3teleport request");
 			send(fromPlayer.getPlayer(), "&e" + Nickname.of(toPlayer) + " &3denied your teleport request");
 		} else {
@@ -146,12 +133,13 @@ public class ITeleportRequestCommand extends CustomCommand {
 		}
 	}
 
-	public void cancel(Player sender, Integer id) {
-		TeleportRequest request = getTeleportRequest(id, sender, "cancel", requests::getBySender);
+	@Path("cancel [id]")
+	public void cancel(Integer id) {
+		TeleportRequest request = getTeleportRequest(id, "cancel", requests::getBySender);
 
 		OfflinePlayer toPlayer = request.getReceiverPlayer();
 		OfflinePlayer fromPlayer = request.getSenderPlayer();
-		if (request.getType() == RequestType.TELEPORT_HERE) {
+		if (request.getType() == RequestType.SUMMON) {
 			toPlayer = request.getSenderPlayer();
 			fromPlayer = request.getReceiverPlayer();
 		}
@@ -159,7 +147,7 @@ public class ITeleportRequestCommand extends CustomCommand {
 		if (!fromPlayer.isOnline())
 			throw new PlayerNotOnlineException(fromPlayer);
 
-		if (request.getType() == RequestType.TELEPORT_TO) {
+		if (request.getType() == RequestType.TELEPORT) {
 			send(toPlayer.getPlayer(), "&e" + Nickname.of(fromPlayer) + " &3canceled their teleport request");
 			send(fromPlayer.getPlayer(), "&3You canceled your teleport request to &e" + Nickname.of(toPlayer));
 		} else {
