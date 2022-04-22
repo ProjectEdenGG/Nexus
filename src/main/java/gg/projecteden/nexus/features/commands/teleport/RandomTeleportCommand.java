@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.commands.poof;
+package gg.projecteden.nexus.features.commands.teleport;
 
 import gg.projecteden.annotations.Async;
 import gg.projecteden.nexus.Nexus;

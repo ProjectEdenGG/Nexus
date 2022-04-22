@@ -7,8 +7,8 @@ import gg.projecteden.nexus.features.chat.events.DiscordChatEvent;
 import gg.projecteden.nexus.features.chat.events.MinecraftChatEvent;
 import gg.projecteden.nexus.features.chat.events.PrivateChatEvent;
 import gg.projecteden.nexus.features.commands.BoopCommand;
-import gg.projecteden.nexus.features.commands.poof.PoofCommand;
-import gg.projecteden.nexus.features.commands.poof.PoofHereCommand;
+import gg.projecteden.nexus.features.commands.teleport.request.TeleportHereRequestCommand;
+import gg.projecteden.nexus.features.commands.teleport.request.TeleportRequestCommand;
 import gg.projecteden.nexus.features.economy.commands.PayCommand;
 import gg.projecteden.nexus.features.tickets.ReportCommand;
 import gg.projecteden.nexus.features.tickets.TicketCommand;
@@ -127,8 +127,8 @@ public class Justice extends Feature implements Listener {
 	}
 
 	private static final List<Class<? extends CustomCommand>> muteCommandBlacklist = Arrays.asList(
-			PoofCommand.class,
-			PoofHereCommand.class,
+			TeleportRequestCommand.class,
+			TeleportHereRequestCommand.class,
 			BoopCommand.class,
 			PayCommand.class,
 			TicketCommand.class,
