@@ -12,8 +12,11 @@ import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.discord.appcommands.NexusAppCommand;
 import gg.projecteden.nexus.features.discord.appcommands.annotations.Verify;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.models.discord.DiscordConfigService;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
+import gg.projecteden.utils.DiscordId;
+import gg.projecteden.utils.DiscordId.User;
 import gg.projecteden.nexus.models.setting.Setting;
 import gg.projecteden.nexus.models.setting.SettingService;
 import net.dv8tion.jda.api.entities.Member;
@@ -31,11 +34,10 @@ public class DiscordAppCommand extends NexusAppCommand {
 	@RequiredRole("Staff")
 	@Command("Toggle lockdown")
 	void lockdown(@Desc("Lockdown state") @Optional Boolean state) {
-		SettingService settingService = new SettingService();
-		Setting setting = settingService.get("discord", "lockdown");
-		setting.setBoolean(state == null ? !setting.getBoolean() : state);
-		settingService.save(setting);
-		reply("Discord lockdown " + (setting.getBoolean() ? "enabled by " + nickname() + ", new members will be automatically kicked" : "disabled by " + nickname()));
+		new DiscordConfigService().edit0(config -> {
+			config.setLockdown(state == null ? !config.isLockdown() : state);
+			reply("Discord lockdown " + (config.isLockdown() ? "enabled by " + nickname() + ", new members will be automatically kicked" : "disabled by " + nickname()));
+		});
 	}
 
 	@Command("Link your Discord and Minecraft accounts")

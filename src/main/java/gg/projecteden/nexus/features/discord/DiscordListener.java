@@ -6,12 +6,11 @@ import gg.projecteden.discord.DiscordId.User;
 import gg.projecteden.exceptions.EdenException;
 import gg.projecteden.nexus.models.badge.BadgeUser.Badge;
 import gg.projecteden.nexus.models.badge.BadgeUserService;
+import gg.projecteden.nexus.models.discord.DiscordConfigService;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nerd.Rank;
-import gg.projecteden.nexus.models.setting.Setting;
-import gg.projecteden.nexus.models.setting.SettingService;
 import gg.projecteden.nexus.utils.HttpUtils;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -55,10 +54,7 @@ public class DiscordListener extends ListenerAdapter {
 	@Override
 	public void onGuildMemberJoin(@Nonnull GuildMemberJoinEvent event) {
 		Tasks.async(() -> {
-			SettingService service = new SettingService();
-			Setting setting = service.get("discord", "lockdown");
-
-			if (setting.getBoolean())
+			if (new DiscordConfigService().get0().isLockdown())
 				event.getMember().kick("This discord is currently on lockdown mode").queue();
 			else {
 				Tasks.waitAsync(5, () -> {

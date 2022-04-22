@@ -14,8 +14,8 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineE
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.models.setting.Setting;
-import gg.projecteden.nexus.models.setting.SettingService;
+import gg.projecteden.nexus.models.poof.TeleportUser;
+import gg.projecteden.nexus.models.poof.TeleportUserService;
 import gg.projecteden.nexus.utils.LocationUtils.RelativeLocation;
 import gg.projecteden.nexus.utils.LocationUtils.RelativeLocation.Modify;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -147,9 +147,8 @@ public class TeleportCommand extends CustomCommand implements Listener {
 	}
 
 	private boolean checkTeleportDisabled(Player from, OfflinePlayer to) {
-		SettingService settingService = new SettingService();
-		Setting setting = settingService.get(to, "tpDisable");
-		if (setting.getBoolean()) {
+		final TeleportUser user = new TeleportUserService().get(to);
+		if (!user.canBeTeleportedTo()) {
 			Rank fromRank = Rank.of(from);
 			Rank toRank = Rank.of(to);
 			if (fromRank.ordinal() > toRank.ordinal())
@@ -186,12 +185,10 @@ public class TeleportCommand extends CustomCommand implements Listener {
 	@Path("toggle")
 	@Permission("ladder.builder")
 	void disable() {
-		SettingService settingService = new SettingService();
-		Setting setting = settingService.get(player(), "tpDisable");
-		boolean enable = setting.getBoolean();
-		setting.setBoolean(!enable);
-		settingService.save(setting);
-		send(PREFIX + "Teleports to you have been " + (enable ? "&aenabled" : "&cdisabled"));
+		new TeleportUserService().edit(player(), user -> {
+			user.canBeTeleportedTo(!user.canBeTeleportedTo());
+			send(PREFIX + "Teleports to you have been " + (user.canBeTeleportedTo() ? "&aenabled" : "&cdisabled"));
+		});
 	}
 
 	@Path("override <player>")
