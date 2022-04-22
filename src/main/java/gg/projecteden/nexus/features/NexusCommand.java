@@ -3,8 +3,6 @@ package gg.projecteden.nexus.features;
 import de.tr7zw.nbtapi.NBTCompound;
 import de.tr7zw.nbtapi.NBTEntity;
 import de.tr7zw.nbtapi.NBTFile;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.crates.models.CrateType;
@@ -13,6 +11,8 @@ import gg.projecteden.nexus.features.customenchants.OldCEConverter;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Train;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.TrainBackground;
 import gg.projecteden.nexus.features.listeners.TemporaryListener;
+import gg.projecteden.nexus.features.menus.api.SmartInventory;
+import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
@@ -39,8 +39,6 @@ import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.models.quests.QuesterService;
-import gg.projecteden.nexus.models.setting.Setting;
-import gg.projecteden.nexus.models.setting.SettingService;
 import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -97,7 +95,6 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.zip.ZipFile;
 
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 import static gg.projecteden.utils.TimeUtils.shortDateFormat;
 import static gg.projecteden.utils.UUIDUtils.UUID0;
@@ -427,13 +424,6 @@ public class NexusCommand extends CustomCommand implements Listener {
 	@Path("jingles <jingle>")
 	void jingles(Jingle jingle) {
 		jingle.play(player());
-	}
-
-	@Path("setting <type> [value]")
-	void setting(String type, String value) {
-		if (!isNullOrEmpty(value))
-			new SettingService().save(new Setting(player(), type, value));
-		send("Setting: " + new SettingService().get(player(), type));
 	}
 
 	@SneakyThrows
