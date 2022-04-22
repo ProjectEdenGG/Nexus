@@ -6,17 +6,24 @@ import gg.projecteden.nexus.features.customblocks.models.blocks.common.ICraftabl
 import gg.projecteden.nexus.features.customblocks.models.blocks.common.ICustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.blocks.common.IDirectional;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
+import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.customblock.CustomBlockData;
 import gg.projecteden.nexus.models.customblock.CustomBlockTracker;
 import gg.projecteden.nexus.models.customblock.CustomBlockTrackerService;
 import gg.projecteden.nexus.models.customblock.NoteBlockData;
+import gg.projecteden.nexus.utils.BlockUtils;
+import gg.projecteden.nexus.utils.NMSUtils;
+import gg.projecteden.nexus.utils.NMSUtils.SoundType;
 import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.UUIDUtils;
 import lombok.NonNull;
 import org.bukkit.Instrument;
 import org.bukkit.Keyed;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.NoteBlock;
@@ -140,4 +147,43 @@ public class CustomBlockUtils {
 			}
 		}
 	}
+
+	public static void playDefaultWoodSounds(Sound sound, Location location) {
+		SoundType soundType = SoundType.fromSound(sound);
+		if (soundType == null)
+			return;
+
+		playDefaultWoodSound(soundType, location);
+	}
+
+	public static void tryPlayDefaultWoodSound(SoundType soundType, Block block) {
+		Sound sound = NMSUtils.getSound(soundType, block);
+		if (sound == null)
+			return;
+
+		String blockSound = "custom." + sound.getKey().getKey();
+		String woodSound = soundType.getCustomWoodSound();
+		if (!blockSound.equalsIgnoreCase(woodSound)) {
+//			Dev.WAKKA.send(blockSound + " == " + woodSound);
+			return;
+		}
+
+		playDefaultWoodSound(soundType, block.getLocation());
+	}
+
+	private static void playDefaultWoodSound(SoundType soundType, Location location) {
+		String soundKey = soundType.getCustomWoodSound();
+		SoundBuilder soundBuilder = new SoundBuilder(soundKey).location(location).volume(soundType.getVolume());
+
+		String locationStr = location.getWorld().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ();
+		String cooldownType = "CustomWoodSound_" + soundType + "_" + locationStr;
+		if (!(new CooldownService().check(UUIDUtils.UUID0, cooldownType, TickTime.TICK.x(4)))) {
+			return;
+		}
+
+//		debug("DefaultWoodSound: " + soundType + " - " + soundKey);
+		BlockUtils.playSound(soundBuilder);
+	}
+
+
 }

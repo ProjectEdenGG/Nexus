@@ -4,6 +4,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.utils.LocationUtils.Axis;
 import gg.projecteden.nexus.utils.NMSUtils.SoundType;
 import gg.projecteden.nexus.utils.Tasks.GlowTask;
+import lombok.NonNull;
 import me.lexikiq.HasPlayer;
 import me.lexikiq.OptionalPlayer;
 import org.bukkit.Bukkit;
@@ -324,17 +325,31 @@ public class BlockUtils {
 		return true;
 	}
 
-	public static void playSound(SoundType soundType, Block block) {
-		playSound(NMSUtils.getSound(soundType, block), block.getLocation().toCenterLocation());
-	}
-
-	public static void playSound(Sound sound, Location location) {
-		if (sound == null || location == null)
+	public static void playSound(@Nullable Sound sound, @NonNull Location location) {
+		if (sound == null)
 			return;
 
-		new SoundBuilder(sound)
-			.location(location)
-			.category(SoundCategory.BLOCKS)
-			.play();
+		playSound(sound.getKey().getKey(), location);
+	}
+
+	public static void playSound(String sound, @NonNull Location location) {
+		if (sound == null)
+			return;
+
+		playSound(new SoundBuilder(sound).location(location));
+	}
+
+	public static void playSound(SoundType soundType, @NonNull Block block) {
+		Sound sound = NMSUtils.getSound(soundType, block);
+		if (sound == null)
+			return;
+
+		Location location = block.getLocation().toCenterLocation();
+
+		playSound(new SoundBuilder(sound).location(location).volume(soundType.getVolume()));
+	}
+
+	public static void playSound(SoundBuilder soundBuilder) {
+		soundBuilder.category(SoundCategory.BLOCKS).play();
 	}
 }

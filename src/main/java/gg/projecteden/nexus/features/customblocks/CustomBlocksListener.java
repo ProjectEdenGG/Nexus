@@ -34,12 +34,15 @@ import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.NotePlayEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCreativeEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
+import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
@@ -59,7 +62,6 @@ public class CustomBlocksListener implements Listener {
 	}
 
 	// Recipe Stuff
-
 	@EventHandler
 	public void on(ResourcePackUpdateCompleteEvent ignored) {
 		for (CustomBlock customBlock : CustomBlock.values())
@@ -160,36 +162,69 @@ public class CustomBlocksListener implements Listener {
 		event.setCursor(newItem);
 	}
 
+	// Handles Sound: STEP, PLACE
 	@EventHandler
 	public void on(LocationNamedSoundEvent event) {
-		if (true) // TODO: wait until SoundEvents are fixed
-			return;
-
 		Block block = event.getLocation().getBlock();
 		Block below = block.getRelative(BlockFace.DOWN);
-		Block source;
+		Block source = null;
 		if (CustomBlocks.isCustom(block))
 			source = block;
 		else if (CustomBlocks.isCustom(below))
 			source = below;
-		else
-			return;
 
-		NoteBlock noteBlock = (NoteBlock) source.getBlockData();
-		CustomBlock _customBlock = CustomBlock.fromNoteBlock(noteBlock);
-		if (_customBlock == null) {
-			debug("SoundEvent: CustomBlock == null");
+
+		if (source != null) {
+			NoteBlock noteBlock = (NoteBlock) source.getBlockData();
+			CustomBlock _customBlock = CustomBlock.fromNoteBlock(noteBlock);
+			if (_customBlock == null) {
+				debug("SoundEvent: CustomBlock == null");
+				return;
+			}
+
+			SoundType soundType = SoundType.fromSound(event.getSound());
+			if (soundType == null)
+				return;
+
+			event.setCancelled(true);
+			_customBlock.playSound(soundType, source.getLocation());
 			return;
 		}
 
-		debug("SoundEvent: " + _customBlock.name() + " - " + event.getSound().getKey().getKey());
-		SoundType soundType = _customBlock.getSoundType(event.getSound());
-		if (soundType == null)
+		if (event.getSound().getKey().getKey().startsWith("block.wood.")) {
+			event.setCancelled(true);
+			CustomBlockUtils.playDefaultWoodSounds(event.getSound(), event.getLocation());
+		}
+	}
+
+	// Handles Sound: FALL
+	@EventHandler
+	public void on(EntityDamageEvent event) {
+		if (event.isCancelled())
 			return;
 
-		debug(" soundType: " + soundType + ", playing sound...");
-		event.setCancelled(true);
-		_customBlock.playSound(soundType, source.getLocation());
+		if (!(event.getEntity() instanceof Player player))
+			return;
+
+		if (!event.getCause().equals(DamageCause.FALL))
+			return;
+
+		Block block = player.getLocation().getBlock().getRelative(BlockFace.DOWN);
+		if (Nullables.isNullOrAir(block))
+			return;
+
+		CustomBlockUtils.tryPlayDefaultWoodSound(SoundType.FALL, block);
+	}
+
+
+	// Handles Sound: HIT
+	@EventHandler
+	public void on(PlayerAnimationEvent event) {
+		Block block = event.getPlayer().getTargetBlockExact(5);
+		if (block == null)
+			return;
+
+		CustomBlockUtils.tryPlayDefaultWoodSound(SoundType.HIT, block);
 	}
 
 	@EventHandler
@@ -203,21 +238,22 @@ public class CustomBlocksListener implements Listener {
 		if (CustomBlocks.isCustomNoteBlock(above)) {
 			NoteBlock noteBlock = (NoteBlock) above.getBlockData();
 			CustomBlockData data = CustomBlockUtils.getData(noteBlock, above.getLocation());
-			if (data == null)
-				return;
-
-			data.getNoteBlockData(above, true);
+			if (data != null)
+				data.getNoteBlockData(above, true);
 		}
 	}
 
+	// Handles Sound: BREAK
 	@EventHandler
 	public void on(BlockBreakEvent event) {
 		if (event.isCancelled())
 			return;
 
 		Block block = event.getBlock();
-		if (!CustomBlocks.isCustom(block))
+		if (!CustomBlocks.isCustom(block)) {
+			CustomBlockUtils.tryPlayDefaultWoodSound(SoundType.BREAK, block);
 			return;
+		}
 
 		NoteBlock noteBlock = (NoteBlock) block.getBlockData();
 		CustomBlock _customBlock = CustomBlock.fromNoteBlock(noteBlock);

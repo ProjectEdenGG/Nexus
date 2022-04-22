@@ -127,6 +127,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.NMSUtils.SoundType;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -136,7 +137,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Note;
-import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -385,41 +385,24 @@ public enum CustomBlock implements Keyed {
 		return true;
 	}
 
-	public @Nullable SoundType getSoundType(Sound sound) {
-		String soundKey = sound.getKey().getKey();
-		if (soundKey.endsWith(".step"))
-			return SoundType.STEP;
-		else if (soundKey.endsWith(".hit"))
-			return SoundType.HIT;
-		else if (soundKey.endsWith(".place"))
-			return SoundType.PLACE;
-		else if (soundKey.endsWith(".break"))
-			return SoundType.BREAK;
-
-		return null;
-	}
-
-	public @Nullable Sound getSound(SoundType type) {
-		switch (type) {
-			case PLACE -> {
-				return customBlock.getPlaceSound();
-			}
-			case BREAK -> {
-				return customBlock.getBreakSound();
-			}
-			case STEP -> {
-				return customBlock.getStepSound();
-			}
-			case HIT -> {
-				return customBlock.getHitSound();
-			}
-		}
-		return null;
+	public @NonNull String getSound(SoundType type) {
+		return switch (type) {
+			case PLACE -> customBlock.getPlaceSound();
+			case BREAK -> customBlock.getBreakSound();
+			case STEP -> customBlock.getStepSound();
+			case HIT -> customBlock.getHitSound();
+			case FALL -> customBlock.getFallSound();
+		};
 	}
 
 	public void playSound(SoundType type, Location location) {
-		Sound sound = getSound(type);
-		BlockUtils.playSound(sound, location);
+		String sound = getSound(type);
+		double volume = type.getVolume();
+
+//		debug("CustomBlockSound: " + type + " - " + sound);
+
+		SoundBuilder soundBuilder = new SoundBuilder(sound).location(location).volume(volume);
+		BlockUtils.playSound(soundBuilder);
 	}
 
 	@Getter

@@ -161,7 +161,7 @@ public class CustomBlockTag implements Tag<CustomBlock> {
 	}
 
 	@Override
-	public NamespacedKey getKey() {
+	public @NotNull NamespacedKey getKey() {
 		return key;
 	}
 
