@@ -128,4 +128,9 @@ public abstract class CustomEnchant extends Enchantment {
 		return items;
 	}
 
+	@Override
+	public @NotNull String translationKey() {
+		// TODO
+		throw new UnsupportedOperationException();
+	}
 }
