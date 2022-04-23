@@ -20,7 +20,6 @@ import lombok.NonNull;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -134,7 +133,7 @@ public class ArenaMenu extends InventoryProvider {
 				return null;
 			}
 		},
-		FLAGS(2, 3, new ItemStack(Material.CYAN_BANNER, 1)) {
+		FLAGS(2, 3, new ItemBuilder(Material.CYAN_BANNER)) {
 			@Override
 			void onClick(Player player, Arena arena) {
 				new FlagsMenu(arena).open(player);
@@ -145,7 +144,7 @@ public class ArenaMenu extends InventoryProvider {
 				return null;
 			}
 		},
-		LIVES(3, 1, new ItemBuilder(Material.PLAYER_HEAD).build()),
+		LIVES(3, 1, new ItemBuilder(Material.PLAYER_HEAD)),
 		SECONDS(3, 2, Material.CLOCK) {
 			@Override
 			public String getTitle() {
@@ -204,10 +203,10 @@ public class ArenaMenu extends InventoryProvider {
 
 		private final int row;
 		private final int column;
-		private final ItemStack item;
+		private final ItemBuilder item;
 
 		ArenaMenuItem(int row, int column, Material material) {
-			this(row, column, new ItemStack(material));
+			this(row, column, new ItemBuilder(material));
 		}
 
 		public String getTitle() {
@@ -254,15 +253,17 @@ public class ArenaMenu extends InventoryProvider {
 
 	@Override
 	public void init() {
-		Arrays.asList(ArenaMenuItem.values()).forEach(menuItem ->
+		Arrays.asList(ArenaMenuItem.values()).forEach(menuItem -> {
+			final ItemBuilder item = menuItem.getItem()
+				.name("&e" + menuItem.getTitle())
+				.lore(menuItem.getLore(player, arena));
+
 			contents.set(
 				(menuItem.getRow() - 1),
 				(menuItem.getColumn() - 1),
-				ClickableItem.of(menuItem.getItem(), "&e" + menuItem.getTitle(), menuItem.getLore(player, arena), e ->
-					menuItem.onClick(player, arena)
-				)
-			)
-		);
+				ClickableItem.of(item, e -> menuItem.onClick(player, arena))
+			);
+		});
 	}
 
 }

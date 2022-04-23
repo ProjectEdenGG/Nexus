@@ -94,11 +94,11 @@ public class ClickableItem {
 	}
 
 	public static ClickableItem of(Material material, String name, Consumer<ItemClickData> consumer) {
-		return of(new ItemStack(material), name, (List<String>) null, consumer);
+		return of(new ItemBuilder(material).name(name), consumer);
 	}
 
 	public static ClickableItem of(Material material, String name, String lore, Consumer<ItemClickData> consumer) {
-		return of(new ItemStack(material), name, lore, consumer);
+		return of(new ItemBuilder(material).name(name).lore(lore), consumer);
 	}
 
 	public static ClickableItem of(ItemStack item, String name, Consumer<ItemClickData> consumer) {
