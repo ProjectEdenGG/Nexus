@@ -36,29 +36,29 @@ public class GatherQuestTask extends QuestTask<GatherQuestTask, GatherQuestTaskS
 
 		@Override
 		public DialogInstance interact(Quester quester, QuestTaskStepProgress stepProgress) {
-			if (dialog != null && stepProgress.isFirstInteraction())
+			if (dialog != null && stepProgress.isFirstInteraction()) {
 				return dialog.send(quester);
-			else
-				if (shouldAdvance(quester, stepProgress)) {
-					if (complete != null)
-						return complete.send(quester);
-				} else if (reminder != null)
-					return reminder.send(quester);
+			} else if (shouldAdvance(quester, stepProgress)) {
+				if (complete != null)
+					return complete.send(quester);
+			} else if (reminder != null)
+				return reminder.send(quester);
 
 			return null;
 		}
 
 		@Override
 		public boolean shouldAdvance(Quester quester, QuestTaskStepProgress stepProgress) {
-			if (predicate != null)
+			if (predicate != null) {
 				if (!stepProgress.isFirstInteraction() && predicate.test(quester))
 					return true;
+			} else {
+				if (Nullables.isNullOrEmpty(items))
+						return true;
 
-			if (Nullables.isNullOrEmpty(items))
-				return true;
-
-			if (!stepProgress.isFirstInteraction() && quester.has(items))
-				return true;
+				if (!stepProgress.isFirstInteraction() && quester.has(items))
+					return true;
+			}
 
 			return false;
 		}
