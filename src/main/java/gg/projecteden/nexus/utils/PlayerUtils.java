@@ -958,6 +958,7 @@ public class PlayerUtils {
 	// https://wiki.vg/Protocol_version_numbers
 	// TODO Is this available somewhere besides the wiki?
 	private static final Map<Integer, String> versions = Map.of(
+		758, "1.18.2",
 		757, "1.18/1.18.1",
 		756, "1.17.1",
 		755, "1.17"
