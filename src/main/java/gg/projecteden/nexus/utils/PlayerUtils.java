@@ -984,6 +984,9 @@ public class PlayerUtils {
 						if (!"release".equals(version.getType()))
 							continue;
 
+						if (version.getProtocolId() == 0)
+							continue;
+
 						versions.computeIfAbsent(version.getProtocolId(), $ -> new ArrayList<>()).add(version.getName());
 					}
 				}
