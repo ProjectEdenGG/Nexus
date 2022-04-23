@@ -134,7 +134,7 @@ public class HttpUtils {
 
 	@NotNull
 	private static RequestBody json(String body) {
-		return RequestBody.create(body, MediaType.parse("application/json"));
+		return RequestBody.create(MediaType.parse("application/json"), body);
 	}
 
 }
