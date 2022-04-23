@@ -169,7 +169,7 @@ public class Discord extends Feature {
 	}
 
 	public static void send(MessageBuilder message, TextChannel... targets) {
-		send(message, success -> {}, error -> {}, targets);
+		send(message, success -> {}, Throwable::printStackTrace, targets);
 	}
 
 	public static void send(MessageBuilder message, Consumer<Message> onSuccess, Consumer<Throwable> onError, TextChannel... targets) {
@@ -179,8 +179,9 @@ public class Discord extends Feature {
 	public static void koda(String message, TextChannel... targets) {
 		koda(new MessageBuilder(stripColor(message)), targets);
 	}
+
 	public static void koda(MessageBuilder message, TextChannel... targets) {
-		koda(message, success -> {}, error -> {}, targets);
+		koda(message, success -> {}, Throwable::printStackTrace, targets);
 	}
 
 	public static void koda(MessageBuilder message, Consumer<Message> onSuccess, Consumer<Throwable> onError, TextChannel... targets) {
