@@ -32,7 +32,7 @@ public class BuyPerksMenu extends CommonPerksMenu {
 	}
 
 	@Override
-	protected int getRows() {
+	protected int getRows(Integer page) {
 		return Math.max(3, MenuUtils.calculateRows(PerkType.getByCategory(category).size(), 1));
 	}
 

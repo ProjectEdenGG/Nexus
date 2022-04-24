@@ -36,7 +36,7 @@ public class TrustProvider extends InventoryProvider {
 	}
 
 	@Override
-	protected int getRows() {
+	protected int getRows(Integer page) {
 		return MenuUtils.calculateRows(new TrustService().get(player).getAll().size(), 3);
 	}
 

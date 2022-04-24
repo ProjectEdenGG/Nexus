@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.votes.vps;
 
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
@@ -15,7 +14,6 @@ import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -43,8 +41,8 @@ public class VPSProvider extends InventoryProvider {
 	}
 
 	@Override
-	protected int getRows() {
-		return menu.getPage(contents.pagination().getPage()).getRows();
+	protected int getRows(Integer page) {
+		return menu.getPage((page == null ? 0 : page) + 1).getRows();
 	}
 
 	@Override

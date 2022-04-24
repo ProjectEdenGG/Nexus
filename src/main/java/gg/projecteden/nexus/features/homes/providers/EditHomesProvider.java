@@ -27,7 +27,7 @@ public class EditHomesProvider extends InventoryProvider {
 	private final HomeService service = new HomeService();
 
 	@Override
-	protected int getRows() {
+	protected int getRows(Integer page) {
 		return MenuUtils.calculateRows(homeOwner.getHomes().size(), 2);
 	}
 

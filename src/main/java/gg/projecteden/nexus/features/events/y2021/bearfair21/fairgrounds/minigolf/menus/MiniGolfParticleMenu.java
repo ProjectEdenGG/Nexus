@@ -21,7 +21,7 @@ public class MiniGolfParticleMenu extends InventoryProvider {
 	private MiniGolf21User user;
 
 	@Override
-	protected int getRows() {
+	protected int getRows(Integer page) {
 		return MenuUtils.calculateRows(MiniGolfParticle.values().length);
 	}
 

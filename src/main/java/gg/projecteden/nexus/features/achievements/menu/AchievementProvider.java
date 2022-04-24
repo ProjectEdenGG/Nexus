@@ -26,7 +26,7 @@ public class AchievementProvider extends InventoryProvider {
 	}
 
 	@Override
-	protected int getRows() {
+	protected int getRows(Integer page) {
 		return calculateRows(group.getAchievements().size(), 2);
 	}
 

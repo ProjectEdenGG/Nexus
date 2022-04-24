@@ -1,10 +1,8 @@
 package gg.projecteden.nexus.features.statistics;
 
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.features.menus.api.content.Pagination;
 import gg.projecteden.nexus.features.mobheads.MobHeadType;
 import gg.projecteden.nexus.features.statistics.StatisticsMenu.StatsMenus;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -18,7 +16,6 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Statistic;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -45,7 +42,7 @@ public class StatisticsMenuProvider extends InventoryProvider {
 	}
 
 	@Override
-	protected int getRows() {
+	protected int getRows(Integer page) {
 		return menu.getSize();
 	}
 

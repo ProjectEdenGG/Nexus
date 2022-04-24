@@ -23,7 +23,7 @@ public class PlayerPerksMenu extends CommonPerksMenu {
 	}
 
 	@Override
-	protected int getRows() {
+	protected int getRows(Integer page) {
 		return Math.max(3, calculateRows(service.get(player).getPurchasedPerkTypesByCategory(category).size(), 1));
 	}
 
