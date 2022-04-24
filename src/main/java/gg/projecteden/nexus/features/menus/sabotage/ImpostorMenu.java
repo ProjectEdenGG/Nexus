@@ -36,7 +36,7 @@ public class ImpostorMenu extends InventoryProvider {
 	}
 
 	@Override
-	protected int getRows() {
+	protected int getRows(Integer page) {
 		return MenuUtils.calculateRows(sabotages.size(), 0);
 	}
 

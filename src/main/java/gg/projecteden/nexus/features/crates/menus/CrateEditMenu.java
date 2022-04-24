@@ -44,7 +44,7 @@ public class CrateEditMenu {
 		private CrateLoot editing;
 
 		@Override
-		protected int getRows() {
+		protected int getRows(Integer page) {
 			return editing == null ? 6 : 3;
 		}
 

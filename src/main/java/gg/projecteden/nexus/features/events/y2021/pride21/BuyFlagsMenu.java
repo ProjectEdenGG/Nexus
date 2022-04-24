@@ -34,7 +34,7 @@ public class BuyFlagsMenu extends InventoryProvider {
 	private static final int COST = 10;
 
 	@Override
-	protected int getRows() {
+	protected int getRows(Integer page) {
 		return MenuUtils.calculateRows(Flags.values().length * 2, 0);
 	}
 

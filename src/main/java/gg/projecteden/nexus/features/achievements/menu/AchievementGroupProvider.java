@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class AchievementGroupProvider extends InventoryProvider {
 
 	@Override
-	protected int getRows() {
+	protected int getRows(Integer page) {
 		return MenuUtils.calculateRows(AchievementGroup.values().length / 9, 2);
 	}
 
