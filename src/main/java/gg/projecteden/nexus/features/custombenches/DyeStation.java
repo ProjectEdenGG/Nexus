@@ -242,6 +242,9 @@ public class DyeStation extends CustomBench {
 		}
 
 		private void replaceItem(Player player, InventoryContents contents, ItemClickData e, SlotPos slot) {
+			if (data.getInputSlot() == SLOT_COSTUME)
+				return;
+
 			ItemStack cursorItem = player.getItemOnCursor();
 			boolean emptyCursor = isNullOrAir(cursorItem);
 			ItemStack slotItem = e.getItem();
