@@ -1,22 +1,26 @@
 package gg.projecteden.nexus.features.customblocks.models;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.customblocks.models.blocks.common.ICraftable;
-import gg.projecteden.nexus.features.customblocks.models.blocks.common.ICustomBlock;
-import gg.projecteden.nexus.features.customblocks.models.blocks.common.IDirectional;
-import gg.projecteden.nexus.features.customblocks.models.blocks.common.IDyeable;
-import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.ICompacted;
-import gg.projecteden.nexus.features.customblocks.models.blocks.concretebricks.IConcreteBricks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.genericcrate.IGenericCrate;
-import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.ILantern;
-import gg.projecteden.nexus.features.customblocks.models.blocks.planks.carved.ICarvedPlanks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.planks.colored.IColoredPlanks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.planks.vertical.IVerticalPlanks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.quiltedwool.IQuiltedWool;
-import gg.projecteden.nexus.features.customblocks.models.blocks.stones.bricks.IStoneBricks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.stones.chiseled.IChiseledStone;
-import gg.projecteden.nexus.features.customblocks.models.blocks.terracottashingles.IColoredTerracottaShingles;
-import gg.projecteden.nexus.features.customblocks.models.blocks.terracottashingles.ITerracottaShingles;
+import gg.projecteden.nexus.features.customblocks.models.common.ICraftable;
+import gg.projecteden.nexus.features.customblocks.models.common.ICustomBlock;
+import gg.projecteden.nexus.features.customblocks.models.common.IDirectional;
+import gg.projecteden.nexus.features.customblocks.models.common.IDyeable;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.ICraftableNoteBlock;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.IDirectionalNoteBlock;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.compacted.ICompacted;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.concretebricks.IConcreteBricks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.genericcrate.IGenericCrate;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.lanterns.ILantern;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.carved.ICarvedPlanks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.colored.IColoredPlanks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.vertical.IVerticalPlanks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.quiltedwool.IQuiltedWool;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.bricks.IStoneBricks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.chiseled.IChiseledStone;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.terracottashingles.IColoredTerracottaShingles;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.terracottashingles.ITerracottaShingles;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.common.ICraftableTripwire;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.common.IDirectionalTripwire;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.RandomUtils;
 import lombok.Getter;
@@ -44,6 +48,7 @@ import java.util.function.Predicate;
 import static gg.projecteden.utils.Utils.collect;
 
 public class CustomBlockTag implements Tag<CustomBlock> {
+	// NOTE BLOCKS
 	public static final CustomBlockTag COMPACTED = new CustomBlockTag(ICompacted.class);
 	public static final CustomBlockTag CONCRETE_BRICKS = new CustomBlockTag(IConcreteBricks.class);
 	public static final CustomBlockTag GENERIC_CRATES = new CustomBlockTag(IGenericCrate.class);
@@ -57,9 +62,17 @@ public class CustomBlockTag implements Tag<CustomBlock> {
 	public static final CustomBlockTag TERRACOTTA_SHINGLES = new CustomBlockTag(ITerracottaShingles.class);
 	public static final CustomBlockTag COLORED_TERRACOTTA_SHINGLES = new CustomBlockTag(IColoredTerracottaShingles.class);
 
+	public static final CustomBlockTag CRAFTABLE_NOTE_BLOCKS = new CustomBlockTag(ICraftableNoteBlock.class);
+	public static final CustomBlockTag DIRECTIONAL_NOTE_BLOCKS = new CustomBlockTag(IDirectionalNoteBlock.class);
+
+	// TRIPWIRE
+	public static final CustomBlockTag CRAFTABLE_TRIPWIRE = new CustomBlockTag(ICraftableTripwire.class);
+	public static final CustomBlockTag DIRECTIONAL_TRIPWIRE = new CustomBlockTag(IDirectionalTripwire.class);
+
+	// COMMON
+	public static final CustomBlockTag CRAFTABLE = new CustomBlockTag(ICraftable.class);
 	public static final CustomBlockTag DIRECTIONAL = new CustomBlockTag(IDirectional.class);
 	public static final CustomBlockTag DYEABLE = new CustomBlockTag(IDyeable.class);
-	public static final CustomBlockTag CRAFTABLE = new CustomBlockTag(ICraftable.class);
 
 	public static final CustomBlockTag ALL = new CustomBlockTag(ICustomBlock.class);
 
@@ -316,7 +329,7 @@ public class CustomBlockTag implements Tag<CustomBlock> {
 		if(!(block instanceof NoteBlock noteBlock))
 			return false;
 
-		return isTagged(CustomBlock.fromNoteBlock(noteBlock));
+		return isTagged(CustomBlock.fromBlockData(noteBlock));
 	}
 
 	public boolean isNotTagged(@NotNull CustomBlock customBlock) {

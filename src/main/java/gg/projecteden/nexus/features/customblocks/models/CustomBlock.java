@@ -3,121 +3,127 @@ package gg.projecteden.nexus.features.customblocks.models;
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customblocks.CustomBlockUtils;
-import gg.projecteden.nexus.features.customblocks.models.blocks.common.ICraftable;
-import gg.projecteden.nexus.features.customblocks.models.blocks.common.ICustomBlock;
-import gg.projecteden.nexus.features.customblocks.models.blocks.common.IDirectional;
-import gg.projecteden.nexus.features.customblocks.models.blocks.common.IDyeable;
-import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.bundle.BambooBundle;
-import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.bundle.CactusBundle;
-import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.bundle.StickBundle;
-import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.bundle.SugarCaneBundle;
-import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.crate.AppleCrate;
-import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.crate.BeetrootCrate;
-import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.crate.CarrotCrate;
-import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.crate.PotatoCrate;
-import gg.projecteden.nexus.features.customblocks.models.blocks.compacted.crate.SweetBerryCrate;
-import gg.projecteden.nexus.features.customblocks.models.blocks.concretebricks.BlackConcreteBricks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.concretebricks.BlueConcreteBricks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.concretebricks.BrownConcreteBricks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.concretebricks.CyanConcreteBricks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.concretebricks.GrayConcreteBricks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.concretebricks.GreenConcreteBricks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.concretebricks.LightBlueConcreteBricks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.concretebricks.LightGrayConcreteBricks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.concretebricks.LimeConcreteBricks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.concretebricks.MagentaConcreteBricks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.concretebricks.OrangeConcreteBricks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.concretebricks.PinkConcreteBricks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.concretebricks.PurpleConcreteBricks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.concretebricks.RedConcreteBricks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.concretebricks.WhiteConcreteBricks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.concretebricks.YellowConcreteBricks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.genericcrate.GenericCrateA;
-import gg.projecteden.nexus.features.customblocks.models.blocks.genericcrate.GenericCrateB;
-import gg.projecteden.nexus.features.customblocks.models.blocks.genericcrate.GenericCrateC;
-import gg.projecteden.nexus.features.customblocks.models.blocks.genericcrate.GenericCrateD;
-import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.AcaciaPaperLantern;
-import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.BirchPaperLantern;
-import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.CrimsonShroomLantern;
-import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.DarkOakPaperLantern;
-import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.JunglePaperLantern;
-import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.OakPaperLantern;
-import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.SprucePaperLantern;
-import gg.projecteden.nexus.features.customblocks.models.blocks.lanterns.WarpedShroomLantern;
-import gg.projecteden.nexus.features.customblocks.models.blocks.misc.NoteBlock;
-import gg.projecteden.nexus.features.customblocks.models.blocks.misc.ShojiBlock;
-import gg.projecteden.nexus.features.customblocks.models.blocks.planks.carved.CarvedAcaciaPlanks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.planks.carved.CarvedBirchPlanks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.planks.carved.CarvedCrimsonPlanks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.planks.carved.CarvedDarkOakPlanks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.planks.carved.CarvedJunglePlanks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.planks.carved.CarvedOakPlanks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.planks.carved.CarvedSprucePlanks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.planks.carved.CarvedWarpedPlanks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.planks.colored.BlackPlanks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.planks.colored.BluePlanks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.planks.colored.BrownPlanks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.planks.colored.CyanPlanks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.planks.colored.GrayPlanks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.planks.colored.GreenPlanks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.planks.colored.LightBluePlanks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.planks.colored.LightGrayPlanks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.planks.colored.LimePlanks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.planks.colored.MagentaPlanks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.planks.colored.OrangePlanks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.planks.colored.PinkPlanks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.planks.colored.PurplePlanks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.planks.colored.RedPlanks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.planks.colored.WhitePlanks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.planks.colored.YellowPlanks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.planks.vertical.VerticalAcaciaPlanks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.planks.vertical.VerticalBirchPlanks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.planks.vertical.VerticalCrimsonPlanks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.planks.vertical.VerticalDarkOakPlanks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.planks.vertical.VerticalJunglePlanks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.planks.vertical.VerticalOakPlanks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.planks.vertical.VerticalSprucePlanks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.planks.vertical.VerticalWarpedPlanks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.quiltedwool.BlackQuiltedWool;
-import gg.projecteden.nexus.features.customblocks.models.blocks.quiltedwool.BlueQuiltedWool;
-import gg.projecteden.nexus.features.customblocks.models.blocks.quiltedwool.BrownQuiltedWool;
-import gg.projecteden.nexus.features.customblocks.models.blocks.quiltedwool.CyanQuiltedWool;
-import gg.projecteden.nexus.features.customblocks.models.blocks.quiltedwool.GrayQuiltedWool;
-import gg.projecteden.nexus.features.customblocks.models.blocks.quiltedwool.GreenQuiltedWool;
-import gg.projecteden.nexus.features.customblocks.models.blocks.quiltedwool.LightBlueQuiltedWool;
-import gg.projecteden.nexus.features.customblocks.models.blocks.quiltedwool.LightGrayQuiltedWool;
-import gg.projecteden.nexus.features.customblocks.models.blocks.quiltedwool.LimeQuiltedWool;
-import gg.projecteden.nexus.features.customblocks.models.blocks.quiltedwool.MagentaQuiltedWool;
-import gg.projecteden.nexus.features.customblocks.models.blocks.quiltedwool.OrangeQuiltedWool;
-import gg.projecteden.nexus.features.customblocks.models.blocks.quiltedwool.PinkQuiltedWool;
-import gg.projecteden.nexus.features.customblocks.models.blocks.quiltedwool.PurpleQuiltedWool;
-import gg.projecteden.nexus.features.customblocks.models.blocks.quiltedwool.RedQuiltedWool;
-import gg.projecteden.nexus.features.customblocks.models.blocks.quiltedwool.WhiteQuiltedWool;
-import gg.projecteden.nexus.features.customblocks.models.blocks.quiltedwool.YellowQuiltedWool;
-import gg.projecteden.nexus.features.customblocks.models.blocks.stones.bricks.AndesiteBricks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.stones.bricks.DioriteBricks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.stones.bricks.GraniteBricks;
-import gg.projecteden.nexus.features.customblocks.models.blocks.stones.chiseled.ChiseledAndesite;
-import gg.projecteden.nexus.features.customblocks.models.blocks.stones.chiseled.ChiseledDiorite;
-import gg.projecteden.nexus.features.customblocks.models.blocks.stones.chiseled.ChiseledGranite;
-import gg.projecteden.nexus.features.customblocks.models.blocks.stones.chiseled.ChiseledStone;
-import gg.projecteden.nexus.features.customblocks.models.blocks.terracottashingles.BlackTerracottaShingles;
-import gg.projecteden.nexus.features.customblocks.models.blocks.terracottashingles.BlueTerracottaShingles;
-import gg.projecteden.nexus.features.customblocks.models.blocks.terracottashingles.BrownTerracottaShingles;
-import gg.projecteden.nexus.features.customblocks.models.blocks.terracottashingles.CyanTerracottaShingles;
-import gg.projecteden.nexus.features.customblocks.models.blocks.terracottashingles.GrayTerracottaShingles;
-import gg.projecteden.nexus.features.customblocks.models.blocks.terracottashingles.GreenTerracottaShingles;
-import gg.projecteden.nexus.features.customblocks.models.blocks.terracottashingles.LightBlueTerracottaShingles;
-import gg.projecteden.nexus.features.customblocks.models.blocks.terracottashingles.LightGrayTerracottaShingles;
-import gg.projecteden.nexus.features.customblocks.models.blocks.terracottashingles.LimeTerracottaShingles;
-import gg.projecteden.nexus.features.customblocks.models.blocks.terracottashingles.MagentaTerracottaShingles;
-import gg.projecteden.nexus.features.customblocks.models.blocks.terracottashingles.OrangeTerracottaShingles;
-import gg.projecteden.nexus.features.customblocks.models.blocks.terracottashingles.PinkTerracottaShingles;
-import gg.projecteden.nexus.features.customblocks.models.blocks.terracottashingles.PurpleTerracottaShingles;
-import gg.projecteden.nexus.features.customblocks.models.blocks.terracottashingles.RedTerracottaShingles;
-import gg.projecteden.nexus.features.customblocks.models.blocks.terracottashingles.TerracottaShingles;
-import gg.projecteden.nexus.features.customblocks.models.blocks.terracottashingles.WhiteTerracottaShingles;
-import gg.projecteden.nexus.features.customblocks.models.blocks.terracottashingles.YellowTerracottaShingles;
+import gg.projecteden.nexus.features.customblocks.models.common.ICraftable;
+import gg.projecteden.nexus.features.customblocks.models.common.ICustomBlock;
+import gg.projecteden.nexus.features.customblocks.models.common.IDyeable;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.ICustomNoteBlock;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.IDirectionalNoteBlock;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.compacted.bundle.BambooBundle;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.compacted.bundle.CactusBundle;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.compacted.bundle.StickBundle;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.compacted.bundle.SugarCaneBundle;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.compacted.crate.AppleCrate;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.compacted.crate.BeetrootCrate;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.compacted.crate.CarrotCrate;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.compacted.crate.PotatoCrate;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.compacted.crate.SweetBerryCrate;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.concretebricks.BlackConcreteBricks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.concretebricks.BlueConcreteBricks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.concretebricks.BrownConcreteBricks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.concretebricks.CyanConcreteBricks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.concretebricks.GrayConcreteBricks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.concretebricks.GreenConcreteBricks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.concretebricks.LightBlueConcreteBricks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.concretebricks.LightGrayConcreteBricks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.concretebricks.LimeConcreteBricks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.concretebricks.MagentaConcreteBricks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.concretebricks.OrangeConcreteBricks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.concretebricks.PinkConcreteBricks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.concretebricks.PurpleConcreteBricks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.concretebricks.RedConcreteBricks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.concretebricks.WhiteConcreteBricks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.concretebricks.YellowConcreteBricks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.genericcrate.GenericCrateA;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.genericcrate.GenericCrateB;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.genericcrate.GenericCrateC;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.genericcrate.GenericCrateD;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.lanterns.AcaciaPaperLantern;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.lanterns.BirchPaperLantern;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.lanterns.CrimsonShroomLantern;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.lanterns.DarkOakPaperLantern;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.lanterns.JunglePaperLantern;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.lanterns.OakPaperLantern;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.lanterns.SprucePaperLantern;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.lanterns.WarpedShroomLantern;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.misc.NoteBlock;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.misc.ShojiBlock;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.carved.CarvedAcaciaPlanks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.carved.CarvedBirchPlanks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.carved.CarvedCrimsonPlanks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.carved.CarvedDarkOakPlanks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.carved.CarvedJunglePlanks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.carved.CarvedOakPlanks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.carved.CarvedSprucePlanks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.carved.CarvedWarpedPlanks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.colored.BlackPlanks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.colored.BluePlanks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.colored.BrownPlanks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.colored.CyanPlanks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.colored.GrayPlanks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.colored.GreenPlanks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.colored.LightBluePlanks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.colored.LightGrayPlanks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.colored.LimePlanks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.colored.MagentaPlanks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.colored.OrangePlanks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.colored.PinkPlanks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.colored.PurplePlanks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.colored.RedPlanks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.colored.WhitePlanks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.colored.YellowPlanks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.vertical.VerticalAcaciaPlanks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.vertical.VerticalBirchPlanks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.vertical.VerticalCrimsonPlanks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.vertical.VerticalDarkOakPlanks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.vertical.VerticalJunglePlanks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.vertical.VerticalOakPlanks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.vertical.VerticalSprucePlanks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.vertical.VerticalWarpedPlanks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.quiltedwool.BlackQuiltedWool;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.quiltedwool.BlueQuiltedWool;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.quiltedwool.BrownQuiltedWool;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.quiltedwool.CyanQuiltedWool;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.quiltedwool.GrayQuiltedWool;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.quiltedwool.GreenQuiltedWool;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.quiltedwool.LightBlueQuiltedWool;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.quiltedwool.LightGrayQuiltedWool;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.quiltedwool.LimeQuiltedWool;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.quiltedwool.MagentaQuiltedWool;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.quiltedwool.OrangeQuiltedWool;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.quiltedwool.PinkQuiltedWool;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.quiltedwool.PurpleQuiltedWool;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.quiltedwool.RedQuiltedWool;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.quiltedwool.WhiteQuiltedWool;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.quiltedwool.YellowQuiltedWool;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.bricks.AndesiteBricks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.bricks.DioriteBricks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.bricks.GraniteBricks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.chiseled.ChiseledAndesite;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.chiseled.ChiseledDiorite;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.chiseled.ChiseledGranite;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.chiseled.ChiseledStone;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.terracottashingles.BlackTerracottaShingles;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.terracottashingles.BlueTerracottaShingles;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.terracottashingles.BrownTerracottaShingles;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.terracottashingles.CyanTerracottaShingles;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.terracottashingles.GrayTerracottaShingles;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.terracottashingles.GreenTerracottaShingles;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.terracottashingles.LightBlueTerracottaShingles;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.terracottashingles.LightGrayTerracottaShingles;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.terracottashingles.LimeTerracottaShingles;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.terracottashingles.MagentaTerracottaShingles;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.terracottashingles.OrangeTerracottaShingles;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.terracottashingles.PinkTerracottaShingles;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.terracottashingles.PurpleTerracottaShingles;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.terracottashingles.RedTerracottaShingles;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.terracottashingles.TerracottaShingles;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.terracottashingles.WhiteTerracottaShingles;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.terracottashingles.YellowTerracottaShingles;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.TallSupport;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.Tripwire;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.TripwireCross;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.common.ICustomTripwire;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.tall.Cattail;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
@@ -128,6 +134,7 @@ import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.NMSUtils.SoundType;
 import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.utils.Nullables;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -139,6 +146,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.Note;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -147,13 +155,14 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.surround;
 
 public enum CustomBlock implements Keyed {
+
+	// NOTE BLOCKS
 	// terracotta shingles
 	TERRACOTTA_SHINGLES(TerracottaShingles.class),
 	RED_TERRACOTTA_SHINGLES(RedTerracottaShingles.class),
@@ -290,22 +299,39 @@ public enum CustomBlock implements Keyed {
 	// misc
 	NOTE_BLOCK(NoteBlock.class),
 	SHOJI_BLOCK(ShojiBlock.class),
+
+	// TRIPWIRE
+
+	// misc
+	TRIPWIRE(Tripwire.class),
+	TRIPWIRE_CROSS(TripwireCross.class),
+	TALL_SUPPORT(TallSupport.class),
+
+	// tall
+	CATTAIL(Cattail.class),
 	;
 
 	private final ICustomBlock customBlock;
+	@Getter
+	private final CustomBlockType type;
 
 	@SneakyThrows
 	CustomBlock(Class<? extends ICustomBlock> clazz) {
 		this.customBlock = (ICustomBlock) clazz.getDeclaredConstructors()[0].newInstance();
+
+		if (this.customBlock instanceof ICustomNoteBlock)
+			this.type = CustomBlockType.NOTE_BLOCK;
+		else if (this.customBlock instanceof ICustomTripwire)
+			this.type = CustomBlockType.TRIPWIRE;
+		else
+			this.type = CustomBlockType.UNKNOWN;
 	}
 
-	public static final HashMap<Integer, CustomBlock> modelDataMap = new HashMap<>();
+	public static final HashMap<Integer, CustomBlock> modelIdMap = new HashMap<>();
 
 	static {
 		for (CustomBlock customBlock : values()) {
-			ICustomBlock iCustomBlock = customBlock.get();
-
-			modelDataMap.put(iCustomBlock.getCustomModelData(), customBlock);
+			modelIdMap.put(customBlock.get().getModelId(), customBlock);
 		}
 	}
 
@@ -315,42 +341,54 @@ public enum CustomBlock implements Keyed {
 	}
 
 	public static @Nullable CustomBlock fromItemstack(ItemStack itemInHand) {
-		int modelData = CustomModelData.of(itemInHand);
-		if (itemInHand.getType().equals(Material.NOTE_BLOCK) && modelData == 0)
+		int modelId = CustomModelData.of(itemInHand);
+		if (itemInHand.getType().equals(Material.NOTE_BLOCK) && modelId == 0)
 			return CustomBlock.NOTE_BLOCK;
+
+		if (itemInHand.getType().equals(Material.STRING) && modelId == 0)
+			return CustomBlock.TRIPWIRE;
 
 		if (!itemInHand.getType().equals(Material.PAPER))
 			return null;
 
-		return fromModelData(modelData);
+		return fromModelId(modelId);
 	}
 
-	public static @Nullable CustomBlock fromModelData(int modelData) {
-		return modelDataMap.getOrDefault(modelData, null);
+	public static @Nullable CustomBlock fromModelId(int modelId) {
+		return modelIdMap.getOrDefault(modelId, null);
 	}
 
-	public static @Nullable CustomBlock fromNoteBlock(@NonNull org.bukkit.block.data.type.NoteBlock noteBlock) {
-		List<CustomBlock> directional = new ArrayList<>();
-		for (CustomBlock _customBlock : values()) {
-			ICustomBlock customBlock = _customBlock.get();
-			if (checkData(customBlock.getNoteBlockInstrument(), customBlock.getNoteBlockStep(), noteBlock))
-				return _customBlock;
-			else if (customBlock instanceof IDirectional)
-				directional.add(_customBlock);
+	public static @Nullable CustomBlock fromBlockData(@NonNull BlockData blockData) {
+		if (blockData instanceof org.bukkit.block.data.type.NoteBlock noteBlock) {
+			List<CustomBlock> directional = new ArrayList<>();
+			for (CustomBlock _customBlock : values()) {
+				ICustomBlock iCustomBlock = _customBlock.get();
+				if (iCustomBlock instanceof ICustomNoteBlock customNoteBlock)
+
+					if (checkData(customNoteBlock.getNoteBlockInstrument(), customNoteBlock.getNoteBlockStep(), noteBlock))
+						return _customBlock;
+					else if (customNoteBlock instanceof IDirectionalNoteBlock)
+						directional.add(_customBlock);
+			}
+
+			// Directional checks
+
+			for (CustomBlock _customBlock : directional) {
+				IDirectionalNoteBlock directionalBlock = (IDirectionalNoteBlock) _customBlock.get();
+				if (checkData(directionalBlock.getNoteBlockInstrument_NS(), directionalBlock.getNoteBlockStep_NS(), noteBlock))
+					return _customBlock;
+
+				if (checkData(directionalBlock.getNoteBlockInstrument_EW(), directionalBlock.getNoteBlockStep_EW(), noteBlock))
+					return _customBlock;
+			}
+
+			debug("CustomBlock: Couldn't find NoteBlock with: " + noteBlock.getInstrument() + " " + noteBlock.getNote().getId());
+
+		} else if (blockData instanceof org.bukkit.block.data.type.Tripwire tripwire) {
+			// TODO
+			debug("(TODO) CustomBlock: Couldn't find Tripwire with: " + tripwire);
 		}
 
-		// Directional checks
-
-		for (CustomBlock _customBlock : directional) {
-			IDirectional directionalBlock = (IDirectional) _customBlock.get();
-			if (checkData(directionalBlock.getNoteBlockInstrument_NS(), directionalBlock.getNoteBlockStep_NS(), noteBlock))
-				return _customBlock;
-
-			if (checkData(directionalBlock.getNoteBlockInstrument_EW(), directionalBlock.getNoteBlockStep_EW(), noteBlock))
-				return _customBlock;
-		}
-
-		debug("CustomBlock: Couldn't find custom block with: " + noteBlock.getInstrument() + " " + noteBlock.getNote().getId());
 		return null;
 	}
 
@@ -360,43 +398,70 @@ public enum CustomBlock implements Keyed {
 		return _step == step && _instrument.equals(instrument);
 	}
 
-	public ICustomBlock get() {
-		return this.customBlock;
-	}
-
 	public boolean placeBlock(Player player, Block block, Block placeAgainst, BlockFace facing, ItemStack itemInHand) {
-		Instrument instrument = this.getNoteBlockInstrument(facing);
-		int step = this.getNoteBlockStep(facing);
+		ICustomBlock iCustomBlock = this.get();
+		boolean placed = false;
+		if (iCustomBlock instanceof ICustomNoteBlock customNoteBlock) {
+			Instrument instrument = customNoteBlock.getNoteBlockInstrument(facing);
+			int step = customNoteBlock.getNoteBlockStep(facing);
 
-		org.bukkit.block.data.type.NoteBlock noteBlock = (org.bukkit.block.data.type.NoteBlock) Material.NOTE_BLOCK.createBlockData();
-		noteBlock.setInstrument(instrument);
-		noteBlock.setNote(new Note(step));
+			org.bukkit.block.data.type.NoteBlock noteBlock = (org.bukkit.block.data.type.NoteBlock) Material.NOTE_BLOCK.createBlockData();
+			noteBlock.setInstrument(instrument);
+			noteBlock.setNote(new Note(step));
 
-		if (!BlockUtils.tryPlaceEvent(player, block, placeAgainst, Material.NOTE_BLOCK, noteBlock, false, new ItemStack(Material.NOTE_BLOCK)))
-			return false;
+			if (!BlockUtils.tryPlaceEvent(player, block, placeAgainst, Material.NOTE_BLOCK, noteBlock, false, new ItemStack(Material.NOTE_BLOCK)))
+				return false;
 
-		UUID uuid = player.getUniqueId();
-		Location location = block.getLocation();
-		CustomBlockUtils.placeBlockDatabase(uuid, this, location, facing);
-		playSound(SoundType.PLACE, location);
+			UUID uuid = player.getUniqueId();
+			Location location = block.getLocation();
 
-		ItemUtils.subtract(player, itemInHand);
-		player.swingMainHand();
-		return true;
+
+			CustomBlockUtils.placeBlockDatabase(uuid, this, location, facing);
+			playSound(SoundType.PLACE, location);
+			placed = true;
+		} else if (iCustomBlock instanceof ICustomTripwire customTripwire) {
+			player.sendMessage("(TODO) place string block: " + customTripwire);
+			// TODO
+
+			placed = true;
+		}
+
+		if (placed) {
+			ItemUtils.subtract(player, itemInHand);
+			player.swingMainHand();
+			return true;
+		}
+
+		return false;
 	}
 
-	public @NonNull String getSound(SoundType type) {
-		return switch (type) {
-			case PLACE -> customBlock.getPlaceSound();
-			case BREAK -> customBlock.getBreakSound();
-			case STEP -> customBlock.getStepSound();
-			case HIT -> customBlock.getHitSound();
-			case FALL -> customBlock.getFallSound();
-		};
+	public @Nullable String getSound(SoundType type) {
+		if (this.isNoteBlock()) {
+			return switch (type) {
+				case PLACE -> this.getNoteBlock().getPlaceSound();
+				case BREAK -> this.getNoteBlock().getBreakSound();
+				case STEP -> this.getNoteBlock().getStepSound();
+				case HIT -> this.getNoteBlock().getHitSound();
+				case FALL -> this.getNoteBlock().getFallSound();
+			};
+		} else if (this.isTripwire()) {
+			return switch (type) {
+				case PLACE -> this.getTripwire().getPlaceSound();
+				case BREAK -> this.getTripwire().getBreakSound();
+				case STEP -> this.getTripwire().getStepSound();
+				case HIT -> this.getTripwire().getHitSound();
+				case FALL -> this.getTripwire().getFallSound();
+			};
+		}
+
+		return null;
 	}
 
 	public void playSound(SoundType type, Location location) {
 		String sound = getSound(type);
+		if (Nullables.isNullOrEmpty(sound))
+			return;
+
 		double volume = type.getVolume();
 
 //		debug("CustomBlockSound: " + type + " - " + sound);
@@ -445,43 +510,29 @@ public enum CustomBlock implements Keyed {
 		}
 	}
 
-	static final Set<BlockFace> directions = Set.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST);
-
-	public Instrument getNoteBlockInstrument(@Nullable BlockFace facing) {
-		ICustomBlock customBlock = this.get();
-		if (facing == null || !directions.contains(facing) || !(customBlock instanceof IDirectional directional))
-			return customBlock.getNoteBlockInstrument();
-
-		switch (facing) {
-			case NORTH, SOUTH -> {
-				return directional.getNoteBlockInstrument_NS();
-			}
-			case EAST, WEST -> {
-				return directional.getNoteBlockInstrument_EW();
-			}
-		}
-
-		return customBlock.getNoteBlockInstrument();
+	public ICustomBlock get() {
+		return this.customBlock;
 	}
 
-	public int getNoteBlockStep(@Nullable BlockFace facing) {
-		ICustomBlock customBlock = this.get();
-		if (facing == null || !directions.contains(facing) || !(customBlock instanceof IDirectional directional))
-			return customBlock.getNoteBlockStep();
-
-		switch (facing) {
-			case NORTH, SOUTH -> {
-				return directional.getNoteBlockStep_NS();
-			}
-			case EAST, WEST -> {
-				return directional.getNoteBlockStep_EW();
-			}
-		}
-
-		return customBlock.getNoteBlockStep();
+	public boolean isTripwire() {
+		return this.get() instanceof ICustomTripwire;
 	}
 
-	public Note getNoteBlockNote(BlockFace facing) {
-		return new Note(this.getNoteBlockStep(facing));
+	public ICustomTripwire getTripwire() {
+		return (ICustomTripwire) this.customBlock;
+	}
+
+	public boolean isNoteBlock() {
+		return this.get() instanceof ICustomNoteBlock;
+	}
+
+	public ICustomNoteBlock getNoteBlock() {
+		return (ICustomNoteBlock) this.customBlock;
+	}
+
+	public enum CustomBlockType {
+		UNKNOWN,
+		NOTE_BLOCK,
+		TRIPWIRE,
 	}
 }

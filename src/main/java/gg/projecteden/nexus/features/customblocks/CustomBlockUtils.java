@@ -2,14 +2,16 @@ package gg.projecteden.nexus.features.customblocks;
 
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
-import gg.projecteden.nexus.features.customblocks.models.blocks.common.ICraftable;
-import gg.projecteden.nexus.features.customblocks.models.blocks.common.ICustomBlock;
-import gg.projecteden.nexus.features.customblocks.models.blocks.common.IDirectional;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.ICraftableNoteBlock;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.ICustomNoteBlock;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.IDirectionalNoteBlock;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.customblock.CustomBlockData;
 import gg.projecteden.nexus.models.customblock.CustomBlockTracker;
 import gg.projecteden.nexus.models.customblock.CustomBlockTrackerService;
+import gg.projecteden.nexus.models.customblock.CustomNoteBlockData;
+import gg.projecteden.nexus.models.customblock.CustomTripwireData;
 import gg.projecteden.nexus.models.customblock.NoteBlockData;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.NMSUtils;
@@ -26,7 +28,9 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.NoteBlock;
+import org.bukkit.block.data.type.Tripwire;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,11 +44,17 @@ public class CustomBlockUtils {
 	private static final CustomBlockTrackerService trackerService = new CustomBlockTrackerService();
 	private static CustomBlockTracker tracker;
 
-	public static CustomBlockData placeBlockDatabase(UUID uuid, CustomBlock customBlock, Location location, BlockFace facing) {
+	public static CustomBlockData placeBlockDatabase(@NonNull UUID uuid, @NonNull CustomBlock customBlock, @NonNull Location location, BlockFace facing) {
 		tracker = trackerService.fromWorld(location);
-		CustomBlockData data = new CustomBlockData(uuid, customBlock.get().getCustomModelData(), facing);
-		if (customBlock.equals(CustomBlock.NOTE_BLOCK))
-			data.setNoteBlockData(new NoteBlockData(location.getBlock()));
+		CustomBlockData data = new CustomBlockData(uuid, customBlock.get().getModelId(), customBlock.getType());
+		switch (customBlock.getType()) {
+			case NOTE_BLOCK -> {
+				CustomNoteBlockData extraData = new CustomNoteBlockData(facing);
+				extraData.setNoteBlockData(new NoteBlockData(location.getBlock()));
+				data.setExtraData(extraData);
+			}
+			case TRIPWIRE -> data.setExtraData(new CustomTripwireData());
+		}
 
 		tracker.put(location, data);
 		trackerService.save(tracker);
@@ -89,42 +99,46 @@ public class CustomBlockUtils {
 		trackerService.save(tracker);
 	}
 
-	public static @Nullable CustomBlockData getData(@NonNull NoteBlock noteBlock, Location location) {
+	public static @Nullable CustomBlockData getData(@NonNull BlockData blockData, Location location) {
 		tracker = trackerService.fromWorld(location);
 		CustomBlockData data = tracker.get(location);
 		if (!data.exists()) {
-			CustomBlock customBlock = CustomBlock.fromNoteBlock(noteBlock);
+			CustomBlock customBlock = CustomBlock.fromBlockData(blockData);
 			if (customBlock == null) {
 				debug("GetData: CustomBlock == null");
 				return null;
 			}
 
 			debug("GetData: creating new data for " + customBlock.name());
-			BlockFace facing = CustomBlockUtils.getFacing(customBlock, noteBlock);
-			data = placeBlockDatabase(UUIDUtils.UUID0, customBlock, location, facing);
+			if (blockData instanceof NoteBlock noteBlock) {
+				BlockFace facing = CustomBlockUtils.getFacing(customBlock.getNoteBlock(), noteBlock);
+				data = placeBlockDatabase(UUIDUtils.UUID0, customBlock, location, facing);
+			} else if (blockData instanceof Tripwire tripwire) {
+				data = placeBlockDatabase(UUIDUtils.UUID0, customBlock, location, null);
+			}
+
 		}
 
 		return data;
 	}
 
-	public static BlockFace getFacing(CustomBlock _customBlock, NoteBlock noteBlock) {
-		ICustomBlock customBlock = _customBlock.get();
-		if (customBlock instanceof IDirectional)
+	public static BlockFace getFacing(ICustomNoteBlock customNoteBlock, NoteBlock noteBlock) {
+		if (customNoteBlock instanceof IDirectionalNoteBlock)
 			return BlockFace.UP;
 
-		if (isFacing(BlockFace.NORTH, _customBlock, noteBlock))
+		if (isFacing(BlockFace.NORTH, customNoteBlock, noteBlock))
 			return BlockFace.NORTH;
-		else if (isFacing(BlockFace.EAST, _customBlock, noteBlock))
+		else if (isFacing(BlockFace.EAST, customNoteBlock, noteBlock))
 			return BlockFace.EAST;
 
 		return BlockFace.UP;
 	}
 
-	private static boolean isFacing(BlockFace face, CustomBlock customBlock, NoteBlock noteBlock) {
+	private static boolean isFacing(BlockFace face, ICustomNoteBlock customNoteBlock, NoteBlock noteBlock) {
 		Instrument instrument = noteBlock.getInstrument();
 		int step = noteBlock.getNote().getId();
 
-		return customBlock.getNoteBlockInstrument(face) == instrument && customBlock.getNoteBlockStep(face) == step;
+		return customNoteBlock.getNoteBlockInstrument(face) == instrument && customNoteBlock.getNoteBlockStep(face) == step;
 	}
 
 	public static void unlockRecipe(Player player, Material material) {
@@ -132,7 +146,7 @@ public class CustomBlockUtils {
 			return;
 
 		for (CustomBlock customBlock : CustomBlock.values()) {
-			if (!(customBlock.get() instanceof ICraftable craftable))
+			if (!(customBlock.get() instanceof ICraftableNoteBlock craftable))
 				continue;
 
 			Material unlockMaterial = craftable.getRecipeUnlockMaterial();

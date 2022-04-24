@@ -120,7 +120,7 @@ public enum NoteBlockInstrument {
 					return instrument;
 			} else {
 				if (belowType.equals(Material.NOTE_BLOCK)) {
-					CustomBlock belowCustomBlock = CustomBlock.fromNoteBlock((NoteBlock) below.getBlockData());
+					CustomBlock belowCustomBlock = CustomBlock.fromBlockData((NoteBlock) below.getBlockData());
 					if (instrument.getCustomBlock() == belowCustomBlock)
 						return instrument;
 				}

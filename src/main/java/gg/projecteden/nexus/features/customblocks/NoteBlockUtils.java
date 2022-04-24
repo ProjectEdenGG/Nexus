@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.customblocks;
 import gg.projecteden.nexus.features.customblocks.events.NoteBlockPlayEvent;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.customblock.CustomBlockData;
+import gg.projecteden.nexus.models.customblock.CustomNoteBlockData;
 import gg.projecteden.nexus.models.customblock.NoteBlockData;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
@@ -69,13 +70,15 @@ public class NoteBlockUtils {
 
 	public static void play(NoteBlock noteBlock, Location location, boolean interacted) {
 		CustomBlockData data = CustomBlockUtils.getData(noteBlock, location);
-		if (data == null || !data.isNoteBlock())
+		if (data == null)
 			return;
 
-		if (interacted)
-			data.getNoteBlockData().setInteracted(true);
+		NoteBlockData noteBlockData = ((CustomNoteBlockData) data.getExtraData()).getNoteBlockData();
 
-		play(location.getBlock(), data.getNoteBlockData());
+		if (interacted)
+			noteBlockData.setInteracted(true);
+
+		play(location.getBlock(), noteBlockData);
 	}
 
 	private static void play(Block block, NoteBlockData data) {

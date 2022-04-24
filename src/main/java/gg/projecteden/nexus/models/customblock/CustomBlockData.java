@@ -1,16 +1,9 @@
 package gg.projecteden.nexus.models.customblock;
 
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
+import gg.projecteden.nexus.features.customblocks.models.CustomBlock.CustomBlockType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import org.bukkit.Material;
-import org.bukkit.Note;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.type.NoteBlock;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -18,40 +11,27 @@ import java.util.UUID;
 @NoArgsConstructor
 public class CustomBlockData {
 	UUID placerUUID = null;
-	int modelData;
-	@NonNull BlockFace facing;
-	NoteBlockData noteBlockData = null;
+	int modelId;
+	CustomBlockType type;
+	ExtraBlockData extraData;
 
-	public CustomBlockData(UUID uuid, int modelData, @NotNull BlockFace facing) {
+	public CustomBlockData(UUID uuid, int modelId, CustomBlockType type) {
+		switch (type) {
+			case NOTE_BLOCK -> extraData = new CustomNoteBlockData();
+			case TRIPWIRE -> extraData = new CustomTripwireData();
+		}
+
 		this.placerUUID = uuid;
-		this.modelData = modelData;
-		this.facing = facing;
+		this.modelId = modelId;
 	}
 
 	public boolean exists() {
 		return this.placerUUID != null && getCustomBlock() != null;
 	}
 
-	public boolean isNoteBlock() {
-		return this.noteBlockData != null;
-	}
-
 	public CustomBlock getCustomBlock() {
-		return CustomBlock.fromModelData(modelData);
+		return CustomBlock.fromModelId(modelId);
 	}
 
-	public @Nullable NoteBlockData getNoteBlockData(Block block, boolean reset) {
-		if (this.noteBlockData == null) {
-			if (reset) {
-				NoteBlock noteBlock = (NoteBlock) Material.NOTE_BLOCK.createBlockData();
-				noteBlock.setInstrument(CustomBlock.NOTE_BLOCK.get().getNoteBlockInstrument());
-				noteBlock.setNote(new Note(CustomBlock.NOTE_BLOCK.get().getNoteBlockStep()));
-				block.setBlockData(noteBlock, false);
-			}
-			this.noteBlockData = new NoteBlockData(block);
-		}
-
-		return this.noteBlockData;
-	}
 
 }

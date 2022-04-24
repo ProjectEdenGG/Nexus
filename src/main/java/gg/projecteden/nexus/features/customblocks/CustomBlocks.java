@@ -15,7 +15,7 @@ import java.util.List;
 /*
 	TODO:
 		- Appropriate tool & mining speed --> CustomBlockBreaking
-		- Sounds --> Wait until SoundEvents are fixed
+		- Sounds --> Testing
 		- //
 		- Known issues:
 			- Custom blocks may flash when placing blocks near them (clientside only) --> Titan
@@ -45,7 +45,7 @@ public class CustomBlocks extends Feature {
 			return false;
 
 		NoteBlock noteBlock = (NoteBlock) block.getBlockData();
-		if (CustomBlock.fromNoteBlock(noteBlock) == null)
+		if (CustomBlock.fromBlockData(noteBlock) == null)
 			return false;
 
 		return true;
@@ -56,7 +56,7 @@ public class CustomBlocks extends Feature {
 			return false;
 
 		NoteBlock noteBlock = (NoteBlock) block.getBlockData();
-		CustomBlock customBlock = CustomBlock.fromNoteBlock(noteBlock);
+		CustomBlock customBlock = CustomBlock.fromBlockData(noteBlock);
 		if (customBlock == null) {
 			debug("isCustomNoteBlock: CustomBlock == null");
 			return false;

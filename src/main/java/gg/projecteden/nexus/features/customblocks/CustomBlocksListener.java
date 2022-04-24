@@ -3,9 +3,11 @@ package gg.projecteden.nexus.features.customblocks;
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
-import gg.projecteden.nexus.features.customblocks.models.blocks.common.ICustomBlock;
+import gg.projecteden.nexus.features.customblocks.models.common.ICustomBlock;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.ICustomNoteBlock;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.models.customblock.CustomBlockData;
+import gg.projecteden.nexus.models.customblock.CustomNoteBlockData;
 import gg.projecteden.nexus.models.customblock.NoteBlockData;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.GameModeWrapper;
@@ -21,7 +23,9 @@ import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.NoteBlock;
+import org.bukkit.block.data.type.Tripwire;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
@@ -141,7 +145,7 @@ public class CustomBlocksListener implements Listener {
 			return;
 
 		NoteBlock noteBlock = (NoteBlock) block.getBlockData();
-		CustomBlock customBlock = CustomBlock.fromNoteBlock(noteBlock);
+		CustomBlock customBlock = CustomBlock.fromBlockData(noteBlock);
 		if (customBlock == null) {
 			debug("CreativePickBlock: CustomBlock == null");
 			return;
@@ -176,7 +180,7 @@ public class CustomBlocksListener implements Listener {
 
 		if (source != null) {
 			NoteBlock noteBlock = (NoteBlock) source.getBlockData();
-			CustomBlock _customBlock = CustomBlock.fromNoteBlock(noteBlock);
+			CustomBlock _customBlock = CustomBlock.fromBlockData(noteBlock);
 			if (_customBlock == null) {
 				debug("SoundEvent: CustomBlock == null");
 				return;
@@ -238,8 +242,11 @@ public class CustomBlocksListener implements Listener {
 		if (CustomBlocks.isCustomNoteBlock(above)) {
 			NoteBlock noteBlock = (NoteBlock) above.getBlockData();
 			CustomBlockData data = CustomBlockUtils.getData(noteBlock, above.getLocation());
-			if (data != null)
-				data.getNoteBlockData(above, true);
+			if (data == null)
+				return;
+
+			CustomNoteBlockData customNoteBlockData = (CustomNoteBlockData) data.getExtraData();
+			customNoteBlockData.getNoteBlockData(above, true);
 		}
 	}
 
@@ -256,7 +263,7 @@ public class CustomBlocksListener implements Listener {
 		}
 
 		NoteBlock noteBlock = (NoteBlock) block.getBlockData();
-		CustomBlock _customBlock = CustomBlock.fromNoteBlock(noteBlock);
+		CustomBlock _customBlock = CustomBlock.fromBlockData(noteBlock);
 		if (_customBlock == null) {
 			debug("BreakBlock: CustomBlock == null");
 			return;
@@ -267,12 +274,14 @@ public class CustomBlocksListener implements Listener {
 
 		// change drops
 		event.setDropItems(false);
-		ICustomBlock customBlock = _customBlock.get();
 
-		for (ItemStack drop : block.getDrops()) {
-			if (drop.getType().equals(Material.NOTE_BLOCK)) {
-				if (!GameModeWrapper.of(event.getPlayer()).isCreative())
-					location.getWorld().dropItemNaturally(location, customBlock.getItemStack());
+		if (_customBlock.isNoteBlock()) {
+			ICustomNoteBlock iCustomNoteBlock = _customBlock.getNoteBlock();
+			for (ItemStack drop : block.getDrops()) {
+				if (drop.getType().equals(Material.NOTE_BLOCK)) {
+					if (!GameModeWrapper.of(event.getPlayer()).isCreative())
+						location.getWorld().dropItemNaturally(location, iCustomNoteBlock.getItemStack());
+				}
 			}
 		}
 	}
@@ -378,8 +387,11 @@ public class CustomBlocksListener implements Listener {
 			if (_customBlock == null)
 				continue;
 
-			ICustomBlock customBlock = _customBlock.get();
-			if (!customBlock.isPistonPushable()) {
+			if (_customBlock.isTripwire())
+				continue;
+
+			ICustomNoteBlock customNoteBlock = _customBlock.getNoteBlock();
+			if (!customNoteBlock.isPistonPushable()) {
 				debug("PistonEvent: " + _customBlock.name() + " cannot be moved by pistons");
 				return false;
 			}
@@ -396,36 +408,38 @@ public class CustomBlocksListener implements Listener {
 	}
 
 	private void resetBlockData(Block block) {
-		org.bukkit.block.data.type.NoteBlock noteBlock = (org.bukkit.block.data.type.NoteBlock) block.getBlockData();
-		Instrument instrument;
-		Note note;
-		boolean powered = false;
-
-		CustomBlockData data = CustomBlockUtils.getData(noteBlock, block.getLocation());
-		if (data == null) {
+		BlockData blockData = block.getBlockData();
+		CustomBlockData data = CustomBlockUtils.getData(blockData, block.getLocation());
+		if (data == null)
 			return;
-		}
 
 		CustomBlock _customBlock = data.getCustomBlock();
-		if (_customBlock == null) {
+		if (_customBlock == null || _customBlock.get() == null) {
 			return;
 		}
 
-		BlockFace facing = data.getFacing();
+		if (blockData instanceof NoteBlock noteBlock) {
+			Instrument instrument;
+			Note note;
+			boolean powered = noteBlock.isPowered();
 
-		instrument = _customBlock.getNoteBlockInstrument(facing);
-		note = _customBlock.getNoteBlockNote(facing);
+			ICustomNoteBlock customNoteBlock = _customBlock.getNoteBlock();
+			BlockFace facing = ((CustomNoteBlockData) data.getExtraData()).getFacing();
 
-		NoteBlockData noteBlockData = data.getNoteBlockData();
-		if (data.isNoteBlock()) {
-			powered = noteBlock.isPowered();
+			instrument = customNoteBlock.getNoteBlockInstrument(facing);
+			note = customNoteBlock.getNoteBlockNote(facing);
+
+			NoteBlockData noteBlockData = ((CustomNoteBlockData) data.getExtraData()).getNoteBlockData();
 			noteBlockData.setPowered(powered);
-		}
 
-		noteBlock.setInstrument(instrument);
-		noteBlock.setNote(note);
-		noteBlock.setPowered(powered);
-		block.setBlockData(noteBlock, false);
+			noteBlock.setInstrument(instrument);
+			noteBlock.setNote(note);
+			noteBlock.setPowered(powered);
+			block.setBlockData(noteBlock, false);
+		} else if (blockData instanceof Tripwire tripwire) {
+			// TODO
+			debug("(TODO) ResetBlockData - Tripwire");
+		}
 	}
 
 	private boolean isSpawningEntity(PlayerInteractEvent event, Block clickedBlock) {
@@ -484,12 +498,12 @@ public class CustomBlocksListener implements Listener {
 
 		Material material = itemInHand.getType();
 		boolean isPlacingCustomBlock = false;
-		if (material.equals(ICustomBlock.blockMaterial))
+		if (material.equals(Material.NOTE_BLOCK))
 			isPlacingCustomBlock = true;
 		else if (material.equals(ICustomBlock.itemMaterial)) {
-			int modelData = CustomModelData.of(itemInHand);
-			if (!CustomBlock.modelDataMap.containsKey(modelData)) {
-				debug(" unknown modelData: " + modelData);
+			int modelId = CustomModelData.of(itemInHand);
+			if (!CustomBlock.modelIdMap.containsKey(modelId)) {
+				debug(" unknown modelId: " + modelId);
 				return false;
 			} else
 				isPlacingCustomBlock = true;
@@ -543,10 +557,11 @@ public class CustomBlocksListener implements Listener {
 
 	private void changePitch(NoteBlock noteBlock, Location location, boolean sneaking) {
 		CustomBlockData data = CustomBlockUtils.getData(noteBlock, location);
-		if (data == null || !data.isNoteBlock())
+		if (data == null)
 			return;
 
-		NoteBlockData noteBlockData = data.getNoteBlockData(location.getBlock(), true);
+		CustomNoteBlockData customNoteBlockData = (CustomNoteBlockData) data.getExtraData();
+		NoteBlockData noteBlockData = customNoteBlockData.getNoteBlockData(location.getBlock(), true);
 		if (noteBlockData == null)
 			return;
 
