@@ -125,6 +125,9 @@ public class ChatManager {
 			.group()
 			.next(event.getMessage());
 
+		if (event.isFiltered())
+			json.next(" *");
+
 		Bukkit.getConsoleSender().sendMessage(stripColor(json.toString()));
 	}
 
