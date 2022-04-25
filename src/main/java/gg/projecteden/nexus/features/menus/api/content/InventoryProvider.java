@@ -74,7 +74,7 @@ public abstract class InventoryProvider {
 
 	public void open(Player player, int page) {
 		this.player = player;
-		getInventory().build().open(player, page);
+		getInventory().rows(getInventory().getProvider().getRows(page)).build().open(player, page);
 	}
 
 	public final void open(HasPlayer player) {
@@ -93,7 +93,7 @@ public abstract class InventoryProvider {
 		return SmartInventory.builder()
 			.provider(this)
 			.title(getTitle())
-			.rows(getRows())
+			.rows(getRows(null))
 			.closeable(isCloseable());
 	}
 
@@ -105,7 +105,7 @@ public abstract class InventoryProvider {
 		return "";
 	}
 
-	protected int getRows() {
+	protected int getRows(Integer page) {
 		final Rows annotation = Utils.getAnnotation(getClass(), Rows.class);
 		if (annotation != null)
 			return annotation.value();

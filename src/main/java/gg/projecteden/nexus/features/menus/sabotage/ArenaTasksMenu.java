@@ -22,7 +22,7 @@ public class ArenaTasksMenu extends InventoryProvider {
 	private final SabotageArena arena;
 
 	@Override
-	protected int getRows() {
+	protected int getRows(Integer page) {
 		return MenuUtils.calculateRows(Tasks.crewmateTasks().size(), 1);
 	}
 

@@ -103,14 +103,16 @@ public class ChatManager {
 		event.checkWasSeen();
 
 		event.getRecipients().forEach(recipient -> {
-			JsonBuilder json = event.getChannel().getChatterFormat(event.getChatter(), recipient)
+			JsonBuilder json = event.getChannel().getChatterFormat(event.getChatter(), recipient, false)
 				.color(event.getChannel().getMessageColor())
+				.group()
 				.next(event.getMessage());
 
 			if (event.isFiltered())
-				if (Rank.of(recipient.getOnlinePlayer()).isStaff())
-					json.next(" &c&l*")
-						.hover("")
+				if (Rank.of(recipient).isStaff())
+					json.next(" ")
+						.group()
+						.next("&c&l*")
 						.hover("&cChat message was filtered")
 						.hover("&cClick to see original message")
 						.command("/echo &3Original message: &f" + event.getOriginalMessage());
@@ -118,9 +120,13 @@ public class ChatManager {
 			recipient.sendMessage(event, json, MessageType.CHAT);
 		});
 
-		JsonBuilder json = event.getChannel().getChatterFormat(event.getChatter(), null)
+		JsonBuilder json = event.getChannel().getChatterFormat(event.getChatter(), null, false)
 			.color(event.getChannel().getMessageColor())
+			.group()
 			.next(event.getMessage());
+
+		if (event.isFiltered())
+			json.next(" *");
 
 		Bukkit.getConsoleSender().sendMessage(stripColor(json.toString()));
 	}

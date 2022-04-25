@@ -342,7 +342,7 @@ public class HideAndSeek extends Infection {
 		private final Match match;
 
 		@Override
-		protected int getRows() {
+		protected int getRows(Integer page) {
 			return MenuUtils.calculateRows(match.getArena().getBlockList().size(), 1);
 		}
 

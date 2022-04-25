@@ -374,9 +374,8 @@ public final class Thimble extends TeamlessMechanic {
 			return;
 
 		ThimbleArena arena = minigamer.getMatch().getArena();
-		if (event.getRegion().getId().equalsIgnoreCase(arena.getProtectedRegion("pool").getId())) {
+		if (event.getRegion().getId().equalsIgnoreCase(arena.getProtectedRegion("pool").getId()))
 			checkInWater(minigamer);
-		}
 	}
 
 	private static void checkInWater(Minigamer minigamer) {
@@ -393,6 +392,8 @@ public final class Thimble extends TeamlessMechanic {
 		if (!minigamer.isAlive())
 			return;
 		if (matchData.getTurnMinigamer() == null || !matchData.getTurnMinigamer().equals(minigamer))
+			return;
+		if (!minigamer.isInRegion("pool"))
 			return;
 
 		Location blockLocation = player.getLocation();
@@ -479,7 +480,7 @@ public final class Thimble extends TeamlessMechanic {
 			}
 			arena.setCurrentMap(thimbleMaps.get(ndx));
 
-			worldedit.set(arena.getRegion("pool"), BlockTypes.WATER);
+			worldedit.getBlocks(arena.getRegion("pool")).forEach(block -> block.setType(Material.WATER));
 		}
 
 		// Randomly place blocks in pool
@@ -575,10 +576,12 @@ public final class Thimble extends TeamlessMechanic {
 			return "LMS";
 		}
 
+		// Place x water holes randomly in pool
 		@Override
-		void onInitialize(Match match) {
+		void editPool(Match match) {
 			ThimbleArena arena = match.getArena();
-			super.onInitialize(match);
+			ThimbleMatchData matchData = match.getMatchData();
+			Thimble mechanic = arena.getMechanic();
 
 			worldedit.getBlocks(arena.getProtectedRegion("pool")).forEach(block -> {
 				block.setType(Material.PISTON);
@@ -586,14 +589,6 @@ public final class Thimble extends TeamlessMechanic {
 				directional.setFacing(BlockFace.DOWN);
 				block.setBlockData(directional);
 			});
-		}
-
-		// Place x water holes randomly in pool
-		@Override
-		void editPool(Match match) {
-			ThimbleArena arena = match.getArena();
-			ThimbleMatchData matchData = match.getMatchData();
-			Thimble mechanic = arena.getMechanic();
 
 			int playerCount = match.getMinigamers().size();
 			int maxPlayers = arena.getMaxPlayers();

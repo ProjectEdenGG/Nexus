@@ -23,7 +23,7 @@ public class MiniGolfColorMenu extends InventoryProvider {
 	private MiniGolf21User user;
 
 	@Override
-	protected int getRows() {
+	protected int getRows(Integer page) {
 		return MenuUtils.calculateRows(MiniGolfColor.values().length);
 	}
 

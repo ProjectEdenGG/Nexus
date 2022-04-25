@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.customenchants;
 import gg.projecteden.nexus.utils.Nullables;
 import io.papermc.paper.enchantments.EnchantmentRarity;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.translation.Translatable;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentTarget;
@@ -21,7 +22,7 @@ import java.util.Set;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.StringUtils.toRoman;
 
-public abstract class CustomEnchant extends Enchantment {
+public abstract class CustomEnchant extends Enchantment implements Translatable {
 
 	public CustomEnchant(@NotNull NamespacedKey key) {
 		super(key);
@@ -130,7 +131,7 @@ public abstract class CustomEnchant extends Enchantment {
 
 	@Override
 	public @NotNull String translationKey() {
-		// TODO
-		throw new UnsupportedOperationException();
+		return "";
 	}
+
 }

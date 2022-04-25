@@ -97,7 +97,7 @@ public class ShowItemCommand extends CustomCommand {
 			.channel(channel)
 			.sender(chatter)
 			.message(viewer -> json()
-				.next(channel.getChatterFormat(chatter, viewer == null ? null : new ChatterService().get(viewer)))
+				.next(channel.getChatterFormat(chatter, viewer == null ? null : new ChatterService().get(viewer), false))
 				.group()
 				.next((isNullOrEmpty(finalMessage) ? "" : finalMessage + " "))
 				.next(color + "&l[" + finalItemName + color + (amount > 1 ? " x" + amount : "") + "&l]")

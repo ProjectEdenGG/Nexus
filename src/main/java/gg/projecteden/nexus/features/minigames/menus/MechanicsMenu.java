@@ -26,7 +26,7 @@ public class MechanicsMenu extends InventoryProvider {
 	private final Arena arena;
 
 	@Override
-	protected int getRows() {
+	protected int getRows(Integer page) {
 		return MenuUtils.calculateRows(MechanicType.values().length, 1);
 	}
 

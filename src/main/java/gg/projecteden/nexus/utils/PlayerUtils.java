@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.utils;
 
 import com.google.common.base.Strings;
+import com.google.gson.annotations.SerializedName;
 import com.viaversion.viaversion.api.Via;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
@@ -20,8 +21,10 @@ import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.nickname.NicknameService;
+import gg.projecteden.nexus.utils.PlayerUtils.VersionConfig.Version;
 import gg.projecteden.utils.Utils.MinMaxResult;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
@@ -33,6 +36,7 @@ import net.dv8tion.jda.annotations.ReplaceWith;
 import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.ComponentLike;
+import okhttp3.Response;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -58,6 +62,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -977,13 +982,43 @@ public class PlayerUtils {
 		return hasPlayers.stream().map(OptionalPlayer::getPlayer).filter(Objects::nonNull).collect(toList());
 	}
 
-	// https://wiki.vg/Protocol_version_numbers
-	// TODO Is this available somewhere besides the wiki?
-	private static final Map<Integer, String> versions = Map.of(
-		757, "1.18/1.18.1",
-		756, "1.17.1",
-		755, "1.17"
-	);
+	private static final Map<Integer, List<String>> versions = new HashMap<>();
+
+	@Data
+	static class VersionConfig {
+		private Map<String, Version> versions;
+
+		@Data
+		static class Version {
+			private String name;
+			private String type;
+			@SerializedName("protocol_id")
+			private int protocolId;
+		}
+	}
+
+	static {
+		Tasks.async(() -> {
+			try {
+				final String URL = "https://gitlab.bixilon.de/bixilon/minosoft/-/raw/master/src/main/resources/assets/minosoft/mapping/versions.json";
+				try (Response response = HttpUtils.callUrl(URL)) {
+					final String body = "{\"versions\": " + response.body().string() + "}";
+					final VersionConfig config = Utils.getGson().fromJson(body, VersionConfig.class);
+					for (Version version : config.getVersions().values()) {
+						if (!"release".equals(version.getType()))
+							continue;
+
+						if (version.getProtocolId() == 0)
+							continue;
+
+						versions.computeIfAbsent(version.getProtocolId(), $ -> new ArrayList<>()).add(version.getName());
+					}
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		});
+	}
 
 	public static String getPlayerVersion(Player player) {
 		try {
@@ -992,7 +1027,7 @@ public class PlayerUtils {
 
 			final int version = Via.getAPI().getPlayerVersion(player);
 			if (versions.containsKey(version))
-				return versions.get(version);
+				return String.join("/", versions.get(version));
 			return "Unknown (" + version + ")";
 		} catch (IllegalArgumentException ex) {
 			ex.printStackTrace();

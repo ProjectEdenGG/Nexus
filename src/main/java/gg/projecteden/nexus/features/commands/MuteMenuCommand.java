@@ -12,7 +12,6 @@ import gg.projecteden.nexus.models.mutemenu.MuteMenuService;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import joptsimple.internal.Strings;
@@ -23,7 +22,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import me.lexikiq.event.sound.EntitySoundEvent;
 import me.lexikiq.event.sound.LocationNamedSoundEvent;
-import org.bukkit.Location;
+import me.lexikiq.event.sound.NamedSoundEvent;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
@@ -291,7 +290,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 			return;
 
 		event.setCancelled(true);
-		modifySound(event.getSound(), event.getVolume(), origin.getLocation(), origin.getType());
+		modifySound(event, origin.getType());
 	}
 
 	@EventHandler
@@ -301,7 +300,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 			return;
 
 		event.setCancelled(true);
-		modifySound(event.getSound(), event.getVolume(), event.getLocation(), entityType);
+		modifySound(event, entityType);
 	}
 
 	private static final String[] entityTypes = Arrays.stream(EntityType.values())
@@ -324,21 +323,23 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 		});
 	}
 
-	public void modifySound(Sound sound, float originalVolume, Location location, EntityType entityType) {
-		OnlinePlayers.where()
-			.world(location.getWorld())
-			.radius(location, 16 * originalVolume)
-			.get().forEach(player -> {
-				final MuteMenuUser user = new MuteMenuService().get(player);
-				final int volume = user.getVolume(entityType);
-				new SoundBuilder(sound)
-					.location(location)
-					.volume(volume)
-					.receiver(player)
-					.play();
-
-				Nexus.debug("Played sound " + sound + " to " + player.getName() + " at volume " + volume);
-			});
+	public void modifySound(NamedSoundEvent event, EntityType entityType) {
+		event.calculateRecipients().forEach(player -> {
+			// calculate adjusted volume
+			final MuteMenuUser user = new MuteMenuService().get(player);
+			final double volumePercent = user.getVolume(entityType) / 100d;
+			final double volume = event.getVolume() * volumePercent;
+			if (volumePercent == 0) return;
+			// play sound
+			new SoundBuilder(event.getSound())
+				.location(event.getLocation())
+				.volume(volume)
+				.pitch(event.getPitch())
+				.category(event.getCategory())
+				.receiver(player)
+				.play();
+			Nexus.debug("Played sound " + event.getSound() + " to " + player.getName() + " at volume " + volume);
+		});
 	}
 
 }

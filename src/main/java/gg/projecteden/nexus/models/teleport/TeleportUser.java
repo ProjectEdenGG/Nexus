@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.models.poof;
+package gg.projecteden.nexus.models.teleport;
 
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
