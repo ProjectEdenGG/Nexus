@@ -83,7 +83,7 @@ public class CustomBlocksListener implements Listener {
 			return;
 
 		CustomBlock customBlock = CustomBlock.fromItemstack(result);
-		if (customBlock != null && customBlock.equals(CustomBlock.NOTE_BLOCK))
+		if (CustomBlock.NOTE_BLOCK == customBlock)
 			event.getInventory().setResult(customBlock.get().getItemStack());
 
 		CustomBlockUtils.unlockRecipe(player, result.getType());
@@ -118,7 +118,8 @@ public class CustomBlocksListener implements Listener {
 	public void on(NotePlayEvent event) {
 		event.setCancelled(true);
 
-		if (!CustomBlocks.isCustomNoteBlock(event.getBlock()))
+		CustomBlock customBlock = CustomBlock.fromBlock(event.getBlock());
+		if (CustomBlock.NOTE_BLOCK != customBlock)
 			return;
 
 		NoteBlock noteBlock = (NoteBlock) event.getBlock().getBlockData();
@@ -135,7 +136,7 @@ public class CustomBlocksListener implements Listener {
 		if (isNullOrAir(item))
 			return;
 
-		if (!item.getType().equals(Material.NOTE_BLOCK))
+		if (Material.NOTE_BLOCK != item.getType())
 			return;
 
 		Player player = (Player) event.getWhoClicked();
@@ -143,11 +144,7 @@ public class CustomBlocksListener implements Listener {
 		if (isNullOrAir(block))
 			return;
 
-		if (!CustomBlocks.isCustom(block))
-			return;
-
-		NoteBlock noteBlock = (NoteBlock) block.getBlockData();
-		CustomBlock customBlock = CustomBlock.fromBlockData(noteBlock);
+		CustomBlock customBlock = CustomBlock.fromBlock(block);
 		if (customBlock == null) {
 			debug("CreativePickBlock: CustomBlock == null");
 			return;
@@ -174,20 +171,17 @@ public class CustomBlocksListener implements Listener {
 		Block block = event.getLocation().getBlock();
 		Block below = block.getRelative(BlockFace.DOWN);
 		Block source = null;
-		if (CustomBlocks.isCustom(block))
+
+		CustomBlock _customBlock = CustomBlock.fromBlock(block);
+		if (_customBlock != null)
 			source = block;
-		else if (CustomBlocks.isCustom(below))
-			source = below;
+		else {
+			_customBlock = CustomBlock.fromBlock(below);
+			if (_customBlock != null)
+				source = below;
+		}
 
-
-		if (source != null) {
-			NoteBlock noteBlock = (NoteBlock) source.getBlockData();
-			CustomBlock _customBlock = CustomBlock.fromBlockData(noteBlock);
-			if (_customBlock == null) {
-				debug("SoundEvent: CustomBlock == null");
-				return;
-			}
-
+		if (!Nullables.isNullOrAir(source)) {
 			SoundType soundType = SoundType.fromSound(event.getSound());
 			if (soundType == null)
 				return;
@@ -241,7 +235,8 @@ public class CustomBlocksListener implements Listener {
 		Block block = event.getBlockPlaced();
 		Block above = block.getRelative(BlockFace.UP);
 
-		if (CustomBlocks.isCustomNoteBlock(above)) {
+		CustomBlock customBlock = CustomBlock.fromBlock(above);
+		if (CustomBlock.NOTE_BLOCK == customBlock) {
 			NoteBlock noteBlock = (NoteBlock) above.getBlockData();
 			CustomBlockData data = CustomBlockUtils.getData(noteBlock, above.getLocation());
 			if (data == null)
@@ -259,15 +254,10 @@ public class CustomBlocksListener implements Listener {
 			return;
 
 		Block block = event.getBlock();
-		if (!CustomBlocks.isCustom(block)) {
-			CustomBlockUtils.tryPlayDefaultWoodSound(SoundType.BREAK, block);
-			return;
-		}
-
-		NoteBlock noteBlock = (NoteBlock) block.getBlockData();
-		CustomBlock _customBlock = CustomBlock.fromBlockData(noteBlock);
+		CustomBlock _customBlock = CustomBlock.fromBlock(block);
 		if (_customBlock == null) {
 			debug("BreakBlock: CustomBlock == null");
+			CustomBlockUtils.tryPlayDefaultWoodSound(SoundType.BREAK, block);
 			return;
 		}
 
@@ -303,20 +293,21 @@ public class CustomBlocksListener implements Listener {
 		if (isNullOrAir(clickedBlock))
 			return;
 
+		CustomBlock customBlock = CustomBlock.fromBlock(clickedBlock);
 		// Place
-		if (isSpawningEntity(event, clickedBlock)) {
+		if (isSpawningEntity(event, clickedBlock, customBlock)) {
 			return;
 		}
-		if (isPlacingBlock(event, clickedBlock)) {
+		if (isPlacingBlock(event, clickedBlock, customBlock)) {
 			return;
 		}
 
-		if (CustomBlocks.isCustom(clickedBlock)) {
+		if (customBlock != null) {
 			boolean isChangingPitch = isChangingPitch(action, sneaking, itemInHand);
 			if (isChangingPitch) {
 				event.setCancelled(true);
 
-				if (CustomBlocks.isCustomNoteBlock(clickedBlock)) {
+				if (CustomBlock.NOTE_BLOCK == customBlock) {
 					NoteBlock noteBlock = (NoteBlock) clickedBlock.getBlockData();
 					changePitch(noteBlock, clickedBlock.getLocation(), sneaking);
 				}
@@ -374,7 +365,7 @@ public class CustomBlocksListener implements Listener {
 	//
 
 	private boolean onPistonEvent(Block piston, List<Block> blocks, BlockFace direction) {
-		blocks = blocks.stream().filter(CustomBlocks::isCustom).collect(Collectors.toList());
+		blocks = blocks.stream().filter(block -> CustomBlock.fromBlock(block) != null).collect(Collectors.toList());
 		Map<CustomBlockData, Pair<Location, Location>> moveBlocks = new HashMap<>();
 
 		// initial checks
@@ -457,7 +448,7 @@ public class CustomBlocksListener implements Listener {
 		}
 	}
 
-	private boolean isSpawningEntity(PlayerInteractEvent event, Block clickedBlock) {
+	private boolean isSpawningEntity(PlayerInteractEvent event, Block clickedBlock, CustomBlock customBlock) {
 		Action action = event.getAction();
 		if (!action.equals(Action.RIGHT_CLICK_BLOCK)) {
 			return false;
@@ -467,7 +458,7 @@ public class CustomBlocksListener implements Listener {
 		BlockFace clickedFace = event.getBlockFace();
 		Block inFront = clickedBlock.getRelative(clickedFace);
 		boolean isInteractable = clickedBlock.getType().isInteractable() || MaterialTag.INTERACTABLES.isTagged(inFront);
-		if (!CustomBlocks.isCustomNoteBlock(clickedBlock)) {
+		if (CustomBlock.NOTE_BLOCK != customBlock) {
 			isInteractable = false;
 		}
 
@@ -482,7 +473,7 @@ public class CustomBlocksListener implements Listener {
 		return MaterialTag.SPAWNS_ENTITY.isTagged(itemInHand.getType());
 	}
 
-	private boolean isPlacingBlock(PlayerInteractEvent event, Block clickedBlock) {
+	private boolean isPlacingBlock(PlayerInteractEvent event, Block clickedBlock, CustomBlock customBlock) {
 		Action action = event.getAction();
 		if (!action.equals(Action.RIGHT_CLICK_BLOCK)) {
 			return false;
@@ -493,9 +484,10 @@ public class CustomBlocksListener implements Listener {
 		Block preBlock = clickedBlock.getRelative(clickedFace);
 		boolean clickedCustomBlock = false;
 		boolean isInteractable = clickedBlock.getType().isInteractable() || MaterialTag.INTERACTABLES.isTagged(preBlock);
-		if (CustomBlocks.isCustom(clickedBlock)) {
+
+		if (customBlock != null) {
 			clickedCustomBlock = true;
-			if (!CustomBlocks.isCustomNoteBlock(clickedBlock)) {
+			if (CustomBlock.NOTE_BLOCK != customBlock) {
 				isInteractable = false;
 			}
 		}
@@ -513,7 +505,7 @@ public class CustomBlocksListener implements Listener {
 
 		Material material = itemInHand.getType();
 		boolean isPlacingCustomBlock = false;
-		if (material.equals(Material.NOTE_BLOCK))
+		if (Material.NOTE_BLOCK == material)
 			isPlacingCustomBlock = true;
 		else if (material.equals(ICustomBlock.itemMaterial)) {
 			int modelId = CustomModelData.of(itemInHand);

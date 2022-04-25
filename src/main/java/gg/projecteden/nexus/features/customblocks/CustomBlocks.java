@@ -1,21 +1,16 @@
 package gg.projecteden.nexus.features.customblocks;
 
 import gg.projecteden.annotations.Environments;
-import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.framework.features.Feature;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.utils.Env;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.data.type.NoteBlock;
 
 import java.util.List;
 
 /*
 	TODO:
 		- Tripwire implementation:
-			- Sounds
+			- Sounds --> probably same treatment as note/wood blocks
 				- place sound doesnt play
 				- break sound plays, default sound
 			- Directional placing
@@ -48,33 +43,5 @@ public class CustomBlocks extends Feature {
 			if (dev.isOnline())
 				dev.send(message);
 		}
-	}
-
-	public static boolean isCustom(Block block) {
-		if (Nullables.isNullOrAir(block))
-			return false;
-
-		if (!block.getType().equals(Material.NOTE_BLOCK))
-			return false;
-
-		NoteBlock noteBlock = (NoteBlock) block.getBlockData();
-		if (CustomBlock.fromBlockData(noteBlock) == null)
-			return false;
-
-		return true;
-	}
-
-	public static boolean isCustomNoteBlock(Block block) {
-		if (!isCustom(block))
-			return false;
-
-		NoteBlock noteBlock = (NoteBlock) block.getBlockData();
-		CustomBlock customBlock = CustomBlock.fromBlockData(noteBlock);
-		if (customBlock == null) {
-			debug("isCustomNoteBlock: CustomBlock == null");
-			return false;
-		}
-
-		return CustomBlock.NOTE_BLOCK.equals(customBlock);
 	}
 }

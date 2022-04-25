@@ -133,12 +133,11 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.NMSUtils.SoundType;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.utils.Nullables;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
-import org.bukkit.Instrument;
 import org.bukkit.Keyed;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -152,9 +151,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.surround;
@@ -334,6 +335,14 @@ public enum CustomBlock implements Keyed {
 		}
 	}
 
+	public ICustomBlock get() {
+		return this.customBlock;
+	}
+
+	public static List<CustomBlock> getType(CustomBlockType type) {
+		return Arrays.stream(values()).filter(customBlock -> customBlock.getType().equals(type)).collect(Collectors.toList());
+	}
+
 	@Override
 	public @NotNull NamespacedKey getKey() {
 		return new NamespacedKey(Nexus.getInstance(), name().toLowerCase());
@@ -357,45 +366,52 @@ public enum CustomBlock implements Keyed {
 		return modelIdMap.getOrDefault(modelId, null);
 	}
 
+	public static @Nullable CustomBlock fromBlock(Block block) {
+		if (Nullables.isNullOrAir(block))
+			return null;
+
+		return fromBlockData(block.getBlockData());
+	}
+
 	public static @Nullable CustomBlock fromBlockData(@NonNull BlockData blockData) {
 		if (blockData instanceof org.bukkit.block.data.type.NoteBlock noteBlock) {
 			List<CustomBlock> directional = new ArrayList<>();
-			for (CustomBlock _customBlock : values()) {
-				ICustomBlock iCustomBlock = _customBlock.get();
-				if (iCustomBlock instanceof ICustomNoteBlock customNoteBlock)
+			for (CustomBlock customBlock : getType(CustomBlockType.NOTE_BLOCK)) {
+				ICustomBlock iCustomBlock = customBlock.get();
 
-					if (checkData(customNoteBlock.getNoteBlockInstrument(), customNoteBlock.getNoteBlockStep(), noteBlock))
-						return _customBlock;
-					else if (customNoteBlock instanceof IDirectionalNoteBlock)
-						directional.add(_customBlock);
+				if (CustomBlockUtils.equals(customBlock, noteBlock, false)) {
+//					debug("CustomBlock: BlockData equals " + customBlock.name());
+					return customBlock;
+				} else if (iCustomBlock instanceof IDirectionalNoteBlock) {
+					directional.add(customBlock);
+				}
 			}
 
 			// Directional checks
 
 			for (CustomBlock _customBlock : directional) {
-				IDirectionalNoteBlock directionalBlock = (IDirectionalNoteBlock) _customBlock.get();
-				if (checkData(directionalBlock.getNoteBlockInstrument_NS(), directionalBlock.getNoteBlockStep_NS(), noteBlock))
+				if (CustomBlockUtils.equals(_customBlock, noteBlock, true)) {
+//					debug("CustomBlock: BlockData equals directional " + _customBlock.name());
 					return _customBlock;
-
-				if (checkData(directionalBlock.getNoteBlockInstrument_EW(), directionalBlock.getNoteBlockStep_EW(), noteBlock))
-					return _customBlock;
+				}
 			}
 
-			debug("CustomBlock: Couldn't find NoteBlock with: " + noteBlock.getInstrument() + " " + noteBlock.getNote().getId());
+			debug("CustomBlock: Couldn't find NoteBlock: " + noteBlock);
 
 		} else if (blockData instanceof org.bukkit.block.data.type.Tripwire tripwire) {
 			// TODO TRIPWIRE
-			debug("(TODO) CustomBlock: Couldn't find Tripwire with: " + tripwire);
+			for (CustomBlock customBlock : getType(CustomBlockType.TRIPWIRE)) {
+				if (CustomBlockUtils.equals(customBlock, tripwire, true)) {
+					return customBlock;
+				}
+			}
+
+			debug("(TODO) CustomBlock: Couldn't find Tripwire: " + tripwire);
 		}
 
 		return null;
 	}
 
-	private static boolean checkData(Instrument _instrument, int _step, org.bukkit.block.data.type.NoteBlock noteBlock) {
-		Instrument instrument = noteBlock.getInstrument();
-		int step = noteBlock.getNote().getId();
-		return _step == step && _instrument.equals(instrument);
-	}
 
 	public boolean placeBlock(Player player, Block block, Block placeAgainst, BlockFace facing, ItemStack itemInHand) {
 		ICustomBlock customBlock = this.get();
@@ -499,10 +515,6 @@ public enum CustomBlock implements Keyed {
 				recipes.add(recipe);
 			}
 		}
-	}
-
-	public ICustomBlock get() {
-		return this.customBlock;
 	}
 
 	public void breakBlock(Block block, boolean dropItem) {

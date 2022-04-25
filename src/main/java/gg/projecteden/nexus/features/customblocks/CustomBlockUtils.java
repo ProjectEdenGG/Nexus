@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.customblocks;
 
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
-import gg.projecteden.nexus.features.customblocks.models.CustomBlock.CustomBlockType;
 import gg.projecteden.nexus.features.customblocks.models.common.ICustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.common.IDirectional;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.ICraftableNoteBlock;
@@ -24,7 +23,6 @@ import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.UUIDUtils;
 import lombok.NonNull;
-import org.bukkit.Instrument;
 import org.bukkit.Keyed;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -32,8 +30,6 @@ import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.block.data.type.NoteBlock;
-import org.bukkit.block.data.type.Tripwire;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -120,59 +116,37 @@ public class CustomBlockUtils {
 		return data;
 	}
 
+	public static boolean equals(CustomBlock customBlock, BlockData blockData, boolean directional) {
+		BlockFace facing = null;
+		if (directional) {
+			facing = CustomBlockUtils.getFacing(customBlock, blockData);
+		}
+
+		return isFacing(facing, customBlock, blockData);
+	}
+
 	public static BlockFace getFacing(CustomBlock customBlock, BlockData blockData) {
 		ICustomBlock iCustomBlock = customBlock.get();
 		if (!(iCustomBlock instanceof IDirectional))
 			return BlockFace.UP;
 
-		CustomBlockType type = customBlock.getType();
-		if (isFacing(BlockFace.NORTH, type, iCustomBlock, blockData))
+		if (isFacing(BlockFace.NORTH, customBlock, blockData))
 			return BlockFace.NORTH;
-		else if (isFacing(BlockFace.EAST, type, iCustomBlock, blockData))
+		else if (isFacing(BlockFace.EAST, customBlock, blockData))
 			return BlockFace.EAST;
 
 		return BlockFace.UP;
 	}
 
-	private static boolean isFacing(BlockFace face, CustomBlockType type, ICustomBlock customBlock, BlockData blockData) {
-		switch (type) {
+	private static boolean isFacing(BlockFace face, CustomBlock customBlock, BlockData blockData) {
+		switch (customBlock.getType()) {
 			case NOTE_BLOCK -> {
-				NoteBlock noteBlock = (NoteBlock) blockData;
-				Instrument instrument = noteBlock.getInstrument();
-				int step = noteBlock.getNote().getId();
-
-				ICustomNoteBlock customNoteBlock = (ICustomNoteBlock) customBlock;
-				Instrument _instrument = customNoteBlock.getNoteBlockInstrument(face);
-				int _step = customNoteBlock.getNoteBlockStep(face);
-
-				return _instrument == instrument && _step == step;
+				ICustomNoteBlock customNoteBlock = (ICustomNoteBlock) customBlock.get();
+				return customNoteBlock.equals(blockData, face);
 			}
 			case TRIPWIRE -> {
-				Tripwire tripwire = (Tripwire) blockData;
-				boolean north = tripwire.hasFace(BlockFace.NORTH);
-				boolean south = tripwire.hasFace(BlockFace.SOUTH);
-				boolean east = tripwire.hasFace(BlockFace.EAST);
-				boolean west = tripwire.hasFace(BlockFace.WEST);
-				boolean attached = tripwire.isAttached();
-				boolean disarmed = tripwire.isDisarmed();
-				boolean powered = tripwire.isPowered();
-
-				ICustomTripwire customTripwire = (ICustomTripwire) customBlock;
-				boolean _north = customTripwire.isNorth(face);
-				boolean _south = customTripwire.isSouth(face);
-				boolean _east = customTripwire.isEast(face);
-				boolean _west = customTripwire.isWest(face);
-				boolean _attached = customTripwire.isAttached(face);
-				boolean _disarmed = customTripwire.isDisarmed(face);
-				boolean _powered = customTripwire.isPowered(face);
-
-				return north == _north
-					&& south == _south
-					&& east == _east
-					&& west == _west
-					&& attached == _attached
-					&& disarmed == _disarmed
-					&& powered == _powered;
+				ICustomTripwire customTripwire = (ICustomTripwire) customBlock.get();
+				return customTripwire.equals(blockData, face);
 			}
 		}
 		return false;

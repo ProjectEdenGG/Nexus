@@ -9,6 +9,7 @@ import org.bukkit.Sound;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.NoteBlock;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
@@ -128,10 +129,22 @@ public interface ICustomNoteBlock extends ICustomBlock {
 	}
 
 	@Override
-	default BlockData getBlockData(BlockFace facing) {
-		NoteBlock noteBlock = (NoteBlock) getBlockMaterial().createBlockData();
-		noteBlock.setInstrument(getNoteBlockInstrument(facing));
-		noteBlock.setNote(getNoteBlockNote(facing));
+	default BlockData getBlockData(@Nullable BlockFace facing) {
+		NoteBlock noteBlock = (NoteBlock) this.getBlockMaterial().createBlockData();
+		noteBlock.setInstrument(this.getNoteBlockInstrument(facing));
+		noteBlock.setNote(this.getNoteBlockNote(facing));
+		noteBlock.setPowered(false);
 		return noteBlock;
+	}
+
+	@Override
+	default boolean equals(@NotNull BlockData blockData, @Nullable BlockFace facing) {
+		if (!(blockData instanceof NoteBlock noteBlock))
+			return false;
+
+		NoteBlock _noteBlock = (NoteBlock) this.getBlockData(facing);
+		noteBlock.setPowered(false);
+
+		return noteBlock.matches(_noteBlock);
 	}
 }

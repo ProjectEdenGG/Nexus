@@ -6,6 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 public interface ICustomBlock {
 	Material itemMaterial = Material.PAPER;
@@ -56,5 +57,8 @@ public interface ICustomBlock {
 	@NonNull String getFallSound();
 
 	// Blockdata
-	BlockData getBlockData(BlockFace facing);
+	BlockData getBlockData(@NonNull BlockFace facing);
+
+
+	boolean equals(@NonNull BlockData blockData, @Nullable BlockFace facing);
 }

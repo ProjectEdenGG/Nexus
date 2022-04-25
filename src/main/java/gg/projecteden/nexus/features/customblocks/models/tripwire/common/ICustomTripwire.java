@@ -7,6 +7,7 @@ import org.bukkit.Sound;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Tripwire;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
@@ -193,7 +194,7 @@ public interface ICustomTripwire extends ICustomBlock {
 	}
 
 	@Override
-	default BlockData getBlockData(BlockFace facing) {
+	default BlockData getBlockData(@NotNull BlockFace facing) {
 		Tripwire tripwire = (Tripwire) getBlockMaterial().createBlockData();
 		tripwire.setFace(BlockFace.NORTH, isNorth(facing));
 		tripwire.setFace(BlockFace.SOUTH, isSouth(facing));
@@ -202,7 +203,21 @@ public interface ICustomTripwire extends ICustomBlock {
 		tripwire.setAttached(isAttached(facing));
 		tripwire.setDisarmed(isDisarmed(facing));
 		tripwire.setPowered(isPowered(facing));
+		if (this.isIgnorePowered())
+			tripwire.setPowered(false);
 
 		return tripwire;
+	}
+
+	@Override
+	default boolean equals(@NotNull BlockData blockData, BlockFace facing) {
+		if (!(blockData instanceof Tripwire tripwire))
+			return false;
+
+		Tripwire _tripwire = (Tripwire) this.getBlockData(facing);
+		if (this.isIgnorePowered())
+			tripwire.setPowered(false);
+
+		return tripwire.matches(_tripwire);
 	}
 }
