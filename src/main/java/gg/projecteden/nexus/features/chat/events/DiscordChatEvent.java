@@ -31,6 +31,10 @@ public class DiscordChatEvent extends ChatEvent {
 	private boolean filtered;
 	private boolean bad;
 
+	public DiscordChatEvent(Member member, PublicChannel channel, String message) {
+		this(member, channel, message, message, false, null);
+	}
+
 	public DiscordChatEvent(Member member, PublicChannel channel, String originalMessage, String message, boolean hasAttachments, String permission) {
 		this.member = member;
 		this.channel = channel;
@@ -80,9 +84,9 @@ public class DiscordChatEvent extends ChatEvent {
 	@Override
 	public Set<Chatter> getRecipients() {
 		return OnlinePlayers.getAll().stream()
-						.filter(player -> player.hasPermission(permission))
-						.map(player -> new ChatterService().get(player))
-						.collect(Collectors.toSet());
+			.filter(player -> permission == null || player.hasPermission(permission))
+			.map(player -> new ChatterService().get(player))
+			.collect(Collectors.toSet());
 	}
 
 }
