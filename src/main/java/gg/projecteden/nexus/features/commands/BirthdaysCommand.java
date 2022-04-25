@@ -1,18 +1,25 @@
 package gg.projecteden.nexus.features.commands;
 
+import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.models.scheduledjobs.jobs.BirthdaysRemoveRoleJob;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.utils.DiscordId.Role;
+import gg.projecteden.utils.DiscordId.TextChannel;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.List;
@@ -60,6 +67,23 @@ public class BirthdaysCommand extends CustomCommand {
 		nerd.setBirthday(birthday);
 		service.save(nerd);
 		send(PREFIX + (isSelf(nerd) ? "Your" : Nickname.of(nerd) + "'s") + " birthday has been set to &e" + birthday.getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault()) + " " + birthday.getDayOfMonth() + ", " + birthday.getYear());
+	}
+
+	@Permission(Group.ADMIN)
+	@Path("forceAnnounce [player]")
+	void forceAnnounce(DiscordUser user) {
+		announcement(user);
+	}
+
+	public static void announcement(DiscordUser user) {
+		Nerd nerd = Nerd.of(user);
+		final Role role = nerd.getRank().isStaff() ? Role.STAFF_BIRTHDAY : Role.BIRTHDAY;
+		user.addRole(role);
+
+		Discord.koda("Happy Birthday " + user.getMember().getAsMention() + "!", TextChannel.BIRTHDAYS).thenAccept(message ->
+			message.createThreadChannel("Wish " + nerd.getNickname() + " a happy birthday!").queue());
+
+		new BirthdaysRemoveRoleJob(nerd.getUuid()).schedule(LocalDateTime.now().plusDays(1));
 	}
 
 	public LocalDate getNextBirthday(Nerd nerd) {
