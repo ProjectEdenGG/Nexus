@@ -33,9 +33,17 @@ public class NerdService extends MongoPlayerService<Nerd> {
 		if (count > 50)
 			throw new InvalidInputException("Too many name matches for &e" + partialName + " &c(" + count + ")");
 
+		final List<Nerd> fuzzyMatches = query.find().toList();
+		final List<Nerd> exactMatches = new ArrayList<>();
+
+		for (Nerd nerd : fuzzyMatches)
+			for (String pastName : nerd.getPastNames())
+				if (pastName.equalsIgnoreCase(partialName))
+					exactMatches.add(nerd);
+
 		Map<UUID, Integer> hoursMap = new HashMap<>() {{
 			HoursService service = new HoursService();
-			for (Nerd nerd : query.find().toList())
+			for (Nerd nerd : exactMatches.isEmpty() ? fuzzyMatches : exactMatches)
 				put(nerd.getUuid(), service.get(nerd).getTotal());
 		}};
 
