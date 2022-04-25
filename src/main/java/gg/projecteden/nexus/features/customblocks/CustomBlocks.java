@@ -28,6 +28,7 @@ import java.util.List;
 		- Known issues:
 			- Custom blocks may flash when placing blocks near them (clientside only) --> Titan
 			- Players arm will swing on interact w/ custom blocks --> Titan
+
  */
 
 @Environments(Env.TEST)
