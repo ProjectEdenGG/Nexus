@@ -109,11 +109,10 @@ public class ChatManager {
 				.next(event.getMessage());
 
 			if (event.isFiltered())
-				if (Rank.of(recipient.getOnlinePlayer()).isStaff())
+				if (Rank.of(recipient).isStaff())
 					json.next(" ")
 						.group()
 						.next("&c&l*")
-						.hover("")
 						.hover("&cChat message was filtered")
 						.hover("&cClick to see original message")
 						.command("/echo &3Original message: &f" + event.getOriginalMessage());
