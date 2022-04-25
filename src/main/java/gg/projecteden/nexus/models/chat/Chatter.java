@@ -21,6 +21,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.lexikiq.HasUniqueId;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
@@ -46,6 +47,10 @@ public class Chatter implements PlayerOwnedObject {
 	private Set<PublicChannel> leftChannels = new HashSet<>();
 	private PrivateChannel lastPrivateMessage;
 	private Language language;
+
+	public static Chatter of(HasUniqueId hasUniqueId) {
+		return hasUniqueId == null ? null : new ChatterService().get(hasUniqueId);
+	}
 
 	public void playSound() {
 		Player player = getPlayer();

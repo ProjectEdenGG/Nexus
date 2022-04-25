@@ -8,11 +8,10 @@ import gg.projecteden.nexus.features.chat.events.DiscordChatEvent;
 import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.models.alerts.AlertsService;
-import gg.projecteden.nexus.models.chat.ChatterService;
+import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.PublicChannel;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
-import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.DiscordId.User;
@@ -31,6 +30,7 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static gg.projecteden.nexus.utils.AdventureUtils.asPlainText;
 import static gg.projecteden.nexus.utils.PlayerUtils.isSelf;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
@@ -61,36 +61,35 @@ public class DiscordBridgeListener extends ListenerAdapter {
 				return;
 			}
 
+			JsonBuilder json = new JsonBuilder();
 			String content = discordChatEvent.getMessage();
-			DiscordUser user = new DiscordUserService().getFromUserId(event.getAuthor().getId());
 
-			JsonBuilder builder = new JsonBuilder();
+			if (content.length() > 0) {
+				if (event.getMessage().getReferencedMessage() != null)
+					json.next(" ");
 
-			if (content.length() > 0)
-				builder.next(" " + content).group();
+				json.next(content).group();
+			}
 
-			for (Message.Attachment attachment : event.getMessage().getAttachments())
-				builder.next(" &f&l[View Attachment]")
+			for (Message.Attachment attachment : event.getMessage().getAttachments()) {
+				final String plainText = asPlainText(json);
+				if (!plainText.isEmpty() && !plainText.endsWith(" "))
+					json.next(" ");
+
+				json.next("&f&l[View Attachment]")
 					.url(attachment.getUrl())
 					.group();
+			}
 
+			DiscordUser user = new DiscordUserService().getFromUserId(event.getAuthor().getId());
 			Identity identity = user == null ? Identity.nil() : user.identity();
 
 			Broadcast.ingame().channel(channel.get()).sender(identity).message(viewer -> new JsonBuilder()
-				.next(channel.get().getDiscordColor() + "[D]")
-				.hover("&5&lDiscord &fChannel")
-				.hover("&fMessages sent in &c#bridge &fon our")
-				.hover("&c/discord &fare shown in this channel")
-				.group()
-				.next(" ")
-				.group()
-				.next(getChatFormat(event, user, viewer))
-				.group()
-				.next(" " + channel.get().getDiscordColor() + "&l>&f")
+				.next(getChatterFormat(event, channel.get(), user, viewer, true))
 				.group()
 				.next(getReplyContent(event, channel.get(), viewer))
 				.group()
-				.next(builder)
+				.next(json)
 			).messageType(MessageType.CHAT).send();
 		});
 	}
@@ -102,7 +101,6 @@ public class DiscordBridgeListener extends ListenerAdapter {
 
 		final boolean ingame = Bot.RELAY.getId().equals(message.getAuthor().getId());
 		final DiscordUserService discordUserService = new DiscordUserService();
-		final JsonBuilder json = new JsonBuilder();
 
 		final String content;
 		final DiscordUser replyAuthor;
@@ -113,7 +111,6 @@ public class DiscordBridgeListener extends ListenerAdapter {
 			if (matcher.find()) {
 				replyAuthor = discordUserService.getFromRoleId(matcher.group().replaceAll("\\D", ""));
 				content = getContent(message.getContentRaw().replaceAll(regex, ""));
-				json.next(channel.getColor() + "[" + channel.getNickname() + "]");
 			} else {
 				replyAuthor = null;
 				content = getContent(message);
@@ -123,16 +120,12 @@ public class DiscordBridgeListener extends ListenerAdapter {
 			DiscordChatEvent chatEvent = new DiscordChatEvent(replyAuthor.getMember(), channel, getContent(message));
 			Censor.process(chatEvent);
 			content = chatEvent.getMessage();
-			json.next(channel.getDiscordColor() + "[D]");
 		}
 
-		json.next(" ")
-			.next(getChatFormat(event, replyAuthor, viewer))
-			.next(" ")
-			.next((ingame ? channel.getColor() : channel.getDiscordColor()) + "&l>&f");
+		final JsonBuilder json = new JsonBuilder(getChatterFormat(event, channel, replyAuthor, viewer, !ingame));
 
 		if (content.length() > 0)
-			json.next(" " + content);
+			json.next(content);
 
 		for (Message.Attachment ignore : message.getAttachments())
 			json.next(" &f&l[View Attachment]");
@@ -142,12 +135,12 @@ public class DiscordBridgeListener extends ListenerAdapter {
 				if (!isSelf(viewer, discordUserService.getFromUserId(event.getAuthor().getId())))
 					new AlertsService().get(viewer).playSound();
 
-		return new JsonBuilder(" &f&l[Reply]").hover(json);
+		return new JsonBuilder("&f&l[Reply]").hover(json);
 	}
 
-	private JsonBuilder getChatFormat(@NotNull MessageReceivedEvent event, DiscordUser user, Player viewer) {
+	private JsonBuilder getChatterFormat(@NotNull MessageReceivedEvent event, PublicChannel channel, DiscordUser user, Player viewer, boolean isDiscord) {
 		if (user != null)
-			return Nerd.of(user.getUuid()).getChatFormat(viewer == null ? null : new ChatterService().get(viewer));
+			return channel.getChatterFormat(Chatter.of(user), Chatter.of(viewer), isDiscord);
 		else
 			return new JsonBuilder("&f" + Discord.getName(event.getMember(), event.getAuthor()));
 	}
