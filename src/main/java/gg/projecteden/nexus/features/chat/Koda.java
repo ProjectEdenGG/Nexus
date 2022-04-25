@@ -25,6 +25,7 @@ import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
+import me.lexikiq.HasUniqueId;
 import net.kyori.adventure.audience.MessageType;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -90,7 +91,7 @@ public class Koda {
 			.channel(channel)
 			.sender(chatter)
 			.messageFunction(viewer -> new JsonBuilder("")
-				.next(channel.getChatterFormat(chatter, viewer == null ? null : new ChatterService().get(viewer)))
+				.next(channel.getChatterFormat(chatter, viewer == null ? null : new ChatterService().get(viewer), false))
 				.group()
 				.next(message))
 			.messageType(MessageType.CHAT)
@@ -140,6 +141,10 @@ public class Koda {
 		}
 	}
 
+	public static boolean is(HasUniqueId hasUniqueId) {
+		return Dev.KODA.is(hasUniqueId);
+	}
+
 	@Data
 	@Builder
 	private static class Trigger {
@@ -178,9 +183,19 @@ public class Koda {
 	public static void respond(ChatEvent event, PublicChannel channel, String response) {
 		Tasks.waitAsync(TickTime.SECOND, () -> {
 			final String finalResponse = response.replaceAll("\\[player]", event.getOrigin());
-			channel.getRecipients(event.getChatter()).forEach(recipient -> recipient.sendMessage(channel.getChatterFormat(chatter, recipient).next(finalResponse)));
+
+			Broadcast.ingame()
+				.channel(channel)
+				.sender(event.getChatter()) // Set sender to the sender of the trigger, so that the mute carries over
+				.message(viewer -> channel.getChatterFormat(chatter, Chatter.of(viewer), false).next(finalResponse))
+				.messageType(MessageType.CHAT)
+				.send();
+
 			if (StaticChannel.GLOBAL.getChannel().equals(channel))
-				Broadcast.discord().channel(channel).message(discordFormat + finalResponse).send();
+				Broadcast.discord()
+					.channel(channel)
+					.message(discordFormat + finalResponse)
+					.send();
 		});
 	}
 
