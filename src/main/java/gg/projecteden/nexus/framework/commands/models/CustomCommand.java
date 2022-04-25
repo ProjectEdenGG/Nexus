@@ -851,10 +851,10 @@ public abstract class CustomCommand extends ICustomCommand {
 	@ConverterFor(ItemStack.class)
 	ItemStack convertToItemStack(String value) {
 		try {
-			return new ItemStack(convertToMaterial(value));
+			return CustomBlock.valueOf(value.toUpperCase()).get().getItemStack();
 		} catch (InvalidInputException ex) {
 			try {
-				return CustomBlock.valueOf(value.toUpperCase()).get().getItemStack();
+				return new ItemStack(convertToMaterial(value));
 			} catch (IllegalArgumentException ex2) {
 				throw new InvalidInputException("Item from " + value + " not found");
 			}
@@ -864,8 +864,8 @@ public abstract class CustomCommand extends ICustomCommand {
 	@TabCompleterFor(ItemStack.class)
 	List<String> tabCompleteItemStack(String filter) {
 		return new ArrayList<>() {{
-			addAll(tabCompleteMaterial(filter));
 			addAll(tabCompleteEnum(filter, CustomBlock.class));
+			addAll(tabCompleteMaterial(filter));
 		}};
 	}
 

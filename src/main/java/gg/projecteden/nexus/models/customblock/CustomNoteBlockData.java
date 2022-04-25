@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.models.customblock;
 
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.ICustomNoteBlock;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -26,8 +27,10 @@ public class CustomNoteBlockData extends ExtraBlockData {
 		if (this.noteBlockData == null) {
 			if (reset) {
 				NoteBlock noteBlock = (NoteBlock) Material.NOTE_BLOCK.createBlockData();
-				noteBlock.setInstrument(CustomBlock.NOTE_BLOCK.getNoteBlock().getNoteBlockInstrument());
-				noteBlock.setNote(new Note(CustomBlock.NOTE_BLOCK.getNoteBlock().getNoteBlockStep()));
+				ICustomNoteBlock customNoteBlock = (ICustomNoteBlock) CustomBlock.NOTE_BLOCK.get();
+
+				noteBlock.setInstrument(customNoteBlock.getNoteBlockInstrument());
+				noteBlock.setNote(new Note(customNoteBlock.getNoteBlockStep()));
 				block.setBlockData(noteBlock, false);
 			}
 			this.noteBlockData = new NoteBlockData(block);

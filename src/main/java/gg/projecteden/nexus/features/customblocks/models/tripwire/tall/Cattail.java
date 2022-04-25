@@ -5,7 +5,7 @@ import gg.projecteden.nexus.features.customblocks.models.tripwire.common.CustomT
 
 @CustomBlockConfig(
 	name = "Cattail",
-	modelId = 21100
+	modelId = 21101
 )
 @CustomTripwireConfig(
 	north_NS = true,

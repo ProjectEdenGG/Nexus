@@ -2,9 +2,12 @@ package gg.projecteden.nexus.features.customblocks;
 
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
+import gg.projecteden.nexus.features.customblocks.models.CustomBlock.CustomBlockType;
+import gg.projecteden.nexus.features.customblocks.models.common.ICustomBlock;
+import gg.projecteden.nexus.features.customblocks.models.common.IDirectional;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.ICraftableNoteBlock;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.ICustomNoteBlock;
-import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.IDirectionalNoteBlock;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.common.ICustomTripwire;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.customblock.CustomBlockData;
@@ -53,7 +56,7 @@ public class CustomBlockUtils {
 				extraData.setNoteBlockData(new NoteBlockData(location.getBlock()));
 				data.setExtraData(extraData);
 			}
-			case TRIPWIRE -> data.setExtraData(new CustomTripwireData());
+			case TRIPWIRE -> data.setExtraData(new CustomTripwireData(facing));
 		}
 
 		tracker.put(location, data);
@@ -110,36 +113,72 @@ public class CustomBlockUtils {
 			}
 
 			debug("GetData: creating new data for " + customBlock.name());
-			if (blockData instanceof NoteBlock noteBlock) {
-				BlockFace facing = CustomBlockUtils.getFacing(customBlock.getNoteBlock(), noteBlock);
-				data = placeBlockDatabase(UUIDUtils.UUID0, customBlock, location, facing);
-			} else if (blockData instanceof Tripwire tripwire) {
-				data = placeBlockDatabase(UUIDUtils.UUID0, customBlock, location, null);
-			}
-
+			BlockFace facing = CustomBlockUtils.getFacing(customBlock, blockData);
+			data = placeBlockDatabase(UUIDUtils.UUID0, customBlock, location, facing);
 		}
 
 		return data;
 	}
 
-	public static BlockFace getFacing(ICustomNoteBlock customNoteBlock, NoteBlock noteBlock) {
-		if (customNoteBlock instanceof IDirectionalNoteBlock)
+	public static BlockFace getFacing(CustomBlock customBlock, BlockData blockData) {
+		ICustomBlock iCustomBlock = customBlock.get();
+		if (!(iCustomBlock instanceof IDirectional))
 			return BlockFace.UP;
 
-		if (isFacing(BlockFace.NORTH, customNoteBlock, noteBlock))
+		CustomBlockType type = customBlock.getType();
+		if (isFacing(BlockFace.NORTH, type, iCustomBlock, blockData))
 			return BlockFace.NORTH;
-		else if (isFacing(BlockFace.EAST, customNoteBlock, noteBlock))
+		else if (isFacing(BlockFace.EAST, type, iCustomBlock, blockData))
 			return BlockFace.EAST;
 
 		return BlockFace.UP;
 	}
 
-	private static boolean isFacing(BlockFace face, ICustomNoteBlock customNoteBlock, NoteBlock noteBlock) {
-		Instrument instrument = noteBlock.getInstrument();
-		int step = noteBlock.getNote().getId();
+	private static boolean isFacing(BlockFace face, CustomBlockType type, ICustomBlock customBlock, BlockData blockData) {
+		switch (type) {
+			case NOTE_BLOCK -> {
+				NoteBlock noteBlock = (NoteBlock) blockData;
+				Instrument instrument = noteBlock.getInstrument();
+				int step = noteBlock.getNote().getId();
 
-		return customNoteBlock.getNoteBlockInstrument(face) == instrument && customNoteBlock.getNoteBlockStep(face) == step;
+				ICustomNoteBlock customNoteBlock = (ICustomNoteBlock) customBlock;
+				Instrument _instrument = customNoteBlock.getNoteBlockInstrument(face);
+				int _step = customNoteBlock.getNoteBlockStep(face);
+
+				return _instrument == instrument && _step == step;
+			}
+			case TRIPWIRE -> {
+				Tripwire tripwire = (Tripwire) blockData;
+				boolean north = tripwire.hasFace(BlockFace.NORTH);
+				boolean south = tripwire.hasFace(BlockFace.SOUTH);
+				boolean east = tripwire.hasFace(BlockFace.EAST);
+				boolean west = tripwire.hasFace(BlockFace.WEST);
+				boolean attached = tripwire.isAttached();
+				boolean disarmed = tripwire.isDisarmed();
+				boolean powered = tripwire.isPowered();
+
+				ICustomTripwire customTripwire = (ICustomTripwire) customBlock;
+				boolean _north = customTripwire.isNorth(face);
+				boolean _south = customTripwire.isSouth(face);
+				boolean _east = customTripwire.isEast(face);
+				boolean _west = customTripwire.isWest(face);
+				boolean _attached = customTripwire.isAttached(face);
+				boolean _disarmed = customTripwire.isDisarmed(face);
+				boolean _powered = customTripwire.isPowered(face);
+
+				return north == _north
+					&& south == _south
+					&& east == _east
+					&& west == _west
+					&& attached == _attached
+					&& disarmed == _disarmed
+					&& powered == _powered;
+			}
+		}
+		return false;
 	}
+
+	//
 
 	public static void unlockRecipe(Player player, Material material) {
 		if (Nullables.isNullOrAir(material))

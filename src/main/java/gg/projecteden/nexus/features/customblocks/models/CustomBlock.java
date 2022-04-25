@@ -143,7 +143,6 @@ import org.bukkit.Keyed;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.Note;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
@@ -385,7 +384,7 @@ public enum CustomBlock implements Keyed {
 			debug("CustomBlock: Couldn't find NoteBlock with: " + noteBlock.getInstrument() + " " + noteBlock.getNote().getId());
 
 		} else if (blockData instanceof org.bukkit.block.data.type.Tripwire tripwire) {
-			// TODO
+			// TODO TRIPWIRE
 			debug("(TODO) CustomBlock: Couldn't find Tripwire with: " + tripwire);
 		}
 
@@ -399,62 +398,54 @@ public enum CustomBlock implements Keyed {
 	}
 
 	public boolean placeBlock(Player player, Block block, Block placeAgainst, BlockFace facing, ItemStack itemInHand) {
-		ICustomBlock iCustomBlock = this.get();
-		boolean placed = false;
-		if (iCustomBlock instanceof ICustomNoteBlock customNoteBlock) {
-			Instrument instrument = customNoteBlock.getNoteBlockInstrument(facing);
-			int step = customNoteBlock.getNoteBlockStep(facing);
+		ICustomBlock customBlock = this.get();
 
-			org.bukkit.block.data.type.NoteBlock noteBlock = (org.bukkit.block.data.type.NoteBlock) Material.NOTE_BLOCK.createBlockData();
-			noteBlock.setInstrument(instrument);
-			noteBlock.setNote(new Note(step));
-
-			if (!BlockUtils.tryPlaceEvent(player, block, placeAgainst, Material.NOTE_BLOCK, noteBlock, false, new ItemStack(Material.NOTE_BLOCK)))
-				return false;
-
-			UUID uuid = player.getUniqueId();
-			Location location = block.getLocation();
-
-
-			CustomBlockUtils.placeBlockDatabase(uuid, this, location, facing);
-			playSound(SoundType.PLACE, location);
-			placed = true;
-		} else if (iCustomBlock instanceof ICustomTripwire customTripwire) {
-			player.sendMessage("(TODO) place string block: " + customTripwire);
-			// TODO
-
-			placed = true;
+		Material blockMaterial = null;
+		ItemStack item = null;
+		boolean setup = false;
+		switch (this.getType()) {
+			case NOTE_BLOCK -> {
+				blockMaterial = Material.NOTE_BLOCK;
+				item = new ItemStack(Material.NOTE_BLOCK);
+				setup = true;
+			}
+			case TRIPWIRE -> {
+				blockMaterial = Material.TRIPWIRE;
+				item = new ItemStack(Material.STRING);
+				setup = true;
+			}
 		}
 
-		if (placed) {
-			ItemUtils.subtract(player, itemInHand);
-			player.swingMainHand();
-			return true;
+		if (setup) {
+			boolean placed = BlockUtils.tryPlaceEvent(player, block, placeAgainst,
+				blockMaterial, customBlock.getBlockData(facing), false, item);
+
+			if (placed) {
+				UUID uuid = player.getUniqueId();
+				Location location = block.getLocation();
+
+				CustomBlockUtils.placeBlockDatabase(uuid, this, location, facing);
+				playSound(SoundType.PLACE, location);
+
+				ItemUtils.subtract(player, itemInHand);
+				player.swingMainHand();
+				return true;
+			}
 		}
 
 		return false;
 	}
 
 	public @Nullable String getSound(SoundType type) {
-		if (this.isNoteBlock()) {
-			return switch (type) {
-				case PLACE -> this.getNoteBlock().getPlaceSound();
-				case BREAK -> this.getNoteBlock().getBreakSound();
-				case STEP -> this.getNoteBlock().getStepSound();
-				case HIT -> this.getNoteBlock().getHitSound();
-				case FALL -> this.getNoteBlock().getFallSound();
-			};
-		} else if (this.isTripwire()) {
-			return switch (type) {
-				case PLACE -> this.getTripwire().getPlaceSound();
-				case BREAK -> this.getTripwire().getBreakSound();
-				case STEP -> this.getTripwire().getStepSound();
-				case HIT -> this.getTripwire().getHitSound();
-				case FALL -> this.getTripwire().getFallSound();
-			};
-		}
+		ICustomBlock customBlock = this.get();
 
-		return null;
+		return switch (type) {
+			case PLACE -> customBlock.getPlaceSound();
+			case BREAK -> customBlock.getBreakSound();
+			case STEP -> customBlock.getStepSound();
+			case HIT -> customBlock.getHitSound();
+			case FALL -> customBlock.getFallSound();
+		};
 	}
 
 	public void playSound(SoundType type, Location location) {
@@ -514,20 +505,23 @@ public enum CustomBlock implements Keyed {
 		return this.customBlock;
 	}
 
-	public boolean isTripwire() {
-		return this.get() instanceof ICustomTripwire;
+	public void breakBlock(Block block, boolean dropItem) {
+		breakBlock(block.getLocation(), dropItem);
 	}
 
-	public ICustomTripwire getTripwire() {
-		return (ICustomTripwire) this.customBlock;
+	public void breakBlock(Location location, boolean dropItem) {
+		playSound(SoundType.BREAK, location);
+		CustomBlockUtils.breakBlockDatabase(location);
+		if (dropItem)
+			dropItem(location);
 	}
 
-	public boolean isNoteBlock() {
-		return this.get() instanceof ICustomNoteBlock;
-	}
+	public void dropItem(Location location) {
+		ItemStack itemStack = this.get().getItemStack();
+		if (this.equals(TRIPWIRE) || this.equals(TRIPWIRE_CROSS))
+			itemStack = new ItemStack(Material.STRING);
 
-	public ICustomNoteBlock getNoteBlock() {
-		return (ICustomNoteBlock) this.customBlock;
+		location.getWorld().dropItemNaturally(location, itemStack);
 	}
 
 	public enum CustomBlockType {

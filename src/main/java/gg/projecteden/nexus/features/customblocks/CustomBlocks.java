@@ -14,8 +14,21 @@ import java.util.List;
 
 /*
 	TODO:
+		- Tripwire implementation:
+			- Sounds
+				- place sound doesnt play
+				- break sound plays, default sound
+			- Directional placing
+				- note blocks need the blockface of the block they are placed against (current & intended)
+				- tripwire needs the facing of the player
+			- Tripwire cross causes endless block updates, crashes server (maybe fixed?)
+			- Block updates are not cancelling as intended
+			- Observers are still detecting block update changes even tho the data is not actually changing
+			- Creative pick block
+			- Placing string needs to place CustomBlock Tripwire
+			- Lots of testing
 		- Appropriate tool & mining speed --> CustomBlockBreaking
-		- Sounds --> Testing
+		- Sounds --> Do some more testing
 		- //
 		- Known issues:
 			- Custom blocks may flash when placing blocks near them (clientside only) --> Titan

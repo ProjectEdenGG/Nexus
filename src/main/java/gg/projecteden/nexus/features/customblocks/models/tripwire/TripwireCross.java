@@ -5,8 +5,8 @@ import gg.projecteden.nexus.features.customblocks.models.tripwire.common.CustomT
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.ICustomTripwire;
 
 @CustomBlockConfig(
-	name = "Tripwire",
-	modelId = 21000
+	name = "Tripwire Cross",
+	modelId = 21001
 )
 @CustomTripwireConfig(
 	north_NS = true,

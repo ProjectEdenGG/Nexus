@@ -4,10 +4,13 @@ import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.common.ICustomBlock;
+import gg.projecteden.nexus.features.customblocks.models.common.ICustomBlock.PistonPushAction;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.ICustomNoteBlock;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.common.ICustomTripwire;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.models.customblock.CustomBlockData;
 import gg.projecteden.nexus.models.customblock.CustomNoteBlockData;
+import gg.projecteden.nexus.models.customblock.CustomTripwireData;
 import gg.projecteden.nexus.models.customblock.NoteBlockData;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.GameModeWrapper;
@@ -17,10 +20,8 @@ import gg.projecteden.nexus.utils.NMSUtils.SoundType;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import me.lexikiq.event.sound.LocationNamedSoundEvent;
-import org.bukkit.Instrument;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Note;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
@@ -55,6 +56,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
@@ -270,18 +272,16 @@ public class CustomBlocksListener implements Listener {
 		}
 
 		Location location = block.getLocation();
-		CustomBlockUtils.breakBlockDatabase(location);
+		_customBlock.breakBlock(location, false);
 
 		// change drops
 		event.setDropItems(false);
 
-		if (_customBlock.isNoteBlock()) {
-			ICustomNoteBlock iCustomNoteBlock = _customBlock.getNoteBlock();
-			for (ItemStack drop : block.getDrops()) {
-				if (drop.getType().equals(Material.NOTE_BLOCK)) {
-					if (!GameModeWrapper.of(event.getPlayer()).isCreative())
-						location.getWorld().dropItemNaturally(location, iCustomNoteBlock.getItemStack());
-				}
+		ItemStack newDrop = _customBlock.get().getItemStack();
+		for (ItemStack drop : block.getDrops()) {
+			if (drop.getType().equals(newDrop.getType())) {
+				if (!GameModeWrapper.of(event.getPlayer()).isCreative())
+					location.getWorld().dropItemNaturally(location, newDrop);
 			}
 		}
 	}
@@ -329,19 +329,20 @@ public class CustomBlocksListener implements Listener {
 		}
 	}
 
+	Set<Material> handleMaterials = Set.of(Material.NOTE_BLOCK, Material.TRIPWIRE);
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void on(BlockPhysicsEvent event) {
 		Block eventBlock = event.getBlock();
 		Material material = eventBlock.getType();
-		if (material == Material.NOTE_BLOCK) {
+		if (handleMaterials.contains(material)) {
 			resetBlockData(eventBlock);
 			eventBlock.getState().update(true, false);
 		}
 
 		Block aboveBlock = eventBlock.getRelative(BlockFace.UP);
-		if (aboveBlock.getType().equals(Material.NOTE_BLOCK)) {
+		if (handleMaterials.contains(aboveBlock.getType())) {
 
-			while (aboveBlock.getType() == Material.NOTE_BLOCK) {
+			while (handleMaterials.contains(aboveBlock.getType())) {
 				resetBlockData(aboveBlock);
 
 				// Leave this as (true, true) -> (true, false) will crash the server
@@ -387,13 +388,20 @@ public class CustomBlocksListener implements Listener {
 			if (_customBlock == null)
 				continue;
 
-			if (_customBlock.isTripwire())
-				continue;
-
-			ICustomNoteBlock customNoteBlock = _customBlock.getNoteBlock();
-			if (!customNoteBlock.isPistonPushable()) {
-				debug("PistonEvent: " + _customBlock.name() + " cannot be moved by pistons");
-				return false;
+			ICustomBlock customBlock = _customBlock.get();
+			PistonPushAction pistonAction = customBlock.getPistonPushedAction();
+			if (!pistonAction.equals(PistonPushAction.MOVE)) {
+				switch (pistonAction) {
+					case PREVENT -> {
+						debug("PistonEvent: " + _customBlock.name() + " cannot be moved by pistons");
+						return false;
+					}
+					case BREAK -> {
+						debug("PistonEvent: " + _customBlock.name() + " broke because of a piston");
+						_customBlock.breakBlock(block, true);
+						continue;
+					}
+				}
 			}
 
 			Location curLoc = block.getLocation().toBlockLocation();
@@ -414,31 +422,38 @@ public class CustomBlocksListener implements Listener {
 			return;
 
 		CustomBlock _customBlock = data.getCustomBlock();
-		if (_customBlock == null || _customBlock.get() == null) {
+		if (_customBlock == null)
 			return;
-		}
+
+		ICustomBlock customBlock = _customBlock.get();
 
 		if (blockData instanceof NoteBlock noteBlock) {
-			Instrument instrument;
-			Note note;
-			boolean powered = noteBlock.isPowered();
-
-			ICustomNoteBlock customNoteBlock = _customBlock.getNoteBlock();
 			BlockFace facing = ((CustomNoteBlockData) data.getExtraData()).getFacing();
 
-			instrument = customNoteBlock.getNoteBlockInstrument(facing);
-			note = customNoteBlock.getNoteBlockNote(facing);
+			ICustomNoteBlock customNoteBlock = (ICustomNoteBlock) customBlock;
+
+			boolean powered = noteBlock.isPowered();
+			noteBlock = (NoteBlock) customNoteBlock.getBlockData(facing);
+			noteBlock.setPowered(powered);
 
 			NoteBlockData noteBlockData = ((CustomNoteBlockData) data.getExtraData()).getNoteBlockData();
 			noteBlockData.setPowered(powered);
 
-			noteBlock.setInstrument(instrument);
-			noteBlock.setNote(note);
-			noteBlock.setPowered(powered);
 			block.setBlockData(noteBlock, false);
 		} else if (blockData instanceof Tripwire tripwire) {
-			// TODO
-			debug("(TODO) ResetBlockData - Tripwire");
+			BlockFace facing = ((CustomTripwireData) data.getExtraData()).getFacing();
+
+			ICustomTripwire customTripwire = (ICustomTripwire) customBlock;
+
+			boolean powered = customTripwire.isPowered(facing);
+			if (customTripwire.isIgnorePowered()) {
+				powered = tripwire.isPowered();
+			}
+
+			tripwire = (Tripwire) customBlock.getBlockData(facing);
+			tripwire.setPowered(powered);
+
+			block.setBlockData(tripwire, false);
 		}
 	}
 

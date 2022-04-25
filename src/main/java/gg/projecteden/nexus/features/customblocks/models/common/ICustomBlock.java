@@ -3,6 +3,8 @@ package gg.projecteden.nexus.features.customblocks.models.common;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.NonNull;
 import org.bukkit.Material;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.inventory.ItemStack;
 
 public interface ICustomBlock {
@@ -28,13 +30,31 @@ public interface ICustomBlock {
 	}
 
 	default @NonNull ItemStack getItemStack() {
-		return getItemBuilder().build();
+		return getItemBuilder().build().clone();
 	}
 
 	// Misc
-	default boolean isPistonPushable() {
-		return getCustomBlockConfig().isPistonPushable();
+	default PistonPushAction getPistonPushedAction() {
+		return getCustomBlockConfig().getPistonPushedAction();
 	}
 
+	enum PistonPushAction {
+		MOVE,
+		PREVENT,
+		BREAK
+	}
 
+	// Sounds
+	@NonNull String getBreakSound();
+
+	@NonNull String getPlaceSound();
+
+	@NonNull String getStepSound();
+
+	@NonNull String getHitSound();
+
+	@NonNull String getFallSound();
+
+	// Blockdata
+	BlockData getBlockData(BlockFace facing);
 }

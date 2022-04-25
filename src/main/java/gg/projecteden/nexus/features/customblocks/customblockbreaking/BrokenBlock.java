@@ -1,8 +1,6 @@
 package gg.projecteden.nexus.features.customblocks.customblockbreaking;
 
-import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.NMSUtils;
-import gg.projecteden.nexus.utils.NMSUtils.SoundType;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.utils.MathUtils;
 import lombok.Data;
@@ -83,12 +81,10 @@ public class BrokenBlock {
 
 	public void breakBlock(Player breaker) {
 		resetBreakPacket();
-		BlockUtils.playSound(SoundType.BREAK, this.block);
 		CustomBlockBreaking.getManager().removeBrokenBlock(this);
 
-		if (breaker == null)
-			return;
-		BlockBreakingUtils.sendBreakBlock(breaker, this.block);
+		if (breaker != null)
+			BlockBreakingUtils.sendBreakBlock(breaker, this.block);
 	}
 
 	public void resetBreakPacket() {

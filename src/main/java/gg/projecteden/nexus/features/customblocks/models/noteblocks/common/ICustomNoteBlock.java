@@ -7,6 +7,8 @@ import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.Sound;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.type.NoteBlock;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
@@ -29,58 +31,7 @@ public interface ICustomNoteBlock extends ICustomBlock {
 		return getNoteBlockConfig().step();
 	}
 
-	//
-
-	default @NonNull String getBreakSound() {
-		Sound sound = getNoteBlockConfig().breakSound();
-		String customSound = sound.getKey().getKey();
-		if (sound.equals(Sound.MUSIC_GAME)) {
-			customSound = getNoteBlockConfig().customBreakSound();
-		}
-
-		return customSound;
-	}
-
-	default @NonNull String getPlaceSound() {
-		Sound sound = getNoteBlockConfig().placeSound();
-		String customSound = sound.getKey().getKey();
-		if (sound.equals(Sound.MUSIC_GAME)) {
-			customSound = getNoteBlockConfig().customPlaceSound();
-		}
-
-		return customSound;
-	}
-
-	default @NonNull String getStepSound() {
-		Sound sound = getNoteBlockConfig().stepSound();
-		String customSound = sound.getKey().getKey();
-		if (sound.equals(Sound.MUSIC_GAME)) {
-			customSound = getNoteBlockConfig().customStepSound();
-		}
-
-		return customSound;
-	}
-
-	default @NonNull String getHitSound() {
-		Sound sound = getNoteBlockConfig().hitSound();
-		String customSound = sound.getKey().getKey();
-		if (sound.equals(Sound.MUSIC_GAME)) {
-			customSound = getNoteBlockConfig().customHitSound();
-		}
-
-		return customSound;
-	}
-
-	default @NonNull String getFallSound() {
-		Sound sound = getNoteBlockConfig().fallSound();
-		String customSound = sound.getKey().getKey();
-		if (sound.equals(Sound.MUSIC_GAME)) {
-			customSound = getNoteBlockConfig().customFallSound();
-		}
-
-		return customSound;
-	}
-
+	// Directional
 	Set<BlockFace> directions = Set.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST);
 
 	default Instrument getNoteBlockInstrument(@Nullable BlockFace facing) {
@@ -117,5 +68,70 @@ public interface ICustomNoteBlock extends ICustomBlock {
 
 	default Note getNoteBlockNote(BlockFace facing) {
 		return new Note(this.getNoteBlockStep(facing));
+	}
+
+	// Sounds
+
+	@Override
+	default @NonNull String getBreakSound() {
+		Sound sound = getNoteBlockConfig().breakSound();
+		String customSound = sound.getKey().getKey();
+		if (sound.equals(Sound.MUSIC_GAME)) {
+			customSound = getNoteBlockConfig().customBreakSound();
+		}
+
+		return customSound;
+	}
+
+	@Override
+	default @NonNull String getPlaceSound() {
+		Sound sound = getNoteBlockConfig().placeSound();
+		String customSound = sound.getKey().getKey();
+		if (sound.equals(Sound.MUSIC_GAME)) {
+			customSound = getNoteBlockConfig().customPlaceSound();
+		}
+
+		return customSound;
+	}
+
+	@Override
+	default @NonNull String getStepSound() {
+		Sound sound = getNoteBlockConfig().stepSound();
+		String customSound = sound.getKey().getKey();
+		if (sound.equals(Sound.MUSIC_GAME)) {
+			customSound = getNoteBlockConfig().customStepSound();
+		}
+
+		return customSound;
+	}
+
+	@Override
+	default @NonNull String getHitSound() {
+		Sound sound = getNoteBlockConfig().hitSound();
+		String customSound = sound.getKey().getKey();
+		if (sound.equals(Sound.MUSIC_GAME)) {
+			customSound = getNoteBlockConfig().customHitSound();
+		}
+
+		return customSound;
+	}
+
+	@Override
+	default @NonNull String getFallSound() {
+		Sound sound = getNoteBlockConfig().fallSound();
+		String customSound = sound.getKey().getKey();
+		if (sound.equals(Sound.MUSIC_GAME)) {
+			customSound = getNoteBlockConfig().customFallSound();
+		}
+
+		return customSound;
+	}
+
+	@Override
+	default BlockData getBlockData(BlockFace facing) {
+		NoteBlock noteBlock = (NoteBlock) getBlockMaterial().createBlockData();
+		noteBlock.setInstrument(getNoteBlockInstrument(facing));
+		noteBlock.setNote(getNoteBlockNote(facing));
+		return noteBlock;
 	}
 }

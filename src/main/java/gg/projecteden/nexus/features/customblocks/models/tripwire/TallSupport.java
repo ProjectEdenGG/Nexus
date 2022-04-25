@@ -6,7 +6,7 @@ import gg.projecteden.nexus.features.customblocks.models.tripwire.common.ICustom
 
 @CustomBlockConfig(
 	name = "Tall Support",
-	modelId = 21001 // TODO
+	modelId = 21100
 )
 @CustomTripwireConfig(
 	north_NS = false,
