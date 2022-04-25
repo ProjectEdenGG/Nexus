@@ -3,8 +3,9 @@ package gg.projecteden.nexus.features.commands.staff.admin;
 import com.gmail.nossr50.datatypes.player.PlayerProfile;
 import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
 import com.gmail.nossr50.mcMMO;
-import com.griefcraft.cache.ProtectionCache;
+import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
+import com.griefcraft.sql.PhysDB;
 import gg.projecteden.annotations.Sync;
 import gg.projecteden.mongodb.annotations.Service;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -328,15 +329,15 @@ public class AccountTransferCommand extends CustomCommand {
 	static class LWCTransferer implements Transferer {
 		@Override
 		public void transfer(OfflinePlayer old, OfflinePlayer target) {
-			final ProtectionCache protectionCache = com.griefcraft.lwc.LWC.getInstance().getProtectionCache();
+			final PhysDB database = LWC.getInstance().getPhysicalDatabase();
 			final LWCProtectionService service = new LWCProtectionService();
 			final List<LWCProtection> oldProtections = service.getPlayerProtections(old.getUniqueId());
 
 			for (LWCProtection oldProtection : oldProtections) {
-				Protection protectionById = protectionCache.getProtectionById(oldProtection.getId());
+				Protection protectionById = database.loadProtection(oldProtection.getId());
 				if (protectionById != null) {
 					protectionById.setOwner(target.getUniqueId().toString());
-					protectionById.save();
+					protectionById.saveNow();
 				}
 			}
 		}
