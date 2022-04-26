@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.store.perks;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
@@ -35,7 +34,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import java.text.DecimalFormat;
 
 import static gg.projecteden.nexus.features.store.perks.RainbowArmorCommand.PERMISSION;
-import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
+import static gg.projecteden.utils.RandomUtils.randomLong;
 
 @NoArgsConstructor
 @Permission(PERMISSION)
@@ -57,7 +56,7 @@ public class RainbowArmorCommand extends CustomCommand implements Listener {
 	static {
 		for (RainbowArmor rainbowArmor : new RainbowArmorService().getOnline())
 			if (rainbowArmor.isEnabled())
-				Tasks.wait(randomInt(0, TickTime.SECOND.x(12)), rainbowArmor::start);
+				Tasks.wait(randomLong(0, TickTime.SECOND.x(12)), rainbowArmor::start);
 	}
 
 	@Path

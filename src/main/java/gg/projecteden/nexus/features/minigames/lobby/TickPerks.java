@@ -52,7 +52,7 @@ public class TickPerks implements Listener {
 	// i'm intentionally not using CooldownService because I need reliability down to the tick to prevent things like
 	// infinite height from the SpringGadget and I don't care about preserving cooldowns through reloads (too short for
 	// it to matter)
-	private static final Map<CooldownWrapper, Integer> cooldowns = new HashMap<>();
+	private static final Map<CooldownWrapper, Long> cooldowns = new HashMap<>();
 
 	public TickPerks() {
 		Nexus.registerListener(this);
@@ -123,7 +123,7 @@ public class TickPerks implements Listener {
 
 		// tick cooldowns
 		Tasks.repeat(5, 1, () -> new HashSet<>(cooldowns.entrySet()).forEach(entry -> {
-			int ticks = entry.getValue();
+			long ticks = entry.getValue();
 			ticks -= 1;
 			if (ticks <= 0)
 				cooldowns.remove(entry.getKey());
@@ -185,7 +185,7 @@ public class TickPerks implements Listener {
 
 		if (perk.getCooldown() > 0) {
 			CooldownWrapper wrapper = CooldownWrapper.of(player, perk);
-			int ticks = cooldowns.getOrDefault(wrapper, 0);
+			long ticks = cooldowns.getOrDefault(wrapper, 0L);
 			if (ticks > 0) {
 				player.sendActionBar(colorize("&eThat gadget is on cooldown for " + (int) Math.ceil(ticks / 20d) + "s"));
 				event.setCancelled(true);

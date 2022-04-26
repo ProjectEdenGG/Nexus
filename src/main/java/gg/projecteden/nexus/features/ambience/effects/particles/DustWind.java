@@ -22,7 +22,7 @@ public class DustWind extends ParticleEffect {
 	private double y;
 	private double z;
 
-	private static final int LIFE = TickTime.SECOND.x(3);
+	private static final long LIFE = TickTime.SECOND.x(3);
 
 	public DustWind(AmbienceUser user, Block block, double chance) {
 		super(user, ParticleEffectType.DUST_WIND, Particle.ITEM_CRACK, LIFE, chance);

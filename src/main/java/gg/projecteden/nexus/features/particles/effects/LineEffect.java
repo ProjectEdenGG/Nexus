@@ -23,7 +23,7 @@ public class LineEffect {
 	private int taskId;
 
 	@Builder(buildMethodName = "start")
-	public LineEffect(ParticleOwner owner, HumanEntity entity, Location startLoc, Location endLoc, Particle particle, int count, double density, int ticks, double speed,
+	public LineEffect(ParticleOwner owner, HumanEntity entity, Location startLoc, Location endLoc, Particle particle, int count, double density, long ticks, double speed,
 					  boolean rainbow, float dustSize, Color color, double disX, double disY, double disZ,
 					  double distance, double maxLength, int startDelay, int pulseDelay) {
 
@@ -86,7 +86,7 @@ public class LineEffect {
 		double finalSpeed = speed;
 		Location finalStart = startLoc;
 		Particle finalParticle = particle;
-		int finalTicks = ticks;
+		long finalTicks = ticks;
 		double finalDiff = diff;
 		double finalMaxLength = maxLength;
 		AtomicInteger ticksElapsed = new AtomicInteger(0);

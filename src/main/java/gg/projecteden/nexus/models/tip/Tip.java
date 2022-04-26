@@ -76,7 +76,7 @@ public class Tip implements PlayerOwnedObject {
 		@Getter
 		private final int retryChance;
 		@Getter
-		private int cooldown;
+		private long cooldown;
 		@Getter
 		private Predicate<Player> predicate;
 
@@ -84,7 +84,7 @@ public class Tip implements PlayerOwnedObject {
 			this.retryChance = retryChance;
 		}
 
-		TipType(int retryChance, int cooldown) {
+		TipType(int retryChance, long cooldown) {
 			this.retryChance = retryChance;
 			this.cooldown = cooldown;
 		}
@@ -93,7 +93,7 @@ public class Tip implements PlayerOwnedObject {
 			this(retryChance, cooldown.get(), predicate);
 		}
 
-		TipType(int retryChance, int cooldown, Predicate<Player> predicate) {
+		TipType(int retryChance, long cooldown, Predicate<Player> predicate) {
 			this.retryChance = retryChance;
 			this.cooldown = cooldown;
 			this.predicate = predicate;

@@ -108,9 +108,9 @@ public abstract class NexusAppCommand extends AppCommand {
 		AppCommandRegistry.registerConverter(LocalDateTime.class, argument -> {
 			final String input = argument.getInput();
 			if (input.startsWith("+"))
-				return LocalDateTime.now().plusSeconds(Timespan.of(input.replaceFirst("\\+", "")).getOriginal());
+				return Timespan.of(input.replaceFirst("\\+", "")).fromNow();
 			if (input.startsWith("-"))
-				return LocalDateTime.now().minusSeconds(Timespan.of(input.replaceFirst("-", "")).getOriginal());
+				return Timespan.of(input.replaceFirst("-", "")).sinceNow();
 
 			return parseDateTime(input);
 		});
@@ -118,9 +118,9 @@ public abstract class NexusAppCommand extends AppCommand {
 		AppCommandRegistry.registerConverter(LocalDate.class, argument -> {
 			final String input = argument.getInput();
 			if (input.startsWith("+"))
-				return LocalDate.now().plusDays(Timespan.of(input.replaceFirst("\\+", "")).getOriginal() / 86400);
+				return Timespan.of(input.replaceFirst("\\+", "")).fromNow();
 			if (input.startsWith("-"))
-				return LocalDate.now().plusDays(Timespan.of(input.replaceFirst("-", "")).getOriginal() / 86400);
+				return Timespan.of(input.replaceFirst("-", "")).sinceNow();
 
 			return parseDate(input);
 		});

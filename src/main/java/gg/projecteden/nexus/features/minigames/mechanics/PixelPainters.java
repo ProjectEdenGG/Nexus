@@ -154,7 +154,7 @@ public class PixelPainters extends TeamlessMechanic {
 				lines.put("&1", 0);
 				lines.put("&2&fRound: &c" + matchData.getCurrentRound() + "&f/&c" + MAX_ROUNDS, 0);
 
-				int timeLeft = matchData.getTimeLeft();
+				long timeLeft = matchData.getTimeLeft();
 				if (timeLeft <= 0)
 					lines.put("&3&fNext Round In: &c", 0);
 				else
@@ -170,7 +170,7 @@ public class PixelPainters extends TeamlessMechanic {
 
 					lines.put("&2", 0);
 
-					int timeLeft = matchData.getTimeLeft();
+					long timeLeft = matchData.getTimeLeft();
 					if (timeLeft <= 0)
 						lines.put("&3&fTime Left: ", 0);
 					else

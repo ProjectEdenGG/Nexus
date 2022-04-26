@@ -143,7 +143,7 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 		Set<Node> nodes = web.getNodes();
 		Node endNode = RandomUtils.randomElement(nodes);
 
-		int ticks = TickTime.SECOND.x(5);
+		long ticks = TickTime.SECOND.x(5);
 		wait = 0;
 
 		startNode.getPathLocation().getBlock().setType(Material.RED_CONCRETE);

@@ -374,7 +374,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Interval set to " + seconds + " seconds (will reset when plugin reloads)");
 	}
 
-	private static int interval = TickTime.MINUTE.x(5);
+	private static long interval = TickTime.MINUTE.x(5);
 	private static int taskId = -1;
 
 	static {

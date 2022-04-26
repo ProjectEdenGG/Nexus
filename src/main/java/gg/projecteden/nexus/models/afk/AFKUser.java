@@ -189,7 +189,7 @@ public class AFKUser implements PlayerOwnedObject {
 		return !isTimeAfk();
 	}
 
-	public boolean hasBeenAfkFor(int ticks) {
+	public boolean hasBeenAfkFor(long ticks) {
 		return time != null && time.isBefore(LocalDateTime.now().minusSeconds(ticks / 20));
 	}
 

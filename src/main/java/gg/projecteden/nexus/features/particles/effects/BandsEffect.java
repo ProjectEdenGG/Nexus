@@ -21,7 +21,7 @@ public class BandsEffect {
 	private int taskId;
 
 	@Builder(buildMethodName = "start")
-	public BandsEffect(HumanEntity player, Particle particle, boolean rainbow, Color color, int ticks, double speed,
+	public BandsEffect(HumanEntity player, Particle particle, boolean rainbow, Color color, long ticks, double speed,
 					   double disX, double disY, double disZ, int startDelay, int pulseDelay) {
 
 		if (player == null) throw new InvalidInputException("No player was provided");
@@ -51,7 +51,7 @@ public class BandsEffect {
 
 		double finalSpeed = speed;
 		int finalCount = count;
-		int finalTicks = ticks;
+		long finalTicks = ticks;
 		Particle finalParticle = particle;
 		final AtomicDouble hue = new AtomicDouble(0);
 		final AtomicInteger red = new AtomicInteger((int) disX);

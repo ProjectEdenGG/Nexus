@@ -83,7 +83,7 @@ public class CommandsConfig implements PlayerOwnedObject {
 		private Set<String> aliases = new HashSet<>();
 		private Set<CommandPath> paths = new HashSet<>();
 		private boolean confirmationMenu;
-		private int cooldown;
+		private long cooldown;
 		private boolean cooldownGlobal;
 		private String cooldownBypass;
 		private boolean enabled = true;
@@ -147,7 +147,7 @@ public class CommandsConfig implements PlayerOwnedObject {
 			private String path;
 			private String description, descriptionExtra, permission;
 			private boolean async;
-			private int cooldown;
+			private long cooldown;
 			private boolean cooldownGlobal;
 			private String cooldownBypass;
 			private Set<CommandPathArgument> arguments = new HashSet<>();

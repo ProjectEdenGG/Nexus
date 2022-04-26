@@ -24,7 +24,7 @@ public class StarEffect {
 
 	@Builder(buildMethodName = "start")
 	StarEffect(HumanEntity player, Location location, boolean updateLoc, Vector updateVector, Particle particle, boolean rotate, double rotateSpeed,
-			   boolean rainbow, Color color, int count, int density, double radius, int ticks, double speed, double growthSpeed,
+			   boolean rainbow, Color color, int count, int density, double radius, long ticks, double speed, double growthSpeed,
 			   double disX, double disY, double disZ, int startDelay, int pulseDelay) {
 
 		if (player != null && location == null)
@@ -76,7 +76,7 @@ public class StarEffect {
 
 		int finalCount = count;
 		double finalSpeed = speed;
-		int finalTicks = ticks;
+		long finalTicks = ticks;
 		Particle finalParticle = particle;
 		Location finalLocation = location;
 		boolean finalUpdateLoc = updateLoc;

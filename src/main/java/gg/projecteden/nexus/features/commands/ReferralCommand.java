@@ -278,7 +278,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 
 	@Path("who has playtime <playtime> from <site> [page]")
 	void whoHasPlaytime(String playtime, @Arg(tabCompleter = ReferralSite.class) String subdomain, @Arg("1") int page) {
-		final long seconds = Timespan.of(playtime).getOriginal();
+		final long seconds = Timespan.of(playtime).getOriginal() / 1000;
 
 		List<Hours> players = getPlayersFrom(subdomain).stream()
 				.map(uuid -> new HoursService().get(uuid))

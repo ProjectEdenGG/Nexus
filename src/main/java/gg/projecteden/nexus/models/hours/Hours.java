@@ -47,7 +47,7 @@ public class Hours implements PlayerOwnedObject {
 		return has(time.get());
 	}
 
-	public boolean has(int ticks) {
+	public boolean has(long ticks) {
 		return getTotal() >= ticks / TickTime.SECOND.get();
 	}
 

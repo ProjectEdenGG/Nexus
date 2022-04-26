@@ -48,7 +48,7 @@ public class HoursCommand extends CustomCommand {
 		super(event);
 	}
 
-	private static final int DAY = TickTime.DAY.get() / 20;
+	private static final long DAY = TickTime.DAY.get() / 20;
 
 	@Async
 	@Path("[player]")

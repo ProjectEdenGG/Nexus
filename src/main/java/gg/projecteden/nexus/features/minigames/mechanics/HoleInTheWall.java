@@ -76,7 +76,7 @@ public class HoleInTheWall extends TeamlessMechanic {
 	public static final int TICK_DECREASE_EVERY_X_WALLS = 10;
 	public static final int BASE_EMPTY_BLOCKS = 4;
 	public static final int EXTRA_EMPTY_BLOCK_EVERY_X_WALLS = 3;
-	public static final int SKIP_BUTTON_COOLDOWN_IN_TICKS = TickTime.SECOND.x(3);
+	public static final long SKIP_BUTTON_COOLDOWN_IN_TICKS = TickTime.SECOND.x(3);
 
 	@Override
 	public void onInitialize(@NotNull MatchInitializeEvent event) {

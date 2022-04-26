@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,7 +20,7 @@ import static gg.projecteden.nexus.utils.CitizensUtils.isNPC;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 public class ActionBar {
-	private static final int DELAY = TickTime.SECOND.x(5);
+	private static final long DELAY = TickTime.SECOND.x(5);
 
 	private List<String> messages = new ArrayList<>() {{
 		add("&3You are currently in the &eMinigame Lobby&3!");
@@ -37,7 +37,7 @@ public class ActionBar {
 
 	public ActionBar() {
 		Tasks.repeat(5, messages.size() * DELAY, () -> {
-			AtomicInteger wait = new AtomicInteger(0);
+			AtomicLong wait = new AtomicLong(0);
 			messages.iterator().forEachRemaining(message ->
 					Tasks.wait(wait.getAndAdd(DELAY), () ->
 							Minigames.getWorld().getPlayers().forEach(player -> {

@@ -26,7 +26,7 @@ public class SpiralEffect {
 
 	@Builder(buildMethodName = "start")
 	public SpiralEffect(HumanEntity player, Location location, boolean updateLoc, Vector updateVector, Particle particle,
-						boolean rainbow, Color color, int count, double radius, int ticks, double speed,
+						boolean rainbow, Color color, int count, double radius, long ticks, double speed,
 						double disX, double disY, double disZ, int startDelay, int pulseDelay) {
 
 		if (player != null && location == null)
@@ -63,7 +63,7 @@ public class SpiralEffect {
 		double finalRadius = radius;
 		int finalCount = count;
 		double finalSpeed = speed;
-		int finalTicks = ticks;
+		long finalTicks = ticks;
 		Particle finalParticle = particle;
 		Location finalLocation = location;
 		boolean finalUpdateLoc = updateLoc;

@@ -112,11 +112,11 @@ public class BoostsCommand extends CustomCommand implements Listener {
 		new BoostMenu().open(player());
 	}
 
-	@Path("give <player> <type> <multiplier> <seconds> [amount]")
+	@Path("give <player> <type> <multiplier> <duration> [amount]")
 	@Permission(Group.ADMIN)
-	void give(Booster booster, Boostable type, double multiplier, Timespan seconds, @Arg("1") int amount) {
+	void give(Booster booster, Boostable type, double multiplier, Timespan duration, @Arg("1") int amount) {
 		for (int i = 0; i < amount; i++)
-			booster.add(type, multiplier, seconds.getOriginal());
+			booster.add(type, multiplier, duration.getOriginal() / 1000);
 		service.save(booster);
 
 		send(PREFIX + "Gave " + amount + " " + plural(camelCase(type) + " boost", amount) + " to " + booster.getNickname());
@@ -154,12 +154,12 @@ public class BoostsCommand extends CustomCommand implements Listener {
 	@Confirm
 	@Permission(Group.SENIOR_STAFF)
 	@Path("start <type> <multiplier> <duration>")
-	void start(Boostable type, double multiplier, int duration) {
+	void start(Boostable type, double multiplier, Timespan duration) {
 		if (config.hasBoost(type))
 			cancel(type, true);
 
 		Booster booster = service.get(Dev.KODA.getUuid());
-		Boost boost = booster.add(type, multiplier, duration);
+		Boost boost = booster.add(type, multiplier, duration.getOriginal() / 1000);
 		boost.activate();
 
 		service.save(booster);

@@ -28,7 +28,7 @@ public class FallingLeaves extends ParticleEffect {
 	private double y;
 	private double z;
 
-	public static final int LIFE = TickTime.SECOND.x(6);
+	public static final long LIFE = TickTime.SECOND.x(6);
 
 	public FallingLeaves(AmbienceUser user, Block block, double chance) {
 		super(user, ParticleEffectType.FALLING_LEAVES, Particle.FALLING_DUST, LIFE, chance);
