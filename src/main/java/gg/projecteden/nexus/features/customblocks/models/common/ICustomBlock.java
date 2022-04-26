@@ -59,6 +59,5 @@ public interface ICustomBlock {
 	// Blockdata
 	BlockData getBlockData(@NonNull BlockFace facing);
 
-
 	boolean equals(@NonNull BlockData blockData, @Nullable BlockFace facing);
 }

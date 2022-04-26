@@ -3,6 +3,8 @@ package gg.projecteden.nexus.features.customblocks.models.tripwire;
 import gg.projecteden.nexus.features.customblocks.models.common.CustomBlockConfig;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.CustomTripwireConfig;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.ICustomTripwire;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import lombok.NonNull;
 
 @CustomBlockConfig(
 	name = "Tripwire Cross",
@@ -18,4 +20,11 @@ import gg.projecteden.nexus.features.customblocks.models.tripwire.common.ICustom
 	powered_NS = false,
 	ignorePowered = true
 )
-public class TripwireCross implements ICustomTripwire {}
+public class TripwireCross implements ICustomTripwire {
+
+	@Override
+	public @NonNull ItemBuilder getItemBuilder() {
+		// same as CustomBlock.TRIPWIRE
+		return new ItemBuilder(itemMaterial).customModelData(21000).name("String");
+	}
+}

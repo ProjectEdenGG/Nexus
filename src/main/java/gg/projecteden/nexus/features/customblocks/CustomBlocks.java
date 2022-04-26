@@ -9,6 +9,7 @@ import java.util.List;
 
 /*
 	TODO:
+		- placing blocks on custom blocks is funky, rotates the normal block
 		- Tripwire implementation:
 			- Sounds --> probably same treatment as note/wood blocks
 				- place sound doesnt play
@@ -28,7 +29,6 @@ import java.util.List;
 		- Known issues:
 			- Custom blocks may flash when placing blocks near them (clientside only) --> Titan
 			- Players arm will swing on interact w/ custom blocks --> Titan
-
  */
 
 @Environments(Env.TEST)

@@ -153,7 +153,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -529,16 +531,30 @@ public enum CustomBlock implements Keyed {
 	}
 
 	public void dropItem(Location location) {
-		ItemStack itemStack = this.get().getItemStack();
-		if (this.equals(TRIPWIRE) || this.equals(TRIPWIRE_CROSS))
-			itemStack = new ItemStack(Material.STRING);
-
-		location.getWorld().dropItemNaturally(location, itemStack);
+		location.getWorld().dropItemNaturally(location, this.get().getItemStack());
 	}
 
 	public enum CustomBlockType {
-		UNKNOWN,
-		NOTE_BLOCK,
-		TRIPWIRE,
+		UNKNOWN(Material.AIR),
+		NOTE_BLOCK(Material.NOTE_BLOCK),
+		TRIPWIRE(Material.TRIPWIRE, Material.STRING),
+		;
+
+		@Getter
+		private final Set<Material> materials;
+
+		CustomBlockType(Material... materials) {
+			this.materials = new HashSet<>(List.of(materials));
+		}
+
+		public static Set<Material> getItemMaterials() {
+			Set<Material> result = new HashSet<>();
+			for (CustomBlockType type : values()) {
+				result.addAll(type.getMaterials());
+			}
+			return result;
+		}
 	}
+
+
 }

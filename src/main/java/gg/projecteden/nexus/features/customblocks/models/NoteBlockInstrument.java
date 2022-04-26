@@ -9,7 +9,6 @@ import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.type.NoteBlock;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -120,7 +119,7 @@ public enum NoteBlockInstrument {
 					return instrument;
 			} else {
 				if (belowType.equals(Material.NOTE_BLOCK)) {
-					CustomBlock belowCustomBlock = CustomBlock.fromBlockData((NoteBlock) below.getBlockData());
+					CustomBlock belowCustomBlock = CustomBlock.fromBlockData(below.getBlockData());
 					if (instrument.getCustomBlock() == belowCustomBlock)
 						return instrument;
 				}

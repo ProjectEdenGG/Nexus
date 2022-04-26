@@ -136,7 +136,7 @@ public class CustomBlocksListener implements Listener {
 		if (isNullOrAir(item))
 			return;
 
-		if (Material.NOTE_BLOCK != item.getType())
+		if (!CustomBlock.CustomBlockType.getItemMaterials().contains(item.getType()))
 			return;
 
 		Player player = (Player) event.getWhoClicked();

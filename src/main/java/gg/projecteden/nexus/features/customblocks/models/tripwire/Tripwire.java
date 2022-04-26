@@ -4,6 +4,8 @@ import gg.projecteden.nexus.features.customblocks.models.common.CustomBlockConfi
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.CustomTripwireConfig;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.DirectionalConfig;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.IDirectionalTripwire;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import lombok.NonNull;
 
 @CustomBlockConfig(
 	name = "Tripwire",
@@ -29,4 +31,10 @@ import gg.projecteden.nexus.features.customblocks.models.tripwire.common.IDirect
 	powered_EW = false,
 	ignorePowered = true
 )
-public class Tripwire implements IDirectionalTripwire {}
+public class Tripwire implements IDirectionalTripwire {
+
+	@Override
+	public @NonNull ItemBuilder getItemBuilder() {
+		return new ItemBuilder(itemMaterial).customModelData(getModelId()).name("String");
+	}
+}
