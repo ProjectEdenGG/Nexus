@@ -22,8 +22,8 @@ import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.models.warps.Warps.Warp;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.Timespan;
 import gg.projecteden.utils.TimeUtils.Timespan.FormatType;
+import gg.projecteden.utils.TimeUtils.Timespan.TimespanBuilder;
 import lombok.NonNull;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
@@ -145,7 +145,7 @@ public class HubCommand extends _WarpCommand {
 		send(PREFIX + "Fastest times for &e" + course.getName() + " &3course");
 
 		final BiFunction<CourseData, String, JsonBuilder> formatter = (run, index) ->
-			json("&3" + index + " &e" + run.getNickname() + " &7- " + Timespan.ofMillis(run.getBestRunTime()).format(FormatType.SHORT));
+			json("&3" + index + " &e" + run.getNickname() + " &7- " + TimespanBuilder.ofMillis(run.getBestRunTime()).displayMillis().build().format(FormatType.SHORT));
 
 		paginate(data, formatter, "/hub parkour top " + course.getName(), page);
 	}
