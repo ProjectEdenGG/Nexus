@@ -12,6 +12,7 @@ import gg.projecteden.mongodb.serializers.LocalDateTimeConverter;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.chat.Koda;
+import gg.projecteden.nexus.features.commands.BirthdaysCommand;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.Colored;
@@ -47,6 +48,7 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.Color;
 import java.io.File;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -135,6 +137,12 @@ public class Nerd extends gg.projecteden.mongodb.models.nerd.Nerd implements Pla
 		if (name.length() <= 16) // ignore "api-<uuid>" names
 			Name.put(uuid, name);
 		return name;
+	}
+
+	@Override
+	public void setBirthday(LocalDate birthday) {
+		Discord.staffLog("**[Birthdays]** " + getNickname() + "'s birthday " + (birthday == null ? "reset" : "set to " + BirthdaysCommand.getFormatter().format(birthday)));
+		super.setBirthday(birthday);
 	}
 
 	public boolean hasMoved() {
