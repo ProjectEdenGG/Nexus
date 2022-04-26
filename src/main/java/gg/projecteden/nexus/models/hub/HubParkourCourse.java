@@ -8,8 +8,8 @@ import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.hub.HubParkourUser.CourseData;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.utils.TimeUtils.Timespan;
 import gg.projecteden.utils.TimeUtils.Timespan.FormatType;
+import gg.projecteden.utils.TimeUtils.Timespan.TimespanBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -53,7 +53,7 @@ public class HubParkourCourse implements DatabaseObject {
 				setline = setline + "TBD";
 			else {
 				final CourseData run = data.get(i);
-				setline = setline + "%s &8- &e%s".formatted(run.getNickname(), Timespan.ofMillis(run.getBestRunTime()).format(FormatType.SHORT));
+				setline = setline + "%s &8- &e%s".formatted(run.getNickname(), TimespanBuilder.ofMillis(run.getBestRunTime()).displayMillis().build().format(FormatType.SHORT));
 			}
 
 			PlayerUtils.runCommandAsConsole(setline);
