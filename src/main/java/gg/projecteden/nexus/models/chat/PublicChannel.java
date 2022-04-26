@@ -76,7 +76,7 @@ public class PublicChannel implements Channel {
 			.next(" ")
 			.group()
 			.next(nerd.getChatFormat(viewer))
-			.next(" " + (isDiscord ? discordColor : color) + ChatColor.BOLD + "> " + getMessageColor());
+			.next(" " + (isDiscord ? getDiscordColor() : color) + ChatColor.BOLD + "> " + getMessageColor());
 
 		if (!Koda.is(nerd))
 			json.hover("&3Rank: " + nerd.getRank().getColoredName());
