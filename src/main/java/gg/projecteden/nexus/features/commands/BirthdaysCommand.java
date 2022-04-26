@@ -17,6 +17,7 @@ import gg.projecteden.nexus.models.scheduledjobs.jobs.BirthdaysRemoveRoleJob;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.utils.DiscordId.Role;
 import gg.projecteden.utils.DiscordId.TextChannel;
+import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -29,6 +30,7 @@ import static java.time.temporal.ChronoUnit.DAYS;
 @Description("View player birthdays")
 public class BirthdaysCommand extends CustomCommand {
 	private final NerdService service = new NerdService();
+	@Getter
 	private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d, yyyy");
 
 	public BirthdaysCommand(CommandEvent event) {
