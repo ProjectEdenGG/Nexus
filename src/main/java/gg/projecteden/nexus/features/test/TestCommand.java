@@ -18,6 +18,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.BiomeTag.BiomeClimateType;
 import gg.projecteden.nexus.utils.BlockUtils;
@@ -324,6 +325,17 @@ public class TestCommand extends CustomCommand implements Listener {
 	@Path("timespan <timespan> <formatType>")
 	void timespan(Timespan timespan, FormatType formatType) {
 		send(timespan.format(formatType));
+	}
+
+	@Path("affectsSpawning toggle [player]")
+	void affectsSpawning_toggle(@Arg("self") Player player) {
+		player.setAffectsSpawning(!player.getAffectsSpawning());
+		send(PREFIX + "&e" + Nickname.of(player) + " " + (player.getAffectsSpawning() ? "&ais now" : "&cis no longer" ) + " &3affecting mob spawns");
+	}
+
+	@Path("affectsSpawning status [player]")
+	void affectsSpawning_status(@Arg("self") Player player) {
+		send(PREFIX + "&e" + Nickname.of(player) + " " + (player.getAffectsSpawning() ? "&ais" : "&cis not" ) + " &3affecting mob spawns");
 	}
 
 	@Path("setTabListName <text...>")
