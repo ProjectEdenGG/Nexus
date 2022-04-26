@@ -44,7 +44,7 @@ public class SuggestAppCommand extends NexusAppCommand {
 
 		Hours hours = new HoursService().get(nerd);
 
-		String firstJoin = nerd.getFirstJoin().format(DateTimeFormatter.ofPattern("MMMM dd, yyyy"));
+		String firstJoin = nerd.getFirstJoin().format(DateTimeFormatter.ofPattern("MMMM d, yyyy"));
 		String hoursTotal = TimespanBuilder.ofSeconds(hours.getTotal()).noneDisplay(true).format();
 		String hoursMonthly = TimespanBuilder.ofSeconds(hours.getMonthly()).noneDisplay(true).format();
 		String history = "None";
