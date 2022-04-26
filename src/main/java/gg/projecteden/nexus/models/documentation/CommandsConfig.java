@@ -78,7 +78,7 @@ public class CommandsConfig implements PlayerOwnedObject {
 	@NoArgsConstructor
 	public static class CommandConfig {
 		@NonNull
-		private String plugin, command;
+		private String plugin, sourceLink, command;
 		private String description, descriptionExtra, permission;
 		private Set<String> aliases = new HashSet<>();
 		private Set<CommandPath> paths = new HashSet<>();
@@ -103,6 +103,7 @@ public class CommandsConfig implements PlayerOwnedObject {
 
 		public CommandConfig(Plugin plugin, CustomCommand command) {
 			this.plugin = plugin.getName();
+			this.sourceLink = "https://github.com/ProjectEdenGG/Nexus/blob/master/src/main/java/" + command.getClass().getName().replace(".", "/") + ".java";
 			this.command = command.getName().toLowerCase();
 
 			Class<? extends CustomCommand> clazz = command.getClass();
