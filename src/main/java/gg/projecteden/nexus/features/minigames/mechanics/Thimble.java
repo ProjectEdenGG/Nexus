@@ -412,7 +412,7 @@ public final class Thimble extends TeamlessMechanic {
 				.type(FireworkEffect.Type.BALL)
 				.color(ColorType.of(helmet.getType()).getBukkitColor())
 				.power(0)
-				.detonateAfter(1)
+				.detonateAfter(1L)
 				.launch();
 
 		minigamer.teleportAsync(((ThimbleArena) minigamer.getMatch().getArena()).getCurrentMap().getSpectateLocation());

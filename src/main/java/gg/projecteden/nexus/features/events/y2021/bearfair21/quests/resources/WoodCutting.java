@@ -41,6 +41,7 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.Utils.getMin;
+import static gg.projecteden.utils.RandomUtils.randomLong;
 import static gg.projecteden.utils.UUIDUtils.UUID0;
 
 public class WoodCutting implements Listener {
@@ -96,7 +97,7 @@ public class WoodCutting implements Listener {
 		@Getter
 		private final Map<Integer, ProtectedRegion> regions = new ConcurrentHashMap<>();
 
-		private static final int animationTime = TickTime.SECOND.x(3);
+		private static final long animationTime = TickTime.SECOND.x(3);
 
 		BearFair21TreeType(Material logs, Material... others) {
 			this.logs = logs;
@@ -215,7 +216,7 @@ public class WoodCutting implements Listener {
 				Queue<Location> queue = new PriorityQueue<>(queueCopy);
 
 				int wait = 0;
-				int blocksPerTick = Math.max(queue.size() / animationTime, 1);
+				long blocksPerTick = Math.max(queue.size() / animationTime, 1);
 
 				queueLoop:
 				while (true) {
@@ -232,7 +233,7 @@ public class WoodCutting implements Listener {
 				Tasks.wait(++wait, () -> treeAnimating = false);
 
 				Tasks.Countdown.builder()
-					.duration(randomInt(8, 12) * 4)
+					.duration(randomLong(8, 12) * 4)
 					.onTick(i -> {
 						if (i % 2 == 0)
 							PlayerUtils.giveItems(player, getDrops(ItemUtils.getTool(player)));

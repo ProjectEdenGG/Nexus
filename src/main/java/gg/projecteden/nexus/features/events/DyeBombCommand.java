@@ -127,7 +127,7 @@ public class DyeBombCommand extends CustomCommand implements Listener {
 		Location location = snowball.getLocation().subtract(vector);
 
 		FireworkLauncher firework = FireworkLauncher.random(location)
-			.detonateAfter(0)
+			.detonateAfter(0L)
 			.power(0)
 			.type(FireworkEffect.Type.BURST)
 			.colors(randomColors())

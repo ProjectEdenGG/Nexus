@@ -20,7 +20,7 @@ import java.util.Map;
 import static gg.projecteden.nexus.features.ambience.old.AmbientSounds.AmbientSoundType.UNDERGROUND;
 
 public class AmbientSounds extends Feature {
-	int startDelay = TickTime.SECOND.x(5);
+	private final static long startDelay = TickTime.SECOND.x(5);
 	//
 	private final static Map<Player, Integer> undergroundTaskMap = new HashMap<>();
 	private final static Sound undergroundLoop = Sound.AMBIENT_CRIMSON_FOREST_LOOP;

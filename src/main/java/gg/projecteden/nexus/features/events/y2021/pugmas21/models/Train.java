@@ -78,7 +78,7 @@ public class Train {
 	}
 
 	public static void schedule() {
-		final Supplier<Integer> delay = () -> TickTime.MINUTE.x(randomInt(5, 10));
+		final Supplier<Long> delay = () -> TickTime.MINUTE.x(randomInt(5, 10));
 
 		Tasks.wait(delay.get(), new AtomicReference<Runnable>() {{
 			set(() -> {

@@ -259,7 +259,7 @@ public class Sabotage extends TeamMechanic {
 					}
 				} else {
 					if (KILL_ITEM.get().isSimilar(inventory.getItem(3))) {
-						int killCooldown = matchData.getKillCooldown(minigamer);
+						long killCooldown = matchData.getKillCooldown(minigamer);
 						if (killCooldown != -1) {
 							if (killCooldown - 1 == 0)
 								matchData.getKillCooldowns().remove(minigamer.getUniqueId());

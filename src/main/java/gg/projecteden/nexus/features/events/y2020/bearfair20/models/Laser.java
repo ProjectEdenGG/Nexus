@@ -76,7 +76,7 @@ public class Laser {
 
 							// If the laser hits its target
 							if (blockType.equals(target)) {
-								FireworkLauncher.random(block.getLocation()).detonateAfter(10).launch();
+								FireworkLauncher.random(block.getLocation()).detonateAfter(10L).launch();
 							}
 
 							stopLaser(curLoc.get());

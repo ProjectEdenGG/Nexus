@@ -536,7 +536,7 @@ public abstract class ICustomCommand {
 				bypass = true;
 
 			if (!bypass) {
-				int ticks = cooldown.value().x(cooldown.x());
+				long ticks = cooldown.value().x(cooldown.x());
 
 				CooldownService service = new CooldownService();
 				UUID uuid = cooldown.global() ? UUID0 : ((Player) command.getEvent().getSender()).getUniqueId();

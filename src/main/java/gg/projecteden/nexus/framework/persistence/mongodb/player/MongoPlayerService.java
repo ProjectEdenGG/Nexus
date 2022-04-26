@@ -59,11 +59,11 @@ public abstract class MongoPlayerService<T extends PlayerOwnedObject> extends gg
 		}
 	}
 
-	public void queueSave(int delayTicks, T object) {
+	public void queueSave(long delayTicks, T object) {
 		Tasks.async(() -> queueSaveSync(delayTicks, object));
 	}
 
-	public void queueSaveSync(int delayTicks, T object) {
+	public void queueSaveSync(long delayTicks, T object) {
 		QueuedTask.builder()
 			.uuid(object.getUuid())
 			.type("mongo save " + object.getClass().getSimpleName())

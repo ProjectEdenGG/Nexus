@@ -19,7 +19,7 @@ public class Fireflies extends ParticleEffect {
 	private double z;
 	private static final int RANGE = 5;
 
-	public static final int LIFE = TickTime.SECOND.x(10);
+	public static final long LIFE = TickTime.SECOND.x(10);
 
 	public Fireflies(AmbienceUser user, Block block, double chance) {
 		super(user, ParticleEffectType.FIREFLIES, Particle.END_ROD, LIFE, chance);

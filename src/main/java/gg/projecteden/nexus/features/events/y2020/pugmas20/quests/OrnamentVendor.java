@@ -220,7 +220,7 @@ public class OrnamentVendor implements Listener {
 		@Getter
 		private final Map<Integer, ProtectedRegion> regions = new HashMap<>();
 
-		private static final int animationTime = TickTime.SECOND.x(3);
+		private static final long animationTime = TickTime.SECOND.x(3);
 
 		PugmasTreeType(Material logs, Material... others) {
 			this.logs = logs;
@@ -329,7 +329,7 @@ public class OrnamentVendor implements Listener {
 				Queue<Location> queue = new PriorityQueue<>(queueCopy);
 
 				int wait = 0;
-				int blocksPerTick = Math.max(queue.size() / animationTime, 1);
+				long blocksPerTick = Math.max(queue.size() / animationTime, 1);
 
 				queueLoop:
 				while (true) {

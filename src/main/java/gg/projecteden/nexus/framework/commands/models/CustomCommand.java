@@ -916,15 +916,20 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	@ConverterFor(LocalDate.class)
 	public LocalDate convertToLocalDate(String value) {
+		if (value.startsWith("+"))
+			return Timespan.of(value.replaceFirst("\\+", "")).fromNow().toLocalDate();
+		if (value.startsWith("-"))
+			return Timespan.of(value.replaceFirst("-", "")).sinceNow().toLocalDate();
+
 		return parseDate(value);
 	}
 
 	@ConverterFor(LocalDateTime.class)
 	public LocalDateTime convertToLocalDateTime(String value) {
 		if (value.startsWith("+"))
-			return LocalDateTime.now().plusSeconds(Timespan.of(value.replaceFirst("\\+", "")).getOriginal());
+			return Timespan.of(value.replaceFirst("\\+", "")).fromNow();
 		if (value.startsWith("-"))
-			return LocalDateTime.now().minusSeconds(Timespan.of(value.replaceFirst("-", "")).getOriginal());
+			return Timespan.of(value.replaceFirst("-", "")).sinceNow();
 
 		return parseDateTime(value);
 	}

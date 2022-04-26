@@ -43,6 +43,10 @@ public class PotionEffectBuilder implements Cloneable {
 		return this;
 	}
 
+	public PotionEffectBuilder duration(long duration){
+		return duration((int) duration);
+	}
+
 	public PotionEffectBuilder duration(int duration){
 		this.duration = duration;
 		return this;

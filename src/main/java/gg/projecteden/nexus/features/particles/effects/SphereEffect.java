@@ -23,7 +23,7 @@ public class SphereEffect {
 
 	@Builder(buildMethodName = "start")
 	public SphereEffect(HumanEntity player, Location location, boolean updateLoc, Vector updateVector, Particle particle,
-						boolean rainbow, Color color, int count, int density, double radius, int ticks, double speed,
+						boolean rainbow, Color color, int count, int density, double radius, long ticks, double speed,
 						double disX, double disY, double disZ, int startDelay, int pulseDelay) {
 
 		if (player != null && location == null)
@@ -60,7 +60,7 @@ public class SphereEffect {
 		double finalRadius = radius;
 		int finalCount = count;
 		double finalSpeed = speed;
-		int finalTicks = ticks;
+		long finalTicks = ticks;
 		Particle finalParticle = particle;
 		Location finalLocation = location;
 		boolean finalUpdateLoc = updateLoc;

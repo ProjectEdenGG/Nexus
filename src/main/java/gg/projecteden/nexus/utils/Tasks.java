@@ -138,15 +138,15 @@ public class Tasks {
 	}
 
 	public static class Countdown {
-		private final int duration;
+		private final long duration;
 		private final boolean doZero;
-		private final Consumer<Integer> onTick;
-		private final Consumer<Integer> onSecond;
+		private final Consumer<Long> onTick;
+		private final Consumer<Long> onSecond;
 		private final Runnable onStart;
 		private final Runnable onComplete;
 
 		@Builder(buildMethodName = "start")
-		public Countdown(int duration, boolean doZero, Consumer<Integer> onTick, Consumer<Integer> onSecond, Runnable onStart, Runnable onComplete) {
+		public Countdown(long duration, boolean doZero, Consumer<Long> onTick, Consumer<Long> onSecond, Runnable onStart, Runnable onComplete) {
 			this.duration = duration;
 			this.doZero = doZero;
 			this.onTick = onTick;
@@ -210,7 +210,7 @@ public class Tasks {
 	public static class GlowTask {
 
 		@Builder(buildMethodName = "start")
-		public GlowTask(int duration, Entity entity, GlowAPI.Color color, Runnable onComplete, List<? extends OptionalPlayer> viewers) {
+		public GlowTask(long duration, Entity entity, GlowAPI.Color color, Runnable onComplete, List<? extends OptionalPlayer> viewers) {
 			List<Player> pViewers = PlayerUtils.getNonNullPlayers(viewers);
 			GlowAPI.setGlowing(entity, color, pViewers);
 			Tasks.wait(duration, () -> GlowAPI.setGlowing(entity, false, pViewers));
@@ -239,8 +239,8 @@ public class Tasks {
 						if (!_player.isOnline())
 							countdown.get().stop();
 
-						int seconds = (ticks / 20) + 1;
-						_player.setLevel(seconds > 59 ? seconds / 60 : seconds);
+						long seconds = (ticks / 20) + 1;
+						_player.setLevel((int) (seconds > 59 ? seconds / 60 : seconds));
 						_player.setExp((float) ticks / duration);
 					})
 					.onComplete(() -> {
@@ -280,7 +280,7 @@ public class Tasks {
 				queue(delay.get());
 			}
 
-			public void queue(int delayTicks) {
+			public void queue(long delayTicks) {
 				_build().queue(delayTicks);
 			}
 
@@ -288,7 +288,7 @@ public class Tasks {
 
 		public static final Map<QueuedTask, Integer> QUEUE = new ConcurrentHashMap<>();
 
-		public void queue(int delayTicks) {
+		public void queue(long delayTicks) {
 			Runnable task = () -> {
 				synchronized (QUEUE) {
 					final Integer expectedTaskId = QUEUE.get(this);

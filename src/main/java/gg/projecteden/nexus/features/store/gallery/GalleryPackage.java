@@ -206,7 +206,7 @@ public enum GalleryPackage {
 				return;
 
 			FireworkLauncher.random(getLaunchLocation())
-				.detonateAfter(13)
+				.detonateAfter(13L)
 				.silent(true)
 				.launch();
 		}
@@ -465,7 +465,7 @@ public enum GalleryPackage {
 				return;
 
 			FireworkLauncher.random(getLaunchLocation())
-				.detonateAfter(13)
+				.detonateAfter(13L)
 				.silent(true)
 				.launch();
 		}
@@ -617,7 +617,7 @@ public enum GalleryPackage {
 		return cooldown(time.get());
 	}
 
-	protected boolean cooldown(int ticks) {
+	protected boolean cooldown(long ticks) {
 		return new CooldownService().check(UUID0, getRegionId(), ticks);
 	}
 

@@ -39,7 +39,7 @@ public class Dialog {
 		return new Dialog(interactable);
 	}
 
-	private Dialog instruction(Consumer<Quester> task, int delay) {
+	private Dialog instruction(Consumer<Quester> task, long delay) {
 		instructions.add(new Instruction(task, delay));
 		return this;
 	}
@@ -48,7 +48,7 @@ public class Dialog {
 	@AllArgsConstructor
 	public static class Instruction {
 		private final Consumer<Quester> task;
-		private final int delay;
+		private final long delay;
 	}
 
 	public Dialog npc(String message) {
@@ -75,7 +75,7 @@ public class Dialog {
 		return instruction(quester -> PlayerUtils.send(quester, message), calculateDelay(AdventureUtils.asPlainText(message)));
 	}
 
-	public Dialog wait(int ticks) {
+	public Dialog pause(long ticks) {
 		return instruction(null, ticks);
 	}
 

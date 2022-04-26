@@ -36,8 +36,8 @@ import gg.projecteden.nexus.utils.Tasks.QueuedTask;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.utils.TimeUtils.Timespan;
 import gg.projecteden.utils.TimeUtils.Timespan.FormatType;
-import gg.projecteden.utils.TimeUtils.Timespan.TimespanBuilder;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.citizensnpcs.api.npc.NPC;
@@ -321,9 +321,9 @@ public class TestCommand extends CustomCommand implements Listener {
 		send("Pasted schematic allowedRegionsTest");
 	}
 
-	@Path("timespanFormatter <seconds> <formatType>")
-	void timespanFormatter(int seconds, FormatType formatType) {
-		send(TimespanBuilder.ofSeconds(seconds).formatType(formatType).format());
+	@Path("timespan <timespan> <formatType>")
+	void timespan(Timespan timespan, FormatType formatType) {
+		send(timespan.format(formatType));
 	}
 
 	@Path("setTabListName <text...>")

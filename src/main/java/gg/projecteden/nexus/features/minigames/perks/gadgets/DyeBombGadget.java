@@ -46,7 +46,7 @@ public class DyeBombGadget implements GadgetPerk {
 	}
 
 	@Override
-	public int getCooldown() {
+	public long getCooldown() {
 		return TickTime.SECOND.x(2);
 	}
 

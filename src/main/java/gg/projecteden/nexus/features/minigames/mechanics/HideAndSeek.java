@@ -61,7 +61,7 @@ import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.StringUtils.plural;
 
 public class HideAndSeek extends Infection {
-	private static final int SOLIDIFY_PLAYER_AT = TickTime.SECOND.x(5);
+	private static final long SOLIDIFY_PLAYER_AT = TickTime.SECOND.x(5);
 
 	@Override
 	public @NotNull String getName() {

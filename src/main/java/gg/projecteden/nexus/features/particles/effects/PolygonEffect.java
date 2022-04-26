@@ -27,7 +27,7 @@ public class PolygonEffect {
 	@Builder(buildMethodName = "start")
 	public PolygonEffect(HumanEntity player, Location location, boolean updateLoc, Vector updateVector, Particle particle,
 						 Boolean whole, boolean rotate, double rotateSpeed, Polygon polygon,
-						 boolean rainbow, Color color, int count, double radius, int ticks, double speed,
+						 boolean rainbow, Color color, int count, double radius, long ticks, double speed,
 						 double disX, double disY, double disZ, int startDelay, int pulseDelay,
 						 boolean clientSide) {
 
@@ -72,7 +72,7 @@ public class PolygonEffect {
 		double finalRadius = radius;
 		int finalCount = count;
 		double finalSpeed = speed;
-		int finalTicks = ticks;
+		long finalTicks = ticks;
 		Particle finalParticle = particle;
 		Location finalLocation = location;
 		boolean finalUpdateLoc = updateLoc;

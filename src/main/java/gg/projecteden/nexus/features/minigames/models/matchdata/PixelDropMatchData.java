@@ -48,7 +48,7 @@ public class PixelDropMatchData extends MatchData {
 	private int wordTaskId;
 	private int currentRound;
 	private long roundStart;
-	private int timeLeft;
+	private long timeLeft;
 	private int roundCountdownId;
 	private boolean roundOver;
 

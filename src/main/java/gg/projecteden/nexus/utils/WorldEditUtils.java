@@ -405,7 +405,7 @@ public class WorldEditUtils {
 			}
 		}
 
-		private int ticks;
+		private long ticks;
 		private CompletableFuture<Map<Location, BlockData>> computedBlocks;
 
 		public Paster file(String fileName) {
@@ -487,7 +487,7 @@ public class WorldEditUtils {
 			return duration(time.get());
 		}
 
-		public Paster duration(int ticks) {
+		public Paster duration(long ticks) {
 			this.ticks = ticks;
 			return this;
 		}
@@ -586,8 +586,8 @@ public class WorldEditUtils {
 					queue.addAll(blocks.keySet());
 
 					int wait = 0;
-					int blocksPerTick = Math.max(queue.size() / ticks, 1);
-					int delay = Math.max(ticks / queue.size(), 1);
+					long blocksPerTick = Math.max(queue.size() / ticks, 1);
+					long delay = Math.max(ticks / queue.size(), 1);
 
 					queueLoop:
 					while (true) {

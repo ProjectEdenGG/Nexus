@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 @NoArgsConstructor
 public class Interactables {
@@ -35,7 +36,7 @@ public class Interactables {
 		int max = 7;
 		int limit = RandomUtils.randomInt(1, 7);
 		AtomicInteger count = new AtomicInteger();
-		AtomicInteger wait = new AtomicInteger(0);
+		AtomicLong wait = new AtomicLong(0);
 		AtomicBoolean breakBool = new AtomicBoolean(false);
 		for (Location location : lights) {
 			Tasks.wait(wait.get(), () -> {
