@@ -21,9 +21,7 @@ import gg.projecteden.utils.DiscordId.TextChannel;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.TextStyle;
 import java.util.List;
-import java.util.Locale;
 import java.util.function.BiFunction;
 
 import static java.time.temporal.ChronoUnit.DAYS;
@@ -54,7 +52,7 @@ public class BirthdaysCommand extends CustomCommand {
 			else
 				json.next("&7" + until + plural(" day", until));
 
-			return json.hover(nerd.getBirthday().format(DateTimeFormatter.ofPattern("MMMM dd, yyyy")));
+			return json.hover(nerd.getBirthday().format(DateTimeFormatter.ofPattern("MMMM d, yyyy")));
 		};
 
 		line();
@@ -64,9 +62,15 @@ public class BirthdaysCommand extends CustomCommand {
 
 	@Path("set <birthday> [player]")
 	void set(LocalDate birthday, @Arg(value = "self", permission = Group.SENIOR_STAFF) Nerd nerd) {
+		final String formatted = DateTimeFormatter.ofPattern("MMMM d, yyyy").format(birthday);
+
+		if (!isStaff())
+			if (nerd.getBirthday() != null)
+				error("You have already set your birthday to &e" + birthday + ". If it is incorrect, please ask a staff member to change it.");
+
 		nerd.setBirthday(birthday);
 		service.save(nerd);
-		send(PREFIX + (isSelf(nerd) ? "Your" : Nickname.of(nerd) + "'s") + " birthday has been set to &e" + birthday.getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault()) + " " + birthday.getDayOfMonth() + ", " + birthday.getYear());
+		send(PREFIX + (isSelf(nerd) ? "Your" : Nickname.of(nerd) + "'s") + " birthday has been set to &e" + formatted);
 	}
 
 	@Permission(Group.ADMIN)
