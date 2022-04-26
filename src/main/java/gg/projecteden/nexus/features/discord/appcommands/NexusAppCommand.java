@@ -19,10 +19,12 @@ import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.UUID;
 
+import static gg.projecteden.utils.TimeUtils.parseDate;
 import static gg.projecteden.utils.TimeUtils.parseDateTime;
 
 @GuildCommand("132680070480396288")
@@ -111,6 +113,16 @@ public abstract class NexusAppCommand extends AppCommand {
 				return LocalDateTime.now().minusSeconds(Timespan.of(input.replaceFirst("-", "")).getOriginal());
 
 			return parseDateTime(input);
+		});
+
+		AppCommandRegistry.registerConverter(LocalDate.class, argument -> {
+			final String input = argument.getInput();
+			if (input.startsWith("+"))
+				return LocalDate.now().plusDays(Timespan.of(input.replaceFirst("\\+", "")).getOriginal() / 86400);
+			if (input.startsWith("-"))
+				return LocalDate.now().plusDays(Timespan.of(input.replaceFirst("-", "")).getOriginal() / 86400);
+
+			return parseDate(input);
 		});
 
 		AppCommandRegistry.registerConverter(Timespan.class, argument -> Timespan.of(argument.getInput()));
