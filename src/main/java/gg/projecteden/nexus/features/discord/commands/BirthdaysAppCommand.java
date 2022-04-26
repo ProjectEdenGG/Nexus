@@ -53,7 +53,7 @@ public class BirthdaysAppCommand extends NexusAppCommand {
 
 		player.setBirthday(null);
 		service.save(player);
-		replyEphemeral("Unset " + player.getNickname() + "'s birthday");
+		replyEphemeral("Unset " + (isSelf(player) ? "your" : player.getNickname() + "'s") + " birthday");
 	}
 
 }
