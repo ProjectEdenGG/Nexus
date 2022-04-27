@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.warps.commands;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -55,6 +56,7 @@ public abstract class _WarpCommand extends CustomCommand {
 	}
 
 	@Path("(list|warps) [filter]")
+	@Description("List available warps")
 	public void list(@Arg(tabCompleter = Warp.class) String filter) {
 		checkPermission();
 		List<String> warps = tabCompleteWarp(filter);
@@ -76,6 +78,7 @@ public abstract class _WarpCommand extends CustomCommand {
 
 	@Path("(set|create) <name>")
 	@Permission(Group.STAFF)
+	@Description("Create a new warp")
 	public void set(@Arg(tabCompleter = Warp.class) String name) {
 		checkPermission();
 		Warp warp = getWarpType().get(name);
@@ -88,6 +91,7 @@ public abstract class _WarpCommand extends CustomCommand {
 	}
 
 	@Path("reset <name>")
+	@Description("Update a warp's location")
 	@Permission(Group.STAFF)
 	public void reset(@Arg(tabCompleter = Warp.class) String name) {
 		checkPermission();
@@ -98,6 +102,7 @@ public abstract class _WarpCommand extends CustomCommand {
 	}
 
 	@Path("(rm|remove|delete|del) <name>")
+	@Description("Delete a warp")
 	@Permission(Group.STAFF)
 	public void delete(Warp warp) {
 		checkPermission();
@@ -107,6 +112,7 @@ public abstract class _WarpCommand extends CustomCommand {
 	}
 
 	@Path("(teleport|tp|warp) <name>")
+	@Description("Teleport to a warp")
 	public void teleport(Warp warp) {
 		checkPermission();
 		if (warp == null)
@@ -116,18 +122,21 @@ public abstract class _WarpCommand extends CustomCommand {
 	}
 
 	@Path("<name>")
+	@Description("Teleport to a warp")
 	public void tp(Warp warp) {
 		checkPermission();
 		teleport(warp);
 	}
 
 	@Path("tp nearest")
+	@Description("Teleport to the nearest warp")
 	public void teleportNearest() {
 		checkPermission();
 		getNearestWarp(location()).ifPresent(this::teleport);
 	}
 
 	@Path("nearest")
+	@Description("View the nearest warp")
 	public void nearest() {
 		checkPermission();
 		Optional<Warp> warp = getNearestWarp(location());
