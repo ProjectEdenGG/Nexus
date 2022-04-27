@@ -7,10 +7,9 @@ import gg.projecteden.nexus.features.quests.interactable.Interactable;
 import gg.projecteden.nexus.features.quests.interactable.InteractableEntity;
 import gg.projecteden.nexus.features.quests.interactable.InteractableNPC;
 import gg.projecteden.nexus.features.quests.tasks.common.IQuestTask;
-import gg.projecteden.nexus.features.warps.commands._WarpCommand;
+import gg.projecteden.nexus.features.warps.commands._WarpSubCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -21,7 +20,6 @@ import gg.projecteden.nexus.models.quests.Quest;
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.models.quests.QuesterService;
 import gg.projecteden.nexus.models.warps.WarpType;
-import gg.projecteden.nexus.models.warps.Warps.Warp;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
@@ -33,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
-public abstract class IEventCommand extends _WarpCommand implements Listener {
+public abstract class IEventCommand extends _WarpSubCommand implements Listener {
 	@SuppressWarnings("FieldCanBeLocal")
 	private final QuesterService questerService = new QuesterService();
 	private Quester quester;
@@ -151,62 +149,6 @@ public abstract class IEventCommand extends _WarpCommand implements Listener {
 	@Override
 	public WarpType getWarpType() {
 		return getEdenEvent().getConfig().warpType();
-	}
-
-	@Path("warps (list|warps) [filter]")
-	@Description("List available warps")
-	@Permission(Group.STAFF)
-	public void list(@Arg(tabCompleter = Warp.class) String filter) {
-		super.list(filter);
-	}
-
-	@Path("warps (set|create) <name>")
-	@Description("Create a new warp")
-	@Permission(Group.STAFF)
-	public void set(@Arg(tabCompleter = Warp.class) String name) {
-		super.set(name);
-	}
-
-	@Path("warps reset <name>")
-	@Description("Update a warp's location")
-	@Permission(Group.STAFF)
-	public void reset(@Arg(tabCompleter = Warp.class) String name) {
-		super.reset(name);
-	}
-
-	@Path("warps (rm|remove|delete|del) <name>")
-	@Description("Delete a warp")
-	@Permission(Group.STAFF)
-	public void delete(Warp warp) {
-		super.delete(warp);
-	}
-
-	@Path("warps (teleport|tp|warp) <name>")
-	@Description("Teleport to a warp")
-	@Permission(Group.STAFF)
-	public void teleport(Warp warp) {
-		super.teleport(warp);
-	}
-
-	@Path("warps <name>")
-	@Description("Teleport to a warp")
-	@Permission(Group.STAFF)
-	public void tp(Warp warp) {
-		super.tp(warp);
-	}
-
-	@Path("warps tp nearest")
-	@Description("Teleport to the nearest warp")
-	@Permission(Group.STAFF)
-	public void teleportNearest() {
-		super.teleportNearest();
-	}
-
-	@Path("warps nearest")
-	@Description("View the nearest warp")
-	@Permission(Group.STAFF)
-	public void nearest() {
-		super.nearest();
 	}
 
 }
