@@ -26,7 +26,7 @@ import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 @EqualsAndHashCode(callSuper = true)
 @Async
 @Schedule("*/30 * * * *")
-public class BirthdaysAddRoleJob extends AbstractJob {
+public class BirthdayBeginJob extends AbstractJob {
 
 	@Override
 	protected CompletableFuture<JobStatus> run() {
