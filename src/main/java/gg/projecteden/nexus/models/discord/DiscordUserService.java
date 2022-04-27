@@ -31,17 +31,21 @@ public class DiscordUserService extends MongoPlayerService<DiscordUser> {
 	public DiscordUser getFromUserId(String userId) {
 		Query<DiscordUser> query = database.createQuery(DiscordUser.class);
 		query.and(query.criteria("userId").equalIgnoreCase(userId));
-		DiscordUser user = query.find().tryNext();
-		cache(user);
-		return user;
+		try (var cursor = query.find()) {
+			DiscordUser user = cursor.tryNext();
+			cache(user);
+			return user;
+		}
 	}
 
 	public DiscordUser getFromRoleId(String roleId) {
 		Query<DiscordUser> query = database.createQuery(DiscordUser.class);
 		query.and(query.criteria("roleId").equalIgnoreCase(roleId));
-		DiscordUser user = query.find().tryNext();
-		cache(user);
-		return user;
+		try (var cursor = query.find()) {
+			DiscordUser user = cursor.tryNext();
+			cache(user);
+			return user;
+		}
 	}
 
 }

@@ -19,7 +19,9 @@ public class InviteRewardsService extends MongoPlayerService<InviteRewards> {
 	public boolean hasBeenInvited(UUID uuid) {
 		Query<InviteRewards> query = database.createQuery(InviteRewards.class);
 		query.and(query.criteria("invited").hasThisOne(uuid.toString()));
-		return query.find().hasNext();
+		try (var cursor = query.find()) {
+			return cursor.hasNext();
+		}
 	}
 
 }

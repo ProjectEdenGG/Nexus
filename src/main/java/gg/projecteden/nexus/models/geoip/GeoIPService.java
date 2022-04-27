@@ -70,7 +70,9 @@ public class GeoIPService extends MongoPlayerService<GeoIP> {
 	}
 
 	public List<GeoIP> getAll() {
-		return database.createQuery(GeoIP.class).find().toList();
+		try (var cursor = database.createQuery(GeoIP.class).find()) {
+			return cursor.toList();
+		}
 	}
 
 	@Override

@@ -18,11 +18,14 @@ public class BearFair20UserService extends MongoPlayerService<BearFair20User> {
 	}
 
 	public List<BearFair20User> getTopPoints(int page) {
-		return database.createQuery(BearFair20User.class)
-				.order(Sort.descending("totalPoints"))
-				.limit(10)
-				.offset((page - 1) * 10)
-				.find().toList();
+		final var query = database.createQuery(BearFair20User.class)
+			.order(Sort.descending("totalPoints"))
+			.limit(10)
+			.offset((page - 1) * 10);
+
+		try (var cursor = query.find()) {
+			return cursor.toList();
+		}
 	}
 
 }
