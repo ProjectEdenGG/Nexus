@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.events.y2021.bearfair21.commands;
 
 import de.tr7zw.nbtapi.NBTItem;
+import gg.projecteden.annotations.Disabled;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.Quests;
@@ -38,6 +39,7 @@ import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.i
 import static gg.projecteden.nexus.features.events.y2021.bearfair21.islands.BearFair21Renderer.getRenderer;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
+@Disabled
 @Aliases("bf21map")
 @NoArgsConstructor
 @Permission(Group.ADMIN)
