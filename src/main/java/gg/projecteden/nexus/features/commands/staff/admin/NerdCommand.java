@@ -65,11 +65,6 @@ public class NerdCommand extends CustomCommand {
 		return Nerd.of(convertToOfflinePlayer(value));
 	}
 
-	@TabCompleterFor(Nerd.class)
-	List<String> tabCompleteNerd(String value) {
-		return tabCompletePlayer(value);
-	}
-
 	@ConverterFor(StaffMember.class)
 	StaffMember convertToStaffMember(String value) {
 		OfflinePlayer player = convertToOfflinePlayer(value);
