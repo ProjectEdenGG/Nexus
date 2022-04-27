@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.events.y2020.pugmas20.commands;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.annotations.Disabled;
 import gg.projecteden.annotations.Environments;
 import gg.projecteden.nexus.features.events.models.QuestStage;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.AdventChests;
@@ -59,6 +60,7 @@ import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.isSec
 import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.showWaypoint;
 import static gg.projecteden.nexus.features.events.y2020.pugmas20.models.QuestNPC.getUnplayedToysList;
 
+@Disabled
 @NoArgsConstructor
 @Environments(Env.PROD)
 //@Redirect(from = "/advent", to = "/pugmas advent")

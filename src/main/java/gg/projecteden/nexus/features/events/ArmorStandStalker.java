@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.events;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
+import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -22,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class ArmorStandStalker {
+public class ArmorStandStalker extends Feature {
 	// TODO Database
 	public static final List<Stalker> stalkers = new ArrayList<>() {{
 		switch (Nexus.getEnv()) {
@@ -63,7 +64,8 @@ public class ArmorStandStalker {
 		}
 	}};
 
-	public ArmorStandStalker() {
+	@Override
+	public void onStart() {
 		Tasks.repeat(TickTime.SECOND.x(5), TickTime.TICK.x(2), () -> {
 			for (Stalker stalker : stalkers) {
 				final Entity entity = stalker.getWorld().getEntity(stalker.getUuid());

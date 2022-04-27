@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.y2020.halloween20;
 
+import gg.projecteden.annotations.Disabled;
 import gg.projecteden.nexus.features.events.y2020.halloween20.models.ComboLockNumber;
 import gg.projecteden.nexus.features.events.y2020.halloween20.models.Pumpkin;
 import gg.projecteden.nexus.features.events.y2020.halloween20.models.QuestStage;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Disabled
 @Aliases("h20")
 public class Halloween20Command extends CustomCommand {
 

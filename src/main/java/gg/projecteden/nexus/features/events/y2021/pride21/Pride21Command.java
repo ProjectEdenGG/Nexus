@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.y2021.pride21;
 
+import gg.projecteden.annotations.Disabled;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -19,6 +20,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+@Disabled
 public class Pride21Command extends CustomCommand {
 	private static final Pride21UserService service = new Pride21UserService();
 

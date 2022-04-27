@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.events.y2021.pugmas21;
 
 import com.sk89q.worldedit.regions.Region;
+import gg.projecteden.annotations.Disabled;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.advent.Advent;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.advent.AdventAnimation;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.advent.AdventMenu;
@@ -59,6 +60,7 @@ import java.util.stream.Collectors;
 
 import static gg.projecteden.utils.TimeUtils.shortDateFormat;
 
+@Disabled
 @NoArgsConstructor
 @Aliases("pugmas")
 @Redirect(from = "/advent", to = "/pugmas21 advent")
