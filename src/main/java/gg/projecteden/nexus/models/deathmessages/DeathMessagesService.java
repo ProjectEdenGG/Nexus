@@ -21,7 +21,9 @@ public class DeathMessagesService extends MongoPlayerService<DeathMessages> {
 	public List<DeathMessages> getExpired() {
 		Query<DeathMessages> query = database.createQuery(DeathMessages.class);
 		query.and(query.criteria("expiration").lessThan(LocalDateTime.now()));
-		return query.find().toList();
+		try (var cursor = query.find()) {
+			return cursor.toList();
+		}
 	}
 
 }

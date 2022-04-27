@@ -43,7 +43,9 @@ public class PunishmentsService extends MongoPlayerService<Punishments> {
 			query.criteria("ipHistory.ip").hasAnyOf(ips)
 		);
 
-		return query.find().toList();
+		try (var cursor = query.find()) {
+			return cursor.toList();
+		}
 	}
 
 }
