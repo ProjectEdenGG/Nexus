@@ -67,11 +67,15 @@ public class BadgeUser implements PlayerOwnedObject {
 		owned.add(badge);
 	}
 
+	public void take(Badge badge) {
+		owned.remove(badge);
+	}
+
 	@Getter
 	@AllArgsConstructor
 	public enum Badge {
-		BOT("Bot", "\uE002", "&bʙᴏᴛ"),
-		SUPPORTER("Supporter", "\uD83D\uDC96", "&c❤"),
+		BOT("Bot", "", "&bʙᴏᴛ"),
+		SUPPORTER("Supporter", "💖", "&c❤"),
 		TWITTER(SocialMediaSite.TWITTER),
 		INSTAGRAM(SocialMediaSite.INSTAGRAM),
 		SNAPCHAT(SocialMediaSite.SNAPCHAT),
@@ -83,6 +87,7 @@ public class BadgeUser implements PlayerOwnedObject {
 		SPOTIFY(SocialMediaSite.SPOTIFY),
 		REDDIT(SocialMediaSite.REDDIT),
 		GITHUB(SocialMediaSite.GITHUB),
+		BIRTHDAY("Birthday", "🎂"),
 		;
 
 		Badge(SocialMediaSite site) {
@@ -102,6 +107,10 @@ public class BadgeUser implements PlayerOwnedObject {
 					json.hover("", "&cNo account linked");
 				}
 			});
+		}
+
+		Badge(String name, String emoji) {
+			this(name, emoji, emoji);
 		}
 
 		Badge(String name, String emoji, String alt) {

@@ -9,11 +9,14 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.badge.BadgeUser.Badge;
+import gg.projecteden.nexus.models.badge.BadgeUserService;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.models.scheduledjobs.jobs.BirthdaysRemoveRoleJob;
+import gg.projecteden.nexus.models.scheduledjobs.jobs.BirthdayEndJob;
+import gg.projecteden.nexus.models.scheduledjobs.jobs.BirthdayEndJob.BirthdayEndJobBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.utils.DiscordId.Role;
 import gg.projecteden.utils.DiscordId.TextChannel;
@@ -100,13 +103,26 @@ public class BirthdaysCommand extends CustomCommand {
 
 	public static void announcement(DiscordUser user) {
 		Nerd nerd = Nerd.of(user);
-		final Role role = nerd.getRank().isStaff() ? Role.STAFF_BIRTHDAY : Role.BIRTHDAY;
-		user.addRole(role);
 
-		Discord.koda("Happy Birthday " + user.getMember().getAsMention() + "!", TextChannel.BIRTHDAYS).thenAccept(message ->
-			message.createThreadChannel("Wish " + nerd.getNickname() + " a happy birthday!").queue());
+		if (user.getMember() != null) {
+			final Role role = nerd.getRank().isStaff() ? Role.STAFF_BIRTHDAY : Role.BIRTHDAY;
+			user.addRole(role);
 
-		new BirthdaysRemoveRoleJob(nerd.getUuid()).schedule(LocalDateTime.now().plusDays(1));
+			Discord.koda("Happy Birthday " + user.getMember().getAsMention() + "!", TextChannel.BIRTHDAYS).thenAccept(message ->
+				message.createThreadChannel("Wish " + nerd.getNickname() + " a happy birthday!").queue());
+		}
+
+		final BirthdayEndJobBuilder job = BirthdayEndJob.builder().uuid(nerd.getUuid());
+
+		new BadgeUserService().edit(nerd, badgeUser -> {
+			if (badgeUser.getActive() != null)
+				job.badge(badgeUser.getActive());
+
+			badgeUser.give(Badge.BIRTHDAY);
+			badgeUser.setActive(Badge.BIRTHDAY);
+		});
+
+		job.build().schedule(LocalDateTime.now().plusDays(1));
 	}
 
 	public LocalDate getNextBirthday(Nerd nerd) {
