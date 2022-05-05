@@ -20,6 +20,7 @@ import gg.projecteden.nexus.utils.NMSUtils;
 import gg.projecteden.nexus.utils.NMSUtils.SoundType;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.UUIDUtils;
 import lombok.NonNull;
@@ -30,16 +31,21 @@ import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Powerable;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
 
 public class CustomBlockUtils {
+	private static final Set<BlockFace> neighborFaces = Set.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST,
+		BlockFace.WEST, BlockFace.UP, BlockFace.DOWN);
+
 	private static final CustomBlockTrackerService trackerService = new CustomBlockTrackerService();
 	private static CustomBlockTracker tracker;
 
@@ -191,7 +197,6 @@ public class CustomBlockUtils {
 		String blockSound = "custom." + sound.getKey().getKey();
 		String woodSound = soundType.getCustomWoodSound();
 		if (!blockSound.equalsIgnoreCase(woodSound)) {
-//			Dev.WAKKA.send(blockSound + " == " + woodSound);
 			return;
 		}
 
@@ -208,9 +213,35 @@ public class CustomBlockUtils {
 			return;
 		}
 
-//		debug("DefaultWoodSound: " + soundType + " - " + soundKey);
+		debug("DefaultWoodSound: " + soundType + " - " + soundKey);
 		BlockUtils.playSound(soundBuilder);
 	}
 
+	public static void updateObservers(Block origin) {
+		for (BlockFace face : neighborFaces) {
+			Block neighbor = origin.getRelative(face);
+			if (neighbor.getType().equals(Material.OBSERVER)) {
+				Powerable powerable = (Powerable) neighbor.getBlockData();
+				if (powerable.isPowered())
+					continue;
 
+				updatePowerable(neighbor);
+			}
+		}
+	}
+
+	public static void updatePowerable(Block block) {
+		Powerable powerable = (Powerable) block.getBlockData();
+		boolean isPowered = powerable.isPowered();
+		powerable.setPowered(!isPowered);
+		block.setBlockData(powerable, true);
+
+		NMSUtils.applyPhysics(block);
+
+		Tasks.wait(3, () -> {
+			Powerable _powerable = (Powerable) block.getBlockData();
+			_powerable.setPowered(isPowered);
+			block.setBlockData(_powerable, true);
+		});
+	}
 }

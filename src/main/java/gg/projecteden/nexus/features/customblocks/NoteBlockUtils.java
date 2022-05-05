@@ -12,17 +12,11 @@ import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.UUIDUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.NoteBlock;
-import org.bukkit.block.data.type.Observer;
-
-import java.util.Set;
 
 public class NoteBlockUtils {
-	private static final Set<BlockFace> neighborFaces = Set.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST,
-		BlockFace.WEST, BlockFace.UP, BlockFace.DOWN);
 
 	public static void changePitch(boolean sneaking, Location location, NoteBlockData data) {
 		if (!sneaking)
@@ -35,34 +29,7 @@ public class NoteBlockUtils {
 		Block block = location.getBlock();
 		play(block, data);
 
-		// update observers (MOSTLY WORKS)
-		//	-  a block on top of a block behind an observer doesn't get updated: https://i.imgur.com/LFJ4RTW.png
-		boolean exists = false;
-		for (BlockFace face : neighborFaces) {
-			Block neighbor = block.getRelative(face);
-			if (neighbor.getType().equals(Material.OBSERVER)) {
-				exists = true;
-
-				Observer observer = (Observer) neighbor.getBlockData();
-				Block facingBlock = neighbor.getRelative(observer.getFacing());
-				if (!facingBlock.getLocation().equals(block.getLocation()))
-					continue;
-
-				if (!observer.isPowered()) {
-					observer.setPowered(true);
-					neighbor.setBlockData(observer, true);
-					neighbor.getState().update(true);
-
-					Tasks.wait(2, () -> {
-						observer.setPowered(false);
-						neighbor.setBlockData(observer, true);
-						neighbor.getState().update(true);
-					});
-				}
-			}
-		}
-		if (exists)
-			block.getState().update(true);
+		CustomBlockUtils.updatePowerable(block);
 
 		// TODO, show instrument + note somewhere to the player?
 	}

@@ -15,11 +15,14 @@ import net.minecraft.world.level.World;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundEffectType;
 import net.minecraft.world.level.block.state.BlockBase;
+import net.minecraft.world.level.block.state.IBlockData;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.v1_17_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_17_R1.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -49,8 +52,36 @@ public class NMSUtils {
 		return ((CraftWorld) location.getWorld()).getHandle();
 	}
 
+	public static BlockPosition getBlockPosition(Location location) {
+		return new BlockPosition(location.getX(), location.getY(), location.getZ());
+	}
+
 	public static Block getBlock(Location location) {
-		return getWorld(location).getType(new BlockPosition(location.getX(), location.getY(), location.getZ())).getBlock();
+		return getWorld(location).getType(getBlockPosition(location)).getBlock();
+	}
+
+	public static IBlockData getBlockData(BlockData blockData) {
+		return ((CraftBlockData) blockData).getState();
+	}
+
+	public static boolean setBlockDataAt(BlockData blockData, Location location, boolean doPhysics) {
+		World world = getWorld(location);
+		BlockPosition blockPosition = getBlockPosition(location);
+		IBlockData iBlockData = getBlockData(blockData);
+
+		return world.setTypeAndData(blockPosition, iBlockData, doPhysics ? 3 : 2);
+	}
+
+	public static void applyPhysics(org.bukkit.block.Block block) {
+		applyPhysics(block.getLocation());
+	}
+
+	public static void applyPhysics(Location location) {
+		World world = getWorld(location);
+		BlockPosition position = getBlockPosition(location);
+		Block nmsBlock = getBlock(location);
+
+		world.applyPhysics(position, nmsBlock);
 	}
 
 	public static EntityArmorStand createHologram(World world) {

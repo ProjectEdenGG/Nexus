@@ -439,10 +439,13 @@ public enum CustomBlock implements Keyed {
 				blockMaterial, customBlock.getBlockData(facing), false, item);
 
 			if (placed) {
+				CustomBlockUtils.updateObservers(block);
+
 				UUID uuid = player.getUniqueId();
 				Location location = block.getLocation();
 
 				CustomBlockUtils.placeBlockDatabase(uuid, this, location, facing);
+				debug("CustomBlock: playing place sound");
 				playSound(SoundType.PLACE, location);
 
 				ItemUtils.subtract(player, itemInHand);
@@ -473,7 +476,7 @@ public enum CustomBlock implements Keyed {
 
 		double volume = type.getVolume();
 
-//		debug("CustomBlockSound: " + type + " - " + sound);
+		debug("CustomBlockSound: " + type + " - " + sound);
 
 		SoundBuilder soundBuilder = new SoundBuilder(sound).location(location).volume(volume);
 		BlockUtils.playSound(soundBuilder);
@@ -524,6 +527,7 @@ public enum CustomBlock implements Keyed {
 	}
 
 	public void breakBlock(Location location, boolean dropItem) {
+		debug("Break block");
 		playSound(SoundType.BREAK, location);
 		CustomBlockUtils.breakBlockDatabase(location);
 		if (dropItem)

@@ -9,7 +9,7 @@ import java.util.List;
 
 /*
 	TODO:
-		- placing blocks on custom blocks is funky, rotates the normal block
+		- placing vanilla blocks on custom blocks is funky, rotates the vanilla block
 		- Tripwire implementation:
 			- Sounds --> probably same treatment as note/wood blocks
 				- place sound doesnt play
@@ -17,18 +17,19 @@ import java.util.List;
 			- Directional placing
 				- note blocks need the blockface of the block they are placed against (current & intended)
 				- tripwire needs the facing of the player
-			- Tripwire cross causes endless block updates, crashes server (maybe fixed?)
-			- Block updates are not cancelling as intended
-			- Observers are still detecting block update changes even tho the data is not actually changing
-			- Creative pick block
-			- Placing string needs to place CustomBlock Tripwire
-			- Lots of testing
-		- Appropriate tool & mining speed --> CustomBlockBreaking
+			- Placing string needs to place TRIPWIRE and not TALL_SUPPORT
 		- Sounds --> Do some more testing
+			- PlayerAnimationEvent, only play hit sound when left clicking a block
+				= Maybe keep track of the players last interaction type?
+		- Vanished handling, proper interactions and what not
+		- Future Conversions on chunk generate/load, itemstacks & blocks
+		- Lots of testing
 		- //
-		- Known issues:
+		- Appropriate tool & mining speed --> CustomBlockBreaking
+		- //
+		- Cannot Fix:
 			- Custom blocks may flash when placing blocks near them (clientside only) --> Titan
-			- Players arm will swing on interact w/ custom blocks --> Titan
+			- Players arm will swing on interact w/ custom blocks (clientside only?) --> Titan
  */
 
 @Environments(Env.TEST)

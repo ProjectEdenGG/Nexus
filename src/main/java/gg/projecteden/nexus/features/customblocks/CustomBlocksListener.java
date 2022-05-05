@@ -165,7 +165,7 @@ public class CustomBlocksListener implements Listener {
 		event.setCursor(newItem);
 	}
 
-	// Handles Sound: STEP, PLACE
+	// Handles Sound: STEP
 	@EventHandler
 	public void on(LocationNamedSoundEvent event) {
 		Block block = event.getLocation().getBlock();
@@ -184,6 +184,9 @@ public class CustomBlocksListener implements Listener {
 		if (!Nullables.isNullOrAir(source)) {
 			SoundType soundType = SoundType.fromSound(event.getSound());
 			if (soundType == null)
+				return;
+
+			if (soundType != SoundType.STEP)
 				return;
 
 			event.setCancelled(true);
@@ -224,6 +227,8 @@ public class CustomBlocksListener implements Listener {
 		if (block == null)
 			return;
 
+		// TODO: determine if the player is left clicking
+		debug("PlayerAnimationEvent");
 		CustomBlockUtils.tryPlayDefaultWoodSound(SoundType.HIT, block);
 	}
 
@@ -276,6 +281,7 @@ public class CustomBlocksListener implements Listener {
 		}
 	}
 
+	// Handles Sound: PLACE
 	@EventHandler
 	public void on(PlayerInteractEvent event) {
 		if (event.useInteractedBlock() == Result.DENY || event.useItemInHand() == Result.DENY)
@@ -326,18 +332,15 @@ public class CustomBlocksListener implements Listener {
 		Block eventBlock = event.getBlock();
 		Material material = eventBlock.getType();
 		if (handleMaterials.contains(material)) {
-			resetBlockData(eventBlock);
-			eventBlock.getState().update(true, false);
+			resetBlockData(event, eventBlock, false);
 		}
 
 		Block aboveBlock = eventBlock.getRelative(BlockFace.UP);
 		if (handleMaterials.contains(aboveBlock.getType())) {
 
 			while (handleMaterials.contains(aboveBlock.getType())) {
-				resetBlockData(aboveBlock);
-
-				// Leave this as (true, true) -> (true, false) will crash the server
-				aboveBlock.getState().update(true, true);
+				// Leave this as true, false will crash the server
+				resetBlockData(event, aboveBlock, true);
 
 				aboveBlock = aboveBlock.getRelative(BlockFace.UP);
 			}
@@ -406,8 +409,11 @@ public class CustomBlocksListener implements Listener {
 		return true;
 	}
 
-	private void resetBlockData(Block block) {
-		BlockData blockData = block.getBlockData();
+	private void resetBlockData(BlockPhysicsEvent event, Block block, boolean doPhysics) {
+		BlockData blockData = event.getChangedBlockData();
+		if (!block.getBlockData().matches(blockData))
+			return;
+
 		CustomBlockData data = CustomBlockUtils.getData(blockData, block.getLocation());
 		if (data == null)
 			return;
@@ -433,7 +439,6 @@ public class CustomBlocksListener implements Listener {
 			block.setBlockData(noteBlock, false);
 		} else if (blockData instanceof Tripwire tripwire) {
 			BlockFace facing = ((CustomTripwireData) data.getExtraData()).getFacing();
-
 			ICustomTripwire customTripwire = (ICustomTripwire) customBlock;
 
 			boolean powered = customTripwire.isPowered(facing);
@@ -444,8 +449,18 @@ public class CustomBlocksListener implements Listener {
 			tripwire = (Tripwire) customBlock.getBlockData(facing);
 			tripwire.setPowered(powered);
 
+			// Fixes the player detection issue, but causes endless physics updates
+//			if(powered) {
+//				block.setBlockData(tripwire, true);
+//				NMSUtils.applyPhysics(block.getLocation());
+//				return;
+//			}
+
 			block.setBlockData(tripwire, false);
+			event.setCancelled(true);
 		}
+
+		block.getState().update(true, doPhysics);
 	}
 
 	private boolean isSpawningEntity(PlayerInteractEvent event, Block clickedBlock, CustomBlock customBlock) {
@@ -493,13 +508,13 @@ public class CustomBlocksListener implements Listener {
 		}
 
 		if (!player.isSneaking() && isInteractable) {
-			debug("not sneaking & isInteractable");
+//			debug("not sneaking & isInteractable");
 			return false;
 		}
 
 		ItemStack itemInHand = event.getItem();
 		if (isNullOrAir(itemInHand)) {
-			debug("item in hand is null or air");
+//			debug("item in hand is null or air");
 			return false;
 		}
 
@@ -520,19 +535,19 @@ public class CustomBlocksListener implements Listener {
 		}
 
 		if (!isNullOrAir(preBlock)) {
-			debug(" preBlock is not air");
+//			debug(" preBlock is not air");
 			return false;
 		}
 
 		if (isPlacingCustomBlock) {
 			if (preBlock.getLocation().toCenterLocation().getNearbyLivingEntities(0.5).size() > 0) {
-				debug(" entity in way");
+//				debug(" entity in way");
 				return false;
 			}
 
 			CustomBlock _customBlock = CustomBlock.fromItemstack(itemInHand);
 			if (_customBlock == null) {
-				debug(" customBlock == null");
+//				debug(" customBlock == null");
 				return false;
 			}
 
@@ -545,11 +560,14 @@ public class CustomBlocksListener implements Listener {
 			if (!clickedCustomBlock)
 				return false;
 
-			if (!BlockUtils.tryPlaceEvent(player, preBlock, clickedBlock, material))
-				return false;
+			if (!player.isSneaking()) {
+				if (!BlockUtils.tryPlaceEvent(player, preBlock, clickedBlock, material))
+					return false;
 
-			debug("CustomBlocks: playing place sound");
-			BlockUtils.playSound(SoundType.PLACE, preBlock);
+				debug("CustomBlocksListener: playing place sound");
+				BlockUtils.playSound(SoundType.PLACE, preBlock);
+			}
+
 		}
 
 		return true;
