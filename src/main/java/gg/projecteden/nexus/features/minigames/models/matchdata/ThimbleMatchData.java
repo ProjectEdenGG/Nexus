@@ -11,14 +11,14 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Data
 @MatchDataFor(Thimble.class)
 public class ThimbleMatchData extends MatchData {
-	private Map<Player, Material> chosenConcrete = new HashMap<>();
+	private Map<Player, Material> chosenConcrete = new ConcurrentHashMap<>();
 
 	public ThimbleMatchData(Match match) {
 		super(match);
@@ -30,11 +30,11 @@ public class ThimbleMatchData extends MatchData {
 
 	public Material getAvailableConcreteId() {
 		final Material[] CONCRETE_IDS = ((Thimble) MechanicType.THIMBLE.get()).getCONCRETE_IDS();
-		Optional<Material> first = Arrays.asList(CONCRETE_IDS).stream()
-				.filter(id -> !concreteIsChosen(id))
-				.findFirst();
+		Optional<Material> first = Arrays.stream(CONCRETE_IDS)
+			.filter(id -> !concreteIsChosen(id))
+			.findFirst();
 
-		if (!first.isPresent())
+		if (first.isEmpty())
 			throw new InvalidInputException("No available concretes");
 
 		return first.get();

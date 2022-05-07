@@ -646,6 +646,12 @@ public final class Thimble extends TeamlessMechanic {
 			Match match = minigamer.getMatch();
 			ThimbleMatchData matchData = match.getMatchData();
 
+			if (matchData.getChosenConcrete().containsValue(concrete.getType())) {
+				minigamer.tell("&cThis concrete has already been chosen.");
+				init();
+				return;
+			}
+
 			matchData.getChosenConcrete().remove(minigamer.getPlayer());
 
 			player.getInventory().setHelmet(concrete);
