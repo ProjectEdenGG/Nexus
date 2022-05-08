@@ -29,21 +29,21 @@ public @interface CustomTripwireConfig {
 
 	Sound breakSound() default Sound.MUSIC_GAME;
 
-	String customBreakSound() default "";
+	String customBreakSound() default "custom.block.stone.break";
 
 	Sound placeSound() default Sound.MUSIC_GAME;
 
-	String customPlaceSound() default "";
+	String customPlaceSound() default "custom.block.stone.place";
 
 	Sound stepSound() default Sound.MUSIC_GAME;
 
-	String customStepSound() default "";
+	String customStepSound() default "custom.block.stone.step";
 
 	Sound hitSound() default Sound.MUSIC_GAME;
 
-	String customHitSound() default "";
+	String customHitSound() default "custom.block.stone.hit";
 
 	Sound fallSound() default Sound.MUSIC_GAME;
 
-	String customFallSound() default "";
+	String customFallSound() default "custom.block.stone.fall";
 }

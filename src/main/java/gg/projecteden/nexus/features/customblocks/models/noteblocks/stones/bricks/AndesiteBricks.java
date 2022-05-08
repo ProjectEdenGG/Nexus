@@ -10,6 +10,11 @@ import org.bukkit.Instrument;
 )
 @CustomNoteBlockConfig(
 	instrument = Instrument.DIDGERIDOO,
-	step = 2
+	step = 2,
+	customBreakSound = "block.stone.break",
+	customPlaceSound = "block.stone.place",
+	customStepSound = "block.stone.step",
+	customHitSound = "block.stone.hit",
+	customFallSound = "block.stone.fall"
 )
 public class AndesiteBricks implements IStoneBricks {}

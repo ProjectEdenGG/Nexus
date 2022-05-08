@@ -4,13 +4,13 @@ import gg.projecteden.nexus.features.customblocks.models.common.CustomBlockConfi
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.CustomTripwireConfig;
 
 @CustomBlockConfig(
-	name = "Cattail",
-	modelId = 21101
+	name = "Water Cattail",
+	modelId = 21102
 )
 @CustomTripwireConfig(
-	north_NS = true,
+	north_NS = false,
 	south_NS = false,
-	east_NS = false,
+	east_NS = true,
 	west_NS = false,
 	attached_NS = false,
 	disarmed_NS = false,
@@ -21,5 +21,12 @@ import gg.projecteden.nexus.features.customblocks.models.tripwire.common.CustomT
 	customHitSound = "block.azalea_leaves.hit",
 	customFallSound = "block.azalea_leaves.fall"
 )
-public class Cattail implements ITall {
+
+public class CattailWater implements ITall {
+// TODO: dynamic placement
+//	@Override
+//	public int getModelId() {
+//		return 21101;
+//	}
+
 }

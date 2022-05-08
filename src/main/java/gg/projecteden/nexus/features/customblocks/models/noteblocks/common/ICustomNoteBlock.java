@@ -16,7 +16,12 @@ import java.util.Set;
 
 public interface ICustomNoteBlock extends ICustomBlock {
 	@Override
-	default Material getBlockMaterial() {
+	default Material getVanillaBlockMaterial() {
+		return Material.NOTE_BLOCK;
+	}
+
+	@Override
+	default Material getVanillaItemMaterial() {
 		return Material.NOTE_BLOCK;
 	}
 
@@ -130,7 +135,7 @@ public interface ICustomNoteBlock extends ICustomBlock {
 
 	@Override
 	default BlockData getBlockData(@Nullable BlockFace facing) {
-		NoteBlock noteBlock = (NoteBlock) this.getBlockMaterial().createBlockData();
+		NoteBlock noteBlock = (NoteBlock) this.getVanillaBlockMaterial().createBlockData();
 		noteBlock.setInstrument(this.getNoteBlockInstrument(facing));
 		noteBlock.setNote(this.getNoteBlockNote(facing));
 		noteBlock.setPowered(false);

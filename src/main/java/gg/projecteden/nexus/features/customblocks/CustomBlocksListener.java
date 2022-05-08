@@ -2,6 +2,9 @@ package gg.projecteden.nexus.features.customblocks;
 
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.customblocks.CustomBlocks.BlockAction;
+import gg.projecteden.nexus.features.customblocks.CustomBlocks.SoundAction;
+import gg.projecteden.nexus.features.customblocks.events.NoteBlockChangePitchEvent;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.common.ICustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.common.ICustomBlock.PistonPushAction;
@@ -16,7 +19,6 @@ import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.NMSUtils.SoundType;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import me.lexikiq.event.sound.LocationNamedSoundEvent;
@@ -25,6 +27,9 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Directional;
+import org.bukkit.block.data.FaceAttachable;
+import org.bukkit.block.data.FaceAttachable.AttachedFace;
 import org.bukkit.block.data.type.NoteBlock;
 import org.bukkit.block.data.type.Tripwire;
 import org.bukkit.entity.Player;
@@ -34,6 +39,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
@@ -57,12 +63,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class CustomBlocksListener implements Listener {
+	Map<Player, BlockAction> playerActionMap = new ConcurrentHashMap<>();
+
 	public CustomBlocksListener() {
 		Nexus.registerListener(this);
 	}
@@ -182,22 +191,20 @@ public class CustomBlocksListener implements Listener {
 		}
 
 		if (!Nullables.isNullOrAir(source)) {
-			SoundType soundType = SoundType.fromSound(event.getSound());
-			if (soundType == null)
+			SoundAction soundAction = SoundAction.fromSound(event.getSound());
+			if (soundAction == null)
 				return;
 
-			if (soundType != SoundType.STEP)
+			if (soundAction != SoundAction.STEP)
 				return;
 
 			event.setCancelled(true);
-			_customBlock.playSound(soundType, source.getLocation());
+			_customBlock.playSound(soundAction, source.getLocation());
 			return;
 		}
 
-		if (event.getSound().getKey().getKey().startsWith("block.wood.")) {
+		if (CustomBlockUtils.playDefaultSounds(event.getSound(), event.getLocation()))
 			event.setCancelled(true);
-			CustomBlockUtils.playDefaultWoodSounds(event.getSound(), event.getLocation());
-		}
 	}
 
 	// Handles Sound: FALL
@@ -216,26 +223,41 @@ public class CustomBlocksListener implements Listener {
 		if (Nullables.isNullOrAir(block))
 			return;
 
-		CustomBlockUtils.tryPlayDefaultWoodSound(SoundType.FALL, block);
+		playerActionMap.put(player, BlockAction.FALL);
+		CustomBlockUtils.tryPlayDefaultSound(SoundAction.FALL, block);
 	}
 
+	@EventHandler
+	public void on(BlockDamageEvent event) {
+		if (event.isCancelled())
+			return;
+
+		playerActionMap.put(event.getPlayer(), BlockAction.HIT);
+	}
 
 	// Handles Sound: HIT
 	@EventHandler
 	public void on(PlayerAnimationEvent event) {
-		Block block = event.getPlayer().getTargetBlockExact(5);
+		Player player = event.getPlayer();
+		Block block = player.getTargetBlockExact(5);
 		if (block == null)
 			return;
 
-		// TODO: determine if the player is left clicking
-		debug("PlayerAnimationEvent");
-		CustomBlockUtils.tryPlayDefaultWoodSound(SoundType.HIT, block);
+		if (!playerActionMap.containsKey(player))
+			return;
+
+		if (playerActionMap.get(player) == BlockAction.HIT) {
+//			debug("PlayerAnimationEvent");
+			CustomBlockUtils.tryPlayDefaultSound(SoundAction.HIT, block);
+		}
 	}
 
 	@EventHandler
 	public void on(BlockPlaceEvent event) {
 		if (event.isCancelled())
 			return;
+
+		playerActionMap.put(event.getPlayer(), BlockAction.PLACE);
 
 		Block block = event.getBlockPlaced();
 		Block above = block.getRelative(BlockFace.UP);
@@ -258,11 +280,13 @@ public class CustomBlocksListener implements Listener {
 		if (event.isCancelled())
 			return;
 
+		playerActionMap.put(event.getPlayer(), BlockAction.BREAK);
+
 		Block block = event.getBlock();
 		CustomBlock _customBlock = CustomBlock.fromBlock(block);
 		if (_customBlock == null) {
-			debug("BreakBlock: CustomBlock == null");
-			CustomBlockUtils.tryPlayDefaultWoodSound(SoundType.BREAK, block);
+//			debug("BreakBlock: CustomBlock == null");
+			CustomBlockUtils.tryPlayDefaultSound(SoundAction.BREAK, block);
 			return;
 		}
 
@@ -273,8 +297,10 @@ public class CustomBlocksListener implements Listener {
 		event.setDropItems(false);
 
 		ItemStack newDrop = _customBlock.get().getItemStack();
+		Material customType = _customBlock.get().getVanillaItemMaterial();
+
 		for (ItemStack drop : block.getDrops()) {
-			if (drop.getType().equals(newDrop.getType())) {
+			if (customType == drop.getType()) {
 				if (!GameModeWrapper.of(event.getPlayer()).isCreative())
 					location.getWorld().dropItemNaturally(location, newDrop);
 			}
@@ -302,11 +328,15 @@ public class CustomBlocksListener implements Listener {
 		CustomBlock customBlock = CustomBlock.fromBlock(clickedBlock);
 		// Place
 		if (isSpawningEntity(event, clickedBlock, customBlock)) {
+			playerActionMap.put(player, BlockAction.UNKNOWN);
 			return;
 		}
 		if (isPlacingBlock(event, clickedBlock, customBlock)) {
+			playerActionMap.put(player, BlockAction.PLACE);
 			return;
 		}
+
+		playerActionMap.put(player, BlockAction.INTERACT);
 
 		if (customBlock != null) {
 			boolean isChangingPitch = isChangingPitch(action, sneaking, itemInHand);
@@ -508,13 +538,13 @@ public class CustomBlocksListener implements Listener {
 		}
 
 		if (!player.isSneaking() && isInteractable) {
-//			debug("not sneaking & isInteractable");
+//			debug(" isPlacingBlock: not sneaking & isInteractable");
 			return false;
 		}
 
 		ItemStack itemInHand = event.getItem();
 		if (isNullOrAir(itemInHand)) {
-//			debug("item in hand is null or air");
+//			debug(" isPlacingBlock: item in hand is null or air");
 			return false;
 		}
 
@@ -525,51 +555,79 @@ public class CustomBlocksListener implements Listener {
 		else if (material.equals(ICustomBlock.itemMaterial)) {
 			int modelId = CustomModelData.of(itemInHand);
 			if (!CustomBlock.modelIdMap.containsKey(modelId)) {
-				debug(" unknown modelId: " + modelId);
+//				debug(" isPlacingBlock: unknown modelId: " + modelId);
 				return false;
 			} else
 				isPlacingCustomBlock = true;
 		} else if (!material.equals(Material.REDSTONE_WIRE) && (!material.isBlock() && !material.isSolid())) {
-			debug(" not a block: " + material);
+//			debug(" isPlacingBlock: not a block: " + material);
 			return false;
 		}
 
 		if (!isNullOrAir(preBlock)) {
-//			debug(" preBlock is not air");
+//			debug(" isPlacingBlock: preBlock is not air");
 			return false;
 		}
 
 		if (isPlacingCustomBlock) {
 			if (preBlock.getLocation().toCenterLocation().getNearbyLivingEntities(0.5).size() > 0) {
-//				debug(" entity in way");
+//				debug(" isPlacingBlock: entity in way");
 				return false;
 			}
 
 			CustomBlock _customBlock = CustomBlock.fromItemstack(itemInHand);
 			if (_customBlock == null) {
-//				debug(" customBlock == null");
+//				debug(" isPlacingBlock: customBlock == null");
 				return false;
 			}
 
 			if (!_customBlock.placeBlock(player, preBlock, clickedBlock, clickedFace, itemInHand)) {
+//				debug(" isPlacingBlock: CustomBlock#PlaceBlock == false");
 				return false;
 			}
 
 			event.setCancelled(true);
 		} else {
-			if (!clickedCustomBlock)
+			if (!clickedCustomBlock) {
+//				debug(" isPlacingBlock: Didn't click on a custom block");
 				return false;
+			}
 
 			if (!player.isSneaking()) {
-				if (!BlockUtils.tryPlaceEvent(player, preBlock, clickedBlock, material))
-					return false;
+				BlockData blockData = material.createBlockData();
+				BlockFace blockFace = event.getBlockFace();
+				if (blockData instanceof Directional directional) {
+					try {
+						directional.setFacing(blockFace);
+//						debug(" isPlacingBlock: set facing direction to " + blockFace);
+					} catch (Exception ignored) {}
+				}
 
-				debug("CustomBlocksListener: playing place sound");
-				BlockUtils.playSound(SoundType.PLACE, preBlock);
+				if (blockData instanceof FaceAttachable faceAttachable) {
+					AttachedFace attachedFace = AttachedFace.WALL;
+					switch (blockFace) {
+						case UP -> attachedFace = AttachedFace.FLOOR;
+						case DOWN -> attachedFace = AttachedFace.CEILING;
+					}
+
+					try {
+						faceAttachable.setAttachedFace(attachedFace);
+//						debug(" isPlacingBlock: set attached face to " + attachedFace);
+					} catch (Exception ignored) {}
+				}
+
+				if (!BlockUtils.tryPlaceEvent(player, preBlock, clickedBlock, material, blockData)) {
+//					debug(" isPlacingBlock: PlaceBlock event was cancelled");
+					return false;
+				}
+
+//				debug(" isPlacingBlock: playing place sound");
+				BlockUtils.playSound(SoundAction.PLACE, preBlock);
 			}
 
 		}
 
+//		debug(" isPlacingBlock: true");
 		return true;
 	}
 
@@ -585,12 +643,15 @@ public class CustomBlocksListener implements Listener {
 		if (data == null)
 			return;
 
+		Block block = location.getBlock();
+
 		CustomNoteBlockData customNoteBlockData = (CustomNoteBlockData) data.getExtraData();
-		NoteBlockData noteBlockData = customNoteBlockData.getNoteBlockData(location.getBlock(), true);
+		NoteBlockData noteBlockData = customNoteBlockData.getNoteBlockData(block, true);
 		if (noteBlockData == null)
 			return;
 
-		// TODO: throw event
-		NoteBlockUtils.changePitch(sneaking, location, noteBlockData);
+		NoteBlockChangePitchEvent event = new NoteBlockChangePitchEvent(block);
+		if (event.callEvent())
+			NoteBlockUtils.changePitch(sneaking, location, noteBlockData);
 	}
 }

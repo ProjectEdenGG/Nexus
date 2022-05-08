@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.customblocks.models;
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customblocks.CustomBlockUtils;
+import gg.projecteden.nexus.features.customblocks.CustomBlocks.SoundAction;
 import gg.projecteden.nexus.features.customblocks.models.common.ICraftable;
 import gg.projecteden.nexus.features.customblocks.models.common.ICustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.common.IDyeable;
@@ -124,6 +125,7 @@ import gg.projecteden.nexus.features.customblocks.models.tripwire.Tripwire;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.TripwireCross;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.ICustomTripwire;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.tall.Cattail;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.tall.CattailWater;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
@@ -132,7 +134,6 @@ import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.NMSUtils.SoundType;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import lombok.Getter;
@@ -311,6 +312,8 @@ public enum CustomBlock implements Keyed {
 
 	// tall
 	CATTAIL(Cattail.class),
+	CATTAIL_WATER(CattailWater.class),
+
 	;
 
 	private final ICustomBlock customBlock;
@@ -401,14 +404,13 @@ public enum CustomBlock implements Keyed {
 			debug("CustomBlock: Couldn't find NoteBlock: " + noteBlock);
 
 		} else if (blockData instanceof org.bukkit.block.data.type.Tripwire tripwire) {
-			// TODO TRIPWIRE
 			for (CustomBlock customBlock : getType(CustomBlockType.TRIPWIRE)) {
 				if (CustomBlockUtils.equals(customBlock, tripwire, true)) {
 					return customBlock;
 				}
 			}
 
-			debug("(TODO) CustomBlock: Couldn't find Tripwire: " + tripwire);
+			debug("CustomBlock: Couldn't find Tripwire: " + tripwire);
 		}
 
 		return null;
@@ -445,8 +447,8 @@ public enum CustomBlock implements Keyed {
 				Location location = block.getLocation();
 
 				CustomBlockUtils.placeBlockDatabase(uuid, this, location, facing);
-				debug("CustomBlock: playing place sound");
-				playSound(SoundType.PLACE, location);
+//				debug("CustomBlock: playing place sound");
+				playSound(SoundAction.PLACE, location);
 
 				ItemUtils.subtract(player, itemInHand);
 				player.swingMainHand();
@@ -457,7 +459,7 @@ public enum CustomBlock implements Keyed {
 		return false;
 	}
 
-	public @Nullable String getSound(SoundType type) {
+	public @Nullable String getSound(SoundAction type) {
 		ICustomBlock customBlock = this.get();
 
 		return switch (type) {
@@ -469,14 +471,14 @@ public enum CustomBlock implements Keyed {
 		};
 	}
 
-	public void playSound(SoundType type, Location location) {
+	public void playSound(SoundAction type, Location location) {
 		String sound = getSound(type);
 		if (Nullables.isNullOrEmpty(sound))
 			return;
 
 		double volume = type.getVolume();
 
-		debug("CustomBlockSound: " + type + " - " + sound);
+//		debug("&eCustomBlockSound:&f " + type + " - " + sound);
 
 		SoundBuilder soundBuilder = new SoundBuilder(sound).location(location).volume(volume);
 		BlockUtils.playSound(soundBuilder);
@@ -527,8 +529,7 @@ public enum CustomBlock implements Keyed {
 	}
 
 	public void breakBlock(Location location, boolean dropItem) {
-		debug("Break block");
-		playSound(SoundType.BREAK, location);
+		playSound(SoundAction.BREAK, location);
 		CustomBlockUtils.breakBlockDatabase(location);
 		if (dropItem)
 			dropItem(location);

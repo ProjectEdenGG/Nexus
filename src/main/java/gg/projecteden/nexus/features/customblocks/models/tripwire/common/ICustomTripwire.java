@@ -14,8 +14,13 @@ import java.util.Set;
 
 public interface ICustomTripwire extends ICustomBlock {
 	@Override
-	default Material getBlockMaterial() {
+	default Material getVanillaBlockMaterial() {
 		return Material.TRIPWIRE;
+	}
+
+	@Override
+	default Material getVanillaItemMaterial() {
+		return Material.STRING;
 	}
 
 	@Override
@@ -195,7 +200,7 @@ public interface ICustomTripwire extends ICustomBlock {
 
 	@Override
 	default BlockData getBlockData(@NotNull BlockFace facing) {
-		Tripwire tripwire = (Tripwire) getBlockMaterial().createBlockData();
+		Tripwire tripwire = (Tripwire) getVanillaBlockMaterial().createBlockData();
 		tripwire.setFace(BlockFace.NORTH, isNorth(facing));
 		tripwire.setFace(BlockFace.SOUTH, isSouth(facing));
 		tripwire.setFace(BlockFace.EAST, isEast(facing));

@@ -11,7 +11,9 @@ import org.jetbrains.annotations.Nullable;
 public interface ICustomBlock {
 	Material itemMaterial = Material.PAPER;
 
-	Material getBlockMaterial();
+	Material getVanillaBlockMaterial();
+
+	Material getVanillaItemMaterial();
 
 	private CustomBlockConfig getCustomBlockConfig() {
 		return getClass().getAnnotation(CustomBlockConfig.class);

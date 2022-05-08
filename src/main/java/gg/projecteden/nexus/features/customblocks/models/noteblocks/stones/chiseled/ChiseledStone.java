@@ -12,7 +12,12 @@ import org.jetbrains.annotations.NotNull;
 )
 @CustomNoteBlockConfig(
 	instrument = Instrument.DIDGERIDOO,
-	step = 1
+	step = 1,
+	customBreakSound = "block.stone.break",
+	customPlaceSound = "block.stone.place",
+	customStepSound = "block.stone.step",
+	customHitSound = "block.stone.hit",
+	customFallSound = "block.stone.fall"
 )
 public class ChiseledStone implements IChiseledStone {
 

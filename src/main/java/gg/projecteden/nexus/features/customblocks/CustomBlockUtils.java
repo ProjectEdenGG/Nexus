@@ -1,6 +1,8 @@
 package gg.projecteden.nexus.features.customblocks;
 
 import com.mojang.datafixers.util.Pair;
+import gg.projecteden.nexus.features.customblocks.CustomBlocks.SoundAction;
+import gg.projecteden.nexus.features.customblocks.CustomBlocks.SoundType;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.common.ICustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.common.IDirectional;
@@ -17,7 +19,6 @@ import gg.projecteden.nexus.models.customblock.CustomTripwireData;
 import gg.projecteden.nexus.models.customblock.NoteBlockData;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.NMSUtils;
-import gg.projecteden.nexus.utils.NMSUtils.SoundType;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
@@ -181,40 +182,49 @@ public class CustomBlockUtils {
 		}
 	}
 
-	public static void playDefaultWoodSounds(Sound sound, Location location) {
+	public static boolean tryPlayDefaultSound(SoundAction soundAction, Block block) {
+		Sound sound = NMSUtils.getSound(soundAction, block);
+		if (sound == null)
+			return false;
+
 		SoundType soundType = SoundType.fromSound(sound);
 		if (soundType == null)
-			return;
-
-		playDefaultWoodSound(soundType, location);
-	}
-
-	public static void tryPlayDefaultWoodSound(SoundType soundType, Block block) {
-		Sound sound = NMSUtils.getSound(soundType, block);
-		if (sound == null)
-			return;
+			return false;
 
 		String blockSound = "custom." + sound.getKey().getKey();
-		String woodSound = soundType.getCustomWoodSound();
-		if (!blockSound.equalsIgnoreCase(woodSound)) {
-			return;
+		String defaultSound = soundAction.getCustomSound(soundType);
+		if (!blockSound.equalsIgnoreCase(defaultSound)) {
+			return false;
 		}
 
-		playDefaultWoodSound(soundType, block.getLocation());
+		return playDefaultSound(soundAction, soundType, block.getLocation());
 	}
 
-	private static void playDefaultWoodSound(SoundType soundType, Location location) {
-		String soundKey = soundType.getCustomWoodSound();
-		SoundBuilder soundBuilder = new SoundBuilder(soundKey).location(location).volume(soundType.getVolume());
+	public static boolean playDefaultSounds(Sound sound, Location location) {
+		SoundAction soundAction = SoundAction.fromSound(sound);
+		if (soundAction == null)
+			return false;
+
+		SoundType soundType = SoundType.fromSound(sound);
+		if (soundType == null)
+			return false;
+
+		return playDefaultSound(soundAction, soundType, location);
+	}
+
+	private static boolean playDefaultSound(SoundAction soundAction, SoundType soundType, Location location) {
+		String soundKey = soundAction.getCustomSound(soundType);
+		SoundBuilder soundBuilder = new SoundBuilder(soundKey).location(location).volume(soundAction.getVolume());
 
 		String locationStr = location.getWorld().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ();
-		String cooldownType = "CustomWoodSound_" + soundType + "_" + locationStr;
-		if (!(new CooldownService().check(UUIDUtils.UUID0, cooldownType, TickTime.TICK.x(4)))) {
-			return;
+		String cooldownType = "CustomDefaultSound_" + soundAction + "_" + locationStr;
+		if (!(new CooldownService().check(UUIDUtils.UUID0, cooldownType, TickTime.TICK.x(3)))) {
+			return false;
 		}
 
-		debug("DefaultWoodSound: " + soundType + " - " + soundKey);
+//		debug("&6CustomDefaultSound:&f " + soundAction + " - " + soundKey);
 		BlockUtils.playSound(soundBuilder);
+		return true;
 	}
 
 	public static void updateObservers(Block origin) {

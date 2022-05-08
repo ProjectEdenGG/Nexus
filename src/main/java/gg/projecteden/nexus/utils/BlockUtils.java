@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.nexus.features.customblocks.CustomBlocks.SoundAction;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.LocationUtils.Axis;
-import gg.projecteden.nexus.utils.NMSUtils.SoundType;
 import gg.projecteden.nexus.utils.Tasks.GlowTask;
 import lombok.NonNull;
 import me.lexikiq.HasPlayer;
@@ -339,14 +339,14 @@ public class BlockUtils {
 		playSound(new SoundBuilder(sound).location(location));
 	}
 
-	public static void playSound(SoundType soundType, @NonNull Block block) {
-		Sound sound = NMSUtils.getSound(soundType, block);
+	public static void playSound(SoundAction soundAction, @NonNull Block block) {
+		Sound sound = NMSUtils.getSound(soundAction, block);
 		if (sound == null)
 			return;
 
 		Location location = block.getLocation().toCenterLocation();
 
-		playSound(new SoundBuilder(sound).location(location).volume(soundType.getVolume()));
+		playSound(new SoundBuilder(sound).location(location).volume(soundAction.getVolume()));
 	}
 
 	public static void playSound(SoundBuilder soundBuilder) {

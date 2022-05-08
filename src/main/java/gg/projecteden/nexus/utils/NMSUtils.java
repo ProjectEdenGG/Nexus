@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.utils;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import gg.projecteden.nexus.features.customblocks.CustomBlocks.SoundAction;
 import net.minecraft.core.BlockPosition;
 import net.minecraft.resources.MinecraftKey;
 import net.minecraft.server.MinecraftServer;
@@ -95,11 +94,11 @@ public class NMSUtils {
 		return armorStand;
 	}
 
-	public static @Nullable Sound getSound(SoundType soundType, org.bukkit.block.Block block) {
+	public static @Nullable Sound getSound(SoundAction soundAction, org.bukkit.block.Block block) {
 		try {
 			Block nmsBlock = getBlock(block.getLocation());
 			SoundEffectType soundEffectType = nmsBlock.getStepSound(nmsBlock.getBlockData());
-			SoundEffect nmsSound = switch (soundType) {
+			SoundEffect nmsSound = switch (soundAction) {
 				case BREAK -> soundEffectType.c();
 				case STEP -> soundEffectType.getStepSound();
 				case PLACE -> soundEffectType.getPlaceSound();
@@ -115,38 +114,6 @@ public class NMSUtils {
 		}
 
 		return null;
-	}
-
-	@AllArgsConstructor
-	public enum SoundType {
-		BREAK(1.0, "custom.block.wood.break"),
-		STEP(0.2, "custom.block.wood.step"),
-		PLACE(1.0, "custom.block.wood.place"),
-		HIT(0.5, "custom.block.wood.hit"),
-		FALL(1.0, "custom.block.wood.fall"),
-		;
-
-		@Getter
-		private final double volume;
-		@Getter
-		private final String customWoodSound;
-
-		public static @Nullable SoundType fromSound(Sound sound) {
-			String soundKey = sound.getKey().getKey();
-			if (soundKey.endsWith(".step"))
-				return SoundType.STEP;
-			else if (soundKey.endsWith(".hit"))
-				return SoundType.HIT;
-			else if (soundKey.endsWith(".place"))
-				return SoundType.PLACE;
-			else if (soundKey.endsWith(".break"))
-				return SoundType.BREAK;
-			else if (soundKey.endsWith(".fall"))
-				return SoundType.FALL;
-
-			return null;
-		}
-
 	}
 
 	public static float getBlockHardness(org.bukkit.block.Block block) {

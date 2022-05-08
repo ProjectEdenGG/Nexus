@@ -10,6 +10,11 @@ import org.bukkit.Instrument;
 )
 @CustomNoteBlockConfig(
 	instrument = Instrument.COW_BELL,
-	step = 4
+	step = 4,
+	customBreakSound = "block.wool.break",
+	customPlaceSound = "block.wool.place",
+	customStepSound = "block.wool.step",
+	customHitSound = "block.wool.hit",
+	customFallSound = "block.wool.fall"
 )
 public class LimeQuiltedWool implements IQuiltedWool {}
