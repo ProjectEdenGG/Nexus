@@ -80,7 +80,7 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 	private Location lastLocation = null;
 	// 1/2 = half a heart, /2s = half a heart every 2 sec, /4.5 = half a heart at max multiplier every 2s
 	private static final double HEALTH_PER_TICK = (1d/2d)/ TickTime.SECOND.x(2);
-	private static final int IMMOBILE_SECONDS = TickTime.SECOND.x(3);
+	private static final long IMMOBILE_SECONDS = TickTime.SECOND.x(3);
 
 	public @NotNull Player getOnlinePlayer() {
 		final Player player = Bukkit.getPlayer(uuid);

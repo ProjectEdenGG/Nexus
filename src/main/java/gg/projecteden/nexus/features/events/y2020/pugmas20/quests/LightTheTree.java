@@ -57,7 +57,7 @@ public class LightTheTree implements Listener {
 	public static final ItemStack lighter = Pugmas20.questItem(Material.FLINT_AND_STEEL).name("Ceremonial Lighter").glow().build();
 	public static final ItemStack steel_ingot = Pugmas20.questItem(Material.IRON_INGOT).name("Steel Ingot").glow().build();
 
-	private static final int timerTicks = TickTime.MINUTE.x(2);
+	private static final long timerTicks = TickTime.MINUTE.x(2);
 	private static final int torches = 9;
 	private static final int treeTorches = 7;
 	@Getter

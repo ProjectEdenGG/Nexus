@@ -22,7 +22,7 @@ public class CalcSpeedCommand extends CustomCommand {
 	void speed(@Arg("3") int startDelay) {
 		line();
 		Tasks.Countdown.builder()
-				.duration(startDelay * 20)
+				.duration(startDelay * 20L)
 				.onSecond(i -> send("&3Starting in &e" + i + "&3..."))
 				.onComplete(() -> {
 					send("&eCalculating...");
@@ -31,7 +31,7 @@ public class CalcSpeedCommand extends CustomCommand {
 							.doZero(true)
 							.onTick(i -> {
 								if (i % 5 == 0)
-									locations[i / 5] = location();
+									locations[(int) (i / 5)] = location();
 							})
 							.onComplete(this::calculate)
 							.start();

@@ -25,8 +25,10 @@ import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.Message.MentionType;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.UserSnowflake;
 import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -36,6 +38,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -144,64 +147,79 @@ public class Discord extends Feature {
 	}
 
 	@Deprecated
-	public static void staffAlerts(String message) {
+	public static CompletableFuture<Message> staffAlerts(String message) {
 		// send(message, Channel.STAFF_ALERTS);
+		return null;
 	}
 
-	public static void log(String message) {
-		send(message, TextChannel.STAFF_BRIDGE, TextChannel.STAFF_LOG);
+	public static CompletableFuture<Message> log(String message) {
+		return send(message, TextChannel.STAFF_BRIDGE, TextChannel.STAFF_LOG);
 	}
 
-	public static void staffBridge(String message) {
-		send(message, TextChannel.STAFF_BRIDGE);
+	public static CompletableFuture<Message> staffBridge(String message) {
+		return send(message, TextChannel.STAFF_BRIDGE);
 	}
 
-	public static void staffLog(String message) {
-		send(message, TextChannel.STAFF_LOG);
+	public static CompletableFuture<Message> staffLog(String message) {
+		return send(message, TextChannel.STAFF_LOG);
 	}
 
-	public static void adminLog(String message) {
-		send(message, TextChannel.ADMIN_LOG);
+	public static CompletableFuture<Message> adminLog(String message) {
+		return send(message, TextChannel.ADMIN_LOG);
 	}
 
-	public static void send(String message, TextChannel... targets) {
-		send(new MessageBuilder(stripColor(message).replace("<@role", "<@&")), targets);
+	public static CompletableFuture<Message> send(String message, TextChannel... targets) {
+		return send(new MessageBuilder(stripColor(message).replace("<@role", "<@&")), targets);
 	}
 
-	public static void send(MessageBuilder message, TextChannel... targets) {
-		send(message, success -> {}, Throwable::printStackTrace, targets);
+	public static CompletableFuture<Message> send(MessageBuilder message, TextChannel... targets) {
+		return send(message, success -> {}, Throwable::printStackTrace, targets);
 	}
 
-	public static void send(MessageBuilder message, Consumer<Message> onSuccess, Consumer<Throwable> onError, TextChannel... targets) {
-		send(message, onSuccess, onError, Bot.RELAY, targets);
+	public static CompletableFuture<Message> send(MessageBuilder message, Consumer<Message> onSuccess, Consumer<Throwable> onError, TextChannel... targets) {
+		return send(message, onSuccess, onError, Bot.RELAY, targets);
 	}
 
-	public static void koda(String message, TextChannel... targets) {
-		koda(new MessageBuilder(stripColor(message)), targets);
+	public static CompletableFuture<Message> koda(String message, TextChannel... targets) {
+		return koda(new MessageBuilder(stripColor(message)), targets);
 	}
 
-	public static void koda(MessageBuilder message, TextChannel... targets) {
-		koda(message, success -> {}, Throwable::printStackTrace, targets);
+	public static CompletableFuture<Message> koda(MessageBuilder message, TextChannel... targets) {
+		return koda(message, success -> {}, Throwable::printStackTrace, targets);
 	}
 
-	public static void koda(MessageBuilder message, Consumer<Message> onSuccess, Consumer<Throwable> onError, TextChannel... targets) {
-		send(message, onSuccess, onError, Bot.KODA, targets);
+	public static CompletableFuture<Message> koda(MessageBuilder message, Consumer<Message> onSuccess, Consumer<Throwable> onError, TextChannel... targets) {
+		return send(message, onSuccess, onError, Bot.KODA, targets);
 	}
 
-	private static void send(MessageBuilder message, Consumer<Message> onSuccess, Consumer<Throwable> onError, Bot bot, TextChannel... targets) {
+	private static CompletableFuture<Message> send(MessageBuilder message, Consumer<Message> onSuccess, Consumer<Throwable> onError, Bot bot, TextChannel... targets) {
 		if (targets == null || targets.length == 0)
 			targets = new TextChannel[]{ TextChannel.BRIDGE };
+
 		for (TextChannel target : targets) {
 			if (target == null || bot.jda() == null)
 				continue;
+
+			final MentionType[] mentionTypes = { MentionType.EVERYONE, MentionType.HERE };
 			if (bot == Bot.RELAY && target == TextChannel.BRIDGE)
-				message.denyMentions(Message.MentionType.EVERYONE, Message.MentionType.HERE);
+				message.denyMentions(mentionTypes);
 			else
-				message.allowMentions(Message.MentionType.EVERYONE, Message.MentionType.HERE);
+				message.allowMentions(mentionTypes);
+
 			var textChannel = target.get(bot.jda());
-			if (textChannel != null)
-				textChannel.sendMessage(message.build()).queue(onSuccess, onError);
+			if (textChannel == null)
+				continue;
+
+			return textChannel.sendMessage(message.build()).submit().thenApply(success -> {
+				onSuccess.accept(success);
+				return success;
+			}).exceptionally(ex -> {
+				onError.accept(ex);
+				return null;
+			});
 		}
+
+		return CompletableFuture.completedFuture(null);
 	}
 
 	public static void addRole(String userId, DiscordId.Role role) {
@@ -210,7 +228,7 @@ public class Discord extends Feature {
 			if (roleById == null)
 				Nexus.log("Role from " + role.name() + " not found");
 			else
-				getGuild().addRoleToMember(userId, roleById).queue();
+				getGuild().addRoleToMember(UserSnowflake.fromId(userId), roleById).queue();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -221,7 +239,7 @@ public class Discord extends Feature {
 		if (roleById == null)
 			Nexus.log("Role from " + role.name() + " not found");
 		else
-			getGuild().removeRoleFromMember(userId, roleById).queue();
+			getGuild().removeRoleFromMember(UserSnowflake.fromId(userId), roleById).queue();
 	}
 
 	private static String bridgeTopic = "";

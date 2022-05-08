@@ -800,7 +800,7 @@ public abstract class CustomCommand extends ICustomCommand {
 		return offlinePlayer.getPlayer();
 	}
 
-	@TabCompleterFor({Player.class, OfflinePlayer.class})
+	@TabCompleterFor(Player.class)
 	public List<String> tabCompletePlayer(String filter) {
 		return OnlinePlayers.getAll().stream()
 				.filter(player -> PlayerUtils.canSee(player(), player))
@@ -809,16 +809,20 @@ public abstract class CustomCommand extends ICustomCommand {
 				.collect(toList());
 	}
 
-//	@TabCompleterFor(OfflinePlayer.class)
+	@TabCompleterFor(OfflinePlayer.class)
 	public List<String> tabCompleteOfflinePlayer(String filter) {
 		List<String> online = tabCompletePlayer(filter);
 		if (!online.isEmpty() || filter.length() < 3)
 			return online;
 
-		return new NerdService().find(filter).stream()
-				.map(Nerd::getName)
+		try {
+			return new NerdService().find(filter.replaceFirst("[pP]:", "")).stream()
+				.map(Nickname::of)
 				.filter(name -> name.toLowerCase().startsWith(filter.replaceFirst("[pP]:", "").toLowerCase()))
 				.collect(toList());
+		} catch (InvalidInputException ex) {
+			return Collections.emptyList();
+		}
 	}
 
 	@ConverterFor(World.class)
@@ -936,15 +940,20 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	@ConverterFor(LocalDate.class)
 	public LocalDate convertToLocalDate(String value) {
+		if (value.startsWith("+"))
+			return Timespan.of(value.replaceFirst("\\+", "")).fromNow().toLocalDate();
+		if (value.startsWith("-"))
+			return Timespan.of(value.replaceFirst("-", "")).sinceNow().toLocalDate();
+
 		return parseDate(value);
 	}
 
 	@ConverterFor(LocalDateTime.class)
 	public LocalDateTime convertToLocalDateTime(String value) {
 		if (value.startsWith("+"))
-			return LocalDateTime.now().plusSeconds(Timespan.of(value.replaceFirst("\\+", "")).getOriginal());
+			return Timespan.of(value.replaceFirst("\\+", "")).fromNow();
 		if (value.startsWith("-"))
-			return LocalDateTime.now().minusSeconds(Timespan.of(value.replaceFirst("-", "")).getOriginal());
+			return Timespan.of(value.replaceFirst("-", "")).sinceNow();
 
 		return parseDateTime(value);
 	}

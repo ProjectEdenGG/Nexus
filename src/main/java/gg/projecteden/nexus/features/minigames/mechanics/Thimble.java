@@ -412,7 +412,7 @@ public final class Thimble extends TeamlessMechanic {
 				.type(FireworkEffect.Type.BALL)
 				.color(ColorType.of(helmet.getType()).getBukkitColor())
 				.power(0)
-				.detonateAfter(1)
+				.detonateAfter(1L)
 				.launch();
 
 		minigamer.teleportAsync(((ThimbleArena) minigamer.getMatch().getArena()).getCurrentMap().getSpectateLocation());
@@ -645,6 +645,12 @@ public final class Thimble extends TeamlessMechanic {
 			Minigamer minigamer = PlayerManager.get(player);
 			Match match = minigamer.getMatch();
 			ThimbleMatchData matchData = match.getMatchData();
+
+			if (matchData.getChosenConcrete().containsValue(concrete.getType())) {
+				minigamer.tell("&cThis concrete has already been chosen.");
+				init();
+				return;
+			}
 
 			matchData.getChosenConcrete().remove(minigamer.getPlayer());
 

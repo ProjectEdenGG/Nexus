@@ -14,7 +14,7 @@ public abstract class ParticleEffect {
 	protected AmbienceUser user;
 	protected ParticleEffectType effectType;
 	protected Particle particle;
-	protected int life;
+	protected long life;
 	protected double chance;
 
 	public void tick() {

@@ -61,7 +61,7 @@ public class CooldownService extends MongoPlayerService<Cooldown> {
 	 * @param ticks  how long the cooldown should last in ticks
 	 * @return true if player is not on cooldown
 	 */
-	public boolean check(OfflinePlayer player, String type, int ticks) {
+	public boolean check(OfflinePlayer player, String type, long ticks) {
 		return check(player.getUniqueId(), type, ticks);
 	}
 
@@ -76,7 +76,7 @@ public class CooldownService extends MongoPlayerService<Cooldown> {
 	 * @param bypassPermission permission the player must have to bypass this cooldown
 	 * @return true if player is not on cooldown
 	 */
-	public boolean check(UUID uuid, String type, int ticks, String bypassPermission) {
+	public boolean check(UUID uuid, String type, long ticks, String bypassPermission) {
 		OfflinePlayer player = PlayerUtils.getPlayer(uuid);
 		if (player.getPlayer() != null && player.getPlayer().hasPermission(bypassPermission))
 			return true;
@@ -94,7 +94,7 @@ public class CooldownService extends MongoPlayerService<Cooldown> {
 	 * @param ticks how long the cooldown should last in ticks
 	 * @return true if player is not on cooldown
 	 */
-	public boolean check(UUID uuid, String type, int ticks) {
+	public boolean check(UUID uuid, String type, long ticks) {
 		Cooldown cooldown = get(uuid);
 		if (cooldown == null) {
 			Nexus.warn("Cooldown object is null? " + uuid.toString() + " / " + type + " / " + ticks);

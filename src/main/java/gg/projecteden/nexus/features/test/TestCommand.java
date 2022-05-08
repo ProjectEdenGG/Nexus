@@ -18,13 +18,13 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.BiomeTag.BiomeClimateType;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -37,8 +37,8 @@ import gg.projecteden.nexus.utils.Tasks.QueuedTask;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.utils.TimeUtils.Timespan;
 import gg.projecteden.utils.TimeUtils.Timespan.FormatType;
-import gg.projecteden.utils.TimeUtils.Timespan.TimespanBuilder;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.citizensnpcs.api.npc.NPC;
@@ -322,9 +322,20 @@ public class TestCommand extends CustomCommand implements Listener {
 		send("Pasted schematic allowedRegionsTest");
 	}
 
-	@Path("timespanFormatter <seconds> <formatType>")
-	void timespanFormatter(int seconds, FormatType formatType) {
-		send(TimespanBuilder.ofSeconds(seconds).formatType(formatType).format());
+	@Path("timespan <timespan> <formatType>")
+	void timespan(Timespan timespan, FormatType formatType) {
+		send(timespan.format(formatType));
+	}
+
+	@Path("affectsSpawning toggle [player]")
+	void affectsSpawning_toggle(@Arg("self") Player player) {
+		player.setAffectsSpawning(!player.getAffectsSpawning());
+		send(PREFIX + "&e" + Nickname.of(player) + " " + (player.getAffectsSpawning() ? "&ais now" : "&cis no longer" ) + " &3affecting mob spawns");
+	}
+
+	@Path("affectsSpawning status [player]")
+	void affectsSpawning_status(@Arg("self") Player player) {
+		send(PREFIX + "&e" + Nickname.of(player) + " " + (player.getAffectsSpawning() ? "&ais" : "&cis not" ) + " &3affecting mob spawns");
 	}
 
 	@Path("setTabListName <text...>")

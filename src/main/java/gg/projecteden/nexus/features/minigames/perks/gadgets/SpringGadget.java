@@ -45,7 +45,7 @@ public class SpringGadget implements GadgetPerk {
 	}
 
 	@Override
-	public int getCooldown() {
+	public long getCooldown() {
 		return TickTime.SECOND.x(1.5);
 	}
 }

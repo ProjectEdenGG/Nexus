@@ -22,7 +22,7 @@ public class StormEffect {
 
 	@Builder(buildMethodName = "start")
 	public StormEffect(HumanEntity player, Location location, boolean updateLoc, Vector updateVector, RainPartile rainParticle,
-					   int density, double radius, int ticks, int startDelay, int pulseDelay) {
+					   int density, double radius, long ticks, int startDelay, int pulseDelay) {
 
 		Particle cloudParticle = Particle.REDSTONE;
 		Color cloudColor = Color.fromRGB(127, 127, 127);
@@ -46,7 +46,7 @@ public class StormEffect {
 		double rainRadius = radius - 0.25;
 		double finalCloudRadius = radius;
 		int finalDensity = density;
-		int finalTicks = ticks;
+		long finalTicks = ticks;
 		RainPartile finalRainParticle = rainParticle;
 		Location finalLocation = location;
 		boolean finalUpdateLoc = updateLoc;

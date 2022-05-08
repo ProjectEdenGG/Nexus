@@ -63,8 +63,8 @@ import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 // TODO Make logic common for minigames
 
-@NoArgsConstructor
 @Disabled
+@NoArgsConstructor
 public class JigsawJam20Command extends CustomCommand implements Listener {
 	private static final String PREFIX = StringUtils.getPrefix("JigsawJam");
 	private static final String WORLD = "gameworld";

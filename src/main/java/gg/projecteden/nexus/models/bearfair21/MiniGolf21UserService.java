@@ -23,7 +23,10 @@ public class MiniGolf21UserService extends MongoPlayerService<MiniGolf21User> {
 	}
 
 	static {
-		Tasks.async(() ->
-				database.createQuery(MiniGolf21User.class).find().forEachRemaining(user -> cache.put(user.getUuid(), user)));
+		Tasks.async(() -> {
+			try (var cursor = database.createQuery(MiniGolf21User.class).find()) {
+				cursor.forEachRemaining(user -> cache.put(user.getUuid(), user));
+			}
+		});
 	}
 }

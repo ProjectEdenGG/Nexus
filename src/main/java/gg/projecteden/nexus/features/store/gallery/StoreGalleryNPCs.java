@@ -6,6 +6,7 @@ import gg.projecteden.nexus.models.costume.Costume;
 import gg.projecteden.nexus.models.costume.Costume.CostumeType;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.utils.CitizensUtils;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
@@ -70,8 +71,8 @@ public class StoreGalleryNPCs {
 					return canUse(costume.get());
 				});
 
-				for (CostumeType value : CostumeType.values())
-					humanEntity.getInventory().setItem(value.getSlot(), new ItemStack(Material.AIR));
+				for (CostumeType type : CostumeType.values())
+					humanEntity.getInventory().setItem(type.getSlot(), new ItemStack(Material.AIR));
 				display.setItem(costume.get());
 				displaySet.setLastUpdatedIndex(displaySet.getDisplays().indexOf(display));
 			}
@@ -99,7 +100,8 @@ public class StoreGalleryNPCs {
 
 	public static void updateSkins() {
 		List<String> modelNames = OnlinePlayers.getAll().stream()
-			.filter(player -> !PlayerUtils.isVanished(player)).map(HumanEntity::getName)
+			.filter(player -> !PlayerUtils.isVanished(player))
+			.map(HumanEntity::getName)
 			.toList();
 
 		List<String> skinNames = new ArrayList<>(modelNames);
@@ -245,8 +247,18 @@ public class StoreGalleryNPCs {
 
 		public void setItem(Costume costume) {
 			final HumanEntity entity = getHumanEntity();
-			if (entity != null)
-				entity.getInventory().setItem(costume.getType().getSlot(), costume.getItem());
+			if (entity == null)
+				return;
+
+			ItemBuilder item = new ItemBuilder(costume.getItem());
+
+			try {
+				if (item.material() == Material.PLAYER_HEAD)
+					item.skullOwner(PlayerUtils.getPlayer(skinName));
+			} catch (NullPointerException ignore) {}
+
+			entity.getInventory().setItem(costume.getType().getSlot(), item.build());
+
 		}
 
 	}

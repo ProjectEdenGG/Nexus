@@ -34,7 +34,6 @@ import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
@@ -260,7 +259,7 @@ public class Sabotage extends TeamMechanic {
 					}
 				} else {
 					if (KILL_ITEM.get().isSimilar(inventory.getItem(3))) {
-						int killCooldown = matchData.getKillCooldown(minigamer);
+						long killCooldown = matchData.getKillCooldown(minigamer);
 						if (killCooldown != -1) {
 							if (killCooldown - 1 == 0)
 								matchData.getKillCooldowns().remove(minigamer.getUniqueId());

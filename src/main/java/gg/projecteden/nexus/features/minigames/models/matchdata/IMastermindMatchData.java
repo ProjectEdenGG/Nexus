@@ -216,7 +216,7 @@ public abstract class IMastermindMatchData extends MatchData {
 			for (int i = 0; i < 3; i++) {
 				Location location = arena.worldguard().getRandomBlock(region).getLocation();
 
-				int delay = RandomUtils.randomInt(TickTime.SECOND.get() / 2, TickTime.SECOND.get());
+				long delay = RandomUtils.randomLong(TickTime.SECOND.get() / 2, TickTime.SECOND.get());
 				Tasks.wait(delay * i, () -> {
 					Type type = RandomUtils.randomElement(EnumUtils.valuesExcept(Type.class, Type.CREEPER, Type.BALL));
 					FireworkLauncher.random(location)

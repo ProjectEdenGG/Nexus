@@ -252,7 +252,7 @@ public enum Pugmas21QuestTask implements IQuestTask {
 			.player("I'm sorry but I think I'll have to pass.")
 			.npc("Suit yourself. Just give me a few minutes.")
 			// TODO Sounds
-			.wait(TickTime.SECOND.x(3))
+			.pause(TickTime.SECOND.x(3))
 			.npc("And... done! Here you go, one wooden basket!")
 			.give(BALLOON_BASKET.get())
 			.player("Thanks again warren!")

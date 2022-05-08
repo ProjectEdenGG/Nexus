@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.y2021.bearfair21.commands;
 
+import gg.projecteden.annotations.Disabled;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fishing.Fishing;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot.FishingLootCategory;
@@ -15,8 +16,10 @@ import lombok.Getter;
 import java.util.ArrayList;
 import java.util.List;
 
+@Disabled
 @Permission(Group.ADMIN)
 public class BearFair21FishingCommand extends CustomCommand {
+
 	public BearFair21FishingCommand(CommandEvent event) {
 		super(event);
 	}

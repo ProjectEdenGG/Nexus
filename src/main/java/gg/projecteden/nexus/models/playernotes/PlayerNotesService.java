@@ -22,7 +22,9 @@ public class PlayerNotesService extends MongoPlayerService<PlayerNotes> {
 	public List<PlayerNotes> getByKeyword(String keyword) {
 		Query<PlayerNotes> query = database.createQuery(PlayerNotes.class);
 		query.and(query.criteria("entries.note").containsIgnoreCase(keyword));
-		return query.find().toList();
+		try (var cursor = query.find()) {
+			return cursor.toList();
+		}
 	}
 
 }

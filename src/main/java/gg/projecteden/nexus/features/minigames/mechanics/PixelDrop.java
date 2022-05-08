@@ -52,8 +52,8 @@ import static java.util.stream.Collectors.toSet;
 public class PixelDrop extends TeamlessMechanic {
 	private static final String PREFIX = StringUtils.getPrefix("PixelDrop");
 	private static final int MAX_ROUNDS = 10;
-	private static final int TIME_BETWEEN_ROUNDS = TickTime.SECOND.x(8);
-	private static final int ROUND_COUNTDOWN = TickTime.SECOND.x(45);
+	private static final long TIME_BETWEEN_ROUNDS = TickTime.SECOND.x(8);
+	private static final long ROUND_COUNTDOWN = TickTime.SECOND.x(45);
 
 	@Override
 	public @NotNull String getName() {
@@ -348,7 +348,7 @@ public class PixelDrop extends TeamlessMechanic {
 					matchData.setTimeLeft(i);
 					match.getScoreboard().update();
 
-					if (Arrays.asList(1, 2, 3, 10).contains(i))
+					if (Arrays.asList(1L, 2L, 3L, 10L).contains(i))
 						minigamer.tell(PREFIX + "&3Round ends in " + i, false);
 
 					if (i <= 3) {

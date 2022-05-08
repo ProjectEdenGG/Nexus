@@ -243,15 +243,15 @@ public class BlockUtils {
 		return null;
 	}
 
-	public static void glow(Block block, int ticks, OptionalPlayer viewer) {
+	public static void glow(Block block, long ticks, OptionalPlayer viewer) {
 		glow(block, ticks, viewer, Color.RED);
 	}
 
-	public static void glow(Block block, int ticks, OptionalPlayer viewer, Color color) {
+	public static void glow(Block block, long ticks, OptionalPlayer viewer, Color color) {
 		glow(block, ticks, Collections.singletonList(viewer), color);
 	}
 
-	public static void glow(Block block, int ticks, List<? extends OptionalPlayer> viewers, Color color) {
+	public static void glow(Block block, long ticks, List<? extends OptionalPlayer> viewers, Color color) {
 		List<Player> _viewers = PlayerUtils.getNonNullPlayers(viewers);
 
 		Material material = block.getType();

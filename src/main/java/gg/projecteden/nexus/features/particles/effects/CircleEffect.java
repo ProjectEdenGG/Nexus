@@ -25,7 +25,7 @@ public class CircleEffect {
 
 	@Builder(buildMethodName = "start")
 	public CircleEffect(HumanEntity player, Location location, boolean updateLoc, Vector updateVector, Particle particle, boolean whole, boolean randomRotation,
-						boolean rainbow, Color color, int count, int density, int ticks, double radius, double speed, boolean fast,
+						boolean rainbow, Color color, int count, int density, long ticks, double radius, double speed, boolean fast,
 						double disX, double disY, double disZ, int startDelay, int pulseDelay, boolean clientSide) {
 
 		if (player != null && location == null)
@@ -69,7 +69,7 @@ public class CircleEffect {
 
 		double finalSpeed = speed;
 		int finalCount = count;
-		int finalTicks = ticks;
+		long finalTicks = ticks;
 		Particle finalParticle = particle;
 		int finalLoops = loops;
 		Location finalLocation = location;

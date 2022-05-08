@@ -115,7 +115,7 @@ public class SabotageMatchData extends MatchData {
 			.color(ChatColor.DARK_GRAY)
 			.permission("")
 			.build();
-	private final Map<UUID, Integer> killCooldowns = new HashMap<>();
+	private final Map<UUID, Long> killCooldowns = new HashMap<>();
 	private Task sabotage;
 	private int sabotageTaskId = -1;
 	private int customSabotageTaskId = -1; // custom task created by the sabotage
@@ -508,12 +508,12 @@ public class SabotageMatchData extends MatchData {
 		return (sabotage == null || sabotage.getTask() == Tasks.LIGHTS) ? 6 : 2;
 	}
 
-	public int getKillCooldown(HasUniqueId player) {
-		return killCooldowns.getOrDefault(player.getUniqueId(), -1);
+	public long getKillCooldown(HasUniqueId player) {
+		return killCooldowns.getOrDefault(player.getUniqueId(), -1L);
 	}
 
 	public int getKillCooldownAsSeconds(HasUniqueId player) {
-		int ticks = getKillCooldown(player);
+		long ticks = getKillCooldown(player);
 		if (ticks == -1) return -1;
 		return (int) Math.ceil(ticks / 20d);
 	}

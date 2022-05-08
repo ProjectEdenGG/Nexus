@@ -28,7 +28,7 @@ public class FireworkLauncher {
 	private Boolean trailing;
 	private FireworkEffect.Type type;
 	private Integer power;
-	private Integer detonateAfter;
+	private Long detonateAfter;
 	private Boolean silent;
 	private Boolean damage;
 	public static final String METADATA_KEY_DAMAGE = "damage";

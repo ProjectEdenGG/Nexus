@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.hub;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.annotations.Async;
-import gg.projecteden.nexus.features.warps.commands._WarpCommand;
+import gg.projecteden.nexus.features.warps.commands._WarpSubCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -19,11 +19,10 @@ import gg.projecteden.nexus.models.hub.HubParkourUserService;
 import gg.projecteden.nexus.models.hub.HubTreasureHunter;
 import gg.projecteden.nexus.models.hub.HubTreasureHunterService;
 import gg.projecteden.nexus.models.warps.WarpType;
-import gg.projecteden.nexus.models.warps.Warps.Warp;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.Timespan;
 import gg.projecteden.utils.TimeUtils.Timespan.FormatType;
+import gg.projecteden.utils.TimeUtils.Timespan.TimespanBuilder;
 import lombok.NonNull;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
@@ -36,7 +35,7 @@ import java.util.function.BiFunction;
 import static gg.projecteden.nexus.features.hub.HubTreasureHunt.TOTAL_TREASURE_CHESTS;
 
 @Redirect(from = {"/tphub", "/lobby"}, to = "/hub")
-public class HubCommand extends _WarpCommand {
+public class HubCommand extends _WarpSubCommand {
 	final HubParkourCourseService courseService = new HubParkourCourseService();
 	final HubParkourUserService userService = new HubParkourUserService();
 
@@ -47,20 +46,6 @@ public class HubCommand extends _WarpCommand {
 	@Override
 	public WarpType getWarpType() {
 		return WarpType.HUB;
-	}
-
-	@Path
-	void warp() {
-		if (isStaff())
-			WarpType.STAFF.get("hub").teleportAsync(player());
-		else
-			WarpType.NORMAL.get("hub").teleportAsync(player());
-	}
-
-	@Override
-	@Path("warps [filter]")
-	public void list(@Arg(tabCompleter = Warp.class) String filter) {
-		super.list(filter);
 	}
 
 	@Path("parkour quit")
@@ -145,7 +130,7 @@ public class HubCommand extends _WarpCommand {
 		send(PREFIX + "Fastest times for &e" + course.getName() + " &3course");
 
 		final BiFunction<CourseData, String, JsonBuilder> formatter = (run, index) ->
-			json("&3" + index + " &e" + run.getNickname() + " &7- " + Timespan.ofMillis(run.getBestRunTime()).format(FormatType.SHORT));
+			json("&3" + index + " &e" + run.getNickname() + " &7- " + TimespanBuilder.ofMillis(run.getBestRunTime()).displayMillis().build().format(FormatType.SHORT));
 
 		paginate(data, formatter, "/hub parkour top " + course.getName(), page);
 	}

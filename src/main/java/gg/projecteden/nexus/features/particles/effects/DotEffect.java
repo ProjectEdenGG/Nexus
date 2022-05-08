@@ -22,7 +22,7 @@ public class DotEffect {
 	private int taskId;
 
 	@Builder(buildMethodName = "start")
-	public DotEffect(HumanEntity player, Location location, boolean clientSide, Particle particle, int count, int ticks, double speed,
+	public DotEffect(HumanEntity player, Location location, boolean clientSide, Particle particle, int count, long ticks, double speed,
 					 boolean rainbow, Color color, double disX, double disY, double disZ,
 					 int startDelay, int pulseDelay) {
 
@@ -54,7 +54,7 @@ public class DotEffect {
 
 		double finalSpeed = speed;
 		int finalCount = count;
-		int finalTicks = ticks;
+		long finalTicks = ticks;
 		Particle finalParticle = particle;
 		Location finalLocation = location;
 		final AtomicDouble hue = new AtomicDouble(0);
@@ -104,7 +104,7 @@ public class DotEffect {
 		debug(player, location, color, TickTime.SECOND.x(3));
 	}
 
-	public static void debug(Player player, Location location, Color color, int ticks) {
+	public static void debug(Player player, Location location, Color color, long ticks) {
 		DotEffect.builder()
 			.player(player)
 			.location(location)

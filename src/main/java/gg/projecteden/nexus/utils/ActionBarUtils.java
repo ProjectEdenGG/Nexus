@@ -35,11 +35,11 @@ public class ActionBarUtils {
 		sendActionBar(player, actionBar.getText(), actionBar.getDuration(), actionBar.isFade());
 	}
 
-	public static void sendActionBar(final HasPlayer player, final String message, int duration) {
+	public static void sendActionBar(final HasPlayer player, final String message, long duration) {
 		sendActionBar(player, message, duration, true);
 	}
 
-	public static void sendActionBar(final HasPlayer player, final String message, int duration, boolean fade) {
+	public static void sendActionBar(final HasPlayer player, final String message, long duration, boolean fade) {
 		if (player == null)
 			return;
 
@@ -69,11 +69,11 @@ public class ActionBarUtils {
 		sendActionBar(players, message, -1);
 	}
 
-	public static void sendActionBar(final List<? extends HasPlayer> players, String message, int duration) {
+	public static void sendActionBar(final List<? extends HasPlayer> players, String message, long duration) {
 		sendActionBar(players, message, duration, true);
 	}
 
-	public static void sendActionBar(final List<? extends HasPlayer> players, String message, int duration, boolean fade) {
+	public static void sendActionBar(final List<? extends HasPlayer> players, String message, long duration, boolean fade) {
 		for (HasPlayer player : players)
 			sendActionBar(player, message, duration, fade);
 	}
@@ -89,11 +89,11 @@ public class ActionBarUtils {
 		sendActionBarToAllPlayers(message, -1);
 	}
 
-	public static void sendActionBarToAllPlayers(String message, int duration) {
+	public static void sendActionBarToAllPlayers(String message, long duration) {
 		sendActionBarToAllPlayers(message, duration, true);
 	}
 
-	public static void sendActionBarToAllPlayers(String message, int duration, boolean fade) {
+	public static void sendActionBarToAllPlayers(String message, long duration, boolean fade) {
 		for (Player player : OnlinePlayers.getAll())
 			sendActionBar(player, message, duration, fade);
 	}
@@ -102,7 +102,7 @@ public class ActionBarUtils {
 	@AllArgsConstructor
 	public static class ActionBar {
 		private String text;
-		private int duration;
+		private long duration;
 		private boolean fade;
 	}
 }

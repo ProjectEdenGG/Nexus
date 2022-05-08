@@ -1,19 +1,20 @@
-package gg.projecteden.nexus.features.events.aeveonproject.commands;
+package gg.projecteden.nexus.features.events.aeveonproject;
 
 import gg.projecteden.annotations.Async;
-import gg.projecteden.nexus.features.events.aeveonproject.APUtils;
 import gg.projecteden.nexus.features.events.aeveonproject.menus.ShipColorMenu;
 import gg.projecteden.nexus.features.events.aeveonproject.sets.APSet;
 import gg.projecteden.nexus.features.events.aeveonproject.sets.APSetType;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.features.warps.commands._WarpSubCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.aeveonproject.AeveonProjectService;
 import gg.projecteden.nexus.models.aeveonproject.AeveonProjectUser;
+import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -39,13 +40,19 @@ import static gg.projecteden.nexus.utils.RandomUtils.getWeightedRandom;
 @Aliases("ap")
 @NoArgsConstructor
 @Permission(Group.STAFF)
-public class AeveonProjectCommand extends CustomCommand implements Listener {
+@Redirect(from = "apw", to = "ap warps")
+public class AeveonProjectCommand extends _WarpSubCommand implements Listener {
 	AeveonProjectService service = new AeveonProjectService();
 	AeveonProjectUser user;
 
 	public AeveonProjectCommand(CommandEvent event) {
 		super(event);
 		PREFIX = StringUtils.getPrefix("AP");
+	}
+
+	@Override
+	public WarpType getWarpType() {
+		return WarpType.AEVEON_PROJECT;
 	}
 
 	@Path("start")

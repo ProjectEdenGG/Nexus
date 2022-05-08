@@ -78,12 +78,12 @@ public class CommandsConfig implements PlayerOwnedObject {
 	@NoArgsConstructor
 	public static class CommandConfig {
 		@NonNull
-		private String plugin, command;
+		private String plugin, sourceLink, command;
 		private String description, descriptionExtra, permission;
 		private Set<String> aliases = new HashSet<>();
 		private Set<CommandPath> paths = new HashSet<>();
 		private boolean confirmationMenu;
-		private int cooldown;
+		private long cooldown;
 		private boolean cooldownGlobal;
 		private String cooldownBypass;
 		private boolean enabled = true;
@@ -103,6 +103,7 @@ public class CommandsConfig implements PlayerOwnedObject {
 
 		public CommandConfig(Plugin plugin, CustomCommand command) {
 			this.plugin = plugin.getName();
+			this.sourceLink = "https://github.com/ProjectEdenGG/Nexus/blob/master/src/main/java/" + command.getClass().getName().replace(".", "/") + ".java";
 			this.command = command.getName().toLowerCase();
 
 			Class<? extends CustomCommand> clazz = command.getClass();
@@ -146,7 +147,7 @@ public class CommandsConfig implements PlayerOwnedObject {
 			private String path;
 			private String description, descriptionExtra, permission;
 			private boolean async;
-			private int cooldown;
+			private long cooldown;
 			private boolean cooldownGlobal;
 			private String cooldownBypass;
 			private Set<CommandPathArgument> arguments = new HashSet<>();

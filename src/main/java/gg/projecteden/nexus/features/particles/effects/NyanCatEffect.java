@@ -19,14 +19,14 @@ public class NyanCatEffect {
 	private int taskId;
 
 	@Builder(buildMethodName = "start")
-	public NyanCatEffect(HumanEntity player, int ticks, int startDelay, int pulseDelay) {
+	public NyanCatEffect(HumanEntity player, long ticks, int startDelay, int pulseDelay) {
 
 		if (player == null) throw new InvalidInputException("No player was provided");
 
 		if (pulseDelay < 1) pulseDelay = 1;
 		if (ticks == 0) ticks = TickTime.SECOND.x(5);
 
-		int finalTicks = ticks;
+		long finalTicks = ticks;
 		AtomicInteger ticksElapsed = new AtomicInteger(0);
 
 		taskId = Tasks.repeat(startDelay, pulseDelay, () -> {

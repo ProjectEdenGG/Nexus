@@ -128,7 +128,7 @@ public class Pugmas21 {
 		return !getAllPlayers().isEmpty();
 	}
 
-	public static void actionBar(String message, int ticks) {
+	public static void actionBar(String message, long ticks) {
 		getAllPlayers().forEach(player -> ActionBarUtils.sendActionBar(player, message, ticks));
 	}
 

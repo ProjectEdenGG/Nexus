@@ -19,6 +19,7 @@ import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import gg.projecteden.utils.TimeUtils.Timespan.FormatType;
+import gg.projecteden.utils.TimeUtils.Timespan.TimespanBuilder;
 import gg.projecteden.utils.Utils;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -101,7 +102,7 @@ public class HubParkour implements Listener {
 				if (run.getCurrentRunSplits().size() != course.getCheckpoints().size() - 1)
 					return;
 
-				final Timespan timespan = Timespan.of(run.getLastCheckpointTime());
+				final Timespan timespan = TimespanBuilder.of(run.getLastCheckpointTime()).displayMillis().build();
 				run.getCurrentRunSplits().add(timespan);
 				user.sendMessage(PREFIX + "Reached checkpoint &e#" + course.getCheckpoints().size() + " &3in &e" + timespan.format(FormatType.SHORT));
 				user.sendMessage(PREFIX + "&eCompleted parkour &3in &e" + Timespan.ofMillis(run.getCurrentRunTime()).format(FormatType.SHORT));
@@ -137,7 +138,7 @@ public class HubParkour implements Listener {
 					if (run.getCurrentRunSplits().size() != number - 1)
 						return;
 
-					final Timespan timespan = Timespan.of(run.getLastCheckpointTime());
+					final Timespan timespan = TimespanBuilder.of(run.getLastCheckpointTime()).displayMillis().build();
 					run.getCurrentRunSplits().add(timespan);
 					run.setLastCheckpoint(number);
 					run.setLastCheckpointTime(LocalDateTime.now());
