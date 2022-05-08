@@ -209,6 +209,10 @@ public class ArenaMenu extends InventoryProvider {
 			this(row, column, new ItemBuilder(material));
 		}
 
+		public ItemBuilder getItem() {
+			return item.clone();
+		}
+
 		public String getTitle() {
 			return StringUtils.camelCase(name());
 		}
