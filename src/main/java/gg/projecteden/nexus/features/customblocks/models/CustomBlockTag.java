@@ -28,6 +28,7 @@ import lombok.SneakyThrows;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.NoteBlock;
 import org.bukkit.inventory.ItemStack;
@@ -61,11 +62,13 @@ public class CustomBlockTag implements Tag<CustomBlock> {
 	public static final CustomBlockTag CHISELED_STONE = new CustomBlockTag(IChiseledStone.class);
 	public static final CustomBlockTag TERRACOTTA_SHINGLES = new CustomBlockTag(ITerracottaShingles.class);
 	public static final CustomBlockTag COLORED_TERRACOTTA_SHINGLES = new CustomBlockTag(IColoredTerracottaShingles.class);
-
+	//
 	public static final CustomBlockTag CRAFTABLE_NOTE_BLOCKS = new CustomBlockTag(ICraftableNoteBlock.class);
 	public static final CustomBlockTag DIRECTIONAL_NOTE_BLOCKS = new CustomBlockTag(IDirectionalNoteBlock.class);
 
 	// TRIPWIRE
+
+	//
 	public static final CustomBlockTag CRAFTABLE_TRIPWIRE = new CustomBlockTag(ICraftableTripwire.class);
 	public static final CustomBlockTag DIRECTIONAL_TRIPWIRE = new CustomBlockTag(IDirectionalTripwire.class);
 
@@ -322,14 +325,14 @@ public class CustomBlockTag implements Tag<CustomBlock> {
 	}
 
 	public boolean isTagged(@NotNull Block block) {
-		return isTagged(block.getBlockData());
+		return isTagged(block.getBlockData(), block.getRelative(BlockFace.DOWN));
 	}
 
-	public boolean isTagged(@NotNull BlockData block) {
-		if(!(block instanceof NoteBlock noteBlock))
+	public boolean isTagged(@NotNull BlockData blockData, Block underneath) {
+		if (!(blockData instanceof NoteBlock noteBlock))
 			return false;
 
-		return isTagged(CustomBlock.fromBlockData(noteBlock));
+		return isTagged(CustomBlock.fromBlockData(noteBlock, underneath));
 	}
 
 	public boolean isNotTagged(@NotNull CustomBlock customBlock) {
@@ -344,8 +347,8 @@ public class CustomBlockTag implements Tag<CustomBlock> {
 		return !isTagged(block);
 	}
 
-	public boolean isNotTagged(@NotNull BlockData block) {
-		return !isTagged(block);
+	public boolean isNotTagged(@NotNull BlockData block, Block underneath) {
+		return !isTagged(block, underneath);
 	}
 
 	@Override

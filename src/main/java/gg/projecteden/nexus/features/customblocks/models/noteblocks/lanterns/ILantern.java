@@ -16,5 +16,4 @@ public interface ILantern extends IDirectionalNoteBlock {
 			.replace("Lantern", "");
 		return Material.valueOf(camelToSnake(woodType).toUpperCase() + "_PLANKS");
 	}
-
 }

@@ -109,51 +109,51 @@ public class CustomBlockUtils {
 		tracker = trackerService.fromWorld(location);
 		CustomBlockData data = tracker.get(location);
 		if (!data.exists()) {
-			CustomBlock customBlock = CustomBlock.fromBlockData(blockData);
+			CustomBlock customBlock = CustomBlock.fromBlockData(blockData, location.getBlock().getRelative(BlockFace.DOWN));
 			if (customBlock == null) {
 				debug("GetData: CustomBlock == null");
 				return null;
 			}
 
 			debug("GetData: creating new data for " + customBlock.name());
-			BlockFace facing = CustomBlockUtils.getFacing(customBlock, blockData);
+			BlockFace facing = CustomBlockUtils.getFacing(customBlock, blockData, location.getBlock().getRelative(BlockFace.DOWN));
 			data = placeBlockDatabase(UUIDUtils.UUID0, customBlock, location, facing);
 		}
 
 		return data;
 	}
 
-	public static boolean equals(CustomBlock customBlock, BlockData blockData, boolean directional) {
+	public static boolean equals(CustomBlock customBlock, BlockData blockData, boolean directional, Block underneath) {
 		BlockFace facing = null;
 		if (directional) {
-			facing = CustomBlockUtils.getFacing(customBlock, blockData);
+			facing = CustomBlockUtils.getFacing(customBlock, blockData, underneath);
 		}
 
-		return isFacing(facing, customBlock, blockData);
+		return isFacing(facing, customBlock, blockData, underneath);
 	}
 
-	public static BlockFace getFacing(CustomBlock customBlock, BlockData blockData) {
+	public static BlockFace getFacing(CustomBlock customBlock, BlockData blockData, Block underneath) {
 		ICustomBlock iCustomBlock = customBlock.get();
 		if (!(iCustomBlock instanceof IDirectional))
 			return BlockFace.UP;
 
-		if (isFacing(BlockFace.NORTH, customBlock, blockData))
+		if (isFacing(BlockFace.NORTH, customBlock, blockData, underneath))
 			return BlockFace.NORTH;
-		else if (isFacing(BlockFace.EAST, customBlock, blockData))
+		else if (isFacing(BlockFace.EAST, customBlock, blockData, underneath))
 			return BlockFace.EAST;
 
 		return BlockFace.UP;
 	}
 
-	private static boolean isFacing(BlockFace face, CustomBlock customBlock, BlockData blockData) {
+	private static boolean isFacing(BlockFace face, CustomBlock customBlock, BlockData blockData, Block underneath) {
 		switch (customBlock.getType()) {
 			case NOTE_BLOCK -> {
 				ICustomNoteBlock customNoteBlock = (ICustomNoteBlock) customBlock.get();
-				return customNoteBlock.equals(blockData, face);
+				return customNoteBlock.equals(blockData, face, underneath);
 			}
 			case TRIPWIRE -> {
 				ICustomTripwire customTripwire = (ICustomTripwire) customBlock.get();
-				return customTripwire.equals(blockData, face);
+				return customTripwire.equals(blockData, face, underneath);
 			}
 		}
 		return false;

@@ -39,5 +39,4 @@ public class ShojiBlock implements ICraftableNoteBlock, IDirectionalNoteBlock {
 			.add('1', Material.STICK)
 			.add('2', Material.PAPER), 4);
 	}
-
 }

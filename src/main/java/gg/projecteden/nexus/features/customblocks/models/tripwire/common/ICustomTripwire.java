@@ -1,9 +1,11 @@
 package gg.projecteden.nexus.features.customblocks.models.tripwire.common;
 
 import gg.projecteden.nexus.features.customblocks.models.common.ICustomBlock;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Tripwire;
@@ -64,63 +66,90 @@ public interface ICustomTripwire extends ICustomBlock {
 		return getConfig().ignorePowered();
 	}
 
+	// Directional / Waterlogged
 
-	// Directional
-
-	default boolean isNorth(@Nullable BlockFace facing) {
+	default boolean isNorth(@Nullable BlockFace facing, Block underneath) {
 		boolean ns = this.isNorth_NS();
-		if (!(this instanceof IDirectionalTripwire directional))
-			return ns;
 
-		return getFacingBool(facing, ns, directional.isNorth_EW());
+		if (this instanceof IDirectionalTripwire directional)
+			return getFacingBool(facing, ns, directional.isNorth_EW());
+
+		if (this instanceof IWaterLogged waterLogged && underneath.getType() == Material.WATER)
+			return waterLogged.isWaterLoggedNorth_NS();
+
+		return ns;
 	}
 
-	default boolean isSouth(@Nullable BlockFace facing) {
+	default boolean isSouth(@Nullable BlockFace facing, Block underneath) {
 		boolean ns = this.isSouth_NS();
-		if (!(this instanceof IDirectionalTripwire directional))
-			return ns;
 
-		return getFacingBool(facing, ns, directional.isSouth_EW());
+		if (this instanceof IDirectionalTripwire directional)
+			return getFacingBool(facing, ns, directional.isSouth_EW());
+
+		if (this instanceof IWaterLogged waterLogged && underneath.getType() == Material.WATER)
+			return waterLogged.isWaterLoggedSouth_NS();
+
+		return ns;
 	}
 
-	default boolean isEast(@Nullable BlockFace facing) {
-		boolean ns = this.isEast_NS();
-		if (!(this instanceof IDirectionalTripwire directional))
-			return ns;
+	default boolean isEast(@Nullable BlockFace facing, Block underneath) {
+		boolean ew = this.isEast_NS();
 
-		return getFacingBool(facing, ns, directional.isEast_EW());
+		if (this instanceof IDirectionalTripwire directional)
+			return getFacingBool(facing, ew, directional.isEast_EW());
+
+		if (this instanceof IWaterLogged waterLogged && underneath.getType() == Material.WATER)
+			return waterLogged.isWatterLoggedEast_NS();
+
+		return ew;
 	}
 
-	default boolean isWest(@Nullable BlockFace facing) {
-		boolean ns = this.isWest_NS();
-		if (!(this instanceof IDirectionalTripwire directional))
-			return ns;
+	default boolean isWest(@Nullable BlockFace facing, Block underneath) {
+		boolean ew = this.isWest_NS();
 
-		return getFacingBool(facing, ns, directional.isWest_EW());
+		if (this instanceof IDirectionalTripwire directional)
+			return getFacingBool(facing, ew, directional.isWest_EW());
+
+		if (this instanceof IWaterLogged waterLogged && underneath.getType() == Material.WATER)
+			return waterLogged.isWaterLoggedWest_NS();
+
+		return ew;
 	}
 
-	default boolean isAttached(@Nullable BlockFace facing) {
-		boolean ns = this.isAttached_NS();
-		if (!(this instanceof IDirectionalTripwire directional))
-			return ns;
+	default boolean isAttached(@Nullable BlockFace facing, Block underneath) {
+		boolean attached = this.isAttached_NS();
 
-		return getFacingBool(facing, ns, directional.isAttached_EW());
+		if (this instanceof IDirectionalTripwire directional)
+			return getFacingBool(facing, attached, directional.isAttached_EW());
+
+		if (this instanceof IWaterLogged waterLogged && underneath.getType() == Material.WATER)
+			return waterLogged.isWaterLoggedAttached_NS();
+
+		return attached;
 	}
 
-	default boolean isDisarmed(@Nullable BlockFace facing) {
-		boolean ns = this.isDisarmed_NS();
-		if (!(this instanceof IDirectionalTripwire directional))
-			return ns;
+	default boolean isDisarmed(@Nullable BlockFace facing, Block underneath) {
+		boolean disarmed = this.isDisarmed_NS();
 
-		return getFacingBool(facing, ns, directional.isDisarmed_EW());
+		if (this instanceof IDirectionalTripwire directional)
+			return getFacingBool(facing, disarmed, directional.isDisarmed_EW());
+
+		if (this instanceof IWaterLogged waterLogged && underneath.getType() == Material.WATER)
+			return waterLogged.isWaterLoggedDisarmed_NS();
+
+		return disarmed;
 	}
 
-	default boolean isPowered(@Nullable BlockFace facing) {
-		boolean ns = this.isPowered_NS();
-		if (!(this instanceof IDirectionalTripwire directional))
-			return ns;
+	default boolean isPowered(@Nullable BlockFace facing, Block underneath) {
+		boolean powered = this.isPowered_NS();
 
-		return getFacingBool(facing, ns, directional.isPowered_EW());
+		if (this instanceof IDirectionalTripwire directional)
+			return getFacingBool(facing, powered, directional.isPowered_EW());
+
+		if (this instanceof IWaterLogged waterLogged && underneath.getType() == Material.WATER)
+			return waterLogged.isWaterLoggedPowered_NS();
+
+		return powered;
 	}
 
 	Set<BlockFace> directions = Set.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST);
@@ -129,16 +158,10 @@ public interface ICustomTripwire extends ICustomBlock {
 		if (facing == null || !directions.contains(facing))
 			return ns;
 
-		switch (facing) {
-			case NORTH, SOUTH -> {
-				return ns;
-			}
-			case EAST, WEST -> {
-				return ew;
-			}
-		}
-
-		return ns;
+		return switch (facing) {
+			case EAST, WEST -> ew;
+			default -> ns;
+		};
 	}
 
 	// Sounds
@@ -199,15 +222,15 @@ public interface ICustomTripwire extends ICustomBlock {
 	}
 
 	@Override
-	default BlockData getBlockData(@NotNull BlockFace facing) {
+	default BlockData getBlockData(@NotNull BlockFace facing, @NotNull Block underneath) {
 		Tripwire tripwire = (Tripwire) getVanillaBlockMaterial().createBlockData();
-		tripwire.setFace(BlockFace.NORTH, isNorth(facing));
-		tripwire.setFace(BlockFace.SOUTH, isSouth(facing));
-		tripwire.setFace(BlockFace.EAST, isEast(facing));
-		tripwire.setFace(BlockFace.WEST, isWest(facing));
-		tripwire.setAttached(isAttached(facing));
-		tripwire.setDisarmed(isDisarmed(facing));
-		tripwire.setPowered(isPowered(facing));
+		tripwire.setFace(BlockFace.NORTH, isNorth(facing, underneath));
+		tripwire.setFace(BlockFace.SOUTH, isSouth(facing, underneath));
+		tripwire.setFace(BlockFace.EAST, isEast(facing, underneath));
+		tripwire.setFace(BlockFace.WEST, isWest(facing, underneath));
+		tripwire.setAttached(isAttached(facing, underneath));
+		tripwire.setDisarmed(isDisarmed(facing, underneath));
+		tripwire.setPowered(isPowered(facing, underneath));
 		if (this.isIgnorePowered())
 			tripwire.setPowered(false);
 
@@ -215,11 +238,25 @@ public interface ICustomTripwire extends ICustomBlock {
 	}
 
 	@Override
-	default boolean equals(@NotNull BlockData blockData, BlockFace facing) {
+	default String toStringBlockData(BlockData blockData) {
+		Tripwire tripwire = (Tripwire) blockData;
+
+		return "Tripwire:"
+			+ " &fN=" + StringUtils.bool(tripwire.hasFace(BlockFace.NORTH))
+			+ " &fS=" + StringUtils.bool(tripwire.hasFace(BlockFace.SOUTH))
+			+ " &fE=" + StringUtils.bool(tripwire.hasFace(BlockFace.EAST))
+			+ " &fW=" + StringUtils.bool(tripwire.hasFace(BlockFace.WEST))
+			+ " &fAttached=" + StringUtils.bool(tripwire.isAttached())
+			+ " &fDisarmed=" + StringUtils.bool(tripwire.isDisarmed())
+			+ " &fPowered=" + StringUtils.bool(tripwire.isPowered());
+	}
+
+	@Override
+	default boolean equals(@NotNull BlockData blockData, BlockFace facing, @NonNull Block underneath) {
 		if (!(blockData instanceof Tripwire tripwire))
 			return false;
 
-		Tripwire _tripwire = (Tripwire) this.getBlockData(facing);
+		Tripwire _tripwire = (Tripwire) this.getBlockData(facing, underneath);
 		if (this.isIgnorePowered())
 			tripwire.setPowered(false);
 

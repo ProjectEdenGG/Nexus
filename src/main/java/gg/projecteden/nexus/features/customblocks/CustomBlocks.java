@@ -15,11 +15,8 @@ import java.util.List;
 	TODO:
 		- Tripwire implementation:
 			- Fix/Remove break particles
-			- Directional placing
-				- note blocks need the blockface of the block they are placed against (current & intended)
-				- tripwire needs the facing of the player
 			- Placing string needs to place TRIPWIRE and not TALL_SUPPORT
-		- Sounds --> Do some more testing
+			- When placing a block near tripwire, sometimes it will change the block data of some tripwire (clientside only)
 		- Vanished handling, proper interactions and what not
 		- Future Conversions on chunk generate/load, itemstacks & blocks
 		- CustomBlockState handling, like bird houses

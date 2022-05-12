@@ -1,11 +1,14 @@
 package gg.projecteden.nexus.features.customblocks.models.noteblocks.common;
 
 import gg.projecteden.nexus.features.customblocks.models.common.ICustomBlock;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
 import org.bukkit.Instrument;
 import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.Sound;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.NoteBlock;
@@ -76,6 +79,11 @@ public interface ICustomNoteBlock extends ICustomBlock {
 		return new Note(this.getNoteBlockStep(facing));
 	}
 
+	@Override
+	default Set<Material> getApplicableTools() {
+		return MaterialTag.AXES.getValues();
+	}
+
 	// Sounds
 
 	@Override
@@ -134,7 +142,7 @@ public interface ICustomNoteBlock extends ICustomBlock {
 	}
 
 	@Override
-	default BlockData getBlockData(@Nullable BlockFace facing) {
+	default BlockData getBlockData(@Nullable BlockFace facing, @NonNull Block underneath) {
 		NoteBlock noteBlock = (NoteBlock) this.getVanillaBlockMaterial().createBlockData();
 		noteBlock.setInstrument(this.getNoteBlockInstrument(facing));
 		noteBlock.setNote(this.getNoteBlockNote(facing));
@@ -143,11 +151,20 @@ public interface ICustomNoteBlock extends ICustomBlock {
 	}
 
 	@Override
-	default boolean equals(@NotNull BlockData blockData, @Nullable BlockFace facing) {
+	default String toStringBlockData(BlockData blockData) {
+		NoteBlock noteBlock = (NoteBlock) blockData;
+		return "NoteBlock:"
+			+ " &fInstrument=" + noteBlock.getInstrument()
+			+ " &fNote=" + noteBlock.getNote().getId()
+			+ " &fPowered=" + StringUtils.bool(noteBlock.isPowered());
+	}
+
+	@Override
+	default boolean equals(@NotNull BlockData blockData, @Nullable BlockFace facing, @NonNull Block underneath) {
 		if (!(blockData instanceof NoteBlock noteBlock))
 			return false;
 
-		NoteBlock _noteBlock = (NoteBlock) this.getBlockData(facing);
+		NoteBlock _noteBlock = (NoteBlock) this.getBlockData(facing, underneath);
 		noteBlock.setPowered(false);
 
 		return noteBlock.matches(_noteBlock);

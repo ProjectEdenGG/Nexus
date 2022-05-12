@@ -124,8 +124,9 @@ import gg.projecteden.nexus.features.customblocks.models.tripwire.TallSupport;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.Tripwire;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.TripwireCross;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.ICustomTripwire;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.common.IWaterLogged;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.tall.Cattail;
-import gg.projecteden.nexus.features.customblocks.models.tripwire.tall.CattailWater;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.tall.ITall;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
@@ -312,7 +313,6 @@ public enum CustomBlock implements Keyed {
 
 	// tall
 	CATTAIL(Cattail.class),
-	CATTAIL_WATER(CattailWater.class),
 
 	;
 
@@ -375,16 +375,16 @@ public enum CustomBlock implements Keyed {
 		if (Nullables.isNullOrAir(block))
 			return null;
 
-		return fromBlockData(block.getBlockData());
+		return fromBlockData(block.getBlockData(), block.getRelative(BlockFace.DOWN));
 	}
 
-	public static @Nullable CustomBlock fromBlockData(@NonNull BlockData blockData) {
+	public static @Nullable CustomBlock fromBlockData(@NonNull BlockData blockData, Block underneath) {
 		if (blockData instanceof org.bukkit.block.data.type.NoteBlock noteBlock) {
 			List<CustomBlock> directional = new ArrayList<>();
 			for (CustomBlock customBlock : getType(CustomBlockType.NOTE_BLOCK)) {
 				ICustomBlock iCustomBlock = customBlock.get();
 
-				if (CustomBlockUtils.equals(customBlock, noteBlock, false)) {
+				if (CustomBlockUtils.equals(customBlock, noteBlock, false, underneath)) {
 //					debug("CustomBlock: BlockData equals " + customBlock.name());
 					return customBlock;
 				} else if (iCustomBlock instanceof IDirectionalNoteBlock) {
@@ -395,7 +395,7 @@ public enum CustomBlock implements Keyed {
 			// Directional checks
 
 			for (CustomBlock _customBlock : directional) {
-				if (CustomBlockUtils.equals(_customBlock, noteBlock, true)) {
+				if (CustomBlockUtils.equals(_customBlock, noteBlock, true, underneath)) {
 //					debug("CustomBlock: BlockData equals directional " + _customBlock.name());
 					return _customBlock;
 				}
@@ -405,7 +405,7 @@ public enum CustomBlock implements Keyed {
 
 		} else if (blockData instanceof org.bukkit.block.data.type.Tripwire tripwire) {
 			for (CustomBlock customBlock : getType(CustomBlockType.TRIPWIRE)) {
-				if (CustomBlockUtils.equals(customBlock, tripwire, true)) {
+				if (CustomBlockUtils.equals(customBlock, tripwire, true, underneath)) {
 					return customBlock;
 				}
 			}
@@ -420,44 +420,75 @@ public enum CustomBlock implements Keyed {
 	public boolean placeBlock(Player player, Block block, Block placeAgainst, BlockFace facing, ItemStack itemInHand) {
 		ICustomBlock customBlock = this.get();
 
-		Material blockMaterial = null;
-		ItemStack item = null;
+		Material blockMaterial = customBlock.getVanillaBlockMaterial();
+		ItemStack item = new ItemStack(customBlock.getVanillaItemMaterial());
+		BlockFace facingFinal = facing;
+		boolean placeTallSupport = false;
+
 		boolean setup = false;
 		switch (this.getType()) {
-			case NOTE_BLOCK -> {
-				blockMaterial = Material.NOTE_BLOCK;
-				item = new ItemStack(Material.NOTE_BLOCK);
-				setup = true;
-			}
+			case NOTE_BLOCK -> setup = true;
 			case TRIPWIRE -> {
-				blockMaterial = Material.TRIPWIRE;
-				item = new ItemStack(Material.STRING);
+				if (customBlock instanceof ITall) {
+					Block above = block.getRelative(BlockFace.UP);
+
+					if (!(customBlock instanceof IWaterLogged))
+						placeTallSupport = true;
+					else if (placeAgainst.getType() != Material.WATER)
+						placeTallSupport = true;
+
+					if (placeTallSupport && !Nullables.isNullOrAir(above)) {
+						return false;
+					}
+				}
+
+				facingFinal = BlockUtils.getNextCardinalBlockFace(BlockUtils.getCardinalBlockFace(player));
 				setup = true;
 			}
 		}
 
 		if (setup) {
-			boolean placed = BlockUtils.tryPlaceEvent(player, block, placeAgainst,
-				blockMaterial, customBlock.getBlockData(facing), false, item);
+			BlockData blockData = customBlock.getBlockData(facingFinal, placeAgainst);
+			debug("Placing Block = " + blockData);
 
-			if (placed) {
-				CustomBlockUtils.updateObservers(block);
+			if (BlockUtils.tryPlaceEvent(player, block, placeAgainst, blockMaterial, blockData, false, item)) {
+				placeBlockDatabase(player, block, facingFinal);
+				if (placeTallSupport)
+					tallSupport(player, block, facingFinal);
 
-				UUID uuid = player.getUniqueId();
-				Location location = block.getLocation();
+				playSound(SoundAction.PLACE, block.getLocation());
 
-				CustomBlockUtils.placeBlockDatabase(uuid, this, location, facing);
-//				debug("CustomBlock: playing place sound");
-				playSound(SoundAction.PLACE, location);
-
-				ItemUtils.subtract(player, itemInHand);
 				player.swingMainHand();
+				ItemUtils.subtract(player, itemInHand);
 				return true;
 			}
 		}
 
 		return false;
 	}
+
+	private void tallSupport(Player player, Block block, BlockFace facingFinal) {
+		CustomBlock _tallSupport = CustomBlock.TALL_SUPPORT;
+		ICustomBlock tallSupport = _tallSupport.get();
+		Material _blockMaterial = tallSupport.getVanillaBlockMaterial();
+		ItemStack _item = new ItemStack(tallSupport.getVanillaItemMaterial());
+
+		Block _block = block.getRelative(BlockFace.UP);
+		BlockData _blockData = tallSupport.getBlockData(facingFinal, block);
+
+		if (BlockUtils.tryPlaceEvent(player, _block, block, _blockMaterial, _blockData, false, _item))
+			_tallSupport.placeBlockDatabase(player, _block, facingFinal);
+	}
+
+	private void placeBlockDatabase(Player player, Block block, BlockFace facingFinal) {
+		CustomBlockUtils.updateObservers(block);
+
+		UUID uuid = player.getUniqueId();
+		Location location = block.getLocation();
+
+		CustomBlockUtils.placeBlockDatabase(uuid, this, location, facingFinal);
+	}
+
 
 	public @Nullable String getSound(SoundAction type) {
 		ICustomBlock customBlock = this.get();
@@ -524,13 +555,16 @@ public enum CustomBlock implements Keyed {
 		}
 	}
 
-	public void breakBlock(Block block, boolean dropItem) {
-		breakBlock(block.getLocation(), dropItem);
+	public void breakBlock(Block block, boolean dropItem, boolean playSound) {
+		breakBlock(block.getLocation(), dropItem, playSound);
 	}
 
-	public void breakBlock(Location location, boolean dropItem) {
-		playSound(SoundAction.BREAK, location);
+	public void breakBlock(Location location, boolean dropItem, boolean playSound) {
 		CustomBlockUtils.breakBlockDatabase(location);
+
+		if (playSound)
+			playSound(SoundAction.BREAK, location);
+
 		if (dropItem)
 			dropItem(location);
 	}

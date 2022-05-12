@@ -3,10 +3,14 @@ package gg.projecteden.nexus.features.customblocks.models.common;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.NonNull;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public interface ICustomBlock {
 	Material itemMaterial = Material.PAPER;
@@ -20,7 +24,7 @@ public interface ICustomBlock {
 	}
 
 	// Item
-	default @NonNull String getName() {
+	default @NonNull String getItemName() {
 		return getCustomBlockConfig().name();
 	}
 
@@ -29,7 +33,7 @@ public interface ICustomBlock {
 	}
 
 	default @NonNull ItemBuilder getItemBuilder() {
-		return new ItemBuilder(itemMaterial).customModelData(getModelId()).name(getName());
+		return new ItemBuilder(itemMaterial).customModelData(getModelId()).name(getItemName());
 	}
 
 	default @NonNull ItemStack getItemStack() {
@@ -37,6 +41,14 @@ public interface ICustomBlock {
 	}
 
 	// Misc
+	default Set<Material> getApplicableTools() {
+		return new HashSet<>();
+	}
+
+	default boolean requireApplicableTools() {
+		return false;
+	}
+
 	default PistonPushAction getPistonPushedAction() {
 		return getCustomBlockConfig().getPistonPushedAction();
 	}
@@ -58,8 +70,10 @@ public interface ICustomBlock {
 
 	@NonNull String getFallSound();
 
-	// Blockdata
-	BlockData getBlockData(@NonNull BlockFace facing);
+	// BlockData
+	BlockData getBlockData(@NonNull BlockFace facing, @NonNull Block underneath);
 
-	boolean equals(@NonNull BlockData blockData, @Nullable BlockFace facing);
+	String toStringBlockData(BlockData blockData);
+
+	boolean equals(@NonNull BlockData blockData, @Nullable BlockFace facing, @NonNull Block underneath);
 }

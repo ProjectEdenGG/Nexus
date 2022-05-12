@@ -10,6 +10,9 @@ import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+import java.util.Set;
+
 import static gg.projecteden.nexus.utils.StringUtils.camelToSnake;
 
 public interface IQuiltedWool extends IDyeable, ICraftableNoteBlock {
@@ -35,5 +38,10 @@ public interface IQuiltedWool extends IDyeable, ICraftableNoteBlock {
 	@Override
 	default @NonNull Material getRecipeUnlockMaterial() {
 		return getMaterial();
+	}
+
+	@Override
+	default Set<Material> getApplicableTools() {
+		return Collections.singleton(Material.SHEARS);
 	}
 }
