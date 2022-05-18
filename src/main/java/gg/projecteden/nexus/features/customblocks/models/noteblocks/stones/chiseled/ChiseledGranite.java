@@ -6,11 +6,11 @@ import org.bukkit.Instrument;
 
 @CustomBlockConfig(
 	name = "Chiseled Granite",
-	modelId = 20356
+	modelId = 20359
 )
 @CustomNoteBlockConfig(
 	instrument = Instrument.DIDGERIDOO,
-	step = 7,
+	step = 10,
 	customBreakSound = "block.stone.break",
 	customPlaceSound = "block.stone.place",
 	customStepSound = "block.stone.step",

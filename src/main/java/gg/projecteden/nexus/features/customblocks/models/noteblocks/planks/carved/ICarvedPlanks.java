@@ -14,7 +14,7 @@ public interface ICarvedPlanks extends ICraftableNoteBlock {
 
 	@Override
 	default @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
-		return getCombineSlabsRecipe(getMaterial());
+		return getCombineSlab(getMaterial());
 	}
 
 	@Override

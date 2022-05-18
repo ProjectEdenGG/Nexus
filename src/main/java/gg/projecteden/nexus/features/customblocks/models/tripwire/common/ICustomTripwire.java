@@ -238,10 +238,10 @@ public interface ICustomTripwire extends ICustomBlock {
 	}
 
 	@Override
-	default String toStringBlockData(BlockData blockData) {
+	default String getStringBlockData(BlockData blockData) {
 		Tripwire tripwire = (Tripwire) blockData;
 
-		return "Tripwire:"
+		return "&oTripwire:"
 			+ " &fN=" + StringUtils.bool(tripwire.hasFace(BlockFace.NORTH))
 			+ " &fS=" + StringUtils.bool(tripwire.hasFace(BlockFace.SOUTH))
 			+ " &fE=" + StringUtils.bool(tripwire.hasFace(BlockFace.EAST))

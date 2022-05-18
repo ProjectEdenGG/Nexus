@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.chiseled;
+package gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.pillar;
 
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.ICraftableNoteBlock;
@@ -6,21 +6,17 @@ import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import lombok.NonNull;
 import org.bukkit.Material;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
-public interface IChiseledStone extends ICraftableNoteBlock {
+public interface IPillar extends ICraftableNoteBlock {
 
-	@NotNull
-	default Material getMaterial() {
-		return Material.valueOf(("POLISHED_" + getClass().getSimpleName().replace("Chiseled", "") + "_SLAB").toUpperCase());
-	}
+	@NonNull Material getMaterial();
 
 	@Override
 	default @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
-		return getCombineSlab(getMaterial());
+		return getCombineRecipeVertical(getMaterial(), 2);
 	}
 
 	@Override
@@ -37,5 +33,4 @@ public interface IChiseledStone extends ICraftableNoteBlock {
 	default Set<Material> getApplicableTools() {
 		return MaterialTag.PICKAXES.getValues();
 	}
-
 }

@@ -19,7 +19,7 @@ import java.util.List;
 			- When placing a block near tripwire, sometimes it will change the block data of some tripwire (clientside only)
 		- Vanished handling, proper interactions and what not
 		- Future Conversions on chunk generate/load, itemstacks & blocks
-		- CustomBlockState handling, like bird houses
+		- better CustomBlockState handling, like bird houses
 		- Lots of testing
 		- //
 		- Appropriate tool & mining speed --> CustomBlockBreaking

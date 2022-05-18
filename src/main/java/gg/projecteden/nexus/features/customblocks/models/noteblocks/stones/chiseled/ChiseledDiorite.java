@@ -6,11 +6,11 @@ import org.bukkit.Instrument;
 
 @CustomBlockConfig(
 	name = "Chiseled Diorite",
-	modelId = 20354
+	modelId = 20356
 )
 @CustomNoteBlockConfig(
 	instrument = Instrument.DIDGERIDOO,
-	step = 5,
+	step = 7,
 	customBreakSound = "block.stone.break",
 	customPlaceSound = "block.stone.place",
 	customStepSound = "block.stone.step",

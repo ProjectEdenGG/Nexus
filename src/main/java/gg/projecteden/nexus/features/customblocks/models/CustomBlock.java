@@ -103,6 +103,13 @@ import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.chise
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.chiseled.ChiseledDiorite;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.chiseled.ChiseledGranite;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.chiseled.ChiseledStone;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.pillar.AndesitePillar;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.pillar.BlackstonePillar;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.pillar.DeepslatePillar;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.pillar.DioritePillar;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.pillar.GranitePillar;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.pillar.StoneBricksPillar;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.pillar.StonePillar;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.terracottashingles.BlackTerracottaShingles;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.terracottashingles.BlueTerracottaShingles;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.terracottashingles.BrownTerracottaShingles;
@@ -283,16 +290,25 @@ public enum CustomBlock implements Keyed {
 	CARVED_CRIMSON_PLANKS(CarvedCrimsonPlanks.class),
 	CARVED_WARPED_PLANKS(CarvedWarpedPlanks.class),
 
-	// stone bricks
+	// bricks
 	ANDESITE_BRICKS(AndesiteBricks.class),
 	DIORITE_BRICKS(DioriteBricks.class),
 	GRANITE_BRICKS(GraniteBricks.class),
 
-	// chiseled stone
+	// chiseled
 	CHISELED_STONE(ChiseledStone.class),
 	CHISELED_ANDESITE(ChiseledAndesite.class),
 	CHISELED_DIORITE(ChiseledDiorite.class),
 	CHISELED_GRANITE(ChiseledGranite.class),
+
+	// pillar
+	STONE_PILLAR(StonePillar.class),
+	ANDESITE_PILLAR(AndesitePillar.class),
+	DIORITE_PILLAR(DioritePillar.class),
+	GRANITE_PILLAR(GranitePillar.class),
+	STONE_BRICKS_PILLAR(StoneBricksPillar.class),
+	DEEPSLATE_PILLAR(DeepslatePillar.class),
+	BLACKSTONE_PILLAR(BlackstonePillar.class),
 
 	// generic crates
 	GENERIC_CRATE_A(GenericCrateA.class),
@@ -449,7 +465,7 @@ public enum CustomBlock implements Keyed {
 
 		if (setup) {
 			BlockData blockData = customBlock.getBlockData(facingFinal, placeAgainst);
-			debug("Placing Block = " + blockData);
+			debug("Placing Block: " + this.name());
 
 			if (BlockUtils.tryPlaceEvent(player, block, placeAgainst, blockMaterial, blockData, false, item)) {
 				placeBlockDatabase(player, block, facingFinal);

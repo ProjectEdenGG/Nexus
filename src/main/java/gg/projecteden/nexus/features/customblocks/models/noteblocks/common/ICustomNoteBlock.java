@@ -151,11 +151,11 @@ public interface ICustomNoteBlock extends ICustomBlock {
 	}
 
 	@Override
-	default String toStringBlockData(BlockData blockData) {
+	default String getStringBlockData(BlockData blockData) {
 		NoteBlock noteBlock = (NoteBlock) blockData;
-		return "NoteBlock:"
-			+ " &fInstrument=" + noteBlock.getInstrument()
-			+ " &fNote=" + noteBlock.getNote().getId()
+		return "&oNoteBlock:"
+			+ " &fInstrument=&e" + noteBlock.getInstrument()
+			+ " &fNote=&e" + noteBlock.getNote().getId()
 			+ " &fPowered=" + StringUtils.bool(noteBlock.isPowered());
 	}
 

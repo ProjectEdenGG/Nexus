@@ -73,7 +73,9 @@ public interface ICustomBlock {
 	// BlockData
 	BlockData getBlockData(@NonNull BlockFace facing, @NonNull Block underneath);
 
-	String toStringBlockData(BlockData blockData);
+	default String getStringBlockData(BlockData blockData) {
+		return blockData.toString();
+	}
 
 	boolean equals(@NonNull BlockData blockData, @Nullable BlockFace facing, @NonNull Block underneath);
 }

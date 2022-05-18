@@ -6,11 +6,11 @@ import org.bukkit.Instrument;
 
 @CustomBlockConfig(
 	name = "Andesite Bricks",
-	modelId = 20351
+	modelId = 20352
 )
 @CustomNoteBlockConfig(
 	instrument = Instrument.DIDGERIDOO,
-	step = 2,
+	step = 3,
 	customBreakSound = "block.stone.break",
 	customPlaceSound = "block.stone.place",
 	customStepSound = "block.stone.step",

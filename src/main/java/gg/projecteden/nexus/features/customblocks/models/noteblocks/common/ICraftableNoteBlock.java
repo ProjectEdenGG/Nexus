@@ -34,8 +34,12 @@ public interface ICraftableNoteBlock extends ICraftable, ICustomNoteBlock {
 		return new Pair<>(shaped("11", "11").add('1', itemStack), amount);
 	}
 
-	default Pair<RecipeBuilder<?>, Integer> getCombineSlabsRecipe(@NotNull Material material) {
-		return new Pair<>(shaped("1", "1").add('1', material), 1);
+	default Pair<RecipeBuilder<?>, Integer> getCombineSlab(@NotNull Material material) {
+		return getCombineRecipeVertical(material, 1);
+	}
+
+	default Pair<RecipeBuilder<?>, Integer> getCombineRecipeVertical(@NotNull Material material, int resultAmount) {
+		return new Pair<>(shaped("1", "1").add('1', material), resultAmount);
 	}
 
 	default Pair<RecipeBuilder<?>, Integer> getSurroundRecipe(@NonNull Material center, @NotNull Tag<Material> surround) {
