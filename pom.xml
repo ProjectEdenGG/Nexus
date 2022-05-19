@@ -561,10 +561,18 @@
             <version>4.1.8</version>
             <scope>provided</scope>
         </dependency>
+        <!-- BoundingBoxAPI -->
         <dependency>
             <groupId>org.inventivetalent</groupId>
             <artifactId>boundingboxapi</artifactId>
             <version>1.4.1-SNAPSHOT</version>
+        </dependency>
+        <!-- BentoBox API -->
+        <dependency>
+            <groupId>world.bentobox</groupId>
+            <artifactId>bentobox</artifactId>
+            <version>1.20.0</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
