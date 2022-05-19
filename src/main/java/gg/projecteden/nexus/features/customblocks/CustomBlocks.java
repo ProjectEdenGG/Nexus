@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.customblocks;
 
 import gg.projecteden.annotations.Environments;
+import gg.projecteden.nexus.features.customblocks.worldedit.WorldEditListener;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.utils.Env;
@@ -19,10 +20,10 @@ import java.util.List;
 			- When placing a block near tripwire, sometimes it will change the block data of some tripwire (clientside only)
 		- Vanished handling, proper interactions and what not
 		- Future Conversions on chunk generate/load, itemstacks & blocks
-		- better CustomBlockState handling, like bird houses
-		- Lots of testing
+		- figure out WorldEdit handling
 		- //
 		- Appropriate tool & mining speed --> CustomBlockBreaking
+		- Better CustomBlockState handling, like bird houses
 		- //
 		- Cannot Fix:
 			- Custom blocks may flash when placing blocks near them (clientside only) --> Titan
@@ -34,6 +35,13 @@ public class CustomBlocks extends Feature {
 	@Override
 	public void onStart() {
 		new CustomBlocksListener();
+
+		WorldEditListener.register();
+	}
+
+	@Override
+	public void onStop() {
+		WorldEditListener.unregister();
 	}
 
 	public static void debug(String message) {

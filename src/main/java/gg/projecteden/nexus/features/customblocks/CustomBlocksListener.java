@@ -397,7 +397,7 @@ public class CustomBlocksListener implements Listener {
 		}
 	}
 
-	Set<Material> handleMaterials = Set.of(Material.NOTE_BLOCK, Material.TRIPWIRE);
+	public static final Set<Material> handleMaterials = Set.of(Material.NOTE_BLOCK, Material.TRIPWIRE);
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void on(BlockPhysicsEvent event) {
 		Block eventBlock = event.getBlock();
@@ -519,8 +519,6 @@ public class CustomBlocksListener implements Listener {
 
 			block.setBlockData(noteBlock, false);
 
-			debug("Changed = " + customBlock.toStringBlockData(noteBlock));
-
 		} else if (blockData instanceof Tripwire tripwire) {
 			BlockFace facing = ((CustomTripwireData) data.getExtraData()).getFacing();
 			ICustomTripwire customTripwire = (ICustomTripwire) customBlock;
@@ -542,15 +540,11 @@ public class CustomBlocksListener implements Listener {
 
 			event.setCancelled(true);
 			block.setBlockData(tripwire, false);
-
-			if (CustomBlock.CATTAIL == _customBlock) {
-				String loc = StringUtils.getShortLocationString(block.getLocation());
-				debug(loc + " -> " + customBlock.toStringBlockData(tripwire));
-			}
-
-//			debug("Fixed " + _customBlock.name() + " = " + tripwire);
 		} else
 			return;
+
+		String loc = StringUtils.getCoordinateString(block.getLocation());
+		debug(loc + " -> " + customBlock.getStringBlockData(block.getBlockData()));
 
 		block.getState().update(true, doPhysics);
 	}
