@@ -456,7 +456,7 @@ public class MinigamesCommand extends CustomCommand {
 	private static String inviteCommand;
 	private static String inviteMessage;
 
-	private void updateInvite() {
+	private void updateInvite(Arena arena) {
 		final boolean noStaffInMinigames = OnlinePlayers.where()
 			.worldGroup(WorldGroup.MINIGAMES)
 			.rank(Rank::isStaff)
@@ -479,27 +479,28 @@ public class MinigamesCommand extends CustomCommand {
 			inviteCommand = "warp screenshot";
 			inviteMessage = "take a screenshot";
 		} else {
-			Sign sign = getTargetSignRequired();
-			String line2 = stripColor(sign.getLine(1)).toLowerCase();
-			if (line2.contains("screenshot"))
-				error("Stand in the screenshot area then run the command (sign not needed)");
-			if (!line2.contains("join"))
-				error("Cannot parse sign. If you believe this is an error, make a GitHub ticket with information and screenshots.");
+			if (arena == null) {
+				Sign sign = getTargetSignRequired();
+				String line2 = stripColor(sign.getLine(1)).toLowerCase();
+				if (line2.contains("screenshot"))
+					error("Stand in the screenshot area then run the command (sign not needed)");
+				if (!line2.contains("join"))
+					error("Cannot parse sign. If you believe this is an error, make a GitHub ticket with information and screenshots.");
 
-			String prefix = "";
-			String line1 = stripColor(sign.getLine(0)).toLowerCase();
-			if (line1.contains("[minigame]") || line1.contains("< minigames >"))
-				prefix = "mgm";
-			else
-				error("Cannot parse sign. If you believe this is an error, make a GitHub ticket with information and screenshots.");
+				String line1 = stripColor(sign.getLine(0)).toLowerCase();
+				if (!line1.contains("[minigame]") && !line1.contains("< minigames >"))
+					error("Cannot parse sign. If you believe this is an error, make a GitHub ticket with information and screenshots.");
 
-			String line3 = stripColor(sign.getLine(2)) + stripColor(sign.getLine(3));
-			inviteCommand = prefix + " join " + line3;
+				String line3 = stripColor(sign.getLine(2)) + stripColor(sign.getLine(3));
+				arena = ArenaManager.get(line3);
+			}
 
-			String mechanic = ArenaManager.get(line3).getMechanic().getName();
-			inviteMessage = mechanic + " &3on &e" + line3;
-			if (line3.equalsIgnoreCase(mechanic))
-				inviteMessage = line3;
+			inviteCommand = "mgm join " + arena.getName();
+
+			String mechanic = arena.getMechanic().getName();
+			inviteMessage = mechanic + " &3on &e" + arena.getName();
+			if (arena.getName().equalsIgnoreCase(mechanic))
+				inviteMessage = arena.getName();
 		}
 	}
 
@@ -511,30 +512,30 @@ public class MinigamesCommand extends CustomCommand {
 				continue;
 
 			send(player, json("")
-					.newline()
-					.next(" &e" + sender + " &3has invited you to play &e" + inviteMessage).group()
-					.newline()
-					.next("&e Click here to &a&laccept")
-					.command("/mgm accept")
-					.hover("&eClick &3to accept"));
+				.newline()
+				.next(" &e" + sender + " &3has invited you to play &e" + inviteMessage).group()
+				.newline()
+				.next("&e Click here to &a&laccept")
+				.command("/mgm accept")
+				.hover("&eClick &3to accept"));
 		}
 	}
 
-	@Path("invite")
-	void invite() {
+	@Path("invite [arena]")
+	void invite(Arena arena) {
 		Collection<Player> players = new WorldGuardUtils(player()).getPlayersInRegion("minigamelobby");
 		int count = players.size() - 1;
 		if (count == 0)
 			error("There is no one to invite!");
 
-		updateInvite();
+		updateInvite(arena);
 		sendInvite(new WorldGuardUtils(player()).getPlayersInRegion("minigamelobby"));
 	}
 
 	@Permission(PERMISSION_MANAGE)
-	@Path("inviteAll")
-	void inviteAll() {
-		updateInvite();
+	@Path("inviteAll [arena]")
+	void inviteAll(Arena arena) {
+		updateInvite(arena);
 		sendInvite(OnlinePlayers.getAll());
 	}
 
