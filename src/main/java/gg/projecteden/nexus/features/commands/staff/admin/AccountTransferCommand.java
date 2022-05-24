@@ -72,6 +72,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.OfflinePlayer;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -100,7 +101,8 @@ public class AccountTransferCommand extends CustomCommand {
 
 				send(PREFIX + "Transferred &e" + camelCase(feature) + " &3data");
 			} catch (Exception ex) {
-				rethrow(ex);
+				send(PREFIX + "&cAn error occurred when transferring " + camelCase(feature) + " data");
+				ex.printStackTrace();
 			}
 		});
 	}
@@ -351,7 +353,14 @@ public class AccountTransferCommand extends CustomCommand {
 				List<Mail> mailOld = old.getMail().get(worldGroup);
 				List<Mail> mailTarget = target.getMail().get(worldGroup);
 
+				if (mailOld == null)
+					mailOld = new ArrayList<>();
+
+				if (mailTarget == null)
+					mailTarget = new ArrayList<>();
+
 				mailTarget.addAll(mailOld);
+
 				target.getMail().put(worldGroup, mailTarget);
 			}
 
