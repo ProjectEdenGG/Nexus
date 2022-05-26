@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.customblocks;
 
 import gg.projecteden.annotations.Environments;
+import gg.projecteden.nexus.features.customblocks.listeners.CustomBlockListener;
 import gg.projecteden.nexus.features.customblocks.worldedit.WorldEditListener;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
@@ -15,15 +16,15 @@ import java.util.List;
 /*
 	TODO:
 		- Tripwire implementation:
-			- Fix/Remove break particles
 			- Placing string needs to place TRIPWIRE and not TALL_SUPPORT
 			- When placing a block near tripwire, sometimes it will change the block data of some tripwire (clientside only)
 		- Vanished handling, proper interactions and what not
 		- Future Conversions on chunk generate/load, itemstacks & blocks
-		- figure out WorldEdit handling
 		- //
 		- Appropriate tool & mining speed --> CustomBlockBreaking
+		- figure out WorldEdit handling
 		- Better CustomBlockState handling, like bird houses
+			- Including waterlogged
 		- //
 		- Cannot Fix:
 			- Custom blocks may flash when placing blocks near them (clientside only) --> Titan
@@ -34,7 +35,7 @@ import java.util.List;
 public class CustomBlocks extends Feature {
 	@Override
 	public void onStart() {
-		new CustomBlocksListener();
+		new CustomBlockListener();
 
 		WorldEditListener.register();
 	}

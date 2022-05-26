@@ -1,9 +1,10 @@
-package gg.projecteden.nexus.features.customblocks;
+package gg.projecteden.nexus.features.customblocks.listeners;
 
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.customblocks.CustomBlocks.BlockAction;
+import gg.projecteden.nexus.features.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.customblocks.CustomBlocks.SoundAction;
+import gg.projecteden.nexus.features.customblocks.NoteBlockUtils;
 import gg.projecteden.nexus.features.customblocks.events.NoteBlockChangePitchEvent;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.common.ICustomBlock;
@@ -12,7 +13,6 @@ import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.ICust
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.ICustomTripwire;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.IWaterLogged;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.tall.ITall;
-import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.models.customblock.CustomBlockData;
 import gg.projecteden.nexus.models.customblock.CustomNoteBlockData;
 import gg.projecteden.nexus.models.customblock.CustomTripwireData;
@@ -24,7 +24,6 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
-import me.lexikiq.event.sound.LocationNamedSoundEvent;
 import org.bukkit.Instrument;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -43,100 +42,33 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.block.NotePlayEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.entity.EntityPickupItemEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCreativeEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.InventoryType.SlotType;
-import org.bukkit.event.inventory.PrepareItemCraftEvent;
-import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
-public class CustomBlocksListener implements Listener {
-	Map<Player, BlockAction> playerActionMap = new ConcurrentHashMap<>();
+public class CustomBlockListener implements Listener {
+	public static final Set<Material> handleMaterials = Set.of(Material.NOTE_BLOCK, Material.TRIPWIRE);
 
-	public CustomBlocksListener() {
+	public CustomBlockListener() {
+		new CustomBlockRecipes();
+		new CustomBlockSounds();
+
 		Nexus.registerListener(this);
-	}
-
-	// Recipe Stuff
-	@EventHandler
-	public void on(ResourcePackUpdateCompleteEvent ignored) {
-		for (CustomBlock customBlock : CustomBlock.values())
-			customBlock.registerRecipes();
-	}
-
-	@EventHandler
-	public void on(PrepareItemCraftEvent event) {
-		if (!(event.getView().getPlayer() instanceof Player player)) return;
-
-		ItemStack result = event.getInventory().getResult();
-		if (Nullables.isNullOrAir(result))
-			return;
-
-		CustomBlock customBlock = CustomBlock.fromItemstack(result);
-		if (CustomBlock.NOTE_BLOCK == customBlock)
-			event.getInventory().setResult(customBlock.get().getItemStack());
-
-		CustomBlockUtils.unlockRecipe(player, result.getType());
-	}
-
-	@EventHandler
-	public void on(EntityPickupItemEvent event) {
-		if (!(event.getEntity() instanceof Player player))
-			return;
-
-		CustomBlockUtils.unlockRecipe(player, event.getItem().getItemStack().getType());
-	}
-
-	@EventHandler
-	public void on(InventoryClickEvent event) {
-		if (!(event.getView().getPlayer() instanceof Player player)) return;
-
-		final Inventory inventory = event.getClickedInventory();
-		if (inventory == null || inventory.getType() == InventoryType.PLAYER)
-			return;
-
-		final ItemStack item = player.getItemOnCursor();
-		if (isNullOrAir(item))
-			return;
-
-		CustomBlockUtils.unlockRecipe(player, item.getType());
-	}
-
-	//
-
-	@EventHandler
-	public void on(NotePlayEvent event) {
-		event.setCancelled(true);
-
-		CustomBlock customBlock = CustomBlock.fromBlock(event.getBlock());
-		if (CustomBlock.NOTE_BLOCK != customBlock)
-			return;
-
-		NoteBlock noteBlock = (NoteBlock) event.getBlock().getBlockData();
-		NoteBlockUtils.play(noteBlock, event.getBlock().getLocation(), true);
 	}
 
 	@EventHandler
@@ -178,90 +110,10 @@ public class CustomBlocksListener implements Listener {
 		event.setCursor(newItem);
 	}
 
-	// Handles Sound: STEP
-	@EventHandler
-	public void on(LocationNamedSoundEvent event) {
-		Block block = event.getLocation().getBlock();
-		Block below = block.getRelative(BlockFace.DOWN);
-		Block source = null;
-
-		CustomBlock _customBlock = CustomBlock.fromBlock(block);
-		if (_customBlock != null)
-			source = block;
-		else {
-			_customBlock = CustomBlock.fromBlock(below);
-			if (_customBlock != null)
-				source = below;
-		}
-
-		if (!Nullables.isNullOrAir(source)) {
-			SoundAction soundAction = SoundAction.fromSound(event.getSound());
-			if (soundAction == null)
-				return;
-
-			if (soundAction != SoundAction.STEP)
-				return;
-
-			event.setCancelled(true);
-			_customBlock.playSound(soundAction, source.getLocation());
-			return;
-		}
-
-		if (CustomBlockUtils.playDefaultSounds(event.getSound(), event.getLocation()))
-			event.setCancelled(true);
-	}
-
-	// Handles Sound: FALL
-	@EventHandler
-	public void on(EntityDamageEvent event) {
-		if (event.isCancelled())
-			return;
-
-		if (!(event.getEntity() instanceof Player player))
-			return;
-
-		if (!event.getCause().equals(DamageCause.FALL))
-			return;
-
-		Block block = player.getLocation().getBlock().getRelative(BlockFace.DOWN);
-		if (Nullables.isNullOrAir(block))
-			return;
-
-		playerActionMap.put(player, BlockAction.FALL);
-		CustomBlockUtils.tryPlayDefaultSound(SoundAction.FALL, block);
-	}
-
-	@EventHandler
-	public void on(BlockDamageEvent event) {
-		if (event.isCancelled())
-			return;
-
-		playerActionMap.put(event.getPlayer(), BlockAction.HIT);
-	}
-
-	// Handles Sound: HIT
-	@EventHandler
-	public void on(PlayerAnimationEvent event) {
-		Player player = event.getPlayer();
-		Block block = player.getTargetBlockExact(5);
-		if (block == null)
-			return;
-
-		if (!playerActionMap.containsKey(player))
-			return;
-
-		if (playerActionMap.get(player) == BlockAction.HIT) {
-//			debug("PlayerAnimationEvent");
-			CustomBlockUtils.tryPlayDefaultSound(SoundAction.HIT, block);
-		}
-	}
-
 	@EventHandler
 	public void on(BlockPlaceEvent event) {
 		if (event.isCancelled())
 			return;
-
-		playerActionMap.put(event.getPlayer(), BlockAction.PLACE);
 
 		Block block = event.getBlockPlaced();
 		Block above = block.getRelative(BlockFace.UP);
@@ -278,34 +130,29 @@ public class CustomBlocksListener implements Listener {
 		}
 	}
 
-	// Handles Sound: BREAK
 	@EventHandler
 	public void on(BlockBreakEvent event) {
 		if (event.isCancelled())
 			return;
 
 		Player player = event.getPlayer();
-		playerActionMap.put(player, BlockAction.BREAK);
-
 		Block brokenBlock = event.getBlock();
 		CustomBlock brokenCustomBlock = CustomBlock.fromBlock(brokenBlock);
-		if (brokenCustomBlock == null) {
-			CustomBlockUtils.tryPlayDefaultSound(SoundAction.BREAK, brokenBlock);
+		if (brokenCustomBlock == null)
 			return;
-		}
 
 		event.setDropItems(false);
 
 		if (CustomBlock.TALL_SUPPORT == brokenCustomBlock) {
 			debug("Broke tall support");
-			breakBlock(player, brokenBlock, brokenCustomBlock, false, false);
+			breakBlock(player, brokenBlock, brokenCustomBlock, false, true, true);
 
 			Block blockUnder = brokenBlock.getRelative(BlockFace.DOWN);
 			CustomBlock under = CustomBlock.fromBlock(blockUnder);
 
 			if (under != null) {
 				debug("Underneath: " + under.name());
-				breakBlock(player, blockUnder, under, true, false);
+				breakBlock(player, blockUnder, under, true, false, true);
 				blockUnder.setType(Material.AIR);
 			}
 
@@ -320,17 +167,17 @@ public class CustomBlocksListener implements Listener {
 			if (CustomBlock.TALL_SUPPORT == above) {
 				debug("Breaking tall support above");
 
-				breakBlock(player, blockAbove, above, false, false);
+				breakBlock(player, blockAbove, above, false, false, true);
 				blockAbove.setType(Material.AIR);
 			}
 		}
 
-		breakBlock(player, brokenBlock, brokenCustomBlock, true, true);
+		breakBlock(player, brokenBlock, brokenCustomBlock, true, true, true);
 	}
 
-	private void breakBlock(Player player, Block block, CustomBlock customBlock, boolean dropItem, boolean playSound) {
+	private void breakBlock(Player player, Block block, CustomBlock customBlock, boolean dropItem, boolean playSound, boolean spawnParticle) {
 		debug("Breaking block: " + customBlock.name());
-		customBlock.breakBlock(block, false, playSound);
+		customBlock.breakBlock(block, false, playSound, spawnParticle);
 
 		if (!dropItem)
 			return;
@@ -348,7 +195,6 @@ public class CustomBlocksListener implements Listener {
 		}
 	}
 
-	// Handles Sound: PLACE
 	@EventHandler
 	public void on(PlayerInteractEvent event) {
 		if (event.useInteractedBlock() == Result.DENY || event.useItemInHand() == Result.DENY)
@@ -369,15 +215,15 @@ public class CustomBlocksListener implements Listener {
 		CustomBlock clickedCustomBlock = CustomBlock.fromBlock(clickedBlock);
 		// Place
 		if (isSpawningEntity(event, clickedBlock, clickedCustomBlock)) {
-			playerActionMap.put(player, BlockAction.UNKNOWN);
+			CustomBlockSounds.placingEntity(player);
 			return;
 		}
 		if (isPlacingBlock(event, clickedBlock, clickedCustomBlock)) {
-			playerActionMap.put(player, BlockAction.PLACE);
+			CustomBlockSounds.placingBlock(player);
 			return;
 		}
 
-		playerActionMap.put(player, BlockAction.INTERACT);
+		CustomBlockSounds.interacting(player);
 
 		if (clickedCustomBlock != null) {
 			boolean isChangingPitch = isChangingPitch(action, sneaking, itemInHand);
@@ -397,7 +243,6 @@ public class CustomBlocksListener implements Listener {
 		}
 	}
 
-	public static final Set<Material> handleMaterials = Set.of(Material.NOTE_BLOCK, Material.TRIPWIRE);
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void on(BlockPhysicsEvent event) {
 		Block eventBlock = event.getBlock();
@@ -463,7 +308,7 @@ public class CustomBlocksListener implements Listener {
 					}
 					case BREAK -> {
 						debug("PistonEvent: " + _customBlock.name() + " broke because of a piston");
-						_customBlock.breakBlock(block, true, true);
+						_customBlock.breakBlock(block, true, true, true);
 						continue;
 					}
 				}

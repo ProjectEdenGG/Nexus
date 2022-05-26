@@ -44,7 +44,7 @@ public class CustomBlockExtent extends AbstractDelegateExtent {
 //		Material priorMaterial = priorBlock.getType();
 //
 //		// if setting to a handled material
-//		if (CustomBlocksListener.handleMaterials.contains(material)) {
+//		if (CustomBlockListener.handleMaterials.contains(material)) {
 //			BlockData blockData = BukkitAdapter.adapt(block);
 //			Dev.WAKKA.send("BlockData: " + blockData);
 //			CustomBlock _customBlock = CustomBlock.fromBlockData(blockData, priorBlock.getRelative(BlockFace.DOWN));

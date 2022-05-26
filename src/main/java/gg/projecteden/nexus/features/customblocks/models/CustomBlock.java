@@ -151,6 +151,8 @@ import org.bukkit.Keyed;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Particle;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
@@ -531,6 +533,15 @@ public enum CustomBlock implements Keyed {
 		BlockUtils.playSound(soundBuilder);
 	}
 
+	private void spawnParticle(Location loc) {
+		World world = loc.getWorld();
+		loc = loc.toCenterLocation();
+		Particle particle = Particle.ITEM_CRACK;
+		ItemStack itemStack = get().getItemStack();
+
+		world.spawnParticle(particle, loc, 25, 0.25, 0.25, 0.25, 0.1, itemStack);
+	}
+
 	@Getter
 	final List<NexusRecipe> recipes = new ArrayList<>();
 
@@ -571,18 +582,33 @@ public enum CustomBlock implements Keyed {
 		}
 	}
 
-	public void breakBlock(Block block, boolean dropItem, boolean playSound) {
-		breakBlock(block.getLocation(), dropItem, playSound);
+	public void breakBlock(Block block, boolean dropItem, boolean playSound, boolean spawnParticle) {
+		breakBlock(block.getLocation(), true, dropItem, playSound, spawnParticle);
 	}
 
-	public void breakBlock(Location location, boolean dropItem, boolean playSound) {
-		CustomBlockUtils.breakBlockDatabase(location);
+	public void breakBlock(Location location, boolean dropItem, boolean playSound, boolean spawnParticle) {
+		breakBlock(location, true, dropItem, playSound, spawnParticle);
+	}
 
-		if (playSound)
-			playSound(SoundAction.BREAK, location);
+	private void breakBlock(Location location, boolean updateDatabase, boolean dropItem, boolean playSound, boolean spawnParticle) {
+		if (updateDatabase)
+			CustomBlockUtils.breakBlockDatabase(location);
 
-		if (dropItem)
-			dropItem(location);
+		if (this != TALL_SUPPORT) {
+			if (spawnParticle)
+				spawnParticle(location);
+
+			if (playSound)
+				playSound(SoundAction.BREAK, location);
+
+			if (dropItem)
+				dropItem(location);
+		} else {
+			CustomBlock below = CustomBlock.fromBlock(location.getBlock().getRelative(BlockFace.DOWN));
+			if (below == null) return;
+
+			below.breakBlock(location, false, false, playSound, spawnParticle);
+		}
 	}
 
 	public void dropItem(Location location) {
