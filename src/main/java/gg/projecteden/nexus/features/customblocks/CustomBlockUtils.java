@@ -24,6 +24,7 @@ import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.UUIDUtils;
+import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.Keyed;
 import org.bukkit.Location;
@@ -44,6 +45,7 @@ import java.util.UUID;
 import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
 
 public class CustomBlockUtils {
+	@Getter
 	private static final Set<BlockFace> neighborFaces = Set.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST,
 		BlockFace.WEST, BlockFace.UP, BlockFace.DOWN);
 

@@ -17,7 +17,6 @@ import java.util.List;
 	TODO:
 		- Tripwire implementation:
 			- Placing string needs to place TRIPWIRE and not TALL_SUPPORT
-			- When placing a block near tripwire, sometimes it will change the block data of some tripwire (clientside only)
 		- Vanished handling, proper interactions and what not
 		- Future Conversions on chunk generate/load, itemstacks & blocks
 		- //

@@ -24,6 +24,7 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Instrument;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -53,6 +54,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -116,6 +118,12 @@ public class CustomBlockListener implements Listener {
 			return;
 
 		Block block = event.getBlockPlaced();
+
+		// fix clientside tripwire changes
+		fixTripwireNearby(event.getPlayer(), block, new HashSet<>(List.of(block.getLocation())));
+
+		// fix instrument changing
+
 		Block above = block.getRelative(BlockFace.UP);
 
 		CustomBlock customBlock = CustomBlock.fromBlock(above);
@@ -576,5 +584,32 @@ public class CustomBlockListener implements Listener {
 		NoteBlockChangePitchEvent event = new NoteBlockChangePitchEvent(block);
 		if (event.callEvent())
 			NoteBlockUtils.changePitch(sneaking, location, noteBlockData);
+	}
+
+	private void fixTripwireNearby(Player player, Block origin, Set<Location> visited) {
+		for (BlockFace face : CustomBlockUtils.getNeighborFaces()) {
+			Block neighbor = origin.getRelative(face);
+			Location location = neighbor.getLocation();
+
+			if (visited.contains(location))
+				continue;
+
+			visited.add(location);
+
+			if (Nullables.isNullOrAir(neighbor))
+				continue;
+
+			CustomBlock customBlock = CustomBlock.fromBlock(neighbor);
+			if (customBlock == null || !(customBlock.get() instanceof ICustomTripwire))
+				continue;
+
+			Block underneath = neighbor.getRelative(BlockFace.DOWN);
+			BlockFace facing = CustomBlockUtils.getFacing(customBlock, neighbor.getBlockData(), underneath);
+
+			BlockData blockData = customBlock.get().getBlockData(facing, underneath);
+			Tasks.wait(1, () -> player.sendBlockChange(location, blockData));
+
+			fixTripwireNearby(player, neighbor, visited);
+		}
 	}
 }

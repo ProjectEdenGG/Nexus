@@ -125,34 +125,38 @@ public class CustomBlockSounds implements Listener {
 	// Handles Sound: STEP
 	@EventHandler
 	public void on(LocationNamedSoundEvent event) {
-		Block block = event.getLocation().getBlock();
-		Block below = block.getRelative(BlockFace.DOWN);
-		Block source = null;
+		try {
+			Block block = event.getLocation().getBlock();
+			Block below = block.getRelative(BlockFace.DOWN);
+			Block source = null;
 
-		CustomBlock _customBlock = CustomBlock.fromBlock(block);
-		if (_customBlock != null)
-			source = block;
-		else {
-			_customBlock = CustomBlock.fromBlock(below);
+			CustomBlock _customBlock = CustomBlock.fromBlock(block);
 			if (_customBlock != null)
-				source = below;
-		}
+				source = block;
+			else {
+				_customBlock = CustomBlock.fromBlock(below);
+				if (_customBlock != null)
+					source = below;
+			}
 
-		if (!Nullables.isNullOrAir(source)) {
-			SoundAction soundAction = SoundAction.fromSound(event.getSound());
-			if (soundAction == null)
+			if (!Nullables.isNullOrAir(source)) {
+				SoundAction soundAction = SoundAction.fromSound(event.getSound());
+				if (soundAction == null)
+					return;
+
+				if (soundAction != SoundAction.STEP)
+					return;
+
+				event.setCancelled(true);
+				_customBlock.playSound(soundAction, source.getLocation());
 				return;
+			}
 
-			if (soundAction != SoundAction.STEP)
-				return;
+			if (CustomBlockUtils.playDefaultSounds(event.getSound(), event.getLocation()))
+				event.setCancelled(true);
+		} catch (Exception ignored) {
 
-			event.setCancelled(true);
-			_customBlock.playSound(soundAction, source.getLocation());
-			return;
 		}
-
-		if (CustomBlockUtils.playDefaultSounds(event.getSound(), event.getLocation()))
-			event.setCancelled(true);
 	}
 
 

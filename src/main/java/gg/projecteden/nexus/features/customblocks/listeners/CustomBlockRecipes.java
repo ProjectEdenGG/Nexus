@@ -31,7 +31,8 @@ public class CustomBlockRecipes implements Listener {
 
 	@EventHandler
 	public void on(PrepareItemCraftEvent event) {
-		if (!(event.getView().getPlayer() instanceof Player player)) return;
+		if (!(event.getView().getPlayer() instanceof Player player))
+			return;
 
 		ItemStack result = event.getInventory().getResult();
 		if (Nullables.isNullOrAir(result))
@@ -54,7 +55,8 @@ public class CustomBlockRecipes implements Listener {
 
 	@EventHandler
 	public void on(InventoryClickEvent event) {
-		if (!(event.getView().getPlayer() instanceof Player player)) return;
+		if (!(event.getView().getPlayer() instanceof Player player))
+			return;
 
 		final Inventory inventory = event.getClickedInventory();
 		if (inventory == null || inventory.getType() == InventoryType.PLAYER)

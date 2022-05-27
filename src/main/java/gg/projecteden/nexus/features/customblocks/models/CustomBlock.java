@@ -332,7 +332,12 @@ public enum CustomBlock implements Keyed {
 	// tall
 	CATTAIL(Cattail.class),
 
-	;
+	/*
+		TODO:
+		 - ROCKS + PEBBLES
+		 - FLOWER + FUNGUS COVER --> HOW TO OBTAIN?
+		 - LOTUS LILLY FLOWER --> HOW TO OBTAIN?
+	 */;
 
 	private final ICustomBlock customBlock;
 	@Getter
@@ -595,7 +600,7 @@ public enum CustomBlock implements Keyed {
 			CustomBlockUtils.breakBlockDatabase(location);
 
 		if (this != TALL_SUPPORT) {
-			if (spawnParticle)
+			if (spawnParticle && this.get() instanceof ICustomTripwire)
 				spawnParticle(location);
 
 			if (playSound)
