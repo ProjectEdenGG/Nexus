@@ -1,13 +1,21 @@
 package gg.projecteden.nexus.features.customblocks.listeners;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.customblocks.CustomBlocks.BlockAction;
 import gg.projecteden.nexus.features.customblocks.CustomBlocks.SoundAction;
+import gg.projecteden.nexus.features.customblocks.CustomBlocks.SoundType;
 import gg.projecteden.nexus.features.customblocks.NoteBlockUtils;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
+import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.utils.BlockUtils;
+import gg.projecteden.nexus.utils.NMSUtils;
 import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.utils.UUIDUtils;
 import me.lexikiq.event.sound.LocationNamedSoundEvent;
+import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.NoteBlock;
@@ -32,31 +40,22 @@ public class CustomBlockSounds implements Listener {
 		Nexus.registerListener(this);
 	}
 
-	public static void placingEntity(Player player) {
-		playerActionMap.put(player, BlockAction.UNKNOWN);
-	}
-
-	// Handles Sound: PLACE
-	public static void placingBlock(Player player) {
-		CustomBlockSounds.playerActionMap.put(player, BlockAction.PLACE);
-	}
-
-	public static void interacting(Player player) {
-		CustomBlockSounds.playerActionMap.put(player, BlockAction.INTERACT);
+	public static void updateAction(Player player, BlockAction action) {
+		playerActionMap.put(player, action);
 	}
 
 	@EventHandler
 	public void on(BlockDamageEvent event) {
 		if (event.isCancelled()) return;
 
-		playerActionMap.put(event.getPlayer(), BlockAction.HIT);
+		updateAction(event.getPlayer(), BlockAction.HIT);
 	}
 
 	@EventHandler
 	public void on(BlockPlaceEvent event) {
 		if (event.isCancelled()) return;
 
-		playerActionMap.put(event.getPlayer(), BlockAction.PLACE);
+		updateAction(event.getPlayer(), BlockAction.PLACE);
 	}
 
 	@EventHandler
@@ -87,8 +86,8 @@ public class CustomBlockSounds implements Listener {
 		if (Nullables.isNullOrAir(block))
 			return;
 
-		playerActionMap.put(player, BlockAction.FALL);
-		CustomBlockUtils.tryPlayDefaultSound(SoundAction.FALL, block);
+		updateAction(player, BlockAction.FALL);
+		tryPlayDefaultSound(SoundAction.FALL, block);
 	}
 
 	// Handles Sound: HIT
@@ -103,7 +102,7 @@ public class CustomBlockSounds implements Listener {
 			return;
 
 		if (playerActionMap.get(player) == BlockAction.HIT) {
-			CustomBlockUtils.tryPlayDefaultSound(SoundAction.HIT, block);
+			tryPlayDefaultSound(SoundAction.HIT, block);
 		}
 	}
 
@@ -113,13 +112,12 @@ public class CustomBlockSounds implements Listener {
 		if (event.isCancelled())
 			return;
 
-		Player player = event.getPlayer();
-		playerActionMap.put(player, BlockAction.BREAK);
+		updateAction(event.getPlayer(), BlockAction.BREAK);
 
 		Block brokenBlock = event.getBlock();
 		CustomBlock brokenCustomBlock = CustomBlock.fromBlock(brokenBlock);
 		if (brokenCustomBlock == null)
-			CustomBlockUtils.tryPlayDefaultSound(SoundAction.BREAK, brokenBlock);
+			tryPlayDefaultSound(SoundAction.BREAK, brokenBlock);
 	}
 
 	// Handles Sound: STEP
@@ -152,11 +150,56 @@ public class CustomBlockSounds implements Listener {
 				return;
 			}
 
-			if (CustomBlockUtils.playDefaultSounds(event.getSound(), event.getLocation()))
+			if (playDefaultSounds(event.getSound(), event.getLocation()))
 				event.setCancelled(true);
 		} catch (Exception ignored) {
 
 		}
+	}
+
+	private static boolean tryPlayDefaultSound(SoundAction soundAction, Block block) {
+		Sound sound = NMSUtils.getSound(soundAction, block);
+		if (sound == null)
+			return false;
+
+		SoundType soundType = SoundType.fromSound(sound);
+		if (soundType == null)
+			return false;
+
+		String blockSound = "custom." + sound.getKey().getKey();
+		String defaultSound = soundAction.getCustomSound(soundType);
+		if (!blockSound.equalsIgnoreCase(defaultSound)) {
+			return false;
+		}
+
+		return playDefaultSound(soundAction, soundType, block.getLocation());
+	}
+
+	private static boolean playDefaultSounds(Sound sound, Location location) {
+		SoundAction soundAction = SoundAction.fromSound(sound);
+		if (soundAction == null)
+			return false;
+
+		SoundType soundType = SoundType.fromSound(sound);
+		if (soundType == null)
+			return false;
+
+		return playDefaultSound(soundAction, soundType, location);
+	}
+
+	private static boolean playDefaultSound(SoundAction soundAction, SoundType soundType, Location location) {
+		String soundKey = soundAction.getCustomSound(soundType);
+		SoundBuilder soundBuilder = new SoundBuilder(soundKey).location(location).volume(soundAction.getVolume());
+
+		String locationStr = location.getWorld().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ();
+		String cooldownType = "CustomDefaultSound_" + soundAction + "_" + locationStr;
+		if (!(new CooldownService().check(UUIDUtils.UUID0, cooldownType, TickTime.TICK.x(3)))) {
+			return false;
+		}
+
+//		debug("&6CustomDefaultSound:&f " + soundAction + " - " + soundKey);
+		BlockUtils.playSound(soundBuilder);
+		return true;
 	}
 
 

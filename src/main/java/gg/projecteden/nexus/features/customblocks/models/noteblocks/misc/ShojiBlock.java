@@ -7,7 +7,6 @@ import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.Direc
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.ICraftableNoteBlock;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.IDirectionalNoteBlock;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
-import lombok.NonNull;
 import org.bukkit.Instrument;
 import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
@@ -29,7 +28,7 @@ import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilde
 public class ShojiBlock implements ICraftableNoteBlock, IDirectionalNoteBlock {
 
 	@Override
-	public @NonNull Material getRecipeUnlockMaterial() {
+	public @Nullable Material getRecipeUnlockMaterial() {
 		return Material.PAPER;
 	}
 

@@ -13,9 +13,9 @@ public @interface CustomTripwireConfig {
 
 	boolean north_NS();
 
-	boolean south_NS();
-
 	boolean east_NS();
+
+	boolean south_NS();
 
 	boolean west_NS();
 

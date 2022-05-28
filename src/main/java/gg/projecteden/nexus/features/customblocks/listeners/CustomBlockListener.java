@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.customblocks.listeners;
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customblocks.CustomBlockUtils;
+import gg.projecteden.nexus.features.customblocks.CustomBlocks.BlockAction;
 import gg.projecteden.nexus.features.customblocks.CustomBlocks.SoundAction;
 import gg.projecteden.nexus.features.customblocks.NoteBlockUtils;
 import gg.projecteden.nexus.features.customblocks.events.NoteBlockChangePitchEvent;
@@ -12,6 +13,7 @@ import gg.projecteden.nexus.features.customblocks.models.common.ICustomBlock.Pis
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.ICustomNoteBlock;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.ICustomTripwire;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.IWaterLogged;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.incremental.IIncremental;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.tall.ITall;
 import gg.projecteden.nexus.models.customblock.CustomBlockData;
 import gg.projecteden.nexus.models.customblock.CustomNoteBlockData;
@@ -223,15 +225,21 @@ public class CustomBlockListener implements Listener {
 		CustomBlock clickedCustomBlock = CustomBlock.fromBlock(clickedBlock);
 		// Place
 		if (isSpawningEntity(event, clickedBlock, clickedCustomBlock)) {
-			CustomBlockSounds.placingEntity(player);
-			return;
-		}
-		if (isPlacingBlock(event, clickedBlock, clickedCustomBlock)) {
-			CustomBlockSounds.placingBlock(player);
+			CustomBlockSounds.updateAction(player, BlockAction.UNKNOWN);
 			return;
 		}
 
-		CustomBlockSounds.interacting(player);
+		if (isIncrementingBlock(event, clickedBlock, clickedCustomBlock)) {
+			CustomBlockSounds.updateAction(player, BlockAction.PLACE);
+			return;
+		}
+
+		if (isPlacingBlock(event, clickedBlock, clickedCustomBlock)) {
+			CustomBlockSounds.updateAction(player, BlockAction.PLACE);
+			return;
+		}
+
+		CustomBlockSounds.updateAction(player, BlockAction.INTERACT);
 
 		if (clickedCustomBlock != null) {
 			boolean isChangingPitch = isChangingPitch(action, sneaking, itemInHand);
@@ -376,7 +384,7 @@ public class CustomBlockListener implements Listener {
 			BlockFace facing = ((CustomTripwireData) data.getExtraData()).getFacing();
 			ICustomTripwire customTripwire = (ICustomTripwire) customBlock;
 
-			boolean powered = customTripwire.isPowered(facing, underneath);
+			boolean powered = customTripwire.isPowered(facing, underneath.getType());
 			if (customTripwire.isIgnorePowered()) {
 				powered = tripwire.isPowered();
 			}
@@ -425,6 +433,44 @@ public class CustomBlockListener implements Listener {
 		}
 
 		return MaterialTag.SPAWNS_ENTITY.isTagged(itemInHand.getType());
+	}
+
+	private boolean isIncrementingBlock(PlayerInteractEvent event, Block clickedBlock, CustomBlock clickedCustomBlock) {
+		Action action = event.getAction();
+		if (!action.equals(Action.RIGHT_CLICK_BLOCK))
+			return false;
+
+		Player player = event.getPlayer();
+		if (player.isSneaking())
+			return false;
+
+		ItemStack itemInHand = event.getItem();
+		CustomBlock customBlockItem = CustomBlock.fromItemstack(itemInHand);
+		if (clickedCustomBlock == null || customBlockItem == null)
+			return false;
+
+		if (!(clickedCustomBlock.get() instanceof IIncremental incremental))
+			return false;
+
+		List<Integer> modelIdList = incremental.getModelIdList();
+		if (!modelIdList.contains(customBlockItem.get().getModelId()))
+			return false;
+
+		// increment block
+
+		int modelId = clickedCustomBlock.get().getModelId();
+		int ndx = modelIdList.indexOf(modelId) + 1;
+
+		if (ndx >= modelIdList.size())
+			return false;
+
+		int newModelId = modelIdList.get(ndx);
+		CustomBlock update = CustomBlock.fromModelId(newModelId);
+		if (update == null)
+			return false;
+
+		clickedCustomBlock.incrementBlock(player, update, clickedBlock);
+		return true;
 	}
 
 	private boolean isPlacingBlock(PlayerInteractEvent event, Block clickedBlock, CustomBlock clickedCustomBlock) {
@@ -506,6 +552,8 @@ public class CustomBlockListener implements Listener {
 					return false;
 				}
 			}
+
+			// place block
 
 			if (!_customBlock.placeBlock(player, preBlock, clickedBlock, clickedFace, itemInHand)) {
 //				debug(" isPlacingBlock: CustomBlock#PlaceBlock == false");

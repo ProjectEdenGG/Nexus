@@ -71,7 +71,7 @@ public interface ICustomBlock {
 	@NonNull String getFallSound();
 
 	// BlockData
-	BlockData getBlockData(@NonNull BlockFace facing, @NonNull Block underneath);
+	BlockData getBlockData(@NonNull BlockFace facing, @Nullable Block underneath);
 
 	default String getStringBlockData(BlockData blockData) {
 		return blockData.toString();

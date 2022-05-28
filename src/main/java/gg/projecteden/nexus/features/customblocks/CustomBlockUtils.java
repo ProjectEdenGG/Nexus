@@ -1,40 +1,28 @@
 package gg.projecteden.nexus.features.customblocks;
 
 import com.mojang.datafixers.util.Pair;
-import gg.projecteden.nexus.features.customblocks.CustomBlocks.SoundAction;
-import gg.projecteden.nexus.features.customblocks.CustomBlocks.SoundType;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.common.ICustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.common.IDirectional;
-import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.ICraftableNoteBlock;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.ICustomNoteBlock;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.ICustomTripwire;
-import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
-import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.customblock.CustomBlockData;
 import gg.projecteden.nexus.models.customblock.CustomBlockTracker;
 import gg.projecteden.nexus.models.customblock.CustomBlockTrackerService;
 import gg.projecteden.nexus.models.customblock.CustomNoteBlockData;
 import gg.projecteden.nexus.models.customblock.CustomTripwireData;
 import gg.projecteden.nexus.models.customblock.NoteBlockData;
-import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.NMSUtils;
-import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.UUIDUtils;
 import lombok.Getter;
 import lombok.NonNull;
-import org.bukkit.Keyed;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Powerable;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -162,72 +150,6 @@ public class CustomBlockUtils {
 	}
 
 	//
-
-	public static void unlockRecipe(Player player, Material material) {
-		if (Nullables.isNullOrAir(material))
-			return;
-
-		for (CustomBlock customBlock : CustomBlock.values()) {
-			if (!(customBlock.get() instanceof ICraftableNoteBlock craftable))
-				continue;
-
-			Material unlockMaterial = craftable.getRecipeUnlockMaterial();
-			if (Nullables.isNullOrAir(unlockMaterial))
-				continue;
-
-			if (unlockMaterial.equals(material)) {
-				for (NexusRecipe recipe : customBlock.getRecipes()) {
-					Keyed keyedRecipe = (Keyed) recipe.getRecipe();
-					player.discoverRecipe(keyedRecipe.getKey());
-				}
-			}
-		}
-	}
-
-	public static boolean tryPlayDefaultSound(SoundAction soundAction, Block block) {
-		Sound sound = NMSUtils.getSound(soundAction, block);
-		if (sound == null)
-			return false;
-
-		SoundType soundType = SoundType.fromSound(sound);
-		if (soundType == null)
-			return false;
-
-		String blockSound = "custom." + sound.getKey().getKey();
-		String defaultSound = soundAction.getCustomSound(soundType);
-		if (!blockSound.equalsIgnoreCase(defaultSound)) {
-			return false;
-		}
-
-		return playDefaultSound(soundAction, soundType, block.getLocation());
-	}
-
-	public static boolean playDefaultSounds(Sound sound, Location location) {
-		SoundAction soundAction = SoundAction.fromSound(sound);
-		if (soundAction == null)
-			return false;
-
-		SoundType soundType = SoundType.fromSound(sound);
-		if (soundType == null)
-			return false;
-
-		return playDefaultSound(soundAction, soundType, location);
-	}
-
-	private static boolean playDefaultSound(SoundAction soundAction, SoundType soundType, Location location) {
-		String soundKey = soundAction.getCustomSound(soundType);
-		SoundBuilder soundBuilder = new SoundBuilder(soundKey).location(location).volume(soundAction.getVolume());
-
-		String locationStr = location.getWorld().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ();
-		String cooldownType = "CustomDefaultSound_" + soundAction + "_" + locationStr;
-		if (!(new CooldownService().check(UUIDUtils.UUID0, cooldownType, TickTime.TICK.x(3)))) {
-			return false;
-		}
-
-//		debug("&6CustomDefaultSound:&f " + soundAction + " - " + soundKey);
-		BlockUtils.playSound(soundBuilder);
-		return true;
-	}
 
 	public static void updateObservers(Block origin) {
 		for (BlockFace face : neighborFaces) {

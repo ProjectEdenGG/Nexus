@@ -12,8 +12,8 @@ import lombok.NonNull;
 )
 @CustomTripwireConfig(
 	north_NS = true,
-	south_NS = true,
 	east_NS = true,
+	south_NS = true,
 	west_NS = true,
 	attached_NS = false,
 	disarmed_NS = false,

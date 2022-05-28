@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.customblocks.models.noteblocks.lanterns;
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.ICraftableNoteBlock;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
-import lombok.NonNull;
 import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,7 +19,7 @@ public interface IShroomLantern extends ILantern, ICraftableNoteBlock {
 	}
 
 	@Override
-	default @NonNull Material getRecipeUnlockMaterial() {
+	default @Nullable Material getRecipeUnlockMaterial() {
 		return getMaterial();
 	}
 

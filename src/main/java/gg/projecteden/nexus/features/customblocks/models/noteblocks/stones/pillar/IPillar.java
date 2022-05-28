@@ -25,7 +25,7 @@ public interface IPillar extends ICraftableNoteBlock {
 	}
 
 	@Override
-	default @NonNull Material getRecipeUnlockMaterial() {
+	default @Nullable Material getRecipeUnlockMaterial() {
 		return getMaterial();
 	}
 

@@ -13,8 +13,8 @@ import org.bukkit.Material;
 )
 @CustomTripwireConfig(
 	north_NS = false,
-	south_NS = false,
 	east_NS = false,
+	south_NS = false,
 	west_NS = false,
 	attached_NS = false,
 	disarmed_NS = false,

@@ -11,8 +11,8 @@ import gg.projecteden.nexus.features.customblocks.models.tripwire.common.WaterLo
 )
 @CustomTripwireConfig(
 	north_NS = true,
-	south_NS = false,
 	east_NS = false,
+	south_NS = false,
 	west_NS = false,
 	attached_NS = false,
 	disarmed_NS = false,

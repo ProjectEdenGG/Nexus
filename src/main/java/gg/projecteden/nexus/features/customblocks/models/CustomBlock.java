@@ -132,6 +132,13 @@ import gg.projecteden.nexus.features.customblocks.models.tripwire.Tripwire;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.TripwireCross;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.ICustomTripwire;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.IWaterLogged;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.incremental.IIncremental;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.incremental.pebbles.Pebbles_0;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.incremental.pebbles.Pebbles_1;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.incremental.pebbles.Pebbles_2;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.incremental.rocks.Rocks_0;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.incremental.rocks.Rocks_1;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.incremental.rocks.Rocks_2;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.tall.Cattail;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.tall.ITall;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
@@ -332,9 +339,18 @@ public enum CustomBlock implements Keyed {
 	// tall
 	CATTAIL(Cattail.class),
 
+	// rocks
+	ROCKS_0(Rocks_0.class),
+	ROCKS_1(Rocks_1.class),
+	ROCKS_2(Rocks_2.class),
+	PEBBLES_0(Pebbles_0.class),
+	PEBBLES_1(Pebbles_1.class),
+	PEBBLES_2(Pebbles_2.class),
+
+	// flora
+
 	/*
 		TODO:
-		 - ROCKS + PEBBLES
 		 - FLOWER + FUNGUS COVER --> HOW TO OBTAIN?
 		 - LOTUS LILLY FLOWER --> HOW TO OBTAIN?
 	 */;
@@ -439,7 +455,6 @@ public enum CustomBlock implements Keyed {
 		return null;
 	}
 
-
 	public boolean placeBlock(Player player, Block block, Block placeAgainst, BlockFace facing, ItemStack itemInHand) {
 		ICustomBlock customBlock = this.get();
 
@@ -475,7 +490,8 @@ public enum CustomBlock implements Keyed {
 			debug("Placing Block: " + this.name());
 
 			if (BlockUtils.tryPlaceEvent(player, block, placeAgainst, blockMaterial, blockData, false, item)) {
-				placeBlockDatabase(player, block, facingFinal);
+				CustomBlockUtils.updateObservers(block);
+				CustomBlockUtils.placeBlockDatabase(player.getUniqueId(), this, block.getLocation(), facingFinal);
 				if (placeTallSupport)
 					tallSupport(player, block, facingFinal);
 
@@ -499,17 +515,61 @@ public enum CustomBlock implements Keyed {
 		Block _block = block.getRelative(BlockFace.UP);
 		BlockData _blockData = tallSupport.getBlockData(facingFinal, block);
 
-		if (BlockUtils.tryPlaceEvent(player, _block, block, _blockMaterial, _blockData, false, _item))
-			_tallSupport.placeBlockDatabase(player, _block, facingFinal);
+		if (BlockUtils.tryPlaceEvent(player, _block, block, _blockMaterial, _blockData, false, _item)) {
+			CustomBlockUtils.updateObservers(block);
+			CustomBlockUtils.placeBlockDatabase(player.getUniqueId(), _tallSupport, _block.getLocation(), facingFinal);
+		}
 	}
 
-	private void placeBlockDatabase(Player player, Block block, BlockFace facingFinal) {
-		CustomBlockUtils.updateObservers(block);
+	public void incrementBlock(Player player, CustomBlock newCustomBlock, Block oldBlock) {
+		if (newCustomBlock == null || !(this.get() instanceof IIncremental) || !(newCustomBlock.get() instanceof IIncremental))
+			return;
 
+		Block underneath = oldBlock.getRelative(BlockFace.DOWN);
+		BlockFace facing = CustomBlockUtils.getFacing(this, oldBlock.getBlockData(), underneath);
+		BlockData newBlockData = newCustomBlock.customBlock.getBlockData(facing, underneath);
+
+		Location location = oldBlock.getLocation();
 		UUID uuid = player.getUniqueId();
-		Location location = block.getLocation();
 
-		CustomBlockUtils.placeBlockDatabase(uuid, this, location, facingFinal);
+		CustomBlockUtils.breakBlockDatabase(location);
+
+		oldBlock.setType(newCustomBlock.get().getVanillaBlockMaterial(), false);
+		oldBlock.setBlockData(newBlockData, false);
+
+		CustomBlockUtils.placeBlockDatabase(uuid, newCustomBlock, location, facing);
+		CustomBlockUtils.updateObservers(oldBlock);
+
+		// TODO: update logs
+	}
+
+	public void breakBlock(Block block, boolean dropItem, boolean playSound, boolean spawnParticle) {
+		breakBlock(block.getLocation(), true, dropItem, playSound, spawnParticle);
+	}
+
+	public void breakBlock(Location location, boolean dropItem, boolean playSound, boolean spawnParticle) {
+		breakBlock(location, true, dropItem, playSound, spawnParticle);
+	}
+
+	private void breakBlock(Location location, boolean updateDatabase, boolean dropItem, boolean playSound, boolean spawnParticle) {
+		if (updateDatabase)
+			CustomBlockUtils.breakBlockDatabase(location);
+
+		if (this != TALL_SUPPORT) {
+			if (spawnParticle && this.get() instanceof ICustomTripwire)
+				spawnParticle(location);
+
+			if (playSound)
+				playSound(SoundAction.BREAK, location);
+
+			if (dropItem)
+				dropItem(location);
+		} else {
+			CustomBlock below = CustomBlock.fromBlock(location.getBlock().getRelative(BlockFace.DOWN));
+			if (below == null) return;
+
+			below.breakBlock(location, false, false, playSound, spawnParticle);
+		}
 	}
 
 
@@ -572,6 +632,14 @@ public enum CustomBlock implements Keyed {
 			recipes.add(recipe);
 		}
 
+		// other recipes
+		if (!craftable.getOtherRecipes().isEmpty()) {
+			for (NexusRecipe recipe : craftable.getOtherRecipes()) {
+				recipe.register();
+				recipes.add(recipe);
+			}
+		}
+
 		// re-dye recipes
 		if (craftable instanceof IDyeable dyeable) {
 			CustomBlockTag tag = dyeable.getRedyeTag();
@@ -584,35 +652,6 @@ public enum CustomBlock implements Keyed {
 				recipe.type(RecipeType.DYES).register();
 				recipes.add(recipe);
 			}
-		}
-	}
-
-	public void breakBlock(Block block, boolean dropItem, boolean playSound, boolean spawnParticle) {
-		breakBlock(block.getLocation(), true, dropItem, playSound, spawnParticle);
-	}
-
-	public void breakBlock(Location location, boolean dropItem, boolean playSound, boolean spawnParticle) {
-		breakBlock(location, true, dropItem, playSound, spawnParticle);
-	}
-
-	private void breakBlock(Location location, boolean updateDatabase, boolean dropItem, boolean playSound, boolean spawnParticle) {
-		if (updateDatabase)
-			CustomBlockUtils.breakBlockDatabase(location);
-
-		if (this != TALL_SUPPORT) {
-			if (spawnParticle && this.get() instanceof ICustomTripwire)
-				spawnParticle(location);
-
-			if (playSound)
-				playSound(SoundAction.BREAK, location);
-
-			if (dropItem)
-				dropItem(location);
-		} else {
-			CustomBlock below = CustomBlock.fromBlock(location.getBlock().getRelative(BlockFace.DOWN));
-			if (below == null) return;
-
-			below.breakBlock(location, false, false, playSound, spawnParticle);
 		}
 	}
 

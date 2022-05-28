@@ -6,7 +6,6 @@ import gg.projecteden.nexus.features.customblocks.models.common.IDyeable;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.ICraftableNoteBlock;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
-import lombok.NonNull;
 import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,7 +34,7 @@ public interface IConcreteBricks extends IDyeable, ICraftableNoteBlock {
 	}
 
 	@Override
-	default @NonNull Material getRecipeUnlockMaterial() {
+	default @Nullable Material getRecipeUnlockMaterial() {
 		return getMaterial();
 	}
 

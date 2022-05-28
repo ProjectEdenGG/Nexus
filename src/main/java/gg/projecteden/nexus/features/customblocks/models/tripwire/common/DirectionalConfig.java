@@ -10,9 +10,9 @@ import java.lang.annotation.Target;
 public @interface DirectionalConfig {
 	boolean north_EW();
 
-	boolean south_EW();
-
 	boolean east_EW();
+
+	boolean south_EW();
 
 	boolean west_EW();
 
