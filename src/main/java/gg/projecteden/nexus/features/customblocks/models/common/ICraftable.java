@@ -84,5 +84,4 @@ public interface ICraftable extends ICustomBlock {
 		return new Pair<>(surround(center).with(surround), 8);
 	}
 
-
 }

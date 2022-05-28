@@ -32,6 +32,7 @@ public enum RecipeType {
 	DECORATION(Material.AMETHYST_SHARD, 4, true),
 	ARMOR(Material.DIAMOND_CHESTPLATE, 0, true),
 	FURNACE(Material.FURNACE),
+	STONECUTTER(Material.STONECUTTER),
 	CUSTOM_BLOCKS(Material.PAPER, 20051, true),
 	;
 

@@ -152,4 +152,8 @@ public abstract class RecipeBuilder<T extends RecipeBuilder<?>> {
 		return new BlastFurnaceBuilder(smelt);
 	}
 
+	public static StoneCutterBuilder stoneCutter(Material material) {
+		return new StoneCutterBuilder(material);
+	}
+
 }
