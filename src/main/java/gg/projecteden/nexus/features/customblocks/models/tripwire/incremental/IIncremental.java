@@ -8,4 +8,7 @@ public interface IIncremental extends ICustomTripwire {
 
 	List<Integer> getModelIdList();
 
+	default int getIndex() {
+		return getModelIdList().indexOf(getModelId());
+	}
 }

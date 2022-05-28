@@ -21,6 +21,7 @@ import gg.projecteden.nexus.models.customblock.CustomTripwireData;
 import gg.projecteden.nexus.models.customblock.NoteBlockData;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.GameModeWrapper;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
@@ -76,7 +77,7 @@ public class CustomBlockListener implements Listener {
 	}
 
 	@EventHandler
-	public void on(InventoryCreativeEvent event) {
+	public void onCreativePickBlock(InventoryCreativeEvent event) {
 		SlotType slotType = event.getSlotType();
 		if (!slotType.equals(SlotType.QUICKBAR))
 			return;
@@ -97,6 +98,12 @@ public class CustomBlockListener implements Listener {
 		if (customBlock == null) {
 			debug("CreativePickBlock: CustomBlock == null");
 			return;
+		}
+
+		if (customBlock == CustomBlock.TALL_SUPPORT) {
+			CustomBlock _customBlock = CustomBlock.fromBlock(block.getRelative(BlockFace.DOWN));
+			if (_customBlock != null)
+				customBlock = _customBlock;
 		}
 
 		ItemStack newItem = customBlock.get().getItemStack();
@@ -152,24 +159,29 @@ public class CustomBlockListener implements Listener {
 			return;
 
 		event.setDropItems(false);
+		int amount = 1;
 
 		if (CustomBlock.TALL_SUPPORT == brokenCustomBlock) {
 			debug("Broke tall support");
-			breakBlock(player, brokenBlock, brokenCustomBlock, false, true, true);
+			breakBlock(player, brokenBlock, brokenCustomBlock, false, amount, true, true);
 
 			Block blockUnder = brokenBlock.getRelative(BlockFace.DOWN);
 			CustomBlock under = CustomBlock.fromBlock(blockUnder);
 
 			if (under != null) {
 				debug("Underneath: " + under.name());
-				breakBlock(player, blockUnder, under, true, false, true);
+				breakBlock(player, blockUnder, under, true, amount, false, true);
 				blockUnder.setType(Material.AIR);
 			}
 
 			return;
 		}
 
-		if (brokenCustomBlock.get() instanceof ITall) {
+
+		if (brokenCustomBlock.get() instanceof IIncremental incremental) {
+			amount = incremental.getIndex() + 1;
+
+		} else if (brokenCustomBlock.get() instanceof ITall) {
 			debug("Broke isTall");
 			Block blockAbove = brokenBlock.getRelative(BlockFace.UP);
 			CustomBlock above = CustomBlock.fromBlock(blockAbove);
@@ -177,15 +189,15 @@ public class CustomBlockListener implements Listener {
 			if (CustomBlock.TALL_SUPPORT == above) {
 				debug("Breaking tall support above");
 
-				breakBlock(player, blockAbove, above, false, false, true);
+				breakBlock(player, blockAbove, above, false, amount, false, true);
 				blockAbove.setType(Material.AIR);
 			}
 		}
 
-		breakBlock(player, brokenBlock, brokenCustomBlock, true, true, true);
+		breakBlock(player, brokenBlock, brokenCustomBlock, true, amount, true, true);
 	}
 
-	private void breakBlock(Player player, Block block, CustomBlock customBlock, boolean dropItem, boolean playSound, boolean spawnParticle) {
+	private void breakBlock(Player player, Block block, CustomBlock customBlock, boolean dropItem, int amount, boolean playSound, boolean spawnParticle) {
 		debug("Breaking block: " + customBlock.name());
 		customBlock.breakBlock(block, false, playSound, spawnParticle);
 
@@ -193,7 +205,7 @@ public class CustomBlockListener implements Listener {
 			return;
 
 		// change drops
-		ItemStack newDrop = customBlock.get().getItemStack();
+		ItemStack newDrop = new ItemBuilder(customBlock.get().getItemStack()).amount(amount).build();
 		Material customType = customBlock.get().getVanillaItemMaterial();
 		Location location = block.getLocation();
 
@@ -445,6 +457,9 @@ public class CustomBlockListener implements Listener {
 			return false;
 
 		ItemStack itemInHand = event.getItem();
+		if (Nullables.isNullOrAir(itemInHand))
+			return false;
+
 		CustomBlock customBlockItem = CustomBlock.fromItemstack(itemInHand);
 		if (clickedCustomBlock == null || customBlockItem == null)
 			return false;
@@ -458,9 +473,7 @@ public class CustomBlockListener implements Listener {
 
 		// increment block
 
-		int modelId = clickedCustomBlock.get().getModelId();
-		int ndx = modelIdList.indexOf(modelId) + 1;
-
+		int ndx = incremental.getIndex() + 1;
 		if (ndx >= modelIdList.size())
 			return false;
 
@@ -470,6 +483,9 @@ public class CustomBlockListener implements Listener {
 			return false;
 
 		clickedCustomBlock.incrementBlock(player, update, clickedBlock);
+		if (!GameModeWrapper.of(player).isCreative())
+			itemInHand.subtract();
+
 		return true;
 	}
 
