@@ -10,12 +10,14 @@ import gg.projecteden.nexus.utils.WorldEditUtils;
 import org.bukkit.World;
 
 public class CustomBlockExtent extends AbstractDelegateExtent {
-	World world;
-	WorldEditUtils WEUtils;
+	private final Extent extent;
+	private final World world;
+	private final WorldEditUtils WEUtils;
 
 	public CustomBlockExtent(Extent extent, org.bukkit.World world) {
 		super(extent);
 
+		this.extent = extent;
 		this.world = world;
 		this.WEUtils = new WorldEditUtils(world);
 
@@ -26,13 +28,13 @@ public class CustomBlockExtent extends AbstractDelegateExtent {
 	@Override
 	public <B extends BlockStateHolder<B>> boolean setBlock(int x, int y, int z, B block) throws WorldEditException {
 		Dev.WAKKA.send("setBlock(x, y, z, block)");
-		return super.setBlock(x, y, z, block);
+		return extent.setBlock(x, y, z, block);
 	}
 
 	@Override
 	public <B extends BlockStateHolder<B>> boolean setBlock(BlockVector3 position, B block) throws WorldEditException {
 		Dev.WAKKA.send("setBlock(position, block)");
-		return super.setBlock(position, block);
+		return extent.setBlock(position, block);
 	}
 }
 
