@@ -20,7 +20,7 @@ import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilde
 	east_NS = true,
 	south_NS = true,
 	west_NS = false,
-	attached_NS = false,
+	attached_NS = true,
 	disarmed_NS = false,
 	powered_NS = false,
 	customBreakSound = "block.stone.break",

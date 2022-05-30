@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.customblocks.models.tripwire;
+package gg.projecteden.nexus.features.customblocks.models.tripwire.tripwire;
 
 import gg.projecteden.nexus.features.customblocks.models.common.CustomBlockConfig;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.CustomTripwireConfig;

@@ -153,12 +153,17 @@ public class CustomBlockListener implements Listener {
 
 		Player player = event.getPlayer();
 		Block brokenBlock = event.getBlock();
+		if (Nullables.isNullOrAir(brokenBlock))
+			return;
+
 		CustomBlock brokenCustomBlock = CustomBlock.fromBlock(brokenBlock);
 		if (brokenCustomBlock == null)
 			return;
 
 		event.setDropItems(false);
 		int amount = 1;
+
+		Set<Location> fixedTripwire = new HashSet<>(List.of(brokenBlock.getLocation()));
 
 		if (CustomBlock.TALL_SUPPORT == brokenCustomBlock) {
 			debug("Broke tall support");
@@ -168,11 +173,13 @@ public class CustomBlockListener implements Listener {
 			CustomBlock under = CustomBlock.fromBlock(blockUnder);
 
 			if (under != null) {
+				fixedTripwire.add(blockUnder.getLocation());
 				debug("Underneath: " + under.name());
 				breakBlock(player, blockUnder, under, true, amount, false, true);
 				blockUnder.setType(Material.AIR);
 			}
 
+			fixTripwireNearby(player, brokenBlock, new HashSet<>(fixedTripwire));
 			return;
 		}
 
@@ -194,6 +201,7 @@ public class CustomBlockListener implements Listener {
 		}
 
 		breakBlock(player, brokenBlock, brokenCustomBlock, true, amount, true, true);
+		fixTripwireNearby(player, brokenBlock, new HashSet<>(fixedTripwire));
 	}
 
 	private void breakBlock(Player player, Block block, CustomBlock customBlock, boolean dropItem, int amount, boolean playSound, boolean spawnParticle) {

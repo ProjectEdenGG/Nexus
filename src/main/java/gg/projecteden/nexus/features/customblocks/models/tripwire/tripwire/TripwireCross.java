@@ -1,32 +1,30 @@
-package gg.projecteden.nexus.features.customblocks.models.tripwire;
+package gg.projecteden.nexus.features.customblocks.models.tripwire.tripwire;
 
 import gg.projecteden.nexus.features.customblocks.models.common.CustomBlockConfig;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.CustomTripwireConfig;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.ICustomTripwire;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.NonNull;
-import org.bukkit.Material;
 
 @CustomBlockConfig(
-	name = "Tall Support",
-	modelId = 21100
+	name = "Tripwire Cross",
+	modelId = 21001
 )
 @CustomTripwireConfig(
-	north_NS = false,
-	east_NS = false,
-	south_NS = false,
-	west_NS = false,
+	north_NS = true,
+	east_NS = true,
+	south_NS = true,
+	west_NS = true,
 	attached_NS = false,
 	disarmed_NS = false,
 	powered_NS = false,
 	ignorePowered = true
 )
-
-// This is not a block you can obtain, it's purpose is to allow for better hitbox detection for tall blocks
-public class TallSupport implements ICustomTripwire {
+public class TripwireCross implements ICustomTripwire {
 
 	@Override
 	public @NonNull ItemBuilder getItemBuilder() {
-		return new ItemBuilder(Material.AIR);
+		// same as CustomBlock.TRIPWIRE
+		return new ItemBuilder(itemMaterial).customModelData(21000).name("String");
 	}
 }

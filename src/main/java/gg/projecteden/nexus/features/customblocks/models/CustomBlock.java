@@ -127,9 +127,6 @@ import gg.projecteden.nexus.features.customblocks.models.noteblocks.terracottash
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.terracottashingles.TerracottaShingles;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.terracottashingles.WhiteTerracottaShingles;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.terracottashingles.YellowTerracottaShingles;
-import gg.projecteden.nexus.features.customblocks.models.tripwire.TallSupport;
-import gg.projecteden.nexus.features.customblocks.models.tripwire.Tripwire;
-import gg.projecteden.nexus.features.customblocks.models.tripwire.TripwireCross;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.ICustomTripwire;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.IWaterLogged;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.cover.FungusCover;
@@ -146,8 +143,14 @@ import gg.projecteden.nexus.features.customblocks.models.tripwire.incremental.pe
 import gg.projecteden.nexus.features.customblocks.models.tripwire.incremental.rocks.Rocks_0;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.incremental.rocks.Rocks_1;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.incremental.rocks.Rocks_2;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.misc.Lavender;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.tall.BlueSage;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.tall.Cattail;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.tall.Gladiolus;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.tall.ITall;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.tall.TallSupport;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.tripwire.Tripwire;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.tripwire.TripwireCross;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
@@ -343,8 +346,13 @@ public enum CustomBlock implements Keyed {
 	TRIPWIRE_CROSS(TripwireCross.class),
 	TALL_SUPPORT(TallSupport.class),
 
-	// tall
+	// flora tall
 	CATTAIL(Cattail.class),
+	BLUE_SAGE(BlueSage.class),
+	GLADIOLUS(Gladiolus.class),
+
+	// flora short
+	LAVENDER(Lavender.class),
 
 	// rocks
 	ROCKS_0(Rocks_0.class),
@@ -362,8 +370,6 @@ public enum CustomBlock implements Keyed {
 	AUBRIETA_WHITE(WhiteAubrieta.class),
 	AUBRIETA_RAINBOW(RainbowAubrieta.class),
 	FUNGUS_COVER(FungusCover.class),
-
-	// flora
 
 
 	/*
