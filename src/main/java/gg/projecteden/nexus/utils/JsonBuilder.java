@@ -890,6 +890,8 @@ public class JsonBuilder implements ComponentLike {
 	 */
 	@NotNull @Contract("_ -> this")
 	public JsonBuilder hover(@NonNull List<String> lines) {
+		if (lines.size() > 1)
+			loreize(false);
 		lore.addAll(lines);
 		return this;
 	}
