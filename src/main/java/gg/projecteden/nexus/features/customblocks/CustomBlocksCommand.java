@@ -16,7 +16,9 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.models.customblock.CustomBlockData;
 import gg.projecteden.nexus.models.customblock.CustomBlockTracker;
 import gg.projecteden.nexus.models.customblock.CustomBlockTrackerService;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.NMSUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Location;
@@ -129,7 +131,6 @@ public class CustomBlocksCommand extends CustomCommand {
 		send("Block Damage: " + NMSUtils.getBlockDamage(player(), block, itemStack));
 	}
 
-
 	public static class CustomBlockTagMenu extends InventoryProvider {
 		private final CustomBlockTag customBlockTag;
 
@@ -147,7 +148,13 @@ public class CustomBlocksCommand extends CustomCommand {
 			addCloseItem();
 
 			List<ClickableItem> items = new ArrayList<>();
-			customBlockTag.getValues().forEach(customBlock -> items.add(ClickableItem.empty(customBlock.get().getItemStack())));
+			customBlockTag.getValues().forEach(customBlock -> {
+				ItemStack customBlockItem = customBlock.get().getItemStack();
+				if (!Nullables.isNullOrAir(customBlockItem)) {
+					ItemStack item = new ItemBuilder(customBlock.get().getItemStack()).lore(customBlock.name().toLowerCase()).build();
+					items.add(ClickableItem.empty(item));
+				}
+			});
 
 			paginator().items(items).build();
 		}

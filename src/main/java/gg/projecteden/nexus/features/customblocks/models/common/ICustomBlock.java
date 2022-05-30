@@ -33,7 +33,7 @@ public interface ICustomBlock {
 	}
 
 	default @NonNull ItemBuilder getItemBuilder() {
-		return new ItemBuilder(itemMaterial).customModelData(getModelId()).name(getItemName());
+		return new ItemBuilder(itemMaterial).customModelData(getModelId()).name(getItemName()).clone();
 	}
 
 	default @NonNull ItemStack getItemStack() {

@@ -46,8 +46,10 @@ import gg.projecteden.nexus.features.customblocks.models.noteblocks.lanterns.Jun
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.lanterns.OakPaperLantern;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.lanterns.SprucePaperLantern;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.lanterns.WarpedShroomLantern;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.misc.HazardBlock;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.misc.NoteBlock;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.misc.ShojiBlock;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.misc.Wireframe;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.carved.CarvedAcaciaPlanks;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.carved.CarvedBirchPlanks;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.carved.CarvedCrimsonPlanks;
@@ -145,9 +147,12 @@ import gg.projecteden.nexus.features.customblocks.models.tripwire.incremental.ro
 import gg.projecteden.nexus.features.customblocks.models.tripwire.incremental.rocks.Rocks_2;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.misc.Lavender;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.tall.BlueSage;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.tall.Bluebell;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.tall.Cattail;
-import gg.projecteden.nexus.features.customblocks.models.tripwire.tall.Gladiolus;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.tall.ITall;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.tall.MountainLaurel;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.tall.OrangeGladiolus;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.tall.PurpleHibiscus;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.tall.TallSupport;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.tripwire.Tripwire;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.tripwire.TripwireCross;
@@ -338,6 +343,8 @@ public enum CustomBlock implements Keyed {
 	// misc
 	NOTE_BLOCK(NoteBlock.class),
 	SHOJI_BLOCK(ShojiBlock.class),
+	HAZARD_BLOCK(HazardBlock.class),
+	WIREFRAME(Wireframe.class),
 
 	// TRIPWIRE
 
@@ -349,7 +356,10 @@ public enum CustomBlock implements Keyed {
 	// flora tall
 	CATTAIL(Cattail.class),
 	BLUE_SAGE(BlueSage.class),
-	GLADIOLUS(Gladiolus.class),
+	ORANGE_GLADIOLUS(OrangeGladiolus.class),
+	MOUNTAIN_LAUREL(MountainLaurel.class),
+	BLUEBELL(Bluebell.class),
+	PURPLE_HIBISCUS(PurpleHibiscus.class),
 
 	// flora short
 	LAVENDER(Lavender.class),
@@ -369,13 +379,13 @@ public enum CustomBlock implements Keyed {
 	AUBRIETA_PINK(PinkAubrieta.class),
 	AUBRIETA_WHITE(WhiteAubrieta.class),
 	AUBRIETA_RAINBOW(RainbowAubrieta.class),
-	FUNGUS_COVER(FungusCover.class),
-
+	FUNGUS_COVER(FungusCover.class), // TODO: make model 3d
 
 	/*
 		TODO:
 		 - FLOWER + FUNGUS COVER --> HOW TO OBTAIN?
 		 - LOTUS LILLY FLOWER --> HOW TO OBTAIN?
+		 - HAZARD, WIREFRAME, DOTS
 	 */;
 
 	private final ICustomBlock customBlock;

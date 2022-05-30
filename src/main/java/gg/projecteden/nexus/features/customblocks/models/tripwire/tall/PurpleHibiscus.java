@@ -8,13 +8,13 @@ import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
 
 @CustomBlockConfig(
-	name = "Gladiolus",
-	modelId = 21118
+	name = "Purple Hibiscus",
+	modelId = 21121
 )
 @CustomTripwireConfig(
-	north_NS = false,
+	north_NS = true,
 	east_NS = false,
-	south_NS = false,
+	south_NS = true,
 	west_NS = true,
 	attached_NS = false,
 	disarmed_NS = false,
@@ -25,10 +25,10 @@ import org.jetbrains.annotations.Nullable;
 	customHitSound = "block.azalea_leaves.hit",
 	customFallSound = "block.azalea_leaves.fall"
 )
-public class Gladiolus implements ITall, ICraftable {
+public class PurpleHibiscus implements ITall, ICraftable {
 
 	@Override
 	public @Nullable RecipeBuilder<?> getUncraftRecipe() {
-		return getUncraftRecipe(Material.ORANGE_DYE, 1);
+		return getUncraftRecipe(Material.PURPLE_DYE, 1);
 	}
 }
