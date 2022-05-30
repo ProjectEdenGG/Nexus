@@ -4,7 +4,6 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
-import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.SocialMediaSite;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.chat.Chatter;
@@ -44,7 +43,7 @@ public class BadgeUser implements PlayerOwnedObject {
 		if (!hasBadge())
 			return json;
 
-		final String emoji = viewer != null && ResourcePack.isEnabledFor(viewer) ? active.getEmoji() : active.getAlt();
+		final String emoji = viewer != null ? active.getEmoji() : active.getAlt();
 
 		if (isNullOrEmpty(emoji))
 			return json;
