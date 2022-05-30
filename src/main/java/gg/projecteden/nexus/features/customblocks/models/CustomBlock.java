@@ -132,6 +132,13 @@ import gg.projecteden.nexus.features.customblocks.models.tripwire.Tripwire;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.TripwireCross;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.ICustomTripwire;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.IWaterLogged;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.cover.FungusCover;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.cover.aubrieta.BlueAubrieta;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.cover.aubrieta.OrangeAubrieta;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.cover.aubrieta.PinkAubrieta;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.cover.aubrieta.PurpleAubrieta;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.cover.aubrieta.RainbowAubrieta;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.cover.aubrieta.WhiteAubrieta;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.incremental.IIncremental;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.incremental.pebbles.Pebbles_0;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.incremental.pebbles.Pebbles_1;
@@ -347,7 +354,17 @@ public enum CustomBlock implements Keyed {
 	PEBBLES_1(Pebbles_1.class),
 	PEBBLES_2(Pebbles_2.class),
 
+	// cover
+	AUBRIETA_ORANGE(OrangeAubrieta.class),
+	AUBRIETA_BLUE(BlueAubrieta.class),
+	AUBRIETA_PURPLE(PurpleAubrieta.class),
+	AUBRIETA_PINK(PinkAubrieta.class),
+	AUBRIETA_WHITE(WhiteAubrieta.class),
+	AUBRIETA_RAINBOW(RainbowAubrieta.class),
+	FUNGUS_COVER(FungusCover.class),
+
 	// flora
+
 
 	/*
 		TODO:

@@ -26,7 +26,6 @@ import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Instrument;
 import org.bukkit.Location;
@@ -70,10 +69,10 @@ public class CustomBlockListener implements Listener {
 	public static final Set<Material> handleMaterials = Set.of(Material.NOTE_BLOCK, Material.TRIPWIRE);
 
 	public CustomBlockListener() {
-		new CustomBlockRecipes();
-		new CustomBlockSounds();
-
 		Nexus.registerListener(this);
+
+		new CustomBlockSounds();
+		new CustomBlockRecipes();
 	}
 
 	@EventHandler
@@ -416,8 +415,8 @@ public class CustomBlockListener implements Listener {
 		} else
 			return;
 
-		String loc = StringUtils.getCoordinateString(block.getLocation());
-		debug(loc + " -> " + customBlock.getStringBlockData(block.getBlockData()));
+//		String loc = StringUtils.getCoordinateString(block.getLocation());
+//		debug(loc + " -> " + customBlock.getStringBlockData(block.getBlockData()));
 
 		block.getState().update(true, doPhysics);
 	}
