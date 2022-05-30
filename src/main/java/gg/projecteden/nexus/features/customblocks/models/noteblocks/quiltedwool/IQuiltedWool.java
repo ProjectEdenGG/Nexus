@@ -35,11 +35,6 @@ public interface IQuiltedWool extends IDyeable, ICraftableNoteBlock {
 	}
 
 	@Override
-	default @Nullable Material getRecipeUnlockMaterial() {
-		return getMaterial();
-	}
-
-	@Override
 	default Set<Material> getApplicableTools() {
 		return Collections.singleton(Material.SHEARS);
 	}

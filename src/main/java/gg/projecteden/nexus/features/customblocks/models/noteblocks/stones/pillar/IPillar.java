@@ -31,13 +31,11 @@ public interface IPillar extends ICraftableNoteBlock {
 	@Override
 	default List<NexusRecipe> getOtherRecipes() {
 		return List.of(
-			stoneCutter(getMaterial()).toMake(getItemStack()).build()
+			stoneCutter(getMaterial()).toMake(getItemStack())
+				.unlockedBy(getItemStack())
+				.unlockedBy(getMaterial())
+				.build()
 		);
-	}
-
-	@Override
-	default @Nullable Material getRecipeUnlockMaterial() {
-		return getMaterial();
 	}
 
 	@Override

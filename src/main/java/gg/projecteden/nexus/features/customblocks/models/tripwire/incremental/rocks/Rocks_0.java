@@ -24,19 +24,9 @@ import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilde
 	west_NS = false,
 	attached_NS = false,
 	disarmed_NS = false,
-	powered_NS = false,
-	customBreakSound = "block.stone.break",
-	customPlaceSound = "block.stone.place",
-	customStepSound = "block.stone.step",
-	customHitSound = "block.stone.hit",
-	customFallSound = "block.stone.fall"
+	powered_NS = false
 )
 public class Rocks_0 implements IRocks, ICraftableTripwire {
-
-	@Override
-	public @Nullable Material getRecipeUnlockMaterial() {
-		return Material.COBBLESTONE;
-	}
 
 	@Override
 	public @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
@@ -46,7 +36,11 @@ public class Rocks_0 implements IRocks, ICraftableTripwire {
 	@Override
 	public List<NexusRecipe> getOtherRecipes() {
 		return List.of(
-			shaped("11", "11").add('1', getItemStack()).toMake(Material.COBBLESTONE, 1).build()
+			shaped("11", "11").add('1', getItemStack())
+				.toMake(Material.COBBLESTONE, 1)
+				.unlockedBy(getItemStack())
+				.unlockedBy(Material.COBBLESTONE)
+				.build()
 		);
 	}
 

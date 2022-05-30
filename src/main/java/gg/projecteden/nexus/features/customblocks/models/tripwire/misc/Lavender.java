@@ -1,8 +1,12 @@
 package gg.projecteden.nexus.features.customblocks.models.tripwire.misc;
 
 import gg.projecteden.nexus.features.customblocks.models.common.CustomBlockConfig;
+import gg.projecteden.nexus.features.customblocks.models.common.ICraftable;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.CustomTripwireConfig;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.ICustomTripwire;
+import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
+import org.bukkit.Material;
+import org.jetbrains.annotations.Nullable;
 
 @CustomBlockConfig(
 	name = "Lavender",
@@ -22,5 +26,10 @@ import gg.projecteden.nexus.features.customblocks.models.tripwire.common.ICustom
 	customHitSound = "block.azalea_leaves.hit",
 	customFallSound = "block.azalea_leaves.fall"
 )
-public class Lavender implements ICustomTripwire {
+public class Lavender implements ICustomTripwire, ICraftable {
+
+	@Override
+	public @Nullable RecipeBuilder<?> getUncraftRecipe() {
+		return getUncraftRecipe(Material.PURPLE_DYE, 1);
+	}
 }

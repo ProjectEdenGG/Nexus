@@ -28,9 +28,4 @@ public interface IColoredPlanks extends IDyeable, ICraftableNoteBlock {
 		return getSurroundRecipe(getMaterial(), MaterialTag.PLANKS);
 	}
 
-	@Override
-	default @Nullable Material getRecipeUnlockMaterial() {
-		return getMaterial();
-	}
-
 }

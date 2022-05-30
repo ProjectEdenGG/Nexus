@@ -14,11 +14,6 @@ import gg.projecteden.nexus.features.customblocks.models.tripwire.common.CustomT
 	west_NS = true,
 	attached_NS = true,
 	disarmed_NS = false,
-	powered_NS = false,
-	customBreakSound = "block.stone.break",
-	customPlaceSound = "block.stone.place",
-	customStepSound = "block.stone.step",
-	customHitSound = "block.stone.hit",
-	customFallSound = "block.stone.fall"
+	powered_NS = false
 )
 public class Pebbles_1 implements IPebbles {}

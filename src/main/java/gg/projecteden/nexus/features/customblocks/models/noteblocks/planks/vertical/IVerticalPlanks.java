@@ -28,9 +28,4 @@ public interface IVerticalPlanks extends ICraftableNoteBlock {
 		return Material.valueOf(camelToSnake(woodType).toUpperCase() + "_PLANKS");
 	}
 
-	@Override
-	default @Nullable Material getRecipeUnlockMaterial() {
-		return getMaterial();
-	}
-
 }

@@ -37,8 +37,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
@@ -58,6 +62,7 @@ import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilde
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shapeless;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.smelt;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.surround;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.pretty;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 import static gg.projecteden.utils.Nullables.isNullOrEmpty;
@@ -142,23 +147,90 @@ public class CustomRecipes extends Feature implements Listener {
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPreCraft(PrepareItemCraftEvent event) {
-		if (!(event.getView().getPlayer() instanceof Player player)) return;
-		if (event.getRecipe() == null) return;
+		if (!(event.getView().getPlayer() instanceof Player player))
+			return;
+
+		if (event.getRecipe() == null)
+			return;
+
 		NexusRecipe recipe = getCraftByRecipe(event.getRecipe());
-		if (recipe == null) return;
+		if (recipe == null)
+			return;
+
 		if (recipe.getPermission() != null && !player.hasPermission(recipe.getPermission()))
 			event.getInventory().setResult(null);
+
 		else if (recipe.getResult().hasItemMeta())
 			event.getInventory().setResult(recipe.getResult());
+
+		unlockRecipe(player, recipe.getResult(), recipe);
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onCraft(CraftItemEvent event) {
 		NexusRecipe recipe = getCraftByRecipe(event.getRecipe());
-		if (recipe == null) return;
-		if (recipe.getPermission() == null) return;
+		if (recipe == null)
+			return;
+
+		if (recipe.getPermission() == null)
+			return;
+
 		if (!event.getWhoClicked().hasPermission(recipe.getPermission()))
 			event.setCancelled(true);
+
+		unlockRecipe((Player) event.getWhoClicked(), event.getRecipe().getResult(), recipe);
+	}
+
+	@EventHandler
+	public void on(EntityPickupItemEvent event) {
+		if (!(event.getEntity() instanceof Player player))
+			return;
+
+		unlockRecipe(player, event.getItem().getItemStack());
+	}
+
+	@EventHandler
+	public void on(InventoryClickEvent event) {
+		if (!(event.getView().getPlayer() instanceof Player player))
+			return;
+
+		final Inventory inventory = event.getClickedInventory();
+		if (inventory == null || inventory.getType() == InventoryType.PLAYER)
+			return;
+
+		final ItemStack item = player.getItemOnCursor();
+		if (isNullOrAir(item))
+			return;
+
+		unlockRecipe(player, item);
+	}
+
+	private static void unlockRecipe(Player player, ItemStack eventItem) {
+		for (NexusRecipe recipe : CustomRecipes.getRecipes()) {
+			unlockRecipe(player, eventItem, recipe);
+		}
+	}
+
+	private static void unlockRecipe(Player player, ItemStack eventItem, NexusRecipe recipe) {
+		List<ItemStack> unlockItems = recipe.getUnlockedByList();
+		if (unlockItems.isEmpty())
+			return;
+
+		Keyed keyedRecipe = (Keyed) recipe.getRecipe();
+		NamespacedKey key = keyedRecipe.getKey();
+		if (player.hasDiscoveredRecipe(key))
+			return;
+
+		for (ItemStack unlockItem : unlockItems) {
+			if (Nullables.isNullOrAir(eventItem) || Nullables.isNullOrAir(unlockItem))
+				continue;
+
+			if (!ItemUtils.isFuzzyMatch(eventItem, unlockItem))
+				continue;
+
+			player.discoverRecipe(key);
+			return;
+		}
 	}
 
 	@NotNull

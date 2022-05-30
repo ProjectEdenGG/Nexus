@@ -518,7 +518,7 @@ public enum CustomBlock implements Keyed {
 				if (placeTallSupport)
 					tallSupport(player, block, facingFinal);
 
-				playSound(SoundAction.PLACE, block.getLocation());
+				playSound(player, SoundAction.PLACE, block.getLocation());
 
 				player.swingMainHand();
 				ItemUtils.subtract(player, itemInHand);
@@ -544,37 +544,38 @@ public enum CustomBlock implements Keyed {
 		}
 	}
 
-	public void incrementBlock(Player player, CustomBlock newCustomBlock, Block oldBlock) {
+	public void incrementBlock(Player player, CustomBlock newCustomBlock, Block block) {
 		if (newCustomBlock == null || !(this.get() instanceof IIncremental) || !(newCustomBlock.get() instanceof IIncremental))
 			return;
 
-		Block underneath = oldBlock.getRelative(BlockFace.DOWN);
-		BlockFace facing = CustomBlockUtils.getFacing(this, oldBlock.getBlockData(), underneath);
+		Block underneath = block.getRelative(BlockFace.DOWN);
+		BlockFace facing = CustomBlockUtils.getFacing(this, block.getBlockData(), underneath);
 		BlockData newBlockData = newCustomBlock.customBlock.getBlockData(facing, underneath);
 
-		Location location = oldBlock.getLocation();
+		Location location = block.getLocation();
 		UUID uuid = player.getUniqueId();
 
 		CustomBlockUtils.breakBlockDatabase(location);
 
-		oldBlock.setType(newCustomBlock.get().getVanillaBlockMaterial(), false);
-		oldBlock.setBlockData(newBlockData, false);
+		block.setType(newCustomBlock.get().getVanillaBlockMaterial(), false);
+		block.setBlockData(newBlockData, false);
+		playSound(player, SoundAction.PLACE, block.getLocation());
 
 		CustomBlockUtils.placeBlockDatabase(uuid, newCustomBlock, location, facing);
-		CustomBlockUtils.updateObservers(oldBlock);
+		CustomBlockUtils.updateObservers(block);
 
 		// TODO: update logs
 	}
 
-	public void breakBlock(Block block, boolean dropItem, boolean playSound, boolean spawnParticle) {
-		breakBlock(block.getLocation(), true, dropItem, playSound, spawnParticle);
+	public void breakBlock(Player source, Block block, boolean dropItem, boolean playSound, boolean spawnParticle) {
+		breakBlock(source, block.getLocation(), true, dropItem, playSound, spawnParticle);
 	}
 
-	public void breakBlock(Location location, boolean dropItem, boolean playSound, boolean spawnParticle) {
-		breakBlock(location, true, dropItem, playSound, spawnParticle);
+	public void breakBlock(Player source, Location location, boolean dropItem, boolean playSound, boolean spawnParticle) {
+		breakBlock(source, location, true, dropItem, playSound, spawnParticle);
 	}
 
-	private void breakBlock(Location location, boolean updateDatabase, boolean dropItem, boolean playSound, boolean spawnParticle) {
+	private void breakBlock(Player source, Location location, boolean updateDatabase, boolean dropItem, boolean playSound, boolean spawnParticle) {
 		if (updateDatabase)
 			CustomBlockUtils.breakBlockDatabase(location);
 
@@ -583,7 +584,7 @@ public enum CustomBlock implements Keyed {
 				spawnParticle(location);
 
 			if (playSound)
-				playSound(SoundAction.BREAK, location);
+				playSound(source, SoundAction.BREAK, location);
 
 			if (dropItem)
 				dropItem(location);
@@ -591,7 +592,7 @@ public enum CustomBlock implements Keyed {
 			CustomBlock below = CustomBlock.fromBlock(location.getBlock().getRelative(BlockFace.DOWN));
 			if (below == null) return;
 
-			below.breakBlock(location, false, false, playSound, spawnParticle);
+			below.breakBlock(source, location, false, false, playSound, spawnParticle);
 		}
 	}
 
@@ -608,7 +609,9 @@ public enum CustomBlock implements Keyed {
 		};
 	}
 
-	public void playSound(SoundAction type, Location location) {
+	public void playSound(@Nullable Player source, SoundAction type, Location location) {
+		// TODO: vanish check on source to determine to play sound or not
+
 		String sound = getSound(type);
 		if (Nullables.isNullOrEmpty(sound))
 			return;

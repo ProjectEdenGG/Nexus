@@ -27,9 +27,4 @@ public interface ICarvedPlanks extends ICraftableNoteBlock {
 		return Material.valueOf(camelToSnake(woodType).toUpperCase() + "_SLAB");
 	}
 
-	@Override
-	default @Nullable Material getRecipeUnlockMaterial() {
-		return getMaterial();
-	}
-
 }

@@ -5,7 +5,7 @@ import gg.projecteden.nexus.features.customblocks.models.common.CustomBlockConfi
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.CustomTripwireConfig;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.ICraftableTripwire;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
-import org.jetbrains.annotations.Nullable;
+import org.bukkit.Material;
 
 import java.util.List;
 
@@ -22,24 +22,17 @@ import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilde
 	west_NS = false,
 	attached_NS = true,
 	disarmed_NS = false,
-	powered_NS = false,
-	customBreakSound = "block.stone.break",
-	customPlaceSound = "block.stone.place",
-	customStepSound = "block.stone.step",
-	customHitSound = "block.stone.hit",
-	customFallSound = "block.stone.fall"
+	powered_NS = false
 )
 public class Pebbles_0 implements IPebbles, ICraftableTripwire {
 
 	@Override
-	public @Nullable String getRecipeUnlockCustomBlock() {
-		return "ROCKS_0";
-	}
-
-	@Override
 	public List<NexusRecipe> getOtherRecipes() {
 		return List.of(
-			shaped("11", "11").add('1', getItemStack()).toMake(CustomBlock.ROCKS_0).build()
+			shaped("11", "11").add('1', getItemStack()).toMake(CustomBlock.ROCKS_0)
+				.unlockedBy(getItemStack())
+				.unlockedBy(Material.COBBLESTONE)
+				.build()
 		);
 	}
 }

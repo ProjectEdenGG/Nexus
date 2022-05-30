@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -25,6 +26,7 @@ import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 public abstract class RecipeBuilder<T extends RecipeBuilder<?>> {
 	protected ItemStack result;
+	protected List<ItemStack> unlockedByList = new ArrayList<>();
 
 	protected List<String> ingredientIds = new ArrayList<>();
 	protected String resultId = "__to_make__";
@@ -71,6 +73,60 @@ public abstract class RecipeBuilder<T extends RecipeBuilder<?>> {
 		return (T) this;
 	}
 
+	public T unlockedBy(CustomBlock customBlock) {
+		this.unlockedByList.add(customBlock.get().getItemStack());
+		return (T) this;
+	}
+
+	public T unlockedByCustomBlocks(CustomBlock... customBlocks) {
+		return unlockedByCustomBlocks(List.of(customBlocks));
+	}
+
+	public T unlockedByCustomBlocks(List<CustomBlock> customBlocks) {
+		for (CustomBlock customBlock : customBlocks)
+			this.unlockedByList.add(customBlock.get().getItemStack());
+
+		return (T) this;
+	}
+
+	public T unlockedBy(Material material) {
+		this.unlockedByList.add(new ItemStack(material));
+		return (T) this;
+	}
+
+	public T unlockedByMaterials(Material... materials) {
+		return unlockedByMaterials(List.of(materials));
+	}
+
+
+	public T unlockedByMaterials(List<Material> materials) {
+		for (Material material : materials) {
+			this.unlockedByList.add(new ItemStack(material));
+		}
+
+		return (T) this;
+	}
+
+	public T unlockedBy(ItemStack itemStack) {
+		if (!Nullables.isNullOrAir(itemStack))
+			this.unlockedByList.add(itemStack);
+
+		return (T) this;
+	}
+
+	public T unlockedByItems(ItemStack... items) {
+		return unlockedByItems(List.of(items));
+	}
+
+	public T unlockedByItems(List<ItemStack> items) {
+		for (ItemStack item : items) {
+			if (!Nullables.isNullOrAir(item))
+				this.unlockedByList.add(new ItemStack(item));
+		}
+
+		return (T) this;
+	}
+
 	protected String getKey() {
 		return String.join("__and__", ingredientIds) + resultId;
 	}
@@ -79,7 +135,7 @@ public abstract class RecipeBuilder<T extends RecipeBuilder<?>> {
 	abstract <R extends Recipe> R getRecipe();
 
 	public NexusRecipe build() {
-		NexusRecipe recipe = new NexusRecipe(getRecipe());
+		NexusRecipe recipe = new NexusRecipe(getRecipe(), unlockedByList);
 		CustomRecipes.recipes.add(recipe);
 		return recipe;
 	}
@@ -155,5 +211,4 @@ public abstract class RecipeBuilder<T extends RecipeBuilder<?>> {
 	public static StoneCutterBuilder stoneCutter(Material material) {
 		return new StoneCutterBuilder(material);
 	}
-
 }

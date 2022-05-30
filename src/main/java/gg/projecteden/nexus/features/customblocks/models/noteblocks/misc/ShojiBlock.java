@@ -28,14 +28,11 @@ import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilde
 public class ShojiBlock implements ICraftableNoteBlock, IDirectionalNoteBlock {
 
 	@Override
-	public @Nullable Material getRecipeUnlockMaterial() {
-		return Material.PAPER;
-	}
-
-	@Override
 	public @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
 		return new Pair<>(shaped("121", "212", "121")
 			.add('1', Material.STICK)
-			.add('2', Material.PAPER), 4);
+			.add('2', Material.PAPER)
+			.unlockedBy(getItemStack())
+			.unlockedBy(Material.PAPER), 4);
 	}
 }

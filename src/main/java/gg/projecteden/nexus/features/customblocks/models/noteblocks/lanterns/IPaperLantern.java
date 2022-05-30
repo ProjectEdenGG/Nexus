@@ -16,12 +16,9 @@ public interface IPaperLantern extends ILantern, ICraftableNoteBlock {
 			.add('1', Material.STICK)
 			.add('2', getMaterial())
 			.add('3', Material.PAPER)
-			.add('4', Material.TORCH), 1);
-	}
-
-	@Override
-	default @Nullable Material getRecipeUnlockMaterial() {
-		return getMaterial();
+			.add('4', Material.TORCH)
+			.unlockedBy(getItemStack())
+			.unlockedBy(Material.TORCH), 1);
 	}
 
 }

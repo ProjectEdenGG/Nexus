@@ -146,7 +146,7 @@ public class CustomBlockSounds implements Listener {
 					return;
 
 				event.setCancelled(true);
-				_customBlock.playSound(soundAction, source.getLocation());
+				_customBlock.playSound(null, soundAction, source.getLocation());
 				return;
 			}
 
@@ -157,22 +157,22 @@ public class CustomBlockSounds implements Listener {
 		}
 	}
 
-	private static boolean tryPlayDefaultSound(SoundAction soundAction, Block block) {
+	private static void tryPlayDefaultSound(SoundAction soundAction, Block block) {
 		Sound sound = NMSUtils.getSound(soundAction, block);
 		if (sound == null)
-			return false;
+			return;
 
 		SoundType soundType = SoundType.fromSound(sound);
 		if (soundType == null)
-			return false;
+			return;
 
 		String blockSound = "custom." + sound.getKey().getKey();
 		String defaultSound = soundAction.getCustomSound(soundType);
 		if (!blockSound.equalsIgnoreCase(defaultSound)) {
-			return false;
+			return;
 		}
 
-		return playDefaultSound(soundAction, soundType, block.getLocation());
+		playDefaultSound(soundAction, soundType, block.getLocation());
 	}
 
 	private static boolean playDefaultSounds(Sound sound, Location location) {

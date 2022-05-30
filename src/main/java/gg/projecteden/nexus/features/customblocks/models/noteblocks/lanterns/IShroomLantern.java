@@ -15,12 +15,9 @@ public interface IShroomLantern extends ILantern, ICraftableNoteBlock {
 		return new Pair<>(shaped("121", "333", "121")
 			.add('1', Material.STICK)
 			.add('2', getMaterial())
-			.add('3', Material.SHROOMLIGHT), 1);
-	}
-
-	@Override
-	default @Nullable Material getRecipeUnlockMaterial() {
-		return getMaterial();
+			.add('3', Material.SHROOMLIGHT)
+			.unlockedBy(getItemStack())
+			.unlockedBy(Material.SHROOMLIGHT), 1);
 	}
 
 }

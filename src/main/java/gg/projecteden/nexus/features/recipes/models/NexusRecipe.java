@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Data
@@ -24,6 +25,17 @@ public class NexusRecipe {
 	@NonNull
 	public Recipe recipe;
 	public RecipeType type = RecipeType.MISC;
+	public List<ItemStack> unlockedByList = new ArrayList<>();
+
+	public <R extends Recipe> NexusRecipe(@NotNull R recipe, @NonNull ItemStack unlockedBy) {
+		this.recipe = recipe;
+		this.unlockedByList = Collections.singletonList(unlockedBy);
+	}
+
+	public <R extends Recipe> NexusRecipe(@NotNull R recipe, @NonNull List<ItemStack> unlockedByList) {
+		this.recipe = recipe;
+		this.unlockedByList = unlockedByList;
+	}
 
 	public String getPermission() {
 		return null;
@@ -31,6 +43,10 @@ public class NexusRecipe {
 
 	public ItemStack getResult() {
 		return recipe.getResult();
+	}
+
+	public List<ItemStack> getUnlockedByList() {
+		return unlockedByList;
 	}
 
 	public NexusRecipe type(RecipeType type) {
@@ -55,5 +71,6 @@ public class NexusRecipe {
 		matrix.removeIf(Nullables::isNullOrAir);
 		return matrix;
 	}
+
 
 }

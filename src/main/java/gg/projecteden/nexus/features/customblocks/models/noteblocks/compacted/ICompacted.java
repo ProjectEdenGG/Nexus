@@ -13,7 +13,9 @@ public interface ICompacted extends ICraftableNoteBlock {
 
 	@Override
 	default @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
-		return new Pair<>(shaped("111", "111", "111").add('1', getMaterial()), 1);
+		return new Pair<>(shaped("111", "111", "111").add('1', getMaterial())
+			.unlockedBy(getItemStack())
+			.unlockedBy(getMaterial()), 1);
 	}
 
 	@Override
@@ -22,10 +24,5 @@ public interface ICompacted extends ICraftableNoteBlock {
 	}
 
 	@NotNull Material getMaterial();
-
-	@Override
-	default @Nullable Material getRecipeUnlockMaterial() {
-		return getMaterial();
-	}
 
 }

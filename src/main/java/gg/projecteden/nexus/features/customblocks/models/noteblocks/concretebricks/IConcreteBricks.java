@@ -34,11 +34,6 @@ public interface IConcreteBricks extends IDyeable, ICraftableNoteBlock {
 	}
 
 	@Override
-	default @Nullable Material getRecipeUnlockMaterial() {
-		return getMaterial();
-	}
-
-	@Override
 	default Set<Material> getApplicableTools() {
 		return MaterialTag.PICKAXES.getValues();
 	}

@@ -206,7 +206,7 @@ public class CustomBlockListener implements Listener {
 
 	private void breakBlock(Player player, Block block, CustomBlock customBlock, boolean dropItem, int amount, boolean playSound, boolean spawnParticle) {
 		debug("Breaking block: " + customBlock.name());
-		customBlock.breakBlock(block, false, playSound, spawnParticle);
+		customBlock.breakBlock(player, block, false, playSound, spawnParticle);
 
 		if (!dropItem)
 			return;
@@ -343,7 +343,7 @@ public class CustomBlockListener implements Listener {
 					}
 					case BREAK -> {
 						debug("PistonEvent: " + _customBlock.name() + " broke because of a piston");
-						_customBlock.breakBlock(block, true, true, true);
+						_customBlock.breakBlock(null, block, true, true, true);
 						continue;
 					}
 				}
@@ -489,6 +489,7 @@ public class CustomBlockListener implements Listener {
 		if (update == null)
 			return false;
 
+		player.swingMainHand();
 		clickedCustomBlock.incrementBlock(player, update, clickedBlock);
 		if (!GameModeWrapper.of(player).isCreative())
 			itemInHand.subtract();
