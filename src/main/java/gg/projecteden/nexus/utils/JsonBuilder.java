@@ -445,10 +445,9 @@ public class JsonBuilder implements ComponentLike {
 			List<String> lines = new ArrayList<>();
 			lore.forEach(line -> {
 				if (loreize)
-					for (String _line : line.split(System.lineSeparator()))
-						lines.addAll(StringUtils.loreize(colorize(line)));
+					lines.addAll(StringUtils.loreize(colorize(line)));
 				else
-					lines.addAll(Arrays.asList(colorize(line).split(System.lineSeparator())));
+					lines.add(colorize(line));
 			});
 
 			Builder hover = Component.text();
