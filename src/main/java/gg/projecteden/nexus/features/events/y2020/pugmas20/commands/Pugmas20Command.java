@@ -40,6 +40,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.utils.Env;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import lombok.NoArgsConstructor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.Listener;
@@ -161,7 +162,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 				} else {
 					json.next("&f  &7☐ &3" + camelCase(quest) + " &7- &eIn progress &7- " + instructions);
 					tradesLeft.add(0, "&6Today's available trades:");
-					json.next(" &7&o(Hover for info)").hover(String.join("\n", tradesLeft));
+					json.next(" &7&o(Hover for info)").hover(tradesLeft);
 				}
 			} else {
 				if (stage == QuestStage.COMPLETE) {
@@ -179,7 +180,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 				if (quest == Pugmas20QuestStageHelper.TOY_TESTING && stage == QuestStage.STARTED) {
 					List<String> toysLeft = getUnplayedToysList(user);
 					toysLeft.add(0, "&6Toys left to test:");
-					json.next(" &7&o(Hover for info)").hover(String.join("\n&f", toysLeft));
+					json.next(" &7&o(Hover for info)").hover(toysLeft, ChatColor.WHITE);
 				}
 
 				if (quest == Pugmas20QuestStageHelper.ORNAMENT_VENDOR && stage != QuestStage.NOT_STARTED) {
@@ -190,7 +191,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 							json.next(" &7- More trades available");
 						lore.add("&f");
 						lore.add("&fYou get to keep any extra ornaments");
-						json.next(" &7&o(Hover for info)").hover(String.join("\n&f", lore));
+						json.next(" &7&o(Hover for info)").hover(lore, ChatColor.WHITE);
 					}
 				}
 			}
