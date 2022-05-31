@@ -30,6 +30,7 @@ import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.SoundBuilder.SoundCooldown;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.StringUtils.Gradient;
 import gg.projecteden.nexus.utils.StringUtils.ProgressBarStyle;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.ExpBarCountdown;
@@ -42,6 +43,7 @@ import gg.projecteden.utils.TimeUtils.Timespan.FormatType;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.citizensnpcs.api.npc.NPC;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -258,11 +260,13 @@ public class TestCommand extends CustomCommand implements Listener {
 			.open(player());
 	}
 
-	@Path("loreizeTest")
-	void loreizeTest() {
-		String lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut " +
+	@Path("loreize")
+	void loreize() {
+		String lorem = Gradient.of(List.of(ChatColor.WHITE, ChatColor.GRAY)).apply(
+			"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut " +
 			"labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris " +
-			"nisi ut aliquip ex ea commodo consequat.";
+			"nisi ut aliquip ex ea commodo consequat."
+		);
 
 		send(json("Test 1").hover(lorem));
 		send(json("Test 2").hover(lorem).loreize(false));
