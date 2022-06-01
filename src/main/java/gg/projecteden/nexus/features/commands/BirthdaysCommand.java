@@ -12,9 +12,11 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.badge.BadgeUser.Badge;
 import gg.projecteden.nexus.models.badge.BadgeUserService;
 import gg.projecteden.nexus.models.discord.DiscordUser;
+import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.models.scheduledjobs.jobs.BirthdayBeginJob;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.BirthdayEndJob;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.BirthdayEndJob.BirthdayEndJobBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -96,13 +98,21 @@ public class BirthdaysCommand extends CustomCommand {
 	}
 
 	@Permission(Group.ADMIN)
-	@Path("forceAnnounce [player]")
-	void forceAnnounce(DiscordUser user) {
-		announcement(user);
+	@Path("forceBegin [player]")
+	void forceBegin(Nerd nerd) {
+		announcement(nerd);
 	}
 
-	public static void announcement(DiscordUser user) {
-		Nerd nerd = Nerd.of(user);
+	@Permission(Group.ADMIN)
+	@Path("job test [time]")
+	void job_test(LocalDateTime now) {
+		for (Nerd nerd : new NerdService().getNerdsWithBirthdays())
+			if (BirthdayBeginJob.isBirthday(now, nerd))
+				send(nerd.getColoredName());
+	}
+
+	public static void announcement(Nerd nerd) {
+		DiscordUser user = new DiscordUserService().get(nerd);
 
 		if (user.getMember() != null) {
 			final Role role = nerd.getRank().isStaff() ? Role.STAFF_BIRTHDAY : Role.BIRTHDAY;
