@@ -19,7 +19,7 @@ import org.bukkit.Material;
 	customHitSound = "custom.block.stone.hit",
 	customFallSound = "custom.block.stone.fall"
 )
-public class GranitePillar implements IPillar {
+public class GraniteStonePillar implements IStonePillar {
 	@Override
 	public @NonNull Material getMaterial() {
 		return Material.POLISHED_GRANITE;

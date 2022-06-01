@@ -105,13 +105,13 @@ import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.chise
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.chiseled.ChiseledDiorite;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.chiseled.ChiseledGranite;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.chiseled.ChiseledStone;
-import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.pillar.AndesitePillar;
-import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.pillar.BlackstonePillar;
-import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.pillar.DeepslatePillar;
-import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.pillar.DioritePillar;
-import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.pillar.GranitePillar;
-import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.pillar.StoneBricksPillar;
-import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.pillar.StonePillar;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.pillar.AndesiteStonePillar;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.pillar.BlackstoneStonePillar;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.pillar.DeepslateStonePillar;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.pillar.DioriteStonePillar;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.pillar.GraniteStonePillar;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.pillar.StoneBricksStonePillar;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.pillar.StoneStonePillar;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.terracottashingles.BlackTerracottaShingles;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.terracottashingles.BlueTerracottaShingles;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.terracottashingles.BrownTerracottaShingles;
@@ -138,7 +138,6 @@ import gg.projecteden.nexus.features.customblocks.models.tripwire.cover.aubrieta
 import gg.projecteden.nexus.features.customblocks.models.tripwire.cover.aubrieta.PurpleAubrieta;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.cover.aubrieta.RainbowAubrieta;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.cover.aubrieta.WhiteAubrieta;
-import gg.projecteden.nexus.features.customblocks.models.tripwire.incremental.IIncremental;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.incremental.pebbles.Pebbles_0;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.incremental.pebbles.Pebbles_1;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.incremental.pebbles.Pebbles_2;
@@ -165,6 +164,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import lombok.Getter;
 import lombok.NonNull;
@@ -199,187 +199,187 @@ public enum CustomBlock implements Keyed {
 
 	// NOTE BLOCKS
 	// terracotta shingles
-	TERRACOTTA_SHINGLES(TerracottaShingles.class),
-	RED_TERRACOTTA_SHINGLES(RedTerracottaShingles.class),
-	ORANGE_TERRACOTTA_SHINGLES(OrangeTerracottaShingles.class),
-	YELLOW_TERRACOTTA_SHINGLES(YellowTerracottaShingles.class),
-	LIME_TERRACOTTA_SHINGLES(LimeTerracottaShingles.class),
-	GREEN_TERRACOTTA_SHINGLES(GreenTerracottaShingles.class),
-	CYAN_TERRACOTTA_SHINGLES(CyanTerracottaShingles.class),
-	LIGHT_BLUE_TERRACOTTA_SHINGLES(LightBlueTerracottaShingles.class),
-	BLUE_TERRACOTTA_SHINGLES(BlueTerracottaShingles.class),
-	PURPLE_TERRACOTTA_SHINGLES(PurpleTerracottaShingles.class),
-	MAGENTA_TERRACOTTA_SHINGLES(MagentaTerracottaShingles.class),
-	PINK_TERRACOTTA_SHINGLES(PinkTerracottaShingles.class),
-	BROWN_TERRACOTTA_SHINGLES(BrownTerracottaShingles.class),
-	BLACK_TERRACOTTA_SHINGLES(BlackTerracottaShingles.class),
-	GRAY_TERRACOTTA_SHINGLES(GrayTerracottaShingles.class),
-	LIGHT_GRAY_TERRACOTTA_SHINGLES(LightGrayTerracottaShingles.class),
-	WHITE_TERRACOTTA_SHINGLES(WhiteTerracottaShingles.class),
+	TERRACOTTA_SHINGLES(TerracottaShingles.class, CustomBlockTab.TERRACOTTA_SHINGLES),
+	RED_TERRACOTTA_SHINGLES(RedTerracottaShingles.class, CustomBlockTab.TERRACOTTA_SHINGLES),
+	ORANGE_TERRACOTTA_SHINGLES(OrangeTerracottaShingles.class, CustomBlockTab.TERRACOTTA_SHINGLES),
+	YELLOW_TERRACOTTA_SHINGLES(YellowTerracottaShingles.class, CustomBlockTab.TERRACOTTA_SHINGLES),
+	LIME_TERRACOTTA_SHINGLES(LimeTerracottaShingles.class, CustomBlockTab.TERRACOTTA_SHINGLES),
+	GREEN_TERRACOTTA_SHINGLES(GreenTerracottaShingles.class, CustomBlockTab.TERRACOTTA_SHINGLES),
+	CYAN_TERRACOTTA_SHINGLES(CyanTerracottaShingles.class, CustomBlockTab.TERRACOTTA_SHINGLES),
+	LIGHT_BLUE_TERRACOTTA_SHINGLES(LightBlueTerracottaShingles.class, CustomBlockTab.TERRACOTTA_SHINGLES),
+	BLUE_TERRACOTTA_SHINGLES(BlueTerracottaShingles.class, CustomBlockTab.TERRACOTTA_SHINGLES),
+	PURPLE_TERRACOTTA_SHINGLES(PurpleTerracottaShingles.class, CustomBlockTab.TERRACOTTA_SHINGLES),
+	MAGENTA_TERRACOTTA_SHINGLES(MagentaTerracottaShingles.class, CustomBlockTab.TERRACOTTA_SHINGLES),
+	PINK_TERRACOTTA_SHINGLES(PinkTerracottaShingles.class, CustomBlockTab.TERRACOTTA_SHINGLES),
+	BROWN_TERRACOTTA_SHINGLES(BrownTerracottaShingles.class, CustomBlockTab.TERRACOTTA_SHINGLES),
+	BLACK_TERRACOTTA_SHINGLES(BlackTerracottaShingles.class, CustomBlockTab.TERRACOTTA_SHINGLES),
+	GRAY_TERRACOTTA_SHINGLES(GrayTerracottaShingles.class, CustomBlockTab.TERRACOTTA_SHINGLES),
+	LIGHT_GRAY_TERRACOTTA_SHINGLES(LightGrayTerracottaShingles.class, CustomBlockTab.TERRACOTTA_SHINGLES),
+	WHITE_TERRACOTTA_SHINGLES(WhiteTerracottaShingles.class, CustomBlockTab.TERRACOTTA_SHINGLES),
 
 	// concrete bricks
-	RED_CONCRETE_BRICKS(RedConcreteBricks.class),
-	ORANGE_CONCRETE_BRICKS(OrangeConcreteBricks.class),
-	YELLOW_CONCRETE_BRICKS(YellowConcreteBricks.class),
-	LIME_CONCRETE_BRICKS(LimeConcreteBricks.class),
-	GREEN_CONCRETE_BRICKS(GreenConcreteBricks.class),
-	CYAN_CONCRETE_BRICKS(CyanConcreteBricks.class),
-	LIGHT_BLUE_CONCRETE_BRICKS(LightBlueConcreteBricks.class),
-	BLUE_CONCRETE_BRICKS(BlueConcreteBricks.class),
-	PURPLE_CONCRETE_BRICKS(PurpleConcreteBricks.class),
-	MAGENTA_CONCRETE_BRICKS(MagentaConcreteBricks.class),
-	PINK_CONCRETE_BRICKS(PinkConcreteBricks.class),
-	BROWN_CONCRETE_BRICKS(BrownConcreteBricks.class),
-	BLACK_CONCRETE_BRICKS(BlackConcreteBricks.class),
-	GRAY_CONCRETE_BRICKS(GrayConcreteBricks.class),
-	LIGHT_GRAY_CONCRETE_BRICKS(LightGrayConcreteBricks.class),
-	WHITE_CONCRETE_BRICKS(WhiteConcreteBricks.class),
+	RED_CONCRETE_BRICKS(RedConcreteBricks.class, CustomBlockTab.CONCRETE_BRICKS),
+	ORANGE_CONCRETE_BRICKS(OrangeConcreteBricks.class, CustomBlockTab.CONCRETE_BRICKS),
+	YELLOW_CONCRETE_BRICKS(YellowConcreteBricks.class, CustomBlockTab.CONCRETE_BRICKS),
+	LIME_CONCRETE_BRICKS(LimeConcreteBricks.class, CustomBlockTab.CONCRETE_BRICKS),
+	GREEN_CONCRETE_BRICKS(GreenConcreteBricks.class, CustomBlockTab.CONCRETE_BRICKS),
+	CYAN_CONCRETE_BRICKS(CyanConcreteBricks.class, CustomBlockTab.CONCRETE_BRICKS),
+	LIGHT_BLUE_CONCRETE_BRICKS(LightBlueConcreteBricks.class, CustomBlockTab.CONCRETE_BRICKS),
+	BLUE_CONCRETE_BRICKS(BlueConcreteBricks.class, CustomBlockTab.CONCRETE_BRICKS),
+	PURPLE_CONCRETE_BRICKS(PurpleConcreteBricks.class, CustomBlockTab.CONCRETE_BRICKS),
+	MAGENTA_CONCRETE_BRICKS(MagentaConcreteBricks.class, CustomBlockTab.CONCRETE_BRICKS),
+	PINK_CONCRETE_BRICKS(PinkConcreteBricks.class, CustomBlockTab.CONCRETE_BRICKS),
+	BROWN_CONCRETE_BRICKS(BrownConcreteBricks.class, CustomBlockTab.CONCRETE_BRICKS),
+	BLACK_CONCRETE_BRICKS(BlackConcreteBricks.class, CustomBlockTab.CONCRETE_BRICKS),
+	GRAY_CONCRETE_BRICKS(GrayConcreteBricks.class, CustomBlockTab.CONCRETE_BRICKS),
+	LIGHT_GRAY_CONCRETE_BRICKS(LightGrayConcreteBricks.class, CustomBlockTab.CONCRETE_BRICKS),
+	WHITE_CONCRETE_BRICKS(WhiteConcreteBricks.class, CustomBlockTab.CONCRETE_BRICKS),
 
 	// colored planks
-	RED_PLANKS(RedPlanks.class),
-	ORANGE_PLANKS(OrangePlanks.class),
-	YELLOW_PLANKS(YellowPlanks.class),
-	LIME_PLANKS(LimePlanks.class),
-	GREEN_PLANKS(GreenPlanks.class),
-	CYAN_PLANKS(CyanPlanks.class),
-	LIGHT_BLUE_PLANKS(LightBluePlanks.class),
-	BLUE_PLANKS(BluePlanks.class),
-	PURPLE_PLANKS(PurplePlanks.class),
-	MAGENTA_PLANKS(MagentaPlanks.class),
-	PINK_PLANKS(PinkPlanks.class),
-	BROWN_PLANKS(BrownPlanks.class),
-	BLACK_PLANKS(BlackPlanks.class),
-	GRAY_PLANKS(GrayPlanks.class),
-	LIGHT_GRAY_PLANKS(LightGrayPlanks.class),
-	WHITE_PLANKS(WhitePlanks.class),
+	RED_PLANKS(RedPlanks.class, CustomBlockTab.COLORED_PLANKS),
+	ORANGE_PLANKS(OrangePlanks.class, CustomBlockTab.COLORED_PLANKS),
+	YELLOW_PLANKS(YellowPlanks.class, CustomBlockTab.COLORED_PLANKS),
+	LIME_PLANKS(LimePlanks.class, CustomBlockTab.COLORED_PLANKS),
+	GREEN_PLANKS(GreenPlanks.class, CustomBlockTab.COLORED_PLANKS),
+	CYAN_PLANKS(CyanPlanks.class, CustomBlockTab.COLORED_PLANKS),
+	LIGHT_BLUE_PLANKS(LightBluePlanks.class, CustomBlockTab.COLORED_PLANKS),
+	BLUE_PLANKS(BluePlanks.class, CustomBlockTab.COLORED_PLANKS),
+	PURPLE_PLANKS(PurplePlanks.class, CustomBlockTab.COLORED_PLANKS),
+	MAGENTA_PLANKS(MagentaPlanks.class, CustomBlockTab.COLORED_PLANKS),
+	PINK_PLANKS(PinkPlanks.class, CustomBlockTab.COLORED_PLANKS),
+	BROWN_PLANKS(BrownPlanks.class, CustomBlockTab.COLORED_PLANKS),
+	BLACK_PLANKS(BlackPlanks.class, CustomBlockTab.COLORED_PLANKS),
+	GRAY_PLANKS(GrayPlanks.class, CustomBlockTab.COLORED_PLANKS),
+	LIGHT_GRAY_PLANKS(LightGrayPlanks.class, CustomBlockTab.COLORED_PLANKS),
+	WHITE_PLANKS(WhitePlanks.class, CustomBlockTab.COLORED_PLANKS),
 
 	// quilted wool
-	RED_QUILTED_WOOL(RedQuiltedWool.class),
-	ORANGE_QUILTED_WOOL(OrangeQuiltedWool.class),
-	YELLOW_QUILTED_WOOL(YellowQuiltedWool.class),
-	LIME_QUILTED_WOOL(LimeQuiltedWool.class),
-	GREEN_QUILTED_WOOL(GreenQuiltedWool.class),
-	CYAN_QUILTED_WOOL(CyanQuiltedWool.class),
-	LIGHT_BLUE_QUILTED_WOOL(LightBlueQuiltedWool.class),
-	BLUE_QUILTED_WOOL(BlueQuiltedWool.class),
-	PURPLE_QUILTED_WOOL(PurpleQuiltedWool.class),
-	MAGENTA_QUILTED_WOOL(MagentaQuiltedWool.class),
-	PINK_QUILTED_WOOL(PinkQuiltedWool.class),
-	BROWN_QUILTED_WOOL(BrownQuiltedWool.class),
-	BLACK_QUILTED_WOOL(BlackQuiltedWool.class),
-	GRAY_QUILTED_WOOL(GrayQuiltedWool.class),
-	LIGHT_GRAY_QUILTED_WOOL(LightGrayQuiltedWool.class),
-	WHITE_QUILTED_WOOL(WhiteQuiltedWool.class),
+	RED_QUILTED_WOOL(RedQuiltedWool.class, CustomBlockTab.QUILTED_WOOL),
+	ORANGE_QUILTED_WOOL(OrangeQuiltedWool.class, CustomBlockTab.QUILTED_WOOL),
+	YELLOW_QUILTED_WOOL(YellowQuiltedWool.class, CustomBlockTab.QUILTED_WOOL),
+	LIME_QUILTED_WOOL(LimeQuiltedWool.class, CustomBlockTab.QUILTED_WOOL),
+	GREEN_QUILTED_WOOL(GreenQuiltedWool.class, CustomBlockTab.QUILTED_WOOL),
+	CYAN_QUILTED_WOOL(CyanQuiltedWool.class, CustomBlockTab.QUILTED_WOOL),
+	LIGHT_BLUE_QUILTED_WOOL(LightBlueQuiltedWool.class, CustomBlockTab.QUILTED_WOOL),
+	BLUE_QUILTED_WOOL(BlueQuiltedWool.class, CustomBlockTab.QUILTED_WOOL),
+	PURPLE_QUILTED_WOOL(PurpleQuiltedWool.class, CustomBlockTab.QUILTED_WOOL),
+	MAGENTA_QUILTED_WOOL(MagentaQuiltedWool.class, CustomBlockTab.QUILTED_WOOL),
+	PINK_QUILTED_WOOL(PinkQuiltedWool.class, CustomBlockTab.QUILTED_WOOL),
+	BROWN_QUILTED_WOOL(BrownQuiltedWool.class, CustomBlockTab.QUILTED_WOOL),
+	BLACK_QUILTED_WOOL(BlackQuiltedWool.class, CustomBlockTab.QUILTED_WOOL),
+	GRAY_QUILTED_WOOL(GrayQuiltedWool.class, CustomBlockTab.QUILTED_WOOL),
+	LIGHT_GRAY_QUILTED_WOOL(LightGrayQuiltedWool.class, CustomBlockTab.QUILTED_WOOL),
+	WHITE_QUILTED_WOOL(WhiteQuiltedWool.class, CustomBlockTab.QUILTED_WOOL),
 
 	// crates
-	APPLE_CRATE(AppleCrate.class),
-	BEETROOT_CRATE(BeetrootCrate.class),
-	BERRY_CRATE(SweetBerryCrate.class),
-	CARROT_CRATE(CarrotCrate.class),
-	POTATO_CRATE(PotatoCrate.class),
+	APPLE_CRATE(AppleCrate.class, CustomBlockTab.COMPACTED),
+	BEETROOT_CRATE(BeetrootCrate.class, CustomBlockTab.COMPACTED),
+	BERRY_CRATE(SweetBerryCrate.class, CustomBlockTab.COMPACTED),
+	CARROT_CRATE(CarrotCrate.class, CustomBlockTab.COMPACTED),
+	POTATO_CRATE(PotatoCrate.class, CustomBlockTab.COMPACTED),
 
 	// bundles
-	BAMBOO_BUNDLE(BambooBundle.class),
-	CACTUS_BUNDLE(CactusBundle.class),
-	STICK_BUNDLE(StickBundle.class),
-	SUGAR_CANE_BUNDLE(SugarCaneBundle.class),
+	BAMBOO_BUNDLE(BambooBundle.class, CustomBlockTab.COMPACTED),
+	CACTUS_BUNDLE(CactusBundle.class, CustomBlockTab.COMPACTED),
+	STICK_BUNDLE(StickBundle.class, CustomBlockTab.COMPACTED),
+	SUGAR_CANE_BUNDLE(SugarCaneBundle.class, CustomBlockTab.COMPACTED),
 
 	// lanterns
-	OAK_PAPER_LANTERN(OakPaperLantern.class),
-	SPRUCE_PAPER_LANTERN(SprucePaperLantern.class),
-	BIRCH_PAPER_LANTERN(BirchPaperLantern.class),
-	JUNGLE_PAPER_LANTERN(JunglePaperLantern.class),
-	ACACIA_PAPER_LANTERN(AcaciaPaperLantern.class),
-	DARK_OAK_PAPER_LANTERN(DarkOakPaperLantern.class),
-	CRIMSON_SHROOM_LANTERN(CrimsonShroomLantern.class),
-	WARPED_SHROOM_LANTERN(WarpedShroomLantern.class),
+	OAK_PAPER_LANTERN(OakPaperLantern.class, CustomBlockTab.LANTERNS),
+	SPRUCE_PAPER_LANTERN(SprucePaperLantern.class, CustomBlockTab.LANTERNS),
+	BIRCH_PAPER_LANTERN(BirchPaperLantern.class, CustomBlockTab.LANTERNS),
+	JUNGLE_PAPER_LANTERN(JunglePaperLantern.class, CustomBlockTab.LANTERNS),
+	ACACIA_PAPER_LANTERN(AcaciaPaperLantern.class, CustomBlockTab.LANTERNS),
+	DARK_OAK_PAPER_LANTERN(DarkOakPaperLantern.class, CustomBlockTab.LANTERNS),
+	CRIMSON_SHROOM_LANTERN(CrimsonShroomLantern.class, CustomBlockTab.LANTERNS),
+	WARPED_SHROOM_LANTERN(WarpedShroomLantern.class, CustomBlockTab.LANTERNS),
 
 	// vertical planks
-	VERTICAL_OAK_PLANKS(VerticalOakPlanks.class),
-	VERTICAL_SPRUCE_PLANKS(VerticalSprucePlanks.class),
-	VERTICAL_BIRCH_PLANKS(VerticalBirchPlanks.class),
-	VERTICAL_JUNGLE_PLANKS(VerticalJunglePlanks.class),
-	VERTICAL_ACACIA_PLANKS(VerticalAcaciaPlanks.class),
-	VERTICAL_DARK_OAK_PLANKS(VerticalDarkOakPlanks.class),
-	VERTICAL_CRIMSON_PLANKS(VerticalCrimsonPlanks.class),
-	VERTICAL_WARPED_PLANKS(VerticalWarpedPlanks.class),
+	VERTICAL_OAK_PLANKS(VerticalOakPlanks.class, CustomBlockTab.VERTICAL_PLANKS),
+	VERTICAL_SPRUCE_PLANKS(VerticalSprucePlanks.class, CustomBlockTab.VERTICAL_PLANKS),
+	VERTICAL_BIRCH_PLANKS(VerticalBirchPlanks.class, CustomBlockTab.VERTICAL_PLANKS),
+	VERTICAL_JUNGLE_PLANKS(VerticalJunglePlanks.class, CustomBlockTab.VERTICAL_PLANKS),
+	VERTICAL_ACACIA_PLANKS(VerticalAcaciaPlanks.class, CustomBlockTab.VERTICAL_PLANKS),
+	VERTICAL_DARK_OAK_PLANKS(VerticalDarkOakPlanks.class, CustomBlockTab.VERTICAL_PLANKS),
+	VERTICAL_CRIMSON_PLANKS(VerticalCrimsonPlanks.class, CustomBlockTab.VERTICAL_PLANKS),
+	VERTICAL_WARPED_PLANKS(VerticalWarpedPlanks.class, CustomBlockTab.VERTICAL_PLANKS),
 
 	// carved planks
-	CARVED_OAK_PLANKS(CarvedOakPlanks.class),
-	CARVED_SPRUCE_PLANKS(CarvedSprucePlanks.class),
-	CARVED_BIRCH_PLANKS(CarvedBirchPlanks.class),
-	CARVED_JUNGLE_PLANKS(CarvedJunglePlanks.class),
-	CARVED_ACACIA_PLANKS(CarvedAcaciaPlanks.class),
-	CARVED_DARK_OAK_PLANKS(CarvedDarkOakPlanks.class),
-	CARVED_CRIMSON_PLANKS(CarvedCrimsonPlanks.class),
-	CARVED_WARPED_PLANKS(CarvedWarpedPlanks.class),
+	CARVED_OAK_PLANKS(CarvedOakPlanks.class, CustomBlockTab.CARVED_PLANKS),
+	CARVED_SPRUCE_PLANKS(CarvedSprucePlanks.class, CustomBlockTab.CARVED_PLANKS),
+	CARVED_BIRCH_PLANKS(CarvedBirchPlanks.class, CustomBlockTab.CARVED_PLANKS),
+	CARVED_JUNGLE_PLANKS(CarvedJunglePlanks.class, CustomBlockTab.CARVED_PLANKS),
+	CARVED_ACACIA_PLANKS(CarvedAcaciaPlanks.class, CustomBlockTab.CARVED_PLANKS),
+	CARVED_DARK_OAK_PLANKS(CarvedDarkOakPlanks.class, CustomBlockTab.CARVED_PLANKS),
+	CARVED_CRIMSON_PLANKS(CarvedCrimsonPlanks.class, CustomBlockTab.CARVED_PLANKS),
+	CARVED_WARPED_PLANKS(CarvedWarpedPlanks.class, CustomBlockTab.CARVED_PLANKS),
 
 	// bricks
-	ANDESITE_BRICKS(AndesiteBricks.class),
-	DIORITE_BRICKS(DioriteBricks.class),
-	GRANITE_BRICKS(GraniteBricks.class),
+	ANDESITE_BRICKS(AndesiteBricks.class, CustomBlockTab.STONE_BRICKS),
+	DIORITE_BRICKS(DioriteBricks.class, CustomBlockTab.STONE_BRICKS),
+	GRANITE_BRICKS(GraniteBricks.class, CustomBlockTab.STONE_BRICKS),
 
 	// chiseled
-	CHISELED_STONE(ChiseledStone.class),
-	CHISELED_ANDESITE(ChiseledAndesite.class),
-	CHISELED_DIORITE(ChiseledDiorite.class),
-	CHISELED_GRANITE(ChiseledGranite.class),
+	CHISELED_STONE(ChiseledStone.class, CustomBlockTab.CHISELED_STONE),
+	CHISELED_ANDESITE(ChiseledAndesite.class, CustomBlockTab.CHISELED_STONE),
+	CHISELED_DIORITE(ChiseledDiorite.class, CustomBlockTab.CHISELED_STONE),
+	CHISELED_GRANITE(ChiseledGranite.class, CustomBlockTab.CHISELED_STONE),
 
 	// pillar
-	STONE_PILLAR(StonePillar.class),
-	ANDESITE_PILLAR(AndesitePillar.class),
-	DIORITE_PILLAR(DioritePillar.class),
-	GRANITE_PILLAR(GranitePillar.class),
-	STONE_BRICKS_PILLAR(StoneBricksPillar.class),
-	DEEPSLATE_PILLAR(DeepslatePillar.class),
-	BLACKSTONE_PILLAR(BlackstonePillar.class),
+	STONE_PILLAR(StoneStonePillar.class, CustomBlockTab.STONE_PILLARS),
+	ANDESITE_PILLAR(AndesiteStonePillar.class, CustomBlockTab.STONE_PILLARS),
+	DIORITE_PILLAR(DioriteStonePillar.class, CustomBlockTab.STONE_PILLARS),
+	GRANITE_PILLAR(GraniteStonePillar.class, CustomBlockTab.STONE_PILLARS),
+	STONE_BRICKS_PILLAR(StoneBricksStonePillar.class, CustomBlockTab.STONE_PILLARS),
+	DEEPSLATE_PILLAR(DeepslateStonePillar.class, CustomBlockTab.STONE_PILLARS),
+	BLACKSTONE_PILLAR(BlackstoneStonePillar.class, CustomBlockTab.STONE_PILLARS),
 
 	// generic crates
-	GENERIC_CRATE_A(GenericCrateA.class),
-	GENERIC_CRATE_B(GenericCrateB.class),
-	GENERIC_CRATE_C(GenericCrateC.class),
-	GENERIC_CRATE_D(GenericCrateD.class),
+	GENERIC_CRATE_A(GenericCrateA.class, CustomBlockTab.GENERIC_CRATES),
+	GENERIC_CRATE_B(GenericCrateB.class, CustomBlockTab.GENERIC_CRATES),
+	GENERIC_CRATE_C(GenericCrateC.class, CustomBlockTab.GENERIC_CRATES),
+	GENERIC_CRATE_D(GenericCrateD.class, CustomBlockTab.GENERIC_CRATES),
 
 	// misc
-	NOTE_BLOCK(NoteBlock.class),
-	SHOJI_BLOCK(ShojiBlock.class),
-	HAZARD_BLOCK(HazardBlock.class),
-	WIREFRAME(Wireframe.class),
+	NOTE_BLOCK(NoteBlock.class, CustomBlockTab.NONE),
+	HAZARD_BLOCK(HazardBlock.class, CustomBlockTab.MISC),
+	SHOJI_BLOCK(ShojiBlock.class, CustomBlockTab.MISC),
+	WIREFRAME(Wireframe.class, CustomBlockTab.MISC),
 
 	// TRIPWIRE
 
 	// misc
-	TRIPWIRE(Tripwire.class),
-	TRIPWIRE_CROSS(TripwireCross.class),
-	TALL_SUPPORT(TallSupport.class),
+	TRIPWIRE(Tripwire.class, CustomBlockTab.NONE),
+	TRIPWIRE_CROSS(TripwireCross.class, CustomBlockTab.NONE),
+	TALL_SUPPORT(TallSupport.class, CustomBlockTab.NONE),
 
 	// flora tall
-	CATTAIL(Cattail.class),
-	BLUE_SAGE(BlueSage.class),
-	ORANGE_GLADIOLUS(OrangeGladiolus.class),
-	MOUNTAIN_LAUREL(MountainLaurel.class),
-	BLUEBELL(Bluebell.class),
-	PURPLE_HIBISCUS(PurpleHibiscus.class),
+	CATTAIL(Cattail.class, CustomBlockTab.FLORA),
+	BLUE_SAGE(BlueSage.class, CustomBlockTab.FLORA),
+	ORANGE_GLADIOLUS(OrangeGladiolus.class, CustomBlockTab.FLORA),
+	MOUNTAIN_LAUREL(MountainLaurel.class, CustomBlockTab.FLORA),
+	BLUEBELL(Bluebell.class, CustomBlockTab.FLORA),
+	PURPLE_HIBISCUS(PurpleHibiscus.class, CustomBlockTab.FLORA),
 
 	// flora short
-	LAVENDER(Lavender.class),
+	LAVENDER(Lavender.class, CustomBlockTab.FLORA),
 
 	// rocks
-	ROCKS_0(Rocks_0.class),
-	ROCKS_1(Rocks_1.class),
-	ROCKS_2(Rocks_2.class),
-	PEBBLES_0(Pebbles_0.class),
-	PEBBLES_1(Pebbles_1.class),
-	PEBBLES_2(Pebbles_2.class),
+	ROCKS_0(Rocks_0.class, CustomBlockTab.ROCKS),
+	ROCKS_1(Rocks_1.class, CustomBlockTab.ROCKS),
+	ROCKS_2(Rocks_2.class, CustomBlockTab.ROCKS),
+	PEBBLES_0(Pebbles_0.class, CustomBlockTab.ROCKS),
+	PEBBLES_1(Pebbles_1.class, CustomBlockTab.ROCKS),
+	PEBBLES_2(Pebbles_2.class, CustomBlockTab.ROCKS),
 
 	// cover
-	AUBRIETA_ORANGE(OrangeAubrieta.class),
-	AUBRIETA_BLUE(BlueAubrieta.class),
-	AUBRIETA_PURPLE(PurpleAubrieta.class),
-	AUBRIETA_PINK(PinkAubrieta.class),
-	AUBRIETA_WHITE(WhiteAubrieta.class),
-	AUBRIETA_RAINBOW(RainbowAubrieta.class),
-	FUNGUS_COVER(FungusCover.class), // TODO: make model 3d
+	AUBRIETA_ORANGE(OrangeAubrieta.class, CustomBlockTab.FLORA),
+	AUBRIETA_BLUE(BlueAubrieta.class, CustomBlockTab.FLORA),
+	AUBRIETA_PURPLE(PurpleAubrieta.class, CustomBlockTab.FLORA),
+	AUBRIETA_PINK(PinkAubrieta.class, CustomBlockTab.FLORA),
+	AUBRIETA_WHITE(WhiteAubrieta.class, CustomBlockTab.FLORA),
+	AUBRIETA_RAINBOW(RainbowAubrieta.class, CustomBlockTab.FLORA),
+	FUNGUS_COVER(FungusCover.class, CustomBlockTab.FLORA), // TODO: make model 3d
 
 	/*
 		TODO:
@@ -391,9 +391,12 @@ public enum CustomBlock implements Keyed {
 	private final ICustomBlock customBlock;
 	@Getter
 	private final CustomBlockType type;
+	@Getter
+	private final CustomBlockTab creativeTab;
 
 	@SneakyThrows
-	CustomBlock(Class<? extends ICustomBlock> clazz) {
+	CustomBlock(Class<? extends ICustomBlock> clazz, CustomBlockTab tab) {
+		this.creativeTab = tab;
 		this.customBlock = (ICustomBlock) clazz.getDeclaredConstructors()[0].newInstance();
 
 		if (this.customBlock instanceof ICustomNoteBlock)
@@ -417,7 +420,11 @@ public enum CustomBlock implements Keyed {
 	}
 
 	public static List<CustomBlock> getType(CustomBlockType type) {
-		return Arrays.stream(values()).filter(customBlock -> customBlock.getType().equals(type)).collect(Collectors.toList());
+		return Arrays.stream(values()).filter(customBlock -> customBlock.getType() == type).collect(Collectors.toList());
+	}
+
+	public static List<CustomBlock> getType(CustomBlockTab tab) {
+		return Arrays.stream(values()).filter(customBlock -> customBlock.getCreativeTab() == tab).collect(Collectors.toList());
 	}
 
 	@Override
@@ -554,8 +561,8 @@ public enum CustomBlock implements Keyed {
 		}
 	}
 
-	public void incrementBlock(Player player, CustomBlock newCustomBlock, Block block) {
-		if (newCustomBlock == null || !(this.get() instanceof IIncremental) || !(newCustomBlock.get() instanceof IIncremental))
+	public void updateBlock(Player player, CustomBlock newCustomBlock, Block block) {
+		if (newCustomBlock == null)
 			return;
 
 		Block underneath = block.getRelative(BlockFace.DOWN);
@@ -591,7 +598,7 @@ public enum CustomBlock implements Keyed {
 
 		if (this != TALL_SUPPORT) {
 			if (spawnParticle && this.get() instanceof ICustomTripwire)
-				spawnParticle(location);
+				spawnParticle(source, location);
 
 			if (playSound)
 				playSound(source, SoundAction.BREAK, location);
@@ -620,7 +627,7 @@ public enum CustomBlock implements Keyed {
 	}
 
 	public void playSound(@Nullable Player source, SoundAction type, Location location) {
-		// TODO: vanish check on source to determine to play sound or not
+		boolean silent = source != null && PlayerUtils.isVanished(source);
 
 		String sound = getSound(type);
 		if (Nullables.isNullOrEmpty(sound))
@@ -628,19 +635,27 @@ public enum CustomBlock implements Keyed {
 
 		double volume = type.getVolume();
 
-//		debug("&eCustomBlockSound:&f " + type + " - " + sound);
-
 		SoundBuilder soundBuilder = new SoundBuilder(sound).location(location).volume(volume);
+
+		if (silent) {
+			soundBuilder.receiver(source);
+		}
+
 		BlockUtils.playSound(soundBuilder);
 	}
 
-	private void spawnParticle(Location loc) {
+	private void spawnParticle(Player source, Location loc) {
+		boolean silent = source != null && PlayerUtils.isVanished(source);
+
 		World world = loc.getWorld();
 		loc = loc.toCenterLocation();
 		Particle particle = Particle.ITEM_CRACK;
 		ItemStack itemStack = get().getItemStack();
 
-		world.spawnParticle(particle, loc, 25, 0.25, 0.25, 0.25, 0.1, itemStack);
+		if (silent)
+			source.spawnParticle(particle, loc, 25, 0.25, 0.25, 0.25, 0.1, itemStack);
+		else
+			world.spawnParticle(particle, loc, 25, 0.25, 0.25, 0.25, 0.1, itemStack);
 	}
 
 	@Getter
@@ -696,22 +711,37 @@ public enum CustomBlock implements Keyed {
 	}
 
 	public enum CustomBlockType {
-		UNKNOWN(Material.AIR),
-		NOTE_BLOCK(Material.NOTE_BLOCK),
+		UNKNOWN(null, null),
+		NOTE_BLOCK(Material.NOTE_BLOCK, Material.NOTE_BLOCK),
 		TRIPWIRE(Material.TRIPWIRE, Material.STRING),
 		;
 
 		@Getter
-		private final Set<Material> materials;
+		private final Material blockMaterial;
+		@Getter
+		private final Material itemMaterial;
 
-		CustomBlockType(Material... materials) {
-			this.materials = new HashSet<>(List.of(materials));
+		CustomBlockType(Material blockMaterial, Material itemMaterial) {
+			this.blockMaterial = blockMaterial;
+			this.itemMaterial = itemMaterial;
 		}
 
 		public static Set<Material> getItemMaterials() {
 			Set<Material> result = new HashSet<>();
 			for (CustomBlockType type : values()) {
-				result.addAll(type.getMaterials());
+				if (type == UNKNOWN) continue;
+
+				result.add(type.getItemMaterial());
+			}
+			return result;
+		}
+
+		public static Set<Material> getBlockMaterials() {
+			Set<Material> result = new HashSet<>();
+			for (CustomBlockType type : values()) {
+				if (type == UNKNOWN) continue;
+
+				result.add(type.getBlockMaterial());
 			}
 			return result;
 		}

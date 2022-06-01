@@ -14,7 +14,7 @@ import java.util.Set;
 
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.stoneCutter;
 
-public interface IPillar extends ICraftableNoteBlock {
+public interface IStonePillar extends ICraftableNoteBlock {
 
 	@NonNull Material getMaterial();
 

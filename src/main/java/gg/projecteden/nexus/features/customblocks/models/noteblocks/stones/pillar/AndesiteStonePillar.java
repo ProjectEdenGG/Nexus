@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 	customHitSound = "custom.block.stone.hit",
 	customFallSound = "custom.block.stone.fall"
 )
-public class AndesitePillar implements IPillar {
+public class AndesiteStonePillar implements IStonePillar {
 	@Override
 	public @NotNull Material getMaterial() {
 		return Material.POLISHED_ANDESITE;

@@ -18,15 +18,13 @@ import java.util.List;
 /*
 	TODO:
 		- Tripwire implementation:
-			- Placing string needs to place TRIPWIRE and not TALL_SUPPORT
-			- on pick block TALL_SUPPORT, get correct item
-		- Vanished handling, proper interactions and what not
+			- Placing string needs properly update nearby tripwire to tripwire cross if suitable
+			- If placed next to hook, and both hooks exist, attach the hooks
 		- Future Conversions on chunk generate/load, itemstacks & blocks
+		- On placing flora, ensure the base block is suitable
 		- //
 		- Appropriate tool & mining speed --> CustomBlockBreaking
-		- figure out WorldEdit handling
-		- Better CustomBlockState handling, like bird houses
-			- Including waterlogged
+		- Figure out WorldEdit handling
 		- //
 		- Cannot Fix:
 			- Custom blocks may flash when placing blocks near them (clientside only) --> Titan

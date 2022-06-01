@@ -152,9 +152,7 @@ public class CustomBlockSounds implements Listener {
 
 			if (playDefaultSounds(event.getSound(), event.getLocation()))
 				event.setCancelled(true);
-		} catch (Exception ignored) {
-
-		}
+		} catch (Exception ignored) {}
 	}
 
 	private static void tryPlayDefaultSound(SoundAction soundAction, Block block) {

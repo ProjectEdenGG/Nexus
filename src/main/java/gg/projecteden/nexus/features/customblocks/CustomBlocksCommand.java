@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.customblocks;
 
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
+import gg.projecteden.nexus.features.customblocks.models.CustomBlockTab;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlockTag;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
@@ -26,15 +27,16 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import static gg.projecteden.utils.UUIDUtils.UUID0;
 
-@Permission(Group.ADMIN)
 public class CustomBlocksCommand extends CustomCommand {
 	private static final CustomBlockTrackerService trackerService = new CustomBlockTrackerService();
 	private static CustomBlockTracker tracker;
@@ -45,7 +47,19 @@ public class CustomBlocksCommand extends CustomCommand {
 			tracker = trackerService.fromWorld(location());
 	}
 
+	@Path
+	void creativeMenu() {
+		// TODO: uncomment upon release
+//		if(!rank().isSeniorStaff() && !rank().isBuilder()){
+//			if(worldGroup() != WorldGroup.CREATIVE)
+//				error("This command can only be used in Creative!");
+//		}
+
+		new CustomBlockCreativeMenu(null).open(player());
+	}
+
 	@Path("list [world]")
+	@Permission(Group.ADMIN)
 	void list(@Arg("current") World world) {
 		tracker = trackerService.fromWorld(world);
 		Map<Location, CustomBlockData> locationMap = tracker.getLocationMap();
@@ -70,17 +84,20 @@ public class CustomBlocksCommand extends CustomCommand {
 	}
 
 	@Path("getAll")
+	@Permission(Group.ADMIN)
 	void getAll() {
 		for (CustomBlock customBlock : CustomBlock.values())
 			giveItem(customBlock.get().getItemStack());
 	}
 
 	@Path("tags list <tag>")
+	@Permission(Group.STAFF)
 	void getTag(CustomBlockTag tag) {
 		new CustomBlockTagMenu(tag).open(player());
 	}
 
 	@Path("tags of <block>")
+	@Permission(Group.STAFF)
 	void materialTag(CustomBlock customBlock) {
 		send(PREFIX + "Applicable tags of " + camelCase(customBlock)
 			+ ": &e" + String.join("&3, &e", CustomBlockTag.getApplicable(customBlock).keySet()));
@@ -108,6 +125,7 @@ public class CustomBlocksCommand extends CustomCommand {
 		breaks with no delay; otherwise a 6 tick (3⁄10 second) delay occurs before the next block begins to break.
 	 */
 	@Path("getBlockHardness")
+	@Permission(Group.ADMIN)
 	void hardness() {
 		Block block = getTargetBlockRequired();
 		ItemStack itemStack = getTool();
@@ -159,5 +177,51 @@ public class CustomBlocksCommand extends CustomCommand {
 			paginator().items(items).build();
 		}
 
+	}
+
+	public static class CustomBlockCreativeMenu extends InventoryProvider {
+		@Nullable CustomBlockTab currentTab;
+
+		public CustomBlockCreativeMenu(@Nullable CustomBlockTab tab) {
+			this.currentTab = tab;
+		}
+
+		@Override
+		public String getTitle() {
+			if (currentTab == null)
+				return "Custom Blocks";
+
+			return currentTab.getMenuTitle();
+		}
+
+		@Override
+		public void init() {
+			LinkedHashSet<ClickableItem> items = new LinkedHashSet<>();
+
+			if (currentTab == null) {
+				addCloseItem();
+
+				for (CustomBlockTab tab : CustomBlockTab.getMenuTabs()) {
+					ItemStack item = new ItemBuilder(CustomBlock.getType(tab).get(0).get().getItemStack()).name(StringUtils.camelCase(tab)).build();
+
+					items.add(ClickableItem.of(item, e -> new CustomBlockCreativeMenu(tab).open(player)));
+				}
+
+			} else {
+				addBackItem(e -> new CustomBlockCreativeMenu(null).open(player));
+
+				LinkedHashSet<ItemStack> uniqueItems = new LinkedHashSet<>();
+				for (CustomBlock customBlock : CustomBlock.getType(currentTab)) {
+					ItemStack item = customBlock.get().getItemStack();
+					uniqueItems.add(item);
+				}
+
+				for (ItemStack customBlockItem : uniqueItems) {
+					items.add(ClickableItem.of(customBlockItem, e -> PlayerUtils.giveItem(player, customBlockItem)));
+				}
+			}
+
+			paginator().items(items.stream().toList()).build();
+		}
 	}
 }

@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.customblocks.CustomBlocks.SoundAction;
 import gg.projecteden.nexus.features.customblocks.NoteBlockUtils;
 import gg.projecteden.nexus.features.customblocks.events.NoteBlockChangePitchEvent;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
+import gg.projecteden.nexus.features.customblocks.models.CustomBlock.CustomBlockType;
 import gg.projecteden.nexus.features.customblocks.models.common.ICustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.common.ICustomBlock.PistonPushAction;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.ICustomNoteBlock;
@@ -15,6 +16,7 @@ import gg.projecteden.nexus.features.customblocks.models.tripwire.common.ICustom
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.IWaterLogged;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.incremental.IIncremental;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.tall.ITall;
+import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.models.customblock.CustomBlockData;
 import gg.projecteden.nexus.models.customblock.CustomNoteBlockData;
 import gg.projecteden.nexus.models.customblock.CustomTripwireData;
@@ -66,13 +68,16 @@ import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class CustomBlockListener implements Listener {
-	public static final Set<Material> handleMaterials = Set.of(Material.NOTE_BLOCK, Material.TRIPWIRE);
-
 	public CustomBlockListener() {
 		Nexus.registerListener(this);
 
 		new CustomBlockSounds();
-		new CustomBlockRecipes();
+	}
+
+	@EventHandler
+	public void on(ResourcePackUpdateCompleteEvent ignored) {
+		for (CustomBlock customBlock : CustomBlock.values())
+			customBlock.registerRecipes();
 	}
 
 	@EventHandler
@@ -244,20 +249,24 @@ public class CustomBlockListener implements Listener {
 		CustomBlock clickedCustomBlock = CustomBlock.fromBlock(clickedBlock);
 		// Place
 		if (isSpawningEntity(event, clickedBlock, clickedCustomBlock)) {
+			debug("is spawning entity");
 			CustomBlockSounds.updateAction(player, BlockAction.UNKNOWN);
 			return;
 		}
 
 		if (isIncrementingBlock(event, clickedBlock, clickedCustomBlock)) {
+			debug("is incrementing block");
 			CustomBlockSounds.updateAction(player, BlockAction.PLACE);
 			return;
 		}
 
 		if (isPlacingBlock(event, clickedBlock, clickedCustomBlock)) {
+			debug("is placing block");
 			CustomBlockSounds.updateAction(player, BlockAction.PLACE);
 			return;
 		}
 
+		debug("is interacting block");
 		CustomBlockSounds.updateAction(player, BlockAction.INTERACT);
 
 		if (clickedCustomBlock != null) {
@@ -282,14 +291,14 @@ public class CustomBlockListener implements Listener {
 	public void on(BlockPhysicsEvent event) {
 		Block eventBlock = event.getBlock();
 		Material material = eventBlock.getType();
-		if (handleMaterials.contains(material)) {
+		if (CustomBlockType.getBlockMaterials().contains(material)) {
 			resetBlockData(event, eventBlock, false);
 		}
 
 		Block aboveBlock = eventBlock.getRelative(BlockFace.UP);
-		if (handleMaterials.contains(aboveBlock.getType())) {
+		if (CustomBlockType.getBlockMaterials().contains(aboveBlock.getType())) {
 
-			while (handleMaterials.contains(aboveBlock.getType())) {
+			while (CustomBlockType.getBlockMaterials().contains(aboveBlock.getType())) {
 				// Leave this as true, false will crash the server
 				resetBlockData(event, aboveBlock, true);
 
@@ -411,20 +420,10 @@ public class CustomBlockListener implements Listener {
 			tripwire = (Tripwire) customBlock.getBlockData(facing, underneath);
 			tripwire.setPowered(powered);
 
-			// Fixes the player detection issue, but causes endless physics updates
-//			if(powered) {
-//				block.setBlockData(tripwire, true);
-//				NMSUtils.applyPhysics(block.getLocation());
-//				return;
-//			}
-
 			event.setCancelled(true);
 			block.setBlockData(tripwire, false);
 		} else
 			return;
-
-//		String loc = StringUtils.getCoordinateString(block.getLocation());
-//		debug(loc + " -> " + customBlock.getStringBlockData(block.getBlockData()));
 
 		block.getState().update(true, doPhysics);
 	}
@@ -490,7 +489,7 @@ public class CustomBlockListener implements Listener {
 			return false;
 
 		player.swingMainHand();
-		clickedCustomBlock.incrementBlock(player, update, clickedBlock);
+		clickedCustomBlock.updateBlock(player, update, clickedBlock);
 		if (!GameModeWrapper.of(player).isCreative())
 			itemInHand.subtract();
 
@@ -529,108 +528,127 @@ public class CustomBlockListener implements Listener {
 
 		Material material = itemInHand.getType();
 		boolean isPlacingCustomBlock = false;
-		if (Material.NOTE_BLOCK == material)
+
+		// Check replaced vanilla items
+		if (CustomBlockType.getItemMaterials().contains(material))
 			isPlacingCustomBlock = true;
+
+			// Check paper
 		else if (material.equals(ICustomBlock.itemMaterial)) {
 			int modelId = CustomModelData.of(itemInHand);
 			if (!CustomBlock.modelIdMap.containsKey(modelId)) {
-//				debug(" isPlacingBlock: unknown modelId: " + modelId);
+				debug(" isPlacingBlock: unknown modelId: " + modelId);
 				return false;
 			} else
 				isPlacingCustomBlock = true;
-		} else if (!material.equals(Material.REDSTONE_WIRE) && (!material.isBlock() && !material.isSolid())) {
-//			debug(" isPlacingBlock: not a block: " + material);
-			return false;
+
+			// Return if non-block, excluding redstone wire
+		} else if (!material.isBlock() && !material.isSolid()) {
+			if (!material.equals(Material.REDSTONE_WIRE)) {
+				debug(" isPlacingBlock: not a block: " + material);
+				return false;
+			}
 		}
 
 		if (isPlacingCustomBlock) {
-			if (preBlock.getLocation().toCenterLocation().getNearbyLivingEntities(0.5).size() > 0) {
-//				debug(" isPlacingBlock: entity in way");
-				return false;
-			}
+			if (placedCustomBlock(clickedBlock, player, clickedFace, preBlock, itemInHand))
+				event.setCancelled(true);
+		} else
+			return placedVanillaBlock(event, clickedBlock, player, preBlock, didClickedCustomBlock, material);
 
-			CustomBlock _customBlock = CustomBlock.fromItemstack(itemInHand);
-			if (_customBlock == null) {
-//				debug(" isPlacingBlock: customBlock == null");
-				return false;
-			}
+		return true;
+	}
 
-			ICustomBlock customBlock = _customBlock.get();
-			if (customBlock instanceof IWaterLogged) {
-				Block underneath = preBlock.getRelative(BlockFace.DOWN);
-
-				// if placing block in 1 depth water
-				if (preBlock.getType() == Material.WATER && Nullables.isNullOrAir(preBlock.getRelative(BlockFace.UP))) {
-					clickedBlock = preBlock;
-					preBlock = preBlock.getRelative(BlockFace.UP);
-
-					// if placing block above water
-				} else if (underneath.getType() == Material.WATER && Nullables.isNullOrAir(preBlock)) {
-					clickedBlock = underneath;
-
-				} else if (!isNullOrAir(preBlock)) {
-					return false;
-				}
-			} else {
-				if (!isNullOrAir(preBlock)) {
-					return false;
-				}
-			}
-
-			// place block
-
-			if (!_customBlock.placeBlock(player, preBlock, clickedBlock, clickedFace, itemInHand)) {
-//				debug(" isPlacingBlock: CustomBlock#PlaceBlock == false");
-				return false;
-			}
-
-			event.setCancelled(true);
-		} else {
-			if (!isNullOrAir(preBlock)) {
-//				debug(" isPlacingBlock: preBlock is not air");
-				return false;
-			}
-
-			if (!didClickedCustomBlock) {
-//				debug(" isPlacingBlock: Didn't click on a custom block");
-				return false;
-			}
-
-			if (!player.isSneaking()) {
-				BlockData blockData = material.createBlockData();
-				BlockFace blockFace = event.getBlockFace();
-				if (blockData instanceof Directional directional) {
-					try {
-						directional.setFacing(blockFace);
-//						debug(" isPlacingBlock: set facing direction to " + blockFace);
-					} catch (Exception ignored) {}
-				}
-
-				if (blockData instanceof FaceAttachable faceAttachable) {
-					AttachedFace attachedFace = AttachedFace.WALL;
-					switch (blockFace) {
-						case UP -> attachedFace = AttachedFace.FLOOR;
-						case DOWN -> attachedFace = AttachedFace.CEILING;
-					}
-
-					try {
-						faceAttachable.setAttachedFace(attachedFace);
-//						debug(" isPlacingBlock: set attached face to " + attachedFace);
-					} catch (Exception ignored) {}
-				}
-
-				if (!BlockUtils.tryPlaceEvent(player, preBlock, clickedBlock, material, blockData)) {
-//					debug(" isPlacingBlock: PlaceBlock event was cancelled");
-					return false;
-				}
-
-//				debug(" isPlacingBlock: playing place sound");
-				BlockUtils.playSound(SoundAction.PLACE, preBlock);
-			}
-
+	private boolean placedCustomBlock(Block clickedBlock, Player player, BlockFace clickedFace, Block preBlock, ItemStack itemInHand) {
+		debug("Placing custom block");
+		if (preBlock.getLocation().toCenterLocation().getNearbyLivingEntities(0.5).size() > 0) {
+//			debug(" isPlacingBlock: entity in way");
+			return false;
 		}
 
-//		debug(" isPlacingBlock: true");
+		CustomBlock _customBlock = CustomBlock.fromItemstack(itemInHand);
+		if (_customBlock == null) {
+			debug(" isPlacingBlock: customBlock == null");
+			return false;
+		}
+
+		ICustomBlock customBlock = _customBlock.get();
+		if (customBlock instanceof IWaterLogged) {
+			Block underneath = preBlock.getRelative(BlockFace.DOWN);
+
+			// if placing block in 1 depth water
+			if (preBlock.getType() == Material.WATER && Nullables.isNullOrAir(preBlock.getRelative(BlockFace.UP))) {
+				clickedBlock = preBlock;
+				preBlock = preBlock.getRelative(BlockFace.UP);
+
+				// if placing block above water
+			} else if (underneath.getType() == Material.WATER && Nullables.isNullOrAir(preBlock)) {
+				clickedBlock = underneath;
+
+			} else if (!isNullOrAir(preBlock)) {
+				return false;
+			}
+		} else {
+			if (!isNullOrAir(preBlock)) {
+				return false;
+			}
+		}
+
+		// place block
+
+		if (!_customBlock.placeBlock(player, preBlock, clickedBlock, clickedFace, itemInHand)) {
+//			debug(" isPlacingBlock: CustomBlock#PlaceBlock == false");
+			return false;
+		}
+
+		return true;
+	}
+
+	private boolean placedVanillaBlock(PlayerInteractEvent event, Block clickedBlock, Player player, Block preBlock, boolean didClickedCustomBlock, Material material) {
+		debug("Placing vanilla block");
+
+		if (!isNullOrAir(preBlock)) {
+//			debug(" isPlacingBlock: preBlock is not air");
+			return false;
+		}
+
+		if (!didClickedCustomBlock) {
+//			debug(" isPlacingBlock: Didn't click on a custom block");
+			return false;
+		}
+
+		if (!player.isSneaking()) {
+			BlockData blockData = material.createBlockData();
+			BlockFace blockFace = event.getBlockFace();
+			if (blockData instanceof Directional directional) {
+				try {
+					directional.setFacing(blockFace);
+//					debug(" isPlacingBlock: set facing direction to " + blockFace);
+				} catch (Exception ignored) {}
+			}
+
+			if (blockData instanceof FaceAttachable faceAttachable) {
+				AttachedFace attachedFace = AttachedFace.WALL;
+				switch (blockFace) {
+					case UP -> attachedFace = AttachedFace.FLOOR;
+					case DOWN -> attachedFace = AttachedFace.CEILING;
+				}
+
+				try {
+					faceAttachable.setAttachedFace(attachedFace);
+//					debug(" isPlacingBlock: set attached face to " + attachedFace);
+				} catch (Exception ignored) {}
+			}
+
+			if (!BlockUtils.tryPlaceEvent(player, preBlock, clickedBlock, material, blockData)) {
+//				debug(" isPlacingBlock: PlaceBlock event was cancelled");
+				return false;
+			}
+
+//			debug(" isPlacingBlock: playing place sound");
+			BlockUtils.playSound(SoundAction.PLACE, preBlock);
+		}
+
 		return true;
 	}
 
@@ -658,9 +676,9 @@ public class CustomBlockListener implements Listener {
 			NoteBlockUtils.changePitch(sneaking, location, noteBlockData);
 	}
 
-	private void fixTripwireNearby(Player player, Block origin, Set<Location> visited) {
+	private void fixTripwireNearby(Player player, Block current, Set<Location> visited) {
 		for (BlockFace face : CustomBlockUtils.getNeighborFaces()) {
-			Block neighbor = origin.getRelative(face);
+			Block neighbor = current.getRelative(face);
 			Location location = neighbor.getLocation();
 
 			if (visited.contains(location))

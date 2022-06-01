@@ -7,21 +7,21 @@ import org.bukkit.Instrument;
 import org.bukkit.Material;
 
 @CustomBlockConfig(
-	name = "Diorite Pillar",
-	modelId = 20357
+	name = "Blackstone Pillar",
+	modelId = 20363
 )
 @CustomNoteBlockConfig(
 	instrument = Instrument.DIDGERIDOO,
-	step = 8,
+	step = 14,
 	customBreakSound = "custom.block.stone.break",
 	customPlaceSound = "custom.block.stone.place",
 	customStepSound = "custom.block.stone.step",
 	customHitSound = "custom.block.stone.hit",
 	customFallSound = "custom.block.stone.fall"
 )
-public class DioritePillar implements IPillar {
+public class BlackstoneStonePillar implements IStonePillar {
 	@Override
 	public @NonNull Material getMaterial() {
-		return Material.POLISHED_DIORITE;
+		return Material.POLISHED_BLACKSTONE;
 	}
 }

@@ -8,6 +8,8 @@ import gg.projecteden.nexus.features.customblocks.models.common.IDyeable;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.ICraftableNoteBlock;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.IDirectionalNoteBlock;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.compacted.ICompacted;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.compacted.bundle.IBundle;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.compacted.crate.ICrate;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.concretebricks.IConcreteBricks;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.genericcrate.IGenericCrate;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.lanterns.ILantern;
@@ -17,6 +19,7 @@ import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.verti
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.quiltedwool.IQuiltedWool;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.bricks.IStoneBricks;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.chiseled.IChiseledStone;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.pillar.IStonePillar;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.terracottashingles.IColoredTerracottaShingles;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.terracottashingles.ITerracottaShingles;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.ICraftableTripwire;
@@ -49,8 +52,10 @@ import java.util.function.Predicate;
 import static gg.projecteden.utils.Utils.collect;
 
 public class CustomBlockTag implements Tag<CustomBlock> {
-	// NOTE BLOCKS
+	// NOTE BLOCKSCA
 	public static final CustomBlockTag COMPACTED = new CustomBlockTag(ICompacted.class);
+	public static final CustomBlockTag COMPACTED_CRATES = new CustomBlockTag(ICrate.class);
+	public static final CustomBlockTag COMPACTED_BUNDLES = new CustomBlockTag(IBundle.class);
 	public static final CustomBlockTag CONCRETE_BRICKS = new CustomBlockTag(IConcreteBricks.class);
 	public static final CustomBlockTag GENERIC_CRATES = new CustomBlockTag(IGenericCrate.class);
 	public static final CustomBlockTag LANTERNS = new CustomBlockTag(ILantern.class);
@@ -60,6 +65,7 @@ public class CustomBlockTag implements Tag<CustomBlock> {
 	public static final CustomBlockTag QUILTED_WOOL = new CustomBlockTag(IQuiltedWool.class);
 	public static final CustomBlockTag STONE_BRICKS = new CustomBlockTag(IStoneBricks.class);
 	public static final CustomBlockTag CHISELED_STONE = new CustomBlockTag(IChiseledStone.class);
+	public static final CustomBlockTag STONE_PILLARS = new CustomBlockTag(IStonePillar.class);
 	public static final CustomBlockTag TERRACOTTA_SHINGLES = new CustomBlockTag(ITerracottaShingles.class);
 	public static final CustomBlockTag COLORED_TERRACOTTA_SHINGLES = new CustomBlockTag(IColoredTerracottaShingles.class);
 	//
