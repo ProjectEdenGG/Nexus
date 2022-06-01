@@ -101,67 +101,28 @@ public class StringUtils extends gg.projecteden.utils.StringUtils {
 		return formatPattern.matcher(colorize(input)).replaceAll("");
 	}
 
-	// TODO This will break with hex
-	// TODO replace with https://canary.discord.com/channels/132680070480396288/421474915930079232/827394245522096158
-	// 		- needs to strip color when measuring max length and carry colors over to next line
+	private static final int APPROX_LORE_LINE_LENGTH = 40;
+
 	public static List<String> loreize(String string) {
-		if (string == null) return null;
+		return new ArrayList<>() {{
+			final String[] split = string.split(" ");
+			StringBuilder line = new StringBuilder();
+			for (String word : split) {
+				final int oldLength = stripColor(line.toString()).length();
+				final int newLength = oldLength + stripColor(word).length();
 
-		int i = 0, lineLength = 0;
-		boolean watchForNewLine = false, watchForColor = false;
-		string = colorize(string);
-
-		List<String> lore = new ArrayList<>();
-
-		for (String character : string.split("")) {
-			if (character.contains("\n")) {
-				lineLength = 0;
-				continue;
-			}
-
-			if (watchForNewLine) {
-				if ("|".equalsIgnoreCase(character))
-					lineLength = 0;
-				watchForNewLine = false;
-			} else if ("|".equalsIgnoreCase(character))
-				watchForNewLine = true;
-
-			if (watchForColor) {
-				if (character.matches("[A-Fa-fK-Ok-oRr\\d]"))
-					lineLength -= 2;
-				watchForColor = false;
-			} else if ("&".equalsIgnoreCase(character))
-				watchForColor = true;
-
-			++lineLength;
-
-			if (lineLength > 28)
-				if (" ".equalsIgnoreCase(character)) {
-					String before = left(string, i);
-					String excess = right(string, string.length() - i);
-					if (excess.length() > 5) {
-						excess = excess.trim();
-						boolean doSplit = true;
-						if (excess.contains(" ") && excess.indexOf(" ") <= 5)
-							doSplit = false;
-						if (lineLength >= 38)
-							doSplit = true;
-
-						if (doSplit) {
-							lore.add(before);
-							string = getLastColor(before) + excess.trim();
-							lineLength = 0;
-							i += 4;
-						}
-					}
+				boolean append = Math.abs(APPROX_LORE_LINE_LENGTH - oldLength) >= Math.abs(APPROX_LORE_LINE_LENGTH - newLength);
+				if (!append) {
+					String newline = line.toString().trim();
+					add(line.toString().trim());
+					line = new StringBuilder(getLastColor(newline));
 				}
 
-			++i;
-		}
+				line.append(word).append(" ");
+			}
 
-		lore.add(string);
-
-		return lore;
+			add(line.toString().trim());
+		}};
 	}
 
 	public static String getLastColor(String text) {

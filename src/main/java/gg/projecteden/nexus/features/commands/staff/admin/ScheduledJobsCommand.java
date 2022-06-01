@@ -53,6 +53,22 @@ public class ScheduledJobsCommand extends CustomCommand {
 		private Class<? extends AbstractJob> clazz;
 	}
 
+	/*
+	@Path("clean")
+	void clean() {
+		AtomicInteger amount = new AtomicInteger();
+		jobs.getJobs().values().removeIf(job -> {
+			if (job instanceof BirthdaysAddRoleJob) {
+				amount.getAndIncrement();
+				return true;
+			}
+			return false;
+		});
+		service.save(jobs);
+		send("Deleted " + amount.get() + " jobs");
+	}
+	*/
+
 	@Path("schedule <job> <time> <data...>")
 	void schedule(JobType jobType, LocalDateTime timestamp, String data) {
 		final Class<? extends AbstractJob> job = jobType.getClazz();

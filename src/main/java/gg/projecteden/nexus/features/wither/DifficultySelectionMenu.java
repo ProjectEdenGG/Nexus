@@ -40,7 +40,7 @@ public class DifficultySelectionMenu extends InventoryProvider {
 				new WitherArenaConfigService().edit0(config -> config.getQueue().remove(player.getUniqueId()));
 				JsonBuilder builder = new JsonBuilder(WitherChallenge.PREFIX + "You have challenged the wither in " + difficulty.getTitle() + " &3mode. ");
 				builder.next("&3You can invite players to fight the Wither with you with &c/wither invite <player>&3.").suggest("/wither invite ").group();
-				builder.next(" &3Once you are ready, ").next("&e&lClick Here to Start").command("/wither start").hover("&eThis will teleport you\n&eto the wither arena.");
+				builder.next(" &3Once you are ready, ").next("&e&lClick Here to Start").command("/wither start").hover("&eThis will teleport you to the wither arena.");
 				PlayerUtils.send(player, builder);
 			}));
 			column += 2;

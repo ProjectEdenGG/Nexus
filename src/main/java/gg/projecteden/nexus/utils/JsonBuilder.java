@@ -445,10 +445,9 @@ public class JsonBuilder implements ComponentLike {
 			List<String> lines = new ArrayList<>();
 			lore.forEach(line -> {
 				if (loreize)
-					for (String _line : line.split(System.lineSeparator()))
-						lines.addAll(StringUtils.loreize(colorize(line)));
+					lines.addAll(StringUtils.loreize(colorize(line)));
 				else
-					lines.addAll(Arrays.asList(colorize(line).split(System.lineSeparator())));
+					lines.add(colorize(line));
 			});
 
 			Builder hover = Component.text();
@@ -890,8 +889,36 @@ public class JsonBuilder implements ComponentLike {
 	 */
 	@NotNull @Contract("_ -> this")
 	public JsonBuilder hover(@NonNull List<String> lines) {
+		if (lines.size() > 1)
+			loreize(false);
 		lore.addAll(lines);
 		return this;
+	}
+
+	/**
+	 * Adds lines of text to this builder's hover text in the specified color
+	 * <br>Note: Other included colors will override specified color
+	 * <br>Note: this is not computed until {@link #build()} which will override any other hover set
+	 * @param lines lines of text
+	 * @param color color
+	 * @return this builder
+	 */
+	@NotNull @Contract("_, _ -> this")
+	public JsonBuilder hover(@NonNull List<String> lines, String color) {
+		return hover(lines.stream().map(line -> color + line).toList());
+	}
+
+	/**
+	 * Adds lines of text to this builder's hover text in the specified color
+	 * <br>Note: Other included colors will override specified color
+	 * <br>Note: this is not computed until {@link #build()} which will override any other hover set
+	 * @param lines lines of text
+	 * @param color color
+	 * @return this builder
+	 */
+	@NotNull @Contract("_, _ -> this")
+	public JsonBuilder hover(@NonNull List<String> lines, ChatColor color) {
+		return hover(lines, color.toString());
 	}
 
 	/**

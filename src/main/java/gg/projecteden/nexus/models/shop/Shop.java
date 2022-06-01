@@ -159,6 +159,19 @@ public class Shop implements PlayerOwnedObject {
 				return null;
 			}
 		}
+
+		public static ShopGroup of(org.bukkit.entity.Entity entity, ShopGroup defaultValue) {
+			return of(entity.getWorld(), defaultValue);
+		}
+
+		public static ShopGroup of(World world, ShopGroup defaultValue) {
+			return of(world.getName(), defaultValue);
+		}
+
+		public static ShopGroup of(String world, ShopGroup defaultValue) {
+			final ShopGroup result = of(world);
+			return result == null ? defaultValue : result;
+		}
 	}
 
 	@Data

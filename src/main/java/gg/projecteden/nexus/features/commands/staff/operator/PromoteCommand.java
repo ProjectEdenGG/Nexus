@@ -31,7 +31,9 @@ public class PromoteCommand extends CustomCommand {
 		send(PREFIX + "Promoted " + nerd.getName() + " to " + next.getColoredName());
 
 		if (nerd.isOnline()) {
-			nerd.sendMessage(new JsonBuilder("\n", NamedTextColor.DARK_AQUA)
+			nerd.sendMessage(new JsonBuilder()
+				.newline()
+				.color(NamedTextColor.DARK_AQUA)
 				.next("Congratulations! ", NamedTextColor.YELLOW, TextDecoration.BOLD)
 				.next("You've been promoted to ").next(next).next("!"));
 

@@ -95,12 +95,12 @@ public class ItemBuilderCommand extends CustomCommand {
 		item.resetName();
 	}
 
-	@Path("lore add <text>")
+	@Path("lore add <text...>")
 	void lore_add(String text) {
 		item.lore(text);
 	}
 
-	@Path("lore set <line> <text>")
+	@Path("lore set <line> <text...>")
 	void lore_set(int line, String text) {
 		item.lore(line, text);
 	}

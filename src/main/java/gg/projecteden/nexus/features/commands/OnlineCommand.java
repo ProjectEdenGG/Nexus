@@ -23,6 +23,7 @@ import gg.projecteden.utils.TimeUtils.Timespan;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -80,31 +81,37 @@ public class OnlineCommand extends CustomCommand {
 				.group();
 	}
 
-	String getInfo(Nerd nerd, Presence presence) {
+	List<String> getInfo(Nerd nerd, Presence presence) {
 		Player player = nerd.getOnlinePlayer();
 		Hours hours = new HoursService().get(player.getUniqueId());
 
 		int ping = player.getPing();
-		String onlineFor = Timespan.of(nerd.getLastJoin()).format();
-		String world = StringUtils.getWorldDisplayName(nerd.getLocation(), nerd.getWorld());
-		ShopGroup shopGroup = ShopGroup.of(player);
-		if (shopGroup == null)
-			shopGroup = ShopGroup.SURVIVAL;
-		String balance = new BankerService().getBalanceFormatted(player, shopGroup);
-		String totalHours = Timespan.ofSeconds(hours.getTotal()).format();
-		String afk = "";
+		final String onlineFor = Timespan.of(nerd.getLastJoin()).format();
+		final String world = StringUtils.getWorldDisplayName(nerd.getLocation(), nerd.getWorld());
+		final ShopGroup shopGroup = ShopGroup.of(player, ShopGroup.SURVIVAL);
+		final String balance = new BankerService().getBalanceFormatted(player, shopGroup);
+		final String totalHours = Timespan.ofSeconds(hours.getTotal()).format();
+
+		final String afk;
 
 		if (presence.applies(Modifier.AFK)) {
 			AFKUser afkUser = AFK.get(player);
 			String timeAFK = Timespan.of(afkUser.getTime()).format();
-			afk = "&3AFK for: &e" + timeAFK + "\n \n";
-		}
+			afk = "&3AFK for: &e" + timeAFK;
+		} else
+			afk = "";
 
-		return afk +
-				"&3Ping: &e" + ping + "\n" +
-				"&3World: &e" + world + "\n" +
-				"&3" + camelCase(shopGroup) + " balance: &e" + balance + "\n" +
-				"&3Online for: &e" + onlineFor + "\n" +
-				"&3Hours: &e" + totalHours;
+		return new ArrayList<>() {{
+			if (afk.length() > 0) {
+				add(afk);
+				add("");
+			}
+
+			add("&3Ping: &e" + ping);
+			add("&3World: &e" + world);
+			add("&3" + camelCase(shopGroup) + " balance: &e" + balance);
+			add("&3Online for: &e" + onlineFor);
+			add("&3Hours: &e" + totalHours);
+		}};
 	}
 }

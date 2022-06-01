@@ -48,6 +48,11 @@ public class HubCommand extends _WarpSubCommand {
 		return WarpType.HUB;
 	}
 
+	@Path
+	void hub() {
+		teleport(WarpType.NORMAL.get("hub"));
+	}
+
 	@Path("parkour quit")
 	void parkour_quit() {
 		userService.edit(player(), user -> user.getCourses().forEach(CourseData::quit));

@@ -205,7 +205,7 @@ public class CouponCommand extends CustomCommand implements Listener {
 		Coupon coupon = new Coupon(id, getToolRequired());
 		coupons.getCoupons().add(coupon);
 		service.save(coupons);
-		send(json(PREFIX + "Coupon &e" + id + " &3created").hover("Add your coupon logic to the code\nClick to copy the coupon's ID").copy(id));
+		send(json(PREFIX + "Coupon &e" + id + " &3created").hover("Add your coupon logic to the code", "Click to copy the coupon's ID").copy(id));
 	}
 
 	@Path("update <id>")
