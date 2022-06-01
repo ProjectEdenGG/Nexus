@@ -9,6 +9,7 @@ import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.geoip.GeoIP;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
 import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.models.nerd.NerdService;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -32,33 +33,31 @@ public class BirthdayBeginJob extends AbstractJob {
 	protected CompletableFuture<JobStatus> run() {
 		final LocalDateTime now = getTimestamp();
 
-		for (DiscordUser discordUser : new DiscordUserService().getAll()) {
-			if (discordUser.getUserId() == null)
-				continue;
-
-			final Nerd nerd = Nerd.of(discordUser);
-			if (nerd.getBirthday() == null)
-				continue;
-
-			LocalDate birthday = nerd.getBirthday().withYear(now.getYear());
-
-			ZoneId zone;
-			final GeoIP geoip = new GeoIPService().get(discordUser);
-			if (geoip.getTimezone() != null && !isNullOrEmpty(geoip.getTimezone().getId()))
-				zone = ZoneId.of(geoip.getTimezone().getId());
-			else
-				zone = ZoneId.systemDefault();
-
-			final ZonedDateTime zonedNow = now.atZone(ZoneId.systemDefault());
-			if (!zonedNow.equals(birthday.atStartOfDay(zone)))
-				continue;
-
-			if (discordUser.getMember() == null)
-				continue;
-
-			BirthdaysCommand.announcement(discordUser);
-		}
+		for (Nerd nerd : new NerdService().getNerdsWithBirthdays())
+			if (isBirthday(now, nerd))
+				BirthdaysCommand.announcement(nerd);
 		return completed();
 	}
 
+	public static boolean isBirthday(LocalDateTime now, Nerd nerd) {
+		DiscordUser discordUser = new DiscordUserService().get(nerd);
+
+		if (discordUser.getUserId() == null)
+			return false;
+
+		LocalDate birthday = nerd.getBirthday().withYear(now.getYear());
+
+		ZoneId zone = ZoneId.systemDefault();
+		final GeoIP geoip = new GeoIPService().get(discordUser);
+		if (geoip.getTimezone() != null && !isNullOrEmpty(geoip.getTimezone().getId()))
+			zone = ZoneId.of(geoip.getTimezone().getId());
+
+		final ZonedDateTime zonedNow = now.atZone(ZoneId.systemDefault());
+		if (!zonedNow.isEqual(birthday.atStartOfDay(zone)))
+			return false;
+
+		return true;
+	}
+
 }
+
