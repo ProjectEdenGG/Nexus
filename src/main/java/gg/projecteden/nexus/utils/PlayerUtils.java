@@ -8,6 +8,7 @@ import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
+import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
@@ -360,8 +361,9 @@ public class PlayerUtils {
 		if (viewer == null || target == null)
 			return false;
 
-		if (!viewer.canSee(target))
-			return false;
+		if (!(Minigamer.of(viewer).isPlaying() && Minigamer.of(viewer).isPlaying()))
+			if (!viewer.canSee(target))
+				return false;
 
 		return !isVanished(target) || viewer.hasPermission("pv.see");
 	}
