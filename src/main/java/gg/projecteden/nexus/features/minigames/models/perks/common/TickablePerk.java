@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.minigames.models.perks.common;
 
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.perks.Perk;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -15,7 +14,7 @@ public interface TickablePerk extends Perk {
 	void tick(Player player);
 
 	default boolean shouldTickFor(Player player) {
-		final Minigamer minigamer = PlayerManager.get(player);
+		final Minigamer minigamer = Minigamer.of(player);
 
 		if (minigamer.isPlaying() && (minigamer.isRespawning() || !minigamer.usesPerk(this)))
 			return false;

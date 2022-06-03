@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.minigames.mechanics;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -167,7 +166,7 @@ public class GrabAJumbuck extends TeamlessMechanic {
 	@EventHandler
 	public void onSheepClick(PlayerInteractEntityEvent event) {
 		if (!event.getHand().equals(EquipmentSlot.HAND)) return;
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 		GrabAJumbuckMatchData matchData = minigamer.getMatch().getMatchData();
 		if (!matchData.getSheeps().contains(event.getRightClicked())) return;
@@ -192,14 +191,14 @@ public class GrabAJumbuck extends TeamlessMechanic {
 		}
 
 		if (!(event.getEntity() instanceof Player player)) return;
-		Minigamer minigamer = PlayerManager.get(player);
+		Minigamer minigamer = Minigamer.of(player);
 		if (!minigamer.isPlaying(this)) return;
 		removeAllPassengers(player, minigamer.getMatch());
 	}
 
 	@EventHandler
 	public void onRegionEnter(PlayerEnteredRegionEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 		Arena arena = minigamer.getMatch().getArena();
 		if (!arena.ownsRegion(event.getRegion().getId(), "capture")) return;

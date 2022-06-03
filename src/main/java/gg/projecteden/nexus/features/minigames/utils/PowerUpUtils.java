@@ -4,7 +4,6 @@ import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.gmail.filoghost.holographicdisplays.api.line.ItemLine;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -43,11 +42,11 @@ public class PowerUpUtils {
 		ItemLine itemLine = hologram.appendItemLine(powerUp.getItemStack());
 
 		itemLine.setPickupHandler(player -> {
-			Minigamer minigamer = PlayerManager.get(player);
+			Minigamer minigamer = Minigamer.of(player);
 			if (!minigamer.isPlaying(match)) return;
 
 			minigamer.tell("You picked up a power up!");
-			powerUp.onPickup(PlayerManager.get(player));
+			powerUp.onPickup(Minigamer.of(player));
 			match.getHolograms().remove(hologram);
 			hologram.delete();
 			if (recurring)

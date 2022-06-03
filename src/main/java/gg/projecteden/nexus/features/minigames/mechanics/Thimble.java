@@ -8,7 +8,6 @@ import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Match.MatchTasks.MatchTaskType;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -356,7 +355,7 @@ public final class Thimble extends TeamlessMechanic {
 		Player player = event.getPlayer();
 		if (!player.getWorld().equals(Minigames.getWorld())) return;
 
-		Minigamer minigamer = PlayerManager.get(player);
+		Minigamer minigamer = Minigamer.of(player);
 		if (!minigamer.isInLobby(this)) return;
 
 		Match match = minigamer.getMatch();
@@ -369,7 +368,7 @@ public final class Thimble extends TeamlessMechanic {
 	@EventHandler
 	public void onEnterRegion(PlayerEnteredRegionEvent event) {
 		Player player = event.getPlayer();
-		Minigamer minigamer = PlayerManager.get(player);
+		Minigamer minigamer = Minigamer.of(player);
 		if (!minigamer.isPlaying(this))
 			return;
 
@@ -621,7 +620,7 @@ public final class Thimble extends TeamlessMechanic {
 
 		@Override
 		public void init() {
-			Minigamer minigamer = PlayerManager.get(player);
+			Minigamer minigamer = Minigamer.of(player);
 			Match match = minigamer.getMatch();
 			ThimbleMatchData matchData = match.getMatchData();
 
@@ -642,7 +641,7 @@ public final class Thimble extends TeamlessMechanic {
 		}
 
 		public void pickColor(ItemStack concrete, Player player) {
-			Minigamer minigamer = PlayerManager.get(player);
+			Minigamer minigamer = Minigamer.of(player);
 			Match match = minigamer.getMatch();
 			ThimbleMatchData matchData = match.getMatchData();
 

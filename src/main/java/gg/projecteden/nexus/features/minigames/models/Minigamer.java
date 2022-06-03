@@ -7,7 +7,6 @@ import gg.projecteden.nexus.features.commands.SpeedCommand;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerScoredEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
@@ -31,6 +30,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import me.lexikiq.HasUniqueId;
+import me.lexikiq.PlayerLike;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -41,6 +42,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -81,6 +83,38 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 	// 1/2 = half a heart, /2s = half a heart every 2 sec, /4.5 = half a heart at max multiplier every 2s
 	private static final double HEALTH_PER_TICK = (1d/2d)/ TickTime.SECOND.x(2);
 	private static final long IMMOBILE_SECONDS = TickTime.SECOND.x(3);
+
+	@NotNull
+	public static Minigamer of(@NotNull UUID uuid) throws PlayerNotOnlineException {
+		for (Match match : MatchManager.getAll())
+			for (Minigamer minigamer : match.getMinigamers())
+				if (minigamer.getUniqueId().equals(uuid))
+					return minigamer;
+
+		Player onlinePlayer = Bukkit.getPlayer(uuid);
+		if (onlinePlayer == null)
+			throw new PlayerNotOnlineException(uuid);
+
+		return new Minigamer(uuid);
+	}
+
+	@Contract("null -> null; !null -> !null")
+	public static Minigamer of(@Nullable HasUniqueId player) {
+		if (player == null)
+			return null;
+
+		if (player instanceof Minigamer minigamer)
+			return minigamer;
+
+		try {
+			return of(player.getUniqueId());
+		} catch (PlayerNotOnlineException exc) {
+			// fake player (NPC), this should probably return null but to avoid breaking changes we create a fake minigamer as well
+			if (player instanceof Player player1)
+				return new Minigamer(player1.getUniqueId());
+			throw exc;
+		}
+	}
 
 	public @NotNull Player getOnlinePlayer() {
 		final Player player = Bukkit.getPlayer(uuid);
@@ -461,7 +495,7 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 			OnlinePlayers.getAll().forEach(_player -> {
 				showPlayer(_player).to(this);
 
-				Minigamer minigamer = PlayerManager.get(_player);
+				Minigamer minigamer = of(_player);
 				if (minigamer.isPlaying(match) && minigamer.isAlive())
 					hidePlayer(_player).from(this);
 			});

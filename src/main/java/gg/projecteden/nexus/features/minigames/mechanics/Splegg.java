@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
 import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.mechanics.common.SpleefMechanic;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -76,7 +75,7 @@ public final class Splegg extends SpleefMechanic {
 		ProjectileSource source = projectile.getShooter();
 		if (!(source instanceof Player)) return;
 
-		Minigamer minigamer = PlayerManager.get((Player) source);
+		Minigamer minigamer = Minigamer.of((Player) source);
 		if (!minigamer.isPlaying(this)) return;
 
 		projectile.remove();
@@ -89,7 +88,7 @@ public final class Splegg extends SpleefMechanic {
 	@EventHandler
 	public void onProjectileCollide(ProjectileCollideEvent event) {
 		if (!(event.getCollidedWith() instanceof Player player)) return;
-		Minigamer minigamer = PlayerManager.get(player);
+		Minigamer minigamer = Minigamer.of(player);
 		if (minigamer.isPlaying(this))
 			event.setCancelled(true);
 	}

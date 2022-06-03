@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer;
 
 import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
 import gg.projecteden.nexus.features.chat.events.PublicChatEvent;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
@@ -110,7 +109,7 @@ public interface VanillaMechanic<T> extends Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	default void onLocalChat(PublicChatEvent event) {
-		final Minigamer minigamer = PlayerManager.get(event.getChatter().getUuid());
+		final Minigamer minigamer = Minigamer.of(event.getChatter().getUuid());
 
 		if (!minigamer.isPlaying())
 			return;

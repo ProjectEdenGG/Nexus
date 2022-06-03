@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.minigames.commands.mechanics;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.mechanics.Bingo;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -36,7 +35,7 @@ public class BingoCommand extends CustomCommand {
 		super(event);
 
 		if (isPlayerCommandEvent()) {
-			minigamer = PlayerManager.get(player());
+			minigamer = Minigamer.of(player());
 			if (!minigamer.isIn(Bingo.class))
 				error("You must be playing Bingo to use this command");
 

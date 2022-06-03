@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.minigames.listeners;
 
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.mechanics.common.AntiCampingTask;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.annotations.AntiCamp;
@@ -37,7 +36,7 @@ public class AnnotationListener implements Listener {
 
 	@EventHandler
 	public void onGunShoot(PlayerInteractEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying())
 			return;
 		if (!ActionGroup.RIGHT_CLICK.applies(event))

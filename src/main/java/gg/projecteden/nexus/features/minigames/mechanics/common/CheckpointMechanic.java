@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.minigames.mechanics.common;
 
 import gg.projecteden.nexus.features.minigames.Minigames;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.arenas.CheckpointArena;
@@ -41,7 +40,7 @@ public abstract class CheckpointMechanic extends SingleplayerMechanic {
 
 	@EventHandler
 	public void onEnterWinRegion(PlayerEnteredRegionEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 
 		Arena arena = minigamer.getMatch().getArena();
@@ -53,7 +52,7 @@ public abstract class CheckpointMechanic extends SingleplayerMechanic {
 
 	@EventHandler
 	public void onEnterCheckpointRegion(PlayerEnteredRegionEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 
 		CheckpointArena arena = minigamer.getMatch().getArena();
@@ -74,7 +73,7 @@ public abstract class CheckpointMechanic extends SingleplayerMechanic {
 	@EventHandler
 	public void onCheckpointReset(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
-		Minigamer minigamer = PlayerManager.get(player);
+		Minigamer minigamer = Minigamer.of(player);
 		if (!minigamer.isPlaying(this)) return;
 
 		if (player.getInventory().getItemInMainHand() == null) return;

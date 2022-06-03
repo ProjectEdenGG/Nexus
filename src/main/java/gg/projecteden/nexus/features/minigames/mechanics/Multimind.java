@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.annotations.Regenerating;
@@ -79,7 +78,7 @@ public final class Multimind extends SingleplayerMechanic {
 		Block block = event.getClickedBlock();
 		if (EquipmentSlot.HAND != event.getHand() || block == null) return;
 
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 
 		if (Action.LEFT_CLICK_BLOCK.equals(event.getAction())) {

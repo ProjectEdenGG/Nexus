@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.menus.sabotage;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.annotations.Uncloseable;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.mechanics.Sabotage;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.matchdata.SabotageMatchData;
@@ -44,10 +43,10 @@ public class ResultsScreen extends AbstractVoteScreen {
 
 	@Override
 	public void init() {
-		SabotageMatchData matchData = PlayerManager.get(player).getMatch().getMatchData();
+		SabotageMatchData matchData = Minigamer.of(player).getMatch().getMatchData();
 
 		List<VoteWrapper> voteWrappers = new ArrayList<>(); // this was gonna be a sorted dict but that is a nightmare to do for values apparently
-		matchData.getMatch().getAliveMinigamers().forEach(minigamer -> voteWrappers.add(new VoteWrapper(minigamer, matchData.getVotesFor(minigamer).stream().map(PlayerManager::get).collect(Collectors.toSet()))));
+		matchData.getMatch().getAliveMinigamers().forEach(minigamer -> voteWrappers.add(new VoteWrapper(minigamer, matchData.getVotesFor(minigamer).stream().map(Minigamer::of).collect(Collectors.toSet()))));
 		Collections.sort(voteWrappers);
 		for (VoteWrapper voteWrapper : voteWrappers) {
 			int voteCount = voteWrapper.getVoteCount();

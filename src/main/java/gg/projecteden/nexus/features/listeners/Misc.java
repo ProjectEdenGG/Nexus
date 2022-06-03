@@ -18,7 +18,7 @@ import gg.projecteden.nexus.features.listeners.events.GolemBuildEvent.SnowGolemB
 import gg.projecteden.nexus.features.listeners.events.LivingEntityDamageByPlayerEvent;
 import gg.projecteden.nexus.features.listeners.events.PlayerDamageByPlayerEvent;
 import gg.projecteden.nexus.features.listeners.events.WorldGroupChangedEvent;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
+import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.warps.Warps;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.mode.ModeUser;
@@ -355,7 +355,7 @@ public class Misc implements Listener {
 		if (event.getCause() == DamageCause.VOID)
 			if (!(Arrays.asList(WorldGroup.SKYBLOCK, WorldGroup.ONEBLOCK).contains(WorldGroup.of(player))
 				|| player.getWorld().getEnvironment() == Environment.THE_END)) {
-				if (PlayerManager.get(player).getMatch() != null)
+				if (Minigamer.of(player).getMatch() != null)
 					Warps.spawn((Player) event.getEntity());
 			}
 	}

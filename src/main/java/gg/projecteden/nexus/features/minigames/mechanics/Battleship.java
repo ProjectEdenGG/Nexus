@@ -7,7 +7,6 @@ import com.sk89q.worldedit.world.block.BlockTypes;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.commands.mechanics.BattleshipCommand;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Match.MatchTasks.MatchTaskType;
@@ -287,7 +286,7 @@ public class Battleship extends TeamMechanic {
 
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 
 		event.setCancelled(true);
@@ -295,7 +294,7 @@ public class Battleship extends TeamMechanic {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockPlace(BlockPlaceEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 
 		event.setCancelled(true);
