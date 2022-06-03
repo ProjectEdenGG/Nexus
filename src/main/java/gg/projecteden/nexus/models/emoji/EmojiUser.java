@@ -3,6 +3,7 @@ package gg.projecteden.nexus.models.emoji;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import dev.morphia.annotations.PostLoad;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -36,6 +38,21 @@ public class EmojiUser implements PlayerOwnedObject {
 
 	public void give(Emoji emoji) {
 		owned.add(emoji.getName());
+	}
+
+	@PostLoad
+	void fix() {
+		final Map<String, String> converter = Map.of(
+			"+1", "thumbsup",
+			"-1", "thumbsdown"
+		);
+
+		converter.forEach((oldName, newName) -> {
+			if (owned.contains(oldName)) {
+				owned.remove(oldName);
+				owned.add(newName);
+			}
+		});
 	}
 
 	@Data
