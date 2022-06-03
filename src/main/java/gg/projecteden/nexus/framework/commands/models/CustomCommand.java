@@ -374,7 +374,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	 * @throws PlayerNotOnlineException the user is not on the server
 	 */
 	public void blockInMinigames() throws PlayerNotOnlineException, BlockedInMinigamesException {
-		if (PlayerManager.get(uuid()).isPlaying())
+		if (Minigamer.of(uuid()).isPlaying())
 			throw new BlockedInMinigamesException(false);
 	}
 

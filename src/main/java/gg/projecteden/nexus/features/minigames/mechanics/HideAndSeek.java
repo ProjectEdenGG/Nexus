@@ -6,7 +6,6 @@ import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.minigames.Minigames;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
@@ -112,7 +111,7 @@ public class HideAndSeek extends Infection {
 		Player player = event.getPlayer();
 		if (!player.getWorld().equals(Minigames.getWorld())) return;
 
-		Minigamer minigamer = PlayerManager.get(player);
+		Minigamer minigamer = Minigamer.of(player);
 		if (!minigamer.isInLobby(this)) return;
 
 		Match match = minigamer.getMatch();
@@ -296,7 +295,7 @@ public class HideAndSeek extends Infection {
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		// this method is basically checking to see if a hunter has swung at a hider's fake block
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 
 		if (
 				minigamer.isPlaying(this) &&

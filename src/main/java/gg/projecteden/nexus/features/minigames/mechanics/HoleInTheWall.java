@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.arenas.HoleInTheWallArena;
@@ -105,7 +104,7 @@ public class HoleInTheWall extends TeamlessMechanic {
 
 		matchData.getTracks().forEach(track -> {
 			Optional<Minigamer> minigamer = arena.worldguard().getPlayersInRegion(track.getRegion()).stream()
-					.map(PlayerManager::get)
+					.map(Minigamer::of)
 					.filter(_minigamer -> _minigamer.isPlaying(match))
 					.findFirst();
 
@@ -178,7 +177,7 @@ public class HoleInTheWall extends TeamlessMechanic {
 
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 
 		if (!isInAnswerRegion(minigamer, event.getBlock().getLocation()))
@@ -187,7 +186,7 @@ public class HoleInTheWall extends TeamlessMechanic {
 
 	@EventHandler
 	public void onRegionExit(PlayerLeavingRegionEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 
 		Match match = minigamer.getMatch();

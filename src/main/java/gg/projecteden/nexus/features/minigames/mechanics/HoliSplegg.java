@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.minigames.mechanics;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.features.minigames.Minigames;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.annotations.Regenerating;
@@ -146,7 +145,7 @@ public final class HoliSplegg extends TeamlessMechanic {
 		ProjectileSource source = projectile.getShooter();
 		if (!(source instanceof Player)) return;
 
-		Minigamer minigamer = PlayerManager.get((Player) source);
+		Minigamer minigamer = Minigamer.of((Player) source);
 		if (!minigamer.isPlaying(this)) return;
 
 		projectile.remove();

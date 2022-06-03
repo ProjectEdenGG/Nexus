@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.nameplates;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.listeners.Tab.Presence;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.framework.features.Features;
@@ -89,7 +88,7 @@ public class Nameplates extends Feature {
 
 	public static String of(Player player, Player viewer) {
 		final Presence presence = Presence.of(player);
-		final Minigamer minigamer = PlayerManager.get(player);
+		final Minigamer minigamer = Minigamer.of(player);
 
 		final JsonBuilder nameplate = new JsonBuilder();
 		if (minigamer.isPlaying())

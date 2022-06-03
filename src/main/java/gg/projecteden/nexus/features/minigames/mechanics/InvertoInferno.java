@@ -5,7 +5,6 @@ import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.features.minigames.Minigames;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
@@ -87,7 +86,7 @@ public final class InvertoInferno extends TeamlessMechanic {
 		Player player = event.getPlayer();
 		if (!player.getWorld().equals(Minigames.getWorld())) return;
 
-		Minigamer minigamer = PlayerManager.get(player);
+		Minigamer minigamer = Minigamer.of(player);
 		if (!minigamer.isPlaying(this)) return;
 
 		event.setCancelled(true);
@@ -102,7 +101,7 @@ public final class InvertoInferno extends TeamlessMechanic {
 
 		if (!player.getWorld().equals(Minigames.getWorld())) return;
 
-		Minigamer minigamer = PlayerManager.get((Player) source);
+		Minigamer minigamer = Minigamer.of((Player) source);
 		if (!minigamer.isPlaying(this)) return;
 
 		PlayerInventory playerInv = player.getInventory();
@@ -129,7 +128,7 @@ public final class InvertoInferno extends TeamlessMechanic {
 		Player player = (Player) projectile.getShooter();
 		if (!player.getWorld().equals(Minigames.getWorld())) return;
 
-		Minigamer minigamer = PlayerManager.get((Player) source);
+		Minigamer minigamer = Minigamer.of((Player) source);
 		if (!minigamer.isPlaying(this)) return;
 
 		// cancel event
@@ -173,7 +172,7 @@ public final class InvertoInferno extends TeamlessMechanic {
 		Player player = event.getPlayer();
 		if (!player.getWorld().equals(Minigames.getWorld())) return;
 
-		Minigamer minigamer = PlayerManager.get(player);
+		Minigamer minigamer = Minigamer.of(player);
 		if (!minigamer.isPlaying(this)) return;
 
 		ItemStack eventItem = event.getItem();
@@ -241,7 +240,7 @@ public final class InvertoInferno extends TeamlessMechanic {
 	public void onBlockBreak(BlockBreakEvent event) {
 		if (!event.getPlayer().getWorld().equals(Minigames.getWorld())) return;
 
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 
 		Block eventBlock = event.getBlock();

@@ -6,7 +6,6 @@ import gg.projecteden.nexus.features.menus.api.InventoryListener;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.matchdata.SabotageMatchData;
@@ -40,7 +39,7 @@ public class MedicalScanTask extends AbstractTaskMenu {
 
 	@Override
 	public void init() {
-		Minigamer minigamer = PlayerManager.get(player);
+		Minigamer minigamer = Minigamer.of(player);
 		Match match = minigamer.getMatch();
 		SabotageMatchData data = match.getMatchData();
 		tasks = match.getTasks();

@@ -6,7 +6,6 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.mechanics.Mastermind;
 import gg.projecteden.nexus.features.minigames.mechanics.common.CheckpointMechanic;
 import gg.projecteden.nexus.features.minigames.menus.ArenaMenu;
@@ -100,7 +99,7 @@ public class MinigamesCommand extends CustomCommand {
 		super(event);
 		PREFIX = Minigames.PREFIX;
 		if (sender() instanceof Player)
-			minigamer = PlayerManager.get(player());
+			minigamer = Minigamer.of(player());
 	}
 
 	@Path
@@ -159,7 +158,7 @@ public class MinigamesCommand extends CustomCommand {
 			error("Cannot use this command on production server");
 
 		for (Player player : OnlinePlayers.getAll())
-			PlayerManager.get(player).join(arena);
+			Minigamer.of(player).join(arena);
 	}
 
 	@Path("(quit|leave)")
@@ -773,7 +772,7 @@ public class MinigamesCommand extends CustomCommand {
 		OfflinePlayer player = PlayerUtils.getPlayer(value);
 		if (!player.isOnline())
 			throw new PlayerNotOnlineException(player);
-		return PlayerManager.get(player.getPlayer());
+		return Minigamer.of(player.getPlayer());
 	}
 
 	@TabCompleterFor(Minigamer.class)

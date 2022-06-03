@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
 import com.sk89q.worldedit.regions.Region;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.annotations.Regenerating;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
@@ -55,8 +54,8 @@ public final class Paintball extends TeamMechanic {
 		if (!(event.getEntity() instanceof Snowball)) return;
 		if (!(event.getHitEntity() instanceof Player)) return;
 		if (!(event.getEntity().getShooter() instanceof Player)) return;
-		Minigamer victim = PlayerManager.get(event.getHitEntity());
-		Minigamer attacker = PlayerManager.get((Player) event.getEntity().getShooter());
+		Minigamer victim = Minigamer.of(event.getHitEntity());
+		Minigamer attacker = Minigamer.of((Player) event.getEntity().getShooter());
 		if (victim.equals(attacker)) return;
 		if (victim.isPlaying(this) && attacker.isPlaying(this) && !victim.getTeam().equals(attacker.getTeam()))
 			kill(victim, attacker);
@@ -66,7 +65,7 @@ public final class Paintball extends TeamMechanic {
 	public void onSnowBallHitBlock(ProjectileHitEvent event) {
 		if (!(event.getEntity() instanceof Snowball)) return;
 		if (!(event.getEntity().getShooter() instanceof Player)) return;
-		Minigamer minigamer = PlayerManager.get((Player) event.getEntity().getShooter());
+		Minigamer minigamer = Minigamer.of((Player) event.getEntity().getShooter());
 		if (!minigamer.isPlaying(this)) return;
 		Block hitBlock = event.getHitBlock();
 		if (hitBlock == null) return;
