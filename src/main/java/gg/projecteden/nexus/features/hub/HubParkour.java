@@ -102,10 +102,12 @@ public class HubParkour implements Listener {
 				if (run.getCurrentRunSplits().size() != course.getCheckpoints().size() - 1)
 					return;
 
-				final Timespan timespan = TimespanBuilder.of(run.getLastCheckpointTime()).displayMillis().build();
-				run.getCurrentRunSplits().add(timespan);
-				user.sendMessage(PREFIX + "Reached checkpoint &e#" + course.getCheckpoints().size() + " &3in &e" + timespan.format(FormatType.SHORT));
-				user.sendMessage(PREFIX + "&eCompleted parkour &3in &e" + Timespan.ofMillis(run.getCurrentRunTime()).format(FormatType.SHORT));
+				final Timespan checkpointTimespan = TimespanBuilder.of(run.getLastCheckpointTime()).displayMillis().build();
+				run.getCurrentRunSplits().add(checkpointTimespan);
+				user.sendMessage(PREFIX + "Reached checkpoint &e#" + course.getCheckpoints().size() + " &3in &e" + checkpointTimespan.format(FormatType.SHORT));
+
+				final Timespan completedTimespan = TimespanBuilder.ofMillis(run.getCurrentRunTime()).displayMillis().build();
+				user.sendMessage(PREFIX + "&eCompleted parkour &3in &e" + completedTimespan.format(FormatType.SHORT));
 
 				if (run.getBestRunSplits().isEmpty() || run.getCurrentRunTime() < run.getBestRunTime()) {
 					run.setBestRunSplits(new ArrayList<>(run.getCurrentRunSplits()));
