@@ -215,7 +215,7 @@
         <dependency>
             <groupId>gg.projecteden</groupId>
             <artifactId>eden-api</artifactId>
-            <version>1.7.15</version>
+            <version>1.7.17</version>
         </dependency>
         <!-- Lombok Project -->
         <dependency>
@@ -255,7 +255,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.25</version>
+            <version>8.0.29</version>
         </dependency>
         <!-- Morphia -->
         <dependency>
@@ -276,13 +276,6 @@
             <version>5.6.8</version>
             <scope>provided</scope>
         </dependency>
-        <!-- JDA-Utilities -->
-        <dependency>
-            <groupId>com.github.JDA-Applications.JDA-Utilities</groupId>
-            <artifactId>jda-utilities-command</artifactId>
-            <version>804d58a5ed</version>
-            <scope>compile</scope>
-        </dependency>
         <!-- Twitter4J -->
         <dependency>
             <groupId>org.twitter4j</groupId>
@@ -299,13 +292,13 @@
         <dependency>
             <groupId>com.google.api-client</groupId>
             <artifactId>google-api-client</artifactId>
-            <version>1.32.2</version>
+            <version>1.34.1</version>
         </dependency>
         <!-- Google OAuth -->
         <dependency>
             <groupId>com.google.oauth-client</groupId>
             <artifactId>google-oauth-client-jetty</artifactId>
-            <version>1.32.1</version>
+            <version>1.33.2</version>
         </dependency>
         <!-- Google Sheets -->
         <dependency>
