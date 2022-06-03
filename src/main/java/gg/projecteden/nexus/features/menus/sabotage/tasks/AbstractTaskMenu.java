@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.menus.sabotage.tasks;
 
 import gg.projecteden.nexus.features.menus.api.InventoryListener;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.mechanics.Sabotage;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -24,7 +23,7 @@ public abstract class AbstractTaskMenu extends InventoryProvider {
 	private final Map<UUID, Integer> closeInvTasks = new HashMap<>();
 	protected final InventoryListener<InventoryCloseEvent> handleInvClose = new InventoryListener<>(InventoryCloseEvent.class, event -> {
 		if (closeInvTasks.containsKey(event.getPlayer().getUniqueId())) {
-			Minigamer minigamer = PlayerManager.get(event.getPlayer());
+			Minigamer minigamer = Minigamer.of(event.getPlayer());
 
 			// we can assume that if they aren't playing Sabotage anymore that the task has already been cancelled
 			if (!minigamer.isPlaying(Sabotage.class)) return;
@@ -39,7 +38,7 @@ public abstract class AbstractTaskMenu extends InventoryProvider {
 	// todo: use for more tasks
 	public void scheduleInvClose(HasPlayer _player) {
 		Player player = _player.getPlayer();
-		Minigamer minigamer = PlayerManager.get(player);
+		Minigamer minigamer = Minigamer.of(player);
 		if (!minigamer.isPlaying(Sabotage.class)) return; // don't schedule if match just ended
 
 		Match.MatchTasks tasks = minigamer.getMatch().getTasks();

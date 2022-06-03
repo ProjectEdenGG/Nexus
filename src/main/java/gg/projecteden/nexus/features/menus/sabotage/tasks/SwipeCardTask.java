@@ -4,7 +4,7 @@ import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
+import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.Task;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -67,7 +67,7 @@ public class SwipeCardTask extends AbstractTaskMenu {
 				contents.set(destination, contents.get(destination).get().clone(new ItemBuilder(Material.RED_STAINED_GLASS_PANE).name("Too " + fmt + ", try again").build()));
 				new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO).receiver(player).category(SoundCategory.MASTER).volume(2f).play();
 			} else {
-				getTask().partCompleted(PlayerManager.get(player));
+				getTask().partCompleted(Minigamer.of(player));
 				close();
 			}
 		}));

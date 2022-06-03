@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.listeners;
 import com.destroystokyo.paper.event.player.PlayerAttackEntityCooldownResetEvent;
 import gg.projecteden.annotations.Disabled;
 import gg.projecteden.nexus.features.chat.Koda;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
+import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.models.tip.Tip;
 import gg.projecteden.nexus.models.tip.Tip.TipType;
 import gg.projecteden.nexus.models.tip.TipService;
@@ -27,7 +27,7 @@ public class SpamClick implements Listener {
 	@EventHandler
 	public void onAttackEntityCooldownReset(PlayerAttackEntityCooldownResetEvent event) {
 		Player player = event.getPlayer();
-		if (PlayerManager.get(player).isPlaying()) return;
+		if (Minigamer.of(player).isPlaying()) return;
 		if (CitizensUtils.isNPC(player)) return;
 
 		if (event.getCooledAttackStrength() == 1)

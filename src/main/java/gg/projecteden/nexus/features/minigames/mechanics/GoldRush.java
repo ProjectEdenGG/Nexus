@@ -6,7 +6,6 @@ import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import gg.projecteden.nexus.features.minigames.Minigames;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.arenas.GoldRushArena;
@@ -120,7 +119,7 @@ public final class GoldRush extends TeamlessMechanic {
 
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 		event.setDropItems(false);
 		if (event.getBlock().getType().equals(Material.IRON_ORE)) {
@@ -131,7 +130,7 @@ public final class GoldRush extends TeamlessMechanic {
 
 	@EventHandler
 	public void onClick(PlayerInteractEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 		if (event.getClickedBlock() == null) return;
 		if (!event.getClickedBlock().getType().equals(Material.IRON_ORE)) return;
@@ -141,13 +140,13 @@ public final class GoldRush extends TeamlessMechanic {
 
 	@EventHandler
 	public void onPlaceBlock(BlockPlaceEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (minigamer.isPlaying(this)) event.setCancelled(true);
 	}
 
 	@EventHandler
 	public void onRegionEnter(PlayerEnteredRegionEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 		if (minigamer.getMatch().getArena().ownsRegion(event.getRegion().getId(), "win")) {
 			minigamer.scored();

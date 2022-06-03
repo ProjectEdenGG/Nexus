@@ -3,7 +3,6 @@ package gg.projecteden.nexus.framework.commands.models;
 import com.google.common.base.Strings;
 import gg.projecteden.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.features.commands.staff.MultiCommandCommand;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -373,7 +372,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	 * @throws PlayerNotOnlineException the user is not on the server
 	 */
 	public void blockInMinigames() throws PlayerNotOnlineException, BlockedInMinigamesException {
-		if (PlayerManager.get(uuid()).isPlaying())
+		if (Minigamer.of(uuid()).isPlaying())
 			throw new BlockedInMinigamesException(false);
 	}
 

@@ -6,7 +6,6 @@ import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.chat.events.PublicChatEvent;
 import gg.projecteden.nexus.features.menus.sabotage.ImpostorMenu;
 import gg.projecteden.nexus.features.minigames.Minigames;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.annotations.Scoreboard;
@@ -154,21 +153,21 @@ public class Sabotage extends TeamMechanic {
 
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void onInventoryCloseEvent(InventoryCloseEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (minigamer.isPlaying(this))
 			event.getPlayer().setItemOnCursor(null);
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void onInventoryEvent(InventoryClickEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getWhoClicked());
+		Minigamer minigamer = Minigamer.of(event.getWhoClicked());
 		if (minigamer.isPlaying(this) && event.getClickedInventory() != null && (event.getClickedInventory().getType() == InventoryType.CRAFTING || event.getClickedInventory() instanceof PlayerInventory || !event.isLeftClick()))
 			event.setCancelled(true);
 	}
 
 	@EventHandler
 	public void offhandEvent(PlayerSwapHandItemsEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (minigamer.isPlaying(this))
 			event.setCancelled(true);
 	}
@@ -191,7 +190,7 @@ public class Sabotage extends TeamMechanic {
 
 	@EventHandler(ignoreCancelled = true)
 	public void onChat(PublicChatEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getChatter());
+		Minigamer minigamer = Minigamer.of(event.getChatter());
 		if (!minigamer.isPlaying(this)) return;
 		SabotageMatchData matchData = minigamer.getMatch().getMatchData();
 		if (!event.getChannel().equals(matchData.getGameChannel())) return;
@@ -232,11 +231,11 @@ public class Sabotage extends TeamMechanic {
 					match.getTasks().sync(() -> {
 						List<Minigamer> nearby = new ArrayList<>();
 						location.getNearbyEntitiesByType(Player.class, lightLevel).forEach(_player -> {
-							Minigamer other = PlayerManager.get(_player);
+							Minigamer other = Minigamer.of(_player);
 							if (!other.isAlive() || !other.isPlaying(match)) return;
 							nearby.add(other);
 						});
-						nearby.removeAll(matchData.getVenters().keySet().stream().map(PlayerManager::get).collect(Collectors.toList()));
+						nearby.removeAll(matchData.getVenters().keySet().stream().map(Minigamer::of).collect(Collectors.toList()));
 						otherPlayers.removeAll(nearby);
 						PlayerUtils.hidePlayers(minigamer, otherPlayers);
 						PlayerUtils.showPlayers(minigamer, nearby);
@@ -439,7 +438,7 @@ public class Sabotage extends TeamMechanic {
 
 	@EventHandler
 	public void onCrouch(PlayerToggleSneakEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (event.isSneaking() && minigamer.isPlaying(this)) {
 			SabotageMatchData matchData = minigamer.getMatch().getMatchData();
 			if (matchData.getVenters().containsKey(minigamer.getUniqueId())) {
@@ -451,7 +450,7 @@ public class Sabotage extends TeamMechanic {
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void onItemHeldEvent(PlayerItemHeldEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 		ItemStack item = event.getPlayer().getInventory().getItem(event.getNewSlot());
 		if (isNullOrAir(item)) return;
@@ -467,7 +466,7 @@ public class Sabotage extends TeamMechanic {
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onInteract(PlayerInteractEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 		if (event.getHand() != EquipmentSlot.HAND) return;
 		if (!Utils.ActionGroup.RIGHT_CLICK.applies(event)) return;
@@ -506,7 +505,7 @@ public class Sabotage extends TeamMechanic {
 	@EventHandler
 	public void onButtonInteract(PlayerInteractAtEntityEvent event) {
 		Player player = event.getPlayer();
-		Minigamer minigamer = PlayerManager.get(player);
+		Minigamer minigamer = Minigamer.of(player);
 		if (!minigamer.isPlaying(this)) return;
 		if (!minigamer.isAlive()) return;
 		if (!(event.getRightClicked() instanceof ArmorStand armorStand)) return;
@@ -554,7 +553,7 @@ public class Sabotage extends TeamMechanic {
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
 	public void onHandAnimation(PlayerAnimationEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (minigamer.isPlaying(this) && event.getAnimationType() == PlayerAnimationType.ARM_SWING)
 			event.setCancelled(true);
 	}
@@ -590,7 +589,7 @@ public class Sabotage extends TeamMechanic {
 
 	@EventHandler
 	public void onEnterRegion(PlayerEnteredRegionEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 		if (!event.getRegion().getId().startsWith(minigamer.getMatch().getArena().getRegionBaseName()+"_room_")) return;
 		ActionBarUtils.sendActionBar(minigamer, camelCase(event.getRegion().getId().split("_room_")[1]));
@@ -622,7 +621,7 @@ public class Sabotage extends TeamMechanic {
 	@EventHandler
 	public void onSoundEvent(LocationNamedSoundEvent event) {
 		try {
-			Minigamer minigamer = PlayerManager.get(event.getPlayer());
+			Minigamer minigamer = Minigamer.of(event.getPlayer());
 			// only acknowledge events inside of a sabotage map
 			if (!(minigamer != null && minigamer.isPlaying(this)))
 				if (new WorldGuardUtils(event.getWorld()).getRegionsLikeAt("sabotage_\\w+", event.getVector()).isEmpty())

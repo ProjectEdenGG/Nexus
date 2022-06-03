@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.minigames.mechanics;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.Minigames;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.Team;
@@ -254,7 +253,7 @@ public class Murder extends TeamMechanic {
 	@EventHandler
 	private void onPlayerInteract(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
-		Minigamer minigamer = PlayerManager.get(player);
+		Minigamer minigamer = Minigamer.of(player);
 		if (!minigamer.isPlaying(this)) return;
 
 		if (!ActionGroup.RIGHT_CLICK.applies(event)) return;
@@ -347,10 +346,10 @@ public class Murder extends TeamMechanic {
 	public void onProjectileHit(ProjectileHitEvent event) {
 		// Make sure the shooter & victim are players
 		if (!(event.getEntity().getShooter() != null && event.getEntity().getShooter() instanceof Player)) return;
-		Minigamer attacker = PlayerManager.get((Player) event.getEntity().getShooter());
+		Minigamer attacker = Minigamer.of((Player) event.getEntity().getShooter());
 		Minigamer victim = null;
 		if (event.getHitEntity() != null && event.getHitEntity() instanceof Player)
-			victim = PlayerManager.get(event.getHitEntity());
+			victim = Minigamer.of(event.getHitEntity());
 
 		if (!attacker.isPlaying(this)) return;
 		if (!isMurderer(attacker)) return;
@@ -373,7 +372,7 @@ public class Murder extends TeamMechanic {
 
 	@EventHandler
 	public void onDrop(PlayerDropItemEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 
 		// Only allow iron ingots to be dropped
@@ -384,7 +383,7 @@ public class Murder extends TeamMechanic {
 	@EventHandler
 	public void onPickup(EntityPickupItemEvent event) {
 		if (!(event.getEntity() instanceof Player player)) return;
-		Minigamer minigamer = PlayerManager.get(player);
+		Minigamer minigamer = Minigamer.of(player);
 		if (!minigamer.isPlaying(this)) return;
 
 		event.setCancelled(true);

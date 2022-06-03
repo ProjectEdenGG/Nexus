@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.minigames.mechanics.common;
 
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.Team;
@@ -63,7 +62,7 @@ public abstract class CaptureTheFlagMechanic extends TeamMechanic {
 
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 
 		if (!(
 				minigamer.isPlaying(this) &&
@@ -85,7 +84,7 @@ public abstract class CaptureTheFlagMechanic extends TeamMechanic {
 
 	@EventHandler
 	public void onRegionEvent(PlayerEnteredRegionEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 		if (!minigamer.getMatch().getArena().ownsRegion(event.getRegion(), "kill")) return;
 

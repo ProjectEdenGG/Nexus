@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.menus.sabotage;
 
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.mechanics.Sabotage;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -35,7 +34,7 @@ public class VotingScreen extends AbstractVoteScreen {
 
 	@Override
 	public void init() {
-		Minigamer voter = PlayerManager.get(player);
+		Minigamer voter = Minigamer.of(player);
 		Match match = voter.getMatch();
 		SabotageMatchData matchData = match.getMatchData();
 

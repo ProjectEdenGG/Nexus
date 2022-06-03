@@ -9,7 +9,6 @@ import gg.projecteden.nexus.features.minigames.lobby.Parkour;
 import gg.projecteden.nexus.features.minigames.lobby.TickPerks;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.MatchData;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -150,11 +149,11 @@ public class Minigames extends Feature {
 	}
 
 	public static List<Minigamer> getMinigamers() {
-		return getPlayers().stream().map(PlayerManager::get).collect(Collectors.toList());
+		return getPlayers().stream().map(Minigamer::of).collect(Collectors.toList());
 	}
 
 	public static List<Minigamer> getActiveMinigamers() {
-		return getPlayers().stream().map(PlayerManager::get).filter(minigamer -> minigamer.getMatch() != null).collect(Collectors.toList());
+		return getPlayers().stream().map(Minigamer::of).filter(minigamer -> minigamer.getMatch() != null).collect(Collectors.toList());
 	}
 
 	public static void broadcast(String announcement) {

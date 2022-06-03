@@ -6,7 +6,6 @@ import com.google.common.collect.HashBiMap;
 import gg.projecteden.nexus.features.menus.sabotage.AbstractVoteScreen;
 import gg.projecteden.nexus.features.menus.sabotage.ResultsScreen;
 import gg.projecteden.nexus.features.menus.sabotage.VotingScreen;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.mechanics.Sabotage;
 import gg.projecteden.nexus.features.minigames.models.Loadout;
 import gg.projecteden.nexus.features.minigames.models.Match;
@@ -265,12 +264,12 @@ public class SabotageMatchData extends MatchData {
 	public @Nullable Minigamer getVote(HasUniqueId player) {
 		if (!votes.containsKey(player.getUniqueId()))
 			return null;
-		return PlayerManager.get(votes.get(player.getUniqueId()));
+		return Minigamer.of(votes.get(player.getUniqueId()));
 	}
 
 	public @NotNull Set<Minigamer> getVotesFor(HasUniqueId player) {
 		UUID uuid = player == null ? null : player.getUniqueId();
-		return votes.entrySet().stream().filter(entry -> Objects.equals(entry.getValue(), uuid)).map(entry -> PlayerManager.get(entry.getKey())).collect(Collectors.toSet());
+		return votes.entrySet().stream().filter(entry -> Objects.equals(entry.getValue(), uuid)).map(entry -> Minigamer.of(entry.getKey())).collect(Collectors.toSet());
 	}
 
 	public int maxVotes() {
@@ -288,7 +287,7 @@ public class SabotageMatchData extends MatchData {
 	}
 
 	public boolean vote(HasUniqueId voter, HasUniqueId target) {
-		MinigamerVoteEvent event = new MinigamerVoteEvent(PlayerManager.get(voter), PlayerManager.get(target), (VotingScreen) votingScreen);
+		MinigamerVoteEvent event = new MinigamerVoteEvent(Minigamer.of(voter), Minigamer.of(target), (VotingScreen) votingScreen);
 		event.setCancelled(votes.containsKey(voter.getUniqueId()) || waitingToVote());
 		if (event.callEvent()) {
 			votes.put(voter.getUniqueId(), target == null ? null : target.getUniqueId());
@@ -351,7 +350,7 @@ public class SabotageMatchData extends MatchData {
 			Set<Task> taskSet = entry.getValue();
 			Minigamer minigamer;
 			try {
-				minigamer = PlayerManager.get(uuid);
+				minigamer = Minigamer.of(uuid);
 			} catch (PlayerNotOnlineException e) {continue;}
 			if (SabotageTeam.of(minigamer) == SabotageTeam.IMPOSTOR) continue;
 			for (Task task : taskSet) {

@@ -4,7 +4,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
+import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
@@ -59,7 +59,7 @@ public class RainbowArmor implements PlayerOwnedObject {
 	}
 
 	public boolean isNotAllowed() {
-		return !isOnline() || PlayerManager.get(getOnlinePlayer()).isPlaying();
+		return !isOnline() || Minigamer.of(getOnlinePlayer()).isPlaying();
 	}
 
 	public boolean isSlotEnabled(ArmorSlot slot) {

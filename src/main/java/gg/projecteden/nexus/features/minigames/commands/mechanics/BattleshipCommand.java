@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.minigames.commands.mechanics;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.mechanics.Battleship;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -49,7 +48,7 @@ public class BattleshipCommand extends CustomCommand {
 
 	public BattleshipCommand(@NonNull CommandEvent event) {
 		super(event);
-		minigamer = PlayerManager.get(player());
+		minigamer = Minigamer.of(player());
 		if (minigamer.isIn(Battleship.class)) {
 			mechanic = (Battleship) MechanicType.BATTLESHIP.get();
 			match = minigamer.getMatch();

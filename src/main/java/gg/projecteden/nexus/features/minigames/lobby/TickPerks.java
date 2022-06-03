@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.minigames.lobby;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.Minigames;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.menus.PerkMenu;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.perks.Perk;
@@ -58,7 +57,7 @@ public class TickPerks implements Listener {
 		Nexus.registerListener(this);
 
 		Tasks.repeat(5, Minigames.PERK_TICK_DELAY, () -> Minigames.getWorld().getPlayers().forEach(player -> {
-			Minigamer minigamer = PlayerManager.get(player);
+			Minigamer minigamer = Minigamer.of(player);
 			if ((minigamer.isPlaying() || isInLobby(player)) && !isNPC(player)) {
 				PerkOwner perkOwner = service.get(player);
 
@@ -134,7 +133,7 @@ public class TickPerks implements Listener {
 
 	private boolean shouldShowLoadout(PerkOwner perkOwner) {
 		final Player player = perkOwner.getOnlinePlayer();
-		final Minigamer minigamer = PlayerManager.get(player);
+		final Minigamer minigamer = Minigamer.of(player);
 
 		if (!minigamer.isPlaying() && !isInLobby(player))
 			return false;

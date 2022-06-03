@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.annotations.Regenerating;
@@ -11,7 +10,6 @@ import gg.projecteden.nexus.features.minigames.models.matchdata.IMastermindMatch
 import gg.projecteden.nexus.features.minigames.models.matchdata.MastermindMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.singleplayer.SingleplayerMechanic;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.Nullables;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.GameMode;
@@ -98,7 +96,7 @@ public final class Mastermind extends SingleplayerMechanic {
 		Block block = event.getClickedBlock();
 		if (EquipmentSlot.HAND != event.getHand() || block == null) return;
 
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 
 		if (Action.LEFT_CLICK_BLOCK.equals(event.getAction())) {

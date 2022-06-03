@@ -2,8 +2,8 @@ package gg.projecteden.nexus.features.menus.sabotage.tasks;
 
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
+import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.matchdata.SabotageMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.Task;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.taskpartdata.LightsTaskPartData;
@@ -25,7 +25,7 @@ public class LightsTask extends AbstractTaskMenu {
 	@Override
 	public void init() {
 		AtomicInteger taskId = new AtomicInteger();
-		Match match = PlayerManager.get(player).getMatch();
+		Match match = Minigamer.of(player).getMatch();
 		SabotageMatchData matchData = match.getMatchData();
 		taskId.set(match.getTasks().repeat(1, 1, () -> {
 			if (matchData.getSabotage() == null)

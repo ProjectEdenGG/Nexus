@@ -4,7 +4,6 @@ import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.arenas.SabotageArena;
@@ -42,7 +41,7 @@ public class ImpostorMenu extends InventoryProvider {
 
 	@Override
 	public void init() {
-		Minigamer minigamer = PlayerManager.get(player);
+		Minigamer minigamer = Minigamer.of(player);
 		Match match = minigamer.getMatch();
 		SabotageMatchData matchData = match.getMatchData();
 		match.getTasks().repeat(1, 2, () -> {

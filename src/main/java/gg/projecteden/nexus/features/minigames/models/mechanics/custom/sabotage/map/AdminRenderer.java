@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.map;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.arenas.SabotageArena;
@@ -26,7 +25,7 @@ public class AdminRenderer extends SabotageMapRenderer {
 
 	@Override
 	public void render(@NotNull MapView map, @NotNull MapCanvas canvas, @NotNull Player player) {
-		Minigamer minigamer = PlayerManager.get(player);
+		Minigamer minigamer = Minigamer.of(player);
 		Match match = minigamer.getMatch();
 		Map<ProtectedRegion, Integer> headCount = new HashMap<>();
 		match.getAlivePlayers().forEach(player1 -> regions.stream()

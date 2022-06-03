@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.minigames.mechanics;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchBeginEvent;
@@ -85,7 +84,7 @@ public class FallingBlocks extends TeamlessMechanic {
 
 	@EventHandler
 	public void onPlayerEnteringRegion(PlayerEnteringRegionEvent event) {
-		final Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		final Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this))
 			return;
 
@@ -103,7 +102,7 @@ public class FallingBlocks extends TeamlessMechanic {
 		if (!(event.getEntity() instanceof Player player))
 			return;
 
-		final Minigamer minigamer = PlayerManager.get(player);
+		final Minigamer minigamer = Minigamer.of(player);
 		if (!minigamer.isPlaying(this))
 			return;
 

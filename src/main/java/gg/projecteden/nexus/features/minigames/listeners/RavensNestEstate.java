@@ -4,7 +4,6 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.annotations.Disabled;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
@@ -134,7 +133,7 @@ public class RavensNestEstate implements Listener {
 	@EventHandler
 	public void onEnterRegion(PlayerEnteredRegionEvent event) {
 		Player player = event.getPlayer();
-		Minigamer minigamer = PlayerManager.get(player);
+		Minigamer minigamer = Minigamer.of(player);
 		if (!isPlayingThis(minigamer)) return;
 
 		Match match = minigamer.getMatch();
@@ -222,7 +221,7 @@ public class RavensNestEstate implements Listener {
 
 		Material material = event.getClickedBlock().getType();
 		Location loc = event.getClickedBlock().getLocation();
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!isPlayingThis(minigamer)) return;
 		Match match = minigamer.getMatch();
 		switch (material) {
