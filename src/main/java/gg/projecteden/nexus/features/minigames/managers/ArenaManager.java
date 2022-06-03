@@ -6,7 +6,6 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -26,9 +25,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ArenaManager {
-	private static List<Arena> arenas = new ArrayList<>();
-	@Getter
-	private static String folder = "plugins/Nexus/minigames/arenas/";
+	private static final List<Arena> arenas = new ArrayList<>();
+	private static final String FOLDER = "plugins/Nexus/minigames/arenas/";
 
 	public static List<Arena> getAll() {
 		return arenas;
@@ -136,7 +134,7 @@ public class ArenaManager {
 	}
 
 	private static String getFile(String name) {
-		return folder + name + ".yml";
+		return FOLDER + name + ".yml";
 	}
 
 	private static FileConfiguration getConfig(String name) {
@@ -155,10 +153,10 @@ public class ArenaManager {
 
 	@SneakyThrows
 	public static void read() {
-		File file = Paths.get(folder).toFile();
+		File file = Paths.get(FOLDER).toFile();
 		if (!file.exists()) file.createNewFile();
 		arenas.clear();
-		try (Stream<Path> paths = Files.walk(Paths.get(folder))) {
+		try (Stream<Path> paths = Files.walk(Paths.get(FOLDER))) {
 			paths.forEach(filePath -> {
 				try {
 					if (!Files.isRegularFile(filePath)) return;
