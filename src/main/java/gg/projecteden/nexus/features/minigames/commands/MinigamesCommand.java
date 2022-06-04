@@ -36,6 +36,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.MustBeIngameException;
+import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.minigamersetting.MinigamerSetting;
 import gg.projecteden.nexus.models.minigamersetting.MinigamerSettingService;
 import gg.projecteden.nexus.models.minigamessetting.MinigamesConfig;
@@ -62,6 +63,8 @@ import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.Env;
+import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.utils.UUIDUtils;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.GameMode;
@@ -526,6 +529,9 @@ public class MinigamesCommand extends CustomCommand {
 		int count = players.size() - 1;
 		if (count == 0)
 			error("There is no one to invite!");
+
+		if (!(new CooldownService().check(UUIDUtils.UUID0, "minigame_invite", TickTime.SECOND.x(3))))
+			return;
 
 		updateInvite(arena);
 		sendInvite(new WorldGuardUtils(player()).getPlayersInRegion("minigamelobby"));
