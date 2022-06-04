@@ -249,7 +249,7 @@ public class CustomBlockListener implements Listener {
 		CustomBlock clickedCustomBlock = CustomBlock.fromBlock(clickedBlock);
 		// Place
 		if (isSpawningEntity(event, clickedBlock, clickedCustomBlock)) {
-			debug("is spawning entity");
+			debug("is spawning entity: cancel=" + event.isCancelled());
 			CustomBlockSounds.updateAction(player, BlockAction.UNKNOWN);
 			return;
 		}
@@ -442,8 +442,9 @@ public class CustomBlockListener implements Listener {
 			isInteractable = false;
 		}
 
-		if (!player.isSneaking() && isInteractable)
+		if (!player.isSneaking() && isInteractable) {
 			return false;
+		}
 
 		ItemStack itemInHand = event.getItem();
 		if (isNullOrAir(itemInHand)) {
@@ -702,4 +703,103 @@ public class CustomBlockListener implements Listener {
 			fixTripwireNearby(player, neighbor, visited);
 		}
 	}
+
+	// TODO
+//	public void updateConnectedTripwire(Player player, CustomBlock customBlock, Location origin){
+//		if (customBlock != CustomBlock.TRIPWIRE && customBlock != CustomBlock.TRIPWIRE_CROSS)
+//			return;
+//
+//		Block originBlock = origin.getBlock();
+//		BlockFace facing = CustomBlockUtils.getFacing(customBlock, originBlock.getBlockData(), originBlock.getRelative(BlockFace.DOWN));
+//
+//		Set<BlockFace> faces = Set.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST);
+//		Set<Location> updated = new HashSet<>();
+//		Set<Location> hooks = new HashSet<>();
+//
+//		// update tripwire
+//		for (BlockFace face : faces) {
+//			Block neighbor = originBlock.getRelative(face);
+//			Location neighborLoc = neighbor.getLocation();
+//
+//			if(updated.contains(neighborLoc))
+//				continue;
+//
+//			CustomBlock _customBlock = CustomBlock.fromBlock(neighbor);
+//			if(_customBlock == null) {
+//				if (neighbor.getType() == Material.TRIPWIRE_HOOK) {
+//					hooks.add(neighborLoc);
+//				}
+//				continue;
+//			}
+//
+//			BlockFace _facing = CustomBlockUtils.getFacing(_customBlock, neighbor.getBlockData(), neighbor.getRelative(BlockFace.DOWN));
+//
+//			if(_customBlock == CustomBlock.TRIPWIRE) {
+//				if (_facing != facing) {
+//					updated.add(neighborLoc);
+//					customBlock.updateBlock(player, CustomBlock.TRIPWIRE_CROSS, originBlock);
+//				}
+//			} else if(_customBlock == CustomBlock.TRIPWIRE_CROSS) {
+//				Map<Location, BlockFace> neighbors = new HashMap<>();
+//				for (BlockFace _face : faces) {
+//					Block crossNeighbor = neighbor.getRelative(_face);
+//					CustomBlock neighborCustomBlock = CustomBlock.fromBlock(crossNeighbor);
+//					if(neighborCustomBlock == null)
+//						continue;
+//
+//					if(neighborCustomBlock == CustomBlock.TRIPWIRE || neighborCustomBlock == CustomBlock.TRIPWIRE_CROSS){
+//						BlockFace __facing = CustomBlockUtils.getFacing(_customBlock, neighbor.getBlockData(), neighbor.getRelative(BlockFace.DOWN));
+//						neighbors.put(crossNeighbor.getLocation(), __facing);
+//					}
+//				}
+//
+//				if(neighbors.isEmpty()){
+//					updated.add(neighborLoc);
+//					customBlock.updateBlock(player, CustomBlock.TRIPWIRE, originBlock);
+//				} else {
+//					Set<BlockFace> directions = new HashSet<>(neighbors.values());
+//					if(directions.size() == 1){
+//						BlockFace neighborFace = directions.stream().toList().get(0);
+//						if(neighborFace == facing)
+//							//
+//					}
+//				}
+//			}
+//		}
+//
+//		// update hooks
+//	}
+//
+//	public void updateConnectedTripwire1(Location origin){
+//
+//		Set<Location> tripwire = updateConnectedTripwire(new HashSet<>(), origin, new HashSet<>());
+//		// TODO: using tripwire, properly setup the hooks
+//	}
+//
+//	public Set<Location> updateConnectedTripwire(Set<Location> visited, Location current, Set<Location> tripwire){
+//		for (BlockFace face : CustomBlockUtils.getNeighborFaces()) {
+//			if(face == BlockFace.UP || face == BlockFace.DOWN)
+//				continue;
+//
+//			Block neighbor = current.getBlock().getRelative(face);
+//			Location location = neighbor.getLocation();
+//
+//			if (visited.contains(location))
+//				continue;
+//
+//			visited.add(location);
+//
+//			if (Nullables.isNullOrAir(neighbor))
+//				continue;
+//
+//			CustomBlock customBlock = CustomBlock.fromBlock(neighbor);
+//			if (customBlock != CustomBlock.TRIPWIRE && customBlock != CustomBlock.TRIPWIRE_CROSS)
+//				continue;
+//
+//			tripwire.add(location);
+//
+//		}
+//
+//		return visited;
+//	}
 }

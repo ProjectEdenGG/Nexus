@@ -22,6 +22,7 @@ import gg.projecteden.nexus.utils.NMSUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
+import lombok.NonNull;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -48,7 +49,7 @@ public class CustomBlocksCommand extends CustomCommand {
 	}
 
 	@Path
-	void creativeMenu() {
+	void menuCreative() {
 		// TODO: uncomment upon release
 //		if(!rank().isSeniorStaff() && !rank().isBuilder()){
 //			if(worldGroup() != WorldGroup.CREATIVE)
@@ -56,6 +57,21 @@ public class CustomBlocksCommand extends CustomCommand {
 //		}
 
 		new CustomBlockCreativeMenu(null).open(player());
+	}
+
+	@Path("search <filter>")
+	void searchCreative(String filter) {
+		// TODO: uncomment upon release
+//		if(!rank().isSeniorStaff() && !rank().isBuilder()){
+//			if(worldGroup() != WorldGroup.CREATIVE)
+//				error("This command can only be used in Creative!");
+//		}
+
+		List<CustomBlock> customBlocks = CustomBlock.matching(filter).stream().filter(CustomBlock::isObtainable).toList();
+		if (customBlocks.isEmpty())
+			error("No matching custom blocks");
+
+		new CustomBlockSearchMenu(filter, customBlocks).open(player());
 	}
 
 	@Path("list [world]")
@@ -86,7 +102,7 @@ public class CustomBlocksCommand extends CustomCommand {
 	@Path("getAll")
 	@Permission(Group.ADMIN)
 	void getAll() {
-		for (CustomBlock customBlock : CustomBlock.values())
+		for (CustomBlock customBlock : CustomBlock.getObtainable())
 			giveItem(customBlock.get().getItemStack());
 	}
 
@@ -202,7 +218,7 @@ public class CustomBlocksCommand extends CustomCommand {
 				addCloseItem();
 
 				for (CustomBlockTab tab : CustomBlockTab.getMenuTabs()) {
-					ItemStack item = new ItemBuilder(CustomBlock.getType(tab).get(0).get().getItemStack()).name(StringUtils.camelCase(tab)).build();
+					ItemStack item = new ItemBuilder(CustomBlock.getBy(tab).get(0).get().getItemStack()).name(StringUtils.camelCase(tab)).build();
 
 					items.add(ClickableItem.of(item, e -> new CustomBlockCreativeMenu(tab).open(player)));
 				}
@@ -211,7 +227,7 @@ public class CustomBlocksCommand extends CustomCommand {
 				addBackItem(e -> new CustomBlockCreativeMenu(null).open(player));
 
 				LinkedHashSet<ItemStack> uniqueItems = new LinkedHashSet<>();
-				for (CustomBlock customBlock : CustomBlock.getType(currentTab)) {
+				for (CustomBlock customBlock : CustomBlock.getBy(currentTab)) {
 					ItemStack item = customBlock.get().getItemStack();
 					uniqueItems.add(item);
 				}
@@ -219,6 +235,34 @@ public class CustomBlocksCommand extends CustomCommand {
 				for (ItemStack customBlockItem : uniqueItems) {
 					items.add(ClickableItem.of(customBlockItem, e -> PlayerUtils.giveItem(player, customBlockItem)));
 				}
+			}
+
+			paginator().items(items.stream().toList()).build();
+		}
+	}
+
+	public static class CustomBlockSearchMenu extends InventoryProvider {
+		@NonNull String filter;
+		@NonNull List<CustomBlock> customBlocks;
+
+		public CustomBlockSearchMenu(@NonNull String filter, @NonNull List<CustomBlock> customBlocks) {
+			this.filter = filter;
+			this.customBlocks = customBlocks;
+		}
+
+		@Override
+		public String getTitle() {
+			return "Custom Blocks: \"" + filter + "\"";
+		}
+
+		@Override
+		public void init() {
+			addCloseItem();
+
+			LinkedHashSet<ClickableItem> items = new LinkedHashSet<>();
+			for (CustomBlock customBlock : customBlocks) {
+				ItemStack item = new ItemBuilder(customBlock.get().getItemStack()).build();
+				items.add(ClickableItem.of(item, e -> PlayerUtils.giveItem(player, item)));
 			}
 
 			paginator().items(items.stream().toList()).build();

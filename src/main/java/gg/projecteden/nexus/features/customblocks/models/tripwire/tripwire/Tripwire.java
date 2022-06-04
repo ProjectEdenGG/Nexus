@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.customblocks.models.tripwire.tripwire;
 
 import gg.projecteden.nexus.features.customblocks.models.common.CustomBlockConfig;
+import gg.projecteden.nexus.features.customblocks.models.common.NonObtainable;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.CustomTripwireConfig;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.DirectionalConfig;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.IDirectionalTripwire;
@@ -31,6 +32,7 @@ import lombok.NonNull;
 	powered_EW = false,
 	ignorePowered = true
 )
+@NonObtainable
 public class Tripwire implements IDirectionalTripwire {
 
 	@Override

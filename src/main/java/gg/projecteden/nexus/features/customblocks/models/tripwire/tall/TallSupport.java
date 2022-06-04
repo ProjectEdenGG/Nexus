@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.customblocks.models.tripwire.tall;
 
 import gg.projecteden.nexus.features.customblocks.models.common.CustomBlockConfig;
+import gg.projecteden.nexus.features.customblocks.models.common.NonObtainable;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.CustomTripwireConfig;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.ICustomTripwire;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -22,7 +23,8 @@ import org.bukkit.Material;
 	ignorePowered = true
 )
 
-// This is not a block you can obtain, it's purpose is to allow for better hitbox detection for tall blocks
+// Purpose: allow for better hitbox detection for tall blocks
+@NonObtainable
 public class TallSupport implements ICustomTripwire {
 
 	@Override

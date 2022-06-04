@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.customblocks.CustomBlocks.SoundAction;
 import gg.projecteden.nexus.features.customblocks.models.common.ICraftable;
 import gg.projecteden.nexus.features.customblocks.models.common.ICustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.common.IDyeable;
+import gg.projecteden.nexus.features.customblocks.models.common.NonObtainable;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.ICustomNoteBlock;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.IDirectionalNoteBlock;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.compacted.bundle.BambooBundle;
@@ -419,12 +420,26 @@ public enum CustomBlock implements Keyed {
 		return this.customBlock;
 	}
 
-	public static List<CustomBlock> getType(CustomBlockType type) {
+	public boolean isObtainable() {
+		return customBlock.getClass().getAnnotation(NonObtainable.class) == null;
+	}
+
+	public static List<CustomBlock> getBy(CustomBlockType type) {
 		return Arrays.stream(values()).filter(customBlock -> customBlock.getType() == type).collect(Collectors.toList());
 	}
 
-	public static List<CustomBlock> getType(CustomBlockTab tab) {
+	public static List<CustomBlock> getBy(CustomBlockTab tab) {
 		return Arrays.stream(values()).filter(customBlock -> customBlock.getCreativeTab() == tab).collect(Collectors.toList());
+	}
+
+	public static List<CustomBlock> matching(String filter) {
+		return Arrays.stream(values())
+			.filter(customBlock -> customBlock.name().toLowerCase().contains(filter))
+			.collect(Collectors.toList());
+	}
+
+	public static List<CustomBlock> getObtainable() {
+		return Arrays.stream(values()).filter(CustomBlock::isObtainable).collect(Collectors.toList());
 	}
 
 	@Override
@@ -460,7 +475,7 @@ public enum CustomBlock implements Keyed {
 	public static @Nullable CustomBlock fromBlockData(@NonNull BlockData blockData, Block underneath) {
 		if (blockData instanceof org.bukkit.block.data.type.NoteBlock noteBlock) {
 			List<CustomBlock> directional = new ArrayList<>();
-			for (CustomBlock customBlock : getType(CustomBlockType.NOTE_BLOCK)) {
+			for (CustomBlock customBlock : getBy(CustomBlockType.NOTE_BLOCK)) {
 				ICustomBlock iCustomBlock = customBlock.get();
 
 				if (CustomBlockUtils.equals(customBlock, noteBlock, false, underneath)) {
@@ -483,7 +498,7 @@ public enum CustomBlock implements Keyed {
 			debug("CustomBlock: Couldn't find NoteBlock: " + noteBlock);
 
 		} else if (blockData instanceof org.bukkit.block.data.type.Tripwire tripwire) {
-			for (CustomBlock customBlock : getType(CustomBlockType.TRIPWIRE)) {
+			for (CustomBlock customBlock : getBy(CustomBlockType.TRIPWIRE)) {
 				if (CustomBlockUtils.equals(customBlock, tripwire, true, underneath)) {
 					return customBlock;
 				}
