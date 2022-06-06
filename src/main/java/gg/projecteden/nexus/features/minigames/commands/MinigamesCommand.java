@@ -33,6 +33,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redi
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.CommandCooldownException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.MustBeIngameException;
@@ -64,7 +65,6 @@ import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.Env;
 import gg.projecteden.utils.TimeUtils.TickTime;
-import gg.projecteden.utils.UUIDUtils;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.GameMode;
@@ -84,6 +84,7 @@ import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
+import static gg.projecteden.utils.UUIDUtils.UUID0;
 
 @Aliases({"mgm", "mg"})
 @Redirect(from = "/mgn", to = "/mgm night")
@@ -530,8 +531,8 @@ public class MinigamesCommand extends CustomCommand {
 		if (count == 0)
 			error("There is no one to invite!");
 
-		if (!(new CooldownService().check(UUIDUtils.UUID0, "minigame_invite", TickTime.SECOND.x(3))))
-			return;
+		if (!new CooldownService().check(UUID0, "minigame_invite", TickTime.SECOND.x(3)))
+			throw new CommandCooldownException(UUID0, "minigame_invite");
 
 		updateInvite(arena);
 		sendInvite(new WorldGuardUtils(player()).getPlayersInRegion("minigamelobby"));
