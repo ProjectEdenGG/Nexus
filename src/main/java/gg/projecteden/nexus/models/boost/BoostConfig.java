@@ -16,8 +16,8 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.entities.BaseGuildMessageChannel;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
@@ -160,7 +160,7 @@ public class BoostConfig implements PlayerOwnedObject {
 			return getChannel().getIterableHistory().takeAsync(100);
 		}
 
-		private static TextChannel getChannel() {
+		private static BaseGuildMessageChannel getChannel() {
 			return DiscordId.TextChannel.BOOSTS.get(Bot.RELAY.jda());
 		}
 	}
