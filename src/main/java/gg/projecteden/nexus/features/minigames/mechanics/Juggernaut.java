@@ -10,7 +10,6 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.
 import gg.projecteden.nexus.features.minigames.models.matchdata.JuggernautMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -84,8 +83,13 @@ public class Juggernaut extends TeamMechanic {
 			attacker = minigamer.get();
 		}
 
+		victim.scored();
 		matchData.setLastAttacker(null);
 		super.onDeath(event);
+
+		if (event.getMatch().isEnded())
+			return;
+
 		// set teams
 		Team juggernautTeam = victim.getTeam();
 		Team humanTeam = attacker.getTeam();
@@ -96,12 +100,10 @@ public class Juggernaut extends TeamMechanic {
 		Loadout juggernautLoadout = juggernautTeam.getLoadout();
 		if (juggernautLoadout != null) {
 			juggernautLoadout.apply(attacker);
-			Player player = attacker.getPlayer();
-			player.setHealth(20d);
+			attacker.getPlayer().setHealth(20d);
 		}
 
 		victim.getMatch().broadcast(attacker.getColoredName() + "&e has become the Juggernaut!");
-		victim.scored();
 	}
 
 	@Override
