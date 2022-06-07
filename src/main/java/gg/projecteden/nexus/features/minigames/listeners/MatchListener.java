@@ -23,8 +23,10 @@ import gg.projecteden.nexus.features.minigames.models.perks.common.ParticleProje
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.models.perkowner.PerkOwner;
 import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
+import gg.projecteden.nexus.utils.BorderUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.WorldGroup;
 import org.bukkit.Sound;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.FallingBlock;
@@ -42,6 +44,7 @@ import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -396,4 +399,23 @@ public class MatchListener implements Listener {
 	public void onDisplayTimer(MinigamerDisplayTimerEvent event) {
 		event.getMatch().getMechanic().onDisplayTimer(event);
 	}
+
+	@EventHandler
+	public void onChangedWorlds(PlayerChangedWorldEvent event) {
+		final Player player = event.getPlayer();
+		if (WorldGroup.of(player) != WorldGroup.MINIGAMES)
+			return;
+
+		if (Minigames.getWorld().equals(player.getWorld())) {
+			player.teleportAsync(Minigames.getLobby());
+			return;
+		}
+
+		if (!BorderUtils.isOutsideBorder(player))
+			return;
+
+		player.sendMessage("Outside of border");
+		BorderUtils.moveInsideBorder(player);
+	}
+
 }
