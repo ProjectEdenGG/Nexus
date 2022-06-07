@@ -70,14 +70,21 @@ public class ItemUtils {
 		List<String> lore2 = itemMeta2.getLore();
 		List<String> conditionTags = Arrays.stream(Condition.values()).map(condition -> stripColor(condition.getTag())).toList();
 		if(lore1 != null) {
-			lore1 = lore1.stream().filter(line -> !conditionTags.contains(stripColor(line))).toList();
+			lore1 = lore1.stream()
+				.filter(line -> !conditionTags.contains(stripColor(line)))
+				.filter(line -> !Nullables.isNullOrEmpty(line.trim()))
+				.toList();
 		}
 		if(lore2 != null) {
-			lore2 = lore2.stream().filter(line -> !conditionTags.contains(stripColor(line))).toList();
+			lore2 = lore2.stream()
+				.filter(line -> !conditionTags.contains(stripColor(line)))
+				.filter(line -> !Nullables.isNullOrEmpty(line.trim()))
+				.toList();
 		}
 
-		if (!Objects.equals(lore1, lore2))
+		if (!Objects.equals(lore1, lore2)) {
 			return false;
+		}
 
 		if (itemMeta1.hasCustomModelData() && itemMeta2.hasCustomModelData())
 			return itemMeta1.getCustomModelData() == itemMeta2.getCustomModelData();
