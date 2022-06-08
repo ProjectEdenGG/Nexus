@@ -125,14 +125,13 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 	}
 
 	@Data
-	@RequiredArgsConstructor
 	public static class ChatGame {
 		private final ChatGameType gameType;
 		private final String answer;
 		private final JsonBuilder broadcast;
 		private final String discordBroadcast;
 		private LinkedList<ChatGameUser> completed = new LinkedList<>();
-		private final LocalDateTime startTime;
+		private LocalDateTime startTime;
 		private boolean started;
 		private int taskId;
 
@@ -148,7 +147,10 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 		}
 
 		public ChatGame(ChatGameType gameType, String answer, JsonBuilder broadcast, String discordBroadcast) {
-			this(gameType, answer, broadcast, discordize(discordBroadcast), LocalDateTime.now());
+			this.gameType = gameType;
+			this.answer = answer;
+			this.broadcast = broadcast;
+			this.discordBroadcast = discordize(discordBroadcast);
 		}
 
 		public void queue() {
@@ -172,6 +174,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 			Tasks.cancel(taskId);
 			ChatGamesConfig.setCurrentGame(this);
 			started = true;
+			startTime = LocalDateTime.now();
 
 			Broadcast.ingame()
 				.prefix("ChatGames")
