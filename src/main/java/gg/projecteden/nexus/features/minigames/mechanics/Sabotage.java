@@ -94,16 +94,19 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
-// TODO: admin table (imageonmap "api"?)
-// TODO: cams (idfk for this one, could just teleport the player around, it'd be kinda shitty tho)
-// TODO: color menu (on interact with lobby armor stand/item frame)
-// TODO: vent animation (open/close trapdoor)
-// TODO: doors
-// TODO: show sabotage duration + progress on sidebar
-// TODO: crisis sfx + bossbar
-// TODO: flash the red worldborder color during crisis??
-// TODO: let impostors fix sabotages
-// TODO: Killing is broken?
+// TODO
+//  - admin table (imageonmap "api"?)
+//  - cams (teleport the player around and spawn an NPC at their cams location which can be killed-[)
+//  - color menu (on interact with lobby armor stand/item frame)
+//  - vent animation (open/close trapdoor)
+//  - door sabotages
+//  - show sabotage duration + progress on sidebar
+//  - crisis sfx + bossbar
+//  - show the red worldborder color during crisis
+//  - let impostors fix sabotages
+//  - Killing is broken?
+//  - refactor player hiding (vastly increase the radius in which you can see players but reduce the radius in which you can see their nameplates)
+//  - create new nameplates implementation which matches the original name coloring implementation...
 @Scoreboard(teams = false, sidebarType = MinigameScoreboard.Type.MINIGAMER)
 public class Sabotage extends TeamMechanic {
 	public static final int MEETING_LENGTH = 100;

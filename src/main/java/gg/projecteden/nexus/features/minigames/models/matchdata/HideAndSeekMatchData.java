@@ -42,7 +42,10 @@ public class HideAndSeekMatchData extends MatchData {
 				Material.TRAPPED_CHEST,
 				Material.ENDER_CHEST,
 				Material.BARRIER,
-				Material.AIR
+				Material.AIR,
+				Material.CAULDRON,
+				Material.HOPPER,
+				Material.COMPOSTER
 		));
 
 		// i've found some broken walls that don't have hitboxes before from conversion errors, so just to be safe...
