@@ -7,6 +7,7 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.PostLoad;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.itemtags.ItemTagsUtils;
 import gg.projecteden.nexus.features.shops.ShopUtils;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
@@ -51,15 +52,18 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.features.shops.ShopUtils.giveItems;
 import static gg.projecteden.nexus.features.shops.ShopUtils.prettyMoney;
 import static gg.projecteden.nexus.features.shops.Shops.PREFIX;
 import static gg.projecteden.nexus.utils.ItemUtils.getShulkerContents;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.PlayerUtils.hasRoomFor;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
@@ -705,10 +709,7 @@ public class Shop implements PlayerOwnedObject {
 		public void validateProcessOne(Player customer) {
 			checkStock();
 
-			// TODO: Allow items with itemtags to be sold on the market
-//			if(ItemTagsUtils.isTagable(product.getItem()))
-
-			if (!customer.getInventory().containsAtLeast(product.getItem(), product.getItem().getAmount()))
+			if (isNullOrEmpty(getMatchingItems(customer)))
 				throw new InvalidInputException("You do not have " + pretty(product.getItem()) + " to sell");
 		}
 
@@ -723,10 +724,37 @@ public class Shop implements PlayerOwnedObject {
 			product.setStock(product.getStock() - price);
 			transaction(customer);
 
-			// TODO: Allow items with itemtags to be sold on the market
-			customer.getInventory().removeItem(product.getItem());
+			for (ItemStack item : getMatchingItems(customer)) {
+				customer.getInventory().removeItem(item);
+				product.getShop().addHolding(item);
+			}
+		}
 
-			product.getShop().addHolding(product.getItem());
+		private List<ItemStack> getMatchingItems(Player customer) {
+			List<ItemStack> found = new ArrayList<>();
+			final int needed = product.getItem().getAmount();
+			Supplier<Integer> count = () -> found.stream().mapToInt(ItemStack::getAmount).sum();
+			Supplier<Integer> left = () -> needed - count.get();
+			for (ItemStack item : customer.getInventory()) {
+				if (isNullOrAir(item))
+					continue;
+
+				ItemStack cloned = item.clone();
+				ItemTagsUtils.clearTags(cloned);
+
+				if (!cloned.isSimilar(product.getItem()))
+					continue;
+
+				found.add(ItemUtils.clone(item, item.getAmount() <= left.get() ? item.getAmount() : left.get()));
+
+				if (left.get() < 1)
+					break;
+			}
+
+			if (count.get() != needed)
+				return Collections.emptyList();
+
+			return found;
 		}
 
 		public BigDecimal processResourceMarket(Player customer, ItemStack item) {
