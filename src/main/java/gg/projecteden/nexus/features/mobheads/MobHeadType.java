@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.mobheads;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.mobheads.common.HeadConfig;
 import gg.projecteden.nexus.features.mobheads.common.MobHead;
 import gg.projecteden.nexus.features.mobheads.common.MobHeadVariant;
 import gg.projecteden.nexus.features.mobheads.variants.AxolotlVariant;
@@ -19,21 +20,12 @@ import gg.projecteden.nexus.features.mobheads.variants.TraderLlamaVariant;
 import gg.projecteden.nexus.features.mobheads.variants.TropicalFishVariant;
 import gg.projecteden.nexus.features.mobheads.variants.VillagerVariant;
 import gg.projecteden.nexus.features.mobheads.variants.ZombieVillagerVariant;
+import gg.projecteden.nexus.models.mobheads.MobHeadChanceConfigService;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.EnumUtils;
-import gg.projecteden.utils.Env;
 import lombok.Getter;
-import lombok.Setter;
-import org.bukkit.Bukkit;
+import lombok.SneakyThrows;
 import org.bukkit.DyeColor;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.Sign;
-import org.bukkit.block.data.Directional;
+import org.bukkit.Material;
 import org.bukkit.entity.Axolotl;
 import org.bukkit.entity.Cat;
 import org.bukkit.entity.Creeper;
@@ -56,190 +48,358 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static gg.projecteden.nexus.utils.Nullables.isNotNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.RandomUtils.randomElement;
 import static gg.projecteden.nexus.utils.Utils.subTypesOf;
+import static gg.projecteden.utils.Nullables.isNotNullOrEmpty;
+import static gg.projecteden.utils.StringUtils.camelCase;
 
 @Getter
 public enum MobHeadType implements MobHead {
-	AXOLOTL(EntityType.AXOLOTL,
-		AxolotlVariant.class,
+	@HeadConfig(headId = "41592", entityType = EntityType.AXOLOTL, variantClass = AxolotlVariant.class)
+	AXOLOTL(
 		entity -> AxolotlVariant.of((Axolotl) entity),
 		(entity, type) -> ((Axolotl) entity).setVariant((Axolotl.Variant) type),
-		() -> randomElement(Axolotl.Variant.class)),
-	BAT(EntityType.BAT),
-	BEE(EntityType.BEE),
-	BLAZE(EntityType.BLAZE),
-	CAT(EntityType.CAT,
-		CatVariant.class,
+		() -> randomElement(Axolotl.Variant.class)
+	),
+
+	@HeadConfig(headId = "26033", entityType = EntityType.BAT)
+	BAT,
+
+	@HeadConfig(headId = "31260", entityType = EntityType.BEE)
+	BEE,
+
+	@HeadConfig(headId = "322", entityType = EntityType.BLAZE)
+	BLAZE,
+
+	@HeadConfig(headId = "14189", entityType = EntityType.CAT, variantClass = CatVariant.class)
+	CAT(
 		entity -> CatVariant.of((Cat) entity),
 		(entity, type) -> ((Cat) entity).setCatType((Cat.Type) type),
-		() -> randomElement(Cat.Type.class)),
-	CAVE_SPIDER(EntityType.CAVE_SPIDER),
-	CHICKEN(EntityType.CHICKEN),
-	COD(EntityType.COD),
-	COW(EntityType.COW),
-	CREEPER(EntityType.CREEPER,
-		CreeperVariant.class,
+		() -> randomElement(Cat.Type.class)
+	),
+
+	@HeadConfig(headId = "315", entityType = EntityType.CAVE_SPIDER)
+	CAVE_SPIDER,
+
+	@HeadConfig(headId = "336", entityType = EntityType.CHICKEN)
+	CHICKEN,
+
+	@HeadConfig(headId = "17898", entityType = EntityType.COD)
+	COD,
+
+	@HeadConfig(headId = "22866", entityType = EntityType.COW)
+	COW,
+
+	@HeadConfig(headType = Material.CREEPER_HEAD, entityType = EntityType.CREEPER, variantClass = CreeperVariant.class)
+	CREEPER(
 		entity -> CreeperVariant.of((Creeper) entity),
 		(entity, type) -> ((Creeper) entity).setPowered((boolean) type),
-		() -> randomElement(true, false)),
-	DOLPHIN(EntityType.DOLPHIN),
-	DONKEY(EntityType.DONKEY),
-	DROWNED(EntityType.DROWNED),
-	ELDER_GUARDIAN(EntityType.ELDER_GUARDIAN),
-	ENDER_DRAGON(EntityType.ENDER_DRAGON),
-	ENDERMAN(EntityType.ENDERMAN),
-	ENDERMITE(EntityType.ENDERMITE),
-	EVOKER(EntityType.EVOKER),
-	FOX(EntityType.FOX,
-		FoxVariant.class,
+		() -> randomElement(true, false)
+	),
+
+	@HeadConfig(headId = "16799", entityType = EntityType.DOLPHIN)
+	DOLPHIN,
+
+	@HeadConfig(headId = "18144", entityType = EntityType.DONKEY)
+	DONKEY,
+
+	@HeadConfig(headId = "15967", entityType = EntityType.DROWNED)
+	DROWNED,
+
+	@HeadConfig(headId = "25357", entityType = EntityType.ELDER_GUARDIAN)
+	ELDER_GUARDIAN,
+
+	@HeadConfig(headType = Material.DRAGON_HEAD, entityType = EntityType.ENDER_DRAGON)
+	ENDER_DRAGON,
+
+	@HeadConfig(headId = "318", entityType = EntityType.ENDERMAN)
+	ENDERMAN,
+
+	@HeadConfig(headId = "18427", entityType = EntityType.ENDERMITE)
+	ENDERMITE,
+
+	@HeadConfig(headId = "3862", entityType = EntityType.EVOKER)
+	EVOKER,
+
+	@HeadConfig(headId = "33923", entityType = EntityType.FOX, variantClass = FoxVariant.class)
+	FOX(
 		entity -> FoxVariant.of((Fox) entity),
 		(entity, type) -> ((Fox) entity).setFoxType((Fox.Type) type),
-		() -> randomElement(Fox.Type.class)),
-	GHAST(EntityType.GHAST),
-	GLOW_SQUID(EntityType.GLOW_SQUID),
-	GOAT(EntityType.GOAT),
-	GUARDIAN(EntityType.GUARDIAN),
-	HOGLIN(EntityType.HOGLIN),
-	HORSE(EntityType.HORSE,
-		HorseVariant.class,
+		() -> randomElement(Fox.Type.class)
+	),
+
+	@HeadConfig(headId = "321", entityType = EntityType.GHAST)
+	GHAST,
+
+	@HeadConfig(headId = "40441", entityType = EntityType.GLOW_SQUID)
+	GLOW_SQUID,
+
+	@HeadConfig(headId = "25213", entityType = EntityType.GOAT)
+	GOAT,
+
+	@HeadConfig(headId = "3135", entityType = EntityType.GUARDIAN)
+	GUARDIAN,
+
+	@HeadConfig(headId = "34783", entityType = EntityType.HOGLIN)
+	HOGLIN,
+
+	@HeadConfig(headId = "1154", entityType = EntityType.HORSE, variantClass = HorseVariant.class)
+	HORSE(
 		entity -> HorseVariant.of((Horse) entity),
 		(entity, type) -> ((Horse) entity).setColor((Horse.Color) type),
-		() -> randomElement(Horse.Color.class)),
-	HUSK(EntityType.HUSK),
-	ILLUSIONER(EntityType.ILLUSIONER),
-	IRON_GOLEM(EntityType.IRON_GOLEM),
-	LLAMA(EntityType.LLAMA,
-		LlamaVariant.class,
+		() -> randomElement(Horse.Color.class)
+	),
+
+	@HeadConfig(headId = "37860", entityType = EntityType.HUSK)
+	HUSK,
+
+	@HeadConfig(headId = "35706", entityType = EntityType.ILLUSIONER)
+	ILLUSIONER,
+
+	@HeadConfig(headId = "33179", entityType = EntityType.IRON_GOLEM)
+	IRON_GOLEM,
+
+	@HeadConfig(headId = "25376", entityType = EntityType.LLAMA, variantClass = LlamaVariant.class)
+	LLAMA(
 		entity -> LlamaVariant.of((Llama) entity),
 		(entity, type) -> ((Llama) entity).setColor((Llama.Color) type),
-		() -> randomElement(Llama.Color.class)),
-	MAGMA_CUBE(EntityType.MAGMA_CUBE),
-	MUSHROOM_COW(EntityType.MUSHROOM_COW,
-		MooshroomVariant.class,
+		() -> randomElement(Llama.Color.class)
+	),
+
+	@HeadConfig(headId = "323", entityType = EntityType.MAGMA_CUBE)
+	MAGMA_CUBE,
+
+	@HeadConfig(headId = "339", entityType = EntityType.MUSHROOM_COW, variantClass = MooshroomVariant.class)
+	MUSHROOM_COW(
 		entity -> MooshroomVariant.of((MushroomCow) entity),
 		(entity, type) -> ((MushroomCow) entity).setVariant((MushroomCow.Variant) type),
-		() -> randomElement(MushroomCow.Variant.class)),
-	MULE(EntityType.MULE),
-	OCELOT(EntityType.OCELOT),
-	PANDA(EntityType.PANDA,
-		PandaVariant.class,
+		() -> randomElement(MushroomCow.Variant.class)
+	),
+
+	@HeadConfig(headId = "3918", entityType = EntityType.MULE)
+	MULE,
+
+	@HeadConfig(headId = "340", entityType = EntityType.OCELOT)
+	OCELOT,
+
+	@HeadConfig(headId = "6538", entityType = EntityType.PANDA, variantClass = PandaVariant.class)
+	PANDA(
 		entity -> PandaVariant.of((Panda) entity),
 		(entity, type) -> ((Panda) entity).setMainGene((Panda.Gene) type),
-		() -> randomElement(Panda.Gene.class)),
-	PARROT(EntityType.PARROT,
-		ParrotVariant.class,
+		() -> randomElement(Panda.Gene.class)
+	),
+
+	@HeadConfig(headId = "34702", entityType = EntityType.PARROT, variantClass = ParrotVariant.class)
+	PARROT(
 		entity -> ParrotVariant.of((Parrot) entity),
 		(entity, type) -> ((Parrot) entity).setVariant((Parrot.Variant) type),
-		() -> randomElement(Parrot.Variant.class)),
-	PHANTOM(EntityType.PHANTOM),
-	PIG(EntityType.PIG),
-	PIGLIN(EntityType.PIGLIN),
-	PIGLIN_BRUTE(EntityType.PIGLIN_BRUTE),
-	PILLAGER(EntityType.PILLAGER),
-	PLAYER(EntityType.PLAYER),
-	POLAR_BEAR(EntityType.POLAR_BEAR),
-	PUFFERFISH(EntityType.PUFFERFISH),
-	RABBIT(EntityType.RABBIT,
-		RabbitVariant.class,
+		() -> randomElement(Parrot.Variant.class)
+	),
+
+	@HeadConfig(headId = "18091", entityType = EntityType.PHANTOM)
+	PHANTOM,
+
+	@HeadConfig(headId = "337", entityType = EntityType.PIG)
+	PIG,
+
+	@HeadConfig(headId = "37258", entityType = EntityType.PIGLIN)
+	PIGLIN,
+
+	@HeadConfig(headId = "38372", entityType = EntityType.PIGLIN_BRUTE)
+	PIGLIN_BRUTE,
+
+	@HeadConfig(headId = "25149", entityType = EntityType.PILLAGER)
+	PILLAGER,
+
+	@HeadConfig(entityType = EntityType.PLAYER)
+	PLAYER,
+
+	@HeadConfig(headId = "18379", entityType = EntityType.POLAR_BEAR)
+	POLAR_BEAR,
+
+	@HeadConfig(headId = "17900", entityType = EntityType.PUFFERFISH)
+	PUFFERFISH,
+
+	@HeadConfig(headId = "3933", entityType = EntityType.RABBIT, variantClass = RabbitVariant.class)
+	RABBIT(
 		entity -> RabbitVariant.of((Rabbit) entity),
 		(entity, type) -> ((Rabbit) entity).setRabbitType((Rabbit.Type) type),
-		() -> randomElement(Rabbit.Type.class)),
-	RAVAGER(EntityType.RAVAGER),
-	SALMON(EntityType.SALMON),
-	SHEEP(EntityType.SHEEP,
-		SheepVariant.class,
+		() -> randomElement(Rabbit.Type.class)
+	),
+
+	@HeadConfig(headId = "28196", entityType = EntityType.RAVAGER)
+	RAVAGER,
+
+	@HeadConfig(headId = "31623", entityType = EntityType.SALMON)
+	SALMON,
+
+	@HeadConfig(headId = "334", entityType = EntityType.SHEEP, variantClass = SheepVariant.class)
+	SHEEP(
 		entity -> SheepVariant.of((Sheep) entity),
 		(entity, type) -> ((Sheep) entity).setColor((DyeColor) type),
-		() -> randomElement(DyeColor.class)),
-	SHULKER(EntityType.SHULKER),
-	SILVERFISH(EntityType.SILVERFISH),
-	SKELETON(EntityType.SKELETON),
-	SKELETON_HORSE(EntityType.SKELETON_HORSE),
-	SLIME(EntityType.SLIME),
-	SNOWMAN(EntityType.SNOWMAN,
-		SnowmanVariant.class,
+		() -> randomElement(DyeColor.class)
+	),
+
+	@HeadConfig(headId = "38317", entityType = EntityType.SHULKER)
+	SHULKER,
+
+	@HeadConfig(headId = "3936", entityType = EntityType.SILVERFISH)
+	SILVERFISH,
+
+	@HeadConfig(headType = Material.SKELETON_SKULL, entityType = EntityType.SKELETON)
+	SKELETON,
+
+	@HeadConfig(headId = "6013", entityType = EntityType.SKELETON_HORSE)
+	SKELETON_HORSE,
+
+	@HeadConfig(headId = "17992", entityType = EntityType.SLIME)
+	SLIME,
+
+	@HeadConfig(headId = "30000", entityType = EntityType.SNOWMAN, variantClass = SnowmanVariant.class)
+	SNOWMAN(
 		entity -> SnowmanVariant.of((Snowman) entity),
 		(entity, type) -> ((Snowman) entity).setDerp((boolean) type),
-		() -> randomElement(true, false)),
-	SPIDER(EntityType.SPIDER),
-	SQUID(EntityType.SQUID),
-	STRAY(EntityType.STRAY),
-	STRIDER(EntityType.STRIDER),
-	TRADER_LLAMA(EntityType.TRADER_LLAMA,
-		TraderLlamaVariant.class,
+		() -> randomElement(true, false)
+	),
+
+	@HeadConfig(headId = "317", entityType = EntityType.SPIDER)
+	SPIDER,
+
+	@HeadConfig(headId = "12237", entityType = EntityType.SQUID)
+	SQUID,
+
+	@HeadConfig(headId = "22401", entityType = EntityType.STRAY)
+	STRAY,
+
+	@HeadConfig(headId = "35431", entityType = EntityType.STRIDER)
+	STRIDER,
+
+	@HeadConfig(headId = "26960", entityType = EntityType.TRADER_LLAMA, variantClass = TraderLlamaVariant.class)
+	TRADER_LLAMA(
 		entity -> TraderLlamaVariant.of((TraderLlama) entity),
 		(entity, type) -> ((TraderLlama) entity).setColor((TraderLlama.Color) type),
-		() -> randomElement(TraderLlama.Color.class)),
-	TROPICAL_FISH(EntityType.TROPICAL_FISH,
-		TropicalFishVariant.class,
+		() -> randomElement(TraderLlama.Color.class)
+	),
+
+	@HeadConfig(headId = "30233", entityType = EntityType.TROPICAL_FISH, variantClass = TropicalFishVariant.class)
+	TROPICAL_FISH(
 		entity -> TropicalFishVariant.random(),
 		(entity, type) -> {},
-		() -> null),
-	TURTLE(EntityType.TURTLE),
-	VEX(EntityType.VEX),
-	VILLAGER(EntityType.VILLAGER,
-		VillagerVariant.class,
+		() -> null
+	),
+
+	@HeadConfig(headId = "17929", entityType = EntityType.TURTLE)
+	TURTLE,
+
+	@HeadConfig(headId = "3080", entityType = EntityType.VEX)
+	VEX,
+
+	@HeadConfig(headId = "12199", entityType = EntityType.VILLAGER, variantClass = VillagerVariant.class)
+	VILLAGER(
 		entity -> VillagerVariant.of((Villager) entity),
 		(entity, type) -> ((Villager) entity).setVillagerType((Villager.Type) type),
-		() -> randomElement(Villager.Type.class)),
-	VINDICATOR(EntityType.VINDICATOR),
-	WANDERING_TRADER(EntityType.WANDERING_TRADER),
-	WITCH(EntityType.WITCH),
-	WITHER(EntityType.WITHER),
-	WITHER_SKELETON(EntityType.WITHER_SKELETON),
-	WOLF(EntityType.WOLF),
-	ZOGLIN(EntityType.ZOGLIN),
-	ZOMBIE(EntityType.ZOMBIE),
-	ZOMBIE_HORSE(EntityType.ZOMBIE_HORSE),
-	ZOMBIE_VILLAGER(EntityType.ZOMBIE_VILLAGER,
-		ZombieVillagerVariant.class,
+		() -> randomElement(Villager.Type.class)
+	),
+
+	@HeadConfig(headId = "28323", entityType = EntityType.VINDICATOR)
+	VINDICATOR,
+
+	@HeadConfig(headId = "25676", entityType = EntityType.WANDERING_TRADER)
+	WANDERING_TRADER,
+
+	@HeadConfig(headId = "35861", entityType = EntityType.WITCH)
+	WITCH,
+
+	@HeadConfig(headId = "22399", entityType = EntityType.WITHER)
+	WITHER,
+
+	@HeadConfig(headType = Material.WITHER_SKELETON_SKULL, entityType = EntityType.WITHER_SKELETON)
+	WITHER_SKELETON,
+
+	@HeadConfig(headId = "38471", entityType = EntityType.WOLF)
+	WOLF,
+
+	@HeadConfig(headId = "35932", entityType = EntityType.ZOGLIN)
+	ZOGLIN,
+
+	@HeadConfig(headType = Material.ZOMBIE_HEAD, entityType = EntityType.ZOMBIE)
+	ZOMBIE,
+
+	@HeadConfig(headId = "33747", entityType = EntityType.ZOMBIE_HORSE)
+	ZOMBIE_HORSE,
+
+	@HeadConfig(headId = "27600", entityType = EntityType.ZOMBIE_VILLAGER, variantClass = ZombieVillagerVariant.class)
+	ZOMBIE_VILLAGER(
 		entity -> ZombieVillagerVariant.of((ZombieVillager) entity),
 		(entity, type) -> ((ZombieVillager) entity).setVillagerType((Villager.Type) type),
-		() -> randomElement(Villager.Type.class)),
-	ZOMBIFIED_PIGLIN(EntityType.ZOMBIFIED_PIGLIN),
+		() -> randomElement(Villager.Type.class)
+	),
+
+	@HeadConfig(headId = "37253", entityType = EntityType.ZOMBIFIED_PIGLIN)
+	ZOMBIFIED_PIGLIN,
 	;
 
+	private final String headId;
+	private final Material headType;
 	private final EntityType entityType;
 	private final Class<? extends MobHeadVariant> variantClass;
 	private final Function<Entity, MobHeadVariant> variantConverter;
 	private final BiConsumer<Entity, Object> variantSetter;
 	private final Supplier<?> randomVariant;
+	private final ItemStack genericSkull;
 
-	@Setter
-	private ItemStack genericSkull;
-	@Setter
-	private double chance;
-
-	@Getter
-	private static final Set<ItemStack> allSkulls = new HashSet<>();
-
-	MobHeadType(EntityType entityType) {
-		this(entityType, null, null, null, null);
+	MobHeadType() {
+		this(null, null, null);
 	}
 
 	MobHeadType(
-		EntityType entityType,
-		Class<? extends MobHeadVariant> variantClass,
 		Function<Entity, MobHeadVariant> variantConverter,
 		BiConsumer<Entity, Object> variantSetter,
 		Supplier<?> randomVariant
 	) {
-		this.entityType = entityType;
-		this.variantClass = variantClass;
+		this.headId = getHeadConfig().headId();
+		this.headType = getHeadConfig().headType();
+		this.entityType = getHeadConfig().entityType();
+		this.variantClass = getHeadConfig().variantClass();
 		this.variantConverter = variantConverter;
 		this.variantSetter = variantSetter;
 		this.randomVariant = randomVariant;
+
+		if (isNotNullOrEmpty(headId) || isNotNullOrAir(headType)) {
+			ItemStack skull = isNullOrAir(headType) ? Nexus.getHeadAPI().getItemHead(headId) : new ItemStack(headType);
+			this.genericSkull = new ItemBuilder(skull).name("&e" + getDisplayName() + " Head").lore("&3Mob Head").build();
+		} else {
+			Nexus.warn("No generic skull for MobType " + camelCase(this) + " defined");
+			this.genericSkull = null;
+		}
+	}
+
+	private static final List<MobHead> allMobHeads = new ArrayList<>();
+
+	public static List<MobHead> getAllMobHeads() {
+		if (allMobHeads.isEmpty())
+			for (MobHeadType type : MobHeadType.values())
+				if (type.hasVariants())
+					allMobHeads.addAll(type.getVariants());
+				else
+					allMobHeads.add(type);
+
+		return allMobHeads;
+	}
+
+	public double getChance() {
+		return new MobHeadChanceConfigService().get0().getChances().get(this);
 	}
 
 	@Nullable
@@ -263,7 +423,7 @@ public enum MobHeadType implements MobHead {
 	}
 
 	public boolean hasVariants() {
-		return getVariantClass() != null;
+		return getVariantClass() != null && getVariantClass() != MobHeadVariant.class;
 	}
 
 	public List<MobHeadVariant> getVariants() {
@@ -308,84 +468,13 @@ public enum MobHeadType implements MobHead {
 		return expectedTypes;
 	}
 
-	static void load() {
-		World world = Bukkit.getWorld(Nexus.getEnv() == Env.PROD ? "server" : "world");
-		if (world == null)
-			return;
-
-		WorldGuardUtils worldguard = new WorldGuardUtils(world);
-		WorldEditUtils worldedit = new WorldEditUtils(world);
-
-		for (Block block : worldedit.getBlocks(worldguard.getRegion("mobheads"))) {
-			try {
-				if (!MaterialTag.SIGNS.isTagged(block.getType()))
-					continue;
-
-				Sign sign = (Sign) block.getState();
-				Directional directional = (Directional) sign.getBlockData();
-				ItemStack skull = block.getRelative(directional.getFacing().getOppositeFace()).getRelative(BlockFace.UP)
-						.getDrops().stream().findFirst().orElse(null);
-				if (skull == null)
-					continue;
-
-				EntityType type;
-				String entity = (sign.getLine(0) + sign.getLine(1)).trim();
-				try {
-					type = EntityType.valueOf(entity);
-				} catch (Exception ignored) {
-					Nexus.warn("[MobHeads] Cannot parse entity type: " + entity);
-					continue;
-				}
-
-				final MobHeadType mobHeadType = MobHeadType.of(type);
-				double chance = Double.parseDouble(sign.getLine(3));
-
-				if (mobHeadType == null) {
-					Nexus.warn("[MobHeads] Found EntityType with no MobHeadType: " + type);
-					return;
-				}
-
-				skull = new ItemBuilder(skull).name("&e" + mobHeadType.getDisplayName() + " Head").lore("&3Mob Head").build();
-				mobHeadType.setGenericSkull(skull);
-				mobHeadType.setChance(chance);
-				allSkulls.add(skull);
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		}
-
-		for (Class<? extends MobHeadVariant> variant : subTypesOf(MobHeadVariant.class, MobHeadType.class.getPackageName())) {
-			for (Block block : worldedit.getBlocks(worldguard.getRegion("mobheads_variant_" + variant.getSimpleName().replace("Variant", "").toLowerCase()))) {
-				try {
-					if (!MaterialTag.SIGNS.isTagged(block.getType()))
-						continue;
-
-					Sign sign = (Sign) block.getState();
-					Directional directional = (Directional) sign.getBlockData();
-					ItemStack skull = block.getRelative(directional.getFacing().getOppositeFace())
-							.getRelative(BlockFace.UP)
-							.getDrops().stream()
-							.findFirst().orElse(null);
-
-					if (skull == null)
-						continue;
-
-					MobHeadVariant mobHeadVariant;
-					String variantType = (sign.getLine(0) + sign.getLine(1)).trim();
-					try {
-						mobHeadVariant = EnumUtils.valueOf(variant, variantType);
-					} catch (Exception ignored) {
-						Nexus.log("Cannot parse entity variant: " + variant.getSimpleName() + "." + variantType);
-						continue;
-					}
-
-					skull = new ItemBuilder(skull).name("&e" + mobHeadVariant.getDisplayName() + " Head").lore("&3Mob Head").build();
-					mobHeadVariant.setItemStack(skull);
-					allSkulls.add(skull);
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-			}
-		}
+	@SneakyThrows
+	public Field getField() {
+		return getClass().getField(name());
 	}
+
+	public HeadConfig getHeadConfig() {
+		return getField().getAnnotation(HeadConfig.class);
+	}
+
 }

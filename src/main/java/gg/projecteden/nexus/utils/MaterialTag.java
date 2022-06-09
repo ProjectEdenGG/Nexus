@@ -9,6 +9,7 @@ import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -494,6 +495,7 @@ public class MaterialTag implements Tag<Material> {
 		return materials.contains(material);
 	}
 
+	@Contract("null -> false")
 	public boolean isTagged(@Nullable ItemStack item) {
 		return item != null && isTagged(item.getType());
 	}

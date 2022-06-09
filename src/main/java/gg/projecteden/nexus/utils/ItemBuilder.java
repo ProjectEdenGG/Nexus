@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.utils;
 
 import de.tr7zw.nbtapi.NBTItem;
+import dev.dbassett.skullcreator.SkullCreator;
 import gg.projecteden.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
@@ -371,6 +372,12 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	public ItemBuilder skullOwner(HasUniqueId hasUUID) {
 		SkullMeta skullMeta = SkinCache.of(hasUUID).getHeadMeta();
 		((SkullMeta) itemMeta).setPlayerProfile(skullMeta.getPlayerProfile());
+		return this;
+	}
+
+	public ItemBuilder skullOwnerUrl(String url) {
+		final ItemStack skull = SkullCreator.itemFromUrl(StringUtils.listLast(url, "/"));
+		((SkullMeta) itemMeta).setPlayerProfile(((SkullMeta) skull.getItemMeta()).getPlayerProfile());
 		return this;
 	}
 

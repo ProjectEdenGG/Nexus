@@ -1,9 +1,10 @@
 package gg.projecteden.nexus.features.mobheads.variants;
 
 import gg.projecteden.nexus.features.mobheads.common.MobHeadVariant;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Rabbit;
 import org.bukkit.entity.Rabbit.Type;
@@ -15,17 +16,22 @@ import java.util.Arrays;
 @Getter
 @RequiredArgsConstructor
 public enum RabbitVariant implements MobHeadVariant {
-	BLACK(Type.BLACK),
-	WHITE(Type.WHITE),
-	BROWN(Type.BROWN),
-	BLACK_AND_WHITE(Type.BLACK_AND_WHITE),
-	GOLD(Type.GOLD),
-	SALT_AND_PEPPER(Type.SALT_AND_PEPPER),
+	BLACK("6814", Type.BLACK),
+	WHITE(null, Type.WHITE) {
+		// TODO https://minecraft-heads.com/forum/animals/5265-better-white-rabbit-head
+		@Override
+		public @NotNull ItemStack getItemStack() {
+			return new ItemBuilder(Material.PLAYER_HEAD).skullOwnerUrl("8652c62a166203db8e1edee6039b4962224690b1e25b1fe00ca2338c2bf5fb78").build();
+		}
+	},
+	BROWN("6812", Type.BROWN),
+	BLACK_AND_WHITE("6813", Type.BLACK_AND_WHITE),
+	GOLD("3932", Type.GOLD),
+	SALT_AND_PEPPER("3933", Type.SALT_AND_PEPPER),
 	;
 
+	private final String headId;
 	private final Type bukkitType;
-	@Setter
-	private ItemStack itemStack;
 
 	@Override
 	public @NotNull EntityType getEntityType() {
