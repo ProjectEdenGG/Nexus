@@ -229,7 +229,7 @@ public class EndermanFarmCommand extends CustomCommand implements Listener {
 			return;
 
 		if (event.getMovementType() == MovementType.CONNECT)
-			Warps.spawn(player);
+			Warps.survival(player);
 		if (event.isCancellable()) {
 			event.setCancelled(true);
 			PlayerUtils.send(player, "&cYou do not have access to " + Nickname.of(owner) + "'s enderman farm");

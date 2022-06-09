@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.warps.commands;
 
+import gg.projecteden.nexus.features.warps.Warps;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
@@ -66,7 +67,7 @@ public class SpawnCommand extends CustomCommand implements Listener {
 		if (event.getPlayer().hasPlayedBefore())
 			return;
 
-		Tasks.wait(1, () -> WarpType.NORMAL.get("hub").teleportAsync(event.getPlayer()));
+		Tasks.wait(1, () -> Warps.hub(event.getPlayer()));
 	}
 
 }
