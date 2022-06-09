@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.minigames.mechanics.common;
 
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.minigames.models.RegenType;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchTimerTickEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.CaptureTheFlagMatchData;
@@ -40,8 +41,8 @@ public abstract class CaptureTheFlagMechanic extends TeamMechanic {
 	}
 
 	@Override
-	public boolean usesAlternativeRegen() {
-		return true;
+	public RegenType getRegenType() {
+		return RegenType.TIER_3;
 	}
 
 	protected abstract void onFlagInteract(Minigamer minigamer, Sign sign);

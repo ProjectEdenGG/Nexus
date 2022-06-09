@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Match.MatchTasks.MatchTaskType;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.minigames.models.RegenType;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchBeginEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
@@ -40,6 +41,8 @@ import org.bukkit.block.Block;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -86,8 +89,42 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		return false;
 	}
 
-	public boolean usesAlternativeRegen() {
-		return false;
+	/**
+	 * Returns the type of regeneration this mechanic uses.
+	 *
+	 * @return regeneration type
+	 */
+	public RegenType getRegenType() {
+		return RegenType.TIER_0;
+	}
+
+	/**
+	 * Heals a killer according to the mechanic's {@link #getRegenType() regeneration rules}.
+	 *
+	 * @param player the player to heal
+	 */
+	public void giveKillHeal(@NotNull Minigamer player) {
+		// flat heal
+		RegenType regenType = getRegenType();
+		if (regenType.hasKillHeal())
+			player.heal(RegenType.KILL_HEAL_AMOUNT);
+
+		// regen potion effect
+		PotionEffect baseEffect = regenType.getBaseKillRegen();
+		if (baseEffect == null)
+			return;
+		PotionEffect currentEffect = player.getPlayer().getPotionEffect(PotionEffectType.REGENERATION);
+		// add if player does not have regen, or it is of a lesser amplifier
+		if (currentEffect == null || currentEffect.getAmplifier() < baseEffect.getAmplifier()) {
+			player.addPotionEffect(baseEffect);
+			return;
+		}
+		// return if player already has regen of greater amplifier
+		if (currentEffect.getAmplifier() > baseEffect.getAmplifier())
+			return;
+		// add new regen effect which combines the duration of the base and current effects
+		PotionEffect combinedEffect = baseEffect.withDuration(baseEffect.getDuration() + (currentEffect.getDuration()/2));
+		player.addPotionEffect(combinedEffect);
 	}
 
 	/**
@@ -206,8 +243,9 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 	}
 
 	public void onDeath(@NotNull MinigamerDeathEvent event) {
-		if (event.getAttacker() != null && usesAlternativeRegen())
-			event.getAttacker().heal(2);
+		Minigamer attacker = event.getAttacker();
+		if (attacker != null)
+			giveKillHeal(attacker);
 
 		event.broadcastDeathMessage();
 		if (event.getMatch().getScoreboard() != null)
