@@ -148,7 +148,7 @@ public class WitherCommand extends CustomCommand {
 			error("You cannot abandon the fight once it has already begun! Use &c/wither quit &3to resign");
 
 		currentFight.broadcastToParty("The host has abandoned the fight and the party has been disbanded");
-		currentFight.alivePlayers().forEach(Warps::spawn);
+		currentFight.alivePlayers().forEach(Warps::survival);
 		WitherChallenge.reset();
 	}
 

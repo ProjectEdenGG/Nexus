@@ -197,7 +197,7 @@ public abstract class WitherFight implements Listener {
 
 	public void sendSpectatorsToSpawn() {
 		spectators().forEach(player -> {
-			Warps.spawn(player);
+			Warps.survival(player);
 			player.setGameMode(GameMode.SURVIVAL);
 		});
 	}
@@ -433,7 +433,7 @@ public abstract class WitherFight implements Listener {
 		}
 		alivePlayers.remove(player.getUniqueId());
 		HealCommand.healPlayer(player);
-		Tasks.wait(5, () -> Warps.spawn(player));
+		Tasks.wait(5, () -> Warps.survival(player));
 	}
 
 	@EventHandler(priority = EventPriority.LOW)
@@ -486,7 +486,7 @@ public abstract class WitherFight implements Listener {
 
 		Tasks.wait(TickTime.SECOND.x(10), () -> {
 			started = false;
-			currentFight.alivePlayers().forEach(Warps::spawn);
+			currentFight.alivePlayers().forEach(Warps::survival);
 			currentFight.sendSpectatorsToSpawn();
 			WitherChallenge.reset();
 		});
