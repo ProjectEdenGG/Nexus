@@ -345,7 +345,7 @@ public class MatchListener implements Listener {
 		if (!minigamer.getMatch().isStarted() || !minigamer.isAlive()) return;
 		Mechanic mechanic = minigamer.getMatch().getMechanic();
 
-		if (mechanic.usesAlternativeRegen())
+		if (mechanic.getRegenType().hasCustomRegen())
 			event.setCancelled(true);
 	}
 

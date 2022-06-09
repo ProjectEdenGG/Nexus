@@ -4,6 +4,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.models.Loadout;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.minigames.models.RegenType;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
@@ -37,8 +38,8 @@ public class Juggernaut extends TeamMechanic {
 	}
 
 	@Override
-	public boolean usesAlternativeRegen() {
-		return true;
+	public RegenType getRegenType() {
+		return RegenType.TIER_1;
 	}
 
 	@Override

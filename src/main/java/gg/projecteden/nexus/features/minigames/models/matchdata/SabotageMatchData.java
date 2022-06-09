@@ -115,7 +115,7 @@ public class SabotageMatchData extends MatchData {
 			.permission("")
 			.build();
 	private final Map<UUID, Long> killCooldowns = new HashMap<>();
-	private Task sabotage;
+	private Task sabotage = null;
 	private int sabotageTaskId = -1;
 	private int customSabotageTaskId = -1; // custom task created by the sabotage
 	private LocalDateTime sabotageStarted;
