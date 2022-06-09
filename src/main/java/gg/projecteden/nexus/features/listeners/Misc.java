@@ -352,12 +352,19 @@ public class Misc implements Listener {
 		if (event.isCancelled()) return;
 		if (!(event.getEntity() instanceof Player player)) return;
 
-		if (event.getCause() == DamageCause.VOID)
-			if (!(Arrays.asList(WorldGroup.SKYBLOCK, WorldGroup.ONEBLOCK).contains(WorldGroup.of(player))
-				|| player.getWorld().getEnvironment() == Environment.THE_END)) {
-				if (Minigamer.of(player).getMatch() != null)
-					Warps.spawn((Player) event.getEntity());
-			}
+		if (event.getCause() != DamageCause.VOID)
+			return;
+
+		if (Minigamer.of(player).isPlaying())
+			return;
+
+		if (Arrays.asList(WorldGroup.SKYBLOCK, WorldGroup.ONEBLOCK).contains(WorldGroup.of(player)))
+			return;
+
+		if (player.getWorld().getEnvironment() == Environment.THE_END)
+			return;
+
+		Warps.spawn(player);
 	}
 
 	@EventHandler
