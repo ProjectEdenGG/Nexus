@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.mobheads.variants;
 import gg.projecteden.nexus.features.mobheads.common.MobHeadVariant;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import org.bukkit.Material;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
@@ -12,12 +12,16 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 @RequiredArgsConstructor
 public enum CreeperVariant implements MobHeadVariant {
-	NONE,
-	POWERED,
+	NONE(null) {
+		@Override
+		public @NotNull ItemStack getItemStack() {
+			return new ItemStack(Material.CREEPER_HEAD);
+		}
+	},
+	POWERED("6450"),
 	;
 
-	@Setter
-	private ItemStack itemStack;
+	private final String headId;
 
 	@Override
 	public @NotNull EntityType getEntityType() {
