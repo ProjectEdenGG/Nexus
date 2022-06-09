@@ -46,7 +46,7 @@ public class HomeListener implements Listener {
 		else if (first.isPresent())
 			event.setRespawnLocation(first.get().getLocation());
 		else
-			event.setRespawnLocation(Warps.getSpawn());
+			event.setRespawnLocation(Warps.getSurvival());
 	}
 
 	@EventHandler

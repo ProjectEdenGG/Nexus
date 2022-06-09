@@ -142,13 +142,13 @@ public class WitherChallenge extends Feature implements Listener {
 			return;
 
 		if (currentFight == null) {
-			Warps.spawn(player);
+			Warps.survival(player);
 			HealCommand.healPlayer(player);
 			return;
 		}
 
 		if (currentFight.party == null) {
-			Warps.spawn(player);
+			Warps.survival(player);
 			HealCommand.healPlayer(player);
 			return;
 		}
@@ -156,7 +156,7 @@ public class WitherChallenge extends Feature implements Listener {
 		if (currentFight.isInParty(player))
 			return;
 
-		Warps.spawn(player);
+		Warps.survival(player);
 		HealCommand.healPlayer(player);
 	}
 

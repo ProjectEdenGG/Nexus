@@ -30,7 +30,6 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.tip.Tip;
 import gg.projecteden.nexus.models.tip.Tip.TipType;
 import gg.projecteden.nexus.models.tip.TipService;
-import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.FireworkLauncher;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -364,7 +363,7 @@ public class Misc implements Listener {
 		if (player.getWorld().getEnvironment() == Environment.THE_END)
 			return;
 
-		Warps.spawn(player);
+		Warps.survival(player);
 	}
 
 	@EventHandler
@@ -480,14 +479,14 @@ public class Misc implements Listener {
 	public void onJoin(PlayerJoinEvent event) {
 		final Player player = event.getPlayer();
 		if (toSpawn.contains(player.getUniqueId())) {
-			WarpType.NORMAL.get("spawn").teleportAsync(player);
+			Warps.survival(player);
 			Nexus.log("Teleporting resource world player " + Nickname.of(player) + " to spawn");
 			toSpawn.remove(player.getUniqueId());
 		}
 
 		Tasks.wait(5, () -> {
 			if (toSpawn.contains(player.getUniqueId())) {
-				WarpType.NORMAL.get("spawn").teleportAsync(player);
+				Warps.survival(player);
 				Nexus.log("Teleporting resource world player " + Nickname.of(player) + " to spawn [2]");
 				toSpawn.remove(player.getUniqueId());
 			}
