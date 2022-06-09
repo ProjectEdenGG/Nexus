@@ -445,7 +445,7 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 			immobileTicks++;
 		lastLocation = playerLocation;
 
-		if (getMatch().getMechanic().usesAlternativeRegen())
+		if (getMatch().getMechanic().getRegenType().hasCustomRegen())
 			regen();
 	}
 
