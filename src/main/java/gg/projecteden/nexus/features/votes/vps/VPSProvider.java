@@ -42,7 +42,7 @@ public class VPSProvider extends InventoryProvider {
 
 	@Override
 	protected int getRows(Integer page) {
-		return menu.getPage((page == null ? 0 : page) + 1).getRows();
+		return menu.getPage(page == null ? 1 : page).getRows();
 	}
 
 	@Override
