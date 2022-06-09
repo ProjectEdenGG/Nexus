@@ -68,23 +68,21 @@ public class ItemUtils {
 
 		List<String> lore1 = itemMeta1.getLore();
 		List<String> lore2 = itemMeta2.getLore();
-		List<String> conditionTags = Arrays.stream(Condition.values()).map(condition -> stripColor(condition.getTag())).toList();
-		if(lore1 != null) {
-			lore1 = lore1.stream()
-				.filter(line -> !conditionTags.contains(stripColor(line)))
-				.filter(line -> !Nullables.isNullOrEmpty(line.trim()))
-				.toList();
-		}
-		if(lore2 != null) {
-			lore2 = lore2.stream()
-				.filter(line -> !conditionTags.contains(stripColor(line)))
-				.filter(line -> !Nullables.isNullOrEmpty(line.trim()))
-				.toList();
-		}
 
-		if (!Objects.equals(lore1, lore2)) {
+		final List<String> conditionTags = Arrays.stream(Condition.values()).map(condition -> stripColor(condition.getTag())).toList();
+		final Function<List<String>, List<String>> filter = lore -> lore.stream()
+			.filter(line -> !conditionTags.contains(stripColor(line)))
+			.filter(line -> !Nullables.isNullOrEmpty(line.trim()))
+			.toList();
+
+		if (lore1 != null)
+			lore1 = filter.apply(lore1);
+
+		if (lore2 != null)
+			lore2 = filter.apply(lore2);
+
+		if (!Objects.equals(lore1, lore2))
 			return false;
-		}
 
 		if (itemMeta1.hasCustomModelData() && itemMeta2.hasCustomModelData())
 			return itemMeta1.getCustomModelData() == itemMeta2.getCustomModelData();
@@ -97,6 +95,16 @@ public class ItemUtils {
 			return null;
 
 		return itemStack.clone();
+	}
+
+	@Contract("null, _ -> null; !null, _ -> _")
+	public static @Nullable ItemStack clone(@Nullable ItemStack itemStack, int amount) {
+		if (isNullOrAir(itemStack))
+			return null;
+
+		final ItemStack clone = itemStack.clone();
+		clone.setAmount(amount);
+		return clone;
 	}
 
 	public static void combine(List<ItemStack> itemStacks, ItemStack... newItemStacks) {
