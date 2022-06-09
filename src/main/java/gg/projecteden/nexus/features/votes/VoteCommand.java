@@ -2,6 +2,8 @@ package gg.projecteden.nexus.features.votes;
 
 import gg.projecteden.annotations.Async;
 import gg.projecteden.nexus.features.commands.AgeCommand.ServerAge;
+import gg.projecteden.nexus.features.commands.staff.admin.PermHelperCommand;
+import gg.projecteden.nexus.features.commands.staff.admin.PermHelperCommand.NumericPermission;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.features.votes.vps.VPS;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -12,6 +14,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -21,11 +24,13 @@ import gg.projecteden.nexus.models.voter.Voter;
 import gg.projecteden.nexus.models.voter.Voter.Vote;
 import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.utils.TimeUtils;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import gg.projecteden.utils.Utils;
 import lombok.NonNull;
+import net.luckperms.api.context.ImmutableContextSet;
 import org.bukkit.entity.Player;
 
 import java.time.LocalDate;
@@ -46,6 +51,7 @@ import static gg.projecteden.nexus.utils.StringUtils.progressBar;
 import static gg.projecteden.utils.TimeUtils.shortishDateTimeFormat;
 
 @Aliases("votes")
+@Redirect(from = "/vps", to = "/vote points store")
 public class VoteCommand extends CustomCommand {
 	private final VoterService service = new VoterService();
 	private Voter voter;
@@ -63,7 +69,7 @@ public class VoteCommand extends CustomCommand {
 
 		line(3);
 		send(json("&3Support the server by voting daily! Each vote gives you &e1 Vote point &3to spend in the " +
-				"&eVote Point Store, &3and the top voters of each month receive a special reward!"));
+			"&eVote Point Store, &3and the top voters of each month receive a special reward!"));
 		line();
 		send("&6&lLinks");
 		for (VoteSite site : VoteSite.getActiveSites()) {
@@ -75,7 +81,7 @@ public class VoteCommand extends CustomCommand {
 		}
 		line();
 		send(json("&3Server goal: " + progressBar(sum, GOAL, NONE, 75) + " &e" + sum + "&3/&e" + GOAL)
-				.hover("&eReach the goal together for a monthly reward!"));
+			.hover("&eReach the goal together for a monthly reward!"));
 		line();
 		send("&e[+] &3" + "You have &e" + voter.getPoints() + " &3vote points");
 		line();
@@ -136,7 +142,7 @@ public class VoteCommand extends CustomCommand {
 
 		send(PREFIX + "Vote counts");
 		Utils.sortByKeyReverse(activeVotes).forEach((count, players) ->
-				send("&e" + count + " &7- " + players.stream().map(Nickname::of).collect(Collectors.joining(", "))));
+			send("&e" + count + " &7- " + players.stream().map(Nickname::of).collect(Collectors.joining(", "))));
 	}
 
 	@Path("reminders [enable] [player]")
@@ -149,8 +155,18 @@ public class VoteCommand extends CustomCommand {
 	}
 
 	@Path("points store [page]")
-	void run(@Arg("1") int page) {
+	void points_store(@Arg("1") int page) {
 		VPS.open(player(), page);
+	}
+
+	@Path("points store buy plot")
+	void buyPlot() {
+		if (LuckPermsUtils.hasPermission(uuid(), "plots.plot.6", ImmutableContextSet.of("world", "creative")))
+			error("You have already purchased the maximum amount of plots");
+
+		new VoterService().edit(player(), voter -> voter.takePoints(150));
+		PermHelperCommand.add(NumericPermission.PLOTS, uuid(), 1);
+		send(PREFIX + "Purchased &e1 creative plot &3for &e150 vote points");
 	}
 
 	@Path("points [player]")
@@ -232,3 +248,4 @@ public class VoteCommand extends CustomCommand {
 		return completions;
 	}
 }
+
