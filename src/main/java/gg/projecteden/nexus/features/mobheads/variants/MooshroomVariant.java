@@ -3,11 +3,9 @@ package gg.projecteden.nexus.features.mobheads.variants;
 import gg.projecteden.nexus.features.mobheads.common.MobHeadVariant;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.MushroomCow;
 import org.bukkit.entity.MushroomCow.Variant;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -15,13 +13,12 @@ import java.util.Arrays;
 @Getter
 @RequiredArgsConstructor
 public enum MooshroomVariant implements MobHeadVariant {
-	RED(Variant.RED),
-	BROWN(Variant.BROWN),
+	RED("339", Variant.RED),
+	BROWN("26552", Variant.BROWN),
 	;
 
+	private final String headId;
 	private final Variant bukkitType;
-	@Setter
-	private ItemStack itemStack;
 
 	@Override
 	public @NotNull EntityType getEntityType() {

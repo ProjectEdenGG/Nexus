@@ -51,13 +51,6 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 		giveItem(mobHead.getSkull());
 	}
 
-	@Path("reload")
-	@Permission(Group.ADMIN)
-	void reload() {
-		MobHeadType.load();
-		send(PREFIX + "Reloaded");
-	}
-
 	@Path("debug [enable]")
 	@Permission(Group.ADMIN)
 	void debug(Boolean enable) {

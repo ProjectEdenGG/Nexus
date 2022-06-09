@@ -226,7 +226,7 @@ public class DailyRewardsFeature extends Feature {
 				/*  84 */ add(new Reward("Coupon for 2 McMMO levels")				.item(CouponCommand.getGenericCoupon("mcmmo", 2)));
 				/*  85 */ add(new Reward("2 Horse Spawn Eggs")						.item(HORSE_SPAWN_EGG, 2));
 				/*  86 */ add(new Reward("3 Enchanted Golden Apples")				.item(ENCHANTED_GOLDEN_APPLE, 3));
-				/*  87 */ add(new Reward("Iron, Gold, Diamond Horse Armor")		.item(IRON_HORSE_ARMOR).item(GOLDEN_HORSE_ARMOR).item(DIAMOND_HORSE_ARMOR));
+				/*  87 */ add(new Reward("Iron, Gold, Diamond Horse Armor")			.item(IRON_HORSE_ARMOR).item(GOLDEN_HORSE_ARMOR).item(DIAMOND_HORSE_ARMOR));
 				/*  88 */ add(new Reward("64 Golden Carrots")						.item(GOLDEN_CARROT, 64));
 				/*  89 */ add(new Reward("16 End Crystals")							.item(END_CRYSTAL, 16));
 				/*  90 */ add(new Reward("$15,000")									.money(15000));
