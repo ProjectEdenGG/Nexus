@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.chat;
 
 import gg.projecteden.discord.DiscordId.Role;
 import gg.projecteden.discord.DiscordId.TextChannel;
+import gg.projecteden.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
@@ -25,7 +26,6 @@ import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
-import me.lexikiq.HasUniqueId;
 import net.kyori.adventure.audience.MessageType;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;

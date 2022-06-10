@@ -16,18 +16,18 @@ repositories {
     maven { url = uri("https://repo.onarandombox.com/content/groups/public/") }
     maven { url = uri("https://repo.dmulloy2.net/nexus/repository/public/") }
     maven { url = uri("https://ci.ender.zone/plugin/repository/everything/") }
-    maven { url = uri("https://maven.sk89q.com/repo/") }
     maven { url = uri("https://ci.athion.net/job/FastAsyncWorldEdit/ws/mvn/") }
     maven { url = uri("https://repo.aikar.co/content/groups/aikar/") }
     maven { url = uri("https://repo.inventivetalent.org/content/groups/public/") }
-    maven { url = uri("https://repo.codemc.io/repository/maven-public/") }
-    maven { url = uri("https://repo.codemc.io/repository/maven-snapshots/") }
+    maven { url = uri("https://repo.codemc.org/repository/maven-public/") }
+    maven { url = uri("https://repo.codemc.org/repository/maven-snapshots/") }
     maven { url = uri("https://repo.citizensnpcs.co/") }
     maven { url = uri("https://repo.md-5.net/content/groups/public/") }
     maven { url = uri("https://github.com/deanveloper/SkullCreator/raw/mvn-repo/") }
     maven { url = uri("https://mvn.intellectualsites.com/content/repositories/thirdparty/") }
     maven { url = uri("https://repo.viaversion.com") }
     maven { url = uri("https://repo.extendedclip.com/content/repositories/placeholderapi/") }
+    maven { url = uri("https://maven.enginehub.org/repo/") }
 }
 
 dependencies {
@@ -35,17 +35,16 @@ dependencies {
     // TODO don't use a hardcoded snapshot version (temporary measure because sonatype updates are slow)
     compileOnly("gg.projecteden.parchment:parchment-api:1.18.1-R0.1-20220116.191519-2")
     implementation("io.papermc:paperlib:1.0.2")
-    implementation("gg.projecteden:eden-common:2.0.7-SNAPSHOT")
-    implementation("gg.projecteden:eden-db:2.0.7-SNAPSHOT")
-    implementation("gg.projecteden:eden-discord:2.0.7-SNAPSHOT")
+    implementation("gg.projecteden:eden-common:2.0.9-SNAPSHOT")
+    implementation("gg.projecteden:eden-db:2.0.9-SNAPSHOT")
+    implementation("gg.projecteden:eden-discord:2.0.9-SNAPSHOT")
     implementation("org.reflections:reflections:0.10.2")
     implementation("org.objenesis:objenesis:3.2")
     implementation("org.checkerframework:checker-qual:3.21.1")
     implementation("com.github.ProjectEdenGG:norm:0843afb4e5")
-    implementation("mysql:mysql-connector-java:8.0.25")
+    implementation("mysql:mysql-connector-java:8.0.28")
     implementation("dev.morphia.morphia:core:1.6.1")
     implementation("it.sauronsoftware.cron4j:cron4j:2.2.5")
-    implementation("com.github.JDA-Applications.JDA-Utilities:jda-utilities-command:804d58a5ed")
     implementation("org.twitter4j:twitter4j-core:4.0.7")
     implementation("com.github.twitch4j:twitch4j:1.7.0")
     implementation("com.google.api-client:google-api-client:1.33.0")
@@ -80,6 +79,7 @@ dependencies {
     compileOnly("com.github.jikoo.OpenInv:openinvapi:4.1.8")
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.0.0")
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.0.0") { isTransitive = false }
+    compileOnly("world.bentobox:bentobox:1.20.1-SNAPSHOT")
     compileOnly(files("libs/BuycraftX.jar"))
     compileOnly(files("libs/GlowAPI.jar"))
     compileOnly(files("libs/nuvotifier-universal-2.3.4.jar"))

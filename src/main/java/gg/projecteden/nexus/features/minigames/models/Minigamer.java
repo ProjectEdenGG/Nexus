@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.minigames.models;
 
 import com.google.common.base.Strings;
 import de.myzelyam.api.vanish.VanishAPI;
+import gg.projecteden.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.SpeedCommand;
 import gg.projecteden.nexus.features.minigames.Minigames;
@@ -30,8 +31,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-import me.lexikiq.HasUniqueId;
-import me.lexikiq.PlayerLike;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;

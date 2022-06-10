@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.models.scheduledjobs.jobs;
 
 import gg.projecteden.annotations.Async;
-import gg.projecteden.models.scheduledjobs.common.AbstractJob;
-import gg.projecteden.models.scheduledjobs.common.Schedule;
+import gg.projecteden.mongodb.models.scheduledjobs.common.AbstractJob;
+import gg.projecteden.mongodb.models.scheduledjobs.common.Schedule;
 import gg.projecteden.nexus.features.commands.BirthdaysCommand;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;

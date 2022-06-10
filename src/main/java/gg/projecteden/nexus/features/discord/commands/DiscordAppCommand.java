@@ -15,10 +15,6 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.models.discord.DiscordConfigService;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
-import gg.projecteden.utils.DiscordId;
-import gg.projecteden.utils.DiscordId.User;
-import gg.projecteden.nexus.models.setting.Setting;
-import gg.projecteden.nexus.models.setting.SettingService;
 import net.dv8tion.jda.api.entities.Member;
 import org.apache.commons.lang.RandomStringUtils;
 

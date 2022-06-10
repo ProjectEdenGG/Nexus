@@ -1,12 +1,12 @@
 package gg.projecteden.nexus.models.scheduledjobs.jobs;
 
-import gg.projecteden.models.scheduledjobs.common.AbstractJob;
-import gg.projecteden.models.scheduledjobs.common.RetryIfInterrupted;
+import gg.projecteden.discord.DiscordId.Role;
+import gg.projecteden.mongodb.models.scheduledjobs.common.AbstractJob;
+import gg.projecteden.mongodb.models.scheduledjobs.common.RetryIfInterrupted;
 import gg.projecteden.nexus.models.badge.BadgeUser.Badge;
 import gg.projecteden.nexus.models.badge.BadgeUserService;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
-import gg.projecteden.utils.DiscordId.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
