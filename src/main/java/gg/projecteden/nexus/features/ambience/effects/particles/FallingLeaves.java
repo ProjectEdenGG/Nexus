@@ -4,14 +4,11 @@ import gg.projecteden.nexus.features.ambience.effects.particles.common.ParticleE
 import gg.projecteden.nexus.features.ambience.effects.particles.common.ParticleEffectType;
 import gg.projecteden.nexus.features.particles.effects.DotEffect;
 import gg.projecteden.nexus.models.ambience.AmbienceUser;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -20,6 +17,8 @@ import org.bukkit.Particle;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @NoArgsConstructor
 public class FallingLeaves extends ParticleEffect {
@@ -57,30 +56,41 @@ public class FallingLeaves extends ParticleEffect {
 			DotEffect.debug(player, new Location(player.getWorld(), xRange, yRange, zRange), Color.RED);
 	}
 
-	@AllArgsConstructor
-	@RequiredArgsConstructor
 	private enum LeavesParticle {
-		OAK(Material.GREEN_CONCRETE, Material.GREEN_TERRACOTTA),
-		SPRUCE(Material.SPRUCE_LEAVES),
-		BIRCH(Material.GREEN_TERRACOTTA),
-		JUNGLE(Material.GREEN_CONCRETE, Material.GREEN_TERRACOTTA),
-		ACACIA(Material.GREEN_CONCRETE, Material.GREEN_TERRACOTTA),
-		DARK_OAK(Material.GREEN_TERRACOTTA),
-		AZALEA(Material.GREEN_CONCRETE),
-		FLOWERING_AZALEA(Material.GREEN_CONCRETE),
+		OAK(Material.OAK_LEAVES, Material.GREEN_CONCRETE, Material.GREEN_TERRACOTTA),
+		SPRUCE(Material.SPRUCE_LEAVES, Material.SPRUCE_LEAVES),
+		BIRCH(Material.BIRCH_LEAVES, Material.GREEN_TERRACOTTA),
+		JUNGLE(Material.JUNGLE_LEAVES, Material.GREEN_CONCRETE, Material.GREEN_TERRACOTTA),
+		ACACIA(Material.ACACIA_LEAVES, Material.GREEN_CONCRETE, Material.GREEN_TERRACOTTA),
+		DARK_OAK(Material.DARK_OAK_LEAVES, Material.GREEN_TERRACOTTA),
+		AZALEA(Material.AZALEA_LEAVES, Material.GREEN_CONCRETE),
+		FLOWERING_AZALEA(Material.FLOWERING_AZALEA_LEAVES, Material.GREEN_CONCRETE),
+		CAVE_VINES(Material.CAVE_VINES, Material.GREEN_CONCRETE),
 		;
 
 		@Getter
-		@NonNull
-		private final Material material;
+		@NotNull
+		private final Material originMaterial;
 		@Getter
-		private Material swampMaterial = null;
+		@NonNull
+		private final Material particleMaterial;
+		@Getter
+		private Material swampParticleMaterial = null;
+
+		LeavesParticle(@NotNull Material origin, @NotNull Material particle, @Nullable Material swamp) {
+			this.originMaterial = origin;
+			this.particleMaterial = particle;
+			this.swampParticleMaterial = swamp;
+		}
+
+		LeavesParticle(@NotNull Material origin, @NotNull Material particle) {
+			this.originMaterial = origin;
+			this.particleMaterial = particle;
+		}
 
 		public static @NonNull LeavesParticle of(Material material) {
-			String leavesStr = material.name().toUpperCase().replace("_LEAVES", "");
-
 			for (LeavesParticle leavesParticle : LeavesParticle.values()) {
-				if (leavesParticle.name().equalsIgnoreCase(leavesStr))
+				if (leavesParticle.getOriginMaterial() == material)
 					return leavesParticle;
 			}
 
@@ -88,17 +98,17 @@ public class FallingLeaves extends ParticleEffect {
 		}
 
 		public Material getBiomeMaterial(Player player) {
-			return getMaterial(player.getLocation().getBlock().getBiome());
+			return getParticleMaterial(player.getLocation().getBlock().getBiome());
 		}
 
-		private Material getMaterial(Biome biome) {
-			Material result = null;
+		private Material getParticleMaterial(Biome biome) {
+			Material result = this.particleMaterial;
 
 			if (biome == Biome.SWAMP)
-				result = this.swampMaterial;
+				result = this.swampParticleMaterial;
 			//...
 
-			return Nullables.isNullOrAir(result) ? this.material : result;
+			return result;
 		}
 
 	}

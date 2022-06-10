@@ -93,6 +93,7 @@ public class ParticleEffectManager extends AmbienceManager {
 		effects.add(new ParticleEffectConfig(ParticleEffectType.FALLING_LEAVES, Material.DARK_OAK_LEAVES, Material.DARK_OAK_LEAVES, null, Material.AIR, 5));
 		effects.add(new ParticleEffectConfig(ParticleEffectType.FALLING_LEAVES, Material.AZALEA_LEAVES, Material.AZALEA_LEAVES, null, Material.AIR, 5));
 		effects.add(new ParticleEffectConfig(ParticleEffectType.FALLING_LEAVES, Material.FLOWERING_AZALEA_LEAVES, Material.FLOWERING_AZALEA_LEAVES, null, Material.AIR, 5));
+		effects.add(new ParticleEffectConfig(ParticleEffectType.FALLING_LEAVES, Material.CAVE_VINES, Material.CAVE_VINES, null, Material.AIR, 5));
 	}
 
 }
