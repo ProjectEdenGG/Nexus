@@ -38,6 +38,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -122,11 +123,15 @@ public class FallingBlocks extends TeamlessMechanic {
 			for (Minigamer minigamer : match.getAliveMinigamers()) {
 				final Location location = minigamer.getLocation();
 				location.setY(y);
+				if (!MaterialTag.ALL_AIR.isTagged(location.getBlock()))
+					continue;
+
 				final BlockData blockData = Bukkit.createBlockData(matchData.getColor(minigamer));
 				final FallingBlock fallingBlock = match.getWorld().spawnFallingBlock(location.toCenterLocation(), blockData);
+
 				fallingBlock.setDropItem(false);
 				fallingBlock.setInvulnerable(true);
-				fallingBlock.setVelocity(new org.bukkit.util.Vector(0, -0.5, 0));
+				fallingBlock.setVelocity(new Vector(0, -0.5, 0));
 			}
 		});
 	}
