@@ -50,6 +50,10 @@ public interface TemporaryMenuListener extends TemporaryListener {
 		open(6, contents);
 	}
 
+	default boolean keepAirSlots() {
+		return false;
+	}
+
 	@EventHandler
 	default void onChestClose(InventoryCloseEvent event) {
 		if (event.getInventory().getHolder() != null) return;
@@ -57,7 +61,7 @@ public interface TemporaryMenuListener extends TemporaryListener {
 		if (!event.getPlayer().equals(getPlayer())) return;
 
 		List<ItemStack> contents = Arrays.stream(event.getInventory().getContents())
-				.filter(Nullables::isNotNullOrAir)
+				.filter(item -> keepAirSlots() || Nullables.isNotNullOrAir(item))
 				.collect(Collectors.toList());
 
 		onClose(event, contents);
