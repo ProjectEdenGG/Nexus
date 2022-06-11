@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.models.legacy;
+package gg.projecteden.nexus.models.legacy.itemtransfer;
 
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
@@ -35,6 +35,10 @@ public class ItemTransferUser implements PlayerOwnedObject {
 		return items.computeIfAbsent(status, $ -> new ArrayList<>());
 	}
 
+	public int getCount(ReviewStatus status) {
+		return getItems(status).stream().mapToInt(ItemStack::getAmount).sum();
+	}
+
 	public void accept(ItemStack item) {
 		getItems(ReviewStatus.PENDING).remove(item);
 		getItems(ReviewStatus.ACCEPTED).add(item);
@@ -45,14 +49,19 @@ public class ItemTransferUser implements PlayerOwnedObject {
 		getItems(ReviewStatus.DENIED).add(item);
 	}
 
-	public void acceptAll() {
-		getItems(ReviewStatus.ACCEPTED).addAll(getItems(ReviewStatus.PENDING));
-		getItems(ReviewStatus.PENDING).clear();
+	public int acceptAll() {
+		return moveItems(ReviewStatus.ACCEPTED);
 	}
 
-	public void denyAll() {
-		getItems(ReviewStatus.DENIED).addAll(getItems(ReviewStatus.PENDING));
+	public int denyAll() {
+		return moveItems(ReviewStatus.DENIED);
+	}
+
+	private int moveItems(ReviewStatus status) {
+		int count = getCount(ReviewStatus.PENDING);
+		getItems(status).addAll(getItems(ReviewStatus.PENDING));
 		getItems(ReviewStatus.PENDING).clear();
+		return count;
 	}
 
 	public enum ReviewStatus {
