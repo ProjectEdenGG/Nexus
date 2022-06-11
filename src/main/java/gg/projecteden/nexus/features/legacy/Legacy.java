@@ -21,6 +21,32 @@ import static gg.projecteden.nexus.utils.Utils.registerListeners;
 	TODO
 		Hook into LuckPerms to add WorldGroup context?
 			For fly; otherwise set essentials.fly=true in each world
+		Reset
+			playerdata.dat
+				EnderItems
+				Inventory
+				XpLevel
+				XpP
+				XpSeed
+				XpTotal
+				bukkit.expToDrop
+				bukkit.newExp
+				bukkit.newLevel
+				bukkit.newTotalExp
+				foodExhaustionLevel
+				foodLevel
+				foodSaturationLevel
+				foodTickTimer
+				recipeBook.recipes
+				recipeBook.toBeDisplayed
+				seenCredits
+				???
+			Inventories
+				Delete mvinv files & playerdata.dat:inventory
+			Vaults
+			Advancements
+				Delete world/advancements
+
 
  */
 
