@@ -106,7 +106,7 @@ public abstract class MultiplayerMechanic extends Mechanic {
 			// iterates until we find a player who is missing at least 1 collectible
 			for (Minigamer minigamer : minigamers) {
 				PerkOwner perkOwner = service.get(minigamer.getPlayer());
-				if (LocalDate.now().isBefore(perkOwner.getRandomGiftDate().plusWeeks(1)))
+				if (LocalDate.now().isBefore(perkOwner.getRandomGiftDate().plusDays(3)))
 					continue;
 
 				// get a random perk the player doesn't own
