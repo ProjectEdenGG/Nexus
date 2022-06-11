@@ -57,7 +57,7 @@ public class StoreGalleryNPCs {
 		Tasks.repeat(TickTime.SECOND, TickTime.SECOND.x(10), () -> {
 			for (DisplaySet displaySet : displays) {
 				Display display = displaySet.getNext();
-				if (display == null)
+				if (display == null || display.skinName == null)
 					continue;
 
 				HumanEntity humanEntity = display.getHumanEntity();
