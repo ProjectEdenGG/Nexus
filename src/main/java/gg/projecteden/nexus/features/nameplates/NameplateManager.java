@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.nameplates;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.nameplates.packet.EntityDestroyPacket;
 import gg.projecteden.nexus.features.nameplates.packet.EntityMetadataPacket;
 import gg.projecteden.nexus.features.nameplates.packet.EntitySpawnPacket;
@@ -185,6 +186,9 @@ public class NameplateManager {
 			if (player.hasPotionEffect(PotionEffectType.INVISIBILITY))
 				return true;
 			if (!player.getPassengers().isEmpty())
+				return true;
+			final Minigamer minigamer = Minigamer.of(player);
+			if (minigamer.isPlaying() && !minigamer.getMatch().getMechanic().showNameplate(minigamer, Minigamer.of(viewer)))
 				return true;
 
 			if (isSelf(this, viewer))

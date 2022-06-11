@@ -66,7 +66,7 @@ import static gg.projecteden.nexus.utils.LocationUtils.getBlockHit;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @Railgun
-@Scoreboard(teams = false, sidebarType = Type.MATCH, visibleNameTags = false)
+@Scoreboard(teams = false, sidebarType = Type.MINIGAMER)
 public class Murder extends TeamMechanic {
 
 	@Override
@@ -76,7 +76,7 @@ public class Murder extends TeamMechanic {
 
 	@Override
 	public @NotNull String getDescription() {
-		return "Try to find and stop the villager who is secretly murderering your fellow villagers";
+		return "Try to find and stop the villager who is secretly murdering your fellow villagers";
 	}
 
 	@Override
@@ -203,11 +203,35 @@ public class Murder extends TeamMechanic {
 		}
 	}
 
-	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Match match) {
-		return new HashMap<>() {{
-			match.getMinigamers().stream().filter(Minigamer::isAlive)
-					.forEach(minigamer -> put(minigamer.getNickname(), 0));
-		}};
+	@Override
+	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Minigamer minigamer) {
+		Match match = minigamer.getMatch();
+		List<Minigamer> allMinigamers = match.getAllMinigamers();
+		Map<String, Integer> lines = new HashMap<>(allMinigamers.size());
+		if (minigamer.isAlive()) {
+			for (Minigamer target : allMinigamers)
+				lines.put(target.getNickname(), 0);
+		} else {
+			for (Minigamer target : allMinigamers) {
+				String color;
+				int index;
+				if (!target.isAlive()) {
+					color = "&8&m&o";
+					index = -1;
+				} else if (isMurderer(target)) {
+					color = "&c";
+					index = 99;
+				} else if (isGunner(target)) {
+					color = "&e";
+					index = 10;
+				} else {
+					color = "&f";
+					index = getScrapCount(target);
+				}
+				lines.put(color + target.getNickname(), index);
+			}
+		}
+		return lines;
 	}
 
 	public void spawnCorpse(Minigamer minigamer) {
@@ -556,6 +580,11 @@ public class Murder extends TeamMechanic {
 
 	private Set<Minigamer> getGunners(Match match) {
 		return match.getAliveMinigamers().stream().filter(this::isGunner).collect(Collectors.toSet());
+	}
+
+	private int getScrapCount(Minigamer minigamer) {
+		ItemStack scrapItem = minigamer.getPlayer().getInventory().getItem(8);
+		return scrapItem == null ? 0 : scrapItem.getAmount();
 	}
 
 	@EventHandler

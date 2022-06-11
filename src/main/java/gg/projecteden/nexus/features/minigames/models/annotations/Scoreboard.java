@@ -9,5 +9,4 @@ import java.lang.annotation.RetentionPolicy;
 public @interface Scoreboard {
 	Type sidebarType() default Type.MATCH;
 	boolean teams() default true;
-	boolean visibleNameTags() default true; // only applicable if teams() is false
 }

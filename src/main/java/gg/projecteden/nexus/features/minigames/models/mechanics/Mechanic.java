@@ -32,6 +32,7 @@ import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
+import me.lucko.helper.scoreboard.ScoreboardTeam.NameTagVisibility;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.TextComponent;
@@ -173,8 +174,9 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 			match.getMinigamers().forEach(minigamer -> minigamer.setLives(lives));
 		else
 			match.getMinigamers().forEach(minigamer -> {
-				if (minigamer.getTeam().getLives() > 0)
-					minigamer.setLives(minigamer.getTeam().getLives());
+				Team team = minigamer.getTeam();
+				if (team != null && team.getLives() > 0)
+					minigamer.setLives(team.getLives());
 			});
 
 		int beginDelay = match.getArena().getBeginDelay();
@@ -320,6 +322,13 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		return left(match.getArena().getName(), 16);
 	}
 
+	/**
+	 * Whether to render the names of teams in the default
+	 * {@link gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreboard.Type#MATCH MATCH}
+	 * scoreboard.
+	 *
+	 * @return whether to render the names of teams in the default scoreboard
+	 */
 	protected boolean renderTeamNames() {
 		return true;
 	}
@@ -371,6 +380,59 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 
 	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Match match, @NotNull Team team) {
 		return new HashMap<>();
+	}
+
+	/**
+	 * Gets the name tag of a {@code target} as viewed by a {@code viewer}.
+	 *
+	 * @param target the target player
+	 * @param viewer the viewer player
+	 * @return the name tag of the target player or null if the player(s) are not in this mechanic
+	 */
+	public @Nullable Component getNameplate(@NotNull Minigamer target, @NotNull Minigamer viewer) {
+		// ensure both players are in the same match (and on this mechanic)
+		if (!target.isPlaying(this))
+			return null;
+		Match match = target.getMatch();
+		if (!viewer.isPlaying(match))
+			return null;
+
+		// return default nameplate
+		return target.asComponent();
+	}
+
+	/**
+	 * Whether the given {@code viewer} should be able to see {@code target}'s name tag.
+	 *
+	 * @param target the target player
+	 * @param viewer the viewer player
+	 * @return whether the viewer should be able to see the target's name tag
+	 */
+	public boolean showNameplate(@NotNull Minigamer target, @NotNull Minigamer viewer) {
+		if (getNameplate(target, viewer) == null)
+			return true;
+
+		// handle respawning
+		if (viewer.isRespawning())
+			return false;
+
+		// handle spectators/dead players
+		if (!target.isAlive() && viewer.isAlive())
+			return false;
+
+		// handle name tag visibility
+		Team targetTeam = target.getTeam();
+		Team viewerTeam = viewer.getTeam();
+		NameTagVisibility targetVisibility = targetTeam == null ? NameTagVisibility.ALWAYS : targetTeam.getNameTagVisibility();
+		if (targetVisibility == NameTagVisibility.NEVER)
+			return false;
+		if (targetVisibility == NameTagVisibility.HIDE_FOR_OTHER_TEAMS && targetTeam != viewerTeam)
+			return false;
+		if (targetVisibility == NameTagVisibility.HIDE_FOR_OWN_TEAM && targetTeam == viewerTeam)
+			return false;
+
+		// name tag is visible :)
+		return true;
 	}
 
 	public void onPlayerInteract(Minigamer minigamer, PlayerInteractEvent event) {
