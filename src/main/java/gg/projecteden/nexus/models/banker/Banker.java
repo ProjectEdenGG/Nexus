@@ -167,7 +167,7 @@ public class Banker implements PlayerOwnedObject {
 
 			if (profit.signum() != 0) {
 				Tasks.cancel(taskId);
-				final String message = (profit.signum() > 0 ? "&a+" : "&c-") + prettyMoney(profit);
+				final String message = (profit.signum() > 0 ? "&a+" : "&c") + prettyMoney(profit);
 				ActionBarUtils.sendActionBar(getOnlinePlayer(), message);
 				taskId = Tasks.wait(TickTime.SECOND.x(3.5), () -> profit = new BigDecimal(0));
 			}
