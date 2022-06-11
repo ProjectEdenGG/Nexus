@@ -29,7 +29,7 @@ public interface TemporaryMenuListener extends TemporaryListener {
 	}
 
 	default void open() {
-		open(3);
+		open(6);
 	}
 
 	default void open(int rows) {
@@ -46,11 +46,7 @@ public interface TemporaryMenuListener extends TemporaryListener {
 		getPlayer().openInventory(inv);
 	}
 
-	default void openMax() {
-		open(6);
-	}
-
-	default void openMax(List<ItemStack> contents) {
+	default void open(List<ItemStack> contents) {
 		open(6, contents);
 	}
 

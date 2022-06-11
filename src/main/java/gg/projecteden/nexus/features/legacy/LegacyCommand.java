@@ -1,49 +1,55 @@
 package gg.projecteden.nexus.features.legacy;
 
 import gg.projecteden.annotations.Environments;
-import gg.projecteden.nexus.features.listeners.TemporaryMenuListener;
-import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
-import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.annotations.Title;
-import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.features.legacy.menus.homes.LegacyHomesMenu;
+import gg.projecteden.nexus.features.legacy.menus.itemtransfer.ItemPendingMenu;
+import gg.projecteden.nexus.features.legacy.menus.itemtransfer.ItemReceiveMenu;
+import gg.projecteden.nexus.features.legacy.menus.itemtransfer.ItemReviewMenu;
+import gg.projecteden.nexus.features.legacy.menus.itemtransfer.ItemTransferMenu;
+import gg.projecteden.nexus.features.legacy.menus.itemtransfer.ReviewableMenu;
+import gg.projecteden.nexus.features.warps.commands._WarpSubCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.models.legacy.ItemTransferUser;
-import gg.projecteden.nexus.models.legacy.ItemTransferUser.ReviewStatus;
-import gg.projecteden.nexus.models.legacy.ItemTransferUserService;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.models.home.Home;
+import gg.projecteden.nexus.models.home.HomeOwner;
+import gg.projecteden.nexus.models.home.HomeService;
+import gg.projecteden.nexus.models.legacy.homes.LegacyHome;
+import gg.projecteden.nexus.models.legacy.homes.LegacyHomeOwner;
+import gg.projecteden.nexus.models.legacy.homes.LegacyHomeService;
+import gg.projecteden.nexus.models.legacy.itemtransfer.ItemTransferUser;
+import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.utils.Env;
-import lombok.Getter;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
-import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import java.util.Optional;
 
 @Environments(Env.TEST)
 @Permission(Group.STAFF)
-public class LegacyCommand extends CustomCommand {
-	public static final String PREFIX = StringUtils.getPrefix("Legacy");
+public class LegacyCommand extends _WarpSubCommand {
+	private final LegacyHomeService legacyHomeService = new LegacyHomeService();
+	private LegacyHomeOwner legacyHomeOwner;
 
 	public LegacyCommand(@NonNull CommandEvent event) {
 		super(event);
+		if (isPlayerCommandEvent())
+			legacyHomeOwner = legacyHomeService.get(player());
+	}
+
+	@Override
+	public WarpType getWarpType() {
+		return WarpType.LEGACY;
 	}
 
 	@Path("items transfer")
@@ -60,7 +66,10 @@ public class LegacyCommand extends CustomCommand {
 	@Path("items review [player]")
 	@Permission(Group.ADMIN)
 	void items_review(ItemTransferUser user) {
-		new ItemReviewMenu(user).open(player());
+		if (user == null)
+			new ReviewableMenu().open(player());
+		else
+			new ItemReviewMenu(user).open(player());
 	}
 
 	@Path("items receive")
@@ -68,185 +77,129 @@ public class LegacyCommand extends CustomCommand {
 		new ItemReceiveMenu(player());
 	}
 
-	@Title("Legacy Item Transfer")
-	public static class ItemTransferMenu implements TemporaryMenuListener {
-		@Getter
-		private final Player player;
+	@Path("homes (teleport|tp) [home]")
+	void homes_teleport(@Arg(value = "home", tabCompleter = LegacyHome.class) String name) {
+		if (legacyHomeOwner.getHomes().size() == 0)
+			error("You do not have any legacy homes");
 
-		public ItemTransferMenu(Player player) {
-			this.player = player;
-			openMax();
-		}
+		Optional<LegacyHome> home = legacyHomeOwner.getHome(name);
+		if (home.isEmpty())
+			error("You do not have a legacy home named &e" + name);
 
-		@Override
-		public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
-			new ItemTransferUserService().edit(player, user -> {
-				user.getItems(ReviewStatus.PENDING).addAll(contents);
-				user.sendMessage(PREFIX + "Successfully stored " + contents.stream().mapToInt(ItemStack::getAmount).sum() + " legacy items for staff review");
-			});
-		}
-
+		home.get().teleportAsync(player());
 	}
 
-	@Title("Pending Items")
-	public static class ItemPendingMenu extends InventoryProvider {
-		private final ItemTransferUserService service = new ItemTransferUserService();
-		private final ItemTransferUser user;
+	@Path("homes (teleport|tp) <player> <home>")
+	void homes_teleport(OfflinePlayer player, @Arg(context = 1) LegacyHome legacyHome) {
+		legacyHome.teleportAsync(player());
+	}
 
-		public ItemPendingMenu(Player player) {
-			this.user = service.get(player);
+	@Path("homes <player>")
+	void homes(LegacyHomeOwner legacyHomeOwner) {
+		new LegacyHomesMenu(legacyHomeOwner).open(player());
+	}
+
+	@Path("homes setItem <home> <material>")
+	void homes_setItem(LegacyHome home, Material material) {
+		home.setItem(new ItemStack(material));
+		legacyHomeService.save(legacyHomeOwner);
+		send(PREFIX + "Legacy home display item set to " + camelCase(material));
+	}
+
+	@Path("homes set <name>")
+	void homes_set(String legacyHomeName) {
+		Optional<LegacyHome> home = legacyHomeOwner.getHome(legacyHomeName);
+
+		String message;
+		if (home.isPresent()) {
+			home.get().setLocation(location());
+			message = "Updated location of legacy home &e" + legacyHomeName + "&3";
+		} else {
+			legacyHomeOwner.add(LegacyHome.builder()
+				.uuid(legacyHomeOwner.getUuid())
+				.name(legacyHomeName)
+				.location(location())
+				.build());
+			message = "Legacy home &e" + legacyHomeName + "&3 set to current location. Return with &c/legacy homes tp " + legacyHomeName;
 		}
 
-		@Override
-		public void init() {
-			addCloseItem();
+		legacyHomeService.save(legacyHomeOwner);
+		send(PREFIX + message);
+	}
 
-			List<ClickableItem> items = new ArrayList<>();
+	@Permission(Group.STAFF)
+	@Path("homes set <player> <name>")
+	void homes_set(LegacyHomeOwner legacyHomeOwner, String legacyHomeName) {
+		Optional<LegacyHome> home = legacyHomeOwner.getHome(legacyHomeName);
+		String message;
+		if (home.isPresent()) {
+			home.get().setLocation(location());
+			message = "Updated location of legacy home &e" + legacyHomeName + "&3";
+		} else {
+			legacyHomeOwner.add(LegacyHome.builder()
+				.uuid(legacyHomeOwner.getUuid())
+				.name(legacyHomeName)
+				.location(location())
+				.build());
+			message = "Legacy home &e" + legacyHomeName + "&3 set to current location";
+		}
 
-			final boolean inLegacy = WorldGroup.of(player) == WorldGroup.LEGACY;
+		legacyHomeService.save(legacyHomeOwner);
+		send(PREFIX + message);
+	}
 
-			for (ItemStack item : user.getItems(ReviewStatus.PENDING)) {
-				if (inLegacy)
-					items.add(ClickableItem.of(new ItemBuilder(item).lore("Click to cancel"), e -> {
-						user.getItems(ReviewStatus.PENDING).remove(item);
-						PlayerUtils.giveItem(user, item);
-						refresh();
-					}));
-				else
-					items.add(ClickableItem.empty(item));
+	@Path("homes delete <name>")
+	void homes_delete(@Arg("home") LegacyHome legacyHome) {
+		legacyHomeOwner.delete(legacyHome);
+		legacyHomeService.save(legacyHomeOwner);
+
+		send(PREFIX + "Legacy home &e" + legacyHome.getName() + "&3 deleted");
+	}
+
+	@Permission(Group.STAFF)
+	@Path("homes delete <player> <name>")
+	void homes_delete(LegacyHomeOwner legacyHomeOwner, @Arg(context = 1) LegacyHome legacyHome) {
+		legacyHomeOwner.delete(legacyHome);
+		legacyHomeService.save(legacyHomeOwner);
+
+		send(PREFIX + "Legacy home &e" + legacyHome.getName() + "&3 deleted");
+	}
+
+	@Path("homes archive")
+	void homes_archive() {
+		int count = 0;
+		for (HomeOwner homeOwner : new HomeService().getAll()) {
+			for (Home home : new ArrayList<>(homeOwner.getHomes())) {
+				if (home.getWorldGroup() != WorldGroup.SURVIVAL)
+					continue;
+
+				legacyHomeOwner.add(LegacyHome.builder()
+					.uuid(home.getUniqueId())
+					.name(home.getName())
+					.location(home.getLocation())
+					.item(home.getItem())
+					.build());
+
+				count++;
+
+				// TODO 1.19 Delete original home
+				// homeOwner.delete(home);
 			}
-
-			paginator().items(items).build();
-		}
-	}
-
-	@Title("Review Items")
-	@RequiredArgsConstructor
-	public static class ItemReviewMenu extends InventoryProvider {
-		private final ItemTransferUserService service = new ItemTransferUserService();
-		private final ItemTransferUser user;
-
-		@Override
-		public void init() {
-			addCloseItem();
-
-			List<ClickableItem> items = new ArrayList<>();
-
-			contents.set(0, 3, ClickableItem.of(Material.RED_CONCRETE, "&cDeny All Items", e -> ConfirmationMenu.builder()
-				.onConfirm(e2 -> {
-					user.denyAll();
-					service.save(user);
-					player.closeInventory();
-				})
-				.onCancel(e2 -> new ItemReviewMenu(user).open(player, contents.pagination().getPage()))
-				.open(player)));
-
-			contents.set(0, 5, ClickableItem.of(Material.LIME_CONCRETE, "&cAccept All Items", e -> ConfirmationMenu.builder()
-				.onConfirm(e2 -> {
-					user.acceptAll();
-					service.save(user);
-					player.closeInventory();
-				})
-				.onCancel(e2 -> new ItemReviewMenu(user).open(player, contents.pagination().getPage()))
-				.open(player)));
-
-			for (ItemStack item : user.getItems(ReviewStatus.PENDING))
-				items.add(ClickableItem.of(item, e ->
-					new ItemReviewSubMenu(user, item, contents.pagination().getPage()).open(player)));
-
-			paginator().items(items).build();
 		}
 
+		send(PREFIX + "Archived " + count + " survival homes");
 	}
 
-	@Title("Review Item")
-	@RequiredArgsConstructor
-	public static class ItemReviewSubMenu extends InventoryProvider {
-		private final ItemTransferUserService service = new ItemTransferUserService();
-		private final ItemTransferUser user;
-		private final ItemStack item;
-		private final int parentPage;
-
-		@Override
-		public void init() {
-			addBackItem(e -> new ItemReviewMenu(user).open(player, parentPage));
-
-			contents.set(1, 3, ClickableItem.of(Material.RED_CONCRETE, "&cDeny Item", e -> {
-				user.deny(item);
-				service.save(user);
-				new ItemReviewMenu(user).open(player, parentPage);
-			}));
-
-			contents.set(1, 5, ClickableItem.of(Material.LIME_CONCRETE, "&cAccept Item", e -> {
-				user.accept(item);
-				service.save(user);
-				new ItemReviewMenu(user).open(player, parentPage);
-			}));
-		}
-
+	@ConverterFor(LegacyHome.class)
+	LegacyHome convertToLegacyHome(String value, OfflinePlayer context) {
+		if (context == null) context = player();
+		return legacyHomeService.get(context).getHome(value).orElseThrow(() -> new InvalidInputException("That legacy home does not exist"));
 	}
 
-	@Title("Receive Items")
-	public static class ItemReceiveMenu implements TemporaryMenuListener {
-		@Getter
-		private final Player player;
-		private final ItemTransferUserService service = new ItemTransferUserService();
-
-		public ItemReceiveMenu(Player player) {
-			this.player = player;
-
-			if (WorldGroup.of(player) != WorldGroup.SURVIVAL)
-				throw new InvalidInputException("You must be in the survival world to receive your items");
-
-			final ItemTransferUser user = service.get(player);
-			// TODO Receive denied items back in legacy world?
-			final ReviewStatus status = ReviewStatus.ACCEPTED;
-
-			if (user.getItems(status).isEmpty())
-				throw new InvalidInputException("No " + status.name().toLowerCase() + " items available, " +
-					(user.getItems(ReviewStatus.PENDING).isEmpty() ? "add them with '/legacy items transfer' in the legacy worlds" :
-						"please wait for the staff team to reivew your items" ));
-
-			final List<ItemStack> contents = new ArrayList<>(user.getItems(status).subList(0, Math.min(user.getItems(status).size(), 4 * 9)));
-
-			user.getItems(status).removeAll(contents);
-			service.save(user);
-
-			openMax(contents);
-
-			service.save(user);
-		}
-
-		@Override
-		public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
-			service.edit(player, user -> user.getItems(ReviewStatus.ACCEPTED).addAll(contents));
-		}
-	}
-
-	@EventHandler
-	public void on(InventoryClickEvent event) {
-		// Ability to open shulker boxes without placing them --> probably editable for item transfer
-	}
-
-
-	@EventHandler
-	public void on(PlayerInteractEntityEvent event) {
-		if (true) return; // TODO 1.19
-
-		if (WorldGroup.of(event.getPlayer()) != WorldGroup.LEGACY)
-			return;
-
-		if (!(event.getRightClicked() instanceof ItemFrame itemFrame))
-			return;
-
-		final ItemStack item = itemFrame.getItem();
-		if (isNullOrAir(item))
-			return;
-
-		if (item.getType() != Material.WRITTEN_BOOK && item.getType() != Material.WRITABLE_BOOK)
-			return;
-
-		event.getPlayer().openBook(item);
+	@TabCompleterFor(LegacyHome.class)
+	public List<String> tabCompleteLegacyHome(String filter, OfflinePlayer context) {
+		if (context == null) context = player();
+		return legacyHomeService.get(context).getNames(filter);
 	}
 
 }

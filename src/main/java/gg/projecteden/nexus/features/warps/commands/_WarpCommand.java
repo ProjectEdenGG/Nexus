@@ -28,8 +28,8 @@ import static gg.projecteden.nexus.utils.Utils.getMin;
 
 @NoArgsConstructor
 public abstract class _WarpCommand extends CustomCommand {
-	protected final WarpsService service = new WarpsService();
-	protected final Warps warps = service.get0();
+	protected final WarpsService warpService = new WarpsService();
+	protected final Warps warps = warpService.get0();
 
 	public _WarpCommand(CommandEvent event) {
 		super(event);
@@ -52,7 +52,7 @@ public abstract class _WarpCommand extends CustomCommand {
 	}
 
 	protected void save() {
-		service.save(warps);
+		warpService.save(warps);
 	}
 
 	@Path("(list|warps) [filter]")

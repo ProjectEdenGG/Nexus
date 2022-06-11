@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.models.legacy;
+package gg.projecteden.nexus.models.legacy.itemtransfer;
 
 
 import gg.projecteden.mongodb.annotations.ObjectClass;
