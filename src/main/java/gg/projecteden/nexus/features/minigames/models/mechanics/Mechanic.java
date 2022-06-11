@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Match.MatchTasks.MatchTaskType;
+import gg.projecteden.nexus.features.minigames.models.MinigameMessageType;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.RegenType;
 import gg.projecteden.nexus.features.minigames.models.Team;
@@ -228,13 +229,13 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 
 	public void onJoin(@NotNull MatchJoinEvent event) {
 		Minigamer minigamer = event.getMinigamer();
-		minigamer.getMatch().broadcast("&e" + minigamer.getNickname() + " &3has joined");
+		minigamer.getMatch().broadcast("&e" + minigamer.getNickname() + " &3has joined", MinigameMessageType.JOIN);
 		tellMapAndMechanic(minigamer);
 	}
 
 	public void onQuit(@NotNull MinigamerQuitEvent event) {
 		Minigamer minigamer = event.getMinigamer();
-		minigamer.getMatch().broadcast("&e" + minigamer.getNickname() + " &3has quit");
+		minigamer.getMatch().broadcast("&e" + minigamer.getNickname() + " &3has quit", MinigameMessageType.QUIT);
 		if (minigamer.getMatch().isStarted() && shouldBeOver(minigamer.getMatch()))
 			minigamer.getMatch().end();
 	}
@@ -404,7 +405,7 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 	 * @param viewer the viewer player (who may or may not be playing on the same match)
 	 * @return whether the viewer should be able to see the target's name tag
 	 */
-	public boolean showNameplate(@NotNull Minigamer target, @NotNull Minigamer viewer) {
+	public boolean shouldShowNameplate(@NotNull Minigamer target, @NotNull Minigamer viewer) {
 		if (getNameplate(target, viewer) == null)
 			return true;
 
@@ -428,6 +429,16 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 			return false;
 
 		// name tag is visible :)
+		return true;
+	}
+
+	/**
+	 * Whether to allow chat messages of the provided {@code type}.
+	 *
+	 * @param type the type of chat message
+	 * @return whether to allow chat messages
+	 */
+	public boolean allowChat(MinigameMessageType type) {
 		return true;
 	}
 

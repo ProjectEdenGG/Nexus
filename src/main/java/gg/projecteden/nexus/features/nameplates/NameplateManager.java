@@ -188,7 +188,7 @@ public class NameplateManager {
 			if (!player.getPassengers().isEmpty())
 				return true;
 			final Minigamer minigamer = Minigamer.of(player);
-			if (minigamer.isPlaying() && !minigamer.getMatch().getMechanic().showNameplate(minigamer, Minigamer.of(viewer)))
+			if (minigamer.isPlaying() && !minigamer.getMatch().getMechanic().shouldShowNameplate(minigamer, Minigamer.of(viewer)))
 				return true;
 
 			if (isSelf(this, viewer))

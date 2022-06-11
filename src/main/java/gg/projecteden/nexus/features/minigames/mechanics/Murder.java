@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.minigames.mechanics;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.models.Match;
+import gg.projecteden.nexus.features.minigames.models.MinigameMessageType;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.annotations.Railgun;
@@ -158,9 +159,13 @@ public class Murder extends TeamMechanic {
 		if (isGunner(victim))
 			victim.getPlayer().getLocation().getWorld().dropItem(victim.getPlayer().getLocation(), gun);
 
-		event.setDeathMessage(victim.getColoredName() + " &3died");
 		victim.tell("You were killed!");
 		super.onDeath(event);
+	}
+
+	@Override
+	public boolean allowChat(MinigameMessageType type) {
+		return type != MinigameMessageType.DEATH && type != MinigameMessageType.QUIT;
 	}
 
 	@Override
