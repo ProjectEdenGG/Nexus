@@ -39,6 +39,8 @@ import gg.projecteden.nexus.models.home.HomeService;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.PackageExpireJob;
 import gg.projecteden.nexus.models.store.Contributor;
 import gg.projecteden.nexus.models.store.ContributorService;
+import gg.projecteden.nexus.models.vaults.VaultUser;
+import gg.projecteden.nexus.models.vaults.VaultUserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange;
@@ -522,12 +524,16 @@ public enum Package {
 
 	@Id("2019259")
 	@Category(StoreCategory.INVENTORY)
-	@Command("/permhelper add vaults [player] 1")
 	@Display(Material.ENDER_CHEST)
 	VAULTS {
 		@Override
+		public void handleApply(UUID uuid) {
+			new VaultUserService().edit(uuid, VaultUser::increaseLimit);
+		}
+
+		@Override
 		public int count(Contributor player) {
-			return NumericPermission.VAULTS.getLimit(player.getUniqueId());
+			return new VaultUserService().get(player).getLimit();
 		}
 
 		@Override

@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.models.autoinventory;
 
+import com.drtshock.playervaults.vaultmanagement.VaultHolder;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
@@ -196,7 +197,7 @@ public class AutoInventoryUser implements PlayerOwnedObject {
 			if (holder instanceof Dispenser)
 				return DISPENSER;
 
-			if (Class.forName("com.drtshock.playervaults.vaultmanagement.VaultHolder").isInstance(holder))
+			if (holder instanceof VaultHolder)
 				return VAULT;
 
 			if (holder == null)
