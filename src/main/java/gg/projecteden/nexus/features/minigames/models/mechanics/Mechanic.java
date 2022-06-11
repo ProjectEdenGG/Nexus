@@ -385,18 +385,14 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 	/**
 	 * Gets the name tag of a {@code target} as viewed by a {@code viewer}.
 	 *
-	 * @param target the target player
-	 * @param viewer the viewer player
+	 * @param target the target player (who is expected to be playing this mechanic)
+	 * @param viewer the viewer player (who may or may not be playing on the same match)
 	 * @return the name tag of the target player or null if the player(s) are not in this mechanic
 	 */
 	public @Nullable Component getNameplate(@NotNull Minigamer target, @NotNull Minigamer viewer) {
-		// ensure both players are in the same match (and on this mechanic)
-		if (!target.isPlaying(this))
+		// ensure both players are in the same match
+		if (target.getMatch() != viewer.getMatch())
 			return null;
-		Match match = target.getMatch();
-		if (!viewer.isPlaying(match))
-			return null;
-
 		// return default nameplate
 		return target.asComponent();
 	}
@@ -404,8 +400,8 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 	/**
 	 * Whether the given {@code viewer} should be able to see {@code target}'s name tag.
 	 *
-	 * @param target the target player
-	 * @param viewer the viewer player
+	 * @param target the target player (who is expected to be playing this mechanic)
+	 * @param viewer the viewer player (who may or may not be playing on the same match)
 	 * @return whether the viewer should be able to see the target's name tag
 	 */
 	public boolean showNameplate(@NotNull Minigamer target, @NotNull Minigamer viewer) {
