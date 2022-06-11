@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.minigames.models.events.matches.minigamers;
 
+import gg.projecteden.nexus.features.minigames.models.MinigameMessageType;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import lombok.Getter;
 import lombok.NonNull;
@@ -56,7 +57,7 @@ public class MinigamerDeathEvent extends MinigamerEvent implements Cancellable {
 			else
 				deathMessage = victimName + " &3was killed by " + (showTeam ? attacker.getColoredName() : "&3" + attacker.getNickname());
 		}
-		getMatch().broadcast(deathMessage);
+		getMatch().broadcast(deathMessage, MinigameMessageType.DEATH);
 	}
 
 	protected boolean cancelled = false;

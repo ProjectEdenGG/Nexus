@@ -452,10 +452,20 @@ public class Match implements ForwardingAudience {
 			minigamers.forEach(minigamer -> minigamer.tell(colorize(event.getMessage())));
 	}
 
+	public void broadcast(String message, MinigameMessageType type) {
+		if (getMechanic().allowChat(type))
+			broadcast(message);
+	}
+
 	public void broadcastNoPrefix(String message) {
 		MatchBroadcastEvent event = new MatchBroadcastEvent(this, message);
 		if (event.callEvent())
 			minigamers.forEach(minigamer -> minigamer.sendMessage(colorize(event.getMessage())));
+	}
+
+	public void broadcastNoPrefix(String message, MinigameMessageType type) {
+		if (getMechanic().allowChat(type))
+			broadcastNoPrefix(message);
 	}
 
 	public void broadcast(Team team, String message) {
@@ -466,6 +476,11 @@ public class Match implements ForwardingAudience {
 					.collect(Collectors.toSet())
 					.forEach(minigamer -> minigamer.tell(colorize(event.getMessage())));
 		}
+	}
+
+	public void broadcast(Team team, String message, MinigameMessageType type) {
+		if (getMechanic().allowChat(type))
+			broadcast(team, message);
 	}
 
 	public void playSound(Jingle jingle) {
