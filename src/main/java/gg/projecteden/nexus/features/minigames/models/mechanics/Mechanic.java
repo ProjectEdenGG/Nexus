@@ -394,6 +394,9 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		// ensure both players are in the same match
 		if (target.getMatch() != viewer.getMatch())
 			return null;
+		// ensure game has started
+		if (!target.getMatch().isStarted())
+			return null;
 		// return default nameplate
 		return target.asComponent();
 	}
@@ -406,6 +409,7 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 	 * @return whether the viewer should be able to see the target's name tag
 	 */
 	public boolean shouldShowNameplate(@NotNull Minigamer target, @NotNull Minigamer viewer) {
+		// ensure player has a minigame nameplate
 		if (getNameplate(target, viewer) == null)
 			return true;
 
@@ -418,15 +422,17 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 			return false;
 
 		// handle name tag visibility
-		Team targetTeam = target.getTeam();
-		Team viewerTeam = viewer.getTeam();
-		NameTagVisibility targetVisibility = targetTeam == null ? NameTagVisibility.ALWAYS : targetTeam.getNameTagVisibility();
-		if (targetVisibility == NameTagVisibility.NEVER)
-			return false;
-		if (targetVisibility == NameTagVisibility.HIDE_FOR_OTHER_TEAMS && targetTeam != viewerTeam)
-			return false;
-		if (targetVisibility == NameTagVisibility.HIDE_FOR_OWN_TEAM && targetTeam == viewerTeam)
-			return false;
+		if (target.isAlive() && viewer.isAlive()) {
+			Team targetTeam = target.getTeam();
+			Team viewerTeam = viewer.getTeam();
+			NameTagVisibility targetVisibility = targetTeam == null ? NameTagVisibility.ALWAYS : targetTeam.getNameTagVisibility();
+			if (targetVisibility == NameTagVisibility.NEVER)
+				return false;
+			if (targetVisibility == NameTagVisibility.HIDE_FOR_OTHER_TEAMS && targetTeam != viewerTeam)
+				return false;
+			if (targetVisibility == NameTagVisibility.HIDE_FOR_OWN_TEAM && targetTeam == viewerTeam)
+				return false;
+		}
 
 		// name tag is visible :)
 		return true;

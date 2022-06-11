@@ -12,6 +12,7 @@ import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.nameplates.NameplateUserService;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Data;
@@ -175,8 +176,14 @@ public class NameplateManager {
 				return true;
 			if (!isOnline())
 				return true;
+			if (!viewer.isOnline())
+				return true;
+			if (CitizensUtils.isNPC(viewer))
+				return true;
 
 			final Player player = getOnlinePlayer();
+			if (CitizensUtils.isNPC(player))
+				return true;
 			if (player.isDead())
 				return true;
 			if (player.isSneaking())
