@@ -17,6 +17,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerLoadoutEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerDisplayTimerEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
+import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.MultiplayerMechanic;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.VanillaMechanic;
 import gg.projecteden.nexus.features.minigames.models.perks.ParticleProjectile;
 import gg.projecteden.nexus.features.minigames.models.perks.common.ParticleProjectilePerk;
@@ -52,8 +53,6 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-
-import java.text.DecimalFormat;
 
 import static gg.projecteden.nexus.utils.PlayerUtils.runCommand;
 import static gg.projecteden.nexus.utils.StringUtils.getShortLocationString;
@@ -229,7 +228,7 @@ public class MatchListener implements Listener {
 					}
 
 					if (attacker != null && event.getDamager() instanceof Arrow)
-						attacker.tell("&7" + victim.getNickname() + " is on &c" + new DecimalFormat("#.0").format(newHealth) + " &7HP");
+						attacker.tell("&7" + victim.getNickname() + " is on &c" + MultiplayerMechanic.HP_FORMAT.format(newHealth) + " &7HP");
 
 					mechanic.onDamage(damageEvent);
 

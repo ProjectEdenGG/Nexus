@@ -24,6 +24,7 @@ import net.kyori.adventure.text.format.TextColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,6 +35,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public abstract class MultiplayerMechanic extends Mechanic {
+
+	public static DecimalFormat HP_FORMAT = new DecimalFormat("#.0");
 
 	@Override
 	public void onDeath(@NotNull MinigamerDeathEvent event) {
@@ -200,5 +203,24 @@ public abstract class MultiplayerMechanic extends Mechanic {
 
 	protected @NotNull final TextComponent getWinnersComponent(@NotNull Named... components) {
 		return getWinnersComponent(Arrays.asList(components));
+	}
+
+	/**
+	 * Whether to show health in nameplates.
+	 *
+	 * @return {@code true} if health should be shown in nameplates
+	 */
+	protected boolean showHealth() {
+		return true;
+	}
+
+	@Override
+	public @Nullable Component getNameplate(@NotNull Minigamer target, @NotNull Minigamer viewer) {
+		Component superNameplate = super.getNameplate(target, viewer);
+		if (superNameplate == null) return null;
+		JsonBuilder nameplate = new JsonBuilder(superNameplate);
+		if (showHealth() && viewer.getPlayer().getLocation().distanceSquared(target.getPlayer().getLocation()) <= 30)
+			nameplate.next("&7 (" + HP_FORMAT.format(target.getPlayer().getHealth()) + "♥)");
+		return nameplate.build();
 	}
 }
