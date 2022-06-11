@@ -399,7 +399,7 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		if (!target.getMatch().isStarted())
 			return null;
 		// return default nameplate
-		return target.asComponent();
+		return new JsonBuilder(target.getColoredName()).build();
 	}
 
 	/**
