@@ -219,7 +219,7 @@ public abstract class MultiplayerMechanic extends Mechanic {
 		Component superNameplate = super.getNameplate(target, viewer);
 		if (superNameplate == null) return null;
 		JsonBuilder nameplate = new JsonBuilder(superNameplate);
-		if (showHealth() && viewer.getPlayer().getLocation().distanceSquared(target.getPlayer().getLocation()) <= 30)
+		if (showHealth())
 			nameplate.next("&7 (" + HP_FORMAT.format(target.getPlayer().getHealth()) + "♥)");
 		return nameplate.build();
 	}
