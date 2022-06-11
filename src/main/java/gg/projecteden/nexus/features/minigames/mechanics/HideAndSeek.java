@@ -149,11 +149,12 @@ public class HideAndSeek extends Infection {
 				Map<Minigamer, Location> solidPlayers = matchData.getSolidPlayers();
 				int immobileTicks = minigamer.getImmobileTicks();
 				Material blockChoice = matchData.getBlockChoice(userId);
-				Component blockName = Component.translatable(blockChoice.getTranslationKey());
+				Component blockName = Component.translatable(blockChoice);
 
 				// if player just moved, break their disguise
 				if (immobileTicks < SOLIDIFY_PLAYER_AT && solidPlayers.containsKey(minigamer)) {
 					blockChange(minigamer, solidPlayers.remove(minigamer), Material.AIR);
+					PlayerUtils.showPlayer(player).to(minigamer.getMatch().getPlayers());
 					if (player.hasPotionEffect(PotionEffectType.INVISIBILITY))
 						player.removePotionEffect(PotionEffectType.INVISIBILITY);
 					FallingBlock fallingBlock = matchData.getSolidBlocks().remove(minigamer.getPlayer().getUniqueId());
@@ -189,6 +190,7 @@ public class HideAndSeek extends Infection {
 							}
 							// add invisibility to hide them/their falling block disguise
 							player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.INVISIBILITY).maxDuration().ambient(true).build());
+							PlayerUtils.hidePlayer(player).from(minigamer.getMatch().getPlayers());
 							// run usual ticking
 							disguisedBlockTick(minigamer);
 						} else
@@ -207,7 +209,7 @@ public class HideAndSeek extends Infection {
 			if (block == null) return;
 			Material type = block.getType();
 			if (MaterialTag.ALL_AIR.isTagged(type)) return;
-			Component name = Component.translatable(type.getTranslationKey());
+			Component name = Component.translatable(type);
 
 			// this will create some grammatically weird messages ("Oak Planks is a possible hider")
 			// idk what to do about that though
@@ -226,8 +228,7 @@ public class HideAndSeek extends Infection {
 		Material blockChoice = matchData.getBlockChoice(minigamer);
 		blockChange(minigamer, matchData.getSolidPlayers().get(minigamer), blockChoice);
 
-		// todo: use a localization string for proper block name
-		JsonBuilder message = new JsonBuilder("&aYou are currently fully disguised as a ").next(Component.translatable(blockChoice.getTranslationKey()));
+		JsonBuilder message = new JsonBuilder("&aYou are currently fully disguised as a ").next(Component.translatable(blockChoice));
 		if (matchData.getSolidBlocks().containsKey(minigamer.getPlayer().getUniqueId())) {
 			matchData.getSolidBlocks().get(minigamer.getPlayer().getUniqueId()).setTicksLived(1);
 			if (!MaterialTag.ALL_AIR.isTagged(minigamer.getPlayer().getInventory().getItemInMainHand().getType()))
@@ -356,7 +357,7 @@ public class HideAndSeek extends Infection {
 				clickableItems.add(ClickableItem.of(itemStack, e -> {
 					matchData.getBlockChoices().put(player.getUniqueId(), material);
 					player.closeInventory();
-					PlayerUtils.send(player, new JsonBuilder("&3You have selected ").next(Component.translatable(material.getTranslationKey(), NamedTextColor.YELLOW)));
+					PlayerUtils.send(player, new JsonBuilder("&3You have selected ").next(Component.translatable(material, NamedTextColor.YELLOW)));
 				}));
 			});
 			paginator().items(clickableItems).build();
