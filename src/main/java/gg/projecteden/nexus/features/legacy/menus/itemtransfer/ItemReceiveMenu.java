@@ -34,9 +34,9 @@ public class ItemReceiveMenu implements TemporaryMenuListener {
 		if (user.getItems(status).isEmpty())
 			throw new InvalidInputException("No " + status.name().toLowerCase() + " items available, " +
 				(user.getItems(ReviewStatus.PENDING).isEmpty() ? "add them with '/legacy items transfer' in the legacy worlds" :
-					"please wait for the staff team to reivew your items"));
+					"please wait for the staff team to review your items"));
 
-		final List<ItemStack> contents = new ArrayList<>(user.getItems(status).subList(0, Math.min(user.getItems(status).size(), 4 * 9)));
+		final List<ItemStack> contents = new ArrayList<>(user.getItems(status).subList(0, Math.min(user.getItems(status).size(), 6 * 9)));
 
 		user.getItems(status).removeAll(contents);
 		service.save(user);
