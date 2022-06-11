@@ -541,11 +541,11 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 		SpeedCommand.resetSpeed(getPlayer());
 		getPlayer().setOp(false);
 
-		if (mechanic.shouldClearInventory() || forceClearInventory)
+		if (mechanic.shouldClearInventory() || forceClearInventory) {
 			getPlayer().getInventory().clear();
-
-		for (PotionEffect effect : getPlayer().getActivePotionEffects())
-			getPlayer().removePotionEffect(effect.getType());
+			for (PotionEffect effect : getPlayer().getActivePotionEffects())
+				getPlayer().removePotionEffect(effect.getType());
+		}
 	}
 
 	public boolean usesPerk(@NotNull Class<? extends Perk> perk) {

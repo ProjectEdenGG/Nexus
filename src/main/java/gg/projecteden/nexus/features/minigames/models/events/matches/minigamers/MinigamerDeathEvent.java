@@ -16,7 +16,7 @@ public class MinigamerDeathEvent extends MinigamerEvent implements Cancellable {
 	private final Minigamer attacker;
 	@Nullable
 	private final Event originalEvent;
-	@Setter
+	@Nullable @Setter
 	private String deathMessage = "";
 
 	public MinigamerDeathEvent(@NonNull Minigamer victim) {

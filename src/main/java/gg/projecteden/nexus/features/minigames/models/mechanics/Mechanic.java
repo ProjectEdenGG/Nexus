@@ -257,6 +257,7 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 	}
 
 	public void onDeath(@NotNull MinigamerDeathEvent event) {
+		event.getMinigamer().clearState();
 		Minigamer attacker = event.getAttacker();
 		if (attacker != null)
 			giveKillHeal(attacker);
