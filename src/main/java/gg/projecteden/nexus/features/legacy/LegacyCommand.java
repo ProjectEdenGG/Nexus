@@ -4,6 +4,7 @@ import com.gmail.nossr50.datatypes.player.PlayerProfile;
 import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
 import com.gmail.nossr50.mcMMO;
 import gg.projecteden.annotations.Async;
+import gg.projecteden.annotations.Disabled;
 import gg.projecteden.annotations.Environments;
 import gg.projecteden.nexus.features.legacy.menus.homes.LegacyHomesMenu;
 import gg.projecteden.nexus.features.legacy.menus.itemtransfer.ItemPendingMenu;
@@ -32,9 +33,13 @@ import gg.projecteden.nexus.models.legacy.homes.LegacyHome;
 import gg.projecteden.nexus.models.legacy.homes.LegacyHomeOwner;
 import gg.projecteden.nexus.models.legacy.homes.LegacyHomeService;
 import gg.projecteden.nexus.models.legacy.itemtransfer.ItemTransferUser;
+import gg.projecteden.nexus.models.mail.Mailer;
+import gg.projecteden.nexus.models.mail.MailerService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.NerdService;
+import gg.projecteden.nexus.models.shop.Shop;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
+import gg.projecteden.nexus.models.shop.ShopService;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.utils.Env;
@@ -46,6 +51,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Environments(Env.TEST)
 @Permission(Group.STAFF)
@@ -186,8 +192,15 @@ public class LegacyCommand extends _WarpSubCommand {
 	@Permission(Group.ADMIN)
 	void archive_homes() {
 		int count = 0;
-		for (HomeOwner homeOwner : new HomeService().getAll()) {
-			for (Home home : new ArrayList<>(homeOwner.getHomes())) {
+		final HomeService homeService = new HomeService();
+		for (HomeOwner uuid : homeService.getAll()) {
+			HomeOwner homeOwner = homeService.get(uuid);
+
+			final List<Home> homes = homeOwner.getHomes();
+			if (homes.isEmpty())
+				continue;
+
+			for (Home home : new ArrayList<>(homes)) {
 				if (home.getWorldGroup() != WorldGroup.SURVIVAL)
 					continue;
 
@@ -203,6 +216,9 @@ public class LegacyCommand extends _WarpSubCommand {
 				// TODO 1.19 Delete original home
 				// homeOwner.delete(home);
 			}
+
+			legacyHomeService.save(legacyHomeOwner);
+			homeService.save(homeOwner);
 		}
 
 		send(PREFIX + "Archived " + count + " survival homes");
@@ -213,9 +229,10 @@ public class LegacyCommand extends _WarpSubCommand {
 	@Permission(Group.ADMIN)
 	void archive_balances() {
 		final LegacyUserService legacyUserService = new LegacyUserService();
+		final BankerService bankerService = new BankerService();
 		int count = 0;
 
-		for (Banker banker : new BankerService().getAll()) {
+		for (Banker banker : bankerService.getAll()) {
 			if (!banker.getBalances().containsKey(ShopGroup.SURVIVAL))
 				continue;
 
@@ -225,6 +242,7 @@ public class LegacyCommand extends _WarpSubCommand {
 
 			// TODO 1.19 zero balance
 			// banker.getBalances().remove(ShopGroup.SURVIVAL);
+			// bankerService.save(banker);
 		}
 
 		send(PREFIX + "Archived " + count + " balances");
@@ -263,6 +281,40 @@ public class LegacyCommand extends _WarpSubCommand {
 
 
 		send(PREFIX + "Archived " + countLevels + " mcmmo levels for " + countUsers + " users");
+	}
+
+	@Disabled
+	@Path("reset mail")
+	void reset_mail() {
+		int count = 0;
+
+		final MailerService service = new MailerService();
+		for (Mailer uuid : service.getAll()) {
+			Mailer mailer = service.get(uuid);
+			count += mailer.getMail().remove(WorldGroup.SURVIVAL).size();
+			mailer.getPendingMail().remove(WorldGroup.SURVIVAL);
+			service.save(mailer);
+		}
+
+		send(PREFIX + "Reset " + count + " mail");
+	}
+
+	@Disabled
+	@Path("reset shops")
+	void reset_shops() {
+		final ShopService service = new ShopService();
+		final AtomicInteger countProduct = new AtomicInteger();
+		final AtomicInteger countShop = new AtomicInteger();
+
+		for (Shop uuid : service.getAll()) {
+			service.edit(uuid, shop -> {
+				countProduct.getAndAdd(shop.getProducts(ShopGroup.SURVIVAL).size());
+				if (shop.getProducts().removeIf(product -> product.getShopGroup() == ShopGroup.SURVIVAL))
+					countShop.getAndIncrement();
+			});
+		}
+
+		send(PREFIX + "Archived " + countProduct + " products for " + countShop + " users");
 	}
 
 	@ConverterFor(LegacyHome.class)
