@@ -27,6 +27,7 @@ import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
@@ -54,6 +55,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -237,6 +239,27 @@ public class Murder extends TeamMechanic {
 			}
 		}
 		return lines;
+	}
+
+	@Override
+	public @Nullable Component getNameplate(@NotNull Minigamer target, @NotNull Minigamer viewer) {
+		// don't show any useful information if viewer is alive
+		if (viewer.isAlive()) return Component.text(target.getNickname());
+		// render murderer/gunner status for spectators
+		JsonBuilder nameplate = new JsonBuilder().content(target.getNickname());
+		if (isMurderer(target))
+			nameplate.color(NamedTextColor.RED);
+		else if (isGunner(target))
+			nameplate.color(NamedTextColor.YELLOW);
+		else
+			nameplate.next(" (" + getScrapCount(target) + "/10)", NamedTextColor.GRAY);
+		return nameplate.build();
+	}
+
+	@Override
+	public boolean shouldShowNameplate(@NotNull Minigamer target, @NotNull Minigamer viewer) {
+		if (!super.shouldShowNameplate(target, viewer)) return false;
+		return viewer.getPlayer().hasLineOfSight(target.getPlayer());
 	}
 
 	public void spawnCorpse(Minigamer minigamer) {
