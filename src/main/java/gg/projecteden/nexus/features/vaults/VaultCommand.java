@@ -17,11 +17,13 @@ import gg.projecteden.nexus.models.vaults.VaultUser;
 import gg.projecteden.nexus.models.vaults.VaultUserService;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.WorldGroup;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -76,6 +78,11 @@ public class VaultCommand extends CustomCommand {
 		}
 
 		@Override
+		public <T extends InventoryHolder> T getInventoryHolder() {
+			return (T) new VaultHolder(page);
+		}
+
+		@Override
 		public boolean keepAirSlots() {
 			return true;
 		}
@@ -85,6 +92,12 @@ public class VaultCommand extends CustomCommand {
 			user.update(page, contents);
 			service.save(user);
 		}
+	}
+
+	@Data
+	public static class VaultHolder implements InventoryHolder {
+		private Inventory inventory;
+		private final int vaultNumber;
 	}
 
 	// Conversion
