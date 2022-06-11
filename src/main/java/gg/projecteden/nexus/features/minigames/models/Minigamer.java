@@ -37,6 +37,7 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -559,12 +560,15 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 		getPlayer().addPotionEffect(potionEffect);
 	}
 
-	public void addPotionEffect(PotionEffectBuilder effectBuilder){
+	public void addPotionEffect(PotionEffectBuilder effectBuilder) {
 		getPlayer().addPotionEffect(effectBuilder.build());
 	}
 
-	public void removePotionEffect(PotionEffectType type){
+	public void removePotionEffect(PotionEffectType type) {
 		getPlayer().removePotionEffect(type);
 	}
 
+	public void clearInventory() {
+		getPlayer().getInventory().setStorageContents(new ItemStack[36]);
+	}
 }

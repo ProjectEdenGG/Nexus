@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.minigames.models.matchdata;
 
-import gg.projecteden.nexus.features.minigames.mechanics.Thimble;
+import gg.projecteden.nexus.features.minigames.mechanics.FallingBlocks;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.MatchData;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -15,17 +15,16 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-@MatchDataFor(Thimble.class)
-public class ThimbleMatchData extends MatchData {
+@MatchDataFor(FallingBlocks.class)
+public class FallingBlocksMatchData extends MatchData {
 	private final Map<UUID, Material> chosenColors = new ConcurrentHashMap<>();
 
-	public ThimbleMatchData(Match match) {
+	public FallingBlocksMatchData(Match match) {
 		super(match);
 	}
 
 	public Material getAvailableColorId() {
-		final List<Material> COLOR_CHOICES = ((Thimble) MechanicType.THIMBLE.get()).getCOLOR_CHOICES();
-
+		final List<Material> COLOR_CHOICES = ((FallingBlocks) MechanicType.FALLING_BLOCKS.get()).getCOLOR_CHOICES();
 		Optional<Material> first = COLOR_CHOICES.stream()
 			.filter(id -> !containsColor(id))
 			.findFirst();
@@ -51,5 +50,4 @@ public class ThimbleMatchData extends MatchData {
 	public void removeColor(Minigamer minigamer) {
 		chosenColors.remove(minigamer.getUuid());
 	}
-
 }
