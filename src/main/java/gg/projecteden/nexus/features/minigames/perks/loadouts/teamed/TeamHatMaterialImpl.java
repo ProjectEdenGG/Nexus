@@ -5,6 +5,7 @@ import gg.projecteden.nexus.utils.ColorType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
@@ -13,21 +14,17 @@ import java.util.function.Function;
 @Getter
 @RequiredArgsConstructor
 public class TeamHatMaterialImpl implements TeamHatMaterialPerk {
-	private final String name;
+	private final @NotNull String name;
 	private final int price;
-	private final List<String> description;
-	private final Function<ColorType, Material> colorMaterial;
+	private final @NotNull List<String> description;
+	private final @NotNull Function<ColorType, Material> colorMaterial;
 
-	public TeamHatMaterialImpl(String name, int price, List<String> description) {
-		this(name, price, description, null);
-	}
-
-	public TeamHatMaterialImpl(String name, int price, String description, Function<ColorType, Material> colorMaterial) {
+	public TeamHatMaterialImpl(@NotNull String name, int price, @NotNull String description, @NotNull Function<ColorType, Material> colorMaterial) {
 		this(name, price, Collections.singletonList(description), colorMaterial);
 	}
 
 	@Override
-	public Material getColorMaterial(ColorType color) {
+	public @NotNull Material getColorMaterial(ColorType color) {
 		return colorMaterial.apply(color);
 	}
 }

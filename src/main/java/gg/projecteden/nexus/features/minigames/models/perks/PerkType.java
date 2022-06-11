@@ -12,11 +12,8 @@ import gg.projecteden.nexus.features.minigames.perks.loadouts.CustomModelHat;
 import gg.projecteden.nexus.features.minigames.perks.loadouts.FlagHat;
 import gg.projecteden.nexus.features.minigames.perks.loadouts.HatMaterialImpl;
 import gg.projecteden.nexus.features.minigames.perks.loadouts.LeavesHat;
+import gg.projecteden.nexus.features.minigames.perks.loadouts.teamed.DyeableCustomModelHat;
 import gg.projecteden.nexus.features.minigames.perks.loadouts.teamed.TeamHatMaterialImpl;
-import gg.projecteden.nexus.features.minigames.perks.loadouts.teamed.pirate.BicornHat;
-import gg.projecteden.nexus.features.minigames.perks.loadouts.teamed.pirate.BicornSideHat;
-import gg.projecteden.nexus.features.minigames.perks.loadouts.teamed.pirate.CavalierHat;
-import gg.projecteden.nexus.features.minigames.perks.loadouts.teamed.pirate.TricornHat;
 import gg.projecteden.nexus.features.minigames.perks.particles.CloudParticle;
 import gg.projecteden.nexus.features.minigames.perks.particles.FlameParticle;
 import gg.projecteden.nexus.features.minigames.perks.particles.HeartParticle;
@@ -42,10 +39,10 @@ public enum PerkType implements IHasPerkCategory, Named {
 	BASIC_TRAIL(new BasicTrail()),
 	SKELETON_SKULL(new HatMaterialImpl(Material.SKELETON_SKULL, 10, "Snipe your foes with the incredible prowess of a skeleton")),
 	CREEPER_SKULL(new HatMaterialImpl(Material.CREEPER_HEAD, 10, "A disguise so scary your enemies will be saying \"aww man!\"")),
-	BICORN_HAT(new BicornHat()),
-	BICORN_SIDE_HAT(new BicornSideHat()),
-	CAVALIER_HAT(new CavalierHat()),
-	TRICORN_HAT(new TricornHat()),
+	BICORN_HAT(DyeableCustomModelHat.createPirateHat("Bicorn", 4001)),
+	BICORN_SIDE_HAT(DyeableCustomModelHat.createPirateHat("Bicorn Side", 4002)),
+	CAVALIER_HAT(DyeableCustomModelHat.createPirateHat("Cavalier", 4000)),
+	TRICORN_HAT(DyeableCustomModelHat.createPirateHat("Tricorn", 4003)),
 	MARKSMANS_HAT(new CustomModelHat(Material.STONE_BUTTON, 21, "Marksman's Hat", 20, "Shoot your targets with uncanny accuracy with this hat")),
 	GREEN_TRAIL(new GreenTrail()),
 	RAINBOW_TRAIL(new RainbowTrail()),
