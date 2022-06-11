@@ -40,7 +40,7 @@ public class PlayerPerksMenu extends CommonPerksMenu {
 		List<PerkType> perks = perkSortWrappers.stream().map(PerkSortWrapper::getPerkType).toList();
 
 		// insert whitespace
-		paginator().items(new ArrayList<ClickableItem>() {{
+		paginator().items(new ArrayList<>() {{
 			perks.forEach(perkType -> {
 				boolean enabled = perkOwner.getPurchasedPerks().get(perkType);
 				Perk perk = perkType.getPerk();
