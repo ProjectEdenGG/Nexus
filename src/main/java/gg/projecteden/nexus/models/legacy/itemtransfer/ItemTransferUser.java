@@ -59,8 +59,9 @@ public class ItemTransferUser implements PlayerOwnedObject {
 
 	private int moveItems(ReviewStatus status) {
 		int count = getCount(ReviewStatus.PENDING);
-		getItems(status).addAll(getItems(ReviewStatus.PENDING));
-		getItems(ReviewStatus.PENDING).clear();
+		final List<ItemStack> pending = getItems(ReviewStatus.PENDING);
+		getItems(status).addAll(pending);
+		pending.clear();
 		return count;
 	}
 
