@@ -1,9 +1,10 @@
 package gg.projecteden.nexus.features.listeners;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.Utils;
-import org.apache.commons.lang.ObjectUtils.Null;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -20,7 +21,12 @@ import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 public interface TemporaryMenuListener extends TemporaryListener {
 
-	String getTitle();
+	default String getTitle() {
+		if (getClass().isAnnotationPresent(Title.class))
+			return getClass().getAnnotation(Title.class).value();
+
+		throw new InvalidInputException("Title not defined");
+	}
 
 	default void open() {
 		open(3);
@@ -38,6 +44,14 @@ public interface TemporaryMenuListener extends TemporaryListener {
 
 		Nexus.registerTemporaryListener(this);
 		getPlayer().openInventory(inv);
+	}
+
+	default void openMax() {
+		open(6);
+	}
+
+	default void openMax(List<ItemStack> contents) {
+		open(6, contents);
 	}
 
 	@EventHandler

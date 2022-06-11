@@ -23,12 +23,17 @@ import java.util.stream.Collectors;
 @Getter
 public enum WorldGroup {
 	SERVER("server"),
-	SURVIVAL("world", "world_nether", "world_the_end",
+	LEGACY(
+		"legacy1", "legacy1_nether", "legacy1_the_end",
+		"legacy2", "legacy2_nether", "legacy2_the_end"
+	),
+	SURVIVAL(
 		"survival", "survival_nether", "survival_the_end",
-		"legacy", "legacy_nether", "legacy_the_end",
+		"world", "world_nether", "world_the_end", // TODO 1.19 Remove
 		"resource", "resource_nether", "resource_the_end",
 		"staff_world", "staff_world_nether", "staff_world_the_end",
-		"safepvp", "events"),
+		"safepvp", "events"
+	),
 	CREATIVE("creative", "buildcontest"),
 	MINIGAMES("gameworld", "blockball", "deathswap", "deathswap_nether", "uhc", "uhc_nether", "bingo", "bingo_nether"),
 	SKYBLOCK("bskyblock_world", "bskyblock_world_nether", "bskyblock_world_the_end"),
