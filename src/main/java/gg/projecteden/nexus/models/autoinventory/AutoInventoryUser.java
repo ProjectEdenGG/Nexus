@@ -1,12 +1,12 @@
 package gg.projecteden.nexus.models.autoinventory;
 
-import com.drtshock.playervaults.vaultmanagement.VaultHolder;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.store.perks.autoinventory.AutoInventory;
 import gg.projecteden.nexus.features.store.perks.autoinventory.AutoInventoryFeature;
+import gg.projecteden.nexus.features.vaults.VaultCommand.VaultHolder;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.tip.Tip;
