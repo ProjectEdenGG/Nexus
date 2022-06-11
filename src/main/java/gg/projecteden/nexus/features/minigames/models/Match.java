@@ -370,7 +370,7 @@ public class Match implements ForwardingAudience {
 		}
 	}
 
-	private static List<EntityType> deletableTypes = List.of(EntityType.ARROW, EntityType.SPECTRAL_ARROW, EntityType.DROPPED_ITEM);
+	private static List<EntityType> deletableTypes = List.of(EntityType.ARROW, EntityType.SPECTRAL_ARROW, EntityType.DROPPED_ITEM, EntityType.FALLING_BLOCK);
 
 	private void clearEntities() {
 		for (UUID uuid : entities) {
