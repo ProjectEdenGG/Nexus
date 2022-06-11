@@ -1009,12 +1009,10 @@ public class JsonBuilder implements ComponentLike {
 	}
 
 	/**
-	 * Builds this component ({@link #build()}) and converts it to json format using Paper's serializer
-	 * @deprecated should not generally be working with json anymore
+	 * {@link #build() Builds} this component and converts it to JSON using Paper's serializer
 	 * @return Minecraft json string
 	 */
 	@NotNull
-	@Deprecated
 	public String serialize() {
 		return GsonComponentSerializer.gson().serialize(build());
 	}
