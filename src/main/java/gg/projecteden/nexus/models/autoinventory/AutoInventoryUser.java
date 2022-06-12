@@ -4,6 +4,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.legacy.LegacyCommand.LegacyVaultMenu.LegacyVaultHolder;
 import gg.projecteden.nexus.features.store.perks.autoinventory.AutoInventory;
 import gg.projecteden.nexus.features.store.perks.autoinventory.AutoInventoryFeature;
 import gg.projecteden.nexus.features.vaults.VaultCommand.VaultMenu.VaultHolder;
@@ -197,7 +198,7 @@ public class AutoInventoryUser implements PlayerOwnedObject {
 			if (holder instanceof Dispenser)
 				return DISPENSER;
 
-			if (holder instanceof VaultHolder)
+			if (holder instanceof VaultHolder || holder instanceof LegacyVaultHolder)
 				return VAULT;
 
 			if (holder == null)

@@ -8,11 +8,11 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-@ObjectClass(ItemTransferUser.class)
-public class ItemTransferUserService extends MongoPlayerService<ItemTransferUser> {
-	private final static Map<UUID, ItemTransferUser> cache = new ConcurrentHashMap<>();
+@ObjectClass(LegacyItemTransferUser.class)
+public class LegacyItemTransferUserService extends MongoPlayerService<LegacyItemTransferUser> {
+	private final static Map<UUID, LegacyItemTransferUser> cache = new ConcurrentHashMap<>();
 
-	public Map<UUID, ItemTransferUser> getCache() {
+	public Map<UUID, LegacyItemTransferUser> getCache() {
 		return cache;
 	}
 

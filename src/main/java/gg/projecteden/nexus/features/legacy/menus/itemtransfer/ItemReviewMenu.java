@@ -5,9 +5,9 @@ import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.models.legacy.itemtransfer.ItemTransferUser;
-import gg.projecteden.nexus.models.legacy.itemtransfer.ItemTransferUser.ReviewStatus;
-import gg.projecteden.nexus.models.legacy.itemtransfer.ItemTransferUserService;
+import gg.projecteden.nexus.models.legacy.itemtransfer.LegacyItemTransferUser;
+import gg.projecteden.nexus.models.legacy.itemtransfer.LegacyItemTransferUser.ReviewStatus;
+import gg.projecteden.nexus.models.legacy.itemtransfer.LegacyItemTransferUserService;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
@@ -19,8 +19,8 @@ import java.util.List;
 @Title("Review Items")
 @RequiredArgsConstructor
 public class ItemReviewMenu extends InventoryProvider {
-	private final ItemTransferUserService service = new ItemTransferUserService();
-	private final ItemTransferUser user;
+	private final LegacyItemTransferUserService service = new LegacyItemTransferUserService();
+	private final LegacyItemTransferUser user;
 
 	@Override
 	public void init() {

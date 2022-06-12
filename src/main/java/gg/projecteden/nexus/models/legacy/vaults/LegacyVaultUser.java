@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.models.vaults;
+package gg.projecteden.nexus.models.legacy.vaults;
 
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
@@ -25,12 +25,12 @@ import java.util.UUID;
 import static gg.projecteden.utils.StringUtils.plural;
 
 @Data
-@Entity(value = "vault_user", noClassnameStored = true)
+@Entity(value = "legacy_vault_user", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Converters({UUIDConverter.class, ItemStackConverter.class})
-public class VaultUser implements PlayerOwnedObject {
+public class LegacyVaultUser implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;

@@ -12,6 +12,7 @@ import gg.projecteden.nexus.features.legacy.menus.itemtransfer.ItemReceiveMenu;
 import gg.projecteden.nexus.features.legacy.menus.itemtransfer.ItemReviewMenu;
 import gg.projecteden.nexus.features.legacy.menus.itemtransfer.ItemTransferMenu;
 import gg.projecteden.nexus.features.legacy.menus.itemtransfer.ReviewableMenu;
+import gg.projecteden.nexus.features.listeners.TemporaryMenuListener;
 import gg.projecteden.nexus.features.warps.commands._WarpSubCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
@@ -32,7 +33,9 @@ import gg.projecteden.nexus.models.legacy.LegacyUserService;
 import gg.projecteden.nexus.models.legacy.homes.LegacyHome;
 import gg.projecteden.nexus.models.legacy.homes.LegacyHomeOwner;
 import gg.projecteden.nexus.models.legacy.homes.LegacyHomeService;
-import gg.projecteden.nexus.models.legacy.itemtransfer.ItemTransferUser;
+import gg.projecteden.nexus.models.legacy.itemtransfer.LegacyItemTransferUser;
+import gg.projecteden.nexus.models.legacy.vaults.LegacyVaultUser;
+import gg.projecteden.nexus.models.legacy.vaults.LegacyVaultUserService;
 import gg.projecteden.nexus.models.mail.Mailer;
 import gg.projecteden.nexus.models.mail.MailerService;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -40,12 +43,20 @@ import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.shop.Shop;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.models.shop.ShopService;
+import gg.projecteden.nexus.models.vaults.VaultUser;
+import gg.projecteden.nexus.models.vaults.VaultUserService;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.utils.Env;
+import lombok.Data;
+import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -56,6 +67,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Environments(Env.TEST)
 @Permission(Group.STAFF)
 public class LegacyCommand extends _WarpSubCommand {
+	private final LegacyVaultUserService legacyVaultService = new LegacyVaultUserService();
 	private final LegacyHomeService legacyHomeService = new LegacyHomeService();
 	private LegacyHomeOwner legacyHomeOwner;
 
@@ -69,6 +81,8 @@ public class LegacyCommand extends _WarpSubCommand {
 	public WarpType getWarpType() {
 		return WarpType.LEGACY;
 	}
+
+	// Items
 
 	@Path("items transfer")
 	@Description("Submit legacy items for transfer review")
@@ -86,7 +100,7 @@ public class LegacyCommand extends _WarpSubCommand {
 	@Path("items review [player]")
 	@Description("Review pending items")
 	@Permission(Group.ADMIN)
-	void items_review(ItemTransferUser user) {
+	void items_review(LegacyItemTransferUser user) {
 		if (user == null)
 			new ReviewableMenu().open(player());
 		else
@@ -98,6 +112,8 @@ public class LegacyCommand extends _WarpSubCommand {
 	void items_receive() {
 		new ItemReceiveMenu(player());
 	}
+
+	// Homes
 
 	@Path("homes (teleport|tp) [home]")
 	void homes_teleport(@Arg(value = "home", tabCompleter = LegacyHome.class) String name) {
@@ -187,6 +203,78 @@ public class LegacyCommand extends _WarpSubCommand {
 		send(PREFIX + "Legacy home &e" + legacyHome.getName() + "&3 deleted");
 	}
 
+	@ConverterFor(LegacyHome.class)
+	LegacyHome convertToLegacyHome(String value, OfflinePlayer context) {
+		if (context == null) context = player();
+		return legacyHomeService.get(context).getHome(value).orElseThrow(() -> new InvalidInputException("That legacy home does not exist"));
+	}
+
+	@TabCompleterFor(LegacyHome.class)
+	public List<String> tabCompleteLegacyHome(String filter, OfflinePlayer context) {
+		if (context == null) context = player();
+		return legacyHomeService.get(context).getNames(filter);
+	}
+
+	// Vaults
+
+	@Path("[page] [user]")
+	void open(@Arg(value = "1", min = 1) int page, @Arg(value = "self", permission = Group.SENIOR_STAFF) LegacyVaultUser user) {
+		if (WorldGroup.of(player()) != WorldGroup.LEGACY && !isSeniorStaff())
+			error("You can't open vaults here");
+
+		new LegacyVaultMenu(player(), user, page);
+	}
+
+	@Path("limit [user]")
+	void limit(@Arg(value = "self", permission = Group.SENIOR_STAFF) VaultUser user) {
+		send(PREFIX + (isSelf(user) ? "You own" : user.getNickname() + " owns") + " &e" + user.getLimit() + " &3legacy vaults");
+	}
+
+	public static class LegacyVaultMenu implements TemporaryMenuListener {
+		private final LegacyVaultUserService service = new LegacyVaultUserService();
+		@Getter
+		private final Player player;
+		private final LegacyVaultUser user;
+		private final int page;
+
+		public LegacyVaultMenu(Player player, LegacyVaultUser user, int page) {
+			this.player = player;
+			this.user = user;
+			this.page = page;
+
+			open(user.get(page, player));
+		}
+
+		@Override
+		public String getTitle() {
+			return "Vault #" + page;
+		}
+
+		@Data
+		public static class LegacyVaultHolder implements InventoryHolder {
+			private Inventory inventory;
+			private final int vaultNumber;
+		}
+
+		@Override
+		public <T extends InventoryHolder> T getInventoryHolder() {
+			return (T) new LegacyVaultHolder(page);
+		}
+
+		@Override
+		public boolean keepAirSlots() {
+			return true;
+		}
+
+		@Override
+		public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
+			user.update(page, contents);
+			service.save(user);
+		}
+	}
+
+	// Archival
+
 	@Async
 	@Path("archive homes")
 	@Permission(Group.ADMIN)
@@ -246,6 +334,34 @@ public class LegacyCommand extends _WarpSubCommand {
 		}
 
 		send(PREFIX + "Archived " + count + " balances");
+	}
+
+	@Async
+	@Path("archive vaults")
+	@Permission(Group.ADMIN)
+	void archive_vaults() {
+		final LegacyVaultUserService legacyVaultService = new LegacyVaultUserService();
+		final VaultUserService vaultService = new VaultUserService();
+		AtomicInteger countVaults = new AtomicInteger();
+		AtomicInteger countUsers = new AtomicInteger();
+
+		for (VaultUser uuid : vaultService.getAll()) {
+			VaultUser user = vaultService.get(uuid);
+
+			legacyVaultService.edit(user, legacyUser -> {
+				legacyUser.setVaults(user.getVaults());
+				legacyUser.setLimit(user.getLimit());
+				countVaults.getAndAdd(legacyUser.getVaults().size());
+			});
+
+			countUsers.getAndIncrement();
+
+			// TODO 1.19 delete items
+			// user.getVaults().clear();
+			// vaultService.save(user);
+		}
+
+		send(PREFIX + "Archived " + countVaults + " vaults for " + countUsers + " users");
 	}
 
 	@Async
@@ -315,18 +431,6 @@ public class LegacyCommand extends _WarpSubCommand {
 		}
 
 		send(PREFIX + "Archived " + countProduct + " products for " + countShop + " users");
-	}
-
-	@ConverterFor(LegacyHome.class)
-	LegacyHome convertToLegacyHome(String value, OfflinePlayer context) {
-		if (context == null) context = player();
-		return legacyHomeService.get(context).getHome(value).orElseThrow(() -> new InvalidInputException("That legacy home does not exist"));
-	}
-
-	@TabCompleterFor(LegacyHome.class)
-	public List<String> tabCompleteLegacyHome(String filter, OfflinePlayer context) {
-		if (context == null) context = player();
-		return legacyHomeService.get(context).getNames(filter);
 	}
 
 }

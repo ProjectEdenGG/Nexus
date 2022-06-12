@@ -20,12 +20,12 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Data
-@Entity(value = "item_transfer_user", noClassnameStored = true)
+@Entity(value = "legacy_item_transfer_user", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Converters({UUIDConverter.class, ItemStackConverter.class})
-public class ItemTransferUser implements PlayerOwnedObject {
+public class LegacyItemTransferUser implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;

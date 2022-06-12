@@ -38,6 +38,11 @@ public class VaultCommand extends CustomCommand {
 		new VaultMenu(player(), user, page);
 	}
 
+	@Path("limit [user]")
+	void limit(@Arg(value = "self", permission = Group.SENIOR_STAFF) VaultUser user) {
+		send(PREFIX + (isSelf(user) ? "You own" : user.getNickname() + " owns") + " &e" + user.getLimit() + " &3vaults");
+	}
+
 	@Path("limit add <user> [amount]")
 	@Permission(Group.ADMIN)
 	void limit_add(VaultUser user, @Arg("1") int amount) {
