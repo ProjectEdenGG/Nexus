@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class Parkour extends CheckpointMechanic {
 
+	// TODO: display total time and checkpoint time in the scoreboard
+
 	@Override
 	public @NotNull String getName() {
 		return "Parkour";

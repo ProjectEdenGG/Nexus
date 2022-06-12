@@ -317,6 +317,19 @@ public class JsonBuilder implements ComponentLike {
 	}
 
 	/**
+	 * Appends text to the internal builder.
+	 * Ampersands and section symbols will <b>not</b> be parsed.
+	 * @param text text formatted with ampersands or section symbols
+	 * @return this builder
+	 */
+	@NotNull @Contract("_ -> this")
+	public JsonBuilder rawNext(@Nullable String text) {
+		if (text != null)
+			builder.append(Component.text(text));
+		return this;
+	}
+
+	/**
 	 * Creates a component with its text and color set and appends it to the internal builder
 	 * @param rawText raw text, color codes are ignored
 	 * @return this builder
