@@ -19,8 +19,6 @@ import java.util.List;
 import static gg.projecteden.nexus.utils.Utils.registerListeners;
 /*
 	TODO
-		Hook into LuckPerms to add WorldGroup context?
-			For fly; otherwise set essentials.fly=true in each world
 		Reset
 			playerdata.dat
 				EnderItems
@@ -43,7 +41,6 @@ import static gg.projecteden.nexus.utils.Utils.registerListeners;
 				???
 			Inventories
 				Delete mvinv files & playerdata.dat:inventory
-			Vaults
 			Advancements
 				Delete world/advancements
 

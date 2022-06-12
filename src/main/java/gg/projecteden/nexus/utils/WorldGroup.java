@@ -1,9 +1,14 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import lombok.Getter;
 import me.lexikiq.HasLocation;
 import me.lexikiq.OptionalLocation;
+import net.luckperms.api.context.ContextCalculator;
+import net.luckperms.api.context.ContextConsumer;
+import net.luckperms.api.context.ContextSet;
+import net.luckperms.api.context.ImmutableContextSet;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -124,6 +129,27 @@ public enum WorldGroup {
 
 	public static boolean isResourceWorld(String world) {
 		return world.toLowerCase().startsWith("resource");
+	}
+
+	static {
+		Nexus.getLuckPerms().getContextManager().registerCalculator(new WorldGroupCalculator());
+	}
+
+	public static class WorldGroupCalculator implements ContextCalculator<Player> {
+
+		@Override
+		public void calculate(@NotNull Player target, ContextConsumer contextConsumer) {
+			contextConsumer.accept("worldgroup", WorldGroup.of(target).name());
+		}
+
+		@Override
+		public ContextSet estimatePotentialContexts() {
+			ImmutableContextSet.Builder builder = ImmutableContextSet.builder();
+			for (WorldGroup worldGroup : WorldGroup.values())
+				builder.add("worldgroup", worldGroup.name().toLowerCase());
+			return builder.build();
+		}
+
 	}
 
 }
