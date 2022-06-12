@@ -164,7 +164,7 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 	}
 
 	public void join(@NotNull Arena arena) {
-		if (!WorldGroup.MINIGAMES.equals(WorldGroup.of(getPlayer().getWorld()))) {
+		if (WorldGroup.of(getPlayer()) != WorldGroup.MINIGAMES) {
 			toGamelobby();
 			Tasks.wait(10, () -> join(arena));
 			return;

@@ -31,7 +31,7 @@ public class Intro implements Listener {
 	public void onRegionEnter(PlayerEnteredRegionEvent event) {
 		Player player = event.getPlayer();
 
-		if (!WorldGroup.of(player).equals(WorldGroup.SURVIVAL))
+		if (WorldGroup.of(player) != WorldGroup.SURVIVAL)
 			return;
 
 		if (!Rank.of(player).isStaff() && Pugmas21.isBeforePugmas())

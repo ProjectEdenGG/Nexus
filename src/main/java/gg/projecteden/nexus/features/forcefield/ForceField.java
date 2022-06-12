@@ -48,7 +48,7 @@ public class ForceField extends Feature {
 		return userService.getAll().stream()
 			.filter(ForceFieldUser::isEnabled)
 			.filter(PlayerOwnedObject::isOnline)
-			.filter(forceFieldUser -> !(WorldGroup.of(forceFieldUser) == WorldGroup.MINIGAMES))
+			.filter(forceFieldUser -> WorldGroup.of(forceFieldUser) != WorldGroup.MINIGAMES)
 			.collect(Collectors.toList());
 	}
 

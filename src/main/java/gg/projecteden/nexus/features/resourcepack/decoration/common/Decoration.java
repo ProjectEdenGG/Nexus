@@ -110,7 +110,7 @@ public class Decoration {
 			if (playerRank.isSeniorStaff() || playerRank.equals(Rank.ARCHITECT) || player.isOp())
 				return true;
 
-			if (WorldGroup.STAFF.equals(WorldGroup.of(player)))
+			if (WorldGroup.STAFF == WorldGroup.of(player))
 				return true;
 
 			if (WorldGuardEditCommand.canWorldGuardEdit(player) && new WorldGuardUtils(player).getRegionsAt(origin).size() > 0)

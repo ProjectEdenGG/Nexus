@@ -206,7 +206,7 @@ public class Misc implements Listener {
 		if (event.getDamager() instanceof Player)
 			return;
 
-		if (!WorldGroup.of(event.getEntity()).equals(WorldGroup.SURVIVAL))
+		if (WorldGroup.of(event.getEntity()) != WorldGroup.SURVIVAL)
 			return;
 
 		event.setCancelled(true);
@@ -309,7 +309,7 @@ public class Misc implements Listener {
 		Block block = event.getBlock();
 		if (MaterialTag.ALL_CORALS.isTagged(block.getType())) {
 			WorldGroup worldGroup = WorldGroup.of(block.getWorld());
-			if (WorldGroup.CREATIVE.equals(worldGroup) || WorldGroup.ADVENTURE.equals(worldGroup) || WorldGroup.MINIGAMES.equals(worldGroup))
+			if (WorldGroup.CREATIVE == worldGroup || WorldGroup.ADVENTURE == worldGroup || WorldGroup.MINIGAMES == worldGroup)
 				event.setCancelled(true);
 		}
 	}

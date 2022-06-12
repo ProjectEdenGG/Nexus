@@ -17,7 +17,7 @@ public class SuicideCommand extends CustomCommand {
 	@Path
 	@Cooldown(TickTime.MINUTE)
 	void suicide() {
-		if (!WorldGroup.of(player()).equals(WorldGroup.SURVIVAL))
+		if (WorldGroup.of(player()) != WorldGroup.SURVIVAL)
 			error("You can only do this command in the survival world.");
 		if (isStaff())
 			runCommand("god off");

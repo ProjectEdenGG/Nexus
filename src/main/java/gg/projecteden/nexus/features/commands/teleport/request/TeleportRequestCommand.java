@@ -75,7 +75,7 @@ public class TeleportRequestCommand extends ITeleportRequestCommand {
 			if (targetWorldGroup == WorldGroup.MINIGAMES)
 				error(cannotTeleport + ", they are playing minigames");
 
-			if (targetWorldGroup.equals(WorldGroup.STAFF))
+			if (targetWorldGroup == WorldGroup.STAFF)
 				error(cannotTeleport + ", they are in a staff world");
 		}
 

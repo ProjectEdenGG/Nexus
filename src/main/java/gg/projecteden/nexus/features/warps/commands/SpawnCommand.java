@@ -41,7 +41,7 @@ public class SpawnCommand extends CustomCommand implements Listener {
 
 		public static SpawnType of(WorldGroup worldGroup) {
 			return Arrays.stream(SpawnType.values())
-				.filter(spawnType -> spawnType.getWorldGroup().equals(worldGroup))
+				.filter(spawnType -> spawnType.getWorldGroup() == worldGroup)
 				.findFirst()
 				.orElse(HUB);
 		}

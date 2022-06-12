@@ -53,7 +53,7 @@ public class WorldBanCommand extends CustomCommand implements Listener {
 			else
 				send(PREFIX + "&e" + player.getName() + "&7 - &3" + String.join("&e, &3", worldBan.getBanNames()));
 		} else {
-			if (worldGroup.equals(WorldGroup.SURVIVAL) || worldGroup.equals(WorldGroup.UNKNOWN))
+			if (worldGroup == WorldGroup.SURVIVAL || worldGroup == WorldGroup.UNKNOWN)
 				error("Cannot world ban from " + worldGroup);
 
 			List<WorldGroup> worldList = worldBan.getBans();
@@ -68,7 +68,7 @@ public class WorldBanCommand extends CustomCommand implements Listener {
 			Broadcast.log().prefix("Justice").message(message).send();
 
 			if (player.isOnline() && player.getPlayer() != null)
-				if (WorldGroup.of(player.getPlayer()).equals(worldGroup)) {
+				if (WorldGroup.of(player.getPlayer()) == worldGroup) {
 					if (player.getPlayer().getVehicle() != null)
 						player.getPlayer().getVehicle().removePassenger(player.getPlayer());
 
