@@ -42,8 +42,10 @@ public class CheckpointData extends MatchData {
 			minigamer.setScore(0);
 		} else if (checkpoints.containsKey(minigamer.getPlayer().getUniqueId()))
 			minigamer.teleportAsync(arena.getCheckpoint(getCheckpointId(minigamer)));
-		else
+		else {
 			minigamer.teleportAsync(minigamer.getTeam().getSpawnpoints().get(0));
+			minigamer.setScore(0);
+		}
 	}
 
 	public void clearData(Minigamer minigamer) {
