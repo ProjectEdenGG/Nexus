@@ -203,22 +203,30 @@ public class Nexus extends JavaPlugin {
 		});
 	}
 
-	// @formatter:off
 	@Override
+	@SuppressWarnings("Convert2MethodRef")
 	public void onDisable() {
-		try { broadcastReload();										} catch (Throwable ex) { ex.printStackTrace(); }
-		try { PlayerUtils.runCommandAsConsole("save-all");				} catch (Throwable ex) { ex.printStackTrace(); }
-		try { cron.stop();												} catch (Throwable ex) { ex.printStackTrace(); }
-		try { protocolManager.removePacketListeners(this);				} catch (Throwable ex) { ex.printStackTrace(); }
-		try { commands.unregisterAll();									} catch (Throwable ex) { ex.printStackTrace(); }
-		try { features.unregisterExcept(Discord.class, Chat.class);		} catch (Throwable ex) { ex.printStackTrace(); }
-		try { features.unregister(Discord.class, Chat.class);			} catch (Throwable ex) { ex.printStackTrace(); }
-		try { Bukkit.getServicesManager().unregisterAll(this);			} catch (Throwable ex) { ex.printStackTrace(); }
-		try { MySQLPersistence.shutdown();								} catch (Throwable ex) { ex.printStackTrace(); }
-		try { GoogleUtils.shutdown();									} catch (Throwable ex) { ex.printStackTrace(); }
-		try { API.shutdown();											} catch (Throwable ex) { ex.printStackTrace(); }
+		List<Runnable> tasks = List.of(
+			() -> broadcastReload(),
+			() -> PlayerUtils.runCommandAsConsole("save-all"),
+			() -> cron.stop(),
+			() -> protocolManager.removePacketListeners(this),
+			() -> commands.unregisterAll(),
+			() -> features.unregisterExcept(Discord.class, Chat.class),
+			() -> features.unregister(Discord.class, Chat.class),
+			() -> Bukkit.getServicesManager().unregisterAll(this),
+			() -> MySQLPersistence.shutdown(),
+			() -> GoogleUtils.shutdown(),
+			() -> API.shutdown()
+		);
+
+		for (Runnable task : tasks)
+			try {
+				task.run();
+			} catch (Throwable ex) {
+				ex.printStackTrace();
+			}
 	}
-	// @formatter:on;
 
 	public void broadcastReload() {
 		Rank.getOnlineStaff().stream()
