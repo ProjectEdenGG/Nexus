@@ -24,6 +24,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.UUID;
 
 import static gg.projecteden.nexus.utils.AdventureUtils.identityOf;
@@ -56,7 +57,7 @@ public interface PlayerOwnedObject extends gg.projecteden.interfaces.PlayerOwned
 	 */
 	@Deprecated
 	default @NotNull OfflinePlayer getOfflinePlayer() {
-		return Bukkit.getOfflinePlayer(getUuid());
+		return Objects.requireNonNullElseGet(getPlayer(), () -> Bukkit.getOfflinePlayer(getUuid()));
 	}
 
 	/**
