@@ -128,6 +128,8 @@ public class Minigames extends Feature {
 	public void onStop() {
 		new ArrayList<>(MatchManager.getAll()).forEach(Match::end);
 		ArenaManager.write();
+		ArenaManager.getAll().clear();
+		MatchManager.getAll().clear();
 	}
 
 	public static boolean isMinigameWorld(World world) {
