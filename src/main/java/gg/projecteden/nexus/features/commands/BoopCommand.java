@@ -15,7 +15,7 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.utils.TimeUtils.TickTime;
-import org.bukkit.Sound;
+import net.kyori.adventure.sound.Sound;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -23,6 +23,13 @@ import java.util.List;
 @Description("Boop")
 @Cooldown(value = TickTime.SECOND, x = 5, bypass = Group.ADMIN)
 public class BoopCommand extends CustomCommand {
+
+	public static final Sound SOUND = Sound.sound(
+		org.bukkit.Sound.BLOCK_NOTE_BLOCK_XYLOPHONE,
+		Sound.Source.MASTER,
+		1f,
+		0.1f
+	);
 
 	public BoopCommand(CommandEvent event) {
 		super(event);
@@ -88,6 +95,6 @@ public class BoopCommand extends CustomCommand {
 		if (!anonymous)
 			json.next("&3. &eClick to boop back").suggest("/boop " + Nickname.of(booper) + " ");
 		booped.sendMessage(booper, json);
-		booped.playSound(booped.getLocation(), Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 10.0F, 0.1F);
+		booped.playSound(SOUND);
 	}
 }
