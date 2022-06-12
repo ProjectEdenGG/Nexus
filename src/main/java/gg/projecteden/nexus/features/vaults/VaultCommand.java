@@ -74,7 +74,7 @@ public class VaultCommand extends CustomCommand {
 
 		@Override
 		public String getTitle() {
-			return "&4Vault #" + page;
+			return "Vault #" + page;
 		}
 
 		@Override
