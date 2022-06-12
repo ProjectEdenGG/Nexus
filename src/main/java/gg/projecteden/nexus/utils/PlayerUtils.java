@@ -363,7 +363,7 @@ public class PlayerUtils {
 		if (viewer == null || target == null)
 			return false;
 
-		if (!(Minigamer.of(viewer).isPlaying() && Minigamer.of(viewer).isPlaying()))
+		if (!(Minigamer.of(viewer).isPlaying() && Minigamer.of(target).isPlaying()))
 			if (!viewer.canSee(target))
 				return false;
 
