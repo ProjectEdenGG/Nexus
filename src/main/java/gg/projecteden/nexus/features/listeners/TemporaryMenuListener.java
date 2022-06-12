@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
@@ -38,7 +39,7 @@ public interface TemporaryMenuListener extends TemporaryListener {
 
 	default void open(int rows, List<ItemStack> contents) {
 		final int slots = rows * 9;
-		Inventory inv = Bukkit.createInventory(null, slots, colorize(getTitle()));
+		Inventory inv = Bukkit.createInventory(getInventoryHolder(), slots, colorize(getTitle()));
 		if (!isNullOrEmpty(contents))
 			inv.setContents(contents.subList(0, Math.min(contents.size(), slots)).toArray(ItemStack[]::new));
 
@@ -50,14 +51,28 @@ public interface TemporaryMenuListener extends TemporaryListener {
 		open(6, contents);
 	}
 
+	default <T extends InventoryHolder> T getInventoryHolder() {
+		return null;
+	}
+
+	default boolean keepAirSlots() {
+		return false;
+	}
+
 	@EventHandler
 	default void onChestClose(InventoryCloseEvent event) {
-		if (event.getInventory().getHolder() != null) return;
-		if (!Utils.equalsInvViewTitle(event.getView(), colorize(getTitle()))) return;
-		if (!event.getPlayer().equals(getPlayer())) return;
+		final InventoryHolder holder = event.getInventory().getHolder();
+		if (holder != null && holder.getClass() != getInventoryHolder().getClass())
+			return;
+
+		if (!Utils.equalsInvViewTitle(event.getView(), colorize(getTitle())))
+			return;
+
+		if (!event.getPlayer().equals(getPlayer()))
+			return;
 
 		List<ItemStack> contents = Arrays.stream(event.getInventory().getContents())
-				.filter(Nullables::isNotNullOrAir)
+				.filter(item -> keepAirSlots() || Nullables.isNotNullOrAir(item))
 				.collect(Collectors.toList());
 
 		onClose(event, contents);

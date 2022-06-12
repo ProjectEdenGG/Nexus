@@ -187,10 +187,6 @@ public class NexusCommand extends CustomCommand implements Listener {
 			if (count > 0)
 				throw new InvalidInputException(new JsonBuilder("There are " + count + " SmartInvs menus open").command("/nexus smartInvs").hover("&eClick to view"));
 		}),
-		TEMP_LISTENERS(() -> {
-			if (!Nexus.getTemporaryListeners().isEmpty())
-				throw new InvalidInputException(new JsonBuilder("There are " + Nexus.getTemporaryListeners().size() + " temporary listeners registered").command("/nexus temporaryListeners").hover("&eClick to view"));
-		}),
 		SIGN_MENUS(() -> {
 			if (!Nexus.getSignMenuFactory().getInputReceivers().isEmpty())
 				throw new InvalidInputException("There are " + Nexus.getSignMenuFactory().getInputReceivers().size() + " sign menus open");
@@ -228,6 +224,10 @@ public class NexusCommand extends CustomCommand implements Listener {
 				if (quester.getDialog() != null)
 					if (quester.getDialog().getTaskId().get() > 0)
 						throw new InvalidInputException("Someone is in a quest dialog");
+		}),
+		TEMP_LISTENERS(() -> {
+			if (!Nexus.getTemporaryListeners().isEmpty())
+				throw new InvalidInputException(new JsonBuilder("There are " + Nexus.getTemporaryListeners().size() + " temporary listeners registered").command("/nexus temporaryListeners").hover("&eClick to view"));
 		}),
 		;
 

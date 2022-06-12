@@ -22,6 +22,7 @@ import gg.projecteden.nexus.features.store.gallery.annotations.RealCategory;
 import gg.projecteden.nexus.features.store.perks.CostumeCommand.CostumeMenu;
 import gg.projecteden.nexus.features.store.perks.joinquit.JoinQuit;
 import gg.projecteden.nexus.features.store.perks.workbenches.WorkbenchesCommand.WorkbenchesMenu;
+import gg.projecteden.nexus.features.vaults.VaultCommand.VaultMenu;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.costume.Costume;
 import gg.projecteden.nexus.models.costume.Costume.CostumeType;
@@ -31,6 +32,7 @@ import gg.projecteden.nexus.models.playerplushie.PlayerPlushieConfig;
 import gg.projecteden.nexus.models.rainbowarmor.RainbowArmorTask;
 import gg.projecteden.nexus.models.rainbowbeacon.RainbowBeacon;
 import gg.projecteden.nexus.models.rainbowbeacon.RainbowBeaconService;
+import gg.projecteden.nexus.models.vaults.VaultUserService;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.CitizensUtils.NPCRandomizer;
 import gg.projecteden.nexus.utils.FireworkLauncher;
@@ -483,7 +485,7 @@ public enum GalleryPackage {
 	VAULTS {
 		@Override
 		public void onImageInteract(Player player) {
-			player.openInventory(Bukkit.createInventory(null, 3 * 9, new JsonBuilder("&4Vault #1").build()));
+			new VaultMenu(player, new VaultUserService().get(player), 0);
 		}
 	},
 

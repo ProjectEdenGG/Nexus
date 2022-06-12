@@ -6,6 +6,7 @@ import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.store.perks.autoinventory.AutoInventory;
 import gg.projecteden.nexus.features.store.perks.autoinventory.AutoInventoryFeature;
+import gg.projecteden.nexus.features.vaults.VaultCommand.VaultMenu.VaultHolder;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.tip.Tip;
@@ -196,7 +197,7 @@ public class AutoInventoryUser implements PlayerOwnedObject {
 			if (holder instanceof Dispenser)
 				return DISPENSER;
 
-			if (Class.forName("com.drtshock.playervaults.vaultmanagement.VaultHolder").isInstance(holder))
+			if (holder instanceof VaultHolder)
 				return VAULT;
 
 			if (holder == null)
