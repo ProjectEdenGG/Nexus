@@ -8,7 +8,7 @@ import gg.projecteden.nexus.models.legacy.itemtransfer.LegacyItemTransferUser.Re
 import gg.projecteden.nexus.models.legacy.itemtransfer.LegacyItemTransferUserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 

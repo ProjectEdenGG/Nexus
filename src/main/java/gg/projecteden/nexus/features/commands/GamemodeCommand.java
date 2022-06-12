@@ -12,6 +12,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.mode.ModeUser;
 import gg.projecteden.nexus.models.mode.ModeUserService;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NonNull;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -51,7 +52,7 @@ public class GamemodeCommand extends CustomCommand {
 		if (!isSelf(player))
 			send(PREFIX + "Switched to &e" + camelCase(gamemode) + " &3for &e" + player.getName());
 
-		if (!worldGroup().isMinigames() && user.getRank().isStaff()) {
+		if (!(worldGroup() == WorldGroup.MINIGAMES) && user.getRank().isStaff()) {
 			user.setGameMode(worldGroup(), gamemode);
 			service.save(user);
 		}

@@ -12,7 +12,7 @@ import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import me.lexikiq.HasUniqueId;
 import me.lexikiq.OptionalPlayerLike;
 import net.kyori.adventure.audience.MessageType;

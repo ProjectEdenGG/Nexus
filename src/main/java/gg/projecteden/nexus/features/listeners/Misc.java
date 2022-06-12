@@ -40,7 +40,8 @@ import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import me.libraryaddict.disguise.DisguiseAPI;
 import org.bukkit.Bukkit;
@@ -254,7 +255,7 @@ public class Misc implements Listener {
 	@EventHandler
 	public void onEatGlowBerry(PlayerItemConsumeEvent event) {
 		Player player = event.getPlayer();
-		if (WorldGroup.of(player).isMinigames())
+		if (WorldGroup.of(player) == WorldGroup.MINIGAMES)
 			return;
 
 		if (event.getItem().getType() != Material.GLOW_BERRIES)
@@ -357,7 +358,7 @@ public class Misc implements Listener {
 		if (Minigamer.of(player).isPlaying())
 			return;
 
-		if (Arrays.asList(WorldGroup.SKYBLOCK, WorldGroup.ONEBLOCK).contains(WorldGroup.of(player)))
+		if (WorldGroup.of(player) == WorldGroup.SKYBLOCK)
 			return;
 
 		if (player.getWorld().getEnvironment() == Environment.THE_END)
@@ -467,7 +468,7 @@ public class Misc implements Listener {
 			World world = nerd.getOfflineWorld();
 			if (world == null) return;
 
-			if (WorldGroup.isResourceWorld(world)) {
+			if (SubWorldGroup.of(world) == SubWorldGroup.RESOURCE) {
 				nerd = Nerd.of(event.getUniqueId());
 				if (nerd.getLastQuit().isBefore(YearMonth.now().atDay(1).atStartOfDay()))
 					toSpawn.add(event.getUniqueId());
@@ -584,7 +585,7 @@ public class Misc implements Listener {
 			Tasks.wait(20, () -> PlayerUtils.runCommand(player, "cheats off"));
 
 		if (DisguiseAPI.isDisguised(player))
-			if (!oldWorldGroup.isMinigames() && newWorldGroup.isMinigames())
+			if (!(oldWorldGroup == WorldGroup.MINIGAMES) && newWorldGroup == WorldGroup.MINIGAMES)
 				DisguiseAPI.undisguiseToAll(player);
 	}
 

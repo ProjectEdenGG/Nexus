@@ -1,15 +1,13 @@
-package gg.projecteden.nexus.utils;
+package gg.projecteden.nexus.utils.worldgroup;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Getter;
-import me.lexikiq.HasLocation;
 import me.lexikiq.OptionalLocation;
 import net.luckperms.api.context.ContextCalculator;
 import net.luckperms.api.context.ContextConsumer;
 import net.luckperms.api.context.ContextSet;
 import net.luckperms.api.context.ImmutableContextSet;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -17,70 +15,59 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
-@Getter
-public enum WorldGroup {
+import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.BINGO;
+import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.DEATH_SWAP;
+import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.LEGACY1;
+import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.LEGACY2;
+import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.ONEBLOCK;
+import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.RESOURCE;
+import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.STAFF_SURVIVAL;
+import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.UHC;
+
+public enum WorldGroup implements IWorldGroup {
 	SERVER("server"),
-	LEGACY(
-		"legacy1", "legacy1_nether", "legacy1_the_end",
-		"legacy2", "legacy2_nether", "legacy2_the_end"
-	),
-	SURVIVAL(
-		"survival", "survival_nether", "survival_the_end",
-		"world", "world_nether", "world_the_end", // TODO 1.19 Remove
-		"resource", "resource_nether", "resource_the_end",
-		"staff_world", "staff_world_nether", "staff_world_the_end",
-		"safepvp", "events"
-	),
+	LEGACY(LEGACY1, LEGACY2),
+	SURVIVAL(List.of("safepvp", "events"), List.of(SubWorldGroup.SURVIVAL, SubWorldGroup.LEGACY, RESOURCE, STAFF_SURVIVAL)),
 	CREATIVE("creative", "buildcontest"),
-	MINIGAMES("gameworld", "blockball", "deathswap", "deathswap_nether", "uhc", "uhc_nether", "bingo", "bingo_nether"),
-	SKYBLOCK("bskyblock_world", "bskyblock_world_nether", "bskyblock_world_the_end"),
-	ONEBLOCK("oneblock_world", "oneblock_world_nether"),
+	MINIGAMES(List.of("gameworld"), List.of(DEATH_SWAP, UHC, BINGO)),
+	SKYBLOCK(SubWorldGroup.SKYBLOCK, ONEBLOCK),
 	ADVENTURE("stranded", "aeveon_project"),
 	EVENTS("bearfair21", "pugmas21"),
 	STAFF("buildadmin", "jail", "pirate", "tiger"),
 	UNKNOWN;
 
-	private final @NotNull List<String> worldNames;
+	@Getter
+	private final @NotNull List<String> worldNames = new ArrayList<>();
 
 	WorldGroup() {
 		this(new String[0]);
 	}
 
 	WorldGroup(String... worldNames) {
-		this.worldNames = Arrays.asList(worldNames);
+		this.worldNames.addAll(Arrays.asList(worldNames));
+	}
+
+	WorldGroup(SubWorldGroup... subWorldGroups) {
+		for (SubWorldGroup subWorldGroup : subWorldGroups)
+			this.worldNames.addAll(subWorldGroup.getWorldNames());
+	}
+
+	WorldGroup(List<String> worldNames, List<SubWorldGroup> subWorldGroups) {
+		for (SubWorldGroup subWorldGroup : subWorldGroups)
+			this.worldNames.addAll(subWorldGroup.getWorldNames());
+
+		this.worldNames.addAll(worldNames);
 	}
 
 	@Override
 	public String toString() {
 		return StringUtils.camelCase(name());
-	}
-
-	public boolean contains(World world) {
-		return contains(world.getName());
-	}
-
-	public boolean contains(String world) {
-		return worldNames.contains(world);
-	}
-
-	public List<World> getWorlds() {
-		return worldNames.stream().map(Bukkit::getWorld).filter(Objects::nonNull).collect(Collectors.toList());
-	}
-
-	public List<Player> getPlayers() {
-		return getWorlds().stream().map(world -> OnlinePlayers.where().world(world).get()).flatMap(Collection::stream).toList();
-	}
-
-	public boolean isMinigames() {
-		return this.equals(MINIGAMES);
 	}
 
 	public static WorldGroup of(@Nullable Entity entity) {
@@ -117,18 +104,6 @@ public enum WorldGroup {
 			return CREATIVE;
 
 		return UNKNOWN;
-	}
-
-	public static boolean isResourceWorld(HasLocation location) {
-		return isResourceWorld(location.getLocation().getWorld());
-	}
-
-	public static boolean isResourceWorld(World world) {
-		return isResourceWorld(world.getName());
-	}
-
-	public static boolean isResourceWorld(String world) {
-		return world.toLowerCase().startsWith("resource");
 	}
 
 	static {

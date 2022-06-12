@@ -18,7 +18,7 @@ import gg.projecteden.nexus.models.trust.Trust.Type;
 import gg.projecteden.nexus.models.trust.TrustService;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -72,7 +72,7 @@ public class TeleportRequestCommand extends ITeleportRequestCommand {
 
 		if (!isStaff()) {
 			String cannotTeleport = "Cannot teleport to " + nickname(target);
-			if (targetWorldGroup.isMinigames())
+			if (targetWorldGroup == WorldGroup.MINIGAMES)
 				error(cannotTeleport + ", they are playing minigames");
 
 			if (targetWorldGroup.equals(WorldGroup.STAFF))

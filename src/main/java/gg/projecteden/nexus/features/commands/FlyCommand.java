@@ -8,6 +8,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.mode.ModeUser;
 import gg.projecteden.nexus.models.mode.ModeUserService;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NonNull;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -43,7 +44,7 @@ public class FlyCommand extends CustomCommand {
 		if (!isSelf(player))
 			send(PREFIX + "Fly " + (enable ? "&aenabled" : "&cdisabled") + " &3for &e" + player.getName());
 
-		if (!worldGroup().isMinigames() && user.getRank().isStaff()) {
+		if (!(worldGroup() == WorldGroup.MINIGAMES) && user.getRank().isStaff()) {
 			user.setFlightMode(worldGroup(), player.getAllowFlight(), player.isFlying());
 			service.save(user);
 		}

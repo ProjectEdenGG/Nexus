@@ -46,7 +46,7 @@ import gg.projecteden.nexus.models.shop.ShopService;
 import gg.projecteden.nexus.models.vaults.VaultUser;
 import gg.projecteden.nexus.models.vaults.VaultUserService;
 import gg.projecteden.nexus.models.warps.WarpType;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.utils.Env;
 import lombok.Data;
 import lombok.Getter;

@@ -6,7 +6,7 @@ import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -44,7 +44,7 @@ public class EasterEggs implements Listener {
 
 	@EventHandler
 	public void onClickOnPlayer(PlayerInteractEntityEvent event) {
-		if (WorldGroup.of(event.getPlayer()).isMinigames())
+		if (WorldGroup.of(event.getPlayer()) == WorldGroup.MINIGAMES)
 			return;
 
 		if (!event.getRightClicked().getType().equals(EntityType.PLAYER))

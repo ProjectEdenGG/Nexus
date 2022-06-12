@@ -13,7 +13,7 @@ import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -42,7 +42,7 @@ public class WhereIsCommand extends CustomCommand {
 
 	@Path("<player>")
 	void whereIs(Player playerArg) {
-		if (WorldGroup.of(player()).isMinigames())
+		if (WorldGroup.of(player()) == WorldGroup.MINIGAMES)
 			error("Cannot use in gameworld");
 
 		Location playerArgLoc = playerArg.getLocation().clone();

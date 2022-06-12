@@ -1,12 +1,13 @@
 package gg.projecteden.nexus.features.achievements.listeners;
 
 import gg.projecteden.nexus.models.achievement.Achievement;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
 public class EconomyListener implements Listener {
 	public void checkBalance(Player player) {
-		if (player.getWorld().getName().startsWith("world")) {
+		if (WorldGroup.of(player) == WorldGroup.SURVIVAL) {
 			Achievement.COMMONWEALTH.check(player);
 			Achievement.UPPER_CLASS.check(player);
 			Achievement.BOUGHT_AND_PAID_FOR.check(player);

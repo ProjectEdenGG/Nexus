@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.achievements.listeners;
 
 import gg.projecteden.nexus.models.achievement.Achievement;
-import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
