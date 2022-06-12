@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchBeginE
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
+import gg.projecteden.nexus.features.minigames.models.perks.PerkCategory;
 import gg.projecteden.nexus.features.minigames.models.perks.PerkType;
 import gg.projecteden.nexus.models.perkowner.PerkOwner;
 import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
@@ -114,9 +115,13 @@ public abstract class MultiplayerMechanic extends Mechanic {
 
 				// get a random perk the player doesn't own
 				Map<PerkType, Double> weights = new HashMap<>();
-				List<PerkType> unownedPerks = Arrays.stream(PerkType.values()).filter(type -> !perkOwner.getPurchasedPerks().containsKey(type)).collect(Collectors.toList());
-				if (unownedPerks.isEmpty())
+				List<PerkType> rawUnownedPerks = Arrays.stream(PerkType.values()).filter(type -> !perkOwner.getPurchasedPerks().containsKey(type)).toList();
+				if (rawUnownedPerks.isEmpty())
 					continue;
+				// filter out pride flag hats if possible
+				List<PerkType> unownedPerks = rawUnownedPerks.stream().filter(type -> type.getPerkCategory() != PerkCategory.PRIDE_FLAG_HAT).toList();
+				if (unownedPerks.isEmpty())
+					unownedPerks = rawUnownedPerks;
 				// weights should be inverse of the cost (i.e. cheapest is most common/highest number)
 				int maxPrice = (int) Utils.getMax(unownedPerks, PerkType::getPrice).getValue();
 				int minPrice = (int) Utils.getMin(unownedPerks, PerkType::getPrice).getValue();
