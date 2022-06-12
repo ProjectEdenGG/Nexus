@@ -58,6 +58,10 @@ public class VaultUser implements PlayerOwnedObject {
 		vaults.put(vault, contents);
 	}
 
+	public void increaseLimit() {
+		increaseLimit(1);
+	}
+
 	public void increaseLimit(int amount) {
 		limit += amount;
 	}
