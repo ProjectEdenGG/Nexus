@@ -1,8 +1,5 @@
 package gg.projecteden.nexus.features.vaults;
 
-import com.drtshock.playervaults.vaultmanagement.VaultManager;
-import gg.projecteden.annotations.Async;
-import gg.projecteden.nexus.features.commands.staff.admin.PermHelperCommand.NumericPermission;
 import gg.projecteden.nexus.features.listeners.TemporaryMenuListener;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -11,11 +8,8 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.models.nerd.Nerd;
-import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.vaults.VaultUser;
 import gg.projecteden.nexus.models.vaults.VaultUserService;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.WorldGroup;
 import lombok.Data;
 import lombok.Getter;
@@ -25,13 +19,8 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Aliases({"playervaults", "pv", "chest", "vaults"})
 public class VaultCommand extends CustomCommand {
@@ -97,47 +86,6 @@ public class VaultCommand extends CustomCommand {
 		public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
 			user.update(page, contents);
 			service.save(user);
-		}
-	}
-
-	// Conversion
-
-	@NotNull
-	private List<UUID> getOldUsers() {
-		final String[] list = java.nio.file.Path.of("plugins/PlayerVaults/newvaults/").toFile().list();
-		if (list == null)
-			error("No vault users");
-
-		return new ArrayList<>() {{
-			for (String file : list)
-				if (file.endsWith(".yml"))
-					add(UUID.fromString(file.replace(".yml", "")));
-		}};
-	}
-
-	@Path("listVaultUsers")
-	void listVaultUsers() {
-		send(getOldUsers().stream().map(Nerd::of).map(Nerd::getColoredName).collect(Collectors.joining(", ")));
-	}
-
-	@Async
-	@Path("convert")
-	void convert() {
-		for (UUID uuid : getOldUsers()) {
-			for (int number = 1; number <= 99; number++) {
-				final Inventory vault = VaultManager.getInstance().getVault(uuid.toString(), number);
-				final long nonAir = Arrays.stream(vault.getContents()).filter(Nullables::isNotNullOrAir).count();
-				if (nonAir == 0)
-					continue;
-
-				final int items = Arrays.stream(vault.getContents()).filter(Nullables::isNotNullOrAir).mapToInt(ItemStack::getAmount).sum();
-				send("Converting " + Nickname.of(uuid) + " #" + number + " (" + items + " items)");
-				final int vaultNumber = number;
-				service.edit(uuid, user -> {
-					user.setLimit(NumericPermission.VAULTS.getLimit(uuid));
-					user.update(vaultNumber, Arrays.asList(vault.getContents()));
-				});
-			}
 		}
 	}
 
