@@ -61,9 +61,15 @@ public interface TemporaryMenuListener extends TemporaryListener {
 
 	@EventHandler
 	default void onChestClose(InventoryCloseEvent event) {
-		if (event.getInventory().getHolder() != null) return;
-		if (!Utils.equalsInvViewTitle(event.getView(), colorize(getTitle()))) return;
-		if (!event.getPlayer().equals(getPlayer())) return;
+		final InventoryHolder holder = event.getInventory().getHolder();
+		if (holder != null && holder.getClass() != getInventoryHolder().getClass())
+			return;
+
+		if (!Utils.equalsInvViewTitle(event.getView(), colorize(getTitle())))
+			return;
+
+		if (!event.getPlayer().equals(getPlayer()))
+			return;
 
 		List<ItemStack> contents = Arrays.stream(event.getInventory().getContents())
 				.filter(item -> keepAirSlots() || Nullables.isNotNullOrAir(item))
