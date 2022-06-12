@@ -26,6 +26,7 @@ import java.util.List;
 		- Appropriate tool & mining speed --> CustomBlockBreaking
 		- Figure out WorldEdit handling
 		- //
+
 		- Cannot Fix:
 			- Custom blocks may flash when placing blocks near them (clientside only) --> Titan
 			- Players arm will swing on interact w/ custom blocks (clientside only?) --> Titan
