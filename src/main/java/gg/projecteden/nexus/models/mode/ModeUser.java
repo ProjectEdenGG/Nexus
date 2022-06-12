@@ -27,7 +27,7 @@ public class ModeUser implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	Map<WorldGroup, PlayerMode> modeMap = new HashMap<>();
+	private Map<WorldGroup, PlayerMode> modeMap = new HashMap<>();
 
 	public void setGameMode(@NonNull WorldGroup worldGroup, @NonNull GameMode gamemode) {
 		PlayerMode mode = getPlayerMode(worldGroup);

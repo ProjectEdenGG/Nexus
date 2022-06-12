@@ -1,10 +1,8 @@
 package gg.projecteden.nexus.models.mail;
 
-import com.mongodb.DBObject;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import dev.morphia.annotations.PreLoad;
 import gg.projecteden.mongodb.serializers.LocalDateTimeConverter;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
@@ -22,7 +20,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.bson.types.BasicBSONList;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -54,14 +51,6 @@ public class Mailer implements PlayerOwnedObject {
 	private UUID uuid;
 	private Map<WorldGroup, List<Mail>> mail = new ConcurrentHashMap<>();
 	private Map<WorldGroup, Mail> pendingMail = new ConcurrentHashMap<>();
-
-	@PreLoad
-	void preLoad(DBObject dbObject) {
-		Map<String, DBObject> mail = (Map<String, DBObject>) dbObject.get("mail");
-		Map<String, DBObject> pendingMail = (Map<String, DBObject>) dbObject.get("pendingMail");
-		mail.values().forEach(list -> ((BasicBSONList) list).forEach(item -> ((DBObject) item).removeField("className")));
-		pendingMail.values().forEach(obj -> obj.removeField("className"));
-	}
 
 	public List<Mail> getMail(WorldGroup worldGroup) {
 		return mail.computeIfAbsent(worldGroup, $ -> new ArrayList<>());

@@ -11,6 +11,7 @@ import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.commands.GamemodeCommand;
 import gg.projecteden.nexus.features.commands.SpeedCommand;
 import gg.projecteden.nexus.features.listeners.events.FakePlayerInteractEvent;
+import gg.projecteden.nexus.features.listeners.events.FirstSubWorldGroupVisitEvent;
 import gg.projecteden.nexus.features.listeners.events.FirstWorldGroupVisitEvent;
 import gg.projecteden.nexus.features.listeners.events.FixedCraftItemEvent;
 import gg.projecteden.nexus.features.listeners.events.GolemBuildEvent.IronGolemBuildEvent;
@@ -493,6 +494,7 @@ public class Misc implements Listener {
 			}
 
 			WorldGroup worldGroup = WorldGroup.of(player);
+			SubWorldGroup subWorldGroup = SubWorldGroup.of(player);
 			if (worldGroup == WorldGroup.MINIGAMES)
 				joinMinigames(player);
 			else if (worldGroup == WorldGroup.CREATIVE)
@@ -501,8 +503,12 @@ public class Misc implements Listener {
 			final Nerd nerd = Nerd.of(player);
 			if (!nerd.getVisitedWorldGroups().contains(worldGroup)) {
 				new FirstWorldGroupVisitEvent(player, worldGroup).callEvent();
-
 				nerd.getVisitedWorldGroups().add(worldGroup);
+				new NerdService().save(nerd);
+			}
+			if (!nerd.getVisitedSubWorldGroups().contains(subWorldGroup)) {
+				new FirstSubWorldGroupVisitEvent(player, subWorldGroup).callEvent();
+				nerd.getVisitedSubWorldGroups().add(subWorldGroup);
 				new NerdService().save(nerd);
 			}
 		});
@@ -534,6 +540,13 @@ public class Misc implements Listener {
 				nerd.getVisitedWorldGroups().add(newWorldGroup);
 				new NerdService().save(nerd);
 			}
+		}
+
+		SubWorldGroup subWorldGroup = SubWorldGroup.of(player);
+		if (!nerd.getVisitedSubWorldGroups().contains(subWorldGroup)) {
+			new FirstSubWorldGroupVisitEvent(player, subWorldGroup).callEvent();
+			nerd.getVisitedSubWorldGroups().add(subWorldGroup);
+			new NerdService().save(nerd);
 		}
 
 		if (!isStaff) {
