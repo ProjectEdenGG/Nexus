@@ -38,6 +38,14 @@ public class CheckpointData extends MatchData {
 		super(match);
 	}
 
+	private static String formatChatTime(Duration duration) {
+		return Timespan.TimespanBuilder.ofMillis(duration.toMillis()).displayMillis().format();
+	}
+
+	private static String formatLiveTime(Duration duration) {
+		return "%d:%02d:%02d.%03d".formatted(duration.toHours(), duration.toMinutesPart(), duration.toSecondsPart(), duration.toMillisPart());
+	}
+
 	public void initialize(Minigamer minigamer) {
 		checkpointTimes.put(minigamer.getUuid(), new HashMap<>());
 		startTimes.put(minigamer.getUuid(), Instant.now());
@@ -111,12 +119,22 @@ public class CheckpointData extends MatchData {
 		return autoresetting.contains(minigamer.getUuid());
 	}
 
-	public Duration calculateTotalTime(Minigamer minigamer, @Nullable Instant endTime) {
+	private Duration calculateTotalTime(Minigamer minigamer, @Nullable Instant endTime) {
 		if (endTime == null) endTime = Instant.now();
-		return Duration.between(startTimes.get(minigamer.getUuid()), endTime);
+		Instant startTime = startTimes.get(minigamer.getUuid());
+		if (startTime == null) return Duration.ZERO;
+		return Duration.between(startTime, endTime);
 	}
 
-	public List<Pair<Integer, Duration>> calculateCheckpointTimes(Minigamer minigamer, @Nullable Instant endTime) {
+	private Duration calculateSplitTime(Minigamer minigamer, @Nullable Instant endTime) {
+		if (endTime == null) endTime = Instant.now();
+		Integer checkpointId = getCheckpointId(minigamer);
+		Instant startTime = checkpointId == null ? startTimes.get(minigamer.getUuid()) : checkpointTimes.get(minigamer.getUuid()).get(checkpointId);
+		if (startTime == null) return Duration.ZERO;
+		return Duration.between(startTime, endTime);
+	}
+
+	private List<Pair<Integer, Duration>> calculateCheckpointTimes(Minigamer minigamer, @Nullable Instant endTime) {
 		if (!checkpointTimes.containsKey(minigamer.getUuid()))
 			return Collections.emptyList();
 
@@ -142,8 +160,16 @@ public class CheckpointData extends MatchData {
 		return durations;
 	}
 
-	public String formatTotalTime(Minigamer minigamer, @Nullable Instant endTime) {
-		return formatTime(calculateTotalTime(minigamer, endTime));
+	public String formatTotalChatTime(Minigamer minigamer, @Nullable Instant endTime) {
+		return formatChatTime(calculateTotalTime(minigamer, endTime));
+	}
+
+	public String formatTotalLiveTime(Minigamer minigamer, @Nullable Instant endTime) {
+		return formatLiveTime(calculateTotalTime(minigamer, endTime));
+	}
+
+	public String formatSplitTime(Minigamer minigamer, @Nullable Instant endTime) {
+		return formatLiveTime(calculateSplitTime(minigamer, endTime));
 	}
 
 	public @NotNull HoverEvent<Component> formatCheckpointTimesHoverText(Minigamer minigamer, @Nullable Instant endTime) {
@@ -153,12 +179,8 @@ public class CheckpointData extends MatchData {
 			builder
 				.newline()
 				.next(checkpoint + ": ", NamedTextColor.GOLD)
-				.next(formatTime(pair.getSecond()), NamedTextColor.YELLOW);
+				.next(formatChatTime(pair.getSecond()), NamedTextColor.YELLOW);
 		}
 		return builder.build().asHoverEvent();
-	}
-
-	private static String formatTime(Duration duration) {
-		return Timespan.TimespanBuilder.ofMillis(duration.toMillis()).displayMillis().format();
 	}
 }
