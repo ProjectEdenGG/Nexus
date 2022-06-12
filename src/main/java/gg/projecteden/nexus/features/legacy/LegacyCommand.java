@@ -226,7 +226,7 @@ public class LegacyCommand extends _WarpSubCommand {
 	}
 
 	@Path("limit [user]")
-	void limit(@Arg(value = "self", permission = Group.SENIOR_STAFF) VaultUser user) {
+	void limit(@Arg(value = "self", permission = Group.SENIOR_STAFF) LegacyVaultUser user) {
 		send(PREFIX + (isSelf(user) ? "You own" : user.getNickname() + " owns") + " &e" + user.getLimit() + " &3legacy vaults");
 	}
 
