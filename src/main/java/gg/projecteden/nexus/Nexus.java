@@ -220,7 +220,8 @@ public class Nexus extends JavaPlugin {
 			() -> Bukkit.getServicesManager().unregisterAll(this),
 			() -> MySQLPersistence.shutdown(),
 			() -> GoogleUtils.shutdown(),
-			() -> API.shutdown()
+			() -> API.shutdown(),
+			() -> shutdownDatabases()
 		);
 
 		for (Runnable task : tasks)
