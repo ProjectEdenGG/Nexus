@@ -61,9 +61,12 @@ public interface TemporaryMenuListener extends TemporaryListener {
 
 	@EventHandler
 	default void onChestClose(InventoryCloseEvent event) {
-		final InventoryHolder holder = event.getInventory().getHolder();
-		if (holder != null && holder.getClass() != getInventoryHolder().getClass())
-			return;
+		final InventoryHolder actualHolder = event.getInventory().getHolder();
+		if (actualHolder != null) {
+			final InventoryHolder expectedHolder = getInventoryHolder();
+			if (expectedHolder == null || actualHolder.getClass() != expectedHolder.getClass())
+				return;
+		}
 
 		if (!Utils.equalsInvViewTitle(event.getView(), colorize(getTitle())))
 			return;
