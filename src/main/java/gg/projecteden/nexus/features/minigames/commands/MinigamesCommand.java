@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.minigames.commands;
 import com.sk89q.worldguard.protection.flags.Flag;
 import gg.projecteden.annotations.Async;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.commands.BoopCommand;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
@@ -521,6 +522,7 @@ public class MinigamesCommand extends CustomCommand {
 				.next("&e Click here to &a&laccept")
 				.command("/mgm accept")
 				.hover("&eClick &3to accept"));
+			player.playSound(BoopCommand.SOUND);
 		}
 	}
 
