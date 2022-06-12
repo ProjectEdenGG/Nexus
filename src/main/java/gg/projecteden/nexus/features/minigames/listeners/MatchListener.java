@@ -21,12 +21,14 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.Mult
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.VanillaMechanic;
 import gg.projecteden.nexus.features.minigames.models.perks.ParticleProjectile;
 import gg.projecteden.nexus.features.minigames.models.perks.common.ParticleProjectilePerk;
+import gg.projecteden.nexus.features.nameplates.Nameplates;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.models.perkowner.PerkOwner;
 import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
 import gg.projecteden.nexus.utils.BorderUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGroup;
 import org.bukkit.Sound;
 import org.bukkit.entity.Arrow;
@@ -255,6 +257,14 @@ public class MatchListener implements Listener {
 			// Different matches
 			event.setCancelled(true);
 		}
+	}
+
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+	public final void onDamageUpdateNameplate(EntityDamageEvent event) {
+		// specialized message for updating nameplates in minigames when they take damage
+		// main onDamage method is below
+		if (event.getEntity() instanceof Player player && Minigamer.of(player).isPlaying())
+			Tasks.wait(1, () -> Nameplates.get().getNameplateManager().update(player));
 	}
 
 	@EventHandler(ignoreCancelled = true)
