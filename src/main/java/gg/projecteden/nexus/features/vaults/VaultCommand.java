@@ -77,6 +77,12 @@ public class VaultCommand extends CustomCommand {
 			return "Vault #" + page;
 		}
 
+		@Data
+		public static class VaultHolder implements InventoryHolder {
+			private Inventory inventory;
+			private final int vaultNumber;
+		}
+
 		@Override
 		public <T extends InventoryHolder> T getInventoryHolder() {
 			return (T) new VaultHolder(page);
@@ -92,12 +98,6 @@ public class VaultCommand extends CustomCommand {
 			user.update(page, contents);
 			service.save(user);
 		}
-	}
-
-	@Data
-	public static class VaultHolder implements InventoryHolder {
-		private Inventory inventory;
-		private final int vaultNumber;
 	}
 
 	// Conversion

@@ -13,11 +13,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,8 +37,6 @@ public class VaultUser implements PlayerOwnedObject {
 	private Map<Integer, List<ItemStack>> vaults = new HashMap<>();
 	private int limit;
 
-	public static final int ROWS = 4;
-
 	public List<ItemStack> get(int page) {
 		return get(page, getOnlinePlayer());
 	}
@@ -51,10 +48,12 @@ public class VaultUser implements PlayerOwnedObject {
 				throw new InvalidInputException(descriptor + " &e" + limit + plural(" &cvault", limit));
 			}
 
-		return vaults.computeIfAbsent(page, $ -> Collections.nCopies(ROWS * 9, new ItemStack(Material.AIR)));
+		return vaults.computeIfAbsent(page, $ -> new ArrayList<>());
 	}
 
 	public void update(int vault, List<ItemStack> contents) {
+		while (contents.lastIndexOf(null) == contents.size() - 1)
+			contents.remove(contents.size() - 1);
 		vaults.put(vault, contents);
 	}
 

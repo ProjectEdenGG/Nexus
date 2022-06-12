@@ -3,6 +3,7 @@ package gg.projecteden.nexus.models.vaults;
 
 import gg.projecteden.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
+import gg.projecteden.nexus.utils.Nullables;
 
 import java.util.Map;
 import java.util.UUID;
@@ -14,6 +15,14 @@ public class VaultUserService extends MongoPlayerService<VaultUser> {
 
 	public Map<UUID, VaultUser> getCache() {
 		return cache;
+	}
+
+	@Override
+	protected void beforeSave(VaultUser user) {
+		user.getVaults().forEach((page, contents) -> {
+			if (contents.stream().noneMatch(Nullables::isNotNullOrAir))
+				user.getVaults().remove(page);
+		});
 	}
 
 }
