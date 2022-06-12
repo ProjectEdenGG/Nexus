@@ -52,8 +52,9 @@ public class VaultUser implements PlayerOwnedObject {
 	}
 
 	public void update(int vault, List<ItemStack> contents) {
-		while (contents.lastIndexOf(null) == contents.size() - 1)
+		while (!contents.isEmpty() && contents.lastIndexOf(null) == contents.size() - 1)
 			contents.remove(contents.size() - 1);
+
 		vaults.put(vault, contents);
 	}
 
