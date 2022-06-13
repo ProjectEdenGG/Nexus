@@ -18,11 +18,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
-public class MatchDamageListener {
+public class MatchDamageListener implements Listener {
 
 	@Data
 	private static final class MinigamerDamageEventData {
@@ -196,6 +197,9 @@ public class MatchDamageListener {
 		event.setCancelled(true);
 
 		MinigamerDeathEvent deathEvent = new MinigamerDeathEvent(victim, event);
+		if (mechanic.useOriginalDeathMessage())
+			deathEvent.setDeathMessage(event.deathMessage());
+
 		if (!deathEvent.callEvent())
 			return;
 

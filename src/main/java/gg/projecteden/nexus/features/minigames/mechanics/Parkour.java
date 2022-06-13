@@ -42,7 +42,7 @@ public class Parkour extends CheckpointMechanic {
 
 	@Override
 	public void onDeath(@NotNull MinigamerDeathEvent event) {
-		event.setDeathMessage(null);
+		event.showDeathMessage(false);
 		super.onDeath(event);
 	}
 

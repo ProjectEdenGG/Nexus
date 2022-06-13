@@ -59,6 +59,11 @@ public abstract class TeamlessVanillaMechanic extends TeamlessMechanic implement
 	}
 
 	@Override
+	public boolean useOriginalDeathMessage() {
+		return true;
+	}
+
+	@Override
 	public void spreadPlayers(@NotNull Match match) {
 		for (Minigamer minigamer : match.getMinigamers()) {
 			minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.DAMAGE_RESISTANCE).duration(TimeUtils.TickTime.SECOND.x(20)).amplifier(10));

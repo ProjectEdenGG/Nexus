@@ -288,6 +288,10 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		return false;
 	}
 
+	public boolean useOriginalDeathMessage() {
+		return false;
+	}
+
 	public void tellMapAndMechanic(@NotNull Minigamer minigamer) {
 		Arena arena = minigamer.getMatch().getArena();
 		String mechanicName = arena.getMechanic().getName();

@@ -340,7 +340,7 @@ public class Sabotage extends TeamMechanic {
 		Match match = minigamer.getMatch();
 		SabotageMatchData matchData = match.getMatchData();
 		Chat.setActiveChannel(minigamer, matchData.getSpectatorChannel());
-		event.setDeathMessage(null);
+		event.showDeathMessage(false);
 		new SoundBuilder(Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR).receiver(minigamer).volume(1).pitch(0.9).play();
 
 		JsonBuilder builder = new JsonBuilder();

@@ -16,6 +16,7 @@ import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.framework.interfaces.IsColoredAndNicknamed;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
@@ -31,6 +32,7 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import me.lexikiq.HasUniqueId;
 import me.lexikiq.PlayerLike;
+import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -53,7 +55,6 @@ import java.util.concurrent.CompletableFuture;
 import static gg.projecteden.nexus.utils.LocationUtils.blockLocationsEqual;
 import static gg.projecteden.nexus.utils.PlayerUtils.hidePlayer;
 import static gg.projecteden.nexus.utils.PlayerUtils.showPlayer;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -282,6 +283,15 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 	}
 
 	/**
+	 * Sends a message to this minigamer in their chat with a prefix ("[Minigames]")
+	 * <p>
+	 * @param withPrefix a message
+	 */
+	public void tell(@NotNull ComponentLike withPrefix) {
+		tell(withPrefix, true);
+	}
+
+	/**
 	 * Sends a message to this minigamer in their chat. If <code>prefix</code> is true, the message will be
 	 * prefixed with "[Minigames]".
 	 * <p>
@@ -290,7 +300,19 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 	 * @param prefix whether or not to display the minigames prefix
 	 */
 	public void tell(@NotNull String message, boolean prefix) {
-		getPlayer().sendMessage((prefix ? Minigames.PREFIX : "") + colorize(message));
+		tell(new JsonBuilder(message), prefix);
+	}
+
+
+	/**
+	 * Sends a message to this minigamer in their chat. If <code>prefix</code> is true, the message will be
+	 * prefixed with "[Minigames]".
+	 * <p>
+	 * @param message a message
+	 * @param prefix whether or not to display the minigames prefix
+	 */
+	public void tell(@NotNull ComponentLike message, boolean prefix) {
+		getPlayer().sendMessage(new JsonBuilder((prefix ? Minigames.PREFIX : "")).next(message));
 	}
 
 	public void toGamelobby() {
