@@ -2,8 +2,6 @@ package gg.projecteden.nexus.features.menus.sabotage.tasks;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.InventoryListener;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.minigames.models.Match;
@@ -18,7 +16,9 @@ import gg.projecteden.utils.MathUtils;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.jetbrains.annotations.NotNull;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.List;
 
 import static gg.projecteden.nexus.utils.StringUtils.plural;
 
@@ -30,11 +30,6 @@ public class MedicalScanTask extends AbstractTaskMenu {
 
 	public MedicalScanTask(Task task) {
 		super(task);
-	}
-
-	@Override
-	public @NotNull SmartInventory.Builder getInventory() {
-		return super.getInventory().listener(new InventoryListener<>(InventoryCloseEvent.class, this::onClose));
 	}
 
 	@Override
@@ -88,7 +83,8 @@ public class MedicalScanTask extends AbstractTaskMenu {
 		});
 	}
 
-	public void onClose(InventoryCloseEvent event) {
+	@Override
+	public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
 		if (taskId != -1)
 			tasks.cancel(taskId);
 	}

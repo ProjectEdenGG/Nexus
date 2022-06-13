@@ -243,7 +243,7 @@ public class InventoryManager {
 				event.getInventory().clear();
 				InventoryManager.this.cancelUpdateTask(player);
 
-				inventories.remove(player);
+				inventories.remove(player).getProvider().onClose(event, new ArrayList<>(Arrays.asList(event.getInventory().getContents())));
 				contents.remove(player);
 			} else
 				Bukkit.getScheduler().runTask(Nexus.getInstance(), () -> player.openInventory(event.getInventory()));

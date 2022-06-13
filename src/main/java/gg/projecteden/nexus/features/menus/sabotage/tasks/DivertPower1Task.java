@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.menus.sabotage.tasks;
 
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory.Builder;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.Task;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.taskpartdata.DivertPower1TaskPartData;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -15,11 +14,6 @@ public class DivertPower1Task extends AbstractTaskMenu {
 
 	public DivertPower1Task(Task task) {
 		super(task);
-	}
-
-	@Override
-	public Builder getInventory() {
-		return super.getInventory().listener(handleInvClose);
 	}
 
 	@Override
