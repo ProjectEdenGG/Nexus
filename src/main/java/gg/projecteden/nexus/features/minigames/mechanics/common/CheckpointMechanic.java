@@ -71,6 +71,7 @@ public abstract class CheckpointMechanic extends SingleplayerMechanic {
 							.hover(matchData.formatCheckpointTimesHoverText(minigamer, now))
 					)
 			);
+			matchData.onWin(minigamer, now);
 			minigamer.quit();
 		}
 	}
