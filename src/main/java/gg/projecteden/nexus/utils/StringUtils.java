@@ -297,9 +297,9 @@ public class StringUtils extends gg.projecteden.utils.StringUtils {
 	public static String getWorldDisplayName(Location location, String world) {
 		if (Arrays.asList("world", "world_nether", "world_the_end").contains(world))
 			world = world.replace("world", "legacy");
-		else if ("oneblock".contains(world))
+		else if (world.contains("oneblock"))
 			world = world.replace("oneblock_world", "one_block");
-		else if ("bskyblock".contains(world))
+		else if (world.contains("bskyblock"))
 			world = world.replace("bskyblock_world", "skyblock");
 		else if ("bearfair21".equals(world))
 			return "Bear Fair 21";
