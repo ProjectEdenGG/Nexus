@@ -10,19 +10,23 @@ import gg.projecteden.nexus.models.particle.ParticleSetting;
 import gg.projecteden.nexus.models.particle.ParticleType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import lombok.Data;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 
+@Data
 @Rows(5)
 @Title("Particle Settings")
 @AllArgsConstructor
-@RequiredArgsConstructor
 public class EffectSettingProvider extends InventoryProvider {
 	private final ParticleService service = new ParticleService();
 	private final ParticleType type;
 	private HumanEntity displayEntity;
+
+	public EffectSettingProvider(ParticleType type) {
+		this(type, null);
+	}
 
 	@Override
 	public void init() {
@@ -59,7 +63,7 @@ public class EffectSettingProvider extends InventoryProvider {
 				builder.dyeColor((Color) setting.get(new ParticleService().get(player), type));
 
 			contents.set(setting.getRow(), setting.getColumn(), ClickableItem.of(builder.build(),
-					e -> setting.onClick(player, type)));
+					e -> setting.onClick(player, this)));
 		}
 	}
 }
