@@ -59,7 +59,7 @@ public abstract class TeamlessVanillaMechanic extends TeamlessMechanic implement
 	}
 
 	@Override
-	public boolean useOriginalDeathMessage() {
+	public boolean useNaturalDeathMessage() {
 		return true;
 	}
 

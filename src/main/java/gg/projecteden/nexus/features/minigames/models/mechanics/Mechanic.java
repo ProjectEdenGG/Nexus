@@ -288,7 +288,7 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		return false;
 	}
 
-	public boolean useOriginalDeathMessage() {
+	public boolean useNaturalDeathMessage() {
 		return false;
 	}
 

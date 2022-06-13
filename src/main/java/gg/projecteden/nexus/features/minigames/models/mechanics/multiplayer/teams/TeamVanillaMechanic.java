@@ -61,7 +61,7 @@ public abstract class TeamVanillaMechanic extends TeamMechanic implements Vanill
 	}
 
 	@Override
-	public boolean useOriginalDeathMessage() {
+	public boolean useNaturalDeathMessage() {
 		return true;
 	}
 

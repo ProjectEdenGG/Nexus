@@ -197,7 +197,7 @@ public class MatchDamageListener implements Listener {
 		event.setCancelled(true);
 
 		MinigamerDeathEvent deathEvent = new MinigamerDeathEvent(victim, event);
-		if (mechanic.useOriginalDeathMessage())
+		if (mechanic.useNaturalDeathMessage())
 			deathEvent.setDeathMessage(event.deathMessage());
 
 		if (!deathEvent.callEvent())
