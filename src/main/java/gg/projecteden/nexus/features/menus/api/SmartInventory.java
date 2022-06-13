@@ -226,12 +226,12 @@ public class SmartInventory {
 
 		public SmartInventory build() {
 			if (this.provider == null)
-				throw new IllegalStateException("The provider of the SmartInventory.Builder must be set.");
+				throw new IllegalStateException("The provider of the SmartInventory.Builder must be set");
 
 			if (this.manager == null) {          // if it's null, use the default instance
 				this.manager = SmartInvsPlugin.manager();
 				if (this.manager == null) {      // if it's still null, throw an exception
-					throw new IllegalStateException("Manager of the SmartInventory.Builder must be set, or SmartInvs should be loaded as a plugin.");
+					throw new IllegalStateException("Manager of the SmartInventory.Builder must be set, or SmartInvs should be loaded as a plugin");
 				}
 			}
 

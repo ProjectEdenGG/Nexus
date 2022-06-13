@@ -62,7 +62,7 @@ public class ATPMenu extends InventoryProvider {
 			contents.set(3, 7, ClickableItem.of(legacy, e -> new ATPMenu(ATPGroup.LEGACY).open(player)));
 		}
 
-		contents.set(1, 7, ClickableItem.of(new ItemBuilder(Material.OAK_SIGN).name("&3Homes").lore("&eClick to teleport to", "&eone of your homes."), e ->
+		contents.set(1, 7, ClickableItem.of(new ItemBuilder(Material.OAK_SIGN).name("&3Homes").lore("&eClick to teleport to", "&eone of your homes"), e ->
 			new ATPHomesMenuProvider().open(player)));
 	}
 

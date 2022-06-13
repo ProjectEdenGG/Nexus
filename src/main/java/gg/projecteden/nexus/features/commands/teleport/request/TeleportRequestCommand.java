@@ -95,7 +95,7 @@ public class TeleportRequestCommand extends ITeleportRequestCommand {
 		requests.getPending().add(request);
 
 		send(json("&eTeleport &3request sent to " + Nickname.of(targetPlayer) + ". ").next("&eClick to cancel").command("tpr cancel " + request.getId()));
-		send(targetPlayer, " &e" + nickname() + " &3is asking to teleport &eto you&3.");
+		send(targetPlayer, " &e" + nickname() + " &3is asking to teleport &eto you");
 		send(targetPlayer, json("&3 Click one &3 || &3 ")
 				.group()
 				.next("&a&lAccept")

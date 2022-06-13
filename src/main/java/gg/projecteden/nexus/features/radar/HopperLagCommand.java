@@ -41,7 +41,7 @@ public class HopperLagCommand extends CustomCommand implements Listener {
 
 		LinkedHashMap<Location, Double> sortedMap = new LinkedHashMap<>();
 
-		if (hopperLagMap.size() <= 0) error("There are currently no logs for Hopper Lag.");
+		if (hopperLagMap.size() <= 0) error("There are currently no logs for Hopper Lag");
 		hopperLagMap.entrySet()
 				.stream()
 				.sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
@@ -49,7 +49,7 @@ public class HopperLagCommand extends CustomCommand implements Listener {
 					sortedMap.put(x.getKey(), x.getValue());
 				});
 
-		if (sortedMap.size() <= 0) error("There are currently no logs for Hopper Lag.");
+		if (sortedMap.size() <= 0) error("There are currently no logs for Hopper Lag");
 
 		for (int i = 1; i <= amount; i++) {
 			if (sortedMap.keySet().size() < i) break;

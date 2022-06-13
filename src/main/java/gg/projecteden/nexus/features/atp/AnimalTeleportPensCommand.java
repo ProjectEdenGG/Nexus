@@ -25,7 +25,7 @@ public class AnimalTeleportPensCommand extends _WarpCommand {
 	@Path
 	void menu() {
 		if (!isInATP())
-			error("You are not in an ATP region.");
+			error("You are not in an ATP region");
 
 		if (new AnimalTeleportPens(player()).getEntities().size() == 0)
 			error("There are no entities to teleport");
