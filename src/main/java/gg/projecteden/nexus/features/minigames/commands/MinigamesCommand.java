@@ -216,6 +216,7 @@ public class MinigamesCommand extends CustomCommand {
 		getRunningMatch(arena).start();
 	}
 
+	@Confirm
 	@Path("end [arena]")
 	@Permission(PERMISSION_MANAGE)
 	void end(@Arg("current") Arena arena) {
