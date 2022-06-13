@@ -104,7 +104,7 @@ public class ShopCommand extends CustomCommand implements Listener {
 
 	@Path("collect")
 	void collect() {
-		new CollectItemsProvider(null).open(player());
+		new CollectItemsProvider(player(), null);
 	}
 
 	@Async
