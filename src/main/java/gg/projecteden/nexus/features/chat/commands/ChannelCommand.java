@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.chat.commands;
 
 import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.chat.ChatManager;
+import gg.projecteden.nexus.features.chat.events.ChannelChangeEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
@@ -33,12 +34,17 @@ public class ChannelCommand extends CustomCommand {
 
 	@Path("<channel> [message...]")
 	void changeChannel(PublicChannel channel, String message) {
-		if (!isNullOrEmpty(message))
+		if (!isNullOrEmpty(message)) {
 			quickMessage(channel, message);
-		else if (channel.equals(chatter.getActiveChannel()))
+			return;
+		}
+
+		final Channel currentChannel = chatter.getActiveChannel();
+		if (channel.equals(currentChannel))
 			error("You are already in that channel");
-		else
-			chatter.setActiveChannel(channel);
+
+		chatter.setActiveChannel(channel);
+		new ChannelChangeEvent(chatter, currentChannel, channel).callEvent();
 	}
 
 	@Path("list [filter]")
