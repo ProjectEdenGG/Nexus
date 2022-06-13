@@ -12,34 +12,23 @@ import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MinigamerQuitEvent;
-import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
-import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerLoadoutEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerDisplayTimerEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
-import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.MultiplayerMechanic;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.VanillaMechanic;
 import gg.projecteden.nexus.features.minigames.models.perks.ParticleProjectile;
 import gg.projecteden.nexus.features.minigames.models.perks.common.ParticleProjectilePerk;
-import gg.projecteden.nexus.features.nameplates.Nameplates;
-import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.models.perkowner.PerkOwner;
 import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
 import gg.projecteden.nexus.utils.BorderUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import org.bukkit.Sound;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
@@ -64,9 +53,15 @@ public class MatchListener implements Listener {
 	@EventHandler
 	public void onInventoryOpen(InventoryOpenEvent event) {
 		Minigamer minigamer = Minigamer.of(event.getPlayer());
-		if (minigamer.getMatch() == null) return;
-		if (event.getInventory().getLocation() == null) return;
-		if (minigamer.getMatch().getMechanic().canOpenInventoryBlocks()) return;
+		if (minigamer.getMatch() == null)
+			return;
+
+		if (event.getInventory().getLocation() == null)
+			return;
+
+		if (minigamer.getMatch().getMechanic().canOpenInventoryBlocks())
+			return;
+
 		event.setCancelled(true);
 	}
 
@@ -112,7 +107,8 @@ public class MatchListener implements Listener {
 	@EventHandler
 	public void onQuit(PlayerQuitEvent event) {
 		Minigamer minigamer = Minigamer.of(event.getPlayer());
-		if (minigamer.getMatch() == null) return;
+		if (minigamer.getMatch() == null)
+			return;
 
 		minigamer.quit();
 	}
@@ -128,16 +124,21 @@ public class MatchListener implements Listener {
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
 		Minigamer minigamer = Minigamer.of(player);
-		if (!minigamer.isPlaying()) return;
+		if (!minigamer.isPlaying())
+			return;
 
 		minigamer.getMatch().getMechanic().onPlayerInteract(minigamer, event);
 	}
 
 	@EventHandler(ignoreCancelled = true)
 	public void onInventoryClick(InventoryClickEvent event) {
-		if (!(event.getWhoClicked() instanceof Player)) return;
+		if (!(event.getWhoClicked() instanceof Player))
+			return;
+
 		Minigamer minigamer = Minigamer.of(event.getWhoClicked());
-		if (!minigamer.isPlaying()) return;
+		if (!minigamer.isPlaying())
+			return;
+
 		Mechanic mechanic = minigamer.getMatch().getMechanic();
 		ItemStack item = event.getCurrentItem();
 
@@ -152,190 +153,32 @@ public class MatchListener implements Listener {
 	@EventHandler(ignoreCancelled = true)
 	public void onItemDrop(PlayerDropItemEvent event) {
 		Minigamer minigamer = Minigamer.of(event.getPlayer());
-		if (!minigamer.isPlaying()) return;
+		if (!minigamer.isPlaying())
+			return;
 
 		ItemStack item = event.getItemDrop().getItemStack();
 		if (!minigamer.getMatch().getMechanic().canDropItem(item))
 			event.setCancelled(true);
 	}
 
-	// TODO: Prevent damage of hanging entities/armor stands/etc
-	public void onDamage(EntityDamageByEntityEvent event) {
-		if (event.isCancelled()) return;
-		if (!(event.getEntity() instanceof Player)) return;
-
-		Minigamer victim = Minigamer.of(event.getEntity());
-		// block damage while in lobby
-
-		if ((victim.isPlaying() && !victim.getMatch().isStarted()) || !victim.isAlive() || victim.isRespawning()) {
-			event.setCancelled(true);
-			return;
-		}
-
-		Minigamer attacker = null;
-		Projectile projectile = null;
-		if (event.getDamager() instanceof Player) {
-			attacker = Minigamer.of(event.getDamager());
-		} else if (event.getDamager() instanceof Projectile) {
-			projectile = (Projectile) event.getDamager();
-			if (projectile.getShooter() instanceof Player) {
-				attacker = Minigamer.of((Player) projectile.getShooter());
-			}
-		}
-
-		if (victim.getMatch() == null || victim.getTeam() == null) {
-			if (attacker != null && (attacker.getMatch() == null || attacker.getTeam() == null)) {
-				if (victim.getMatch() != null && attacker.getMatch() == null) {
-					// Normal player damaging someone in a minigame
-					event.setCancelled(true);
-				}
-				if (victim.getMatch() == null && attacker.getMatch() != null) {
-					// Minigamer damaging normal player
-					event.setCancelled(true);
-				}
-			}
-			// Neither in minigames, ignore
-			return;
-		}
-
-		if (attacker != null) {
-			if (!(victim.isPlaying() && attacker.isPlaying())) return;
-
-			if ((victim.isRespawning() || attacker.isRespawning()) || victim.equals(attacker)) {
-				event.setCancelled(true);
-				return;
-			}
-
-			if (!victim.getMatch().isStarted()) {
-				event.setCancelled(true);
-				return;
-			}
-		}
-
-		if (attacker == null || victim.getMatch().equals(attacker.getMatch())) {
-			// Same match
-			Mechanic mechanic = victim.getMatch().getMechanic();
-			if (attacker != null && victim.getTeam().equals(attacker.getTeam()) && mechanic.isTeamGame()) {
-				// Friendly fire
-				event.setCancelled(true);
-			} else {
-				// Damaged by opponent
-				double newHealth = victim.getPlayer().getHealth() - event.getFinalDamage();
-
-				if (newHealth > 0) {
-					MinigamerDamageEvent damageEvent = new MinigamerDamageEvent(victim, attacker, event);
-					if (!damageEvent.callEvent()) {
-						event.setCancelled(true);
-						return;
-					}
-
-					if (attacker != null && event.getDamager() instanceof Arrow)
-						attacker.tell("&7" + victim.getNickname() + " is on &c" + MultiplayerMechanic.HP_FORMAT.format(newHealth) + " &7HP");
-
-					mechanic.onDamage(damageEvent);
-
-					if (damageEvent.isCancelled())
-						event.setCancelled(true);
-					return;
-				}
-
-				event.setCancelled(true);
-
-				if (projectile != null)
-					projectile.remove();
-
-				if (attacker != null && event.getDamager() instanceof Arrow)
-					attacker.getPlayer().playSound(attacker.getPlayer().getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 0.3F, 0.1F);
-
-				MinigamerDeathEvent deathEvent = new MinigamerDeathEvent(victim, attacker, event);
-				if (!deathEvent.callEvent()) return;
-
-				if (!victim.getMatch().isEnded())
-					mechanic.onDeath(deathEvent);
-			}
-		} else {
-			// Different matches
-			event.setCancelled(true);
-		}
-	}
-
-	@EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
-	public final void onDamageUpdateNameplate(EntityDamageEvent event) {
-		// specialized message for updating nameplates in minigames when they take damage
-		// main onDamage method is below
-		if (event.getEntity() instanceof Player player && Minigamer.of(player).isPlaying())
-			Tasks.wait(1, () -> Nameplates.get().getNameplateManager().update(player));
-	}
-
-	@EventHandler(ignoreCancelled = true)
-	public void onDamage(EntityDamageEvent event) {
-		if (event instanceof EntityDamageByEntityEvent entityDamageByEntityEvent) {
-			if (!(entityDamageByEntityEvent.getDamager() instanceof FallingBlock)) {
-				onDamage(entityDamageByEntityEvent);
-				return;
-			}
-		}
-
-		if (!(event.getEntity() instanceof Player)) return;
-
-		Minigamer victim = Minigamer.of(event.getEntity());
-
-		if (!victim.isPlaying()) return;
-
-		// block damage while in lobby
-		if (!victim.isAlive() || victim.isRespawning() || !victim.getMatch().isStarted()) {
-			event.setCancelled(true);
-			return;
-		}
-
-		Mechanic mechanic = victim.getMatch().getMechanic();
-
-		if (event.getFinalDamage() < victim.getPlayer().getHealth()) {
-			MinigamerDamageEvent damageEvent = new MinigamerDamageEvent(victim, event);
-			if (!damageEvent.callEvent()) {
-				event.setCancelled(true);
-				return;
-			}
-
-			mechanic.onDamage(damageEvent);
-
-			if (damageEvent.isCancelled())
-				event.setCancelled(true);
-			return;
-		}
-
-		event.setCancelled(true);
-
-		MinigamerDeathEvent deathEvent = new MinigamerDeathEvent(victim, event);
-		if (!deathEvent.callEvent())
-			return;
-
-		if (!victim.getMatch().isEnded())
-			mechanic.onDeath(deathEvent);
-	}
-
-	@EventHandler
-	public void onEnterKillRegion(PlayerEnteredRegionEvent event) {
-		Minigamer minigamer = Minigamer.of(event.getPlayer());
-		if (!minigamer.isPlaying()) return;
-		if (!minigamer.getMatch().isStarted() || !minigamer.isAlive()) return;
-		Mechanic mechanic = minigamer.getMatch().getMechanic();
-
-		Arena arena = minigamer.getMatch().getArena();
-		if (arena.ownsRegion(event.getRegion(), "kill"))
-			mechanic.kill(minigamer);
-	}
 
 	@EventHandler
 	public void onItemPickup(EntityPickupItemEvent event) {
-		if (!Minigames.isMinigameWorld(event.getEntity().getWorld())) return;
+		if (!Minigames.isMinigameWorld(event.getEntity().getWorld()))
+			return;
+
 		// TODO: Entity pickups?
-		if (!(event.getEntity() instanceof Player player)) return;
+		if (!(event.getEntity() instanceof Player player))
+			return;
 
 		Arena arena = ArenaManager.getFromLocation(event.getItem().getLocation());
-		if (arena == null) return;
+		if (arena == null)
+			return;
+
 		Match match = MatchManager.find(arena);
-		if (match == null) return;
+		if (match == null)
+			return;
+
 		Minigamer minigamer = Minigamer.of(player);
 		if (!minigamer.isIn(match))
 			event.setCancelled(true);
@@ -343,15 +186,20 @@ public class MatchListener implements Listener {
 
 	@EventHandler(ignoreCancelled = true)
 	public void onEntityRegainHealth(EntityRegainHealthEvent event) {
-		if (!(event.getEntity() instanceof Player)) return;
+		if (!(event.getEntity() instanceof Player))
+			return;
 
 		RegainReason regainReason = event.getRegainReason();
 		if (regainReason != RegainReason.REGEN && regainReason != RegainReason.SATIATED)
 			return;
 
 		Minigamer minigamer = Minigamer.of(event.getEntity());
-		if (!minigamer.isPlaying()) return;
-		if (!minigamer.getMatch().isStarted() || !minigamer.isAlive()) return;
+		if (!minigamer.isPlaying())
+			return;
+
+		if (!minigamer.getMatch().isStarted() || !minigamer.isAlive())
+			return;
+
 		Mechanic mechanic = minigamer.getMatch().getMechanic();
 
 		if (mechanic.getRegenType().hasCustomRegen())
@@ -383,19 +231,33 @@ public class MatchListener implements Listener {
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void onProjectileCollide(ProjectileCollideEvent event) {
-		if (!(event.getCollidedWith() instanceof Player)) return;
-		if (!(event.getEntity().getShooter() instanceof Player)) return;
+		if (!(event.getCollidedWith() instanceof Player))
+			return;
+
+		if (!(event.getEntity().getShooter() instanceof Player))
+			return;
+
 		Minigamer victim = Minigamer.of(event.getCollidedWith());
-		if (!victim.isPlaying()) return;
+		if (!victim.isPlaying())
+			return;
+
 		if (victim.isRespawning() || !victim.isAlive()) {
 			event.setCancelled(true);
 			return;
 		}
-		if (victim.getTeam() == null) return;
-		if (!victim.getMatch().getMechanic().isTeamGame()) return;
+		if (victim.getTeam() == null)
+			return;
+
+		if (!victim.getMatch().getMechanic().isTeamGame())
+			return;
+
 		Minigamer attacker = Minigamer.of((Player) event.getEntity().getShooter());
-		if (!attacker.isPlaying(victim.getMatch())) return;
-		if (!victim.getTeam().equals(attacker.getTeam())) return;
+		if (!attacker.isPlaying(victim.getMatch()))
+			return;
+
+		if (!victim.getTeam().equals(attacker.getTeam()))
+			return;
+
 		event.setCancelled(true);
 	}
 
