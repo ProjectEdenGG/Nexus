@@ -34,6 +34,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -79,10 +80,17 @@ public class SmartInventory {
 		Optional<SmartInventory> oldInv = this.manager.getInventory(player);
 
 		oldInv.ifPresent(inv -> {
+			final InventoryCloseEvent event = new InventoryCloseEvent(player.getOpenInventory());
+
+			final var contents = new ArrayList<>(Arrays.asList(event.getInventory().getContents()));
+			inv.getProvider().onClose(event, contents);
+
 			inv.getListeners().stream()
 				.filter(listener -> listener.getType() == InventoryCloseEvent.class)
 				.forEach(listener -> ((InventoryListener<InventoryCloseEvent>) listener)
-					.accept(new InventoryCloseEvent(player.getOpenInventory())));
+					.accept(event));
+
+			player.getOpenInventory().getTopInventory().clear();
 
 			this.manager.setInventory(player, null);
 		});
@@ -113,10 +121,17 @@ public class SmartInventory {
 	}
 
 	public void close(Player player) {
+		final InventoryCloseEvent event = new InventoryCloseEvent(player.getOpenInventory());
+
+		this.manager.getInventory(player).ifPresent(inv -> {
+			final var contents = new ArrayList<>(Arrays.asList(event.getInventory().getContents()));
+			inv.getProvider().onClose(event, contents);
+		});
+
 		listeners.stream()
 			.filter(listener -> listener.getType() == InventoryCloseEvent.class)
 			.forEach(listener -> ((InventoryListener<InventoryCloseEvent>) listener)
-				.accept(new InventoryCloseEvent(player.getOpenInventory())));
+				.accept(event));
 
 		this.manager.setInventory(player, null);
 		player.closeInventory();

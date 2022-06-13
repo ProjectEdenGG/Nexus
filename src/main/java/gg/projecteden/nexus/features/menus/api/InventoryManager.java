@@ -240,10 +240,12 @@ public class InventoryManager {
 				.forEach(listener -> ((InventoryListener<InventoryCloseEvent>) listener).accept(event));
 
 			if (inv.isCloseable()) {
+				final var items = new ArrayList<>(Arrays.asList(event.getInventory().getContents()));
+				inventories.get(player).getProvider().onClose(event, items);
 				event.getInventory().clear();
 				InventoryManager.this.cancelUpdateTask(player);
 
-				inventories.remove(player).getProvider().onClose(event, new ArrayList<>(Arrays.asList(event.getInventory().getContents())));
+				inventories.remove(player);
 				contents.remove(player);
 			} else
 				Bukkit.getScheduler().runTask(Nexus.getInstance(), () -> player.openInventory(event.getInventory()));
