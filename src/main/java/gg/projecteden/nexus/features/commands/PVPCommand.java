@@ -120,7 +120,6 @@ public class PVPCommand extends CustomCommand implements Listener {
 		if (WorldGroup.of(victim) != WorldGroup.SURVIVAL)
 			return;
 
-
 		// Cancel if both players do not have pvp on
 		if (!victim.isEnabled() || !attacker.isEnabled()) {
 			event.setCancelled(true);
@@ -216,7 +215,6 @@ public class PVPCommand extends CustomCommand implements Listener {
 	public void onPlayerPVP(EntityDamageByEntityEvent event) {
 		if (WorldGroup.of(event.getEntity()) != WorldGroup.SURVIVAL)
 			return;
-
 
 		if (!(event.getEntity() instanceof Player player))
 			return;

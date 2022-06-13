@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.chat.commands;
 
-
 import gg.projecteden.nexus.features.chat.Censor;
 import gg.projecteden.nexus.features.chat.events.ChatEvent;
 import gg.projecteden.nexus.features.chat.events.PublicChatEvent;

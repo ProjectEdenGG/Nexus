@@ -58,7 +58,6 @@ public class ModeUser implements PlayerOwnedObject {
 		return getPlayerMode(worldGroup).getFlightMode();
 	}
 
-
 	@Data
 	public static class PlayerMode {
 		GameMode gameMode = GameMode.SURVIVAL;

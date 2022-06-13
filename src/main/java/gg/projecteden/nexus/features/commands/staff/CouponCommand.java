@@ -174,7 +174,6 @@ public class CouponCommand extends CustomCommand implements Listener {
 			return Integer.parseInt(lore.get(0).split(StringUtils.colorize(": &e"))[1]);
 		}
 
-
 	}
 
 	public CouponCommand(CommandEvent event) {

@@ -55,5 +55,4 @@ public class ThimbleArena extends Arena {
 		return RandomUtils.randomElement(Arrays.asList(new Thimble.ClassicGamemode(), new Thimble.RiskGamemode(), new Thimble.LastManStandingGamemode()));
 	}
 
-
 }

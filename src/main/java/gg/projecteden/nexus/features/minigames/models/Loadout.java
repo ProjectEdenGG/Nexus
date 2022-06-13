@@ -69,5 +69,4 @@ public class Loadout implements ConfigurationSerializable {
 		new MinigamerLoadoutEvent(minigamer, this).callEvent();
 	}
 
-
 }

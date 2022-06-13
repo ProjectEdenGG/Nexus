@@ -274,7 +274,6 @@ public enum QuestNPC {
 		}
 	};
 
-
 	int npcId;
 
 	QuestNPC(int id) {

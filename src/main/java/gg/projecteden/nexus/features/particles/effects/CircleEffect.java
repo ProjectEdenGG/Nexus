@@ -40,7 +40,6 @@ public class CircleEffect {
 		if (updateVector != null) updateLoc = true;
 		if (updateVector == null && updateLoc) updateVector = new Vector(0, 0, 0);
 
-
 		if (color != null) {
 			disX = color.getRed();
 			disY = color.getGreen();

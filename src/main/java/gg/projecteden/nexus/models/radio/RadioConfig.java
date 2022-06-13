@@ -144,7 +144,6 @@ public class RadioConfig implements PlayerOwnedObject {
 		}
 	}
 
-
 	public enum RadioType {
 		SERVER,
 		RADIUS

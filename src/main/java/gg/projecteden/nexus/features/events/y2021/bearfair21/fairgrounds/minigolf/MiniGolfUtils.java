@@ -64,7 +64,6 @@ public class MiniGolfUtils {
 			Quests.giveTrophy(user, Trophy.BEAR_FAIR_2021_MINIGOLF);
 	}
 
-
 	public static MiniGolfHole getHole(Location location) {
 		Set<ProtectedRegion> regions = BearFair21.worldguard().getRegionsLikeAt(MiniGolf.getRegionHole() + ".*", location);
 		ProtectedRegion region = regions.stream().findFirst().orElse(null);

@@ -21,5 +21,4 @@ public class Parkour implements Listener {
 		event.getPlayer().teleportAsync(new Location(event.getPlayer().getWorld(), 1899.5, 33, 247.5, 270, 0));
 	}
 
-
 }

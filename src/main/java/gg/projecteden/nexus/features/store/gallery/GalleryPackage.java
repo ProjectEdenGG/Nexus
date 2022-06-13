@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.store.gallery;
 
-
 import com.destroystokyo.paper.ParticleBuilder;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;

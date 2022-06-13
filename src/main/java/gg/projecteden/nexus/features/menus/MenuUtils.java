@@ -113,8 +113,6 @@ public abstract class MenuUtils {
 				contents.set(row, noSpace[i], items[i]);
 	}
 
-
-
 	public static void openAnvilMenu(Player player, String text, BiFunction<Player, String, AnvilGUI.Response> onComplete, Consumer<Player> onClose) {
 		new AnvilGUI.Builder()
 				.text(text)

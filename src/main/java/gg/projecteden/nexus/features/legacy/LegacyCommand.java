@@ -395,7 +395,6 @@ public class LegacyCommand extends _WarpSubCommand {
 			}
 		}
 
-
 		send(PREFIX + "Archived " + countLevels + " mcmmo levels for " + countUsers + " users");
 	}
 

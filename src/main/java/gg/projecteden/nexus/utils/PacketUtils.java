@@ -260,7 +260,6 @@ public class PacketUtils {
 		sendFakeItem(owner, Collections.singletonList(recipient), item, slot);
 	}
 
-
 	// untested
 	public static void entityRelativeMove(@NonNull HasPlayer player, @NonNull org.bukkit.entity.Entity bukkitEntity, Vector delta, boolean onGround) {
 		Entity entity = ((CraftEntity) bukkitEntity).getHandle();
@@ -345,7 +344,6 @@ public class PacketUtils {
 		sendPacket(player, spawnArmorStand, rawMetadataPacket, rawEquipmentPacket);
 		return armorStand;
 	}
-
 
 	/*
 	public void addNPCPacket(EntityPlayer npc, Player player) {
@@ -490,7 +488,6 @@ public class PacketUtils {
 		return armorStand;
 	}
 
-
 	public static void updateArmorStandArmor(HasPlayer player, ArmorStand entity, List<Pair<EnumItemSlot, net.minecraft.world.item.ItemStack>> equipment) {
 		if (equipment == null) equipment = getEquipmentList(null, null, null, null);
 		EntityArmorStand armorStand = ((CraftArmorStand) entity).getHandle();
@@ -499,7 +496,6 @@ public class PacketUtils {
 
 		sendPacket(player, rawEquipmentPacket);
 	}
-
 
 	public static List<Pair<EnumItemSlot, net.minecraft.world.item.ItemStack>> getEquipmentList() {
 		return getEquipmentList(null, null, null, null);

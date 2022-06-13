@@ -323,7 +323,6 @@ public class ConvertShopCommand extends CustomCommand {
 		return Utils.isInt(split[split.length - 1]);
 	}
 
-
 	public PotionType getPotionFromShort(String potionShort) {
 		return switch (potionShort) {
 			case "Water" -> PotionType.WATER;

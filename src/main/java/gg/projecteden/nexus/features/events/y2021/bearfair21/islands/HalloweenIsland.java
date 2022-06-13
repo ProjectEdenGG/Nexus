@@ -13,7 +13,6 @@ import gg.projecteden.nexus.models.bearfair21.BearFair21User;
 import gg.projecteden.nexus.models.bearfair21.BearFair21UserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.RandomUtils;
 import org.bukkit.Location;
@@ -517,6 +516,5 @@ public class HalloweenIsland implements BearFair21Island {
 			userService.save(user);
 		}
 	}
-
 
 }

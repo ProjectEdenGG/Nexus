@@ -386,7 +386,6 @@ public abstract class WitherFight implements Listener {
 		if (!blazes.contains(blaze))
 			return;
 
-
 		if (blaze.getVehicle() != null)
 			blaze.getVehicle().remove();
 

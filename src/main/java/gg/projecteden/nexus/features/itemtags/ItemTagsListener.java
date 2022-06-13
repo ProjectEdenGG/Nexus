@@ -198,7 +198,6 @@ public class ItemTagsListener implements Listener {
 		ItemStack itemStack = event.getItem();
 		updateItem(itemStack);
 
-
 	}
 
 	@EventHandler

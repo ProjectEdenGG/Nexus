@@ -63,5 +63,4 @@ public class SafeCrackerPlayer implements PlayerOwnedObject {
 		private boolean correct;
 	}
 
-
 }

@@ -16,7 +16,6 @@ import java.util.HashMap;
 
 import static gg.projecteden.nexus.features.menus.MenuUtils.openAnvilMenu;
 
-
 @Disabled
 @Title("SafeCracker Game Selector")
 public class SafeCrackerGameSelector extends InventoryProvider {

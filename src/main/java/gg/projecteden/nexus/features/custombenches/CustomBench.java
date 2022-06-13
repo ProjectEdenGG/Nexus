@@ -100,7 +100,6 @@ public abstract class CustomBench extends Feature implements Listener {
 		customBenchType.interact(event.getPlayer());
 	}
 
-
 	/*
 	 * 	List<ItemFrame> itemFrames = getPossibleItemFrames(block);
 	 * 	for (ItemFrame itemFrame : itemFrames) {

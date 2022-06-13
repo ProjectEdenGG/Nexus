@@ -40,5 +40,4 @@ public class WeeeCommand extends CustomCommand {
 				.start();
 	}
 
-
 }

@@ -30,5 +30,4 @@ public class APRegions {
 	private static final String vespyr = APSetType.VESPYR.get().getRegion();
 	public static String vespyr_shipColor = vespyr + "_shipcolor";
 
-
 }

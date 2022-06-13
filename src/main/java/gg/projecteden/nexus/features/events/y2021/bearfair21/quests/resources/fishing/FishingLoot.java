@@ -26,7 +26,6 @@ import static gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resou
 import static gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot.FishingLootTime.DAY;
 import static gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot.FishingLootTime.NIGHT;
 
-
 @Getter
 @AllArgsConstructor
 public enum FishingLoot {

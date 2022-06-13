@@ -42,7 +42,6 @@ public class Merchants {
 	public static ItemBuilder goldBlock = new ItemBuilder(Material.GOLD_BLOCK).lore(itemLore);
 	public static ItemBuilder TBD = new ItemBuilder(Material.STICK).name("To Be Determined").lore(itemLore).amount(1);
 
-
 	public static void openMerchant(Player player, int id) {
 		BFMerchant bfMerchant = BFMerchant.getFromId(id);
 		if (bfMerchant == null)

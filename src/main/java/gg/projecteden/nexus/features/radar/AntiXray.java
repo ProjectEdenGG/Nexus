@@ -100,5 +100,4 @@ public class AntiXray implements Listener {
 		private final Location location;
 	}
 
-
 }

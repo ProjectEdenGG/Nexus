@@ -48,7 +48,6 @@ import static gg.projecteden.nexus.utils.Utils.registerListeners;
 				"survival"
 			Update getWorldDisplayName
 
-
  */
 
 @Environments(Env.TEST)

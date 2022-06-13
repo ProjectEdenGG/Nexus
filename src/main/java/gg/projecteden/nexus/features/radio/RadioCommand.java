@@ -355,7 +355,6 @@ public class RadioCommand extends CustomCommand {
 			userService.save(user);
 		}
 
-
 		send(PREFIX + "Id set to " + radio.getId());
 	}
 

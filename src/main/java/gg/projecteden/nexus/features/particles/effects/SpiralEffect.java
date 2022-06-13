@@ -33,7 +33,6 @@ public class SpiralEffect {
 			location = player.getLocation();
 		if (player == null) throw new InvalidInputException("No player was provided");
 
-
 		if (updateVector != null) updateLoc = true;
 		if (updateVector == null && updateLoc) updateVector = new Vector(0, 0, 0);
 

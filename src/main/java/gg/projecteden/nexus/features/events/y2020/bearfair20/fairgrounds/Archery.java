@@ -115,7 +115,6 @@ public class Archery implements Listener {
 		return locs;
 	}
 
-
 	private boolean canPlaceTarget(Location loc, boolean checkRadius) {
 		if (loc == null)
 			return false;

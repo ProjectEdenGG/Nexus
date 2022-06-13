@@ -83,7 +83,6 @@ public class MinigameNightIsland implements Listener, BearFairIsland {
 	//
 	public static ItemStack arcadeToken = new ItemBuilder(Material.SUNFLOWER).lore(itemLore).amount(1).name("Arcade Token").glow().build();
 
-
 	public MinigameNightIsland() {
 		Nexus.registerListener(this);
 		soundTasks();

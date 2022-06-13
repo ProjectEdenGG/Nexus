@@ -61,6 +61,4 @@ public class DisarmingEnchant extends CustomEnchant implements Listener {
 		});
 	}
 
-
-
 }

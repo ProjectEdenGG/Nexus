@@ -121,5 +121,4 @@ public class CustomModelMenu extends InventoryProvider {
 				ResourcePack.getRootFolder().getFolder(parent).addFolder(folder);
 	}
 
-
 }

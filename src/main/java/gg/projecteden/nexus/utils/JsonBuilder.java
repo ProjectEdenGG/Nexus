@@ -680,7 +680,6 @@ public class JsonBuilder implements ComponentLike {
 		return decorate(state, TextDecoration.ITALIC);
 	}
 
-
 	/**
 	 * Enables strikethrough on the internal builder
 	 * @return this builder

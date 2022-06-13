@@ -78,7 +78,6 @@ public class BearFair21 implements Listener {
 	@Getter
 	private static final Location shipSpawnLoc = BearFair21.locationOf(5, 135, 32, 90, 0).toCenterLocation();
 
-
 	public BearFair21() {
 		Nexus.registerListener(this);
 

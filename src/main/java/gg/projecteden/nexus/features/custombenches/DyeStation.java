@@ -63,7 +63,6 @@ public class DyeStation extends CustomBench {
 		.customModelData(1)
 		.name("Dye Station");
 
-
 	public static ItemBuilder getMagicDye() {
 		return MAGIC_DYE.clone();
 	}

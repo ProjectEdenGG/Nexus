@@ -350,6 +350,5 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 		});
 	}
 
-
 }
 

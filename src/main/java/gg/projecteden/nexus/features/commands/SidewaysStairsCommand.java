@@ -132,7 +132,6 @@ public class SidewaysStairsCommand extends CustomCommand implements Listener {
 			Player player = event.getPlayer();
 			SidewaysStairsPlayer swsPlayer = playerData.get(player);
 
-
 			if (swsPlayer != null && swsPlayer.isEnabled())
 				if (swsPlayer.getAction() == SwsAction.COPY)
 					if (MaterialTag.STAIRS.isTagged(block.getType())) {

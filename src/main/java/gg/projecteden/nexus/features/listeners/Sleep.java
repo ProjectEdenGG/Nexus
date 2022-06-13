@@ -42,7 +42,6 @@ public class Sleep implements Listener {
 			}
 		});
 
-
 	}
 
 	private static boolean canSleep(Player player) {

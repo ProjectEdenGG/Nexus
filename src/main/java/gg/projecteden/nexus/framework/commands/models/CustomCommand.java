@@ -1089,7 +1089,6 @@ public abstract class CustomCommand extends ICustomCommand {
 		lines.forEach(this::send);
 	}
 
-
 	@AllArgsConstructor
 	public class WhoFormatter {
 		private final OfflinePlayer self, target;

@@ -206,7 +206,6 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 				}
 			}
 
-
 			LinkedList<UUID> routeUuids = route.getNodeUuids();
 			if (routeUuids.isEmpty() || (routeUuids.size() == 1 && routeUuids.getLast().equals(startNode.getUuid()))) {
 				player.sendMessage("no nodes left in route, returning");

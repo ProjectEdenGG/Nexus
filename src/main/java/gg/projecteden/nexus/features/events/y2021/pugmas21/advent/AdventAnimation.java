@@ -75,7 +75,6 @@ public class AdventAnimation {
 			explodeContents(location);
 		});
 
-
 	}
 
 	public void openTwice() {

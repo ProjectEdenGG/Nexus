@@ -7,7 +7,6 @@ import gg.projecteden.nexus.models.radio.RadioConfig.Radio;
 import gg.projecteden.nexus.models.radio.RadioUser;
 import gg.projecteden.nexus.models.radio.RadioUserService;
 import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -18,7 +17,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-
 
 public class RadioHeads implements Listener {
 	public RadioHeads() {

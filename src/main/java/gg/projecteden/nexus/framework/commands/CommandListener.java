@@ -54,7 +54,6 @@ public class CommandListener implements Listener {
 		if (lastIndexIsEmpty || buffer.endsWith(" ")) args.add("");
 		args.remove(0);
 
-
 		CommandTabEvent tabEvent = new CommandTabEvent(event.getSender(), customCommand, alias, args, Collections.unmodifiableList(args));
 		if (!tabEvent.callEvent())
 			return;

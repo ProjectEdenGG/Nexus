@@ -385,7 +385,6 @@ public enum Achievement implements HasDescription {
 			new ItemStack(Material.TNT),
 			ProgressType.NUMBER, 20);
 
-
 	private String description;
 	private AchievementGroup group;
 	private ItemStack itemStack;

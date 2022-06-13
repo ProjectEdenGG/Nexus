@@ -44,7 +44,6 @@ public class Sounds {
 		});
 	}
 
-
 	private boolean isInside(Player player, byte blocks) {
 		return player.getLocation().getBlock().getLightFromSky() < (15 - blocks);
 	}

@@ -150,7 +150,6 @@ public class StoreGalleryNPCs {
 		}
 	}
 
-
 	private static String getUniqueName(List<String> skinNames, List<String> backups) {
 		AtomicReference<String> name = new AtomicReference<>(null);
 		if (skinNames.size() != 0) {

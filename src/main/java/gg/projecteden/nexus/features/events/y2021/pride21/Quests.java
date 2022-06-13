@@ -73,7 +73,6 @@ public class Quests implements Listener {
 			return;
 		}
 
-
 		boolean sendFact = !user.getDecorationsCollected().contains(decoration);
 		if (!sendFact) {
 			if (user.isComplete())

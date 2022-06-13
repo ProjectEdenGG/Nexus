@@ -104,7 +104,6 @@ public class Halloween21 implements Listener {
 
 	private static final List<WorldGroup> PUMPKINABLE_WORLD_GROUPS = List.of(WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK);
 
-
 	public static int taskId;
 
 	@EventHandler

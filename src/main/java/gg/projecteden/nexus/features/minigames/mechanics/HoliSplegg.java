@@ -182,5 +182,4 @@ public final class HoliSplegg extends TeamlessMechanic {
 		location.getWorld().playSound(location, Sound.ENTITY_CHICKEN_EGG, 1.0F, 0.7F);
 	}
 
-
 }
