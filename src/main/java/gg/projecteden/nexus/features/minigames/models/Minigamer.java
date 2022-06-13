@@ -312,7 +312,7 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 	 * @param prefix whether or not to display the minigames prefix
 	 */
 	public void tell(@NotNull ComponentLike message, boolean prefix) {
-		getPlayer().sendMessage(new JsonBuilder((prefix ? Minigames.PREFIX : "")).next(message));
+		getPlayer().sendMessage(prefix ? JsonBuilder.fromPrefix("Minigames", message) : message);
 	}
 
 	public void toGamelobby() {
