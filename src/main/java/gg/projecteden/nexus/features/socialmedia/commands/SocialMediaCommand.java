@@ -68,7 +68,7 @@ public class SocialMediaCommand extends CustomCommand implements Listener {
 			page.next("&f" + site.getEmoji() + " " + site.getLabel())
 				.hover(connection.getUrl());
 
-			if (site.getProfileUrl().equals("%s"))
+			if ("%s".equals(site.getProfileUrl()))
 				page.copy(connection.getUrl())
 					.hover("&f")
 					.hover("&eClick to copy");

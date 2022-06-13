@@ -4,6 +4,7 @@ import com.destroystokyo.paper.event.player.PlayerAdvancementCriterionGrantEvent
 import gg.projecteden.nexus.features.chat.Censor;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.chat.Koda;
+import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -175,7 +176,7 @@ public class Restrictions implements Listener {
 			return;
 
 		// Vanilla mechanic portals
-		if (worldGroup == WorldGroup.MINIGAMES && !event.getWorld().getName().equals("gameworld"))
+		if (worldGroup == WorldGroup.MINIGAMES && !Minigames.getWorld().equals(event.getWorld()))
 			return;
 
 		event.setCancelled(true);

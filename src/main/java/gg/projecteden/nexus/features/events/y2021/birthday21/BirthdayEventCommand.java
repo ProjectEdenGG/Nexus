@@ -130,7 +130,7 @@ public class BirthdayEventCommand extends CustomCommand implements Listener {
 		if (block == null)
 			return;
 
-		if (!block.getWorld().getName().equals("survival"))
+		if (!"survival".equals(block.getWorld().getName()))
 			return;
 
 		if (block.getType() != Material.PLAYER_HEAD && block.getType() != Material.PLAYER_WALL_HEAD)

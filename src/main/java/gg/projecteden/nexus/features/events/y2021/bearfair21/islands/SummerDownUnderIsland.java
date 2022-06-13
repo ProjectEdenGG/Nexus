@@ -129,13 +129,13 @@ public class SummerDownUnderIsland implements BearFair21Island {
 		BearFair21UserService service = new BearFair21UserService();
 		BearFair21User user = service.get(event.getPlayer());
 		QuestStage stage = user.getQuestStage_SDU();
-		if (regionName.equals("bearfair21_summerdownunder_elytra")) {
+		if ("bearfair21_summerdownunder_elytra".equals(regionName)) {
 			if (stage == QuestStage.STEP_SEVEN) {
 				teleportToElytraCourse(event.getPlayer());
 				event.getPlayer().getInventory().setChestplate(ELYTRA.get());
 			} else if (stage.ordinal() < QuestStage.STEP_SEVEN.ordinal())
 				event.getPlayer().sendMessage(new JsonBuilder("&c&oYou feel as though you are not yet ready to travel deeper into the cave..."));
-		} else if (regionName.equals("bearfair21_elytra_dialogue") && !serpentTalkingTo.contains(event.getPlayer().getUniqueId())) {
+		} else if ("bearfair21_elytra_dialogue".equals(regionName) && !serpentTalkingTo.contains(event.getPlayer().getUniqueId())) {
 			serpentTalkingTo.add(event.getPlayer().getUniqueId());
 			Talker.runScript(event.getPlayer(), SERPENT).thenRun(() -> {
 				user.setQuestStage_SDU(QuestStage.STEPS_DONE);
@@ -146,12 +146,12 @@ public class SummerDownUnderIsland implements BearFair21Island {
 				event.getPlayer().teleportAsync(new Location(event.getPlayer().getWorld(), 172.5, 99, -171.5, -180, 0));
 				ClientsideContentManager.addCategory(user, ClientsideContent.Content.ContentCategory.SERPENT);
 			});
-		} else if (regionName.equals("bearfair21_elytra_finish") || regionName.equals("bearfair21")) {
+		} else if ("bearfair21_elytra_finish".equals(regionName) || "bearfair21".equals(regionName)) {
 			ItemStack elytra = ELYTRA.build();
 			for (ItemStack item : event.getPlayer().getInventory().getContents())
-				if (elytra.isSimilar(item))
+				if (item != null && elytra.isSimilar(item))
 					item.setAmount(0);
-		} else if (regionName.equals("bearfair21_summerdownunder")) {
+		} else if ("bearfair21_summerdownunder".equals(regionName)) {
 			if (stage == QuestStage.FOUND_ALL || stage == QuestStage.COMPLETE)
 				event.getPlayer().setPlayerWeather(WeatherType.DOWNFALL);
 		}

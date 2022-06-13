@@ -31,7 +31,7 @@ public class EasterEggs implements Listener {
 		if (!(event.getDamager() instanceof Player player))
 			return;
 
-		if (!player.getName().equals("Porkeroni"))
+		if (!"Porkeroni".equals(player.getName()))
 			return;
 
 		if (!new CooldownService().check(player, "pork-pig-easter-egg", TickTime.SECOND.x(5)))

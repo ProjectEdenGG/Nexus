@@ -35,7 +35,7 @@ public class CustomModelMenu extends InventoryProvider {
 	@Override
 	public String getTitle() {
 		String title = "Custom Models";
-		if (!folder.getPath().equals("/"))
+		if (!"/".equals(folder.getPath()))
 			title = folder.getDisplayPath();
 
 		return "&0" + title;
@@ -69,7 +69,7 @@ public class CustomModelMenu extends InventoryProvider {
 		}
 
 		for (CustomModel model : folder.getModels()) {
-			if (model.getFileName().equals("icon"))
+			if ("icon".equals(model.getFileName()))
 				continue;
 
 			ItemBuilder item = new ItemBuilder(model.getDisplayItem())
@@ -103,7 +103,7 @@ public class CustomModelMenu extends InventoryProvider {
 
 		String walk = "";
 		for (String folder : folders) {
-			if (folder.isEmpty() || folder.equals("/"))
+			if (folder.isEmpty() || "/".equals(folder))
 				continue;
 
 			String parent = walk;

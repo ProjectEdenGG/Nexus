@@ -73,10 +73,10 @@ public class GamemodeCommand extends CustomCommand {
 	@ConverterFor(GameMode.class)
 	GameMode convertToGameMode(String value) {
 		if (value != null)
-			if (value.equals("3") || value.startsWith("sp")) return GameMode.SPECTATOR;
-			else if (value.equals("2") || value.startsWith("a")) return GameMode.ADVENTURE;
-			else if (value.equals("1") || value.startsWith("c")) return GameMode.CREATIVE;
-			else if (value.equals("0") || value.startsWith("s")) return GameMode.SURVIVAL;
+			if ("3".equals(value) || value.startsWith("sp")) return GameMode.SPECTATOR;
+			else if ("2".equals(value) || value.startsWith("a")) return GameMode.ADVENTURE;
+			else if ("1".equals(value) || value.startsWith("c")) return GameMode.CREATIVE;
+			else if ("0".equals(value) || value.startsWith("s")) return GameMode.SURVIVAL;
 		throw new InvalidInputException("Invalid gamemode");
 	}
 

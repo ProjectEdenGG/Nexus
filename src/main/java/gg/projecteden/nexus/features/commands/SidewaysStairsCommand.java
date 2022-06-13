@@ -88,7 +88,7 @@ public class SidewaysStairsCommand extends CustomCommand implements Listener {
 	@Path("setupsidedown [true/false]")
 	void setUpsidedown(Boolean value) {
 		if (value == null)
-			setUpsidedown(!swsPlayer.getHalf().equals("top"));
+			setUpsidedown(!"top".equals(swsPlayer.getHalf()));
 		else {
 			swsPlayer.setEnabled(true);
 			swsPlayer.setAction(SwsAction.SET_ANGLE);

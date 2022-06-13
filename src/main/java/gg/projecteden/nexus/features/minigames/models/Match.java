@@ -162,7 +162,7 @@ public class Match implements ForwardingAudience {
 	}
 
 	public boolean join(Minigamer minigamer) {
-		if (arena.getName().equals("RavensNestEstate")) {
+		if ("RavensNestEstate".equals(arena.getName())) {
 			minigamer.tell("This arena is temporarily disabled while we work out some bugs");
 			return false;
 		}

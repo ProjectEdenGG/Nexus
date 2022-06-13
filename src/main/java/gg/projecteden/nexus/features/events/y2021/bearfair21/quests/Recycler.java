@@ -9,7 +9,6 @@ import gg.projecteden.nexus.features.particles.ParticleUtils;
 import gg.projecteden.nexus.models.bearfair21.BearFair21User;
 import gg.projecteden.nexus.models.bearfair21.BearFair21UserService;
 import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -56,7 +55,7 @@ public class Recycler implements Listener {
 		if (lines == null)
 			return;
 
-		if (!StringUtils.stripColor(lines[0]).equals("[Recycle]"))
+		if (!"[Recycle]".equals(StringUtils.stripColor(lines[0])))
 			return;
 
 		if (active) {

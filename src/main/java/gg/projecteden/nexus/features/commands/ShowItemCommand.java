@@ -131,7 +131,7 @@ public class ShowItemCommand extends CustomCommand {
 					.setTitle(discordName)
 					.appendDescription(enchants);
 
-			if (!durability.equals("0/0"))
+			if (!"0/0".equals(durability))
 				embed.setFooter(durability);
 
 			DiscordUser user = new DiscordUserService().get(player);

@@ -135,7 +135,7 @@ public class CommandsConfig implements PlayerOwnedObject {
 
 			this.paths = command.getPathMethods().stream()
 					.filter(method -> method.getAnnotation(HideFromHelp.class) == null)
-					.filter(method -> !method.getAnnotation(Path.class).value().equals("help"))
+					.filter(method -> !"help".equals(method.getAnnotation(Path.class).value()))
 					.map(method -> new CommandPath(this, method))
 					.collect(Collectors.toSet());
 		}

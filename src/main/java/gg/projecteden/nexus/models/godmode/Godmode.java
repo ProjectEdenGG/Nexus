@@ -42,7 +42,7 @@ public class Godmode implements PlayerOwnedObject {
 		final Player player = getOnlinePlayer();
 		if (!Nerd.of(this).hasMoved())
 			return true;
-		if (player.getWorld().getName().equals("bearfair21") && new BearFair21ConfigService().get0().isEnabled(WARP) && !PlayerUtils.isVanished(player))
+		if ("bearfair21".equals(player.getWorld().getName()) && new BearFair21ConfigService().get0().isEnabled(WARP) && !PlayerUtils.isVanished(player))
 			return false;
 		if (!Rank.of(player).isStaff())
 			return false;
