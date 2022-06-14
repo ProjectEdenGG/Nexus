@@ -10,9 +10,13 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import kotlin.Pair;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import net.kyori.adventure.sound.Sound;
+import net.kyori.adventure.sound.Sound.Source;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.title.Title.Times;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -54,10 +58,10 @@ public class CheckpointData extends MatchData {
 		return sb.toString();
 	}
 
-	public static String formatLiveTime(Duration liveTime, @Nullable Duration best) {
-		String output = "%d:%02d:%02d.%02d".formatted(liveTime.toHours(), liveTime.toMinutesPart(), liveTime.toSecondsPart(), liveTime.toMillisPart());
+	public static String formatLiveTime(Duration liveTime, @Nullable Duration best, @Nullable Integer deltaDecimals) {
+		String output = "%d:%02d:%05.2f".formatted(liveTime.toHours(), liveTime.toMinutesPart(), liveTime.toSecondsPart() + (liveTime.toNanosPart() / 1000000000.0));
 		if (best != null)
-			output += " &7(" + formatDelta(liveTime, best, 0) + "&7)";
+			output += " &7(" + formatDelta(liveTime, best, Objects.requireNonNullElse(deltaDecimals, 0)) + "&7)";
 		return output;
 	}
 
@@ -107,9 +111,18 @@ public class CheckpointData extends MatchData {
 	public void setCheckpoint(Minigamer minigamer, int id) {
 		int currentId = Objects.requireNonNullElse(getCheckpointId(minigamer), 0);
 		if (currentId < id) {
+			// init variables
 			Instant now = Instant.now();
 			Duration time = Duration.between(startTimes.get(minigamer.getUuid()), now);
-			minigamer.tell("Reached checkpoint &e#" + id + "&3 in &e" + formatChatTime(time) + " &3(" + formatDelta(time, 2) + "&3)");
+			RecordTotalTime best = bestTotalTimesCache.get(minigamer.getUuid());
+			// send messages
+			String chatMessage = "Reached checkpoint &e#" + id + "&3 in &e" + formatChatTime(time);
+			if (best != null)
+				chatMessage += " &3(" + formatDelta(time, best.getTime(), 2) + "&3)";
+			minigamer.playSound(Sound.sound(org.bukkit.Sound.BLOCK_NOTE_BLOCK_BIT, Source.MASTER, .6f, 2f), Sound.Emitter.self());
+			minigamer.tell(chatMessage);
+			minigamer.showTitle(Title.title(Component.empty(), new JsonBuilder("&e" + formatLiveTime(time, best == null ? null : best.getTime(), 2)).build(),
+				Times.of(Duration.ZERO, Duration.ofMillis(750), Duration.ofMillis(200))));
 			checkpointTimes
 				.computeIfAbsent(minigamer.getUuid(), k -> new HashMap<>())
 				.put(id, now);
@@ -216,16 +229,16 @@ public class CheckpointData extends MatchData {
 
 	public String formatTotalLiveTime(Minigamer minigamer, @Nullable Instant endTime) {
 		RecordTotalTime record = bestTotalTimesCache.get(minigamer.getUuid());
-		return formatLiveTime(calculateTotalTime(minigamer, endTime), record == null ? null : record.getTime());
+		return formatLiveTime(calculateTotalTime(minigamer, endTime), record == null ? null : record.getTime(), null);
 	}
 
 	public String formatSplitTime(Minigamer minigamer, @Nullable Instant endTime) {
-		return formatLiveTime(calculateSplitTime(minigamer, endTime), null); // TODO split comparison
+		return formatLiveTime(calculateSplitTime(minigamer, endTime), null, null); // TODO split comparison
 	}
 
 	public String formatTotalBestTime(Minigamer minigamer) {
 		RecordTotalTime record = bestTotalTimesCache.get(minigamer.getUuid());
-		return record == null ? "&7N/A" : "&e" + formatLiveTime(record.getTime(), null);
+		return record == null ? "&7N/A" : "&e" + formatLiveTime(record.getTime(), null, null);
 	}
 
 	public @NotNull HoverEvent<Component> formatCheckpointTimesHoverText(Minigamer minigamer, @Nullable Instant endTime) {
