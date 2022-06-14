@@ -244,8 +244,8 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 	}
 
 	static {
-		AdventMenu.loadHeads();
-		new AdventChests();
+//		AdventMenu.loadHeads();
+//		new AdventChests();
 	}
 
 	@Path("advent")
