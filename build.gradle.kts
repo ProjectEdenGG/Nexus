@@ -42,7 +42,8 @@ dependencies {
     implementation("org.checkerframework:checker-qual:3.22.1")
     implementation("com.github.ProjectEdenGG:norm:0843afb4e5")
     implementation("mysql:mysql-connector-java:8.0.29")
-    implementation("dev.morphia.morphia:core:1.6.1")
+    implementation("dev.morphia.morphia:core:1.6.2-SNAPSHOT")
+    implementation("org.slf4j:slf4j-api:1.8.0-beta4")
     implementation("it.sauronsoftware.cron4j:cron4j:2.2.5")
     implementation("org.twitter4j:twitter4j-core:4.0.7")
     implementation("com.github.twitch4j:twitch4j:1.10.0")
@@ -119,5 +120,9 @@ tasks {
         filesMatching("plugin.yml") {
             expand("version" to project.version)
         }
+    }
+
+    shadowJar {
+        relocate("org.slf4j", "gg.projecteden.slf4j")
     }
 }
