@@ -620,7 +620,7 @@ public class ItemUtils {
 			}
 		}
 
-		/* // TODO Java doesnt include support for Byte arrays in streams
+		/* TODO Java doesnt include support for Byte arrays in streams
 		public static class ByteArrayType extends NBTDataType<byte[]> {
 			public ByteArrayType() {
 				super(NBTItem::getByteArray, NBTItem::setByteArray, string -> Arrays.stream(string.split(",")).map(Byte::valueOf).toArray());
