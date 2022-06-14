@@ -326,7 +326,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 		return cache.computeIfAbsent(sound, $ -> {
 			for (String entityType : entityTypes)
 				if (sound.value().matches("^entity\\." + entityType + "\\..*"))
-					return EntityType.valueOf(entityType);
+					return EntityType.valueOf(entityType.toUpperCase());
 
 			return null;
 		});
