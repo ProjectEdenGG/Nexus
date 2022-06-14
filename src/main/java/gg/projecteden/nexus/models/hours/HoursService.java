@@ -58,7 +58,10 @@ public class HoursService extends MongoPlayerService<Hours> {
 		return hours;
 	}
 
-	private static final MongoCollection<Document> collection = database.getDatabase().getCollection("hours");
+	@NotNull
+	private static MongoCollection<Document> collection() {
+		return database.getDatabase().getCollection("hours");
+	}
 
 	@Override
 	@Deprecated // Use HoursService#update to increment daily counter
@@ -90,7 +93,7 @@ public class HoursService extends MongoPlayerService<Hours> {
 
 	public List<PageResult> getPage(HoursTopArguments args) {
 		List<Bson> arguments = getTopArguments(args);
-		return getPageResults(collection.aggregate(arguments));
+		return getPageResults(collection().aggregate(arguments));
 	}
 
 	@NotNull
@@ -126,7 +129,7 @@ public class HoursService extends MongoPlayerService<Hours> {
 			arguments.add(limit(100));
 
 			activePlayers.addAll(
-					getPageResults(collection.aggregate(arguments)).stream()
+					getPageResults(collection().aggregate(arguments)).stream()
 							.map(PageResult::getUuid)
 							.collect(Collectors.toList())
 			);
