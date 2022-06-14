@@ -22,7 +22,6 @@ public class AdventMenu {
 	public static ItemBuilder missedHead;
 	public static ItemBuilder toFindHead;
 
-
 	public static void loadHeads() {
 		// Specific Heads
 		origin.getRelative(0, 0, 2).getDrops().stream().findFirst().ifPresent(skull -> lockedHead = new ItemBuilder(skull));

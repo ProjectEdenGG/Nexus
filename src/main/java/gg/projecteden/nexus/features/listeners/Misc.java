@@ -11,6 +11,7 @@ import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.commands.GamemodeCommand;
 import gg.projecteden.nexus.features.commands.SpeedCommand;
 import gg.projecteden.nexus.features.listeners.events.FakePlayerInteractEvent;
+import gg.projecteden.nexus.features.listeners.events.FirstSubWorldGroupVisitEvent;
 import gg.projecteden.nexus.features.listeners.events.FirstWorldGroupVisitEvent;
 import gg.projecteden.nexus.features.listeners.events.FixedCraftItemEvent;
 import gg.projecteden.nexus.features.listeners.events.GolemBuildEvent.IronGolemBuildEvent;
@@ -40,7 +41,8 @@ import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import me.libraryaddict.disguise.DisguiseAPI;
 import org.bukkit.Bukkit;
@@ -205,7 +207,7 @@ public class Misc implements Listener {
 		if (event.getDamager() instanceof Player)
 			return;
 
-		if (!WorldGroup.of(event.getEntity()).equals(WorldGroup.SURVIVAL))
+		if (WorldGroup.of(event.getEntity()) != WorldGroup.SURVIVAL)
 			return;
 
 		event.setCancelled(true);
@@ -254,7 +256,7 @@ public class Misc implements Listener {
 	@EventHandler
 	public void onEatGlowBerry(PlayerItemConsumeEvent event) {
 		Player player = event.getPlayer();
-		if (WorldGroup.of(player).isMinigames())
+		if (WorldGroup.of(player) == WorldGroup.MINIGAMES)
 			return;
 
 		if (event.getItem().getType() != Material.GLOW_BERRIES)
@@ -308,7 +310,7 @@ public class Misc implements Listener {
 		Block block = event.getBlock();
 		if (MaterialTag.ALL_CORALS.isTagged(block.getType())) {
 			WorldGroup worldGroup = WorldGroup.of(block.getWorld());
-			if (WorldGroup.CREATIVE.equals(worldGroup) || WorldGroup.ADVENTURE.equals(worldGroup) || WorldGroup.MINIGAMES.equals(worldGroup))
+			if (WorldGroup.CREATIVE == worldGroup || WorldGroup.ADVENTURE == worldGroup || WorldGroup.MINIGAMES == worldGroup)
 				event.setCancelled(true);
 		}
 	}
@@ -357,7 +359,7 @@ public class Misc implements Listener {
 		if (Minigamer.of(player).isPlaying())
 			return;
 
-		if (Arrays.asList(WorldGroup.SKYBLOCK, WorldGroup.ONEBLOCK).contains(WorldGroup.of(player)))
+		if (WorldGroup.of(player) == WorldGroup.SKYBLOCK)
 			return;
 
 		if (player.getWorld().getEnvironment() == Environment.THE_END)
@@ -467,7 +469,7 @@ public class Misc implements Listener {
 			World world = nerd.getOfflineWorld();
 			if (world == null) return;
 
-			if (WorldGroup.isResourceWorld(world)) {
+			if (SubWorldGroup.of(world) == SubWorldGroup.RESOURCE) {
 				nerd = Nerd.of(event.getUniqueId());
 				if (nerd.getLastQuit().isBefore(YearMonth.now().atDay(1).atStartOfDay()))
 					toSpawn.add(event.getUniqueId());
@@ -492,6 +494,7 @@ public class Misc implements Listener {
 			}
 
 			WorldGroup worldGroup = WorldGroup.of(player);
+			SubWorldGroup subWorldGroup = SubWorldGroup.of(player);
 			if (worldGroup == WorldGroup.MINIGAMES)
 				joinMinigames(player);
 			else if (worldGroup == WorldGroup.CREATIVE)
@@ -500,8 +503,12 @@ public class Misc implements Listener {
 			final Nerd nerd = Nerd.of(player);
 			if (!nerd.getVisitedWorldGroups().contains(worldGroup)) {
 				new FirstWorldGroupVisitEvent(player, worldGroup).callEvent();
-
 				nerd.getVisitedWorldGroups().add(worldGroup);
+				new NerdService().save(nerd);
+			}
+			if (!nerd.getVisitedSubWorldGroups().contains(subWorldGroup)) {
+				new FirstSubWorldGroupVisitEvent(player, subWorldGroup).callEvent();
+				nerd.getVisitedSubWorldGroups().add(subWorldGroup);
 				new NerdService().save(nerd);
 			}
 		});
@@ -533,6 +540,13 @@ public class Misc implements Listener {
 				nerd.getVisitedWorldGroups().add(newWorldGroup);
 				new NerdService().save(nerd);
 			}
+		}
+
+		SubWorldGroup subWorldGroup = SubWorldGroup.of(player);
+		if (!nerd.getVisitedSubWorldGroups().contains(subWorldGroup)) {
+			new FirstSubWorldGroupVisitEvent(player, subWorldGroup).callEvent();
+			nerd.getVisitedSubWorldGroups().add(subWorldGroup);
+			new NerdService().save(nerd);
 		}
 
 		if (!isStaff) {
@@ -584,7 +598,7 @@ public class Misc implements Listener {
 			Tasks.wait(20, () -> PlayerUtils.runCommand(player, "cheats off"));
 
 		if (DisguiseAPI.isDisguised(player))
-			if (!oldWorldGroup.isMinigames() && newWorldGroup.isMinigames())
+			if (!(oldWorldGroup == WorldGroup.MINIGAMES) && newWorldGroup == WorldGroup.MINIGAMES)
 				DisguiseAPI.undisguiseToAll(player);
 	}
 

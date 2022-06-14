@@ -60,7 +60,6 @@ import java.util.function.Supplier;
 import static gg.projecteden.nexus.utils.Nullables.isNotNullOrAir;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.RandomUtils.randomElement;
-import static gg.projecteden.nexus.utils.Utils.subTypesOf;
 import static gg.projecteden.utils.Nullables.isNotNullOrEmpty;
 import static gg.projecteden.utils.StringUtils.camelCase;
 
@@ -380,7 +379,8 @@ public enum MobHeadType implements MobHead {
 			ItemStack skull = isNullOrAir(headType) ? Nexus.getHeadAPI().getItemHead(headId) : new ItemStack(headType);
 			this.genericSkull = new ItemBuilder(skull).name("&e" + getDisplayName() + " Head").lore("&3Mob Head").build();
 		} else {
-			Nexus.warn("No generic skull for MobType " + camelCase(this) + " defined");
+			if (!"PLAYER".equals(name()))
+				Nexus.warn("No generic skull for MobType " + camelCase(this) + " defined");
 			this.genericSkull = null;
 		}
 	}

@@ -327,7 +327,6 @@ public class Reflection implements Listener {
 
 		objMob = mobs.get(colors.indexOf(objColor));
 
-
 		String color = objColor.getChatColor() + camelCase(objColor.getName());
 
 		objReflections = 0;

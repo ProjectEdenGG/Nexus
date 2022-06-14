@@ -10,7 +10,7 @@ import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.mail.Mailer.Mail;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.utils.Utils;
 import me.arcaniax.hdb.api.PlayerClickHeadEvent;
 import org.bukkit.GameMode;
@@ -43,7 +43,7 @@ public class EventStoreListener implements Listener {
 		}
 	}
 
-	private static final List<WorldGroup> HDB_ALLOWED = List.of(WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK, WorldGroup.ONEBLOCK);
+	private static final List<WorldGroup> HDB_ALLOWED = List.of(WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK);
 	private static final List<WorldGroup> HDB_BYPASS = List.of(WorldGroup.CREATIVE, WorldGroup.STAFF);
 
 	@EventHandler

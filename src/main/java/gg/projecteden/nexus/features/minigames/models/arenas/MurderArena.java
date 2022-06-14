@@ -30,5 +30,4 @@ public class MurderArena extends Arena {
 		return map;
 	}
 
-
 }

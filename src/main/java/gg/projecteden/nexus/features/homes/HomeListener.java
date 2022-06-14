@@ -6,7 +6,7 @@ import gg.projecteden.nexus.features.warps.Warps;
 import gg.projecteden.nexus.models.home.Home;
 import gg.projecteden.nexus.models.home.HomeOwner;
 import gg.projecteden.nexus.models.home.HomeService;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -52,7 +52,7 @@ public class HomeListener implements Listener {
 	@EventHandler
 	public void onDeath(PlayerDeathEvent event) {
 		Player player = event.getEntity();
-		if (!WorldGroup.of(player).equals(WorldGroup.SURVIVAL)) return;
+		if (WorldGroup.of(player) != WorldGroup.SURVIVAL) return;
 
 		HomeService service = new HomeService();
 		HomeOwner homeOwner = service.get(player);
@@ -66,7 +66,7 @@ public class HomeListener implements Listener {
 	@EventHandler
 	public void onRespawn(PlayerRespawnEvent event) {
 		Player player = event.getPlayer();
-		if (!WorldGroup.of(player).equals(WorldGroup.SURVIVAL)) return;
+		if (WorldGroup.of(player) != WorldGroup.SURVIVAL) return;
 
 		UUID uuid = player.getUniqueId();
 		if (!deathLocations.containsKey(uuid)) return;

@@ -248,5 +248,4 @@ public class BearFair20 implements Listener {
 		PlayerUtils.send(to, message);
 	}
 
-
 }

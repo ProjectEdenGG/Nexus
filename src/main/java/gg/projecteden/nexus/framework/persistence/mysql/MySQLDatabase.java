@@ -9,7 +9,7 @@ public enum MySQLDatabase {
 	public String getDatabase() {
 		String name = name().toLowerCase();
 
-		if (name.equals("bearnation"))
+		if ("bearnation".equals(name))
 			return name;
 
 		return "bearnation_" + name;

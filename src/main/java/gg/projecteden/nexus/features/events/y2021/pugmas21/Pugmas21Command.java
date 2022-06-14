@@ -104,7 +104,6 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	void randomizePresents() {
 		List<Instrument> instruments = List.of(Instrument.DIDGERIDOO, Instrument.PLING);
 
-
 		WorldEditUtils WEUtils = new WorldEditUtils(player());
 		Region selection = WEUtils.getPlayerSelection(player());
 

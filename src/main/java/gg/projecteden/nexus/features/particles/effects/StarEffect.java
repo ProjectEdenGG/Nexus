@@ -31,7 +31,6 @@ public class StarEffect {
 			location = player.getLocation();
 		if (player == null) throw new InvalidInputException("No player was provided");
 
-
 		if (density == 0) density = 20;
 		if (updateVector != null) updateLoc = true;
 		if (updateVector == null && updateLoc) updateVector = new Vector(0, 0, 0);

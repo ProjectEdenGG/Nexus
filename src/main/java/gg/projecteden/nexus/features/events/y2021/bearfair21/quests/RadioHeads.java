@@ -18,7 +18,6 @@ import org.bukkit.inventory.ItemStack;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
-
 public class RadioHeads implements Listener {
 	public RadioHeads() {
 		Nexus.registerListener(this);

@@ -32,6 +32,10 @@ import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Utils;
+import lombok.Setter;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import gg.projecteden.parchment.HasPlayer;
 import lombok.Setter;
 import org.bukkit.Material;
@@ -88,6 +92,8 @@ public abstract class InventoryProvider {
 	public final void open(HasPlayer player, int page) {
 		open(player.getPlayer(), page);
 	}
+
+	public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {}
 
 	public SmartInventory.Builder getInventory() {
 		return SmartInventory.builder()

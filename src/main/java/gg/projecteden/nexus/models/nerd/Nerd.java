@@ -29,7 +29,8 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -72,6 +73,7 @@ public class Nerd extends gg.projecteden.mongodb.models.nerd.Nerd implements Pla
 	private Location location;
 
 	private Set<WorldGroup> visitedWorldGroups = new HashSet<>();
+	private Set<SubWorldGroup> visitedSubWorldGroups = new HashSet<>();
 
 	// Set to null after they have moved
 	private Location loginLocation;

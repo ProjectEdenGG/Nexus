@@ -29,5 +29,3 @@ World/region based plugin:
     and since the lower pitched sound is longer, and the higher is shorter, 
     I could even shorten how often the outside sound is repeated, resulting in a faster fad
 
-
-

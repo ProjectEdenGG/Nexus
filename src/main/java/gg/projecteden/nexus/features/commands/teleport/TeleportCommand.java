@@ -52,7 +52,7 @@ public class TeleportCommand extends CustomCommand implements Listener {
 
 	private boolean isCoord(String arg) {
 		if (isNullOrEmpty(arg)) return false;
-		if (arg.equals("~")) return true;
+		if ("~".equals(arg)) return true;
 		arg = arg.replace("~", "");
 		return isDouble(arg);
 	}
@@ -183,7 +183,7 @@ public class TeleportCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("toggle")
-	@Permission("ladder.builder")
+	@Permission("group.staff")
 	void disable() {
 		new TeleportUserService().edit(player(), user -> {
 			user.canBeTeleportedTo(!user.canBeTeleportedTo());

@@ -251,7 +251,6 @@ public class ClientsideContentManager implements Listener {
 			ItemFrame itemFrame = PacketUtils.spawnItemFrame(player, content.getLocation(), content.getBlockFace(),
 					content.getItemStack(), content.getRotation(), false, true);
 
-
 			addClientsideEntity(player, itemFrame);
 		}
 	}

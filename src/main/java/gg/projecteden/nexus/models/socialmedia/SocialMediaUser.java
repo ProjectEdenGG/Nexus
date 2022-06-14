@@ -67,7 +67,7 @@ public class SocialMediaUser implements PlayerOwnedObject {
 		public String getDiscordUrl() {
 			final String format = String.format(site.getProfileUrl(), username);
 
-			if (site.getProfileUrl().equals("%s"))
+			if ("%s".equals(site.getProfileUrl()))
 				return format;
 
 			return "<" + format + ">";

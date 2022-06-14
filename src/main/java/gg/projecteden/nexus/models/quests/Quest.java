@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.models.quests;
 
 import dev.morphia.annotations.Converters;
-import gg.projecteden.interfaces.HasUniqueId;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.quests.tasks.common.IQuestTask;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
@@ -9,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.lexikiq.HasUniqueId;
 
 import java.util.ArrayList;
 import java.util.List;

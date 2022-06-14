@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.minigames.mechanics;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.models.Match;
+import gg.projecteden.nexus.features.minigames.models.MinigameMessageType;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.annotations.Railgun;
@@ -26,6 +27,7 @@ import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
@@ -53,6 +55,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -66,7 +69,7 @@ import static gg.projecteden.nexus.utils.LocationUtils.getBlockHit;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @Railgun
-@Scoreboard(teams = false, sidebarType = Type.MATCH, visibleNameTags = false)
+@Scoreboard(teams = false, sidebarType = Type.MINIGAMER)
 public class Murder extends TeamMechanic {
 
 	@Override
@@ -76,7 +79,7 @@ public class Murder extends TeamMechanic {
 
 	@Override
 	public @NotNull String getDescription() {
-		return "Try to find and stop the villager who is secretly murderering your fellow villagers";
+		return "Try to find and stop the villager who is secretly murdering your fellow villagers";
 	}
 
 	@Override
@@ -158,9 +161,13 @@ public class Murder extends TeamMechanic {
 		if (isGunner(victim))
 			victim.getPlayer().getLocation().getWorld().dropItem(victim.getPlayer().getLocation(), gun);
 
-		event.setDeathMessage(victim.getColoredName() + " &3died");
 		victim.tell("You were killed!");
 		super.onDeath(event);
+	}
+
+	@Override
+	public boolean allowChat(MinigameMessageType type) {
+		return type != MinigameMessageType.DEATH && type != MinigameMessageType.QUIT;
 	}
 
 	@Override
@@ -203,11 +210,56 @@ public class Murder extends TeamMechanic {
 		}
 	}
 
-	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Match match) {
-		return new HashMap<>() {{
-			match.getMinigamers().stream().filter(Minigamer::isAlive)
-					.forEach(minigamer -> put(minigamer.getNickname(), 0));
-		}};
+	@Override
+	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Minigamer minigamer) {
+		Match match = minigamer.getMatch();
+		List<Minigamer> allMinigamers = match.getAllMinigamers();
+		Map<String, Integer> lines = new HashMap<>(allMinigamers.size());
+		if (minigamer.isAlive()) {
+			for (Minigamer target : allMinigamers)
+				lines.put(target.getNickname(), 0);
+		} else {
+			for (Minigamer target : allMinigamers) {
+				String color;
+				int index;
+				if (!target.isAlive()) {
+					color = "&8&m&o";
+					index = -1;
+				} else if (isMurderer(target)) {
+					color = "&c";
+					index = 99;
+				} else if (isGunner(target)) {
+					color = "&e";
+					index = 10;
+				} else {
+					color = "&f";
+					index = getScrapCount(target);
+				}
+				lines.put(color + target.getNickname(), index);
+			}
+		}
+		return lines;
+	}
+
+	@Override
+	public @Nullable Component getNameplate(@NotNull Minigamer target, @NotNull Minigamer viewer) {
+		// don't show any useful information if viewer is alive
+		if (viewer.isAlive()) return Component.text(target.getNickname());
+		// render murderer/gunner status for spectators
+		JsonBuilder nameplate = new JsonBuilder().content(target.getNickname());
+		if (isMurderer(target))
+			nameplate.color(NamedTextColor.RED);
+		else if (isGunner(target))
+			nameplate.color(NamedTextColor.YELLOW);
+		else
+			nameplate.next(" (" + getScrapCount(target) + "/10)", NamedTextColor.GRAY);
+		return nameplate.build();
+	}
+
+	@Override
+	public boolean shouldShowNameplate(@NotNull Minigamer target, @NotNull Minigamer viewer) {
+		if (!super.shouldShowNameplate(target, viewer)) return false;
+		return viewer.getPlayer().hasLineOfSight(target.getPlayer());
 	}
 
 	public void spawnCorpse(Minigamer minigamer) {
@@ -558,6 +610,11 @@ public class Murder extends TeamMechanic {
 		return match.getAliveMinigamers().stream().filter(this::isGunner).collect(Collectors.toSet());
 	}
 
+	private int getScrapCount(Minigamer minigamer) {
+		ItemStack scrapItem = minigamer.getPlayer().getInventory().getItem(8);
+		return scrapItem == null ? 0 : scrapItem.getAmount();
+	}
+
 	@EventHandler
 	public void onTimeTick(MatchTimerTickEvent event) {
 		if (!event.getMatch().isMechanic(this))
@@ -576,9 +633,6 @@ public class Murder extends TeamMechanic {
 			else
 				teamName = "an &9Innocent";
 			sendBarWithTimer(minigamer, "&3You are "+teamName);
-
-			int foodLevel = (!minigamer.isAlive() || isMurderer(minigamer)) ? 18 : 3;
-			minigamer.getPlayer().setFoodLevel(foodLevel);
 		});
 
 		int arenaDuration = event.getMatch().getArena().getSeconds();

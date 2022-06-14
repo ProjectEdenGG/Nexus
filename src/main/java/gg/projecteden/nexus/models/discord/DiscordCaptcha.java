@@ -56,7 +56,6 @@ public class DiscordCaptcha implements PlayerOwnedObject {
 		new DiscordCaptchaKickJob(id).schedule(now().plusMinutes(9));
 	}
 
-
 	public void confirm(String id) {
 		unconfirmed.remove(id);
 		confirmed.put(id, now());

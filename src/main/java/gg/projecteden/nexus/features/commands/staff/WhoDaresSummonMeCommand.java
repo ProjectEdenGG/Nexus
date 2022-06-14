@@ -37,5 +37,4 @@ public class WhoDaresSummonMeCommand extends CustomCommand {
 		Tasks.wait(TickTime.SECOND.x(5), () -> bats.forEach(Bat::remove));
 	}
 
-
 }

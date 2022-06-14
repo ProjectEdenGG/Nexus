@@ -36,9 +36,9 @@ public class Warps {
 //		NETHER(0, 4, Material.NETHERRACK)
 		;
 
-		private int row;
-		private int column;
-		private ItemStack itemStack;
+		private final int row;
+		private final int column;
+		private final ItemStack itemStack;
 
 		SurvivalWarp(int row, int column, Material material) {
 			this.row = row;
@@ -53,7 +53,6 @@ public class Warps {
 		public ItemStack getMenuItem() {
 			return ItemStackBuilder.of(itemStack).name("&3" + getDisplayName()).build();
 		}
-
 
 	}
 
@@ -78,9 +77,9 @@ public class Warps {
 		NORTHWEST_2(1, 0, Material.JUNGLE_PLANKS),
 		NETHER(0, 4, Material.NETHERRACK);
 
-		private int row;
-		private int column;
-		private ItemStack itemStack;
+		private final int row;
+		private final int column;
+		private final ItemStack itemStack;
 
 		LegacySurvivalWarp(int row, int column, Material material) {
 			this.row = row;

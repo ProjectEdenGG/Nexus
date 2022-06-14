@@ -5,7 +5,6 @@ import com.google.gson.annotations.SerializedName;
 import com.viaversion.viaversion.api.Via;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
-import gg.projecteden.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -24,14 +23,17 @@ import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.nickname.NicknameService;
 import gg.projecteden.nexus.utils.PlayerUtils.VersionConfig.Version;
-import gg.projecteden.parchment.HasOfflinePlayer;
-import gg.projecteden.parchment.HasPlayer;
-import gg.projecteden.parchment.OptionalPlayer;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.utils.Utils.MinMaxResult;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.experimental.UtilityClass;
+import me.lexikiq.HasOfflinePlayer;
+import me.lexikiq.HasPlayer;
+import me.lexikiq.HasUniqueId;
+import me.lexikiq.OptionalPlayer;
 import net.dv8tion.jda.annotations.ReplaceWith;
 import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
@@ -84,6 +86,7 @@ import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.utils.UUIDUtils.isUuid;
 import static java.util.stream.Collectors.toList;
 
+@UtilityClass
 public class PlayerUtils {
 
 	public enum Dev implements PlayerOwnedObject {
@@ -361,7 +364,7 @@ public class PlayerUtils {
 		if (viewer == null || target == null)
 			return false;
 
-		if (!(Minigamer.of(viewer).isPlaying() && Minigamer.of(viewer).isPlaying()))
+		if (!(Minigamer.of(viewer).isPlaying() && Minigamer.of(target).isPlaying()))
 			if (!viewer.canSee(target))
 				return false;
 

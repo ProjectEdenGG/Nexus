@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.minigolf.models.blocks;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-
 @AllArgsConstructor
 public enum ModifierBlockType {
 	HOLE(new HoleBlock()),

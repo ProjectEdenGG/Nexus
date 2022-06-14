@@ -17,7 +17,7 @@ public class MastermindMatchData extends IMastermindMatchData {
 
 	public MastermindMatchData(Match match) {
 		super(match);
-		answerLength = match.getArena().getName().equals("Megamind") ? 5 : 4;
+		answerLength = "Megamind".equals(match.getArena().getName()) ? 5 : 4;
 		createAnswer();
 	}
 

@@ -5,7 +5,7 @@ import gg.projecteden.nexus.features.menus.sabotage.tasks.ReactorTask;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.matchdata.SabotageMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.TaskPart;
-import gg.projecteden.parchment.HasPlayer;
+import me.lexikiq.HasPlayer;
 import org.bukkit.entity.Player;
 
 import java.util.List;

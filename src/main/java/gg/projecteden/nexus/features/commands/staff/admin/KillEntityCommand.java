@@ -21,6 +21,7 @@ import org.bukkit.entity.Hanging;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Monster;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -70,7 +71,10 @@ public class KillEntityCommand extends CustomCommand {
 			kill.run();
 	}
 
-	private boolean canKill(Entity entity) {
+	public static boolean canKill(Entity entity) {
+		if (entity instanceof Player)
+			return false;
+
 		if (entity instanceof Monster) {
 			if (entity.getCustomName() != null)
 				return false;

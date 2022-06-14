@@ -162,7 +162,6 @@ public class PathfinderCommand extends CustomCommand implements Listener {
 
 		}
 
-
 	}
 
 	@EventHandler

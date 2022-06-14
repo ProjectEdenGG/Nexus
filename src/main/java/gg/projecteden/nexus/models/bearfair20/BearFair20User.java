@@ -129,5 +129,4 @@ public class BearFair20User implements PlayerOwnedObject {
 		REFLECTION
 	}
 
-
 }

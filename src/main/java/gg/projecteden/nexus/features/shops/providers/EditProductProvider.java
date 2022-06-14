@@ -6,6 +6,11 @@ import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.listeners.TemporaryMenuListener;
+import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.shops.ShopCommand;
 import gg.projecteden.nexus.features.shops.Shops;
 import gg.projecteden.nexus.features.shops.providers.common.ShopProvider;
@@ -20,12 +25,9 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.Getter;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.math.BigDecimal;
@@ -35,7 +37,6 @@ import java.util.List;
 import static gg.projecteden.nexus.features.menus.SignMenuFactory.ARROWS;
 import static gg.projecteden.nexus.utils.ItemUtils.isSimilar;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.nexus.utils.StringUtils.pretty;
 
 @Rows(4)
@@ -87,10 +88,10 @@ public class EditProductProvider extends ShopProvider {
 					PlayerUtils.send(player, new JsonBuilder(Shops.PREFIX + "Right click any container (ie chest, shulker box, etc) to stock &e"
 						+ pretty(product.getItem()) + "&3. &eClick here to end").command("/shop cancelInteractStock"));
 				} else {
-					new AddStockProvider(this, product).open(player);
+					new AddStockProvider(player, this, product);
 				}
 			}));
-			contents.set(1, 5, ClickableItem.of(Material.RED_CONCRETE_POWDER, "&6Remove Stock", e -> new RemoveStockProvider(this, product).open(player)));
+			contents.set(1, 5, ClickableItem.of(Material.RED_CONCRETE_POWDER, "&6Remove Stock", e -> new RemoveStockProvider(player, this, product)));
 		}
 
 		ItemBuilder purchasable = new ItemBuilder(Material.WHITE_STAINED_GLASS);
@@ -135,34 +136,24 @@ public class EditProductProvider extends ShopProvider {
 
 	}
 
-	public static class AddStockProvider extends ShopProvider implements TemporaryListener {
-		private final static String TITLE = colorize("&0Add Stock");
+	@Title("&0Add Stock")
+	public static class AddStockProvider implements TemporaryMenuListener {
 		@Getter
-		private Player player;
+		private final Player player;
 		private final ShopProvider previousMenu;
 		private final Product product;
 
-		public AddStockProvider(ShopProvider previousMenu, Product product) {
+		public AddStockProvider(Player player, ShopProvider previousMenu, Product product) {
+			this.player = player;
 			this.previousMenu = previousMenu;
 			this.product = product;
-		}
 
-		public void open(Player player, int page) {
-			this.player = player;
 			product.setEditing(true);
-
-			Inventory inv = Bukkit.createInventory(null, 54, TITLE);
-			Nexus.registerTemporaryListener(this);
-			player.openInventory(inv);
+			open();
 		}
 
-		@EventHandler
-		public void onChestClose(InventoryCloseEvent event) {
-			if (event.getInventory().getHolder() != null) return;
-			if (!Utils.equalsInvViewTitle(event.getView(), TITLE)) return;
-			if (!event.getPlayer().equals(player)) return;
-
-			ItemStack[] contents = event.getInventory().getContents();
+		@Override
+		public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
 			for (ItemStack content : contents) {
 				if (isNullOrAir(content))
 					continue;
@@ -173,53 +164,40 @@ public class EditProductProvider extends ShopProvider {
 					PlayerUtils.giveItem(player, content);
 			}
 
-			new ShopService().save(product.getShop());
 			product.setEditing(false);
+			new ShopService().save(product.getShop());
 
-			Nexus.unregisterTemporaryListener(this);
-			event.getPlayer().closeInventory();
-			Tasks.wait(1, () -> previousMenu.open(player));
+			if (previousMenu != null)
+				Tasks.wait(1, () -> previousMenu.open(player));
 		}
 
 	}
 
-	public static class RemoveStockProvider extends ShopProvider implements TemporaryListener {
-		private final static String TITLE = colorize("&0Remove Stock");
+	@Title("&0Remove Stock")
+	public static class RemoveStockProvider implements TemporaryMenuListener {
 		@Getter
-		private Player player;
+		private final Player player;
 		private final ShopProvider previousMenu;
 		private final Product product;
 		private int itemsAdded;
 
-		public RemoveStockProvider(ShopProvider previousMenu, Product product) {
+		public RemoveStockProvider(Player player, ShopProvider previousMenu, Product product) {
+			this.player = player;
 			this.previousMenu = previousMenu;
 			this.product = product;
-		}
 
-		public void open(Player player, int page) {
-			this.player = player;
 			product.setEditing(true);
 
-			final int size = 54;
-			Inventory inv = Bukkit.createInventory(null, size, TITLE);
-
-			List<ItemStack> items = product.getItemStacks(size);
+			List<ItemStack> items = product.getItemStacks(54);
 
 			for (ItemStack item : items)
 				itemsAdded += item.getAmount();
 
-			inv.setContents(items.toArray(ItemStack[]::new));
-			Nexus.registerTemporaryListener(this);
-			player.openInventory(inv);
+			open(items);
 		}
 
-		@EventHandler
-		public void onChestClose(InventoryCloseEvent event) {
-			if (event.getInventory().getHolder() != null) return;
-			if (!Utils.equalsInvViewTitle(event.getView(), TITLE)) return;
-			if (!event.getPlayer().equals(player)) return;
-
-			ItemStack[] contents = event.getInventory().getContents();
+		@Override
+		public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
 			int itemsLeft = 0;
 			for (ItemStack content : contents) {
 				if (isNullOrAir(content))
@@ -237,9 +215,8 @@ public class EditProductProvider extends ShopProvider {
 			new ShopService().save(product.getShop());
 			product.setEditing(false);
 
-			Nexus.unregisterTemporaryListener(this);
-			event.getPlayer().closeInventory();
-			Tasks.wait(1, () -> previousMenu.open(player));
+			if (previousMenu != null)
+				Tasks.wait(1, () -> previousMenu.open(player));
 		}
 
 	}

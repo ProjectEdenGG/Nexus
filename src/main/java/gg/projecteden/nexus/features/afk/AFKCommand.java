@@ -145,7 +145,7 @@ public class AFKCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent event) {
 		final Player player = event.getPlayer();
-		if (!player.getWorld().getName().equals("server"))
+		if (!"server".equals(player.getWorld().getName()))
 			return;
 
 		final AFKUser user = AFK.get(player);

@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.minigames.models;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
-import com.google.common.base.Strings;
 import gg.projecteden.nexus.features.commands.staff.admin.RebootCommand;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.minigames.Minigames;
@@ -25,7 +24,9 @@ import gg.projecteden.nexus.features.minigames.models.modifiers.MinigameModifier
 import gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreboard;
 import gg.projecteden.nexus.features.minigames.modifiers.NoModifier;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.BossBarBuilder;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import gg.projecteden.nexus.utils.Tasks;
@@ -46,6 +47,7 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
@@ -75,7 +77,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
+import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 @Data
 public class Match implements ForwardingAudience {
@@ -162,7 +164,7 @@ public class Match implements ForwardingAudience {
 	}
 
 	public boolean join(Minigamer minigamer) {
-		if (arena.getName().equals("RavensNestEstate")) {
+		if ("RavensNestEstate".equals(arena.getName())) {
 			minigamer.tell("This arena is temporarily disabled while we work out some bugs");
 			return false;
 		}
@@ -370,7 +372,7 @@ public class Match implements ForwardingAudience {
 		}
 	}
 
-	private static List<EntityType> deletableTypes = List.of(EntityType.ARROW, EntityType.SPECTRAL_ARROW, EntityType.DROPPED_ITEM);
+	private static List<EntityType> deletableTypes = List.of(EntityType.ARROW, EntityType.SPECTRAL_ARROW, EntityType.DROPPED_ITEM, EntityType.FALLING_BLOCK);
 
 	private void clearEntities() {
 		for (UUID uuid : entities) {
@@ -441,7 +443,15 @@ public class Match implements ForwardingAudience {
 	}
 
 	public void broadcast(String message) {
-		if (Strings.isNullOrEmpty(message)) {
+		broadcast(new JsonBuilder(message));
+	}
+
+	public void broadcast(String message, MinigameMessageType type) {
+		broadcast(new JsonBuilder(message), type);
+	}
+
+	public void broadcast(ComponentLike message) {
+		if (isNullOrEmpty(AdventureUtils.asPlainText(message))) {
 			broadcastNoPrefix("");
 			return;
 		}
@@ -449,13 +459,23 @@ public class Match implements ForwardingAudience {
 		MatchBroadcastEvent event = new MatchBroadcastEvent(this, message);
 		event.callEvent();
 		if (!event.isCancelled())
-			minigamers.forEach(minigamer -> minigamer.tell(colorize(event.getMessage())));
+			minigamers.forEach(minigamer -> minigamer.tell(event.getMessage()));
+	}
+
+	public void broadcast(ComponentLike message, MinigameMessageType type) {
+		if (getMechanic().allowChat(type))
+			broadcast(message);
 	}
 
 	public void broadcastNoPrefix(String message) {
 		MatchBroadcastEvent event = new MatchBroadcastEvent(this, message);
 		if (event.callEvent())
-			minigamers.forEach(minigamer -> minigamer.sendMessage(colorize(event.getMessage())));
+			minigamers.forEach(minigamer -> minigamer.sendMessage(event.getMessage()));
+	}
+
+	public void broadcastNoPrefix(String message, MinigameMessageType type) {
+		if (getMechanic().allowChat(type))
+			broadcastNoPrefix(message);
 	}
 
 	public void broadcast(Team team, String message) {
@@ -464,8 +484,13 @@ public class Match implements ForwardingAudience {
 			minigamers.stream()
 					.filter(minigamer -> minigamer.getTeam().equals(event.getTeam()))
 					.collect(Collectors.toSet())
-					.forEach(minigamer -> minigamer.tell(colorize(event.getMessage())));
+					.forEach(minigamer -> minigamer.tell(event.getMessage()));
 		}
+	}
+
+	public void broadcast(Team team, String message, MinigameMessageType type) {
+		if (getMechanic().allowChat(type))
+			broadcast(team, message);
 	}
 
 	public void playSound(Jingle jingle) {

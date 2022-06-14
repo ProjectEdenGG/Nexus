@@ -102,7 +102,6 @@ public class PolygonEffect {
 			if (finalUpdateLoc)
 				newLoc = player.getLocation().add(finalUpdateVector);
 
-
 			for (int iteration = 0; iteration < points; iteration++) {
 				double angle = 360.0 / points * iteration;
 				double nextAngle = 360.0 / points * (iteration + 1); // the angle for the next point.

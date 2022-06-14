@@ -6,6 +6,12 @@ import gg.projecteden.nexus.features.crates.models.CrateLoot;
 import gg.projecteden.nexus.features.crates.models.CrateType;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.menus.api.content.Pagination;
+import gg.projecteden.nexus.features.menus.api.content.SlotPos;
+import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
@@ -21,8 +27,6 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -30,6 +34,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
@@ -53,20 +58,20 @@ public class CrateEditMenu {
 			if (editing != null) {
 				// Back Item
 				addBackItem(e -> {
-					save(player.getOpenInventory().getTopInventory(), editing);
+					save(player.getOpenInventory().getTopInventory());
 					new CrateEditProvider(filter, null).open(player);
 				});
 
 				// Save Item
 				contents.set(0, 8, ClickableItem.of(new ItemBuilder(Material.NETHER_STAR).name("&eSave").build(), e -> {
-					save(player.getOpenInventory().getTopInventory(), editing);
+					save(player.getOpenInventory().getTopInventory());
 					new CrateEditProvider(filter, editing).open(player);
 				}));
 
 				// Weight Item
 				contents.set(0, 2, ClickableItem.of(new ItemBuilder(Material.ANVIL).name("&eWeight")
 					.lore("&3Current Value: &e" + editing.getWeight()).build(), e -> {
-					save(player.getOpenInventory().getTopInventory(), editing);
+						save(player.getOpenInventory().getTopInventory());
 					new AnvilGUI.Builder()
 						.text("" + editing.getWeight())
 						.onComplete((player1, text) -> {
@@ -88,7 +93,7 @@ public class CrateEditMenu {
 				// CrateType Item
 				contents.set(0, 3, ClickableItem.of(new ItemBuilder(Material.PAPER).name("&eCrate Type")
 					.lore("&3" + StringUtils.camelCase(editing.getType().name())).build(), e -> {
-					save(player.getOpenInventory().getTopInventory(), editing);
+					save(player.getOpenInventory().getTopInventory());
 					editing.setType(EnumUtils.nextWithLoop(CrateType.class, filter.ordinal()));
 					editing.update();
 					new CrateEditProvider(filter, editing).open(player);
@@ -97,7 +102,7 @@ public class CrateEditMenu {
 				// Title Item
 				contents.set(0, 4, ClickableItem.of(new ItemBuilder(Material.WRITABLE_BOOK).name("&eDisplay Name")
 					.lore("&3" + editing.getTitle()).build(), e -> {
-					save(player.getOpenInventory().getTopInventory(), editing);
+					save(player.getOpenInventory().getTopInventory());
 					new AnvilGUI.Builder()
 						.text(editing.getTitle())
 						.onComplete(((player1, text) -> {
@@ -120,7 +125,7 @@ public class CrateEditMenu {
 						.lore("&3item that spawns on crate opening")
 						.build();
 				contents.set(0, 5, ClickableItem.of(displayItem, e -> {
-					save(player.getOpenInventory().getTopInventory(), editing);
+					save(player.getOpenInventory().getTopInventory());
 					InventoryClickEvent event = (InventoryClickEvent) e.getEvent();
 					ItemStack display = isNullOrAir(event.getCursor()) ? null : event.getCursor();
 					editing.setDisplayItem(display);
@@ -136,7 +141,7 @@ public class CrateEditMenu {
 				// Toggle Active Item
 				contents.set(0, 6, ClickableItem.of(new ItemBuilder(editing.isActive() ? Material.ENDER_CHEST : Material.CHEST)
 					.name("&eToggle Active").lore("&3" + editing.isActive()).build(), e -> {
-					save(player.getOpenInventory().getTopInventory(), editing);
+					save(player.getOpenInventory().getTopInventory());
 					editing.setActive(!editing.isActive());
 					editing.update();
 					new CrateEditProvider(filter, editing).open(player);
@@ -215,28 +220,24 @@ public class CrateEditMenu {
 			}
 		}
 
-		public void save(Inventory inventory, CrateLoot editing) {
+		public void save(List<ItemStack> contents) {
 			List<ItemStack> items = new ArrayList<>();
-			ItemStack[] contents = inventory.getContents();
 			for (int i = 9; i < 27; i++)
-				if (!isNullOrAir(contents[i]))
-					items.add(contents[i]);
+				if (!isNullOrAir(contents.get(i)))
+					items.add(contents.get(i));
 			editing.setItems(items);
 			editing.update();
 		}
 
-		@EventHandler
-		public void onInventoryClose(InventoryCloseEvent event) {
-			Player player = (Player) event.getPlayer();
-			SmartInventory inv = SmartInvsPlugin.manager().getInventory(player).orElse(null);
-			if (inv == null) return;
-			if (inv.getProvider() != this) return;
-			CrateLoot editing = ((CrateEditProvider) inv.getProvider()).editing;
-			if (editing == null) return;
-			save(event.getInventory(), editing);
+		public void save(Inventory inventory) {
+			save(Arrays.asList(inventory.getContents()));
+		}
+
+		@Override
+		public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
+			save(contents);
 		}
 
 	}
-
 
 }

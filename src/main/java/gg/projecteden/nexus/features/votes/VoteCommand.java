@@ -217,9 +217,9 @@ public class VoteCommand extends CustomCommand {
 
 	@ConverterFor(YearMonth.class)
 	YearMonth convertToYearMonth(String value) {
-		if (value.equals("current"))
+		if ("current".equals(value))
 			return YearMonth.now();
-		if (value.equals("previous"))
+		if ("previous".equals(value))
 			return YearMonth.now().minusMonths(1);
 
 		final String[] split = value.split("-");

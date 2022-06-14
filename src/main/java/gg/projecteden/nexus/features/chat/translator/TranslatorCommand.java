@@ -35,7 +35,7 @@ public class TranslatorCommand extends CustomCommand {
 		for (UUID uuid : Translator.getMap().keySet())
 			Translator.getMap().get(uuid).remove(uuid());
 
-		send(PREFIX + "Stopping all active translations.");
+		send(PREFIX + "Stopping all active translations");
 	}
 
 	@Path("<player>")
@@ -50,7 +50,7 @@ public class TranslatorCommand extends CustomCommand {
 		}};
 		Translator.getMap().put(player.getUniqueId(), uuids);
 
-		send(PREFIX + "You are now translating messages from " + player.getDisplayName() + ".");
+		send(PREFIX + "You are now translating messages from " + player.getDisplayName());
 	}
 
 }

@@ -312,7 +312,6 @@ public class Quests implements Listener {
 		}
 	}
 
-
 	public static String getThanks() {
 		List<String> thanks = Arrays.asList(
 			"Thanks!",

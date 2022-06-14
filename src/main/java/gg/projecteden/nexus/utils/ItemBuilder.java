@@ -3,6 +3,7 @@ package gg.projecteden.nexus.utils;
 import de.tr7zw.nbtapi.NBTItem;
 import dev.dbassett.skullcreator.SkullCreator;
 import gg.projecteden.interfaces.HasUniqueId;
+import dev.dbassett.skullcreator.SkullCreator;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.customenchants.enchants.SoulboundEnchant;
@@ -11,7 +12,7 @@ import gg.projecteden.nexus.features.itemtags.Rarity;
 import gg.projecteden.nexus.features.recipes.functionals.Backpacks;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.framework.interfaces.Colored;
+import gg.projecteden.nexus.framework.interfaces.IsColored;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.skincache.SkinCache;
 import gg.projecteden.nexus.utils.SymbolBanner.Symbol;
@@ -309,8 +310,8 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return this;
 	}
 
-	public ItemBuilder dyeColor(Colored color) {
-		return dyeColor(color.getBukkitColor());
+	public ItemBuilder dyeColor(IsColored color) {
+		return dyeColor(color.colored().getBukkitColor());
 	}
 
 	public ItemBuilder dyeColor(String hex) {

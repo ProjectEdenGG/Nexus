@@ -27,5 +27,4 @@ public class Chair extends Dyeable implements Seat, Colorable {
 		return this.type;
 	}
 
-
 }

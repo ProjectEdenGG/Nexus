@@ -35,5 +35,4 @@ public class SafeCrackerPlayerService extends MongoPlayerService<SafeCrackerPlay
 		return scores;
 	}
 
-
 }

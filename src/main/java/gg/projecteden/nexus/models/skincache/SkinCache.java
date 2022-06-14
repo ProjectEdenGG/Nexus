@@ -181,7 +181,7 @@ public class SkinCache implements PlayerOwnedObject {
 	private @NotNull ProfileProperty getTextureProperty(PlayerProfile profile) {
 		if (profile != null)
 			for (ProfileProperty property : profile.getProperties())
-				if (property.getName().equals("textures"))
+				if ("textures".equals(property.getName()))
 					return property;
 
 		throw new NexusException("No texture property:\n" + StringUtils.toPrettyString(profile));

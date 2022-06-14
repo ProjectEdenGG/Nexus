@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchBeginE
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
+import gg.projecteden.nexus.features.minigames.models.perks.PerkCategory;
 import gg.projecteden.nexus.features.minigames.models.perks.PerkType;
 import gg.projecteden.nexus.models.perkowner.PerkOwner;
 import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
@@ -24,6 +25,7 @@ import net.kyori.adventure.text.format.TextColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,11 +37,11 @@ import java.util.stream.Collectors;
 
 public abstract class MultiplayerMechanic extends Mechanic {
 
+	public static DecimalFormat HP_FORMAT = new DecimalFormat("#.0");
+
 	@Override
 	public void onDeath(@NotNull MinigamerDeathEvent event) {
-		event.getMinigamer().clearState();
 		onDeath(event.getMinigamer());
-
 		super.onDeath(event);
 	}
 
@@ -108,14 +110,18 @@ public abstract class MultiplayerMechanic extends Mechanic {
 			// iterates until we find a player who is missing at least 1 collectible
 			for (Minigamer minigamer : minigamers) {
 				PerkOwner perkOwner = service.get(minigamer.getPlayer());
-				if (LocalDate.now().isBefore(perkOwner.getRandomGiftDate().plusWeeks(1)))
+				if (LocalDate.now().isBefore(perkOwner.getRandomGiftDate().plusDays(3)))
 					continue;
 
 				// get a random perk the player doesn't own
 				Map<PerkType, Double> weights = new HashMap<>();
-				List<PerkType> unownedPerks = Arrays.stream(PerkType.values()).filter(type -> !perkOwner.getPurchasedPerks().containsKey(type)).collect(Collectors.toList());
-				if (unownedPerks.isEmpty())
+				List<PerkType> rawUnownedPerks = Arrays.stream(PerkType.values()).filter(type -> !perkOwner.getPurchasedPerks().containsKey(type)).toList();
+				if (rawUnownedPerks.isEmpty())
 					continue;
+				// filter out pride flag hats if possible
+				List<PerkType> unownedPerks = rawUnownedPerks.stream().filter(type -> type.getPerkCategory() != PerkCategory.PRIDE_FLAG_HAT).toList();
+				if (unownedPerks.isEmpty())
+					unownedPerks = rawUnownedPerks;
 				// weights should be inverse of the cost (i.e. cheapest is most common/highest number)
 				int maxPrice = (int) Utils.getMax(unownedPerks, PerkType::getPrice).getValue();
 				int minPrice = (int) Utils.getMin(unownedPerks, PerkType::getPrice).getValue();
@@ -202,5 +208,24 @@ public abstract class MultiplayerMechanic extends Mechanic {
 
 	protected @NotNull final TextComponent getWinnersComponent(@NotNull Named... components) {
 		return getWinnersComponent(Arrays.asList(components));
+	}
+
+	/**
+	 * Whether to show health in nameplates.
+	 *
+	 * @return {@code true} if health should be shown in nameplates
+	 */
+	protected boolean showHealth() {
+		return true;
+	}
+
+	@Override
+	public @Nullable Component getNameplate(@NotNull Minigamer target, @NotNull Minigamer viewer) {
+		Component superNameplate = super.getNameplate(target, viewer);
+		if (superNameplate == null) return null;
+		JsonBuilder nameplate = new JsonBuilder(superNameplate);
+		if (showHealth())
+			nameplate.next("&7 (" + HP_FORMAT.format(target.getPlayer().getHealth()) + "♥)");
+		return nameplate.build();
 	}
 }

@@ -317,6 +317,19 @@ public class JsonBuilder implements ComponentLike {
 	}
 
 	/**
+	 * Appends text to the internal builder.
+	 * Ampersands and section symbols will <b>not</b> be parsed.
+	 * @param text text formatted with ampersands or section symbols
+	 * @return this builder
+	 */
+	@NotNull @Contract("_ -> this")
+	public JsonBuilder rawNext(@Nullable String text) {
+		if (text != null)
+			builder.append(Component.text(text));
+		return this;
+	}
+
+	/**
 	 * Creates a component with its text and color set and appends it to the internal builder
 	 * @param rawText raw text, color codes are ignored
 	 * @return this builder
@@ -667,7 +680,6 @@ public class JsonBuilder implements ComponentLike {
 		return decorate(state, TextDecoration.ITALIC);
 	}
 
-
 	/**
 	 * Enables strikethrough on the internal builder
 	 * @return this builder
@@ -1009,12 +1021,10 @@ public class JsonBuilder implements ComponentLike {
 	}
 
 	/**
-	 * Builds this component ({@link #build()}) and converts it to json format using Paper's serializer
-	 * @deprecated should not generally be working with json anymore
+	 * {@link #build() Builds} this component and converts it to JSON using Paper's serializer
 	 * @return Minecraft json string
 	 */
 	@NotNull
-	@Deprecated
 	public String serialize() {
 		return GsonComponentSerializer.gson().serialize(build());
 	}

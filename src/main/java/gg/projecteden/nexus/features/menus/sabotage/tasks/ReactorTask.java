@@ -5,8 +5,6 @@ import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.Task;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.parchment.HasPlayer;
-import lombok.Getter;
 import org.bukkit.Material;
 
 @Rows(3)

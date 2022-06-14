@@ -16,6 +16,7 @@ public enum WarpType {
 	GILIHOUSE,
 	HALLOWEEN22,
 	HUB,
+	LEGACY,
 	NORMAL,
 	PRIDE22,
 	STAFF,

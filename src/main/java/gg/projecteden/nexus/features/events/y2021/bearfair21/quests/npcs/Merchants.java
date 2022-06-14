@@ -29,7 +29,6 @@ import java.util.List;
 
 import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
-
 public class Merchants {
 
 	public static ItemBuilder goldNugget = new ItemBuilder(Material.GOLD_NUGGET);

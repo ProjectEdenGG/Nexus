@@ -16,8 +16,9 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -121,6 +122,7 @@ public class MobHeads extends Feature implements Listener {
 
 		if (drop) {
 			player.getWorld().dropItemNaturally(victim.getLocation(), skull);
+			PlayerUtils.send(player, PREFIX + mobHead.getDisplayName() + " head dropped");
 
 			if (victim instanceof Player)
 				Discord.staffLog("**[MobHeads]** Dropped " + Nickname.of(victim) + "'s head for " + Nickname.of(player) + " with texture " + SkinCache.of(victim).getTextureUrl());

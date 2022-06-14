@@ -1,5 +1,9 @@
 package gg.projecteden.nexus.features.store.perks.autoinventory;
 
+import gg.projecteden.nexus.features.listeners.TemporaryMenuListener;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.listeners.TemporaryListener;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
@@ -21,20 +25,17 @@ import gg.projecteden.nexus.utils.ItemUtils.ItemStackComparator;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Utils;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -181,7 +182,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 
 	@Path("settings trash materials")
 	void settings_trash_materials() {
-		new AutoTrashMaterialEditor(user);
+		new AutoTrashMaterialEditor(player());
 	}
 
 	@Path("settings trash behavior [behavior]")
@@ -196,46 +197,32 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 		send(PREFIX + "AutoTrash behavior set to " + camelCase(behavior));
 	}
 
-	public static class AutoTrashMaterialEditor implements TemporaryListener {
-		private static final String TITLE = StringUtils.colorize("&eAutoTrash");
-		private final AutoInventoryUser user;
+	@Getter
+	@Title("&eAutoTrash")
+	public static class AutoTrashMaterialEditor implements TemporaryMenuListener {
+		private final AutoInventoryUserService service = new AutoInventoryUserService();
+		private final Player player;
 
-		@Override
-		public Player getPlayer() {
-			return user.getOnlinePlayer();
-		}
+		public AutoTrashMaterialEditor(Player player) {
+			this.player = player;
 
-		public AutoTrashMaterialEditor(AutoInventoryUser user) {
-			this.user = user;
-
-			Inventory inv = Bukkit.createInventory(null, 6 * 9, TITLE);
-			inv.setContents(user.getAutoTrashInclude().stream()
+			open(service.get(player).getAutoTrashInclude().stream()
 				.map(ItemStack::new)
 				.sorted(new ItemStackComparator())
-				.toArray(ItemStack[]::new));
-
-			Nexus.registerTemporaryListener(this);
-			user.getOnlinePlayer().openInventory(inv);
+				.toList());
 		}
 
-		@EventHandler
-		public void onChestClose(InventoryCloseEvent event) {
-			if (event.getInventory().getHolder() != null) return;
-			if (!Utils.equalsInvViewTitle(event.getView(), TITLE)) return;
-			if (!event.getPlayer().equals(user.getOnlinePlayer())) return;
-
+		@Override
+		public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
 			Set<Material> materials = Arrays.stream(event.getInventory().getContents())
 				.filter(Nullables::isNotNullOrAir)
 				.map(ItemStack::getType)
 				.collect(Collectors.toSet());
-			user.setAutoTrashInclude(materials);
 
-			new AutoInventoryUserService().save(user);
-
-			user.sendMessage(StringUtils.getPrefix("AutoTrash") + "Automatically trashing " + materials.size() + " materials");
-
-			Nexus.unregisterTemporaryListener(this);
-			event.getPlayer().closeInventory();
+			service.edit(player, user -> {
+				user.setAutoTrashInclude(materials);
+				user.sendMessage(StringUtils.getPrefix("AutoTrash") + "Automatically trashing " + materials.size() + " materials");
+			});
 		}
 	}
 

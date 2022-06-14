@@ -144,10 +144,10 @@ public class RadioCommand extends CustomCommand {
 		if (enable) {
 			user.setMute(true);
 			leaveRadio();
-			send(PREFIX + "Muted all radios.");
+			send(PREFIX + "Muted all radios");
 		} else {
 			user.setMute(false);
-			send(PREFIX + "Unmuted all radios.");
+			send(PREFIX + "Unmuted all radios");
 		}
 
 		userService.save(user);
@@ -227,7 +227,7 @@ public class RadioCommand extends CustomCommand {
 	@Permission(Group.ADMIN)
 	void configReload(Radio radio) {
 		if (!radio.isEnabled())
-			error("Radio is not enabled.");
+			error("Radio is not enabled");
 		radio.reload();
 		send(PREFIX + StringUtils.camelCase(radio.getType()) + " Radio &e" + radio.getId() + " &3reloaded");
 	}
@@ -354,7 +354,6 @@ public class RadioCommand extends CustomCommand {
 
 			userService.save(user);
 		}
-
 
 		send(PREFIX + "Id set to " + radio.getId());
 	}

@@ -113,6 +113,4 @@ public class ArmorStandEditorCommand extends CustomCommand {
 		armorStand.setLeftArmPose(ea);
 	}
 
-
-
 }

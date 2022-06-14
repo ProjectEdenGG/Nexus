@@ -43,5 +43,4 @@ public class JMiniGolfCommand extends CustomCommand {
 		send("set debug to: " + user.isDebug());
 	}
 
-
 }

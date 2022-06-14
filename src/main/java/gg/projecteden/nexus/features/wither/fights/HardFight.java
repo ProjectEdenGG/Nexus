@@ -93,5 +93,4 @@ public class HardFight extends WitherFight {
 		this.blazes = spawnBlazes(10, 8);
 	}
 
-
 }

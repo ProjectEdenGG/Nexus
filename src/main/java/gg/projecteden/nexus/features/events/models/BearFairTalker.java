@@ -27,7 +27,6 @@ public class BearFairTalker extends Talker {
 		sendScript(player, talker);
 	}
 
-
 	private static BearFairIsland getIslandType(Player player) {
 		WorldGuardUtils worldguard = new WorldGuardUtils(player);
 		Location location = player.getLocation();

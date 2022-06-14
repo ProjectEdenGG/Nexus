@@ -21,6 +21,9 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.Player;
+
+import java.util.List;
 
 @Data
 public class Flag {
@@ -59,11 +62,17 @@ public class Flag {
 	}
 
 	public static void particle(Minigamer carrier) {
+		final List<Player> players = carrier.getMatch().getAliveMinigamers().stream()
+			.filter(minigamer -> !minigamer.isRespawning())
+			.map(Minigamer::getOnlinePlayer)
+			.toList();
+
 		new ParticleBuilder(Particle.FLAME)
 				.location(carrier.getPlayer().getLocation().add(0, 1, 0))
 				.offset(0.35, 0.75, 0.35)
 				.extra(0)
 				.count(25)
+				.receivers(players)
 				.spawn();
 	}
 

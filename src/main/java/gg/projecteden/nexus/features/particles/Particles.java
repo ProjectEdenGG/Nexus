@@ -33,5 +33,4 @@ public class Particles extends Feature {
 		new ParticleService().get(player).cancel();
 	}
 
-
 }

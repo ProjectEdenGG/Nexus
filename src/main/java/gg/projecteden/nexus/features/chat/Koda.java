@@ -26,6 +26,7 @@ import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
+import me.lexikiq.HasUniqueId;
 import net.kyori.adventure.audience.MessageType;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -258,9 +259,9 @@ public class Koda {
 				break;
 			case "useless":
 				if ("GriffinCodes".equals(event.getOrigin()) || "Griffin".equals(event.getOrigin()))
-					respond(event, "You're the one who decided to make a potato do important things.");
+					respond(event, "You're the one who decided to make a potato do important things");
 				else
-					respond(event, "Griffin is the one who decided to make a potato do important things.");
+					respond(event, "Griffin is the one who decided to make a potato do important things");
 				break;
 			case "griefing":
 				if (event.getChatter() != null)

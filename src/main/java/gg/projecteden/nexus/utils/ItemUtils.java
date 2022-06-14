@@ -5,6 +5,11 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.itemtags.Condition;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import me.lexikiq.HasPlayer;
+import org.apache.logging.log4j.util.TriConsumer;
 import gg.projecteden.parchment.HasPlayer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -224,7 +229,6 @@ public class ItemUtils {
 
 		ItemMeta itemMeta = skull.getItemMeta();
 		SkullMeta skullMeta = (SkullMeta) itemMeta;
-
 
 		if (skullMeta.getPlayerProfile() == null)
 			return null;

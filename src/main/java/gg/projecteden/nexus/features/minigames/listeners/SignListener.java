@@ -67,7 +67,7 @@ public class SignListener implements Listener {
 						builder.newline(false).next(String.valueOf(players), NamedTextColor.YELLOW).next("/").next(Component.text(arena.getMaxPlayers(), NamedTextColor.YELLOW))
 								.next(Component.text(" players"));
 
-						builder.newline().color(NamedTextColor.GOLD).content("This game is ");
+						builder.newline().color(NamedTextColor.GOLD).next("This game is ");
 						if (canJoin)
 							builder.next("available", NamedTextColor.GREEN);
 						else

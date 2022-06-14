@@ -125,7 +125,6 @@ public class Quarry implements Listener {
 		Tasks.wait(TickTime.SECOND.x(3), () -> dioriteRegenMap.put(block.getLocation(), diorite));
 	}
 
-
 	private boolean adjBlockNeedsSupport(Block origin) {
 		List<Block> adj = BlockUtils.getAdjacentBlocks(origin);
 		if (adj.size() == 0)

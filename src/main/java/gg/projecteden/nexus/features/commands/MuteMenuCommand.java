@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands;
 
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.mobheads.MobHeadType;
@@ -10,17 +11,18 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuService;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.parchment.event.sound.EntitySoundEvent;
-import gg.projecteden.parchment.event.sound.LocationNamedSoundEvent;
-import gg.projecteden.parchment.event.sound.NamedSoundEvent;
+import joptsimple.internal.Strings;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.lexikiq.event.sound.EntitySoundEvent;
+import me.lexikiq.event.sound.LocationNamedSoundEvent;
+import me.lexikiq.event.sound.NamedSoundEvent;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
@@ -84,7 +86,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 					for (MuteMenuItem item : MuteMenuItem.values()) {
 						if (item.getDefaultVolume() != null)
 							continue;
-						if (!Nullables.isNullOrEmpty(item.getPermission()) && !player.hasPermission(item.getPermission()))
+						if (!Strings.isNullOrEmpty(item.getPermission()) && !player.hasPermission(item.getPermission()))
 							continue;
 
 						boolean muted = user.hasMuted(item);
@@ -119,7 +121,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 					for (MuteMenuItem item : MuteMenuItem.values()) {
 						if (item.getDefaultVolume() == null)
 							continue;
-						if (!Nullables.isNullOrEmpty(item.getPermission()) && !player.hasPermission(item.getPermission()))
+						if (!Strings.isNullOrEmpty(item.getPermission()) && !player.hasPermission(item.getPermission()))
 							continue;
 
 						boolean muted = user.hasMuted(item);
@@ -322,7 +324,6 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 	}
 
 	public void modifySound(NamedSoundEvent event, EntityType entityType) {
-		/* TODO 1.19
 		event.calculateRecipients().forEach(player -> {
 			// calculate adjusted volume
 			final MuteMenuUser user = new MuteMenuService().get(player);
@@ -339,7 +340,6 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 				.play();
 			Nexus.debug("Played sound " + event.getSound() + " to " + player.getName() + " at volume " + volume);
 		});
-		*/
 	}
 
 }

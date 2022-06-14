@@ -237,5 +237,4 @@ public class BasketballCommand extends CustomCommand implements Listener {
 		removeBasketball(event.getPlayer());
 	}
 
-
 }

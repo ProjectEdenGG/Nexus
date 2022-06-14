@@ -61,15 +61,14 @@ public class SellCrates implements Listener {
 			for (Block relativeBlock : relatives) {
 				if (MaterialTag.SIGNS.isTagged(relativeBlock.getType())) {
 					crateType = getCrateType(relativeBlock);
-					if (!crateType.equals("null"))
+					if (!"null".equals(crateType))
 						break;
 				}
 			}
 		}
 
-		if (crateType.equals("null")) {
+		if ("null".equals(crateType))
 			return;
-		}
 
 		event.setCancelled(true);
 		openSellCrate(event.getPlayer(), crateType);
@@ -79,7 +78,7 @@ public class SellCrates implements Listener {
 		Sign sign = (Sign) block.getState();
 		String line1 = sign.getLine(0);
 		String line2 = sign.getLine(1);
-		if (stripColor(line1).equals("[Sell Crate]") && stripColor(line2).contains("Items"))
+		if ("[Sell Crate]".equals(stripColor(line1)) && "Items".contains(stripColor(line2)))
 			return line2;
 		return "null";
 	}

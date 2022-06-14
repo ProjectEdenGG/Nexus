@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.models.testquestuser;
 
-
 import gg.projecteden.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 

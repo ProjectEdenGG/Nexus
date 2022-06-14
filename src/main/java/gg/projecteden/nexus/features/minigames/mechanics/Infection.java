@@ -114,7 +114,7 @@ public class Infection extends TeamMechanic {
 
 		if (victim.getTeam() != zombies) {
 			event.broadcastDeathMessage();
-			event.setDeathMessage(null);
+			event.showDeathMessage(false);
 			victim.setTeam(zombies);
 			match.broadcast(victim.getColoredName() + " has joined the " + victim.getTeam().getColoredName());
 		}

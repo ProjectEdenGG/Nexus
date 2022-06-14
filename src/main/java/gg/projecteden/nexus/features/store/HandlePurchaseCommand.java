@@ -69,7 +69,7 @@ public class HandlePurchaseCommand extends CustomCommand {
 		else {
 			if (purchase.getPrice() > 0) {
 				send(purchase.getUuid(), PREFIX + "Thank you for buying &e" + purchase.getPackageName() + "&3! " +
-						"Your contribution is &3&ogreatly &3appreciated and will be put to good use.");
+						"Your contribution is &3&ogreatly &3appreciated and will be put to good use");
 
 				if (contributor.isBroadcasts())
 					if (packageType == Package.CUSTOM_DONATION) {
@@ -102,7 +102,7 @@ public class HandlePurchaseCommand extends CustomCommand {
 
 			packageType.apply(purchase.getUuid());
 
-			discordMessage += "\nPurchase successfully processed.";
+			discordMessage += "\nPurchase successfully processed";
 		}
 
 		Discord.send(discordMessage, TextChannel.ADMIN_LOG);

@@ -517,5 +517,4 @@ public class HalloweenIsland implements BearFair21Island {
 		}
 	}
 
-
 }

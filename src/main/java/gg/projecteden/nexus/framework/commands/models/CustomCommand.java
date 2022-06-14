@@ -37,8 +37,8 @@ import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import gg.projecteden.utils.UUIDUtils;
 import lombok.AllArgsConstructor;
@@ -1090,7 +1090,6 @@ public abstract class CustomCommand extends ICustomCommand {
 		send(PREFIX + "Usage:");
 		lines.forEach(this::send);
 	}
-
 
 	@AllArgsConstructor
 	public class WhoFormatter {

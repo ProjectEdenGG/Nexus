@@ -97,6 +97,14 @@ public class ResourcePack extends Feature implements Listener {
 	public void onStop() {
 		closeZip();
 		Bukkit.getMessenger().unregisterOutgoingPluginChannel(Nexus.getInstance(), "titan:out");
+
+		if (modelGroups != null)
+			modelGroups.clear();
+		if (folders != null)
+			folders.clear();
+		if (models != null)
+			models.clear();
+		rootFolder = null;
 	}
 
 	public static void read() {

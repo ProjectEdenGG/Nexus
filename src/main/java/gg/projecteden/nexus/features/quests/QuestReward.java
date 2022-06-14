@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.quests;
 
-import gg.projecteden.interfaces.HasUniqueId;
+import me.lexikiq.HasUniqueId;
 
 import java.util.UUID;
 import java.util.function.BiConsumer;

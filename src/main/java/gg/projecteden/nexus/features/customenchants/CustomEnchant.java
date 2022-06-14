@@ -136,4 +136,9 @@ public abstract class CustomEnchant extends Enchantment implements Translatable 
 		return items;
 	}
 
+	@Override
+	public @NotNull String translationKey() {
+		return "";
+	}
+
 }

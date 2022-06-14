@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.resourcepack.decoration.types;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Colorable;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 
-
 public class Dyeable extends DecorationConfig implements Colorable {
 	private final Colorable.Type type;
 

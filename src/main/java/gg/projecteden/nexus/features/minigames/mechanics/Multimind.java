@@ -108,7 +108,7 @@ public final class Multimind extends SingleplayerMechanic {
 				Sign sign = (Sign) block.getState();
 
 				String line1 = stripColor(sign.getLine(0));
-				if (line1.equals("< Colorblind >")) {
+				if ("< Colorblind >".equals(line1)) {
 					if (guess != 1) {
 						minigamer.tell("You cannot change colorblind mode in the middle of the game");
 						return;
@@ -119,15 +119,15 @@ public final class Multimind extends SingleplayerMechanic {
 					match.getArena().regenerate();
 					return;
 				}
-				if (line1.equals("< Difficulty >")) {
+				if ("< Difficulty >".equals(line1)) {
 					if (guess != 1) {
 						minigamer.tell("You cannot change the difficulty mode in the middle of the game");
 						return;
 					}
 					String line2 = stripColor(sign.getLine(1));
-					if (line2.equals("Easy"))
+					if ("Easy".equals(line2))
 						matchData.setRepeats(false);
-					else if (line2.equals("Hard"))
+					else if ("Hard".equals(line2))
 						matchData.setRepeats(true);
 					matchData.createAnswer();
 					match.getArena().regenerate();

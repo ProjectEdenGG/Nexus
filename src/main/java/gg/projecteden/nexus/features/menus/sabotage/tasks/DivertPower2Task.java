@@ -1,6 +1,9 @@
 package gg.projecteden.nexus.features.menus.sabotage.tasks;
 
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
@@ -15,11 +18,6 @@ public class DivertPower2Task extends AbstractTaskMenu {
 
 	public DivertPower2Task(Task task) {
 		super(task);
-	}
-
-	@Override
-	public @NotNull SmartInventory.Builder getInventory() {
-		return super.getInventory().listener(handleInvClose);
 	}
 
 	@Override

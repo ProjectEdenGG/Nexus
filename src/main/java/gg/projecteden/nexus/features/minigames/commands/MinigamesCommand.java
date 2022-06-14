@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.minigames.commands;
 import com.sk89q.worldguard.protection.flags.Flag;
 import gg.projecteden.annotations.Async;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.commands.BoopCommand;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
@@ -61,8 +62,8 @@ import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.utils.Env;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import net.citizensnpcs.api.CitizensAPI;
@@ -215,6 +216,7 @@ public class MinigamesCommand extends CustomCommand {
 		getRunningMatch(arena).start();
 	}
 
+	@Confirm
 	@Path("end [arena]")
 	@Permission(PERMISSION_MANAGE)
 	void end(@Arg("current") Arena arena) {
@@ -283,12 +285,6 @@ public class MinigamesCommand extends CustomCommand {
 			error("You are not in a match");
 		minigamer.getMatch().getTimer().setTime(seconds);
 		minigamer.getMatch().getTimer().broadcastTimeLeft();
-	}
-
-	@Path("flagParticle")
-	@Permission(PERMISSION_MANAGE)
-	void flagParticle() {
-		gg.projecteden.nexus.features.minigames.models.matchdata.Flag.particle(minigamer);
 	}
 
 	@Path("create <name>")
@@ -521,6 +517,7 @@ public class MinigamesCommand extends CustomCommand {
 				.next("&e Click here to &a&laccept")
 				.command("/mgm accept")
 				.hover("&eClick &3to accept"));
+			player.playSound(BoopCommand.SOUND);
 		}
 	}
 

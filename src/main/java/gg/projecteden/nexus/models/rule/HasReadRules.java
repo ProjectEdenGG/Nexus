@@ -107,7 +107,7 @@ public class HasReadRules implements PlayerOwnedObject {
 					new JsonBuilder("&e2. &3You, the streamer, and all your followers must follow all the rules"),
 					new JsonBuilder("&e3. &3If a large percentage of your followers do not comply with the rules, we may ban you and any people associated with your stream")
 				),
-				new JsonBuilder("&e « Back to Community rules.").command("/rules community 2")
+				new JsonBuilder("&e « Back to Community rules").command("/rules community 2")
 		),
 		SURVIVAL(
 				List.of(
@@ -116,8 +116,8 @@ public class HasReadRules implements PlayerOwnedObject {
 					new JsonBuilder("&e3. &3Do not create lag using Minecraft mechanics. &eHover for more info.").hover("&3This includes things such as:", "&3[+] &eAFKing for many hours at a grinder.", "&3[+] &eRedstone clocks", "&3[+] &eExcessive redstone machinery", "&3[+] &ePerm-loading chunks", "&3[+] &eMassively oversized farms", "&3[+] &eEtc"),
 					new JsonBuilder("&e4. &3No AFK farms that level up mcMMO or anti-AFK mechanisms"),
 					new JsonBuilder("&e5. &3Be considerate of other and future players when exploring the worlds/raiding generated structures"),
-					new JsonBuilder("&e6. &3Give nearby players a reasonable amount of space. When in doubt, ask the build owner."),
-					new JsonBuilder("&e7. &3No mods/hacks, except OptiFine and Shaders. &eHover for more info").hover("&3Please ask about other mods you may wish to use."),
+					new JsonBuilder("&e6. &3Give nearby players a reasonable amount of space. When in doubt, ask the build owner"),
+					new JsonBuilder("&e7. &3No mods/hacks, except OptiFine and Shaders. &eHover for more info").hover("&3Please ask about other mods you may wish to use"),
 					new JsonBuilder("&e8. &3No random 1x1 towers/holes, block spam or obscene structures/skins"),
 					new JsonBuilder("&e9. &3The staff have the right to use & modify all builds produced on the server")
 				)
@@ -126,7 +126,7 @@ public class HasReadRules implements PlayerOwnedObject {
 				List.of(
 					new JsonBuilder("&e1. &3Poor sportsmanship including but not limited to whining, gloating, or scum-bagging will not be tolerated"),
 					new JsonBuilder("&e2. &3Use the Minigame channel for minigames"),
-					new JsonBuilder("&e3. &3If you suspect something should be changed or removed, report it."),
+					new JsonBuilder("&e3. &3If you suspect something should be changed or removed, report it"),
 					new JsonBuilder("&e4. &3Do not use hacks, mods, external programs or exploits that give you an advantage, including hitboxes"),
 					new JsonBuilder("&e5. &3Spawn trapping/camping/killing will not be tolerated"),
 					new JsonBuilder("&e6. &3Do not say who the murderer is in Murder if you are dead")

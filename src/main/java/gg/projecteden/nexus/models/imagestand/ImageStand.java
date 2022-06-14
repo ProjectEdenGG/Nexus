@@ -286,5 +286,4 @@ public class ImageStand implements DatabaseObject {
 		}
 	}
 
-
 }

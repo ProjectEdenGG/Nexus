@@ -301,11 +301,11 @@ public class StringUtils extends gg.projecteden.utils.StringUtils {
 			world = world.replace("oneblock_world", "one_block");
 		else if (world.contains("bskyblock"))
 			world = world.replace("bskyblock_world", "skyblock");
-		else if (world.equals("bearfair21"))
+		else if ("bearfair21".equals(world))
 			return "Bear Fair 21";
-		else if (world.equals("uhc"))
+		else if ("uhc".equals(world))
 			return "UHC";
-		else if (world.equals("server")) {
+		else if ("server".equals(world)) {
 			if (location != null)
 				if (new WorldGuardUtils(location).getRegionNamesAt(location).contains("hub"))
 					return "Hub";

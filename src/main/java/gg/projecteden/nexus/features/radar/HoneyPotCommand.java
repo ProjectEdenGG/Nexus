@@ -148,7 +148,7 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 		List<ProtectedRegion> regions = new ArrayList<>(worldguard.getRegionsLike("hp_.*"));
 
 		if (regions.isEmpty())
-			error("There are no Honey Pots in your world.");
+			error("There are no Honey Pots in your world");
 
 		send(PREFIX + "Honey Pots in your world:");
 		BiFunction<ProtectedRegion, String, JsonBuilder> formatter = (region, index) -> {
@@ -349,7 +349,6 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 			fix(event.getRegion(), event.getPlayer().getWorld());
 		});
 	}
-
 
 }
 

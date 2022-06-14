@@ -31,7 +31,7 @@ public class TeleportHereRequestCommand extends ITeleportRequestCommand {
 		requests.getPending().add(request);
 
 		send(json("&eSummon &3request sent to " + Nickname.of(target) + ". ").next("&eClick to cancel").command("tprhere cancel " + request.getId()));
-		send(target, "  &e" + nickname() + " &3is asking you to teleport &eto them&3.");
+		send(target, "  &e" + nickname() + " &3is asking you to teleport &eto them");
 		send(target, json("&3  Click one  ||  &a&lAccept")
 				.command("/tprhere accept " + request.getId())
 				.hover("&eClick &3to accept")

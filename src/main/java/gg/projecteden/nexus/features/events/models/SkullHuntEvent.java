@@ -227,5 +227,4 @@ public abstract class SkullHuntEvent implements Listener {
 
 	}
 
-
 }

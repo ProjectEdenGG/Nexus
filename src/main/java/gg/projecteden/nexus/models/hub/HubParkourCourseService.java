@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.models.hub;
 
-
 import gg.projecteden.mongodb.MongoService;
 import gg.projecteden.mongodb.annotations.ObjectClass;
 

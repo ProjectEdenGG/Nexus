@@ -50,7 +50,6 @@ public class Sialia implements Listener, APSet {
 		});
 	}
 
-
 	@EventHandler
 	public void onEnterRegion_Bulkhead(PlayerEnteredRegionEvent event) {
 		Player player = event.getPlayer();

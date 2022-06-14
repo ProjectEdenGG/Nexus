@@ -86,5 +86,4 @@ public class CPSWatchCommand extends CustomCommand implements Listener {
 		watchMap.remove(player);
 	}
 
-
 }

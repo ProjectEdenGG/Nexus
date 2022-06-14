@@ -12,9 +12,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -51,9 +51,9 @@ public class NexusRecipe {
 
 	@NotNull
 	protected List<ItemStack> getFilteredMatrix(PrepareItemCraftEvent event) {
-		List<ItemStack> matrix = new ArrayList<>(Arrays.asList(event.getInventory().getMatrix().clone()));
-		matrix.removeIf(Nullables::isNullOrAir);
-		return matrix;
+		return Arrays.stream(event.getInventory().getMatrix().clone())
+			.filter(Nullables::isNullOrAir)
+			.collect(Collectors.toList());
 	}
 
 }

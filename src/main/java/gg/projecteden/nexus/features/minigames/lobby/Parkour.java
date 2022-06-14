@@ -16,10 +16,9 @@ public class Parkour implements Listener {
 	@EventHandler
 	public void onRegionEnter(PlayerEnteredRegionEvent event) {
 		if (!event.getPlayer().getWorld().equals(Minigames.getWorld())) return;
-		if (!event.getRegion().getId().equals("lobby_parkour_fall_1")) return;
+		if (!"lobby_parkour_fall_1".equals(event.getRegion().getId())) return;
 
 		event.getPlayer().teleportAsync(new Location(event.getPlayer().getWorld(), 1899.5, 33, 247.5, 270, 0));
 	}
-
 
 }

@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Match.MatchTasks.MatchTaskType;
+import gg.projecteden.nexus.features.minigames.models.MinigameMessageType;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.RegenType;
 import gg.projecteden.nexus.features.minigames.models.Team;
@@ -32,6 +33,7 @@ import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
+import me.lucko.helper.scoreboard.ScoreboardTeam.NameTagVisibility;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.TextComponent;
@@ -173,8 +175,9 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 			match.getMinigamers().forEach(minigamer -> minigamer.setLives(lives));
 		else
 			match.getMinigamers().forEach(minigamer -> {
-				if (minigamer.getTeam().getLives() > 0)
-					minigamer.setLives(minigamer.getTeam().getLives());
+				Team team = minigamer.getTeam();
+				if (team != null && team.getLives() > 0)
+					minigamer.setLives(team.getLives());
 			});
 
 		int beginDelay = match.getArena().getBeginDelay();
@@ -226,13 +229,13 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 
 	public void onJoin(@NotNull MatchJoinEvent event) {
 		Minigamer minigamer = event.getMinigamer();
-		minigamer.getMatch().broadcast("&e" + minigamer.getNickname() + " &3has joined");
+		minigamer.getMatch().broadcast("&e" + minigamer.getNickname() + " &3has joined", MinigameMessageType.JOIN);
 		tellMapAndMechanic(minigamer);
 	}
 
 	public void onQuit(@NotNull MinigamerQuitEvent event) {
 		Minigamer minigamer = event.getMinigamer();
-		minigamer.getMatch().broadcast("&e" + minigamer.getNickname() + " &3has quit");
+		minigamer.getMatch().broadcast("&e" + minigamer.getNickname() + " &3has quit", MinigameMessageType.QUIT);
 		if (minigamer.getMatch().isStarted() && shouldBeOver(minigamer.getMatch()))
 			minigamer.getMatch().end();
 	}
@@ -240,9 +243,21 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 	public void onDamage(@NotNull MinigamerDamageEvent event) {
 		Minigamer minigamer = event.getMinigamer();
 		minigamer.damaged();
+
+		// reduce duration of regen by a few seconds when damaged
+		PotionEffect mechanicRegenEffect = getRegenType().getBaseKillRegen();
+		if (mechanicRegenEffect == null) return;
+		PotionEffect playerRegenEffect = minigamer.getPlayer().getPotionEffect(PotionEffectType.REGENERATION);
+		if (playerRegenEffect == null) return;
+		if (mechanicRegenEffect.getAmplifier() != playerRegenEffect.getAmplifier()) return;
+		minigamer.removePotionEffect(PotionEffectType.REGENERATION);
+		int newDuration = playerRegenEffect.getDuration() - (mechanicRegenEffect.getDuration()/3);
+		if (newDuration <= 0) return;
+		minigamer.addPotionEffect(playerRegenEffect.withDuration(newDuration));
 	}
 
 	public void onDeath(@NotNull MinigamerDeathEvent event) {
+		event.getMinigamer().clearState();
 		Minigamer attacker = event.getAttacker();
 		if (attacker != null)
 			giveKillHeal(attacker);
@@ -270,6 +285,10 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 	}
 
 	public boolean allowFly() {
+		return false;
+	}
+
+	public boolean useNaturalDeathMessage() {
 		return false;
 	}
 
@@ -309,6 +328,13 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		return left(match.getArena().getName(), 16);
 	}
 
+	/**
+	 * Whether to render the names of teams in the default
+	 * {@link gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreboard.Type#MATCH MATCH}
+	 * scoreboard.
+	 *
+	 * @return whether to render the names of teams in the default scoreboard
+	 */
 	protected boolean renderTeamNames() {
 		return true;
 	}
@@ -360,6 +386,71 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 
 	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Match match, @NotNull Team team) {
 		return new HashMap<>();
+	}
+
+	/**
+	 * Gets the name tag of a {@code target} as viewed by a {@code viewer}.
+	 *
+	 * @param target the target player (who is expected to be playing this mechanic)
+	 * @param viewer the viewer player (who may or may not be playing on the same match)
+	 * @return the name tag of the target player or null if the player(s) are not in this mechanic
+	 */
+	public @Nullable Component getNameplate(@NotNull Minigamer target, @NotNull Minigamer viewer) {
+		// ensure both players are in the same match
+		if (target.getMatch() != viewer.getMatch())
+			return null;
+		// ensure game has started
+		if (!target.getMatch().isStarted())
+			return null;
+		// return default nameplate
+		return new JsonBuilder(target.getColoredName()).build();
+	}
+
+	/**
+	 * Whether the given {@code viewer} should be able to see {@code target}'s name tag.
+	 *
+	 * @param target the target player (who is expected to be playing this mechanic)
+	 * @param viewer the viewer player (who may or may not be playing on the same match)
+	 * @return whether the viewer should be able to see the target's name tag
+	 */
+	public boolean shouldShowNameplate(@NotNull Minigamer target, @NotNull Minigamer viewer) {
+		// ensure player has a minigame nameplate
+		if (getNameplate(target, viewer) == null)
+			return true;
+
+		// handle respawning
+		if (viewer.isRespawning())
+			return false;
+
+		// handle spectators/dead players
+		if (!target.isAlive() && viewer.isAlive())
+			return false;
+
+		// handle name tag visibility
+		if (target.isAlive() && viewer.isAlive()) {
+			Team targetTeam = target.getTeam();
+			Team viewerTeam = viewer.getTeam();
+			NameTagVisibility targetVisibility = targetTeam == null ? NameTagVisibility.ALWAYS : targetTeam.getNameTagVisibility();
+			if (targetVisibility == NameTagVisibility.NEVER)
+				return false;
+			if (targetVisibility == NameTagVisibility.HIDE_FOR_OTHER_TEAMS && targetTeam != viewerTeam)
+				return false;
+			if (targetVisibility == NameTagVisibility.HIDE_FOR_OWN_TEAM && targetTeam == viewerTeam)
+				return false;
+		}
+
+		// name tag is visible :)
+		return true;
+	}
+
+	/**
+	 * Whether to allow chat messages of the provided {@code type}.
+	 *
+	 * @param type the type of chat message
+	 * @return whether to allow chat messages
+	 */
+	public boolean allowChat(MinigameMessageType type) {
+		return true;
 	}
 
 	public void onPlayerInteract(Minigamer minigamer, PlayerInteractEvent event) {

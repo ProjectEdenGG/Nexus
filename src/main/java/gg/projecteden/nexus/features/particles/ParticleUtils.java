@@ -9,7 +9,6 @@ import org.bukkit.entity.Player;
 
 import java.awt.Color;
 
-
 public class ParticleUtils {
 
 	public static double incHue(double hue) {

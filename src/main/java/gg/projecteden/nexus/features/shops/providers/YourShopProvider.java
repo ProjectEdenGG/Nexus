@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.shops.providers;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.listeners.TemporaryListener;
+import gg.projecteden.nexus.features.listeners.TemporaryMenuListener;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
@@ -13,14 +13,10 @@ import gg.projecteden.nexus.models.shop.ShopService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.Utils;
 import lombok.Getter;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -65,7 +61,7 @@ public class YourShopProvider extends ShopProvider {
 			PlayerUtils.runCommand(player, "shop history");
 			player.closeInventory();
 		}));
-		contents.set(0, 7, ClickableItem.of(Material.CYAN_SHULKER_BOX, "&6Collect items", e -> new CollectItemsProvider(this).open(player)));
+		contents.set(0, 7, ClickableItem.of(Material.CYAN_SHULKER_BOX, "&6Collect items", e -> new CollectItemsProvider(player, this)));
 
 		contents.set(5, 3, ClickableItem.of(new ItemBuilder(Material.RED_CONCRETE_POWDER).name("&cDisable all").lore("", "&7Click to disable all items"), e3 ->
 			ConfirmationMenu.builder()
@@ -102,20 +98,14 @@ public class YourShopProvider extends ShopProvider {
 	}
 
 	@Title("Collect Items")
-	public static class CollectItemsProvider extends ShopProvider implements TemporaryListener {
+	public static class CollectItemsProvider implements TemporaryMenuListener {
 		@Getter
-		private Player player;
+		private final Player player;
+		private final ShopProvider previousMenu;
 
-		public CollectItemsProvider(ShopProvider previousMenu) {
-			this.previousMenu = previousMenu;
-		}
-
-		@Override
-		public void open(Player player, int page) {
+		public CollectItemsProvider(Player player, ShopProvider previousMenu) {
 			this.player = player;
-
-			final int size = 54;
-			Inventory inv = Bukkit.createInventory(null, size, getTitle());
+			this.previousMenu = previousMenu;
 
 			ShopService service = new ShopService();
 			Shop shop = service.get(player);
@@ -124,7 +114,7 @@ public class YourShopProvider extends ShopProvider {
 				throw new InvalidInputException("No items available for collection");
 
 			List<ItemStack> items = new ArrayList<>();
-			final int max = Math.min(size, shop.getHolding().size());
+			final int max = Math.min(54, shop.getHolding().size());
 			final Iterator<ItemStack> iterator = shop.getHolding().iterator();
 			while (items.size() < max && iterator.hasNext()) {
 				items.add(iterator.next());
@@ -132,17 +122,11 @@ public class YourShopProvider extends ShopProvider {
 			}
 			service.save(shop);
 
-			inv.setContents(items.toArray(ItemStack[]::new));
-			Nexus.registerTemporaryListener(this);
-			player.openInventory(inv);
+			open(items);
 		}
 
-		@EventHandler
-		public void onChestClose(InventoryCloseEvent event) {
-			if (event.getInventory().getHolder() != null) return;
-			if (!Utils.equalsInvViewTitle(event.getView(), getTitle())) return;
-			if (!event.getPlayer().equals(player)) return;
-
+		@Override
+		public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
 			ShopService service = new ShopService();
 			Shop shop = service.get(player);
 
@@ -152,8 +136,6 @@ public class YourShopProvider extends ShopProvider {
 
 			service.save(shop);
 
-			Nexus.unregisterTemporaryListener(this);
-			event.getPlayer().closeInventory();
 			if (previousMenu != null)
 				Tasks.wait(1, () -> previousMenu.open(player));
 		}

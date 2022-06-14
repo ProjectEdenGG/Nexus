@@ -108,7 +108,7 @@ public class TheMines implements Listener {
 		Sign sign = (Sign) block.getState();
 		String line1 = sign.getLine(0);
 		String line2 = sign.getLine(1);
-		if (stripColor(line1).equals("[Sell Crate]") && stripColor(line2).contains("Ingots"))
+		if ("[Sell Crate]".equals(stripColor(line1)) && stripColor(line2).contains("Ingots"))
 			return line2;
 		return null;
 	}

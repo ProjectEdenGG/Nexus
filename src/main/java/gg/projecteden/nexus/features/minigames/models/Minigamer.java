@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.minigames.models;
 
 import com.google.common.base.Strings;
 import de.myzelyam.api.vanish.VanishAPI;
-import gg.projecteden.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.SpeedCommand;
 import gg.projecteden.nexus.features.minigames.Minigames;
@@ -17,26 +16,30 @@ import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.framework.interfaces.IsColoredAndNicknamed;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.parchment.PlayerLike;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import me.lexikiq.HasUniqueId;
+import me.lexikiq.PlayerLike;
+import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -52,7 +55,6 @@ import java.util.concurrent.CompletableFuture;
 import static gg.projecteden.nexus.utils.LocationUtils.blockLocationsEqual;
 import static gg.projecteden.nexus.utils.PlayerUtils.hidePlayer;
 import static gg.projecteden.nexus.utils.PlayerUtils.showPlayer;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -163,7 +165,7 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 	}
 
 	public void join(@NotNull Arena arena) {
-		if (!WorldGroup.MINIGAMES.equals(WorldGroup.of(getPlayer().getWorld()))) {
+		if (WorldGroup.of(getPlayer()) != WorldGroup.MINIGAMES) {
 			toGamelobby();
 			Tasks.wait(10, () -> join(arena));
 			return;
@@ -281,6 +283,15 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 	}
 
 	/**
+	 * Sends a message to this minigamer in their chat with a prefix ("[Minigames]")
+	 * <p>
+	 * @param withPrefix a message
+	 */
+	public void tell(@NotNull ComponentLike withPrefix) {
+		tell(withPrefix, true);
+	}
+
+	/**
 	 * Sends a message to this minigamer in their chat. If <code>prefix</code> is true, the message will be
 	 * prefixed with "[Minigames]".
 	 * <p>
@@ -289,7 +300,19 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 	 * @param prefix whether or not to display the minigames prefix
 	 */
 	public void tell(@NotNull String message, boolean prefix) {
-		getPlayer().sendMessage((prefix ? Minigames.PREFIX : "") + colorize(message));
+		tell(new JsonBuilder(message), prefix);
+	}
+
+
+	/**
+	 * Sends a message to this minigamer in their chat. If <code>prefix</code> is true, the message will be
+	 * prefixed with "[Minigames]".
+	 * <p>
+	 * @param message a message
+	 * @param prefix whether or not to display the minigames prefix
+	 */
+	public void tell(@NotNull ComponentLike message, boolean prefix) {
+		getPlayer().sendMessage(prefix ? JsonBuilder.fromPrefix("Minigames", message) : message);
 	}
 
 	public void toGamelobby() {
@@ -540,11 +563,11 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 		SpeedCommand.resetSpeed(getPlayer());
 		getPlayer().setOp(false);
 
-		if (mechanic.shouldClearInventory() || forceClearInventory)
+		if (mechanic.shouldClearInventory() || forceClearInventory) {
 			getPlayer().getInventory().clear();
-
-		for (PotionEffect effect : getPlayer().getActivePotionEffects())
-			getPlayer().removePotionEffect(effect.getType());
+			for (PotionEffect effect : getPlayer().getActivePotionEffects())
+				getPlayer().removePotionEffect(effect.getType());
+		}
 	}
 
 	public boolean usesPerk(@NotNull Class<? extends Perk> perk) {
@@ -559,12 +582,15 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 		getPlayer().addPotionEffect(potionEffect);
 	}
 
-	public void addPotionEffect(PotionEffectBuilder effectBuilder){
+	public void addPotionEffect(PotionEffectBuilder effectBuilder) {
 		getPlayer().addPotionEffect(effectBuilder.build());
 	}
 
-	public void removePotionEffect(PotionEffectType type){
+	public void removePotionEffect(PotionEffectType type) {
 		getPlayer().removePotionEffect(type);
 	}
 
+	public void clearInventory() {
+		getPlayer().getInventory().setStorageContents(new ItemStack[36]);
+	}
 }

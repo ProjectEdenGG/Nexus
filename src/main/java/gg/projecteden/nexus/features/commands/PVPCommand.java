@@ -11,14 +11,15 @@ import gg.projecteden.nexus.models.pvp.PVP;
 import gg.projecteden.nexus.models.pvp.PVPService;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldGroup;
-import gg.projecteden.parchment.HasPlayer;
-import gg.projecteden.parchment.event.player.PlayerUseRespawnAnchorEvent;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import io.papermc.paper.event.player.PlayerBedFailEnterEvent;
 import lombok.NoArgsConstructor;
+import me.lexikiq.HasPlayer;
+import me.lexikiq.event.player.PlayerUseRespawnAnchorEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -43,12 +44,15 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 import static gg.projecteden.nexus.utils.PlayerUtils.isVanished;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
@@ -58,7 +62,7 @@ import static gg.projecteden.nexus.utils.StringUtils.colorize;
 @Description("Toggle PVP in the survival world")
 public class PVPCommand extends CustomCommand implements Listener {
 	public final PVPService service = new PVPService();
-	private final Map<UUID, Location> bedLocations = new ConcurrentHashMap<>();
+	private final Map<UUID, Location> bedLocations = new HashMap<>();
 	public PVP pvp;
 
 	static {
@@ -207,7 +211,7 @@ public class PVPCommand extends CustomCommand implements Listener {
 		return attacker;
 	}
 
-	@EventHandler(priority = EventPriority.HIGH)
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onPlayerPVP(EntityDamageByEntityEvent event) {
 		if (WorldGroup.of(event.getEntity()) != WorldGroup.SURVIVAL)
 			return;
@@ -291,29 +295,51 @@ public class PVPCommand extends CustomCommand implements Listener {
 			event.setKeepInventory(false);
 	}
 	
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler
 	public void onPlayerItemDamage(PlayerItemDamageEvent event) {
 		final Player player = event.getPlayer();
 
+		Consumer<String> debug = message -> {
+			if (Dev.WAKKA.is(player))
+				Dev.GRIFFIN.sendMessage(message);
+		};
+
+		debug.accept("=======");
+		debug.accept("0");
 		if (!service.get(player).isEnabled())
 			return;
 
 		final ItemStack item = event.getItem();
+		debug.accept("1 " + item.getType());
 		if (!MaterialTag.ARMOR.isTagged(item))
 			return;
 
+		debug.accept("2");
 		final EntityDamageEvent lastDamage = player.getLastDamageCause();
 		if (lastDamage == null)
 			return;
 
+		debug.accept("3 " + lastDamage.getClass().getSimpleName() + " / " + lastDamage.getCause());
 		if (!(lastDamage instanceof EntityDamageByEntityEvent attackEvent))
 			return;
 
+		debug.accept("4 " + attackEvent.getDamager().getType());
 		if (attackEvent.getDamager().getType() != EntityType.PLAYER)
 			return;
 
+		debug.accept("5 cancelling");
+
+		// Attempt #1
 		event.setCancelled(true);
-		event.setDamage(0);
+
+		// Attempt #2
+//		event.setDamage(0);
+
+		// Attempt #3
+		final ItemMeta meta = item.getItemMeta();
+		final Damageable damageable = (Damageable) meta;
+		damageable.setDamage(damageable.getDamage() + event.getDamage());
+		item.setItemMeta(meta);
 	}
 
 }

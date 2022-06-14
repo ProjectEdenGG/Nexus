@@ -26,9 +26,11 @@ import gg.projecteden.nexus.utils.Timer;
 import gg.projecteden.nexus.utils.WorldGuardFlagUtils;
 import gg.projecteden.utils.EnumUtils;
 import gg.projecteden.utils.Env;
+import gg.projecteden.utils.Utils;
 import it.sauronsoftware.cron4j.Scheduler;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import me.arcaniax.hdb.api.HeadDatabaseAPI;
 import net.buycraft.plugin.bukkit.BuycraftPluginBase;
 import net.citizensnpcs.Citizens;
@@ -200,10 +202,10 @@ public class Nexus extends JavaPlugin {
 	}
 
 	// @formatter:off
-	@SuppressWarnings({"Convert2MethodRef", "CodeBlock2Expr"})
 	@Override
+	@SuppressWarnings({"Convert2MethodRef", "CodeBlock2Expr"})
 	public void onDisable() {
-		List<Runnable> tasks = Arrays.asList(
+		List<Runnable> tasks = List.of(
 			() -> { broadcastReload(); },
 			() -> { PlayerUtils.runCommandAsConsole("save-all"); },
 			() -> { if (cron.isStarted()) cron.stop(); },
@@ -214,18 +216,17 @@ public class Nexus extends JavaPlugin {
 			() -> { Bukkit.getServicesManager().unregisterAll(this); },
 			() -> { MySQLPersistence.shutdown(); },
 			() -> { GoogleUtils.shutdown(); },
-			() -> { if (api != null) api.shutdown(); }
+			() -> { if (api != null) API.shutdown(); },
+			() -> { shutdownDatabases(); },
 		);
 
-		tasks.forEach(task -> {
+		for (Runnable task : tasks)
 			try {
 				task.run();
 			} catch (Throwable ex) {
 				ex.printStackTrace();
 			}
-		});
 	}
-	// @formatter:on;
 
 	public void broadcastReload() {
 		if (luckPerms == null)
@@ -290,6 +291,13 @@ public class Nexus extends JavaPlugin {
 			Tasks.wait(5, () -> MongoService.loadServices("gg.projecteden.nexus.models"));
 			new HomeService();
 		});
+	}
+
+	@SneakyThrows
+	private void shutdownDatabases() {
+		for (Class<? extends MongoService> service : MongoService.getServices())
+			if (Utils.canEnable(service))
+				service.getConstructor().newInstance().clearCache();
 	}
 
 	private void hooks() {
