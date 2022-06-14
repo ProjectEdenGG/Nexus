@@ -98,7 +98,7 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 
 	@Path("count [player]")
 	@Permission(Group.ADMIN)
-	void count(Transactions banker) {
+	void count(@Arg("self") Transactions banker) {
 		send("Size: " + banker.getTransactions().size());
 	}
 
