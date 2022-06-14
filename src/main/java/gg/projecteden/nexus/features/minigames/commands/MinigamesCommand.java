@@ -287,12 +287,6 @@ public class MinigamesCommand extends CustomCommand {
 		minigamer.getMatch().getTimer().broadcastTimeLeft();
 	}
 
-	@Path("flagParticle")
-	@Permission(PERMISSION_MANAGE)
-	void flagParticle() {
-		gg.projecteden.nexus.features.minigames.models.matchdata.Flag.particle(minigamer);
-	}
-
 	@Path("create <name>")
 	@Permission(PERMISSION_MANAGE)
 	void create(String name) {
