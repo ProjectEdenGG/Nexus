@@ -54,7 +54,7 @@ public class Parkour extends CheckpointMechanic {
 			"&3Total Time", 7,
 			"&a&e" + matchData.formatTotalLiveTime(minigamer, now), 6,
 			"&3Personal Best", 5, // TODO: allow players to decide what to compare against (i.e. PB, SoB, or WR)
-			"&b" + matchData.formatTotalBestTime(minigamer, now), 4,
+			"&b" + matchData.formatTotalBestTime(minigamer), 4,
 			"&b", 3,
 			"&3Checkpoint Time", 2,
 			"&c&e" + matchData.formatSplitTime(minigamer, now), 1

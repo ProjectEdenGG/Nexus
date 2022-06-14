@@ -31,14 +31,15 @@ public class CheckpointUser implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private Map<String, Duration> bestTotalTimes = new ConcurrentHashMap<>(); // TODO should store splits alongside the total time (will need to drop the original table)
-	private Map<Pair<String, Integer>, Duration> bestCheckpointTimes = new ConcurrentHashMap<>();
+	private Map<String, RecordTotalTime> bestTotalTimes = new ConcurrentHashMap<>();
+	private Map<Pair<String, Integer>, Duration> bestCheckpointTimes = new ConcurrentHashMap<>(); // for sum of best
 
-	public void recordTotalTime(String arena, Duration duration) {
-		if (!bestTotalTimes.containsKey(arena) || bestTotalTimes.get(arena).compareTo(duration) > 0) {
-			bestTotalTimes.put(arena, duration);
+	public void recordTotalTime(String arena, Duration duration, Map<Integer, Duration> checkpointTimes) {
+		RecordTotalTime newRecord = new RecordTotalTime(uuid, duration, checkpointTimes);
+		if (!bestTotalTimes.containsKey(arena) || bestTotalTimes.get(arena).compareTo(newRecord) > 0) {
+			bestTotalTimes.put(arena, newRecord);
 		}
-		CheckpointService.recordBestTotalTime(arena, new RecordTotalTime(uuid, duration));
+		CheckpointService.recordBestTotalTime(arena, newRecord);
 	}
 
 	public void recordCheckpointTime(String arena, int checkpoint, Duration duration) {
@@ -49,7 +50,7 @@ public class CheckpointUser implements PlayerOwnedObject {
 		// service does not currently keep a cache of the best checkpoint times
 	}
 
-	public @Nullable Duration getBestTotalTime(String arena) {
+	public @Nullable RecordTotalTime getBestTotalTime(String arena) {
 		return bestTotalTimes.get(arena);
 	}
 
@@ -60,15 +61,15 @@ public class CheckpointUser implements PlayerOwnedObject {
 
 	// handy dandy boilerplate
 
-	public void recordTotalTime(Arena arena, Duration duration) {
-		recordTotalTime(arena.getName(), duration);
+	public void recordTotalTime(Arena arena, Duration duration, Map<Integer, Duration> checkpointTimes) {
+		recordTotalTime(arena.getName(), duration, checkpointTimes);
 	}
 
 	public void recordCheckpointTime(Arena arena, int checkpoint, Duration duration) {
 		recordCheckpointTime(arena.getName(), checkpoint, duration);
 	}
 
-	public @Nullable Duration getBestTotalTime(Arena arena) {
+	public @Nullable RecordTotalTime getBestTotalTime(Arena arena) {
 		return getBestTotalTime(arena.getName());
 	}
 
@@ -76,15 +77,15 @@ public class CheckpointUser implements PlayerOwnedObject {
 		return getBestCheckpointTime(arena.getName(), checkpoint);
 	}
 
-	public void recordTotalTime(Match match, Duration duration) {
-		recordTotalTime(match.getArena(), duration);
+	public void recordTotalTime(Match match, Duration duration, Map<Integer, Duration> checkpointTimes) {
+		recordTotalTime(match.getArena(), duration, checkpointTimes);
 	}
 
 	public void recordCheckpointTime(Match match, int checkpoint, Duration duration) {
 		recordCheckpointTime(match.getArena(), checkpoint, duration);
 	}
 
-	public @Nullable Duration getBestTotalTime(Match match) {
+	public @Nullable RecordTotalTime getBestTotalTime(Match match) {
 		return getBestTotalTime(match.getArena());
 	}
 
@@ -92,15 +93,15 @@ public class CheckpointUser implements PlayerOwnedObject {
 		return getBestCheckpointTime(match.getArena(), checkpoint);
 	}
 
-	public void recordTotalTime(MatchData matchData, Duration duration) {
-		recordTotalTime(matchData.getMatch(), duration);
+	public void recordTotalTime(MatchData matchData, Duration duration, Map<Integer, Duration> checkpointTimes) {
+		recordTotalTime(matchData.getMatch(), duration, checkpointTimes);
 	}
 
 	public void recordCheckpointTime(MatchData matchData, int checkpoint, Duration duration) {
 		recordCheckpointTime(matchData.getMatch(), checkpoint, duration);
 	}
 
-	public @Nullable Duration getBestTotalTime(MatchData matchData) {
+	public @Nullable RecordTotalTime getBestTotalTime(MatchData matchData) {
 		return getBestTotalTime(matchData.getMatch());
 	}
 

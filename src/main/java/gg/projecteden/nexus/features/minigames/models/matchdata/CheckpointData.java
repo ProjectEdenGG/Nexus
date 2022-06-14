@@ -10,6 +10,7 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import kotlin.Pair;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -31,11 +32,12 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class CheckpointData extends MatchData {
 	private final CheckpointService service = new CheckpointService();
 	private final Map<UUID, Map<Integer, Instant>> checkpointTimes = new HashMap<>();
 	private final Map<UUID, Instant> startTimes = new HashMap<>();
-	private final Map<UUID, Duration> bestTotalTimesCache = new HashMap<>();
+	private final Map<UUID, RecordTotalTime> bestTotalTimesCache = new HashMap<>();
 	private RecordTotalTime bestTotalTimeCache = null;
 	private final Set<UUID> autoresetting = new HashSet<>();
 
@@ -47,16 +49,14 @@ public class CheckpointData extends MatchData {
 		return Timespan.TimespanBuilder.ofMillis(duration.toMillis()).displayMillis().format();
 	}
 
-	public static String formatLiveTime(Duration duration) {
-		return "%d:%02d:%02d.%03d".formatted(duration.toHours(), duration.toMinutesPart(), duration.toSecondsPart(), duration.toMillisPart());
-	}
-
-	public static String formatComparisonTime(Duration liveTime, @Nullable Duration totalBest) {
-		if (totalBest == null)
-			return "&7N/A";
-		Duration delta = liveTime.minus(totalBest);
-		String formattedDelta = (delta.isNegative() ? "&a" : "&c") + "%+.1f".formatted(delta.toMillis() / 1000.0);
-		return "&e" + formatLiveTime(totalBest) + " &7(" + formattedDelta + "&7)";
+	public static String formatLiveTime(Duration liveTime, @Nullable Duration best) {
+		String output = "%d:%02d:%02d.%03d".formatted(liveTime.toHours(), liveTime.toMinutesPart(), liveTime.toSecondsPart(), liveTime.toMillisPart());
+		if (best != null) {
+			Duration delta = liveTime.minus(best);
+			String formattedDelta = (delta.isNegative() ? "&a" : "&c") + "%+.0f".formatted(delta.toMillis() / 1000.0);
+			output += " &7(" + formattedDelta + "&7)";
+		}
+		return output;
 	}
 
 	private void updateBestTimeCaches(Minigamer minigamer) {
@@ -71,8 +71,16 @@ public class CheckpointData extends MatchData {
 	}
 
 	public void onWin(Minigamer minigamer, Instant now) {
-		Duration time = Duration.between(startTimes.get(minigamer.getUuid()), now);
-		service.get(minigamer).recordTotalTime(this, time);
+		// compute total time
+		Instant startTime = startTimes.get(minigamer.getUuid());
+		Duration time = Duration.between(startTime, now);
+		// compute checkpoint times
+		Map<Integer, Instant> checkpointInstants = checkpointTimes.get(minigamer.getUuid());
+		Map<Integer, Duration> checkpoints = new HashMap<>();
+		if (checkpointInstants != null)
+			checkpointInstants.forEach((chkptId, chkptTime) -> checkpoints.put(chkptId, Duration.between(chkptTime, now)));
+		// save data
+		service.get(minigamer).recordTotalTime(this, time, checkpoints);
 		updateBestTimeCaches(minigamer);
 	}
 
@@ -192,15 +200,16 @@ public class CheckpointData extends MatchData {
 	}
 
 	public String formatTotalLiveTime(Minigamer minigamer, @Nullable Instant endTime) {
-		return formatLiveTime(calculateTotalTime(minigamer, endTime));
+		return formatLiveTime(calculateTotalTime(minigamer, endTime), bestTotalTimesCache.get(minigamer.getUuid()).getTime());
 	}
 
 	public String formatSplitTime(Minigamer minigamer, @Nullable Instant endTime) {
-		return formatLiveTime(calculateSplitTime(minigamer, endTime));
+		return formatLiveTime(calculateSplitTime(minigamer, endTime), null); // TODO split comparison
 	}
 
-	public String formatTotalBestTime(Minigamer minigamer, @Nullable Instant endTime) {
-		return formatComparisonTime(calculateTotalTime(minigamer, endTime), bestTotalTimesCache.get(minigamer.getUuid()));
+	public String formatTotalBestTime(Minigamer minigamer) {
+		RecordTotalTime bestTime = bestTotalTimesCache.get(minigamer.getUuid());
+		return bestTime == null ? "&7N/A" : "&e" + formatLiveTime(bestTime.getTime(), null);
 	}
 
 	public @NotNull HoverEvent<Component> formatCheckpointTimesHoverText(Minigamer minigamer, @Nullable Instant endTime) {

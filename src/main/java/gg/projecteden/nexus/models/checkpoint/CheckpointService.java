@@ -8,9 +8,9 @@ import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerServ
 import gg.projecteden.nexus.utils.Tasks;
 import org.jetbrains.annotations.Nullable;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -40,8 +40,8 @@ public class CheckpointService extends MongoPlayerService<CheckpointUser> {
 			globalBestTimesInitialized = true;
 			Tasks.async(() -> {
 				for (CheckpointUser user : getAll()) {
-					for (Map.Entry<String, Duration> entry : user.getBestTotalTimes().entrySet()) {
-						recordBestTotalTime(entry.getKey(), new RecordTotalTime(user.getUuid(), entry.getValue()));
+					for (Map.Entry<String, RecordTotalTime> entry : user.getBestTotalTimes().entrySet()) {
+						recordBestTotalTime(entry.getKey(), entry.getValue());
 					}
 				}
 			});
@@ -61,8 +61,8 @@ public class CheckpointService extends MongoPlayerService<CheckpointUser> {
 	public CompletableFuture<List<RecordTotalTime>> getBestTotalTimes(String arena) {
 		return CompletableFuture.supplyAsync(
 			() -> getAll().stream()
-				.filter(user -> user.getBestTotalTime(arena) != null)
-				.map(user -> new RecordTotalTime(user.getUuid(), user.getBestTotalTime(arena)))
+				.map(user -> user.getBestTotalTime(arena))
+				.filter(Objects::nonNull)
 				.sorted()
 				.toList(),
 			Tasks::async

@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
+import java.util.Map;
 import java.util.UUID;
 
 @Data
@@ -14,6 +15,7 @@ import java.util.UUID;
 public class RecordTotalTime implements Comparable<RecordTotalTime> {
 	private UUID playerId;
 	private Duration time;
+	private Map<Integer, Duration> checkpointTimes;
 
 	@Override
 	public int compareTo(@NotNull RecordTotalTime o) {
