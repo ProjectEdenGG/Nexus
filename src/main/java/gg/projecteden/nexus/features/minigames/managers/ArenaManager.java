@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -169,7 +170,7 @@ public class ArenaManager {
 
 					read(name.replace(".yml", ""));
 				} catch (Exception ex) {
-					Nexus.severe("An error occurred while trying to read arena configuration file " + filePath.getFileName().toFile() + ": " + ex.getMessage());
+					Nexus.getInstance().getLogger().log(Level.SEVERE, "An error occurred while trying to read arena configuration file " + filePath.getFileName().toFile(), ex);
 					if (Nexus.isDebug())
 						ex.printStackTrace();
 				}
