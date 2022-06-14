@@ -7,7 +7,7 @@ plugins {
 }
 
 repositories {
-    mavenLocal() { content { includeGroup("gg.projecteden") } }
+    mavenLocal { content { includeGroup("gg.projecteden") } }
     mavenCentral()
     maven { url = uri("https://sonatype.projecteden.gg/repository/maven-public/") }
     maven { url = uri("https://jitpack.io") }
@@ -34,9 +34,9 @@ dependencies {
     paperweightDevBundle("gg.projecteden.parchment", "1.19-R0.1-SNAPSHOT")
     compileOnly("gg.projecteden.parchment:parchment-api:1.19-R0.1-SNAPSHOT")
     implementation("io.papermc:paperlib:1.0.2")
-    implementation("gg.projecteden:eden-common:2.0.9-SNAPSHOT")
-    implementation("gg.projecteden:eden-db:2.0.9-SNAPSHOT")
-    implementation("gg.projecteden:eden-discord:2.0.9-SNAPSHOT")
+    implementation("gg.projecteden:eden-common:2.0.10-SNAPSHOT")
+    implementation("gg.projecteden:eden-db:2.0.10-SNAPSHOT")
+    implementation("gg.projecteden:eden-discord:2.0.10-SNAPSHOT")
     implementation("org.reflections:reflections:0.10.2")
     implementation("org.objenesis:objenesis:3.2")
     implementation("org.checkerframework:checker-qual:3.22.1")
