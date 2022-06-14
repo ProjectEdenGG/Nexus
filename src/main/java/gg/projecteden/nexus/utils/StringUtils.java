@@ -14,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -295,9 +294,7 @@ public class StringUtils extends gg.projecteden.utils.StringUtils {
 	}
 
 	public static String getWorldDisplayName(Location location, String world) {
-		if (Arrays.asList("world", "world_nether", "world_the_end").contains(world))
-			world = world.replace("world", "legacy");
-		else if (world.contains("oneblock"))
+		if (world.contains("oneblock"))
 			world = world.replace("oneblock_world", "one_block");
 		else if (world.contains("bskyblock"))
 			world = world.replace("bskyblock_world", "skyblock");

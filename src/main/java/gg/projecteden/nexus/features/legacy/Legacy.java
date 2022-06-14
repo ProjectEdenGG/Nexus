@@ -46,7 +46,6 @@ import static gg.projecteden.nexus.utils.Utils.registerListeners;
 			Ctrl+f
 				"world"
 				"survival"
-			Update getWorldDisplayName
 
  */
 
