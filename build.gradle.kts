@@ -3,7 +3,7 @@ plugins {
     `maven-publish`
     id("io.freefair.lombok") version "6.5.0-rc1"
     id("com.github.johnrengelman.shadow") version "7.1.2"
-    id("io.papermc.paperweight.userdev") version "1.3.3"
+    id("io.papermc.paperweight.userdev") version "1.3.7"
 }
 
 repositories {
@@ -31,9 +31,7 @@ repositories {
 }
 
 dependencies {
-    paperDevBundle("1.18.1-R0.1-SNAPSHOT")
-    // TODO don't use a hardcoded snapshot version (temporary measure because sonatype updates are slow)
-    compileOnly("gg.projecteden.parchment:parchment-api:1.18.1-R0.1-20220116.191519-2")
+    paperweightDevBundle("gg.projecteden.parchment", "1.19-R0.1-SNAPSHOT")
     implementation("io.papermc:paperlib:1.0.2")
     implementation("gg.projecteden:eden-common:2.0.9-SNAPSHOT")
     implementation("gg.projecteden:eden-db:2.0.9-SNAPSHOT")
