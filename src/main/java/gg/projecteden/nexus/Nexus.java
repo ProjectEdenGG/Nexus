@@ -124,7 +124,7 @@ public class Nexus extends JavaPlugin {
 
 	@Getter
 	@Setter
-	private static boolean debug = true; // TODO 1.19 disable
+	private static boolean debug = false;
 
 	public static void debug(String message) {
 		if (debug)
