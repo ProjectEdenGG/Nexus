@@ -6,7 +6,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.fakenpc.FakeNPC.SkinProperties;
 import gg.projecteden.nexus.utils.Tasks;
 import net.minecraft.server.level.ServerPlayer;
-import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
