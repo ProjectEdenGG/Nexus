@@ -7,7 +7,6 @@ import gg.projecteden.nexus.features.minigames.models.arenas.CheckpointArena;
 import gg.projecteden.nexus.models.checkpoint.CheckpointService;
 import gg.projecteden.nexus.models.checkpoint.RecordTotalTime;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.utils.TimeUtils.Timespan;
 import kotlin.Pair;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -46,11 +45,17 @@ public class CheckpointData extends MatchData {
 	}
 
 	public static String formatChatTime(Duration duration) {
-		return Timespan.TimespanBuilder.ofMillis(duration.toMillis()).displayMillis().format();
+		StringBuilder sb = new StringBuilder();
+		if (duration.toHoursPart() > 0)
+			sb.append(duration.toHoursPart()).append("h ");
+		if (duration.toMinutesPart() > 0)
+			sb.append(duration.toMinutesPart()).append("m ");
+		sb.append(String.format("%.2fs", duration.toSecondsPart() + (duration.toNanosPart() / 1000000000.0)));
+		return sb.toString();
 	}
 
 	public static String formatLiveTime(Duration liveTime, @Nullable Duration best) {
-		String output = "%d:%02d:%02d.%03d".formatted(liveTime.toHours(), liveTime.toMinutesPart(), liveTime.toSecondsPart(), liveTime.toMillisPart());
+		String output = "%d:%02d:%02d.%02d".formatted(liveTime.toHours(), liveTime.toMinutesPart(), liveTime.toSecondsPart(), liveTime.toMillisPart());
 		if (best != null) {
 			Duration delta = liveTime.minus(best);
 			String formattedDelta = (delta.isNegative() ? "&a" : "&c") + "%+.0f".formatted(delta.toMillis() / 1000.0);
@@ -200,7 +205,8 @@ public class CheckpointData extends MatchData {
 	}
 
 	public String formatTotalLiveTime(Minigamer minigamer, @Nullable Instant endTime) {
-		return formatLiveTime(calculateTotalTime(minigamer, endTime), bestTotalTimesCache.get(minigamer.getUuid()).getTime());
+		RecordTotalTime record = bestTotalTimesCache.get(minigamer.getUuid());
+		return formatLiveTime(calculateTotalTime(minigamer, endTime), record == null ? null : record.getTime());
 	}
 
 	public String formatSplitTime(Minigamer minigamer, @Nullable Instant endTime) {
@@ -208,8 +214,8 @@ public class CheckpointData extends MatchData {
 	}
 
 	public String formatTotalBestTime(Minigamer minigamer) {
-		RecordTotalTime bestTime = bestTotalTimesCache.get(minigamer.getUuid());
-		return bestTime == null ? "&7N/A" : "&e" + formatLiveTime(bestTime.getTime(), null);
+		RecordTotalTime record = bestTotalTimesCache.get(minigamer.getUuid());
+		return record == null ? "&7N/A" : "&e" + formatLiveTime(record.getTime(), null);
 	}
 
 	public @NotNull HoverEvent<Component> formatCheckpointTimesHoverText(Minigamer minigamer, @Nullable Instant endTime) {
