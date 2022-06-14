@@ -55,6 +55,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Level;
 
 import static org.reflections.ReflectionUtils.getMethods;
 import static org.reflections.ReflectionUtils.withAnnotation;
@@ -80,7 +81,12 @@ public class Nexus extends JavaPlugin {
 			try {
 				return clazz.getConstructor().newInstance();
 			} catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException ex) {
-				return new ObjenesisStd().newInstance(clazz);
+				Nexus.getInstance().getLogger().log(Level.SEVERE, "Failed to create singleton of " + clazz.getName() + ", falling back to Objenesis", ex);
+				try {
+					return new ObjenesisStd().newInstance(clazz);
+				} catch (Throwable t) {
+					throw new IllegalStateException("Failed to create singleton of " + clazz.getName() + " using Objenesis", t);
+				}
 			}
 		});
 	}
@@ -118,7 +124,7 @@ public class Nexus extends JavaPlugin {
 
 	@Getter
 	@Setter
-	private static boolean debug = false;
+	private static boolean debug = true; // TODO 1.19 disable
 
 	public static void debug(String message) {
 		if (debug)
@@ -156,6 +162,7 @@ public class Nexus extends JavaPlugin {
 	}
 
 	public static void registerListener(Listener listener) {
+		Nexus.debug("Registering listener: " + listener.getClass().getName());
 		if (getInstance().isEnabled()) {
 			getInstance().getServer().getPluginManager().registerEvents(listener, getInstance());
 			listeners.add(listener);
@@ -163,7 +170,7 @@ public class Nexus extends JavaPlugin {
 				for (Method method : getMethods(listener.getClass(), withAnnotation(EventHandler.class)))
 					eventHandlers.add((Class<? extends Event>) method.getParameters()[0].getType());
 		} else
-			log("Could not register listener " + listener.toString() + "!");
+			log("Could not register listener " + listener.getClass().getName() + "!");
 	}
 
 	public static void unregisterListener(Listener listener) {

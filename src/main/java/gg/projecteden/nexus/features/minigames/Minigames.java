@@ -71,7 +71,7 @@ public class Minigames extends Feature {
 		registerSerializables();
 		registerMatchDatas();
 		Tasks.async(() -> {
-			ArenaManager.read();
+//			ArenaManager.read(); | TODO 1.19 uncomment
 			registerListeners();
 
 			new ActionBar();

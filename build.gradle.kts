@@ -121,8 +121,4 @@ tasks {
             expand("version" to project.version)
         }
     }
-
-    shadowJar {
-        relocate("org.slf4j", "gg.projecteden.slf4j")
-    }
 }

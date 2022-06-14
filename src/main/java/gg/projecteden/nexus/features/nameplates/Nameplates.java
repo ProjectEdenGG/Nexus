@@ -24,8 +24,6 @@ import org.bukkit.scoreboard.Team.OptionStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
-
 import static gg.projecteden.nexus.utils.PlayerUtils.canSee;
 
 @Getter
@@ -42,13 +40,10 @@ public class Nameplates extends Feature {
 	private static boolean debug;
 
 	public Nameplates() {
-		Nexus.getInstance().getLogger().info("Initializing Nameplates");
-		nameplateManager = new NameplateManager();
-
+		this.nameplateManager = new NameplateManager();
 		new NameplatesListener();
 
 		final Scoreboard scoreboard = Nexus.getInstance().getServer().getScoreboardManager().getMainScoreboard();
-
 		this.pushTeam = initializeTeam(scoreboard, pushTeamName, true);
 		this.noPushTeam = initializeTeam(scoreboard, noPushTeamName, false);
 	}
@@ -56,11 +51,12 @@ public class Nameplates extends Feature {
 	private Team initializeTeam(Scoreboard scoreboard, String name, boolean allowPush) {
 		Team team = scoreboard.getTeam(name);
 
-		if (team != null)
+		if (team != null) {
 			team.unregister();
+		}
 
-		team = scoreboard.registerNewTeam(pushTeamName);
-		team.setOption(Option.NAME_TAG_VISIBILITY, OptionStatus.FOR_OWN_TEAM);
+		team = scoreboard.registerNewTeam(name);
+		team.setOption(Option.NAME_TAG_VISIBILITY, OptionStatus.NEVER);
 		team.setOption(Option.COLLISION_RULE, allowPush ? OptionStatus.ALWAYS : OptionStatus.NEVER);
 
 		return team;
@@ -89,11 +85,7 @@ public class Nameplates extends Feature {
 
 	@Override
 	public void onStart() {
-		Nexus.getInstance().getLogger().info("Starting Nameplates");
-		Tasks.wait(1, () -> {
-			Nexus.getInstance().getLogger().info("Super Starting Nameplates");
-			Objects.requireNonNull(this.nameplateManager, "NameplateManager is null").onStart();
-		});
+		Tasks.wait(1, this.nameplateManager::onStart);
 	}
 
 	@Override
