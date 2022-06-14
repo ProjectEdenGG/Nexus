@@ -308,7 +308,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 		// don't play sound at all if muted
 		Function<SoundEvent, List<Player>> baseRecipientsFunction = event.getRecipientsFunction();
 		event.setRecipientsFunction(_event -> {
-			List<Player> recipients = baseRecipientsFunction.apply(_event);
+			List<Player> recipients = new ArrayList<>(baseRecipientsFunction.apply(_event));
 			recipients.removeIf(player -> event.calculateSound(player).volume() == 0);
 			return recipients;
 		});
