@@ -186,8 +186,8 @@ public class Nexus extends JavaPlugin {
 		new Timer("Enable", () -> {
 			new Timer(" Cache Usernames", () -> OnlinePlayers.getAll().forEach(Name::of));
 			new Timer(" Config", this::setupConfig);
-			new Timer(" Databases", this::databases);
 			new Timer(" Hooks", this::hooks);
+			new Timer(" Databases", this::databases);
 			new Timer(" Features", () -> {
 				features = new Features(this, "gg.projecteden.nexus.features");
 				features.register(Chat.class, Discord.class); // prioritize

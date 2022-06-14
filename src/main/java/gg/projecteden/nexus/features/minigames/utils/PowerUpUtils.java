@@ -1,8 +1,5 @@
 package gg.projecteden.nexus.features.minigames.utils;
 
-import com.gmail.filoghost.holographicdisplays.api.Hologram;
-import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
-import com.gmail.filoghost.holographicdisplays.api.line.ItemLine;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -10,6 +7,9 @@ import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
+import me.filoghost.holographicdisplays.api.hologram.Hologram;
+import me.filoghost.holographicdisplays.api.hologram.line.ItemHologramLine;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -35,18 +35,18 @@ public class PowerUpUtils {
 
 	public void spawn(Location location, boolean recurring) {
 		PowerUp powerUp = getRandomPowerUp();
-		Hologram hologram = HologramsAPI.createHologram(Nexus.getInstance(), location.clone().add(0, 2, 0));
+		Hologram hologram = HolographicDisplaysAPI.get(Nexus.getInstance()).createHologram(location.clone().add(0, 2, 0));
 		match.getHolograms().add(hologram);
-		hologram.appendTextLine(StringUtils.colorize("&3&lPower Up"));
-		hologram.insertTextLine(1, powerUp.getName());
-		ItemLine itemLine = hologram.appendItemLine(powerUp.getItemStack());
+		hologram.getLines().appendText(StringUtils.colorize("&3&lPower Up"));
+		hologram.getLines().insertText(1, powerUp.getName());
+		ItemHologramLine itemLine = hologram.getLines().appendItem(powerUp.getItemStack());
 
-		itemLine.setPickupHandler(player -> {
-			Minigamer minigamer = Minigamer.of(player);
+		itemLine.setPickupListener(listener -> {
+			Minigamer minigamer = Minigamer.of(listener.getPlayer());
 			if (!minigamer.isPlaying(match)) return;
 
 			minigamer.tell("You picked up a power up!");
-			powerUp.onPickup(Minigamer.of(player));
+			powerUp.onPickup(Minigamer.of(listener.getPlayer()));
 			match.getHolograms().remove(hologram);
 			hologram.delete();
 			if (recurring)

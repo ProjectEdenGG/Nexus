@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.minigames.models;
 
-import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import gg.projecteden.nexus.features.commands.staff.admin.RebootCommand;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.minigames.Minigames;
@@ -43,6 +42,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.ToString;
+import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.bossbar.BossBar;

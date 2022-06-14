@@ -1,9 +1,6 @@
 package gg.projecteden.nexus.features.store.gallery;
 
 import com.destroystokyo.paper.ParticleBuilder;
-import com.gmail.filoghost.holographicdisplays.api.Hologram;
-import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
-import com.gmail.filoghost.holographicdisplays.api.line.ItemLine;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Emotes;
 import gg.projecteden.nexus.features.custombenches.DyeStation;
@@ -51,6 +48,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
+import me.filoghost.holographicdisplays.api.hologram.Hologram;
+import me.filoghost.holographicdisplays.api.hologram.line.ItemHologramLine;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -503,9 +503,9 @@ public enum GalleryPackage {
 		@Override
 		public void init() {
 			final Location location = StoreGallery.location(950.5, 70.5, 972.5);
-			hologram = HologramsAPI.createHologram(Nexus.getInstance(), location);
-			hologram.appendTextLine(colorize("&eBob"));
-			hologram.appendItemLine(new ItemStack(Material.DIAMOND_SWORD));
+			hologram = HolographicDisplaysAPI.get(Nexus.getInstance()).createHologram(location);
+			hologram.getLines().appendText(colorize("&eBob"));
+			hologram.getLines().appendItem(new ItemStack(Material.DIAMOND_SWORD));
 		}
 
 		@Override
@@ -521,7 +521,7 @@ public enum GalleryPackage {
 		@Override
 		public void init() {
 			final Location location = StoreGallery.location(1048.5, 70.25, 991.5);
-			hologram = HologramsAPI.createHologram(Nexus.getInstance(), location);
+			hologram = HolographicDisplaysAPI.get(Nexus.getInstance()).createHologram(location);
 
 			final ItemBuilder builder = new ItemBuilder(Material.PLAYER_HEAD);
 
@@ -529,8 +529,8 @@ public enum GalleryPackage {
 			final List<Player> players = OnlinePlayers.getAll();
 			builder.skullOwner(players.isEmpty() ? randomElement(EnumUtils.valuesExcept(Dev.class, Dev.SPIKE)) : randomElement(players));
 
-			final ItemLine itemLine = hologram.appendItemLine(builder.build());
-			itemLine.setTouchHandler(player -> itemLine.setItemStack(new ItemBuilder(Material.PLAYER_HEAD).skullOwner(player).build()));
+			final ItemHologramLine itemLine = hologram.getLines().appendItem(builder.build());
+			itemLine.setClickListener(listener -> itemLine.setItemStack(new ItemBuilder(Material.PLAYER_HEAD).skullOwner(listener.getPlayer()).build()));
 		}
 
 		@Override

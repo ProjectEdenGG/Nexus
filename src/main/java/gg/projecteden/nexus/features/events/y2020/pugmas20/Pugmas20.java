@@ -1,8 +1,6 @@
 package gg.projecteden.nexus.features.events.y2020.pugmas20;
 
 import com.destroystokyo.paper.ParticleBuilder;
-import com.gmail.filoghost.holographicdisplays.api.Hologram;
-import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import gg.projecteden.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.models.AdventChest;
@@ -27,6 +25,8 @@ import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import lombok.Setter;
+import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
+import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
@@ -126,8 +126,9 @@ public class Pugmas20 implements Listener {
 		deleteNpcHolograms();
 		for (QuestNPC questNPC : QuestNPC.values()) {
 			NPC npc = CitizensUtils.getNPC(questNPC.getId());
-			Hologram hologram = HologramsAPI.createHologram(Nexus.getInstance(), npc.getStoredLocation().clone().add(0, 3.15, 0));
-			hologram.appendItemLine(new ItemStack(Material.EMERALD));
+
+			final Hologram hologram = HolographicDisplaysAPI.get(Nexus.getInstance()).createHologram(npc.getStoredLocation().clone().add(0, 3.15, 0));
+			hologram.getLines().appendItem(new ItemStack(Material.EMERALD));
 			holograms.add(hologram);
 		}
 	}

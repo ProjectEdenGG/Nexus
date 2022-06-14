@@ -81,6 +81,10 @@ public class Nerd extends gg.projecteden.mongodb.models.nerd.Nerd implements Pla
 
 	@PreLoad
 	void preLoad(DBObject dbObject) {
+		List<String> visitedWorldGroups = (List<String>) dbObject.get("visitedWorldGroups");
+		if (visitedWorldGroups.remove("ONEBLOCK"))
+			visitedWorldGroups.add("SKYBLOCK");
+
 		List<String> pronouns = (List<String>) dbObject.get("pronouns");
 		if (!isNullOrEmpty(pronouns)) {
 			List<String> fixed = new ArrayList<>() {{

@@ -68,7 +68,7 @@ dependencies {
     compileOnly("net.minidev:json-smart:2.4.8")
     compileOnly("de.tr7zw:item-nbt-api-plugin:2.10.0")
     compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
-    compileOnly("com.gmail.filoghost.holographicdisplays:holographicdisplays-api:2.4.0")
+    compileOnly("me.filoghost.holographicdisplays:holographicdisplays-api:3.0.0-SNAPSHOT")
     compileOnly("net.citizensnpcs:citizens-main:2.0.28-SNAPSHOT")
     compileOnly("com.github.koca2000:NoteBlockAPI:1.4.4")
     compileOnly("com.github.BlueMap-Minecraft:BlueMapAPI:v1.3.1")
