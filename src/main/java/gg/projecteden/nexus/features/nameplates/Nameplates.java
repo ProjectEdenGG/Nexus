@@ -24,6 +24,8 @@ import org.bukkit.scoreboard.Team.OptionStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 import static gg.projecteden.nexus.utils.PlayerUtils.canSee;
 
 @Getter
@@ -40,6 +42,7 @@ public class Nameplates extends Feature {
 	private static boolean debug;
 
 	public Nameplates() {
+		Nexus.getInstance().getLogger().info("Initializing Nameplates");
 		nameplateManager = new NameplateManager();
 
 		new NameplatesListener();
@@ -86,7 +89,11 @@ public class Nameplates extends Feature {
 
 	@Override
 	public void onStart() {
-		Tasks.wait(1, this.nameplateManager::onStart);
+		Nexus.getInstance().getLogger().info("Starting Nameplates");
+		Tasks.wait(1, () -> {
+			Nexus.getInstance().getLogger().info("Super Starting Nameplates");
+			Objects.requireNonNull(this.nameplateManager, "NameplateManager is null").onStart();
+		});
 	}
 
 	@Override
