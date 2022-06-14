@@ -81,7 +81,7 @@ public class Nexus extends JavaPlugin {
 			try {
 				return clazz.getConstructor().newInstance();
 			} catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException ex) {
-				Nexus.getInstance().getLogger().log(Level.SEVERE, "Failed to create singleton of " + clazz.getName() + ", falling back to Objenesis", ex);
+				Nexus.getInstance().getLogger().log(Level.FINE, "Failed to create singleton of " + clazz.getName() + ", falling back to Objenesis", ex);
 				try {
 					return new ObjenesisStd().newInstance(clazz);
 				} catch (Throwable t) {
