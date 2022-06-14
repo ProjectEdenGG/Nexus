@@ -2,8 +2,8 @@ package gg.projecteden.nexus.utils.worldgroup;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.parchment.OptionalLocation;
 import lombok.Getter;
-import me.lexikiq.OptionalLocation;
 import net.luckperms.api.context.ContextCalculator;
 import net.luckperms.api.context.ContextConsumer;
 import net.luckperms.api.context.ContextSet;

@@ -5,11 +5,6 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.itemtags.Condition;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import me.lexikiq.HasPlayer;
-import org.apache.logging.log4j.util.TriConsumer;
 import gg.projecteden.parchment.HasPlayer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -568,12 +563,12 @@ public class ItemUtils {
 			INT_ARRAY(IntArrayType.class),
 			;
 
-			private final Class<? extends NBTDataType> clazz;
+			private final Class<? extends NBTDataType<?>> clazz;
 		}
 
 		public static class StringType extends NBTDataType<String> {
 			public StringType() {
-				super(NBTItem::getString, NBTItem::setString, String::valueOf);;
+				super(NBTItem::getString, NBTItem::setString, String::valueOf);
 			}
 		}
 

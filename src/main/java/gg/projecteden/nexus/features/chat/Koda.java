@@ -26,7 +26,6 @@ import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
-import me.lexikiq.HasUniqueId;
 import net.kyori.adventure.audience.MessageType;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
