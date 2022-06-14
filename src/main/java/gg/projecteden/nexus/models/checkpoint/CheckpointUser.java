@@ -28,6 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 @Converters({UUIDConverter.class})
 public class CheckpointUser implements PlayerOwnedObject {
+	private static final CheckpointService service = new CheckpointService();
 	@Id
 	@NonNull
 	private UUID uuid;
@@ -38,6 +39,7 @@ public class CheckpointUser implements PlayerOwnedObject {
 		RecordTotalTime newRecord = new RecordTotalTime(uuid, duration, checkpointTimes);
 		if (!bestTotalTimes.containsKey(arena) || bestTotalTimes.get(arena).compareTo(newRecord) > 0) {
 			bestTotalTimes.put(arena, newRecord);
+			service.save(this);
 		}
 		CheckpointService.recordBestTotalTime(arena, newRecord);
 	}
@@ -46,6 +48,7 @@ public class CheckpointUser implements PlayerOwnedObject {
 		Pair<String, Integer> key = new Pair<>(arena, checkpoint);
 		if (!bestCheckpointTimes.containsKey(key) || bestCheckpointTimes.get(key).compareTo(duration) > 0) {
 			bestCheckpointTimes.put(key, duration);
+			service.save(this);
 		}
 		// service does not currently keep a cache of the best checkpoint times
 	}
