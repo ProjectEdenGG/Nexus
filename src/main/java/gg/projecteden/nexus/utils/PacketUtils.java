@@ -13,22 +13,19 @@ import io.papermc.paper.adventure.AdventureComponent;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import net.minecraft.core.Direction;
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket;
+import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
+import net.minecraft.network.protocol.game.ClientboundRotateHeadPacket;
+import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
-import net.minecraft.network.protocol.game.PacketPlayOutEntity;
-import net.minecraft.network.protocol.game.PacketPlayOutEntity.PacketPlayOutEntityLook;
-import net.minecraft.network.protocol.game.PacketPlayOutEntity.PacketPlayOutRelEntityMove;
-import net.minecraft.network.protocol.game.PacketPlayOutEntityDestroy;
-import net.minecraft.network.protocol.game.PacketPlayOutEntityHeadRotation;
-import net.minecraft.network.protocol.game.PacketPlayOutEntityMetadata;
-import net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport;
-import net.minecraft.network.protocol.game.PacketPlayOutSpawnEntity;
+import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.monster.Slime;
-import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -72,21 +69,21 @@ public class PacketUtils {
 	}
 
 	public static void entityDestroy(@NonNull HasPlayer player, int entityId) {
-		PacketPlayOutEntityDestroy destroyPacket = new PacketPlayOutEntityDestroy(entityId);
+		ClientboundRemoveEntitiesPacket destroyPacket = new ClientboundRemoveEntitiesPacket(entityId);
 		sendPacket(player, destroyPacket);
 	}
 
 	public static void entityInvisible(@NonNull HasPlayer player, @NonNull org.bukkit.entity.Entity bukkitEntity, boolean invisible) {
 		Entity entity = ((CraftEntity) bukkitEntity).getHandle();
 		entity.setInvisible(invisible);
-		PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.getId(), entity.getEntityData(), true);
+		ClientboundSetEntityDataPacket metadataPacket = new ClientboundSetEntityDataPacket(entity.getId(), entity.getEntityData(), true);
 		sendPacket(player, metadataPacket);
 	}
 
 	public static void entityLook(@NonNull HasPlayer player, @NonNull org.bukkit.entity.Entity bukkitEntity, float yaw, float pitch) {
 		Entity entity = ((CraftEntity) bukkitEntity).getHandle();
-		PacketPlayOutEntityHeadRotation headRotationPacket = new PacketPlayOutEntityHeadRotation(entity, (byte) (yaw * 256 / 360));
-		PacketPlayOutEntityLook lookPacket = new PacketPlayOutEntity.PacketPlayOutEntityLook(entity.getId(), (byte) (yaw * 256 / 360), (byte) (pitch * 256 / 360), true);
+		ClientboundRotateHeadPacket headRotationPacket = new ClientboundRotateHeadPacket(entity, (byte) (yaw * 256 / 360));
+		ClientboundMoveEntityPacket.Rot lookPacket = new ClientboundMoveEntityPacket.Rot(entity.getId(), (byte) (yaw * 256 / 360), (byte) (pitch * 256 / 360), true);
 		sendPacket(player, headRotationPacket, lookPacket);
 	}
 
@@ -266,7 +263,7 @@ public class PacketUtils {
 	// untested
 	public static void entityRelativeMove(@NonNull HasPlayer player, @NonNull org.bukkit.entity.Entity bukkitEntity, Vector delta, boolean onGround) {
 		Entity entity = ((CraftEntity) bukkitEntity).getHandle();
-		PacketPlayOutRelEntityMove movePacket = new PacketPlayOutRelEntityMove(entity.getId(),
+		ClientboundMoveEntityPacket.Pos movePacket = new ClientboundMoveEntityPacket.Pos(entity.getId(),
 				encodePosition(delta.getX()), encodePosition(delta.getY()), encodePosition(delta.getZ()), onGround);
 
 		sendPacket(player, movePacket);
@@ -274,10 +271,10 @@ public class PacketUtils {
 
 	public static void entityTeleport(@NonNull HasPlayer player, @NonNull org.bukkit.entity.Entity bukkitEntity, Location location, boolean onGround) {
 		Entity entity = ((CraftEntity) bukkitEntity).getHandle();
-		entity.setPositionRotation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+		entity.moveTo(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
 		entity.setOnGround(onGround);
 
-		sendPacket(player, new PacketPlayOutEntityTeleport(entity));
+		sendPacket(player, new ClientboundTeleportEntityPacket(entity));
 		entityLook(player, bukkitEntity, location.getYaw(), location.getPitch());
 	}
 
@@ -340,8 +337,8 @@ public class PacketUtils {
 			armorStand.setCustomNameVisible(true);
 		}
 
-		PacketPlayOutSpawnEntity spawnArmorStand = new PacketPlayOutSpawnEntity(armorStand, getObjectId(armorStand));
-		PacketPlayOutEntityMetadata rawMetadataPacket = new PacketPlayOutEntityMetadata(armorStand.getId(), armorStand.getEntityData(), true);
+		ClientboundAddEntityPacket spawnArmorStand = new ClientboundAddEntityPacket(armorStand, getObjectId(armorStand));
+		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(armorStand.getId(), armorStand.getEntityData(), true);
 		ClientboundSetEquipmentPacket rawEquipmentPacket = new ClientboundSetEquipmentPacket(armorStand.getId(), getEquipmentList());
 
 		sendPacket(player, spawnArmorStand, rawMetadataPacket, rawEquipmentPacket);
@@ -369,8 +366,8 @@ public class PacketUtils {
 		slime.setNoGravity(true);
 		slime.setPersistenceRequired();
 
-		PacketPlayOutSpawnEntity rawSpawnPacket = new PacketPlayOutSpawnEntity(slime, getObjectId(slime));
-		PacketPlayOutEntityMetadata rawMetadataPacket = new PacketPlayOutEntityMetadata(slime.getId(), slime.getEntityData(), true);
+		ClientboundAddEntityPacket rawSpawnPacket = new ClientboundAddEntityPacket(slime, getObjectId(slime));
+		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(slime.getId(), slime.getEntityData(), true);
 
 		sendPacket(player, rawSpawnPacket, rawMetadataPacket);
 		return slime;
@@ -378,7 +375,7 @@ public class PacketUtils {
 
 	// Falling Block
 	// needs more testing, seemed to only spawn an iron ore block
-	public static FallingBlock spawnFallingBlock(@NonNull HasPlayer player, @NonNull Location location, Block block) {
+	public static FallingBlockEntity spawnFallingBlock(@NonNull HasPlayer player, @NonNull Location location, Block block) {
 		ServerPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
 		BlockState blockData = ((CraftBlockData) block.getBlockData()).getState();
 
@@ -389,8 +386,8 @@ public class PacketUtils {
 		fallingBlock.getBukkitEntity().setGlowing(true);
 		fallingBlock.getBukkitEntity().setVelocity(new Vector(0, 0, 0));
 
-		PacketPlayOutSpawnEntity rawSpawnPacket = new PacketPlayOutSpawnEntity(fallingBlock, getObjectId(fallingBlock));
-		PacketPlayOutEntityMetadata rawMetadataPacket = new PacketPlayOutEntityMetadata(fallingBlock.getId(), fallingBlock.getEntityData(), true);
+		ClientboundAddEntityPacket rawSpawnPacket = new ClientboundAddEntityPacket(fallingBlock, getObjectId(fallingBlock));
+		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(fallingBlock.getId(), fallingBlock.getEntityData(), true);
 
 		sendPacket(player, rawSpawnPacket, rawMetadataPacket);
 		return fallingBlock;
@@ -410,9 +407,9 @@ public class PacketUtils {
 		itemFrame.setInvisible(invisible);
 		itemFrame.setRotation(rotation);
 
-//		PacketPlayOutSpawnEntity rawSpawnPacket = new PacketPlayOutSpawnEntity(itemFrame, getObjectId(itemFrame));
-		PacketPlayOutSpawnEntity rawSpawnPacket = (PacketPlayOutSpawnEntity) itemFrame.getPacket();
-		PacketPlayOutEntityMetadata rawMetadataPacket = new PacketPlayOutEntityMetadata(itemFrame.getId(), itemFrame.getEntityData(), true);
+//		ClientboundAddEntityPacket rawSpawnPacket = new ClientboundAddEntityPacket(itemFrame, getObjectId(itemFrame));
+		ClientboundAddEntityPacket rawSpawnPacket = (ClientboundAddEntityPacket) itemFrame.getAddEntityPacket();
+		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(itemFrame.getId(), itemFrame.getEntityData(), true);
 
 		sendPacket(player, rawSpawnPacket, rawMetadataPacket);
 		return itemFrame;
@@ -427,8 +424,8 @@ public class PacketUtils {
 		dataWatcher.set(EntityDataSerializers.ITEM_STACK.createAccessor(7), CraftItemStack.asNMSCopy(content));
 		dataWatcher.set(EntityDataSerializers.INT.createAccessor(8), rotation != -1 ? rotation : itemFrame.getRotation());
 
-		PacketPlayOutEntityMetadata rawMetadataPacket = new PacketPlayOutEntityMetadata(
-				itemFrame.getId(), itemFrame.getDataWatcher(), true);
+		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(
+				itemFrame.getId(), itemFrame.getEntityData(), true);
 
 		sendPacket(player, rawMetadataPacket);
 	}
@@ -463,8 +460,8 @@ public class PacketUtils {
 			armorStand.setCustomNameVisible(true);
 		}
 
-		PacketPlayOutSpawnEntity rawSpawnPacket = new PacketPlayOutSpawnEntity(armorStand, getObjectId(armorStand));
-		PacketPlayOutEntityMetadata rawMetadataPacket = new PacketPlayOutEntityMetadata(armorStand.getId(), armorStand.getEntityData(), true);
+		ClientboundAddEntityPacket rawSpawnPacket = new ClientboundAddEntityPacket(armorStand, getObjectId(armorStand));
+		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(armorStand.getId(), armorStand.getEntityData(), true);
 		ClientboundSetEquipmentPacket rawEquipmentPacket = new ClientboundSetEquipmentPacket(armorStand.getId(), equipment);
 
 		sendPacket(player, rawSpawnPacket, rawMetadataPacket, rawEquipmentPacket);
@@ -482,8 +479,8 @@ public class PacketUtils {
 		armorStand.setSmall(true);
 		armorStand.getBukkitEntity().setGlowing(true);
 
-		PacketPlayOutSpawnEntity rawSpawnPacket = new PacketPlayOutSpawnEntity(armorStand, getObjectId(armorStand));
-		PacketPlayOutEntityMetadata rawMetadataPacket = new PacketPlayOutEntityMetadata(armorStand.getId(), armorStand.getEntityData(), true);
+		ClientboundAddEntityPacket rawSpawnPacket = new ClientboundAddEntityPacket(armorStand, getObjectId(armorStand));
+		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(armorStand.getId(), armorStand.getEntityData(), true);
 		ClientboundSetEquipmentPacket rawEquipmentPacket = new ClientboundSetEquipmentPacket(armorStand.getId(), getEquipmentList());
 
 		sendPacket(player, rawSpawnPacket, rawMetadataPacket, rawEquipmentPacket);

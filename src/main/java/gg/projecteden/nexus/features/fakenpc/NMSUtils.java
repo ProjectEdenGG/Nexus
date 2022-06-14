@@ -35,7 +35,7 @@ public class NMSUtils {
 
 		ServerLevel world = getWorldServer(location);
 		GameProfile gameProfile = new GameProfile(uuid, name);
-		ServerPlayer entityPlayer = new ServerPlayer(NMSUtils.getServer(), world, gameProfile);
+		ServerPlayer entityPlayer = new ServerPlayer(NMSUtils.getServer(), world, gameProfile, null);
 		setLocation(entityPlayer, location);
 		return entityPlayer;
 	}
