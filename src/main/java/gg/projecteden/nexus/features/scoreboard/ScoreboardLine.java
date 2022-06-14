@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.scoreboard;
 import com.gmail.nossr50.datatypes.player.McMMOPlayer;
 import com.gmail.nossr50.util.player.UserManager;
 import gg.projecteden.nexus.features.commands.PushCommand;
+import gg.projecteden.nexus.features.nameplates.Nameplates;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.models.afk.AFKUser;
 import gg.projecteden.nexus.models.banker.BankerService;
@@ -128,7 +129,7 @@ public enum ScoreboardLine {
 	PUSHING {
 		@Override
 		public String render(Player player) {
-			return "&3Pushing: &e" + player.hasPermission(PushCommand.PERMISSION);
+			return "&3Pushing: &e" + Nameplates.get().getPushService().get(player).isEnabled();
 		}
 	},
 

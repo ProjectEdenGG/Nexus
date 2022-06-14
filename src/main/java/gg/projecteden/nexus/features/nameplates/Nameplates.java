@@ -7,9 +7,11 @@ import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.framework.features.Features;
 import gg.projecteden.nexus.models.chat.ChatterService;
 import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.models.push.PushService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
@@ -26,10 +28,12 @@ import static gg.projecteden.nexus.utils.PlayerUtils.canSee;
 
 @Getter
 public class Nameplates extends Feature {
+	private final PushService pushService = new PushService();
 	private final NameplateManager nameplateManager;
-	private final Team team;
-	private final String teamName = "NP_HIDE";
-	private final boolean manageTeams = true;
+	private final Team pushTeam;
+	private final Team noPushTeam;
+	private final String pushTeamName = "NP_HIDE_PUSH";
+	private final String noPushTeamName = "NP_HIDE_NO_PUSH";
 	private final static int RADIUS = 75;
 
 	@Getter
@@ -42,27 +46,42 @@ public class Nameplates extends Feature {
 
 		final Scoreboard scoreboard = Nexus.getInstance().getServer().getScoreboardManager().getMainScoreboard();
 
-		Team team;
+		this.pushTeam = initializeTeam(scoreboard, pushTeamName, true);
+		this.noPushTeam = initializeTeam(scoreboard, noPushTeamName, false);
+	}
 
-		if (manageTeams) {
-			team = scoreboard.getTeam(teamName);
-			if (team != null)
-				team.unregister();
+	private Team initializeTeam(Scoreboard scoreboard, String name, boolean allowPush) {
+		Team team = scoreboard.getTeam(name);
 
-			team = scoreboard.registerNewTeam(teamName);
-			team.setOption(Option.NAME_TAG_VISIBILITY, OptionStatus.FOR_OWN_TEAM);
-		} else {
-			team = scoreboard.getTeam(teamName);
-			if (team != null)
-				team.unregister();
-		}
+		if (team != null)
+			team.unregister();
 
-		this.team = team;
+		team = scoreboard.registerNewTeam(pushTeamName);
+		team.setOption(Option.NAME_TAG_VISIBILITY, OptionStatus.FOR_OWN_TEAM);
+		team.setOption(Option.COLLISION_RULE, allowPush ? OptionStatus.ALWAYS : OptionStatus.NEVER);
+
+		return team;
 	}
 
 	public static void addToTeam(Player player) {
-		if (Nameplates.get().isManageTeams())
-			Nameplates.get().getTeam().addEntry(player.getName());
+		Nameplates nameplates = Nameplates.get();
+
+		// determine whether to allow pushing
+		boolean allowPushing;
+		if (WorldGroup.of(player) == WorldGroup.MINIGAMES)
+			allowPushing = false;
+		else
+			allowPushing = nameplates.getPushService().get(player).isEnabled();
+
+		// set team
+		Team addTo = nameplates.teamFor(allowPushing);
+		addTo.addEntry(player.getName());
+		Team removeFrom = nameplates.teamFor(!allowPushing);
+		removeFrom.removeEntry(player.getName());
+	}
+
+	public Team teamFor(boolean allowPush) {
+		return allowPush ? this.pushTeam : this.noPushTeam;
 	}
 
 	@Override
