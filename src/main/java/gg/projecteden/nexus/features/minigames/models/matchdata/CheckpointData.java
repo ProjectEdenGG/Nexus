@@ -56,12 +56,21 @@ public class CheckpointData extends MatchData {
 
 	public static String formatLiveTime(Duration liveTime, @Nullable Duration best) {
 		String output = "%d:%02d:%02d.%02d".formatted(liveTime.toHours(), liveTime.toMinutesPart(), liveTime.toSecondsPart(), liveTime.toMillisPart());
-		if (best != null) {
-			Duration delta = liveTime.minus(best);
-			String formattedDelta = (delta.isNegative() ? "&a" : "&c") + "%+.0f".formatted(delta.toMillis() / 1000.0);
-			output += " &7(" + formattedDelta + "&7)";
-		}
+		if (best != null)
+			output += " &7(" + formatDelta(liveTime, best, 0) + "&7)";
 		return output;
+	}
+
+	public static String formatDelta(Duration delta, int decimals) {
+		char color;
+		if (delta.isZero()) color = '7';
+		else if (delta.isNegative()) color = 'a';
+		else color = 'c';
+		return '&' + color + ("%+." + decimals + "f").formatted(delta.toMillis() / 1000.0);
+	}
+
+	public static String formatDelta(Duration live, Duration best, int decimals) {
+		return formatDelta(live.minus(best), decimals);
 	}
 
 	private void updateBestTimeCaches(Minigamer minigamer) {
@@ -98,12 +107,13 @@ public class CheckpointData extends MatchData {
 	public void setCheckpoint(Minigamer minigamer, int id) {
 		int currentId = Objects.requireNonNullElse(getCheckpointId(minigamer), 0);
 		if (currentId < id) {
-			minigamer.tell("Checkpoint saved (&e#" + id + "&3)");
 			Instant now = Instant.now();
+			Duration time = Duration.between(startTimes.get(minigamer.getUuid()), now);
+			minigamer.tell("Reached checkpoint &e#" + id + "&3 in &e" + formatChatTime(time) + " &3(" + formatDelta(time, 2) + "&3)");
 			checkpointTimes
 				.computeIfAbsent(minigamer.getUuid(), k -> new HashMap<>())
 				.put(id, now);
-			service.get(minigamer).recordCheckpointTime(this, id, Duration.between(startTimes.get(minigamer.getUuid()), now));
+			service.get(minigamer).recordCheckpointTime(this, id, time);
 		}
 	}
 
