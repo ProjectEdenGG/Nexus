@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.commands;
 
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.mobheads.MobHeadType;
@@ -12,22 +11,18 @@ import gg.projecteden.nexus.models.mutemenu.MuteMenuService;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.parchment.event.sound.EntitySoundEvent;
-import gg.projecteden.parchment.event.sound.LocationNamedSoundEvent;
-import gg.projecteden.parchment.event.sound.NamedSoundEvent;
+import gg.projecteden.parchment.event.sound.SoundEvent;
+import gg.projecteden.parchment.event.sound.SoundEvent.EntityEmitter;
 import joptsimple.internal.Strings;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import net.kyori.adventure.key.Key;
 import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -41,6 +36,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import static java.util.stream.Collectors.toList;
 
@@ -284,61 +280,55 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 	}
 
 	@EventHandler
-	public void onEntitySound(EntitySoundEvent event) {
-		final Entity origin = event.getOrigin();
-		if (!(origin instanceof LivingEntity))
-			return;
+	public void on(SoundEvent event) {
+		EntityType entityType;
+		if (event.getEmitter() instanceof EntityEmitter emitter)
+			entityType = emitter.entity().getType();
+		else
+			entityType = getEntityType(event.getSound().name());
 
-		event.setCancelled(true);
-		modifySound(event, origin.getType());
-	}
-
-	@EventHandler
-	public void on(LocationNamedSoundEvent event) {
-		final EntityType entityType = getEntityType(event.getSound());
 		if (entityType == null || !entityType.isAlive())
 			return;
 
-		event.setCancelled(true);
-		modifySound(event, entityType);
+		MuteMenuService service = new MuteMenuService();
+
+		// adjust volume for each user
+		event.setSoundOverrideFunction((_event, player) -> {
+			final MuteMenuUser user = service.get(player);
+			final float volumePercent = user.getVolume(entityType) / 100f;
+			net.kyori.adventure.sound.Sound sound = _event.getSound();
+			return net.kyori.adventure.sound.Sound.sound(
+				sound.name(),
+				sound.source(),
+				sound.volume() * volumePercent,
+				sound.pitch()
+			);
+		});
+
+		// don't play sound at all if muted
+		Function<SoundEvent, List<Player>> baseRecipientsFunction = event.getRecipientsFunction();
+		event.setRecipientsFunction(_event -> {
+			List<Player> recipients = baseRecipientsFunction.apply(_event);
+			recipients.removeIf(player -> event.calculateSound(player).volume() == 0);
+			return recipients;
+		});
 	}
 
 	private static final String[] entityTypes = Arrays.stream(EntityType.values())
 		.map(EntityType::name)
+		.map(String::toLowerCase)
+		.sorted(Comparator.comparingInt(String::length).reversed())
 		.toArray(String[]::new);
 
-	private static final Map<Sound, EntityType> cache = new HashMap<>();
+	private static final Map<Key, EntityType> cache = new HashMap<>();
 
-	static {
-		Arrays.sort(entityTypes, Comparator.comparingInt(String::length).reversed());
-	}
-
-	private EntityType getEntityType(Sound sound) {
+	private EntityType getEntityType(Key sound) {
 		return cache.computeIfAbsent(sound, $ -> {
 			for (String entityType : entityTypes)
-				if (sound.name().matches("^ENTITY_" + entityType + "_.*"))
+				if (sound.value().matches("^entity\\." + entityType + "\\..*"))
 					return EntityType.valueOf(entityType);
 
 			return null;
-		});
-	}
-
-	public void modifySound(NamedSoundEvent event, EntityType entityType) {
-		event.calculateRecipients().forEach(player -> {
-			// calculate adjusted volume
-			final MuteMenuUser user = new MuteMenuService().get(player);
-			final double volumePercent = user.getVolume(entityType) / 100d;
-			final double volume = event.getVolume() * volumePercent;
-			if (volumePercent == 0) return;
-			// play sound
-			new SoundBuilder(event.getSound())
-				.location(event.getLocation())
-				.volume(volume)
-				.pitch(event.getPitch())
-				.category(event.getCategory())
-				.receiver(player)
-				.play();
-			Nexus.debug("Played sound " + event.getSound() + " to " + player.getName() + " at volume " + volume);
 		});
 	}
 
