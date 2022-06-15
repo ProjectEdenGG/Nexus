@@ -15,4 +15,15 @@ public class JukeboxUserService extends MongoPlayerService<JukeboxUser> {
 		return cache;
 	}
 
+	@Override
+	public void clearCache() {
+		for (JukeboxUser user : getCache().values())
+			if (user.getSongPlayer() != null) {
+				user.getSongPlayer().destroy();
+				user.setSongPlayer(null);
+			}
+
+		super.clearCache();
+	}
+
 }
