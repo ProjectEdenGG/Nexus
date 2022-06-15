@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.models.checkpoint;
 
+import gg.projecteden.interfaces.PlayerOwnedObject;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,7 +17,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RecordTotalTime implements Comparable<RecordTotalTime> {
+public class RecordTotalTime implements Comparable<RecordTotalTime>, PlayerOwnedObject {
 	private UUID playerId;
 	private Duration time;
 	private Map<Integer, Duration> checkpointTimes; // map of checkpoint number to time it took the player to complete that checkpoint
@@ -39,5 +40,10 @@ public class RecordTotalTime implements Comparable<RecordTotalTime> {
 			map.put(entry.getKey(), sum);
 		}
 		return map;
+	}
+
+	@Override
+	public @NotNull UUID getUuid() {
+		return playerId;
 	}
 }

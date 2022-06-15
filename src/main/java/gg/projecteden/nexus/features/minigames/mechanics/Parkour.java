@@ -50,17 +50,19 @@ public class Parkour extends CheckpointMechanic {
 		Instant now = Instant.now();
 
 		return Map.of(
-			"&a", 8,
-			"&3Total Time", 7,
-			"&a&e" + matchData.formatTotalLiveTime(minigamer, now), 6,
-			"&3Personal Best", 5,
-			"&b" + matchData.formatTotalBestTime(minigamer), 4,
-			"&b", 3,
-			"&3Checkpoint Time", 2,
-			"&c&e" + matchData.formatSplitTime(minigamer, now), 1
-//			"&3Personal Best", 3,
-//			"&d&e" + <code>, 2,
-//			"<delta stuff>", 1,
+			"&a", 10,
+			"&3Total Time", 9,
+			"&a&e" + matchData.formatTotalLiveTime(minigamer, now), 8,
+			"&3Personal Best", 7,
+			"&b" + matchData.formatTotalBestTime(minigamer), 6,
+			"&b", 5,
+			"&3Checkpoint Time", 4,
+			"&c&e" + matchData.formatSplitTime(minigamer, now), 3,
+//			"&3Personal Best", 5,
+//			"&d&e" + <code>, 4,
+//			"<delta stuff>", 3,
+			"&c", 2,
+			"&6/mgm leaderboard", 1
 		);
 	}
 }

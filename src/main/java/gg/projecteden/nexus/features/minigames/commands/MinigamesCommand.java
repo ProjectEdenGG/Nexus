@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.mechanics.Mastermind;
 import gg.projecteden.nexus.features.minigames.mechanics.common.CheckpointMechanic;
 import gg.projecteden.nexus.features.minigames.menus.ArenaMenu;
+import gg.projecteden.nexus.features.minigames.menus.LeaderboardMenu;
 import gg.projecteden.nexus.features.minigames.menus.PerkMenu;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
@@ -739,6 +740,15 @@ public class MinigamesCommand extends CustomCommand {
 				send(PREFIX + "Refreshed " + match.getArena().getDisplayName());
 			}
 		});
+	}
+
+	@Path("leaderboard [arena]")
+	void leaderboard(Arena arena) {
+		if (arena == null)
+			error("Please join or specify a minigame to use this command.");
+		if (!(arena.getMechanic() instanceof CheckpointMechanic))
+			error("Sorry! At this time, only games with checkpoints have a leaderboard.");
+		new LeaderboardMenu(arena).open(player());
 	}
 
 	private Match getRunningMatch(Arena arena) {
