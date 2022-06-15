@@ -45,7 +45,7 @@ public class API extends EdenDatabaseAPI {
 
 	@Override
 	public ClassLoader getClassLoader() {
-		return Nexus.getInstance().getClass().getClassLoader();
+		return Nexus.class.getClassLoader();
 	}
 
 	@Override
