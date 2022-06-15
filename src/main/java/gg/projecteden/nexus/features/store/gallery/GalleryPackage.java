@@ -510,7 +510,8 @@ public enum GalleryPackage {
 
 		@Override
 		public void shutdown() {
-			hologram.delete();
+			if (hologram != null)
+				hologram.delete();
 		}
 	},
 
@@ -535,7 +536,8 @@ public enum GalleryPackage {
 
 		@Override
 		public void shutdown() {
-			hologram.delete();
+			if (hologram != null)
+				hologram.delete();
 		}
 	},
 

@@ -12,7 +12,7 @@ import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Set;
 
-import static gg.projecteden.nexus.utils.Utils.subTypesOf;
+import static gg.projecteden.utils.ReflectionUtils.subTypesOf;
 
 public class CustomEnchantsRegistration {
 

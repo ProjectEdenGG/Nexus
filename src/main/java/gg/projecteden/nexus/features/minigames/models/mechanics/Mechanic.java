@@ -31,6 +31,7 @@ import gg.projecteden.nexus.utils.Tasks.Countdown;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
+import gg.projecteden.utils.ReflectionUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import me.lucko.helper.scoreboard.ScoreboardTeam.NameTagVisibility;
@@ -475,8 +476,8 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 
 	// Reflection utils
 
-	public @NotNull final List<Class<? extends Mechanic>> getSuperclasses() {
-		return Utils.getSuperclasses(this.getClass());
+	public @NotNull final List<Class<? extends Mechanic>> superclassesOf() {
+		return ReflectionUtils.superclassesOf(this.getClass());
 	}
 
 	@Nullable

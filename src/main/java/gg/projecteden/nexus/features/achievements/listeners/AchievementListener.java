@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.achievements.listeners;
 
+import gg.projecteden.annotations.Disabled;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.achievements.events.AchievementCompletedEvent;
 import gg.projecteden.nexus.models.achievement.Achievement;
@@ -12,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+@Disabled
 public class AchievementListener implements Listener {
 
 	@EventHandler
@@ -32,7 +34,6 @@ public class AchievementListener implements Listener {
 			String message = StringUtils.getPrefix("Achievements") + "You have completed the &e" + achievement.toString() + " &3achievement!";
 			PlayerUtils.send(player, new JsonBuilder(message).hover("&e" + achievement.getDescription()));
 		}
-
 	}
 
 }

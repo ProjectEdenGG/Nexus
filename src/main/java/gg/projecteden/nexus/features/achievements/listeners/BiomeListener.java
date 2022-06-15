@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.achievements.listeners;
 
+import gg.projecteden.annotations.Disabled;
 import gg.projecteden.nexus.models.achievement.Achievement;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
@@ -14,9 +15,10 @@ import org.bukkit.event.Listener;
 import java.util.HashMap;
 import java.util.Map;
 
+@Disabled
 public class BiomeListener implements Listener {
 
-	static {
+	public BiomeListener() {
 		Tasks.repeat(100, 100, BiomeListener::check);
 	}
 

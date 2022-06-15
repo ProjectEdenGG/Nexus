@@ -15,10 +15,11 @@ import lombok.SneakyThrows;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.reflections.Reflections;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static gg.projecteden.utils.ReflectionUtils.subTypesOf;
 
 @Title("Game Mechanic Type")
 @RequiredArgsConstructor
@@ -64,8 +65,8 @@ public class MechanicsMenu extends InventoryProvider {
 		Class<? extends InventoryProvider> provider = null;
 
 		customMenus:
-		for (Class<? extends InventoryProvider> menu : new Reflections(ICustomMechanicMenu.class.getPackageName()).getSubTypesOf(InventoryProvider.class)) {
-			for (Class<? extends Mechanic> superclass : arena.getMechanic().getSuperclasses()) {
+		for (Class<? extends InventoryProvider> menu : subTypesOf(InventoryProvider.class, ICustomMechanicMenu.class.getPackageName())) {
+			for (Class<? extends Mechanic> superclass : arena.getMechanic().superclassesOf()) {
 				if (menu.getAnnotation(CustomMechanicSettings.class) != null) {
 					List<Class<? extends Mechanic>> classes = Arrays.asList(menu.getAnnotation(CustomMechanicSettings.class).value());
 					if (classes.contains(superclass)) {

@@ -45,7 +45,6 @@ import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
-import org.reflections.Reflections;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -56,6 +55,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static gg.projecteden.utils.ReflectionUtils.subTypesOf;
+import static gg.projecteden.utils.ReflectionUtils.typesAnnotatedWith;
 
 public class Minigames extends Feature {
 	public static final String PREFIX = StringUtils.getPrefix("Minigames");
@@ -71,7 +73,7 @@ public class Minigames extends Feature {
 		registerSerializables();
 		registerMatchDatas();
 		Tasks.async(() -> {
-//			ArenaManager.read(); | TODO 1.19 uncomment
+			ArenaManager.read();
 			registerListeners();
 
 			new ActionBar();
@@ -178,12 +180,12 @@ public class Minigames extends Feature {
 	}
 
 	private void registerListeners() {
-		for (Class<? extends Listener> clazz : new Reflections(getPath() + ".listeners").getSubTypesOf(Listener.class))
+		for (Class<? extends Listener> clazz : subTypesOf(Listener.class))
 			Utils.tryRegisterListener(clazz);
 	}
 
 	private void registerSerializables() {
-		new Reflections(getPath()).getTypesAnnotatedWith(SerializableAs.class).forEach(clazz -> {
+		typesAnnotatedWith(SerializableAs.class, getPath()).forEach(clazz -> {
 			String alias = clazz.getAnnotation(SerializableAs.class).value();
 			ConfigurationSerialization.registerClass((Class<? extends ConfigurationSerializable>) clazz, alias);
 		});
@@ -195,15 +197,14 @@ public class Minigames extends Feature {
 	public static void registerMatchDatas() {
 		try {
 			String path = Minigames.class.getPackage().getName();
-			Set<Class<? extends MatchData>> matchDataTypes = new Reflections(path + ".models.matchdata")
-					.getSubTypesOf(MatchData.class);
+			Set<Class<? extends MatchData>> matchDataTypes = subTypesOf(MatchData.class, path + ".models.matchdata");
 
 			for (Class<?> matchDataType : matchDataTypes) {
 				if (matchDataType.getAnnotation(MatchDataFor.class) == null)
 					continue;
 
 				for (MechanicType mechanicType : MechanicType.values())
-					for (Class<? extends Mechanic> superclass : mechanicType.get().getSuperclasses())
+					for (Class<? extends Mechanic> superclass : mechanicType.get().superclassesOf())
 						for (Class<? extends Mechanic> applicableMechanic : matchDataType.getAnnotation(MatchDataFor.class).value())
 							if (applicableMechanic.equals(superclass))
 								try {

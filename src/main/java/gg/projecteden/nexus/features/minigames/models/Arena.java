@@ -177,7 +177,7 @@ public class Arena implements ConfigurationSerializable, Named, ComponentLike {
 	}
 
 	public void regenerate() {
-		for (Class<? extends Mechanic> mechanic : getMechanic().getSuperclasses()) {
+		for (Class<? extends Mechanic> mechanic : getMechanic().superclassesOf()) {
 			Regenerating annotation = mechanic.getAnnotation(Regenerating.class);
 			if (annotation != null)
 				for (String type : annotation.value())

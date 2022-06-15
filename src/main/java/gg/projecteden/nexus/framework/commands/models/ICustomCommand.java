@@ -71,9 +71,8 @@ import static gg.projecteden.nexus.utils.Utils.getDefaultPrimitiveValue;
 import static gg.projecteden.nexus.utils.Utils.getMaxValue;
 import static gg.projecteden.nexus.utils.Utils.getMinValue;
 import static gg.projecteden.nexus.utils.Utils.isBoolean;
+import static gg.projecteden.utils.ReflectionUtils.methodsAnnotatedWith;
 import static gg.projecteden.utils.UUIDUtils.UUID0;
-import static org.reflections.ReflectionUtils.getAllMethods;
-import static org.reflections.ReflectionUtils.withAnnotation;
 
 @SuppressWarnings("unused")
 public abstract class ICustomCommand {
@@ -490,7 +489,7 @@ public abstract class ICustomCommand {
 
 	@NotNull
 	public List<Method> getPathMethods() {
-		return new ArrayList<>(getAllMethods(this.getClass(), withAnnotation(Path.class)));
+		return new ArrayList<>(methodsAnnotatedWith(this.getClass(), Path.class));
 	}
 
 	private Method getMethod(CommandRunEvent event) {

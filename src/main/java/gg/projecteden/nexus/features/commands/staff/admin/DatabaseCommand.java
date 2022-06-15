@@ -36,7 +36,7 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.Utils.subTypesOf;
+import static gg.projecteden.utils.ReflectionUtils.subTypesOf;
 import static gg.projecteden.utils.UUIDUtils.UUID0;
 import static gg.projecteden.utils.UUIDUtils.isUuid;
 

@@ -19,9 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static gg.projecteden.nexus.utils.Utils.subTypesOf;
-import static org.reflections.ReflectionUtils.getMethods;
-import static org.reflections.ReflectionUtils.withAnnotation;
+import static gg.projecteden.utils.ReflectionUtils.methodsAnnotatedWith;
+import static gg.projecteden.utils.ReflectionUtils.subTypesOf;
 
 @SuppressWarnings({"unused", "unchecked"})
 public class Commands {
@@ -162,7 +161,7 @@ public class Commands {
 	}
 
 	private void registerTabCompleters(Class<?> clazz) {
-		getMethods(clazz, withAnnotation(TabCompleterFor.class)).forEach(method -> {
+		methodsAnnotatedWith(clazz, TabCompleterFor.class).forEach(method -> {
 			for (Class<?> classFor : method.getAnnotation(TabCompleterFor.class).value()) {
 				method.setAccessible(true);
 				tabCompleters.put(classFor, method);
@@ -171,7 +170,7 @@ public class Commands {
 	}
 
 	private void registerConverters(Class<?> clazz) {
-		getMethods(clazz, withAnnotation(ConverterFor.class)).forEach(method -> {
+		methodsAnnotatedWith(clazz, ConverterFor.class).forEach(method -> {
 			for (Class<?> classFor : method.getAnnotation(ConverterFor.class).value()) {
 				method.setAccessible(true);
 				converters.put(classFor, method);

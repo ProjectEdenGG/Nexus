@@ -16,7 +16,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
-import static gg.projecteden.nexus.utils.Utils.subTypesOf;
+import static gg.projecteden.utils.ReflectionUtils.subTypesOf;
 
 public class API extends EdenDatabaseAPI {
 

@@ -7,7 +7,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import gg.projecteden.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,7 +23,6 @@ import org.bukkit.inventory.InventoryView;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.reflections.Reflections;
 
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
@@ -34,7 +32,6 @@ import java.lang.annotation.Target;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -43,8 +40,9 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-import static org.reflections.ReflectionUtils.getAllMethods;
-import static org.reflections.ReflectionUtils.withAnnotation;
+import static gg.projecteden.utils.ReflectionUtils.methodsAnnotatedWith;
+import static gg.projecteden.utils.ReflectionUtils.subTypesOf;
+import static gg.projecteden.utils.ReflectionUtils.superclassesOf;
 
 public class Utils extends gg.projecteden.utils.Utils {
 
@@ -73,7 +71,7 @@ public class Utils extends gg.projecteden.utils.Utils {
 					Nexus.registerListener(listener);
 				else
 					Nexus.warn("Cannot register listener on " + clazz.getSimpleName() + ", needs @NoArgsConstructor");
-			} else if (new ArrayList<>(getAllMethods(clazz, withAnnotation(EventHandler.class))).size() > 0)
+			} else if (methodsAnnotatedWith(clazz, EventHandler.class).size() > 0)
 				Nexus.warn("Found @EventHandlers in " + clazz.getSimpleName() + " which does not implement Listener"
 					+ (hasNoArgsConstructor ? "" : " or have a @NoArgsConstructor"));
 		} catch (Exception ex) {
@@ -298,11 +296,6 @@ public class Utils extends gg.projecteden.utils.Utils {
 		return output;
 	}
 
-	public static <T> List<T> reverse(List<T> list) {
-		Collections.reverse(list);
-		return list;
-	}
-
 	public static <T> T tryCalculate(int times, Supplier<T> to) {
 		int count = 0;
 		while (++count <= times) {
@@ -320,7 +313,7 @@ public class Utils extends gg.projecteden.utils.Utils {
 		if (annotation == null)
 			return null;
 
-		for (Class<? extends T> superclass : Utils.getSuperclasses(clazz))
+		for (Class<? extends T> superclass : superclassesOf(clazz))
 			if (superclass.isAnnotationPresent(annotation))
 				return superclass.getAnnotation(annotation);
 

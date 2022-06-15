@@ -26,6 +26,7 @@ import gg.projecteden.nexus.utils.Timer;
 import gg.projecteden.nexus.utils.WorldGuardFlagUtils;
 import gg.projecteden.utils.EnumUtils;
 import gg.projecteden.utils.Env;
+import gg.projecteden.utils.ReflectionUtils;
 import gg.projecteden.utils.Utils;
 import it.sauronsoftware.cron4j.Scheduler;
 import lombok.Getter;
@@ -51,14 +52,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
-
-import static org.reflections.ReflectionUtils.getMethods;
-import static org.reflections.ReflectionUtils.withAnnotation;
 
 public class Nexus extends JavaPlugin {
 	@Getter
@@ -74,7 +72,7 @@ public class Nexus extends JavaPlugin {
 	private static API api;
 	public static final String DOMAIN = "projecteden.gg";
 
-	public static Map<Class<?>, Object> singletons = new HashMap<>();
+	public static Map<Class<?>, Object> singletons = new ConcurrentHashMap<>();
 
 	public static <T> T singletonOf(Class<T> clazz) {
 		return (T) singletons.computeIfAbsent(clazz, $ -> {
@@ -124,7 +122,7 @@ public class Nexus extends JavaPlugin {
 
 	@Getter
 	@Setter
-	private static boolean debug = false;
+	private static boolean debug = true;
 
 	public static void debug(String message) {
 		if (debug)
@@ -167,7 +165,7 @@ public class Nexus extends JavaPlugin {
 			getInstance().getServer().getPluginManager().registerEvents(listener, getInstance());
 			listeners.add(listener);
 			if (!(listener instanceof TemporaryListener))
-				for (Method method : getMethods(listener.getClass(), withAnnotation(EventHandler.class)))
+				for (Method method : ReflectionUtils.methodsAnnotatedWith(listener.getClass(), EventHandler.class))
 					eventHandlers.add((Class<? extends Event>) method.getParameters()[0].getType());
 		} else
 			log("Could not register listener " + listener.getClass().getName() + "!");

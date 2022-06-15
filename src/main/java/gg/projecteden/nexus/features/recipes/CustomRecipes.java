@@ -51,8 +51,8 @@ import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilde
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.smelt;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.surround;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
-import static gg.projecteden.nexus.utils.Utils.subTypesOf;
 import static gg.projecteden.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.utils.ReflectionUtils.subTypesOf;
 
 @Depends({ResourcePack.class, CustomEnchants.class})
 public class CustomRecipes extends Feature implements Listener {
