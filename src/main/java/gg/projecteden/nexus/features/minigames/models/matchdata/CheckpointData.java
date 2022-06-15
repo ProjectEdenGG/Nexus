@@ -166,6 +166,10 @@ public class CheckpointData extends MatchData {
 		minigamer.teleportAsync(minigamer.getTeam().getSpawnpoints().get(0));
 		minigamer.setScore(0);
 		startTimes.put(minigamer.getUuid(), Instant.now());
+		// re-apply inventory | TODO: make this a config option in CheckpointArena (default: true)
+		int heldItemSlot = minigamer.getPlayer().getInventory().getHeldItemSlot();
+		minigamer.getTeam().getLoadout().apply(minigamer);
+		minigamer.getPlayer().getInventory().setHeldItemSlot(heldItemSlot);
 	}
 
 	public void clearData(Minigamer minigamer) {
