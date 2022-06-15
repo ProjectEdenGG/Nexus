@@ -23,7 +23,7 @@ public class Achievements extends Feature {
 		});
 
 	/*
-		subTypesOf(getClass().getPackageName(), Listener.class).forEach(listener -> {
+		subTypesOf(Listener.class, getClass().getPackageName()).forEach(listener -> {
 			try {
 				if (listener.getAnnotation(Disabled.class) == null)
 					Nexus.registerListener(new ObjenesisStd().newInstance(listener));

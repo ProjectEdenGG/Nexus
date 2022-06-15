@@ -180,7 +180,7 @@ public class Minigames extends Feature {
 	}
 
 	private void registerListeners() {
-		for (Class<? extends Listener> clazz : subTypesOf(Listener.class))
+		for (Class<? extends Listener> clazz : subTypesOf(Listener.class, getPath() + " .listeners"))
 			Utils.tryRegisterListener(clazz);
 	}
 
