@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.utils.worldgroup;
 
-import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.parchment.OptionalLocation;
 import lombok.Getter;
@@ -107,7 +107,7 @@ public enum WorldGroup implements IWorldGroup {
 	}
 
 	static {
-		Nexus.getLuckPerms().getContextManager().registerCalculator(new WorldGroupCalculator());
+		LuckPermsUtils.registerContext(new WorldGroupCalculator());
 	}
 
 	public static class WorldGroupCalculator implements ContextCalculator<Player> {

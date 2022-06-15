@@ -52,7 +52,7 @@ dependencies {
     implementation("com.google.oauth-client:google-oauth-client-jetty:1.34.1")
     implementation("com.google.apis:google-api-services-sheets:v4-rev20220411-1.32.1")
     implementation("com.comphenix.packetwrapper:PacketWrapper:1.15.2-R0.1-SNAPSHOT")
-    implementation("net.wesjd:anvilgui:1.5.1-SNAPSHOT")
+    implementation("net.wesjd:anvilgui:1.5.3-SNAPSHOT")
     implementation("dev.dbassett:skullcreator:3.0.1")
     implementation("org.inventivetalent:boundingboxapi:1.4.1-SNAPSHOT")
     implementation("com.vdurmont:emoji-java:5.1.1")

@@ -18,6 +18,7 @@ import gg.projecteden.nexus.models.home.HomeService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.GoogleUtils;
+import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
@@ -220,6 +221,7 @@ public class Nexus extends JavaPlugin {
 			() -> { Bukkit.getServicesManager().unregisterAll(this); },
 			() -> { MySQLPersistence.shutdown(); },
 			() -> { GoogleUtils.shutdown(); },
+			() -> { LuckPermsUtils.shutdown(); },
 			() -> { if (api != null) api.shutdown(); },
 			() -> { shutdownDatabases(); }
 		);
