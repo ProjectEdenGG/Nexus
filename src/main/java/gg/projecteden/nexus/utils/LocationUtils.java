@@ -381,7 +381,7 @@ public class LocationUtils {
 			if (Utils.isDouble(string))
 				return Double.parseDouble(string);
 
-			string = StringUtils.right(string, string.length() - 1).replaceAll(",", "");
+			string = string.replaceAll("~", "").replaceAll(",", "");
 
 			if (isNullOrEmpty(string))
 				return 0;
