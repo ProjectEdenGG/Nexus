@@ -26,7 +26,7 @@ public interface TemporaryMenuListener extends TemporaryListener {
 		if (getClass().isAnnotationPresent(Title.class))
 			return getClass().getAnnotation(Title.class).value();
 
-		throw new InvalidInputException("Title not defined");
+		throw new InvalidInputException("Title not defined for " + getClass().getSimpleName());
 	}
 
 	default void open() {
