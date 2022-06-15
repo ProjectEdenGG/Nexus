@@ -55,7 +55,7 @@ public interface VanillaMechanic<T> extends Listener {
 		});
 	}
 
-	@NotNull CompletableFuture<Void> onRandomTeleport(@NotNull Match match, @NotNull T t, @NotNull Location location);
+	@NotNull CompletableFuture<?> onRandomTeleport(@NotNull Match match, @NotNull T t, @NotNull Location location);
 
 	int getWorldDiameter();
 

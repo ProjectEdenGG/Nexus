@@ -49,6 +49,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.Color;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -73,7 +74,7 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 	 */
 	private int contributionScore = 0;
 	@Accessors(fluent = true)
-	private boolean canTeleport;
+	private volatile boolean canTeleport;
 	private boolean respawning = false;
 	private boolean isAlive = true;
 	private int lives;
@@ -142,12 +143,13 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 
 	/**
 	 * Returns the Minigamer's Minecraft username.
+	 *
 	 * @deprecated You should probably be using {@link #getNickname()} instead.
 	 */
 	@Deprecated
 	@NotNull
 	public String getName() {
-		return Name.of(uuid);
+		return Objects.requireNonNull(Name.of(uuid), "Name of " + uuid + " is null");
 	}
 
 	public @NotNull String getNickname() {
@@ -276,6 +278,7 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 	 * Sends a message to this minigamer in their chat with a prefix ("[Minigames]")
 	 * <p>
 	 * This method will automatically {@link gg.projecteden.nexus.utils.StringUtils#colorize(String)} the input.
+	 *
 	 * @param withPrefix a message
 	 */
 	public void tell(@NotNull String withPrefix) {
@@ -284,7 +287,7 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 
 	/**
 	 * Sends a message to this minigamer in their chat with a prefix ("[Minigames]")
-	 * <p>
+	 *
 	 * @param withPrefix a message
 	 */
 	public void tell(@NotNull ComponentLike withPrefix) {
@@ -296,6 +299,7 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 	 * prefixed with "[Minigames]".
 	 * <p>
 	 * This method will automatically {@link gg.projecteden.nexus.utils.StringUtils#colorize(String)} the input.
+	 *
 	 * @param message a message
 	 * @param prefix whether or not to display the minigames prefix
 	 */
@@ -307,7 +311,7 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 	/**
 	 * Sends a message to this minigamer in their chat. If <code>prefix</code> is true, the message will be
 	 * prefixed with "[Minigames]".
-	 * <p>
+	 *
 	 * @param message a message
 	 * @param prefix whether or not to display the minigames prefix
 	 */
@@ -336,12 +340,15 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 		});
 	}
 
-	public CompletableFuture<Void> teleportAsync(@NotNull Location location) {
+	public CompletableFuture<Boolean> teleportAsync(@NotNull Location location) {
 		return teleportAsync(location, false);
 	}
 
-	public CompletableFuture<Void> teleportAsync(@NotNull Location location, boolean withSlowness) {
+	public CompletableFuture<Boolean> teleportAsync(@NotNull Location location, boolean withSlowness) {
 		Utils.notNull(location, "Tried to teleport " + getName() + " to a null location");
+
+		if (canTeleport)
+			return CompletableFuture.completedFuture(false); // Already teleporting
 
 		final Location up = location.clone().add(0, .5, 0);
 		final Vector still = new Vector(0, 0, 0);
@@ -353,13 +360,14 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 			}).thenCompose($ -> {
 				final TeleportCause cause = match == null ? TeleportCause.COMMAND : TeleportCause.PLUGIN;
 				return getPlayer().teleportAsync(up, cause);
-			}).thenRun(() -> {
+			}).thenApply(result -> {
 				canTeleport = false;
 				getPlayer().setVelocity(still);
 				if (withSlowness) {
 					match.getTasks().wait(1, () -> getPlayer().setVelocity(still));
 					match.getTasks().wait(2, () -> getPlayer().setVelocity(still));
 				}
+				return result;
 			});
 	}
 
@@ -451,6 +459,7 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 
 	/**
 	 * Calculates the current player's location without yaw or pitch
+	 *
 	 * @return player's {@link org.bukkit.Location} without yaw or pitch
 	 */
 	private @NotNull Location getRotationlessLocation() {

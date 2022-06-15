@@ -144,7 +144,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 	}
 
 	@Override
-	public @NotNull CompletableFuture<Void> onRandomTeleport(@NotNull Match match, @NotNull Minigamer minigamer, @NotNull Location location) {
+	public @NotNull CompletableFuture<Boolean> onRandomTeleport(@NotNull Match match, @NotNull Minigamer minigamer, @NotNull Location location) {
 		super.onRandomTeleport(match, minigamer, location);
 		return minigamer.getMatch().<BingoMatchData>getMatchData().spawnpoint(minigamer, location);
 	}

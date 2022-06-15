@@ -77,10 +77,11 @@ public abstract class TeamlessVanillaMechanic extends TeamlessMechanic implement
 	}
 
 	@Override
-	public @NotNull CompletableFuture<Void> onRandomTeleport(@NotNull Match match, @NotNull Minigamer minigamer, @NotNull Location location) {
-		return minigamer.teleportAsync(location).thenRun(() -> {
+	public @NotNull CompletableFuture<Boolean> onRandomTeleport(@NotNull Match match, @NotNull Minigamer minigamer, @NotNull Location location) {
+		return minigamer.teleportAsync(location).thenApply(result -> {
 			minigamer.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
 			minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.DAMAGE_RESISTANCE).duration(400).amplifier(254));
+			return result;
 		});
 	}
 }
