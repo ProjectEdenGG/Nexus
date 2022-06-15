@@ -37,6 +37,11 @@ import java.util.stream.Collectors;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class CheckpointData extends MatchData {
+
+	// TODO: display golden splits
+	// TODO: display live split comparison
+	// TODO: command to configure which splits to compare against
+
 	private final CheckpointService service = new CheckpointService();
 	private final Map<UUID, Map<Integer, Instant>> checkpointTimes = new HashMap<>();
 	private final Map<UUID, Instant> startTimes = new HashMap<>();
@@ -48,24 +53,27 @@ public class CheckpointData extends MatchData {
 		super(match);
 	}
 
-	public static String formatChatTime(Duration duration) {
+	public static String formatChatTime(Duration duration, @Nullable Duration best, @Nullable Integer deltaDecimals) {
 		StringBuilder sb = new StringBuilder();
 		if (duration.toHoursPart() > 0)
 			sb.append(duration.toHoursPart()).append("h ");
 		if (duration.toMinutesPart() > 0)
 			sb.append(duration.toMinutesPart()).append("m ");
 		sb.append(String.format("%.2fs", duration.toSecondsPart() + (duration.toNanosPart() / 1000000000.0)));
+		if (best != null)
+			sb.append(" &7(").append(formatDelta(duration, best, deltaDecimals)).append("&7)");
 		return sb.toString();
 	}
 
 	public static String formatLiveTime(Duration liveTime, @Nullable Duration best, @Nullable Integer deltaDecimals) {
 		String output = "%d:%02d:%05.2f".formatted(liveTime.toHours(), liveTime.toMinutesPart(), liveTime.toSecondsPart() + (liveTime.toNanosPart() / 1000000000.0));
 		if (best != null)
-			output += " &7(" + formatDelta(liveTime, best, Objects.requireNonNullElse(deltaDecimals, 0)) + "&7)";
+			output += " &7(" + formatDelta(liveTime, best, deltaDecimals) + "&7)";
 		return output;
 	}
 
-	public static String formatDelta(Duration delta, int decimals) {
+	public static String formatDelta(Duration delta, @Nullable Integer decimals) {
+		decimals = Objects.requireNonNullElse(decimals, 0);
 		String color;
 		if (delta.isZero()) color = "&7";
 		else if (delta.isNegative()) color = "&a";
@@ -73,7 +81,7 @@ public class CheckpointData extends MatchData {
 		return color + ("%+." + decimals + "f").formatted(delta.toMillis() / 1000.0);
 	}
 
-	public static String formatDelta(Duration live, Duration best, int decimals) {
+	public static String formatDelta(Duration live, Duration best, @Nullable Integer decimals) {
 		return formatDelta(live.minus(best), decimals);
 	}
 
@@ -90,13 +98,9 @@ public class CheckpointData extends MatchData {
 
 	public void onWin(Minigamer minigamer, Instant now) {
 		// compute total time
-		Instant startTime = startTimes.get(minigamer.getUuid());
-		Duration time = Duration.between(startTime, now);
+		Duration time = calculateTotalTime(minigamer, now);
 		// compute checkpoint times
-		Map<Integer, Instant> checkpointInstants = checkpointTimes.get(minigamer.getUuid());
-		Map<Integer, Duration> checkpoints = new HashMap<>();
-		if (checkpointInstants != null)
-			checkpointInstants.forEach((chkptId, chkptTime) -> checkpoints.put(chkptId, Duration.between(chkptTime, now)));
+		Map<Integer, Duration> checkpoints = pairListToMap(calculateCheckpointTimes(minigamer, now));
 		// save data
 		service.get(minigamer).recordTotalTime(this, time, checkpoints);
 		updateBestTimeCaches(minigamer);
@@ -113,20 +117,35 @@ public class CheckpointData extends MatchData {
 		if (currentId < id) {
 			// init variables
 			Instant now = Instant.now();
-			Duration time = Duration.between(startTimes.get(minigamer.getUuid()), now);
-			RecordTotalTime best = bestTotalTimesCache.get(minigamer.getUuid());
-			// send messages
-			String chatMessage = "Reached checkpoint &e#" + id + "&3 in &e" + formatChatTime(time);
-			if (best != null)
-				chatMessage += " &3(" + formatDelta(time, best.getTime(), 2) + "&3)";
+			Duration timeFromStart = Duration.between(startTimes.get(minigamer.getUuid()), now);
+			RecordTotalTime bestWrapper = bestTotalTimesCache.get(minigamer.getUuid());
+			Duration bestFromStart = bestWrapper == null ? null : bestWrapper.getCheckpointTimesAsSum().get(id);
+			// calculate split time (and the record's split time)
+			Instant previousCheckpoint;
+			if (!checkpointTimes.containsKey(minigamer.getUuid()) || !checkpointTimes.get(minigamer.getUuid()).containsKey(currentId))
+				previousCheckpoint = startTimes.get(minigamer.getUuid());
+			else
+				previousCheckpoint = checkpointTimes.get(minigamer.getUuid()).get(currentId);
+			Duration timeFromPrevious = Duration.between(previousCheckpoint, now);
+			Duration bestFromPrevious = bestWrapper == null ? null : bestWrapper.getCheckpointTimes().get(id);
+			// send chat message
+			minigamer.tell(new JsonBuilder("Reached checkpoint ")
+				.next("#" + id, NamedTextColor.YELLOW)
+				.rawNext(" at ")
+				.next("&e" + formatChatTime(timeFromStart, bestFromStart, 2))
+				.hover(
+					new JsonBuilder("Split: ", NamedTextColor.DARK_AQUA)
+						.next("&e" + formatChatTime(timeFromPrevious, bestFromPrevious, 2))
+				));
+			// send other stuff
 			minigamer.playSound(Sound.sound(org.bukkit.Sound.BLOCK_NOTE_BLOCK_BIT, Source.MASTER, .6f, 2f), Sound.Emitter.self());
-			minigamer.tell(chatMessage);
-			minigamer.showTitle(Title.title(Component.empty(), new JsonBuilder("&e" + formatLiveTime(time, best == null ? null : best.getTime(), 2)).build(),
+			minigamer.showTitle(Title.title(Component.empty(), new JsonBuilder("&e" + formatLiveTime(timeFromStart, bestFromStart, 2)).build(),
 				Times.of(Duration.ZERO, Duration.ofMillis(750), Duration.ofMillis(200))));
+			// save data
 			checkpointTimes
 				.computeIfAbsent(minigamer.getUuid(), k -> new HashMap<>())
 				.put(id, now);
-			service.get(minigamer).recordCheckpointTime(this, id, time);
+			service.get(minigamer).recordCheckpointTime(this, id, timeFromStart);
 		}
 	}
 
@@ -224,12 +243,13 @@ public class CheckpointData extends MatchData {
 	}
 
 	public String formatTotalChatTime(Minigamer minigamer, @Nullable Instant endTime) {
-		return formatChatTime(calculateTotalTime(minigamer, endTime));
+		RecordTotalTime record = bestTotalTimesCache.get(minigamer.getUuid());
+		return formatChatTime(calculateTotalTime(minigamer, endTime), record == null ? null : record.getTime(), 2);
 	}
 
 	public String formatTotalLiveTime(Minigamer minigamer, @Nullable Instant endTime) {
 		RecordTotalTime record = bestTotalTimesCache.get(minigamer.getUuid());
-		return formatLiveTime(calculateTotalTime(minigamer, endTime), record == null ? null : record.getTime(), null);
+		return formatLiveTime(calculateTotalTime(minigamer, endTime), record == null ? null : record.getTime(), 0);
 	}
 
 	public String formatSplitTime(Minigamer minigamer, @Nullable Instant endTime) {
@@ -243,13 +263,23 @@ public class CheckpointData extends MatchData {
 
 	public @NotNull HoverEvent<Component> formatCheckpointTimesHoverText(Minigamer minigamer, @Nullable Instant endTime) {
 		JsonBuilder builder = new JsonBuilder("Individual Checkpoint Times", NamedTextColor.DARK_AQUA);
+		RecordTotalTime recordWrapper = bestTotalTimesCache.get(minigamer.getUuid());
+		Map<Integer, Duration> recordSplits = recordWrapper == null ? Collections.emptyMap() : recordWrapper.getCheckpointTimes();
 		for (Pair<Integer, Duration> pair : calculateCheckpointTimes(minigamer, endTime)) {
 			String checkpoint = pair.getFirst() == -1 ? "End" : "Checkpoint #" + pair.getFirst();
+			Duration record = recordSplits.get(pair.getFirst());
 			builder
 				.newline()
 				.next(checkpoint + ": ", NamedTextColor.GOLD)
-				.next(formatChatTime(pair.getSecond()), NamedTextColor.YELLOW);
+				.next("&e" + formatChatTime(pair.getSecond(), record, 2));
 		}
 		return builder.build().asHoverEvent();
+	}
+
+	private static <T, U> Map<T, U> pairListToMap(List<Pair<T, U>> list) {
+		Map<T, U> map = new HashMap<>(list.size());
+		for (Pair<T, U> pair : list)
+			map.put(pair.getFirst(), pair.getSecond());
+		return map;
 	}
 }

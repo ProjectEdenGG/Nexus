@@ -36,7 +36,7 @@ public class CheckpointUser implements PlayerOwnedObject {
 	private Map<Pair<String, Integer>, Duration> bestCheckpointTimes = new ConcurrentHashMap<>(); // for sum of best
 
 	public void recordTotalTime(String arena, Duration duration, Map<Integer, Duration> checkpointTimes) {
-		RecordTotalTime newRecord = new RecordTotalTime(uuid, duration, checkpointTimes);
+		RecordTotalTime newRecord = new RecordTotalTime(uuid, duration, new ConcurrentHashMap<>(checkpointTimes));
 		if (!bestTotalTimes.containsKey(arena) || bestTotalTimes.get(arena).compareTo(newRecord) > 0) {
 			bestTotalTimes.put(arena, newRecord);
 			service.save(this);

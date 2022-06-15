@@ -65,9 +65,7 @@ public abstract class CheckpointMechanic extends SingleplayerMechanic {
 					.next(arena.getDisplayName(), NamedTextColor.YELLOW)
 					.rawNext(" in ")
 					.next(
-						new JsonBuilder()
-							.content(matchData.formatTotalChatTime(minigamer, now))
-							.color(NamedTextColor.YELLOW)
+						new JsonBuilder("&e" + matchData.formatTotalChatTime(minigamer, now))
 							.hover(matchData.formatCheckpointTimesHoverText(minigamer, now))
 					)
 			);
