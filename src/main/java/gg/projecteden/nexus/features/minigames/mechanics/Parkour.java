@@ -17,8 +17,6 @@ import java.util.Map;
 @Scoreboard(teams = false, sidebarType = Type.MINIGAMER)
 public class Parkour extends CheckpointMechanic {
 
-	// TODO: store best times
-
 	@Override
 	public @NotNull String getName() {
 		return "Parkour";
@@ -50,13 +48,13 @@ public class Parkour extends CheckpointMechanic {
 	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Minigamer minigamer) {
 		CheckpointMatchData matchData = getMatchData(minigamer);
 		Instant now = Instant.now();
+
 		return Map.of(
-			"&a", 6,
-			"&3Total Time", 5,
-			"&a&e" + matchData.formatTotalLiveTime(minigamer, now), 4,
-//			"&3Personal Best", 9,    <- allow players to decide what to compare against (i.e. PB, SoB, or WR)
-//			"&b&e" + <code>, 8,
-//			"<show current delta, i.e. a green "-1.3" if player is 1.3 seconds ahead of their PB>", 7,
+			"&a", 8,
+			"&3Total Time", 7,
+			"&a&e" + matchData.formatTotalLiveTime(minigamer, now), 6,
+			"&3Personal Best", 5,
+			"&b" + matchData.formatTotalBestTime(minigamer), 4,
 			"&b", 3,
 			"&3Checkpoint Time", 2,
 			"&c&e" + matchData.formatSplitTime(minigamer, now), 1
