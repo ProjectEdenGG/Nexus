@@ -30,12 +30,12 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-public class WakkaMaze implements Listener {
+public class Labyrinth implements Listener {
 	private static final ItemStack exitKey = new ItemBuilder(Material.TRIPWIRE_HOOK).name("Exit Key").undroppable().build();
 	protected static WorldEditUtils worldedit = Minigames.worldedit();
 
 	private static Arena getArena() {
-		return ArenaManager.get(WakkaMaze.class.getSimpleName());
+		return ArenaManager.get(Labyrinth.class.getSimpleName());
 	}
 
 	public boolean isPlayingThis(Minigamer minigamer) {
