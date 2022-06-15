@@ -66,11 +66,11 @@ public class CheckpointData extends MatchData {
 	}
 
 	public static String formatDelta(Duration delta, int decimals) {
-		char color;
-		if (delta.isZero()) color = '7';
-		else if (delta.isNegative()) color = 'a';
-		else color = 'c';
-		return '&' + color + ("%+." + decimals + "f").formatted(delta.toMillis() / 1000.0);
+		String color;
+		if (delta.isZero()) color = "&7";
+		else if (delta.isNegative()) color = "&a";
+		else color = "&c";
+		return color + ("%+." + decimals + "f").formatted(delta.toMillis() / 1000.0);
 	}
 
 	public static String formatDelta(Duration live, Duration best, int decimals) {
