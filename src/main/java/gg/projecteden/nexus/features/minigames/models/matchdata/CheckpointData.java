@@ -66,6 +66,7 @@ public class CheckpointData extends MatchData {
 	}
 
 	public static String formatLiveTime(Duration liveTime, @Nullable Duration best, @Nullable Integer deltaDecimals) {
+		// TODO make decimals of time configurable
 		String output = "%d:%02d:%05.2f".formatted(liveTime.toHours(), liveTime.toMinutesPart(), liveTime.toSecondsPart() + (liveTime.toNanosPart() / 1000000000.0));
 		if (best != null)
 			output += " &7(" + formatDelta(liveTime, best, deltaDecimals) + "&7)";
