@@ -37,7 +37,10 @@ public abstract class CheckpointMechanic extends SingleplayerMechanic {
 
 	@Override
 	public void onDeath(@NotNull MinigamerDeathEvent event) {
+		// preserve held item slot
+		int heldItemSlot = event.getMinigamer().getPlayer().getInventory().getHeldItemSlot();
 		super.onDeath(event);
+		event.getMinigamer().getPlayer().getInventory().setHeldItemSlot(heldItemSlot);
 
 		getMatchData(event.getMinigamer()).toCheckpoint(event.getMinigamer());
 	}
@@ -96,17 +99,21 @@ public abstract class CheckpointMechanic extends SingleplayerMechanic {
 
 	@EventHandler
 	public void onInteractEvent(PlayerInteractEvent event) {
-		// TODO: add "Reset to Start" item
 		// TODO: add hide/show players item
 		Player player = event.getPlayer();
 		Minigamer minigamer = Minigamer.of(player);
 		if (!minigamer.isPlaying(this)) return;
-
-		if (player.getInventory().getItemInMainHand() == null) return;
-		if (player.getInventory().getItemInMainHand().getType() != Material.POISONOUS_POTATO) return;
 		if (!ActionGroup.RIGHT_CLICK.applies(event)) return;
 
-		getMatchData(minigamer).toCheckpoint(minigamer);
+		Material item = player.getInventory().getItemInMainHand().getType();
+		if (item == Material.POISONOUS_POTATO)
+			getMatchData(minigamer).toCheckpoint(minigamer);
+		else if (item == Material.GUNPOWDER)
+			getMatchData(minigamer).reset(minigamer);
+		else
+			return;
+
+		event.setCancelled(true);
 	}
 
 }

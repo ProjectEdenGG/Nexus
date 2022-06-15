@@ -160,7 +160,7 @@ public class CheckpointData extends MatchData {
 			reset(minigamer);
 	}
 
-	private void reset(Minigamer minigamer) {
+	public void reset(Minigamer minigamer) {
 		clearCheckpoints(minigamer);
 		minigamer.teleportAsync(minigamer.getTeam().getSpawnpoints().get(0));
 		minigamer.setScore(0);
