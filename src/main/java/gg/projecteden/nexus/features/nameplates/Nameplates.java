@@ -58,6 +58,8 @@ public class Nameplates extends Feature {
 		team = scoreboard.registerNewTeam(name);
 		team.setOption(Option.NAME_TAG_VISIBILITY, OptionStatus.NEVER);
 		team.setOption(Option.COLLISION_RULE, allowPush ? OptionStatus.ALWAYS : OptionStatus.NEVER);
+		team.setOption(Option.COLLISION_RULE, allowPush ? OptionStatus.ALWAYS : OptionStatus.NEVER);
+		team.setCanSeeFriendlyInvisibles(false);
 
 		return team;
 	}
