@@ -1,22 +1,21 @@
 package gg.projecteden.nexus.models.checkpoint;
 
 import gg.projecteden.interfaces.PlayerOwnedObject;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class RecordTotalTime implements Comparable<RecordTotalTime>, PlayerOwnedObject {
 
 	// TODO: experiment with replay storage
@@ -24,6 +23,17 @@ public class RecordTotalTime implements Comparable<RecordTotalTime>, PlayerOwned
 	private UUID playerId;
 	private Duration time;
 	private Map<Integer, Duration> checkpointTimes; // map of checkpoint number to time it took the player to complete that checkpoint
+	private @Nullable Instant achievedAt;
+
+	public RecordTotalTime() {
+	}
+
+	public RecordTotalTime(UUID playerId, Duration time, Map<Integer, Duration> checkpointTimes, Instant achievedAt) {
+		this.playerId = playerId;
+		this.time = time;
+		this.checkpointTimes = new ConcurrentHashMap<>(checkpointTimes);
+		this.achievedAt = achievedAt;
+	}
 
 	@Override
 	public int compareTo(@NotNull RecordTotalTime o) {
