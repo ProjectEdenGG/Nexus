@@ -277,11 +277,6 @@ public class MatchListener implements Listener {
 		if (WorldGroup.of(player) != WorldGroup.MINIGAMES)
 			return;
 
-		if (Minigames.getWorld().equals(player.getWorld())) {
-			player.teleportAsync(Minigames.getLobby());
-			return;
-		}
-
 		if (!BorderUtils.isOutsideBorder(player))
 			return;
 
