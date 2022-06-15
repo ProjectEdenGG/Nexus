@@ -6,7 +6,6 @@ import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
-import gg.projecteden.nexus.features.minigames.models.events.matches.MinigamerQuitEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
 import gg.projecteden.nexus.utils.ActionBarUtils;
@@ -31,14 +30,9 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-
 public class WakkaMaze implements Listener {
-	private static final ItemStack exitKey = new ItemBuilder(Material.TRIPWIRE_HOOK).name("Exit Key").build();
+	private static final ItemStack exitKey = new ItemBuilder(Material.TRIPWIRE_HOOK).name("Exit Key").undroppable().build();
 	protected static WorldEditUtils worldedit = Minigames.worldedit();
-	Set<UUID> hasKey = new HashSet<>();
 
 	private static Arena getArena() {
 		return ArenaManager.get(WakkaMaze.class.getSimpleName());
@@ -72,7 +66,7 @@ public class WakkaMaze implements Listener {
 		String regionId = event.getRegion().getId();
 
 		if (regionId.equalsIgnoreCase(match.getArena().getProtectedRegion("exit").getId())) {
-			if (!hasKey.contains(player.getUniqueId()))
+			if (!PlayerUtils.playerHas(player, exitKey))
 				event.setCancelled(true);
 		}
 	}
@@ -107,7 +101,7 @@ public class WakkaMaze implements Listener {
 		event.getMatch().getTasks().repeat(0, TickTime.MINUTE.x(1), () -> WallType.toggleWalls(event.getMatch()));
 		event.getMatch().getTasks().repeat(0, 2, () -> {
 			for (Player player : event.getMatch().getPlayers()) {
-				if (hasKey.contains(player.getUniqueId()))
+				if (PlayerUtils.playerHas(player, exitKey))
 					continue;
 
 				worldedit.getBlocks(event.getMatch().getArena().getProtectedRegion("exit"))
@@ -117,20 +111,10 @@ public class WakkaMaze implements Listener {
 	}
 
 	@EventHandler
-	public void onMatchQuit(MinigamerQuitEvent event) {
-		if (!isPlayingThis(event.getMinigamer())) return;
-
-		hasKey.remove(event.getMinigamer().getUniqueId());
-	}
-
-	@EventHandler
 	public void on(PlayerInteractEntityEvent event) {
 		Player player = event.getPlayer();
 		Minigamer minigamer = Minigamer.of(player);
 		if (!isPlayingThis(minigamer))
-			return;
-
-		if (hasKey.contains(player.getUniqueId()))
 			return;
 
 		if (!(event.getRightClicked() instanceof ItemFrame itemFrame))
@@ -143,9 +127,11 @@ public class WakkaMaze implements Listener {
 		if (!ItemUtils.isFuzzyMatch(exitKey, itemStack))
 			return;
 
+		if (PlayerUtils.playerHas(player, exitKey))
+			return;
+
 		minigamer.tell("The exit has been revealed!");
 		PlayerUtils.giveItem(player, exitKey);
-		hasKey.add(player.getUniqueId());
 
 		worldedit.getBlocks(minigamer.getMatch().getArena().getProtectedRegion("exit"))
 			.forEach(block -> player.sendBlockChange(block.getLocation(), Material.AIR.createBlockData()));
