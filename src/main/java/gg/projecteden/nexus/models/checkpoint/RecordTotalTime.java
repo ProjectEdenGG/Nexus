@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.models.checkpoint;
 
-import gg.projecteden.interfaces.PlayerOwnedObject;
+import gg.projecteden.mongodb.interfaces.PlayerOwnedObject;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
