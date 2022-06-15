@@ -72,6 +72,7 @@ public abstract class CheckpointMechanic extends SingleplayerMechanic {
 							.hover(matchData.formatCheckpointTimesHoverText(minigamer, now))
 					)
 			);
+			// TODO: broadcast WRs to whole server
 			matchData.onWin(minigamer, now);
 			minigamer.quit();
 		}

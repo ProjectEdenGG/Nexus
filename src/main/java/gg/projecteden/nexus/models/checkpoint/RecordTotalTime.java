@@ -18,6 +18,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RecordTotalTime implements Comparable<RecordTotalTime>, PlayerOwnedObject {
+
+	// TODO: experiment with replay storage
+
 	private UUID playerId;
 	private Duration time;
 	private Map<Integer, Duration> checkpointTimes; // map of checkpoint number to time it took the player to complete that checkpoint
