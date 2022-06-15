@@ -7,7 +7,7 @@ import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
-import gg.projecteden.nexus.features.commands.PushCommand;
+import gg.projecteden.nexus.features.nameplates.Nameplates;
 import gg.projecteden.nexus.features.warps.Warps;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.afk.events.NotAFKEvent;
@@ -94,7 +94,7 @@ public class AFKUser implements PlayerOwnedObject {
 		forceAfk = true;
 		WarpType.STAFF.get("limbo").teleportAsync(player).thenRun(() -> {
 			update();
-			PushCommand.set(uuid, false);
+			Nameplates.get().getPushService().edit(uuid, user -> user.setEnabled(false));
 			player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.INVISIBILITY).maxDuration().build());
 			forceAfk = false;
 			save();
