@@ -42,7 +42,7 @@ public abstract class CheckpointMechanic extends SingleplayerMechanic {
 		super.onDeath(event);
 		event.getMinigamer().getPlayer().getInventory().setHeldItemSlot(heldItemSlot);
 
-		getMatchData(event.getMinigamer()).toCheckpoint(event.getMinigamer());
+		getMatchData(event.getMinigamer()).toCheckpoint(event.getMinigamer(), false);
 	}
 
 	@Override
@@ -106,14 +106,28 @@ public abstract class CheckpointMechanic extends SingleplayerMechanic {
 		if (!ActionGroup.RIGHT_CLICK.applies(event)) return;
 
 		Material item = player.getInventory().getItemInMainHand().getType();
-		if (item == Material.POISONOUS_POTATO)
-			getMatchData(minigamer).toCheckpoint(minigamer);
-		else if (item == Material.GUNPOWDER)
-			getMatchData(minigamer).reset(minigamer);
-		else
-			return;
+		switch (item) {
+			case POISONOUS_POTATO:
+				if (canTeleport(minigamer))
+					getMatchData(minigamer).toCheckpoint(minigamer, true);
+				break;
+			case GUNPOWDER:
+				if (canTeleport(minigamer))
+					getMatchData(minigamer).reset(minigamer);
+				break;
+			default:
+				return;
+		}
 
 		event.setCancelled(true);
+	}
+
+	private boolean canTeleport(Minigamer minigamer) {
+		if (!minigamer.getPlayer().isOnGround()) {
+			minigamer.sendActionBar(new JsonBuilder("You must be on the ground to use this item.", NamedTextColor.RED));
+			return false;
+		}
+		return true;
 	}
 
 }

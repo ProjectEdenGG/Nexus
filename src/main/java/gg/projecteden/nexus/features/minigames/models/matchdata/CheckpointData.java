@@ -149,10 +149,10 @@ public class CheckpointData extends MatchData {
 		}
 	}
 
-	public void toCheckpoint(Minigamer minigamer) {
+	public void toCheckpoint(Minigamer minigamer, boolean force) {
 		CheckpointArena arena = minigamer.getMatch().getArena();
 
-		if (autoresetting.contains(minigamer.getUuid()))
+		if (autoresetting.contains(minigamer.getUuid()) && !force)
 			reset(minigamer);
 		else if (getCheckpointId(minigamer) != null)
 			minigamer.teleportAsync(arena.getCheckpoint(getCheckpointId(minigamer)));
