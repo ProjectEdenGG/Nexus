@@ -6,19 +6,23 @@ import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.MatchData;
 import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 import gg.projecteden.nexus.utils.Tasks;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @ObjectClass(CheckpointUser.class)
 public class CheckpointService extends MongoPlayerService<CheckpointUser> {
 	private final static Map<UUID, CheckpointUser> cache = new ConcurrentHashMap<>();
 	private final static Map<String, RecordTotalTime> globalBestTimes = new ConcurrentHashMap<>();
+	private final static Map<CheckpointKey, CheckpointValue> globalBestCheckpointTimes = new ConcurrentHashMap<>();
 	private static boolean globalBestTimesInitialized = false;
 
 	public CheckpointService() {
@@ -43,6 +47,9 @@ public class CheckpointService extends MongoPlayerService<CheckpointUser> {
 					for (Map.Entry<String, RecordTotalTime> entry : user.getBestTotalTimes().entrySet()) {
 						recordBestTotalTime(entry.getKey(), entry.getValue());
 					}
+					for (Map.Entry<CheckpointKey, CheckpointValue> entry : user.getBestCheckpointTimes().entrySet()) {
+						recordBestCheckpointTime(entry.getKey(), entry.getValue());
+					}
 				}
 			});
 		}
@@ -51,6 +58,12 @@ public class CheckpointService extends MongoPlayerService<CheckpointUser> {
 	public static void recordBestTotalTime(String arena, RecordTotalTime time) {
 		if (!globalBestTimes.containsKey(arena) || globalBestTimes.get(arena).compareTo(time) > 0) {
 			globalBestTimes.put(arena, time);
+		}
+	}
+
+	public static void recordBestCheckpointTime(CheckpointKey key, CheckpointValue value) {
+		if (!globalBestCheckpointTimes.containsKey(key) || globalBestCheckpointTimes.get(key).compareTo(value) > 0) {
+			globalBestCheckpointTimes.put(key, value);
 		}
 	}
 
@@ -69,6 +82,12 @@ public class CheckpointService extends MongoPlayerService<CheckpointUser> {
 		);
 	}
 
+	public static Map<Integer, CheckpointValue> getBestCheckpointTimes(@NotNull String arena) {
+		return globalBestCheckpointTimes.entrySet().stream()
+			.filter(entry -> entry.getKey().getArenaName().equals(arena))
+			.collect(Collectors.toMap(entry -> entry.getKey().getCheckpoint(), Entry::getValue));
+	}
+
 	// boilerplate
 
 	public static @Nullable RecordTotalTime getBestTotalTime(Arena arena) {
@@ -79,6 +98,10 @@ public class CheckpointService extends MongoPlayerService<CheckpointUser> {
 		return getBestTotalTimes(arena.getName());
 	}
 
+	public static Map<Integer, CheckpointValue> getBestCheckpointTimes(@NotNull Arena arena) {
+		return getBestCheckpointTimes(arena.getName());
+	}
+
 	public static @Nullable RecordTotalTime getBestTotalTime(Match match) {
 		return getBestTotalTime(match.getArena());
 	}
@@ -87,11 +110,19 @@ public class CheckpointService extends MongoPlayerService<CheckpointUser> {
 		return getBestTotalTimes(match.getArena());
 	}
 
+	public static Map<Integer, CheckpointValue> getBestCheckpointTimes(@NotNull Match match) {
+		return getBestCheckpointTimes(match.getArena());
+	}
+
 	public static @Nullable RecordTotalTime getBestTotalTime(MatchData matchData) {
 		return getBestTotalTime(matchData.getMatch());
 	}
 
 	public CompletableFuture<List<RecordTotalTime>> getBestTotalTimes(MatchData matchData) {
 		return getBestTotalTimes(matchData.getMatch());
+	}
+
+	public static Map<Integer, CheckpointValue> getBestCheckpointTimes(@NotNull MatchData matchData) {
+		return getBestCheckpointTimes(matchData.getMatch());
 	}
 }

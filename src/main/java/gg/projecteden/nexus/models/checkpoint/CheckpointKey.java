@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CheckpointKey {
 	private String arenaName;
-	private int checkpointNumber;
+	private int checkpoint;
 }

@@ -7,11 +7,14 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartE
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.CheckpointMatchData;
 import gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreboard.Type;
+import gg.projecteden.nexus.models.checkpoint.MiniCheckpointTimeWrapper;
+import gg.projecteden.nexus.models.checkpoint.Pace;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.Map;
 
 @Scoreboard(teams = false, sidebarType = Type.MINIGAMER)
@@ -49,20 +52,32 @@ public class Parkour extends CheckpointMechanic {
 		CheckpointMatchData matchData = getMatchData(minigamer);
 		Instant now = Instant.now();
 
-		return Map.of(
-			"&a", 10,
-			"&3Total Time", 9,
-			"&a&e" + matchData.formatTotalLiveTime(minigamer, now), 8,
-			"&3Personal Best", 7,
-			"&b" + matchData.formatTotalBestTime(minigamer), 6,
-			"&b", 5,
-			"&3Checkpoint Time", 4,
-			"&c&e" + matchData.formatSplitTime(minigamer, now), 3,
-//			"&3Personal Best", 5,
-//			"&d&e" + <code>, 4,
-//			"<delta stuff>", 3,
-			"&c", 2,
-			"&6/mgm leaderboard", 1
-		);
+		// get checkpoint time
+		MiniCheckpointTimeWrapper cpTime = matchData.getNextSplitTime(minigamer);
+		StringBuilder cpTimeHeader = new StringBuilder("&b&3Personal Best");
+		if (cpTime != null)
+			cpTimeHeader.append("&7 (").append(cpTime.getShortDisplayName()).append(")");
+
+		// get pace
+		Pace pace = matchData.getPace(minigamer);
+
+		// this map grew too large for Map.of() lol
+		Map<String, Integer> lines = new HashMap<>(15);
+		lines.put("&a", 15);
+		lines.put("&3Total Time", 14);
+		lines.put("&a&e" + matchData.formatTotalLiveTime(minigamer, now), 13);
+		lines.put("&a&3Personal Best", 12);
+		lines.put("&b" + matchData.formatTotalBestTime(minigamer), 11);
+		lines.put("&b", 10);
+		lines.put("&3Checkpoint Time", 9);
+		lines.put("&c&e" + matchData.formatSplitTime(minigamer, now), 8);
+		lines.put(cpTimeHeader.toString(), 7); // TODO: this isn't technically their best *ever* time, just their time from their best overall run. not sure what a better label would be atm.
+		lines.put("&d&e" + matchData.formatSplitBestTime(minigamer, cpTime), 6);
+		lines.put("&c", 5);
+		lines.put(pace.header(), 4);
+		lines.put("&f" + pace.body(), 3);
+		lines.put("&d", 2);
+		lines.put("&c/mgm leaderboard", 1);
+		return lines;
 	}
 }

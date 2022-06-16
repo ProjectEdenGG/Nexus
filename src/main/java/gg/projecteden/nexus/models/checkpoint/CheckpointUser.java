@@ -13,10 +13,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -49,7 +51,7 @@ public class CheckpointUser implements PlayerOwnedObject {
 			bestCheckpointTimes.put(key, value);
 			service.save(this);
 		}
-		// service does not currently keep a cache of the best checkpoint times
+		CheckpointService.recordBestCheckpointTime(key, value);
 	}
 
 	public void recordCheckpointTime(String arena, int checkpoint, Duration duration, Instant achievedAt) {
@@ -66,6 +68,26 @@ public class CheckpointUser implements PlayerOwnedObject {
 
 	public @Nullable CheckpointValue getBestCheckpointTime(String arena, int checkpoint) {
 		return getBestCheckpointTime(new CheckpointKey(arena, checkpoint));
+	}
+
+	public @NotNull Map<Integer, CheckpointValue> getBestCheckpointTimes(String arena) {
+		Map<Integer, CheckpointValue> bestCheckpointTimes = new HashMap<>();
+		for (Map.Entry<CheckpointKey, CheckpointValue> entry : this.bestCheckpointTimes.entrySet()) {
+			if (entry.getKey().getArenaName().equals(arena)) {
+				bestCheckpointTimes.put(entry.getKey().getCheckpoint(), entry.getValue());
+			}
+		}
+		return bestCheckpointTimes;
+	}
+
+	public @NotNull Map<CheckpointKey, CheckpointValue> filterBestCheckpointTimes(String arena) {
+		Map<CheckpointKey, CheckpointValue> filtered = new HashMap<>();
+		for (Map.Entry<CheckpointKey, CheckpointValue> entry : this.bestCheckpointTimes.entrySet()) {
+			if (entry.getKey().getArenaName().equals(arena)) {
+				filtered.put(entry.getKey(), entry.getValue());
+			}
+		}
+		return filtered;
 	}
 
 	// handy dandy boilerplate
@@ -86,6 +108,14 @@ public class CheckpointUser implements PlayerOwnedObject {
 		return getBestCheckpointTime(arena.getName(), checkpoint);
 	}
 
+	public @NotNull Map<Integer, CheckpointValue> getBestCheckpointTimes(Arena arena) {
+		return getBestCheckpointTimes(arena.getName());
+	}
+
+	public @NotNull Map<CheckpointKey, CheckpointValue> filterBestCheckpointTimes(Arena arena) {
+		return filterBestCheckpointTimes(arena.getName());
+	}
+
 	public void recordTotalTime(Match match, Duration duration, Map<Integer, Duration> checkpointTimes, Instant achievedAt) {
 		recordTotalTime(match.getArena(), duration, checkpointTimes, achievedAt);
 	}
@@ -102,6 +132,14 @@ public class CheckpointUser implements PlayerOwnedObject {
 		return getBestCheckpointTime(match.getArena(), checkpoint);
 	}
 
+	public @NotNull Map<Integer, CheckpointValue> getBestCheckpointTimes(Match match) {
+		return getBestCheckpointTimes(match.getArena());
+	}
+
+	public @NotNull Map<CheckpointKey, CheckpointValue> filterBestCheckpointTimes(Match match) {
+		return filterBestCheckpointTimes(match.getArena());
+	}
+
 	public void recordTotalTime(MatchData matchData, Duration duration, Map<Integer, Duration> checkpointTimes, Instant achievedAt) {
 		recordTotalTime(matchData.getMatch(), duration, checkpointTimes, achievedAt);
 	}
@@ -116,5 +154,13 @@ public class CheckpointUser implements PlayerOwnedObject {
 
 	public @Nullable CheckpointValue getBestCheckpointTime(MatchData matchData, int checkpoint) {
 		return getBestCheckpointTime(matchData.getMatch(), checkpoint);
+	}
+
+	public @NotNull Map<Integer, CheckpointValue> getBestCheckpointTimes(MatchData matchData) {
+		return getBestCheckpointTimes(matchData.getMatch());
+	}
+
+	public @NotNull Map<CheckpointKey, CheckpointValue> filterBestCheckpointTimes(MatchData matchData) {
+		return filterBestCheckpointTimes(matchData.getMatch());
 	}
 }
