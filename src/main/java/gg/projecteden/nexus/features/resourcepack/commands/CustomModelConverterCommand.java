@@ -44,6 +44,15 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 		});
 	}
 
+	@Path("convert <material> <data>")
+	void convert(Material material, int data) {
+		final CustomModel newModel = CustomModel.convert(material, data);
+		if (newModel == null)
+			error("Unknown custom model");
+
+		send(newModel.getMaterial() + " " + newModel.getData());
+	}
+
 	@Path("tables [radius]")
 	void convert_tables(@Arg("200") int radius) {
 		int converted = 0;

@@ -5,6 +5,8 @@ import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
 import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelMaterial.Override3;
+import gg.projecteden.nexus.models.custommodels.CustomModelConfig;
+import gg.projecteden.nexus.models.custommodels.CustomModelConfigService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -54,6 +56,25 @@ public class CustomModel implements Comparable<CustomModel> {
 				.filter(model -> model.getMaterial() == material && model.getData() == data)
 				.findFirst()
 				.orElse(null);
+	}
+
+	public static CustomModel convert(Material material, int data) {
+		final CustomModelConfig config = new CustomModelConfigService().get0();
+		final var oldModels = config.getOldModels();
+		final var newModels = config.getNewModels();
+		if (!oldModels.containsKey(material))
+			return null;
+
+		final String model = oldModels.get(material).get(data);
+		if (isNullOrEmpty(model))
+			return null;
+
+		for (var map1 : newModels.entrySet())
+			for (var map2 : map1.getValue().entrySet())
+				if (model.equals(map2.getValue()))
+					return CustomModel.of(map1.getKey(), map2.getKey());
+
+		return null;
 	}
 
 	public static ItemStack itemOf(Material material, int data) {
