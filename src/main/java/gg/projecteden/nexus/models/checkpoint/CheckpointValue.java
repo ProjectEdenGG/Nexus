@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.models.checkpoint;
 
-import gg.projecteden.interfaces.PlayerOwnedObject;
+import gg.projecteden.mongodb.interfaces.PlayerOwnedObject;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +13,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CheckpointValue implements Comparable<CheckpointValue>, PlayerOwnedObject {
+public class CheckpointValue implements PlayerOwnedObject, Comparable<CheckpointValue> {
 	private UUID playerId;
 	private Duration time;
 	private Instant achievedAt;
