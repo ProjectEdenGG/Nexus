@@ -94,7 +94,8 @@ public class CustomModelMenu extends InventoryProvider {
 
 		for (CustomModelMaterial group : ResourcePack.getModelGroups())
 			for (Override3 override : group.getOverrides())
-				paths.add(override.getFolderPath());
+				if (override.getModel().startsWith("projecteden"))
+					paths.add(override.getFolderPath());
 
 		return new TreeSet<>(paths);
 	}
