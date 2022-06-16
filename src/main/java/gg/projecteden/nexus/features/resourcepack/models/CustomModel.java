@@ -3,8 +3,8 @@ package gg.projecteden.nexus.features.resourcepack.models;
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
-import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelGroup;
-import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelGroup.Override3;
+import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelMaterial.Override3;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -40,7 +40,7 @@ public class CustomModel implements Comparable<CustomModel> {
 	@Getter
 	private static final String customSubdirectory = modelsSubdirectory + "projecteden";
 
-	public CustomModel(@NonNull CustomModelFolder folder, @NonNull CustomModelGroup.Override3 override, @NonNull Material material) {
+	public CustomModel(@NonNull CustomModelFolder folder, @NonNull CustomModelMaterial.Override3 override, @NonNull Material material) {
 		this.folder = folder;
 		this.override = override;
 		this.material = material;

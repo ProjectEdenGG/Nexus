@@ -1,18 +1,19 @@
 package gg.projecteden.nexus.features.resourcepack;
 
+import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.api.common.utils.MathUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationListener;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateStartEvent;
 import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
-import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelGroup;
+import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.files.FontFile;
 import gg.projecteden.nexus.features.resourcepack.models.files.SoundsFile;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
 import gg.projecteden.nexus.utils.ColorType;
-import gg.projecteden.nexus.utils.HttpUtils;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
@@ -21,8 +22,6 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.parchment.OptionalPlayerLike;
-import gg.projecteden.api.common.utils.Env;
-import gg.projecteden.api.common.utils.MathUtils;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -51,7 +50,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static gg.projecteden.nexus.features.resourcepack.models.files.CustomModelGroup.addCustomModel;
+import static gg.projecteden.nexus.features.resourcepack.models.files.CustomModelMaterial.addCustomModelMaterial;
 
 @NoArgsConstructor
 public class ResourcePack extends Feature implements Listener {
@@ -70,7 +69,7 @@ public class ResourcePack extends Feature implements Listener {
 	private static FileSystem zipFile;
 
 	@Getter
-	private static List<CustomModelGroup> modelGroups;
+	private static List<CustomModelMaterial> modelGroups;
 	@Getter
 	private static List<CustomModelFolder> folders;
 	@Getter
@@ -113,7 +112,7 @@ public class ResourcePack extends Feature implements Listener {
 				new ResourcePackUpdateStartEvent().callEvent();
 				reloading = true;
 
-				HttpUtils.saveFile(URL, FILE_NAME);
+//				HttpUtils.saveFile(URL, FILE_NAME);
 				openZip();
 
 				setup();
@@ -139,27 +138,30 @@ public class ResourcePack extends Feature implements Listener {
 
 	static void readAllFiles() {
 		try {
+			soundsFile = SoundsFile.of(zipFile.getPath(SoundsFile.getPath()));
+			fontFile = FontFile.of(zipFile.getPath(FontFile.getPath()));
+
 			for (Path root : zipFile.getRootDirectories()) {
-				Files.walk(root).forEach(path -> {
-					try {
-						final String uri = path.toUri().toString();
+				try (var walker = Files.walk(root)) {
+					walker.forEach(path -> {
+						try {
+							final String uri = path.toUri().toString();
+							if (uri.contains("pack.mcmeta")) {
+								System.out.println("pack.mcmeta");
+								System.out.println(Files.readAllLines(path));
+							}
 
-						if (uri.contains(CustomModel.getVanillaSubdirectory()))
-							addCustomModel(path);
+							if (uri.contains(CustomModel.getVanillaSubdirectory()))
+								addCustomModelMaterial(path);
 
-						if (uri.endsWith(FontFile.getPath()))
-							fontFile = FontFile.of(path);
+							if (uri.contains(".ogg"))
+								SoundsFile.addAudioFile(path);
 
-						if (uri.endsWith(SoundsFile.getPath()))
-							soundsFile = SoundsFile.of(path);
-
-						if (uri.contains(".ogg"))
-							SoundsFile.addAudioFile(path);
-
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
-				});
+						} catch (Exception ex) {
+							ex.printStackTrace();
+						}
+					});
+				}
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();

@@ -1,11 +1,14 @@
 package gg.projecteden.nexus.features.resourcepack.commands;
 
+import gg.projecteden.nexus.features.resourcepack.ResourcePack;
+import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.custommodels.CustomModelConfigService;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
@@ -20,6 +23,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
@@ -29,6 +33,15 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 
 	public CustomModelConverterCommand(@NonNull CommandEvent event) {
 		super(event);
+	}
+
+	@Path("compute")
+	void compute() {
+		new CustomModelConfigService().edit0(config -> {
+			config.setNewModels(new ConcurrentHashMap<>());
+			for (CustomModel model : ResourcePack.getModels().values())
+				config.getNewModels().computeIfAbsent(model.getMaterial(), $ -> new ConcurrentHashMap<>()).put(model.getData(), model.getId());
+		});
 	}
 
 	@Path("tables [radius]")

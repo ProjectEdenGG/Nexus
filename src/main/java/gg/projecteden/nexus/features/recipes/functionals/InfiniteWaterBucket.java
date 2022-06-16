@@ -27,7 +27,7 @@ public class InfiniteWaterBucket extends FunctionalRecipe {
 	private static final ItemStack item = getCustomModel().getItem();
 
 	public static CustomModel getCustomModel() {
-		return CustomModel.of(Material.WATER_BUCKET, 2);
+		return CustomModel.of(Material.WATER_BUCKET, 1);
 	}
 
 	@Override
