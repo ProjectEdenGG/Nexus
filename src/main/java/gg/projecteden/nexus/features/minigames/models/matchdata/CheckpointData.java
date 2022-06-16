@@ -103,7 +103,7 @@ public class CheckpointData extends MatchData {
 		// compute checkpoint times
 		Map<Integer, Duration> checkpoints = pairListToMap(calculateCheckpointTimes(minigamer, now));
 		// save data
-		service.get(minigamer).recordTotalTime(this, time, checkpoints);
+		service.get(minigamer).recordTotalTime(this, time, checkpoints, now);
 		updateBestTimeCaches(minigamer);
 	}
 
@@ -146,7 +146,7 @@ public class CheckpointData extends MatchData {
 			checkpointTimes
 				.computeIfAbsent(minigamer.getUuid(), k -> new HashMap<>())
 				.put(id, now);
-			service.get(minigamer).recordCheckpointTime(this, id, timeFromStart);
+			service.get(minigamer).recordCheckpointTime(this, id, timeFromStart, now);
 		}
 	}
 

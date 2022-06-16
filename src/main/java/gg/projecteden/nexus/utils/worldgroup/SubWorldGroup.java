@@ -17,9 +17,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public enum SubWorldGroup implements IWorldGroup {
 	LEGACY1("legacy1", "legacy1_nether", "legacy1_the_end"),
@@ -76,7 +76,7 @@ public enum SubWorldGroup implements IWorldGroup {
 		return world == null ? UNKNOWN : of(world.getName());
 	}
 
-	private static final Map<String, SubWorldGroup> CACHE = new HashMap<>();
+	private static final Map<String, SubWorldGroup> CACHE = new ConcurrentHashMap<>();
 
 	public static SubWorldGroup of(String world) {
 		return CACHE.computeIfAbsent(world, $ -> rawOf(world));
