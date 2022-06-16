@@ -205,10 +205,12 @@ public class Labyrinth implements Listener {
 
 		private void teleport(Player player) {
 			Minigamer minigamer = Minigamer.of(player);
+			Vector velocity = player.getVelocity();
+			boolean sprinting = player.isSprinting();
+
 			Location curLocation = player.getLocation().toCenterLocation().add(0, 1, 0);
 			Location newLocation = this.getLocation().toCenterLocation();
 			newLocation.setPitch(curLocation.getPitch());
-			Vector velocity = player.getVelocity();
 
 			new SoundBuilder(Sound.ENTITY_ENDERMAN_TELEPORT)
 				.location(curLocation)
@@ -216,13 +218,12 @@ public class Labyrinth implements Listener {
 
 			minigamer.teleportAsync(newLocation);
 			player.setVelocity(velocity);
-			newLocation.add(0, 1, 0);
+			player.setSprinting(sprinting);
 
-			Tasks.wait(1, () -> {
+			Tasks.wait(1, () ->
 				new SoundBuilder(Sound.ENTITY_ENDERMAN_TELEPORT)
 					.location(newLocation)
-					.play();
-			});
+					.play());
 		}
 	}
 }
