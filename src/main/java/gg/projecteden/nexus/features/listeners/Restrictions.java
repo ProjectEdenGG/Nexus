@@ -198,7 +198,7 @@ public class Restrictions implements Listener {
 		if (isVanished(player))
 			return;
 
-		if (player.getLocation().getY() < -300)
+		if (player.getLocation().getY() < -1000)
 			return;
 
 		if (player.getFallDistance() > 5 && !player.isFlying()) {

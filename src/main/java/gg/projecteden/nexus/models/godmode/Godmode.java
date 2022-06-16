@@ -41,7 +41,8 @@ public class Godmode implements PlayerOwnedObject {
 
 		final Player player = getOnlinePlayer();
 		if (!Nerd.of(this).hasMoved())
-			return true;
+			if (player.getLocation().getY() >= -300) // If they logged out & back in while falling into the void, don't save them
+				return true;
 		if ("bearfair21".equals(player.getWorld().getName()) && new BearFair21ConfigService().get0().isEnabled(WARP) && !PlayerUtils.isVanished(player))
 			return false;
 		if (!Rank.of(player).isStaff())
