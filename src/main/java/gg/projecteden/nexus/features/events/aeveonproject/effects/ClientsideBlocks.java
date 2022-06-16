@@ -11,7 +11,7 @@ import gg.projecteden.nexus.models.aeveonproject.AeveonProjectService;
 import gg.projecteden.nexus.models.aeveonproject.AeveonProjectUser;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;

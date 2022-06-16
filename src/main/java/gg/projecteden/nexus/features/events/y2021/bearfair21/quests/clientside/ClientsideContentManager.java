@@ -13,7 +13,7 @@ import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import net.citizensnpcs.api.npc.NPC;
 import net.minecraft.world.entity.Entity;
@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import static gg.projecteden.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 public class ClientsideContentManager implements Listener {
 	private static final ClientsideContentService contentService = new ClientsideContentService();

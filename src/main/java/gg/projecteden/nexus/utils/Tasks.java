@@ -3,7 +3,7 @@ package gg.projecteden.nexus.utils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.parchment.HasPlayer;
 import gg.projecteden.parchment.OptionalPlayer;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

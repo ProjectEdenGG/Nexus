@@ -26,7 +26,7 @@ import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
@@ -46,7 +46,7 @@ import java.util.function.Supplier;
 import static gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC.*;
 import static gg.projecteden.nexus.utils.ItemUtils.isSameHead;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 @Region("main")
 @NPCClass(MainNPCs.class)

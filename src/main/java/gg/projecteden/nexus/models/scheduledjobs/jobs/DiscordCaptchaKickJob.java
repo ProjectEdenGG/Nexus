@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.models.scheduledjobs.jobs;
 
-import gg.projecteden.annotations.Async;
-import gg.projecteden.mongodb.models.scheduledjobs.common.AbstractJob;
+import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.mongodb.models.scheduledjobs.common.AbstractJob;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.models.discord.DiscordCaptcha;

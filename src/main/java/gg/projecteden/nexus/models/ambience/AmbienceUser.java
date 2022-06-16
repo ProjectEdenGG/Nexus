@@ -3,7 +3,7 @@ package gg.projecteden.nexus.models.ambience;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.ambience.effects.sounds.common.SoundPlayer;
 import gg.projecteden.nexus.features.ambience.managers.common.AmbienceManagers;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;

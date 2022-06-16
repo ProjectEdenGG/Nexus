@@ -1,12 +1,12 @@
 package gg.projecteden.nexus.utils;
 
-import gg.projecteden.interfaces.HasUniqueId;
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.parchment.OptionalPlayer;
-import gg.projecteden.utils.MathUtils;
+import gg.projecteden.api.common.utils.MathUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -30,7 +30,7 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 @Data
 @NoArgsConstructor

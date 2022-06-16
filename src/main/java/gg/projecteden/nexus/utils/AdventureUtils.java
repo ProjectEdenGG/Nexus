@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.utils;
 
-import gg.projecteden.interfaces.HasUniqueId;
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.framework.interfaces.IsColoredAndNamed;
 import gg.projecteden.nexus.framework.interfaces.IsColoredAndNicknamed;
-import gg.projecteden.utils.TimeUtils;
+import gg.projecteden.api.common.utils.TimeUtils;
 import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;

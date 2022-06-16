@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.events.y2021.pugmas21;
 
 import com.sk89q.worldedit.regions.Region;
-import gg.projecteden.annotations.Disabled;
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.advent.Advent;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.advent.AdventAnimation;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.advent.AdventMenu;
@@ -35,9 +35,9 @@ import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.utils.RandomUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
-import gg.projecteden.utils.TimeUtils.Timespan;
+import gg.projecteden.api.common.utils.RandomUtils;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.citizensnpcs.api.npc.NPC;
@@ -58,7 +58,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.utils.TimeUtils.shortDateFormat;
+import static gg.projecteden.api.common.utils.TimeUtils.shortDateFormat;
 
 @Disabled
 @NoArgsConstructor

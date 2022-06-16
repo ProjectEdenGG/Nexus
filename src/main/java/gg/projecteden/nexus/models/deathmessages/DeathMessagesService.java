@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.models.deathmessages;
 
 import dev.morphia.query.Query;
-import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.api.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 
 import java.time.LocalDateTime;

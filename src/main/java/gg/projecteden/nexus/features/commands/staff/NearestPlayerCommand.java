@@ -1,12 +1,12 @@
 package gg.projecteden.nexus.features.commands.staff;
 
+import gg.projecteden.api.common.utils.Utils.MinMaxResult;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.utils.Utils.MinMaxResult;
 import org.bukkit.entity.Player;
 
 @Permission(Group.STAFF)

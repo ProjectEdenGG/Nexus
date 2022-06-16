@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.events.y2020.bearfair20.commands;
 
-import gg.projecteden.annotations.Async;
-import gg.projecteden.annotations.Disabled;
+import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.discord.Discord;
@@ -29,7 +29,7 @@ import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.Utils.MapRotation;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.Timespan;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Location;

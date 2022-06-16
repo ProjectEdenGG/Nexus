@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.models.scheduledjobs.jobs;
 
-import gg.projecteden.mongodb.models.scheduledjobs.common.AbstractJob;
-import gg.projecteden.mongodb.models.scheduledjobs.common.RetryIfInterrupted;
+import gg.projecteden.api.mongodb.models.scheduledjobs.common.AbstractJob;
+import gg.projecteden.api.mongodb.models.scheduledjobs.common.RetryIfInterrupted;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.TreeType;
 import lombok.AllArgsConstructor;
 import lombok.Data;

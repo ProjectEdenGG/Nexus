@@ -1,10 +1,10 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
-import gg.projecteden.mongodb.models.scheduledjobs.ScheduledJobs;
-import gg.projecteden.mongodb.models.scheduledjobs.ScheduledJobsRunner;
-import gg.projecteden.mongodb.models.scheduledjobs.ScheduledJobsService;
-import gg.projecteden.mongodb.models.scheduledjobs.common.AbstractJob;
-import gg.projecteden.mongodb.models.scheduledjobs.common.AbstractJob.JobStatus;
+import gg.projecteden.api.mongodb.models.scheduledjobs.ScheduledJobs;
+import gg.projecteden.api.mongodb.models.scheduledjobs.ScheduledJobsRunner;
+import gg.projecteden.api.mongodb.models.scheduledjobs.ScheduledJobsService;
+import gg.projecteden.api.mongodb.models.scheduledjobs.common.AbstractJob;
+import gg.projecteden.api.mongodb.models.scheduledjobs.common.AbstractJob.JobStatus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;

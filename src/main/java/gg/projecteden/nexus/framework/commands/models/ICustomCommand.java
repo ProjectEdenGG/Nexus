@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.framework.commands.models;
 
-import gg.projecteden.annotations.Async;
-import gg.projecteden.annotations.Disabled;
-import gg.projecteden.annotations.Environments;
-import gg.projecteden.mongodb.interfaces.PlayerOwnedObject;
+import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.common.annotations.Disabled;
+import gg.projecteden.api.common.annotations.Environments;
+import gg.projecteden.api.mongodb.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.framework.commands.Commands;
@@ -71,8 +71,8 @@ import static gg.projecteden.nexus.utils.Utils.getDefaultPrimitiveValue;
 import static gg.projecteden.nexus.utils.Utils.getMaxValue;
 import static gg.projecteden.nexus.utils.Utils.getMinValue;
 import static gg.projecteden.nexus.utils.Utils.isBoolean;
-import static gg.projecteden.utils.ReflectionUtils.methodsAnnotatedWith;
-import static gg.projecteden.utils.UUIDUtils.UUID0;
+import static gg.projecteden.api.common.utils.ReflectionUtils.methodsAnnotatedWith;
+import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 
 @SuppressWarnings("unused")
 public abstract class ICustomCommand {

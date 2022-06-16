@@ -6,7 +6,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.mcmmo.menus.McMMOResetProvider.ResetSkillType;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 
 import java.lang.reflect.Field;
 import java.util.HashSet;

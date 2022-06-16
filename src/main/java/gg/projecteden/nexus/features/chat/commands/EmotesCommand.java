@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.chat.commands;
 
-import gg.projecteden.interfaces.HasUniqueId;
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.features.chat.Emotes;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;

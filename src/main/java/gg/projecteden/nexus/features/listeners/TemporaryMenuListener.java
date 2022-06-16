@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
-import static gg.projecteden.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 public interface TemporaryMenuListener extends TemporaryListener {
 

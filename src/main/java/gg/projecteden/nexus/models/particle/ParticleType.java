@@ -13,7 +13,7 @@ import gg.projecteden.nexus.features.particles.effects.WingsEffect;
 import gg.projecteden.nexus.features.particles.effects.WingsEffect.WingsEffectBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;

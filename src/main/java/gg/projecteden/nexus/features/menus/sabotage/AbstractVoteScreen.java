@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.menus.sabotage;
 
-import gg.projecteden.interfaces.Nicknamed;
+import gg.projecteden.api.interfaces.Nicknamed;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;

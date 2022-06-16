@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.minigames.models.perks;
 
-import gg.projecteden.interfaces.Named;
+import gg.projecteden.api.interfaces.Named;
 import gg.projecteden.nexus.features.events.y2021.pride21.Flags;
 import gg.projecteden.nexus.features.minigames.perks.arrowparticles.BasicTrail;
 import gg.projecteden.nexus.features.minigames.perks.arrowparticles.GreenTrail;

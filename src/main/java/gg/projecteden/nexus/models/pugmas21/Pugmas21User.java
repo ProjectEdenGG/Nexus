@@ -3,7 +3,7 @@ package gg.projecteden.nexus.models.pugmas21;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestLine;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -16,7 +16,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks.GlowTask;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
@@ -35,7 +35,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import static gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21.PREFIX;
-import static gg.projecteden.utils.TimeUtils.shortDateFormat;
+import static gg.projecteden.api.common.utils.TimeUtils.shortDateFormat;
 import static java.util.Collections.singletonList;
 
 @Data

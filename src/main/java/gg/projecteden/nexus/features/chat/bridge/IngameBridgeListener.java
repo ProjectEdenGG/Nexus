@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.chat.bridge;
 
-import gg.projecteden.discord.DiscordId.TextChannel;
+import gg.projecteden.api.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.features.chat.events.PublicChatEvent;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.models.discord.DiscordUser;

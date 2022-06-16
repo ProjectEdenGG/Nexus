@@ -37,7 +37,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.utils.UUIDUtils.UUID_REGEX;
+import static gg.projecteden.api.common.utils.UUIDUtils.UUID_REGEX;
 
 @NoArgsConstructor
 @Aliases("endfarm")

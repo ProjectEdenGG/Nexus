@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.events.y2020.halloween20;
 
-import gg.projecteden.annotations.Disabled;
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.events.y2020.halloween20.models.ComboLockNumber;
 import gg.projecteden.nexus.features.events.y2020.halloween20.models.Pumpkin;
 import gg.projecteden.nexus.features.events.y2020.halloween20.models.QuestStage;

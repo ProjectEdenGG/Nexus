@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.dailyrewards;
 
-import gg.projecteden.annotations.Async;
+import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -15,13 +16,12 @@ import gg.projecteden.nexus.models.dailyreward.DailyRewardUser;
 import gg.projecteden.nexus.models.dailyreward.DailyRewardUserService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import gg.projecteden.utils.TimeUtils.TickTime;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.BiFunction;
 
-import static gg.projecteden.utils.TimeUtils.shortDateTimeFormat;
+import static gg.projecteden.api.common.utils.TimeUtils.shortDateTimeFormat;
 
 @Aliases({"dr", "dailyreward"})
 @Permission("daily.rewards")

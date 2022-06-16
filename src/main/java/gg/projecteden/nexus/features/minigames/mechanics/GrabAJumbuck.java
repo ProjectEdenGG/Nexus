@@ -17,7 +17,7 @@ import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegion
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.EnumUtils;
+import gg.projecteden.api.common.utils.EnumUtils;
 import lombok.SneakyThrows;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;

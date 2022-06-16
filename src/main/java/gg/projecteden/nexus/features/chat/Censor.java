@@ -29,8 +29,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 import static gg.projecteden.nexus.utils.StringUtils.countUpperCase;
-import static gg.projecteden.utils.UUIDUtils.UUID0;
 
 public class Censor {
 	@Getter

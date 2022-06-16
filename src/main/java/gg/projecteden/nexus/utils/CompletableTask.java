@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.utils;
 
-import gg.projecteden.utils.TimeUtils;
+import gg.projecteden.api.common.utils.TimeUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;

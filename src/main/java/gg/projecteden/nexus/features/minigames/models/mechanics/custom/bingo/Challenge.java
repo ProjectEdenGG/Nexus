@@ -18,7 +18,7 @@ import gg.projecteden.nexus.utils.FuzzyItemStack;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.MaterialTag.MatchMode;
-import gg.projecteden.utils.EnumUtils;
+import gg.projecteden.api.common.utils.EnumUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;

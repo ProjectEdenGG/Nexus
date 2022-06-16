@@ -2,7 +2,7 @@ package gg.projecteden.nexus.utils;
 
 import de.tr7zw.nbtapi.NBTItem;
 import dev.dbassett.skullcreator.SkullCreator;
-import gg.projecteden.interfaces.HasUniqueId;
+import gg.projecteden.api.interfaces.HasUniqueId;
 import dev.dbassett.skullcreator.SkullCreator;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
@@ -17,7 +17,7 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.skincache.SkinCache;
 import gg.projecteden.nexus.utils.SymbolBanner.Symbol;
 import gg.projecteden.parchment.HasOfflinePlayer;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
@@ -72,7 +72,7 @@ import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
-import static gg.projecteden.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 @SuppressWarnings({"UnusedReturnValue", "ResultOfMethodCallIgnored", "CopyConstructorMissesField", "deprecation"})
 public class ItemBuilder implements Cloneable, Supplier<ItemStack> {

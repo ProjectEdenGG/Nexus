@@ -4,7 +4,7 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
-public class MathUtils extends gg.projecteden.utils.MathUtils {
+public class MathUtils extends gg.projecteden.api.common.utils.MathUtils {
 
 	public static Point2D getIntersectPoint(Line2D line1, Line2D line2) {
 		if (line1 == null || line2 == null)

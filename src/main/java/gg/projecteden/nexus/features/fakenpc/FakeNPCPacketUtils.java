@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static gg.projecteden.nexus.utils.PacketUtils.sendPacket;
-import static gg.projecteden.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 public class FakeNPCPacketUtils {
 

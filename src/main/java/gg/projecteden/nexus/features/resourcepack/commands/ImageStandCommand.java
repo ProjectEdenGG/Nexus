@@ -39,7 +39,7 @@ import org.bukkit.util.BoundingBox;
 import java.util.List;
 import java.util.UUID;
 
-import static gg.projecteden.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 @NoArgsConstructor
 @Aliases("imagestands")

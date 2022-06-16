@@ -5,7 +5,7 @@ import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Contract;
 
-public class Nullables extends gg.projecteden.utils.Nullables {
+public class Nullables extends gg.projecteden.api.common.utils.Nullables {
 
 	/**
 	 * Tests if an item is not null or {@link MaterialTag#ALL_AIR air}

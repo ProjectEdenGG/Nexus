@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.discord.commands.justice.deactivate;
 
-import gg.projecteden.discord.appcommands.AppCommandEvent;
+import gg.projecteden.api.discord.appcommands.AppCommandEvent;
 import gg.projecteden.nexus.features.discord.commands.justice._PunishmentAppCommand;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.discord.DiscordUser;

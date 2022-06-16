@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.discord;
 
-import gg.projecteden.discord.DiscordId.Role;
+import gg.projecteden.api.discord.DiscordId.Role;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.models.discord.DiscordCaptcha;

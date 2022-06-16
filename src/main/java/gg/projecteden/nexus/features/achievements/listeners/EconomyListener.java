@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.achievements.listeners;
 
-import gg.projecteden.annotations.Disabled;
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.models.achievement.Achievement;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.entity.Player;

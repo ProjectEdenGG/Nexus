@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.models.banker;
 
-import gg.projecteden.interfaces.HasUniqueId;
-import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.api.interfaces.HasUniqueId;
+import gg.projecteden.api.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;

@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.events.aeveonproject;
 
-import gg.projecteden.annotations.Async;
+import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.nexus.features.events.aeveonproject.menus.ShipColorMenu;
 import gg.projecteden.nexus.features.events.aeveonproject.sets.APSet;
 import gg.projecteden.nexus.features.events.aeveonproject.sets.APSetType;

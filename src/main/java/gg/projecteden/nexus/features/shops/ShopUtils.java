@@ -5,7 +5,7 @@ import gg.projecteden.nexus.models.shop.Shop;
 import gg.projecteden.nexus.models.shop.ShopService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Collections;

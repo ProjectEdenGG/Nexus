@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.models.scheduledjobs.jobs;
 
-import gg.projecteden.discord.DiscordId.Role;
-import gg.projecteden.mongodb.models.scheduledjobs.common.AbstractJob;
-import gg.projecteden.mongodb.models.scheduledjobs.common.RetryIfInterrupted;
+import gg.projecteden.api.discord.DiscordId.Role;
+import gg.projecteden.api.mongodb.models.scheduledjobs.common.AbstractJob;
+import gg.projecteden.api.mongodb.models.scheduledjobs.common.RetryIfInterrupted;
 import gg.projecteden.nexus.models.badge.BadgeUser.Badge;
 import gg.projecteden.nexus.models.badge.BadgeUserService;
 import gg.projecteden.nexus.models.discord.DiscordUserService;

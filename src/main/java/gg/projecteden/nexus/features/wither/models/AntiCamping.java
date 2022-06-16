@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.wither.models;
 
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils;
+import gg.projecteden.api.common.utils.TimeUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;

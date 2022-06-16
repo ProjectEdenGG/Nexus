@@ -60,8 +60,8 @@ import java.util.function.Supplier;
 import static gg.projecteden.nexus.utils.Nullables.isNotNullOrAir;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.RandomUtils.randomElement;
-import static gg.projecteden.utils.Nullables.isNotNullOrEmpty;
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty;
+import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 
 @Getter
 public enum MobHeadType implements MobHead {

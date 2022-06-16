@@ -3,11 +3,11 @@ package gg.projecteden.nexus.models.nickname;
 import com.vdurmont.emoji.EmojiManager;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
-import gg.projecteden.EdenAPI;
-import gg.projecteden.discord.DiscordId;
-import gg.projecteden.discord.DiscordId.Role;
-import gg.projecteden.interfaces.HasUniqueId;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.common.EdenAPI;
+import gg.projecteden.api.discord.DiscordId;
+import gg.projecteden.api.discord.DiscordId.Role;
+import gg.projecteden.api.interfaces.HasUniqueId;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
@@ -15,7 +15,7 @@ import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.utils.TimeUtils.Timespan;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -38,16 +38,16 @@ import java.util.UUID;
 import static gg.projecteden.nexus.features.discord.Discord.discordize;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
-import static gg.projecteden.utils.TimeUtils.shortishDateTimeFormat;
-import static gg.projecteden.utils.UUIDUtils.isAppUuid;
-import static gg.projecteden.utils.UUIDUtils.isUUID0;
+import static gg.projecteden.api.common.utils.TimeUtils.shortishDateTimeFormat;
+import static gg.projecteden.api.common.utils.UUIDUtils.isAppUuid;
+import static gg.projecteden.api.common.utils.UUIDUtils.isUUID0;
 
 @Data
 @Entity(value = "nickname", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Converters({UUIDConverter.class, LocationConverter.class})
-public class Nickname extends gg.projecteden.mongodb.models.nickname.Nickname implements PlayerOwnedObject {
+public class Nickname extends gg.projecteden.api.mongodb.models.nickname.Nickname implements PlayerOwnedObject {
 
 	private List<NicknameHistoryEntry> nicknameHistory = new ArrayList<>();
 

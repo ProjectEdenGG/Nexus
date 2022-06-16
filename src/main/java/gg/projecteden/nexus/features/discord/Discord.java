@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.discord;
 
-import gg.projecteden.discord.DiscordId;
-import gg.projecteden.discord.DiscordId.TextChannel;
-import gg.projecteden.discord.appcommands.AppCommandRegistry;
+import gg.projecteden.api.discord.DiscordId;
+import gg.projecteden.api.discord.DiscordId.TextChannel;
+import gg.projecteden.api.discord.appcommands.AppCommandRegistry;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.commands.DiscordAppCommand;
 import gg.projecteden.nexus.features.listeners.Tab.Presence;
@@ -18,8 +18,8 @@ import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.Env;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Guild;

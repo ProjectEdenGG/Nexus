@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static gg.projecteden.utils.ReflectionUtils.methodsAnnotatedWith;
-import static gg.projecteden.utils.ReflectionUtils.subTypesOf;
+import static gg.projecteden.api.common.utils.ReflectionUtils.methodsAnnotatedWith;
+import static gg.projecteden.api.common.utils.ReflectionUtils.subTypesOf;
 
 @SuppressWarnings({"unused", "unchecked"})
 public class Commands {

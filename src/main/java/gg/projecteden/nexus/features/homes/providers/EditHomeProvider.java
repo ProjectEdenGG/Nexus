@@ -11,7 +11,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
 
 import static gg.projecteden.nexus.features.homes.HomesMenu.getAccessListNames;
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 
 public class EditHomeProvider extends InventoryProvider {
 	private final Home home;

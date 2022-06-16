@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-import static gg.projecteden.utils.UUIDUtils.isUUID0;
+import static gg.projecteden.api.common.utils.UUIDUtils.isUUID0;
 
 public class TicketFeature {
 	public static final String PREFIX = StringUtils.getPrefix("Tickets");

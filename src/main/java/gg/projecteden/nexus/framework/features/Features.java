@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import static gg.projecteden.utils.ReflectionUtils.subTypesOf;
+import static gg.projecteden.api.common.utils.ReflectionUtils.subTypesOf;
 
 @SuppressWarnings("unchecked")
 public class Features {

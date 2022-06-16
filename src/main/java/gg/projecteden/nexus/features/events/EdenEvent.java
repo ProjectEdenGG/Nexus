@@ -9,7 +9,7 @@ import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.quests.QuesterService;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.parchment.HasLocation;
-import gg.projecteden.utils.EnumUtils;
+import gg.projecteden.api.common.utils.EnumUtils;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Location;

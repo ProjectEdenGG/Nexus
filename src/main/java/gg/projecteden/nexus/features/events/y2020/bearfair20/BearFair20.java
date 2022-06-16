@@ -15,7 +15,7 @@ import gg.projecteden.nexus.utils.Timer;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Data;
 import lombok.Getter;
 import net.citizensnpcs.api.event.NPCRightClickEvent;

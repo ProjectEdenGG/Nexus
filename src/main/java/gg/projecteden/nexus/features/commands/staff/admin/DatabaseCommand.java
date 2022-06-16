@@ -1,10 +1,11 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
 import com.mongodb.MongoNamespace;
-import gg.projecteden.EdenAPI;
-import gg.projecteden.annotations.Async;
-import gg.projecteden.interfaces.DatabaseObject;
-import gg.projecteden.mongodb.MongoService;
+import gg.projecteden.api.common.EdenAPI;
+import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.common.utils.Utils;
+import gg.projecteden.api.interfaces.DatabaseObject;
+import gg.projecteden.api.mongodb.MongoService;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -20,7 +21,6 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.utils.Utils;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
@@ -35,10 +35,10 @@ import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.api.common.utils.ReflectionUtils.subTypesOf;
+import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
+import static gg.projecteden.api.common.utils.UUIDUtils.isUuid;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.utils.ReflectionUtils.subTypesOf;
-import static gg.projecteden.utils.UUIDUtils.UUID0;
-import static gg.projecteden.utils.UUIDUtils.isUuid;
 
 @Aliases("db")
 @Permission(Group.ADMIN)

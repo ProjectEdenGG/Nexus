@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.events.y2021.halloween21;
 
-import gg.projecteden.annotations.Disabled;
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2021.halloween21.models.Candy;
 import gg.projecteden.nexus.features.events.y2021.halloween21.models.Pumpkin;

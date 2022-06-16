@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.test;
 
-import gg.projecteden.annotations.Environments;
+import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
@@ -11,10 +11,10 @@ import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.EnumUtils;
-import gg.projecteden.utils.Env;
-import gg.projecteden.utils.RandomUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.EnumUtils;
+import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.api.common.utils.RandomUtils;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;

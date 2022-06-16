@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.store;
 
-import gg.projecteden.discord.DiscordId.Role;
-import gg.projecteden.discord.DiscordId.TextChannel;
+import gg.projecteden.api.discord.DiscordId.Role;
+import gg.projecteden.api.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.discord.Discord;
@@ -23,8 +23,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
-import static gg.projecteden.utils.UUIDUtils.isV4Uuid;
-import static gg.projecteden.utils.UUIDUtils.uuidFormat;
+import static gg.projecteden.api.common.utils.UUIDUtils.isV4Uuid;
+import static gg.projecteden.api.common.utils.UUIDUtils.uuidFormat;
 
 public class HandlePurchaseCommand extends CustomCommand {
 	private final String PREFIX = StringUtils.getPrefix("Store");

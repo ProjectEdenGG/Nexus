@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.features.discord;
 
-import gg.projecteden.discord.DiscordId.Role;
-import gg.projecteden.discord.DiscordId.TextChannel;
-import gg.projecteden.discord.DiscordId.User;
-import gg.projecteden.exceptions.EdenException;
+import gg.projecteden.api.discord.DiscordId.Role;
+import gg.projecteden.api.discord.DiscordId.TextChannel;
+import gg.projecteden.api.discord.DiscordId.User;
+import gg.projecteden.api.common.exceptions.EdenException;
 import gg.projecteden.nexus.models.badge.BadgeUser.Badge;
 import gg.projecteden.nexus.models.badge.BadgeUserService;
 import gg.projecteden.nexus.models.discord.DiscordConfigService;

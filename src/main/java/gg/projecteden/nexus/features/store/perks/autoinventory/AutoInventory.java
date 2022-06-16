@@ -9,7 +9,7 @@ import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import gg.projecteden.utils.Utils;
+import gg.projecteden.api.common.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;

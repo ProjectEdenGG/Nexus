@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.store.perks.joinquit;
 
-import gg.projecteden.discord.DiscordId.TextChannel;
+import gg.projecteden.api.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.chat.bridge.RoleManager;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;

@@ -6,7 +6,7 @@ import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.PostLoad;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.itemtags.ItemTagsUtils;
 import gg.projecteden.nexus.features.shops.ShopUtils;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -25,7 +25,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SerializationUtils.Json;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import gg.projecteden.utils.EnumUtils.IteratableEnum;
+import gg.projecteden.api.common.utils.EnumUtils.IteratableEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -69,7 +69,7 @@ import static gg.projecteden.nexus.utils.PlayerUtils.hasRoomFor;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.StringUtils.pretty;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
-import static gg.projecteden.utils.UUIDUtils.UUID0;
+import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 
 @Data
 @Entity(value = "shop", noClassnameStored = true)

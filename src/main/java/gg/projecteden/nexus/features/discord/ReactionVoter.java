@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.discord;
 
 import com.vdurmont.emoji.EmojiManager;
-import gg.projecteden.discord.DiscordId.Role;
+import gg.projecteden.api.discord.DiscordId.Role;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import lombok.Builder;
 import net.dv8tion.jda.api.entities.Member;

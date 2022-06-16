@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 
 import static java.util.stream.Collectors.joining;
 
-public class StringUtils extends gg.projecteden.utils.StringUtils {
+public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 	@Getter
 	private static final String colorChar = "§";
 	@Getter

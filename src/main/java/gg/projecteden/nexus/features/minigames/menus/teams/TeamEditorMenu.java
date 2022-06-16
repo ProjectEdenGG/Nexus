@@ -15,7 +15,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.utils.MathUtils;
+import gg.projecteden.api.common.utils.MathUtils;
 import lombok.RequiredArgsConstructor;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
@@ -24,7 +24,7 @@ import org.bukkit.entity.Player;
 import java.util.function.BiFunction;
 
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-import static gg.projecteden.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 @Rows(3)
 @Title("Team Editor Menu")

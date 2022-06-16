@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.minigames.models.mechanics;
 
-import gg.projecteden.interfaces.Named;
+import gg.projecteden.api.interfaces.Named;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.models.Arena;
@@ -31,9 +31,9 @@ import gg.projecteden.nexus.utils.Tasks.Countdown;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
-import gg.projecteden.utils.ReflectionUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
-import gg.projecteden.utils.TimeUtils.Timespan;
+import gg.projecteden.api.common.utils.ReflectionUtils;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import me.lucko.helper.scoreboard.ScoreboardTeam.NameTagVisibility;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;

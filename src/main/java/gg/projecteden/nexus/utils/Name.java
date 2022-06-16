@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.utils;
 
-import gg.projecteden.interfaces.HasUniqueId;
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.parchment.HasOfflinePlayer;
 import gg.projecteden.parchment.HasPlayer;
 import gg.projecteden.parchment.OptionalPlayerLike;

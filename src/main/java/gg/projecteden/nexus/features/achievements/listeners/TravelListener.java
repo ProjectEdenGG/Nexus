@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.achievements.listeners;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import gg.projecteden.annotations.Disabled;
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.achievements.events.travel.WarpEvent;
 import gg.projecteden.nexus.features.regionapi.MovementType;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;

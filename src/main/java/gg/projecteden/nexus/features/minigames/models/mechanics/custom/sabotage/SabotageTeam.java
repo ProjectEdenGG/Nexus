@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage;
 
-import gg.projecteden.interfaces.HasUniqueId;
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.framework.interfaces.Colored;

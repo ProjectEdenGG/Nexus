@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.discord;
 
-import gg.projecteden.discord.DiscordId.User;
+import gg.projecteden.api.discord.DiscordId.User;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.bridge.DiscordBridgeListener;
 import gg.projecteden.nexus.features.commands.NicknameCommand.NicknameApprovalListener;

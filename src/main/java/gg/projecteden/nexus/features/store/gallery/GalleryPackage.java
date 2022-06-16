@@ -40,8 +40,8 @@ import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.EnumUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.EnumUtils;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -81,8 +81,8 @@ import static gg.projecteden.nexus.features.store.BuycraftUtils.ADD_TO_CART_URL;
 import static gg.projecteden.nexus.features.store.BuycraftUtils.CATEGORY_URL;
 import static gg.projecteden.nexus.utils.RandomUtils.randomElement;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
-import static gg.projecteden.utils.EnumUtils.random;
-import static gg.projecteden.utils.UUIDUtils.UUID0;
+import static gg.projecteden.api.common.utils.EnumUtils.random;
+import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 
 @Getter
 @NoArgsConstructor

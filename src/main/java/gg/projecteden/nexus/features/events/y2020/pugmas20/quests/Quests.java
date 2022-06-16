@@ -24,7 +24,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.utils.ReflectionUtils.subTypesOf;
+import static gg.projecteden.api.common.utils.ReflectionUtils.subTypesOf;
 
 public class Quests {
 	public static final String fullInvError_obtain = Pugmas20.PREFIX + "&cYour inventory is too full to get this!";

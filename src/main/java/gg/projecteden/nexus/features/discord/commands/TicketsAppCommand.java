@@ -1,10 +1,10 @@
 package gg.projecteden.nexus.features.discord.commands;
 
-import gg.projecteden.discord.appcommands.AppCommandEvent;
-import gg.projecteden.discord.appcommands.AppCommandRegistry;
-import gg.projecteden.discord.appcommands.annotations.Command;
-import gg.projecteden.discord.appcommands.annotations.Desc;
-import gg.projecteden.discord.appcommands.annotations.RequiredRole;
+import gg.projecteden.api.discord.appcommands.AppCommandEvent;
+import gg.projecteden.api.discord.appcommands.AppCommandRegistry;
+import gg.projecteden.api.discord.appcommands.annotations.Command;
+import gg.projecteden.api.discord.appcommands.annotations.Desc;
+import gg.projecteden.api.discord.appcommands.annotations.RequiredRole;
 import gg.projecteden.nexus.features.discord.appcommands.NexusAppCommand;
 import gg.projecteden.nexus.features.discord.appcommands.annotations.Verify;
 import gg.projecteden.nexus.features.tickets.TicketFeature;

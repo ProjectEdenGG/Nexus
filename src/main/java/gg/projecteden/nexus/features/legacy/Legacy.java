@@ -2,14 +2,14 @@ package gg.projecteden.nexus.features.legacy;
 
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.StateFlag.State;
-import gg.projecteden.annotations.Environments;
+import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.spawnlimits.SpawnLimits.SpawnLimitType;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.WorldGuardFlagUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import gg.projecteden.utils.Env;
+import gg.projecteden.api.common.utils.Env;
 import org.bukkit.GameRule;
 import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;

@@ -6,10 +6,10 @@ import de.tr7zw.nbtapi.NBTList;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.PreLoad;
-import gg.projecteden.interfaces.HasUniqueId;
-import gg.projecteden.mongodb.serializers.LocalDateConverter;
-import gg.projecteden.mongodb.serializers.LocalDateTimeConverter;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.interfaces.HasUniqueId;
+import gg.projecteden.api.mongodb.serializers.LocalDateConverter;
+import gg.projecteden.api.mongodb.serializers.LocalDateTimeConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.commands.BirthdaysCommand;
@@ -67,7 +67,7 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 @NoArgsConstructor
 @AllArgsConstructor
 @Converters({UUIDConverter.class, LocalDateConverter.class, LocalDateTimeConverter.class})
-public class Nerd extends gg.projecteden.mongodb.models.nerd.Nerd implements PlayerOwnedObject, IsColoredAndNicknamed, Colored {
+public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements PlayerOwnedObject, IsColoredAndNicknamed, Colored {
 	@ToString.Exclude
 	@EqualsAndHashCode.Exclude
 	private Location location;

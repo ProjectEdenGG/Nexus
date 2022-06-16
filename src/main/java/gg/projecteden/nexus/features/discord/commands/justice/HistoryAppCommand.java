@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.features.discord.commands.justice;
 
-import gg.projecteden.discord.appcommands.AppCommandEvent;
-import gg.projecteden.discord.appcommands.annotations.Command;
-import gg.projecteden.discord.appcommands.annotations.Desc;
-import gg.projecteden.discord.appcommands.annotations.RequiredRole;
+import gg.projecteden.api.discord.appcommands.AppCommandEvent;
+import gg.projecteden.api.discord.appcommands.annotations.Command;
+import gg.projecteden.api.discord.appcommands.annotations.Desc;
+import gg.projecteden.api.discord.appcommands.annotations.RequiredRole;
 import gg.projecteden.nexus.features.discord.appcommands.NexusAppCommand;
 import gg.projecteden.nexus.features.justice.Justice;
 import gg.projecteden.nexus.models.punishments.Punishments;

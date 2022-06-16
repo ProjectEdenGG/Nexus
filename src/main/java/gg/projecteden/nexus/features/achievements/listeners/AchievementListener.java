@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.achievements.listeners;
 
-import gg.projecteden.annotations.Disabled;
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.achievements.events.AchievementCompletedEvent;
 import gg.projecteden.nexus.models.achievement.Achievement;

@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.events;
 
-import gg.projecteden.annotations.Async;
+import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.nexus.features.events.store.EventStoreListener;
 import gg.projecteden.nexus.features.events.store.models.EventStoreImage;
 import gg.projecteden.nexus.features.events.store.providers.EventStoreProvider;

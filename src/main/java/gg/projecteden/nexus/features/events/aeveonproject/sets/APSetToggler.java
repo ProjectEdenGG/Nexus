@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.events.aeveonproject.sets;
 
 import com.google.common.base.Strings;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 
 import static gg.projecteden.nexus.features.events.aeveonproject.AeveonProject.worldguard;
 

@@ -6,9 +6,9 @@ import dev.dbassett.skullcreator.SkullCreator;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.interfaces.HasUniqueId;
-import gg.projecteden.mongodb.serializers.LocalDateTimeConverter;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.interfaces.HasUniqueId;
+import gg.projecteden.api.mongodb.serializers.LocalDateTimeConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
@@ -39,8 +39,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.utils.UUIDUtils.uuidFormat;
-import static gg.projecteden.utils.UUIDUtils.uuidUnformat;
+import static gg.projecteden.api.common.utils.UUIDUtils.uuidFormat;
+import static gg.projecteden.api.common.utils.UUIDUtils.uuidUnformat;
 
 @Data
 @Entity(value = "skin_cache", noClassnameStored = true)

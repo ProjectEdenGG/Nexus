@@ -27,9 +27,9 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.features.menus.SignMenuFactory.ARROWS;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 @Title("&3Daily Rewards")
 @RequiredArgsConstructor

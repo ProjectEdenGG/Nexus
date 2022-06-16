@@ -3,7 +3,7 @@ package gg.projecteden.nexus.models.banker;
 import com.mongodb.DBObject;
 import com.mysql.cj.util.StringUtils;
 import dev.morphia.annotations.PreLoad;
-import gg.projecteden.interfaces.HasUniqueId;
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.Utils;
@@ -22,7 +22,7 @@ import java.util.UUID;
 
 import static gg.projecteden.nexus.models.banker.BankerService.rounded;
 import static gg.projecteden.nexus.models.banker.Transaction.TransactionCause.shopCauses;
-import static gg.projecteden.utils.UUIDUtils.isUUID0;
+import static gg.projecteden.api.common.utils.UUIDUtils.isUUID0;
 
 @Data
 @Builder

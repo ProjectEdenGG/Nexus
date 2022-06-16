@@ -1,12 +1,12 @@
 package gg.projecteden.nexus.features.ambience.effects.birds;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.ambience.effects.birds.common.annotations.Biomes;
 import gg.projecteden.nexus.features.ambience.effects.birds.common.annotations.Birdhouse;
 import gg.projecteden.nexus.utils.BiomeTag;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.bukkit.Location;

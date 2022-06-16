@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.discord.commands;
 
-import gg.projecteden.discord.DiscordId.Role;
-import gg.projecteden.discord.appcommands.AppCommandEvent;
-import gg.projecteden.discord.appcommands.annotations.Command;
+import gg.projecteden.api.discord.DiscordId.Role;
+import gg.projecteden.api.discord.appcommands.AppCommandEvent;
+import gg.projecteden.api.discord.appcommands.annotations.Command;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.discord.appcommands.NexusAppCommand;
 

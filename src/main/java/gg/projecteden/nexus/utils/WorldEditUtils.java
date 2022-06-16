@@ -34,7 +34,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.parchment.HasPlayer;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -74,7 +74,7 @@ import static com.sk89q.worldedit.extent.clipboard.io.BuiltInClipboardFormat.SPO
 import static gg.projecteden.nexus.utils.BlockUtils.createDistanceSortedQueue;
 import static gg.projecteden.nexus.utils.StringUtils.getFlooredCoordinateString;
 import static gg.projecteden.nexus.utils.StringUtils.left;
-import static gg.projecteden.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
 public class WorldEditUtils {

@@ -9,7 +9,7 @@ import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Timespan;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import lombok.RequiredArgsConstructor;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
@@ -22,7 +22,7 @@ import java.util.List;
 
 import static gg.projecteden.nexus.features.menus.MenuUtils.openAnvilMenu;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 
 @Title("Kit Manager")
 @Rows(3)

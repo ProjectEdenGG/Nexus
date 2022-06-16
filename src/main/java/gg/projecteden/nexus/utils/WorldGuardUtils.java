@@ -19,7 +19,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.utils.CitizensUtils.NPCFinder;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.parchment.HasPlayer;
-import gg.projecteden.utils.RegexUtils;
+import gg.projecteden.api.common.utils.RegexUtils;
 import lombok.Data;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;

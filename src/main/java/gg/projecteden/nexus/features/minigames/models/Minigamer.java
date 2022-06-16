@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.minigames.models;
 
 import com.google.common.base.Strings;
 import de.myzelyam.api.vanish.VanishAPI;
-import gg.projecteden.interfaces.HasUniqueId;
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.SpeedCommand;
 import gg.projecteden.nexus.features.minigames.Minigames;
@@ -27,7 +27,7 @@ import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.parchment.PlayerLike;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

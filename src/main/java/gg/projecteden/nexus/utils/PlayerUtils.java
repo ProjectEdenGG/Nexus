@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import com.viaversion.viaversion.api.Via;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
-import gg.projecteden.interfaces.HasUniqueId;
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -28,7 +28,7 @@ import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.parchment.HasOfflinePlayer;
 import gg.projecteden.parchment.HasPlayer;
 import gg.projecteden.parchment.OptionalPlayer;
-import gg.projecteden.utils.Utils.MinMaxResult;
+import gg.projecteden.api.common.utils.Utils.MinMaxResult;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -82,8 +82,8 @@ import java.util.stream.Stream;
 import static gg.projecteden.nexus.utils.ItemUtils.fixMaxStackSize;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.Utils.getMin;
-import static gg.projecteden.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.utils.UUIDUtils.isUuid;
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.api.common.utils.UUIDUtils.isUuid;
 import static java.util.stream.Collectors.toList;
 
 @UtilityClass

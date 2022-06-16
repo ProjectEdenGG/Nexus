@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.crates.menus;
 
+import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.crates.Crates;
 import gg.projecteden.nexus.features.crates.models.CrateLoot;
@@ -10,19 +11,10 @@ import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.Pagination;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
-import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
-import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
-import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
-import gg.projecteden.nexus.features.menus.api.annotations.Title;
-import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.features.menus.api.content.Pagination;
-import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.EnumUtils;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import net.wesjd.anvilgui.AnvilGUI;

@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.commands;
 
-import gg.projecteden.annotations.Async;
+import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -15,7 +15,7 @@ import gg.projecteden.nexus.utils.IOUtils;
 
 import java.time.format.DateTimeFormatter;
 
-import static gg.projecteden.utils.TimeUtils.longDateTimeFormat;
+import static gg.projecteden.api.common.utils.TimeUtils.longDateTimeFormat;
 
 @Aliases("firstjoin")
 public class FirstLoginCommand extends CustomCommand {

@@ -3,7 +3,7 @@ package gg.projecteden.nexus.models.freeze;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.commands.SpeedCommand;
 import gg.projecteden.nexus.features.commands.SpeedCommand.SpeedType;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;

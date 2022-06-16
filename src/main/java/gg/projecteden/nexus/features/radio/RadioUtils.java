@@ -9,7 +9,7 @@ import com.xxmicloxx.NoteBlockAPI.songplayer.Fade;
 import com.xxmicloxx.NoteBlockAPI.songplayer.PositionSongPlayer;
 import com.xxmicloxx.NoteBlockAPI.songplayer.RadioSongPlayer;
 import com.xxmicloxx.NoteBlockAPI.songplayer.SongPlayer;
-import gg.projecteden.interfaces.HasUniqueId;
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.models.radio.RadioConfig;
 import gg.projecteden.nexus.models.radio.RadioConfig.Radio;
 import gg.projecteden.nexus.models.radio.RadioConfig.RadioType;

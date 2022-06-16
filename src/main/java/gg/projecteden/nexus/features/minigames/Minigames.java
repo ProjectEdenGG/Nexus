@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.minigames;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import gg.projecteden.discord.DiscordId.TextChannel;
+import gg.projecteden.api.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.features.discord.Discord;
@@ -56,8 +56,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.utils.ReflectionUtils.subTypesOf;
-import static gg.projecteden.utils.ReflectionUtils.typesAnnotatedWith;
+import static gg.projecteden.api.common.utils.ReflectionUtils.subTypesOf;
+import static gg.projecteden.api.common.utils.ReflectionUtils.typesAnnotatedWith;
 
 public class Minigames extends Feature {
 	public static final String PREFIX = StringUtils.getPrefix("Minigames");

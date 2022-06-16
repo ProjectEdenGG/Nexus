@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.votes;
 
-import gg.projecteden.discord.DiscordId.User;
+import gg.projecteden.api.discord.DiscordId.User;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.crates.models.CrateType;

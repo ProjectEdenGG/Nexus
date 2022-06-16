@@ -1,9 +1,8 @@
 package gg.projecteden.nexus.features.chat.bridge;
 
 import com.vdurmont.emoji.EmojiParser;
+import gg.projecteden.api.discord.DiscordId.User;
 import gg.projecteden.nexus.features.chat.Censor;
-import gg.projecteden.nexus.features.chat.Censor;
-import gg.projecteden.discord.DiscordId.User;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.chat.ChatManager;
 import gg.projecteden.nexus.features.chat.events.DiscordChatEvent;

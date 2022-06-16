@@ -1,11 +1,11 @@
 package gg.projecteden.nexus.features.ambience.effects.particles;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.ambience.effects.particles.common.ParticleEffect;
 import gg.projecteden.nexus.features.ambience.effects.particles.common.ParticleEffectType;
 import gg.projecteden.nexus.features.particles.effects.DotEffect;
 import gg.projecteden.nexus.models.ambience.AmbienceUser;
 import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;

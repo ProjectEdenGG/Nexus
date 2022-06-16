@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.chat;
 
-import gg.projecteden.discord.DiscordId.TextChannel;
-import gg.projecteden.interfaces.HasUniqueId;
+import gg.projecteden.api.discord.DiscordId.TextChannel;
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.alerts.AlertsListener;
 import gg.projecteden.nexus.features.chat.bridge.IngameBridgeListener;
@@ -40,9 +40,9 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.AdventureUtils.asLegacyText;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
-import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 public class Chat extends Feature {
 

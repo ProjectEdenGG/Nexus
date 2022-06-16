@@ -2,21 +2,21 @@ package gg.projecteden.nexus;
 
 import com.google.gson.GsonBuilder;
 import dev.morphia.converters.TypeConverter;
-import gg.projecteden.DatabaseConfig;
-import gg.projecteden.mongodb.EdenDatabaseAPI;
+import gg.projecteden.api.common.DatabaseConfig;
+import gg.projecteden.api.mongodb.EdenDatabaseAPI;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import gg.projecteden.nexus.utils.SerializationUtils.Json.LocalDateGsonSerializer;
 import gg.projecteden.nexus.utils.SerializationUtils.Json.LocalDateTimeGsonSerializer;
 import gg.projecteden.nexus.utils.SerializationUtils.Json.LocationGsonSerializer;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.Env;
+import gg.projecteden.api.common.utils.Env;
 import org.bukkit.Location;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
-import static gg.projecteden.utils.ReflectionUtils.subTypesOf;
+import static gg.projecteden.api.common.utils.ReflectionUtils.subTypesOf;
 
 public class API extends EdenDatabaseAPI {
 

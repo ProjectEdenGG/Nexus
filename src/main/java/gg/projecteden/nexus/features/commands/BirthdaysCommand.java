@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.commands;
 
-import gg.projecteden.discord.DiscordId.Role;
-import gg.projecteden.discord.DiscordId.TextChannel;
+import gg.projecteden.api.discord.DiscordId.Role;
+import gg.projecteden.api.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;

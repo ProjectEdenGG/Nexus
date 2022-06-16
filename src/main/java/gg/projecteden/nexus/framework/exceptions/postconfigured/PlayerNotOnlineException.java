@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.framework.exceptions.postconfigured;
 
-import gg.projecteden.interfaces.HasUniqueId;
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.models.nickname.Nickname;
 
 import java.util.UUID;

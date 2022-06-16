@@ -5,7 +5,7 @@ import gg.projecteden.nexus.features.commands.staff.admin.BashCommand;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.playerplushie.PlayerPlushieConfig;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.utils.Env;
+import gg.projecteden.api.common.utils.Env;
 import lombok.SneakyThrows;
 
 import java.nio.file.Files;

@@ -14,7 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-import static gg.projecteden.utils.UUIDUtils.UUID0;
+import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 
 public class Market {
 	private static final ShopService service = new ShopService();

@@ -8,7 +8,7 @@ import org.bukkit.entity.Entity;
 import java.util.UUID;
 import java.util.function.Predicate;
 
-import static gg.projecteden.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 @Getter
 @AllArgsConstructor

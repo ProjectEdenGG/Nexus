@@ -16,7 +16,7 @@ import gg.projecteden.nexus.models.mobheads.MobHeadUser;
 import gg.projecteden.nexus.models.mobheads.MobHeadUser.MobHeadData;
 import gg.projecteden.nexus.models.mobheads.MobHeadUserService;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.utils.Utils;
+import gg.projecteden.api.common.utils.Utils;
 import kotlin.Pair;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;

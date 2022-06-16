@@ -6,9 +6,9 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.PostLoad;
 import dev.morphia.annotations.PreLoad;
-import gg.projecteden.interfaces.HasUniqueId;
-import gg.projecteden.mongodb.serializers.BigDecimalConverter;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.interfaces.HasUniqueId;
+import gg.projecteden.api.mongodb.serializers.BigDecimalConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.economy.events.BalanceChangeEvent;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.NegativeBalanceException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
@@ -17,7 +17,7 @@ import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -34,7 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static gg.projecteden.nexus.models.banker.BankerService.rounded;
 import static gg.projecteden.nexus.utils.StringUtils.prettyMoney;
-import static gg.projecteden.utils.UUIDUtils.isUUID0;
+import static gg.projecteden.api.common.utils.UUIDUtils.isUUID0;
 
 @Data
 @Entity(value = "banker", noClassnameStored = true)

@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.minigames.models;
 import com.google.common.base.Strings;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import gg.projecteden.interfaces.Named;
+import gg.projecteden.api.interfaces.Named;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.models.annotations.Regenerating;

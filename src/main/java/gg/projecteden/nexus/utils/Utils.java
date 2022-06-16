@@ -5,7 +5,7 @@ import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import gg.projecteden.interfaces.HasUniqueId;
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import lombok.AllArgsConstructor;
@@ -40,11 +40,11 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.utils.ReflectionUtils.methodsAnnotatedWith;
-import static gg.projecteden.utils.ReflectionUtils.subTypesOf;
-import static gg.projecteden.utils.ReflectionUtils.superclassesOf;
+import static gg.projecteden.api.common.utils.ReflectionUtils.methodsAnnotatedWith;
+import static gg.projecteden.api.common.utils.ReflectionUtils.subTypesOf;
+import static gg.projecteden.api.common.utils.ReflectionUtils.superclassesOf;
 
-public class Utils extends gg.projecteden.utils.Utils {
+public class Utils extends gg.projecteden.api.common.utils.Utils {
 
 	public static void registerListeners(Package packageObject) {
 		registerListeners(packageObject.getName());

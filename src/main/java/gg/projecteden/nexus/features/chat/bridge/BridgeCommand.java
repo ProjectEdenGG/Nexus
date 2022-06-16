@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.features.chat.bridge;
 
 import com.google.gson.Gson;
-import gg.projecteden.annotations.Async;
-import gg.projecteden.discord.DiscordId;
-import gg.projecteden.discord.DiscordId.TextChannel;
+import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.discord.DiscordId;
+import gg.projecteden.api.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.features.discord.Discord;

@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.achievements.listeners;
 
-import gg.projecteden.annotations.Disabled;
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.achievements.events.social.DiscordLinkEvent;
 import gg.projecteden.nexus.features.achievements.events.social.poof.PoofToEvent;
 import gg.projecteden.nexus.features.chat.events.ChannelChangeEvent;

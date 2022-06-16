@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 public class Advent implements Listener {
 	private static final Pugmas21UserService userService = new Pugmas21UserService();

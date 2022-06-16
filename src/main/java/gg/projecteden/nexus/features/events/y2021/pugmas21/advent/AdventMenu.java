@@ -11,7 +11,7 @@ import gg.projecteden.nexus.models.pugmas21.Advent21Config.AdventPresent;
 import gg.projecteden.nexus.models.pugmas21.Pugmas21User;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.EnumUtils.IteratableEnum;
+import gg.projecteden.api.common.utils.EnumUtils.IteratableEnum;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
