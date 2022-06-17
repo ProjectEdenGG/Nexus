@@ -9,7 +9,8 @@ import org.jetbrains.annotations.NotNull;
 @Data
 @NoArgsConstructor
 public class CustomTripwireData extends ExtraBlockData {
-	@NonNull BlockFace facing;
+	@NonNull
+	private BlockFace facing;
 
 	public CustomTripwireData(@NotNull BlockFace facing) {
 		this.facing = facing;

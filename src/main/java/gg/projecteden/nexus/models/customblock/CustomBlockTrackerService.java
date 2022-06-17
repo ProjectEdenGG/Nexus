@@ -25,5 +25,9 @@ public class CustomBlockTrackerService extends MongoService<CustomBlockTracker> 
 		return this.fromWorld(location.getWorld());
 	}
 
+	@Override
+	protected void beforeSave(CustomBlockTracker object) {
+		object.getCustomBlockMap().values().removeIf(Map::isEmpty);
+	}
 
 }

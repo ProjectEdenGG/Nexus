@@ -15,11 +15,11 @@ import org.bukkit.block.data.type.NoteBlock;
 @Data
 @NoArgsConstructor
 public class NoteBlockData {
-	NoteBlockInstrument instrument = NoteBlockInstrument.PIANO;
-	int step = 0;
-	double volume = 1.0;
-	boolean powered;
-	boolean interacted;
+	private NoteBlockInstrument instrument = NoteBlockInstrument.PIANO;
+	private int step = 0;
+	private double volume = 1.0;
+	private boolean powered;
+	private boolean interacted;
 
 	public NoteBlockData(Block block) {
 		NoteBlock noteBlock = ((NoteBlock) block.getBlockData());

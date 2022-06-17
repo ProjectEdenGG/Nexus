@@ -43,22 +43,6 @@ public interface ICustomNoteBlock extends ICustomBlock {
 	// Directional
 	Set<BlockFace> directions = Set.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST);
 
-	default Instrument getNoteBlockInstrument(@Nullable BlockFace facing) {
-		if (facing == null || !directions.contains(facing) || !(this instanceof IDirectionalNoteBlock directional))
-			return this.getNoteBlockInstrument();
-
-		switch (facing) {
-			case NORTH, SOUTH -> {
-				return directional.getNoteBlockInstrument_NS();
-			}
-			case EAST, WEST -> {
-				return directional.getNoteBlockInstrument_EW();
-			}
-		}
-
-		return this.getNoteBlockInstrument();
-	}
-
 	default int getNoteBlockStep(@Nullable BlockFace facing) {
 		if (facing == null || !directions.contains(facing) || !(this instanceof IDirectionalNoteBlock directional))
 			return this.getNoteBlockStep();
@@ -144,7 +128,7 @@ public interface ICustomNoteBlock extends ICustomBlock {
 	@Override
 	default BlockData getBlockData(@Nullable BlockFace facing, Block underneath) {
 		NoteBlock noteBlock = (NoteBlock) this.getVanillaBlockMaterial().createBlockData();
-		noteBlock.setInstrument(this.getNoteBlockInstrument(facing));
+		noteBlock.setInstrument(this.getNoteBlockInstrument());
 		noteBlock.setNote(this.getNoteBlockNote(facing));
 		noteBlock.setPowered(false);
 		return noteBlock;

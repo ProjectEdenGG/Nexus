@@ -10,10 +10,10 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 public class CustomBlockData {
-	UUID placerUUID = null;
-	int modelId;
-	CustomBlockType type;
-	ExtraBlockData extraData;
+	private UUID placerUUID = null;
+	private int modelId;
+	private CustomBlockType type;
+	private ExtraBlockData extraData;
 
 	public CustomBlockData(UUID uuid, int modelId, CustomBlockType type) {
 		switch (type) {
