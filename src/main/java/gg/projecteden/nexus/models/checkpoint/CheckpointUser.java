@@ -18,7 +18,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,59 +34,45 @@ public class CheckpointUser implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private Map<String, RecordTotalTime> bestTotalTimes = new ConcurrentHashMap<>();
-	private Map<CheckpointKey, CheckpointValue> bestCheckpointTimes = new ConcurrentHashMap<>(); // for sum of best
+	private Map<String, Map<Integer, CheckpointValue>> bestCheckpointTimes = new ConcurrentHashMap<>(); // for sum of best
 
 	public void recordTotalTime(String arena, Duration duration, Map<Integer, Duration> checkpointTimes, Instant achievedAt) {
-		RecordTotalTime newRecord = new RecordTotalTime(uuid, duration, checkpointTimes, achievedAt);
-		if (!bestTotalTimes.containsKey(arena) || bestTotalTimes.get(arena).compareTo(newRecord) > 0) {
+		final var newRecord = new RecordTotalTime(uuid, duration, checkpointTimes, achievedAt);
+		final boolean hasBestTotalTime = bestTotalTimes.containsKey(arena);
+		final boolean isBetterTotalTime = bestTotalTimes.get(arena).compareTo(newRecord) > 0;
+
+		if (!hasBestTotalTime || isBetterTotalTime) {
 			bestTotalTimes.put(arena, newRecord);
 			service.save(this);
 		}
+
 		CheckpointService.recordBestTotalTime(arena, newRecord);
 	}
 
-	public void recordCheckpointTime(CheckpointKey key, CheckpointValue value) {
-		if (!bestCheckpointTimes.containsKey(key) || bestCheckpointTimes.get(key).compareTo(value) > 0) {
-			bestCheckpointTimes.put(key, value);
+	public void recordCheckpointTime(String arena, int checkpoint, Duration duration, Instant achievedAt) {
+		final var bestCheckpointTimes = getBestCheckpointTimes(arena);
+		final var value = new CheckpointValue(uuid, duration, achievedAt);
+		final boolean hasBestCheckpointTime = bestCheckpointTimes.containsKey(checkpoint);
+		final boolean isBetterCheckpointTime = bestCheckpointTimes.get(checkpoint).compareTo(value) > 0;
+
+		if (!hasBestCheckpointTime || isBetterCheckpointTime) {
+			bestCheckpointTimes.put(checkpoint, value);
 			service.save(this);
 		}
-		CheckpointService.recordBestCheckpointTime(key, value);
+
+		CheckpointService.recordBestCheckpointTime(arena, checkpoint, value);
 	}
 
-	public void recordCheckpointTime(String arena, int checkpoint, Duration duration, Instant achievedAt) {
-		recordCheckpointTime(new CheckpointKey(arena, checkpoint), new CheckpointValue(uuid, duration, achievedAt));
+	private Map<Integer, CheckpointValue> getBestCheckpointTimes(String arena) {
+		return bestCheckpointTimes.computeIfAbsent(arena, $ -> new ConcurrentHashMap<>());
 	}
 
 	public @Nullable RecordTotalTime getBestTotalTime(String arena) {
 		return bestTotalTimes.get(arena);
 	}
 
-	public @Nullable CheckpointValue getBestCheckpointTime(CheckpointKey key) {
-		return bestCheckpointTimes.get(key);
-	}
-
 	public @Nullable CheckpointValue getBestCheckpointTime(String arena, int checkpoint) {
-		return getBestCheckpointTime(new CheckpointKey(arena, checkpoint));
-	}
-
-	public @NotNull Map<Integer, CheckpointValue> getBestCheckpointTimes(String arena) {
-		Map<Integer, CheckpointValue> bestCheckpointTimes = new HashMap<>();
-		for (Map.Entry<CheckpointKey, CheckpointValue> entry : this.bestCheckpointTimes.entrySet()) {
-			if (entry.getKey().getArenaName().equals(arena)) {
-				bestCheckpointTimes.put(entry.getKey().getCheckpoint(), entry.getValue());
-			}
-		}
-		return bestCheckpointTimes;
-	}
-
-	public @NotNull Map<CheckpointKey, CheckpointValue> filterBestCheckpointTimes(String arena) {
-		Map<CheckpointKey, CheckpointValue> filtered = new HashMap<>();
-		for (Map.Entry<CheckpointKey, CheckpointValue> entry : this.bestCheckpointTimes.entrySet()) {
-			if (entry.getKey().getArenaName().equals(arena)) {
-				filtered.put(entry.getKey(), entry.getValue());
-			}
-		}
-		return filtered;
+		return getBestCheckpointTimes(arena).get(checkpoint);
 	}
 
 	// handy dandy boilerplate
@@ -112,10 +97,6 @@ public class CheckpointUser implements PlayerOwnedObject {
 		return getBestCheckpointTimes(arena.getName());
 	}
 
-	public @NotNull Map<CheckpointKey, CheckpointValue> filterBestCheckpointTimes(Arena arena) {
-		return filterBestCheckpointTimes(arena.getName());
-	}
-
 	public void recordTotalTime(Match match, Duration duration, Map<Integer, Duration> checkpointTimes, Instant achievedAt) {
 		recordTotalTime(match.getArena(), duration, checkpointTimes, achievedAt);
 	}
@@ -134,10 +115,6 @@ public class CheckpointUser implements PlayerOwnedObject {
 
 	public @NotNull Map<Integer, CheckpointValue> getBestCheckpointTimes(Match match) {
 		return getBestCheckpointTimes(match.getArena());
-	}
-
-	public @NotNull Map<CheckpointKey, CheckpointValue> filterBestCheckpointTimes(Match match) {
-		return filterBestCheckpointTimes(match.getArena());
 	}
 
 	public void recordTotalTime(MatchData matchData, Duration duration, Map<Integer, Duration> checkpointTimes, Instant achievedAt) {
@@ -160,7 +137,4 @@ public class CheckpointUser implements PlayerOwnedObject {
 		return getBestCheckpointTimes(matchData.getMatch());
 	}
 
-	public @NotNull Map<CheckpointKey, CheckpointValue> filterBestCheckpointTimes(MatchData matchData) {
-		return filterBestCheckpointTimes(matchData.getMatch());
-	}
 }

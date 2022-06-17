@@ -11,18 +11,16 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 @ObjectClass(CheckpointUser.class)
 public class CheckpointService extends MongoPlayerService<CheckpointUser> {
 	private final static Map<UUID, CheckpointUser> cache = new ConcurrentHashMap<>();
 	private final static Map<String, RecordTotalTime> globalBestTimes = new ConcurrentHashMap<>();
-	private final static Map<CheckpointKey, CheckpointValue> globalBestCheckpointTimes = new ConcurrentHashMap<>();
+	private final static Map<String, Map<Integer, CheckpointValue>> globalBestCheckpointTimes = new ConcurrentHashMap<>();
 	private static boolean globalBestTimesInitialized = false;
 
 	public CheckpointService() {
@@ -44,12 +42,10 @@ public class CheckpointService extends MongoPlayerService<CheckpointUser> {
 			globalBestTimesInitialized = true;
 			Tasks.async(() -> {
 				for (CheckpointUser user : getAll()) {
-					for (Map.Entry<String, RecordTotalTime> entry : user.getBestTotalTimes().entrySet()) {
-						recordBestTotalTime(entry.getKey(), entry.getValue());
-					}
-					for (Map.Entry<CheckpointKey, CheckpointValue> entry : user.getBestCheckpointTimes().entrySet()) {
-						recordBestCheckpointTime(entry.getKey(), entry.getValue());
-					}
+					user.getBestTotalTimes().forEach(CheckpointService::recordBestTotalTime);
+
+					user.getBestCheckpointTimes().forEach((arena, map) ->
+						map.forEach((checkpoint, value) -> recordBestCheckpointTime(arena, checkpoint, value)));
 				}
 			});
 		}
@@ -61,10 +57,15 @@ public class CheckpointService extends MongoPlayerService<CheckpointUser> {
 		}
 	}
 
-	public static void recordBestCheckpointTime(CheckpointKey key, CheckpointValue value) {
-		if (!globalBestCheckpointTimes.containsKey(key) || globalBestCheckpointTimes.get(key).compareTo(value) > 0) {
-			globalBestCheckpointTimes.put(key, value);
-		}
+	public static void recordBestCheckpointTime(String arena, Integer checkpoint, CheckpointValue value) {
+		final var globalBestCheckpointTimes = CheckpointService.globalBestCheckpointTimes.computeIfAbsent(arena, $ -> new ConcurrentHashMap<>());
+		final boolean hasGlobalBestCheckpointTime = globalBestCheckpointTimes.containsKey(checkpoint);
+		final boolean isBetterGlobalCheckpointTime = globalBestCheckpointTimes.get(checkpoint).compareTo(value) > 0;
+
+		if (hasGlobalBestCheckpointTime && !isBetterGlobalCheckpointTime)
+			return;
+
+		globalBestCheckpointTimes.put(checkpoint, value);
 	}
 
 	public static @Nullable RecordTotalTime getBestTotalTime(String arena) {
@@ -83,9 +84,7 @@ public class CheckpointService extends MongoPlayerService<CheckpointUser> {
 	}
 
 	public static Map<Integer, CheckpointValue> getBestCheckpointTimes(@NotNull String arena) {
-		return globalBestCheckpointTimes.entrySet().stream()
-			.filter(entry -> entry.getKey().getArenaName().equals(arena))
-			.collect(Collectors.toMap(entry -> entry.getKey().getCheckpoint(), Entry::getValue));
+		return globalBestCheckpointTimes.get(arena);
 	}
 
 	// boilerplate
