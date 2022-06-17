@@ -145,24 +145,31 @@ public class CustomBlocksCommand extends CustomCommand {
 	void hardness() {
 		Block block = getTargetBlockRequired();
 		ItemStack itemStack = getTool();
+		if (itemStack == null)
+			itemStack = new ItemStack(Material.AIR);
 
 		Material blockType = block.getType();
-		Material itemType = itemStack == null ? Material.AIR : itemStack.getType();
-		float blockDurability = NMSUtils.getBlockDurability(block);
+		Material itemType = itemStack.getType();
 		float blockHardness = NMSUtils.getBlockHardness(block);
 		float destroySpeedItem = NMSUtils.getDestroySpeed(block, itemStack);
-		float destroySpeedItem1 = -1;
-		if (itemType != Material.AIR)
-			destroySpeedItem1 = block.getDestroySpeed(itemStack, true);
+		boolean canHarvest = NMSUtils.canHarvest(player(), block, itemStack);
+		float blockDamage = NMSUtils.getBlockDamage(player(), block, itemStack);
+		int breakTicks = (int) Math.ceil(1 / blockDamage);
+		double breakSeconds = breakTicks / 20.0;
+		boolean isBestTool = block.isPreferredTool(itemStack);
 
-		send("Tool: " + itemType);
+		send("= = = = =");
 		send("Block: " + blockType);
 		send("Block Hardness: " + blockHardness);
-		send("Block Durability: " + blockDurability);
+		line();
+		send("Tool: " + itemType);
 		send("Item Destroy Speed: " + destroySpeedItem);
-		send("Item Destroy Speed Alt: " + destroySpeedItem1);
-		send("");
-		send("Block Damage: " + NMSUtils.getBlockDamage(player(), block, itemStack));
+		send("Can Harvest: " + canHarvest);
+		send("Is Best Tool: " + isBestTool);
+		line();
+		send("Block Damage: " + blockDamage);
+		send("Break Times: " + breakTicks + "t | " + breakSeconds + "s");
+		send("= = = = =");
 	}
 
 	public static class CustomBlockTagMenu extends InventoryProvider {

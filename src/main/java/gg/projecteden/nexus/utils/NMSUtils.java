@@ -1,6 +1,8 @@
 package gg.projecteden.nexus.utils;
 
 import gg.projecteden.nexus.features.customblocks.CustomBlocks.SoundAction;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
+import lombok.NonNull;
 import net.minecraft.core.BlockPosition;
 import net.minecraft.resources.MinecraftKey;
 import net.minecraft.server.MinecraftServer;
@@ -17,6 +19,7 @@ import net.minecraft.world.level.block.state.BlockBase;
 import net.minecraft.world.level.block.state.IBlockData;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.v1_17_R1.CraftServer;
@@ -30,6 +33,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -151,20 +155,94 @@ public class NMSUtils {
 		return 1;
 	}
 
+	private enum ToolType {
+		NONE,
+		WOODEN,
+		STONE,
+		IRON,
+		DIAMOND,
+		NETHERITE,
+		GOLDEN,
+		SHEARS,
+		SWORD,
+		;
+
+		public static @NonNull ToolType of(@Nullable org.bukkit.inventory.ItemStack itemStack) {
+			if (Nullables.isNullOrAir(itemStack))
+				return NONE;
+
+			String material = itemStack.getType().name().toLowerCase();
+			if (material.contains("sword"))
+				return SWORD;
+			if (material.equals("shears"))
+				return SHEARS;
+
+			for (ToolType toolType : values()) {
+				if (material.startsWith(toolType.name().toLowerCase()))
+					return toolType;
+			}
+
+			return NONE;
+		}
+
+		public List<org.bukkit.inventory.ItemStack> getTools() {
+			if (this == NONE || this == SHEARS)
+				return new ArrayList<>();
+
+			Material shovel = Material.valueOf(this.name() + "_SHOVEL");
+			Material pickaxe = Material.valueOf(this.name() + "_PICKAXE");
+			Material axe = Material.valueOf(this.name() + "_AXE");
+			Material hoe = Material.valueOf(this.name() + "_HOE");
+			Material sword = Material.valueOf(this.name() + "_SWORD");
+			Material shears = Material.SHEARS;
+
+			return List.of(
+				new org.bukkit.inventory.ItemStack(shovel),
+				new org.bukkit.inventory.ItemStack(pickaxe),
+				new org.bukkit.inventory.ItemStack(axe),
+				new org.bukkit.inventory.ItemStack(hoe),
+				new org.bukkit.inventory.ItemStack(sword),
+				new org.bukkit.inventory.ItemStack(shears)
+			);
+		}
+	}
+
+	public static boolean canHarvest(Player player, org.bukkit.block.Block block, org.bukkit.inventory.ItemStack itemStack) {
+		return block.getDrops(itemStack, player).stream()
+			.filter(Nullables::isNotNullOrAir)
+			.toList()
+			.size() > 0;
+	}
+
 	public static float getBlockDamage(Player player, org.bukkit.block.Block block, org.bukkit.inventory.ItemStack itemStack) {
 		float blockHardness = getBlockHardness(block);
 		if (blockHardness == -1)
 			return -1;
 
-		float speedMultiplier = 1;
+		boolean canHarvest = canHarvest(player, block, itemStack);
 
-		if (!Nullables.isNullOrAir(itemStack)) {
-			speedMultiplier = getDestroySpeed(block, itemStack);
+		float speedMultiplier = getDestroySpeed(block, itemStack);
 
-			if (itemStack.getItemMeta().hasEnchants()) {
-				Map<Enchantment, Integer> enchants = itemStack.getItemMeta().getEnchants();
-				if (enchants.containsKey(Enchant.EFFICIENCY)) {
-					speedMultiplier += 1 + Math.pow(enchants.get(Enchant.EFFICIENCY), 2);
+		Dev.WAKKA.send("init speed multiplier = " + speedMultiplier);
+
+		// if (isBestTool): speedMultiplier = toolMultiplier
+		if (block.isPreferredTool(itemStack)) {
+			Dev.WAKKA.send("is best tool, speed multiplier = " + speedMultiplier);
+
+			// if (not canHarvest): speedMultiplier = 1
+			if (!canHarvest) {
+				speedMultiplier = 1;
+				Dev.WAKKA.send("can't harvest, speed multiplier = " + speedMultiplier);
+			}
+
+			// else if (toolEfficiency): speedMultiplier += efficiencyLevel ^ 2 + 1
+			else if (!Nullables.isNullOrAir(itemStack)) {
+				if (itemStack.getItemMeta().hasEnchants()) {
+					Map<Enchantment, Integer> enchants = itemStack.getItemMeta().getEnchants();
+					if (enchants.containsKey(Enchant.EFFICIENCY)) {
+						speedMultiplier += Math.pow(enchants.get(Enchant.EFFICIENCY), 2) + 1;
+						Dev.WAKKA.send("efficiency speed multiplier = " + speedMultiplier);
+					}
 				}
 			}
 		}
@@ -183,42 +261,63 @@ public class NMSUtils {
 				}
 			}
 
+			// if (hasteEffect): speedMultiplier *= 0.2 * hasteLevel + 1
 			if (hasteLevel > 0) {
 				speedMultiplier *= (0.2 * hasteLevel) + 1;
+				Dev.WAKKA.send("Player has haste, speed multiplier = " + speedMultiplier);
 			}
 
+			// if (miningFatigue): speedMultiplier *= 0.3 ^ min(miningFatigueLevel, 4)
 			if (fatigueLevel > 0) {
-				speedMultiplier *= Math.pow(0.3, fatigueLevel);
+				speedMultiplier *= Math.pow(0.3, Math.min(fatigueLevel, 4));
+				Dev.WAKKA.send("Player has fatigue, speed multiplier = " + speedMultiplier);
 			}
 		}
-
 
 		org.bukkit.inventory.ItemStack helmet = player.getInventory().getHelmet();
-		if (player.isInWater() && !Nullables.isNullOrAir(helmet) && helmet.getItemMeta().hasEnchants()) {
-			int aquaAffLevel = 0;
+		if (!Nullables.isNullOrAir(helmet) && helmet.getItemMeta().hasEnchants()) {
+			boolean hasAquaAffinity = false;
 
 			@NotNull Map<Enchantment, Integer> enchants = helmet.getItemMeta().getEnchants();
-			if (enchants.containsKey(Enchant.AQUA_AFFINITY)) {
-				aquaAffLevel = enchants.get(Enchant.AQUA_AFFINITY);
-			}
+			if (enchants.containsKey(Enchant.AQUA_AFFINITY))
+				hasAquaAffinity = true;
 
-			if (aquaAffLevel > 0)
+			// if (inWater and not hasAquaAffinity): speedMultiplier /= 5
+			if (player.isInWater() && !hasAquaAffinity) {
 				speedMultiplier /= 5;
+				Dev.WAKKA.send("Player is in water with no AquaAffinity, speed multiplier = " + speedMultiplier);
+			}
 		}
 
-		if (!player.isOnGround())
+		// if (not onGround): speedMultiplier /= 5
+		if (!player.isOnGround()) {
 			speedMultiplier /= 5;
+			Dev.WAKKA.send("Player is not on ground, speed multiplier = " + speedMultiplier);
+		}
 
+		Dev.WAKKA.send("final speed multiplier = " + speedMultiplier);
+		// damage = speedMultiplier / blockHardness
 		float damage = speedMultiplier / blockHardness;
-		List<org.bukkit.inventory.ItemStack> drops = block.getDrops(itemStack, player).stream()
-			.filter(_itemStack -> !Nullables.isNullOrAir(_itemStack)).toList();
-		if (drops.size() > 0)
-			damage /= 30;
-		else
-			damage /= 100;
 
-		if (damage > 1)
+		Dev.WAKKA.send("init damage = " + damage);
+
+		// if (canHarvest): damage /= 30
+		if (canHarvest) {
+			damage /= 30;
+			Dev.WAKKA.send("can harvest, damage = " + damage);
+		}
+		// else: damage /= 100
+		else {
+			damage /= 100;
+			Dev.WAKKA.send("can't harvest, damage = " + damage);
+		}
+
+		// Instant Breaking:
+		// if (damage > 1): return 0
+		if (damage > 1) {
+			Dev.WAKKA.send("instant breaking, damage = 0");
 			return 0;
+		}
 
 		return damage;
 	}
