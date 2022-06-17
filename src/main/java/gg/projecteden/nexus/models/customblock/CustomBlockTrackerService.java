@@ -28,6 +28,7 @@ public class CustomBlockTrackerService extends MongoService<CustomBlockTracker> 
 	@Override
 	protected void beforeSave(CustomBlockTracker object) {
 		object.getCustomBlockMap().values().removeIf(Map::isEmpty);
+		object.getCustomBlockMap().values().forEach(value -> value.values().removeIf(Map::isEmpty));
 	}
 
 }
