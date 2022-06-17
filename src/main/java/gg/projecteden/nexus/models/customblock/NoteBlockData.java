@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.models.customblock;
 
 import com.destroystokyo.paper.ParticleBuilder;
+import gg.projecteden.api.common.utils.MathUtils;
 import gg.projecteden.nexus.features.customblocks.models.NoteBlockInstrument;
 import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.utils.MathUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;

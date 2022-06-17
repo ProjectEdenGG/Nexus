@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.customblocks;
 
 import com.mojang.datafixers.util.Pair;
+import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.common.ICustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.common.IDirectional;
@@ -14,7 +15,6 @@ import gg.projecteden.nexus.models.customblock.CustomTripwireData;
 import gg.projecteden.nexus.models.customblock.NoteBlockData;
 import gg.projecteden.nexus.utils.NMSUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.UUIDUtils;
 import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.Location;

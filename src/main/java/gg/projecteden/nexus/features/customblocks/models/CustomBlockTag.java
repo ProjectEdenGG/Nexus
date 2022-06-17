@@ -49,7 +49,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import static gg.projecteden.utils.Utils.collect;
+import static gg.projecteden.api.common.utils.Utils.collect;
 
 public class CustomBlockTag implements Tag<CustomBlock> {
 	// NOTE BLOCKSCA
@@ -362,7 +362,7 @@ public class CustomBlockTag implements Tag<CustomBlock> {
 		return customBlocks.toString();
 	}
 
-	public CustomBlock random() {
+	public CustomBlockTag random() {
 		return RandomUtils.randomElement(this);
 	}
 

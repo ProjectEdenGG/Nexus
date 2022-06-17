@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static gg.projecteden.utils.UUIDUtils.UUID0;
+import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 
 public class CustomBlocksCommand extends CustomCommand {
 	private static final CustomBlockTrackerService trackerService = new CustomBlockTrackerService();

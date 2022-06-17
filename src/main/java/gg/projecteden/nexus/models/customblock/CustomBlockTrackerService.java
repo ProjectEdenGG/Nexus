@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.models.customblock;
 
-import gg.projecteden.mongodb.MongoService;
-import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.api.mongodb.MongoService;
+import gg.projecteden.api.mongodb.annotations.ObjectClass;
 import org.bukkit.Location;
 import org.bukkit.World;
 
