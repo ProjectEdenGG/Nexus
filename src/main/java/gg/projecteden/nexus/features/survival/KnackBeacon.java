@@ -24,8 +24,8 @@ public class KnackBeacon extends Feature implements Listener {
 	private final List<Location> chests = List.of(
 		new Location(Bukkit.getWorld("survival"), -2145.5, 50.5, 1797.5),
 		new Location(Bukkit.getWorld("survival"), -2145.5, 50.5, 1796.5),
-		new Location(Bukkit.getWorld("survival"), -2145.5, 50.5, 1797.5),
-		new Location(Bukkit.getWorld("survival"), -2145.5, 50.5, 1796.5)
+		new Location(Bukkit.getWorld("survival"), -2145.5, 51.5, 1797.5),
+		new Location(Bukkit.getWorld("survival"), -2145.5, 51.5, 1796.5)
 	);
 	private KeyedBossBar bossBar;
 
