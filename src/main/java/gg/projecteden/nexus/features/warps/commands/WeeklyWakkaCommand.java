@@ -40,7 +40,7 @@ public class WeeklyWakkaCommand extends _WarpCommand implements Listener {
 
 	private static final List<Supplier<JsonBuilder>> tips = new ArrayList<>() {{
 		add(() -> new JsonBuilder(
-			"&3You can reset your McMMO stats when maxed with &c/mcmmo reset &3for unique gear and in-game money.")
+			"&3You can reset your McMMO stats when maxed with &c/mcmmo reset &3for unique gear and in-game money")
 			.command("/mcmmo reset")
 			.hover("&eClick to run the command!"));
 

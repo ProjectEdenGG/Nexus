@@ -633,9 +633,6 @@ public class Murder extends TeamMechanic {
 			else
 				teamName = "an &9Innocent";
 			sendBarWithTimer(minigamer, "&3You are "+teamName);
-
-			int foodLevel = (!minigamer.isAlive() || isMurderer(minigamer)) ? 18 : 3;
-			minigamer.getPlayer().setFoodLevel(foodLevel);
 		});
 
 		int arenaDuration = event.getMatch().getArena().getSeconds();

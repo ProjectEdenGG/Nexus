@@ -53,5 +53,4 @@ public class BirdEffectConfig implements AmbientEffectConfig<BirdEffectType> {
 		user.setCooldown(cooldownId, cooldownMin + RandomUtils.getRandom().nextInt(cooldownMax - cooldownMin + 1));
 	}
 
-
 }

@@ -6,7 +6,7 @@ import gg.projecteden.nexus.models.boost.BoostConfig;
 import gg.projecteden.nexus.models.boost.Boostable;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.bukkit.GameMode;

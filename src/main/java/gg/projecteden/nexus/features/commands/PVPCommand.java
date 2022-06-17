@@ -14,7 +14,7 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import io.papermc.paper.event.player.PlayerBedFailEnterEvent;
 import lombok.NoArgsConstructor;
@@ -120,7 +120,6 @@ public class PVPCommand extends CustomCommand implements Listener {
 		if (WorldGroup.of(victim) != WorldGroup.SURVIVAL)
 			return;
 
-
 		// Cancel if both players do not have pvp on
 		if (!victim.isEnabled() || !attacker.isEnabled()) {
 			event.setCancelled(true);
@@ -216,7 +215,6 @@ public class PVPCommand extends CustomCommand implements Listener {
 	public void onPlayerPVP(EntityDamageByEntityEvent event) {
 		if (WorldGroup.of(event.getEntity()) != WorldGroup.SURVIVAL)
 			return;
-
 
 		if (!(event.getEntity() instanceof Player player))
 			return;

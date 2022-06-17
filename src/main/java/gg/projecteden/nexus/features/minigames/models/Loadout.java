@@ -53,7 +53,7 @@ public class Loadout implements ConfigurationSerializable {
 			PlayerInventory inventory = player.getInventory();
 			inventory.setContents(this.inventory.clone());
 			ItemStack offHand = inventory.getItemInOffHand().clone();
-			if (offHand.getType() == Material.BOW) {
+			if (offHand.getType() == Material.BOW || offHand.getType() == Material.CROSSBOW) {
 				MinigamerSettingService service = new MinigamerSettingService();
 				MinigamerSetting settings = service.get(player);
 				if (!settings.isBowInOffHand()) {
@@ -68,6 +68,5 @@ public class Loadout implements ConfigurationSerializable {
 
 		new MinigamerLoadoutEvent(minigamer, this).callEvent();
 	}
-
 
 }

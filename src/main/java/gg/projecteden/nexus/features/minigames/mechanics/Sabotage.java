@@ -278,7 +278,7 @@ public class Sabotage extends TeamMechanic {
 					}
 				}
 				ItemStack currentItem = inventory.getItem(2);
-				if (currentItem != null && currentItem.hasItemMeta() && currentItem.getItemMeta().hasDisplayName() && AdventureUtils.asPlainText(currentItem.getItemMeta().displayName()).equals("Report")) {
+				if (currentItem != null && currentItem.hasItemMeta() && currentItem.getItemMeta().hasDisplayName() && "Report".equals(AdventureUtils.asPlainText(currentItem.getItemMeta().displayName()))) {
 					boolean bodyFound = false;
 					if (minigamer.isAlive()) {
 						for (SabotageMatchData.Body body : matchData.getBodies().values()) {
@@ -340,7 +340,7 @@ public class Sabotage extends TeamMechanic {
 		Match match = minigamer.getMatch();
 		SabotageMatchData matchData = match.getMatchData();
 		Chat.setActiveChannel(minigamer, matchData.getSpectatorChannel());
-		event.setDeathMessage(null);
+		event.showDeathMessage(false);
 		new SoundBuilder(Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR).receiver(minigamer).volume(1).pitch(0.9).play();
 
 		JsonBuilder builder = new JsonBuilder();
@@ -461,7 +461,7 @@ public class Sabotage extends TeamMechanic {
 		ItemMeta itemMeta = item.getItemMeta();
 		if (!itemMeta.hasLore()) return;
 		if (!itemMeta.hasDisplayName()) return;
-		if (!AdventureUtils.asPlainText(itemMeta.displayName()).equals("Crouch to Exit")) return;
+		if (!"Crouch to Exit".equals(AdventureUtils.asPlainText(itemMeta.displayName()))) return;
 		Location location = LocationUtils.parse(minigamer.getPlayer().getWorld().getName() + " " + itemMeta.getLore().get(0));
 		location.add(.5, .1875-.5, .5);
 		minigamer.getMatch().<SabotageMatchData>getMatchData().getVenters().put(minigamer.getUniqueId(), location);

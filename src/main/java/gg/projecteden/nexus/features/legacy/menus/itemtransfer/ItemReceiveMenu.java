@@ -3,10 +3,10 @@ package gg.projecteden.nexus.features.legacy.menus.itemtransfer;
 import gg.projecteden.nexus.features.listeners.TemporaryMenuListener;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.models.legacy.itemtransfer.ItemTransferUser;
-import gg.projecteden.nexus.models.legacy.itemtransfer.ItemTransferUser.ReviewStatus;
-import gg.projecteden.nexus.models.legacy.itemtransfer.ItemTransferUserService;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.models.legacy.itemtransfer.LegacyItemTransferUser;
+import gg.projecteden.nexus.models.legacy.itemtransfer.LegacyItemTransferUser.ReviewStatus;
+import gg.projecteden.nexus.models.legacy.itemtransfer.LegacyItemTransferUserService;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -19,7 +19,7 @@ import java.util.List;
 public class ItemReceiveMenu implements TemporaryMenuListener {
 	@Getter
 	private final Player player;
-	private final ItemTransferUserService service = new ItemTransferUserService();
+	private final LegacyItemTransferUserService service = new LegacyItemTransferUserService();
 
 	public ItemReceiveMenu(Player player) {
 		this.player = player;
@@ -27,7 +27,7 @@ public class ItemReceiveMenu implements TemporaryMenuListener {
 		if (WorldGroup.of(player) != WorldGroup.SURVIVAL)
 			throw new InvalidInputException("You must be in the survival world to receive your items");
 
-		final ItemTransferUser user = service.get(player);
+		final LegacyItemTransferUser user = service.get(player);
 		// TODO Receive denied items back in legacy world?
 		final ReviewStatus status = ReviewStatus.ACCEPTED;
 

@@ -103,7 +103,6 @@ public class ArcadeMachineMenu extends InventoryProvider implements Listener {
 		MinigameNightIsland.nextStep(player); // 2
 	}
 
-
 	public void getItems(Player player, InventoryContents contents) {
 		ItemStack[] items = new ItemStack[openSlots.length];
 		for (int i = 0; i < openSlots.length; i++) {

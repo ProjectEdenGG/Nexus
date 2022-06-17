@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.legacy.listeners;
 
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.inventory.FurnaceBurnEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -52,7 +53,13 @@ public class Misc implements Listener {
 	}
 
 	private static final List<Material> NO_INTERACT = List.of(
-		Material.CRAFTING_TABLE
+		Material.CRAFTING_TABLE,
+		Material.STONECUTTER,
+		Material.LOOM,
+		Material.ANVIL,
+		Material.SMITHING_TABLE,
+		Material.CARTOGRAPHY_TABLE,
+		Material.GRINDSTONE
 	);
 
 	@EventHandler
@@ -74,6 +81,14 @@ public class Misc implements Listener {
 			return;
 
 		PlayerUtils.send(player, "&c&lHey! &7You cannot interact with that in the legacy world");
+	}
+
+	@EventHandler
+	public void on(FurnaceBurnEvent event) {
+		if (WorldGroup.of(event.getBlock()) != WorldGroup.LEGACY)
+			return;
+
+		event.setCancelled(true);
 	}
 
 }

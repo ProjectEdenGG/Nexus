@@ -109,7 +109,6 @@ public class VPSProvider extends InventoryProvider {
 		}
 	}
 
-
 	public void log(Player player, VPSSlot vpsSlot) {
 		List<String> columns = new ArrayList<>(Arrays.asList(
 				DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()),

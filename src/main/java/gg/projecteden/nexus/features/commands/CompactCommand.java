@@ -115,5 +115,4 @@ public class CompactCommand extends CustomCommand {
 		private final int requiredAmount;
 	}
 
-
 }

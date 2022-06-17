@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.store.perks.stattrack.models;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Data;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -13,7 +13,7 @@ import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Data
 public class StatIncreaseEvent {
-	private static final List<WorldGroup> ENABLED_WORLDS = List.of(WorldGroup.SURVIVAL, WorldGroup.ONEBLOCK, WorldGroup.SKYBLOCK);
+	private static final List<WorldGroup> ENABLED_WORLDS = List.of(WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK);
 
 	public StatIncreaseEvent(Player player, ItemStack item, Stat stat, int value) {
 		if (!Dev.GRIFFIN.is(player))

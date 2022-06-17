@@ -11,7 +11,7 @@ import gg.projecteden.nexus.models.forcefield.ForceFieldUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 
@@ -29,7 +29,7 @@ public class ForceFieldCommand extends CustomCommand {
 		if (isPlayerCommandEvent()) {
 			user = userService.get(player());
 
-			if (WorldGroup.of(user).isMinigames())
+			if (WorldGroup.of(user) == WorldGroup.MINIGAMES)
 				error("Disabled in Minigames.");
 		}
 	}

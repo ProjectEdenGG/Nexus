@@ -10,15 +10,17 @@ import gg.projecteden.nexus.models.particle.ParticleService;
 import gg.projecteden.nexus.models.particle.ParticleSetting;
 import gg.projecteden.nexus.models.particle.ParticleType;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.Tasks;
+import lombok.RequiredArgsConstructor;
 
 @Rows(5)
 @Title("Wings Style")
+@RequiredArgsConstructor
 public class WingsTypeProvider extends InventoryProvider {
+	private final EffectSettingProvider previousMenu;
 
 	@Override
 	public void init() {
-		addBackItem(e -> new EffectSettingProvider(ParticleType.WINGS).open(player));
+		addBackItem(e -> previousMenu.open(player));
 
 		ParticleService service = new ParticleService();
 		ParticleOwner owner = service.get(player);
@@ -34,7 +36,7 @@ public class WingsTypeProvider extends InventoryProvider {
 			contents.set(row, column, ClickableItem.of(item, e -> {
 				owner.getSettings(ParticleType.WINGS).put(ParticleSetting.WINGS_STYLE, style);
 				service.save(owner);
-				Tasks.wait(5, () -> new WingsTypeProvider().open(player));
+				init();
 			}));
 
 			if (column == 7) {

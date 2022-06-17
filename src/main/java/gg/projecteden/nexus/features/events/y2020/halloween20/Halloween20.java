@@ -117,7 +117,6 @@ public class Halloween20 implements Listener {
 		Tasks.wait(TickTime.SECOND.x(15) + 300, () -> sendInstructions(event.getPlayer()));
 	}
 
-
 	@EventHandler
 	public void onButtonClick(PlayerInteractEvent event) {
 		if (!ActionGroup.CLICK_BLOCK.applies(event)) return;

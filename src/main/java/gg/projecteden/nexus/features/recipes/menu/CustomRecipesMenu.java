@@ -36,7 +36,7 @@ public class CustomRecipesMenu extends InventoryProvider {
 	}
 
 	public CustomRecipesMenu(NexusRecipe recipe) {
-		this(RecipeType.FUNCTIONAL, recipe);
+		this(recipe.getType(), recipe);
 	}
 
 	@Override

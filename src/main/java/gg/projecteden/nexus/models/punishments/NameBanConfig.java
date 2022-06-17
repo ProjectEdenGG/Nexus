@@ -61,7 +61,7 @@ public class NameBanConfig implements PlayerOwnedObject {
 
 	public static Component getBanMessage(String name) {
 		return new JsonBuilder("&cYour username &e" + name + "&c has been banned from this server,")
-				.line().next("&cplease change it in order to join.").asComponent();
+				.line().next("&cplease change it in order to join").asComponent();
 	}
 
 	public static Component getBanMessage(UUID uuid) {

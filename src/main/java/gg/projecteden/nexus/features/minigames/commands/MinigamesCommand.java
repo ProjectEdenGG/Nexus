@@ -10,11 +10,13 @@ import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.mechanics.Mastermind;
 import gg.projecteden.nexus.features.minigames.mechanics.common.CheckpointMechanic;
 import gg.projecteden.nexus.features.minigames.menus.ArenaMenu;
+import gg.projecteden.nexus.features.minigames.menus.LeaderboardMenu;
 import gg.projecteden.nexus.features.minigames.menus.PerkMenu;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.Team;
+import gg.projecteden.nexus.features.minigames.models.arenas.CheckpointArena;
 import gg.projecteden.nexus.features.minigames.models.matchdata.CheckpointMatchData;
 import gg.projecteden.nexus.features.minigames.models.matchdata.MastermindMatchData;
 import gg.projecteden.nexus.features.minigames.models.modifiers.MinigameModifiers;
@@ -62,8 +64,8 @@ import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.utils.Env;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import net.citizensnpcs.api.CitizensAPI;
@@ -216,6 +218,7 @@ public class MinigamesCommand extends CustomCommand {
 		getRunningMatch(arena).start();
 	}
 
+	@Confirm
 	@Path("end [arena]")
 	@Permission(PERMISSION_MANAGE)
 	void end(@Arg("current") Arena arena) {
@@ -284,12 +287,6 @@ public class MinigamesCommand extends CustomCommand {
 			error("You are not in a match");
 		minigamer.getMatch().getTimer().setTime(seconds);
 		minigamer.getMatch().getTimer().broadcastTimeLeft();
-	}
-
-	@Path("flagParticle")
-	@Permission(PERMISSION_MANAGE)
-	void flagParticle() {
-		gg.projecteden.nexus.features.minigames.models.matchdata.Flag.particle(minigamer);
 	}
 
 	@Path("create <name>")
@@ -746,6 +743,11 @@ public class MinigamesCommand extends CustomCommand {
 		});
 	}
 
+	@Path("leaderboard [arena]")
+	void leaderboard(@Arg("current") CheckpointArena arena) {
+		new LeaderboardMenu(arena).open(player());
+	}
+
 	private Match getRunningMatch(Arena arena) {
 		Match match = MatchManager.find(arena);
 
@@ -772,6 +774,32 @@ public class MinigamesCommand extends CustomCommand {
 	@TabCompleterFor(Arena.class)
 	List<String> arenaTabComplete(String filter) {
 		return ArenaManager.getNames(filter);
+	}
+
+	@ConverterFor(CheckpointArena.class)
+	CheckpointArena convertToCheckpointArena(String value) {
+		Arena arena;
+		if ("current".equalsIgnoreCase(value)) {
+			if (minigamer != null) {
+				if (minigamer.getMatch() != null) {
+					arena = minigamer.getMatch().getArena();
+				} else
+					throw new InvalidInputException("You are not currently in a match");
+			} else
+				throw new MustBeIngameException();
+		} else {
+			arena = ArenaManager.find(value);
+		}
+
+		if (!(arena instanceof CheckpointArena checkpointArena))
+			throw new InvalidInputException("Sorry! At this time, only games with checkpoints have a leaderboard.");
+
+		return checkpointArena;
+	}
+
+	@TabCompleterFor(CheckpointArena.class)
+	List<String> checkpointArenaTabComplete(String filter) {
+		return ArenaManager.getNamesStream(filter).filter(name -> ArenaManager.find(name) instanceof CheckpointArena).collect(Collectors.toList());
 	}
 
 	@ConverterFor(Minigamer.class)

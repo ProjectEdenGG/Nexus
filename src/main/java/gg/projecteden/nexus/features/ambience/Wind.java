@@ -23,7 +23,6 @@ public class Wind {
 		Ambience.sendDebug("Blowing: " + blowing);
 	};
 
-
 	private static final long directionUpdateInterval = TickTime.MINUTE.get();
 	private static final Runnable directionUpdate = () -> {
 		direction = Math.random() * 2 * Math.PI;

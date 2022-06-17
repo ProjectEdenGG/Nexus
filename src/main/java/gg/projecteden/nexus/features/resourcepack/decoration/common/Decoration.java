@@ -11,8 +11,8 @@ import gg.projecteden.nexus.models.trust.Trust.Type;
 import gg.projecteden.nexus.models.trust.TrustService;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
-import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Data;
 import lombok.NonNull;
 import org.bukkit.GameMode;
@@ -110,7 +110,7 @@ public class Decoration {
 			if (playerRank.isSeniorStaff() || playerRank.equals(Rank.ARCHITECT) || player.isOp())
 				return true;
 
-			if (WorldGroup.STAFF.equals(WorldGroup.of(player)))
+			if (WorldGroup.STAFF == WorldGroup.of(player))
 				return true;
 
 			if (WorldGuardEditCommand.canWorldGuardEdit(player) && new WorldGuardUtils(player).getRegionsAt(origin).size() > 0)

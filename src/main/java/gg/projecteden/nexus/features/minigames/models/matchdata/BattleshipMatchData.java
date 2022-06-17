@@ -623,6 +623,4 @@ public class BattleshipMatchData extends MatchData {
 		}
 	}
 
-
-
 }

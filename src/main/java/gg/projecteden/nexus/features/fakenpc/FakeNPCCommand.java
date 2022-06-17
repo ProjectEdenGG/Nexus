@@ -71,5 +71,4 @@ public class FakeNPCCommand extends CustomCommand {
 		FakeNPCManager.setMineSkin(fakeNPC, url);
 	}
 
-
 }

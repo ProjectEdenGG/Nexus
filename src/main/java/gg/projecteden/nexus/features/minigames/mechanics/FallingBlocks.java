@@ -218,7 +218,6 @@ public class FallingBlocks extends TeamlessMechanic {
 		kill(minigamer);
 	}
 
-
 	@Rows(2)
 	@Title("Select Your Color")
 	private static class ColorPickMenu extends InventoryProvider {

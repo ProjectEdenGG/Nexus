@@ -12,6 +12,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.mode.ModeUser;
 import gg.projecteden.nexus.models.mode.ModeUserService;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NonNull;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -51,7 +52,7 @@ public class GamemodeCommand extends CustomCommand {
 		if (!isSelf(player))
 			send(PREFIX + "Switched to &e" + camelCase(gamemode) + " &3for &e" + player.getName());
 
-		if (!worldGroup().isMinigames() && user.getRank().isStaff()) {
+		if (!(worldGroup() == WorldGroup.MINIGAMES) && user.getRank().isStaff()) {
 			user.setGameMode(worldGroup(), gamemode);
 			service.save(user);
 		}
@@ -72,10 +73,10 @@ public class GamemodeCommand extends CustomCommand {
 	@ConverterFor(GameMode.class)
 	GameMode convertToGameMode(String value) {
 		if (value != null)
-			if (value.equals("3") || value.startsWith("sp")) return GameMode.SPECTATOR;
-			else if (value.equals("2") || value.startsWith("a")) return GameMode.ADVENTURE;
-			else if (value.equals("1") || value.startsWith("c")) return GameMode.CREATIVE;
-			else if (value.equals("0") || value.startsWith("s")) return GameMode.SURVIVAL;
+			if ("3".equals(value) || value.startsWith("sp")) return GameMode.SPECTATOR;
+			else if ("2".equals(value) || value.startsWith("a")) return GameMode.ADVENTURE;
+			else if ("1".equals(value) || value.startsWith("c")) return GameMode.CREATIVE;
+			else if ("0".equals(value) || value.startsWith("s")) return GameMode.SURVIVAL;
 		throw new InvalidInputException("Invalid gamemode");
 	}
 

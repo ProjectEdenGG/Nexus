@@ -147,16 +147,16 @@ public class ConvertShopCommand extends CustomCommand {
 	public SignData read(Sign sign) {
 		String[] lines = sign.getLines();
 
-		if (StringUtils.stripColor(lines[0]).equals("[Trade]"))
+		if ("[Trade]".equals(StringUtils.stripColor(lines[0])))
 			return readNormalSign(lines);
 
-		if (StringUtils.stripColor(lines[0]).equals("[Ench Trade]"))
+		if ("[Ench Trade]".equals(StringUtils.stripColor(lines[0])))
 			return readEnchTradeSign(lines);
 
-		if (StringUtils.stripColor(lines[0]).equals("[Potion Trade]"))
+		if ("[Potion Trade]".equals(StringUtils.stripColor(lines[0])))
 			return readPotionTradeSign(lines);
 
-		if (StringUtils.stripColor(lines[0]).equals("[Arrow Trade]"))
+		if ("[Arrow Trade]".equals(StringUtils.stripColor(lines[0])))
 			return readArrowTradeSign(lines);
 
 		throw new InvalidInputException("Not a valid shop sign");
@@ -217,14 +217,14 @@ public class ConvertShopCommand extends CustomCommand {
 		data.setStock(Integer.parseInt(lines[1].split(" \\| ")[1]));
 		data.setPlayer(PlayerUtils.getPlayer(StringUtils.stripColor(lines[3])));
 
-		boolean ext = (StringUtils.right(lines[2], 3).equals("Ext"));
+		boolean ext = "Ext".equals(StringUtils.right(lines[2], 3));
 		boolean isMultiplied = isMultiplied(lines[2]);
 
 		ItemStack item = new ItemStack(Material.POTION);
 
-		if (StringUtils.left(lines[2], 2).equals("S "))
+		if ("S ".equals(StringUtils.left(lines[2], 2)))
 			item.setType(Material.SPLASH_POTION);
-		if (StringUtils.left(lines[2], 2).equals("L "))
+		if ("L ".equals(StringUtils.left(lines[2], 2)))
 			item.setType(Material.LINGERING_POTION);
 
 		String potionName = lines[2].replace("P ", "").replace("L ", "")
@@ -246,7 +246,7 @@ public class ConvertShopCommand extends CustomCommand {
 		data.setStock(Integer.parseInt(lines[1].split(" \\| ")[1]));
 		data.setPlayer(PlayerUtils.getPlayer(StringUtils.stripColor(lines[3])));
 
-		boolean ext = (StringUtils.right(lines[2], 3).equals("Ext"));
+		boolean ext = "Ext".equals(StringUtils.right(lines[2], 3));
 		boolean isMultiplied = isMultiplied(lines[2]);
 
 		ItemStack item = new ItemStack(Material.TIPPED_ARROW);
@@ -322,7 +322,6 @@ public class ConvertShopCommand extends CustomCommand {
 		String[] split = string.split(" ");
 		return Utils.isInt(split[split.length - 1]);
 	}
-
 
 	public PotionType getPotionFromShort(String potionShort) {
 		return switch (potionShort) {

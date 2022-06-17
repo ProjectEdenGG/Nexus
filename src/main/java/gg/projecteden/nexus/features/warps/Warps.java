@@ -54,7 +54,6 @@ public class Warps {
 			return ItemStackBuilder.of(itemStack).name("&3" + getDisplayName()).build();
 		}
 
-
 	}
 
 	@Getter

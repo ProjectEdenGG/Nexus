@@ -231,5 +231,4 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 		}
 	}
 
-
 }

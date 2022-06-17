@@ -95,7 +95,7 @@ public class BadgeUser implements PlayerOwnedObject {
 				final Connection connection = user.getConnection(site);
 				if (connection != null) {
 					final String url = connection.getUrl();
-					if (site.getProfileUrl().equals("%s"))
+					if ("%s".equals(site.getProfileUrl()))
 						json.copy(url).hover("", "&e" + url, "", "&eClick to copy");
 					else
 						json.url(url).hover("", "&e" + url, "", "&eClick to open");

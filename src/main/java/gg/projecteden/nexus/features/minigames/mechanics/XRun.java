@@ -1,12 +1,10 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
-import gg.projecteden.nexus.features.minigames.mechanics.common.CheckpointMechanic;
-import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class XRun extends CheckpointMechanic {
+public class XRun extends Parkour {
 
 	@Override
 	public @NotNull String getName() {
@@ -21,12 +19,6 @@ public class XRun extends CheckpointMechanic {
 	@Override
 	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.SUGAR);
-	}
-
-	@Override
-	public void onDeath(@NotNull MinigamerDeathEvent event) {
-		event.setDeathMessage(null);
-		super.onDeath(event);
 	}
 
 }

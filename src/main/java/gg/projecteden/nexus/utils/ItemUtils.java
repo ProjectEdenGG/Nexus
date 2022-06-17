@@ -225,7 +225,6 @@ public class ItemUtils {
 		ItemMeta itemMeta = skull.getItemMeta();
 		SkullMeta skullMeta = (SkullMeta) itemMeta;
 
-
 		if (skullMeta.getPlayerProfile() == null)
 			return null;
 

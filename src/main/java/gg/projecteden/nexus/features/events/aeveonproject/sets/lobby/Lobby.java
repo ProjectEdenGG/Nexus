@@ -19,7 +19,6 @@ public class Lobby implements APSet {
 
 	}
 
-
 	@Override
 	public List<String> getUpdateRegions() {
 		return Collections.singletonList(APRegions.lobby_shipColor);

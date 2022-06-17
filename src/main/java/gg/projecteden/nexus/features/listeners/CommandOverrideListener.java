@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.listeners;
 
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

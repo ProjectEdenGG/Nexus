@@ -93,7 +93,6 @@ public class SafeCrackerAdminProvider extends InventoryProvider {
 		int row = 1;
 		int column = 0;
 
-
 		Map<String, SafeCrackerEvent.SafeCrackerNPC> npcs = new HashMap<>();
 		for (SafeCrackerEvent.SafeCrackerNPC npc : game.getNpcs().values()) {
 			try {

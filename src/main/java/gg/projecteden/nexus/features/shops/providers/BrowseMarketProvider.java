@@ -5,9 +5,8 @@ import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.shops.Market;
 import gg.projecteden.nexus.features.shops.providers.common.ShopProvider;
 import gg.projecteden.nexus.models.shop.ShopService;
+import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
 import org.bukkit.entity.Player;
-
-import static gg.projecteden.nexus.utils.WorldGroup.isResourceWorld;
 
 @Title("&0Browse Market")
 public class BrowseMarketProvider extends PlayerShopProvider {
@@ -18,7 +17,7 @@ public class BrowseMarketProvider extends PlayerShopProvider {
 
 	@Override
 	public void open(Player player, int page) {
-		if (isResourceWorld(player.getWorld())) {
+		if (SubWorldGroup.of(player.getWorld()) == SubWorldGroup.RESOURCE) {
 			new ResourceWorldMarketProvider(previousMenu).open(player);
 			return;
 		}

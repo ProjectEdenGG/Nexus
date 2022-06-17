@@ -272,7 +272,6 @@ public class BFFishingCommand extends CustomCommand {
 				|| material.equals(Material.NAUTILUS_SHELL));
 	}
 
-
 	private void giveAllLoot(Player player) {
 		List<ItemStack> items = new ArrayList<>();
 		weightedList.forEach(weightedLoot -> items.add(weightedLoot.getItemStack()));

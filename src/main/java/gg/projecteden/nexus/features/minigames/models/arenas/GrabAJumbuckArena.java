@@ -34,5 +34,4 @@ public class GrabAJumbuckArena extends Arena {
 		return map;
 	}
 
-
 }

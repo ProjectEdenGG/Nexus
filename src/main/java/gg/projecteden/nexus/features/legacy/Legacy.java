@@ -7,8 +7,8 @@ import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.spawnlimits.SpawnLimits.SpawnLimitType;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.nexus.utils.WorldGuardFlagUtils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.utils.Env;
 import org.bukkit.GameRule;
 import org.bukkit.World;
@@ -19,8 +19,6 @@ import java.util.List;
 import static gg.projecteden.nexus.utils.Utils.registerListeners;
 /*
 	TODO
-		Hook into LuckPerms to add WorldGroup context?
-			For fly; otherwise set essentials.fly=true in each world
 		Reset
 			playerdata.dat
 				EnderItems
@@ -43,10 +41,12 @@ import static gg.projecteden.nexus.utils.Utils.registerListeners;
 				???
 			Inventories
 				Delete mvinv files & playerdata.dat:inventory
-			Vaults
 			Advancements
 				Delete world/advancements
-
+			Ctrl+f
+				"world"
+				"survival"
+			Update getWorldDisplayName
 
  */
 

@@ -36,6 +36,7 @@ import lombok.Setter;
 import me.lexikiq.HasPlayer;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.CheckReturnValue;
@@ -88,6 +89,8 @@ public abstract class InventoryProvider {
 	public final void open(HasPlayer player, int page) {
 		open(player.getPlayer(), page);
 	}
+
+	public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {}
 
 	public SmartInventory.Builder getInventory() {
 		return SmartInventory.builder()

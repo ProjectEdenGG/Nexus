@@ -16,14 +16,15 @@ import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.framework.interfaces.IsColoredAndNicknamed;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -31,6 +32,7 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import me.lexikiq.HasUniqueId;
 import me.lexikiq.PlayerLike;
+import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -47,13 +49,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.Color;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import static gg.projecteden.nexus.utils.LocationUtils.blockLocationsEqual;
 import static gg.projecteden.nexus.utils.PlayerUtils.hidePlayer;
 import static gg.projecteden.nexus.utils.PlayerUtils.showPlayer;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -72,7 +74,7 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 	 */
 	private int contributionScore = 0;
 	@Accessors(fluent = true)
-	private boolean canTeleport;
+	private volatile boolean canTeleport;
 	private boolean respawning = false;
 	private boolean isAlive = true;
 	private int lives;
@@ -141,12 +143,13 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 
 	/**
 	 * Returns the Minigamer's Minecraft username.
+	 *
 	 * @deprecated You should probably be using {@link #getNickname()} instead.
 	 */
 	@Deprecated
 	@NotNull
 	public String getName() {
-		return Name.of(uuid);
+		return Objects.requireNonNull(Name.of(uuid), "Name of " + uuid + " is null");
 	}
 
 	public @NotNull String getNickname() {
@@ -164,7 +167,7 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 	}
 
 	public void join(@NotNull Arena arena) {
-		if (!WorldGroup.MINIGAMES.equals(WorldGroup.of(getPlayer().getWorld()))) {
+		if (WorldGroup.of(getPlayer()) != WorldGroup.MINIGAMES) {
 			toGamelobby();
 			Tasks.wait(10, () -> join(arena));
 			return;
@@ -275,9 +278,19 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 	 * Sends a message to this minigamer in their chat with a prefix ("[Minigames]")
 	 * <p>
 	 * This method will automatically {@link gg.projecteden.nexus.utils.StringUtils#colorize(String)} the input.
+	 *
 	 * @param withPrefix a message
 	 */
 	public void tell(@NotNull String withPrefix) {
+		tell(withPrefix, true);
+	}
+
+	/**
+	 * Sends a message to this minigamer in their chat with a prefix ("[Minigames]")
+	 *
+	 * @param withPrefix a message
+	 */
+	public void tell(@NotNull ComponentLike withPrefix) {
 		tell(withPrefix, true);
 	}
 
@@ -286,11 +299,24 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 	 * prefixed with "[Minigames]".
 	 * <p>
 	 * This method will automatically {@link gg.projecteden.nexus.utils.StringUtils#colorize(String)} the input.
+	 *
 	 * @param message a message
 	 * @param prefix whether or not to display the minigames prefix
 	 */
 	public void tell(@NotNull String message, boolean prefix) {
-		getPlayer().sendMessage((prefix ? Minigames.PREFIX : "") + colorize(message));
+		tell(new JsonBuilder(message), prefix);
+	}
+
+
+	/**
+	 * Sends a message to this minigamer in their chat. If <code>prefix</code> is true, the message will be
+	 * prefixed with "[Minigames]".
+	 *
+	 * @param message a message
+	 * @param prefix whether or not to display the minigames prefix
+	 */
+	public void tell(@NotNull ComponentLike message, boolean prefix) {
+		getPlayer().sendMessage(prefix ? JsonBuilder.fromPrefix("Minigames", message) : message);
 	}
 
 	public void toGamelobby() {
@@ -314,31 +340,32 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 		});
 	}
 
-	public CompletableFuture<Void> teleportAsync(@NotNull Location location) {
+	public CompletableFuture<Boolean> teleportAsync(@NotNull Location location) {
 		return teleportAsync(location, false);
 	}
 
-	public CompletableFuture<Void> teleportAsync(@NotNull Location location, boolean withSlowness) {
+	public CompletableFuture<Boolean> teleportAsync(@NotNull Location location, boolean withSlowness) {
 		Utils.notNull(location, "Tried to teleport " + getName() + " to a null location");
+
+		if (canTeleport)
+			return CompletableFuture.completedFuture(false); // Already teleporting
+		canTeleport = true;
 
 		final Location up = location.clone().add(0, .5, 0);
 		final Vector still = new Vector(0, 0, 0);
+		getPlayer().setVelocity(still);
 
-		return location.getWorld().getChunkAtAsyncUrgently(up)
-			.thenRun(() -> {
-				getPlayer().setVelocity(still);
-				canTeleport = true;
-			}).thenCompose($ -> {
-				final TeleportCause cause = match == null ? TeleportCause.COMMAND : TeleportCause.PLUGIN;
-				return getPlayer().teleportAsync(up, cause);
-			}).thenRun(() -> {
-				canTeleport = false;
-				getPlayer().setVelocity(still);
-				if (withSlowness) {
-					match.getTasks().wait(1, () -> getPlayer().setVelocity(still));
-					match.getTasks().wait(2, () -> getPlayer().setVelocity(still));
-				}
-			});
+		final TeleportCause cause = match == null ? TeleportCause.COMMAND : TeleportCause.PLUGIN;
+		return getPlayer().teleportAsync(up, cause).thenApply(result -> {
+			canTeleport = false;
+			if (!result) return false;
+			getPlayer().setVelocity(still);
+			if (withSlowness) {
+				match.getTasks().wait(1, () -> getPlayer().setVelocity(still));
+				match.getTasks().wait(2, () -> getPlayer().setVelocity(still));
+			}
+			return true;
+		});
 	}
 
 	public void setTeam(@Nullable Team team) {
@@ -429,6 +456,7 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 
 	/**
 	 * Calculates the current player's location without yaw or pitch
+	 *
 	 * @return player's {@link org.bukkit.Location} without yaw or pitch
 	 */
 	private @NotNull Location getRotationlessLocation() {

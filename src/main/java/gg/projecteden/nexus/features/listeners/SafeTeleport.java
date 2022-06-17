@@ -64,5 +64,4 @@ public class SafeTeleport implements Listener {
 		return null;
 	}
 
-
 }

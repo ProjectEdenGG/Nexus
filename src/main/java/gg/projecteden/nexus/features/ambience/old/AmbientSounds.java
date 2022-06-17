@@ -102,5 +102,4 @@ public class AmbientSounds extends Feature {
 		DUNGEON
 	}
 
-
 }

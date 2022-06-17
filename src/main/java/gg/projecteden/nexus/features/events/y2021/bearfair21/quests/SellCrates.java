@@ -6,7 +6,6 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.Merchan
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.farming.FarmingLoot;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot;
 import gg.projecteden.nexus.utils.MerchantBuilder;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -48,7 +47,7 @@ public class SellCrates implements Listener {
 	private String getCrateType(String[] lines) {
 		String line1 = lines[0];
 		String line2 = lines[1];
-		if (stripColor(line1).equals("[Sell Crate]"))
+		if ("[Sell Crate]".equals(stripColor(line1)))
 			return line2;
 		return null;
 	}

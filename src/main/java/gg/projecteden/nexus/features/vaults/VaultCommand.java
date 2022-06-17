@@ -10,7 +10,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.vaults.VaultUser;
 import gg.projecteden.nexus.models.vaults.VaultUserService;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
@@ -36,6 +36,11 @@ public class VaultCommand extends CustomCommand {
 			error("You can't open vaults here");
 
 		new VaultMenu(player(), user, page);
+	}
+
+	@Path("limit [user]")
+	void limit(@Arg(value = "self", permission = Group.SENIOR_STAFF) VaultUser user) {
+		send(PREFIX + (isSelf(user) ? "You own" : user.getNickname() + " owns") + " &e" + user.getLimit() + " &3vaults");
 	}
 
 	@Path("limit add <user> [amount]")

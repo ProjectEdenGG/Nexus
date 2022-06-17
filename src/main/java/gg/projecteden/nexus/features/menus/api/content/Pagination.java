@@ -151,7 +151,6 @@ public interface Pagination {
 	 */
 	Pagination setItemsPerPage(int itemsPerPage);
 
-
 	class Impl implements Pagination {
 
 		private int currentPage;

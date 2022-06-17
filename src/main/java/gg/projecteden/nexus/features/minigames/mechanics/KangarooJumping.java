@@ -129,6 +129,5 @@ public final class KangarooJumping extends TeamlessMechanic {
 		player.setVelocity(event.getEntity().getVelocity().multiply(0.5).add(new Vector(0, .5, 0)));
 	}
 
-
 }
 

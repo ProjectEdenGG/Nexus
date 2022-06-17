@@ -61,6 +61,11 @@ public abstract class TeamVanillaMechanic extends TeamMechanic implements Vanill
 	}
 
 	@Override
+	public boolean useNaturalDeathMessage() {
+		return true;
+	}
+
+	@Override
 	public void spreadPlayers(@NotNull Match match) {
 		match.getMinigamers().forEach(minigamer -> {
 			minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.DAMAGE_RESISTANCE).duration(TickTime.SECOND.x(20)).amplifier(10));

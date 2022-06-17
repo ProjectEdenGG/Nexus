@@ -23,6 +23,7 @@ import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.nickname.NicknameService;
 import gg.projecteden.nexus.utils.PlayerUtils.VersionConfig.Version;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.utils.Utils.MinMaxResult;
 import lombok.AllArgsConstructor;
 import lombok.Data;

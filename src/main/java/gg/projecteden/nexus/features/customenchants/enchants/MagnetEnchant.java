@@ -5,7 +5,7 @@ import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;

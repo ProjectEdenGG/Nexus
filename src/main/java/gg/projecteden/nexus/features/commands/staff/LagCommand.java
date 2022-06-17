@@ -65,5 +65,4 @@ public class LagCommand extends CustomCommand {
 		}
 	}
 
-
 }

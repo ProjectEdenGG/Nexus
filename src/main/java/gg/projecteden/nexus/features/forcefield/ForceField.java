@@ -7,7 +7,7 @@ import gg.projecteden.nexus.models.forcefield.ForceFieldUserService;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -48,7 +48,7 @@ public class ForceField extends Feature {
 		return userService.getAll().stream()
 			.filter(ForceFieldUser::isEnabled)
 			.filter(PlayerOwnedObject::isOnline)
-			.filter(forceFieldUser -> !(WorldGroup.of(forceFieldUser).isMinigames()))
+			.filter(forceFieldUser -> WorldGroup.of(forceFieldUser) != WorldGroup.MINIGAMES)
 			.collect(Collectors.toList());
 	}
 

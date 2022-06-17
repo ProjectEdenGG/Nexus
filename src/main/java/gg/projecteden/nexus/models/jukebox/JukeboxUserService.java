@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.models.jukebox;
 
-
 import gg.projecteden.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 
@@ -14,6 +13,17 @@ public class JukeboxUserService extends MongoPlayerService<JukeboxUser> {
 
 	public Map<UUID, JukeboxUser> getCache() {
 		return cache;
+	}
+
+	@Override
+	public void clearCache() {
+		for (JukeboxUser user : getCache().values())
+			if (user.getSongPlayer() != null) {
+				user.getSongPlayer().destroy();
+				user.setSongPlayer(null);
+			}
+
+		super.clearCache();
 	}
 
 }

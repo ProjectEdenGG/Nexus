@@ -37,7 +37,6 @@ class HitboxMaze {
 	private int tries = 0;
 	private int wait = 0;
 
-
 	public HitboxMaze(Player player, Block clicked, int radius) {
 		this.player = player;
 		this.origin = clicked;

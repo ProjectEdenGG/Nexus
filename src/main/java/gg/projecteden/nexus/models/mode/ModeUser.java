@@ -5,7 +5,7 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,7 +27,7 @@ public class ModeUser implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	Map<WorldGroup, PlayerMode> modeMap = new HashMap<>();
+	private Map<WorldGroup, PlayerMode> modeMap = new HashMap<>();
 
 	public void setGameMode(@NonNull WorldGroup worldGroup, @NonNull GameMode gamemode) {
 		PlayerMode mode = getPlayerMode(worldGroup);
@@ -57,7 +57,6 @@ public class ModeUser implements PlayerOwnedObject {
 	public @NonNull FlightMode getFlightMode(@NonNull WorldGroup worldGroup) {
 		return getPlayerMode(worldGroup).getFlightMode();
 	}
-
 
 	@Data
 	public static class PlayerMode {

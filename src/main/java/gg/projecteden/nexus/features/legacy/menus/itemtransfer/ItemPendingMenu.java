@@ -3,12 +3,12 @@ package gg.projecteden.nexus.features.legacy.menus.itemtransfer;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.models.legacy.itemtransfer.ItemTransferUser;
-import gg.projecteden.nexus.models.legacy.itemtransfer.ItemTransferUser.ReviewStatus;
-import gg.projecteden.nexus.models.legacy.itemtransfer.ItemTransferUserService;
+import gg.projecteden.nexus.models.legacy.itemtransfer.LegacyItemTransferUser;
+import gg.projecteden.nexus.models.legacy.itemtransfer.LegacyItemTransferUser.ReviewStatus;
+import gg.projecteden.nexus.models.legacy.itemtransfer.LegacyItemTransferUserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -17,10 +17,10 @@ import java.util.List;
 
 @Title("Pending Items")
 public class ItemPendingMenu extends InventoryProvider {
-	private final ItemTransferUser user;
+	private final LegacyItemTransferUser user;
 
 	public ItemPendingMenu(Player player) {
-		this.user = new ItemTransferUserService().get(player);
+		this.user = new LegacyItemTransferUserService().get(player);
 	}
 
 	@Override

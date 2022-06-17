@@ -26,8 +26,8 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.utils.DiscordId.TextChannel;
 import lombok.Getter;
 import me.lexikiq.OptionalLocation;
@@ -128,6 +128,8 @@ public class Minigames extends Feature {
 	public void onStop() {
 		new ArrayList<>(MatchManager.getAll()).forEach(Match::end);
 		ArenaManager.write();
+		ArenaManager.getAll().clear();
+		MatchManager.getAll().clear();
 	}
 
 	public static boolean isMinigameWorld(World world) {

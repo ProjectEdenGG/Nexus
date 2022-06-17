@@ -51,6 +51,7 @@ public class Nameplates extends Feature {
 
 			team = scoreboard.registerNewTeam(teamName);
 			team.setOption(Option.NAME_TAG_VISIBILITY, OptionStatus.FOR_OWN_TEAM);
+			team.setCanSeeFriendlyInvisibles(false);
 		} else {
 			team = scoreboard.getTeam(teamName);
 			if (team != null)

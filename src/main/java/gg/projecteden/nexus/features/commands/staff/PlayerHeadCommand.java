@@ -13,7 +13,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.CommandCooldownE
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NonNull;
 import org.bukkit.Material;
@@ -33,8 +33,7 @@ public class PlayerHeadCommand extends CustomCommand {
 	private static final List<WorldGroup> allowedWorldGroups = List.of(
 		WorldGroup.SURVIVAL,
 		WorldGroup.CREATIVE,
-		WorldGroup.SKYBLOCK,
-		WorldGroup.ONEBLOCK
+		WorldGroup.SKYBLOCK
 	);
 
 	public PlayerHeadCommand(@NonNull CommandEvent event) {

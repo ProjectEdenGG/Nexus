@@ -168,4 +168,3 @@ public class HoursCommand extends CustomCommand {
 	}
 }
 
-

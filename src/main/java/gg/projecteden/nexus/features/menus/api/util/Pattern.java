@@ -67,8 +67,8 @@ public class Pattern<T> {
 	 * @throws IllegalArgumentException If the length of a line is not equal to the length of the first line
 	 */
 	public Pattern(boolean wrapAround, String... lines) {
-		Preconditions.checkNotNull(lines, "The given pattern lines must not be null.");
-		Preconditions.checkArgument(lines.length > 0, "The given pattern lines must not be empty.");
+		Preconditions.checkNotNull(lines, "The given pattern lines must not be null");
+		Preconditions.checkArgument(lines.length > 0, "The given pattern lines must not be empty");
 
 		int columnCount = lines[0].length();
 
@@ -76,9 +76,9 @@ public class Pattern<T> {
 
 		for (int i = 0; i < lines.length; i++) {
 			String line = lines[i];
-			Preconditions.checkNotNull(line, "The given pattern line %s cannot be null.", i);
+			Preconditions.checkNotNull(line, "The given pattern line %s cannot be null", i);
 			Preconditions.checkArgument(line.length() == columnCount,
-				"The given pattern line %s does not match the first line character count.", i);
+				"The given pattern line %s does not match the first line character count", i);
 			this.lines[i] = lines[i];
 		}
 

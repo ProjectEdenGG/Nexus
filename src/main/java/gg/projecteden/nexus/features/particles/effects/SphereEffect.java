@@ -92,7 +92,6 @@ public class SphereEffect {
 				newLoc = player.getLocation().add(finalUpdateVector);
 			newLoc.add(0, 1, 0);
 
-
 			t.updateAndGet(v -> v + Math.PI / (double) finalDensity);
 
 			for (double theta = 0.0D; theta <= Math.PI * 2; theta += Math.PI / (double) finalDensity) {

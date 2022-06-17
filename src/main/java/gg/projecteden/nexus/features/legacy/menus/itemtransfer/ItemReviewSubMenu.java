@@ -3,8 +3,8 @@ package gg.projecteden.nexus.features.legacy.menus.itemtransfer;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.models.legacy.itemtransfer.ItemTransferUser;
-import gg.projecteden.nexus.models.legacy.itemtransfer.ItemTransferUserService;
+import gg.projecteden.nexus.models.legacy.itemtransfer.LegacyItemTransferUser;
+import gg.projecteden.nexus.models.legacy.itemtransfer.LegacyItemTransferUserService;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -12,8 +12,8 @@ import org.bukkit.inventory.ItemStack;
 @Title("Review Item")
 @RequiredArgsConstructor
 public class ItemReviewSubMenu extends InventoryProvider {
-	private final ItemTransferUserService service = new ItemTransferUserService();
-	private final ItemTransferUser user;
+	private final LegacyItemTransferUserService service = new LegacyItemTransferUserService();
+	private final LegacyItemTransferUser user;
 	private final ItemStack item;
 	private final int parentPage;
 

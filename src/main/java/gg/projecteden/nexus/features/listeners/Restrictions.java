@@ -4,14 +4,15 @@ import com.destroystokyo.paper.event.player.PlayerAdvancementCriterionGrantEvent
 import gg.projecteden.nexus.features.chat.Censor;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.chat.Koda;
+import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import me.lexikiq.HasUniqueId;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -54,8 +55,7 @@ import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 public class Restrictions implements Listener {
 	private static final String PREFIX = Koda.getLocalFormat();
 
-	private static final List<WorldGroup> allowedWorldGroups = Arrays.asList(WorldGroup.SURVIVAL, WorldGroup.CREATIVE,
-			WorldGroup.SKYBLOCK, WorldGroup.ONEBLOCK);
+	private static final List<WorldGroup> allowedWorldGroups = Arrays.asList(WorldGroup.SURVIVAL, WorldGroup.CREATIVE, WorldGroup.SKYBLOCK);
 	private static final List<String> blockedWorlds = Arrays.asList("safepvp", "events");
 
 	public static boolean isPerkAllowedAt(HasUniqueId player, Location location) {
@@ -165,7 +165,7 @@ public class Restrictions implements Listener {
 
 	@EventHandler
 	public void onPortalEvent(PlayerPortalEvent event) {
-		if (Arrays.asList(WorldGroup.ONEBLOCK, WorldGroup.CREATIVE).contains(WorldGroup.of(event.getPlayer())))
+		if (Arrays.asList(WorldGroup.SKYBLOCK, WorldGroup.CREATIVE).contains(WorldGroup.of(event.getPlayer())))
 			event.setCancelled(true);
 	}
 
@@ -176,7 +176,7 @@ public class Restrictions implements Listener {
 			return;
 
 		// Vanilla mechanic portals
-		if (worldGroup == WorldGroup.MINIGAMES && !event.getWorld().getName().equals("gameworld"))
+		if (worldGroup == WorldGroup.MINIGAMES && !Minigames.getWorld().equals(event.getWorld()))
 			return;
 
 		event.setCancelled(true);
@@ -190,15 +190,15 @@ public class Restrictions implements Listener {
 	}
 
 	@EventHandler
-	public void onOneBlockFallingCommand(PlayerCommandPreprocessEvent event) {
+	public void onSkyBlockFallingCommand(PlayerCommandPreprocessEvent event) {
 		Player player = event.getPlayer();
-		if (!Arrays.asList(WorldGroup.ONEBLOCK, WorldGroup.SKYBLOCK).contains(WorldGroup.of(player)))
+		if (WorldGroup.of(player) != WorldGroup.SKYBLOCK)
 			return;
 
 		if (isVanished(player))
 			return;
 
-		if (player.getLocation().getY() < -300)
+		if (player.getLocation().getY() < -1000)
 			return;
 
 		if (player.getFallDistance() > 5 && !player.isFlying()) {

@@ -34,6 +34,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -79,10 +80,17 @@ public class SmartInventory {
 		Optional<SmartInventory> oldInv = this.manager.getInventory(player);
 
 		oldInv.ifPresent(inv -> {
+			final InventoryCloseEvent event = new InventoryCloseEvent(player.getOpenInventory());
+
+			final var contents = new ArrayList<>(Arrays.asList(event.getInventory().getContents()));
+			inv.getProvider().onClose(event, contents);
+
 			inv.getListeners().stream()
 				.filter(listener -> listener.getType() == InventoryCloseEvent.class)
 				.forEach(listener -> ((InventoryListener<InventoryCloseEvent>) listener)
-					.accept(new InventoryCloseEvent(player.getOpenInventory())));
+					.accept(event));
+
+			player.getOpenInventory().getTopInventory().clear();
 
 			this.manager.setInventory(player, null);
 		});
@@ -113,10 +121,17 @@ public class SmartInventory {
 	}
 
 	public void close(Player player) {
+		final InventoryCloseEvent event = new InventoryCloseEvent(player.getOpenInventory());
+
+		this.manager.getInventory(player).ifPresent(inv -> {
+			final var contents = new ArrayList<>(Arrays.asList(event.getInventory().getContents()));
+			inv.getProvider().onClose(event, contents);
+		});
+
 		listeners.stream()
 			.filter(listener -> listener.getType() == InventoryCloseEvent.class)
 			.forEach(listener -> ((InventoryListener<InventoryCloseEvent>) listener)
-				.accept(new InventoryCloseEvent(player.getOpenInventory())));
+				.accept(event));
 
 		this.manager.setInventory(player, null);
 		player.closeInventory();
@@ -226,12 +241,12 @@ public class SmartInventory {
 
 		public SmartInventory build() {
 			if (this.provider == null)
-				throw new IllegalStateException("The provider of the SmartInventory.Builder must be set.");
+				throw new IllegalStateException("The provider of the SmartInventory.Builder must be set");
 
 			if (this.manager == null) {          // if it's null, use the default instance
 				this.manager = SmartInvsPlugin.manager();
 				if (this.manager == null) {      // if it's still null, throw an exception
-					throw new IllegalStateException("Manager of the SmartInventory.Builder must be set, or SmartInvs should be loaded as a plugin.");
+					throw new IllegalStateException("Manager of the SmartInventory.Builder must be set, or SmartInvs should be loaded as a plugin");
 				}
 			}
 

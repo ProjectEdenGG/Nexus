@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.entity.Player;
 
 @Permission(Group.STAFF)
@@ -18,7 +19,7 @@ public class SlapCommand extends CustomCommand {
 
 	@Path("<player>")
 	void run(Nerd nerd) {
-		if (nerd.getWorldGroup().isMinigames())
+		if (nerd.getWorldGroup() == WorldGroup.MINIGAMES)
 			error("Cannot slap " + nerd.getNickname() + ", they are in minigames");
 
 		final Player player = nerd.getOnlinePlayer();

@@ -25,7 +25,7 @@ import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUser;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.entity.Player;

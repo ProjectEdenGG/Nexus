@@ -36,7 +36,6 @@ public enum Decorations {
 		return new Location(Bukkit.getWorld("events"), x, y, z);
 	}
 
-
 	public static @Nullable Decorations getByLocation(Location location) {
 		return Arrays.stream(Decorations.values()).parallel().filter(decorations -> LocationUtils.blockLocationsEqual(location, decorations.getLocation())).findAny().orElse(null);
 	}

@@ -83,7 +83,7 @@ public abstract class _WarpCommand extends CustomCommand {
 		checkPermission();
 		Warp warp = getWarpType().get(name);
 		if (warp != null)
-			error("That warp is already set.");
+			error("That warp is already set");
 
 		getWarpType().add(name, location());
 		save();

@@ -74,8 +74,7 @@ public class McMMOResetProvider extends InventoryProvider {
 					PlayerUtils.runCommandAsConsole("ce give " + player.getName() + " " + Material.DIAMOND_AXE.name() + " thunderingblow:2 sharpness:3 mending:1 unbreaking:3");
 				}
 		},
-		HERBALISM(2, 6, Material.DIAMOND_HOE,
-				"The boots of Demeter give you the power to increase agricultural rates around you.") {
+		HERBALISM(2, 6, Material.DIAMOND_HOE, "The boots of Demeter give you the power to increase agricultural rates around you") {
 			@Override
 			void onClick(Player player) {
 				PlayerUtils.giveItem(player, new ItemBuilder(Material.GOLDEN_BOOTS).lore("&aBonemeal Boots").build());
@@ -130,8 +129,7 @@ public class McMMOResetProvider extends InventoryProvider {
 					PlayerUtils.runCommandAsConsole("ce give " + player.getName() + " " + Material.LEATHER_HELMET.name() + " implants:1");
 				}
 		},
-		UNARMED(4, 6, Material.ROTTEN_FLESH,
-				"Punching your enemies to death can be dangerous work, this bandage and stick will help with that.") {
+		UNARMED(4, 6, Material.ROTTEN_FLESH, "Punching your enemies to death can be dangerous work, this bandage and stick will help with that") {
 			@Override
 			void onClick(Player player) {
 				PlayerUtils.runCommandAsConsole("ce give " + player.getName() + " " + Material.PAPER.name() + " bandage");

@@ -4,7 +4,7 @@ import com.destroystokyo.paper.event.inventory.PrepareResultEvent;
 import com.gmail.nossr50.events.skills.repair.McMMOPlayerRepairCheckEvent;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -197,7 +197,6 @@ public class ItemTagsListener implements Listener {
 
 		ItemStack itemStack = event.getItem();
 		updateItem(itemStack);
-
 
 	}
 
