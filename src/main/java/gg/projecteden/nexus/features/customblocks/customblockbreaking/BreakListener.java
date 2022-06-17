@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.customblocks.customblockbreaking;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.NMSUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -30,10 +29,7 @@ public class BreakListener implements Listener {
 	}
 
 	private boolean isValid(Player player) {
-		if (GameModeWrapper.of(player).isCreative())
-			return false;
-
-		return true;
+		return !GameModeWrapper.of(player).isCreative();
 	}
 
 	@EventHandler
@@ -58,29 +54,15 @@ public class BreakListener implements Listener {
 			return;
 
 		Location blockLoc = block.getLocation();
-		if (!CustomBlockBreaking.getManager().isTracking(blockLoc)) {
+		if (player.getLocation().distanceSquared(blockLoc) >= 1024.0D)
 			return;
-		}
+
+		if (!CustomBlockBreaking.getManager().isTracking(blockLoc))
+			return;
+
+		BlockBreakingUtils.addSlowDig(player, 200);
 
 		ItemStack itemStack = player.getInventory().getItemInMainHand();
-
-		float damage = NMSUtils.getBlockDamage(player, block, itemStack);
-		if (damage < 0)
-			return;
-		else if (damage == 0)
-			damage = NMSUtils.getBlockHardness(block);
-
-		double multiplier = damage;
-
-		Location playerLoc = player.getLocation();
-		double distanceX = blockLoc.getX() - playerLoc.getX();
-		double distanceY = blockLoc.getY() - playerLoc.getY();
-		double distanceZ = blockLoc.getZ() - playerLoc.getZ();
-
-		if (distanceX * distanceX + distanceY * distanceY + distanceZ * distanceZ >= 1024.0D)
-			return;
-
-		BlockBreakingUtils.addSlowDig(event.getPlayer(), 200);
-		CustomBlockBreaking.getManager().getBrokenBlock(blockLoc).incrementDamage(player, multiplier);
+		CustomBlockBreaking.getManager().getBrokenBlock(blockLoc).incrementDamage(player, itemStack);
 	}
 }

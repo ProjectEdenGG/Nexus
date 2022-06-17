@@ -24,7 +24,6 @@ import java.util.List;
 		- On placing flora, ensure the base block is suitable
 		- //
 		- Appropriate tool & mining speed --> CustomBlockBreaking
-		- Figure out WorldEdit handling
 		- //
 
 		- Cannot Fix:

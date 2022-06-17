@@ -3,11 +3,10 @@ package gg.projecteden.nexus.features.customblocks.customblockbreaking;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,14 +14,14 @@ import java.util.concurrent.ConcurrentHashMap;
 public class BrokenBlocksManager {
 	@Getter
 	private static final Map<Location, BrokenBlock> brokenBlocks = new ConcurrentHashMap<>();
-	private static final double expirationSeconds = 1.0;
+	private static final double expirationTicks = 20;
 
 	public BrokenBlocksManager() {
 		janitor();
 	}
 
 	public void createBrokenBlock(Block block) {
-		if (isTracking(block.getLocation()))
+		if (isTracking(block))
 			return;
 
 		BrokenBlock brokenBlock = new BrokenBlock(block);
@@ -43,6 +42,10 @@ public class BrokenBlocksManager {
 		return brokenBlocks.get(location);
 	}
 
+	public boolean isTracking(Block block) {
+		return isTracking(block.getLocation());
+	}
+
 	public boolean isTracking(Location location) {
 		return brokenBlocks.containsKey(location);
 	}
@@ -52,19 +55,15 @@ public class BrokenBlocksManager {
 			Map<Location, BrokenBlock> blocks = new HashMap<>(getBrokenBlocks());
 			for (Location location : blocks.keySet()) {
 				BrokenBlock damagedBlock = blocks.get(location);
-				if (damagedBlock.getLastDamage() == null)
-					continue;
-
 				if (damagedBlock.isBroken() || !damagedBlock.isDamaged()) {
 					damagedBlock.resetBreakPacket();
 					removeBrokenBlock(damagedBlock);
 					continue;
 				}
 
-				long seconds = damagedBlock.getLastDamage().until(LocalDateTime.now(), ChronoUnit.SECONDS);
-//				Dev.WAKKA.send("seconds = " + seconds + " (" + damagedBlock.getDamage() + "/" + damagedBlock.getHardness() + ")");
+				int tickDiff = Bukkit.getCurrentTick() - damagedBlock.getLastDamageTick();
 
-				if (seconds > expirationSeconds) {
+				if (tickDiff > expirationTicks) {
 					damagedBlock.decrementDamage();
 				}
 			}
