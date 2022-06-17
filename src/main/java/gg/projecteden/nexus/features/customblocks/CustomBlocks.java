@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.customblocks;
 import com.sk89q.worldedit.WorldEdit;
 import gg.projecteden.annotations.Environments;
 import gg.projecteden.nexus.features.customblocks.listeners.CustomBlockListener;
-import gg.projecteden.nexus.features.customblocks.worldedit.CustomBlockPatternParser;
+import gg.projecteden.nexus.features.customblocks.worldedit.CustomBlockParser;
 import gg.projecteden.nexus.features.customblocks.worldedit.WorldEditListener;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
@@ -39,7 +39,7 @@ public class CustomBlocks extends Feature {
 		new CustomBlockListener();
 
 		WorldEditListener.register();
-		WorldEdit.getInstance().getPatternFactory().register(new CustomBlockPatternParser(WorldEdit.getInstance()));
+		WorldEdit.getInstance().getBlockFactory().register(new CustomBlockParser(WorldEdit.getInstance()));
 	}
 
 	@Override

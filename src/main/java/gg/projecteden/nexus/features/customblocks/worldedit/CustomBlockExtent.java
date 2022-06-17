@@ -12,29 +12,27 @@ import org.bukkit.World;
 public class CustomBlockExtent extends AbstractDelegateExtent {
 	private final Extent extent;
 	private final World world;
-	private final WorldEditUtils WEUtils;
+	private final WorldEditUtils worldedit;
 
 	public CustomBlockExtent(Extent extent, org.bukkit.World world) {
 		super(extent);
 
 		this.extent = extent;
 		this.world = world;
-		this.WEUtils = new WorldEditUtils(world);
-
-		Dev.WAKKA.send("created extent");
+		this.worldedit = new WorldEditUtils(world);
 	}
 
 	// TODO: these events don't seem to fire
 	@Override
-	public <B extends BlockStateHolder<B>> boolean setBlock(int x, int y, int z, B block) throws WorldEditException {
+	public <T extends BlockStateHolder<T>> boolean setBlock(int x, int y, int z, T block) throws WorldEditException {
 		Dev.WAKKA.send("setBlock(x, y, z, block)");
-		return extent.setBlock(x, y, z, block);
+		return super.setBlock(x, y, z, block);
 	}
 
 	@Override
 	public <B extends BlockStateHolder<B>> boolean setBlock(BlockVector3 position, B block) throws WorldEditException {
 		Dev.WAKKA.send("setBlock(position, block)");
-		return extent.setBlock(position, block);
+		return super.setBlock(position, block);
 	}
 }
 

@@ -6,15 +6,12 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.event.extent.EditSessionEvent;
 import com.sk89q.worldedit.util.eventbus.Subscribe;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import lombok.Data;
-import org.bukkit.Bukkit;
 import org.bukkit.World;
 
 @Data
 public class WorldEditListener {
 	private static boolean initialized = false;
-	private static boolean isFAWE = false;
 	private static WorldEditListener event = new WorldEditListener();
 
 	public static void register() {
@@ -23,7 +20,6 @@ public class WorldEditListener {
 
 		try {
 			WorldEdit.getInstance().getEventBus().register(event);
-			isFAWE = (Bukkit.getServer().getPluginManager().getPlugin("FastAsyncWorldEdit") != null);
 			initialized = true;
 		} catch (Exception e) {
 			Nexus.warn("Failed to register CustomBlock's WorldEditListener");
@@ -56,9 +52,7 @@ public class WorldEditListener {
 		if (world == null)
 			return;
 
-		if (event.getStage() == (isFAWE ? Stage.BEFORE_HISTORY : Stage.BEFORE_CHANGE)) {
-			Dev.WAKKA.send("EditSessionEvent: " + event.getStage());
+		if (event.getStage() == Stage.BEFORE_HISTORY)
 			event.setExtent(new CustomBlockExtent(event.getExtent(), world));
-		}
 	}
 }
