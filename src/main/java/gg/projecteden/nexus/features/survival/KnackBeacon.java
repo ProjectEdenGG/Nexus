@@ -3,13 +3,14 @@ package gg.projecteden.nexus.features.survival;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockTypes;
+import gg.projecteden.nexus.features.listeners.events.WorldGroupChangedEvent;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
-import net.kyori.adventure.bossbar.BossBar.Listener;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
@@ -17,10 +18,15 @@ import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Chest;
 import org.bukkit.boss.KeyedBossBar;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
+// TODO 1.19 remove
 public class KnackBeacon extends Feature implements Listener {
 	private static final double GOAL = 5904;
 	private final List<Location> chests = List.of(
@@ -71,5 +77,22 @@ public class KnackBeacon extends Feature implements Listener {
 			Component title = new JsonBuilder("&cNetherite Beacon Progress &7(%.2f%%)".formatted(progress * 100)).build();
 			bossBar.setTitle(LegacyComponentSerializer.legacySection().serialize(title));
 		});
+	}
+
+	private void update(Player player) {
+		if (WorldGroup.of(player) == WorldGroup.SURVIVAL)
+			bossBar.addPlayer(player);
+		else
+			bossBar.removePlayer(player);
+	}
+
+	@EventHandler
+	public void onJoin(PlayerJoinEvent event) {
+		update(event.getPlayer());
+	}
+
+	@EventHandler
+	public void onWorldChange(WorldGroupChangedEvent event) {
+		update(event.getPlayer());
 	}
 }
