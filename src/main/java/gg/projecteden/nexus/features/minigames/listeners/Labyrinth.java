@@ -216,14 +216,15 @@ public class Labyrinth implements Listener {
 				.location(curLocation)
 				.play();
 
-			minigamer.teleportAsync(newLocation);
-			player.setVelocity(velocity);
-			player.setSprinting(sprinting);
+			minigamer.teleportAsync(newLocation).thenRun(() -> {
+				player.setVelocity(velocity);
+				player.setSprinting(sprinting);
 
-			Tasks.wait(1, () ->
-				new SoundBuilder(Sound.ENTITY_ENDERMAN_TELEPORT)
-					.location(newLocation)
-					.play());
+				Tasks.wait(1, () ->
+					new SoundBuilder(Sound.ENTITY_ENDERMAN_TELEPORT)
+						.location(newLocation)
+						.play());
+			});
 		}
 	}
 }

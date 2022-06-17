@@ -41,6 +41,7 @@ public class NameplateManager {
 
 	public void shutdown() {
 		destroyAll();
+		players.clear();
 	}
 
 	public static NameplatePlayer get(@NotNull Player holder) {

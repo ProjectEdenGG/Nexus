@@ -34,6 +34,7 @@ public class DurationConverter extends TypeConverter implements SimpleValueConve
 	}
 
 	public static Duration decode(Map<String, Number> value) {
+		if (!(value.containsKey("seconds") && value.containsKey("nanos"))) return null;
 		return Duration.ofSeconds(value.get("seconds").longValue(), value.get("nanos").longValue());
 	}
 

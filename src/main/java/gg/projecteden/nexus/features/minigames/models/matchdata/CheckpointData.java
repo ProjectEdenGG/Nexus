@@ -5,6 +5,8 @@ import gg.projecteden.nexus.features.minigames.models.MatchData;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.arenas.CheckpointArena;
 import gg.projecteden.nexus.models.checkpoint.CheckpointService;
+import gg.projecteden.nexus.models.checkpoint.MiniCheckpointTimeWrapper;
+import gg.projecteden.nexus.models.checkpoint.Pace;
 import gg.projecteden.nexus.models.checkpoint.RecordTotalTime;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import kotlin.Pair;
@@ -39,13 +41,14 @@ import java.util.stream.Collectors;
 public class CheckpointData extends MatchData {
 
 	// TODO: display golden splits
-	// TODO: display live split comparison
 	// TODO: command to configure which splits to compare against
 
+	private static final Pace UNAVAILABLE_PACE = new Pace("&3Pace", "&7N/A");
 	private final CheckpointService service = new CheckpointService();
 	private final Map<UUID, Map<Integer, Instant>> checkpointTimes = new HashMap<>();
 	private final Map<UUID, Instant> startTimes = new HashMap<>();
 	private final Map<UUID, RecordTotalTime> bestTotalTimesCache = new HashMap<>();
+	private final Map<UUID, Pace> paceCache = new HashMap<>();
 	private RecordTotalTime bestTotalTimeCache = null;
 	private final Set<UUID> autoresetting = new HashSet<>();
 
@@ -113,6 +116,29 @@ public class CheckpointData extends MatchData {
 		return checkpoints.keySet().stream().max(Integer::compareTo).orElse(null);
 	}
 
+	private @Nullable MiniCheckpointTimeWrapper getNextCheckpointTime(Map<Integer, Duration> checkpoints, int currentCheckpoint) {
+		if (currentCheckpoint != 0 && !checkpoints.containsKey(currentCheckpoint)) return null;
+		return checkpoints.entrySet().stream()
+			.filter(entry -> entry.getKey() > currentCheckpoint || entry.getKey() == -1)
+			.map(entry -> new MiniCheckpointTimeWrapper(entry.getKey(), entry.getValue()))
+			.min(MiniCheckpointTimeWrapper.idComparator())
+			.orElse(null);
+	}
+
+	public @Nullable MiniCheckpointTimeWrapper getNextSplitTime(Minigamer minigamer) {
+		int checkpointId = Objects.requireNonNullElse(getCheckpointId(minigamer), 0);
+		RecordTotalTime record = bestTotalTimesCache.get(minigamer.getUuid());
+		if (record == null) return null;
+		return getNextCheckpointTime(record.getCheckpointTimes(), checkpointId);
+	}
+
+	public @Nullable MiniCheckpointTimeWrapper getNextCheckpointSumTime(Minigamer minigamer) {
+		int checkpointId = Objects.requireNonNullElse(getCheckpointId(minigamer), 0);
+		RecordTotalTime record = bestTotalTimesCache.get(minigamer.getUuid());
+		if (record == null) return null;
+		return getNextCheckpointTime(record.getCheckpointTimesAsSum(), checkpointId);
+	}
+
 	public void setCheckpoint(Minigamer minigamer, int id) {
 		int currentId = Objects.requireNonNullElse(getCheckpointId(minigamer), 0);
 		if (currentId < id) {
@@ -146,7 +172,9 @@ public class CheckpointData extends MatchData {
 			checkpointTimes
 				.computeIfAbsent(minigamer.getUuid(), k -> new HashMap<>())
 				.put(id, now);
-			service.get(minigamer).recordCheckpointTime(this, id, timeFromStart, now);
+			service.get(minigamer).recordCheckpointTime(this, id, timeFromPrevious, now);
+			if (bestFromStart != null)
+				paceCache.put(minigamer.getUuid(), new Pace("&3Pace &7(CP#" + id + ")", "&e" + formatLiveTime(timeFromStart, bestFromStart, 2)));
 		}
 	}
 
@@ -180,6 +208,7 @@ public class CheckpointData extends MatchData {
 
 	private void clearCheckpoints(Minigamer minigamer) {
 		checkpointTimes.remove(minigamer.getUuid());
+		paceCache.remove(minigamer.getUuid());
 	}
 
 	private void clearAutoreset(Minigamer minigamer) {
@@ -258,12 +287,23 @@ public class CheckpointData extends MatchData {
 	}
 
 	public String formatSplitTime(Minigamer minigamer, @Nullable Instant endTime) {
-		return formatLiveTime(calculateSplitTime(minigamer, endTime), null, null); // TODO split comparison
+		MiniCheckpointTimeWrapper record = getNextSplitTime(minigamer);
+		return formatLiveTime(calculateSplitTime(minigamer, endTime), record == null ? null : record.time(), 0);
 	}
 
 	public String formatTotalBestTime(Minigamer minigamer) {
 		RecordTotalTime record = bestTotalTimesCache.get(minigamer.getUuid());
 		return record == null ? "&7N/A" : "&e" + formatLiveTime(record.getTime(), null, null);
+	}
+
+	public String formatSplitBestTime(Minigamer minigamer, @Nullable MiniCheckpointTimeWrapper record) {
+		if (record == null)
+			record = getNextSplitTime(minigamer);
+		return record == null ? "&7N/A" : "&e" + formatLiveTime(record.time(), null, null);
+	}
+
+	public Pace getPace(Minigamer minigamer) {
+		return paceCache.getOrDefault(minigamer.getUuid(), UNAVAILABLE_PACE);
 	}
 
 	public @NotNull HoverEvent<Component> formatCheckpointTimesHoverText(Minigamer minigamer, @Nullable Instant endTime) {
@@ -286,5 +326,9 @@ public class CheckpointData extends MatchData {
 		for (Pair<T, U> pair : list)
 			map.put(pair.getFirst(), pair.getSecond());
 		return map;
+	}
+
+	public static String formatShortCheckpointName(int checkpointId) {
+		return checkpointId == -1 ? "End" : "CP#" + checkpointId;
 	}
 }
