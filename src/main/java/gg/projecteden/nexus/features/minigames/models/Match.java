@@ -467,20 +467,10 @@ public class Match implements ForwardingAudience {
 			broadcast(message);
 	}
 
-	public void broadcast(String message, MinigameMessageType type) {
-		if (getMechanic().allowChat(type))
-			broadcast(message);
-	}
-
 	public void broadcastNoPrefix(String message) {
 		MatchBroadcastEvent event = new MatchBroadcastEvent(this, message);
 		if (event.callEvent())
 			minigamers.forEach(minigamer -> minigamer.sendMessage(event.getMessage()));
-	}
-
-	public void broadcastNoPrefix(String message, MinigameMessageType type) {
-		if (getMechanic().allowChat(type))
-			broadcastNoPrefix(message);
 	}
 
 	public void broadcastNoPrefix(String message, MinigameMessageType type) {
