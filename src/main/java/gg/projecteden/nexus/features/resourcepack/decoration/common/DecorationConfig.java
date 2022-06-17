@@ -4,13 +4,13 @@ import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPlaceEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -150,8 +150,7 @@ public class DecorationConfig {
 
 		ItemStack _item = item.clone();
 		_item.setAmount(1);
-		if (!player.getGameMode().equals(GameMode.CREATIVE))
-			item.subtract();
+		ItemUtils.subtract(player, item);
 
 		NBTItem nbtItem = new NBTItem(_item);
 		nbtItem.setString(NBT_OWNER_KEY, player.getUniqueId().toString());

@@ -29,7 +29,6 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 
-import static gg.projecteden.nexus.features.recipes.CustomRecipes.choiceOf;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
@@ -82,9 +81,8 @@ public abstract class Windchimes extends FunctionalRecipe {
 			.add('1', Material.STICK)
 			.add('2', Material.CHAIN)
 			.add('3', getWindchimeType().getIngot())
-			.add('4', choiceOf(MaterialTag.WOOD_BUTTONS))
+			.add('4', MaterialTag.WOOD_BUTTONS)
 			.toMake(getResult())
-			.id("windchimes_" + getWindchimeType().name().toLowerCase())
 			.getRecipe();
 	}
 

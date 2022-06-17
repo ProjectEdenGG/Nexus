@@ -31,6 +31,7 @@ import static org.bukkit.Material.*;
 public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag ALL_AIR = new MaterialTag("AIR", MatchMode.SUFFIX);
 	public static final MaterialTag WOOL = new MaterialTag("_WOOL", MatchMode.SUFFIX);
+	public static final MaterialTag WOOL_CARPET = new MaterialTag("_CARP", MatchMode.SUFFIX);
 	public static final MaterialTag DYES = new MaterialTag("_DYE", MatchMode.SUFFIX);
 	public static final MaterialTag BEDS = new MaterialTag("_BED", MatchMode.SUFFIX);
 	public static final MaterialTag ALL_BANNERS = new MaterialTag(Tag.BANNERS);
@@ -152,6 +153,7 @@ public class MaterialTag implements Tag<Material> {
 
 	public static final MaterialTag ALL_DEEPSLATE = new MaterialTag("DEEPSLATE", MatchMode.CONTAINS);
 
+	// TODO: Include Blackstone?
 	public static final MaterialTag ALL_STONE = new MaterialTag(STONE, STONE_STAIRS, STONE_SLAB, Material.STONE_BRICKS, SMOOTH_STONE, SMOOTH_STONE_SLAB)
 		.append(ALL_DEEPSLATE).exclude(new MaterialTag("WALL", MatchMode.CONTAINS, ALL_DEEPSLATE))
 		.append(new MaterialTag("STONE_BRICK", MatchMode.PREFIX))
@@ -267,6 +269,10 @@ public class MaterialTag implements Tag<Material> {
 		REPEATER, COMPARATOR, ITEM_FRAME, BELL, Material.SNOW, SCAFFOLDING, TRIPWIRE_HOOK, LADDER, LEVER, SOUL_LANTERN)
 		.append(SAPLINGS, DOORS, SIGNS, RAILS, ALL_BANNERS, CONCRETE_POWDERS, SAND, CORALS, CARPETS,
 			PRESSURE_PLATES, BUTTONS, FLOWER_POTS, ANVIL, PLANTS, TORCHES);
+
+	public static final MaterialTag SPAWNS_ENTITY = new MaterialTag(SPAWN_EGGS, BOATS, MINECARTS).append(EGG, SNOWBALL, BOW, CROSSBOW,
+		TRIDENT, FIREWORK_ROCKET, ENDER_PEARL, ENDER_EYE, SPLASH_POTION, LINGERING_POTION, EXPERIENCE_BOTTLE, ARMOR_STAND, ITEM_FRAME,
+		GLOW_ITEM_FRAME, PAINTING);
 
 	public static final MaterialTag WEARABLE = new MaterialTag(ARMOR, SKULLS).append(CARVED_PUMPKIN).exclude("_WALL_", MatchMode.CONTAINS);
 

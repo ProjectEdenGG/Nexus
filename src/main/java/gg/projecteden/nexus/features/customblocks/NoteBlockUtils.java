@@ -1,0 +1,79 @@
+package gg.projecteden.nexus.features.customblocks;
+
+import gg.projecteden.nexus.features.customblocks.events.NoteBlockPlayEvent;
+import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.models.customblock.CustomBlockData;
+import gg.projecteden.nexus.models.customblock.CustomNoteBlockData;
+import gg.projecteden.nexus.models.customblock.NoteBlockData;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.utils.UUIDUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.type.NoteBlock;
+
+public class NoteBlockUtils {
+
+	public static void changePitch(boolean sneaking, Location location, NoteBlockData data) {
+		if (!sneaking)
+			data.incrementStep();
+		else
+			data.decrementStep();
+
+		data.setInteracted(true);
+
+		Block block = location.getBlock();
+		play(block, data);
+
+		CustomBlockUtils.updatePowerable(block);
+
+		// TODO, show instrument + note somewhere to the player?
+	}
+
+
+	public static void play(NoteBlock noteBlock, Location location, boolean interacted) {
+		CustomBlockData data = CustomBlockUtils.getData(noteBlock, location);
+		if (data == null)
+			return;
+
+		NoteBlockData noteBlockData = ((CustomNoteBlockData) data.getExtraData()).getNoteBlockData();
+
+		if (interacted)
+			noteBlockData.setInteracted(true);
+
+		play(location.getBlock(), noteBlockData);
+	}
+
+	private static void play(Block block, NoteBlockData data) {
+		Location location = block.getLocation();
+		Block above = block.getRelative(BlockFace.UP);
+
+		// TODO: 1.19, double check that this is still a thing
+		String version = Bukkit.getMinecraftVersion();
+		if (version.matches("1.19[.]?[0-9]*")) {
+			if (MaterialTag.WOOL.isTagged(above) || MaterialTag.WOOL_CARPET.isTagged(above))
+				return;
+		} else if (!Nullables.isNullOrAir(above))
+			return;
+
+		Tasks.wait(1, () -> {
+			if (!data.isPowered() && !data.isInteracted()) {
+				return;
+			}
+
+			String cooldownType = "noteblock_" + location.getWorld().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ();
+			if (!(new CooldownService().check(UUIDUtils.UUID0, cooldownType, TickTime.TICK))) {
+				return;
+			}
+
+			NoteBlockPlayEvent event = new NoteBlockPlayEvent(block);
+			if (event.callEvent()) {
+				data.play(location);
+			}
+		});
+	}
+}

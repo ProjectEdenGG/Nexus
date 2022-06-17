@@ -328,6 +328,11 @@ public class ItemUtils {
 		return false;
 	}
 
+	public static void subtract(Player player, ItemStack item) {
+		if (!GameModeWrapper.of(player).isCreative())
+			item.subtract();
+	}
+
 	public static class ItemStackComparator implements Comparator<ItemStack> {
 		@Override
 		public int compare(ItemStack a, ItemStack b) {

@@ -2,9 +2,9 @@ package gg.projecteden.nexus.features.events.y2021.pugmas21.models;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
+import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
@@ -68,8 +68,7 @@ public class CandyCaneCannon implements Listener {
 		snowball.setSilent(true);
 		new SoundBuilder(Sound.ENTITY_SNOWBALL_THROW).location(player).pitch(2).play();
 
-		if (!GameModeWrapper.of(player).isCreative())
-			candyCaneItem.subtract();
+		ItemUtils.subtract(player, candyCaneItem);
 	}
 
 	private enum CandyCane {

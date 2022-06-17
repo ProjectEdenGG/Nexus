@@ -12,6 +12,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.NonNull;
 import org.bukkit.Material;
 import org.bukkit.Tag;
+import org.bukkit.inventory.ItemStack;
 
 @Aliases("i")
 @Permission("essentials.item")
@@ -22,8 +23,9 @@ public class ItemCommand extends CustomCommand {
 	}
 
 	@Path("<type> [amount] [nbt...]")
-	void run(Material material, @Arg(min = 1, max = 2304, minMaxBypass = Group.STAFF) Integer amount, @Arg(permission = Group.STAFF) String nbt) {
-		PlayerUtils.giveItem(player(), material, amount == null ? material.getMaxStackSize() : amount, nbt);
+	void run(ItemStack item, @Arg(min = 1, max = 2304, minMaxBypass = Group.STAFF) Integer amount, @Arg(permission = Group.STAFF) String nbt) {
+		item.setAmount(amount == null ? item.getType().getMaxStackSize() : amount);
+		PlayerUtils.giveItem(player(), item, nbt);
 	}
 
 	@Path("rp <material> <id>")
@@ -34,7 +36,7 @@ public class ItemCommand extends CustomCommand {
 
 	@Path("tag <tag> [amount]")
 	void tag(Tag<Material> tag, @Arg("1") int amount) {
-		tag.getValues().forEach(material -> run(material, amount, null));
+		tag.getValues().forEach(material -> run(new ItemStack(material), amount, null));
 	}
 
 }

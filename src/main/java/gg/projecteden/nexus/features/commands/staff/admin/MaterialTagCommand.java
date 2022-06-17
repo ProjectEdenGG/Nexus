@@ -10,12 +10,15 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
 import org.bukkit.Material;
 import org.bukkit.Tag;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -36,6 +39,16 @@ public class MaterialTagCommand extends CustomCommand {
 	@Path("find <material>")
 	void materialTag(Material material) {
 		send(PREFIX + "Applicable tags: &e" + String.join("&3, &e", MaterialTag.getApplicable(material).keySet()));
+	}
+
+	@Path("random <tag> [player]")
+	void materialTag(Tag<Material> tag, Player player) {
+		Material material = RandomUtils.randomMaterial(tag);
+		giveItem(new ItemStack(material));
+		String output = PREFIX + "Gave " + camelCase(material);
+		if (!isSelf(player))
+			output += " to &e" + Nickname.of(player);
+		send(output);
 	}
 
 	@ConverterFor(Tag.class)

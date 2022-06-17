@@ -1,21 +1,35 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.nexus.features.customblocks.CustomBlocks.SoundAction;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.LocationUtils.Axis;
 import gg.projecteden.nexus.utils.Tasks.GlowTask;
 import gg.projecteden.parchment.HasPlayer;
 import gg.projecteden.parchment.OptionalPlayer;
+import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event.Result;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import org.inventivetalent.glow.GlowAPI.Color;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -254,14 +268,105 @@ public class BlockUtils {
 
 		GlowTask.builder()
 				.duration(ticks)
-				.entity(fallingBlock)
-				.color(color)
-				.viewers(_viewers)
-				.onComplete(() -> {
-					fallingBlock.remove();
-					for (Player viewer : _viewers)
-						viewer.sendBlockChange(location, block.getType().createBlockData());
-				})
-				.start();
+			.entity(fallingBlock)
+			.color(color)
+			.viewers(_viewers)
+			.onComplete(() -> {
+				fallingBlock.remove();
+				for (Player viewer : _viewers)
+					viewer.sendBlockChange(location, block.getType().createBlockData());
+			})
+			.start();
+	}
+
+	public static boolean tryPlaceEvent(@NotNull Player player, @NotNull Block block, @NotNull Block placedAgainst, Material material) {
+		return tryPlaceEvent(player, block, placedAgainst, material, null, true, player.getInventory().getItemInMainHand());
+	}
+
+	public static boolean tryPlaceEvent(@NotNull Player player, @NotNull Block block, @NotNull Block placedAgainst, Material material, BlockData blockData) {
+		return tryPlaceEvent(player, block, placedAgainst, material, blockData, true, player.getInventory().getItemInMainHand());
+	}
+
+	public static boolean tryPlaceEvent(@NotNull Player player, @NotNull Block blockPlacement, @NotNull Block placedAgainst,
+										@NotNull Material material, @Nullable BlockData data, boolean applyPhysics, ItemStack itemInHand) {
+		// copies current data to send in event and to restore if event is cancelled
+		BlockState currentState = blockPlacement.getState();
+		Material currentMaterial = blockPlacement.getType();
+		BlockData currentData = currentState.getBlockData();
+
+		blockPlacement.setType(material, applyPhysics);
+		if (data != null)
+			blockPlacement.setBlockData(data, applyPhysics);
+
+		// ensure no plugins are blocking placing here
+		BlockPlaceEvent event = new BlockPlaceEvent(blockPlacement, blockPlacement.getState(), placedAgainst, itemInHand, player, true, EquipmentSlot.HAND);
+		if (!event.callEvent() || !event.canBuild()) {
+			blockPlacement.setType(currentMaterial, false);
+			blockPlacement.setBlockData(currentData, false); // revert blockPlacement
+			return false;
+		}
+
+		return true;
+	}
+
+	public static boolean tryBreakEvent(@NotNull Player player, @NotNull Block block) {
+		BlockBreakEvent event = new BlockBreakEvent(block, player);
+		if (!event.callEvent() || event.isCancelled())
+			return false;
+
+		return true;
+	}
+
+	public static boolean tryInteractEvent(Player player, Action action, Block block, BlockFace blockFace) {
+		PlayerInteractEvent event = new PlayerInteractEvent(player, action, null, block, blockFace);
+		if (!event.callEvent() || event.useInteractedBlock() == Result.DENY || event.useInteractedBlock() == Result.DENY)
+			return false;
+
+		return true;
+	}
+
+	public static void playSound(@Nullable Sound sound, @NonNull Location location) {
+		if (sound == null)
+			return;
+
+		playSound(sound.getKey().getKey(), location);
+	}
+
+	public static void playSound(String sound, @NonNull Location location) {
+		if (sound == null)
+			return;
+
+		playSound(new SoundBuilder(sound).location(location));
+	}
+
+	public static void playSound(SoundAction soundAction, @NonNull Block block) {
+		Sound sound = NMSUtils.getSound(soundAction, block);
+		if (sound == null)
+			return;
+
+		Location location = block.getLocation().toCenterLocation();
+
+		playSound(new SoundBuilder(sound).location(location).volume(soundAction.getVolume()));
+	}
+
+	public static void playSound(SoundBuilder soundBuilder) {
+		soundBuilder.category(SoundCategory.BLOCKS).play();
+	}
+
+	public static final List<BlockFace> cardinalFaces = List.of(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST);
+
+	public static BlockFace getCardinalBlockFace(Player player) {
+		BlockFace facing = player.getFacing();
+		if (cardinalFaces.contains(facing))
+			return facing;
+
+		int ndx = Math.round(player.getLocation().getYaw() / 90f) & 0x3;
+		return cardinalFaces.get(ndx);
+	}
+
+	public static BlockFace getNextCardinalBlockFace(BlockFace blockFace) {
+		int ndx = cardinalFaces.indexOf(blockFace);
+		ndx = (ndx == (cardinalFaces.size() - 1) ? 0 : ++ndx);
+		return cardinalFaces.get(ndx);
 	}
 }

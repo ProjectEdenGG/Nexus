@@ -148,12 +148,20 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 		return StringUtils.getColorGroupPattern().matcher(input).replaceAll(result -> result.group() + formatting);
 	}
 
+	public static String camelToSnake(String input) {
+		return input.replaceAll("(?<!^)([A-Z])", "_$1").toLowerCase();
+	}
+
 	public static String pretty(ItemStack item) {
 		return pretty(item, 1);
 	}
 
 	public static String pretty(ItemStack item, int amount) {
-		return item.getAmount() * amount + " " + camelCase(item.getType().name());
+		String name = camelCase(item.getType().name());
+		if (item.getItemMeta().hasDisplayName())
+			return item.getItemMeta().getDisplayName();
+
+		return item.getAmount() * amount + " " + name;
 	}
 
 	@NotNull

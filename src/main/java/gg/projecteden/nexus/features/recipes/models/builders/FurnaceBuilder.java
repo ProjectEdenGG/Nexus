@@ -13,6 +13,7 @@ public class FurnaceBuilder extends RecipeBuilder<FurnaceBuilder> {
 	protected int time;
 
 	public FurnaceBuilder(Material smelt) {
+		this.ingredientIds.add(smelt.name());
 		this.smelt = smelt;
 	}
 

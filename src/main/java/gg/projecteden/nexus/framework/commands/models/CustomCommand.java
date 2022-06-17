@@ -3,6 +3,7 @@ package gg.projecteden.nexus.framework.commands.models;
 import com.google.common.base.Strings;
 import gg.projecteden.api.mongodb.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.features.commands.staff.MultiCommandCommand;
+import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -848,6 +849,28 @@ public abstract class CustomCommand extends ICustomCommand {
 		return Stream.of("true", "false")
 				.filter(bool -> bool.toLowerCase().startsWith(filter.toLowerCase()))
 				.collect(toList());
+	}
+
+	@ConverterFor(ItemStack.class)
+	ItemStack convertToItemStack(String value) {
+		try {
+			return CustomBlock.valueOf(value.toUpperCase()).get().getItemStack();
+		} catch (IllegalArgumentException ex) {
+			try {
+				return new ItemStack(convertToMaterial(value));
+			} catch (IllegalArgumentException ex2) {
+				throw new InvalidInputException("Item from " + value + " not found");
+			}
+		}
+	}
+
+	@TabCompleterFor(ItemStack.class)
+	List<String> tabCompleteItemStack(String filter) {
+		return new ArrayList<>() {{
+			addAll(tabCompleteMaterial(filter));
+			addAll(tabCompleteEnum(filter, CustomBlock.class));
+
+		}};
 	}
 
 	@ConverterFor(Material.class)
