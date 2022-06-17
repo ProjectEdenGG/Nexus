@@ -78,6 +78,7 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 		send(PREFIX + "Converted " + converted + " tables");
 	}
 
+	@Getter
 	@AllArgsConstructor
 	private enum TableSize {
 		_1x1(30, 300),
@@ -87,9 +88,8 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 		_3x3(34, 304),
 		;
 
-		int oldId;
-		@Getter
-		int newId;
+		private final int oldId;
+		private final int newId;
 
 		public static TableSize ofOld(ItemStack item) {
 			return ofOld(CustomModelData.of(item));
@@ -97,7 +97,7 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 
 		public static TableSize ofOld(int customModelData) {
 			for (TableSize size : values())
-				if (customModelData == size.oldId)
+				if (customModelData == size.getOldId())
 					return size;
 
 			return null;
@@ -197,9 +197,6 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 		for (ItemFrame itemFrame : location().getNearbyEntitiesByType(ItemFrame.class, radius)) {
 			final ItemStack item = itemFrame.getItem();
 			if (isNullOrAir(item))
-				continue;
-
-			if (item.getType() != Material.BLUE_STAINED_GLASS_PANE)
 				continue;
 
 			final PotionSize size = PotionSize.ofOld(item);

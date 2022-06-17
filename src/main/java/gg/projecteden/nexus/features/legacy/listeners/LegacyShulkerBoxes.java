@@ -35,14 +35,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.api.common.utils.StringUtils.paste;
 import static gg.projecteden.nexus.features.legacy.Legacy.PREFIX;
 import static gg.projecteden.nexus.features.recipes.functionals.Backpacks.isBackpack;
 import static gg.projecteden.nexus.utils.ItemUtils.find;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.api.common.utils.StringUtils.paste;
 
-public class ShulkerBoxes implements Listener {
+public class LegacyShulkerBoxes implements Listener {
 
 	@EventHandler
 	public void onClickBackpack(InventoryClickEvent event) {

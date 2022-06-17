@@ -63,10 +63,8 @@ public class CustomModelMaterial {
 			return;
 
 		CustomModelMaterial group = of(path);
-		if (group.getMaterial() != null && !group.getOverrides().isEmpty()) {
-			System.out.println("Found custom model material: " + path);
+		if (group.getMaterial() != null && !group.getOverrides().isEmpty())
 			ResourcePack.getModelGroups().add(group);
-		}
 	}
 
 	private static CustomModelMaterial of(Path path) {

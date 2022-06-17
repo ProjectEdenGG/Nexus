@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.features.legacy.listeners;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
@@ -23,7 +23,7 @@ import java.util.List;
 import static gg.projecteden.nexus.features.legacy.Legacy.PREFIX;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
-public class Misc implements Listener {
+public class LegacyMisc implements Listener {
 
 	@EventHandler
 	public void onClickBook(PlayerInteractEntityEvent event) {

@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelMateri
 import gg.projecteden.nexus.models.custommodels.CustomModelConfig;
 import gg.projecteden.nexus.models.custommodels.CustomModelConfigService;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -56,6 +57,10 @@ public class CustomModel implements Comparable<CustomModel> {
 				.filter(model -> model.getMaterial() == material && model.getData() == data)
 				.findFirst()
 				.orElse(null);
+	}
+
+	public static CustomModel convert(ItemStack item) {
+		return convert(item.getType(), CustomModelData.of(item));
 	}
 
 	public static CustomModel convert(Material material, int data) {

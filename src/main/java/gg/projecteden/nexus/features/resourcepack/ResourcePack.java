@@ -11,6 +11,7 @@ import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder
 import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.files.FontFile;
 import gg.projecteden.nexus.features.resourcepack.models.files.SoundsFile;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
 import gg.projecteden.nexus.utils.ColorType;
@@ -22,6 +23,7 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.parchment.OptionalPlayerLike;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,6 +37,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -146,10 +149,6 @@ public class ResourcePack extends Feature implements Listener {
 					walker.forEach(path -> {
 						try {
 							final String uri = path.toUri().toString();
-							if (uri.contains("pack.mcmeta")) {
-								System.out.println("pack.mcmeta");
-								System.out.println(Files.readAllLines(path));
-							}
 
 							if (uri.contains(CustomModel.getVanillaSubdirectory()))
 								addCustomModelMaterial(path);
@@ -259,6 +258,39 @@ public class ResourcePack extends Feature implements Listener {
 					.dyeColor(color)
 					.itemFlags(ItemFlag.HIDE_ATTRIBUTES);
 		}
+	}
+
+	@Getter
+	@AllArgsConstructor
+	public enum RainbowBlockOrder {
+		RED(ColorType.RED),
+		ORANGE(ColorType.ORANGE),
+		YELLOW(ColorType.YELLOW),
+		LIME(ColorType.LIGHT_GREEN),
+		GREEN(ColorType.GREEN),
+		DARK_AQUA(ColorType.CYAN),
+		AQUA(ColorType.LIGHT_BLUE),
+		BLUE(ColorType.BLUE),
+		PURPLE(ColorType.PURPLE),
+		MAGENTA(ColorType.MAGENTA),
+		PINK(ColorType.PINK),
+		BROWN(ColorType.BROWN),
+		BLACK(ColorType.BLACK),
+		DARK_GRAY(ColorType.GRAY),
+		LIGHT_GRAY(ColorType.LIGHT_GRAY),
+		WHITE(ColorType.WHITE),
+		;
+
+		private final ColorType colorType;
+
+		public static @NotNull RainbowBlockOrder of(ColorType colorType) {
+			for (RainbowBlockOrder color : values())
+				if (color.getColorType() == colorType)
+					return color;
+
+			throw new InvalidInputException("Unsupported color type");
+		}
+
 	}
 
 }

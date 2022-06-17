@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.legacy.menus.itemtransfer;
 
 import gg.projecteden.nexus.features.legacy.Legacy;
+import gg.projecteden.nexus.features.legacy.listeners.LegacyItems;
 import gg.projecteden.nexus.features.listeners.TemporaryMenuListener;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.models.legacy.itemtransfer.LegacyItemTransferUser.ReviewStatus;
@@ -26,7 +27,7 @@ public class ItemTransferMenu implements TemporaryMenuListener {
 	public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
 		new LegacyItemTransferUserService().edit(player, user -> {
 			// TODO Banned items list
-			user.getItems(ReviewStatus.PENDING).addAll(Legacy.convertItems(contents));
+			user.getItems(ReviewStatus.PENDING).addAll(LegacyItems.convert(contents));
 			user.sendMessage(Legacy.PREFIX + "Successfully stored " + contents.stream().mapToInt(ItemStack::getAmount).sum() + " legacy items for staff review");
 		});
 	}
