@@ -38,28 +38,20 @@ public class CheckpointUser implements PlayerOwnedObject {
 
 	public void recordTotalTime(String arena, Duration duration, Map<Integer, Duration> checkpointTimes, Instant achievedAt) {
 		final var newRecord = new RecordTotalTime(uuid, duration, checkpointTimes, achievedAt);
-		final boolean hasBestTotalTime = bestTotalTimes.containsKey(arena);
-		final boolean isBetterTotalTime = bestTotalTimes.get(arena).compareTo(newRecord) > 0;
-
-		if (!hasBestTotalTime || isBetterTotalTime) {
+		if (!bestTotalTimes.containsKey(arena) || bestTotalTimes.get(arena).compareTo(newRecord) > 0) {
 			bestTotalTimes.put(arena, newRecord);
 			service.save(this);
 		}
-
 		CheckpointService.recordBestTotalTime(arena, newRecord);
 	}
 
 	public void recordCheckpointTime(String arena, int checkpoint, Duration duration, Instant achievedAt) {
 		final var bestCheckpointTimes = getBestCheckpointTimes(arena);
 		final var value = new CheckpointValue(uuid, duration, achievedAt);
-		final boolean hasBestCheckpointTime = bestCheckpointTimes.containsKey(checkpoint);
-		final boolean isBetterCheckpointTime = bestCheckpointTimes.get(checkpoint).compareTo(value) > 0;
-
-		if (!hasBestCheckpointTime || isBetterCheckpointTime) {
+		if (!bestCheckpointTimes.containsKey(checkpoint) || bestCheckpointTimes.get(checkpoint).compareTo(value) > 0) {
 			bestCheckpointTimes.put(checkpoint, value);
 			service.save(this);
 		}
-
 		CheckpointService.recordBestCheckpointTime(arena, checkpoint, value);
 	}
 
