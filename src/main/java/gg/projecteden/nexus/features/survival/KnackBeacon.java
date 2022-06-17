@@ -63,7 +63,7 @@ public class KnackBeacon extends Feature implements Listener {
 				for (ItemStack item : chest.getInventory()) {
 					if (item == null) continue;
 					int multiplier = switch (item.getType()) {
-						case NETHERITE_SCRAP -> 1;
+						case ANCIENT_DEBRIS, NETHERITE_SCRAP -> 1;
 						case NETHERITE_INGOT -> 4;
 						case NETHERITE_BLOCK -> 9*4;
 						default -> 0;
