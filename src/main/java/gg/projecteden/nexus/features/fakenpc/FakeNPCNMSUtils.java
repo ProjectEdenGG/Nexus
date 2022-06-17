@@ -3,26 +3,27 @@ package gg.projecteden.nexus.features.fakenpc;
 import com.mojang.authlib.GameProfile;
 import gg.projecteden.nexus.utils.NMSUtils;
 import lombok.NonNull;
-import net.minecraft.server.level.EntityPlayer;
-import net.minecraft.server.level.WorldServer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import org.bukkit.Location;
 
 import java.util.UUID;
 
 public class FakeNPCNMSUtils {
-	public static EntityPlayer createEntityPlayer(UUID uuid, @NonNull Location location, String name) {
+	public static ServerPlayer createEntityPlayer(UUID uuid, @NonNull Location location, String name) {
 		if (uuid == null)
 			uuid = UUID.randomUUID();
 
-		WorldServer world = NMSUtils.getWorldServer(location);
+		ServerLevel world = NMSUtils.getWorldServer(location);
 		GameProfile gameProfile = new GameProfile(uuid, name);
-		EntityPlayer entityPlayer = new EntityPlayer(NMSUtils.getServer(), world, gameProfile);
+		ServerPlayer entityPlayer = new ServerPlayer(NMSUtils.getServer(), world, gameProfile, null);
 		setLocation(entityPlayer, location);
 		return entityPlayer;
 	}
 
-	public static void setLocation(EntityPlayer entityPlayer, Location location) {
-		entityPlayer.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+	public static void setLocation(Player entityPlayer, Location location) {
+		entityPlayer.moveTo(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
 	}
 
 }

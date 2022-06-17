@@ -10,6 +10,7 @@ import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import net.kyori.adventure.key.Key;
 import org.bukkit.Sound;
 import org.jetbrains.annotations.Nullable;
 
@@ -59,14 +60,25 @@ public class CustomBlocks extends Feature {
 		STONE,
 		;
 
-		public static @Nullable SoundType fromSound(Sound sound) {
-			String soundKey = sound.getKey().getKey();
+		public static @Nullable SoundType fromSound(String soundKey) {
 			if (soundKey.startsWith("block." + SoundType.WOOD.name().toLowerCase() + "."))
 				return WOOD;
 			else if (soundKey.startsWith("block." + SoundType.STONE.name().toLowerCase() + "."))
 				return STONE;
 
 			return null;
+		}
+
+		public static @Nullable SoundType fromSound(Key sound) {
+			return fromSound(sound.value());
+		}
+
+		public static @Nullable SoundType fromSound(Sound sound) {
+			return fromSound(sound.name());
+		}
+
+		public static @Nullable SoundType fromSound(net.kyori.adventure.sound.Sound sound) {
+			return fromSound(sound.name());
 		}
 	}
 
@@ -86,8 +98,7 @@ public class CustomBlocks extends Feature {
 			return "custom.block." + soundType.name().toLowerCase() + "." + this.name().toLowerCase();
 		}
 
-		public static @Nullable CustomBlocks.SoundAction fromSound(Sound sound) {
-			String soundKey = sound.getKey().getKey();
+		public static @Nullable CustomBlocks.SoundAction fromSound(String soundKey) {
 			if (soundKey.endsWith(".step"))
 				return SoundAction.STEP;
 			else if (soundKey.endsWith(".hit"))
@@ -100,6 +111,18 @@ public class CustomBlocks extends Feature {
 				return SoundAction.FALL;
 
 			return null;
+		}
+
+		public static @Nullable CustomBlocks.SoundAction fromSound(Key sound) {
+			return fromSound(sound.value());
+		}
+
+		public static @Nullable CustomBlocks.SoundAction fromSound(Sound sound) {
+			return fromSound(sound.getKey());
+		}
+
+		public static @Nullable CustomBlocks.SoundAction fromSound(net.kyori.adventure.sound.Sound sound) {
+			return fromSound(sound.name());
 		}
 	}
 

@@ -73,7 +73,10 @@ dependencies {
     compileOnly("net.citizensnpcs:citizens-main:2.0.28-SNAPSHOT")
     compileOnly("com.github.koca2000:NoteBlockAPI:1.4.4")
     compileOnly("com.github.BlueMap-Minecraft:BlueMapAPI:v1.3.1")
-    compileOnly("LibsDisguises:LibsDisguises:10.0.28")
+    compileOnly("LibsDisguises:LibsDisguises:10.0.28") {
+        exclude("org.spigotmc", "spigot-api")
+        exclude("org.spigotmc", "spigot")
+    }
     compileOnly("com.arcaniax:HeadDatabase-API:1.3.1")
     compileOnly("com.viaversion:viaversion-api:4.0.1")
     compileOnly("me.clip:placeholderapi:2.10.10")

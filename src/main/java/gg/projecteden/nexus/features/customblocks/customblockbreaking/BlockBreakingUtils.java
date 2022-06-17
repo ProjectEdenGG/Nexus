@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.customblocks.customblockbreaking;
 
-import net.minecraft.core.BlockPosition;
-import net.minecraft.network.protocol.game.PacketPlayOutBlockBreakAnimation;
-import net.minecraft.server.level.PlayerInteractManager;
+import gg.projecteden.nexus.utils.NMSUtils;
+import net.minecraft.network.protocol.game.ClientboundBlockDestructionPacket;
+import net.minecraft.server.level.ServerPlayerGameMode;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
@@ -25,17 +25,13 @@ public class BlockBreakingUtils {
 	}
 
 	public static void sendBreakPacket(int animation, Block block) {
-		((CraftServer) Bukkit.getServer()).getHandle().sendPacketNearby(null, block.getX(), block.getY(), block.getZ(), 120,
-			((CraftWorld) block.getWorld()).getHandle().getDimensionKey(), new PacketPlayOutBlockBreakAnimation(getBlockEntityId(block), getBlockPosition(block), animation));
+		((CraftServer) Bukkit.getServer()).getHandle().broadcast(null, block.getX(), block.getY(), block.getZ(), 120,
+			((CraftWorld) block.getWorld()).getHandle().dimension(), new ClientboundBlockDestructionPacket(getBlockEntityId(block), NMSUtils.getBlockPosition(block), animation));
 	}
 
 	public static void sendBreakBlock(Player player, Block block) {
-		PlayerInteractManager interactManager = ((CraftPlayer) player).getHandle().d;
-		interactManager.breakBlock(getBlockPosition(block));
-	}
-
-	private static BlockPosition getBlockPosition(Block block) {
-		return new BlockPosition(block.getX(), block.getY(), block.getZ());
+		ServerPlayerGameMode interactManager = ((CraftPlayer) player).getHandle().gameMode;
+		interactManager.destroyBlock(NMSUtils.getBlockPosition(block));
 	}
 
 	private static int getBlockEntityId(Block block) {

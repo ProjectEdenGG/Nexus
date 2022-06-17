@@ -13,6 +13,7 @@ import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.NMSUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.parchment.event.sound.SoundEvent;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -121,9 +122,9 @@ public class CustomBlockSounds implements Listener {
 
 	// Handles Sound: STEP
 	@EventHandler
-	public void on(LocationNamedSoundEvent event) {
+	public void on(SoundEvent event) {
 		try {
-			Block block = event.getLocation().getBlock();
+			Block block = event.getEmitter().location().getBlock();
 			Block below = block.getRelative(BlockFace.DOWN);
 			Block source = null;
 
@@ -149,7 +150,7 @@ public class CustomBlockSounds implements Listener {
 				return;
 			}
 
-			if (playDefaultSounds(event.getSound(), event.getLocation()))
+			if (playDefaultSounds(event.getSound().name().value(), event.getEmitter().location()))
 				event.setCancelled(true);
 		} catch (Exception ignored) {}
 	}
@@ -172,12 +173,12 @@ public class CustomBlockSounds implements Listener {
 		playDefaultSound(soundAction, soundType, block.getLocation());
 	}
 
-	private static boolean playDefaultSounds(Sound sound, Location location) {
-		SoundAction soundAction = SoundAction.fromSound(sound);
+	private static boolean playDefaultSounds(String soundKey, Location location) {
+		SoundAction soundAction = SoundAction.fromSound(soundKey);
 		if (soundAction == null)
 			return false;
 
-		SoundType soundType = SoundType.fromSound(sound);
+		SoundType soundType = SoundType.fromSound(soundKey);
 		if (soundType == null)
 			return false;
 
