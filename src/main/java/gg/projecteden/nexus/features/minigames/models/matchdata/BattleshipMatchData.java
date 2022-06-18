@@ -495,7 +495,6 @@ public class BattleshipMatchData extends MatchData {
 		private final PegBoard board;
 		@Getter
 		private final Material material;
-		@Getter
 		private final String opposite;
 
 		Peg(PegBoard board, Material material) {
