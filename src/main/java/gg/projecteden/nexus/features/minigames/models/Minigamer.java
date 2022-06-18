@@ -30,8 +30,14 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import me.lexikiq.HasLocation;
+import me.lexikiq.HasOfflinePlayer;
+import me.lexikiq.HasPlayer;
 import me.lexikiq.HasUniqueId;
-import me.lexikiq.PlayerLike;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.audience.ForwardingAudience;
+import net.kyori.adventure.identity.Identified;
+import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -59,7 +65,7 @@ import static gg.projecteden.nexus.utils.PlayerUtils.showPlayer;
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Colored {
+public final class Minigamer implements IsColoredAndNicknamed, HasPlayer, HasOfflinePlayer, HasLocation, HasUniqueId, Colored, ForwardingAudience.Single, Identified {
 	@NotNull
 	@EqualsAndHashCode.Include
 	private UUID uuid;
@@ -134,6 +140,15 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 	@Deprecated
 	public @NotNull OfflinePlayer getOfflinePlayer() {
 		return getPlayer();
+	}
+
+	public @NotNull Location getLocation() {
+		return getPlayer().getLocation();
+	}
+
+	@Override
+	public @NotNull Identity identity() {
+		return getPlayer().identity();
 	}
 
 	@Override
@@ -598,5 +613,12 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 
 	public void clearInventory() {
 		getPlayer().getInventory().setStorageContents(new ItemStack[36]);
+	}
+
+	// audience
+
+	@Override
+	public @NotNull Audience audience() {
+		return getPlayer();
 	}
 }
