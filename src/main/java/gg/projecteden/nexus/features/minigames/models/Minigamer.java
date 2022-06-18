@@ -80,7 +80,7 @@ public final class Minigamer implements IsColoredAndNicknamed, HasPlayer, HasOff
 	 */
 	private int contributionScore = 0;
 	@Accessors(fluent = true)
-	private volatile boolean canTeleport;
+	private boolean canTeleport;
 	private boolean respawning = false;
 	private boolean isAlive = true;
 	private int lives;
@@ -362,8 +362,8 @@ public final class Minigamer implements IsColoredAndNicknamed, HasPlayer, HasOff
 	public CompletableFuture<Boolean> teleportAsync(@NotNull Location location, boolean withSlowness) {
 		Utils.notNull(location, "Tried to teleport " + getName() + " to a null location");
 
-		if (canTeleport)
-			return CompletableFuture.completedFuture(false); // Already teleporting
+//		if (canTeleport)
+//			return CompletableFuture.completedFuture(false); // Already teleporting
 		canTeleport = true;
 
 		final Location up = location.clone().add(0, .5, 0);
