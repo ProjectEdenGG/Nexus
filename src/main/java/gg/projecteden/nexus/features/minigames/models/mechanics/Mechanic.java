@@ -22,7 +22,6 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import gg.projecteden.nexus.features.minigames.models.modifiers.MinigameModifier;
 import gg.projecteden.nexus.features.minigames.models.perks.Perk;
-import gg.projecteden.nexus.features.minigames.models.perks.common.PlayerParticlePerk;
 import gg.projecteden.nexus.features.minigames.modifiers.NoModifier;
 import gg.projecteden.nexus.framework.interfaces.HasDescription;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -136,7 +135,7 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 	 * @return whether or not to allow the perk
 	 */
 	public boolean usesPerk(@NotNull Class<? extends Perk> perk, @NotNull Minigamer minigamer) {
-		return !PlayerParticlePerk.class.isAssignableFrom(perk);
+		return true;
 	}
 
 	/**
