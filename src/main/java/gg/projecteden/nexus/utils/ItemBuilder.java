@@ -464,19 +464,18 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	public ItemBuilder shulkerBox(ItemBuilder... builders) {
-		for (ItemBuilder builder : builders)
-			shulkerBox(builder.build());
-		return this;
+		return shulkerBox(Arrays.stream(builders).map(ItemBuilder::build).toList());
 	}
 
 	public ItemBuilder shulkerBox(ItemStack... items) {
+		shulkerBox(box -> box.getInventory().setContents(items));
+		return this;
+	}
+
+	public ItemBuilder shulkerBox(Consumer<ShulkerBox> consumer) {
 		BlockStateMeta blockStateMeta = (BlockStateMeta) itemMeta;
 		ShulkerBox box = (ShulkerBox) blockStateMeta.getBlockState();
-		for (ItemStack item : items)
-			if (isNullOrAir(item))
-				box.getInventory().addItem(new ItemStack(Material.AIR));
-			else
-				box.getInventory().addItem(item);
+		consumer.accept(box);
 		blockStateMeta.setBlockState(box);
 		return this;
 	}
@@ -489,6 +488,10 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 
 	public List<@Nullable ItemStack> nonAirShulkerBoxContents() {
 		return shulkerBoxContents().stream().filter(Nullables::isNotNullOrAir).collect(Collectors.toList());
+	}
+
+	public ItemBuilder clearShulkerBox() {
+		return shulkerBox(box -> box.getInventory().clear());
 	}
 
 	// Books

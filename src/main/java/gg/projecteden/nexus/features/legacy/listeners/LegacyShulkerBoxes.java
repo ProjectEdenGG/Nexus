@@ -6,6 +6,8 @@ import gg.projecteden.nexus.features.listeners.TemporaryMenuListener;
 import gg.projecteden.nexus.features.listeners.events.FakePlayerInteractEvent;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SerializationUtils.Json;
@@ -14,9 +16,7 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.bukkit.Sound;
-import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -29,7 +29,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.BlockStateMeta;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,13 +37,12 @@ import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.api.common.utils.StringUtils.paste;
 import static gg.projecteden.nexus.features.legacy.Legacy.PREFIX;
 import static gg.projecteden.nexus.features.recipes.functionals.Backpacks.isBackpack;
-import static gg.projecteden.nexus.utils.ItemUtils.find;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class LegacyShulkerBoxes implements Listener {
 
 	@EventHandler
-	public void onClickBackpack(InventoryClickEvent event) {
+	public void onClickShulkerBox(InventoryClickEvent event) {
 		if (WorldGroup.of(event.getWhoClicked()) != WorldGroup.LEGACY)
 			return;
 
@@ -69,7 +68,7 @@ public class LegacyShulkerBoxes implements Listener {
 	}
 
 	@EventHandler
-	public void onPlaceBackpack(PlayerInteractEvent event) {
+	public void onPlaceShulkerBox(PlayerInteractEvent event) {
 		if (WorldGroup.of(event.getPlayer()) != WorldGroup.LEGACY)
 			return;
 
@@ -89,7 +88,7 @@ public class LegacyShulkerBoxes implements Listener {
 
 	public void openShulkerBox(Player player, ItemStack shulkerBox) {
 		new SoundBuilder(Sound.BLOCK_SHULKER_BOX_OPEN).receiver(player).volume(.3f).play();
-		new ShulkerBoxMenu(player, shulkerBox);
+		new LegacyShulkerBoxMenu(player, shulkerBox);
 	}
 
 	public static final String NBT_KEY = "ShulkerBoxId";
@@ -104,36 +103,45 @@ public class LegacyShulkerBoxes implements Listener {
 		return !isNullOrEmpty(new NBTItem(item).getString(NBT_KEY));
 	}
 
-	private static boolean isShulkerBox(ItemStack item, String id) {
+	public static String getShulkerBoxId(ItemStack item) {
 		if (!isShulkerBox(item))
-			return false;
+			return null;
 
-		return new NBTItem(item).getString(NBT_KEY).equals(id);
+		return new NBTItem(item).getString(NBT_KEY);
 	}
 
-	@NoArgsConstructor
-	public static class ShulkerBoxMenu implements TemporaryMenuListener {
+	public static class LegacyShulkerBoxMenu implements TemporaryMenuListener {
 		@Getter
-		private Player player;
-		private ItemStack shulkerBox;
-		private String shulkerBoxId;
-		private ItemStack[] originalItems;
+		private final Player player;
+		private final ItemStack shulkerBox;
+		private final List<ItemStack> originalItems;
 
-		public ShulkerBoxMenu(Player player, ItemStack shulkerBox) {
+		@Getter
+		private final LegacyShulkerBoxHolder inventoryHolder = new LegacyShulkerBoxHolder();
+
+		public LegacyShulkerBoxMenu(Player player, ItemStack shulkerBox) {
 			this.player = player;
 			this.shulkerBox = shulkerBox;
-			this.shulkerBoxId = new NBTItem(shulkerBox.clone()).getString(NBT_KEY);
+			this.originalItems = new ItemBuilder(shulkerBox).shulkerBoxContents();
 
-			BlockStateMeta shulkerBoxMeta = (BlockStateMeta) shulkerBox.getItemMeta();
-			ShulkerBox shulkerBoxState = (ShulkerBox) shulkerBoxMeta.getBlockState();
-			originalItems = shulkerBoxState.getInventory().getContents();
-
-			open(3, Arrays.asList(originalItems));
+			try {
+				verifyInventory(player);
+				open(3, originalItems);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				PlayerUtils.send(player, PREFIX + "&c" + ex.getMessage());
+			}
 		}
+
+		public static class LegacyShulkerBoxHolder extends CustomInventoryHolder {}
 
 		@Override
 		public String getTitle() {
-			return shulkerBox.getItemMeta().getDisplayName();
+			final String displayName = shulkerBox.getItemMeta().getDisplayName();
+			if (!isNullOrEmpty(displayName))
+				return displayName;
+
+			return "Shulker Box";
 		}
 
 		@EventHandler
@@ -148,12 +156,8 @@ public class LegacyShulkerBoxes implements Listener {
 			player.getInventory().setItem(player.getInventory().getHeldItemSlot(), shulkerBox);
 		}
 
-		// Cancel Moving shulker boxes While shulker box is open
 		@EventHandler
 		public void onClickShulkerBox(InventoryClickEvent event) {
-			if (WorldGroup.of(player) != WorldGroup.LEGACY)
-				return;
-
 			if (player != event.getWhoClicked())
 				return;
 
@@ -171,23 +175,18 @@ public class LegacyShulkerBoxes implements Listener {
 		}
 
 		@Override
+		public boolean keepAirSlots() {
+			return true;
+		}
+
+		@Override
 		public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
-			new SoundBuilder(Sound.BLOCK_SHULKER_BOX_CLOSE).receiver(player).volume(.3f).play();
-			ItemStack shulkerBox = find(contents, item -> isShulkerBox(item, this.shulkerBoxId));
-			BlockStateMeta meta = null;
-
-			if (shulkerBox != null)
-				meta = (BlockStateMeta) shulkerBox.getItemMeta();
-
-			if (meta == null) {
+			if (shulkerBox == null || !(shulkerBox.getItemMeta() instanceof BlockStateMeta)) {
 				handleError(contents);
 				return;
 			}
 
-			ShulkerBox shulkerBoxState = (ShulkerBox) meta.getBlockState();
-			shulkerBoxState.getInventory().setContents(contents.toArray(ItemStack[]::new));
-			meta.setBlockState(shulkerBoxState);
-			shulkerBox.setItemMeta(meta);
+			shulkerBox.setItemMeta(new ItemBuilder(shulkerBox).clearShulkerBox().shulkerBox(contents).build().getItemMeta());
 
 			player.updateInventory();
 			Tasks.wait(1, player::updateInventory);
@@ -196,11 +195,23 @@ public class LegacyShulkerBoxes implements Listener {
 		private void handleError(List<ItemStack> contents) {
 			Nexus.warn("There was an error while saving ShulkerBox contents for " + player.getName());
 			Nexus.warn("Below is a serialized paste of the original and new contents in the shulker box:");
-			Nexus.warn("Old Contents: " + paste(Json.toString(Json.serialize(Arrays.asList(originalItems)))));
-			Nexus.warn("New Contents: " + paste(Json.toString(Json.serialize(Arrays.asList(contents.toArray(ItemStack[]::new))))));
+			Nexus.warn("Old Contents: " + paste(Json.toString(Json.serialize(originalItems))));
+			Nexus.warn("New Contents: " + paste(Json.toString(Json.serialize(contents))));
 			PlayerUtils.send(player, PREFIX + "&cThere was an error while saving your shulker box items. Please report this to staff to retrieve your lost items.");
 		}
 
+		private static void verifyInventory(Player player) {
+			List<String> ids = new ArrayList<>();
+			for (ItemStack item : player.getInventory().getContents()) {
+				if (!isShulkerBox(item))
+					continue;
+
+				final String id = getShulkerBoxId(item);
+				if (ids.contains(id))
+					throw new InvalidInputException("Duplicate shulker boxes found, please contact staff");
+				ids.add(id);
+			}
+		}
 	}
 
 }

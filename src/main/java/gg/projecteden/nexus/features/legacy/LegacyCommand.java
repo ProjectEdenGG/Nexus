@@ -6,6 +6,7 @@ import com.gmail.nossr50.mcMMO;
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.api.common.annotations.Environments;
+import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.features.legacy.menus.homes.LegacyHomesMenu;
 import gg.projecteden.nexus.features.legacy.menus.itemtransfer.ItemPendingMenu;
 import gg.projecteden.nexus.features.legacy.menus.itemtransfer.ItemReceiveMenu;
@@ -47,16 +48,12 @@ import gg.projecteden.nexus.models.vaults.VaultUser;
 import gg.projecteden.nexus.models.vaults.VaultUserService;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import gg.projecteden.api.common.utils.Env;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -237,6 +234,9 @@ public class LegacyCommand extends _WarpSubCommand {
 		private final LegacyVaultUser user;
 		private final int page;
 
+		@Getter
+		private final LegacyVaultHolder inventoryHolder = new LegacyVaultHolder();
+
 		public LegacyVaultMenu(Player player, LegacyVaultUser user, int page) {
 			this.player = player;
 			this.user = user;
@@ -250,16 +250,7 @@ public class LegacyCommand extends _WarpSubCommand {
 			return "Vault #" + page;
 		}
 
-		@Data
-		public static class LegacyVaultHolder implements InventoryHolder {
-			private Inventory inventory;
-			private final int vaultNumber;
-		}
-
-		@Override
-		public <T extends InventoryHolder> T getInventoryHolder() {
-			return (T) new LegacyVaultHolder(page);
-		}
+		public static class LegacyVaultHolder extends CustomInventoryHolder {}
 
 		@Override
 		public boolean keepAirSlots() {

@@ -6,7 +6,6 @@ import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpda
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.Tasks;
-import org.apache.commons.lang.RandomStringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -28,6 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 
 public class LegacyItems implements Listener {
 
@@ -89,9 +89,9 @@ public class LegacyItems implements Listener {
 		if (converted.material() == Material.SHULKER_BOX)
 			converted
 				.shulkerBox(new ItemBuilder(item).shulkerBoxContents())
-				.nbt(nbtItem -> {
-					nbtItem.removeKey("BackpackId");
-					nbtItem.setString(LegacyShulkerBoxes.NBT_KEY, RandomStringUtils.randomAlphabetic(10));
+				.nbt(nbt -> {
+					nbt.removeKey("BackpackId");
+					nbt.setString(LegacyShulkerBoxes.NBT_KEY, randomAlphabetic(10));
 				});
 
 		return converted.build();
