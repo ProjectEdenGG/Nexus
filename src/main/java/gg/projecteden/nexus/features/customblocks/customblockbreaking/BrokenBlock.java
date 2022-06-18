@@ -1,6 +1,8 @@
 package gg.projecteden.nexus.features.customblocks.customblockbreaking;
 
+import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.NMSUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import lombok.Data;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -16,52 +18,85 @@ public class BrokenBlock {
 	private static final DecimalFormat df = new DecimalFormat("#.###");
 
 	private Block block;
+	private ItemStack initialItemStack;
+	private int breakTicks;
 	private int damageFrame = 0;
-	private int initialDamageTick;
 	private int lastDamageTick;
+	private int totalDamageTicks = 0;
 
-	public BrokenBlock(Block block) {
+	public BrokenBlock(Block block, Player player, ItemStack itemStack, int currentTick) {
 		this.block = block;
-		this.initialDamageTick = Bukkit.getCurrentTick();
-		this.lastDamageTick = Bukkit.getCurrentTick();
+		this.initialItemStack = itemStack;
+
+		float blockDamage = NMSUtils.getBlockDamage(player, block, itemStack);
+		if (blockDamage <= 0.0)
+			this.breakTicks = 1;
+		else
+			this.breakTicks = (int) Math.ceil(1 / blockDamage);
+
+		Dev.WAKKA.send("Break Ticks = " + breakTicks);
+
+		this.lastDamageTick = currentTick;
+	}
+
+	public void remove() {
+		CustomBlockBreaking.getManager().removeBrokenBlock(this);
+	}
+
+	public void reset(ItemStack itemStack, int currentTick) {
+		resetDamagePacket();
+		this.damageFrame = 0;
+		this.totalDamageTicks = 0;
+		this.initialItemStack = itemStack;
+		this.lastDamageTick = currentTick;
 	}
 
 	public void breakBlock(Player breaker) {
-		resetBreakPacket();
-		CustomBlockBreaking.getManager().removeBrokenBlock(this);
+		remove();
 
 		if (breaker != null)
 			BlockBreakingUtils.sendBreakBlock(breaker, this.block);
 	}
 
-	public void resetBreakPacket() {
-		sendBreakPacket(-1);
+	public void resetDamagePacket() {
+		sendDamagePacket(-1);
 	}
 
-	public void sendBreakPacket(int animation) {
-		BlockBreakingUtils.sendBreakPacket(animation, this.block);
+	public void sendDamagePacket(int frame) {
+		BlockBreakingUtils.sendBreakPacket(frame, this.block);
 	}
 
 	public void incrementDamage(Player player, ItemStack itemStack) {
-		double breakTicks = Math.ceil(1 / NMSUtils.getBlockDamage(player, block, itemStack));
-		double currentTicks = Bukkit.getCurrentTick() - getInitialDamageTick();
+		int currentTick = Bukkit.getCurrentTick();
+		if (!ItemUtils.isFuzzyMatch(itemStack, this.initialItemStack)) {
+			reset(itemStack, currentTick);
+			return;
+		}
 
-		this.damageFrame = (int) Math.round(currentTicks / breakTicks);
-		sendBreakPacket(this.damageFrame);
+		this.lastDamageTick = currentTick;
+		this.totalDamageTicks++;
 
-		if (currentTicks >= breakTicks) {
+		this.damageFrame = (int) Math.round(((double) this.totalDamageTicks / this.breakTicks) * 10.0);
+		sendDamagePacket(this.damageFrame);
+
+//		Dev.WAKKA.send("Ticks = " + this.totalDamageTicks + " / " + this.breakTicks +" | Frame = " + this.damageFrame);
+
+		if (this.totalDamageTicks >= this.breakTicks) {
 			breakBlock(player);
-			CustomBlockBreaking.getManager().removeBrokenBlock(this);
 		}
 	}
 
-	public void decrementDamage() {
-		double currentTicks = Bukkit.getCurrentTick() - getLastDamageTick();
-		if (currentTicks < 10)
-			return;
+	public void decrementDamage(int currentTick) {
+		this.lastDamageTick = currentTick;
+		this.totalDamageTicks -= (this.breakTicks / 10);
 
 		this.damageFrame--;
-		sendBreakPacket(this.damageFrame);
+		sendDamagePacket(this.damageFrame);
+
+		if (this.totalDamageTicks <= 0) {
+			resetDamagePacket();
+			remove();
+		}
 	}
 
 	public boolean isBroken() {
@@ -69,6 +104,6 @@ public class BrokenBlock {
 	}
 
 	public boolean isDamaged() {
-		return this.damageFrame > 0;
+		return this.damageFrame >= 0;
 	}
 }

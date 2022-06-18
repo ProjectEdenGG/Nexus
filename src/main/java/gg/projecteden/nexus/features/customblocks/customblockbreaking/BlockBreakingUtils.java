@@ -1,12 +1,18 @@
 package gg.projecteden.nexus.features.customblocks.customblockbreaking;
 
 import gg.projecteden.nexus.utils.NMSUtils;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ClientboundBlockDestructionPacket;
+import net.minecraft.server.dedicated.DedicatedPlayerList;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -25,13 +31,23 @@ public class BlockBreakingUtils {
 	}
 
 	public static void sendBreakPacket(int animation, Block block) {
-		((CraftServer) Bukkit.getServer()).getHandle().broadcast(null, block.getX(), block.getY(), block.getZ(), 120,
-			((CraftWorld) block.getWorld()).getHandle().dimension(), new ClientboundBlockDestructionPacket(getBlockEntityId(block), NMSUtils.getBlockPosition(block), animation));
+		DedicatedPlayerList playerList = ((CraftServer) Bukkit.getServer()).getHandle();
+		ServerLevel serverLevel = NMSUtils.getWorldServer(block.getLocation());
+		BlockPos blockPos = NMSUtils.getBlockPosition(block);
+
+		playerList.broadcast(null, block.getX(), block.getY(), block.getZ(), 120,
+			serverLevel.dimension(), new ClientboundBlockDestructionPacket(getBlockEntityId(block), blockPos, animation));
 	}
 
 	public static void sendBreakBlock(Player player, Block block) {
-		ServerPlayerGameMode interactManager = ((CraftPlayer) player).getHandle().gameMode;
-		interactManager.destroyBlock(NMSUtils.getBlockPosition(block));
+		World world = block.getWorld();
+		Location loc = block.getLocation();
+
+		ServerPlayer serverPlayer = ((CraftPlayer) player).getHandle();
+		ServerPlayerGameMode interactManager = serverPlayer.gameMode;
+		if (interactManager.destroyBlock(NMSUtils.getBlockPosition(block))) {
+			world.spawnParticle(Particle.BLOCK_CRACK, loc, 25, 0.25, 0.25, 0.25, 0.1, block.getBlockData());
+		}
 	}
 
 	private static int getBlockEntityId(Block block) {

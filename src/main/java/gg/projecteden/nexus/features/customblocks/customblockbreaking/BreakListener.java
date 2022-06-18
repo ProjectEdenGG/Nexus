@@ -11,7 +11,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -40,7 +39,10 @@ public class BreakListener implements Listener {
 		if (!isValid(event.getPlayer()))
 			return;
 
-		CustomBlockBreaking.getManager().createBrokenBlock(event.getBlock());
+		if (CustomBlockBreaking.getManager().isTracking(event.getBlock()))
+			return;
+
+		CustomBlockBreaking.getManager().createBrokenBlock(event.getPlayer(), event.getBlock(), event.getItemInHand());
 	}
 
 	@EventHandler
@@ -60,9 +62,12 @@ public class BreakListener implements Listener {
 		if (!CustomBlockBreaking.getManager().isTracking(blockLoc))
 			return;
 
+		BrokenBlock brokenBlock = CustomBlockBreaking.getManager().getBrokenBlock(blockLoc);
+		if (brokenBlock == null)
+			return;
+
 		BlockBreakingUtils.addSlowDig(player, 200);
 
-		ItemStack itemStack = player.getInventory().getItemInMainHand();
-		CustomBlockBreaking.getManager().getBrokenBlock(blockLoc).incrementDamage(player, itemStack);
+		brokenBlock.incrementDamage(player, player.getInventory().getItemInMainHand());
 	}
 }

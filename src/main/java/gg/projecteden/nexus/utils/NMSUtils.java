@@ -173,26 +173,21 @@ public class NMSUtils {
 
 		float speedMultiplier = getDestroySpeed(block, itemStack);
 
-//		Dev.WAKKA.send("init speed multiplier = " + speedMultiplier);
-
 		// if (isBestTool): speedMultiplier = toolMultiplier
 		if (block.isPreferredTool(itemStack)) {
-//			Dev.WAKKA.send("is best tool, speed multiplier = " + speedMultiplier);
 
 			// if (not canHarvest): speedMultiplier = 1
 			if (!canHarvest) {
 				speedMultiplier = 1;
-//				Dev.WAKKA.send("can't harvest, speed multiplier = " + speedMultiplier);
 			}
+		}
 
-			// else if (toolEfficiency): speedMultiplier += efficiencyLevel ^ 2 + 1
-			else if (!Nullables.isNullOrAir(itemStack)) {
-				if (itemStack.getItemMeta().hasEnchants()) {
-					Map<Enchantment, Integer> enchants = itemStack.getItemMeta().getEnchants();
-					if (enchants.containsKey(Enchant.EFFICIENCY)) {
-						speedMultiplier += Math.pow(enchants.get(Enchant.EFFICIENCY), 2) + 1;
-//						Dev.WAKKA.send("efficiency speed multiplier = " + speedMultiplier);
-					}
+		// if (toolEfficiency): speedMultiplier += efficiencyLevel ^ 2 + 1
+		if (!Nullables.isNullOrAir(itemStack)) {
+			if (itemStack.getItemMeta().hasEnchants()) {
+				Map<Enchantment, Integer> enchants = itemStack.getItemMeta().getEnchants();
+				if (enchants.containsKey(Enchant.EFFICIENCY)) {
+					speedMultiplier += Math.pow(enchants.get(Enchant.EFFICIENCY), 2) + 1;
 				}
 			}
 		}
@@ -214,13 +209,11 @@ public class NMSUtils {
 			// if (hasteEffect): speedMultiplier *= 0.2 * hasteLevel + 1
 			if (hasteLevel > 0) {
 				speedMultiplier *= (0.2 * hasteLevel) + 1;
-//				Dev.WAKKA.send("Player has haste, speed multiplier = " + speedMultiplier);
 			}
 
 			// if (miningFatigue): speedMultiplier *= 0.3 ^ min(miningFatigueLevel, 4)
 			if (fatigueLevel > 0) {
 				speedMultiplier *= Math.pow(0.3, Math.min(fatigueLevel, 4));
-//				Dev.WAKKA.send("Player has fatigue, speed multiplier = " + speedMultiplier);
 			}
 		}
 
@@ -235,37 +228,29 @@ public class NMSUtils {
 			// if (inWater and not hasAquaAffinity): speedMultiplier /= 5
 			if (player.isInWater() && !hasAquaAffinity) {
 				speedMultiplier /= 5;
-//				Dev.WAKKA.send("Player is in water with no AquaAffinity, speed multiplier = " + speedMultiplier);
 			}
 		}
 
 		// if (not onGround): speedMultiplier /= 5
 		if (!player.isOnGround()) {
 			speedMultiplier /= 5;
-//			Dev.WAKKA.send("Player is not on ground, speed multiplier = " + speedMultiplier);
 		}
 
-//		Dev.WAKKA.send("final speed multiplier = " + speedMultiplier);
 		// damage = speedMultiplier / blockHardness
 		float damage = speedMultiplier / blockHardness;
-
-//		Dev.WAKKA.send("init damage = " + damage);
 
 		// if (canHarvest): damage /= 30
 		if (canHarvest) {
 			damage /= 30;
-//			Dev.WAKKA.send("can harvest, damage = " + damage);
 		}
 		// else: damage /= 100
 		else {
 			damage /= 100;
-//			Dev.WAKKA.send("can't harvest, damage = " + damage);
 		}
 
 		// Instant Breaking:
 		// if (damage > 1): return 0
 		if (damage > 1) {
-//			Dev.WAKKA.send("instant breaking, damage = 0");
 			return 0;
 		}
 

@@ -263,6 +263,7 @@ public class CustomBlockListener implements Listener {
 		if (isPlacingBlock(event, clickedBlock, clickedCustomBlock)) {
 			debug("is placing block");
 			CustomBlockSounds.updateAction(player, BlockAction.PLACE);
+
 			return;
 		}
 
@@ -648,6 +649,9 @@ public class CustomBlockListener implements Listener {
 
 //			debug(" isPlacingBlock: playing place sound");
 			BlockUtils.playSound(SoundAction.PLACE, preBlock);
+
+			if (!Nullables.isNullOrAir(event.getItem()))
+				event.getItem().subtract();
 		}
 
 		return true;
