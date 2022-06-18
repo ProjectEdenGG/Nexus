@@ -3,11 +3,8 @@ package gg.projecteden.nexus.features.customblocks.models.noteblocks.terracottas
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.ICraftableNoteBlock;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
-import gg.projecteden.nexus.utils.MaterialTag;
 import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Set;
 
 public interface ITerracottaShingles extends ICraftableNoteBlock {
 
@@ -24,8 +21,12 @@ public interface ITerracottaShingles extends ICraftableNoteBlock {
 	}
 
 	@Override
-	default Set<Material> getApplicableTools() {
-		return MaterialTag.PICKAXES.getValues();
+	default double getBlockHardness() {
+		return 1.25;
 	}
 
+	@Override
+	default Material getPreferredTool() {
+		return Material.WOODEN_PICKAXE;
+	}
 }

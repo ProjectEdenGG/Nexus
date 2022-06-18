@@ -344,6 +344,8 @@ public class BlockUtils {
 		if (sound == null)
 			return;
 
+		// TODO: if sound is replaced, play RP sound
+
 		Location location = block.getLocation().toCenterLocation();
 
 		playSound(new SoundBuilder(sound).location(location).volume(soundAction.getVolume()));

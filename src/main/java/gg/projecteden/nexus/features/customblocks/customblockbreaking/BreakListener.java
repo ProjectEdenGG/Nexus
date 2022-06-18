@@ -15,6 +15,7 @@ import org.bukkit.event.player.PlayerAnimationEvent;
 import java.util.HashSet;
 import java.util.Set;
 
+// TODO: Support custom blocks
 public class BreakListener implements Listener {
 
 	private static final Set<Material> blackListed = new HashSet<>();

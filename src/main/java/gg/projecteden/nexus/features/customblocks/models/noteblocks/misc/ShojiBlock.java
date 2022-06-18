@@ -35,4 +35,14 @@ public class ShojiBlock implements ICraftableNoteBlock, IDirectionalNoteBlock {
 			.unlockedBy(getItemStack())
 			.unlockedBy(Material.PAPER), 4);
 	}
+
+	@Override
+	public double getBlockHardness() {
+		return 0.8;
+	}
+
+	@Override
+	public Material getPreferredTool() {
+		return Material.WOODEN_AXE;
+	}
 }

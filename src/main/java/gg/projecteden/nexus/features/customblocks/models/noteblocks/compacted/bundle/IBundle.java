@@ -12,4 +12,9 @@ public interface IBundle extends ICompacted, IDirectionalNoteBlock {
 	default @NotNull Material getMaterial() {
 		return Material.valueOf(camelToSnake(getClass().getSimpleName().replace("Bundle", "")).toUpperCase());
 	}
+
+	@Override
+	default double getBlockHardness() {
+		return 0.5;
+	}
 }

@@ -16,4 +16,14 @@ public interface ILantern extends IDirectionalNoteBlock {
 			.replace("Lantern", "");
 		return Material.valueOf(camelToSnake(woodType).toUpperCase() + "_PLANKS");
 	}
+
+	@Override
+	default double getBlockHardness() {
+		return 0.8;
+	}
+
+	@Override
+	default Material getPreferredTool() {
+		return Material.WOODEN_AXE;
+	}
 }

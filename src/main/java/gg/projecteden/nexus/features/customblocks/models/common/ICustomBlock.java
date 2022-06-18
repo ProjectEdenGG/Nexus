@@ -9,9 +9,6 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
-import java.util.Set;
-
 public interface ICustomBlock {
 	Material itemMaterial = Material.PAPER;
 
@@ -41,12 +38,12 @@ public interface ICustomBlock {
 	}
 
 	// Misc
-	default Set<Material> getApplicableTools() {
-		return new HashSet<>();
+	default double getBlockHardness() {
+		return 0.0;
 	}
 
-	default boolean requireApplicableTools() {
-		return false;
+	default Material getPreferredTool() {
+		return Material.AIR;
 	}
 
 	default PistonPushAction getPistonPushedAction() {

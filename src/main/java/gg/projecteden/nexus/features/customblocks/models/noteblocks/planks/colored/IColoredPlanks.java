@@ -28,4 +28,14 @@ public interface IColoredPlanks extends IDyeable, ICraftableNoteBlock {
 		return getSurroundRecipe(getMaterial(), MaterialTag.PLANKS);
 	}
 
+	@Override
+	default double getBlockHardness() {
+		return 2.0;
+	}
+
+	@Override
+	default Material getPreferredTool() {
+		return Material.WOODEN_AXE;
+	}
+
 }

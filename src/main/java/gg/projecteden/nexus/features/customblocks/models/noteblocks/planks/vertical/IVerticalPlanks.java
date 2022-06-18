@@ -28,4 +28,14 @@ public interface IVerticalPlanks extends ICraftableNoteBlock {
 		return Material.valueOf(camelToSnake(woodType).toUpperCase() + "_PLANKS");
 	}
 
+	@Override
+	default double getBlockHardness() {
+		return 2.0;
+	}
+
+	@Override
+	default Material getPreferredTool() {
+		return Material.WOODEN_AXE;
+	}
+
 }

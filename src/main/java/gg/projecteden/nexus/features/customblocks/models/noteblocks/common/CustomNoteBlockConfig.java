@@ -15,23 +15,25 @@ public @interface CustomNoteBlockConfig {
 
 	int step();
 
-	Sound breakSound() default Sound.MUSIC_GAME;
+	boolean powered() default false;
+
+	Sound breakSound() default Sound.UI_BUTTON_CLICK;
 
 	String customBreakSound() default "custom.block.wood.break";
 
-	Sound placeSound() default Sound.MUSIC_GAME;
+	Sound placeSound() default Sound.UI_BUTTON_CLICK;
 
 	String customPlaceSound() default "custom.block.wood.place";
 
-	Sound stepSound() default Sound.MUSIC_GAME;
+	Sound stepSound() default Sound.UI_BUTTON_CLICK;
 
 	String customStepSound() default "custom.block.wood.step";
 
-	Sound hitSound() default Sound.MUSIC_GAME;
+	Sound hitSound() default Sound.UI_BUTTON_CLICK;
 
 	String customHitSound() default "custom.block.wood.hit";
 
-	Sound fallSound() default Sound.MUSIC_GAME;
+	Sound fallSound() default Sound.UI_BUTTON_CLICK;
 
 	String customFallSound() default "custom.block.wood.fall";
 }

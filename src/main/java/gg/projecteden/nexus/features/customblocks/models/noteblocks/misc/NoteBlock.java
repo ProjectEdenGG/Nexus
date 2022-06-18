@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.customblocks.models.common.CustomBlockConfi
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.CustomNoteBlockConfig;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.ICustomNoteBlock;
 import org.bukkit.Instrument;
+import org.bukkit.Material;
 
 @CustomBlockConfig(
 	name = "Note Block",
@@ -13,4 +14,14 @@ import org.bukkit.Instrument;
 	instrument = Instrument.PIANO,
 	step = 0
 )
-public class NoteBlock implements ICustomNoteBlock {}
+public class NoteBlock implements ICustomNoteBlock {
+	@Override
+	public double getBlockHardness() {
+		return 0.8;
+	}
+
+	@Override
+	public Material getPreferredTool() {
+		return Material.WOODEN_AXE;
+	}
+}

@@ -286,6 +286,8 @@ public class CustomBlockListener implements Listener {
 				event.setCancelled(true);
 			}
 		}
+
+
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -647,12 +649,14 @@ public class CustomBlockListener implements Listener {
 				return false;
 			}
 
-//			debug(" isPlacingBlock: playing place sound");
-			BlockUtils.playSound(SoundAction.PLACE, preBlock);
-
-			if (!Nullables.isNullOrAir(event.getItem()))
-				event.getItem().subtract();
+			if (!Nullables.isNullOrAir(event.getItem())) {
+				if (!GameModeWrapper.of(player).isCreative())
+					event.getItem().subtract();
+			}
 		}
+
+		debug(" isPlacingBlock: playing default place sound");
+		BlockUtils.playSound(SoundAction.PLACE, preBlock);
 
 		return true;
 	}

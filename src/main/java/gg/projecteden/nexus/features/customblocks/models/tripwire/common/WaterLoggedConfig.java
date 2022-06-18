@@ -26,23 +26,23 @@ public @interface WaterLoggedConfig {
 
 	boolean ignorePowered() default false;
 
-	Sound breakSound() default Sound.MUSIC_GAME;
+	Sound breakSound() default Sound.UI_BUTTON_CLICK;
 
 	String customBreakSound() default "custom.block.stone.break";
 
-	Sound placeSound() default Sound.MUSIC_GAME;
+	Sound placeSound() default Sound.UI_BUTTON_CLICK;
 
 	String customPlaceSound() default "custom.block.stone.place";
 
-	Sound stepSound() default Sound.MUSIC_GAME;
+	Sound stepSound() default Sound.UI_BUTTON_CLICK;
 
 	String customStepSound() default "custom.block.stone.step";
 
-	Sound hitSound() default Sound.MUSIC_GAME;
+	Sound hitSound() default Sound.UI_BUTTON_CLICK;
 
 	String customHitSound() default "custom.block.stone.hit";
 
-	Sound fallSound() default Sound.MUSIC_GAME;
+	Sound fallSound() default Sound.UI_BUTTON_CLICK;
 
 	String customFallSound() default "custom.block.stone.fall";
 }

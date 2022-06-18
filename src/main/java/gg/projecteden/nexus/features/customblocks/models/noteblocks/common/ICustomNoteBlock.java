@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.customblocks.models.noteblocks.common;
 
 import gg.projecteden.nexus.features.customblocks.models.common.ICustomBlock;
-import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
 import org.bukkit.Instrument;
@@ -40,6 +39,10 @@ public interface ICustomNoteBlock extends ICustomBlock {
 		return getNoteBlockConfig().step();
 	}
 
+	default boolean getPowered() {
+		return getNoteBlockConfig().powered();
+	}
+
 	// Directional
 	Set<BlockFace> directions = Set.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST);
 
@@ -63,18 +66,13 @@ public interface ICustomNoteBlock extends ICustomBlock {
 		return new Note(this.getNoteBlockStep(facing));
 	}
 
-	@Override
-	default Set<Material> getApplicableTools() {
-		return MaterialTag.AXES.getValues();
-	}
-
 	// Sounds
 
 	@Override
 	default @NonNull String getBreakSound() {
 		Sound sound = getNoteBlockConfig().breakSound();
 		String customSound = sound.getKey().getKey();
-		if (sound.equals(Sound.MUSIC_GAME)) {
+		if (sound.equals(Sound.UI_BUTTON_CLICK)) {
 			customSound = getNoteBlockConfig().customBreakSound();
 		}
 
@@ -85,7 +83,7 @@ public interface ICustomNoteBlock extends ICustomBlock {
 	default @NonNull String getPlaceSound() {
 		Sound sound = getNoteBlockConfig().placeSound();
 		String customSound = sound.getKey().getKey();
-		if (sound.equals(Sound.MUSIC_GAME)) {
+		if (sound.equals(Sound.UI_BUTTON_CLICK)) {
 			customSound = getNoteBlockConfig().customPlaceSound();
 		}
 
@@ -96,7 +94,7 @@ public interface ICustomNoteBlock extends ICustomBlock {
 	default @NonNull String getStepSound() {
 		Sound sound = getNoteBlockConfig().stepSound();
 		String customSound = sound.getKey().getKey();
-		if (sound.equals(Sound.MUSIC_GAME)) {
+		if (sound.equals(Sound.UI_BUTTON_CLICK)) {
 			customSound = getNoteBlockConfig().customStepSound();
 		}
 
@@ -107,7 +105,7 @@ public interface ICustomNoteBlock extends ICustomBlock {
 	default @NonNull String getHitSound() {
 		Sound sound = getNoteBlockConfig().hitSound();
 		String customSound = sound.getKey().getKey();
-		if (sound.equals(Sound.MUSIC_GAME)) {
+		if (sound.equals(Sound.UI_BUTTON_CLICK)) {
 			customSound = getNoteBlockConfig().customHitSound();
 		}
 
@@ -118,7 +116,7 @@ public interface ICustomNoteBlock extends ICustomBlock {
 	default @NonNull String getFallSound() {
 		Sound sound = getNoteBlockConfig().fallSound();
 		String customSound = sound.getKey().getKey();
-		if (sound.equals(Sound.MUSIC_GAME)) {
+		if (sound.equals(Sound.UI_BUTTON_CLICK)) {
 			customSound = getNoteBlockConfig().customFallSound();
 		}
 
@@ -130,7 +128,7 @@ public interface ICustomNoteBlock extends ICustomBlock {
 		NoteBlock noteBlock = (NoteBlock) this.getVanillaBlockMaterial().createBlockData();
 		noteBlock.setInstrument(this.getNoteBlockInstrument());
 		noteBlock.setNote(this.getNoteBlockNote(facing));
-		noteBlock.setPowered(false);
+		noteBlock.setPowered(this.getPowered());
 		return noteBlock;
 	}
 

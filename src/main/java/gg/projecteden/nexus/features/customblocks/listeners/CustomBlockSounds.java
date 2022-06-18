@@ -12,6 +12,7 @@ import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.NMSUtils;
 import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.parchment.event.sound.SoundEvent;
 import org.bukkit.Location;
@@ -116,8 +117,10 @@ public class CustomBlockSounds implements Listener {
 
 		Block brokenBlock = event.getBlock();
 		CustomBlock brokenCustomBlock = CustomBlock.fromBlock(brokenBlock);
-		if (brokenCustomBlock == null)
+		if (brokenCustomBlock == null) {
+			Dev.WAKKA.send("BlockBreakEvent: playing default break sound");
 			tryPlayDefaultSound(SoundAction.BREAK, brokenBlock);
+		}
 	}
 
 	// Handles Sound: STEP

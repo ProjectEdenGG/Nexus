@@ -4,13 +4,11 @@ import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.ICraftableNoteBlock;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
-import gg.projecteden.nexus.utils.MaterialTag;
 import lombok.NonNull;
 import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Set;
 
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.stoneCutter;
 
@@ -39,7 +37,13 @@ public interface IStonePillar extends ICraftableNoteBlock {
 	}
 
 	@Override
-	default Set<Material> getApplicableTools() {
-		return MaterialTag.PICKAXES.getValues();
+	default double getBlockHardness() {
+		return 2.0;
 	}
+
+	@Override
+	default Material getPreferredTool() {
+		return Material.WOODEN_PICKAXE;
+	}
+
 }

@@ -11,5 +11,14 @@ public interface ICrate extends ICompacted {
 	default @NotNull Material getMaterial() {
 		return Material.valueOf(camelToSnake(getClass().getSimpleName().replace("Crate", "")).toUpperCase());
 	}
-	
+
+	@Override
+	default double getBlockHardness() {
+		return 0.6;
+	}
+
+	@Override
+	default Material getPreferredTool() {
+		return Material.WOODEN_AXE;
+	}
 }

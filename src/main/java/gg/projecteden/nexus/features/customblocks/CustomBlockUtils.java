@@ -14,6 +14,7 @@ import gg.projecteden.nexus.models.customblock.CustomNoteBlockData;
 import gg.projecteden.nexus.models.customblock.CustomTripwireData;
 import gg.projecteden.nexus.models.customblock.NoteBlockData;
 import gg.projecteden.nexus.utils.NMSUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
 import lombok.NonNull;
@@ -165,6 +166,7 @@ public class CustomBlockUtils {
 	}
 
 	public static void updatePowerable(Block block) {
+		Dev.WAKKA.send("Updating Powerable: " + block.getType());
 		Powerable powerable = (Powerable) block.getBlockData();
 		boolean isPowered = powerable.isPowered();
 		powerable.setPowered(!isPowered);
