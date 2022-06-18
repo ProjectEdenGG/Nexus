@@ -2,12 +2,11 @@ package gg.projecteden.nexus.features.recipes.functionals;
 
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.listeners.TemporaryListener;
+import gg.projecteden.nexus.features.listeners.TemporaryMenuListener;
 import gg.projecteden.nexus.features.listeners.events.FakePlayerInteractEvent;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
-import gg.projecteden.nexus.features.resourcepack.ResourcePack.RainbowBlockOrder;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -22,7 +21,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import org.apache.commons.lang.RandomStringUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.ShulkerBox;
@@ -36,7 +34,6 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.Recipe;
@@ -151,8 +148,8 @@ public class Backpacks extends FunctionalRecipe {
 			displayName = backpack.getItemMeta().displayName();
 
 		ItemStack newBackpack = new ItemBuilder(backpack.clone())
+			.material(color.getShulkerBox())
 			.name(displayName)
-			.customModelData(RainbowBlockOrder.of(color).ordinal() + 2)
 			.build();
 
 		copyContents(backpack, newBackpack);
@@ -224,33 +221,34 @@ public class Backpacks extends FunctionalRecipe {
 		event.setCancelled(true);
 	}
 
-	public static class BackpackMenu implements TemporaryListener {
+	public static class BackpackMenu implements TemporaryMenuListener {
 		@Getter
 		private final Player player;
 		private final ItemStack backpack;
 		private final String backpackId;
-		private final ItemStack[] originalItems;
+		private ItemStack[] originalItems;
 
 		public BackpackMenu(Player player, ItemStack backpack) {
 			this.player = player;
 			this.backpack = backpack;
 			this.backpackId = new NBTItem(backpack.clone()).getString("BackpackId");
 
-			BlockStateMeta blockStateMeta = (BlockStateMeta) backpack.getItemMeta();
-			ShulkerBox shulkerBox = (ShulkerBox) blockStateMeta.getBlockState();
-			this.originalItems = shulkerBox.getInventory().getContents();
-
 			try {
-				verifyInventory(player);
+				BlockStateMeta blockStateMeta = (BlockStateMeta) backpack.getItemMeta();
+				ShulkerBox shulkerBox = (ShulkerBox) blockStateMeta.getBlockState();
+				this.originalItems = shulkerBox.getInventory().getContents();
 
-				Inventory inv = Bukkit.createInventory(null, 27, backpack.getItemMeta().getDisplayName());
-				inv.setContents(originalItems);
-				player.openInventory(inv);
-				Nexus.registerTemporaryListener(this);
+				verifyInventory(player);
+				open(3, Arrays.asList(originalItems));
 			} catch (Exception ex) {
 				ex.printStackTrace();
 				PlayerUtils.send(player, StringUtils.getPrefix("Backpacks") + "&c" + ex.getMessage());
 			}
+		}
+
+		@Override
+		public String getTitle() {
+			return backpack.getItemMeta().getDisplayName();
 		}
 
 		@EventHandler
@@ -284,18 +282,9 @@ public class Backpacks extends FunctionalRecipe {
 			event.setCancelled(true);
 		}
 
-		@EventHandler
-		public void onInventoryClose(InventoryCloseEvent event) {
-			if (!player.equals(event.getPlayer()))
-				return;
-
-			Nexus.unregisterTemporaryListener(this);
-			save(event.getView().getTopInventory().getContents());
-		}
-
-		private void save(ItemStack[] contents) {
-			ItemStack[] inv = player.getInventory().getContents();
-			ItemStack backpack = find(inv, item -> isBackpack(item, this.backpackId));
+		@Override
+		public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
+			ItemStack backpack = find(contents, item -> isBackpack(item, this.backpackId));
 			BlockStateMeta meta = null;
 
 			if (backpack != null)
@@ -307,7 +296,7 @@ public class Backpacks extends FunctionalRecipe {
 			}
 
 			ShulkerBox shulkerBox = (ShulkerBox) meta.getBlockState();
-			shulkerBox.getInventory().setContents(contents);
+			shulkerBox.getInventory().setContents(contents.toArray(ItemStack[]::new));
 			meta.setBlockState(shulkerBox);
 			backpack.setItemMeta(meta);
 
@@ -315,11 +304,11 @@ public class Backpacks extends FunctionalRecipe {
 			Tasks.wait(1, player::updateInventory);
 		}
 
-		private void handleError(ItemStack[] contents) {
+		private void handleError(List<ItemStack> contents) {
 			Nexus.warn("There was an error while saving Backpack contents for " + player.getName());
 			Nexus.warn("Below is a serialized paste of the original and new contents in the backpack:");
 			Nexus.warn("Old Contents: " + paste(Json.toString(Json.serialize(Arrays.asList(originalItems)))));
-			Nexus.warn("New Contents: " + paste(Json.toString(Json.serialize(Arrays.asList(contents)))));
+			Nexus.warn("New Contents: " + paste(Json.toString(Json.serialize(Arrays.asList(contents.toArray(ItemStack[]::new))))));
 			PlayerUtils.send(player, "&cThere was an error while saving your backpack items. Please report this to staff to retrieve your lost items.");
 		}
 
@@ -339,4 +328,3 @@ public class Backpacks extends FunctionalRecipe {
 	}
 
 }
-

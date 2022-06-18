@@ -15,7 +15,6 @@ import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
@@ -26,7 +25,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.BlockStateMeta;
@@ -94,7 +92,7 @@ public class LegacyShulkerBoxes implements Listener {
 		new ShulkerBoxMenu(player, shulkerBox);
 	}
 
-	private static final String SHULKER_BOX_NBT_KEY = "ShulkerBoxId";
+	public static final String NBT_KEY = "ShulkerBoxId";
 
 	private static boolean isShulkerBox(ItemStack item) {
 		if (isNullOrAir(item))
@@ -103,14 +101,14 @@ public class LegacyShulkerBoxes implements Listener {
 		if (isBackpack(item))
 			return false;
 
-		return !isNullOrEmpty(new NBTItem(item).getString(SHULKER_BOX_NBT_KEY));
+		return !isNullOrEmpty(new NBTItem(item).getString(NBT_KEY));
 	}
 
 	private static boolean isShulkerBox(ItemStack item, String id) {
 		if (!isShulkerBox(item))
 			return false;
 
-		return new NBTItem(item).getString(SHULKER_BOX_NBT_KEY).equals(id);
+		return new NBTItem(item).getString(NBT_KEY).equals(id);
 	}
 
 	@NoArgsConstructor
@@ -124,21 +122,18 @@ public class LegacyShulkerBoxes implements Listener {
 		public ShulkerBoxMenu(Player player, ItemStack shulkerBox) {
 			this.player = player;
 			this.shulkerBox = shulkerBox;
-			this.shulkerBoxId = new NBTItem(shulkerBox.clone()).getString(SHULKER_BOX_NBT_KEY);
+			this.shulkerBoxId = new NBTItem(shulkerBox.clone()).getString(NBT_KEY);
 
 			BlockStateMeta shulkerBoxMeta = (BlockStateMeta) shulkerBox.getItemMeta();
 			ShulkerBox shulkerBoxState = (ShulkerBox) shulkerBoxMeta.getBlockState();
-			this.originalItems = shulkerBoxState.getInventory().getContents();
+			originalItems = shulkerBoxState.getInventory().getContents();
 
-			try {
-				Inventory inv = Bukkit.createInventory(null, 27, shulkerBox.getItemMeta().getDisplayName());
-				inv.setContents(originalItems);
-				player.openInventory(inv);
-				Nexus.registerTemporaryListener(this);
-			} catch (Exception ex) {
-				ex.printStackTrace();
-				PlayerUtils.send(player, PREFIX + "&c" + ex.getMessage());
-			}
+			open(3, Arrays.asList(originalItems));
+		}
+
+		@Override
+		public String getTitle() {
+			return shulkerBox.getItemMeta().getDisplayName();
 		}
 
 		@EventHandler
@@ -178,8 +173,7 @@ public class LegacyShulkerBoxes implements Listener {
 		@Override
 		public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
 			new SoundBuilder(Sound.BLOCK_SHULKER_BOX_CLOSE).receiver(player).volume(.3f).play();
-			ItemStack[] inv = player.getInventory().getContents();
-			ItemStack shulkerBox = find(inv, item -> isShulkerBox(item, this.shulkerBoxId));
+			ItemStack shulkerBox = find(contents, item -> isShulkerBox(item, this.shulkerBoxId));
 			BlockStateMeta meta = null;
 
 			if (shulkerBox != null)

@@ -1,6 +1,9 @@
 package gg.projecteden.nexus.features.test;
 
 import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan.FormatType;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
@@ -37,9 +40,6 @@ import gg.projecteden.nexus.utils.Tasks.ExpBarCountdown;
 import gg.projecteden.nexus.utils.Tasks.QueuedTask;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.api.common.utils.TimeUtils.Timespan;
-import gg.projecteden.api.common.utils.TimeUtils.Timespan.FormatType;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.citizensnpcs.api.npc.NPC;
@@ -68,6 +68,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.utils.BlockUtils.getBlocksInRadius;
 import static gg.projecteden.nexus.utils.BlockUtils.getDirection;
@@ -81,6 +82,13 @@ public class TestCommand extends CustomCommand implements Listener {
 
 	public TestCommand(@NonNull CommandEvent event) {
 		super(event);
+	}
+
+	@Path("shulkerBox")
+	void shulkerBox() {
+		final ItemBuilder old = new ItemBuilder(Material.RED_SHULKER_BOX).shulkerBox(new ItemStack(Material.STONE, 64));
+		final ItemBuilder converted = new ItemBuilder(old).material(Material.SHULKER_BOX);
+		send(converted.nonAirShulkerBoxContents().stream().map(StringUtils::pretty).collect(Collectors.joining(", ")));
 	}
 
 	@Override

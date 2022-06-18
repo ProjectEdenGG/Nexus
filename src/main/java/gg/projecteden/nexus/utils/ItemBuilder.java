@@ -2,8 +2,8 @@ package gg.projecteden.nexus.utils;
 
 import de.tr7zw.nbtapi.NBTItem;
 import dev.dbassett.skullcreator.SkullCreator;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.interfaces.HasUniqueId;
-import dev.dbassett.skullcreator.SkullCreator;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.customenchants.enchants.SoulboundEnchant;
@@ -17,7 +17,6 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.skincache.SkinCache;
 import gg.projecteden.nexus.utils.SymbolBanner.Symbol;
 import gg.projecteden.parchment.HasOfflinePlayer;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
@@ -70,9 +69,9 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 @SuppressWarnings({"UnusedReturnValue", "ResultOfMethodCallIgnored", "CopyConstructorMissesField", "deprecation"})
 public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
@@ -460,6 +459,10 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 
 	// Shulker Boxes
 
+	public ItemBuilder shulkerBox(List<ItemStack> items) {
+		return shulkerBox(items.toArray(ItemStack[]::new));
+	}
+
 	public ItemBuilder shulkerBox(ItemBuilder... builders) {
 		for (ItemBuilder builder : builders)
 			shulkerBox(builder.build());
@@ -470,7 +473,10 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		BlockStateMeta blockStateMeta = (BlockStateMeta) itemMeta;
 		ShulkerBox box = (ShulkerBox) blockStateMeta.getBlockState();
 		for (ItemStack item : items)
-			box.getInventory().addItem(item);
+			if (isNullOrAir(item))
+				box.getInventory().addItem(new ItemStack(Material.AIR));
+			else
+				box.getInventory().addItem(item);
 		blockStateMeta.setBlockState(box);
 		return this;
 	}
