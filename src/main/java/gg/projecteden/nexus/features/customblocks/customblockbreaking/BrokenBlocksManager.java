@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.customblocks.customblockbreaking;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.utils.NMSUtils;
+import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -27,17 +27,17 @@ public class BrokenBlocksManager {
 		if (isTracking(block))
 			return;
 
-		float blockHardness = NMSUtils.getBlockHardness(block);
+		float blockHardness = BlockUtils.getBlockHardness(block);
 		if (blockHardness == -1 || blockHardness > 50) // unbreakable
 			return;
 
-		BrokenBlock brokenBlock = new BrokenBlock(block, player, itemStack, Bukkit.getCurrentTick());
+		BrokenBlock brokenBlock = new BrokenBlock(block.getLocation(), block, player, itemStack, Bukkit.getCurrentTick());
 		brokenBlocks.put(block.getLocation(), brokenBlock);
 	}
 
 
 	public void removeBrokenBlock(BrokenBlock brokenBlock) {
-		removeBrokenBlock(brokenBlock.getBlock().getLocation());
+		removeBrokenBlock(brokenBlock.getLocation());
 	}
 
 	public void removeBrokenBlock(Location location) {

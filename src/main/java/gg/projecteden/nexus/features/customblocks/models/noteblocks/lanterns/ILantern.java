@@ -23,7 +23,7 @@ public interface ILantern extends IDirectionalNoteBlock {
 	}
 
 	@Override
-	default Material getPreferredTool() {
+	default Material getMinimumPreferredTool() {
 		return Material.WOODEN_AXE;
 	}
 }

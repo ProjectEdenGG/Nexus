@@ -24,14 +24,7 @@ import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_19_R1.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_19_R1.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Map;
 
 public class NMSUtils {
 
@@ -137,14 +130,6 @@ public class NMSUtils {
 		return null;
 	}
 
-	public static float getBlockHardness(org.bukkit.block.Block block) {
-		return block.getType().getHardness();
-	}
-
-	public static float getBlastResistance(org.bukkit.block.Block block) {
-		return block.getType().getBlastResistance();
-	}
-
 	public static float getDestroySpeed(org.bukkit.block.Block block, org.bukkit.inventory.ItemStack itemStack) {
 		try {
 			ItemStack nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
@@ -157,103 +142,4 @@ public class NMSUtils {
 		return 1;
 	}
 
-	public static boolean canHarvest(Player player, org.bukkit.block.Block block, org.bukkit.inventory.ItemStack itemStack) {
-		return block.getDrops(itemStack, player).stream()
-			.filter(Nullables::isNotNullOrAir)
-			.toList()
-			.size() > 0;
-	}
-
-	public static float getBlockDamage(Player player, org.bukkit.block.Block block, org.bukkit.inventory.ItemStack itemStack) {
-		float blockHardness = getBlockHardness(block);
-		if (blockHardness == -1)
-			return -1;
-
-		boolean canHarvest = canHarvest(player, block, itemStack);
-
-		float speedMultiplier = getDestroySpeed(block, itemStack);
-
-		// if (isBestTool): speedMultiplier = toolMultiplier
-		if (block.isPreferredTool(itemStack)) {
-
-			// if (not canHarvest): speedMultiplier = 1
-			if (!canHarvest) {
-				speedMultiplier = 1;
-			}
-		}
-
-		// if (toolEfficiency): speedMultiplier += efficiencyLevel ^ 2 + 1
-		if (!Nullables.isNullOrAir(itemStack)) {
-			if (itemStack.getItemMeta().hasEnchants()) {
-				Map<Enchantment, Integer> enchants = itemStack.getItemMeta().getEnchants();
-				if (enchants.containsKey(Enchant.EFFICIENCY)) {
-					speedMultiplier += Math.pow(enchants.get(Enchant.EFFICIENCY), 2) + 1;
-				}
-			}
-		}
-
-		if (!player.getActivePotionEffects().isEmpty()) {
-			int hasteLevel = 0;
-			int fatigueLevel = 0;
-			for (PotionEffect potionEffect : player.getActivePotionEffects()) {
-				int amplifier = potionEffect.getAmplifier();
-				if (potionEffect.getType().equals(PotionEffectType.FAST_DIGGING)) {
-					if (amplifier > hasteLevel)
-						hasteLevel = amplifier;
-				} else if (potionEffect.getType().equals(PotionEffectType.SLOW_DIGGING)) {
-					if (amplifier > fatigueLevel)
-						fatigueLevel = amplifier;
-				}
-			}
-
-			// if (hasteEffect): speedMultiplier *= 0.2 * hasteLevel + 1
-			if (hasteLevel > 0) {
-				speedMultiplier *= (0.2 * hasteLevel) + 1;
-			}
-
-			// if (miningFatigue): speedMultiplier *= 0.3 ^ min(miningFatigueLevel, 4)
-			if (fatigueLevel > 0) {
-				speedMultiplier *= Math.pow(0.3, Math.min(fatigueLevel, 4));
-			}
-		}
-
-		org.bukkit.inventory.ItemStack helmet = player.getInventory().getHelmet();
-		if (!Nullables.isNullOrAir(helmet) && helmet.getItemMeta().hasEnchants()) {
-			boolean hasAquaAffinity = false;
-
-			@NotNull Map<Enchantment, Integer> enchants = helmet.getItemMeta().getEnchants();
-			if (enchants.containsKey(Enchant.AQUA_AFFINITY))
-				hasAquaAffinity = true;
-
-			// if (inWater and not hasAquaAffinity): speedMultiplier /= 5
-			if (player.isInWater() && !hasAquaAffinity) {
-				speedMultiplier /= 5;
-			}
-		}
-
-		// if (not onGround): speedMultiplier /= 5
-		if (!player.isOnGround()) {
-			speedMultiplier /= 5;
-		}
-
-		// damage = speedMultiplier / blockHardness
-		float damage = speedMultiplier / blockHardness;
-
-		// if (canHarvest): damage /= 30
-		if (canHarvest) {
-			damage /= 30;
-		}
-		// else: damage /= 100
-		else {
-			damage /= 100;
-		}
-
-		// Instant Breaking:
-		// if (damage > 1): return 0
-		if (damage > 1) {
-			return 0;
-		}
-
-		return damage;
-	}
 }

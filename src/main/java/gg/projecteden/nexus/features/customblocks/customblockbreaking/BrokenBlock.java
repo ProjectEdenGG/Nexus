@@ -1,11 +1,12 @@
 package gg.projecteden.nexus.features.customblocks.customblockbreaking;
 
+import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
+import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.NMSUtils;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import lombok.Data;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -17,26 +18,43 @@ public class BrokenBlock {
 	@Getter
 	private static final DecimalFormat df = new DecimalFormat("#.###");
 
-	private Block block;
+	private Location location;
+	private Object blockObject;
+
 	private ItemStack initialItemStack;
 	private int breakTicks;
 	private int damageFrame = 0;
 	private int lastDamageTick;
 	private int totalDamageTicks = 0;
 
-	public BrokenBlock(Block block, Player player, ItemStack itemStack, int currentTick) {
-		this.block = block;
+	public BrokenBlock(Location location, Object blockObject, Player player, ItemStack itemStack, int currentTick) {
+		this.location = location;
+		this.blockObject = blockObject;
 		this.initialItemStack = itemStack;
 
-		float blockDamage = NMSUtils.getBlockDamage(player, block, itemStack);
+		float blockDamage = getBlockDamage(player, blockObject, itemStack);
 		if (blockDamage <= 0.0)
 			this.breakTicks = 1;
 		else
 			this.breakTicks = (int) Math.ceil(1 / blockDamage);
 
-		Dev.WAKKA.send("Break Ticks = " + breakTicks);
-
 		this.lastDamageTick = currentTick;
+	}
+
+	public Block getBlock() {
+		return location.getBlock();
+	}
+
+	private float getBlockDamage(Player player, Object blockObject, ItemStack itemStack) {
+		if (blockObject instanceof Block block) {
+			return BlockUtils.getBlockDamage(player, itemStack, block);
+		}
+
+		if (blockObject instanceof CustomBlock customBlock) {
+			return customBlock.get().getBlockDamage(player, itemStack);
+		}
+
+		return 0.0F;
 	}
 
 	public void remove() {
@@ -55,7 +73,7 @@ public class BrokenBlock {
 		remove();
 
 		if (breaker != null)
-			BlockBreakingUtils.sendBreakBlock(breaker, this.block);
+			BlockBreakingUtils.sendBreakBlock(breaker, getBlock());
 	}
 
 	public void resetDamagePacket() {
@@ -63,7 +81,7 @@ public class BrokenBlock {
 	}
 
 	public void sendDamagePacket(int frame) {
-		BlockBreakingUtils.sendBreakPacket(frame, this.block);
+		BlockBreakingUtils.sendBreakPacket(frame, getBlock());
 	}
 
 	public void incrementDamage(Player player, ItemStack itemStack) {

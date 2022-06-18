@@ -18,7 +18,7 @@ public interface ICrate extends ICompacted {
 	}
 
 	@Override
-	default Material getPreferredTool() {
+	default Material getMinimumPreferredTool() {
 		return Material.WOODEN_AXE;
 	}
 }

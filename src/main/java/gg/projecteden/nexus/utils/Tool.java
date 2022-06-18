@@ -1,9 +1,12 @@
 package gg.projecteden.nexus.utils;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -108,6 +111,14 @@ public enum Tool {
 		return null;
 	}
 
+	public List<Material> getTools(List<ToolGrade> grades) {
+		return new ArrayList<>() {{
+			for (Material tool : tools)
+				if (grades.contains(ToolGrade.of(tool)))
+					add(tool);
+		}};
+	}
+
 	public enum ToolGroup {
 		ARMOR(HELMET, CHESTPLATE, LEGGINGS, BOOTS),
 		WEAPONS(SWORD, AXE, BOW, CROSSBOW, TRIDENT),
@@ -118,6 +129,40 @@ public enum Tool {
 
 		ToolGroup(Tool... tools) {
 			this.tools = Arrays.asList(tools);
+		}
+	}
+
+	@AllArgsConstructor
+	public enum ToolGrade {
+		WOODEN(2),
+		STONE(4),
+		GOLDEN(12),
+		IRON(6),
+		DIAMOND(8),
+		NETHERITE(9),
+		;
+
+		@Getter
+		private final double baseDiggingSpeed;
+
+		public static @Nullable ToolGrade of(ItemStack tool) {
+			return of(tool.getType());
+		}
+
+		public static @Nullable ToolGrade of(Material tool) {
+			for (ToolGrade grade : values())
+				if (tool.name().startsWith(grade.name()))
+					return grade;
+
+			return null;
+		}
+
+		public List<ToolGrade> getHigherToolGrades() {
+			return new ArrayList<>() {{
+				for (ToolGrade grade : values())
+					if (grade.ordinal() >= ordinal())
+						add(grade);
+			}};
 		}
 	}
 }

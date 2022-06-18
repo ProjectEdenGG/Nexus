@@ -34,7 +34,7 @@ public interface IVerticalPlanks extends ICraftableNoteBlock {
 	}
 
 	@Override
-	default Material getPreferredTool() {
+	default Material getMinimumPreferredTool() {
 		return Material.WOODEN_AXE;
 	}
 

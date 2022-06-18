@@ -21,7 +21,7 @@ public class NoteBlock implements ICustomNoteBlock {
 	}
 
 	@Override
-	public Material getPreferredTool() {
+	public Material getMinimumPreferredTool() {
 		return Material.WOODEN_AXE;
 	}
 }

@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.customblocks.models.common.IDyeable;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.ICraftableNoteBlock;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,7 +38,15 @@ public interface IQuiltedWool extends IDyeable, ICraftableNoteBlock {
 	}
 
 	@Override
-	default Material getPreferredTool() {
+	default Material getMinimumPreferredTool() {
 		return Material.SHEARS;
+	}
+
+	@Override
+	default double getSpeedMultiplier(ItemStack tool) {
+		if (tool.getType() == Material.SHEARS)
+			return 5;
+
+		return IDyeable.super.getSpeedMultiplier(tool);
 	}
 }

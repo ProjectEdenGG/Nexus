@@ -5,15 +5,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ClientboundBlockDestructionPacket;
 import net.minecraft.server.dedicated.DedicatedPlayerList;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.level.ServerPlayerGameMode;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -41,13 +38,13 @@ public class BlockBreakingUtils {
 
 	public static void sendBreakBlock(Player player, Block block) {
 		World world = block.getWorld();
-		Location loc = block.getLocation();
+		Location loc = block.getLocation().toCenterLocation();
+		BlockData blockData = block.getBlockData();
 
-		ServerPlayer serverPlayer = ((CraftPlayer) player).getHandle();
-		ServerPlayerGameMode interactManager = serverPlayer.gameMode;
-		if (interactManager.destroyBlock(NMSUtils.getBlockPosition(block))) {
-			world.spawnParticle(Particle.BLOCK_CRACK, loc, 25, 0.25, 0.25, 0.25, 0.1, block.getBlockData());
-		}
+		player.breakBlock(block);
+		// Block breaking particles appear for everyone except for the person breaking the block, most of the time
+//			world.spawnParticle(Particle.BLOCK_DUST, loc, 25, 0.25, 0.25, 0.25, 0.1, blockData);
+
 	}
 
 	private static int getBlockEntityId(Block block) {

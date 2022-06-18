@@ -17,6 +17,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
@@ -26,6 +27,8 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.inventivetalent.glow.GlowAPI.Color;
 import org.jetbrains.annotations.NotNull;
@@ -370,5 +373,118 @@ public class BlockUtils {
 		int ndx = cardinalFaces.indexOf(blockFace);
 		ndx = (ndx == (cardinalFaces.size() - 1) ? 0 : ++ndx);
 		return cardinalFaces.get(ndx);
+	}
+
+	public static float getBlastResistance(Block block) {
+		return block.getType().getBlastResistance();
+	}
+
+	public static float getBlockHardness(Block block) {
+		return block.getType().getHardness();
+	}
+
+	public static boolean canHarvest(Block block, Player player, ItemStack tool) {
+		return block.getDrops(tool, player).stream()
+			.filter(Nullables::isNotNullOrAir)
+			.toList()
+			.size() > 0;
+	}
+
+	public static float getBlockDamage(Player player, org.bukkit.inventory.ItemStack tool, org.bukkit.block.Block block) {
+		float blockHardness = getBlockHardness(block);
+		boolean canHarvest = canHarvest(block, player, tool);
+		float speedMultiplier = NMSUtils.getDestroySpeed(block, tool);
+		boolean isPreferredTool = block.isPreferredTool(tool);
+
+		return getBlockDamage(player, tool, blockHardness, canHarvest, speedMultiplier, isPreferredTool);
+	}
+
+	public static float getBlockDamage(Player player, org.bukkit.inventory.ItemStack tool, float blockHardness,
+									   boolean canHarvest, float speedMultiplier, boolean isPreferredTool) {
+		if (blockHardness == -1)
+			return -1;
+
+		// if (isBestTool): speedMultiplier = toolMultiplier
+		if (isPreferredTool) {
+
+			// if (not canHarvest): speedMultiplier = 1
+			if (!canHarvest) {
+				speedMultiplier = 1;
+			}
+		}
+
+		// if (toolEfficiency): speedMultiplier += efficiencyLevel ^ 2 + 1
+		if (!Nullables.isNullOrAir(tool)) {
+			if (tool.getItemMeta().hasEnchants()) {
+				Map<Enchantment, Integer> enchants = tool.getItemMeta().getEnchants();
+				if (enchants.containsKey(Enchant.EFFICIENCY)) {
+					speedMultiplier += Math.pow(enchants.get(Enchant.EFFICIENCY), 2) + 1;
+				}
+			}
+		}
+
+		if (!player.getActivePotionEffects().isEmpty()) {
+			int hasteLevel = 0;
+			int fatigueLevel = 0;
+			for (PotionEffect potionEffect : player.getActivePotionEffects()) {
+				int amplifier = potionEffect.getAmplifier();
+				if (potionEffect.getType().equals(PotionEffectType.FAST_DIGGING)) {
+					if (amplifier > hasteLevel)
+						hasteLevel = amplifier;
+				} else if (potionEffect.getType().equals(PotionEffectType.SLOW_DIGGING)) {
+					if (amplifier > fatigueLevel)
+						fatigueLevel = amplifier;
+				}
+			}
+
+			// if (hasteEffect): speedMultiplier *= 0.2 * hasteLevel + 1
+			if (hasteLevel > 0) {
+				speedMultiplier *= (0.2 * hasteLevel) + 1;
+			}
+
+			// if (miningFatigue): speedMultiplier *= 0.3 ^ min(miningFatigueLevel, 4)
+			if (fatigueLevel > 0) {
+				speedMultiplier *= Math.pow(0.3, Math.min(fatigueLevel, 4));
+			}
+		}
+
+		org.bukkit.inventory.ItemStack helmet = player.getInventory().getHelmet();
+		if (!Nullables.isNullOrAir(helmet) && helmet.getItemMeta().hasEnchants()) {
+			boolean hasAquaAffinity = false;
+
+			@NotNull Map<Enchantment, Integer> enchants = helmet.getItemMeta().getEnchants();
+			if (enchants.containsKey(Enchant.AQUA_AFFINITY))
+				hasAquaAffinity = true;
+
+			// if (inWater and not hasAquaAffinity): speedMultiplier /= 5
+			if (player.isInWater() && !hasAquaAffinity) {
+				speedMultiplier /= 5;
+			}
+		}
+
+		// if (not onGround): speedMultiplier /= 5
+		if (!player.isOnGround()) {
+			speedMultiplier /= 5;
+		}
+
+		// damage = speedMultiplier / blockHardness
+		float damage = speedMultiplier / blockHardness;
+
+		// if (canHarvest): damage /= 30
+		if (canHarvest) {
+			damage /= 30;
+		}
+		// else: damage /= 100
+		else {
+			damage /= 100;
+		}
+
+		// Instant Breaking:
+		// if (damage > 1): return 0
+		if (damage > 1) {
+			return 0;
+		}
+
+		return damage;
 	}
 }

@@ -10,7 +10,7 @@ public interface IGenericCrate extends ICustomNoteBlock {
 	}
 
 	@Override
-	default Material getPreferredTool() {
+	default Material getMinimumPreferredTool() {
 		return Material.WOODEN_AXE;
 	}
 }

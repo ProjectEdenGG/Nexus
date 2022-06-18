@@ -26,7 +26,7 @@ public interface ITerracottaShingles extends ICraftableNoteBlock {
 	}
 
 	@Override
-	default Material getPreferredTool() {
+	default Material getMinimumPreferredTool() {
 		return Material.WOODEN_PICKAXE;
 	}
 }

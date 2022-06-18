@@ -17,6 +17,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.models.customblock.CustomBlockData;
 import gg.projecteden.nexus.models.customblock.CustomBlockTracker;
 import gg.projecteden.nexus.models.customblock.CustomBlockTrackerService;
+import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.NMSUtils;
 import gg.projecteden.nexus.utils.Nullables;
@@ -150,10 +151,10 @@ public class CustomBlocksCommand extends CustomCommand {
 
 		Material blockType = block.getType();
 		Material itemType = itemStack.getType();
-		float blockHardness = NMSUtils.getBlockHardness(block);
+		float blockHardness = BlockUtils.getBlockHardness(block);
 		float destroySpeedItem = NMSUtils.getDestroySpeed(block, itemStack);
-		boolean canHarvest = NMSUtils.canHarvest(player(), block, itemStack);
-		float blockDamage = NMSUtils.getBlockDamage(player(), block, itemStack);
+		boolean canHarvest = BlockUtils.canHarvest(block, player(), itemStack);
+		float blockDamage = BlockUtils.getBlockDamage(player(), itemStack, block);
 		int breakTicks = (int) Math.ceil(1 / blockDamage);
 		double breakSeconds = breakTicks / 20.0;
 		boolean isBestTool = block.isPreferredTool(itemStack);
