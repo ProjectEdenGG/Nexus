@@ -22,7 +22,6 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.SabotageTeam;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.Task;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
-import gg.projecteden.nexus.features.minigames.models.perks.Perk;
 import gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreboard;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack.ResourcePackNumber;
@@ -148,11 +147,6 @@ public class Sabotage extends TeamMechanic {
 	@Override
 	public boolean canMoveArmor() {
 		return false;
-	}
-
-	@Override
-	public boolean usesPerk(@NotNull Class<? extends Perk> perk, @NotNull Minigamer minigamer) {
-		return super.usesPerk(perk, minigamer);
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)

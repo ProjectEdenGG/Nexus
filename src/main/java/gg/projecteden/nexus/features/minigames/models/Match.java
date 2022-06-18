@@ -541,7 +541,7 @@ public class Match implements ForwardingAudience {
 	}
 
 	@Override
-	public @org.checkerframework.checker.nullness.qual.NonNull Iterable<? extends Audience> audiences() {
+	public @NotNull Iterable<? extends Audience> audiences() {
 		return getMinigamers();
 	}
 

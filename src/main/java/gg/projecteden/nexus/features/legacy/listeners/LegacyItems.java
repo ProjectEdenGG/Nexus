@@ -6,7 +6,9 @@ import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpda
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.Tasks;
+import org.apache.commons.lang.RandomStringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -80,10 +82,19 @@ public class LegacyItems implements Listener {
 		if (newModel == null)
 			return item;
 
-		return new ItemBuilder(item)
+		final var converted = new ItemBuilder(item)
 			.material(newModel.getMaterial())
-			.customModelData(newModel.getData())
-			.build();
+			.customModelData(newModel.getData());
+
+		if (converted.material() == Material.SHULKER_BOX)
+			converted
+				.shulkerBox(new ItemBuilder(item).shulkerBoxContents())
+				.nbt(nbtItem -> {
+					nbtItem.removeKey("BackpackId");
+					nbtItem.setString(LegacyShulkerBoxes.NBT_KEY, RandomStringUtils.randomAlphabetic(10));
+				});
+
+		return converted.build();
 	}
 
 	private static void convert(EntityEquipment equipment) {

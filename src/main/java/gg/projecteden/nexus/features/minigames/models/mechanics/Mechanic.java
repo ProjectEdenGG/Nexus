@@ -22,7 +22,6 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import gg.projecteden.nexus.features.minigames.models.modifiers.MinigameModifier;
 import gg.projecteden.nexus.features.minigames.models.perks.Perk;
-import gg.projecteden.nexus.features.minigames.models.perks.common.PlayerParticlePerk;
 import gg.projecteden.nexus.features.minigames.modifiers.NoModifier;
 import gg.projecteden.nexus.framework.interfaces.HasDescription;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -39,6 +38,8 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.title.Title.Times;
 import org.bukkit.GameMode;
 import org.bukkit.block.Block;
 import org.bukkit.event.Listener;
@@ -51,8 +52,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
+import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -132,26 +133,28 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 
 	/**
 	 * Determines if a user is allowed to use a perk in a specified minigame.
+	 *
 	 * @param perk a user's perk
 	 * @param minigamer the user
-	 * @return whether or not to allow the perk
+	 * @return whether to allow the perk
 	 */
 	public boolean usesPerk(@NotNull Class<? extends Perk> perk, @NotNull Minigamer minigamer) {
-		return !PlayerParticlePerk.class.isAssignableFrom(perk);
+		return true;
 	}
 
 	/**
 	 * Determines if a user is allowed to use a perk in a specified minigame.
+	 *
 	 * @param perk a user's perk
 	 * @param minigamer the user
-	 * @return whether or not to allow the perk
+	 * @return whether to allow the perk
 	 */
 	public final boolean usesPerk(@NotNull Perk perk, @NotNull Minigamer minigamer) {
 		return usesPerk(perk.getClass(), minigamer);
 	}
 
 	/**
-	 * Whether or not to hide the colors of team-colored perks.
+	 * Whether to hide the colors of team-colored perks.
 	 */
 	public boolean hideTeamLoadoutColors() {
 		return false;
@@ -186,8 +189,10 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 			int taskId = match.getTasks().countdown(Countdown.builder()
 					.duration(TickTime.SECOND.x(beginDelay))
 					.onSecond(i -> {
-						if (Arrays.asList(60, 30, 15, 5, 4, 3, 2, 1).contains(i))
-							match.broadcast("&7Starting in &e" + plural(i + " second", i) + "...");
+						Component message = new JsonBuilder("&7Starting in &e" + plural(i + " second", i)).build();
+						match.showTitle(Title.title(Component.empty(), message, Times.of(Duration.ZERO, Duration.ofSeconds(1), TickTime.TICK.duration(5))));
+						if (List.of(60, 30, 15, 5, 4, 3, 2, 1).contains(Math.toIntExact(i)))
+							match.broadcast(message);
 					})
 					.onComplete(() -> {
 						MatchBeginEvent beginEvent = new MatchBeginEvent(match);
