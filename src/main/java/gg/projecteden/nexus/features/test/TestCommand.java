@@ -68,7 +68,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.utils.BlockUtils.getBlocksInRadius;
 import static gg.projecteden.nexus.utils.BlockUtils.getDirection;
@@ -82,13 +81,6 @@ public class TestCommand extends CustomCommand implements Listener {
 
 	public TestCommand(@NonNull CommandEvent event) {
 		super(event);
-	}
-
-	@Path("shulkerBox")
-	void shulkerBox() {
-		final ItemBuilder old = new ItemBuilder(Material.RED_SHULKER_BOX).shulkerBox(new ItemStack(Material.STONE, 64));
-		final ItemBuilder converted = new ItemBuilder(old).material(Material.SHULKER_BOX);
-		send(converted.nonAirShulkerBoxContents().stream().map(StringUtils::pretty).collect(Collectors.joining(", ")));
 	}
 
 	@Override
