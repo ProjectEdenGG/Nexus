@@ -1,8 +1,6 @@
 package gg.projecteden.nexus.features.menus.sabotage.tasks;
 
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.features.menus.api.InventoryListener;
-import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.minigames.mechanics.Sabotage;
 import gg.projecteden.nexus.features.minigames.models.Match.MatchTasks;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -24,9 +22,6 @@ public abstract class AbstractTaskMenu extends InventoryProvider {
 	@Getter
 	protected final Task task;
 	private final Map<UUID, Integer> closeInvTasks = new HashMap<>();
-
-	@Override
-	public abstract void init(); // changes the default variable name for InventoryContents when overriding :P
 
 	// todo: use for more tasks
 	public void scheduleInvClose(HasPlayer _player) {

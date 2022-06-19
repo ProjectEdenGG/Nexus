@@ -4,7 +4,7 @@ import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.itemtags.Condition;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
+import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.parchment.HasPlayer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -343,7 +343,7 @@ public class ItemUtils {
 			result = Integer.compare(b.getAmount(), a.getAmount());
 			if (result != 0) return result;
 
-			result = Integer.compare(CustomModelData.of(a), CustomModelData.of(b));
+			result = Integer.compare(ModelId.of(a), ModelId.of(b));
 			return result;
 		}
 	}

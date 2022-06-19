@@ -4,11 +4,6 @@ import gg.projecteden.nexus.features.listeners.TemporaryMenuListener;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.listeners.TemporaryListener;
-import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.annotations.Title;
-import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.store.perks.autoinventory.features.AutoCraft;
 import gg.projecteden.nexus.features.store.perks.autoinventory.tasks.FindChestsThread;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -143,11 +138,11 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 			List<ClickableItem> items = new ArrayList<>();
 			for (AutoSortInventoryType inventoryType : AutoSortInventoryType.values()) {
 				Material material = inventoryType.getMaterial();
-				int customModelData = inventoryType.getCustomModelData();
+				int modelId = inventoryType.getModelId();
 
 				ItemBuilder item = new ItemBuilder(material).name(StringUtils.camelCase(inventoryType));
-				if (customModelData > 0)
-					item.customModelData(customModelData);
+				if (modelId > 0)
+					item.modelId(modelId);
 
 				if (!user.getDisabledInventoryTypes().contains(inventoryType))
 					item.lore("&aEnabled");

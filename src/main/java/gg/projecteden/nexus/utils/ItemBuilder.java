@@ -96,7 +96,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	public ItemBuilder(CustomMaterial material, int amount) {
-		this(new ItemBuilder(material.getMaterial()).customModelData(material.getModelId()).amount(amount));
+		this(new ItemBuilder(material.getMaterial()).modelId(material.getModelId()).amount(amount));
 	}
 
 	public ItemBuilder(ItemBuilder itemBuilder) {
@@ -588,7 +588,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	public ItemBuilder axolotl(Axolotl.Variant variant) {
 		final AxolotlBucketMeta bucketMeta = (AxolotlBucketMeta) itemMeta;
 		bucketMeta.setVariant(variant);
-		customModelData(variant.ordinal());
+		modelId(variant.ordinal());
 		return this;
 	}
 
@@ -735,19 +735,19 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return setting(ItemSetting.TRADEABLE, false);
 	}
 
-	public ItemBuilder customModelData(int id) {
+	public ItemBuilder modelId(int id) {
 		if (id > 0)
 			nbt(item -> item.setInteger(CustomModel.NBT_KEY, id));
 		return this;
 	}
 
-	public int customModelData() {
+	public int modelId() {
 		NBTItem nbtItem = nbtItem();
-		final Integer customModelData = nbtItem.getInteger(CustomModel.NBT_KEY);
-		return customModelData == null ? 0 : customModelData;
+		final Integer modelId = nbtItem.getInteger(CustomModel.NBT_KEY);
+		return modelId == null ? 0 : modelId;
 	}
 
-	public static class CustomModelData {
+	public static class ModelId {
 
 		public static int of(ItemStack item) {
 			if (isNullOrAir(item))
@@ -757,7 +757,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		}
 
 		public static int of(ItemBuilder item) {
-			return item.customModelData();
+			return item.modelId();
 		}
 
 	}

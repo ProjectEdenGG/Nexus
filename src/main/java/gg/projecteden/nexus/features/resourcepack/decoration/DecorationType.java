@@ -13,7 +13,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.PlayerPlushie
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Table;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose;
-import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
+import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import lombok.AllArgsConstructor;
@@ -195,8 +195,8 @@ public enum DecorationType {
 		if (!item1.getType().equals(item2.getType()))
 			return false;
 
-		int decorModelData = CustomModelData.of(item1);
-		int itemModelData = CustomModelData.of(item2);
+		int decorModelData = ModelId.of(item1);
+		int itemModelData = ModelId.of(item2);
 		if (decorModelData != itemModelData)
 			return false;
 

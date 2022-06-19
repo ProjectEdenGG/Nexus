@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.resourcepack.models.files;
 
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
-import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelMaterial.Override3;
+import gg.projecteden.nexus.features.resourcepack.models.files.ResourcePackOverriddenMaterial.ModelOverride;
 import lombok.Data;
 import lombok.NonNull;
 
@@ -81,8 +81,8 @@ public class CustomModelFolder {
 	}
 
 	private void findModels() {
-		for (CustomModelMaterial group : ResourcePack.getModelGroups())
-			for (Override3 override : group.getOverrides())
+		for (ResourcePackOverriddenMaterial group : ResourcePack.getModelGroups())
+			for (ModelOverride override : group.getOverrides())
 				if (override.getModel().matches("projecteden" + path + "/" + ResourcePack.getFileRegex()))
 					models.add(new CustomModel(this, override, group.getMaterial()));
 

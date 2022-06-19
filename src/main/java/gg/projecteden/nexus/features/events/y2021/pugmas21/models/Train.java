@@ -228,7 +228,7 @@ public class Train {
 		return ArmorStandEditorCommand.summon(location, armorStand -> {
 			armorStand.setVisible(false);
 			armorStand.setItem(EquipmentSlot.HEAD, new ItemBuilder(CustomMaterial.PUGMAS21_TRAIN_1)
-				.customModelData(CustomMaterial.PUGMAS21_TRAIN_1.getModelId() + model)
+				.modelId(CustomMaterial.PUGMAS21_TRAIN_1.getModelId() + model)
 				.build());
 		});
 	}

@@ -4,6 +4,10 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.lishid.openinv.IOpenInv;
 import com.onarandombox.MultiverseCore.MultiverseCore;
+import gg.projecteden.api.common.utils.EnumUtils;
+import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.api.common.utils.ReflectionUtils;
+import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.api.mongodb.MongoService;
 import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.discord.Discord;
@@ -25,10 +29,6 @@ import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Timer;
 import gg.projecteden.nexus.utils.WorldGuardFlagUtils;
-import gg.projecteden.api.common.utils.EnumUtils;
-import gg.projecteden.api.common.utils.Env;
-import gg.projecteden.api.common.utils.ReflectionUtils;
-import gg.projecteden.api.common.utils.Utils;
 import it.sauronsoftware.cron4j.Scheduler;
 import lombok.Getter;
 import lombok.Setter;
@@ -80,7 +80,7 @@ public class Nexus extends JavaPlugin {
 			try {
 				return clazz.getConstructor().newInstance();
 			} catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException ex) {
-				Nexus.getInstance().getLogger().log(Level.FINE, "Failed to create singleton of " + clazz.getName() + ", falling back to Objenesis", ex);
+				Nexus.log(Level.FINE, "Failed to create singleton of " + clazz.getName() + ", falling back to Objenesis", ex);
 				try {
 					return new ObjenesisStd().newInstance(clazz);
 				} catch (Throwable t) {
@@ -131,15 +131,35 @@ public class Nexus extends JavaPlugin {
 	}
 
 	public static void log(String message) {
-		getInstance().getLogger().info(ChatColor.stripColor(message));
+		log(Level.INFO, message);
+	}
+
+	public static void log(String message, Throwable ex) {
+		log(Level.INFO, message, ex);
 	}
 
 	public static void warn(String message) {
-		getInstance().getLogger().warning(ChatColor.stripColor(message));
+		log(Level.WARNING, message);
+	}
+
+	public static void warn(String message, Throwable ex) {
+		log(Level.WARNING, message, ex);
 	}
 
 	public static void severe(String message) {
-		getInstance().getLogger().severe(ChatColor.stripColor(message));
+		log(Level.SEVERE, message);
+	}
+
+	public static void severe(String message, Throwable ex) {
+		log(Level.SEVERE, message, ex);
+	}
+
+	public static void log(Level level, String message) {
+		log(level, message, null);
+	}
+
+	public static void log(Level level, String message, Throwable ex) {
+		getInstance().getLogger().log(level, ChatColor.stripColor(message), ex);
 	}
 
 	@Getter
@@ -294,8 +314,8 @@ public class Nexus extends JavaPlugin {
 	private void databases() {
 //		new Timer(" MySQL", LWCProtectionService::new);
 		new Timer(" MongoDB", () -> {
-			Tasks.wait(5, () -> MongoService.loadServices("gg.projecteden.nexus.models"));
 			new HomeService();
+			Tasks.wait(5, () -> MongoService.loadServices("gg.projecteden.nexus.models"));
 		});
 	}
 

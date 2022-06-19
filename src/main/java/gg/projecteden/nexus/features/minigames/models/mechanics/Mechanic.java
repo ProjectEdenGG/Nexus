@@ -1,5 +1,8 @@
 package gg.projecteden.nexus.features.minigames.models.mechanics;
 
+import gg.projecteden.api.common.utils.ReflectionUtils;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.api.interfaces.Named;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.Minigames;
@@ -30,9 +33,6 @@ import gg.projecteden.nexus.utils.Tasks.Countdown;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
-import gg.projecteden.api.common.utils.ReflectionUtils;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import me.lucko.helper.scoreboard.ScoreboardTeam.NameTagVisibility;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
@@ -481,7 +481,7 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 
 	// Reflection utils
 
-	public @NotNull final List<Class<? extends Mechanic>> superclassesOf() {
+	public @NotNull final List<Class<? extends Mechanic>> getSuperclasses() {
 		return ReflectionUtils.superclassesOf(this.getClass());
 	}
 

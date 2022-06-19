@@ -45,7 +45,7 @@ public @interface Category {
 		}
 
 		public ItemBuilder getDisplayItem() {
-			return new ItemBuilder(material).customModelData(modelId).name(camelCase(name()));
+			return new ItemBuilder(material).modelId(modelId).name(camelCase(name()));
 		}
 
 		public List<Package> getPackages() {

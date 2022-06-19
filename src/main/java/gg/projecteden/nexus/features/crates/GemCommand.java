@@ -9,7 +9,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
+import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -117,7 +117,7 @@ public class GemCommand extends CustomCommand implements Listener {
 		if (isNullOrAir(item)) return false;
 		if (!item.getType().equals(Material.EMERALD)) return false;
 		if (item.getEnchantments().isEmpty()) return false;
-		return CustomModelData.of(item) == 1;
+		return ModelId.of(item) == 1;
 	}
 
 	public static ItemStack makeGem(Enchantment enchantment, int level) {

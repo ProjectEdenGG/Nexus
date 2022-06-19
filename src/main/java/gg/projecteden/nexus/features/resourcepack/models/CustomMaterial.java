@@ -89,8 +89,8 @@ public enum CustomMaterial {
 	MINIGOLF_BALL(Material.SNOWBALL, 901),
 
 	PRIDE21_TROPHY(Material.GOLD_INGOT, 1),
-	PRIDE_FLAG_ACE(Material.PAPER, 8000),
-	PRIDE_BUNTING_ACE(Material.PAPER, 8050),
+	PRIDE_FLAG_BASE(Material.PAPER, 8000),
+	PRIDE_BUNTING_BASE(Material.PAPER, 8050),
 
 	BEARFAIR21_MINIGOLF(Material.GOLD_INGOT, 2),
 	BEARFAIR21_CAKE(Material.GOLD_INGOT, 5),
@@ -290,7 +290,7 @@ public enum CustomMaterial {
 
 		for (CustomMaterial customMaterial : values())
 			if (customMaterial.getMaterial() == item.material())
-				if (customMaterial.getModelId() == item.customModelData())
+				if (customMaterial.getModelId() == item.modelId())
 					return customMaterial;
 
 		return null;

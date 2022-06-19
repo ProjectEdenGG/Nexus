@@ -19,7 +19,7 @@ public enum MiniGolfColor {
 	RAINBOW(911, ColorType.WHITE);
 
 	@Getter
-	private final int customModelData;
+	private final int modelId;
 	@Getter
 	private final ColorType colorType;
 }

@@ -54,7 +54,7 @@ public enum Trophy {
 
 	@NonNull
 	private final Material material;
-	private int customModelData;
+	private int modelId;
 
 	Trophy(CustomMaterial material) {
 		this(material.getMaterial(), material.getModelId());
@@ -66,7 +66,7 @@ public enum Trophy {
 	}
 
 	public ItemBuilder getItem() {
-		return new ItemBuilder(material).name(toString()).customModelData(customModelData).untradeable();
+		return new ItemBuilder(material).name(toString()).modelId(modelId).untradeable();
 	}
 
 	public String getEvent() {

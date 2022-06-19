@@ -172,7 +172,7 @@ public enum FishingLoot {
 			result.name(this.getCustomName());
 
 		if (this.getModelId() != 0)
-			result.customModelData(this.getModelId());
+			result.modelId(this.getModelId());
 
 		if (material.equals(Material.ENCHANTED_BOOK)) {
 			if (this.equals(UNBREAKING))

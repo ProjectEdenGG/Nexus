@@ -463,5 +463,3 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	}
 
 }
-
-

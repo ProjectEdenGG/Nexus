@@ -13,7 +13,7 @@ import gg.projecteden.nexus.features.recipes.functionals.windchimes.Windchimes.W
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.ambience.AmbienceConfig.Ambience.AmbienceType;
-import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
+import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
@@ -141,14 +141,14 @@ public class AmbienceConfig implements PlayerOwnedObject {
 
 			private final AmbienceLocationType type;
 			private final Material material;
-			private final Set<Integer> customModelDatas;
+			private final Set<Integer> modelIds;
 
 			abstract public void play(Location location);
 
 			public boolean equals(ItemStack itemStack) {
 				if (itemStack.getType() != material)
 					return false;
-				if (!customModelDatas.contains(CustomModelData.of(itemStack)))
+				if (!modelIds.contains(ModelId.of(itemStack)))
 					return false;
 
 				return true;

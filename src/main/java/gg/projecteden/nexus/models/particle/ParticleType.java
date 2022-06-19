@@ -549,7 +549,7 @@ public enum ParticleType {
 	}
 
 	public ItemBuilder getDisplayItem() {
-		return new ItemBuilder(material).customModelData(modelId).itemFlags(ItemFlag.HIDE_ATTRIBUTES).name("&3" + getDisplayName());
+		return new ItemBuilder(material).modelId(modelId).itemFlags(ItemFlag.HIDE_ATTRIBUTES).name("&3" + getDisplayName());
 	}
 
 	public static ParticleType[] getShapes() {

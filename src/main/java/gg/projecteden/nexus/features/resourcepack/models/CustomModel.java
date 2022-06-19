@@ -3,12 +3,12 @@ package gg.projecteden.nexus.features.resourcepack.models;
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
-import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelMaterial;
-import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelMaterial.Override3;
+import gg.projecteden.nexus.features.resourcepack.models.files.ResourcePackOverriddenMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.files.ResourcePackOverriddenMaterial.ModelOverride;
 import gg.projecteden.nexus.models.custommodels.CustomModelConfig;
 import gg.projecteden.nexus.models.custommodels.CustomModelConfigService;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
+import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -27,7 +27,7 @@ import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 @AllArgsConstructor
 public class CustomModel implements Comparable<CustomModel> {
 	private CustomModelFolder folder;
-	private Override3 override;
+	private ModelOverride override;
 	private Material material;
 	private int data;
 	private CustomModelMeta meta;
@@ -43,11 +43,11 @@ public class CustomModel implements Comparable<CustomModel> {
 	@Getter
 	private static final String customSubdirectory = modelsSubdirectory + "projecteden";
 
-	public CustomModel(@NonNull CustomModelFolder folder, @NonNull CustomModelMaterial.Override3 override, @NonNull Material material) {
+	public CustomModel(@NonNull CustomModelFolder folder, @NonNull ResourcePackOverriddenMaterial.ModelOverride override, @NonNull Material material) {
 		this.folder = folder;
 		this.override = override;
 		this.material = material;
-		this.data = override.getPredicate().getCustomModelData();
+		this.data = override.getPredicate().getModelId();
 		this.meta = override.getMeta();
 		this.fileName = override.getFileName();
 	}
@@ -60,7 +60,7 @@ public class CustomModel implements Comparable<CustomModel> {
 	}
 
 	public static CustomModel convert(ItemStack item) {
-		return convert(item.getType(), CustomModelData.of(item));
+		return convert(item.getType(), ModelId.of(item));
 	}
 
 	public static CustomModel convert(Material material, int data) {
@@ -95,7 +95,7 @@ public class CustomModel implements Comparable<CustomModel> {
 		if (isNullOrAir(item))
 			return null;
 
-		return of(item.getType(), CustomModelData.of(item));
+		return of(item.getType(), ModelId.of(item));
 	}
 
 	public static CustomModel of(String path) {
@@ -126,7 +126,7 @@ public class CustomModel implements Comparable<CustomModel> {
 
 	public ItemStack getItem() {
 		final ItemBuilder builder = new ItemBuilder(material)
-			.customModelData(data)
+			.modelId(data)
 			.name(meta.getName())
 			.lore(meta.getLore());
 

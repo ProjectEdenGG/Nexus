@@ -83,7 +83,7 @@ public class RainbowArmor implements PlayerOwnedObject {
 
 	public ItemStack getHiddenIcon(ArmorSlot slot) {
 		return new ItemBuilder(CustomMaterial.ARMOR_OUTLINE_HELMET)
-			.customModelData(CustomMaterial.ARMOR_OUTLINE_HELMET.getModelId() + slot.ordinal())
+			.modelId(CustomMaterial.ARMOR_OUTLINE_HELMET.getModelId() + slot.ordinal())
 			.name(camelCase(slot))
 			.build();
 	}

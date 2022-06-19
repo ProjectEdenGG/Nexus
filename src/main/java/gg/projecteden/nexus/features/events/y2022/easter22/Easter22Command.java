@@ -102,7 +102,7 @@ public class Easter22Command extends IEventCommand {
 			final int MODEL_ID_START = CustomMaterial.EASTER22_EASTER_EGG.getModelId();
 			final int MODEL_ID_END = MODEL_ID_START + 20;
 			for (int i = MODEL_ID_START; i < MODEL_ID_END; i++) {
-				final ItemStack egg = new ItemBuilder(Material.PAPER).customModelData(i).name("&eEgg #" + (i - MODEL_ID_START + 1)).build();
+				final ItemStack egg = new ItemBuilder(Material.PAPER).modelId(i).name("&eEgg #" + (i - MODEL_ID_START + 1)).build();
 				final ItemStack display = new ItemBuilder(egg).lore("", "&" + (eventUser.getTokens() >= 200 ? "e" : "c") + "200 Event Tokens").build();
 				items.add(ClickableItem.of(display, e -> {
 					if (!eventUser.hasTokens(200)) {

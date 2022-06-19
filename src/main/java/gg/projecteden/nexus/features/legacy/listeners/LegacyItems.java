@@ -4,7 +4,7 @@ import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
+import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.Bukkit;
@@ -76,7 +76,7 @@ public class LegacyItems implements Listener {
 		if (isNullOrAir(item))
 			return item;
 
-		if (CustomModelData.of(item) == 0)
+		if (ModelId.of(item) == 0)
 			return item;
 
 		final CustomModel newModel = CustomModel.convert(item);
@@ -85,7 +85,7 @@ public class LegacyItems implements Listener {
 
 		final var converted = new ItemBuilder(item)
 			.material(newModel.getMaterial())
-			.customModelData(newModel.getData());
+			.modelId(newModel.getData());
 
 		if (converted.material() == Material.SHULKER_BOX)
 			converted

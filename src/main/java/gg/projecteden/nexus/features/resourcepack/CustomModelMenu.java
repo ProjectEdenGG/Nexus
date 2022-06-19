@@ -4,8 +4,8 @@ import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
-import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelMaterial;
-import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelMaterial.Override3;
+import gg.projecteden.nexus.features.resourcepack.models.files.ResourcePackOverriddenMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.files.ResourcePackOverriddenMaterial.ModelOverride;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.NonNull;
@@ -92,8 +92,8 @@ public class CustomModelMenu extends InventoryProvider {
 	private static Set<String> getFolderPaths() {
 		Set<String> paths = new HashSet<>();
 
-		for (CustomModelMaterial group : ResourcePack.getModelGroups())
-			for (Override3 override : group.getOverrides())
+		for (ResourcePackOverriddenMaterial group : ResourcePack.getModelGroups())
+			for (ModelOverride override : group.getOverrides())
 				if (override.getModel().startsWith("projecteden"))
 					paths.add(override.getFolderPath());
 

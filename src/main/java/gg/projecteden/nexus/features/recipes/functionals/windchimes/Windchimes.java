@@ -6,7 +6,7 @@ import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.models.ambience.AmbienceConfig.Ambience.AmbienceType;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
+import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
@@ -65,17 +65,18 @@ public abstract class Windchimes extends FunctionalRecipe {
 				.map(windchimeType -> windchimeType.ordinal() + CUSTOM_MODEL_DATA_START)
 				.collect(toSet());
 		}
-	}
 
-	@Getter
-	public ItemStack item = new ItemBuilder(Material.PAPER)
-		.name(camelCase(getWindchimeType()) + " Windchimes")
-		.customModelData(getWindchimeType().ordinal() + CUSTOM_MODEL_DATA_START)
-		.build();
+		public ItemStack getItem() {
+			return new ItemBuilder(Material.PAPER)
+				.name(camelCase(this) + " Windchimes")
+				.modelId(ordinal() + CUSTOM_MODEL_DATA_START)
+				.build();
+		}
+	}
 
 	@Override
 	public ItemStack getResult() {
-		return item;
+		return getWindchimeType().getItem();
 	}
 
 	abstract WindchimeType getWindchimeType();
@@ -104,7 +105,7 @@ public abstract class Windchimes extends FunctionalRecipe {
 		if (!item.getType().equals(Material.PAPER))
 			return false;
 
-		if (!isBetween(CustomModelData.of(item), CUSTOM_MODEL_DATA_START, CUSTOM_MODEL_DATA_END))
+		if (!isBetween(ModelId.of(item), CUSTOM_MODEL_DATA_START, CUSTOM_MODEL_DATA_END))
 			return false;
 
 		return true;
