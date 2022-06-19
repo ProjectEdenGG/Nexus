@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands;
 
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.mobheads.MobHeadType;
@@ -14,7 +15,6 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.parchment.event.sound.SoundEvent;
 import gg.projecteden.parchment.event.sound.SoundEvent.EntityEmitter;
-import joptsimple.internal.Strings;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -82,7 +82,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 					for (MuteMenuItem item : MuteMenuItem.values()) {
 						if (item.getDefaultVolume() != null)
 							continue;
-						if (!Strings.isNullOrEmpty(item.getPermission()) && !player.hasPermission(item.getPermission()))
+						if (!Nullables.isNullOrEmpty(item.getPermission()) && !player.hasPermission(item.getPermission()))
 							continue;
 
 						boolean muted = user.hasMuted(item);
@@ -117,7 +117,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 					for (MuteMenuItem item : MuteMenuItem.values()) {
 						if (item.getDefaultVolume() == null)
 							continue;
-						if (!Strings.isNullOrEmpty(item.getPermission()) && !player.hasPermission(item.getPermission()))
+						if (!Nullables.isNullOrEmpty(item.getPermission()) && !player.hasPermission(item.getPermission()))
 							continue;
 
 						boolean muted = user.hasMuted(item);

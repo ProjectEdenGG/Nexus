@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.framework.persistence.mysql;
 
 import com.dieselpoint.norm.Database;
-import com.google.common.base.Strings;
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.api.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.Nexus;
@@ -33,7 +33,7 @@ public abstract class MySQLService {
 	public String getTable() {
 		Class<? extends gg.projecteden.api.interfaces.DatabaseObject> objectClass = getPlayerClass();
 		Table annotation = objectClass.getAnnotation(Table.class);
-		if (annotation != null && !Strings.isNullOrEmpty(annotation.name()))
+		if (annotation != null && !Nullables.isNullOrEmpty(annotation.name()))
 			return annotation.name();
 		return objectClass.getSimpleName().toLowerCase();
 	}

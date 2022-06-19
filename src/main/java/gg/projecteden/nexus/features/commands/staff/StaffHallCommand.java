@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.commands.staff;
 
-import com.google.common.base.Strings;
 import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -71,7 +71,7 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 				for (Nerd staff : ranks.get(rank))
 					try {
 						String html = "";
-						if (!Strings.isNullOrEmpty(staff.getPreferredName()))
+						if (!Nullables.isNullOrEmpty(staff.getPreferredName()))
 							html += "<span style=\"font-weight: bold;\">Preferred name:</span> " + staff.getPreferredName() + "<br/>";
 						if (staff.getBirthday() != null)
 							html += "<span style=\"font-weight: bold;\">Birthday:</span> " + shortDateFormat(staff.getBirthday())
@@ -79,7 +79,7 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 						if (staff.getPromotionDate() != null)
 							html += "<span style=\"font-weight: bold;\">Promotion date:</span> " + shortDateFormat(staff.getPromotionDate()) + "<br/>";
 						html += "<br/>";
-						if (!Strings.isNullOrEmpty(staff.getAbout()))
+						if (!Nullables.isNullOrEmpty(staff.getAbout()))
 							html += "<span style=\"font-weight: bold;\">About me:</span> " + staff.getAbout();
 
 						File file = Paths.get("plugins/website/meetthestaff/" + staff.getUuid() + ".html").toFile();

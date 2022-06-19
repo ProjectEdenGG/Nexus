@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
-import com.google.common.base.Strings;
 import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -23,7 +23,7 @@ public class BashCommand extends CustomCommand {
 	@Async
 	void run(String command) {
 		final String output = tryExecute(command);
-		if (Strings.isNullOrEmpty(output))
+		if (Nullables.isNullOrEmpty(output))
 			send(PREFIX + "Command executed successfully");
 		else
 			send(PREFIX + "&7" + output);

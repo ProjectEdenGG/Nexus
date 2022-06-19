@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.models.reminders;
 
-import com.google.common.base.Strings;
+import gg.projecteden.api.common.utils.Nullables;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -16,7 +17,6 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -222,9 +222,9 @@ public class ReminderConfig {
 		@NotNull
 		private JsonBuilder getJson() {
 			JsonBuilder json = new JsonBuilder(PREFIX + text);
-			if (!Strings.isNullOrEmpty(command)) json.command(command);
-			if (!Strings.isNullOrEmpty(suggest)) json.suggest(suggest);
-			if (!Strings.isNullOrEmpty(url)) json.url(url);
+			if (!Nullables.isNullOrEmpty(command)) json.command(command);
+			if (!Nullables.isNullOrEmpty(suggest)) json.suggest(suggest);
+			if (!Nullables.isNullOrEmpty(url)) json.url(url);
 			if (!hover.isEmpty()) json.hover(hover);
 			return json;
 		}

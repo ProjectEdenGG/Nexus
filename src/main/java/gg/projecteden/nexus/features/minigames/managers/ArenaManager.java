@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.minigames.managers;
 
-import com.google.common.base.Strings;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -94,7 +94,7 @@ public class ArenaManager {
 	}
 
 	public static Arena find(String name) {
-		if (!Strings.isNullOrEmpty(name)) {
+		if (!Nullables.isNullOrEmpty(name)) {
 			for (Arena arena : arenas)
 				if (arena.getName().equalsIgnoreCase(name))
 					return arena;

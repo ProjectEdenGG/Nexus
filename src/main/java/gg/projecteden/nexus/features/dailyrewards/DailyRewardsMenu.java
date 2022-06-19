@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.dailyrewards;
 
-import com.google.common.base.Strings;
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.ColorSelectMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
@@ -160,7 +160,7 @@ public class DailyRewardsMenu extends InventoryProvider {
 					PlayerUtils.send(player, PREFIX + "&e" + votePoints + " &3vote points has been added to your balance");
 				}
 
-				if (!Strings.isNullOrEmpty(command))
+				if (!Nullables.isNullOrEmpty(command))
 					PlayerUtils.runCommandAsConsole(command.replaceAll("%player%", player.getName()));
 
 				saveAndReturn(day);
