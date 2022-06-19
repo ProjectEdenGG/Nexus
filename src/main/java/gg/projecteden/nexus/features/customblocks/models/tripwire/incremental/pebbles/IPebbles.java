@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.customblocks.models.tripwire.incremental.pebbles;
 
 import gg.projecteden.nexus.features.customblocks.models.tripwire.incremental.IIncremental;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.NonNull;
 
@@ -16,6 +17,6 @@ public interface IPebbles extends IIncremental {
 	@Override
 	@NonNull
 	default ItemBuilder getItemBuilder() {
-		return new ItemBuilder(itemMaterial).customModelData(21106).name("Pebbles");
+		return new ItemBuilder(CustomMaterial.BLOCKS_ROCKS_PEBBLES).name("Pebbles");
 	}
 }

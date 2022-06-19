@@ -271,6 +271,11 @@ public enum CustomMaterial {
 	INKWELL(Material.PAPER, 6204),
 	WHEEL_SMALL(Material.PAPER, 6206),
 	TRAFFIC_CONE(Material.PAPER, 6211),
+
+	TRIPWIRE_CROSS(Material.PAPER, 21000),
+	BLOCKS_CRATE_APPLE(Material.PAPER, 20051),
+	BLOCKS_ROCKS(Material.PAPER, 21103),
+	BLOCKS_ROCKS_PEBBLES(Material.PAPER, 21106),
 	;
 
 	private final Material material;
