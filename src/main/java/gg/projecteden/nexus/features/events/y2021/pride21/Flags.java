@@ -4,8 +4,8 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.inventory.ItemStack;
 
-import static gg.projecteden.nexus.features.resourcepack.models.CustomMaterial.PRIDE_BUNTING_ACE;
-import static gg.projecteden.nexus.features.resourcepack.models.CustomMaterial.PRIDE_FLAG_ACE;
+import static gg.projecteden.nexus.features.resourcepack.models.CustomMaterial.PRIDE_BUNTING_BASE;
+import static gg.projecteden.nexus.features.resourcepack.models.CustomMaterial.PRIDE_FLAG_BASE;
 
 public enum Flags {
 	ACE,
@@ -39,10 +39,10 @@ public enum Flags {
 	}
 
 	public ItemStack getFlag() {
-		return new ItemBuilder(PRIDE_FLAG_ACE).customModelData(PRIDE_FLAG_ACE.getModelId() + ordinal()).name("&e" + this +" Flag").build();
+		return new ItemBuilder(PRIDE_FLAG_BASE).modelId(PRIDE_FLAG_BASE.getModelId() + ordinal()).name("&e" + this +" Flag").build();
 	}
 
 	public ItemStack getBunting() {
-		return new ItemBuilder(PRIDE_BUNTING_ACE).customModelData(PRIDE_BUNTING_ACE.getModelId() + ordinal()).name("&e" + this +" Bunting").build();
+		return new ItemBuilder(PRIDE_BUNTING_BASE).modelId(PRIDE_BUNTING_BASE.getModelId() + ordinal()).name("&e" + this +" Bunting").build();
 	}
 }

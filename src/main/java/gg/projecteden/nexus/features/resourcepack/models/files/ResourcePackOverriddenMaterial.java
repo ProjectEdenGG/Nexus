@@ -18,19 +18,19 @@ import java.util.Arrays;
 import java.util.List;
 
 @Data
-public class CustomModelMaterial {
+public class ResourcePackOverriddenMaterial {
 	private Material material;
-	private List<Override3> overrides = new ArrayList<>();
+	private List<ModelOverride> overrides = new ArrayList<>();
 
 	@Data
-	public static class Override3 {
-		private Predicate predicate;
+	public static class ModelOverride {
+		private ModelPredicate predicate;
 		private String model;
 
 		@Data
-		public static class Predicate {
+		public static class ModelPredicate {
 			@SerializedName("custom_model_data")
-			private int customModelData;
+			private int modelId;
 		}
 
 		public String getFolderPath() {
@@ -62,21 +62,21 @@ public class CustomModelMaterial {
 		if (!path.toUri().toString().matches(MODEL_REGEX))
 			return;
 
-		CustomModelMaterial group = of(path);
+		ResourcePackOverriddenMaterial group = of(path);
 		if (group.getMaterial() != null && !group.getOverrides().isEmpty())
 			ResourcePack.getModelGroups().add(group);
 	}
 
-	private static CustomModelMaterial of(Path path) {
-		CustomModelMaterial model = getCustomModelMaterial(path);
+	private static ResourcePackOverriddenMaterial of(Path path) {
+		ResourcePackOverriddenMaterial model = getCustomModelMaterial(path);
 		model.setMaterial(getMaterial(path));
 		return model;
 	}
 
 	@SneakyThrows
-	private static CustomModelMaterial getCustomModelMaterial(Path path) {
+	private static ResourcePackOverriddenMaterial getCustomModelMaterial(Path path) {
 		String json = String.join("", Files.readAllLines(path));
-		return new Gson().fromJson(json, CustomModelMaterial.class);
+		return new Gson().fromJson(json, ResourcePackOverriddenMaterial.class);
 	}
 
 	@Nullable

@@ -47,7 +47,7 @@ public enum Boostable {
 
 	@NotNull
 	public ItemBuilder getDisplayItem() {
-		return new ItemBuilder(material).customModelData(modelId).name(camelCase(name()));
+		return new ItemBuilder(material).modelId(modelId).name(camelCase(name()));
 	}
 
 	public void onActivate() {}

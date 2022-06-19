@@ -13,6 +13,9 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.Rotation;
 import org.bukkit.block.BlockFace;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -39,12 +42,24 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.api.common.utils.ReflectionUtils.methodsAnnotatedWith;
 import static gg.projecteden.api.common.utils.ReflectionUtils.subTypesOf;
 import static gg.projecteden.api.common.utils.ReflectionUtils.superclassesOf;
+import static gg.projecteden.api.common.utils.ReflectionUtils.typesAnnotatedWith;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 public class Utils extends gg.projecteden.api.common.utils.Utils {
+
+	public static void registerSerializables(Package packageObject) {
+		registerSerializables(packageObject.getName());
+	}
+
+	public static void registerSerializables(String packageName) {
+		typesAnnotatedWith(SerializableAs.class, packageName).forEach(clazz -> {
+			String alias = clazz.getAnnotation(SerializableAs.class).value();
+			ConfigurationSerialization.registerClass((Class<? extends ConfigurationSerializable>) clazz, alias);
+		});
+	}
 
 	public static void registerListeners(Package packageObject) {
 		registerListeners(packageObject.getName());

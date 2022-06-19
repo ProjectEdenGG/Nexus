@@ -66,7 +66,6 @@ public class WitherChallenge extends Feature implements Listener {
 		return new Location(Bukkit.getWorld("events"), x, y, z, yaw, pitch);
 	}
 
-	@Getter
 	public static final ItemStack WITHER_FRAGMENT = new ItemBuilder(CustomMaterial.WITHER_FRAGMENT)
 		.name("&eWither Fragment")
 		.lore("&7Can be used to craft", "&7Wither Skeleton Skulls")

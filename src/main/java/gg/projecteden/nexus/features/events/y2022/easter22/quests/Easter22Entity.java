@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.events.y2022.easter22.quests;
 import gg.projecteden.nexus.features.events.y2022.easter22.Easter22;
 import gg.projecteden.nexus.features.quests.interactable.Inanimate;
 import gg.projecteden.nexus.features.quests.interactable.InteractableEntity;
-import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
+import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
@@ -14,8 +14,8 @@ import org.bukkit.inventory.ItemStack;
 import java.util.UUID;
 import java.util.function.Predicate;
 
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Getter
 @AllArgsConstructor
@@ -38,7 +38,7 @@ public enum Easter22Entity implements InteractableEntity {
 		if (item.getType() != Material.PAPER)
 			return false;
 
-		final int modelId = CustomModelData.of(item);
+		final int modelId = ModelId.of(item);
 		return modelId >= 2001 && modelId <= 2020;
 	}),
 	;

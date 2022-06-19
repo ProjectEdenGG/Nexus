@@ -27,7 +27,7 @@ public class MultiModelStructure {
 	@RequiredArgsConstructor
 	public static class Model {
 		private final Map<BlockFace, Integer> modifiers;
-		private final int customModelData;
+		private final int modelId;
 		private BlockFace direction;
 
 		private ArmorStand armorStand;
@@ -47,7 +47,7 @@ public class MultiModelStructure {
 		public void spawn(Location location) {
 			armorStand = ArmorStandEditorCommand.summon(modify(location.clone()), armorStand -> {
 				armorStand.setVisible(false);
-				armorStand.setItem(EquipmentSlot.HEAD, new ItemBuilder(Material.PAPER).customModelData(customModelData).build());
+				armorStand.setItem(EquipmentSlot.HEAD, new ItemBuilder(Material.PAPER).modelId(modelId).build());
 			});
 		}
 
@@ -62,8 +62,8 @@ public class MultiModelStructure {
 		return this;
 	}
 
-	public MultiModelStructure add(Map<BlockFace, Integer> modifier, Integer customModelData) {
-		models.add(new Model(modifier, customModelData));
+	public MultiModelStructure add(Map<BlockFace, Integer> modifier, Integer modelId) {
+		models.add(new Model(modifier, modelId));
 		return this;
 	}
 

@@ -4,7 +4,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
+import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
@@ -36,12 +36,12 @@ public abstract class Birdhouse extends FunctionalRecipe {
 		private final Material roof, hole, siding;
 
 		public static BirdhouseType of(ItemStack item) {
-			return of(CustomModelData.of(item));
+			return of(ModelId.of(item));
 		}
 
-		public static BirdhouseType of(int customModelData) {
+		public static BirdhouseType of(int modelId) {
 			for (BirdhouseType type : values())
-				if (type.getModels().contains(customModelData))
+				if (type.getModels().contains(modelId))
 					return type;
 			return null;
 		}
@@ -57,7 +57,7 @@ public abstract class Birdhouse extends FunctionalRecipe {
 		public ItemBuilder getDisplayItem() {
 			return new ItemBuilder(BIRDHOUSE_FOREST_HORIZONTAL)
 				.name(camelCase(this) + " Birdhouse")
-				.customModelData(baseModel());
+				.modelId(baseModel());
 		}
 
 		public static int getBaseModelId() {
@@ -84,19 +84,11 @@ public abstract class Birdhouse extends FunctionalRecipe {
 		HANGING,
 	}
 
-	@Getter
-	public ItemStack item = getBirdhouseType().getDisplayItem().build();
-
 	abstract BirdhouseType getBirdhouseType();
 
 	@Override
-	public String getPermission() {
-		return null;
-	}
-
-	@Override
 	public ItemStack getResult() {
-		return item;
+		return getBirdhouseType().getDisplayItem().build();
 	}
 
 	@Override

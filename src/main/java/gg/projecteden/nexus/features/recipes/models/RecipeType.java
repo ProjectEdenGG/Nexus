@@ -38,7 +38,7 @@ public enum RecipeType {
 	;
 
 	private final Material material;
-	private final int customModelData;
+	private final int modelId;
 	private final boolean folder;
 
 	RecipeType() {
@@ -62,7 +62,7 @@ public enum RecipeType {
 	}
 
 	public ItemStack getItem() {
-		return new ItemBuilder(material).customModelData(customModelData).name("&e" + camelCase(this)).build();
+		return new ItemBuilder(material).modelId(modelId).name("&e" + camelCase(this)).build();
 	}
 
 	public List<NexusRecipe> getRecipes() {

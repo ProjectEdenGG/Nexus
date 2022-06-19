@@ -229,7 +229,7 @@ public enum EventStoreItem {
 
 	private final int price;
 	private final Material material;
-	private int customModelData;
+	private int modelId;
 
 	EventStoreItem(int price, CustomMaterial material) {
 		this(price, material.getMaterial(), material.getModelId());
@@ -241,7 +241,7 @@ public enum EventStoreItem {
 
 	@NotNull
 	public ItemBuilder getRawDisplayItem() {
-		return new ItemBuilder(material).customModelData(customModelData);
+		return new ItemBuilder(material).modelId(modelId);
 	}
 
 	public ItemBuilder getDisplayItem() {

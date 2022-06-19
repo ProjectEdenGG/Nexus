@@ -6,7 +6,6 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -21,6 +20,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -35,11 +35,16 @@ public class CandyCaneCannon implements Listener {
 	}
 
 	public static boolean isCannon(ItemStack item) {
-		return CustomMaterial.of(item) == CustomMaterial.PUGMAS21_CANDY_CANE_CANNON;
+		return CustomMaterial.of(item) == getCustomMaterial();
+	}
+
+	@NotNull
+	private static CustomMaterial getCustomMaterial() {
+		return CustomMaterial.PUGMAS21_CANDY_CANE_CANNON;
 	}
 
 	public static ItemBuilder getItem() {
-		return new ItemBuilder(CustomMaterial.PUGMAS21_CANDY_CANE_CANNON).name("&cCandy Cane Cannon");
+		return new ItemBuilder(getCustomMaterial()).name("&cCandy Cane Cannon");
 	}
 
 	@EventHandler
@@ -91,15 +96,8 @@ public class CandyCaneCannon implements Listener {
 			if (isNullOrAir(item))
 				return null;
 
-			if (item.getType() != CustomMaterial.PUGMAS21_CANDY_CANE_RED.getMaterial())
-				return null;
-
-			return of(CustomModelData.of(item));
-		}
-
-		public static CandyCane of(int customModelData) {
 			for (CandyCane candyCane : values())
-				if (candyCane.getMaterial().getModelId() == customModelData)
+				if (CustomMaterial.of(item) == candyCane.getMaterial())
 					return candyCane;
 
 			return null;

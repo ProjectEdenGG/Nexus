@@ -303,9 +303,9 @@ public class ItemBuilderCommand extends CustomCommand {
 		item.unset(setting);
 	}
 
-	@Path("customModelData <id>")
-	void customModelData(int id) {
-		item.customModelData(id);
+	@Path("modelId <id>")
+	void modelId(int id) {
+		item.modelId(id);
 	}
 
 	@Path("soulbound")

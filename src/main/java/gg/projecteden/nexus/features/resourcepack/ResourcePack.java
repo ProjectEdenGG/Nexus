@@ -9,8 +9,8 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateStartEvent;
 import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
-import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.files.FontFile;
+import gg.projecteden.nexus.features.resourcepack.models.files.ResourcePackOverriddenMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.files.SoundsFile;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Feature;
@@ -18,7 +18,7 @@ import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
+import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Tasks;
@@ -54,7 +54,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static gg.projecteden.nexus.features.resourcepack.models.files.CustomModelMaterial.addCustomModelMaterial;
+import static gg.projecteden.nexus.features.resourcepack.models.files.ResourcePackOverriddenMaterial.addCustomModelMaterial;
 
 @NoArgsConstructor
 public class ResourcePack extends Feature implements Listener {
@@ -73,7 +73,7 @@ public class ResourcePack extends Feature implements Listener {
 	private static FileSystem zipFile;
 
 	@Getter
-	private static List<CustomModelMaterial> modelGroups;
+	private static List<ResourcePackOverriddenMaterial> modelGroups;
 	@Getter
 	private static List<CustomModelFolder> folders;
 	@Getter
@@ -186,7 +186,7 @@ public class ResourcePack extends Feature implements Listener {
 	}
 
 	public static boolean isCustomItem(@Nullable ItemStack item) {
-		return item != null && !MaterialTag.ALL_AIR.isTagged(item.getType()) && CustomModelData.of(item) > 0;
+		return item != null && !MaterialTag.ALL_AIR.isTagged(item.getType()) && ModelId.of(item) > 0;
 	}
 
 	public static boolean isEnabledFor(Player player) {
@@ -258,7 +258,7 @@ public class ResourcePack extends Feature implements Listener {
 				return new ItemBuilder(Material.ARROW).amount(MathUtils.clamp(number, 1, 64));
 			else {
 				return new ItemBuilder(BASE_MODEL)
-					.customModelData(MODEL_ID_START + number)
+					.modelId(MODEL_ID_START + number)
 					.dyeColor(color)
 					.itemFlags(ItemFlag.HIDE_ATTRIBUTES);
 			}
@@ -273,15 +273,15 @@ public class ResourcePack extends Feature implements Listener {
 		YELLOW(ColorType.YELLOW),
 		LIME(ColorType.LIGHT_GREEN),
 		GREEN(ColorType.GREEN),
-		DARK_AQUA(ColorType.CYAN),
-		AQUA(ColorType.LIGHT_BLUE),
+		CYAN(ColorType.CYAN),
+		LIGHT_BLUE(ColorType.LIGHT_BLUE),
 		BLUE(ColorType.BLUE),
 		PURPLE(ColorType.PURPLE),
 		MAGENTA(ColorType.MAGENTA),
 		PINK(ColorType.PINK),
 		BROWN(ColorType.BROWN),
 		BLACK(ColorType.BLACK),
-		DARK_GRAY(ColorType.GRAY),
+		GRAY(ColorType.GRAY),
 		LIGHT_GRAY(ColorType.LIGHT_GRAY),
 		WHITE(ColorType.WHITE),
 		;

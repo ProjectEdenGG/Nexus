@@ -66,7 +66,7 @@ public class MechanicsMenu extends InventoryProvider {
 
 		customMenus:
 		for (Class<? extends InventoryProvider> menu : subTypesOf(InventoryProvider.class, ICustomMechanicMenu.class.getPackageName())) {
-			for (Class<? extends Mechanic> superclass : arena.getMechanic().superclassesOf()) {
+			for (Class<? extends Mechanic> superclass : arena.getMechanic().getSuperclasses()) {
 				if (menu.getAnnotation(CustomMechanicSettings.class) != null) {
 					List<Class<? extends Mechanic>> classes = Arrays.asList(menu.getAnnotation(CustomMechanicSettings.class).value());
 					if (classes.contains(superclass)) {

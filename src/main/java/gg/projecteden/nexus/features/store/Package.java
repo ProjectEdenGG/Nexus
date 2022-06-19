@@ -841,7 +841,7 @@ public enum Package {
 			}
 		}
 
-		return new ItemBuilder(material).customModelData(modelId).name(camelCase(name()));
+		return new ItemBuilder(material).modelId(modelId).name(camelCase(name()));
 	}
 
 	@Nullable

@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.menus;
 
-import com.google.common.base.Strings;
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import lombok.Getter;
@@ -26,9 +26,9 @@ public abstract class BookBuilder<T extends BookBuilder<?>> {
 		this.meta = (BookMeta) book.getItemMeta();
 
 		if (book.getType() == Material.WRITTEN_BOOK) {
-			if (Strings.isNullOrEmpty(meta.getTitle()))
+			if (Nullables.isNullOrEmpty(meta.getTitle()))
 				this.meta.setTitle("Book Menu");
-			if (Strings.isNullOrEmpty(meta.getAuthor()))
+			if (Nullables.isNullOrEmpty(meta.getAuthor()))
 				this.meta.setAuthor("Server");
 		}
 	}

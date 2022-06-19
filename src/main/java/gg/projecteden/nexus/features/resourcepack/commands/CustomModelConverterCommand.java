@@ -11,7 +11,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.custommodels.CustomModelConfigService;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
+import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -69,7 +69,7 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 				continue;
 
 			itemFrame.setItem(new ItemBuilder(Material.LEATHER_HORSE_ARMOR)
-				.customModelData(size.getNewId())
+				.modelId(size.getNewId())
 				.dyeColor(ColorType.hexToBukkit("#F4C57A"))
 				.build());
 			++converted;
@@ -92,12 +92,12 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 		private final int newId;
 
 		public static TableSize ofOld(ItemStack item) {
-			return ofOld(CustomModelData.of(item));
+			return ofOld(ModelId.of(item));
 		}
 
-		public static TableSize ofOld(int customModelData) {
+		public static TableSize ofOld(int modelId) {
 			for (TableSize size : values())
-				if (customModelData == size.getOldId())
+				if (modelId == size.getOldId())
 					return size;
 
 			return null;
@@ -122,7 +122,7 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 			final BalloonColor color = BalloonColor.ofOld(item);
 
 			itemFrame.setItem(new ItemBuilder(Material.LEATHER_HORSE_ARMOR)
-				.customModelData(size.getNewId())
+				.modelId(size.getNewId())
 				.dyeColor(color.getColor())
 				.build());
 			++converted;
@@ -144,12 +144,12 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 		private final int newId;
 
 		public static BalloonSize ofOld(ItemStack item) {
-			return ofOld(CustomModelData.of(item));
+			return ofOld(ModelId.of(item));
 		}
 
-		public static BalloonSize ofOld(int customModelData) {
+		public static BalloonSize ofOld(int modelId) {
 			for (BalloonSize size : values())
-				if (customModelData >= size.oldMin && customModelData <= size.oldMax)
+				if (modelId >= size.oldMin && modelId <= size.oldMax)
 					return size;
 
 			return null;
@@ -182,11 +182,11 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 		}
 
 		public static BalloonColor ofOld(ItemStack item) {
-			return ofOld(CustomModelData.of(item));
+			return ofOld(ModelId.of(item));
 		}
 
-		public static BalloonColor ofOld(int customModelData) {
-			return BalloonColor.values()[(customModelData - 2) % 14];
+		public static BalloonColor ofOld(int modelId) {
+			return BalloonColor.values()[(modelId - 2) % 14];
 		}
 	}
 
@@ -202,8 +202,8 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 			final PotionSize size = PotionSize.ofOld(item);
 			if (size != null) {
 				itemFrame.setItem(new ItemBuilder(Material.LEATHER_HORSE_ARMOR)
-					.customModelData(size.getNewId())
-					.dyeColor(size.getLeatherColor(CustomModelData.of(item)))
+					.modelId(size.getNewId())
+					.dyeColor(size.getLeatherColor(ModelId.of(item)))
 					.build());
 				++converted;
 			}
@@ -211,7 +211,7 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 			final PotionGroup group = PotionGroup.ofOld(item);
 			if (group != null) {
 				itemFrame.setItem(new ItemBuilder(Material.LEATHER_HORSE_ARMOR)
-					.customModelData(group.getNewId())
+					.modelId(group.getNewId())
 					.dyeColor(group.getLeatherColor())
 					.build());
 				++converted;
@@ -249,12 +249,12 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 		private final List<String> colors;
 
 		public static PotionSize ofOld(ItemStack item) {
-			return ofOld(CustomModelData.of(item));
+			return ofOld(ModelId.of(item));
 		}
 
-		public static PotionSize ofOld(int customModelData) {
+		public static PotionSize ofOld(int modelId) {
 			for (PotionSize size : values())
-				if (customModelData >= size.oldMin && customModelData <= size.oldMax)
+				if (modelId >= size.oldMin && modelId <= size.oldMax)
 					return size;
 
 			return null;
@@ -285,12 +285,12 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 		private final String hexColor = "ffffff";
 
 		public static PotionGroup ofOld(ItemStack item) {
-			return ofOld(CustomModelData.of(item));
+			return ofOld(ModelId.of(item));
 		}
 
-		public static PotionGroup ofOld(int customModelData) {
+		public static PotionGroup ofOld(int modelId) {
 			for (PotionGroup size : values())
-				if (customModelData == size.oldId)
+				if (modelId == size.oldId)
 					return size;
 
 			return null;

@@ -39,11 +39,7 @@ import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
-import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
@@ -57,7 +53,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.api.common.utils.ReflectionUtils.subTypesOf;
-import static gg.projecteden.api.common.utils.ReflectionUtils.typesAnnotatedWith;
 
 public class Minigames extends Feature {
 	public static final String PREFIX = StringUtils.getPrefix("Minigames");
@@ -70,11 +65,11 @@ public class Minigames extends Feature {
 
 	@Override
 	public void onStart() {
-		registerSerializables();
+		Utils.registerSerializables(getPath());
 		registerMatchDatas();
 		Tasks.async(() -> {
 			ArenaManager.read();
-			registerListeners();
+			Utils.registerListeners(getPath());
 
 			new ActionBar();
 			new Parkour();
@@ -175,20 +170,8 @@ public class Minigames extends Feature {
 
 	// Registration
 
-	private String getPath() {
-		return this.getClass().getPackage().getName();
-	}
-
-	private void registerListeners() {
-		for (Class<? extends Listener> clazz : subTypesOf(Listener.class, getPath() + ".listeners"))
-			Utils.tryRegisterListener(clazz);
-	}
-
-	private void registerSerializables() {
-		typesAnnotatedWith(SerializableAs.class, getPath()).forEach(clazz -> {
-			String alias = clazz.getAnnotation(SerializableAs.class).value();
-			ConfigurationSerialization.registerClass((Class<? extends ConfigurationSerializable>) clazz, alias);
-		});
+	private Package getPath() {
+		return this.getClass().getPackage();
 	}
 
 	@Getter
@@ -204,7 +187,7 @@ public class Minigames extends Feature {
 					continue;
 
 				for (MechanicType mechanicType : MechanicType.values())
-					for (Class<? extends Mechanic> superclass : mechanicType.get().superclassesOf())
+					for (Class<? extends Mechanic> superclass : mechanicType.get().getSuperclasses())
 						for (Class<? extends Mechanic> applicableMechanic : matchDataType.getAnnotation(MatchDataFor.class).value())
 							if (applicableMechanic.equals(superclass))
 								try {

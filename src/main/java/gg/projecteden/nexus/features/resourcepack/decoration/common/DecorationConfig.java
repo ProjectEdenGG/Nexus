@@ -55,7 +55,7 @@ public class DecorationConfig {
 	}
 
 	public ItemStack getItem() {
-		ItemBuilder decor = new ItemBuilder(material).customModelData(modelId).name(name).lore(lore);
+		ItemBuilder decor = new ItemBuilder(material).modelId(modelId).name(name).lore(lore);
 
 		if (this instanceof Colorable colorable && colorable.isColorable())
 			decor.dyeColor(colorable.getType().getColor());

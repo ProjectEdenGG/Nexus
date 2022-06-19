@@ -64,49 +64,49 @@ public class CrateEditMenu {
 				contents.set(0, 2, ClickableItem.of(new ItemBuilder(Material.ANVIL).name("&eWeight")
 					.lore("&3Current Value: &e" + editing.getWeight()).build(), e -> {
 						save(player.getOpenInventory().getTopInventory());
-					new AnvilGUI.Builder()
-						.text("" + editing.getWeight())
-						.onComplete((player1, text) -> {
-							try {
-								double d = Double.parseDouble(text);
-								editing.setWeight(d);
-								editing.update();
-							} catch (NumberFormatException ex) {
-								PlayerUtils.send(player1, Crates.PREFIX + "Weight must be a number value");
-							}
-							new CrateEditProvider(filter, editing).open(player);
-							return AnvilGUI.Response.close();
-						})
-						.onClose($ -> new CrateEditProvider(filter, editing).open(player))
-						.plugin(Nexus.getInstance())
-						.open(player);
-				}));
+						new AnvilGUI.Builder()
+							.text("" + editing.getWeight())
+							.onComplete((player1, text) -> {
+								try {
+									double d = Double.parseDouble(text);
+									editing.setWeight(d);
+									editing.update();
+								} catch (NumberFormatException ex) {
+									PlayerUtils.send(player1, Crates.PREFIX + "Weight must be a number value");
+								}
+								new CrateEditProvider(filter, editing).open(player);
+								return AnvilGUI.Response.close();
+							})
+							.onClose($ -> new CrateEditProvider(filter, editing).open(player))
+							.plugin(Nexus.getInstance())
+							.open(player);
+					}));
 
 				// CrateType Item
 				contents.set(0, 3, ClickableItem.of(new ItemBuilder(Material.PAPER).name("&eCrate Type")
 					.lore("&3" + StringUtils.camelCase(editing.getType().name())).build(), e -> {
-					save(player.getOpenInventory().getTopInventory());
-					editing.setType(EnumUtils.nextWithLoop(CrateType.class, filter.ordinal()));
-					editing.update();
-					new CrateEditProvider(filter, editing).open(player);
-				}));
+						save(player.getOpenInventory().getTopInventory());
+						editing.setType(EnumUtils.nextWithLoop(CrateType.class, filter.ordinal()));
+						editing.update();
+						new CrateEditProvider(filter, editing).open(player);
+					}));
 
 				// Title Item
 				contents.set(0, 4, ClickableItem.of(new ItemBuilder(Material.WRITABLE_BOOK).name("&eDisplay Name")
 					.lore("&3" + editing.getTitle()).build(), e -> {
-					save(player.getOpenInventory().getTopInventory());
-					new AnvilGUI.Builder()
-						.text(editing.getTitle())
-						.onComplete(((player1, text) -> {
-							editing.setTitle(text);
-							editing.update();
-							new CrateEditProvider(filter, editing).open(player);
-							return AnvilGUI.Response.text(text);
-						}))
-						.onClose(player1 -> new CrateEditProvider(filter, editing).open(player))
-						.plugin(Nexus.getInstance())
-						.open(player);
-				}));
+						save(player.getOpenInventory().getTopInventory());
+						new AnvilGUI.Builder()
+							.text(editing.getTitle())
+							.onComplete(((player1, text) -> {
+								editing.setTitle(text);
+								editing.update();
+								new CrateEditProvider(filter, editing).open(player);
+								return AnvilGUI.Response.text(text);
+							}))
+							.onClose(player1 -> new CrateEditProvider(filter, editing).open(player))
+							.plugin(Nexus.getInstance())
+							.open(player);
+					}));
 
 				// Display Item
 				ItemStack displayItem = editing.getDisplayItemWithNull();
@@ -133,11 +133,11 @@ public class CrateEditMenu {
 				// Toggle Active Item
 				contents.set(0, 6, ClickableItem.of(new ItemBuilder(editing.isActive() ? Material.ENDER_CHEST : Material.CHEST)
 					.name("&eToggle Active").lore("&3" + editing.isActive()).build(), e -> {
-					save(player.getOpenInventory().getTopInventory());
-					editing.setActive(!editing.isActive());
-					editing.update();
-					new CrateEditProvider(filter, editing).open(player);
-				}));
+						save(player.getOpenInventory().getTopInventory());
+						editing.setActive(!editing.isActive());
+						editing.update();
+						new CrateEditProvider(filter, editing).open(player);
+					}));
 
 				int i = 1;
 				int j = 0;

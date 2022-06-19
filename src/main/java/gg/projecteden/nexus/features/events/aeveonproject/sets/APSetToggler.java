@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.events.aeveonproject.sets;
 
-import com.google.common.base.Strings;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.utils.Tasks;
 
 import static gg.projecteden.nexus.features.events.aeveonproject.AeveonProject.worldguard;
 
@@ -18,7 +18,7 @@ public class APSetToggler {
 				APSet set = setType.get();
 				String region = set.getRegion();
 
-				if (!Strings.isNullOrEmpty(region)) {
+				if (!Nullables.isNullOrEmpty(region)) {
 					Tasks.sync(() -> {
 						int players = worldguard().getPlayersInRegion(region).size();
 

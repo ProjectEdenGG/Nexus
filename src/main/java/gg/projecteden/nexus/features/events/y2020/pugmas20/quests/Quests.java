@@ -12,7 +12,6 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -24,7 +23,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.api.common.utils.ReflectionUtils.subTypesOf;
 
 public class Quests {
 	public static final String fullInvError_obtain = Pugmas20.PREFIX + "&cYour inventory is too full to get this!";
@@ -32,7 +30,7 @@ public class Quests {
 	public static final String leftoverItems = Pugmas20.PREFIX + "Giving leftover items...";
 
 	public Quests() {
-		subTypesOf(Listener.class, getClass().getPackageName()).forEach(Utils::tryRegisterListener);
+		Utils.registerListeners(getClass().getPackage());
 	}
 
 	@Getter

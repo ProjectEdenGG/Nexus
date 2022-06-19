@@ -93,8 +93,8 @@ public class Halloween21 implements Listener {
 			}
 
 			final String bits = String.valueOf(entity.getUniqueId().getLeastSignificantBits());
-			final int customModelData = Pumpkin.MIN + Integer.parseInt(right(bits, 2));
-			return Pumpkin.itemOf(customModelData);
+			final int modelId = Pumpkin.MIN + Integer.parseInt(right(bits, 2));
+			return Pumpkin.itemOf(modelId);
 		}
 
 		public static PumpkinableEntity of(LivingEntity entity) {

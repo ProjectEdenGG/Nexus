@@ -27,7 +27,7 @@ public class DyeableCustomModelHat implements TeamHatPerk {
 
 	@Override
 	public @NotNull ItemStack getColorItem(ColorType color) {
-		return new ItemBuilder(material).customModelData(modelId).dyeColor(color).name(name).build();
+		return new ItemBuilder(material).modelId(modelId).dyeColor(color).name(name).build();
 	}
 
 	public static @NotNull DyeableCustomModelHat createPirateHat(@NotNull String name, int modelId) {

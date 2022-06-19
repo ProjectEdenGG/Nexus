@@ -135,7 +135,7 @@ public class MiniGolf {
 
 			List<ItemStack> golfBalls = Arrays.stream(MiniGolfColor.values())
 				.filter(Objects::nonNull)
-				.map(miniGolfColor -> (MiniGolf.getGolfBall().clone().customModelData(miniGolfColor.getCustomModelData()).build()))
+				.map(miniGolfColor -> (MiniGolf.getGolfBall().clone().modelId(miniGolfColor.getModelId()).build()))
 				.toList();
 
 			if (armorStand != null && !isNullOrEmpty(golfBalls)) {

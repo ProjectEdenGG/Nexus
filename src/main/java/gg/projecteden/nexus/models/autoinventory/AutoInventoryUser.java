@@ -162,7 +162,7 @@ public class AutoInventoryUser implements PlayerOwnedObject {
 
 		@NonNull
 		private final Material material;
-		private int customModelData;
+		private int modelId;
 
 		@SneakyThrows
 		public static AutoSortInventoryType of(@Nullable Inventory inventory, String title) {

@@ -85,14 +85,14 @@ public class InvisibleArmor implements PlayerOwnedObject {
 
 	public ItemStack getHiddenIcon(ArmorSlot slot) {
 		return new ItemBuilder(CustomMaterial.ARMOR_OUTLINE_HELMET)
-			.customModelData(CustomMaterial.ARMOR_OUTLINE_HELMET.getModelId() + slot.ordinal())
+			.modelId(CustomMaterial.ARMOR_OUTLINE_HELMET.getModelId() + slot.ordinal())
 			.name(camelCase(slot))
 			.build();
 	}
 
 	public ItemStack getShownIcon(ArmorSlot slot) {
 		return new ItemBuilder(CustomMaterial.ARMOR_FILLED_HELMET)
-			.customModelData(CustomMaterial.ARMOR_FILLED_HELMET.getModelId() + slot.ordinal())
+			.modelId(CustomMaterial.ARMOR_FILLED_HELMET.getModelId() + slot.ordinal())
 			.name(camelCase(slot))
 			.build();
 	}

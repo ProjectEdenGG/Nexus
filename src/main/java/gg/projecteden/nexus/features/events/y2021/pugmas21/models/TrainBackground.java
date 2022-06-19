@@ -1,14 +1,14 @@
 package gg.projecteden.nexus.features.events.y2021.pugmas21.models;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
+import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -124,8 +124,8 @@ public class TrainBackground {
 		} else {
 			to = loopLocation.clone().add(_forwards);
 
-			if (randomModels.contains(CustomModelData.of(headItem)))
-				headItem = new ItemBuilder(headItem).customModelData(RandomUtils.randomElement(randomModels)).build();
+			if (randomModels.contains(ModelId.of(headItem)))
+				headItem = new ItemBuilder(headItem).modelId(RandomUtils.randomElement(randomModels)).build();
 
 			armorStand.setItem(EquipmentSlot.HEAD, new ItemStack(Material.AIR));
 			armorStand.teleport(to);
