@@ -24,7 +24,7 @@ import gg.projecteden.nexus.models.customblock.NoteBlockData;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
+import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -539,7 +539,7 @@ public class CustomBlockListener implements Listener {
 
 			// Check paper
 		else if (material.equals(ICustomBlock.itemMaterial)) {
-			int modelId = CustomModelData.of(itemInHand);
+			int modelId = ModelId.of(itemInHand);
 			if (!CustomBlock.modelIdMap.containsKey(modelId)) {
 				debug(" isPlacingBlock: unknown modelId: " + modelId);
 				return false;

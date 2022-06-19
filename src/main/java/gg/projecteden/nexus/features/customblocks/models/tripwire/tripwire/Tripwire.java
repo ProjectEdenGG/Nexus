@@ -37,6 +37,6 @@ public class Tripwire implements IDirectionalTripwire {
 
 	@Override
 	public @NonNull ItemBuilder getItemBuilder() {
-		return new ItemBuilder(itemMaterial).customModelData(getModelId()).name("String");
+		return new ItemBuilder(itemMaterial).modelId(getModelId()).name("String");
 	}
 }

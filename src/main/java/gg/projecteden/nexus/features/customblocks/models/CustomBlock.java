@@ -162,7 +162,7 @@ import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
+import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -448,7 +448,7 @@ public enum CustomBlock implements Keyed {
 	}
 
 	public static @Nullable CustomBlock fromItemstack(ItemStack itemInHand) {
-		int modelId = CustomModelData.of(itemInHand);
+		int modelId = ModelId.of(itemInHand);
 		if (itemInHand.getType().equals(Material.NOTE_BLOCK) && modelId == 0)
 			return CustomBlock.NOTE_BLOCK;
 

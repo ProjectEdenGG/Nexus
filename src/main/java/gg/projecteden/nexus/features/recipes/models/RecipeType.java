@@ -34,7 +34,7 @@ public enum RecipeType {
 	ARMOR(Material.DIAMOND_CHESTPLATE, true),
 	FURNACE(Material.FURNACE),
 	STONECUTTER(Material.STONECUTTER),
-	CUSTOM_BLOCKS(CustomMaterial.CUSTOM_BLOCKS_ICON, true),
+	CUSTOM_BLOCKS(CustomMaterial.BLOCKS_CRATE_APPLE, true),
 	;
 
 	private final Material material;
