@@ -64,7 +64,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Environments(Env.TEST)
 @Permission(Group.STAFF)
 public class LegacyCommand extends _WarpSubCommand {
-	private final LegacyVaultUserService legacyVaultService = new LegacyVaultUserService();
 	private final LegacyHomeService legacyHomeService = new LegacyHomeService();
 	private LegacyHomeOwner legacyHomeOwner;
 
