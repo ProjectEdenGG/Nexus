@@ -5,7 +5,7 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
-import gg.projecteden.nexus.features.resourcepack.ResourcePack;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -82,13 +82,10 @@ public class RainbowArmor implements PlayerOwnedObject {
 	}
 
 	public ItemStack getHiddenIcon(ArmorSlot slot) {
-		final ItemBuilder item;
-		if (ResourcePack.isEnabledFor(this))
-			item = new ItemBuilder(Material.ARMOR_STAND).customModelData(slot.ordinal() + 1);
-		else
-			item = new ItemBuilder(Material.RED_CONCRETE);
-
-		return item.name(camelCase(slot)).build();
+		return new ItemBuilder(CustomMaterial.ARMOR_OUTLINE_HELMET)
+			.customModelData(CustomMaterial.ARMOR_OUTLINE_HELMET.getModelId() + slot.ordinal())
+			.name(camelCase(slot))
+			.build();
 	}
 
 	public ItemStack getShownIcon(ArmorSlot slot) {

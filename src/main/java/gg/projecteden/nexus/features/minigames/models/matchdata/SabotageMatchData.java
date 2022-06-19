@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.minigames.models.matchdata;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.features.menus.sabotage.AbstractVoteScreen;
 import gg.projecteden.nexus.features.menus.sabotage.ResultsScreen;
@@ -23,6 +24,8 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.TaskPart;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.Tasks;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.taskpartdata.SabotageTaskPartData;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import gg.projecteden.nexus.models.chat.PublicChannel;
 import gg.projecteden.nexus.utils.BossBarBuilder;
@@ -36,7 +39,6 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundUtils;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.api.common.utils.TimeUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -48,7 +50,6 @@ import net.kyori.adventure.title.Title;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -539,7 +540,7 @@ public class SabotageMatchData extends MatchData {
 			if (tasks.contains(armorStandTask.part)) {
 				enable.add(entity);
 				ItemStack item = armorStandTask.part.getInteractionItem();
-				if (item.getType() == Material.BARRIER)
+				if (Objects.equals(CustomModel.of(EXCLAMATION_ITEM.get()), CustomModel.of(item)))
 					match.getTasks().wait(1, () -> PacketUtils.sendFakeItem(entity, minigamer, EXCLAMATION_ITEM.get(), EnumWrappers.ItemSlot.HEAD));
 			} else {
 				disable.add(entity);
@@ -551,7 +552,7 @@ public class SabotageMatchData extends MatchData {
 	}
 
 	private static final Duration fade = Duration.ofSeconds(1).dividedBy(2);
-	private static final Supplier<ItemStack> EXCLAMATION_ITEM = () -> new ItemBuilder(Material.BARRIER).customModelData(2).build();
+	private static final Supplier<ItemStack> EXCLAMATION_ITEM = () -> new ItemBuilder(CustomMaterial.EXCLAMATION).build();
 
 	public void setRoundStarted() {
 		setRoundStarted(LocalDateTime.now());

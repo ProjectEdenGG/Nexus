@@ -1,8 +1,10 @@
 package gg.projecteden.nexus.features.wither;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.HealCommand;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.warps.Warps;
 import gg.projecteden.nexus.features.wither.fights.CorruptedFight;
 import gg.projecteden.nexus.features.wither.fights.EasyFight;
@@ -21,7 +23,6 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.md_5.bungee.api.ChatColor;
@@ -66,10 +67,9 @@ public class WitherChallenge extends Feature implements Listener {
 	}
 
 	@Getter
-	private static final ItemStack witherFragment = new ItemBuilder(Material.GHAST_TEAR)
+	public static final ItemStack WITHER_FRAGMENT = new ItemBuilder(CustomMaterial.WITHER_FRAGMENT)
 		.name("&eWither Fragment")
 		.lore("&7Can be used to craft", "&7Wither Skeleton Skulls")
-		.customModelData(1)
 		.build();
 
 	public static void reset() {

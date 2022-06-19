@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.recipes.functionals.windchimes;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.models.ambience.AmbienceConfig.Ambience.AmbienceType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
@@ -31,11 +32,14 @@ import java.util.Set;
 
 import static gg.projecteden.nexus.features.recipes.CustomRecipes.choiceOf;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
+import static gg.projecteden.nexus.utils.MathUtils.isBetween;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static java.util.stream.Collectors.toSet;
 
 public abstract class Windchimes extends FunctionalRecipe {
+	private static final int CUSTOM_MODEL_DATA_START = CustomMaterial.WINDCHIMES_IRON.getModelId();
+	private static final int CUSTOM_MODEL_DATA_END = CUSTOM_MODEL_DATA_START + 19;
 
 	@Getter
 	@AllArgsConstructor
@@ -58,15 +62,15 @@ public abstract class Windchimes extends FunctionalRecipe {
 
 		public static Set<Integer> ids() {
 			return Arrays.stream(WindchimeType.values())
-				.map(windchimeType -> windchimeType.ordinal() + 1)
+				.map(windchimeType -> windchimeType.ordinal() + CUSTOM_MODEL_DATA_START)
 				.collect(toSet());
 		}
 	}
 
 	@Getter
-	public ItemStack item = new ItemBuilder(Material.AMETHYST_SHARD)
+	public ItemStack item = new ItemBuilder(Material.PAPER)
 		.name(camelCase(getWindchimeType()) + " Windchimes")
-		.customModelData(getWindchimeType().ordinal() + 1)
+		.customModelData(getWindchimeType().ordinal() + CUSTOM_MODEL_DATA_START)
 		.build();
 
 	@Override
@@ -97,10 +101,10 @@ public abstract class Windchimes extends FunctionalRecipe {
 		if (isNullOrAir(item))
 			return false;
 
-		if (!item.getType().equals(Material.AMETHYST_SHARD))
+		if (!item.getType().equals(Material.PAPER))
 			return false;
 
-		if (CustomModelData.of(item) > WindchimeType.values().length)
+		if (!isBetween(CustomModelData.of(item), CUSTOM_MODEL_DATA_START, CUSTOM_MODEL_DATA_END))
 			return false;
 
 		return true;

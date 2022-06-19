@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.customenchants.enchants.SoulboundEnchant;
 import gg.projecteden.nexus.features.itemtags.Condition;
 import gg.projecteden.nexus.features.itemtags.Rarity;
 import gg.projecteden.nexus.features.recipes.functionals.Backpacks;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.IsColored;
@@ -86,8 +87,16 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		this(new ItemStack(material));
 	}
 
+	public ItemBuilder(CustomMaterial material) {
+		this(material, 1);
+	}
+
 	public ItemBuilder(Material material, int amount) {
 		this(new ItemStack(material, amount));
+	}
+
+	public ItemBuilder(CustomMaterial material, int amount) {
+		this(new ItemBuilder(material.getMaterial()).customModelData(material.getModelId()).amount(amount));
 	}
 
 	public ItemBuilder(ItemBuilder itemBuilder) {
