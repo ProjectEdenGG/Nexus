@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.recipes.models;
 
 import gg.projecteden.nexus.features.recipes.CustomRecipes;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,7 @@ import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 @Getter
 @RequiredArgsConstructor
 public enum RecipeType {
-	MAIN(null),
+	MAIN,
 	SLABS(Material.OAK_SLAB),
 	QUARTZ(Material.QUARTZ),
 	BEDS_BANNERS(Material.CYAN_BED) {
@@ -28,20 +29,36 @@ public enum RecipeType {
 	WOOL(Material.WHITE_WOOL),
 	STONE_BRICK(Material.STONE_BRICKS),
 	MISC(Material.BLUE_ICE),
-	FUNCTIONAL(Material.CHEST, 0, true),
-	DECORATION(Material.AMETHYST_SHARD, 4, true),
-	ARMOR(Material.DIAMOND_CHESTPLATE, 0, true),
+	FUNCTIONAL(Material.CHEST, true),
+	DECORATION(CustomMaterial.WINDCHIMES_AMETHYST, true),
+	ARMOR(Material.DIAMOND_CHESTPLATE, true),
 	FURNACE(Material.FURNACE),
 	STONECUTTER(Material.STONECUTTER),
-	CUSTOM_BLOCKS(Material.PAPER, 20051, true),
+	CUSTOM_BLOCKS(CustomMaterial.CUSTOM_BLOCKS_ICON, true),
 	;
 
 	private final Material material;
 	private final int customModelData;
 	private final boolean folder;
 
+	RecipeType() {
+		this(null, 0, false);
+	}
+
 	RecipeType(Material material) {
-		this(material, 0, false);
+		this(material, false);
+	}
+
+	RecipeType(Material material, boolean folder) {
+		this(material, 0, folder);
+	}
+
+	RecipeType(CustomMaterial material) {
+		this(material.getMaterial(), material.getModelId(), false);
+	}
+
+	RecipeType(CustomMaterial material, boolean folder) {
+		this(material.getMaterial(), material.getModelId(), folder);
 	}
 
 	public ItemStack getItem() {

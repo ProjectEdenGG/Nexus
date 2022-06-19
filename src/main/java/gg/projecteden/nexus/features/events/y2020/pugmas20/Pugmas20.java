@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.events.y2020.pugmas20;
 
 import com.destroystokyo.paper.ParticleBuilder;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.models.AdventChest;
@@ -22,7 +23,6 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import lombok.Setter;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
@@ -73,10 +73,6 @@ public class Pugmas20 implements Listener {
 	@Getter
 	private static final String adventLore = "&ePugmas 2020 Advent Item";
 
-	@Getter
-	private static final Location initialSpawn = location(898.5, 52, 356.5);
-	@Getter
-	private static final Location subsequentSpawn = location(909.5, 52, 368.5);
 	@Getter
 	@Setter
 	private static boolean treeAnimating = false;

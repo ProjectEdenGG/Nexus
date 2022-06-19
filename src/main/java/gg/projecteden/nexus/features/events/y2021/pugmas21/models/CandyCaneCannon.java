@@ -1,6 +1,9 @@
 package gg.projecteden.nexus.features.events.y2021.pugmas21.models;
 
+import gg.projecteden.api.common.utils.RandomUtils;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
@@ -8,9 +11,8 @@ import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
-import gg.projecteden.api.common.utils.RandomUtils;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import org.bukkit.Material;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
@@ -33,11 +35,11 @@ public class CandyCaneCannon implements Listener {
 	}
 
 	public static boolean isCannon(ItemStack item) {
-		return !isNullOrAir(item) && item.getType() == Material.STICK && CustomModelData.of(item) == 49;
+		return CustomMaterial.of(item) == CustomMaterial.PUGMAS21_CANDY_CANE_CANNON;
 	}
 
 	public static ItemBuilder getItem() {
-		return new ItemBuilder(Material.STICK).customModelData(49).name("&cCandy Cane Cannon");
+		return new ItemBuilder(CustomMaterial.PUGMAS21_CANDY_CANE_CANNON).name("&cCandy Cane Cannon");
 	}
 
 	@EventHandler
@@ -71,25 +73,25 @@ public class CandyCaneCannon implements Listener {
 		ItemUtils.subtract(player, candyCaneItem);
 	}
 
+	@Getter
+	@AllArgsConstructor
 	private enum CandyCane {
-		RED,
-		GREEN,
-		YELLOW,
+		RED(CustomMaterial.PUGMAS21_CANDY_CANE_RED),
+		GREEN(CustomMaterial.PUGMAS21_CANDY_CANE_GREEN),
+		YELLOW(CustomMaterial.PUGMAS21_CANDY_CANE_YELLOW),
 		;
 
-		private int customModelData() {
-			return ordinal() + 100;
-		}
+		private final CustomMaterial material;
 
 		private ItemStack item() {
-			return new ItemBuilder(Material.COOKIE).customModelData(customModelData()).build();
+			return new ItemBuilder(material).build();
 		}
 
 		public static CandyCane of(ItemStack item) {
 			if (isNullOrAir(item))
 				return null;
 
-			if (item.getType() != Material.COOKIE)
+			if (item.getType() != CustomMaterial.PUGMAS21_CANDY_CANE_RED.getMaterial())
 				return null;
 
 			return of(CustomModelData.of(item));
@@ -97,7 +99,7 @@ public class CandyCaneCannon implements Listener {
 
 		public static CandyCane of(int customModelData) {
 			for (CandyCane candyCane : values())
-				if (candyCane.customModelData() == customModelData)
+				if (candyCane.getMaterial().getModelId() == customModelData)
 					return candyCane;
 
 			return null;

@@ -6,7 +6,7 @@ import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpda
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.Tasks;
-import org.apache.commons.lang.RandomStringUtils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -28,6 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 
 public class LegacyItems implements Listener {
 
@@ -43,7 +44,7 @@ public class LegacyItems implements Listener {
 	@EventHandler
 	public void on(InventoryOpenEvent event) {
 		if (event.getInventory().getHolder() != null)
-			convert(event.getInventory());
+			convert(event.getPlayer().getWorld(), event.getInventory());
 	}
 
 	@EventHandler
@@ -51,27 +52,27 @@ public class LegacyItems implements Listener {
 		convert(event.getEntity());
 	}
 
-	public static List<ItemStack> convert(List<ItemStack> contents) {
-		return contents.stream().map(LegacyItems::convert).toList();
+	public static List<ItemStack> convert(World world, List<ItemStack> contents) {
+		return contents.stream().map(item -> convert(world, item)).toList();
 	}
 
-	private static void convert(Inventory inventory) {
+	private static void convert(World world, Inventory inventory) {
 		for (var slot = new AtomicInteger(); slot.get() < inventory.getContents().length; slot.getAndIncrement())
-			convert(inventory.getItem(slot.get()), converted -> inventory.setItem(slot.get(), converted));
+			convert(world, inventory.getItem(slot.get()), converted -> inventory.setItem(slot.get(), converted));
 	}
 
-	private static void convert(ItemStack item, Consumer<ItemStack> setter) {
+	private static void convert(World world, ItemStack item, Consumer<ItemStack> setter) {
 		if (isNullOrAir(item))
 			return;
 
-		ItemStack converted = convert(item);
+		ItemStack converted = convert(world, item);
 		if (item.equals(converted))
 			return;
 
 		setter.accept(converted);
 	}
 
-	public static ItemStack convert(ItemStack item) {
+	public static ItemStack convert(World world, ItemStack item) {
 		if (isNullOrAir(item))
 			return item;
 
@@ -89,34 +90,37 @@ public class LegacyItems implements Listener {
 		if (converted.material() == Material.SHULKER_BOX)
 			converted
 				.shulkerBox(new ItemBuilder(item).shulkerBoxContents())
-				.nbt(nbtItem -> {
-					nbtItem.removeKey("BackpackId");
-					nbtItem.setString(LegacyShulkerBoxes.NBT_KEY, RandomStringUtils.randomAlphabetic(10));
+				.nbt(nbt -> {
+					if (WorldGroup.of(world) == WorldGroup.LEGACY) {
+						nbt.removeKey("BackpackId");
+						nbt.setString(LegacyShulkerBoxes.NBT_KEY, randomAlphabetic(10));
+					}
 				});
 
 		return converted.build();
 	}
 
-	private static void convert(EntityEquipment equipment) {
+	private static void convert(World world, EntityEquipment equipment) {
 		if (equipment == null)
 			return;
 
 		for (EquipmentSlot slot : EquipmentSlot.values())
-			convert(equipment.getItem(slot), converted -> equipment.setItem(slot, converted, true));
+			convert(world, equipment.getItem(slot), converted -> equipment.setItem(slot, converted, true));
 	}
 
 	private static void convert(Entity entity) {
+		final World world = entity.getWorld();
 		if (entity instanceof LivingEntity livingEntity)
-			convert(livingEntity.getEquipment());
+			convert(world, livingEntity.getEquipment());
 
 		if (entity instanceof InventoryHolder holder)
-			convert(holder.getInventory());
+			convert(world, holder.getInventory());
 
 		if (entity instanceof ItemFrame itemFrame)
-			convert(itemFrame.getItem(), itemFrame::setItem);
+			convert(world, itemFrame.getItem(), itemFrame::setItem);
 
 		if (entity instanceof Item droppedItem)
-			convert(droppedItem.getItemStack(), droppedItem::setItemStack);
+			convert(world, droppedItem.getItemStack(), droppedItem::setItemStack);
 	}
 
 }

@@ -97,7 +97,7 @@ public class SerializationUtils {
 
 		/** Bukkit ConfigurationSerializable */
 
-		public static List<Map<String, Object>> serialize(List<ConfigurationSerializable> values) {
+		public static List<Map<String, Object>> serialize(List<? extends ConfigurationSerializable> values) {
 			return new ArrayList<>() {{
 				for (ConfigurationSerializable value : values)
 					add(serialize(value));

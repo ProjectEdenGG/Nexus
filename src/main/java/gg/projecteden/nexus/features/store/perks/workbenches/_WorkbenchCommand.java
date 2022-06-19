@@ -43,18 +43,18 @@ public abstract class _WorkbenchCommand extends CustomCommand {
 		DYE_STATION(CustomBenchType.DYE_STATION, DyeStation::open);
 
 		private final Material material;
-		private final int customModelData;
+		private final int modelId;
 		private final Consumer<Player> open;
 
 		Workbench(Material material, Consumer<Player> open) {
 			this.material = material;
-			this.customModelData = 0;
+			this.modelId = 0;
 			this.open = open;
 		}
 
 		Workbench(CustomBenchType customBenchType, Consumer<Player> open) {
-			this.material = customBenchType.getMaterial();
-			this.customModelData = customBenchType.getModelData();
+			this.material = customBenchType.getMaterial().getMaterial();
+			this.modelId = customBenchType.getMaterial().getModelId();
 			this.open = open;
 		}
 

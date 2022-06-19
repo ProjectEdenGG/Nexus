@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.models.trophy;
 
 import gg.projecteden.api.interfaces.HasUniqueId;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Utils;
@@ -34,14 +35,14 @@ public enum Trophy {
 //	EASTER_2021_COMPLETION(Material.STONE),
 
 	//	PRIDE_2021_PARTICIPATION(Material.STONE),
-	PRIDE_2021(Material.GOLD_INGOT, 1),
+	PRIDE_2021(CustomMaterial.PRIDE21_TROPHY),
 
 	//	BEAR_FAIR_2021_PARTICIPATION(Material.STONE),
-	BEAR_FAIR_2021(Material.CAKE, 1),
-	BEAR_FAIR_2021_MINIGAME_NIGHT_QUEST(Material.CYAN_STAINED_GLASS_PANE, 101),
-	BEAR_FAIR_2021_MINIGOLF(Material.GOLD_INGOT, 2),
+	BEAR_FAIR_2021(CustomMaterial.BEARFAIR21_CAKE),
+	BEAR_FAIR_2021_MINIGAME_NIGHT_QUEST(CustomMaterial.COSTUMES_GG_HAT),
+	BEAR_FAIR_2021_MINIGOLF(CustomMaterial.BEARFAIR21_MINIGOLF),
 
-	BIRTHDAY_PARTY_2021(Material.CAKE, 3) {
+	BIRTHDAY_PARTY_2021(Material.PAPER, 6070) {
 		@Override
 		public String toString() {
 			return "Griffin & Wakka Birthday Party 2021 Trophy";
@@ -54,6 +55,10 @@ public enum Trophy {
 	@NonNull
 	private final Material material;
 	private int customModelData;
+
+	Trophy(CustomMaterial material) {
+		this(material.getMaterial(), material.getModelId());
+	}
 
 	@Override
 	public String toString() {

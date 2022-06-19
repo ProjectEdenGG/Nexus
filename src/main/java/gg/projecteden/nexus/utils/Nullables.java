@@ -41,6 +41,16 @@ public class Nullables extends gg.projecteden.api.common.utils.Nullables {
 
 	/**
 	 * Tests if an item is null or {@link MaterialTag#ALL_AIR air}
+	 * @param itemBuilder item
+	 * @return if item is null or air
+	 */
+	@Contract("null -> true; !null -> _")
+	public static boolean isNullOrAir(ItemBuilder itemBuilder) {
+		return itemBuilder == null || itemBuilder.material().isEmpty();
+	}
+
+	/**
+	 * Tests if an item is null or {@link MaterialTag#ALL_AIR air}
 	 * @param material item
 	 * @return if item is null or air
 	 */

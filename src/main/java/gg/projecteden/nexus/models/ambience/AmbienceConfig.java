@@ -4,6 +4,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.PostLoad;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.ambience.effects.birds.BirdSound;
@@ -16,7 +17,6 @@ import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -119,7 +119,7 @@ public class AmbienceConfig implements PlayerOwnedObject {
 		@Getter
 		@AllArgsConstructor
 		public enum AmbienceType {
-			METAL_WINDCHIMES(AmbienceLocationType.ITEM_FRAME, Material.AMETHYST_SHARD, WindchimeType.ids()) {
+			METAL_WINDCHIMES(AmbienceLocationType.ITEM_FRAME, Material.PAPER, WindchimeType.ids()) {
 				@Override
 				public void play(Location location) {
 					new SoundBuilder("minecraft:custom.ambient.windchimes.metal_" + randomInt(1, 5))
@@ -131,7 +131,7 @@ public class AmbienceConfig implements PlayerOwnedObject {
 						.play();
 				}
 			},
-			BIRDHOUSE(AmbienceLocationType.ITEM_FRAME, Material.OAK_WOOD, BirdhouseType.ids()) {
+			BIRDHOUSE(AmbienceLocationType.ITEM_FRAME, Material.PAPER, BirdhouseType.ids()) {
 				@Override
 				public void play(Location location) {
 					Tasks.wait(TickTime.SECOND.x(randomInt(0, 45)), () -> BirdSound.randomBirdhouse().play(location));

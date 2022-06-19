@@ -1,13 +1,14 @@
 package gg.projecteden.nexus.features.events.y2021.pugmas21.models;
 
+import gg.projecteden.api.common.utils.MathUtils;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.commands.ArmorStandEditorCommand;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.api.common.utils.MathUtils;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Builder;
 import lombok.Getter;
 import org.bukkit.Location;
@@ -217,7 +218,7 @@ public class Train {
 	}
 
 	public void spawnArmorStands() {
-		for (int i = 1; i <= TOTAL_MODELS; i++) {
+		for (int i = 0; i < TOTAL_MODELS; i++) {
 			armorStands.add(armorStand(i, location));
 			location.add(backwards.getDirection().multiply(SEPARATOR));
 		}
@@ -226,7 +227,9 @@ public class Train {
 	public static ArmorStand armorStand(int model, Location location) {
 		return ArmorStandEditorCommand.summon(location, armorStand -> {
 			armorStand.setVisible(false);
-			armorStand.setItem(EquipmentSlot.HEAD, new ItemBuilder(Material.MINECART).customModelData(model).build());
+			armorStand.setItem(EquipmentSlot.HEAD, new ItemBuilder(CustomMaterial.PUGMAS21_TRAIN_1)
+				.customModelData(CustomMaterial.PUGMAS21_TRAIN_1.getModelId() + model)
+				.build());
 		});
 	}
 

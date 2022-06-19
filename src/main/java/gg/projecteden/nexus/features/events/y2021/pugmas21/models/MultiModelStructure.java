@@ -47,7 +47,7 @@ public class MultiModelStructure {
 		public void spawn(Location location) {
 			armorStand = ArmorStandEditorCommand.summon(modify(location.clone()), armorStand -> {
 				armorStand.setVisible(false);
-				armorStand.setItem(EquipmentSlot.HEAD, new ItemBuilder(Material.MINECART).customModelData(customModelData).build());
+				armorStand.setItem(EquipmentSlot.HEAD, new ItemBuilder(Material.PAPER).customModelData(customModelData).build());
 			});
 		}
 

@@ -1,10 +1,10 @@
 package gg.projecteden.nexus.models.boost;
 
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.shops.Market;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
@@ -33,16 +33,23 @@ public enum Boostable {
 	KILLER_MONEY(Material.GOLD_INGOT),
 	MOB_HEADS(Material.ZOMBIE_HEAD),
 	MYSTERY_CRATE_KEY(Material.TRIPWIRE_HOOK),
-	HALLOWEEN_CANDY(Material.COOKIE, 110),
+	HALLOWEEN_CANDY(CustomMaterial.FOOD_CANDY_CORN),
 	;
 
-	@NonNull
-	public final Material material;
-	private int customModelData;
+	private final Material material;
+	private final int modelId;
+
+	Boostable(Material material) {
+		this(material, 0);
+	}
+
+	Boostable(CustomMaterial customMaterial) {
+		this(customMaterial.getMaterial(), customMaterial.getModelId());
+	}
 
 	@NotNull
 	public ItemBuilder getDisplayItem() {
-		return new ItemBuilder(material).customModelData(customModelData).name(camelCase(name()));
+		return new ItemBuilder(material).customModelData(modelId).name(camelCase(name()));
 	}
 
 	public void onActivate() {}

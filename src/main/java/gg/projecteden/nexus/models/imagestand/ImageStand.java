@@ -6,6 +6,7 @@ import dev.morphia.annotations.Id;
 import gg.projecteden.api.interfaces.DatabaseObject;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.particles.effects.LineEffect;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PacketUtils;
@@ -262,17 +263,16 @@ public class ImageStand implements DatabaseObject {
 	@AllArgsConstructor
 	public enum ImageSize {
 		// Height x Width
-		_1x1(Material.PAPER, 1296),
-		_1x2(Material.PAPER, 1297),
-		_3x2(Material.PAPER, 1298),
-		_4x3(Material.PAPER, 1299),
+//		_1x1(),
+//		_1x2(),
+//		_3x2(),
+		_4x3(CustomMaterial.IMAGES_OUTLINE_4x3),
 		;
 
-		private final Material material;
-		private final int customModelData;
+		private final CustomMaterial material;
 
 		public ItemStack getOutlineItem() {
-			return new ItemBuilder(material).customModelData(customModelData).build();
+			return new ItemBuilder(material).build();
 		}
 
 		public BoundingBox getBoundingBox(Location location) {

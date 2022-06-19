@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.store.annotations;
 
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.store.Package;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.AllArgsConstructor;
@@ -36,10 +37,15 @@ public @interface Category {
 
 		@NonNull
 		private final Material material;
-		private int customModelData;
+		private int modelId;
+
+		StoreCategory(CustomMaterial material) {
+			this.material = material.getMaterial();
+			this.modelId = material.getModelId();
+		}
 
 		public ItemBuilder getDisplayItem() {
-			return new ItemBuilder(material).customModelData(customModelData).name(camelCase(name()));
+			return new ItemBuilder(material).customModelData(modelId).name(camelCase(name()));
 		}
 
 		public List<Package> getPackages() {

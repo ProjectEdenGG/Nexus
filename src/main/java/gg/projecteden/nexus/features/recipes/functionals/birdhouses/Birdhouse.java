@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
+import static gg.projecteden.nexus.features.resourcepack.models.CustomMaterial.BIRDHOUSE_FOREST_HORIZONTAL;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 public abstract class Birdhouse extends FunctionalRecipe {
@@ -27,13 +28,12 @@ public abstract class Birdhouse extends FunctionalRecipe {
 	@Getter
 	@AllArgsConstructor
 	public enum BirdhouseType {
-		FOREST(Material.RED_TERRACOTTA, Material.DARK_OAK_PLANKS, Material.BIRCH_PLANKS, Set.of(1, 2, 3)),
-		ENCHANTED(Material.BLUE_TERRACOTTA, Material.DARK_PRISMARINE, Material.CYAN_CONCRETE_POWDER, Set.of(4, 5, 6)),
-		DEPTHS(Material.GREEN_TERRACOTTA, Material.DEEPSLATE_TILES, Material.STONE, Set.of(7, 8, 9)),
+		FOREST(Material.RED_TERRACOTTA, Material.DARK_OAK_PLANKS, Material.BIRCH_PLANKS),
+		ENCHANTED(Material.BLUE_TERRACOTTA, Material.DARK_PRISMARINE, Material.CYAN_CONCRETE_POWDER),
+		DEPTHS(Material.GREEN_TERRACOTTA, Material.DEEPSLATE_TILES, Material.STONE),
 		;
 
 		private final Material roof, hole, siding;
-		private final Set<Integer> models;
 
 		public static BirdhouseType of(ItemStack item) {
 			return of(CustomModelData.of(item));
@@ -46,20 +46,34 @@ public abstract class Birdhouse extends FunctionalRecipe {
 			return null;
 		}
 
+		public Set<Integer> getModels() {
+			return new HashSet<>() {{
+				final int orientations = BirdhouseOrientation.values().length;
+				for (int i = 0; i < orientations; i++)
+					add(ordinal() * orientations + i + getBaseModelId());
+			}};
+		}
+
 		public ItemBuilder getDisplayItem() {
-			return new ItemBuilder(Material.OAK_WOOD)
+			return new ItemBuilder(BIRDHOUSE_FOREST_HORIZONTAL)
 				.name(camelCase(this) + " Birdhouse")
 				.customModelData(baseModel());
 		}
 
+		public static int getBaseModelId() {
+			return BIRDHOUSE_FOREST_HORIZONTAL.getModelId();
+		}
+
 		public int baseModel() {
-			return ordinal() * 3 + 1;
+			final int orientations = BirdhouseOrientation.values().length;
+			return ordinal() * orientations + getBaseModelId();
 		}
 
 		public static Set<Integer> ids() {
 			return new HashSet<>() {{
-				for (int i = 1; i <= BirdhouseType.values().length * BirdhouseOrientation.values().length ; i++)
-					add(i);
+				final int total = BirdhouseType.values().length * BirdhouseOrientation.values().length;
+				for (int i = 0; i < total; i++)
+					add(i + getBaseModelId());
 			}};
 		}
 	}

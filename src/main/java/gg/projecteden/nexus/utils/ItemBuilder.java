@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.customenchants.enchants.SoulboundEnchant;
 import gg.projecteden.nexus.features.itemtags.Condition;
 import gg.projecteden.nexus.features.itemtags.Rarity;
 import gg.projecteden.nexus.features.recipes.functionals.Backpacks;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.IsColored;
@@ -87,8 +88,16 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		this(new ItemStack(material));
 	}
 
+	public ItemBuilder(CustomMaterial material) {
+		this(material, 1);
+	}
+
 	public ItemBuilder(Material material, int amount) {
 		this(new ItemStack(material, amount));
+	}
+
+	public ItemBuilder(CustomMaterial material, int amount) {
+		this(new ItemBuilder(material.getMaterial()).customModelData(material.getModelId()).amount(amount));
 	}
 
 	public ItemBuilder(ItemBuilder itemBuilder) {
@@ -465,19 +474,18 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	public ItemBuilder shulkerBox(ItemBuilder... builders) {
-		for (ItemBuilder builder : builders)
-			shulkerBox(builder.build());
-		return this;
+		return shulkerBox(Arrays.stream(builders).map(ItemBuilder::build).toList());
 	}
 
 	public ItemBuilder shulkerBox(ItemStack... items) {
+		shulkerBox(box -> box.getInventory().setContents(items));
+		return this;
+	}
+
+	public ItemBuilder shulkerBox(Consumer<ShulkerBox> consumer) {
 		BlockStateMeta blockStateMeta = (BlockStateMeta) itemMeta;
 		ShulkerBox box = (ShulkerBox) blockStateMeta.getBlockState();
-		for (ItemStack item : items)
-			if (isNullOrAir(item))
-				box.getInventory().addItem(new ItemStack(Material.AIR));
-			else
-				box.getInventory().addItem(item);
+		consumer.accept(box);
 		blockStateMeta.setBlockState(box);
 		return this;
 	}
@@ -490,6 +498,10 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 
 	public List<@Nullable ItemStack> nonAirShulkerBoxContents() {
 		return shulkerBoxContents().stream().filter(Nullables::isNotNullOrAir).collect(Collectors.toList());
+	}
+
+	public ItemBuilder clearShulkerBox() {
+		return shulkerBox(box -> box.getInventory().clear());
 	}
 
 	// Books

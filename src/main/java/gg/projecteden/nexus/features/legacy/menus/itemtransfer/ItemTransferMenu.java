@@ -27,7 +27,7 @@ public class ItemTransferMenu implements TemporaryMenuListener {
 	public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
 		new LegacyItemTransferUserService().edit(player, user -> {
 			// TODO Banned items list
-			user.getItems(ReviewStatus.PENDING).addAll(LegacyItems.convert(contents));
+			user.getItems(ReviewStatus.PENDING).addAll(LegacyItems.convert(player.getWorld(), contents));
 			user.sendMessage(Legacy.PREFIX + "Successfully stored " + contents.stream().mapToInt(ItemStack::getAmount).sum() + " legacy items for staff review");
 		});
 	}

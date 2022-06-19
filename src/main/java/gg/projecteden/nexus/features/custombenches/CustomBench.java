@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.custombenches;
 
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.AllArgsConstructor;
@@ -31,13 +31,12 @@ public abstract class CustomBench extends Feature implements Listener {
 	@Getter
 	@AllArgsConstructor
 	public enum CustomBenchType {
-		DYE_STATION("Dye Station", Material.CRAFTING_TABLE, 1, Map.of(BlockFace.DOWN, 1), DyeStation::open),
+		DYE_STATION("Dye Station", CustomMaterial.DYE_STATION, Map.of(BlockFace.DOWN, 1), DyeStation::open),
 		;
 
 		private final String name;
-		private final Material material;
-		private final int modelData;
-		Map<BlockFace, Integer> offsets;
+		private final CustomMaterial material;
+		private final Map<BlockFace, Integer> offsets;
 		private final Consumer<Player> interact;
 
 		public void interact(Player player) {
@@ -48,7 +47,6 @@ public abstract class CustomBench extends Feature implements Listener {
 	@Getter
 	public ItemStack item = new ItemBuilder(getBenchType().getMaterial())
 		.name(getBenchType().getName())
-		.customModelData(getBenchType().getModelData())
 		.build();
 
 	abstract CustomBenchType getBenchType();
@@ -57,13 +55,9 @@ public abstract class CustomBench extends Feature implements Listener {
 		if (isNullOrAir(item))
 			return null;
 
-		int modelData = CustomModelData.of(item);
-		Material material = item.getType();
-
-		for (CustomBenchType customBenchType : CustomBenchType.values()) {
-			if (customBenchType.getMaterial().equals(material) && customBenchType.getModelData() == modelData)
+		for (CustomBenchType customBenchType : CustomBenchType.values())
+			if (CustomMaterial.of(item) == customBenchType.getMaterial())
 				return customBenchType;
-		}
 
 		return null;
 	}

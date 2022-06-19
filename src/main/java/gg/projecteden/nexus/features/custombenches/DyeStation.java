@@ -6,19 +6,12 @@ import gg.projecteden.nexus.features.menus.api.ItemClickData;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
-import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.ItemClickData;
-import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
-import gg.projecteden.nexus.features.menus.api.annotations.Uncloseable;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
-import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.features.menus.api.content.SlotPos;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.models.costume.Costume;
 import gg.projecteden.nexus.models.costume.CostumeUser;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -56,19 +49,15 @@ public class DyeStation extends CustomBench {
 	private static final int MAX_USES = 5;
 	private static final String USES_LORE = "&3Uses: &e";
 
-	private static final ItemBuilder MAGIC_DYE = new ItemBuilder(Material.PAPER)
-		.customModelData(DyeType.DYE.getBottleModelData())
+	private static final ItemBuilder MAGIC_DYE = new ItemBuilder(DyeType.DYE.getBottleMaterial())
 		.name(Gradient.of(List.of(ChatColor.RED, ChatColor.YELLOW, ChatColor.AQUA)).apply("Magic Dye"))
 		.lore(USAGE_LORE, USES_LORE + MAX_USES);
 
-	private static final ItemBuilder MAGIC_STAIN = new ItemBuilder(Material.PAPER)
-		.customModelData(DyeType.STAIN.getBottleModelData())
+	private static final ItemBuilder MAGIC_STAIN = new ItemBuilder(DyeType.STAIN.getBottleMaterial())
 		.name(Gradient.of(List.of(ChatColor.of("#e0a175"), ChatColor.of("#5c371d"))).apply("Magic Stain"))
 		.lore(USAGE_LORE, USES_LORE + MAX_USES);
 
-	private static final ItemBuilder DYE_STATION = new ItemBuilder(Material.CRAFTING_TABLE)
-		.customModelData(1)
-		.name("Dye Station");
+	private static final ItemBuilder DYE_STATION = new ItemBuilder(CustomMaterial.DYE_STATION).name("Dye Station");
 
 	public static ItemBuilder getMagicDye() {
 		return MAGIC_DYE.clone();
@@ -98,19 +87,19 @@ public class DyeStation extends CustomBench {
 	@Getter
 	@AllArgsConstructor
 	public enum DyeType {
-		DYE(5, 1),
-		STAIN(6, 2),
+		DYE(CustomMaterial.DYE_STATION_DYE, CustomMaterial.DYE_STATION_BUTTON_DYE),
+		STAIN(CustomMaterial.DYE_STATION_STAIN, CustomMaterial.DYE_STATION_BUTTON_STAIN),
 		;
 
-		private final int bottleModelData;
-		private final int buttonModelData;
+		private final CustomMaterial bottleMaterial;
+		private final CustomMaterial buttonMaterial;
 
 		public ItemBuilder getItem() {
-			return new ItemBuilder(Material.LEATHER_HORSE_ARMOR).customModelData(bottleModelData);
+			return new ItemBuilder(bottleMaterial);
 		}
 
 		public ItemBuilder getButton() {
-			return new ItemBuilder(Material.LEATHER_HORSE_ARMOR).customModelData(buttonModelData);
+			return new ItemBuilder(buttonMaterial);
 		}
 	}
 
@@ -286,9 +275,9 @@ public class DyeStation extends CustomBench {
 
 			Optional<ClickableItem> dyeOptional = contents.get(SLOT_DYE);
 			ItemStack dye = dyeOptional.map(ClickableItem::getItem).orElse(null);
-			if (CustomModelData.of(dye) == DyeType.DYE.getBottleModelData())
+			if (CustomMaterial.of(dye) == DyeType.DYE.getBottleMaterial())
 				data.setDyeType(DyeType.DYE);
-			else if (CustomModelData.of(dye) == DyeType.STAIN.getBottleModelData())
+			else if (CustomMaterial.of(dye) == DyeType.STAIN.getBottleMaterial())
 				data.setDyeType(DyeType.STAIN);
 
 			Optional<ClickableItem> resultOptional = contents.get(SLOT_RESULT);

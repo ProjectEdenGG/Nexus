@@ -95,7 +95,7 @@ public class CustomModel implements Comparable<CustomModel> {
 		if (isNullOrAir(item))
 			return null;
 
-		return of(item.getType(), getModelId(item));
+		return of(item.getType(), CustomModelData.of(item));
 	}
 
 	public static CustomModel of(String path) {
@@ -105,16 +105,13 @@ public class CustomModel implements Comparable<CustomModel> {
 		return ResourcePack.getModels().get(path);
 	}
 
+	public static CustomModel of(CustomMaterial material) {
+		return of(material.getMaterial(), material.getModelId());
+	}
+
 	@NotNull
 	public String getId() {
 		return folder.getDisplayPath() + "/" + fileName;
-	}
-
-	public static Integer getModelId(ItemStack item) {
-		if (isNullOrAir(item))
-			return null;
-
-		return new NBTItem(item).getInteger(NBT_KEY);
 	}
 
 	public boolean equals(ItemStack itemStack) {
@@ -143,6 +140,14 @@ public class CustomModel implements Comparable<CustomModel> {
 		return new ItemBuilder(getItem())
 				.name(isNullOrEmpty(meta.getName()) ? camelCase(fileName) : meta.getName())
 				.build();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		CustomModel that = (CustomModel) o;
+		return data == that.data && material == that.material;
 	}
 
 	@Override

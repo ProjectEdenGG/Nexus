@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.crates;
 
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
@@ -120,12 +121,11 @@ public class GemCommand extends CustomCommand implements Listener {
 	}
 
 	public static ItemStack makeGem(Enchantment enchantment, int level) {
-		return new ItemBuilder(Material.EMERALD)
-				.name("&#0fa8ffGem of " + StringUtils.camelCase(enchantment.getKey().getKey()))
-				.enchant(enchantment, level)
-				.lore(" ", "&fHold this gem and a tool", "&fto apply this enchantment")
-				.customModelData(1)
-				.build();
+		return new ItemBuilder(CustomMaterial.GEM_SAPPHIRE)
+			.name("&#0fa8ffGem of " + StringUtils.camelCase(enchantment.getKey().getKey()))
+			.enchant(enchantment, level)
+			.lore(" ", "&fHold this gem and a tool", "&fto apply this enchantment")
+			.build();
 	}
 
 }

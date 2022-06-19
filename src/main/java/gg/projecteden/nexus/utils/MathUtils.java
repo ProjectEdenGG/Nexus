@@ -60,4 +60,12 @@ public class MathUtils extends gg.projecteden.api.common.utils.MathUtils {
 		return null;
 	}
 
+	public static boolean isBetween(int num, int min, int max) {
+		return num >= min && num <= max;
+	}
+
+	public static boolean isBetween(float num, float min, float max) {
+		return num >= min && num <= max;
+	}
+
 }
