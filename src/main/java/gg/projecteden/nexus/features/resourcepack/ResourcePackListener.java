@@ -2,13 +2,14 @@ package gg.projecteden.nexus.features.resourcepack;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import io.papermc.paper.event.player.PlayerFlowerPotManipulateEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.ArmorStand;
@@ -53,6 +54,10 @@ public class ResourcePackListener implements Listener {
 
 	@EventHandler
 	public void on(BlockPlaceEvent event) {
+		final CustomMaterial customMaterial = CustomMaterial.of(event.getItemInHand());
+		if (customMaterial != null && customMaterial.canBePlaced())
+			return;
+
 		if (isCustomItem(event.getItemInHand()))
 			event.setCancelled(true);
 	}

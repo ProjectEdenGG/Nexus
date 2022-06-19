@@ -12,6 +12,7 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 @AllArgsConstructor
 public enum CustomMaterial {
 	BACKPACK(Material.SHULKER_BOX, 1),
+	INFINITE_WATER_BUCKET(Material.PAPER, 5903),
 
 	ARMOR_OUTLINE_HELMET(Material.PAPER, 1501),
 	ARMOR_OUTLINE_CHESTPLATE(Material.PAPER, 1502),
@@ -298,12 +299,12 @@ public enum CustomMaterial {
 	public CustomModel getCustomModel() {
 		return CustomModel.of(this);
 	}
+
+	public boolean canBePlaced() {
+		return switch (this) {
+			case INFINITE_WATER_BUCKET -> true;
+			default -> false;
+		};
+	}
+
 }
-
-
-
-
-
-
-
-
