@@ -4,9 +4,9 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
 
 public class Pumpkin {
-	private static final Material MATERIAL = Material.STONE_BUTTON;
-	public static final int MIN = 900;
-	public static final int MAX = 919;
+	private static final Material MATERIAL = Material.PAPER;
+	public static final int MIN = 22700;
+	public static final int MAX = 22719;
 
 	public static boolean isOutOfRange(int customModelData) {
 		return customModelData < MIN || customModelData > MAX;

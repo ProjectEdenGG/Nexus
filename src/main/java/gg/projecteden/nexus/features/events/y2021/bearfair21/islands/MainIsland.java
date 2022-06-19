@@ -61,9 +61,9 @@ public class MainIsland implements BearFair21Island {
 	private static final BearFair21UserService userService = new BearFair21UserService();
 	//
 	@Getter
-	private static final ItemBuilder balloon_cyan = new ItemBuilder(CustomMaterial.BALLOON_MEDIUM).color(ColorType.CYAN).undroppable();
+	private static final ItemBuilder balloon_cyan = new ItemBuilder(CustomMaterial.BALLOON_MEDIUM).dyeColor(ColorType.CYAN).undroppable();
 	@Getter
-	private static final ItemBuilder balloon_yellow = new ItemBuilder(CustomMaterial.BALLOON_MEDIUM).color(ColorType.YELLOW).undroppable();
+	private static final ItemBuilder balloon_yellow = new ItemBuilder(CustomMaterial.BALLOON_MEDIUM).dyeColor(ColorType.YELLOW).undroppable();
 	@Getter
 	private static final ItemBuilder cakeItem = new ItemBuilder(CustomMaterial.BEARFAIR21_CAKE).name("Bear Fair Cake").undroppable();
 	@Getter
@@ -71,9 +71,9 @@ public class MainIsland implements BearFair21Island {
 	@Getter
 	private static final Supplier<ItemBuilder> queenLarvae = () -> ItemBuilder.fromHeadId("33827").name("Queen Larva").undroppable();
 	@Getter
-	private static final ItemBuilder replacementSaw = new ItemBuilder(Material.STONECUTTER).name("Replacement Saw").customModelData(2).undroppable();
+	private static final ItemBuilder replacementSaw = new ItemBuilder(CustomMaterial.SAW_FULL).name("Replacement Saw").undroppable();
 	@Getter
-	private static final ItemBuilder invitation = new ItemBuilder(Material.PAPER).name("Anniversary Event Invitation").customModelData(3).undroppable();
+	private static final ItemBuilder invitation = new ItemBuilder(CustomMaterial.ENVELOPE_2).name("Anniversary Event Invitation").undroppable();
 	@Getter
 	private static final List<BearFair21NPC> invitees = Arrays.asList(ARCHITECT, ARTIST, BAKER, BARTENDER, BLACKSMITH, BOTANIST, CARPENTER, COLLECTOR,
 		CURATOR, FISHERMAN1, INVENTOR, PASTRY_CHEF, SORCERER, LUMBERJACK, BEEKEEPER, FISHERMAN2, AERONAUT, ADMIRAL, ORGANIZER, TRADER, JAMES);

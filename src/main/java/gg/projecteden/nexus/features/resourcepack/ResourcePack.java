@@ -4,6 +4,7 @@ import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.MathUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationListener;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateStartEvent;
@@ -249,14 +250,18 @@ public class ResourcePack extends Feature implements Listener {
 			return this;
 		}
 
+		private static final CustomMaterial BASE_MODEL = CustomMaterial.UI_NUMBERS_0;
+		private static final int MODEL_ID_START = BASE_MODEL.getModelId();
+
 		public ItemBuilder get() {
 			if (!hasResourcePack || (player != null && !ResourcePack.isEnabledFor(player)))
 				return new ItemBuilder(Material.ARROW).amount(MathUtils.clamp(number, 1, 64));
-			else
-				return new ItemBuilder(Material.LEATHER_HORSE_ARMOR)
-					.customModelData(2000 + number)
+			else {
+				return new ItemBuilder(BASE_MODEL)
+					.customModelData(MODEL_ID_START + number)
 					.dyeColor(color)
 					.itemFlags(ItemFlag.HIDE_ATTRIBUTES);
+			}
 		}
 	}
 

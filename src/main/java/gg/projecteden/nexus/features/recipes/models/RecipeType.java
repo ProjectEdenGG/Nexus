@@ -29,9 +29,9 @@ public enum RecipeType {
 	WOOL(Material.WHITE_WOOL),
 	STONE_BRICK(Material.STONE_BRICKS),
 	MISC(Material.BLUE_ICE),
-	FUNCTIONAL(Material.CHEST, 0, true),
+	FUNCTIONAL(Material.CHEST, true),
 	DECORATION(CustomMaterial.WINDCHIMES_AMETHYST, true),
-	ARMOR(Material.DIAMOND_CHESTPLATE, 0, true),
+	ARMOR(Material.DIAMOND_CHESTPLATE, true),
 	FURNACE(Material.FURNACE);
 
 	private final Material material;
@@ -43,7 +43,11 @@ public enum RecipeType {
 	}
 
 	RecipeType(Material material) {
-		this(material, 0, false);
+		this(material, false);
+	}
+
+	RecipeType(Material material, boolean folder) {
+		this(material, 0, folder);
 	}
 
 	RecipeType(CustomMaterial material) {

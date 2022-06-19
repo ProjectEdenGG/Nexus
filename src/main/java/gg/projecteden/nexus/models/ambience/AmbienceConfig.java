@@ -131,7 +131,7 @@ public class AmbienceConfig implements PlayerOwnedObject {
 						.play();
 				}
 			},
-			BIRDHOUSE(AmbienceLocationType.ITEM_FRAME, Material.OAK_WOOD, BirdhouseType.ids()) {
+			BIRDHOUSE(AmbienceLocationType.ITEM_FRAME, Material.PAPER, BirdhouseType.ids()) {
 				@Override
 				public void play(Location location) {
 					Tasks.wait(TickTime.SECOND.x(randomInt(0, 45)), () -> BirdSound.randomBirdhouse().play(location));

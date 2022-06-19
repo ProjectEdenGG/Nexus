@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.listeners.events.FakePlayerInteractEvent;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -53,10 +54,8 @@ import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 public class Backpacks extends FunctionalRecipe {
 
 	@Getter
-	public static ItemStack defaultBackpack = new ItemBuilder(Material.SHULKER_BOX)
-		.name("Backpack")
-		.customModelData(1)
-		.build();
+	public static ItemStack defaultBackpack = new ItemBuilder(CustomMaterial.BACKPACK).name("Backpack").build();
+	public static final String NBT_KEY = "BackpackId";
 
 	@Override
 	public ItemStack getResult() {
@@ -79,14 +78,14 @@ public class Backpacks extends FunctionalRecipe {
 		if (isNullOrAir(item))
 			return false;
 
-		return !isNullOrEmpty(new NBTItem(item).getString("BackpackId"));
+		return !isNullOrEmpty(new NBTItem(item).getString(NBT_KEY));
 	}
 
 	public static String getBackpackId(ItemStack item) {
 		if (!isBackpack(item))
 			return null;
 
-		return new NBTItem(item).getString("BackpackId");
+		return new NBTItem(item).getString(NBT_KEY);
 	}
 
 	public void openBackpack(Player player, ItemStack backpack) {
@@ -157,11 +156,11 @@ public class Backpacks extends FunctionalRecipe {
 		if (event.getRecipe() == null)
 			return;
 
-		if (!(event.getView().getPlayer() instanceof Player player))
+		if (!(event.getView().getPlayer() instanceof Player))
 			return;
 
 		final ItemStack result = event.getInventory().getResult();
-		if (!getDefaultBackpack().equals(result))
+		if (!defaultBackpack.equals(result))
 			return;
 
 		final ItemStack backpack = getBackpack(result.clone());
@@ -177,7 +176,7 @@ public class Backpacks extends FunctionalRecipe {
 			backpack = defaultBackpack.clone();
 
 		return new ItemBuilder(backpack)
-			.nbt(nbt -> nbt.setString("BackpackId", randomAlphabetic(10)))
+			.nbt(nbt -> nbt.setString(NBT_KEY, randomAlphabetic(10)))
 			.build();
 	}
 

@@ -105,6 +105,10 @@ public class CustomModel implements Comparable<CustomModel> {
 		return ResourcePack.getModels().get(path);
 	}
 
+	public static CustomModel of(CustomMaterial material) {
+		return of(material.getMaterial(), material.getModelId());
+	}
+
 	@NotNull
 	public String getId() {
 		return folder.getDisplayPath() + "/" + fileName;

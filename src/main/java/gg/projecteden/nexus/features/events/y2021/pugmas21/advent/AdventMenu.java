@@ -1,21 +1,21 @@
 package gg.projecteden.nexus.features.events.y2021.pugmas21.advent;
 
+import gg.projecteden.api.common.utils.EnumUtils.IteratableEnum;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotIterator;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.models.pugmas21.Advent21Config;
 import gg.projecteden.nexus.models.pugmas21.Advent21Config.AdventPresent;
 import gg.projecteden.nexus.models.pugmas21.Pugmas21User;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.api.common.utils.EnumUtils.IteratableEnum;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -114,26 +114,22 @@ public class AdventMenu extends InventoryProvider {
 
 	@AllArgsConstructor
 	public enum Icon {
-		MISSED(Material.TRAPPED_CHEST, 3, "&cMissed"),
-		OPENED(Material.TRAPPED_CHEST, 5, "&aOpened"),
-		AVAILABLE(Material.TRAPPED_CHEST, 4, "&a&oAvailable"),
-		LOCKED(Material.TRAPPED_CHEST, 6, "&7Locked"),
+		MISSED(CustomMaterial.PUGMAS21_PRESENT_OUTLINED, "&cMissed"),
+		OPENED(CustomMaterial.PUGMAS21_PRESENT_OPENED, "&aOpened"),
+		AVAILABLE(CustomMaterial.PUGMAS21_PRESENT_COLORED, "&a&oAvailable"),
+		LOCKED(CustomMaterial.PUGMAS21_PRESENT_LOCKED, "&7Locked"),
 		;
 
-		private final Material material;
-		private final int customModelData;
+		private final CustomMaterial material;
 		private final String status;
 
 		public ItemBuilder getItem(int day) {
 			AdventPresent present = Advent21Config.get().get(day);
 
 			return new ItemBuilder(material)
-				.customModelData(customModelData)
 				.name("&3Day: &e" + present.getDay())
-				.lore(
-					"&3Status: &e" + status,
-					"&3District: &e" + present.getDistrict().getName()
-				);
+				.lore("&3Status: &e" + status)
+				.lore("&3District: &e" + present.getDistrict().getName());
 		}
 	}
 

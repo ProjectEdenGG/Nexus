@@ -1,8 +1,11 @@
 package gg.projecteden.nexus.features.events.y2021.pugmas21.advent;
 
 import com.destroystokyo.paper.ParticleBuilder;
+import gg.projecteden.api.common.utils.RandomUtils;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
 import gg.projecteden.nexus.features.particles.VectorUtils;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.models.coupon.CouponService;
 import gg.projecteden.nexus.models.jukebox.JukeboxSong;
 import gg.projecteden.nexus.models.jukebox.JukeboxUser;
@@ -15,8 +18,6 @@ import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import gg.projecteden.api.common.utils.RandomUtils;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Builder;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -64,7 +65,7 @@ public class AdventAnimation {
 			return;
 		}
 
-		ItemStack chest = new ItemBuilder(Material.TRAPPED_CHEST).customModelData(1).build();
+		ItemStack chest = new ItemBuilder(CustomMaterial.PUGMAS21_PRESENT_ADVENT).build();
 		Item item = spawnItem(location, chest, length1, height1, location.getDirection());
 		int itemTaskId = particleTask(particle1, item);
 
@@ -78,7 +79,7 @@ public class AdventAnimation {
 	}
 
 	public void openTwice() {
-		ItemStack chest = new ItemBuilder(Material.TRAPPED_CHEST).customModelData(1).build();
+		ItemStack chest = new ItemBuilder(CustomMaterial.PUGMAS21_PRESENT_ADVENT).build();
 		Item chestItem = spawnItem(location, chest, length1, height1, location.getDirection());
 		int itemTaskId = particleTask(particle1, chestItem);
 

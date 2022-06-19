@@ -32,7 +32,7 @@ public class BirdhouseListener implements Listener {
 			if (isNullOrAir(item))
 				return;
 
-			if (item.getType() != Material.OAK_WOOD)
+			if (item.getType() != Material.PAPER)
 				return;
 
 			BirdhouseType type = BirdhouseType.of(item);
@@ -60,7 +60,7 @@ public class BirdhouseListener implements Listener {
 		if (isNullOrAir(item))
 			return;
 
-		if (item.getType() != Material.OAK_WOOD)
+		if (item.getType() != Material.PAPER)
 			return;
 
 		BirdhouseType type = BirdhouseType.of(item);
