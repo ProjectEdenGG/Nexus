@@ -68,7 +68,7 @@ public enum DecorationType {
 	COUCH_MODERN_CORNER(new Couch("Modern Couch Corner", CustomMaterial.COUCH_MODERN_CORNER, Type.DYE, CouchPart.CORNER)),
 	COUCH_MODERN_OTTOMAN(new Couch("Modern Couch Ottoman", CustomMaterial.COUCH_MODERN_OTTOMAN, Type.DYE, CouchPart.STRAIGHT)),
 	// Blocks
-	DYE_STATION(new Block("Dye Station", 1, Material.CRAFTING_TABLE)),
+	DYE_STATION(new Block("Dye Station", CustomMaterial.DYE_STATION)),
 	// Fireplaces: TODO
 	// Gravestones
 	GRAVESTONE_SMALL(new DecorationConfig("Small Gravestone", CustomMaterial.GRAVESTONE_SMALL)),

@@ -5,7 +5,6 @@ import gg.projecteden.nexus.features.shops.Market;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,7 +12,6 @@ import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Getter
 @AllArgsConstructor
-@RequiredArgsConstructor
 public enum Boostable {
 	EXPERIENCE(Material.EXPERIENCE_BOTTLE),
 	MCMMO_EXPERIENCE(Material.NETHERITE_PICKAXE),

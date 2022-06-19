@@ -277,6 +277,9 @@ public enum CustomMaterial {
 	private final int modelId;
 
 	public static CustomMaterial of(ItemStack item) {
+		if (isNullOrAir(item))
+			return null;
+
 		return of(new ItemBuilder(item));
 	}
 
