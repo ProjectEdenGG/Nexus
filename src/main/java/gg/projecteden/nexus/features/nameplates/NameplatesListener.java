@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.nameplates;
 
 import de.myzelyam.api.vanish.PlayerVanishStateChangeEvent;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateStartEvent;
@@ -8,7 +9,6 @@ import gg.projecteden.nexus.models.afk.events.AFKEvent;
 import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange.PlayerRankChangeEvent;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import me.libraryaddict.disguise.events.DisguiseEvent;
 import me.libraryaddict.disguise.events.UndisguiseEvent;
 import org.bukkit.Bukkit;
@@ -28,6 +28,10 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 public class NameplatesListener implements Listener {
 
 	public NameplatesListener() {
@@ -42,17 +46,22 @@ public class NameplatesListener implements Listener {
 		return nameplates().getNameplateManager();
 	}
 
-	private static int taskId;
+	private static List<Integer> taskIds = new ArrayList<>();
 
 	@EventHandler
 	public void on(ResourcePackUpdateStartEvent event) {
-		Tasks.cancel(taskId);
+		Iterator<Integer> iterator = taskIds.iterator();
+		while (iterator.hasNext()) {
+			int taskId = iterator.next();
+			Tasks.cancel(taskId);
+			iterator.remove();
+		}
 	}
 
 	@EventHandler
 	public void on(ResourcePackUpdateCompleteEvent event) {
-		taskId = Tasks.repeatAsync(TickTime.SECOND.x(5), TickTime.SECOND.x(5), () -> manager().spawnAll());
-		Tasks.repeat(0, 1, () -> OnlinePlayers.getAll().forEach(Nameplates::addToTeam));
+		taskIds.add(Tasks.repeatAsync(TickTime.SECOND.x(5), TickTime.SECOND.x(5), () -> manager().spawnAll()));
+		taskIds.add(Tasks.repeat(0, 1, () -> OnlinePlayers.getAll().forEach(player -> Nameplates.get().updateTeamOf(player))));
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
@@ -60,7 +69,7 @@ public class NameplatesListener implements Listener {
 		Nameplates.debug("on PlayerJoinEvent(" + event.getPlayer().getName() + ")");
 		Player player = event.getPlayer();
 
-		Nameplates.addToTeam(player);
+		Nameplates.get().updateTeamOf(player);
 		Tasks.waitAsync(10, () -> manager().respawn(player));
 	}
 
@@ -102,7 +111,7 @@ public class NameplatesListener implements Listener {
 			return;
 
 		Nameplates.debug("on PlayerVanishStateChangeEvent(" + player.getName() + ")");
-		Nameplates.addToTeam(player);
+		Nameplates.get().updateTeamOf(player);
 		manager().respawn(player);
 	}
 
