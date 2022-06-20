@@ -18,13 +18,12 @@ import java.util.List;
 
 /*
 	TODO:
+		- Future Conversions on chunk generate/load, itemstacks & blocks
 		- Tripwire implementation:
 			- Placing string needs properly update nearby tripwire to tripwire cross if suitable
 			- If placed next to hook, and both hooks exist, attach the hooks
-		- Future Conversions on chunk generate/load, itemstacks & blocks
 		- On placing flora, ensure the base block is suitable
-		- //
-		- Appropriate tool & mining speed --> CustomBlockBreaking
+		- 6 tick delay between block break
 		- //
 
 		- Cannot Fix:

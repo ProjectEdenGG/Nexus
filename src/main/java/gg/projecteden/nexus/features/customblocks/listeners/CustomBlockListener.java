@@ -23,12 +23,10 @@ import gg.projecteden.nexus.models.customblock.CustomTripwireData;
 import gg.projecteden.nexus.models.customblock.NoteBlockData;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.GameModeWrapper;
-import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Instrument;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -133,7 +131,7 @@ public class CustomBlockListener implements Listener {
 		Block block = event.getBlockPlaced();
 
 		// fix clientside tripwire changes
-		fixTripwireNearby(event.getPlayer(), block, new HashSet<>(List.of(block.getLocation())));
+		CustomBlockUtils.fixTripwireNearby(event.getPlayer(), block, new HashSet<>(List.of(block.getLocation())));
 
 		// fix instrument changing
 
@@ -156,7 +154,6 @@ public class CustomBlockListener implements Listener {
 		if (event.isCancelled())
 			return;
 
-		Player player = event.getPlayer();
 		Block brokenBlock = event.getBlock();
 		if (Nullables.isNullOrAir(brokenBlock))
 			return;
@@ -165,6 +162,8 @@ public class CustomBlockListener implements Listener {
 		if (brokenCustomBlock == null)
 			return;
 
+		Player player = event.getPlayer();
+		ItemStack tool = player.getInventory().getItemInMainHand();
 		event.setDropItems(false);
 		int amount = 1;
 
@@ -172,7 +171,7 @@ public class CustomBlockListener implements Listener {
 
 		if (CustomBlock.TALL_SUPPORT == brokenCustomBlock) {
 			debug("Broke tall support");
-			breakBlock(player, brokenBlock, brokenCustomBlock, false, amount, true, true);
+			brokenCustomBlock.breakBlock(player, tool, brokenBlock, false, amount, true, true);
 
 			Block blockUnder = brokenBlock.getRelative(BlockFace.DOWN);
 			CustomBlock under = CustomBlock.fromBlock(blockUnder);
@@ -180,11 +179,11 @@ public class CustomBlockListener implements Listener {
 			if (under != null) {
 				fixedTripwire.add(blockUnder.getLocation());
 				debug("Underneath: " + under.name());
-				breakBlock(player, blockUnder, under, true, amount, false, true);
+				under.breakBlock(player, tool, blockUnder, true, amount, false, true);
 				blockUnder.setType(Material.AIR);
 			}
 
-			fixTripwireNearby(player, brokenBlock, new HashSet<>(fixedTripwire));
+			CustomBlockUtils.fixTripwireNearby(player, brokenBlock, new HashSet<>(fixedTripwire));
 			return;
 		}
 
@@ -200,33 +199,13 @@ public class CustomBlockListener implements Listener {
 			if (CustomBlock.TALL_SUPPORT == above) {
 				debug("Breaking tall support above");
 
-				breakBlock(player, blockAbove, above, false, amount, false, true);
+				above.breakBlock(player, tool, blockAbove, false, amount, false, true);
 				blockAbove.setType(Material.AIR);
 			}
 		}
 
-		breakBlock(player, brokenBlock, brokenCustomBlock, true, amount, true, true);
-		fixTripwireNearby(player, brokenBlock, new HashSet<>(fixedTripwire));
-	}
-
-	private void breakBlock(Player player, Block block, CustomBlock customBlock, boolean dropItem, int amount, boolean playSound, boolean spawnParticle) {
-		debug("Breaking block: " + customBlock.name());
-		customBlock.breakBlock(player, block, false, playSound, spawnParticle);
-
-		if (!dropItem)
-			return;
-
-		// change drops
-		ItemStack newDrop = new ItemBuilder(customBlock.get().getItemStack()).amount(amount).build();
-		Material customType = customBlock.get().getVanillaItemMaterial();
-		Location location = block.getLocation();
-
-		for (ItemStack drop : block.getDrops()) {
-			if (customType == drop.getType()) {
-				if (!GameModeWrapper.of(player).isCreative())
-					location.getWorld().dropItemNaturally(location, newDrop);
-			}
-		}
+		brokenCustomBlock.breakBlock(player, tool, brokenBlock, true, amount, true, true);
+		CustomBlockUtils.fixTripwireNearby(player, brokenBlock, new HashSet<>(fixedTripwire));
 	}
 
 	@EventHandler
@@ -355,7 +334,7 @@ public class CustomBlockListener implements Listener {
 					}
 					case BREAK -> {
 						debug("PistonEvent: " + _customBlock.name() + " broke because of a piston");
-						_customBlock.breakBlock(null, block, true, true, true);
+						_customBlock.breakBlock(null, null, block, true, 1, true, true);
 						continue;
 					}
 				}
@@ -684,32 +663,7 @@ public class CustomBlockListener implements Listener {
 			NoteBlockUtils.changePitch(sneaking, location, noteBlockData);
 	}
 
-	private void fixTripwireNearby(Player player, Block current, Set<Location> visited) {
-		for (BlockFace face : CustomBlockUtils.getNeighborFaces()) {
-			Block neighbor = current.getRelative(face);
-			Location location = neighbor.getLocation();
 
-			if (visited.contains(location))
-				continue;
-
-			visited.add(location);
-
-			if (Nullables.isNullOrAir(neighbor))
-				continue;
-
-			CustomBlock customBlock = CustomBlock.fromBlock(neighbor);
-			if (customBlock == null || !(customBlock.get() instanceof ICustomTripwire))
-				continue;
-
-			Block underneath = neighbor.getRelative(BlockFace.DOWN);
-			BlockFace facing = CustomBlockUtils.getFacing(customBlock, neighbor.getBlockData(), underneath);
-
-			BlockData blockData = customBlock.get().getBlockData(facing, underneath);
-			Tasks.wait(1, () -> player.sendBlockChange(location, blockData));
-
-			fixTripwireNearby(player, neighbor, visited);
-		}
-	}
 
 	// TODO
 //	public void updateConnectedTripwire(Player player, CustomBlock customBlock, Location origin){

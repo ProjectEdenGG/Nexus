@@ -80,7 +80,7 @@ public interface ICustomBlock {
 		List<Material> acceptable = new ArrayList<>();
 		acceptable.add(minimumTool);
 		if (minimumTool == Material.AIR)
-			return acceptable.contains(tool.getType());
+			return true;
 
 		if (minimumTool == Material.SHEARS || MaterialTag.SWORDS.isTagged(minimumTool))
 			acceptable.add(Material.AIR);

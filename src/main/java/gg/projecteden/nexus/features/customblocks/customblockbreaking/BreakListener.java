@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.customblocks.customblockbreaking;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.MaterialTag;
 import org.bukkit.Location;
@@ -9,13 +10,14 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.HashSet;
 import java.util.Set;
 
-// TODO: Support custom blocks
 public class BreakListener implements Listener {
 
 	private static final Set<Material> blackListed = new HashSet<>();
@@ -33,17 +35,35 @@ public class BreakListener implements Listener {
 	}
 
 	@EventHandler
+	public void on(BlockBreakEvent event) {
+		if (event.isCancelled())
+			return;
+
+		if (!CustomBlockBreaking.getManager().isTracking(event.getBlock()))
+			return;
+
+		CustomBlockBreaking.getManager().removeBrokenBlock(event.getBlock());
+	}
+
+	@EventHandler
 	public void on(BlockDamageEvent event) {
 		if (event.isCancelled())
 			return;
 
-		if (!isValid(event.getPlayer()))
+		Player player = event.getPlayer();
+		if (!isValid(player))
 			return;
 
-		if (CustomBlockBreaking.getManager().isTracking(event.getBlock()))
+		Block block = event.getBlock();
+		if (CustomBlockBreaking.getManager().isTracking(block))
 			return;
 
-		CustomBlockBreaking.getManager().createBrokenBlock(event.getPlayer(), event.getBlock(), event.getItemInHand());
+		CustomBlock customBlock = CustomBlock.fromBlock(block);
+		ItemStack itemInHand = event.getItemInHand();
+		if (customBlock != null)
+			CustomBlockBreaking.getManager().createBrokenBlock(block.getLocation(), customBlock, player, itemInHand);
+		else
+			CustomBlockBreaking.getManager().createBrokenBlock(block.getLocation(), block, player, itemInHand);
 	}
 
 	@EventHandler

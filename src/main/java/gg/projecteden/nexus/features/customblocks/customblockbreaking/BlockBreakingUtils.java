@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.features.customblocks.customblockbreaking;
 
+import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
+import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.NMSUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ClientboundBlockDestructionPacket;
@@ -7,7 +9,7 @@ import net.minecraft.server.dedicated.DedicatedPlayerList;
 import net.minecraft.server.level.ServerLevel;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
@@ -36,15 +38,20 @@ public class BlockBreakingUtils {
 			serverLevel.dimension(), new ClientboundBlockDestructionPacket(getBlockEntityId(block), blockPos, animation));
 	}
 
-	public static void sendBreakBlock(Player player, Block block) {
-		World world = block.getWorld();
+
+	public static void sendBreakBlock(Player player, Block block, Object blockObject) {
 		Location loc = block.getLocation().toCenterLocation();
-		BlockData blockData = block.getBlockData();
+		if (blockObject instanceof CustomBlock) {
+			BlockUtils.tryBreakEvent(player, block, false);
+		} else {
 
-		player.breakBlock(block);
-		// Block breaking particles appear for everyone except for the person breaking the block, most of the time
-//			world.spawnParticle(Particle.BLOCK_DUST, loc, 25, 0.25, 0.25, 0.25, 0.1, blockData);
+			BlockData blockData = block.getBlockData();
+			player.breakBlock(block);
 
+			// Block breaking particles appear for everyone except for the person breaking the block, most of the time
+			// 	so until a better solution if found, we'll just play particles for the player breaking the block
+			player.spawnParticle(Particle.BLOCK_CRACK, loc, 25, 0.25, 0.25, 0.25, 0.1, blockData);
+		}
 	}
 
 	private static int getBlockEntityId(Block block) {

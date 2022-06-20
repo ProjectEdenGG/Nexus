@@ -14,7 +14,7 @@ import gg.projecteden.nexus.models.customblock.CustomNoteBlockData;
 import gg.projecteden.nexus.models.customblock.CustomTripwireData;
 import gg.projecteden.nexus.models.customblock.NoteBlockData;
 import gg.projecteden.nexus.utils.NMSUtils;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
 import lombok.NonNull;
@@ -24,6 +24,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Powerable;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -166,7 +167,7 @@ public class CustomBlockUtils {
 	}
 
 	public static void updatePowerable(Block block) {
-		Dev.WAKKA.send("Updating Powerable: " + block.getType());
+		debug("Updating Powerable: " + block.getType());
 		Powerable powerable = (Powerable) block.getBlockData();
 		boolean isPowered = powerable.isPowered();
 		powerable.setPowered(!isPowered);
@@ -179,5 +180,32 @@ public class CustomBlockUtils {
 			_powerable.setPowered(isPowered);
 			block.setBlockData(_powerable, true);
 		});
+	}
+
+	public static void fixTripwireNearby(Player player, Block current, Set<Location> visited) {
+		for (BlockFace face : CustomBlockUtils.getNeighborFaces()) {
+			Block neighbor = current.getRelative(face);
+			Location location = neighbor.getLocation();
+
+			if (visited.contains(location))
+				continue;
+
+			visited.add(location);
+
+			if (Nullables.isNullOrAir(neighbor))
+				continue;
+
+			CustomBlock customBlock = CustomBlock.fromBlock(neighbor);
+			if (customBlock == null || !(customBlock.get() instanceof ICustomTripwire))
+				continue;
+
+			Block underneath = neighbor.getRelative(BlockFace.DOWN);
+			BlockFace facing = CustomBlockUtils.getFacing(customBlock, neighbor.getBlockData(), underneath);
+
+			BlockData blockData = customBlock.get().getBlockData(facing, underneath);
+			Tasks.wait(1, () -> player.sendBlockChange(location, blockData));
+
+			fixTripwireNearby(player, neighbor, visited);
+		}
 	}
 }

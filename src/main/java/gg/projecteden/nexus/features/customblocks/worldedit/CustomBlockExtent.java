@@ -5,9 +5,10 @@ import com.sk89q.worldedit.extent.AbstractDelegateExtent;
 import com.sk89q.worldedit.extent.Extent;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.block.BlockStateHolder;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import org.bukkit.World;
+
+import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
 
 public class CustomBlockExtent extends AbstractDelegateExtent {
 	private final Extent extent;
@@ -25,13 +26,13 @@ public class CustomBlockExtent extends AbstractDelegateExtent {
 	// TODO: these events don't seem to fire
 	@Override
 	public <T extends BlockStateHolder<T>> boolean setBlock(int x, int y, int z, T block) throws WorldEditException {
-		Dev.WAKKA.send("setBlock(x, y, z, block)");
+		debug("setBlock(x, y, z, block)");
 		return super.setBlock(x, y, z, block);
 	}
 
 	@Override
 	public <B extends BlockStateHolder<B>> boolean setBlock(BlockVector3 position, B block) throws WorldEditException {
-		Dev.WAKKA.send("setBlock(position, block)");
+		debug("setBlock(position, block)");
 		return super.setBlock(position, block);
 	}
 }
@@ -46,9 +47,9 @@ public class CustomBlockExtent extends AbstractDelegateExtent {
 //		// if setting to a handled material
 //		if (CustomBlockListener.handleMaterials.contains(material)) {
 //			BlockData blockData = BukkitAdapter.adapt(block);
-//			Dev.WAKKA.send("BlockData: " + blockData);
+//			debug("BlockData: " + blockData);
 //			CustomBlock _customBlock = CustomBlock.fromBlockData(blockData, priorBlock.getRelative(BlockFace.DOWN));
 //			if (_customBlock != null) {
-//				Dev.WAKKA.send("Custom Block: " + _customBlock.name());
+//				debug("Custom Block: " + _customBlock.name());
 //			}
 //		}

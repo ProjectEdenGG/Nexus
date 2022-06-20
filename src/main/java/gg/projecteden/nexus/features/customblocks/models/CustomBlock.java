@@ -600,15 +600,20 @@ public enum CustomBlock implements Keyed {
 		// TODO: update logs
 	}
 
-	public void breakBlock(Player source, Block block, boolean dropItem, boolean playSound, boolean spawnParticle) {
-		breakBlock(source, block.getLocation(), true, dropItem, playSound, spawnParticle);
+	public void breakBlock(Player source, @Nullable ItemStack tool, Block block, boolean dropItem, int amount, boolean playSound, boolean spawnParticle) {
+		breakBlock(source, tool, block.getLocation(), true, dropItem, amount, playSound, spawnParticle);
 	}
 
-	public void breakBlock(Player source, Location location, boolean dropItem, boolean playSound, boolean spawnParticle) {
-		breakBlock(source, location, true, dropItem, playSound, spawnParticle);
+	public void breakBlock(Player source, @Nullable ItemStack tool, Location location, boolean dropItem, int amount, boolean playSound, boolean spawnParticle) {
+		breakBlock(source, tool, location, true, dropItem, amount, playSound, spawnParticle);
 	}
 
-	private void breakBlock(Player source, Location location, boolean updateDatabase, boolean dropItem, boolean playSound, boolean spawnParticle) {
+	private void breakBlock(Player source, @Nullable ItemStack tool, Location location, boolean updateDatabase, boolean dropItem, int amount, boolean playSound, boolean spawnParticle) {
+		if (tool != null) {
+			if (!get().isAcceptableTool(tool))
+				dropItem = false;
+		}
+
 		if (updateDatabase)
 			CustomBlockUtils.breakBlockDatabase(location);
 
@@ -620,12 +625,14 @@ public enum CustomBlock implements Keyed {
 				playSound(source, SoundAction.BREAK, location);
 
 			if (dropItem)
-				dropItem(location);
+				dropItem(amount, location);
+
+			location.getBlock().setType(Material.AIR);
 		} else {
 			CustomBlock below = CustomBlock.fromBlock(location.getBlock().getRelative(BlockFace.DOWN));
 			if (below == null) return;
 
-			below.breakBlock(source, location, false, false, playSound, spawnParticle);
+			below.breakBlock(source, tool, location, false, false, amount, playSound, spawnParticle);
 		}
 	}
 
@@ -722,8 +729,10 @@ public enum CustomBlock implements Keyed {
 		}
 	}
 
-	public void dropItem(Location location) {
-		location.getWorld().dropItemNaturally(location, this.get().getItemStack());
+	public void dropItem(int amount, Location location) {
+		ItemStack item = this.get().getItemStack();
+		item.setAmount(amount);
+		location.getWorld().dropItemNaturally(location, item);
 	}
 
 	public enum CustomBlockType {

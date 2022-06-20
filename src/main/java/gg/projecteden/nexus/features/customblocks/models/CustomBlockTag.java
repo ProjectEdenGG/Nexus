@@ -100,10 +100,13 @@ public class CustomBlockTag implements Tag<CustomBlock> {
 		for (Field field : fields) {
 			try {
 				field.setAccessible(true);
-				if (field.getType() == Tag.class || field.getType() == CustomBlockTag.class) {
+				if (field.getType() == CustomBlockTag.class) {
 					Tag<CustomBlock> customBlockTag = (Tag<CustomBlock>) field.get(null);
 
 					try {
+						if (customBlockTag == null)
+							Nexus.log(field.getName());
+
 						Method isTaggedMethod = customBlockTag.getClass().getMethod("isTagged", CustomBlock.class);
 						put(field.getName(), customBlockTag);
 					} catch (NoSuchMethodException ignore) {

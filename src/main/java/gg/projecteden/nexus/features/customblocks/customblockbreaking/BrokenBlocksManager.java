@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.customblocks.customblockbreaking;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
@@ -23,21 +24,32 @@ public class BrokenBlocksManager {
 		janitor();
 	}
 
-	public void createBrokenBlock(Player player, Block block, ItemStack itemStack) {
-		if (isTracking(block))
+	public void createBrokenBlock(Location location, Object blockObject, Player player, ItemStack itemStack) {
+		if (isTracking(location))
 			return;
 
-		float blockHardness = BlockUtils.getBlockHardness(block);
+		float blockHardness = -1;
+		if (blockObject instanceof Block block) {
+			blockHardness = BlockUtils.getBlockHardness(block);
+		}
+		if (blockObject instanceof CustomBlock customBlock) {
+			blockHardness = (float) customBlock.get().getBlockHardness();
+		}
+
 		if (blockHardness == -1 || blockHardness > 50) // unbreakable
 			return;
 
-		BrokenBlock brokenBlock = new BrokenBlock(block.getLocation(), block, player, itemStack, Bukkit.getCurrentTick());
-		brokenBlocks.put(block.getLocation(), brokenBlock);
+		BrokenBlock brokenBlock = new BrokenBlock(location, blockObject, player, itemStack, Bukkit.getCurrentTick());
+		brokenBlocks.put(location, brokenBlock);
 	}
 
 
 	public void removeBrokenBlock(BrokenBlock brokenBlock) {
 		removeBrokenBlock(brokenBlock.getLocation());
+	}
+
+	public void removeBrokenBlock(Block block) {
+		removeBrokenBlock(block.getLocation());
 	}
 
 	public void removeBrokenBlock(Location location) {
@@ -51,7 +63,6 @@ public class BrokenBlocksManager {
 	public boolean isTracking(Block block) {
 		return isTracking(block.getLocation());
 	}
-
 
 	public boolean isTracking(Location location) {
 		return brokenBlocks.containsKey(location);

@@ -312,8 +312,9 @@ public class BlockUtils {
 		return true;
 	}
 
-	public static boolean tryBreakEvent(@NotNull Player player, @NotNull Block block) {
+	public static boolean tryBreakEvent(@NotNull Player player, @NotNull Block block, boolean dropItems) {
 		BlockBreakEvent event = new BlockBreakEvent(block, player);
+		event.setDropItems(dropItems);
 		if (!event.callEvent() || event.isCancelled())
 			return false;
 

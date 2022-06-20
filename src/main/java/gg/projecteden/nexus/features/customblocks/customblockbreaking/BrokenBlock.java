@@ -5,6 +5,7 @@ import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ItemUtils;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -69,11 +70,8 @@ public class BrokenBlock {
 		this.lastDamageTick = currentTick;
 	}
 
-	public void breakBlock(Player breaker) {
-		remove();
-
-		if (breaker != null)
-			BlockBreakingUtils.sendBreakBlock(breaker, getBlock());
+	public void breakBlock(@NonNull Player breaker) {
+		BlockBreakingUtils.sendBreakBlock(breaker, getBlock(), blockObject);
 	}
 
 	public void resetDamagePacket() {
@@ -97,7 +95,7 @@ public class BrokenBlock {
 		this.damageFrame = (int) Math.round(((double) this.totalDamageTicks / this.breakTicks) * 10.0);
 		sendDamagePacket(this.damageFrame);
 
-//		Dev.WAKKA.send("Ticks = " + this.totalDamageTicks + " / " + this.breakTicks +" | Frame = " + this.damageFrame);
+//		debug("Ticks = " + this.totalDamageTicks + " / " + this.breakTicks +" | Frame = " + this.damageFrame);
 
 		if (this.totalDamageTicks >= this.breakTicks) {
 			breakBlock(player);
