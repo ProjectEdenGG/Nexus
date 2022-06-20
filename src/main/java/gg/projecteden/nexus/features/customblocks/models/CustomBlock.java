@@ -175,6 +175,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
+import org.bukkit.SoundCategory;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -656,7 +657,7 @@ public enum CustomBlock implements Keyed {
 			soundBuilder.receiver(source);
 		}
 
-		BlockUtils.playSound(soundBuilder);
+		soundBuilder.category(SoundCategory.BLOCKS).play();
 	}
 
 	private void spawnParticle(Player source, Location loc) {

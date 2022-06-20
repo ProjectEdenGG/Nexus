@@ -55,29 +55,30 @@ public class CustomBlocks extends Feature {
 		}
 	}
 
-	public enum SoundType {
+	public enum ReplacedSoundType {
 		WOOD,
 		STONE,
 		;
 
-		public static @Nullable SoundType fromSound(String soundKey) {
-			if (soundKey.startsWith("block." + SoundType.WOOD.name().toLowerCase() + "."))
+		public static @Nullable CustomBlocks.ReplacedSoundType fromSound(String soundKey) {
+			soundKey = soundKey.toLowerCase().replaceAll("_", ".");
+			if (soundKey.startsWith("block." + ReplacedSoundType.WOOD.name().toLowerCase() + "."))
 				return WOOD;
-			else if (soundKey.startsWith("block." + SoundType.STONE.name().toLowerCase() + "."))
+			else if (soundKey.startsWith("block." + ReplacedSoundType.STONE.name().toLowerCase() + "."))
 				return STONE;
 
 			return null;
 		}
 
-		public static @Nullable SoundType fromSound(Key sound) {
+		public static @Nullable CustomBlocks.ReplacedSoundType fromSound(Key sound) {
 			return fromSound(sound.value());
 		}
 
-		public static @Nullable SoundType fromSound(Sound sound) {
+		public static @Nullable CustomBlocks.ReplacedSoundType fromSound(Sound sound) {
 			return fromSound(sound.name());
 		}
 
-		public static @Nullable SoundType fromSound(net.kyori.adventure.sound.Sound sound) {
+		public static @Nullable CustomBlocks.ReplacedSoundType fromSound(net.kyori.adventure.sound.Sound sound) {
 			return fromSound(sound.name());
 		}
 	}
@@ -94,7 +95,7 @@ public class CustomBlocks extends Feature {
 		@Getter
 		private final double volume;
 
-		public String getCustomSound(SoundType soundType) {
+		public String getCustomSound(ReplacedSoundType soundType) {
 			return "custom.block." + soundType.name().toLowerCase() + "." + this.name().toLowerCase();
 		}
 

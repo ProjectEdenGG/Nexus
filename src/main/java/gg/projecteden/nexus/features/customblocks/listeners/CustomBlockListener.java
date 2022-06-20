@@ -655,8 +655,7 @@ public class CustomBlockListener implements Listener {
 			}
 		}
 
-		debug(" isPlacingBlock: playing default place sound");
-		BlockUtils.playSound(SoundAction.PLACE, preBlock);
+		CustomBlockSounds.tryPlaySound(SoundAction.PLACE, preBlock);
 
 		return true;
 	}

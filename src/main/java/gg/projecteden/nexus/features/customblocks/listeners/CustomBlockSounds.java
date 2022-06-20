@@ -4,15 +4,14 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customblocks.CustomBlocks.BlockAction;
+import gg.projecteden.nexus.features.customblocks.CustomBlocks.ReplacedSoundType;
 import gg.projecteden.nexus.features.customblocks.CustomBlocks.SoundAction;
-import gg.projecteden.nexus.features.customblocks.CustomBlocks.SoundType;
 import gg.projecteden.nexus.features.customblocks.NoteBlockUtils;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.NMSUtils;
 import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.parchment.event.sound.SoundEvent;
 import org.bukkit.Location;
@@ -88,7 +87,7 @@ public class CustomBlockSounds implements Listener {
 			return;
 
 		updateAction(player, BlockAction.FALL);
-		tryPlayDefaultSound(SoundAction.FALL, block);
+		tryPlaySound(SoundAction.FALL, block);
 	}
 
 	// Handles Sound: HIT
@@ -103,7 +102,7 @@ public class CustomBlockSounds implements Listener {
 			return;
 
 		if (playerActionMap.get(player) == BlockAction.HIT) {
-			tryPlayDefaultSound(SoundAction.HIT, block);
+			tryPlaySound(SoundAction.HIT, block);
 		}
 	}
 
@@ -118,8 +117,7 @@ public class CustomBlockSounds implements Listener {
 		Block brokenBlock = event.getBlock();
 		CustomBlock brokenCustomBlock = CustomBlock.fromBlock(brokenBlock);
 		if (brokenCustomBlock == null) {
-			Dev.WAKKA.send("BlockBreakEvent: playing default break sound");
-			tryPlayDefaultSound(SoundAction.BREAK, brokenBlock);
+			tryPlaySound(SoundAction.BREAK, brokenBlock);
 		}
 	}
 
@@ -140,11 +138,12 @@ public class CustomBlockSounds implements Listener {
 					source = below;
 			}
 
-			if (!Nullables.isNullOrAir(source)) {
-				SoundAction soundAction = SoundAction.fromSound(event.getSound());
-				if (soundAction == null)
-					return;
+			net.kyori.adventure.sound.Sound sound = event.getSound();
+			SoundAction soundAction = SoundAction.fromSound(sound);
+			if (soundAction == null)
+				return;
 
+			if (!Nullables.isNullOrAir(source)) {
 				if (soundAction != SoundAction.STEP)
 					return;
 
@@ -153,42 +152,36 @@ public class CustomBlockSounds implements Listener {
 				return;
 			}
 
-			if (playDefaultSounds(event.getSound().name().value(), event.getEmitter().location()))
+			ReplacedSoundType soundType = ReplacedSoundType.fromSound(sound.name().value());
+			if (soundType == null)
+				return;
+
+			if (tryPlaySound(soundAction, soundType, event.getEmitter().location()))
 				event.setCancelled(true);
+
+
 		} catch (Exception ignored) {}
 	}
 
-	private static void tryPlayDefaultSound(SoundAction soundAction, Block block) {
+	public static void tryPlaySound(SoundAction soundAction, Block block) {
 		Sound sound = NMSUtils.getSound(soundAction, block);
 		if (sound == null)
 			return;
 
-		SoundType soundType = SoundType.fromSound(sound);
+		ReplacedSoundType soundType = ReplacedSoundType.fromSound(sound);
 		if (soundType == null)
-			return;
+			return; // handled by minecraft
 
-		String blockSound = "custom." + sound.getKey().getKey();
+		String customSound = "custom." + sound.getKey().getKey();
 		String defaultSound = soundAction.getCustomSound(soundType);
-		if (!blockSound.equalsIgnoreCase(defaultSound)) {
+		if (!customSound.equalsIgnoreCase(defaultSound)) {
 			return;
 		}
 
-		playDefaultSound(soundAction, soundType, block.getLocation());
+		tryPlaySound(soundAction, soundType, block.getLocation());
 	}
 
-	private static boolean playDefaultSounds(String soundKey, Location location) {
-		SoundAction soundAction = SoundAction.fromSound(soundKey);
-		if (soundAction == null)
-			return false;
-
-		SoundType soundType = SoundType.fromSound(soundKey);
-		if (soundType == null)
-			return false;
-
-		return playDefaultSound(soundAction, soundType, location);
-	}
-
-	private static boolean playDefaultSound(SoundAction soundAction, SoundType soundType, Location location) {
+	public static boolean tryPlaySound(SoundAction soundAction, ReplacedSoundType soundType, Location location) {
 		String soundKey = soundAction.getCustomSound(soundType);
 		SoundBuilder soundBuilder = new SoundBuilder(soundKey).location(location).volume(soundAction.getVolume());
 
@@ -202,6 +195,5 @@ public class CustomBlockSounds implements Listener {
 		BlockUtils.playSound(soundBuilder);
 		return true;
 	}
-
 
 }
