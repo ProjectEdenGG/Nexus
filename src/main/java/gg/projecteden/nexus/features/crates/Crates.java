@@ -49,7 +49,7 @@ public class Crates extends Feature implements Listener {
 
 	@Getter
 	@Setter
-	private static boolean enabled = true;
+	private static boolean enabled = false;
 
 	@Override
 	public void onStart() {

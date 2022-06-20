@@ -33,7 +33,7 @@ import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.UHC;
 public enum WorldGroup implements IWorldGroup {
 	SERVER("server"),
 	LEGACY(LEGACY1, LEGACY2),
-	SURVIVAL(List.of("safepvp", "events"), List.of(SubWorldGroup.SURVIVAL, SubWorldGroup.LEGACY, RESOURCE, STAFF_SURVIVAL)),
+	SURVIVAL(List.of("safepvp", "events"), List.of(SubWorldGroup.SURVIVAL, RESOURCE, STAFF_SURVIVAL)),
 	CREATIVE("creative", "buildcontest"),
 	MINIGAMES(List.of("gameworld"), List.of(DEATH_SWAP, UHC, BINGO)),
 	SKYBLOCK(SubWorldGroup.SKYBLOCK, ONEBLOCK),

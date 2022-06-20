@@ -264,9 +264,9 @@ public class ImageStand implements DatabaseObject {
 	@AllArgsConstructor
 	public enum ImageSize {
 		// Height x Width
-//		_1x1(),
-//		_1x2(),
-//		_3x2(),
+		_1x1(null),
+		_1x2(null),
+		_3x2(null),
 		_4x3(CustomMaterial.IMAGES_OUTLINE_4x3),
 		;
 

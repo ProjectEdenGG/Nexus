@@ -20,7 +20,7 @@ public enum Pugmas21Entity implements InteractableEntity {
 	;
 
 	Pugmas21Entity(String name, String uuid) {
-		this(name, UUID.fromString(uuid), isNullOrEmpty(uuid) ? null : entity -> entity.getUniqueId().equals(UUID.fromString(uuid)));
+		this(name, isNullOrEmpty(uuid) ? null : UUID.fromString(uuid), isNullOrEmpty(uuid) ? null : entity -> entity.getUniqueId().equals(UUID.fromString(uuid)));
 	}
 
 	Pugmas21Entity(String name, Predicate<Entity> predicate) {

@@ -1,12 +1,12 @@
 package gg.projecteden.nexus.features.events;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,12 +28,12 @@ public class ArmorStandStalker extends Feature {
 	public static final List<Stalker> stalkers = new ArrayList<>() {{
 		switch (Nexus.getEnv()) {
 			case TEST -> {
-				add(Stalker.builder().uuid("c590d410-2604-48bb-aa3b-dd78419bf672").world("world").radius(25).percentage(.1).build());
-				add(Stalker.builder().uuid("8bb5a1fa-cbb3-4ff2-952f-75833d467082").world("world").radius(25).build());
+				add(Stalker.builder().uuid("c590d410-2604-48bb-aa3b-dd78419bf672").world("legacy1").radius(25).percentage(.1).build());
+				add(Stalker.builder().uuid("8bb5a1fa-cbb3-4ff2-952f-75833d467082").world("legacy1").radius(25).build());
 			}
 			case PROD -> {
 				// Spawn - Wakka Crate
-				add(Stalker.builder().uuid("ab374814-dbda-4d83-a796-87c8037ee7d2").world("survival").build());
+				add(Stalker.builder().uuid("ab374814-dbda-4d83-a796-87c8037ee7d2").world("legacy2").build());
 				// BearFair21 - Halloween Island
 				add(Stalker.builder().uuid("720fc446-7598-4a99-9493-40bc784667dc").world(BearFair21.getWorld()).build());
 				// New Spawn - Owl on Fletcher Building

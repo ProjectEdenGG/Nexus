@@ -135,16 +135,49 @@ public class DatabaseCommand extends CustomCommand {
 	}
 
 	@Async
-	@Path("cacheAll <service>")
+	@SneakyThrows
+	@Path("cacheAll [service]")
 	<T extends DatabaseObject> void cacheAll(MongoService<T> service) {
-		int count = 0;
-		for (T object : service.getAll())
-			if (!service.isCached(object)) {
-				++count;
-				service.cache(object);
-			}
+		List<MongoService<T>> services = new ArrayList<>();
 
-		send(PREFIX + "Cached &e" + count + " &3objects to &e" + name(service));
+		if (service != null)
+			services.add(service);
+		else
+			for (Class<? extends MongoService> clazz : MongoService.getServices())
+				if (Utils.canEnable(clazz))
+					services.add(clazz.getConstructor().newInstance());
+
+		for (MongoService<T> _service : services) {
+			int count = 0;
+			for (T object : _service.getAll())
+				if (!_service.isCached(object)) {
+					++count;
+					_service.cache(object);
+				}
+
+			send(PREFIX + "Cached &e" + count + " &3objects to &e" + name(_service));
+		}
+
+		if (services.size() > 1)
+			send(PREFIX + "Done");
+	}
+
+	@Async
+	@SneakyThrows
+	@Path("saveAllCaches")
+	<T extends DatabaseObject> void saveAll() {
+		List<MongoService<T>> services = new ArrayList<>() {{
+			for (Class<? extends MongoService> clazz : MongoService.getServices())
+				if (Utils.canEnable(clazz))
+					add(clazz.getConstructor().newInstance());
+		}};
+
+		for (MongoService<T> service : services) {
+			service.saveCache();
+			send(PREFIX + "Saved &e" + service.getCache().size() + " &3objects to &e" + name(service));
+		}
+
+		send(PREFIX + "Done");
 	}
 
 	@Async
@@ -187,7 +220,7 @@ public class DatabaseCommand extends CustomCommand {
 
 	@Async
 	@Confirm
-	@Path("deleteAll <service> ")
+	@Path("deleteAll <service>")
 	<T extends DatabaseObject> void deleteAll(MongoService<T> service) {
 		service.deleteAll();
 		send(PREFIX + "Deleted all objects from &e" + name(service));

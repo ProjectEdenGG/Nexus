@@ -84,6 +84,9 @@ public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements
 		List<String> visitedWorldGroups = (List<String>) dbObject.get("visitedWorldGroups");
 		if (visitedWorldGroups.remove("ONEBLOCK"))
 			visitedWorldGroups.add("SKYBLOCK");
+		List<String> visitedSubWorldGroups = (List<String>) dbObject.get("visitedSubWorldGroups");
+		if (visitedSubWorldGroups.remove("LEGACY"))
+			visitedSubWorldGroups.add("LEGACY1");
 
 		List<String> pronouns = (List<String>) dbObject.get("pronouns");
 		if (!isNullOrEmpty(pronouns)) {
