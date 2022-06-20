@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.shops.Shops;
 import gg.projecteden.nexus.features.shops.providers.common.ShopProvider;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.shop.Shop;
+import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.models.shop.ShopService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -114,8 +115,8 @@ public class YourShopProvider extends ShopProvider {
 				throw new InvalidInputException("No items available for collection");
 
 			List<ItemStack> items = new ArrayList<>();
-			final int max = Math.min(54, shop.getHolding().size());
-			final Iterator<ItemStack> iterator = shop.getHolding().iterator();
+			final int max = Math.min(54, shop.getHolding(ShopGroup.of(player)).size());
+			final Iterator<ItemStack> iterator = shop.getHolding(ShopGroup.of(player)).iterator();
 			while (items.size() < max && iterator.hasNext()) {
 				items.add(iterator.next());
 				iterator.remove();
@@ -132,7 +133,7 @@ public class YourShopProvider extends ShopProvider {
 
 			for (ItemStack content : event.getInventory().getContents())
 				if (!isNullOrAir(content))
-					shop.addHolding(content);
+					shop.addHolding(ShopGroup.of(player), content);
 
 			service.save(shop);
 

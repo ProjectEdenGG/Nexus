@@ -251,7 +251,7 @@ public class DatabaseCommand extends CustomCommand {
 	public static final Map<String, MongoService<? extends DatabaseObject>> services = new HashMap<>();
 
 	static {
-		for (var service : subTypesOf(MongoService.class, EdenAPI.class.getPackageName())) {
+		for (var service : subTypesOf(MongoService.class, "gg.projecteden")) {
 			if (Modifier.isAbstract(service.getModifiers()))
 				continue;
 

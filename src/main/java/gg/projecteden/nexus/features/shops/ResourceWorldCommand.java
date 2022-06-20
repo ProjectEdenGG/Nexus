@@ -3,6 +3,8 @@ package gg.projecteden.nexus.features.shops;
 import com.sk89q.worldedit.regions.Region;
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.annotations.Environments;
+import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.homes.HomesFeature;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -32,8 +34,6 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
-import gg.projecteden.api.common.utils.Env;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.citizensnpcs.api.CitizensAPI;
@@ -260,7 +260,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 		save(eventBlock.getWorld());
 	}
 
-	@EventHandler(ignoreCancelled = true)
+//	@EventHandler(ignoreCancelled = true)
 	public void onBlockDropItem(BlockDropItemEvent event) {
 		if (SubWorldGroup.of(event.getBlock()) != SubWorldGroup.RESOURCE)
 			return;
@@ -269,7 +269,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 			trySell(event.getPlayer(), event.getBlockState(), item.getItemStack()));
 	}
 
-	@EventHandler(ignoreCancelled = true)
+//	@EventHandler(ignoreCancelled = true)
 	public void onEntityExplode(EntityExplodeEvent event) {
 		if (SubWorldGroup.of(event.getLocation()) != SubWorldGroup.RESOURCE)
 			return;

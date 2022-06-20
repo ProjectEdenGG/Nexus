@@ -49,9 +49,9 @@ public class LegacyHomeOwner implements PlayerOwnedObject {
 				.findFirst();
 	}
 
-	public void add(LegacyHome home) {
+	public void add(LegacyHome.LegacyHomeBuilder home) {
 		getHome(home.getName()).ifPresent(this::delete);
-		homes.add(home);
+		homes.add(home.build());
 	}
 
 	public void delete(LegacyHome home) {
