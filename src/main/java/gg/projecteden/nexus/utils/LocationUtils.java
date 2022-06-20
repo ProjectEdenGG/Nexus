@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.util.BlockIterator;
+import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -416,6 +417,18 @@ public class LocationUtils {
 		float yaw = Location.normalizeYaw(location.getYaw());
 		if (yaw < 0) yaw += 360;
 		return yaw;
+	}
+
+	public static BoundingBox boundingBoxBlockOf(double x, double y, double z) {
+		return new BoundingBox(Math.floor(x), Math.floor(y), Math.floor(z), Math.ceil(x), Math.ceil(y), Math.ceil(z));
+	}
+
+	public static BoundingBox boundingBoxBlockOf(Location location) {
+		return boundingBoxBlockOf(location.getX(), location.getY(), location.getZ());
+	}
+
+	public static BoundingBox boundingBoxBlockOf(Block block) {
+		return boundingBoxBlockOf(block.getX(), block.getY(), block.getZ());
 	}
 
 }
