@@ -16,6 +16,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
 import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.HttpUtils;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
@@ -116,7 +117,7 @@ public class ResourcePack extends Feature implements Listener {
 				new ResourcePackUpdateStartEvent().callEvent();
 				reloading = true;
 
-//				HttpUtils.saveFile(URL, FILE_NAME);
+				HttpUtils.saveFile(URL, FILE_NAME);
 				openZip();
 
 				setup();

@@ -2,6 +2,9 @@ package gg.projecteden.nexus.features.store.perks;
 
 import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
 import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan.FormatType;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
@@ -30,9 +33,6 @@ import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.api.common.utils.TimeUtils.Timespan;
-import gg.projecteden.api.common.utils.TimeUtils.Timespan.FormatType;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiFunction;
 
@@ -112,6 +113,16 @@ public class BoostsCommand extends CustomCommand implements Listener {
 		new BoostMenu().open(player());
 	}
 
+	@Path("listOwners <type>")
+	@Permission(Group.ADMIN)
+	void listOwners(Boostable type) {
+		for (Booster booster : new BoosterService().getAll()) {
+			final List<Boost> boosts = booster.getBoosts().stream().filter(boost -> boost.getType() == type && boost.canActivateIfEnabled()).toList();
+			if (!boosts.isEmpty())
+				send(PREFIX + "&e" + booster.getNickname() + " &3has &e" + boosts.size() + " &3" + camelCase(type) + " boosts");
+		}
+	}
+
 	@Path("give <player> <type> <multiplier> <duration> [amount]")
 	@Permission(Group.ADMIN)
 	void give(Booster booster, Boostable type, double multiplier, Timespan duration, @Arg("1") int amount) {
@@ -122,14 +133,29 @@ public class BoostsCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Gave " + amount + " " + plural(camelCase(type) + " boost", amount) + " to " + booster.getNickname());
 	}
 
-	@Path("delete <player> <id>")
+	@Path("cancel <player> <id>")
 	@Permission(Group.ADMIN)
-	void delete(Booster booster, int id) {
-		if (!booster.getBoosts().removeIf(boost -> boost.getId() == id))
+	void cancel(Booster booster, int id) {
+		final Optional<Boost> boost = booster.getBoosts(_boost -> _boost.getId() == id).stream().findFirst();
+		if (boost.isEmpty())
 			error("Boost &e#" + id + " &cfor &e" + booster.getNickname() + " &cnot found");
 
+		boost.get().setCancelled(true);
 		service.save(booster);
-		send(PREFIX + "Deleted boost &e#" + id + " &3for &e" + booster.getNickname());
+		send(PREFIX + "Cancelled boost &e#" + id + " &3for &e" + booster.getNickname());
+	}
+
+	@Path("cancelType <player> <type>")
+	@Permission(Group.ADMIN)
+	void cancelType(Booster booster, Boostable type) {
+		final List<Boost> boosts = booster.getBoosts(boost -> boost.getType() == type && boost.canActivateIfEnabled());
+		final long count = boosts.size();
+		if (count == 0)
+			error(booster.getNickname() + " does not own any " + camelCase(type) + " boosts");
+
+		booster.getBoosts(type).forEach(boost -> boost.setCancelled(true));
+		service.save(booster);
+		send(PREFIX + "Cancelled &e" + count + " &3" + camelCase(type) + " boosts for &e" + booster.getNickname());
 	}
 
 	@Confirm
@@ -202,6 +228,10 @@ public class BoostsCommand extends CustomCommand implements Listener {
 					int boosts = booster.getNonExpiredBoosts(boostable).size();
 					if (boosts > 0) {
 						ItemBuilder item = boostable.getDisplayItem().lore("&3" + StringUtils.plural(boosts + " boost", boosts) + " available");
+
+						if (boostable.isDisabled())
+							item.lore("", "&cCannot activate, boost type is disabled");
+
 						items.add(ClickableItem.of(item.build(), e -> new BoostMenu(boostable, this).open(player)));
 					}
 				}
@@ -226,6 +256,9 @@ public class BoostsCommand extends CustomCommand implements Listener {
 									.onCancel(e2 -> open(player))
 									.open(player)));
 						}
+					} else if (boost.getType().isDisabled()) {
+						item.lore("", "&cCannot activate, boost type is disabled");
+						items.add(ClickableItem.empty(item.build()));
 					}
 				}
 

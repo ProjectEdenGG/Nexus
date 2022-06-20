@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.events;
 
 import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.events.store.EventStoreListener;
 import gg.projecteden.nexus.features.events.store.models.EventStoreImage;
 import gg.projecteden.nexus.features.events.store.providers.EventStoreProvider;
@@ -92,6 +93,7 @@ public class EventsCommand extends CustomCommand {
 	}
 	*/
 
+	@Disabled // TODO 1.19 Re-enable eventually
 	@Path("tokens pay <player> <tokens>")
 	void tokens_pay(EventUser toUser, int tokens) {
 		EventUser fromUser = service.get(player());

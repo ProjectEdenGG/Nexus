@@ -1,12 +1,16 @@
 package gg.projecteden.nexus.models.boost;
 
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.shops.Market;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
+
+import java.lang.reflect.Field;
 
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
@@ -15,6 +19,7 @@ import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 public enum Boostable {
 	EXPERIENCE(Material.EXPERIENCE_BOTTLE),
 	MCMMO_EXPERIENCE(Material.NETHERITE_PICKAXE),
+	@Disabled
 	MARKET_SELL_PRICES(Material.OAK_SIGN) {
 		@Override
 		public void onActivate() {
@@ -30,6 +35,7 @@ public enum Boostable {
 	MINIGAME_DAILY_TOKENS(Material.DIAMOND_SWORD),
 	KILLER_MONEY(Material.GOLD_INGOT),
 	MOB_HEADS(Material.ZOMBIE_HEAD),
+	@Disabled
 	MYSTERY_CRATE_KEY(Material.TRIPWIRE_HOOK),
 	HALLOWEEN_CANDY(CustomMaterial.FOOD_CANDY_CORN),
 	;
@@ -45,9 +51,18 @@ public enum Boostable {
 		this(customMaterial.getMaterial(), customMaterial.getModelId());
 	}
 
+	@SneakyThrows
+	public Field getField() {
+		return getClass().getField(name());
+	}
+
+	public boolean isDisabled() {
+		return getField().getAnnotation(Disabled.class) != null;
+	}
+
 	@NotNull
 	public ItemBuilder getDisplayItem() {
-		return new ItemBuilder(material).modelId(modelId).name(camelCase(name()));
+		return new ItemBuilder(material).modelId(modelId).name("&6" + camelCase(name()));
 	}
 
 	public void onActivate() {}
