@@ -17,17 +17,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import net.minecraft.world.phys.AABB;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
+import org.bukkit.craftbukkit.v1_19_R1.entity.CraftArmorStand;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BoundingBox;
-import org.inventivetalent.boundingbox.BoundingBoxAPI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -150,11 +151,11 @@ public class ImageStand implements DatabaseObject {
 		}
 	}
 
-	public void updateBoundingBox(ArmorStand armorStand, BoundingBox boundingBox) {
-		if (armorStand == null || boundingBox == null)
+	public void updateBoundingBox(ArmorStand armorStand, BoundingBox box) {
+		if (armorStand == null || box == null)
 			return;
 
-		BoundingBoxAPI.setBoundingBox(armorStand, boundingBox);
+		((CraftArmorStand) armorStand).getHandle().setBoundingBox(new AABB(box.getMinX(), box.getMinY(), box.getMinZ(), box.getMaxX(), box.getMaxY(), box.getMaxZ()));
 	}
 
 	public List<ArmorStand> getArmorStands() {
