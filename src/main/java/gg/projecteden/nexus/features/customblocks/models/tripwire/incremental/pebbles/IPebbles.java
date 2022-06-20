@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.customblocks.models.tripwire.incremental.pebbles;
 
+import gg.projecteden.nexus.features.customblocks.models.tripwire.common.IRequireSupport;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.incremental.IIncremental;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -7,7 +8,7 @@ import lombok.NonNull;
 
 import java.util.List;
 
-public interface IPebbles extends IIncremental {
+public interface IPebbles extends IIncremental, IRequireSupport {
 
 	@Override
 	default List<Integer> getModelIdList() {

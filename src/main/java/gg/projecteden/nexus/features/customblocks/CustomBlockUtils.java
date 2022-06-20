@@ -7,6 +7,9 @@ import gg.projecteden.nexus.features.customblocks.models.common.ICustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.common.IDirectional;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.ICustomNoteBlock;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.ICustomTripwire;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.common.IRequireSupport;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.incremental.IIncremental;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.tall.ITall;
 import gg.projecteden.nexus.models.customblock.CustomBlockData;
 import gg.projecteden.nexus.models.customblock.CustomBlockTracker;
 import gg.projecteden.nexus.models.customblock.CustomBlockTrackerService;
@@ -25,9 +28,12 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Powerable;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -207,5 +213,54 @@ public class CustomBlockUtils {
 
 			fixTripwireNearby(player, neighbor, visited);
 		}
+	}
+
+	public static void breakBlock(Block brokenBlock, CustomBlock brokenCustomBlock, Player player, ItemStack tool) {
+		Block aboveBlock = brokenBlock.getRelative(BlockFace.UP);
+		CustomBlock aboveCustomBlock = CustomBlock.fromBlock(aboveBlock);
+		if (aboveCustomBlock != null && aboveCustomBlock.get() instanceof IRequireSupport)
+			breakBlock(aboveBlock, aboveCustomBlock, player, tool);
+
+		int amount = 1;
+
+		Set<Location> fixedTripwire = new HashSet<>(List.of(brokenBlock.getLocation()));
+
+		if (brokenCustomBlock != null) {
+			if (CustomBlock.TALL_SUPPORT == brokenCustomBlock) {
+				debug("Broke tall support");
+				brokenCustomBlock.breakBlock(player, tool, brokenBlock, false, amount, true, true);
+
+				Block blockUnder = brokenBlock.getRelative(BlockFace.DOWN);
+				CustomBlock under = CustomBlock.fromBlock(blockUnder);
+
+				if (under != null) {
+					fixedTripwire.add(blockUnder.getLocation());
+					debug("Underneath: " + under.name());
+					under.breakBlock(player, tool, blockUnder, true, amount, false, true);
+					blockUnder.setType(Material.AIR);
+				}
+
+				CustomBlockUtils.fixTripwireNearby(player, brokenBlock, new HashSet<>(fixedTripwire));
+				return;
+			}
+
+			if (brokenCustomBlock.get() instanceof IIncremental incremental) {
+				amount = incremental.getIndex() + 1;
+
+			} else if (brokenCustomBlock.get() instanceof ITall) {
+				debug("Broke isTall");
+
+				if (CustomBlock.TALL_SUPPORT == aboveCustomBlock) {
+					debug("Breaking tall support above");
+
+					aboveCustomBlock.breakBlock(player, tool, aboveBlock, false, amount, false, true);
+					aboveBlock.setType(Material.AIR);
+				}
+			}
+
+			brokenCustomBlock.breakBlock(player, tool, brokenBlock, true, amount, true, true);
+		}
+
+		CustomBlockUtils.fixTripwireNearby(player, brokenBlock, new HashSet<>(fixedTripwire));
 	}
 }

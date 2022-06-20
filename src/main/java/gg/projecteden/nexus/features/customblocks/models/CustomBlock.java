@@ -524,16 +524,10 @@ public enum CustomBlock implements Keyed {
 			case NOTE_BLOCK -> setup = true;
 			case TRIPWIRE -> {
 				if (customBlock instanceof ITall) {
-					Block above = block.getRelative(BlockFace.UP);
-
 					if (!(customBlock instanceof IWaterLogged))
 						placeTallSupport = true;
 					else if (placeAgainst.getType() != Material.WATER)
 						placeTallSupport = true;
-
-					if (placeTallSupport && !Nullables.isNullOrAir(above)) {
-						return false;
-					}
 				}
 
 				facingFinal = BlockUtils.getNextCardinalBlockFace(BlockUtils.getCardinalBlockFace(player));

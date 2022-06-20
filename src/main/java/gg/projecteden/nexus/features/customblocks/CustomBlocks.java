@@ -19,13 +19,12 @@ import java.util.List;
 /*
 	TODO:
 		- Future Conversions on chunk generate/load, itemstacks & blocks
+		- WorldEdit handling
 		- Tripwire implementation:
 			- Placing string needs properly update nearby tripwire to tripwire cross if suitable
 			- If placed next to hook, and both hooks exist, attach the hooks
-		- On placing flora, ensure the base block is suitable
 		- 6 tick delay between block break
 		- //
-
 		- Cannot Fix:
 			- Custom blocks may flash when placing blocks near them (clientside only) --> Titan
 			- Players arm will swing on interact w/ custom blocks (clientside only?) --> Titan

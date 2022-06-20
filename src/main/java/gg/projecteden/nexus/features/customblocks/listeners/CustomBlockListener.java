@@ -13,6 +13,7 @@ import gg.projecteden.nexus.features.customblocks.models.common.ICustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.common.ICustomBlock.PistonPushAction;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.ICustomNoteBlock;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.ICustomTripwire;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.common.IRequireSupport;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.IWaterLogged;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.incremental.IIncremental;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.tall.ITall;
@@ -59,7 +60,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
@@ -158,54 +158,14 @@ public class CustomBlockListener implements Listener {
 		if (Nullables.isNullOrAir(brokenBlock))
 			return;
 
-		CustomBlock brokenCustomBlock = CustomBlock.fromBlock(brokenBlock);
-		if (brokenCustomBlock == null)
-			return;
-
 		Player player = event.getPlayer();
 		ItemStack tool = player.getInventory().getItemInMainHand();
-		event.setDropItems(false);
-		int amount = 1;
 
-		Set<Location> fixedTripwire = new HashSet<>(List.of(brokenBlock.getLocation()));
+		CustomBlock brokenCustomBlock = CustomBlock.fromBlock(brokenBlock);
+		if (brokenCustomBlock != null)
+			event.setDropItems(false);
 
-		if (CustomBlock.TALL_SUPPORT == brokenCustomBlock) {
-			debug("Broke tall support");
-			brokenCustomBlock.breakBlock(player, tool, brokenBlock, false, amount, true, true);
-
-			Block blockUnder = brokenBlock.getRelative(BlockFace.DOWN);
-			CustomBlock under = CustomBlock.fromBlock(blockUnder);
-
-			if (under != null) {
-				fixedTripwire.add(blockUnder.getLocation());
-				debug("Underneath: " + under.name());
-				under.breakBlock(player, tool, blockUnder, true, amount, false, true);
-				blockUnder.setType(Material.AIR);
-			}
-
-			CustomBlockUtils.fixTripwireNearby(player, brokenBlock, new HashSet<>(fixedTripwire));
-			return;
-		}
-
-
-		if (brokenCustomBlock.get() instanceof IIncremental incremental) {
-			amount = incremental.getIndex() + 1;
-
-		} else if (brokenCustomBlock.get() instanceof ITall) {
-			debug("Broke isTall");
-			Block blockAbove = brokenBlock.getRelative(BlockFace.UP);
-			CustomBlock above = CustomBlock.fromBlock(blockAbove);
-
-			if (CustomBlock.TALL_SUPPORT == above) {
-				debug("Breaking tall support above");
-
-				above.breakBlock(player, tool, blockAbove, false, amount, false, true);
-				blockAbove.setType(Material.AIR);
-			}
-		}
-
-		brokenCustomBlock.breakBlock(player, tool, brokenBlock, true, amount, true, true);
-		CustomBlockUtils.fixTripwireNearby(player, brokenBlock, new HashSet<>(fixedTripwire));
+		CustomBlockUtils.breakBlock(brokenBlock, brokenCustomBlock, player, tool);
 	}
 
 	@EventHandler
@@ -556,8 +516,10 @@ public class CustomBlockListener implements Listener {
 		}
 
 		ICustomBlock customBlock = _customBlock.get();
+		Block underneath = preBlock.getRelative(BlockFace.DOWN);
+
+		// IWaterlogged
 		if (customBlock instanceof IWaterLogged) {
-			Block underneath = preBlock.getRelative(BlockFace.DOWN);
 
 			// if placing block in 1 depth water
 			if (preBlock.getType() == Material.WATER && Nullables.isNullOrAir(preBlock.getRelative(BlockFace.UP))) {
@@ -577,8 +539,28 @@ public class CustomBlockListener implements Listener {
 			}
 		}
 
-		// place block
+		// ITall
+		if (customBlock instanceof ITall) {
+			Block above = preBlock.getRelative(BlockFace.UP);
 
+			boolean placeTallSupport = false;
+			if (!(customBlock instanceof IWaterLogged))
+				placeTallSupport = true;
+			else if (clickedBlock.getType() != Material.WATER)
+				placeTallSupport = true;
+
+			if (placeTallSupport && !Nullables.isNullOrAir(above)) {
+				return false;
+			}
+		}
+
+		// IRequireSupport
+		if (customBlock instanceof IRequireSupport && !(customBlock instanceof IWaterLogged)) {
+			if (!underneath.isSolid())
+				return false;
+		}
+
+		// place block
 		if (!_customBlock.placeBlock(player, preBlock, clickedBlock, clickedFace, itemInHand)) {
 //			debug(" isPlacingBlock: CustomBlock#PlaceBlock == false");
 			return false;

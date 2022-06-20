@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.customblocks.models.tripwire.cover;
 
-import gg.projecteden.nexus.features.customblocks.models.tripwire.common.ICustomTripwire;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.common.IRequireSupport;
 
-public interface ICover extends ICustomTripwire {
+public interface ICover extends IRequireSupport {
 }

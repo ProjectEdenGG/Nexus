@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.customblocks.models.tripwire.misc;
 import gg.projecteden.nexus.features.customblocks.models.common.CustomBlockConfig;
 import gg.projecteden.nexus.features.customblocks.models.common.ICraftable;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.CustomTripwireConfig;
-import gg.projecteden.nexus.features.customblocks.models.tripwire.common.ICustomTripwire;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.common.IRequireSupport;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 	customHitSound = "block.azalea_leaves.hit",
 	customFallSound = "block.azalea_leaves.fall"
 )
-public class Lavender implements ICustomTripwire, ICraftable {
+public class Lavender implements IRequireSupport, ICraftable {
 
 	@Override
 	public @Nullable RecipeBuilder<?> getUncraftRecipe() {
