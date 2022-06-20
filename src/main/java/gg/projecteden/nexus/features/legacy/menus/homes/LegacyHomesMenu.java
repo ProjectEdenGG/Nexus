@@ -37,7 +37,7 @@ public class LegacyHomesMenu extends InventoryProvider {
 			if (home.getItem() != null && home.getItem().getItemMeta() != null)
 				item = new ItemBuilder(home.getItem());
 
-			items.add(ClickableItem.of(item, e -> home.teleportAsync(player)));
+			items.add(ClickableItem.of(item.name(home.getName()), e -> home.teleportAsync(player)));
 		}
 
 		paginator().items(items).build();

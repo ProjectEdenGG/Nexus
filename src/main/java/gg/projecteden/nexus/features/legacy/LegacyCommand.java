@@ -106,8 +106,8 @@ public class LegacyCommand extends _WarpSubCommand {
 		legacyHome.teleportAsync(player());
 	}
 
-	@Path("homes <player>")
-	void homes(LegacyHomeOwner legacyHomeOwner) {
+	@Path("homes [player]")
+	void homes(@Arg("self") LegacyHomeOwner legacyHomeOwner) {
 		new LegacyHomesMenu(legacyHomeOwner).open(player());
 	}
 
@@ -253,33 +253,35 @@ public class LegacyCommand extends _WarpSubCommand {
 	void archive_homes() {
 		int count = 0;
 		final HomeService homeService = new HomeService();
+		final LegacyHomeService legacyHomeService = new LegacyHomeService();
+
 		for (HomeOwner uuid : homeService.getAll()) {
 			HomeOwner homeOwner = homeService.get(uuid);
+			LegacyHomeOwner legacyHomeOwner = legacyHomeService.get(uuid);
 
 			final List<Home> homes = homeOwner.getHomes();
 			if (homes.isEmpty())
 				continue;
 
-			legacyHomeOwner.getHomes().clear();
-
 			for (Home home : new ArrayList<>(homes)) {
 				if (!subWorldGroups.contains(SubWorldGroup.of(home.getLocation())))
 					continue;
 
-				legacyHomeOwner.add(LegacyHome.builder()
+				legacyHomeOwner.getHomes().add(LegacyHome.builder()
 					.uuid(home.getUniqueId())
 					.name(home.getName())
 					.location(home.getLocation())
-					.item(home.getItem()));
+					.item(home.getItem())
+					.build());
 
 				++count;
 
-				homeOwner.delete(home);
+				homeOwner.getHomes().removeIf(_home -> home.getName().equals(_home.getName()));
 			}
-
-			legacyHomeService.save(legacyHomeOwner);
-			homeService.save(homeOwner);
 		}
+
+		legacyHomeService.saveCache();
+		homeService.saveCache();
 
 		send(PREFIX + "Archived " + count + " survival homes");
 	}
