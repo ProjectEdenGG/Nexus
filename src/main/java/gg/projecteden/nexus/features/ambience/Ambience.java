@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.ambience;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.ambience.managers.common.AmbienceManagers;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.ambience.AmbienceUser;
@@ -7,7 +8,6 @@ import gg.projecteden.nexus.models.ambience.AmbienceUserService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import org.bukkit.event.Listener;
 

@@ -6,7 +6,6 @@ import gg.projecteden.nexus.features.votes.vps.VPSMenu.VPSPage.VPSSlot.VPSSlotBu
 import gg.projecteden.nexus.models.chatgames.ChatGamesConfig;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.Builder;
-import lombok.Builder.Default;
 import lombok.Data;
 import lombok.Getter;
 import org.bukkit.Material;
@@ -629,7 +628,6 @@ public enum VPSMenu {
 
 	@Data
 	public static class VPSPage {
-		@Default
 		private int rows = 6;
 		private Map<Integer, VPSSlot> items;
 

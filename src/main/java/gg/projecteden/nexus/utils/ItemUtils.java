@@ -4,11 +4,11 @@ import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.itemtags.Condition;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
+import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
+import gg.projecteden.parchment.HasPlayer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import me.lexikiq.HasPlayer;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.bukkit.Material;
 import org.bukkit.StructureType;
@@ -343,7 +343,7 @@ public class ItemUtils {
 			result = Integer.compare(b.getAmount(), a.getAmount());
 			if (result != 0) return result;
 
-			result = Integer.compare(CustomModelData.of(a), CustomModelData.of(b));
+			result = Integer.compare(ModelId.of(a), ModelId.of(b));
 			return result;
 		}
 	}
@@ -563,12 +563,12 @@ public class ItemUtils {
 			INT_ARRAY(IntArrayType.class),
 			;
 
-			private final Class<? extends NBTDataType> clazz;
+			private final Class<? extends NBTDataType<?>> clazz;
 		}
 
 		public static class StringType extends NBTDataType<String> {
 			public StringType() {
-				super(NBTItem::getString, NBTItem::setString, String::valueOf);;
+				super(NBTItem::getString, NBTItem::setString, String::valueOf);
 			}
 		}
 
@@ -620,7 +620,7 @@ public class ItemUtils {
 			}
 		}
 
-		/* // TODO Java doesnt include support for Byte arrays in streams
+		/* TODO Java doesnt include support for Byte arrays in streams
 		public static class ByteArrayType extends NBTDataType<byte[]> {
 			public ByteArrayType() {
 				super(NBTItem::getByteArray, NBTItem::setByteArray, string -> Arrays.stream(string.split(",")).map(Byte::valueOf).toArray());

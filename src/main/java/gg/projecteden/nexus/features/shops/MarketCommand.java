@@ -16,6 +16,8 @@ public class MarketCommand extends CustomCommand {
 
 	@Path
 	void run() {
+		error("The Market has been retired. Replacement coming soon!");
+
 		new BrowseMarketProvider(null).open(player());
 	}
 

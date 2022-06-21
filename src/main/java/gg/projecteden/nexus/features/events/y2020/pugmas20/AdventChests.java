@@ -47,7 +47,7 @@ import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.isPas
 import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.isSecondChance;
 import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.location;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 public class AdventChests implements Listener {
 	public static Map<Integer, Location> adventLootMap = new HashMap<>();

@@ -2,23 +2,24 @@ package gg.projecteden.nexus.utils;
 
 import de.tr7zw.nbtapi.NBTItem;
 import dev.dbassett.skullcreator.SkullCreator;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.customenchants.enchants.SoulboundEnchant;
 import gg.projecteden.nexus.features.itemtags.Condition;
 import gg.projecteden.nexus.features.itemtags.Rarity;
 import gg.projecteden.nexus.features.recipes.functionals.Backpacks;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.IsColored;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.skincache.SkinCache;
 import gg.projecteden.nexus.utils.SymbolBanner.Symbol;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.parchment.HasOfflinePlayer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import me.lexikiq.HasOfflinePlayer;
-import me.lexikiq.HasUniqueId;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -69,9 +70,9 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
-import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 @SuppressWarnings({"UnusedReturnValue", "ResultOfMethodCallIgnored", "CopyConstructorMissesField", "deprecation"})
 public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
@@ -86,8 +87,16 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		this(new ItemStack(material));
 	}
 
+	public ItemBuilder(CustomMaterial material) {
+		this(material, 1);
+	}
+
 	public ItemBuilder(Material material, int amount) {
 		this(new ItemStack(material, amount));
+	}
+
+	public ItemBuilder(CustomMaterial material, int amount) {
+		this(new ItemBuilder(material.getMaterial()).modelId(material.getModelId()).amount(amount));
 	}
 
 	public ItemBuilder(ItemBuilder itemBuilder) {
@@ -459,17 +468,23 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 
 	// Shulker Boxes
 
+	public ItemBuilder shulkerBox(List<ItemStack> items) {
+		return shulkerBox(items.toArray(ItemStack[]::new));
+	}
+
 	public ItemBuilder shulkerBox(ItemBuilder... builders) {
-		for (ItemBuilder builder : builders)
-			shulkerBox(builder.build());
-		return this;
+		return shulkerBox(Arrays.stream(builders).map(ItemBuilder::build).toList());
 	}
 
 	public ItemBuilder shulkerBox(ItemStack... items) {
+		shulkerBox(box -> box.getInventory().setContents(items));
+		return this;
+	}
+
+	public ItemBuilder shulkerBox(Consumer<ShulkerBox> consumer) {
 		BlockStateMeta blockStateMeta = (BlockStateMeta) itemMeta;
 		ShulkerBox box = (ShulkerBox) blockStateMeta.getBlockState();
-		for (ItemStack item : items)
-			box.getInventory().addItem(item);
+		consumer.accept(box);
 		blockStateMeta.setBlockState(box);
 		return this;
 	}
@@ -482,6 +497,10 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 
 	public List<@Nullable ItemStack> nonAirShulkerBoxContents() {
 		return shulkerBoxContents().stream().filter(Nullables::isNotNullOrAir).collect(Collectors.toList());
+	}
+
+	public ItemBuilder clearShulkerBox() {
+		return shulkerBox(box -> box.getInventory().clear());
 	}
 
 	// Books
@@ -569,7 +588,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	public ItemBuilder axolotl(Axolotl.Variant variant) {
 		final AxolotlBucketMeta bucketMeta = (AxolotlBucketMeta) itemMeta;
 		bucketMeta.setVariant(variant);
-		customModelData(variant.ordinal());
+		modelId(variant.ordinal());
 		return this;
 	}
 
@@ -716,19 +735,19 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return setting(ItemSetting.TRADEABLE, false);
 	}
 
-	public ItemBuilder customModelData(int id) {
+	public ItemBuilder modelId(int id) {
 		if (id > 0)
 			nbt(item -> item.setInteger(CustomModel.NBT_KEY, id));
 		return this;
 	}
 
-	public int customModelData() {
+	public int modelId() {
 		NBTItem nbtItem = nbtItem();
-		final Integer customModelData = nbtItem.getInteger(CustomModel.NBT_KEY);
-		return customModelData == null ? 0 : customModelData;
+		final Integer modelId = nbtItem.getInteger(CustomModel.NBT_KEY);
+		return modelId == null ? 0 : modelId;
 	}
 
-	public static class CustomModelData {
+	public static class ModelId {
 
 		public static int of(ItemStack item) {
 			if (isNullOrAir(item))
@@ -738,7 +757,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		}
 
 		public static int of(ItemBuilder item) {
-			return item.customModelData();
+			return item.modelId();
 		}
 
 	}

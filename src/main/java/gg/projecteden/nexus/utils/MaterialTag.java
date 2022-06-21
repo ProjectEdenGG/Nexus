@@ -292,6 +292,9 @@ public class MaterialTag implements Tag<Material> {
 				if (field.getType() == Tag.class || field.getType() == MaterialTag.class) {
 					Tag<Material> materialTag = (Tag<Material>) field.get(null);
 
+					if (materialTag == null)
+						continue;
+
 					try {
 						Method isTaggedMethod = materialTag.getClass().getMethod("isTagged", Material.class);
 						put(field.getName(), materialTag);

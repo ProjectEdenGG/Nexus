@@ -28,13 +28,13 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 @Getter
 public enum CrateType {
 	ALL(null, null),
-	VOTE(new VoteCrate(), new Location(Bukkit.getWorld("survival"), 8, 15, 11)),
-	MYSTERY(new MysteryCrate(), new Location(Bukkit.getWorld("survival"), 11, 15, 8)),
-	WEEKLY_WAKKA(new WeeklyWakkaCrate(), new Location(Bukkit.getWorld("survival"), 15, 15, -8)),
+	VOTE(new VoteCrate(), new Location(Bukkit.getWorld("legacy2"), 8, 15, 11)),
+	MYSTERY(new MysteryCrate(), new Location(Bukkit.getWorld("legacy2"), 11, 15, 8)),
+	WEEKLY_WAKKA(new WeeklyWakkaCrate(), new Location(Bukkit.getWorld("legacy2"), 15, 15, -8)),
 	FEB_VOTE_REWARD(new FebVoteRewardCrate(), null),
-	BOSS(new BossCrate(), new Location(Bukkit.getWorld("survival"), -9, 15, 12)),
+	BOSS(new BossCrate(), new Location(Bukkit.getWorld("legacy2"), -9, 15, 12)),
 	BEAR_FAIR_21(new BearFair21Crate(), null),
-	PUGMAS_21(new Pugmas21Crate(), new Location(Bukkit.getWorld("survival"), -12, 15, 9)),
+	PUGMAS_21(new Pugmas21Crate(), new Location(Bukkit.getWorld("legacy2"), -12, 15, 9)),
 	;
 
 	Crate crateClass;

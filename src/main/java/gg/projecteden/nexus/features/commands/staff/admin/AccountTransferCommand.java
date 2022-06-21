@@ -6,8 +6,8 @@ import com.gmail.nossr50.mcMMO;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Protection;
 import com.griefcraft.sql.PhysDB;
-import gg.projecteden.annotations.Sync;
-import gg.projecteden.mongodb.annotations.Service;
+import gg.projecteden.api.common.annotations.Sync;
+import gg.projecteden.api.mongodb.annotations.Service;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -445,7 +445,7 @@ public class AccountTransferCommand extends CustomCommand {
 		@Override
 		public void transfer(Shop previous, Shop current) {
 			current.setDescription(previous.getDescription());
-			current.addHolding(previous.getHolding());
+			current.setHolding(previous.getHolding());
 			current.getDisabledResourceMarketItems().addAll(previous.getDisabledResourceMarketItems());
 
 			for (Product product : previous.getProducts()) {

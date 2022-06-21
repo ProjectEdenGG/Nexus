@@ -4,7 +4,7 @@ import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
 import com.gmail.nossr50.events.skills.fishing.McMMOPlayerFishingEvent;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.utils.WorldGuardFlagUtils;
-import me.lexikiq.HasPlayer;
+import gg.projecteden.parchment.HasPlayer;
 import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.Location;
 import org.bukkit.Material;

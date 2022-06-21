@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.features.chat;
 
+import gg.projecteden.api.discord.DiscordId.TextChannel;
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.alerts.AlertsListener;
 import gg.projecteden.nexus.features.chat.bridge.IngameBridgeListener;
@@ -20,11 +22,9 @@ import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Timer;
-import gg.projecteden.utils.DiscordId.TextChannel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import me.lexikiq.HasUniqueId;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
@@ -40,9 +40,9 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.AdventureUtils.asLegacyText;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
-import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 public class Chat extends Feature {
 

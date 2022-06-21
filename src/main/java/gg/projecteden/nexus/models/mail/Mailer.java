@@ -3,8 +3,8 @@ package gg.projecteden.nexus.models.mail;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.mongodb.serializers.LocalDateTimeConverter;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.mongodb.serializers.LocalDateTimeConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.MailCommand;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -36,8 +36,8 @@ import java.util.stream.Collectors;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.asOxfordList;
-import static gg.projecteden.utils.UUIDUtils.UUID0;
-import static gg.projecteden.utils.UUIDUtils.isUUID0;
+import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
+import static gg.projecteden.api.common.utils.UUIDUtils.isUUID0;
 
 @Data
 @Entity(value = "mailer", noClassnameStored = true)

@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.listeners;
 
 import com.destroystokyo.paper.event.player.PlayerAttackEntityCooldownResetEvent;
-import gg.projecteden.annotations.Disabled;
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.models.tip.Tip;

@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.statistics;
 
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 
 public class StatisticsMenu {
 

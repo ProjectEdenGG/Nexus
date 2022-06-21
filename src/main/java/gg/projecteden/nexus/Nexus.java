@@ -4,7 +4,11 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.lishid.openinv.IOpenInv;
 import com.onarandombox.MultiverseCore.MultiverseCore;
-import gg.projecteden.mongodb.MongoService;
+import gg.projecteden.api.common.utils.EnumUtils;
+import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.api.common.utils.ReflectionUtils;
+import gg.projecteden.api.common.utils.Utils;
+import gg.projecteden.api.mongodb.MongoService;
 import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.listeners.TemporaryListener;
@@ -18,14 +22,13 @@ import gg.projecteden.nexus.models.home.HomeService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.GoogleUtils;
+import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Timer;
-import gg.projecteden.nexus.utils.WorldGuardFlagUtils;
-import gg.projecteden.utils.EnumUtils;
-import gg.projecteden.utils.Env;
-import gg.projecteden.utils.Utils;
+import gg.projecteden.nexus.utils.WorldGuardFlagUtils.CustomFlags;
 import it.sauronsoftware.cron4j.Scheduler;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,8 +40,6 @@ import net.luckperms.api.LuckPerms;
 import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -52,13 +53,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-import static org.reflections.ReflectionUtils.getMethods;
-import static org.reflections.ReflectionUtils.withAnnotation;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 
 public class Nexus extends JavaPlugin {
 	@Getter
@@ -71,18 +70,28 @@ public class Nexus extends JavaPlugin {
 	public static final LocalDateTime EPOCH = LocalDateTime.now();
 	@Getter
 	private final static HeadDatabaseAPI headAPI = new HeadDatabaseAPI();
+	private static API api;
 	public static final String DOMAIN = "projecteden.gg";
 
-	public static Map<Class<?>, Object> singletons = new HashMap<>();
+	public static Map<Class<?>, Object> singletons = new ConcurrentHashMap<>();
 
 	public static <T> T singletonOf(Class<T> clazz) {
 		return (T) singletons.computeIfAbsent(clazz, $ -> {
 			try {
 				return clazz.getConstructor().newInstance();
 			} catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException ex) {
-				return new ObjenesisStd().newInstance(clazz);
+				Nexus.log(Level.FINE, "Failed to create singleton of " + clazz.getName() + ", falling back to Objenesis", ex);
+				try {
+					return new ObjenesisStd().newInstance(clazz);
+				} catch (Throwable t) {
+					throw new IllegalStateException("Failed to create singleton of " + clazz.getName() + " using Objenesis", t);
+				}
 			}
 		});
+	}
+
+	static {
+		Locale.setDefault(Locale.US);
 	}
 
 	public Nexus() {
@@ -92,7 +101,7 @@ public class Nexus extends JavaPlugin {
 		} else
 			Bukkit.getServer().getLogger().info("Nexus could not be initialized: Instance is not null, but is: " + instance.getClass().getName());
 
-		new API();
+		api = new API();
 	}
 
 	public static Nexus getInstance() {
@@ -122,15 +131,35 @@ public class Nexus extends JavaPlugin {
 	}
 
 	public static void log(String message) {
-		getInstance().getLogger().info(ChatColor.stripColor(message));
+		log(Level.INFO, message);
+	}
+
+	public static void log(String message, Throwable ex) {
+		log(Level.INFO, message, ex);
 	}
 
 	public static void warn(String message) {
-		getInstance().getLogger().warning(ChatColor.stripColor(message));
+		log(Level.WARNING, message);
+	}
+
+	public static void warn(String message, Throwable ex) {
+		log(Level.WARNING, message, ex);
 	}
 
 	public static void severe(String message) {
-		getInstance().getLogger().severe(ChatColor.stripColor(message));
+		log(Level.SEVERE, message);
+	}
+
+	public static void severe(String message, Throwable ex) {
+		log(Level.SEVERE, message, ex);
+	}
+
+	public static void log(Level level, String message) {
+		log(level, message, null);
+	}
+
+	public static void log(Level level, String message, Throwable ex) {
+		getInstance().getLogger().log(level, ChatColor.stripColor(message), ex);
 	}
 
 	@Getter
@@ -152,14 +181,15 @@ public class Nexus extends JavaPlugin {
 	}
 
 	public static void registerListener(Listener listener) {
+		Nexus.debug("Registering listener: " + listener.getClass().getName());
 		if (getInstance().isEnabled()) {
 			getInstance().getServer().getPluginManager().registerEvents(listener, getInstance());
 			listeners.add(listener);
 			if (!(listener instanceof TemporaryListener))
-				for (Method method : getMethods(listener.getClass(), withAnnotation(EventHandler.class)))
+				for (Method method : ReflectionUtils.methodsAnnotatedWith(listener.getClass(), EventHandler.class))
 					eventHandlers.add((Class<? extends Event>) method.getParameters()[0].getType());
 		} else
-			log("Could not register listener " + listener.toString() + "!");
+			log("Could not register listener " + listener.getClass().getName() + "!");
 	}
 
 	public static void unregisterListener(Listener listener) {
@@ -172,28 +202,18 @@ public class Nexus extends JavaPlugin {
 		}
 	}
 
-	public static void registerCommand(String command, CommandExecutor executor) {
-		getInstance().getCommand(command).setExecutor(executor);
-	}
-
-	public static void registerTabCompleter(String command, TabCompleter tabCompleter) {
-		getInstance().getCommand(command).setTabCompleter(tabCompleter);
-	}
-
 	@Override
 	public void onLoad() {
-		WorldGuardFlagUtils.Flags.register();
+		CustomFlags.register();
 	}
 
 	@Override
 	public void onEnable() {
-		Locale.setDefault(Locale.US);
-
 		new Timer("Enable", () -> {
 			new Timer(" Cache Usernames", () -> OnlinePlayers.getAll().forEach(Name::of));
 			new Timer(" Config", this::setupConfig);
-			new Timer(" Databases", this::databases);
 			new Timer(" Hooks", this::hooks);
+			new Timer(" Databases", this::databases);
 			new Timer(" Features", () -> {
 				features = new Features(this, "gg.projecteden.nexus.features");
 				features.register(Chat.class, Discord.class); // prioritize
@@ -206,22 +226,24 @@ public class Nexus extends JavaPlugin {
 		});
 	}
 
+	// @formatter:off
 	@Override
-	@SuppressWarnings("Convert2MethodRef")
+	@SuppressWarnings({"Convert2MethodRef", "CodeBlock2Expr"})
 	public void onDisable() {
 		List<Runnable> tasks = List.of(
-			() -> broadcastReload(),
-			() -> PlayerUtils.runCommandAsConsole("save-all"),
-			() -> cron.stop(),
-			() -> protocolManager.removePacketListeners(this),
-			() -> commands.unregisterAll(),
-			() -> features.unregisterExcept(Discord.class, Chat.class),
-			() -> features.unregister(Discord.class, Chat.class),
-			() -> Bukkit.getServicesManager().unregisterAll(this),
-			() -> MySQLPersistence.shutdown(),
-			() -> GoogleUtils.shutdown(),
-			() -> API.shutdown(),
-			() -> shutdownDatabases()
+			() -> { broadcastReload(); },
+			() -> { PlayerUtils.runCommandAsConsole("save-all"); },
+			() -> { if (cron.isStarted()) cron.stop(); },
+			() -> { if (protocolManager != null) protocolManager.removePacketListeners(this); },
+			() -> { if (commands != null) commands.unregisterAll(); },
+			() -> { if (features != null) features.unregisterExcept(Discord.class, Chat.class); },
+			() -> { if (features != null) features.unregister(Discord.class, Chat.class); },
+			() -> { Bukkit.getServicesManager().unregisterAll(this); },
+			() -> { MySQLPersistence.shutdown(); },
+			() -> { GoogleUtils.shutdown(); },
+			() -> { LuckPermsUtils.shutdown(); },
+			() -> { if (api != null) api.shutdown(); },
+			() -> { shutdownDatabases(); }
 		);
 
 		for (Runnable task : tasks)
@@ -233,6 +255,9 @@ public class Nexus extends JavaPlugin {
 	}
 
 	public void broadcastReload() {
+		if (luckPerms == null)
+			return;
+
 		Rank.getOnlineStaff().stream()
 				.map(Nerd::getPlayer)
 				.forEach(player -> {
@@ -288,7 +313,10 @@ public class Nexus extends JavaPlugin {
 
 	private void databases() {
 //		new Timer(" MySQL", LWCProtectionService::new);
-		new Timer(" MongoDB", HomeService::new);
+		new Timer(" MongoDB", () -> {
+			new HomeService();
+			Tasks.wait(5, () -> MongoService.loadServices("gg.projecteden.nexus.models"));
+		});
 	}
 
 	@SneakyThrows

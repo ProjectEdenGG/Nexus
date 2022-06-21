@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.votes;
 
+import gg.projecteden.api.discord.DiscordId.User;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.crates.models.CrateType;
@@ -15,7 +16,6 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.DiscordId.User;
 import lombok.Data;
 import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;

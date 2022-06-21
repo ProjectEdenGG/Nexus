@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.models.chat;
 
+import gg.projecteden.api.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.features.commands.NearCommand.Near;
@@ -8,7 +9,6 @@ import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.utils.DiscordId.TextChannel;
 import lombok.Builder;
 import lombok.Data;
 import net.md_5.bungee.api.ChatColor;

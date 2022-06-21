@@ -13,8 +13,8 @@ import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils.Paster;
-import gg.projecteden.utils.TimeUtils.TickTime;
-import gg.projecteden.utils.Utils.MinMaxResult;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.Utils.MinMaxResult;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Location;
@@ -41,8 +41,8 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.Utils.getMin;
-import static gg.projecteden.utils.RandomUtils.randomLong;
-import static gg.projecteden.utils.UUIDUtils.UUID0;
+import static gg.projecteden.api.common.utils.RandomUtils.randomLong;
+import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 
 public class WoodCutting implements Listener {
 	private static final String tree_region = BearFair21.getRegion() + "_trees";

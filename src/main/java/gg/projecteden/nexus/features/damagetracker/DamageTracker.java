@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.damagetracker;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.damagetracker.models.DamageEvent;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.entity.LivingEntity;
 
 import java.time.LocalDateTime;

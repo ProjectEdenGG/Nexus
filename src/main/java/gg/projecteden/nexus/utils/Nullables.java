@@ -5,7 +5,7 @@ import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Contract;
 
-public class Nullables extends gg.projecteden.utils.Nullables {
+public class Nullables extends gg.projecteden.api.common.utils.Nullables {
 
 	/**
 	 * Tests if an item is not null or {@link MaterialTag#ALL_AIR air}
@@ -37,6 +37,16 @@ public class Nullables extends gg.projecteden.utils.Nullables {
 	@Contract("null -> true; !null -> _")
 	public static boolean isNullOrAir(ItemStack itemStack) {
 		return itemStack == null || itemStack.getType().isEmpty();
+	}
+
+	/**
+	 * Tests if an item is null or {@link MaterialTag#ALL_AIR air}
+	 * @param itemBuilder item
+	 * @return if item is null or air
+	 */
+	@Contract("null -> true; !null -> _")
+	public static boolean isNullOrAir(ItemBuilder itemBuilder) {
+		return itemBuilder == null || itemBuilder.material().isEmpty();
 	}
 
 	/**

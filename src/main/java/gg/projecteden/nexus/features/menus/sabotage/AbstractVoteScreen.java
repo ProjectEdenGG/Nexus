@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.menus.sabotage;
 
-import gg.projecteden.interfaces.Nicknamed;
+import gg.projecteden.api.interfaces.Nicknamed;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
@@ -9,7 +9,7 @@ import gg.projecteden.nexus.features.minigames.models.matchdata.SabotageMatchDat
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.SabotageColor;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import me.lexikiq.HasPlayer;
+import gg.projecteden.parchment.HasPlayer;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Material;
 

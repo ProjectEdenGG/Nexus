@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -9,8 +10,7 @@ import gg.projecteden.nexus.models.snoweffect.SnowEffectService;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardFlagUtils;
-import gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.utils.WorldGuardFlagUtils.CustomFlags;
 import lombok.NoArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -41,7 +41,7 @@ public class SnowEffectCommand extends CustomCommand implements Listener {
 			});
 
 			OnlinePlayers.getAll().stream()
-					.filter(player -> WorldGuardFlagUtils.test(player, Flags.SNOW_EFFECT))
+					.filter(player -> WorldGuardFlagUtils.test(player, CustomFlags.SNOW_EFFECT))
 					.forEach(SnowEffectCommand::playSnowEffect);
 		});
 	}

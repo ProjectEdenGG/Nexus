@@ -5,7 +5,7 @@ import gg.projecteden.nexus.models.shop.Shop.ExchangeType;
 import gg.projecteden.nexus.models.shop.Shop.Product;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.LanguageUtils;
-import gg.projecteden.utils.EnumUtils.IteratableEnum;
+import gg.projecteden.api.common.utils.EnumUtils.IteratableEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;

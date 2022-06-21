@@ -1,12 +1,12 @@
 name: Nexus
 main: gg.projecteden.nexus.Nexus
-version: ${project.version}
+version: ${version}
 authors:
   - GriffinCodes
   - WakkaFlocka
   - Blast-MC
   - lexikiq
-api-version: 1.17
+api-version: 1.19
 load: POSTWORLD
 depend:
   - helper

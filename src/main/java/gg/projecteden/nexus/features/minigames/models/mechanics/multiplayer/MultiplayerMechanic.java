@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer;
 
-import gg.projecteden.interfaces.Named;
-import gg.projecteden.interfaces.Nicknamed;
+import gg.projecteden.api.interfaces.Named;
+import gg.projecteden.api.interfaces.Nicknamed;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;

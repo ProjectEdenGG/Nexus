@@ -5,7 +5,7 @@ import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.District;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeavingRegionEvent;
-import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.models.pugmas21.Advent21Config;
 import gg.projecteden.nexus.models.pugmas21.Advent21Config.AdventPresent;
 import gg.projecteden.nexus.models.pugmas21.Advent21ConfigService;
@@ -33,8 +33,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 public class Advent implements Listener {
 	private static final Pugmas21UserService userService = new Pugmas21UserService();
@@ -124,10 +124,8 @@ public class Advent implements Listener {
 		if (isNullOrAir(item))
 			return;
 
-		if (!item.getType().equals(Material.TRAPPED_CHEST))
-			return;
-
-		if (!CustomModel.exists(item))
+		final CustomMaterial customMaterial = CustomMaterial.of(item);
+		if (customMaterial == null || !customMaterial.name().startsWith(CustomMaterial.PUGMAS21_PRESENT_ADVENT.name().replace("ADVENT", "")))
 			return;
 
 		List<String> lore = item.getItemMeta().getLore();

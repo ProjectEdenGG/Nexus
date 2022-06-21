@@ -15,7 +15,7 @@ import gg.projecteden.nexus.models.warps.Warps;
 import gg.projecteden.nexus.models.warps.Warps.Warp;
 import gg.projecteden.nexus.models.warps.WarpsService;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.utils.Utils.MinMaxResult;
+import gg.projecteden.api.common.utils.Utils.MinMaxResult;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
 

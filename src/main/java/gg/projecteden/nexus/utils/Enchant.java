@@ -10,7 +10,6 @@ import gg.projecteden.nexus.features.customenchants.enchants.GlowingEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.MagnetEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.SoulboundEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.ThunderingBlowEnchant;
-import lombok.experimental.UtilityClass;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentWrapper;
 
@@ -23,7 +22,6 @@ import java.util.List;
  * <p>
  * If replacing an old CustomEnchantments enchant, please use {@link OldCEConverter.ConversionEnchant}
  */
-@UtilityClass
 @SuppressWarnings("unused")
 public class Enchant {
 

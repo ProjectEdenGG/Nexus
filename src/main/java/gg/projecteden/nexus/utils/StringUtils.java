@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.parchment.HasPlayer;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import me.lexikiq.HasPlayer;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -14,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -24,7 +23,7 @@ import java.util.regex.Pattern;
 
 import static java.util.stream.Collectors.joining;
 
-public class StringUtils extends gg.projecteden.utils.StringUtils {
+public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 	@Getter
 	private static final String colorChar = "§";
 	@Getter
@@ -295,9 +294,7 @@ public class StringUtils extends gg.projecteden.utils.StringUtils {
 	}
 
 	public static String getWorldDisplayName(Location location, String world) {
-		if (Arrays.asList("world", "world_nether", "world_the_end").contains(world))
-			world = world.replace("world", "legacy");
-		else if (world.contains("oneblock"))
+		if (world.contains("oneblock"))
 			world = world.replace("oneblock_world", "one_block");
 		else if (world.contains("bskyblock"))
 			world = world.replace("bskyblock_world", "skyblock");

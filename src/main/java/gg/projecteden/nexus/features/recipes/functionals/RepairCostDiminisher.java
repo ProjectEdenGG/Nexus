@@ -2,10 +2,10 @@ package gg.projecteden.nexus.features.recipes.functionals;
 
 import gg.projecteden.nexus.features.recipes.RecipeUtils;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.Getter;
@@ -33,8 +33,7 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 public class RepairCostDiminisher extends FunctionalRecipe {
 
 	@Getter
-	private final static ItemStack item = new ItemBuilder(Material.EMERALD)
-		.customModelData(6)
+	private final static ItemStack item = new ItemBuilder(CustomMaterial.GEM_GARNET)
 		.name("&eRepair Cost Diminisher")
 		.lore("&7Use with an equipment item in")
 		.lore("&7your offhand to reduce the repair")

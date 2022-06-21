@@ -29,7 +29,7 @@ public class ItemCommand extends CustomCommand {
 	@Path("rp <material> <id>")
 	@Permission(Group.STAFF)
 	void rp(Material material, int id) {
-		PlayerUtils.giveItem(player(), new ItemBuilder(material).customModelData(id).build());
+		PlayerUtils.giveItem(player(), new ItemBuilder(material).modelId(id).build());
 	}
 
 	@Path("tag <tag> [amount]")

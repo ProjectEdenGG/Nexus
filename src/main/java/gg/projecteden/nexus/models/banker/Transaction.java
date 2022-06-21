@@ -1,16 +1,16 @@
 package gg.projecteden.nexus.models.banker;
 
 import com.mongodb.DBObject;
+import com.mysql.cj.util.StringUtils;
 import dev.morphia.annotations.PreLoad;
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.Utils;
-import joptsimple.internal.Strings;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import me.lexikiq.HasUniqueId;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -22,24 +22,25 @@ import java.util.UUID;
 
 import static gg.projecteden.nexus.models.banker.BankerService.rounded;
 import static gg.projecteden.nexus.models.banker.Transaction.TransactionCause.shopCauses;
-import static gg.projecteden.utils.UUIDUtils.isUUID0;
+import static gg.projecteden.api.common.utils.UUIDUtils.isUUID0;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Transaction {
-	private UUID receiver = null;
-	private BigDecimal receiverOldBalance = null;
-	private BigDecimal receiverNewBalance = null;
+	private UUID receiver;
+	private BigDecimal receiverOldBalance;
+	private BigDecimal receiverNewBalance;
 
-	private UUID sender = null;
-	private BigDecimal senderOldBalance = null;
-	private BigDecimal senderNewBalance = null;
+	private UUID sender;
+	private BigDecimal senderOldBalance;
+	private BigDecimal senderNewBalance;
 
 	private BigDecimal amount;
 	private String description;
 	private TransactionCause cause;
+	@Builder.Default
 	private LocalDateTime timestamp = LocalDateTime.now();
 	private ShopGroup shopGroup;
 
@@ -189,7 +190,7 @@ public class Transaction {
 		if (!shopCauses.contains(previous.getCause()))
 			return 0;
 
-		if (Strings.isNullOrEmpty(transaction.getDescription()))
+		if (StringUtils.isNullOrEmpty(transaction.getDescription()))
 			return 0;
 
 		String[] split = transaction.getDescription().split(" ", 2);

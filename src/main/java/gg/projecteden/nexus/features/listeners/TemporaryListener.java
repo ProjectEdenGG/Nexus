@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.listeners;
 
-import me.lexikiq.HasPlayer;
+import gg.projecteden.parchment.HasPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 

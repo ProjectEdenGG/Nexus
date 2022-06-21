@@ -3,7 +3,7 @@ package gg.projecteden.nexus.models.alerts;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import lombok.AllArgsConstructor;
@@ -87,7 +87,6 @@ public class Alerts implements PlayerOwnedObject {
 	public static class Highlight implements Comparable<Highlight> {
 		@NonNull
 		private String highlight;
-		@NonNull
 		private boolean partialMatching;
 
 		@Override

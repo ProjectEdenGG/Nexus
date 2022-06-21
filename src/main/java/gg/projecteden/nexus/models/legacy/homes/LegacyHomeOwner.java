@@ -3,7 +3,7 @@ package gg.projecteden.nexus.models.legacy.homes;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import lombok.AllArgsConstructor;
@@ -49,9 +49,9 @@ public class LegacyHomeOwner implements PlayerOwnedObject {
 				.findFirst();
 	}
 
-	public void add(LegacyHome home) {
+	public void add(LegacyHome.LegacyHomeBuilder home) {
 		getHome(home.getName()).ifPresent(this::delete);
-		homes.add(home);
+		homes.add(home.build());
 	}
 
 	public void delete(LegacyHome home) {

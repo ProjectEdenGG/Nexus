@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.events.y2020.bearfair20;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.models.BearFairTalker;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.islands.IslandType;
@@ -15,7 +16,6 @@ import gg.projecteden.nexus.utils.Timer;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Data;
 import lombok.Getter;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
@@ -47,7 +47,7 @@ public class BearFair20 implements Listener {
 	@Getter
 	private static final String region = "bearfair2020";
 	@Getter
-//	private static final Set<Class<? extends BearFairIsland>> islands = new Reflections(BearFair20.class.getPackage().getName() + ".islands").getSubTypesOf(BearFairIsland.class);
+//	private static final Set<Class<? extends BearFairIsland>> islands = subTypesOf(BearFair20.class.getPackageName() + ".islands", BearFairIsland.class);
 	public static String PREFIX = "&8&l[&eBearFair&8&l] &3";
 
 	// TODO: When BF is over, disable these, and disable block break/place on regions
@@ -177,7 +177,7 @@ public class BearFair20 implements Listener {
 //		if (!allowWarp) return;
 //		if (!event.getRegion().getId().equalsIgnoreCase("spawn_bearfair")) return;
 //
-//		Location spawnTransition = new Location(Bukkit.getWorld("survival"), 24.5, 96.5, -189.5);
+//		Location spawnTransition = new Location(Bukkit.getWorld("legacy2"), 24.5, 96.5, -189.5);
 //		Location bearFairYacht = new Location(world, -984.5, 135.5, -1529.5);
 //		Player player = event.getPlayer();
 //		BearFairService service = new BearFairService();

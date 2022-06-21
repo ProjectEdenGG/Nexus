@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.wither;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.features.commands.staff.admin.RebootCommand;
@@ -19,7 +20,6 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.SneakyThrows;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -335,7 +335,7 @@ public class WitherCommand extends CustomCommand {
 	@Path("getFragment")
 	@Permission(Group.ADMIN)
 	void fragment() {
-		PlayerUtils.giveItem(player(), WitherChallenge.getWitherFragment());
+		PlayerUtils.giveItem(player(), WitherChallenge.WITHER_FRAGMENT);
 	}
 
 }

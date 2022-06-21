@@ -1,6 +1,9 @@
 package gg.projecteden.nexus.features.minigames.models.mechanics;
 
-import gg.projecteden.interfaces.Named;
+import gg.projecteden.api.common.utils.ReflectionUtils;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
+import gg.projecteden.api.interfaces.Named;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.models.Arena;
@@ -23,6 +26,8 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.team
 import gg.projecteden.nexus.features.minigames.models.modifiers.MinigameModifier;
 import gg.projecteden.nexus.features.minigames.models.perks.Perk;
 import gg.projecteden.nexus.features.minigames.modifiers.NoModifier;
+import gg.projecteden.nexus.features.nameplates.Nameplates;
+import gg.projecteden.nexus.features.nameplates.TeamAssigner;
 import gg.projecteden.nexus.framework.interfaces.HasDescription;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -30,8 +35,6 @@ import gg.projecteden.nexus.utils.Tasks.Countdown;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
-import gg.projecteden.utils.TimeUtils.TickTime;
-import gg.projecteden.utils.TimeUtils.Timespan;
 import me.lucko.helper.scoreboard.ScoreboardTeam.NameTagVisibility;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
@@ -171,17 +174,27 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 
 	public void onStart(@NotNull MatchStartEvent event) {
 		Match match = event.getMatch();
+		int lives = match.getArena().getLives();
+
+		// announce match start
 		match.broadcast("Starting match");
 		match.broadcastNoPrefix("");
-		int lives = match.getArena().getLives();
-		if (lives > 0)
-			match.getMinigamers().forEach(minigamer -> minigamer.setLives(lives));
-		else
-			match.getMinigamers().forEach(minigamer -> {
+
+		for (Minigamer minigamer : match.getMinigamers()) {
+			// assign bukkit teams
+			TeamAssigner assigner = getTeamAssigner();
+			if (assigner != null)
+				Nameplates.get().registerTeamAssigner(minigamer, getTeamAssigner());
+
+			// set lives
+			if (lives > 0)
+				minigamer.setLives(lives);
+			else {
 				Team team = minigamer.getTeam();
 				if (team != null && team.getLives() > 0)
 					minigamer.setLives(team.getLives());
-			});
+			}
+		}
 
 		int beginDelay = match.getArena().getBeginDelay();
 		if (beginDelay > 0) {
@@ -189,7 +202,7 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 					.duration(TickTime.SECOND.x(beginDelay))
 					.onSecond(i -> {
 						Component message = new JsonBuilder("&7Starting in &e" + plural(i + " second", i)).build();
-						match.showTitle(Title.title(Component.empty(), message, Times.of(Duration.ZERO, Duration.ofSeconds(1), TickTime.TICK.duration(5))));
+						match.showTitle(Title.title(Component.empty(), message, Times.times(Duration.ZERO, Duration.ofSeconds(1), TickTime.TICK.duration(5))));
 						if (List.of(60, 30, 15, 5, 4, 3, 2, 1).contains(Math.toIntExact(i)))
 							match.broadcast(message);
 					})
@@ -481,7 +494,7 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 	// Reflection utils
 
 	public @NotNull final List<Class<? extends Mechanic>> getSuperclasses() {
-		return Utils.getSuperclasses(this.getClass());
+		return ReflectionUtils.superclassesOf(this.getClass());
 	}
 
 	@Nullable
@@ -521,5 +534,9 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 	}
 
 	public void onDisplayTimer(MinigamerDisplayTimerEvent event) {}
+
+	public @Nullable TeamAssigner getTeamAssigner() {
+		return null;
+	}
 
 }

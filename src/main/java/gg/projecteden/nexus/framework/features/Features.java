@@ -6,7 +6,6 @@ import gg.projecteden.nexus.utils.Timer;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.Getter;
 import org.bukkit.plugin.Plugin;
-import org.reflections.Reflections;
 
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -15,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+
+import static gg.projecteden.api.common.utils.ReflectionUtils.subTypesOf;
 
 @SuppressWarnings("unchecked")
 public class Features {
@@ -25,7 +26,7 @@ public class Features {
 
 	public Features(Plugin plugin, String path) {
 		this.plugin = plugin;
-		this.featureSet = new Reflections(path).getSubTypesOf(Feature.class);
+		this.featureSet = subTypesOf(Feature.class, path);
 	}
 
 	public static <T extends Feature> T get(Class<T> clazz) {
@@ -45,6 +46,7 @@ public class Features {
 	}
 
 	public void registerAll() {
+		Nexus.debug(" Registering " + featureSet.size() + " features");
 		featureSet.forEach(this::register);
 	}
 

@@ -14,7 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-import static gg.projecteden.utils.UUIDUtils.UUID0;
+import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 
 public class Market {
 	private static final ShopService service = new ShopService();
@@ -30,6 +30,8 @@ public class Market {
 	}
 
 	private static void addItems() {
+		if (true) return;
+
 		addSellItem(ShopGroup.SURVIVAL, false, Material.COBBLESTONE, 32, 50);
 		addSellItem(ShopGroup.SURVIVAL, false, Material.STONE_BRICKS, 32, 120);
 		addSellItem(ShopGroup.SURVIVAL, false, Material.MOSSY_STONE_BRICKS, 32, 150);

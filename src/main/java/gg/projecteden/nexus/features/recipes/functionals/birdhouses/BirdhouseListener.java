@@ -32,24 +32,24 @@ public class BirdhouseListener implements Listener {
 			if (isNullOrAir(item))
 				return;
 
-			if (item.getType() != Material.OAK_WOOD)
+			if (item.getType() != Material.PAPER)
 				return;
 
 			BirdhouseType type = BirdhouseType.of(item);
 			if (type == null)
 				return;
 
-			int customModelData = type.baseModel();
+			int modelId = type.baseModel();
 
 			final BlockFace face = itemFrame.getAttachedFace();
 
 			if (face == BlockFace.UP)
-				customModelData += 2;
+				modelId += 2;
 			else if (face != BlockFace.DOWN)
-				customModelData += 1;
+				modelId += 1;
 
 			itemFrame.setSilent(true);
-			itemFrame.setItem(new ItemBuilder(item).resetName().customModelData(customModelData).build());
+			itemFrame.setItem(new ItemBuilder(item).resetName().modelId(modelId).build());
 			itemFrame.setSilent(false);
 		});
 	}
@@ -60,7 +60,7 @@ public class BirdhouseListener implements Listener {
 		if (isNullOrAir(item))
 			return;
 
-		if (item.getType() != Material.OAK_WOOD)
+		if (item.getType() != Material.PAPER)
 			return;
 
 		BirdhouseType type = BirdhouseType.of(item);

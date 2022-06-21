@@ -6,6 +6,7 @@ import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import de.myzelyam.api.vanish.PlayerVanishStateChangeEvent;
 import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.NBTTileEntity;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.commands.GamemodeCommand;
@@ -43,7 +44,6 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import me.libraryaddict.disguise.DisguiseAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -55,6 +55,7 @@ import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Beehive;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Bee;
 import org.bukkit.entity.Entity;
@@ -118,6 +119,10 @@ public class Misc implements Listener {
 				continue;
 
 			world.setKeepSpawnInMemory(false);
+
+			// disable TIME_SINCE_SLEEP (used to determine when to spawn phantoms) outside the survival worlds
+			WorldGroup worldGroup = WorldGroup.of(world);
+			((CraftWorld) world).getHandle().paperConfig().entities.behavior.tickTimeSinceSleep = worldGroup == WorldGroup.SURVIVAL || worldGroup == WorldGroup.SKYBLOCK;
 		}
 	}
 

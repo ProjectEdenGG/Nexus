@@ -2,11 +2,11 @@ package gg.projecteden.nexus.features.events.store.providers;
 
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.LuckPermsUtils.PermissionChange;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +27,7 @@ public abstract class EventStoreMenu extends InventoryProvider {
 		else
 			addBackItem(e -> getPreviousMenu().open(player));
 
-		ItemStack tokens = new ItemBuilder(Material.GOLD_INGOT).customModelData(100).name("&e&lEvent Tokens").lore("&f" + getUser(player).getTokens()).build();
+		ItemStack tokens = new ItemBuilder(CustomMaterial.EVENT_TOKEN).name("&e&lEvent Tokens").lore("&f" + getUser(player).getTokens()).build();
 		contents.set(0, 8, ClickableItem.empty(tokens));
 
 		paginator().items(getItems(player)).build();

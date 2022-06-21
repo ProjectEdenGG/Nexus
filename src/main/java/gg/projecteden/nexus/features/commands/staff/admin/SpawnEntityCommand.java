@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
-import com.google.common.base.Strings;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTEntity;
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -70,7 +70,7 @@ public class SpawnEntityCommand extends CustomCommand {
 		public Entity spawn(SpawnReason spawnReason) {
 			Entity entity = location.getWorld().spawnEntity(location, type, spawnReason);
 
-			if (!Strings.isNullOrEmpty(data)) {
+			if (!Nullables.isNullOrEmpty(data)) {
 				if ("baby".equalsIgnoreCase(data) && entity instanceof Ageable ageable)
 					ageable.setBaby();
 

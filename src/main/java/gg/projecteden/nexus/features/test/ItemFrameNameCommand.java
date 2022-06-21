@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.test;
 
-import gg.projecteden.annotations.Environments;
+import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
@@ -11,14 +11,14 @@ import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.EnumUtils;
-import gg.projecteden.utils.Env;
-import gg.projecteden.utils.RandomUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.EnumUtils;
+import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.api.common.utils.RandomUtils;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import net.minecraft.world.entity.decoration.EntityArmorStand;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ItemFrame;
@@ -86,7 +86,7 @@ public class ItemFrameNameCommand extends CustomCommand {
 
 		String name = EnumUtils.random(ColorType.class).getChatColor() + "Item Name Here";
 		double height = RandomUtils.randomDouble(0.0, 0.6);
-		EntityArmorStand armorStand = PacketUtils.entityNameFake(player, itemFrame, height, name, 1);
+		ArmorStand armorStand = PacketUtils.entityNameFake(player, itemFrame, height, name, 1);
 
 		itemFrameName.setId(armorStand.getId());
 		itemFrameName.setLocation(itemFrame.getLocation());

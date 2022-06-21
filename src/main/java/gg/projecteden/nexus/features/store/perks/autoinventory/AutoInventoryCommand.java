@@ -138,11 +138,11 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 			List<ClickableItem> items = new ArrayList<>();
 			for (AutoSortInventoryType inventoryType : AutoSortInventoryType.values()) {
 				Material material = inventoryType.getMaterial();
-				int customModelData = inventoryType.getCustomModelData();
+				int modelId = inventoryType.getModelId();
 
 				ItemBuilder item = new ItemBuilder(material).name(StringUtils.camelCase(inventoryType));
-				if (customModelData > 0)
-					item.customModelData(customModelData);
+				if (modelId > 0)
+					item.modelId(modelId);
 
 				if (!user.getDisabledInventoryTypes().contains(inventoryType))
 					item.lore("&aEnabled");

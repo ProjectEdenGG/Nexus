@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.minigames.models.perks;
 
-import gg.projecteden.interfaces.Named;
+import gg.projecteden.api.interfaces.Named;
 import gg.projecteden.nexus.features.events.y2021.pride21.Flags;
 import gg.projecteden.nexus.features.minigames.perks.arrowparticles.BasicTrail;
 import gg.projecteden.nexus.features.minigames.perks.arrowparticles.GreenTrail;
@@ -19,6 +19,7 @@ import gg.projecteden.nexus.features.minigames.perks.particles.FlameParticle;
 import gg.projecteden.nexus.features.minigames.perks.particles.HeartParticle;
 import gg.projecteden.nexus.features.minigames.perks.particles.SoulFlameParticle;
 import gg.projecteden.nexus.features.minigames.perks.particles.SplashParticle;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
@@ -43,7 +44,7 @@ public enum PerkType implements IHasPerkCategory, Named {
 	BICORN_SIDE_HAT(DyeableCustomModelHat.createPirateHat("Bicorn Side", 4002)),
 	CAVALIER_HAT(DyeableCustomModelHat.createPirateHat("Cavalier", 4000)),
 	TRICORN_HAT(DyeableCustomModelHat.createPirateHat("Tricorn", 4003)),
-	MARKSMANS_HAT(new CustomModelHat(Material.STONE_BUTTON, 21, "Marksman's Hat", 20, "Shoot your targets with uncanny accuracy with this hat")),
+	MARKSMANS_HAT(new CustomModelHat(CustomMaterial.COSTUMES_PIRATE_HAT_LEATHER_CAVALIER, "Marksman's Hat", 20, "Shoot your targets with uncanny accuracy with this hat")),
 	GREEN_TRAIL(new GreenTrail()),
 	RAINBOW_TRAIL(new RainbowTrail()),
 	TERRACOTTA_HAT(new TeamHatMaterialImpl("Terracotta", 25, "Protect your head with this uniquely colored clay", colorType -> colorType.getTerracotta())),
@@ -74,7 +75,7 @@ public enum PerkType implements IHasPerkCategory, Named {
 	SNOWBALLS(new SnowballGadget()),
 	SPRING(new SpringGadget()),
 	DYE_BOMB(new DyeBombGadget()),
-	TRAFFIC_CONE(new CustomModelHat(Material.ORANGE_CONCRETE, 3, "Traffic Cone", 25, "Warn others of ongoing construction with this flashy hat")),
+	TRAFFIC_CONE(new CustomModelHat(CustomMaterial.TRAFFIC_CONE, "Traffic Cone", 25, "Warn others of ongoing construction with this flashy hat")),
 	ACE_FLAG(new FlagHat(Flags.ACE)),
 	AGENDER_FLAG(new FlagHat(Flags.AGENDER)),
 	ARO_FLAG(new FlagHat(Flags.ARO)),

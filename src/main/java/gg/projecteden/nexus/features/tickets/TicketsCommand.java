@@ -26,7 +26,7 @@ import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.utils.UUIDUtils.isUUID0;
+import static gg.projecteden.api.common.utils.UUIDUtils.isUUID0;
 
 public class TicketsCommand extends CustomCommand {
 	private final TicketsService service = new TicketsService();

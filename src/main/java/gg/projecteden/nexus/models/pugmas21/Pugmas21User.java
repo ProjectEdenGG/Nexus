@@ -3,7 +3,7 @@ package gg.projecteden.nexus.models.pugmas21;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestLine;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -16,14 +16,14 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks.GlowTask;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import net.minecraft.world.entity.decoration.EntityItemFrame;
+import net.minecraft.world.entity.decoration.ItemFrame;
 import org.bukkit.Sound;
 import org.inventivetalent.glow.GlowAPI;
 
@@ -35,7 +35,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import static gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21.PREFIX;
-import static gg.projecteden.utils.TimeUtils.shortDateFormat;
+import static gg.projecteden.api.common.utils.TimeUtils.shortDateFormat;
 import static java.util.Collections.singletonList;
 
 @Data
@@ -70,9 +70,9 @@ public class Pugmas21User implements PlayerOwnedObject {
 		private Set<Integer> collected = new HashSet<>();
 		private Set<Integer> found = new HashSet<>();
 
-		public transient final Map<Integer, EntityItemFrame> frames = new HashMap<>();
+		public transient final Map<Integer, ItemFrame> frames = new HashMap<>();
 
-		private EntityItemFrame getItemFrame(AdventPresent present) {
+		private ItemFrame getItemFrame(AdventPresent present) {
 			return frames.get(present.getDay());
 		}
 
@@ -152,7 +152,7 @@ public class Pugmas21User implements PlayerOwnedObject {
 
 		@Deprecated
 		public void glow(AdventPresent present) {
-			EntityItemFrame itemFrame = getItemFrame(present);
+			ItemFrame itemFrame = getItemFrame(present);
 			if (itemFrame == null)
 				itemFrame = show(present);
 
@@ -164,13 +164,13 @@ public class Pugmas21User implements PlayerOwnedObject {
 				.start();
 		}
 
-		public EntityItemFrame show(AdventPresent present) {
+		public ItemFrame show(AdventPresent present) {
 			hide(present);
 			return frames.compute(present.getDay(), ($1, $2) -> present.sendPacket(this));
 		}
 
 		public void hide(AdventPresent present) {
-			EntityItemFrame itemFrame = getItemFrame(present);
+			ItemFrame itemFrame = getItemFrame(present);
 			if (itemFrame == null)
 				return;
 

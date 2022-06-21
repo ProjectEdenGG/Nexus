@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands.teleport.request;
 
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -11,7 +12,6 @@ import gg.projecteden.nexus.models.teleport.TeleportRequests.TeleportRequest;
 import gg.projecteden.nexus.models.teleport.TeleportRequests.TeleportRequest.RequestType;
 import gg.projecteden.nexus.models.teleport.TeleportRequestsService;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.utils.TimeUtils.Timespan;
 import lombok.NonNull;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;

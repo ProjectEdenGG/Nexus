@@ -1,13 +1,13 @@
 package gg.projecteden.nexus.utils;
 
 import com.sk89q.worldedit.math.transform.AffineTransform;
-import gg.projecteden.utils.EnumUtils.IteratableEnum;
-import gg.projecteden.utils.MathUtils;
+import gg.projecteden.parchment.HasPlayer;
+import gg.projecteden.api.common.utils.EnumUtils.IteratableEnum;
+import gg.projecteden.api.common.utils.MathUtils;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
-import me.lexikiq.HasPlayer;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

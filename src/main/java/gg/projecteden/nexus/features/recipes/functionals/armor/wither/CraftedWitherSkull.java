@@ -30,7 +30,7 @@ public class CraftedWitherSkull extends FunctionalRecipe {
 	@Override
 	public @NotNull Recipe getRecipe() {
 		return shapeless()
-			.add(WitherChallenge.getWitherFragment(), 4)
+			.add(WitherChallenge.WITHER_FRAGMENT, 4)
 			.toMake(getResult())
 			.getRecipe();
 	}

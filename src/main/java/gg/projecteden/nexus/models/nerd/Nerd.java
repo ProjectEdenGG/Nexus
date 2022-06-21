@@ -6,9 +6,10 @@ import de.tr7zw.nbtapi.NBTList;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.PreLoad;
-import gg.projecteden.mongodb.serializers.LocalDateConverter;
-import gg.projecteden.mongodb.serializers.LocalDateTimeConverter;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.interfaces.HasUniqueId;
+import gg.projecteden.api.mongodb.serializers.LocalDateConverter;
+import gg.projecteden.api.mongodb.serializers.LocalDateTimeConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.commands.BirthdaysCommand;
@@ -36,7 +37,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
-import me.lexikiq.HasUniqueId;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -67,7 +67,7 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 @NoArgsConstructor
 @AllArgsConstructor
 @Converters({UUIDConverter.class, LocalDateConverter.class, LocalDateTimeConverter.class})
-public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwnedObject, IsColoredAndNicknamed, Colored {
+public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements PlayerOwnedObject, IsColoredAndNicknamed, Colored {
 	@ToString.Exclude
 	@EqualsAndHashCode.Exclude
 	private Location location;
@@ -81,6 +81,13 @@ public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwned
 
 	@PreLoad
 	void preLoad(DBObject dbObject) {
+		List<String> visitedWorldGroups = (List<String>) dbObject.get("visitedWorldGroups");
+		if (visitedWorldGroups.remove("ONEBLOCK"))
+			visitedWorldGroups.add("SKYBLOCK");
+		List<String> visitedSubWorldGroups = (List<String>) dbObject.get("visitedSubWorldGroups");
+		if (visitedSubWorldGroups.remove("LEGACY"))
+			visitedSubWorldGroups.add("LEGACY1");
+
 		List<String> pronouns = (List<String>) dbObject.get("pronouns");
 		if (!isNullOrEmpty(pronouns)) {
 			List<String> fixed = new ArrayList<>() {{

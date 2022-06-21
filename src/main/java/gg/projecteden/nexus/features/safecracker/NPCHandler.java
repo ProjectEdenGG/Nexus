@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.safecracker;
 
-import gg.projecteden.annotations.Disabled;
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.models.safecracker.SafeCrackerEvent;
 import gg.projecteden.nexus.models.safecracker.SafeCrackerEventService;
 import gg.projecteden.nexus.models.safecracker.SafeCrackerPlayer;

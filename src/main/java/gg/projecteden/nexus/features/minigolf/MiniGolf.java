@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.minigolf;
 
-import gg.projecteden.annotations.Environments;
+import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.nexus.features.minigolf.listeners.InteractListener;
 import gg.projecteden.nexus.features.minigolf.listeners.ProjectileListener;
 import gg.projecteden.nexus.features.minigolf.models.GolfBall;
@@ -11,8 +11,8 @@ import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallModifier
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallMoveEvent;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.Env;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.block.Block;

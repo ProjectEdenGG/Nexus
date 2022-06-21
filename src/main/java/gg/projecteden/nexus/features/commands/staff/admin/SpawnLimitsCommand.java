@@ -14,8 +14,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 
+import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 import static gg.projecteden.nexus.utils.StringUtils.getWorldDisplayName;
-import static gg.projecteden.utils.UUIDUtils.UUID0;
 
 @Permission(Group.ADMIN)
 public class SpawnLimitsCommand extends CustomCommand {

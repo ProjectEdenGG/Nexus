@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
-import lombok.experimental.Accessors;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
@@ -18,7 +17,6 @@ import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @Getter
 @Setter
-@Accessors(fluent = true, chain = true)
 @NoArgsConstructor
 public class BossBarBuilder {
 	/**
@@ -97,6 +95,28 @@ public class BossBarBuilder {
 			case YELLOW -> color = BossBar.Color.YELLOW;
 			default -> throw new IllegalArgumentException("Color not supported");
 		}
+		return this;
+	}
+
+	/**
+	 * Overlay of the boss bar
+	 * @param overlay
+	 * @return this builder
+	 */
+	@NonNull
+	public BossBarBuilder overlay(@NonNull BossBar.Overlay overlay) {
+		this.overlay = overlay;
+		return this;
+	}
+
+	/**
+	 * Progress of the boss bar
+	 * @param progress
+	 * @return this builder
+	 */
+	@NonNull
+	public BossBarBuilder progress(float progress) {
+		this.progress = progress;
 		return this;
 	}
 

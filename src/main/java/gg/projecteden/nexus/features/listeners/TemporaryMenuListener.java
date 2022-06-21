@@ -4,7 +4,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.Utils;
+import lombok.Data;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -17,8 +17,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
-import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 public interface TemporaryMenuListener extends TemporaryListener {
 
@@ -26,7 +26,7 @@ public interface TemporaryMenuListener extends TemporaryListener {
 		if (getClass().isAnnotationPresent(Title.class))
 			return getClass().getAnnotation(Title.class).value();
 
-		throw new InvalidInputException("Title not defined");
+		throw new InvalidInputException("Title not defined for " + getClass().getSimpleName());
 	}
 
 	default void open() {
@@ -68,9 +68,6 @@ public interface TemporaryMenuListener extends TemporaryListener {
 				return;
 		}
 
-		if (!Utils.equalsInvViewTitle(event.getView(), colorize(getTitle())))
-			return;
-
 		if (!event.getPlayer().equals(getPlayer()))
 			return;
 
@@ -78,9 +75,14 @@ public interface TemporaryMenuListener extends TemporaryListener {
 				.filter(item -> keepAirSlots() || Nullables.isNotNullOrAir(item))
 				.collect(Collectors.toList());
 
-		onClose(event, contents);
-
 		Nexus.unregisterTemporaryListener(this);
+
+		onClose(event, contents);
+	}
+
+	@Data
+	abstract class CustomInventoryHolder implements InventoryHolder {
+		private Inventory inventory;
 	}
 
 	void onClose(InventoryCloseEvent event, List<ItemStack> contents);

@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.resourcepack.decoration.types;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.MultiBlock;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 
@@ -20,7 +21,7 @@ public class Fireplace extends DecorationConfig {
 		new Hitbox(Material.BARRIER, Map.of(BlockFace.EAST, 1, BlockFace.UP, 1)),
 		Hitbox.offset(Material.LIGHT, BlockFace.SOUTH));
 
-	public Fireplace(String name, int modelData) {
-		super(name, modelData, hitboxes);
+	public Fireplace(String name, CustomMaterial material) {
+		super(name, material, hitboxes);
 	}
 }

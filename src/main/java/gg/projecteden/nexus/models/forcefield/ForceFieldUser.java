@@ -4,7 +4,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.Transient;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.particles.effects.PolygonEffect;
 import gg.projecteden.nexus.features.particles.effects.PolygonEffect.PolygonEffectBuilder;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;

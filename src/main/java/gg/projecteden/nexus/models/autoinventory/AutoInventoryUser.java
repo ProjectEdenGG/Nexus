@@ -3,7 +3,8 @@ package gg.projecteden.nexus.models.autoinventory;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.interfaces.HasUniqueId;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.legacy.LegacyCommand.LegacyVaultMenu.LegacyVaultHolder;
 import gg.projecteden.nexus.features.store.perks.autoinventory.AutoInventory;
 import gg.projecteden.nexus.features.store.perks.autoinventory.AutoInventoryFeature;
@@ -22,7 +23,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import me.lexikiq.HasUniqueId;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Barrel;
@@ -162,7 +162,7 @@ public class AutoInventoryUser implements PlayerOwnedObject {
 
 		@NonNull
 		private final Material material;
-		private int customModelData;
+		private int modelId;
 
 		@SneakyThrows
 		public static AutoSortInventoryType of(@Nullable Inventory inventory, String title) {

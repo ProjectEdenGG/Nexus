@@ -1,6 +1,8 @@
 package gg.projecteden.nexus.features.commands.teleport;
 
-import gg.projecteden.annotations.Async;
+import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -12,24 +14,23 @@ import gg.projecteden.nexus.models.lwc.LWCProtection;
 import gg.projecteden.nexus.models.lwc.LWCProtectionService;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.Env;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Aliases({"randomtp", "rtp", "wild"})
 public class RandomTeleportCommand extends CustomCommand {
+	private static final List<SubWorldGroup> ALLOWED_WORLD_GROUPS = List.of(SubWorldGroup.SURVIVAL, SubWorldGroup.RESOURCE);
 	private static final LWCProtectionService service = new LWCProtectionService();
 	private final AtomicInteger count = new AtomicInteger(0);
 	private boolean running = false;
@@ -42,26 +43,25 @@ public class RandomTeleportCommand extends CustomCommand {
 	@Async
 	@Cooldown(value = TickTime.SECOND, x = 30, bypass = Group.ADMIN)
 	void rtp() {
-		final String worldName = world().getName();
-		final World world = List.of("world", "server").contains(worldName) ? Objects.requireNonNull(Bukkit.getWorld("survival")) : world();
-
-		if (world.getEnvironment() != Environment.NORMAL)
-			error("You must be in a survival overworld to run this command");
-		if (!Set.of("survival", "resource").contains(world.getName()))
-			error("You must be in the survival world to run this command");
+		final World world;
+		if (worldGroup() != WorldGroup.SURVIVAL)
+			world = Objects.requireNonNull(Bukkit.getWorld("survival"));
+		else
+			world = world();
 
 		if (!running) {
 			send(PREFIX + "Teleporting to random location");
 			running = true;
 		}
-		count.getAndIncrement();
 
 		int radius = 0;
 		switch (world.getName()) {
-			case "survival" -> radius = 7500;
+			case "survival" -> radius = 5000;
 			case "resource" -> radius = 2500;
-			default -> error("Could not find world border of current world");
+			default -> error("You must be in a survival overworld to run this command");
 		}
+
+		count.getAndIncrement();
 
 		int range = 250;
 		List<Location> locationList = LocationUtils.getRandomPointInCircle(world, radius);

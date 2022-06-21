@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.features.minigames.models;
 
-import com.google.common.base.Strings;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import gg.projecteden.interfaces.Named;
+import gg.projecteden.api.common.utils.Nullables;
+import gg.projecteden.api.interfaces.Named;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.models.annotations.Regenerating;
@@ -31,7 +31,13 @@ import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static gg.projecteden.nexus.utils.SerializationUtils.YML.deserializeMaterialSet;
 import static gg.projecteden.nexus.utils.SerializationUtils.YML.serializeMaterialSet;
@@ -208,7 +214,7 @@ public class Arena implements ConfigurationSerializable, Named, ComponentLike {
 	private static final @NotNull String NUMBER_MODIFIER = "(_[\\d]+)?";
 
 	public @NotNull String getRegionTypeRegex(String type) {
-		if (Strings.isNullOrEmpty(type))
+		if (Nullables.isNullOrEmpty(type))
 			return "^" + getRegionBaseName() + "$";
 		return "^" + getRegionBaseName() + "_" + type.toLowerCase() + NUMBER_MODIFIER + "$";
 	}

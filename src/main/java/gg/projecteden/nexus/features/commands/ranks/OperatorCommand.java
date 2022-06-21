@@ -1,12 +1,12 @@
 package gg.projecteden.nexus.features.commands.ranks;
 
-import gg.projecteden.annotations.Async;
+import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
 
-import static gg.projecteden.utils.TimeUtils.shortDateFormat;
+import static gg.projecteden.api.common.utils.TimeUtils.shortDateFormat;
 
 public class OperatorCommand extends CustomCommand {
 

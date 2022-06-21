@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.commands.staff;
 
-import com.google.common.base.Strings;
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -54,7 +54,7 @@ public class EntitiesCommand extends CustomCommand {
 			Location location = entity.getLocation();
 
 			String name = StringUtils.camelCase(entity.getType().name());
-			if (!Strings.isNullOrEmpty(entity.getCustomName()))
+			if (!Nullables.isNullOrEmpty(entity.getCustomName()))
 				name = name + " named " + stripColor(entity.getCustomName());
 
 			new JsonBuilder("&e" + name)

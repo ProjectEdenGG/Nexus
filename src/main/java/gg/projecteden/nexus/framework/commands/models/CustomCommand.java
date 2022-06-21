@@ -1,7 +1,10 @@
 package gg.projecteden.nexus.framework.commands.models;
 
 import com.google.common.base.Strings;
-import gg.projecteden.interfaces.PlayerOwnedObject;
+import gg.projecteden.api.common.utils.Nullables;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
+import gg.projecteden.api.common.utils.UUIDUtils;
+import gg.projecteden.api.mongodb.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.features.commands.staff.MultiCommandCommand;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
@@ -36,9 +39,8 @@ import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import gg.projecteden.utils.TimeUtils.Timespan;
-import gg.projecteden.utils.UUIDUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -89,12 +91,12 @@ import java.util.function.BiFunction;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+import static gg.projecteden.api.common.utils.TimeUtils.parseDate;
+import static gg.projecteden.api.common.utils.TimeUtils.parseDateTime;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.an;
 import static gg.projecteden.nexus.utils.StringUtils.trimFirst;
-import static gg.projecteden.utils.TimeUtils.parseDate;
-import static gg.projecteden.utils.TimeUtils.parseDateTime;
 import static java.util.stream.Collectors.toList;
 
 @NoArgsConstructor
@@ -238,6 +240,10 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	protected WorldGroup worldGroup() {
 		return WorldGroup.of(location());
+	}
+
+	protected SubWorldGroup subWorldGroup() {
+		return SubWorldGroup.of(location());
 	}
 
 	protected PlayerInventory inventory() {
@@ -609,7 +615,7 @@ public abstract class CustomCommand extends ICustomCommand {
 			return String.join(" ", event.getArgs().subList(i - 1, event.getArgs().size()));
 
 		String result = event.getArgs().get(i - 1);
-		if (Strings.isNullOrEmpty(result)) return null;
+		if (Nullables.isNullOrEmpty(result)) return null;
 		return result;
 	}
 

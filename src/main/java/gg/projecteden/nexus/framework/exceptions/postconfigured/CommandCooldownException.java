@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.framework.exceptions.postconfigured;
 
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.utils.TimeUtils.Timespan;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import org.bukkit.OfflinePlayer;
 
 import java.time.LocalDateTime;

@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.features.events.store;
 
+import gg.projecteden.api.common.utils.EnumUtils;
+import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.store.providers.EventStoreMenu;
 import gg.projecteden.nexus.features.events.store.providers.EventStoreProvider;
@@ -7,6 +9,7 @@ import gg.projecteden.nexus.features.events.store.providers.purchasable.EventSto
 import gg.projecteden.nexus.features.events.store.providers.purchasable.EventStoreParticlesProvider;
 import gg.projecteden.nexus.features.events.store.providers.purchasable.EventStoreWingsProvider;
 import gg.projecteden.nexus.features.particles.effects.WingsEffect.WingStyle;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.store.perks.emojihats.EmojiHat;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
@@ -16,8 +19,6 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.utils.EnumUtils;
-import gg.projecteden.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -148,7 +149,7 @@ public enum EventStoreItem {
 			new EventStoreWingsProvider(currentMenu).open(player);
 		}
 	},
-	CHAT_EMOJIS(5, Material.MAP, 1000) {
+	CHAT_EMOJIS(5, CustomMaterial.EMOJI_100) {
 		@Override
 		public List<String> getLore() {
 			return List.of("&eSend custom emojis in chat!", "&f👀 💯 🔥 👍 👏 😍 😎",
@@ -228,7 +229,11 @@ public enum EventStoreItem {
 
 	private final int price;
 	private final Material material;
-	private int customModelData;
+	private int modelId;
+
+	EventStoreItem(int price, CustomMaterial material) {
+		this(price, material.getMaterial(), material.getModelId());
+	}
 
 	protected List<String> getLore() {
 		return null;
@@ -236,7 +241,7 @@ public enum EventStoreItem {
 
 	@NotNull
 	public ItemBuilder getRawDisplayItem() {
-		return new ItemBuilder(material).customModelData(customModelData);
+		return new ItemBuilder(material).modelId(modelId);
 	}
 
 	public ItemBuilder getDisplayItem() {

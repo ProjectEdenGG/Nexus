@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.commands;
 
-import gg.projecteden.annotations.Async;
+import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.nexus.features.commands.staff.admin.BashCommand;
 import gg.projecteden.nexus.features.resourcepack.CustomModelMenu;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
@@ -71,9 +71,6 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 			send(PREFIX + "If you have the resource pack installed locally, use &c/rp local true");
 			return;
 		}
-
-		if (enabled && Status.DECLINED != player().getResourcePackStatus())
-			error("You must decline the resource pack in order to run this command");
 
 		service.edit(player(), user -> user.setEnabled(enabled));
 		if (enabled)

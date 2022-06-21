@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.framework.commands.models;
 
-import gg.projecteden.annotations.Async;
-import gg.projecteden.annotations.Disabled;
-import gg.projecteden.annotations.Environments;
-import gg.projecteden.interfaces.PlayerOwnedObject;
+import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.common.annotations.Disabled;
+import gg.projecteden.api.common.annotations.Environments;
+import gg.projecteden.api.mongodb.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.framework.commands.Commands;
@@ -26,7 +26,6 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineE
 import gg.projecteden.nexus.framework.exceptions.preconfigured.MissingArgumentException;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.NoPermissionException;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -60,6 +59,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.api.common.utils.ReflectionUtils.methodsAnnotatedWith;
+import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 import static gg.projecteden.nexus.framework.commands.models.CustomCommand.getSwitchPattern;
 import static gg.projecteden.nexus.framework.commands.models.PathParser.getLiteralWords;
 import static gg.projecteden.nexus.framework.commands.models.PathParser.getPathString;
@@ -71,9 +72,6 @@ import static gg.projecteden.nexus.utils.Utils.getDefaultPrimitiveValue;
 import static gg.projecteden.nexus.utils.Utils.getMaxValue;
 import static gg.projecteden.nexus.utils.Utils.getMinValue;
 import static gg.projecteden.nexus.utils.Utils.isBoolean;
-import static gg.projecteden.utils.UUIDUtils.UUID0;
-import static org.reflections.ReflectionUtils.getAllMethods;
-import static org.reflections.ReflectionUtils.withAnnotation;
 
 @SuppressWarnings("unused")
 public abstract class ICustomCommand {
@@ -463,15 +461,7 @@ public abstract class ICustomCommand {
 		methods.clear();
 		methods.addAll(overridden.values());
 
-		methods.sort(
-			Comparator.comparing(method ->
-				Arrays.stream(getLiteralWords(getPathString((Method) method)).split(" "))
-					.filter(Nullables::isNotNullOrEmpty)
-					.count())
-			.thenComparing(method ->
-				Arrays.stream(getPathString((Method) method).split(" "))
-					.filter(Nullables::isNotNullOrEmpty)
-					.count()));
+		methods.sort(Comparator.comparing(method -> getLiteralWords(getPathString(method))));
 
 		List<Method> filtered = methods.stream()
 			.filter(method -> method.getAnnotation(Disabled.class) == null)
@@ -490,7 +480,7 @@ public abstract class ICustomCommand {
 
 	@NotNull
 	public List<Method> getPathMethods() {
-		return new ArrayList<>(getAllMethods(this.getClass(), withAnnotation(Path.class)));
+		return new ArrayList<>(methodsAnnotatedWith(this.getClass(), Path.class));
 	}
 
 	private Method getMethod(CommandRunEvent event) {

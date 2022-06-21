@@ -41,8 +41,9 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils;
-import me.lexikiq.event.sound.LocationNamedSoundEvent;
+import gg.projecteden.parchment.event.sound.SoundEvent;
+import gg.projecteden.api.common.utils.TimeUtils;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -232,7 +233,7 @@ public class Sabotage extends TeamMechanic {
 							if (!other.isAlive() || !other.isPlaying(match)) return;
 							nearby.add(other);
 						});
-						nearby.removeAll(matchData.getVenters().keySet().stream().map(Minigamer::of).collect(Collectors.toList()));
+						nearby.removeAll(matchData.getVenters().keySet().stream().map(Minigamer::of).toList());
 						otherPlayers.removeAll(nearby);
 						PlayerUtils.hidePlayers(minigamer, otherPlayers);
 						PlayerUtils.showPlayers(minigamer, nearby);
@@ -272,6 +273,7 @@ public class Sabotage extends TeamMechanic {
 					}
 				}
 				ItemStack currentItem = inventory.getItem(2);
+				//noinspection ConstantConditions - item name cannot be null thanks to #hasDisplayName check
 				if (currentItem != null && currentItem.hasItemMeta() && currentItem.getItemMeta().hasDisplayName() && "Report".equals(AdventureUtils.asPlainText(currentItem.getItemMeta().displayName()))) {
 					boolean bodyFound = false;
 					if (minigamer.isAlive()) {
@@ -455,7 +457,9 @@ public class Sabotage extends TeamMechanic {
 		ItemMeta itemMeta = item.getItemMeta();
 		if (!itemMeta.hasLore()) return;
 		if (!itemMeta.hasDisplayName()) return;
+		//noinspection ConstantConditions - item name cannot be null thanks to #hasDisplayName check
 		if (!"Crouch to Exit".equals(AdventureUtils.asPlainText(itemMeta.displayName()))) return;
+		//noinspection ConstantConditions - item lore cannot be null thanks to #hasLore check
 		Location location = LocationUtils.parse(minigamer.getPlayer().getWorld().getName() + " " + itemMeta.getLore().get(0));
 		location.add(.5, .1875-.5, .5);
 		minigamer.getMatch().<SabotageMatchData>getMatchData().getVenters().put(minigamer.getUniqueId(), location);
@@ -491,7 +495,8 @@ public class Sabotage extends TeamMechanic {
 				}
 			} else if (SABOTAGE_MENU.get().isSimilar(item)) {
 				new ImpostorMenu(matchData.getArena()).open(minigamer);
-			} else if (minigamer.isAlive() && item != null && item.hasItemMeta() && item.getItemMeta().getDisplayName().equals(colorize("&eReport")) && item.getItemMeta().hasLore()) {
+			} else if (minigamer.isAlive() && item != null && item.hasItemMeta() && item.getItemMeta().hasDisplayName() && item.getItemMeta().getDisplayName().equals(colorize("&eReport")) && item.getItemMeta().hasLore()) {
+				//noinspection ConstantConditions - item lore cannot be null thanks to #hasLore check
 				String lore = AdventureUtils.asPlainText(item.getItemMeta().lore().get(0));
 				String color = lore.split(" ")[1].split("'")[0];
 				matchData.startMeeting(minigamer, SabotageColor.valueOf(color.replace(' ', '_').toUpperCase()));
@@ -530,22 +535,20 @@ public class Sabotage extends TeamMechanic {
 
 	@Override
 	public void announceWinners(@NotNull Match match) {
-		if (false) {
-			List<Minigamer> winners = match.getMinigamers().stream().filter(minigamer -> minigamer.getScore() > 0).collect(Collectors.toList());
-			JsonBuilder builder = new JsonBuilder();
-			if (winners.isEmpty())
-				builder.group().next("&bThe Crewmates")
-						.hover(new JsonBuilder(AdventureUtils.commaJoinText(winners)).color(NamedTextColor.DARK_AQUA))
-						.group().color(NamedTextColor.DARK_AQUA).next(" have won on ");
-			else {
-				builder.next(AdventureUtils.commaJoinText(winners.stream().map(minigamer -> {
-					SabotageTeam team = SabotageTeam.of(minigamer);
-					return new JsonBuilder(minigamer.getNickname(), team.colored()).hover(team); // weirdly required cast
-				}).collect(Collectors.toList())));
-				builder.next(StringUtils.plural(" has won on ", " have won on ", winners.size()));
-			}
-			Minigames.broadcast(builder.next(match.getArena()));
+		List<Minigamer> winners = match.getMinigamers().stream().filter(minigamer -> minigamer.getScore() > 0).collect(Collectors.toList());
+		JsonBuilder builder = new JsonBuilder();
+		if (winners.isEmpty())
+			builder.group().next("&bThe Crewmates")
+					.hover(new JsonBuilder(AdventureUtils.commaJoinText(winners)).color(NamedTextColor.DARK_AQUA))
+					.group().color(NamedTextColor.DARK_AQUA).next(" have won on ");
+		else {
+			builder.next(AdventureUtils.commaJoinText(winners.stream().map(minigamer -> {
+				SabotageTeam team = SabotageTeam.of(minigamer);
+				return new JsonBuilder(minigamer.getNickname(), team.colored()).hover(team); // weirdly required cast
+			}).collect(Collectors.toList())));
+			builder.next(StringUtils.plural(" has won on ", " have won on ", winners.size()));
 		}
+		Minigames.broadcast(builder.next(match.getArena()));
 	}
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
@@ -592,40 +595,36 @@ public class Sabotage extends TeamMechanic {
 		ActionBarUtils.sendActionBar(minigamer, camelCase(event.getRegion().getId().split("_room_")[1]));
 	}
 
-	private static final Set<Sound> BLOCKED_SOUNDS = Set.of(
-			Sound.ITEM_ARMOR_EQUIP_GENERIC,
-			Sound.ITEM_ARMOR_EQUIP_IRON,
-			Sound.ITEM_ARMOR_EQUIP_DIAMOND,
-			Sound.ITEM_ARMOR_EQUIP_NETHERITE,
-			Sound.ITEM_ARMOR_EQUIP_TURTLE,
-			Sound.ITEM_ARMOR_EQUIP_CHAIN,
-			Sound.ITEM_ARMOR_EQUIP_ELYTRA,
-			Sound.ITEM_ARMOR_EQUIP_LEATHER,
-			Sound.ITEM_ARMOR_EQUIP_GOLD,
-			Sound.ENTITY_PLAYER_ATTACK_NODAMAGE,
-			Sound.ENTITY_PLAYER_ATTACK_CRIT,
-			Sound.ENTITY_PLAYER_ATTACK_KNOCKBACK,
-			Sound.ENTITY_PLAYER_ATTACK_STRONG,
-			Sound.ENTITY_PLAYER_ATTACK_SWEEP,
-			Sound.ENTITY_PLAYER_ATTACK_WEAK,
-			Sound.ENTITY_PLAYER_HURT,
-			Sound.ENTITY_ARMOR_STAND_HIT,
-			Sound.ENTITY_ARMOR_STAND_FALL,
-			Sound.ENTITY_ARMOR_STAND_BREAK,
-			Sound.ENTITY_ARMOR_STAND_PLACE
-			);
+	private static final Set<Key> BLOCKED_SOUNDS = Set.of(
+		Key.key(Key.MINECRAFT_NAMESPACE, "item.armor.equip_generic"),
+		Key.key(Key.MINECRAFT_NAMESPACE, "item.armor.equip_iron"),
+		Key.key(Key.MINECRAFT_NAMESPACE, "item.armor.equip_diamond"),
+		Key.key(Key.MINECRAFT_NAMESPACE, "item.armor.equip_netherite"),
+		Key.key(Key.MINECRAFT_NAMESPACE, "item.armor.equip_turtle"),
+		Key.key(Key.MINECRAFT_NAMESPACE, "item.armor.equip_chain"),
+		Key.key(Key.MINECRAFT_NAMESPACE, "item.armor.equip_elytra"),
+		Key.key(Key.MINECRAFT_NAMESPACE, "item.armor.equip_leather"),
+		Key.key(Key.MINECRAFT_NAMESPACE, "item.armor.equip_gold"),
+		Key.key(Key.MINECRAFT_NAMESPACE, "entity.player.attack.nodamage"),
+		Key.key(Key.MINECRAFT_NAMESPACE, "entity.player.attack.crit"),
+		Key.key(Key.MINECRAFT_NAMESPACE, "entity.player.attack.knockback"),
+		Key.key(Key.MINECRAFT_NAMESPACE, "entity.player.attack.strong"),
+		Key.key(Key.MINECRAFT_NAMESPACE, "entity.player.attack.sweep"),
+		Key.key(Key.MINECRAFT_NAMESPACE, "entity.player.attack.weak"),
+		Key.key(Key.MINECRAFT_NAMESPACE, "entity.player.hurt"),
+		Key.key(Key.MINECRAFT_NAMESPACE, "entity.armor_stand.hit"),
+		Key.key(Key.MINECRAFT_NAMESPACE, "entity.armor_stand.fall"),
+		Key.key(Key.MINECRAFT_NAMESPACE, "entity.armor_stand.break"),
+		Key.key(Key.MINECRAFT_NAMESPACE, "entity.armor_stand.place")
+	);
 
 	@EventHandler
-	public void onSoundEvent(LocationNamedSoundEvent event) {
-		try {
-			Minigamer minigamer = Minigamer.of(event.getPlayer());
-			// only acknowledge events inside of a sabotage map
-			if (!(minigamer != null && minigamer.isPlaying(this)))
-				if (new WorldGuardUtils(event.getWorld()).getRegionsLikeAt("sabotage_\\w+", event.getVector()).isEmpty())
-					return;
+	public void onSoundEvent(SoundEvent event) {
+		Location location = event.getEmitter().location();
+		if (new WorldGuardUtils(location).getRegionsLikeAt("sabotage_\\w+", location).isEmpty())
+			return;
 
-			if (BLOCKED_SOUNDS.contains(event.getSound()))
-				event.setCancelled(true);
-		} catch (PlayerNotOnlineException ignored) {}
+		if (BLOCKED_SOUNDS.contains(event.getSound().name()))
+			event.setCancelled(true); // TODO: don't block sounds in lobby
 	}
 }

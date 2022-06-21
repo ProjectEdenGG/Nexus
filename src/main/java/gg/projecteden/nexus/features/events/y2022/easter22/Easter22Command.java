@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -98,8 +99,10 @@ public class Easter22Command extends IEventCommand {
 			final EventUser eventUser = new EventUserService().get(player);
 			contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.BOOK).name("&e" + eventUser.getTokens() + " Event Tokens").build()));
 
-			for (int i = 2001; i <= 2020; i++) {
-				final ItemStack egg = new ItemBuilder(Material.PAPER).customModelData(i).name("&eEgg #" + (i - 2000)).build();
+			final int MODEL_ID_START = CustomMaterial.EASTER22_EASTER_EGG.getModelId();
+			final int MODEL_ID_END = MODEL_ID_START + 20;
+			for (int i = MODEL_ID_START; i < MODEL_ID_END; i++) {
+				final ItemStack egg = new ItemBuilder(Material.PAPER).modelId(i).name("&eEgg #" + (i - MODEL_ID_START + 1)).build();
 				final ItemStack display = new ItemBuilder(egg).lore("", "&" + (eventUser.getTokens() >= 200 ? "e" : "c") + "200 Event Tokens").build();
 				items.add(ClickableItem.of(display, e -> {
 					if (!eventUser.hasTokens(200)) {

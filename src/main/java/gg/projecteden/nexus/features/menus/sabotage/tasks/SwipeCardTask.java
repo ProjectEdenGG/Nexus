@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.Task;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import org.bukkit.Material;
@@ -22,8 +23,7 @@ import java.util.function.Supplier;
 @Title("Swipe Card")
 public class SwipeCardTask extends AbstractTaskMenu {
 
-	private static final Supplier<ItemStack> KEY_CARD = () -> new ItemBuilder(Material.ICE)
-		.customModelData(903)
+	private static final Supplier<ItemStack> KEY_CARD = () -> new ItemBuilder(CustomMaterial.SABOTAGE_KEY_CARD)
 		.name("Key Card")
 		.lore("Grab this key card and place it on the right")
 		.build();

@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.minigames.managers;
 
-import com.google.common.base.Strings;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -93,7 +93,7 @@ public class ArenaManager {
 	}
 
 	public static Arena find(String name) {
-		if (!Strings.isNullOrEmpty(name)) {
+		if (!Nullables.isNullOrEmpty(name)) {
 			for (Arena arena : arenas)
 				if (arena.getName().equalsIgnoreCase(name))
 					return arena;
@@ -151,6 +151,8 @@ public class ArenaManager {
 					Nexus.warn("File " + file.getName() + " already exists");
 			} catch (IOException ex) {
 				Nexus.severe("An error occurred while trying to create a configuration file: " + ex.getMessage());
+				if (Nexus.isDebug())
+					ex.printStackTrace();
 			}
 		}
 
@@ -173,11 +175,15 @@ public class ArenaManager {
 
 					read(name.replace(".yml", ""));
 				} catch (Exception ex) {
-					Nexus.severe("An error occurred while trying to read arena configuration file " + filePath.getFileName().toFile() + ": " + ex.getMessage());
+					Nexus.severe("An error occurred while trying to read arena configuration file " + filePath.getFileName().toFile(), ex);
+					if (Nexus.isDebug())
+						ex.printStackTrace();
 				}
 			});
 		} catch (Exception ex) {
 			Nexus.severe("An error occurred while trying to read arena configuration files: " + ex.getMessage());
+			if (Nexus.isDebug())
+				ex.printStackTrace();
 		}
 	}
 
@@ -199,6 +205,8 @@ public class ArenaManager {
 				add(arena);
 		} catch (Exception ex) {
 			Nexus.severe("An error occurred while trying to write arena configuration file " + arena.getName() + ": " + ex.getMessage());
+			if (Nexus.isDebug())
+				ex.printStackTrace();
 		}
 	}
 

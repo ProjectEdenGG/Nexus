@@ -3,11 +3,11 @@ package gg.projecteden.nexus.features.recipes.functionals.windchimes;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.models.ambience.AmbienceConfig.Ambience.AmbienceType;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
+import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import lombok.AllArgsConstructor;
@@ -32,11 +32,14 @@ import java.util.Set;
 
 import static gg.projecteden.nexus.features.recipes.CustomRecipes.choiceOf;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
+import static gg.projecteden.nexus.utils.MathUtils.isBetween;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static java.util.stream.Collectors.toSet;
 
 public abstract class Windchimes extends FunctionalRecipe {
+	private static final int CUSTOM_MODEL_DATA_START = CustomMaterial.WINDCHIMES_IRON.getModelId();
+	private static final int CUSTOM_MODEL_DATA_END = CUSTOM_MODEL_DATA_START + 19;
 
 	@Getter
 	@AllArgsConstructor
@@ -59,20 +62,21 @@ public abstract class Windchimes extends FunctionalRecipe {
 
 		public static Set<Integer> ids() {
 			return Arrays.stream(WindchimeType.values())
-				.map(windchimeType -> windchimeType.ordinal() + 1)
+				.map(windchimeType -> windchimeType.ordinal() + CUSTOM_MODEL_DATA_START)
 				.collect(toSet());
+		}
+
+		public ItemStack getItem() {
+			return new ItemBuilder(Material.PAPER)
+				.name(camelCase(this) + " Windchimes")
+				.modelId(ordinal() + CUSTOM_MODEL_DATA_START)
+				.build();
 		}
 	}
 
-	@Getter
-	public ItemStack item = new ItemBuilder(Material.AMETHYST_SHARD)
-		.name(camelCase(getWindchimeType()) + " Windchimes")
-		.customModelData(getWindchimeType().ordinal() + 1)
-		.build();
-
 	@Override
 	public ItemStack getResult() {
-		return item;
+		return getWindchimeType().getItem();
 	}
 
 	abstract WindchimeType getWindchimeType();
@@ -98,10 +102,10 @@ public abstract class Windchimes extends FunctionalRecipe {
 		if (isNullOrAir(item))
 			return false;
 
-		if (!item.getType().equals(Material.AMETHYST_SHARD))
+		if (!item.getType().equals(Material.PAPER))
 			return false;
 
-		if (CustomModelData.of(item) > WindchimeType.values().length)
+		if (!isBetween(ModelId.of(item), CUSTOM_MODEL_DATA_START, CUSTOM_MODEL_DATA_END))
 			return false;
 
 		return true;

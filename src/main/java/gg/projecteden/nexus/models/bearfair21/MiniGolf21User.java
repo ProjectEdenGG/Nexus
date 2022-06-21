@@ -3,7 +3,7 @@ package gg.projecteden.nexus.models.bearfair21;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.MiniGolf;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfColor;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfHole;
@@ -106,7 +106,7 @@ public class MiniGolf21User implements PlayerOwnedObject {
 	}
 
 	public ItemStack getGolfBall() {
-		return MiniGolf.getGolfBall().customModelData(miniGolfColor.getCustomModelData()).build();
+		return MiniGolf.getGolfBall().modelId(miniGolfColor.getModelId()).build();
 	}
 
 }
