@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.legacy.listeners;
 import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.Material;
@@ -15,6 +16,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BookMeta;
 
 import java.util.List;
 
@@ -30,13 +32,23 @@ public class LegacyEntities implements Listener {
 		if (!(event.getRightClicked() instanceof ItemFrame itemFrame))
 			return;
 
-		final ItemStack item = itemFrame.getItem();
+		ItemStack item = itemFrame.getItem();
 		if (isNullOrAir(item))
 			return;
 
-		if (item.getType() != Material.WRITTEN_BOOK && item.getType() != Material.WRITABLE_BOOK)
+		if (item.getType() == Material.WRITABLE_BOOK) {
+			final BookMeta bookMeta = (BookMeta) item.getItemMeta();
+			item = new ItemBuilder(Material.WRITTEN_BOOK)
+				.bookTitle("Legacy Book")
+				.bookAuthor("Server")
+				.bookPages(bookMeta.pages())
+				.build();
+		}
+
+		if (item.getType() != Material.WRITTEN_BOOK)
 			return;
 
+		event.setCancelled(true);
 		event.getPlayer().openBook(item);
 	}
 
