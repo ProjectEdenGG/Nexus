@@ -47,7 +47,7 @@ class PathParser {
 	public PathParser(@NonNull CommandEvent event) {
 		this.event = event;
 		this.command = event.getCommand();
-		this.methods = Utils.reverse(command.getPathMethods(event));
+		this.methods = Utils.reverse(command.getPathMethodsForExecution(event));
 	}
 
 	@Data
