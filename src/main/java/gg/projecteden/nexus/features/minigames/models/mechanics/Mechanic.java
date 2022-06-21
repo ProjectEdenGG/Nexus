@@ -182,9 +182,9 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 
 		for (Minigamer minigamer : match.getMinigamers()) {
 			// assign bukkit teams
-			TeamAssigner assigner = getTeamAssigner();
+			TeamAssigner assigner = getTeamAssigner(match);
 			if (assigner != null)
-				Nameplates.get().registerTeamAssigner(minigamer, getTeamAssigner());
+				Nameplates.get().registerTeamAssigner(minigamer, assigner);
 
 			// set lives
 			if (lives > 0)
@@ -535,7 +535,7 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 
 	public void onDisplayTimer(MinigamerDisplayTimerEvent event) {}
 
-	public @Nullable TeamAssigner getTeamAssigner() {
+	public @Nullable TeamAssigner getTeamAssigner(Match match) {
 		return null;
 	}
 

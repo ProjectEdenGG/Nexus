@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
-import com.comphenix.protocol.wrappers.EnumWrappers;
+import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
+import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.chat.events.PublicChatEvent;
@@ -18,14 +19,17 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerCompleteTaskPartEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerVoteEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.SabotageMatchData;
+import gg.projecteden.nexus.features.minigames.models.matchdata.SabotageMatchData.Body;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.SabotageColor;
+import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.SabotageLight;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.SabotageTeam;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.Task;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreboard;
+import gg.projecteden.nexus.features.nameplates.Nameplates;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack.ResourcePackNumber;
-import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.ColorType;
@@ -42,7 +46,6 @@ import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.parchment.event.sound.SoundEvent;
-import gg.projecteden.api.common.utils.TimeUtils;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -53,7 +56,6 @@ import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Light;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.LivingEntity;
@@ -79,6 +81,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffectType;
 import org.inventivetalent.glow.GlowAPI;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -105,8 +108,7 @@ import static gg.projecteden.nexus.utils.StringUtils.colorize;
 //  - show the red worldborder color during crisis
 //  - let impostors fix sabotages
 //  - Killing is broken?
-//  - refactor player hiding (vastly increase the radius in which you can see players but reduce the radius in which you can see their nameplates)
-//  - create new nameplates implementation which matches the original name coloring implementation...
+//  - add Darkness (1.19) potion effect to lights sabotage
 @Scoreboard(teams = false, sidebarType = MinigameScoreboard.Type.MINIGAMER)
 public class Sabotage extends TeamMechanic {
 	public static final int MEETING_LENGTH = 100;
@@ -214,83 +216,97 @@ public class Sabotage extends TeamMechanic {
 				match.sendMessage(new JsonBuilder(team.players(match).size() + "x ", NamedTextColor.DARK_AQUA).next(team));
 		});
 		match.getTasks().wait(TimeUtils.TickTime.SECOND.x(1.5), () -> match.getMinigamers().forEach(matchData::initGlow));
-		match.getTasks().repeatAsync(0, 1, () -> {
-			if (matchData.isMeetingActive()) return;
-			int lightLevel = matchData.lightLevel();
-			match.getMinigamers().forEach(minigamer -> {
-				Player player = minigamer.getPlayer();
-				Location location = player.getLocation();
-				PlayerInventory inventory = player.getInventory();
-				List<Minigamer> otherPlayers = new ArrayList<>(match.getAliveMinigamers());
-				Utils.removeEntityFrom(minigamer, otherPlayers);
-				PacketUtils.sendFakeItem(minigamer.getPlayer(), otherPlayers, new ItemStack(Material.AIR), EnumWrappers.ItemSlot.MAINHAND);
-				SabotageTeam team = SabotageTeam.of(minigamer);
-				if (team != SabotageTeam.IMPOSTOR) {
-					match.getTasks().sync(() -> {
-						List<Minigamer> nearby = new ArrayList<>();
-						location.getNearbyEntitiesByType(Player.class, lightLevel).forEach(_player -> {
-							Minigamer other = Minigamer.of(_player);
-							if (!other.isAlive() || !other.isPlaying(match)) return;
-							nearby.add(other);
-						});
-						nearby.removeAll(matchData.getVenters().keySet().stream().map(Minigamer::of).toList());
-						otherPlayers.removeAll(nearby);
-						PlayerUtils.hidePlayers(minigamer, otherPlayers);
-						PlayerUtils.showPlayers(minigamer, nearby);
-					});
-					Location lastKnownLight = matchData.getLightMap().get(player.getUniqueId());
-					if (!LocationUtils.blockLocationsEqual(location, lastKnownLight) || lightLevel <= 2) {
-						if (lastKnownLight != null)
-							player.sendBlockChange(lastKnownLight, lastKnownLight.getBlock().getBlockData());
-						if (lightLevel > 2) {
-							if (location.getBlock().isReplaceable()) {
-								final BlockData blockData = Material.LIGHT.createBlockData();
-								((Light) blockData).setLevel(7);
-								player.sendBlockChange(location, blockData);
-							}
-							matchData.getLightMap().put(player.getUniqueId(), location);
-						} else {
-							player.sendBlockChange(location, location.getBlock().getBlockData());
-							matchData.getLightMap().remove(player.getUniqueId());
-						}
+		match.getTasks().repeatAsync(0, 1, () -> tick(match));
+
+		// force faster nameplate updates
+		match.getTasks().repeat(0, 5, () -> match.getMinigamers()
+			.forEach(minigamer -> Nameplates.get().getNameplateManager().update(minigamer.getPlayer())));
+	}
+
+	private void tick(Match match) {
+		// get match data
+		SabotageMatchData matchData = match.getMatchData();
+
+		// skip tick if meeting is active (meeting ticking is handled by another task)
+		if (matchData.isMeetingActive()) return;
+
+		// get game's current light level
+		int lightLevel = matchData.lightLevel();
+
+		// iterate through minigamers
+		for (Minigamer minigamer : match.getMinigamers()) {
+			// TODO: dead player handling
+
+			// fetch variables
+			Player player = minigamer.getPlayer();
+			Location location = player.getLocation();
+			PlayerInventory inventory = player.getInventory();
+
+			// get all other players
+			List<Minigamer> otherPlayers = new ArrayList<>(match.getAliveMinigamers());
+			Utils.removeEntityFrom(minigamer, otherPlayers);
+
+			// hide held item
+			PacketUtils.sendFakeItem(minigamer.getPlayer(), otherPlayers, new ItemStack(Material.AIR), ItemSlot.MAINHAND);
+
+			// get player's team
+			SabotageTeam team = SabotageTeam.of(minigamer);
+			// tick crewmates
+			if (team != SabotageTeam.IMPOSTOR) {
+				// send fake light block to non-impostors | TODO: effect looks kinda bad sometimes
+				SabotageLight newLight = new SabotageLight(location, lightLevel);
+				SabotageLight lastKnownLight = matchData.getLightMap().get(player.getUniqueId());
+				if (!newLight.equals(lastKnownLight)) {
+					if (lastKnownLight != null)
+						player.sendBlockChange(lastKnownLight.location(), lastKnownLight.location().getBlock().getBlockData());
+					if (location.getBlock().isReplaceable()) {
+						final Light blockData = (Light) Material.LIGHT.createBlockData();
+						blockData.setLevel(7);
+						player.sendBlockChange(location, blockData);
 					}
-				} else {
-					if (KILL_ITEM.get().isSimilar(inventory.getItem(3))) {
-						long killCooldown = matchData.getKillCooldown(minigamer);
-						if (killCooldown != -1) {
-							if (killCooldown - 1 == 0)
-								matchData.getKillCooldowns().remove(minigamer.getUniqueId());
-							else
-								matchData.getKillCooldowns().put(minigamer.getUniqueId(), killCooldown - 1);
-						}
-						inventory.setItem(3, KILL_ITEM.get().asQuantity(Math.max(1, 1 + matchData.getKillCooldownAsSeconds(minigamer))));
+					matchData.getLightMap().put(player.getUniqueId(), newLight);
+				}
+			// tick impostors
+			} else {
+				// display kill cooldown
+				if (KILL_ITEM.get().isSimilar(inventory.getItem(3))) {
+					long killCooldown = matchData.getKillCooldown(minigamer);
+					if (killCooldown != -1) {
+						if (killCooldown - 1 == 0)
+							matchData.getKillCooldowns().remove(minigamer.getUniqueId());
+						else
+							matchData.getKillCooldowns().put(minigamer.getUniqueId(), killCooldown - 1);
 					}
-					if (matchData.getVenters().containsKey(minigamer.getUniqueId())) {
-						Location dest = matchData.getVenters().get(minigamer.getUniqueId());
-						if (!LocationUtils.locationsEqual(location, dest))
-							match.getTasks().sync(() -> minigamer.teleportAsync(dest));
-						minigamer.sendActionBar(new JsonBuilder("Crouch (", NamedTextColor.RED).next(Component.keybind("key.sneak")).next(") to exit vent"));
+					inventory.setItem(3, KILL_ITEM.get().asQuantity(Math.max(1, 1 + matchData.getKillCooldownAsSeconds(minigamer))));
+				}
+				// venting tick
+				if (matchData.getVenters().containsKey(minigamer.getUniqueId())) {
+					Location dest = matchData.getVenters().get(minigamer.getUniqueId());
+					if (!LocationUtils.locationsEqual(location, dest))
+						match.getTasks().sync(() -> minigamer.teleportAsync(dest));
+					minigamer.sendActionBar(new JsonBuilder("Crouch (", NamedTextColor.RED).next(Component.keybind("key.sneak")).next(") to exit vent"));
+				}
+			}
+
+			// update report item if a corpse is nearby
+			ItemStack reportItem = inventory.getItem(2);
+			//noinspection ConstantConditions - item name cannot be null thanks to #hasDisplayName check
+			if (reportItem != null && reportItem.hasItemMeta() && reportItem.getItemMeta().hasDisplayName() && "Report".equals(AdventureUtils.asPlainText(reportItem.getItemMeta().displayName()))) {
+				boolean bodyFound = false;
+				if (minigamer.isAlive()) {
+					for (Body body : matchData.getBodies().values()) {
+						if (body.getReportBoundingBox().contains(location.toVector())) {
+							inventory.setItem(2, new ItemBuilder(REPORT_ITEM.get())
+								.componentLore(new JsonBuilder("Report ", NamedTextColor.DARK_AQUA).next(body.getPlayerColor()).next("'s body")).build());
+							bodyFound = true;
+							break;
+						}
 					}
 				}
-				ItemStack currentItem = inventory.getItem(2);
-				//noinspection ConstantConditions - item name cannot be null thanks to #hasDisplayName check
-				if (currentItem != null && currentItem.hasItemMeta() && currentItem.getItemMeta().hasDisplayName() && "Report".equals(AdventureUtils.asPlainText(currentItem.getItemMeta().displayName()))) {
-					boolean bodyFound = false;
-					if (minigamer.isAlive()) {
-						for (SabotageMatchData.Body body : matchData.getBodies().values()) {
-							if (body.getReportBoundingBox().contains(location.toVector())) {
-								inventory.setItem(2, new ItemBuilder(REPORT_ITEM.get())
-										.componentLore(new JsonBuilder("Report ", NamedTextColor.DARK_AQUA).next(body.getPlayerColor()).next("'s body")).build());
-								bodyFound = true;
-								break;
-							}
-						}
-					}
-					if (!bodyFound)
-						inventory.setItem(2, EMPTY_REPORT_ITEM.get());
-				}
-			});
-		});
+				if (!bodyFound)
+					inventory.setItem(2, EMPTY_REPORT_ITEM.get());
+			}
+		}
 	}
 
 	public static final Component COMPLETED_TASK_TEXT = new JsonBuilder("Task Complete!", NamedTextColor.GREEN).build();
@@ -626,5 +642,17 @@ public class Sabotage extends TeamMechanic {
 
 		if (BLOCKED_SOUNDS.contains(event.getSound().name()))
 			event.setCancelled(true); // TODO: don't block sounds in lobby
+	}
+
+	@Override
+	public boolean shouldShowNameplate(@NotNull Minigamer target, @NotNull Minigamer viewer) {
+		SabotageMatchData matchData = target.getMatch().getMatchData();
+		int radius = SabotageTeam.of(target) == SabotageTeam.IMPOSTOR ? SabotageMatchData.BRIGHT_LIGHT_LEVEL : matchData.lightLevel();
+		return target.getLocation().distanceSquared(viewer.getLocation()) <= (radius * radius);
+	}
+
+	@Override
+	public @Nullable Component getNameplate(@NotNull Minigamer target, @NotNull Minigamer viewer) {
+		return Component.text(Nickname.of(target), SabotageTeam.render(viewer, target).colored());
 	}
 }
