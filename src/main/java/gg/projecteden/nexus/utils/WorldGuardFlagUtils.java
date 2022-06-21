@@ -38,7 +38,7 @@ public class WorldGuardFlagUtils {
 	 * Nexus's custom World Guard flags
 	 */
 	@AllArgsConstructor
-	public enum Flags {
+	public enum CustomFlags {
 		/**
 		 * Enables showing the Pugmas snow effect to players in the region
 		 */
@@ -119,8 +119,8 @@ public class WorldGuardFlagUtils {
 
 		public final Flag<?> flag;
 
-		public Flag<?> get() {
-			return flag;
+		public <T extends Flag<?>> T get() {
+			return (T) flag;
 		}
 
 		public static void register() {
@@ -258,7 +258,7 @@ public class WorldGuardFlagUtils {
 	 * @return true if the result was {@code ALLOW}
 	 * @see #hasBypass(HasPlayer)
 	 */
-	public static boolean test(@NotNull org.bukkit.Location location, @Nullable OptionalPlayer player, Flags flag) {
+	public static boolean test(@NotNull org.bukkit.Location location, @Nullable OptionalPlayer player, CustomFlags flag) {
 		Validate.notNull(flag, "Flag cannot be null");
 		return test(location, player, (StateFlag) flag.get());
 	}
@@ -273,7 +273,7 @@ public class WorldGuardFlagUtils {
 	 * @return true if the result was {@code ALLOW}
 	 * @see #hasBypass(HasPlayer)
 	 */
-	public static boolean test(@NotNull HasPlayer player, Flags flag) {
+	public static boolean test(@NotNull HasPlayer player, CustomFlags flag) {
 		Validate.notNull(player, "Player cannot be null");
 		Validate.notNull(flag, "Flag cannot be null");
 		return test(player.getPlayer().getLocation(), player, (StateFlag) flag.get());
@@ -318,7 +318,7 @@ public class WorldGuardFlagUtils {
 	 * @param flag flag to check
 	 * @return true if the result was {@code ALLOW}
 	 */
-	public static boolean test(@NotNull org.bukkit.Location location, @NotNull Flags flag) {
+	public static boolean test(@NotNull org.bukkit.Location location, @NotNull WorldGuardFlagUtils.CustomFlags flag) {
 		Validate.notNull(flag, "Flag cannot be null");
 		return test(location, (StateFlag) flag.get());
 	}
@@ -345,7 +345,7 @@ public class WorldGuardFlagUtils {
 	 * @param flag flag to check
 	 * @return true if the result was {@code ALLOW}
 	 */
-	public static boolean test(@NotNull Block block, @NotNull Flags flag) {
+	public static boolean test(@NotNull Block block, @NotNull WorldGuardFlagUtils.CustomFlags flag) {
 		Validate.notNull(block, "Block cannot be null");
 		return test(block.getLocation(), flag);
 	}
@@ -376,7 +376,7 @@ public class WorldGuardFlagUtils {
 	 * @return effective state
 	 * @see #hasBypass(HasPlayer)
 	 */
-	public static State query(@NotNull org.bukkit.Location location, @Nullable OptionalPlayer player, Flags flag) {
+	public static State query(@NotNull org.bukkit.Location location, @Nullable OptionalPlayer player, CustomFlags flag) {
 		Validate.notNull(flag, "Flag cannot be null");
 		return query(location, player, (StateFlag) flag.get());
 	}
@@ -392,7 +392,7 @@ public class WorldGuardFlagUtils {
 	 * @return effective state
 	 * @see #hasBypass(HasPlayer)
 	 */
-	public static State query(@NotNull HasPlayer player, Flags flag) {
+	public static State query(@NotNull HasPlayer player, CustomFlags flag) {
 		Validate.notNull(player, "Player cannot be null");
 		Validate.notNull(flag, "Flag cannot be null");
 		return query(player.getPlayer().getLocation(), player, (StateFlag) flag.get());
@@ -440,7 +440,7 @@ public class WorldGuardFlagUtils {
 	 * @param flag flags to check
 	 * @return effective state
 	 */
-	public static State query(@NotNull org.bukkit.Location location, @NotNull Flags flag) {
+	public static State query(@NotNull org.bukkit.Location location, @NotNull WorldGuardFlagUtils.CustomFlags flag) {
 		Validate.notNull(flag, "Flag cannot be null");
 		return query(location, (StateFlag) flag.get());
 	}
@@ -469,7 +469,7 @@ public class WorldGuardFlagUtils {
 	 * @param flag flags to check
 	 * @return effective state
 	 */
-	public static State query(@NotNull Block block, @NotNull Flags flag) {
+	public static State query(@NotNull Block block, @NotNull WorldGuardFlagUtils.CustomFlags flag) {
 		Validate.notNull(block, "Block cannot be null");
 		return query(block.getLocation(), flag);
 	}
@@ -500,7 +500,7 @@ public class WorldGuardFlagUtils {
 	 * @return effective value
 	 * @see #hasBypass(HasPlayer)
 	 */
-	public static <T> T queryValue(@NotNull org.bukkit.Location location, @Nullable OptionalPlayer player, Flags flag) {
+	public static <T> T queryValue(@NotNull org.bukkit.Location location, @Nullable OptionalPlayer player, CustomFlags flag) {
 		Validate.notNull(flag, "Flag cannot be null");
 		return queryValue(location, player, (Flag<T>) flag.get());
 	}
@@ -515,7 +515,7 @@ public class WorldGuardFlagUtils {
 	 * @return effective value
 	 * @see #hasBypass(HasPlayer)
 	 */
-	public static <T> T queryValue(@NotNull HasPlayer player, Flags flag) {
+	public static <T> T queryValue(@NotNull HasPlayer player, CustomFlags flag) {
 		Validate.notNull(player, "Player cannot be null");
 		Validate.notNull(flag, "Flag cannot be null");
 		return queryValue(player.getPlayer().getLocation(), player, (Flag<T>) flag.get());
@@ -560,7 +560,7 @@ public class WorldGuardFlagUtils {
 	 * @param flag flag to check
 	 * @return effective value
 	 */
-	public static <T> T queryValue(@NotNull org.bukkit.Location location, @NotNull Flags flag) {
+	public static <T> T queryValue(@NotNull org.bukkit.Location location, @NotNull WorldGuardFlagUtils.CustomFlags flag) {
 		Validate.notNull(flag, "Flag cannot be null");
 		return queryValue(location, (Flag<T>) flag.get());
 	}
@@ -601,7 +601,7 @@ public class WorldGuardFlagUtils {
 	 * @param flag flag to check
 	 * @return effective value
 	 */
-	public static <T> T queryValue(@NotNull Block block, @NotNull Flags flag) {
+	public static <T> T queryValue(@NotNull Block block, @NotNull WorldGuardFlagUtils.CustomFlags flag) {
 		Validate.notNull(block, "Block cannot be null");
 		return queryValue(block.getLocation(), flag);
 	}

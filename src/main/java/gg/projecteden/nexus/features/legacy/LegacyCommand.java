@@ -89,29 +89,26 @@ public class LegacyCommand extends _WarpSubCommand {
 
 	// Homes
 
-	@Path("homes (teleport|tp) [home]")
-	void homes_teleport(@Arg(value = "home", tabCompleter = LegacyHome.class) String name) {
-		if (legacyHomeOwner.getHomes().size() == 0)
-			error("You do not have any legacy homes");
-
-		Optional<LegacyHome> home = legacyHomeOwner.getHome(name);
-		if (home.isEmpty())
-			error("You do not have a legacy home named &e" + name);
-
-		home.get().teleportAsync(player());
+	@Path("home <home>")
+	@Description("Teleport to your legacy homes")
+	void home(@Arg LegacyHome legacyHome) {
+		legacyHome.teleportAsync(player());
 	}
 
-	@Path("homes (teleport|tp) <player> <home>")
-	void homes_teleport(OfflinePlayer player, @Arg(context = 1) LegacyHome legacyHome) {
+	@Path("home tp <player> <home>")
+	@Description("Teleport to another player's legacy homes")
+	void home_tp(OfflinePlayer player, @Arg(context = 1) LegacyHome legacyHome) {
 		legacyHome.teleportAsync(player());
 	}
 
 	@Path("homes [player]")
+	@Description("View a list of legacy homes")
 	void homes(@Arg("self") LegacyHomeOwner legacyHomeOwner) {
 		new LegacyHomesMenu(legacyHomeOwner).open(player());
 	}
 
 	@Path("homes setItem <home> <material>")
+	@Description("Set the display item for a legacy home")
 	void homes_setItem(LegacyHome home, Material material) {
 		home.setItem(new ItemStack(material));
 		legacyHomeService.save(legacyHomeOwner);
@@ -119,7 +116,8 @@ public class LegacyCommand extends _WarpSubCommand {
 	}
 
 	@Path("homes set <name>")
-	void homes_set(String legacyHomeName) {
+	@Description("Set a new legacy home")
+	void homes_set(String legacyHomeName, @Arg(value = "self", permission = Group.STAFF) LegacyHomeOwner legacyHomeOwner) {
 		legacyOnly();
 
 		Optional<LegacyHome> home = legacyHomeOwner.getHome(legacyHomeName);
@@ -140,39 +138,9 @@ public class LegacyCommand extends _WarpSubCommand {
 		send(PREFIX + message);
 	}
 
-	@Permission(Group.STAFF)
-	@Path("homes set <player> <name>")
-	void homes_set(LegacyHomeOwner legacyHomeOwner, String legacyHomeName) {
-		legacyOnly();
-
-		Optional<LegacyHome> home = legacyHomeOwner.getHome(legacyHomeName);
-		String message;
-		if (home.isPresent()) {
-			home.get().setLocation(location());
-			message = "Updated location of legacy home &e" + legacyHomeName + "&3";
-		} else {
-			legacyHomeOwner.add(LegacyHome.builder()
-				.uuid(legacyHomeOwner.getUuid())
-				.name(legacyHomeName)
-				.location(location()));
-			message = "Legacy home &e" + legacyHomeName + "&3 set to current location";
-		}
-
-		legacyHomeService.save(legacyHomeOwner);
-		send(PREFIX + message);
-	}
-
 	@Path("homes delete <name>")
-	void homes_delete(@Arg("home") LegacyHome legacyHome) {
-		legacyHomeOwner.delete(legacyHome);
-		legacyHomeService.save(legacyHomeOwner);
-
-		send(PREFIX + "Legacy home &e" + legacyHome.getName() + "&3 deleted");
-	}
-
-	@Permission(Group.STAFF)
-	@Path("homes delete <player> <name>")
-	void homes_delete(LegacyHomeOwner legacyHomeOwner, @Arg(context = 1) LegacyHome legacyHome) {
+	@Description("Delete a legacy home")
+	void homes_delete(@Arg("home") LegacyHome legacyHome, @Arg(value = "self", permission = Group.STAFF) LegacyHomeOwner legacyHomeOwner) {
 		legacyHomeOwner.delete(legacyHome);
 		legacyHomeService.save(legacyHomeOwner);
 
@@ -194,6 +162,7 @@ public class LegacyCommand extends _WarpSubCommand {
 	// Vaults
 
 	@Path("vaults [page] [user]")
+	@Description("Open a legacy vault")
 	void vaults(@Arg(value = "1", min = 1) int page, @Arg(value = "self", permission = Group.SENIOR_STAFF) LegacyVaultUser user) {
 		legacyOnly();
 
@@ -201,6 +170,7 @@ public class LegacyCommand extends _WarpSubCommand {
 	}
 
 	@Path("vaults limit [user]")
+	@Description("View how many legacy vaults you own")
 	void vaults_limit(@Arg(value = "self", permission = Group.SENIOR_STAFF) LegacyVaultUser user) {
 		send(PREFIX + (isSelf(user) ? "You own" : user.getNickname() + " owns") + " &e" + user.getLimit() + " &3legacy vaults");
 	}
