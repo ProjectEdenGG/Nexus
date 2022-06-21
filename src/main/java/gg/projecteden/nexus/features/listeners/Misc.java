@@ -26,6 +26,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.models.mode.ModeUser;
 import gg.projecteden.nexus.models.mode.ModeUser.FlightMode;
 import gg.projecteden.nexus.models.mode.ModeUserService;
+import gg.projecteden.nexus.models.nerd.NBTPlayer;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -471,7 +472,7 @@ public class Misc implements Listener {
 	public void onConnect(AsyncPlayerPreLoginEvent event) {
 		Nerd nerd = Nerd.of(event.getUniqueId());
 		try {
-			World world = nerd.getOfflineWorld();
+			World world = new NBTPlayer(nerd).getWorld();
 			if (world == null) return;
 
 			if (SubWorldGroup.of(world) == SubWorldGroup.RESOURCE) {

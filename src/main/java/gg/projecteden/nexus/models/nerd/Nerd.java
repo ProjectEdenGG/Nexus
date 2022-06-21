@@ -1,11 +1,6 @@
 package gg.projecteden.nexus.models.nerd;
 
 import com.mongodb.DBObject;
-import de.tr7zw.nbtapi.NBTCompoundList;
-import de.tr7zw.nbtapi.NBTFile;
-import de.tr7zw.nbtapi.NBTItem;
-import de.tr7zw.nbtapi.NBTList;
-import de.tr7zw.nbtapi.NBTListCompound;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.PreLoad;
@@ -25,7 +20,6 @@ import gg.projecteden.nexus.models.badge.BadgeUserService;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.freeze.FreezeService;
-import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -41,7 +35,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -51,8 +44,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.Color;
-import java.io.File;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -274,32 +265,6 @@ public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements
 		return PlayerUtils.isVanished(getOnlinePlayer());
 	}
 
-	@ToString.Exclude
-	@EqualsAndHashCode.Exclude
-	private transient NBTFile nbtFile;
-
-	public @NotNull NBTFile getNbtFile() {
-		if (isOnline())
-			return loadNbtFile();
-
-		if (nbtFile == null)
-			nbtFile = loadNbtFile();
-
-		return nbtFile;
-	}
-
-	@NotNull
-	private NBTFile loadNbtFile() {
-		try {
-			File file = Paths.get(Bukkit.getServer().getWorlds().get(0).getName() + "/playerdata/" + uuid + ".dat").toFile();
-			if (file.exists())
-				return new NBTFile(file);
-			throw new InvalidInputException("[Nerd]" + Nickname.of(uuid) + "'s data file does not exist");
-		} catch (Exception ex) {
-			throw new InvalidInputException("[Nerd] Error opening " + Nickname.of(uuid) + "'s data file");
-		}
-	}
-
 	public @NotNull WorldGroup getWorldGroup() {
 		return WorldGroup.of(getLocation());
 	}
@@ -308,17 +273,7 @@ public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements
 		if (isOnline())
 			return getOnlinePlayer().getWorld();
 
-		return getOfflineWorld();
-	}
-
-	public World getOfflineWorld() {
-		NBTFile dataFile = getNbtFile();
-		String dimension = dataFile.getString("Dimension").replace("minecraft:", "");
-
-		if ("overworld".equals(dimension))
-			return Bukkit.getWorlds().get(0);
-
-		return Bukkit.getWorld(dimension);
+		return new NBTPlayer(this).getWorld();
 	}
 
 	public @NotNull Location getLocation() {
@@ -333,15 +288,7 @@ public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements
 			return location;
 
 		try {
-			NBTFile file = getNbtFile();
-			World world = getOfflineWorld();
-			if (world == null)
-				throw new InvalidInputException("[Nerd] " + name + " is not in a valid world");
-
-			NBTList<Double> pos = file.getDoubleList("Pos");
-			NBTList<Float> rotation = file.getFloatList("Rotation");
-
-			location = new Location(world, pos.get(0), pos.get(1), pos.get(2), rotation.get(0), rotation.get(1));
+			location = new NBTPlayer(this).getOfflineLocation();
 			new NerdService().save(this);
 			return location;
 		} catch (Exception ex) {
@@ -353,25 +300,14 @@ public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements
 		if (isOnline())
 			return Arrays.asList(getOnlinePlayer().getInventory().getContents());
 
-		return getOfflineInventory();
+		return new NBTPlayer(this).getOfflineInventory();
 	}
 
-	public List<ItemStack> getOfflineInventory() {
-		final ItemStack[] contents = new ItemStack[41];
+	public List<ItemStack> getEnderChest() {
+		if (isOnline())
+			return Arrays.asList(getOnlinePlayer().getEnderChest().getContents());
 
-		final NBTCompoundList inventory = getNbtFile().getCompoundList("Inventory");
-		for (NBTListCompound compound : inventory) {
-			int slot = compound.getInteger("Slot");
-			slot = switch (slot) {
-				case 100, 101, 102, 103 -> slot - 64;
-				case -106 -> 40;
-				default -> slot;
-			};
-
-			contents[slot] = NBTItem.convertNBTtoItem(compound);
-		}
-
-		return Arrays.asList(contents);
+		return new NBTPlayer(this).getOfflineEnderChest();
 	}
 
 	public void addPronoun(Pronoun pronoun) {

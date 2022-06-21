@@ -10,6 +10,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.hours.HoursService;
+import gg.projecteden.nexus.models.nerd.NBTPlayer;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Nerd.StaffMember;
 import gg.projecteden.nexus.models.nerd.NerdService;
@@ -57,7 +58,7 @@ public class NerdCommand extends CustomCommand {
 	@Path("getDataFile [player]")
 	@Permission(Group.ADMIN)
 	void getDataFile(@Arg("self") Nerd nerd) {
-		send(json().next(paste(nerd.getNbtFile().asNBTString())));
+		send(json().next(paste(new NBTPlayer(nerd).getNbtFile().asNBTString())));
 	}
 
 	@ConverterFor(Nerd.class)

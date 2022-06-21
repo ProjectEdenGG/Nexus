@@ -24,6 +24,7 @@ import gg.projecteden.nexus.models.legacy.homes.LegacyHomeService;
 import gg.projecteden.nexus.models.legacy.itemtransfer.LegacyItemTransferUser;
 import gg.projecteden.nexus.models.legacy.vaults.LegacyVaultUser;
 import gg.projecteden.nexus.models.legacy.vaults.LegacyVaultUserService;
+import gg.projecteden.nexus.models.nerd.NBTPlayer;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
@@ -402,7 +403,7 @@ public class LegacyCommand extends _WarpSubCommand {
 	@Path("archive inventories")
 	void archive_inventories() {
 		final List<ItemStack> inventory = nerd().getInventory();
-		final List<ItemStack> nbtInventory = nerd().getOfflineInventory();
+		final List<ItemStack> nbtInventory = new NBTPlayer(nerd()).getOfflineInventory();
 
 		for (int i = 0; i < inventory.size(); i++) {
 			final ItemStack item = inventory.get(i);
