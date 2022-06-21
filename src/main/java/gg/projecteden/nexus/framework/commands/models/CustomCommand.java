@@ -40,6 +40,7 @@ import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -240,6 +241,10 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	protected WorldGroup worldGroup() {
 		return WorldGroup.of(location());
+	}
+
+	protected SubWorldGroup subWorldGroup() {
+		return SubWorldGroup.of(location());
 	}
 
 	protected PlayerInventory inventory() {

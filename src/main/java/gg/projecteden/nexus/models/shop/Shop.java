@@ -56,6 +56,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -85,7 +86,7 @@ public class Shop implements PlayerOwnedObject {
 	@Embedded
 	private List<Product> products = new ArrayList<>();
 	@Embedded
-	private List<ItemStack> holding = new ArrayList<>();
+	private Map<ShopGroup, List<ItemStack>> holding = new ConcurrentHashMap<>();
 	@Embedded
 	private List<Material> disabledResourceMarketItems = new ArrayList<>();
 
@@ -124,23 +125,28 @@ public class Shop implements PlayerOwnedObject {
 		return getProducts(shopGroup).stream().filter(product -> product.isEnabled() && product.isPurchasable() && !product.canFulfillPurchase()).collect(Collectors.toList());
 	}
 
-	public void addHolding(List<ItemStack> itemStacks) {
+	public void addHolding(ShopGroup shopGroup, List<ItemStack> itemStacks) {
 		if (isMarket())
 			return;
 
-		itemStacks.forEach(this::addHolding);
+		itemStacks.forEach(itemStack -> addHolding(shopGroup, itemStack));
 	}
 
-	public void addHolding(ItemStack itemStack) {
+	public void addHolding(ShopGroup shopGroup, ItemStack itemStack) {
 		if (isMarket())
 			return;
 
-		ItemUtils.combine(holding, itemStack.clone());
+		ItemUtils.combine(getHolding(shopGroup), itemStack.clone());
+	}
+
+	@NotNull
+	public List<ItemStack> getHolding(ShopGroup shopGroup) {
+		return holding.computeIfAbsent(shopGroup, $ -> new ArrayList<>());
 	}
 
 	public void removeProduct(Product product) {
 		products.remove(product);
-		ShopUtils.giveItems(uuid, product.getItemStacks());
+		ShopUtils.giveItems(uuid, product.getShopGroup(), product.getItemStacks());
 	}
 
 	public enum ShopGroup {
@@ -551,7 +557,7 @@ public class Shop implements PlayerOwnedObject {
 
 			product.setStock(product.getStock() - product.getItem().getAmount());
 			transaction(customer);
-			giveItems(customer.getUniqueId(), product.getItem());
+			giveItems(customer.getUniqueId(), product.getShopGroup(), product.getItem());
 		}
 
 		@Override
@@ -642,8 +648,8 @@ public class Shop implements PlayerOwnedObject {
 
 			product.setStock(product.getStock() - product.getItem().getAmount());
 			customer.getInventory().removeItem(price);
-			product.getShop().addHolding(price);
-			giveItems(customer.getUniqueId(), product.getItem());
+			product.getShop().addHolding(product.getShopGroup(), price);
+			giveItems(customer.getUniqueId(), product.getShopGroup(), product.getItem());
 		}
 
 		@Override
@@ -726,7 +732,7 @@ public class Shop implements PlayerOwnedObject {
 
 			for (ItemStack item : getMatchingItems(customer)) {
 				customer.getInventory().removeItem(item);
-				product.getShop().addHolding(item);
+				product.getShop().addHolding(product.getShopGroup(), item);
 			}
 		}
 

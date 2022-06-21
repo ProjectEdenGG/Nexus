@@ -2,13 +2,12 @@ package gg.projecteden.nexus.features.legacy;
 
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.StateFlag.State;
-import gg.projecteden.api.common.annotations.Environments;
-import gg.projecteden.api.common.utils.Env;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.nexus.features.commands.staff.admin.CreativeFlagsCommand;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.spawnlimits.SpawnLimits.SpawnLimitType;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.WorldGuardFlagUtils;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.GameRule;
 import org.bukkit.World;
@@ -46,7 +45,6 @@ import static gg.projecteden.nexus.utils.Utils.registerListeners;
 
  */
 
-@Environments(Env.TEST)
 public class Legacy extends Feature {
 	public static final String PREFIX = StringUtils.getPrefix("Legacy");
 
@@ -70,10 +68,15 @@ public class Legacy extends Feature {
 			world.setGameRule(GameRule.DO_INSOMNIA, false);
 			world.setGameRule(GameRule.MAX_ENTITY_CRAMMING, 4);
 
-			PlayerUtils.runCommandAsConsole("creativeflags " + world.getName());
-			PlayerUtils.runCommandAsConsole(WorldGuardFlagUtils.command(world, Flags.BUILD, State.DENY));
-			PlayerUtils.runCommandAsConsole(WorldGuardFlagUtils.command(world, Flags.MOB_SPAWNING, State.DENY));
-			PlayerUtils.runCommandAsConsole(WorldGuardFlagUtils.command(world, Flags.INVINCIBILITY, State.ALLOW));
+			final ProtectedRegion globalRegion = new WorldGuardUtils(world).getManager().getRegion("__global__");
+			if (globalRegion != null) {
+				CreativeFlagsCommand.setFlags(world);
+				globalRegion.setFlag(Flags.BUILD, State.DENY);
+				globalRegion.setFlag(Flags.MOB_SPAWNING, State.DENY);
+				globalRegion.setFlag(Flags.INVINCIBILITY, State.ALLOW);
+				globalRegion.setFlag(Flags.CHEST_ACCESS, State.ALLOW);
+				globalRegion.setFlag(Flags.USE, State.ALLOW);
+			}
 		}
 	}
 

@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.nameplates;
 
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.listeners.Tab.Presence;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -11,18 +12,19 @@ import gg.projecteden.nexus.models.push.PushService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
+import lombok.AccessLevel;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
-import org.bukkit.scoreboard.Team.Option;
-import org.bukkit.scoreboard.Team.OptionStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 import static gg.projecteden.nexus.utils.PlayerUtils.canSee;
 
@@ -30,10 +32,9 @@ import static gg.projecteden.nexus.utils.PlayerUtils.canSee;
 public class Nameplates extends Feature {
 	private final PushService pushService = new PushService();
 	private final NameplateManager nameplateManager;
-	private final Team pushTeam;
-	private final Team noPushTeam;
-	private final String pushTeamName = "NP_HIDE_PUSH";
-	private final String noPushTeamName = "NP_HIDE_NO_PUSH";
+	private final TeamAssigner defaultTeamAssigner = new PushTeamAssigner();
+	@Getter(value = AccessLevel.NONE)
+	private final Map<UUID, TeamAssigner> teamAssigners = new HashMap<>();
 	private final static int RADIUS = 75;
 
 	@Getter
@@ -42,47 +43,6 @@ public class Nameplates extends Feature {
 	public Nameplates() {
 		this.nameplateManager = new NameplateManager();
 		new NameplatesListener();
-
-		final Scoreboard scoreboard = Nexus.getInstance().getServer().getScoreboardManager().getMainScoreboard();
-		this.pushTeam = initializeTeam(scoreboard, pushTeamName, true);
-		this.noPushTeam = initializeTeam(scoreboard, noPushTeamName, false);
-	}
-
-	private Team initializeTeam(Scoreboard scoreboard, String name, boolean allowPush) {
-		Team team = scoreboard.getTeam(name);
-
-		if (team != null) {
-			team.unregister();
-		}
-
-		team = scoreboard.registerNewTeam(name);
-		team.setOption(Option.NAME_TAG_VISIBILITY, OptionStatus.NEVER);
-		team.setOption(Option.COLLISION_RULE, allowPush ? OptionStatus.ALWAYS : OptionStatus.NEVER);
-		team.setOption(Option.COLLISION_RULE, allowPush ? OptionStatus.ALWAYS : OptionStatus.NEVER);
-		team.setCanSeeFriendlyInvisibles(false);
-
-		return team;
-	}
-
-	public static void addToTeam(Player player) {
-		Nameplates nameplates = Nameplates.get();
-
-		// determine whether to allow pushing
-		boolean allowPushing;
-		if (WorldGroup.of(player) == WorldGroup.MINIGAMES)
-			allowPushing = false;
-		else
-			allowPushing = nameplates.getPushService().get(player).isEnabled();
-
-		// set team
-		Team addTo = nameplates.teamFor(allowPushing);
-		addTo.addEntry(player.getName());
-		Team removeFrom = nameplates.teamFor(!allowPushing);
-		removeFrom.removeEntry(player.getName());
-	}
-
-	public Team teamFor(boolean allowPush) {
-		return allowPush ? this.pushTeam : this.noPushTeam;
 	}
 
 	@Override
@@ -93,6 +53,70 @@ public class Nameplates extends Feature {
 	@Override
 	public void onStop() {
 		this.nameplateManager.shutdown();
+	}
+
+	/**
+	 * Updates the {@link Team} of a {@link Player}.
+	 *
+	 * @param player the player to update the team of
+	 */
+	public void updateTeamOf(@NotNull Player player) {
+		Team oldTeam = TeamAssigner.scoreboard().getPlayerTeam(player);
+		Team newTeam = teamAssigners.getOrDefault(player.getUniqueId(), defaultTeamAssigner).teamFor(player);
+
+		if (oldTeam != null && !oldTeam.equals(newTeam))
+			oldTeam.removePlayer(player);
+		newTeam.addPlayer(player);
+	}
+
+	/**
+	 * Returns whether the player's team is being handled by a dedicated team assigner.
+	 *
+	 * @param player the player to check for a team assigner
+	 * @return whether the player's team is being handled by a dedicated team assigner
+	 */
+	public boolean hasTeamAssigner(@NotNull HasUniqueId player) {
+		return teamAssigners.containsKey(player.getUniqueId());
+	}
+
+	/**
+	 * Registers a team assigner for a player.
+	 *
+	 * @param player       the player to register the team assigner for
+	 * @param teamAssigner the team assigner to register
+	 * @throws IllegalArgumentException if the default team assigner was provided
+	 * @return {@code true} if the team assigner was registered,
+	 *         {@code false} if another team assigner was already registered for the player
+	 */
+	public boolean registerTeamAssigner(@NotNull HasUniqueId player, @NotNull TeamAssigner teamAssigner) {
+		UUID uuid = player.getUniqueId();
+		if (teamAssigners.containsKey(uuid))
+			return false;
+		if (teamAssigner == defaultTeamAssigner)
+			throw new IllegalArgumentException("The default team assigner should not be registered");
+		teamAssigners.put(uuid, teamAssigner);
+		return true;
+	}
+
+	/**
+	 * Unregisters a team assigner for a player.
+	 *
+	 * @param player the player to unregister the team assigner for
+	 * @return whether the player had a team assigner
+	 */
+	public boolean unregisterTeamAssigner(@NotNull HasUniqueId player) {
+		return teamAssigners.remove(player.getUniqueId()) != null;
+	}
+
+	/**
+	 * Unregisters a specific team assigner for a player.
+	 *
+	 * @param player       the player to unregister the team assigner for
+	 * @param teamAssigner the team assigner to unregister
+	 * @return whether the player had the team assigner
+	 */
+	public boolean unregisterTeamAssigner(@NotNull HasUniqueId player, @NotNull TeamAssigner teamAssigner) {
+		return teamAssigners.remove(player.getUniqueId(), teamAssigner);
 	}
 
 	public static void toggleDebug() {

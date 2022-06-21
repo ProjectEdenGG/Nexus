@@ -76,7 +76,7 @@ public class LegacyMisc implements Listener {
 		if (isNullOrAir(block))
 			return;
 
-		if (NO_INTERACT.contains(block.getType()))
+		if (!NO_INTERACT.contains(block.getType()))
 			return;
 
 		event.setCancelled(true);

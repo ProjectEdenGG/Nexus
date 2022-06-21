@@ -445,7 +445,7 @@ public class AccountTransferCommand extends CustomCommand {
 		@Override
 		public void transfer(Shop previous, Shop current) {
 			current.setDescription(previous.getDescription());
-			current.addHolding(previous.getHolding());
+			current.setHolding(previous.getHolding());
 			current.getDisabledResourceMarketItems().addAll(previous.getDisabledResourceMarketItems());
 
 			for (Product product : previous.getProducts()) {

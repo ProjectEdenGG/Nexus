@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.events.y2021.bearfair21;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.Rides;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.islands.IslandType;
@@ -24,7 +25,6 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Timer;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -52,6 +52,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
 import static gg.projecteden.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.GIVE_DAILY_TOKENS;
 import static gg.projecteden.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.GIVE_REWARDS;
@@ -59,7 +60,6 @@ import static gg.projecteden.nexus.models.bearfair21.BearFair21Config.BearFair21
 import static gg.projecteden.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.WARP;
 import static gg.projecteden.nexus.utils.PlayerUtils.isVanished;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 public class BearFair21 implements Listener {
 	private static final BearFair21ConfigService configService = new BearFair21ConfigService();
@@ -353,7 +353,7 @@ public class BearFair21 implements Listener {
 		if (!config.isEnabled(WARP)) return;
 		if (!event.getRegion().getId().equalsIgnoreCase("spawn_bearfair")) return;
 
-		Location spawnTransition = new Location(Bukkit.getWorld("survival"), 9.5, 100, -180.5);
+		Location spawnTransition = new Location(Bukkit.getWorld("legacy2"), 9.5, 100, -180.5);
 		Player player = event.getPlayer();
 		BearFair21User user = userService.get(player);
 

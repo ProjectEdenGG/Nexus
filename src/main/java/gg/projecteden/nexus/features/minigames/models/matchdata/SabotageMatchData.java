@@ -19,6 +19,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerLoadoutEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerVoteEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.SabotageColor;
+import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.SabotageLight;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.SabotageTeam;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.Task;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.TaskPart;
@@ -91,6 +92,9 @@ public class SabotageMatchData extends MatchData {
 		super(match);
 	}
 
+	public static final int BRIGHT_LIGHT_LEVEL = 6;
+	public static final int DARK_LIGHT_LEVEL = 2;
+
 	private final Map<UUID, UUID> votes = new HashMap<>();
 	private final BiMap<UUID, SabotageColor> playerColors = HashBiMap.create();
 	private LocalDateTime meetingStarted, meetingEnded = LocalDateTime.of(1970, 1, 1, 0, 0);
@@ -124,7 +128,7 @@ public class SabotageMatchData extends MatchData {
 	private final Map<UUID, Body> bodies = new HashMap<>(); // this is a map of Armor Stand UUIDs to their report locations
 	private final Set<Tasks> commonTasks = randomTasks(Tasks.TaskType.COMMON);
 	private final Map<UUID, Location> venters = new HashMap<>();
-	private final Map<UUID, Location> lightMap = new HashMap<>();
+	private final Map<UUID, SabotageLight> lightMap = new HashMap<>();
 	private Set<ArmorStandTask> armorStandTasks = null;
 
 	private Set<ArmorStandTask> armorStandTasksInit() {
@@ -505,7 +509,8 @@ public class SabotageMatchData extends MatchData {
 	}
 
 	public int lightLevel() {
-		return (sabotage == null || sabotage.getTask() == Tasks.LIGHTS) ? 6 : 2;
+		// TODO animate
+		return (sabotage == null || sabotage.getTask() != Tasks.LIGHTS) ? BRIGHT_LIGHT_LEVEL : DARK_LIGHT_LEVEL;
 	}
 
 	public long getKillCooldown(HasUniqueId player) {

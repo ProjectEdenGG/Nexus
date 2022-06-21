@@ -28,7 +28,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Timer;
-import gg.projecteden.nexus.utils.WorldGuardFlagUtils;
+import gg.projecteden.nexus.utils.WorldGuardFlagUtils.CustomFlags;
 import it.sauronsoftware.cron4j.Scheduler;
 import lombok.Getter;
 import lombok.Setter;
@@ -204,7 +204,7 @@ public class Nexus extends JavaPlugin {
 
 	@Override
 	public void onLoad() {
-		WorldGuardFlagUtils.Flags.register();
+		CustomFlags.register();
 	}
 
 	@Override
