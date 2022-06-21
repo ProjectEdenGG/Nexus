@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
+import gg.projecteden.nexus.features.customblocks.models.CustomBlockTag;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -52,18 +53,42 @@ public class MaterialTagCommand extends CustomCommand {
 	}
 
 	@ConverterFor(Tag.class)
-	Tag<Material> convertToMaterialTag(String value) {
-		if (MaterialTag.getTags().containsKey(value.toUpperCase()))
-			return MaterialTag.getTags().get(value.toUpperCase());
-		throw new InvalidInputException("MaterialTag from " + value + " not found");
+	Tag<?> convertToTag(String value) {
+		if (!value.contains("."))
+			error("Tag is not scoped");
+
+		final String[] split = value.split("\\.");
+		final String scope = split[0].toLowerCase();
+		final String key = split[1].toUpperCase();
+
+		switch (scope) {
+			case "material":
+				if (MaterialTag.getTags().containsKey(key))
+					return MaterialTag.getTags().get(key);
+				else
+					throw new InvalidInputException("MaterialTag from &e" + value + " &cnot found");
+			case "customblock":
+				if (CustomBlockTag.getTags().containsKey(key))
+					return CustomBlockTag.getTags().get(key);
+				else
+					throw new InvalidInputException("CustomBlockTag from &e" + value + " &cnot found");
+			default:
+				throw new InvalidInputException("Unsupported tag type");
+		}
 	}
 
 	@TabCompleterFor(Tag.class)
-	List<String> tabCompleteMaterialTag(String filter) {
-		return MaterialTag.getTags().keySet().stream()
-			.map(String::toLowerCase)
-			.filter(s -> s.startsWith(filter.toLowerCase()))
-			.toList();
+	List<String> tabCompleteTag(String filter) {
+		return new ArrayList<>() {{
+			addAll(MaterialTag.getTags().keySet().stream()
+				.map(material -> "material." + material.toLowerCase())
+				.filter(material -> material.toLowerCase().startsWith(filter.toLowerCase()))
+				.toList());
+			addAll(CustomBlockTag.getTags().keySet().stream()
+				.map(customBlock -> "customblock." + customBlock.toLowerCase())
+				.filter(customBlock -> customBlock.toLowerCase().startsWith(filter.toLowerCase()))
+				.toList());
+		}};
 	}
 
 	public static class MaterialTagMaterialsMenu extends InventoryProvider {

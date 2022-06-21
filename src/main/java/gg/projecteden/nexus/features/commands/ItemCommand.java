@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands;
 
+import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -35,8 +36,15 @@ public class ItemCommand extends CustomCommand {
 	}
 
 	@Path("tag <tag> [amount]")
-	void tag(Tag<Material> tag, @Arg("1") int amount) {
-		tag.getValues().forEach(material -> run(new ItemStack(material), amount, null));
+	void tag(Tag<?> tag, @Arg("1") int amount) {
+		tag.getValues().forEach(tagged -> {
+			if (tagged instanceof Material material)
+				run(new ItemStack(material), amount, null);
+			else if (tagged instanceof CustomBlock customBlock)
+				run(customBlock.get().getItemStack(), amount, null);
+			else
+				error("Unsupported tag type");
+		});
 	}
 
 }

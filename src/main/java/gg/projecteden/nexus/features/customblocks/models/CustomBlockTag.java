@@ -52,7 +52,7 @@ import java.util.function.Predicate;
 import static gg.projecteden.api.common.utils.Utils.collect;
 
 public class CustomBlockTag implements Tag<CustomBlock> {
-	// NOTE BLOCKSCA
+	// NOTE BLOCKS
 	public static final CustomBlockTag COMPACTED = new CustomBlockTag(ICompacted.class);
 	public static final CustomBlockTag COMPACTED_CRATES = new CustomBlockTag(ICrate.class);
 	public static final CustomBlockTag COMPACTED_BUNDLES = new CustomBlockTag(IBundle.class);

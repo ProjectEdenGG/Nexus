@@ -870,7 +870,6 @@ public abstract class CustomCommand extends ICustomCommand {
 		return new ArrayList<>() {{
 			addAll(tabCompleteMaterial(filter));
 			addAll(tabCompleteEnum(filter, CustomBlock.class));
-
 		}};
 	}
 
