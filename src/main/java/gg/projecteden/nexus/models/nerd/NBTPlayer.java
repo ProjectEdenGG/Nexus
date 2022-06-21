@@ -111,4 +111,22 @@ public class NBTPlayer implements PlayerOwnedObject {
 
 		return Arrays.asList(contents);
 	}
+
+	public void setLocation(Location location) {
+		final NBTFile nbt = getNbtFile();
+
+		final NBTList<Double> pos = nbt.getDoubleList("Pos");
+		pos.set(0, location.getX());
+		pos.set(1, location.getY());
+		pos.set(2, location.getZ());
+
+		final NBTList<Float> rotation = nbt.getFloatList("Rotation");
+		rotation.set(0, location.getYaw());
+		rotation.set(1, location.getPitch());
+
+		final UUID worldUuid = location.getWorld().getUID();
+		nbt.setLong("WorldUUIDMost", worldUuid.getMostSignificantBits());
+		nbt.setLong("WorldUUIDLeast", worldUuid.getLeastSignificantBits());
+	}
+
 }

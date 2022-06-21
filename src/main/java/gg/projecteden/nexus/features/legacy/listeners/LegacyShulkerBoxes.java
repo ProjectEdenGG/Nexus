@@ -16,6 +16,7 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -110,11 +111,12 @@ public class LegacyShulkerBoxes implements Listener {
 		return new NBTItem(item).getString(NBT_KEY);
 	}
 
+	@NoArgsConstructor
 	public static class LegacyShulkerBoxMenu implements TemporaryMenuListener {
 		@Getter
-		private final Player player;
-		private final ItemStack shulkerBox;
-		private final List<ItemStack> originalItems;
+		private Player player;
+		private ItemStack shulkerBox;
+		private List<ItemStack> originalItems;
 
 		@Getter
 		private final LegacyShulkerBoxHolder inventoryHolder = new LegacyShulkerBoxHolder();

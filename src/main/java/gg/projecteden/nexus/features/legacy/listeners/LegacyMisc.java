@@ -32,13 +32,14 @@ public class LegacyMisc implements Listener {
 	}
 
 	private static final List<Material> NO_INTERACT = List.of(
-		Material.CRAFTING_TABLE,
-		Material.STONECUTTER,
 		Material.LOOM,
 		Material.ANVIL,
+		Material.GRINDSTONE,
+		Material.STONECUTTER,
+		Material.CRAFTING_TABLE,
 		Material.SMITHING_TABLE,
-		Material.CARTOGRAPHY_TABLE,
-		Material.GRINDSTONE
+		Material.ENCHANTING_TABLE,
+		Material.CARTOGRAPHY_TABLE
 	);
 
 	@EventHandler

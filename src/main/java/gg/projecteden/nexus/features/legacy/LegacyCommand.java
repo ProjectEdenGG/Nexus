@@ -1,6 +1,12 @@
 package gg.projecteden.nexus.features.legacy;
 
+import com.onarandombox.multiverseinventories.profile.PlayerProfile;
+import com.onarandombox.multiverseinventories.profile.ProfileTypes;
+import com.onarandombox.multiverseinventories.share.Sharable;
+import com.onarandombox.multiverseinventories.share.Sharables;
+import de.tr7zw.nbtapi.NBTFile;
 import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.legacy.menus.homes.LegacyHomesMenu;
 import gg.projecteden.nexus.features.legacy.menus.itemtransfer.ItemPendingMenu;
 import gg.projecteden.nexus.features.legacy.menus.itemtransfer.ItemReceiveMenu;
@@ -8,6 +14,8 @@ import gg.projecteden.nexus.features.legacy.menus.itemtransfer.ItemReviewMenu;
 import gg.projecteden.nexus.features.legacy.menus.itemtransfer.ItemTransferMenu;
 import gg.projecteden.nexus.features.legacy.menus.itemtransfer.ReviewableMenu;
 import gg.projecteden.nexus.features.listeners.TemporaryMenuListener;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.warps.commands._WarpSubCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
@@ -25,19 +33,28 @@ import gg.projecteden.nexus.models.legacy.itemtransfer.LegacyItemTransferUser;
 import gg.projecteden.nexus.models.legacy.vaults.LegacyVaultUser;
 import gg.projecteden.nexus.models.legacy.vaults.LegacyVaultUserService;
 import gg.projecteden.nexus.models.nerd.NBTPlayer;
+import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.warps.WarpType;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.SneakyThrows;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class LegacyCommand extends _WarpSubCommand {
 	private final LegacyHomeService legacyHomeService = new LegacyHomeService();
@@ -98,9 +115,9 @@ public class LegacyCommand extends _WarpSubCommand {
 		legacyHome.teleportAsync(player());
 	}
 
-	@Path("home tp <player> <home>")
+	@Path("home <player> <home>")
 	@Description("Teleport to another player's legacy homes")
-	void home_tp(OfflinePlayer player, @Arg(context = 1) LegacyHome legacyHome) {
+	void home(OfflinePlayer player, @Arg(context = 1) LegacyHome legacyHome) {
 		legacyHome.teleportAsync(player());
 	}
 
@@ -118,7 +135,7 @@ public class LegacyCommand extends _WarpSubCommand {
 		send(PREFIX + "Legacy home display item set to " + camelCase(material));
 	}
 
-	@Path("homes set <name>")
+	@Path("homes set <name> [player]")
 	@Description("Set a new legacy home")
 	void homes_set(String legacyHomeName, @Arg(value = "self", permission = Group.STAFF) LegacyHomeOwner legacyHomeOwner) {
 		legacyOnly();
@@ -134,14 +151,14 @@ public class LegacyCommand extends _WarpSubCommand {
 				.uuid(legacyHomeOwner.getUuid())
 				.name(legacyHomeName)
 				.location(location()));
-			message = "Legacy home &e" + legacyHomeName + "&3 set to current location. Return with &c/legacy homes tp " + legacyHomeName;
+			message = "Legacy home &e" + legacyHomeName + "&3 set to current location. Return with &c/legacy home " + legacyHomeName;
 		}
 
 		legacyHomeService.save(legacyHomeOwner);
 		send(PREFIX + message);
 	}
 
-	@Path("homes delete <name>")
+	@Path("homes delete <name> [player]")
 	@Description("Delete a legacy home")
 	void homes_delete(@Arg("home") LegacyHome legacyHome, @Arg(value = "self", permission = Group.STAFF) LegacyHomeOwner legacyHomeOwner) {
 		legacyHomeOwner.delete(legacyHome);
@@ -398,20 +415,106 @@ public class LegacyCommand extends _WarpSubCommand {
 	}
 	*/
 
+	@Data
+	private static class InvData {
+		private final Nerd nerd;
+		private final GameMode gamemode;
+
+		public InvData(Nerd nerd, GameMode gamemode) {
+			this.nerd = nerd;
+			this.gamemode = gamemode;
+		}
+
+		private List<ItemStack> get(WorldGroup group) {
+			final PlayerProfile survivalData = getProfile(group);
+
+			var data2 = survivalData.get(Sharables.INVENTORY);
+			List<ItemStack> inventory = Arrays.asList(data2 == null ? new ItemStack[0] : data2);
+
+			if (nerd.getWorldGroup() == group)
+				inventory = nerd.getInventory();
+
+			return inventory;
+		}
+
+		public PlayerProfile getProfile(WorldGroup group) {
+			var survivalGroup = Nexus.getMultiverseInventories().getGroupManager().getGroup(StringUtils.camelCase(group));
+			return survivalGroup.getGroupProfileContainer().getPlayerData(ProfileTypes.forGameMode(gamemode), nerd.getOfflinePlayer());
+		}
+	}
+
+	@SneakyThrows
+	@Path("inventories archive <player>")
+	@Description("Archive a player's legacy inventory")
+	void inventories_archive(Nerd nerd) {
+		final InvData data = new InvData(nerd, GameMode.SURVIVAL);
+		final PlayerProfile legacy = data.getProfile(WorldGroup.LEGACY);
+		final PlayerProfile survival = data.getProfile(WorldGroup.SURVIVAL);
+
+		legacy.set(Sharables.INVENTORY, survival.get(Sharables.INVENTORY).clone());
+		legacy.set(Sharables.ENDER_CHEST, survival.get(Sharables.ENDER_CHEST).clone());
+
+		for (Sharable<?> sharable : Sharables.allOf())
+			survival.set(sharable, null);
+
+		Nexus.getMultiverseInventories().getData().updatePlayerData(legacy);
+		Nexus.getMultiverseInventories().getData().updatePlayerData(survival);
+
+		final WorldGroup worldGroup = nerd.getWorldGroup();
+		if (worldGroup == WorldGroup.LEGACY || worldGroup == WorldGroup.SURVIVAL) {
+			final NBTPlayer nbtPlayer = new NBTPlayer(nerd);
+			final NBTFile nbtFile = nbtPlayer.getNbtFile();
+			nbtFile.removeKey("Inventory");
+			nbtFile.removeKey("EnderItems");
+			nbtPlayer.setLocation(WarpType.NORMAL.get("hub").getLocation());
+			nbtFile.save();
+		}
+
+		send(PREFIX + "Migrated inventory for " + nerd.getNickname());
+	}
+
 	@Async
 	@Permission(Group.ADMIN)
-	@Path("archive inventories")
-	void archive_inventories() {
-		final List<ItemStack> inventory = nerd().getInventory();
-		final List<ItemStack> nbtInventory = new NBTPlayer(nerd()).getOfflineInventory();
+	@Path("inventories debug <player> <gamemode>")
+	@Description("View a list of items in a player's survival and legacy inventories")
+	void inventories_debug(Nerd nerd, GameMode gamemode) {
+		Function<List<ItemStack>, String> debugInventory = contents ->
+			contents.stream().filter(Nullables::isNotNullOrAir).map(StringUtils::pretty).collect(Collectors.joining(", "));
 
-		for (int i = 0; i < inventory.size(); i++) {
-			final ItemStack item = inventory.get(i);
-			final ItemStack nbtItem = nbtInventory.get(i);
-			if (Objects.equals(item, nbtItem))
-				send("&a" + i + ": " + item + " == " + nbtItem);
-			else
-				send("&c" + i + ": " + item + " != " + nbtItem);
+		var data = new InvData(nerd, gamemode);
+
+		line(2);
+		send("legacyInventory: &7" + debugInventory.apply(data.get(WorldGroup.LEGACY)));
+		line();
+		send("survivalInventory: " + debugInventory.apply(data.get(WorldGroup.SURVIVAL)));
+	}
+
+	@Permission(Group.ADMIN)
+	@Path("inventories view <player> <gamemode> <group>")
+	@Description("View a list of items in a player's survival and legacy inventories")
+	void inventories_view(Nerd nerd, GameMode gamemode, WorldGroup worldGroup) {
+		new InventoryMenu(nerd, gamemode, worldGroup).open(player());
+	}
+
+	@Data
+	public static class InventoryMenu extends InventoryProvider {
+		private final Nerd nerd;
+		private final GameMode gamemode;
+		private final WorldGroup worldGroup;
+
+		@Override
+		public String getTitle() {
+			return StringUtils.camelCase(gamemode) + " inventory for " + nerd.getNickname();
+		}
+
+		@Override
+		public void init() {
+			List<ClickableItem> items = new ArrayList<>();
+
+			for (ItemStack itemStack : new InvData(nerd, gamemode).get(worldGroup))
+				items.add(ClickableItem.empty(itemStack));
+
+			paginator().items(items).perPage(5 * 9).startingRow(0).build();
 		}
 	}
 

@@ -32,14 +32,11 @@ import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Utils;
-import lombok.Setter;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import gg.projecteden.parchment.HasPlayer;
 import lombok.Setter;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.CheckReturnValue;
@@ -165,6 +162,7 @@ public abstract class InventoryProvider {
 		private Boolean hasResourcePack;
 		private List<ClickableItem> items;
 		private int perPage = 36;
+		private int startingRow = 1;
 		private SlotPos previousSlot;
 		private SlotPos nextSlot;
 		private SlotIterator iterator;
@@ -184,6 +182,12 @@ public abstract class InventoryProvider {
 		@CheckReturnValue
 		public Paginator perPage(int perPage) {
 			this.perPage = perPage;
+			return this;
+		}
+
+		@CheckReturnValue
+		public Paginator startingRow(int startingRow) {
+			this.startingRow = startingRow;
 			return this;
 		}
 
@@ -225,7 +229,7 @@ public abstract class InventoryProvider {
 				nextSlot = SlotPos.of(contents.inventory().getRows() - 1, 8);
 
 			if (iterator == null)
-				iterator = contents.newIterator(SlotIterator.Type.HORIZONTAL, 1, 0);
+				iterator = contents.newIterator(SlotIterator.Type.HORIZONTAL, startingRow, 0);
 
 			Pagination page = contents.pagination();
 
