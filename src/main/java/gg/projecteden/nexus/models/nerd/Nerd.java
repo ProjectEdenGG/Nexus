@@ -1,8 +1,11 @@
 package gg.projecteden.nexus.models.nerd;
 
 import com.mongodb.DBObject;
+import de.tr7zw.nbtapi.NBTCompoundList;
 import de.tr7zw.nbtapi.NBTFile;
+import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.NBTList;
+import de.tr7zw.nbtapi.NBTListCompound;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.PreLoad;
@@ -43,6 +46,7 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -52,6 +56,7 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -82,10 +87,10 @@ public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements
 	@PreLoad
 	void preLoad(DBObject dbObject) {
 		List<String> visitedWorldGroups = (List<String>) dbObject.get("visitedWorldGroups");
-		if (visitedWorldGroups.remove("ONEBLOCK"))
+		if (visitedWorldGroups != null && visitedWorldGroups.remove("ONEBLOCK"))
 			visitedWorldGroups.add("SKYBLOCK");
 		List<String> visitedSubWorldGroups = (List<String>) dbObject.get("visitedSubWorldGroups");
-		if (visitedSubWorldGroups.remove("LEGACY"))
+		if (visitedSubWorldGroups != null && visitedSubWorldGroups.remove("LEGACY"))
 			visitedSubWorldGroups.add("LEGACY1");
 
 		List<String> pronouns = (List<String>) dbObject.get("pronouns");
@@ -295,18 +300,20 @@ public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements
 		}
 	}
 
-	public World getWorld() {
-		return getLocation().getWorld();
+	public @NotNull WorldGroup getWorldGroup() {
+		return WorldGroup.of(getLocation());
 	}
 
-	public World getOfflineWorld() {
+	public World getWorld() {
 		if (isOnline())
 			return getOnlinePlayer().getWorld();
 
+		return getOfflineWorld();
+	}
+
+	public World getOfflineWorld() {
 		NBTFile dataFile = getNbtFile();
 		String dimension = dataFile.getString("Dimension").replace("minecraft:", "");
-		if (isNullOrEmpty(dimension))
-			dimension = dataFile.getString("SpawnWorld").replace("minecraft:", "");
 
 		if ("overworld".equals(dimension))
 			return Bukkit.getWorlds().get(0);
@@ -314,14 +321,14 @@ public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements
 		return Bukkit.getWorld(dimension);
 	}
 
-	public @NotNull WorldGroup getWorldGroup() {
-		return WorldGroup.of(getLocation());
-	}
-
 	public @NotNull Location getLocation() {
 		if (isOnline())
 			return getOnlinePlayer().getPlayer().getLocation();
 
+		return getOfflineLocation();
+	}
+
+	public Location getOfflineLocation() {
 		if (location != null)
 			return location;
 
@@ -329,7 +336,7 @@ public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements
 			NBTFile file = getNbtFile();
 			World world = getOfflineWorld();
 			if (world == null)
-				throw new InvalidInputException("[Nerd]" + name + " is not in a valid world");
+				throw new InvalidInputException("[Nerd] " + name + " is not in a valid world");
 
 			NBTList<Double> pos = file.getDoubleList("Pos");
 			NBTList<Float> rotation = file.getFloatList("Rotation");
@@ -340,6 +347,31 @@ public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements
 		} catch (Exception ex) {
 			throw new InvalidInputException("Could not get location of offline player " + name + ": " + ex.getMessage());
 		}
+	}
+
+	public List<ItemStack> getInventory() {
+		if (isOnline())
+			return Arrays.asList(getOnlinePlayer().getInventory().getContents());
+
+		return getOfflineInventory();
+	}
+
+	public List<ItemStack> getOfflineInventory() {
+		final ItemStack[] contents = new ItemStack[41];
+
+		final NBTCompoundList inventory = getNbtFile().getCompoundList("Inventory");
+		for (NBTListCompound compound : inventory) {
+			int slot = compound.getInteger("Slot");
+			slot = switch (slot) {
+				case 100, 101, 102, 103 -> slot - 64;
+				case -106 -> 40;
+				default -> slot;
+			};
+
+			contents[slot] = NBTItem.convertNBTtoItem(compound);
+		}
+
+		return Arrays.asList(contents);
 	}
 
 	public void addPronoun(Pronoun pronoun) {

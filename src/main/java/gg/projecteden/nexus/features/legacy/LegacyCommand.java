@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.legacy;
 
+import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.nexus.features.legacy.menus.homes.LegacyHomesMenu;
 import gg.projecteden.nexus.features.legacy.menus.itemtransfer.ItemPendingMenu;
 import gg.projecteden.nexus.features.legacy.menus.itemtransfer.ItemReceiveMenu;
@@ -34,6 +35,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public class LegacyCommand extends _WarpSubCommand {
@@ -394,5 +396,22 @@ public class LegacyCommand extends _WarpSubCommand {
 		send(PREFIX + "Archived " + countProduct + " products for " + countShop + " users");
 	}
 	*/
+
+	@Async
+	@Permission(Group.ADMIN)
+	@Path("archive inventories")
+	void archive_inventories() {
+		final List<ItemStack> inventory = nerd().getInventory();
+		final List<ItemStack> nbtInventory = nerd().getOfflineInventory();
+
+		for (int i = 0; i < inventory.size(); i++) {
+			final ItemStack item = inventory.get(i);
+			final ItemStack nbtItem = nbtInventory.get(i);
+			if (Objects.equals(item, nbtItem))
+				send("&a" + i + ": " + item + " == " + nbtItem);
+			else
+				send("&c" + i + ": " + item + " != " + nbtItem);
+		}
+	}
 
 }
