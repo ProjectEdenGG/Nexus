@@ -43,8 +43,7 @@ public class ItemTransferMenu implements TemporaryMenuListener {
 		MaterialTag.MENU_BLOCKS,
 		MaterialTag.ALL_MINERALS,
 		MaterialTag.ALL_WOOD,
-		MaterialTag.ALL_NETHER,
-		MaterialTag.ALL_END
+		MaterialTag.ITEMS_MUSIC_DISCS
 	).append(
 		Material.GOLDEN_APPLE,
 		Material.ENCHANTED_GOLDEN_APPLE

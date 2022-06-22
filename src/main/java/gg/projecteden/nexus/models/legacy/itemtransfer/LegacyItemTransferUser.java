@@ -51,6 +51,11 @@ public class LegacyItemTransferUser implements PlayerOwnedObject {
 		getItems(ReviewStatus.DENIED).add(item);
 	}
 
+	public void delay(ItemStack item) {
+		getItems(ReviewStatus.PENDING).remove(item);
+		getItems(ReviewStatus.DELAYED).add(item);
+	}
+
 	public int acceptAll() {
 		return moveItems(ReviewStatus.ACCEPTED);
 	}
@@ -71,6 +76,7 @@ public class LegacyItemTransferUser implements PlayerOwnedObject {
 		PENDING,
 		ACCEPTED,
 		DENIED,
+		DELAYED,
 	}
 
 }
