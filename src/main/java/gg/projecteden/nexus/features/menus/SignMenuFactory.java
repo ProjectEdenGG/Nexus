@@ -135,7 +135,10 @@ public final class SignMenuFactory {
 		public void open(Player player) {
 			Location location = player.getLocation().add(0, -4, 0);
 
-			List<Component> lines = this.lines.stream().map(line -> new JsonBuilder(line).build().asComponent()).collect(Collectors.toList());
+			List<Component> lines = this.lines.stream()
+				.map(line -> colorize ? new JsonBuilder(line).build().asComponent() : Component.text(line))
+				.collect(Collectors.toList());
+
 			while (lines.size() < 4)
 				lines.add(Component.text(""));
 
