@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.ambience;
 
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.ambience.managers.common.AmbienceManagers;
 import gg.projecteden.nexus.framework.features.Feature;
@@ -13,6 +14,7 @@ import org.bukkit.event.Listener;
 
 import java.util.List;
 
+@Disabled
 @NoArgsConstructor
 public class Ambience extends Feature implements Listener {
 	private static final AmbienceUserService userService = new AmbienceUserService();
@@ -29,18 +31,18 @@ public class Ambience extends Feature implements Listener {
 	}
 
 	public static void sendDebug(String message) {
-		for (AmbienceUser user : getUsers()) {
+		for (AmbienceUser user : getUsers())
 			user.debug(message);
-		}
 	}
 
 	private void ambienceTask() {
-		Tasks.repeat(0, TickTime.TICK.x(2), () -> {
+		Tasks.repeat(0, TickTime.TICK.x(2), AmbienceManagers::tick);
+
+		Tasks.repeat(0, TickTime.SECOND.x(2), () -> {
 			for (AmbienceUser user : getUsers()) {
 				user.getVariables().update();
 				user.getSoundPlayer().update();
 			}
-			AmbienceManagers.tick();
 		});
 
 		Tasks.repeat(0, TickTime.SECOND.x(1), () -> {

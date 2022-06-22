@@ -42,6 +42,10 @@ public class AmbienceUser implements PlayerOwnedObject {
 			sendMessage(message);
 	}
 
+	public boolean isEnabled() {
+		return sounds || particles;
+	}
+
 	public Variables getVariables() {
 		if (variables == null)
 			variables = new Variables(getPlayer());

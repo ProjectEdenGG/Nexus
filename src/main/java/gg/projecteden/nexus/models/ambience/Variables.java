@@ -49,6 +49,9 @@ public class Variables {
 		if (player == null || !player.isOnline())
 			return;
 
+		if (!new AmbienceUserService().get(player).isEnabled())
+			return;
+
 		location = player.getLocation();
 		biome = location.getBlock().getBiome();
 		dimension = player.getWorld().getEnvironment();
