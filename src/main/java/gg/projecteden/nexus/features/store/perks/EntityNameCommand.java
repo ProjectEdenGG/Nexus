@@ -11,6 +11,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.StringUtils.Gradient;
 import gg.projecteden.nexus.utils.StringUtils.Rainbow;
 import lombok.NonNull;
@@ -19,6 +20,7 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -79,6 +81,13 @@ public class EntityNameCommand extends CustomCommand {
 		} else {
 			targetEntity.setCustomName(colorize(input));
 			targetEntity.setCustomNameVisible(input != null);
+
+			final boolean hasName = input != null;
+			if (targetEntity instanceof InventoryHolder holder) {
+				final boolean hasItems = !ItemUtils.nonNullOrAir(holder.getInventory().getContents()).isEmpty();
+				targetEntity.setPersistent(hasItems || hasName);
+			} else
+				targetEntity.setPersistent(hasName);
 		}
 	}
 
