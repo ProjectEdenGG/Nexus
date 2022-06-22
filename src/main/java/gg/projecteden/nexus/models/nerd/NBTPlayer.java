@@ -1,20 +1,24 @@
 package gg.projecteden.nexus.models.nerd;
 
+import de.tr7zw.nbtapi.NBTCompound;
 import de.tr7zw.nbtapi.NBTCompoundList;
 import de.tr7zw.nbtapi.NBTFile;
 import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.NBTList;
 import de.tr7zw.nbtapi.NBTListCompound;
+import de.tr7zw.nbtapi.NBTType;
 import gg.projecteden.api.interfaces.HasUniqueId;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
-import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.utils.Timer;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -22,8 +26,11 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+
+import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 
 @Data
 @NoArgsConstructor
@@ -54,19 +61,48 @@ public class NBTPlayer implements PlayerOwnedObject {
 			File file = Paths.get(Bukkit.getServer().getWorlds().get(0).getName() + "/playerdata/" + uuid + ".dat").toFile();
 			if (file.exists())
 				return new NBTFile(file);
-			throw new InvalidInputException("[Nerd]" + Nickname.of(uuid) + "'s data file does not exist");
+			throw new InvalidInputException("[Nerd]" + getNickname() + "'s data file does not exist");
 		} catch (Exception ex) {
-			throw new InvalidInputException("[Nerd] Error opening " + Nickname.of(uuid) + "'s data file");
+			throw new InvalidInputException("[Nerd] Error opening " + getNickname() + "'s data file");
 		}
 	}
 
 	public World getWorld() {
-		String dimension = getNbtFile().getString("Dimension").replace("minecraft:", "");
+		final String NBT_KEY = "Dimension";
 
-		if ("overworld".equals(dimension))
-			return Bukkit.getWorlds().get(0);
+		final NBTType dataType = getNbtFile().getType(NBT_KEY);
 
-		return Bukkit.getWorld(dimension);
+		switch (dataType) {
+			case NBTTagString -> {
+				final String dimension = getNbtFile().getString(NBT_KEY).replace("minecraft:", "");
+
+				if ("overworld".equals(dimension))
+					return Bukkit.getWorlds().get(0);
+
+				final World result = Bukkit.getWorld(dimension);
+				if (result != null)
+					return result;
+			}
+			case NBTTagInt -> {
+				final int dimension = getNbtFile().getInteger(NBT_KEY);
+				if (dimension == 0)
+					return Bukkit.getWorld("survival");
+			}
+		}
+
+		final long most = getNbtFile().getLong("WorldUUIDMost");
+		final long least = getNbtFile().getLong("WorldUUIDLeast");
+		final UUID worldUuid = new UUID(most, least);
+		final World world = Bukkit.getWorld(worldUuid);
+		if (world != null)
+			return world;
+
+		final NBTCompound compound = getNbtFile().getCompound(NBT_KEY);
+		throw new InvalidInputException("[Nerd] %s is not in a valid world (Type: %s, Value: %s, UUID: %s)".formatted(
+			getNickname(), camelCase(dataType),
+			compound == null ? "null" : compound.asNBTString(),
+			uuid == null ? "null" : uuid.toString()
+		));
 	}
 
 	public Location getOfflineLocation() {
@@ -112,21 +148,48 @@ public class NBTPlayer implements PlayerOwnedObject {
 		return Arrays.asList(contents);
 	}
 
-	public void setLocation(Location location) {
-		final NBTFile nbt = getNbtFile();
+	public List<ItemStack> getOfflineArmor() {
+		final List<ItemStack> inventory = new NBTPlayer(this).getOfflineInventory();
+		if (inventory.size() >= 37)
+			return inventory.subList(36, Math.min(inventory.size() - 1, 40));
 
-		final NBTList<Double> pos = nbt.getDoubleList("Pos");
+		return Collections.emptyList();
+	}
+
+	public ItemStack getOfflineOffHand() {
+		final List<ItemStack> inventory = new NBTPlayer(this).getOfflineInventory();
+		if (inventory.size() >= 41)
+			return inventory.get(40);
+
+		return new ItemStack(Material.AIR);
+	}
+
+	public void setLocation(Location location) {
+		setPosition(location);
+		setRotation(location);
+		setWorld(location);
+
+		new Timer("    Update MVINV last world", () ->
+			Nexus.getMultiverseInventories().getData().updateLastWorld(getName(), location.getWorld().getName()));
+	}
+
+	private void setPosition(Location location) {
+		final NBTList<Double> pos = getNbtFile().getDoubleList("Pos");
 		pos.set(0, location.getX());
 		pos.set(1, location.getY());
 		pos.set(2, location.getZ());
+	}
 
-		final NBTList<Float> rotation = nbt.getFloatList("Rotation");
+	private void setRotation(Location location) {
+		final NBTList<Float> rotation = getNbtFile().getFloatList("Rotation");
 		rotation.set(0, location.getYaw());
 		rotation.set(1, location.getPitch());
+	}
 
+	private void setWorld(Location location) {
 		final UUID worldUuid = location.getWorld().getUID();
-		nbt.setLong("WorldUUIDMost", worldUuid.getMostSignificantBits());
-		nbt.setLong("WorldUUIDLeast", worldUuid.getLeastSignificantBits());
+		getNbtFile().setLong("WorldUUIDMost", worldUuid.getMostSignificantBits());
+		getNbtFile().setLong("WorldUUIDLeast", worldUuid.getLeastSignificantBits());
 	}
 
 }

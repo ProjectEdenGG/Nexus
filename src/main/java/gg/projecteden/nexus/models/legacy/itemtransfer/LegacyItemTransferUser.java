@@ -4,6 +4,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.crates.models.CrateType;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import lombok.AllArgsConstructor;
@@ -30,6 +31,7 @@ public class LegacyItemTransferUser implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private Map<ReviewStatus, List<ItemStack>> items = new ConcurrentHashMap<>();
+	private Map<CrateType, Integer> crateKeys = new ConcurrentHashMap<>();
 
 	public List<ItemStack> getItems(ReviewStatus status) {
 		return items.computeIfAbsent(status, $ -> new ArrayList<>());

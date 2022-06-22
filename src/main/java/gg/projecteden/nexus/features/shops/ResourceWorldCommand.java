@@ -379,7 +379,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 				else if (world.contains("the_end"))
 					args = "end";
 				else
-					args = "normal -s -900287747221759";
+					args = "normal";
 
 				run.accept("mv create " + world + " " + args);
 			}
@@ -405,7 +405,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 
 		PlayerUtils.runCommandAsConsole("wb " + worldName + " set " + RADIUS + " 0 0");
 		PlayerUtils.runCommandAsConsole("bluemap purge " + worldName);
-		Tasks.wait(TickTime.MINUTE, () -> PlayerUtils.runCommandAsConsole("chunkmaster generate " + worldName + " " + (RADIUS + 200) + " circle"));
+//		Tasks.wait(TickTime.MINUTE, () -> PlayerUtils.runCommandAsConsole("chunkmaster generate " + worldName + " " + (RADIUS + 200) + " circle"));
 	}
 
 	private static NPC getFilidNPC() {

@@ -4,8 +4,8 @@ import com.onarandombox.multiverseinventories.profile.PlayerProfile;
 import com.onarandombox.multiverseinventories.profile.ProfileTypes;
 import com.onarandombox.multiverseinventories.share.Sharable;
 import com.onarandombox.multiverseinventories.share.Sharables;
-import de.tr7zw.nbtapi.NBTFile;
 import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.legacy.menus.homes.LegacyHomesMenu;
 import gg.projecteden.nexus.features.legacy.menus.itemtransfer.ItemPendingMenu;
@@ -25,6 +25,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.legacy.homes.LegacyHome;
 import gg.projecteden.nexus.models.legacy.homes.LegacyHomeOwner;
@@ -34,9 +35,13 @@ import gg.projecteden.nexus.models.legacy.vaults.LegacyVaultUser;
 import gg.projecteden.nexus.models.legacy.vaults.LegacyVaultUserService;
 import gg.projecteden.nexus.models.nerd.NBTPlayer;
 import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.warps.WarpType;
+import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Timer;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Data;
 import lombok.Getter;
@@ -53,6 +58,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -109,15 +115,15 @@ public class LegacyCommand extends _WarpSubCommand {
 
 	// Homes
 
-	@Path("home <home>")
+	@Path("home [home]")
 	@Description("Teleport to your legacy homes")
-	void home(@Arg LegacyHome legacyHome) {
+	void home(LegacyHome legacyHome) {
 		legacyHome.teleportAsync(player());
 	}
 
-	@Path("home <player> <home>")
+	@Path("home visit <player> <home>")
 	@Description("Teleport to another player's legacy homes")
-	void home(OfflinePlayer player, @Arg(context = 1) LegacyHome legacyHome) {
+	void home_visit(OfflinePlayer player, @Arg(context = 1) LegacyHome legacyHome) {
 		legacyHome.teleportAsync(player());
 	}
 
@@ -277,6 +283,33 @@ public class LegacyCommand extends _WarpSubCommand {
 	}
 
 	@Async
+	@Path("archive votepoints")
+	@Permission(Group.ADMIN)
+	void archive_balances() {
+		final LegacyUserService legacyUserService = new LegacyUserService();
+		final VoterService voterService = new VoterService();
+		int countVoters = 0;
+		int countPoints = 0;
+
+		for (Voter uuid : voterService.getAll()) {
+			final Voter voter = voterService.get(uuid);
+
+			if (voter.getPoints() == 0)
+				continue;
+
+			legacyUserService.edit(voter, legacyUser -> legacyUser.setVotePoints(voter.getPoints()));
+
+			++countVoters;
+			countPoints += voter.getPoints();
+
+			voter.setPoints(0);
+			voterService.save(voter);
+		}
+
+		send(PREFIX + "Archived " + countPoints + " vote points for " + countVoters + " voters");
+	}
+
+	@Async
 	@Path("archive balances")
 	@Permission(Group.ADMIN)
 	void archive_balances() {
@@ -415,6 +448,7 @@ public class LegacyCommand extends _WarpSubCommand {
 	}
 	*/
 
+	@SuppressWarnings("SameParameterValue")
 	@Data
 	private static class InvData {
 		private final Nerd nerd;
@@ -425,16 +459,48 @@ public class LegacyCommand extends _WarpSubCommand {
 			this.gamemode = gamemode;
 		}
 
-		private List<ItemStack> get(WorldGroup group) {
+		private ItemStack[] getInventory(WorldGroup group) {
 			final PlayerProfile survivalData = getProfile(group);
 
-			var data2 = survivalData.get(Sharables.INVENTORY);
-			List<ItemStack> inventory = Arrays.asList(data2 == null ? new ItemStack[0] : data2);
+			ItemStack[] inventory = survivalData.get(Sharables.INVENTORY);
 
 			if (nerd.getWorldGroup() == group)
-				inventory = nerd.getInventory();
+				inventory = nerd.getInventory().toArray(ItemStack[]::new);
 
 			return inventory;
+		}
+
+		private ItemStack[] getEnderChest(WorldGroup group) {
+			final PlayerProfile survivalData = getProfile(group);
+
+			ItemStack[] inventory = survivalData.get(Sharables.ENDER_CHEST);
+
+			if (nerd.getWorldGroup() == group)
+				inventory = nerd.getEnderChest().toArray(ItemStack[]::new);
+
+			return inventory;
+		}
+
+		private ItemStack[] getArmor(WorldGroup group) {
+			final PlayerProfile survivalData = getProfile(group);
+
+			ItemStack[] inventory = survivalData.get(Sharables.ARMOR);
+
+			if (nerd.getWorldGroup() == group)
+				inventory = nerd.getArmor().toArray(ItemStack[]::new);
+
+			return inventory;
+		}
+
+		private ItemStack getOffHand(WorldGroup group) {
+			final PlayerProfile survivalData = getProfile(group);
+
+			ItemStack item = survivalData.get(Sharables.OFF_HAND);
+
+			if (nerd.getWorldGroup() == group)
+				item = nerd.getOffHand();
+
+			return item;
 		}
 
 		public PlayerProfile getProfile(WorldGroup group) {
@@ -443,50 +509,176 @@ public class LegacyCommand extends _WarpSubCommand {
 		}
 	}
 
+	public static boolean cancelled = false;
+
+	@Permission(Group.ADMIN)
+	@Path("inventories archive cancel")
+	void inventories_archive_cancel() {
+		cancelled = true;
+		send(PREFIX + "Cancelling task...");
+	}
+
+	@Async
 	@SneakyThrows
+	@Permission(Group.ADMIN)
+	@Path("inventories verify all")
+	@Description("Verify all survival inventories are empty")
+	void inventories_verify_all() {
+		for (Nerd nerd : new NerdService().getAll()) {
+			try {
+				if (cancelled) {
+					send(PREFIX + "Cancelled");
+					cancelled = false;
+					return;
+				}
+
+				final InvData data = new InvData(nerd, GameMode.SURVIVAL);
+
+				if (!ItemUtils.nonNullOrAir(data.getInventory(WorldGroup.SURVIVAL)).isEmpty())
+					Dev.GRIFFIN.send(nerd.getNickname() + " has non null survival inventory contents");
+				if (!ItemUtils.nonNullOrAir(data.getEnderChest(WorldGroup.SURVIVAL)).isEmpty())
+					Dev.GRIFFIN.send(nerd.getNickname() + " has non null survival ender chest contents");
+			} catch (NexusException ex) {
+				send(ex.getMessage());
+			} catch (Exception ex) {
+				send(ex.getMessage());
+				ex.printStackTrace();
+			}
+		}
+	}
+
+	@Async
+	@SneakyThrows
+	@Permission(Group.ADMIN)
+	@Path("inventories archive all")
+	@Description("Archive all legacy inventories")
+	@Disabled
+	void inventories_archive_all() {
+		for (Nerd nerd : new NerdService().getAll()) {
+			try {
+				if (cancelled) {
+					send(PREFIX + "Cancelled");
+					cancelled = false;
+					return;
+				}
+
+				final InvData data = new InvData(nerd, GameMode.SURVIVAL);
+
+				new Timer("Archive inventory of " + nerd.getNickname(), () -> {
+					AtomicBoolean archive = new AtomicBoolean(true);
+					new Timer("  Check legacy inventories of " + nerd.getNickname(), () -> {
+						if (!ItemUtils.nonNullOrAir(data.getInventory(WorldGroup.LEGACY)).isEmpty()) {
+							Dev.GRIFFIN.send(nerd.getNickname() + " has non null legacy inventory contents, skipping");
+							archive.set(false);
+						}
+						if (!ItemUtils.nonNullOrAir(data.getEnderChest(WorldGroup.LEGACY)).isEmpty()) {
+							Dev.GRIFFIN.send(nerd.getNickname() + " has non null legacy ender chest contents, skipping");
+							archive.set(false);
+						}
+					});
+
+					if (archive.get())
+						inventories_archive(nerd);
+				});
+			} catch (NexusException ex) {
+				send(ex.getMessage());
+			} catch (Exception ex) {
+				send(ex.getMessage());
+				ex.printStackTrace();
+			}
+		}
+	}
+
+	@Permission(Group.ADMIN)
 	@Path("inventories archive <player>")
 	@Description("Archive a player's legacy inventory")
 	void inventories_archive(Nerd nerd) {
 		final InvData data = new InvData(nerd, GameMode.SURVIVAL);
-		final PlayerProfile legacy = data.getProfile(WorldGroup.LEGACY);
-		final PlayerProfile survival = data.getProfile(WorldGroup.SURVIVAL);
 
-		legacy.set(Sharables.INVENTORY, survival.get(Sharables.INVENTORY).clone());
-		legacy.set(Sharables.ENDER_CHEST, survival.get(Sharables.ENDER_CHEST).clone());
+		new Timer("  Read & modify MVINV data", () -> {
+			final PlayerProfile legacy = data.getProfile(WorldGroup.LEGACY);
+			final PlayerProfile survival = data.getProfile(WorldGroup.SURVIVAL);
 
-		for (Sharable<?> sharable : Sharables.allOf())
-			survival.set(sharable, null);
+			legacy.set(Sharables.INVENTORY, data.getInventory(WorldGroup.SURVIVAL));
+			legacy.set(Sharables.ARMOR, data.getArmor(WorldGroup.SURVIVAL));
+			legacy.set(Sharables.OFF_HAND, data.getOffHand(WorldGroup.SURVIVAL));
+			legacy.set(Sharables.ENDER_CHEST, data.getEnderChest(WorldGroup.SURVIVAL));
 
-		Nexus.getMultiverseInventories().getData().updatePlayerData(legacy);
-		Nexus.getMultiverseInventories().getData().updatePlayerData(survival);
+			for (Sharable<?> sharable : Sharables.allOf())
+				survival.set(sharable, null);
 
-		final WorldGroup worldGroup = nerd.getWorldGroup();
-		if (worldGroup == WorldGroup.LEGACY || worldGroup == WorldGroup.SURVIVAL) {
-			final NBTPlayer nbtPlayer = new NBTPlayer(nerd);
-			final NBTFile nbtFile = nbtPlayer.getNbtFile();
-			nbtFile.removeKey("Inventory");
-			nbtFile.removeKey("EnderItems");
-			nbtPlayer.setLocation(WarpType.NORMAL.get("hub").getLocation());
-			nbtFile.save();
-		}
+			new Timer("    Save MVINV data", () -> {
+				Nexus.getMultiverseInventories().getData().updatePlayerData(legacy);
+				Nexus.getMultiverseInventories().getData().updatePlayerData(survival);
+			});
+		});
+
+		final NBTPlayer nbtPlayer = new NBTPlayer(nerd);
+
+		new Timer("  Read player.data", nbtPlayer::getNbtFile);
+
+		new Timer("  Modify player.data", () -> {
+			final WorldGroup worldGroup = nerd.getWorldGroup();
+			if (worldGroup == WorldGroup.LEGACY || worldGroup == WorldGroup.SURVIVAL) {
+				nbtPlayer.getNbtFile().removeKey("Inventory");
+				nbtPlayer.getNbtFile().removeKey("EnderItems");
+				nbtPlayer.getNbtFile().removeKey("XpLevel");
+				nbtPlayer.getNbtFile().removeKey("XpP");
+				nbtPlayer.getNbtFile().removeKey("XpSeed");
+				nbtPlayer.getNbtFile().removeKey("XpTotal");
+				nbtPlayer.getNbtFile().removeKey("foodExhaustionLevel");
+				nbtPlayer.getNbtFile().removeKey("foodLevel");
+				nbtPlayer.getNbtFile().removeKey("foodSaturationLevel");
+				nbtPlayer.getNbtFile().removeKey("foodTickTimer");
+				nbtPlayer.getNbtFile().removeKey("recipeBook");
+				nbtPlayer.getNbtFile().removeKey("seenCredits");
+				nbtPlayer.getNbtFile().removeKey("SleepTimer");
+				nbtPlayer.getNbtFile().removeKey("Fire");
+				nbtPlayer.getNbtFile().removeKey("FallDistance");
+				nbtPlayer.getNbtFile().removeKey("AbsorptionAmount");
+				nbtPlayer.setLocation(WarpType.NORMAL.get("hub").getLocation());
+			}
+
+			nbtPlayer.getNbtFile().removeKey("Score");
+			nbtPlayer.getNbtFile().removeKey("SpawnAngle");
+			nbtPlayer.getNbtFile().removeKey("SpawnDimension");
+			nbtPlayer.getNbtFile().removeKey("SpawnForced");
+			nbtPlayer.getNbtFile().removeKey("SpawnX");
+			nbtPlayer.getNbtFile().removeKey("SpawnY");
+			nbtPlayer.getNbtFile().removeKey("SpawnZ");
+		});
+
+		new Timer("  Save player.data", () -> {
+			try {
+				nbtPlayer.getNbtFile().save();
+			} catch (Exception ex) {
+				throw new RuntimeException(ex);
+			}
+		});
 
 		send(PREFIX + "Migrated inventory for " + nerd.getNickname());
 	}
+
+	private static final Function<ItemStack[], String> debugInventory = contents -> {
+		if (contents == null)
+			return "";
+		return Arrays.stream(contents)
+			.filter(Nullables::isNotNullOrAir)
+			.map(StringUtils::pretty)
+			.collect(Collectors.joining(", "));
+	};
 
 	@Async
 	@Permission(Group.ADMIN)
 	@Path("inventories debug <player> <gamemode>")
 	@Description("View a list of items in a player's survival and legacy inventories")
 	void inventories_debug(Nerd nerd, GameMode gamemode) {
-		Function<List<ItemStack>, String> debugInventory = contents ->
-			contents.stream().filter(Nullables::isNotNullOrAir).map(StringUtils::pretty).collect(Collectors.joining(", "));
-
 		var data = new InvData(nerd, gamemode);
 
 		line(2);
-		send("legacyInventory: &7" + debugInventory.apply(data.get(WorldGroup.LEGACY)));
+		send("legacyInventory: &7" + debugInventory.apply(data.getInventory(WorldGroup.LEGACY)));
 		line();
-		send("survivalInventory: " + debugInventory.apply(data.get(WorldGroup.SURVIVAL)));
+		send("survivalInventory: " + debugInventory.apply(data.getInventory(WorldGroup.SURVIVAL)));
 	}
 
 	@Permission(Group.ADMIN)
@@ -494,6 +686,28 @@ public class LegacyCommand extends _WarpSubCommand {
 	@Description("View a list of items in a player's survival and legacy inventories")
 	void inventories_view(Nerd nerd, GameMode gamemode, WorldGroup worldGroup) {
 		new InventoryMenu(nerd, gamemode, worldGroup).open(player());
+	}
+
+	private enum InventoryType {
+		INVENTORY,
+		ENDER_CHEST,
+	}
+
+	@Permission(Group.ADMIN)
+	@Path("inventories get <player> <gamemode> <group> <type>")
+	@Description("Get the items in a player's survival and legacy inventories")
+	void inventories_get(Nerd nerd, GameMode gamemode, WorldGroup worldGroup, InventoryType type) {
+		final InvData data = new InvData(nerd, gamemode);
+
+		switch (type) {
+			case INVENTORY -> {
+				player().getInventory().setContents(data.getInventory(worldGroup));
+				player().getInventory().setArmorContents(data.getArmor(worldGroup));
+				player().getInventory().setItemInOffHand(data.getOffHand(worldGroup));
+			}
+			case ENDER_CHEST ->
+				player().getInventory().setContents(data.getEnderChest(worldGroup));
+		}
 	}
 
 	@Data
@@ -511,7 +725,7 @@ public class LegacyCommand extends _WarpSubCommand {
 		public void init() {
 			List<ClickableItem> items = new ArrayList<>();
 
-			for (ItemStack itemStack : new InvData(nerd, gamemode).get(worldGroup))
+			for (ItemStack itemStack : new InvData(nerd, gamemode).getInventory(worldGroup))
 				items.add(ClickableItem.empty(itemStack));
 
 			paginator().items(items).perPage(5 * 9).startingRow(0).build();

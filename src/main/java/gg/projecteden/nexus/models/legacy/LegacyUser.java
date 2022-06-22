@@ -28,6 +28,7 @@ public class LegacyUser implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private BigDecimal balance;
+	private int votePoints;
 	private Map<String, Integer> mcmmo = new ConcurrentHashMap<>();
 
 }

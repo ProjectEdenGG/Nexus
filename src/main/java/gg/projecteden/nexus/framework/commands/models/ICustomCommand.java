@@ -477,7 +477,6 @@ public abstract class ICustomCommand {
 		methods.clear();
 		methods.addAll(overridden.values());
 
-
 		methods.sort((Comparator<? super Method>) comparator);
 
 		List<Method> filtered = methods.stream()

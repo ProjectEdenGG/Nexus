@@ -284,6 +284,10 @@ public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements
 	}
 
 	public Location getOfflineLocation() {
+		if (true)
+			return new NBTPlayer(this).getOfflineLocation();
+
+		// TODO 1.19 Remove if nbt is reliable
 		if (location != null)
 			return location;
 
@@ -308,6 +312,20 @@ public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements
 			return Arrays.asList(getOnlinePlayer().getEnderChest().getContents());
 
 		return new NBTPlayer(this).getOfflineEnderChest();
+	}
+
+	public List<ItemStack> getArmor() {
+		if (isOnline())
+			return Arrays.asList(getOnlinePlayer().getInventory().getArmorContents());
+
+		return new NBTPlayer(this).getOfflineArmor();
+	}
+
+	public ItemStack getOffHand() {
+		if (isOnline())
+			return getOnlinePlayer().getInventory().getItemInOffHand();
+
+		return new NBTPlayer(this).getOfflineOffHand();
 	}
 
 	public void addPronoun(Pronoun pronoun) {
