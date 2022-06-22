@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.models.legacy.itemtransfer.LegacyItemTransferUser.ReviewStatus;
 import gg.projecteden.nexus.models.legacy.itemtransfer.LegacyItemTransferUserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.Getter;
@@ -71,6 +72,8 @@ public class ItemTransferMenu implements TemporaryMenuListener {
 			}
 
 			if (!NOT_ALLOWED.isTagged(content.getType()))
+				continue;
+			else if (ModelId.of(content) != 0)
 				continue;
 
 			contents.remove(content);
