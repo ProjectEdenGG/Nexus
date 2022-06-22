@@ -82,12 +82,14 @@ public class EntityNameCommand extends CustomCommand {
 			targetEntity.setCustomName(colorize(input));
 			targetEntity.setCustomNameVisible(input != null);
 
-			final boolean hasName = input != null;
-			if (targetEntity instanceof InventoryHolder holder) {
-				final boolean hasItems = !ItemUtils.nonNullOrAir(holder.getInventory().getContents()).isEmpty();
-				targetEntity.setPersistent(hasItems || hasName);
-			} else
-				targetEntity.setPersistent(hasName);
+			if (targetEntity instanceof LivingEntity livingEntity) {
+				final boolean hasName = input != null;
+				if (livingEntity instanceof InventoryHolder holder) {
+					final boolean hasItems = !ItemUtils.nonNullOrAir(holder.getInventory().getContents()).isEmpty();
+					livingEntity.setRemoveWhenFarAway(hasName || hasItems);
+				} else
+					livingEntity.setRemoveWhenFarAway(hasName);
+			}
 		}
 	}
 
