@@ -13,7 +13,7 @@ public class SurvivalCommand extends CustomCommand {
 
 	@Path
 	void warp() {
-		runCommand("rtp");
+		runCommand("rtp survival");
 	}
 
 }
