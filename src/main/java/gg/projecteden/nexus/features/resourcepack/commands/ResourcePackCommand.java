@@ -106,8 +106,8 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	@Path("status [player]")
 	void getStatus(@Arg("self") LocalResourcePackUser user) {
 		send(PREFIX + "Status of &e" + user.getNickname());
-		send("&6 Saturn &7- " + user.getSaturnStatus());
-		send("&6 Titan &7- " + user.getTitanStatus());
+		send(json("&6 Saturn &7- " + user.getSaturnStatus()).url(user.getSaturnCommitUrl()));
+		send(json("&6 Titan &7- " + user.getTitanStatus()).url(user.getTitanCommitUrl()));
 	}
 
 	@Permission(Group.STAFF)
@@ -121,14 +121,14 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 		new HashMap<String, Set<String>>() {{
 			for (Player player : players)
 				computeIfAbsent(service.get(player).getSaturnStatus(), $ -> new HashSet<>()).add(Nickname.of(player));
-		}}.forEach((status, names) -> send("&e" + status + "&3: " + String.join(", ", names)));
+		}}.forEach((status, names) -> send(json("&e" + status + "&3: " + String.join(", ", names))));
 
 		line();
 		send("&6Titan");
 		new HashMap<String, Set<String>>() {{
 			for (Player player : players)
 				computeIfAbsent(service.get(player).getTitanStatus(), $ -> new HashSet<>()).add(Nickname.of(player));
-		}}.forEach((status, names) -> send("&e" + status + "&3: " + String.join(", ", names)));
+		}}.forEach((status, names) -> send(json("&e" + status + "&3: " + String.join(", ", names))));
 	}
 
 	@Path("getHash")

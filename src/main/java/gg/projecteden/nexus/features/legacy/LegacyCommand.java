@@ -446,6 +446,21 @@ public class LegacyCommand extends _WarpSubCommand {
 
 		send(PREFIX + "Archived " + countProduct + " products for " + countShop + " users");
 	}
+
+	@Async
+	@Path("archive streaks")
+	@Permission(Group.ADMIN)
+	void archive_streaks() {
+		final DailyRewardUserService dailyUserService = new DailyRewardUserService();
+
+		for (DailyRewardUser uuid : dailyUserService.getAll()) {
+			dailyUserService.edit(uuid, user -> {
+				int day = 1;
+				while (user.getCurrentStreak().canClaim(day))
+					user.getCurrentStreak().claim(day++);
+			});
+		}
+	}
 	*/
 
 	@SuppressWarnings("SameParameterValue")

@@ -47,6 +47,7 @@ import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import me.libraryaddict.disguise.DisguiseAPI;
 import org.bukkit.Bukkit;
+import org.bukkit.Difficulty;
 import org.bukkit.GameMode;
 import org.bukkit.GameRule;
 import org.bukkit.Location;
@@ -121,6 +122,8 @@ public class Misc implements Listener {
 				world.setKeepSpawnInMemory(false);
 
 			world.setGameRule(GameRule.COMMAND_BLOCK_OUTPUT, false);
+			if (WorldGroup.of(world) == WorldGroup.SURVIVAL)
+				world.setDifficulty(Difficulty.HARD);
 
 			// disable TIME_SINCE_SLEEP (used to determine when to spawn phantoms) outside the survival worlds
 			WorldGroup worldGroup = WorldGroup.of(world);

@@ -52,6 +52,11 @@ public class SpawnCommand extends CustomCommand implements Listener {
 		if (spawnType == null)
 			spawnType = SpawnType.of(worldGroup());
 
+		if (spawnType == SpawnType.SURVIVAL) {
+			runCommand("rtp"); // TODO 1.19 Remove when spawn is complete
+			return;
+		}
+
 		WarpType.NORMAL.get(spawnType.name()).teleportAsync(player());
 	}
 
