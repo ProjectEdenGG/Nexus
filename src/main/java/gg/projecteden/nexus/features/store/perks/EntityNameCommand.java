@@ -86,9 +86,9 @@ public class EntityNameCommand extends CustomCommand {
 				final boolean hasName = input != null;
 				if (livingEntity instanceof InventoryHolder holder) {
 					final boolean hasItems = !ItemUtils.nonNullOrAir(holder.getInventory().getContents()).isEmpty();
-					livingEntity.setRemoveWhenFarAway(hasName || hasItems);
+					livingEntity.setRemoveWhenFarAway(!hasName && !hasItems);
 				} else
-					livingEntity.setRemoveWhenFarAway(hasName);
+					livingEntity.setRemoveWhenFarAway(!hasName);
 			}
 		}
 	}
