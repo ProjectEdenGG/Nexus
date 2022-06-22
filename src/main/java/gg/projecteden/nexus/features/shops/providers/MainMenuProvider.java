@@ -56,7 +56,7 @@ public class MainMenuProvider extends ShopProvider {
 					.skullOwner(shops.get(index.getAndIncrement()))
 					.name("&6&lBrowse Shops");
 
-			contents.set(1, 4, ClickableItem.of(owner.build(), e -> new BrowseShopsProvider(this).open(player)));
+			contents.set(1, 3, ClickableItem.of(owner.build(), e -> new BrowseShopsProvider(this).open(player)));
 		}));
 	}
 
