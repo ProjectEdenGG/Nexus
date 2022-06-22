@@ -11,10 +11,10 @@ import org.bukkit.Instrument;
 @CustomNoteBlockConfig(
 	instrument = Instrument.BIT,
 	step = 13,
-	customBreakSound = "custom.block.stone.break",
-	customPlaceSound = "custom.block.stone.place",
-	customStepSound = "custom.block.stone.step",
-	customHitSound = "custom.block.stone.hit",
-	customFallSound = "custom.block.stone.fall"
+	customBreakSound = "block.deepslate_bricks.break",
+	customPlaceSound = "block.deepslate_bricks.place",
+	customStepSound = "block.mud_bricks.step",
+	customHitSound = "block.mud_bricks.hit",
+	customFallSound = "block.mud_bricks.fall"
 )
 public class BlackTerracottaShingles implements IColoredTerracottaShingles {}
