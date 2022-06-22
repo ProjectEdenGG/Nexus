@@ -66,7 +66,6 @@ public class RandomTeleportCommand extends CustomCommand {
 		}
 
 		final RTPWorld overworld = rtpWorld;
-		final int radius = overworld.getRadius();
 		final World world = overworld.getWorld();
 
 		if (!running) {
@@ -77,15 +76,15 @@ public class RandomTeleportCommand extends CustomCommand {
 		count.getAndIncrement();
 
 		int range = 250;
-		List<Location> locationList = LocationUtils.getRandomPointInCircle(world, radius);
+		List<Location> locationList = LocationUtils.getRandomPoints(world, 10);
 
 		locationList.sort(Comparator.comparingInt(loc -> (int) (getDensity(loc, range) * 100000)));
 		Location best = locationList.get(0);
-		if (Nexus.getEnv() == Env.PROD)
-			if (service.getProtectionsInRange(best, 50).size() != 0 && count.get() < 5) {
-				rtp(overworld);
-				return;
-			}
+
+		if (service.getProtectionsInRange(best, 50).size() != 0 && count.get() < 5) {
+			rtp(overworld);
+			return;
+		}
 
 		// TODO 1.19 Improve logic to handle other regions like warps/towns (Check if can build?)
 		if (new WorldGuardUtils(world).getRegionNamesAt(best).contains("spawn")) {

@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.utils;
 
 import com.sk89q.worldedit.math.transform.AffineTransform;
-import gg.projecteden.parchment.HasPlayer;
 import gg.projecteden.api.common.utils.EnumUtils.IteratableEnum;
 import gg.projecteden.api.common.utils.MathUtils;
+import gg.projecteden.parchment.HasPlayer;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
@@ -13,6 +13,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.WorldBorder;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -30,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.RandomUtils.randomDouble;
 
 public class LocationUtils {
 	/**
@@ -242,6 +244,25 @@ public class LocationUtils {
 
 	public static float toDegree(double angle) {
 		return (float) Math.toDegrees(angle);
+	}
+
+	public static List<Location> getRandomPoints(World world, int amount) {
+		return new ArrayList<>() {{
+			for (int i = 0; i < amount; i++)
+				add(getRandomPoint(world));
+		}};
+	}
+
+	@NotNull
+	private static Location getRandomPoint(World world) {
+		final WorldBorder worldBorder = world.getWorldBorder();
+		final double radius = worldBorder.getSize() / 2;
+		final Location center = worldBorder.getCenter();
+		final double minX = center.getX() - radius;
+		final double minZ = center.getZ() - radius;
+		final double maxX = center.getX() + radius;
+		final double maxZ = center.getZ() + radius;
+		return new Location(world, randomDouble(minX, maxX), 0, randomDouble(minZ, maxZ));
 	}
 
 	public enum EgocentricDirection {
