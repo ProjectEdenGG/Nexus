@@ -20,6 +20,7 @@ import gg.projecteden.nexus.utils.ItemUtils.ItemStackComparator;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -177,6 +178,9 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 
 	@Path("settings trash materials")
 	void settings_trash_materials() {
+		if (worldGroup() != WorldGroup.SURVIVAL)
+			error("You can only use this command in survival");
+
 		new AutoTrashMaterialEditor(player());
 	}
 
