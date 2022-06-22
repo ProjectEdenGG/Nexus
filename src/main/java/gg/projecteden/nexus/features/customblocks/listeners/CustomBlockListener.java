@@ -336,10 +336,23 @@ public class CustomBlockListener implements Listener {
 			Instrument instrument = noteBlock.getInstrument();
 
 			noteBlock = (NoteBlock) customNoteBlock.getBlockData(facing, underneath);
-			noteBlock.setPowered(powered);
-
 			NoteBlockData noteBlockData = ((CustomNoteBlockData) data.getExtraData()).getNoteBlockData();
-			noteBlockData.setPowered(noteBlock.isPowered());
+
+			debug("Block Physics Event");
+			//
+			noteBlock.setPowered(powered);
+//			noteBlockData.setPowered(noteBlock.isPowered());
+
+//			if(CustomBlock.NOTE_BLOCK == _customBlock) {
+//				noteBlock.setPowered(powered);
+//				noteBlockData.setPowered(powered);
+//			} else {
+//				noteBlock.setPowered(noteBlockData.isPowered());
+//			}
+			//
+
+//			noteBlock.setPowered(powered);
+//			noteBlockData.setPowered(noteBlock.isPowered());
 
 			if (CustomBlock.NOTE_BLOCK != _customBlock)
 				event.setCancelled(true);

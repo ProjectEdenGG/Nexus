@@ -19,6 +19,7 @@ public class BrokenBlock {
 	@Getter
 	private static final DecimalFormat df = new DecimalFormat("#.###");
 
+	private Player player;
 	private Location location;
 	private Object blockObject;
 
@@ -29,6 +30,7 @@ public class BrokenBlock {
 	private int totalDamageTicks = 0;
 
 	public BrokenBlock(Location location, Object blockObject, Player player, ItemStack itemStack, int currentTick) {
+		this.player = player;
 		this.location = location;
 		this.blockObject = blockObject;
 		this.initialItemStack = itemStack;
@@ -68,6 +70,12 @@ public class BrokenBlock {
 		this.totalDamageTicks = 0;
 		this.initialItemStack = itemStack;
 		this.lastDamageTick = currentTick;
+
+		float blockDamage = getBlockDamage(this.player, this.blockObject, itemStack);
+		if (blockDamage <= 0.0)
+			this.breakTicks = 1;
+		else
+			this.breakTicks = (int) Math.ceil(1 / blockDamage);
 	}
 
 	public void breakBlock(@NonNull Player breaker) {
@@ -95,8 +103,6 @@ public class BrokenBlock {
 		this.damageFrame = (int) Math.round(((double) this.totalDamageTicks / this.breakTicks) * 10.0);
 		sendDamagePacket(this.damageFrame);
 
-//		debug("Ticks = " + this.totalDamageTicks + " / " + this.breakTicks +" | Frame = " + this.damageFrame);
-
 		if (this.totalDamageTicks >= this.breakTicks) {
 			breakBlock(player);
 		}
@@ -104,7 +110,8 @@ public class BrokenBlock {
 
 	public void decrementDamage(int currentTick) {
 		this.lastDamageTick = currentTick;
-		this.totalDamageTicks -= (this.breakTicks / 10);
+
+		this.totalDamageTicks -= Math.round(this.breakTicks / 10.0);
 
 		this.damageFrame--;
 		sendDamagePacket(this.damageFrame);
