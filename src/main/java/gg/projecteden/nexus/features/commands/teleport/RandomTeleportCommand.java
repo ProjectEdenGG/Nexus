@@ -14,6 +14,7 @@ import gg.projecteden.nexus.models.lwc.LWCProtection;
 import gg.projecteden.nexus.models.lwc.LWCProtectionService;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
@@ -72,6 +73,12 @@ public class RandomTeleportCommand extends CustomCommand {
 				rtp();
 				return;
 			}
+
+		// TODO 1.19 Improve logic to handle other regions like warps/towns (Check if can build?)
+		if (new WorldGuardUtils(world).getRegionNamesAt(best).contains("spawn")) {
+			rtp();
+			return;
+		}
 
 		PaperLib.getChunkAtAsync(best, true).thenAccept(chunk -> {
 			Block highestBlock = world.getHighestBlockAt(best);

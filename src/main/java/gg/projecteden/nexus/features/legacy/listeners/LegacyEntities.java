@@ -5,8 +5,10 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LivingEntity;
@@ -79,13 +81,42 @@ public class LegacyEntities implements Listener {
 		EntityType.MINECART_HOPPER
 	);
 
+	// TODO 1.19 Fix interacting with item frames
+	@EventHandler
+	public void onItemFrameInteract(PlayerInteractEntityEvent event) {
+		final Player player = event.getPlayer();
+		if (WorldGroup.of(player) != WorldGroup.LEGACY)
+			return;
+
+		final Entity entity = event.getRightClicked();
+		if (!(entity instanceof ItemFrame itemFrame))
+			return;
+
+		if (!new WorldGuardUtils(entity).getRegionsAt(entity.getLocation()).isEmpty())
+			return;
+
+		final ItemStack mainHand = player.getInventory().getItemInMainHand();
+		if (isNullOrAir(itemFrame.getItem())) {
+			if (!isNullOrAir(mainHand)) {
+				itemFrame.setItem(mainHand.clone());
+				player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
+			}
+		} else {
+			if (isNullOrAir(mainHand)) {
+				player.getInventory().setItemInMainHand(itemFrame.getItem().clone());
+				itemFrame.setItem(new ItemStack(Material.AIR));
+			}
+		}
+	}
+
 	@EventHandler
 	public void on(PlayerInteractEntityEvent event) {
 		final Player player = event.getPlayer();
 		if (WorldGroup.of(player) != WorldGroup.LEGACY)
 			return;
 
-		if (ALLOWED_ENTITY_TYPES.contains(event.getRightClicked().getType()))
+		final Entity entity = event.getRightClicked();
+		if (ALLOWED_ENTITY_TYPES.contains(entity.getType()))
 			return;
 
 		event.setCancelled(true);
