@@ -6,11 +6,12 @@ import com.onarandombox.multiverseinventories.share.Sharable;
 import com.onarandombox.multiverseinventories.share.Sharables;
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.annotations.Disabled;
+import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.legacy.menus.homes.LegacyHomesMenu;
-import gg.projecteden.nexus.features.legacy.menus.itemtransfer.ItemPendingMenu;
 import gg.projecteden.nexus.features.legacy.menus.itemtransfer.ItemReceiveMenu;
 import gg.projecteden.nexus.features.legacy.menus.itemtransfer.ItemReviewMenu;
+import gg.projecteden.nexus.features.legacy.menus.itemtransfer.ItemStatusMenu;
 import gg.projecteden.nexus.features.legacy.menus.itemtransfer.ItemTransferMenu;
 import gg.projecteden.nexus.features.legacy.menus.itemtransfer.ReviewableMenu;
 import gg.projecteden.nexus.features.listeners.TemporaryMenuListener;
@@ -31,6 +32,8 @@ import gg.projecteden.nexus.models.legacy.homes.LegacyHome;
 import gg.projecteden.nexus.models.legacy.homes.LegacyHomeOwner;
 import gg.projecteden.nexus.models.legacy.homes.LegacyHomeService;
 import gg.projecteden.nexus.models.legacy.itemtransfer.LegacyItemTransferUser;
+import gg.projecteden.nexus.models.legacy.itemtransfer.LegacyItemTransferUser.ReviewStatus;
+import gg.projecteden.nexus.models.legacy.itemtransfer.LegacyItemTransferUserService;
 import gg.projecteden.nexus.models.legacy.vaults.LegacyVaultUser;
 import gg.projecteden.nexus.models.legacy.vaults.LegacyVaultUserService;
 import gg.projecteden.nexus.models.nerd.NBTPlayer;
@@ -91,15 +94,15 @@ public class LegacyCommand extends _WarpSubCommand {
 		new ItemTransferMenu(player());
 	}
 
-	@Path("items pending")
-	@Description("View legacy items pending transfer approval")
-	void items_pending() {
-		new ItemPendingMenu(player()).open(player());
+	@Path("items list <status> [player]")
+	@Description("View legacy items in each state")
+	void items_list(ReviewStatus status, @Arg(value = "self", permission = Group.ADMIN) LegacyItemTransferUser user) {
+		new ItemStatusMenu(user, status).open(player());
 	}
 
+	@Permission(Group.ADMIN)
 	@Path("items review [player]")
 	@Description("Review pending items")
-	@Permission(Group.ADMIN)
 	void items_review(LegacyItemTransferUser user) {
 		if (user == null)
 			new ReviewableMenu().open(player());
@@ -111,6 +114,16 @@ public class LegacyCommand extends _WarpSubCommand {
 	@Description("Receive transfer approved legacy items")
 	void items_receive() {
 		new ItemReceiveMenu(player());
+	}
+
+	@Permission(Group.ADMIN)
+	@Path("items reset <player>")
+	@Description("Reset all items to pending status")
+	void items_reset(LegacyItemTransferUser user) {
+		for (ReviewStatus status : EnumUtils.valuesExcept(ReviewStatus.class, ReviewStatus.PENDING))
+			user.getItems(ReviewStatus.PENDING).addAll(user.getItems().remove(status));
+		new LegacyItemTransferUserService().save(user);
+		send(PREFIX + "Reset all of " + user.getNickname() + "'s items to pending status");
 	}
 
 	// Homes

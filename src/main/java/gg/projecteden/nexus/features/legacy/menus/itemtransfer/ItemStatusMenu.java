@@ -5,22 +5,22 @@ import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.models.legacy.itemtransfer.LegacyItemTransferUser;
 import gg.projecteden.nexus.models.legacy.itemtransfer.LegacyItemTransferUser.ReviewStatus;
-import gg.projecteden.nexus.models.legacy.itemtransfer.LegacyItemTransferUserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Title("Pending Items")
-public class ItemPendingMenu extends InventoryProvider {
+public class ItemStatusMenu extends InventoryProvider {
 	private final LegacyItemTransferUser user;
+	private final ReviewStatus status;
 
-	public ItemPendingMenu(Player player) {
-		this.user = new LegacyItemTransferUserService().get(player);
+	public ItemStatusMenu(LegacyItemTransferUser user, ReviewStatus status) {
+		this.user = user;
+		this.status = status;
 	}
 
 	@Override
@@ -29,10 +29,10 @@ public class ItemPendingMenu extends InventoryProvider {
 
 		List<ClickableItem> items = new ArrayList<>();
 
-		final boolean inLegacy = WorldGroup.of(player) == WorldGroup.LEGACY;
+		final boolean inLegacy = PlayerUtils.isSelf(player, user) && WorldGroup.of(player) == WorldGroup.LEGACY;
 
-		for (ItemStack item : user.getItems(ReviewStatus.PENDING)) {
-			if (inLegacy)
+		for (ItemStack item : user.getItems(status)) {
+			if (inLegacy && status == ReviewStatus.PENDING)
 				items.add(ClickableItem.of(new ItemBuilder(item).lore("Click to cancel"), e -> {
 					user.getItems(ReviewStatus.PENDING).remove(item);
 					PlayerUtils.giveItem(user, item);
