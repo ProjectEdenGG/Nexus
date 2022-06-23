@@ -440,6 +440,7 @@ public class DyeStation extends CustomBench {
 			CRIMSON("#924967"),
 			ACACIA("#F18648"),
 			WARPED("#2FA195"),
+			MANGROVE("#7F3535")
 			;
 
 			private final ColoredButton button;
