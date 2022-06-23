@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.features.customblocks.models.common;
 
+import gg.projecteden.nexus.features.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.Tool;
 import gg.projecteden.nexus.utils.Tool.ToolGrade;
 import lombok.NonNull;
 import org.bukkit.Material;
@@ -13,9 +13,6 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public interface ICustomBlock {
 	Material itemMaterial = Material.PAPER;
@@ -76,24 +73,7 @@ public interface ICustomBlock {
 
 	default boolean isAcceptableTool(ItemStack tool) {
 		Material minimumTool = getMinimumPreferredTool();
-
-		List<Material> acceptable = new ArrayList<>();
-		acceptable.add(minimumTool);
-		if (minimumTool == Material.AIR)
-			return true;
-
-		if (minimumTool == Material.SHEARS || MaterialTag.SWORDS.isTagged(minimumTool))
-			acceptable.add(Material.AIR);
-
-		ToolGrade grade = ToolGrade.of(tool);
-		Tool minimumToolType = Tool.of(minimumTool);
-		if (grade == null || minimumToolType == null)
-			return acceptable.contains(tool.getType());
-
-		List<ToolGrade> higherGrades = grade.getHigherToolGrades();
-		acceptable.addAll(minimumToolType.getTools(higherGrades));
-
-		return acceptable.contains(tool.getType());
+		return CustomBlockUtils.isAcceptableTool(tool, minimumTool);
 	}
 
 	default PistonPushAction getPistonPushedAction() {

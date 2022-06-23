@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.utils;
 
 import gg.projecteden.nexus.features.customblocks.CustomBlocks.SoundAction;
+import gg.projecteden.nexus.features.customblocks.customblockbreaking.ChangedBlockTool;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.LocationUtils.Axis;
 import gg.projecteden.nexus.utils.Tasks.GlowTask;
@@ -383,17 +384,31 @@ public class BlockUtils {
 	}
 
 	public static boolean canHarvest(Block block, Player player, ItemStack tool) {
+		ChangedBlockTool changedBlock = ChangedBlockTool.of(block);
+		if (changedBlock != null) {
+			return changedBlock.isAcceptableTool(tool);
+		}
+
 		return block.getDrops(tool, player).stream()
 			.filter(Nullables::isNotNullOrAir)
 			.toList()
 			.size() > 0;
 	}
 
+	public static boolean isPreferredTool(Block block, ItemStack tool) {
+		ChangedBlockTool changedBlock = ChangedBlockTool.of(block);
+		if (changedBlock != null) {
+			return changedBlock.isAcceptableTool(tool);
+		}
+
+		return block.isPreferredTool(tool);
+	}
+
 	public static float getBlockDamage(Player player, org.bukkit.inventory.ItemStack tool, org.bukkit.block.Block block) {
 		float blockHardness = getBlockHardness(block);
 		boolean canHarvest = canHarvest(block, player, tool);
 		float speedMultiplier = NMSUtils.getDestroySpeed(block, tool);
-		boolean isPreferredTool = block.isPreferredTool(tool);
+		boolean isPreferredTool = isPreferredTool(block, tool);
 
 		return getBlockDamage(player, tool, blockHardness, canHarvest, speedMultiplier, isPreferredTool);
 	}

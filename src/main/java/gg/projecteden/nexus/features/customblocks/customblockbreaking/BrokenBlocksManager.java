@@ -29,11 +29,10 @@ public class BrokenBlocksManager {
 			return;
 
 		float blockHardness = -1;
-		if (blockObject instanceof Block block) {
-			blockHardness = BlockUtils.getBlockHardness(block);
-		}
 		if (blockObject instanceof CustomBlock customBlock) {
 			blockHardness = (float) customBlock.get().getBlockHardness();
+		} else if (blockObject instanceof Block block) {
+			blockHardness = BlockUtils.getBlockHardness(block);
 		}
 
 		if (blockHardness == -1 || blockHardness > 50) // unbreakable

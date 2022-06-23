@@ -16,9 +16,12 @@ import gg.projecteden.nexus.models.customblock.CustomBlockTrackerService;
 import gg.projecteden.nexus.models.customblock.CustomNoteBlockData;
 import gg.projecteden.nexus.models.customblock.CustomTripwireData;
 import gg.projecteden.nexus.models.customblock.NoteBlockData;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.NMSUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Tool;
+import gg.projecteden.nexus.utils.Tool.ToolGrade;
 import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.Location;
@@ -31,6 +34,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -262,5 +266,25 @@ public class CustomBlockUtils {
 		}
 
 		CustomBlockUtils.fixTripwireNearby(player, brokenBlock, new HashSet<>(fixedTripwire));
+	}
+
+	public static boolean isAcceptableTool(ItemStack tool, Material minimumTool) {
+		List<Material> acceptable = new ArrayList<>();
+		acceptable.add(minimumTool);
+		if (minimumTool == Material.AIR)
+			return true;
+
+		if (minimumTool == Material.SHEARS || MaterialTag.SWORDS.isTagged(minimumTool))
+			acceptable.add(Material.AIR);
+
+		ToolGrade grade = ToolGrade.of(tool);
+		Tool minimumToolType = Tool.of(minimumTool);
+		if (grade == null || minimumToolType == null)
+			return acceptable.contains(tool.getType());
+
+		List<ToolGrade> higherGrades = grade.getHigherToolGrades();
+		acceptable.addAll(minimumToolType.getTools(higherGrades));
+
+		return acceptable.contains(tool.getType());
 	}
 }
