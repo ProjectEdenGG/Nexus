@@ -4,6 +4,7 @@ import com.destroystokyo.paper.ParticleBuilder;
 import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
@@ -27,7 +28,6 @@ import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Data;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -85,11 +85,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.features.wither.WitherChallenge.currentFight;
 import static gg.projecteden.nexus.models.witherarena.WitherArenaConfig.isBeta;
 import static gg.projecteden.nexus.utils.StringUtils.plural;
 import static gg.projecteden.nexus.utils.Utils.tryCalculate;
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 @Data
 public abstract class WitherFight implements Listener {
@@ -156,6 +156,7 @@ public abstract class WitherFight implements Listener {
 			}));
 
 			tasks.add(new AntiCamping(this).start());
+			tasks.add(Tasks.repeat(TickTime.SECOND, 5, () -> spectators().forEach(player -> player.setGameMode(GameMode.SPECTATOR))));
 		});
 	}
 
