@@ -49,6 +49,15 @@ public class CustomBlocksCommand extends CustomCommand {
 			tracker = trackerService.fromWorld(location());
 	}
 
+	@Path("debug [state]")
+	void debug(Boolean state) {
+		if (state == null)
+			state = !CustomBlocks.isDebug();
+
+		CustomBlocks.setDebug(state);
+		send(PREFIX + (state ? "&aEnabled" : "&cDisabled"));
+	}
+
 	@Path
 	void menuCreative() {
 		// TODO: uncomment upon release

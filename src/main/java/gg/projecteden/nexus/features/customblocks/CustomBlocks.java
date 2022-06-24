@@ -10,6 +10,7 @@ import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Sound;
 import org.jetbrains.annotations.Nullable;
@@ -47,12 +48,13 @@ public class CustomBlocks extends Feature {
 		WorldEditListener.unregister();
 	}
 
+	@Getter
+	@Setter
+	private static boolean debug = true;
+
 	public static void debug(String message) {
-		List<Dev> devs = List.of(Dev.WAKKA, Dev.GRIFFIN);
-		for (Dev dev : devs) {
-			if (dev.isOnline())
-				dev.send(message);
-		}
+		if (debug)
+			List.of(Dev.WAKKA, Dev.GRIFFIN).forEach(dev -> dev.send(message));
 	}
 
 	public enum ReplacedSoundType {
