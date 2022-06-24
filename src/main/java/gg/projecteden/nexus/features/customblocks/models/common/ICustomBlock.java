@@ -1,10 +1,9 @@
 package gg.projecteden.nexus.features.customblocks.models.common;
 
-import gg.projecteden.nexus.features.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.Tool.ToolGrade;
+import gg.projecteden.nexus.utils.ToolType.ToolGrade;
 import lombok.NonNull;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -14,7 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-public interface ICustomBlock {
+public interface ICustomBlock extends IHarvestable {
 	Material itemMaterial = Material.PAPER;
 
 	Material getVanillaBlockMaterial();
@@ -47,14 +46,9 @@ public interface ICustomBlock {
 		return 0.0;
 	}
 
-	default Material getMinimumPreferredTool() {
-		return Material.AIR;
-	}
-
 	default float getBlockDamage(Player player, ItemStack tool) {
-		boolean isAcceptableTool = isAcceptableTool(tool);
-		return BlockUtils.getBlockDamage(player, tool, (float) getBlockHardness(),
-			isAcceptableTool, (float) getSpeedMultiplier(tool), isAcceptableTool);
+		final boolean canHarvest = canHarvestWith(tool);
+		return BlockUtils.getBlockDamage(player, tool, (float) getBlockHardness(), (float) getSpeedMultiplier(tool), canHarvest, canHarvest);
 	}
 
 	default double getSpeedMultiplier(ItemStack tool) {
@@ -69,11 +63,6 @@ public interface ICustomBlock {
 		}
 
 		return grade.getBaseDiggingSpeed();
-	}
-
-	default boolean isAcceptableTool(ItemStack tool) {
-		Material minimumTool = getMinimumPreferredTool();
-		return CustomBlockUtils.isAcceptableTool(tool, minimumTool);
 	}
 
 	default PistonPushAction getPistonPushedAction() {

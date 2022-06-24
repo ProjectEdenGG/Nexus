@@ -154,19 +154,18 @@ public class CustomBlocksCommand extends CustomCommand {
 	@Permission(Group.ADMIN)
 	void hardness() {
 		Block block = getTargetBlockRequired();
-		ItemStack itemStack = getTool();
-		if (itemStack == null)
-			itemStack = new ItemStack(Material.AIR);
+		ItemStack tool = getTool();
+		if (tool == null)
+			tool = new ItemStack(Material.AIR);
 
 		Material blockType = block.getType();
-		Material itemType = itemStack.getType();
+		Material itemType = tool.getType();
 		float blockHardness = BlockUtils.getBlockHardness(block);
-		float destroySpeedItem = NMSUtils.getDestroySpeed(block, itemStack);
-		boolean canHarvest = BlockUtils.canHarvest(block, player(), itemStack);
-		float blockDamage = BlockUtils.getBlockDamage(player(), itemStack, block);
+		float destroySpeedItem = NMSUtils.getDestroySpeed(block, tool);
+		float blockDamage = BlockUtils.getBlockDamage(player(), tool, block);
 		int breakTicks = (int) Math.ceil(1 / blockDamage);
 		double breakSeconds = breakTicks / 20.0;
-		boolean isBestTool = block.isPreferredTool(itemStack);
+		boolean isBestTool = block.isPreferredTool(tool);
 
 		send("= = = = =");
 		send("Block: " + blockType);
@@ -174,7 +173,6 @@ public class CustomBlocksCommand extends CustomCommand {
 		line();
 		send("Tool: " + itemType);
 		send("Item Destroy Speed: " + destroySpeedItem);
-		send("Can Harvest: " + canHarvest);
 		send("Is Best Tool: " + isBestTool);
 		line();
 		send("Block Damage: " + blockDamage);

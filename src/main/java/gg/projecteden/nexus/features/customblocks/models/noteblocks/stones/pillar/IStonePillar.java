@@ -42,7 +42,7 @@ public interface IStonePillar extends ICraftableNoteBlock {
 	}
 
 	@Override
-	default Material getMinimumPreferredTool() {
+	default Material getMinimumRequiredTool() {
 		return Material.WOODEN_PICKAXE;
 	}
 

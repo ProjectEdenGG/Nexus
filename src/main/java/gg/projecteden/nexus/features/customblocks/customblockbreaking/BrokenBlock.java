@@ -48,12 +48,11 @@ public class BrokenBlock {
 		return location.getBlock();
 	}
 
-	private float getBlockDamage(Player player, Object blockObject, ItemStack itemStack) {
-		if (blockObject instanceof CustomBlock customBlock) {
-			return customBlock.get().getBlockDamage(player, itemStack);
-		} else if (blockObject instanceof Block block) {
-			return BlockUtils.getBlockDamage(player, itemStack, block);
-		}
+	private float getBlockDamage(Player player, Object blockObject, ItemStack tool) {
+		if (blockObject instanceof CustomBlock customBlock)
+			return customBlock.get().getBlockDamage(player, tool);
+		else if (blockObject instanceof Block block)
+			return BlockUtils.getBlockDamage(player, tool, block);
 
 		return 0.0F;
 	}

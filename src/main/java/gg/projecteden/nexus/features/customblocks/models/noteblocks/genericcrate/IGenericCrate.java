@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.customblocks.models.noteblocks.genericcrate;
 
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.ICustomNoteBlock;
-import org.bukkit.Material;
 
 public interface IGenericCrate extends ICustomNoteBlock {
 	@Override
@@ -10,7 +9,8 @@ public interface IGenericCrate extends ICustomNoteBlock {
 	}
 
 	@Override
-	default Material getMinimumPreferredTool() {
-		return Material.WOODEN_AXE;
+	default boolean requiresCorrectToolForDrops() {
+		return false;
 	}
+
 }

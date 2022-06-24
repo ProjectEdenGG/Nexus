@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.carved;
 
 import com.mojang.datafixers.util.Pair;
-import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.ICraftableNoteBlock;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.IPlanks;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 import static gg.projecteden.nexus.utils.StringUtils.camelToSnake;
 
-public interface ICarvedPlanks extends ICraftableNoteBlock {
+public interface ICarvedPlanks extends IPlanks {
 
 	@Override
 	default @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
@@ -27,13 +27,4 @@ public interface ICarvedPlanks extends ICraftableNoteBlock {
 		return Material.valueOf(camelToSnake(woodType).toUpperCase() + "_SLAB");
 	}
 
-	@Override
-	default double getBlockHardness() {
-		return 2.0;
-	}
-
-	@Override
-	default Material getMinimumPreferredTool() {
-		return Material.WOODEN_AXE;
-	}
 }

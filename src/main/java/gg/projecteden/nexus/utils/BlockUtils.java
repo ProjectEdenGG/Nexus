@@ -1,7 +1,8 @@
 package gg.projecteden.nexus.utils;
 
 import gg.projecteden.nexus.features.customblocks.CustomBlocks.SoundAction;
-import gg.projecteden.nexus.features.customblocks.customblockbreaking.ChangedBlockTool;
+import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
+import gg.projecteden.nexus.features.customblocks.models.CustomToolBlock;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.LocationUtils.Axis;
 import gg.projecteden.nexus.utils.Tasks.GlowTask;
@@ -380,13 +381,17 @@ public class BlockUtils {
 	}
 
 	public static float getBlockHardness(Block block) {
+		CustomBlock customBlock = CustomBlock.fromBlock(block);
+		if (customBlock != null)
+			return (float) customBlock.get().getBlockHardness();
+
 		return block.getType().getHardness();
 	}
 
-	public static boolean canHarvest(Block block, Player player, ItemStack tool) {
-		ChangedBlockTool changedBlock = ChangedBlockTool.of(block);
+	public static boolean hasDrops(Player player, Block block, ItemStack tool) {
+		CustomToolBlock changedBlock = CustomToolBlock.of(block);
 		if (changedBlock != null) {
-			return changedBlock.isAcceptableTool(tool);
+			return changedBlock.canHarvestWith(tool);
 		}
 
 		return block.getDrops(tool, player).stream()
@@ -395,34 +400,35 @@ public class BlockUtils {
 			.size() > 0;
 	}
 
-	public static boolean isPreferredTool(Block block, ItemStack tool) {
-		ChangedBlockTool changedBlock = ChangedBlockTool.of(block);
+	public static boolean canHarvest(Block block, ItemStack tool) {
+		CustomToolBlock changedBlock = CustomToolBlock.of(block);
 		if (changedBlock != null) {
-			return changedBlock.isAcceptableTool(tool);
+			return changedBlock.canHarvestWith(tool);
 		}
 
 		return block.isPreferredTool(tool);
 	}
 
-	public static float getBlockDamage(Player player, org.bukkit.inventory.ItemStack tool, org.bukkit.block.Block block) {
-		float blockHardness = getBlockHardness(block);
-		boolean canHarvest = canHarvest(block, player, tool);
-		float speedMultiplier = NMSUtils.getDestroySpeed(block, tool);
-		boolean isPreferredTool = isPreferredTool(block, tool);
-
-		return getBlockDamage(player, tool, blockHardness, canHarvest, speedMultiplier, isPreferredTool);
+	public static int getBlockBreakTime(Player player, org.bukkit.inventory.ItemStack tool, org.bukkit.block.Block block) {
+		return (int) Math.ceil(1 / getBlockDamage(player, tool, block));
 	}
 
-	public static float getBlockDamage(Player player, org.bukkit.inventory.ItemStack tool, float blockHardness,
-									   boolean canHarvest, float speedMultiplier, boolean isPreferredTool) {
-		if (blockHardness == -1)
+	public static float getBlockDamage(Player player, org.bukkit.inventory.ItemStack tool, org.bukkit.block.Block block) {
+		float blockHardness = getBlockHardness(block);
+		float speedMultiplier = NMSUtils.getDestroySpeed(block, tool);
+		boolean canHarvest = canHarvest(block, tool);
+		boolean hasDrops = hasDrops(player, block, tool);
+
+		return getBlockDamage(player, tool, blockHardness, speedMultiplier, canHarvest, hasDrops);
+	}
+
+	public static float getBlockDamage(Player player, org.bukkit.inventory.ItemStack tool, float blockHardness, float speedMultiplier, boolean canHarvest, boolean hasDrops) {
+		if (blockHardness == -1) {
 			return -1;
+		}
 
-		// if (isBestTool): speedMultiplier = toolMultiplier
-		if (isPreferredTool) {
-
-			// if (not canHarvest): speedMultiplier = 1
-			if (!canHarvest) {
+		if (canHarvest) {
+			if (!hasDrops) {
 				speedMultiplier = 1;
 			}
 		}
@@ -451,12 +457,10 @@ public class BlockUtils {
 				}
 			}
 
-			// if (hasteEffect): speedMultiplier *= 0.2 * hasteLevel + 1
 			if (hasteLevel > 0) {
 				speedMultiplier *= (0.2 * hasteLevel) + 1;
 			}
 
-			// if (miningFatigue): speedMultiplier *= 0.3 ^ min(miningFatigueLevel, 4)
 			if (fatigueLevel > 0) {
 				speedMultiplier *= Math.pow(0.3, Math.min(fatigueLevel, 4));
 			}
@@ -470,31 +474,24 @@ public class BlockUtils {
 			if (enchants.containsKey(Enchant.AQUA_AFFINITY))
 				hasAquaAffinity = true;
 
-			// if (inWater and not hasAquaAffinity): speedMultiplier /= 5
 			if (player.isInWater() && !hasAquaAffinity) {
 				speedMultiplier /= 5;
 			}
 		}
 
-		// if (not onGround): speedMultiplier /= 5
 		if (!player.isOnGround()) {
 			speedMultiplier /= 5;
 		}
 
-		// damage = speedMultiplier / blockHardness
 		float damage = speedMultiplier / blockHardness;
 
-		// if (canHarvest): damage /= 30
 		if (canHarvest) {
 			damage /= 30;
-		}
-		// else: damage /= 100
-		else {
+		} else {
 			damage /= 100;
 		}
 
 		// Instant Breaking:
-		// if (damage > 1): return 0
 		if (damage > 1) {
 			return 0;
 		}

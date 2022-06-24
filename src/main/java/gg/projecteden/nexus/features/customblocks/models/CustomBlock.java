@@ -7,7 +7,7 @@ import gg.projecteden.nexus.features.customblocks.CustomBlocks.SoundAction;
 import gg.projecteden.nexus.features.customblocks.models.common.ICraftable;
 import gg.projecteden.nexus.features.customblocks.models.common.ICustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.common.IDyeable;
-import gg.projecteden.nexus.features.customblocks.models.common.NonObtainable;
+import gg.projecteden.nexus.features.customblocks.models.common.Unobtainable;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.ICustomNoteBlock;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.IDirectionalNoteBlock;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.compacted.bundle.BambooBundle;
@@ -422,7 +422,7 @@ public enum CustomBlock implements Keyed {
 	}
 
 	public boolean isObtainable() {
-		return customBlock.getClass().getAnnotation(NonObtainable.class) == null;
+		return customBlock.getClass().getAnnotation(Unobtainable.class) == null;
 	}
 
 	public static List<CustomBlock> getBy(CustomBlockType type) {
@@ -604,7 +604,7 @@ public enum CustomBlock implements Keyed {
 
 	private void breakBlock(Player source, @Nullable ItemStack tool, Location location, boolean updateDatabase, boolean dropItem, int amount, boolean playSound, boolean spawnParticle) {
 		if (tool != null) {
-			if (!get().isAcceptableTool(tool))
+			if (!get().canHarvestWith(tool))
 				dropItem = false;
 		}
 

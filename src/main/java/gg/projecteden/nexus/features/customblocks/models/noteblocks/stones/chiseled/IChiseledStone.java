@@ -45,9 +45,8 @@ public interface IChiseledStone extends ICraftableNoteBlock {
 	}
 
 	@Override
-	default Material getMinimumPreferredTool() {
+	default Material getMinimumRequiredTool() {
 		return Material.WOODEN_PICKAXE;
 	}
-
 
 }

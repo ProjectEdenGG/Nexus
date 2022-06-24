@@ -42,7 +42,8 @@ public class ShojiBlock implements ICraftableNoteBlock, IDirectionalNoteBlock {
 	}
 
 	@Override
-	public Material getMinimumPreferredTool() {
-		return Material.WOODEN_AXE;
+	public boolean requiresCorrectToolForDrops() {
+		return false;
 	}
+
 }

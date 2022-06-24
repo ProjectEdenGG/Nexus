@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.colo
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlockTag;
 import gg.projecteden.nexus.features.customblocks.models.common.IDyeable;
-import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.ICraftableNoteBlock;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.IPlanks;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import org.bukkit.Material;
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import static gg.projecteden.nexus.utils.StringUtils.camelToSnake;
 
-public interface IColoredPlanks extends IDyeable, ICraftableNoteBlock {
+public interface IColoredPlanks extends IDyeable, IPlanks {
 
 	@Override
 	default CustomBlockTag getRedyeTag() {
@@ -26,16 +26,6 @@ public interface IColoredPlanks extends IDyeable, ICraftableNoteBlock {
 	@Override
 	default @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
 		return getSurroundRecipe(getMaterial(), MaterialTag.PLANKS);
-	}
-
-	@Override
-	default double getBlockHardness() {
-		return 2.0;
-	}
-
-	@Override
-	default Material getMinimumPreferredTool() {
-		return Material.WOODEN_AXE;
 	}
 
 }

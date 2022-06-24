@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.customblocks.models.tripwire.tripwire;
 
 import gg.projecteden.nexus.features.customblocks.models.common.CustomBlockConfig;
-import gg.projecteden.nexus.features.customblocks.models.common.NonObtainable;
+import gg.projecteden.nexus.features.customblocks.models.common.Unobtainable;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.CustomTripwireConfig;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.ICustomTripwire;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
@@ -22,7 +22,7 @@ import lombok.NonNull;
 	powered_NS = false,
 	ignorePowered = true
 )
-@NonObtainable
+@Unobtainable
 public class TripwireCross implements ICustomTripwire {
 
 	@Override

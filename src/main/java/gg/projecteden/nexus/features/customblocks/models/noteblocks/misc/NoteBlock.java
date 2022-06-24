@@ -4,7 +4,6 @@ import gg.projecteden.nexus.features.customblocks.models.common.CustomBlockConfi
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.CustomNoteBlockConfig;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.ICustomNoteBlock;
 import org.bukkit.Instrument;
-import org.bukkit.Material;
 
 @CustomBlockConfig(
 	name = "Note Block",
@@ -21,7 +20,8 @@ public class NoteBlock implements ICustomNoteBlock {
 	}
 
 	@Override
-	public Material getMinimumPreferredTool() {
-		return Material.WOODEN_AXE;
+	public boolean requiresCorrectToolForDrops() {
+		return false;
 	}
+
 }

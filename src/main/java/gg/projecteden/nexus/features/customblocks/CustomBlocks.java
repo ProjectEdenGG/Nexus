@@ -50,7 +50,7 @@ public class CustomBlocks extends Feature {
 
 	@Getter
 	@Setter
-	private static boolean debug = true;
+	private static boolean debug = false;
 
 	public static void debug(String message) {
 		if (debug)

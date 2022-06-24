@@ -22,7 +22,8 @@ public class HazardBlock implements ICustomNoteBlock {
 	}
 
 	@Override
-	public Material getMinimumPreferredTool() {
+	public Material getMinimumRequiredTool() {
 		return Material.WOODEN_PICKAXE;
 	}
+
 }

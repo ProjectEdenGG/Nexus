@@ -38,8 +38,8 @@ public interface IQuiltedWool extends IDyeable, ICraftableNoteBlock {
 	}
 
 	@Override
-	default Material getMinimumPreferredTool() {
-		return Material.SHEARS;
+	default boolean requiresCorrectToolForDrops() {
+		return false;
 	}
 
 	@Override

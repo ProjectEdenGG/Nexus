@@ -36,7 +36,8 @@ public interface IConcreteBricks extends IDyeable, ICraftableNoteBlock {
 	}
 
 	@Override
-	default Material getMinimumPreferredTool() {
+	default Material getMinimumRequiredTool() {
 		return Material.WOODEN_PICKAXE;
 	}
+
 }

@@ -17,4 +17,10 @@ public interface IBundle extends ICompacted, IDirectionalNoteBlock {
 	default double getBlockHardness() {
 		return 0.5;
 	}
+
+	@Override
+	default boolean requiresCorrectToolForDrops() {
+		return false;
+	}
+
 }
