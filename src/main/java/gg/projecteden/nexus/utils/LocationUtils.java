@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.utils;
 
 import com.sk89q.worldedit.math.transform.AffineTransform;
-import gg.projecteden.api.common.utils.EnumUtils.IteratableEnum;
+import gg.projecteden.api.common.utils.EnumUtils.IterableEnum;
 import gg.projecteden.api.common.utils.MathUtils;
 import gg.projecteden.parchment.HasPlayer;
 import lombok.Data;
@@ -270,7 +270,7 @@ public class LocationUtils {
 		RIGHT
 	}
 
-	public enum CardinalDirection implements IteratableEnum {
+	public enum CardinalDirection implements IterableEnum {
 		NORTH(180),
 		EAST(270),
 		SOUTH(0),
@@ -351,7 +351,7 @@ public class LocationUtils {
 		Y,
 		Z;
 
-		public static Axis getAxis(Location location1, Location location2) {
+		public static Axis of(Location location1, Location location2) {
 			if (Math.floor(location1.getX()) == Math.floor(location2.getX()) && Math.floor(location1.getZ()) == Math.floor(location2.getZ()))
 				return Y;
 			if (Math.floor(location1.getX()) == Math.floor(location2.getX()))

@@ -193,7 +193,7 @@ public class BlockUtils {
 	}
 
 	public static BlockFace getDirection(Location from, Location to) {
-		Axis axis = Axis.getAxis(from, to);
+		Axis axis = Axis.of(from, to);
 		if (axis == null)
 			throw new InvalidInputException("Locations not aligned on an axis, cannot determine direction");
 

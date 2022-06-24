@@ -3,11 +3,11 @@ package gg.projecteden.nexus.models.trust;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import gg.projecteden.api.common.utils.EnumUtils.IterableEnum;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.api.common.utils.EnumUtils.IteratableEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -63,7 +63,7 @@ public class Trust implements PlayerOwnedObject {
 
 	@Getter
 	@AllArgsConstructor
-	public enum Type implements IteratableEnum {
+	public enum Type implements IterableEnum {
 		LOCKS(1, Material.CHEST),
 		HOMES(3, Material.CYAN_BED),
 		TELEPORTS(5, Material.COMPASS),

@@ -1,11 +1,11 @@
 package gg.projecteden.nexus.features.shops.providers.common;
 
+import gg.projecteden.api.common.utils.EnumUtils.IterableEnum;
 import gg.projecteden.nexus.features.shops.providers.SearchProductsProvider;
 import gg.projecteden.nexus.models.shop.Shop.ExchangeType;
 import gg.projecteden.nexus.models.shop.Shop.Product;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.LanguageUtils;
-import gg.projecteden.api.common.utils.EnumUtils.IteratableEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -30,7 +30,7 @@ public class ShopMenuFunctions {
 		private String message;
 	}
 
-	public interface FilterType extends IteratableEnum {
+	public interface FilterType extends IterableEnum {
 
 		String name();
 

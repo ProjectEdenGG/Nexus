@@ -7,7 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.utils.Tool;
+import gg.projecteden.nexus.utils.ToolType;
 import lombok.NonNull;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -33,8 +33,8 @@ public class StatTrackCommand extends CustomCommand {
 		EquipmentSlot hand = getHandWithToolRequired();
 		ItemStack item = Objects.requireNonNull(inventory().getItem(hand));
 
-		for (Tool tool : Tool.values()) {
-			if (tool.getTools().contains(item.getType())) {
+		for (ToolType toolType : ToolType.values()) {
+			if (toolType.getTools().contains(item.getType())) {
 				inventory().setItem(hand, new StatItem(item).write().getItem());
 				send(PREFIX + "Enabled statistic tracking on " + camelCase(item.getType()));
 				return;

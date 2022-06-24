@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.events.y2021.pugmas21.advent;
 
-import gg.projecteden.api.common.utils.EnumUtils.IteratableEnum;
+import gg.projecteden.api.common.utils.EnumUtils.IterableEnum;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -99,7 +99,7 @@ public class AdventMenu extends InventoryProvider {
 	}
 
 	@AllArgsConstructor
-	public enum Title implements IteratableEnum {
+	public enum Title implements IterableEnum {
 		FRAME_1("ꈉ盆"),
 		FRAME_2("ꈉ鉊"),
 		;

@@ -7,7 +7,7 @@ import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
-import gg.projecteden.nexus.utils.Tool;
+import gg.projecteden.nexus.utils.ToolType;
 import lombok.NoArgsConstructor;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -100,8 +100,8 @@ public class AutoTool implements Listener {
 
 			if (MaterialTag.ALL_GLASS.isTagged(block.getType())) {
 				if (item.containsEnchantment(Enchant.SILK_TOUCH)) {
-					Tool tool = Tool.of(item);
-					final int i = (Tool.values().length - tool.ordinal()) + tool.getTools().indexOf(item.getType());
+					ToolType tool = ToolType.of(item);
+					final int i = (ToolType.values().length - tool.ordinal()) + tool.getTools().indexOf(item.getType());
 					debug.accept("  %d (silk touch)".formatted(i));
 					return i;
 				}
