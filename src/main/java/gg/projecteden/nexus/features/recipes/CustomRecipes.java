@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.recipes;
 
+import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.custombenches.DyeStation;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
@@ -18,7 +19,6 @@ import gg.projecteden.nexus.utils.ItemUtils.ItemStackComparator;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WoodType;
-import gg.projecteden.api.common.utils.Utils;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
@@ -45,14 +45,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.api.common.utils.ReflectionUtils.subTypesOf;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.blast;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shapeless;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.smelt;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.surround;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.api.common.utils.ReflectionUtils.subTypesOf;
 
 @Depends({ResourcePack.class, CustomEnchants.class})
 public class CustomRecipes extends Feature implements Listener {
@@ -234,13 +234,13 @@ public class CustomRecipes extends Feature implements Listener {
 
 	public void registerQuartz() {
 		shapeless().add(Material.QUARTZ_BLOCK).toMake(Material.QUARTZ, 4).extra("quartz_uncrafting").build().type(RecipeType.QUARTZ).register();
-		shapeless().add(Material.QUARTZ_PILLAR).toMake(Material.QUARTZ_BLOCK, 1).extra("quartz_uncrafting").build().type(RecipeType.QUARTZ).register();
+		shapeless().add(Material.QUARTZ_PILLAR).toMake(Material.QUARTZ_BLOCK).extra("quartz_uncrafting").build().type(RecipeType.QUARTZ).register();
 		shapeless().add(Material.CHISELED_QUARTZ_BLOCK).toMake(Material.QUARTZ_SLAB, 2).extra("quartz_uncrafting").build().type(RecipeType.QUARTZ).register();
-		shapeless().add(Material.QUARTZ_BRICKS).toMake(Material.QUARTZ_BLOCK, 4).extra("quartz_uncrafting_bricks").build().type(RecipeType.QUARTZ).register();
+		shapeless().add(Material.QUARTZ_BRICKS).toMake(Material.QUARTZ_BLOCK).extra("quartz_uncrafting_bricks").build().type(RecipeType.QUARTZ).register();
 	}
 
 	public void registerStoneBricks() {
-		shapeless().add(Material.STONE_BRICKS).toMake(Material.STONE, 1).extra("stonebrick_uncrafting").build().type(RecipeType.STONE_BRICK).register();
+		shapeless().add(Material.STONE_BRICKS).toMake(Material.STONE).extra("stonebrick_uncrafting").build().type(RecipeType.STONE_BRICK).register();
 		shapeless().add(Material.CHISELED_STONE_BRICKS).toMake(Material.STONE_BRICK_SLAB, 2).extra("stonebrick_uncrafting").build().type(RecipeType.STONE_BRICK).register();
 		shapeless().add(Material.MOSSY_STONE_BRICKS).toMake(Material.STONE_BRICKS).extra("stonebrick_uncrafting").build().type(RecipeType.STONE_BRICK).register();
 		shapeless().add(Material.CHISELED_DEEPSLATE).toMake(Material.COBBLED_DEEPSLATE_SLAB, 2).extra("stonebrick_uncrafting").build().type(RecipeType.STONE_BRICK).register();
