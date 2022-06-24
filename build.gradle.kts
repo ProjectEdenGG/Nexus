@@ -18,15 +18,20 @@ repositories {
     maven { url = uri("https://repo.onarandombox.com/content/groups/public/") }
     maven { url = uri("https://repo.dmulloy2.net/nexus/repository/public/") }
     maven { url = uri("https://ci.ender.zone/plugin/repository/everything/") }
-    maven { url = uri("https://ci.athion.net/job/FastAsyncWorldEdit/ws/mvn/") }
     maven { url = uri("https://repo.aikar.co/content/groups/aikar/") }
-    maven { url = uri("https://repo.inventivetalent.org/content/groups/public/") }
-    maven { url = uri("https://repo.codemc.org/repository/maven-public/") }
-    maven { url = uri("https://repo.codemc.org/repository/maven-snapshots/") }
+    maven {
+        url = uri("https://ci.athion.net/job/FastAsyncWorldEdit/ws/mvn/")
+        content { includeGroup("com.fastasyncworldedit") }
+    }
+    maven {
+        url = uri("https://repo.inventivetalent.org/content/groups/public/")
+        content { includeGroup("org.inventivetalent") }
+    }
+    maven { url = uri("https://repo.codemc.io/repository/maven-public/") }
+    maven { url = uri("https://repo.codemc.io/repository/maven-snapshots/") }
     maven { url = uri("https://repo.citizensnpcs.co/") }
     maven { url = uri("https://repo.md-5.net/content/groups/public/") }
     maven { url = uri("https://github.com/deanveloper/SkullCreator/raw/mvn-repo/") }
-    maven { url = uri("https://mvn.intellectualsites.com/content/repositories/thirdparty/") }
     maven { url = uri("https://repo.viaversion.com") }
     maven { url = uri("https://repo.extendedclip.com/content/repositories/placeholderapi/") }
     maven { url = uri("https://maven.enginehub.org/repo/") }
@@ -71,7 +76,10 @@ dependencies {
     compileOnly("net.citizensnpcs:citizens-main:2.0.28-SNAPSHOT")
     compileOnly("com.github.koca2000:NoteBlockAPI:1.4.4")
     compileOnly("com.github.BlueMap-Minecraft:BlueMapAPI:v1.3.1")
-    compileOnly("LibsDisguises:LibsDisguises:10.0.28")
+    compileOnly("LibsDisguises:LibsDisguises:10.0.28") {
+        exclude("org.spigotmc", "spigot-api")
+        exclude("org.spigotmc", "spigot")
+    }
     compileOnly("com.arcaniax:HeadDatabase-API:1.3.1")
     compileOnly("com.viaversion:viaversion-api:4.0.1")
     compileOnly("me.clip:placeholderapi:2.10.10")
@@ -82,7 +90,6 @@ dependencies {
     compileOnly(files("libs/BuycraftX.jar"))
     compileOnly(files("libs/GlowAPI.jar"))
     compileOnly(files("libs/nuvotifier-universal-2.3.4.jar"))
-    compileOnly(files("libs/SmartInvs-1.3.4.jar"))
     compileOnly(files("libs/SuperVanish-6.2.6.jar"))
 }
 
