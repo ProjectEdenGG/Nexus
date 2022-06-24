@@ -31,6 +31,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.parchment.HasPlayer;
 import lombok.Setter;
@@ -156,6 +157,10 @@ public abstract class InventoryProvider {
 	@CheckReturnValue
 	public final Paginator paginator() {
 		return new Paginator();
+	}
+
+	public String getPrefix() {
+		return StringUtils.getPrefix(getClass().getSimpleName().replaceFirst("Menu$", ""));
 	}
 
 	public class Paginator {

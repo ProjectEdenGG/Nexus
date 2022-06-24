@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.costume.Costume;
 import gg.projecteden.nexus.models.costume.CostumeUser;
 import gg.projecteden.nexus.utils.ColorType;
@@ -174,6 +175,9 @@ public class DyeStation extends CustomBench {
 
 		@Override
 		public void init() {
+			if (true)
+				throw new InvalidInputException("Temporarily disabled");
+
 			addCloseItem();
 
 			contents.set(data.getInputSlot(), ClickableItem.of(data.getInput(), e -> replaceItem(player, contents, e, data.getInputSlot())));

@@ -128,7 +128,7 @@ public class LegacyCommand extends _WarpSubCommand {
 
 	// Homes
 
-	@Path("home [home]")
+	@Path("home <home>")
 	@Description("Teleport to your legacy homes")
 	void home(LegacyHome legacyHome) {
 		legacyHome.teleportAsync(player());
