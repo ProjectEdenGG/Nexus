@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.mobheads;
 
+import gg.projecteden.api.common.utils.EnumUtils.IterableEnum;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -10,7 +11,6 @@ import gg.projecteden.nexus.models.mobheads.MobHeadUser;
 import gg.projecteden.nexus.models.mobheads.MobHeadUserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.api.common.utils.EnumUtils.IteratableEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
@@ -99,14 +99,14 @@ public class MobHeadUserMenu extends InventoryProvider {
 		}));
 	}
 
-	private ItemBuilder getFilterItem(Material zombieHead, IteratableEnum iteratableEnum) {
+	private ItemBuilder getFilterItem(Material zombieHead, IterableEnum iterableEnum) {
 		return new ItemBuilder(zombieHead).name("&6Filter by:")
-			.lore("&7⬇ " + StringUtils.camelCase(iteratableEnum.previousWithLoop().name()))
-			.lore("&e⬇ " + StringUtils.camelCase(iteratableEnum.name()))
-			.lore("&7⬇ " + StringUtils.camelCase(iteratableEnum.nextWithLoop().name()));
+			.lore("&7⬇ " + StringUtils.camelCase(iterableEnum.previousWithLoop().name()))
+			.lore("&e⬇ " + StringUtils.camelCase(iterableEnum.name()))
+			.lore("&7⬇ " + StringUtils.camelCase(iterableEnum.nextWithLoop().name()));
 	}
 
-	private interface FilterType extends IteratableEnum {
+	private interface FilterType extends IterableEnum {
 
 		String name();
 

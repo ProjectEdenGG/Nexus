@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.store.perks.stattrack.models;
 
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.Tool;
-import gg.projecteden.nexus.utils.Tool.ToolGroup;
+import gg.projecteden.nexus.utils.ToolType;
+import gg.projecteden.nexus.utils.ToolType.ToolGroup;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.Tag;
@@ -21,43 +21,43 @@ public enum Stat {
 	MOBS_KILLED(ToolGroup.WEAPONS),
 	DAMAGE_DEALT(ToolGroup.WEAPONS),
 	DURABILITY_MENDED,
-	STONE_MINED(Tool.PICKAXE, MaterialTag.ALL_STONE),
-	WOOD_CHOPPED(Tool.AXE, MaterialTag.ALL_WOOD),
-	DIRT_EXCAVATED(Tool.SHOVEL, MaterialTag.ALL_DIRT),
-	SAND_EXCAVATED(Tool.SHOVEL, MaterialTag.ALL_SAND),
-	PATHS_CREATED(Tool.SHOVEL, Material.DIRT_PATH),
-	DIRT_TILLED(Tool.HOE, Material.FARMLAND),
-	FLOWERS_PICKED(Tool.SHEARS, MaterialTag.ALL_FLOWERS),
-	FISH_CAUGHT(Tool.FISHING_ROD, MaterialTag.ITEMS_FISHES),
-	TREASURE_FISHED(Tool.FISHING_ROD);
+	STONE_MINED(ToolType.PICKAXE, MaterialTag.ALL_STONE),
+	WOOD_CHOPPED(ToolType.AXE, MaterialTag.ALL_WOOD),
+	DIRT_EXCAVATED(ToolType.SHOVEL, MaterialTag.ALL_DIRT),
+	SAND_EXCAVATED(ToolType.SHOVEL, MaterialTag.ALL_SAND),
+	PATHS_CREATED(ToolType.SHOVEL, Material.DIRT_PATH),
+	DIRT_TILLED(ToolType.HOE, Material.FARMLAND),
+	FLOWERS_PICKED(ToolType.SHEARS, MaterialTag.ALL_FLOWERS),
+	FISH_CAUGHT(ToolType.FISHING_ROD, MaterialTag.ITEMS_FISHES),
+	TREASURE_FISHED(ToolType.FISHING_ROD);
 
 	@Getter
-	private List<Tool> tools = new ArrayList<>();
+	private List<ToolType> toolTypes = new ArrayList<>();
 	@Getter
 	private List<Material> materials = new ArrayList<>();
 
 	Stat() {}
 
-	Stat(Tool tools) {
-		this.tools = Arrays.asList(tools);
+	Stat(ToolType tools) {
+		this.toolTypes = Arrays.asList(tools);
 	}
 
 	Stat(ToolGroup toolGroup) {
-		this.tools = toolGroup.getTools();
+		this.toolTypes = toolGroup.getTools();
 	}
 
-	Stat(Tool tool, Material... materials) {
-		this.tools = Collections.singletonList(tool);
+	Stat(ToolType toolType, Material... materials) {
+		this.toolTypes = Collections.singletonList(toolType);
 		this.materials = Arrays.asList(materials);
 	}
 
-	Stat(Tool tool, Tag<Material> materials) {
-		this.tools = Collections.singletonList(tool);
+	Stat(ToolType toolType, Tag<Material> materials) {
+		this.toolTypes = Collections.singletonList(toolType);
 		this.materials = new ArrayList<>(materials.getValues());
 	}
 
-	Stat(Tool tool, MaterialTag materials) {
-		this.tools = Collections.singletonList(tool);
+	Stat(ToolType toolType, MaterialTag materials) {
+		this.toolTypes = Collections.singletonList(toolType);
 		this.materials = new ArrayList<>(materials.getValues());
 	}
 
@@ -70,8 +70,8 @@ public enum Stat {
 	}
 
 	public boolean isToolApplicable(Material material) {
-		for (Tool tool : tools)
-			if (tool.getTools().contains(material))
+		for (ToolType toolType : toolTypes)
+			if (toolType.getTools().contains(material))
 				return true;
 		return false;
 	}

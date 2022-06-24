@@ -6,7 +6,7 @@ import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.PostLoad;
-import gg.projecteden.api.common.utils.EnumUtils.IteratableEnum;
+import gg.projecteden.api.common.utils.EnumUtils.IterableEnum;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.itemtags.ItemTagsUtils;
 import gg.projecteden.nexus.features.shops.ShopUtils;
@@ -440,7 +440,7 @@ public class Shop implements PlayerOwnedObject {
 	}
 
 	// Dumb enum due to morphia refusing to deserialize interfaces properly
-	public enum ExchangeType implements IteratableEnum {
+	public enum ExchangeType implements IterableEnum {
 		SELL(SellExchange.class),
 		TRADE(TradeExchange.class),
 		BUY(BuyExchange.class);

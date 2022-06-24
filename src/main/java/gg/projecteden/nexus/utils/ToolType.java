@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 // Order of this enum is important, please do not change it arbitrarily
-public enum Tool {
+public enum ToolType {
 	SWORD(
 			Material.WOODEN_SWORD,
 			Material.STONE_SWORD,
@@ -95,18 +95,18 @@ public enum Tool {
 	@Getter
 	private final List<Material> tools;
 
-	Tool(Material... tools) {
+	ToolType(Material... tools) {
 		this.tools = Arrays.asList(tools);
 	}
 
-	public static Tool of(ItemStack item) {
+	public static ToolType of(ItemStack item) {
 		return of(item.getType());
 	}
 
-	public static Tool of(Material material) {
-		for (Tool tool : values())
-			if (tool.getTools().contains(material))
-				return tool;
+	public static ToolType of(Material material) {
+		for (ToolType toolType : values())
+			if (toolType.getTools().contains(material))
+				return toolType;
 
 		return null;
 	}
@@ -125,9 +125,9 @@ public enum Tool {
 		TOOLS(PICKAXE, AXE, SHOVEL, HOE, SHEARS);
 
 		@Getter
-		private final List<Tool> tools;
+		private final List<ToolType> tools;
 
-		ToolGroup(Tool... tools) {
+		ToolGroup(ToolType... tools) {
 			this.tools = Arrays.asList(tools);
 		}
 	}
