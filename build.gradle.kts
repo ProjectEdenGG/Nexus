@@ -38,16 +38,9 @@ repositories {
 }
 
 dependencies {
-    paperweightDevBundle("gg.projecteden.parchment", "1.19-R0.1-SNAPSHOT") {
-        exclude("net.minecraftforge:forgeflower")
-    }
-    compileOnly("gg.projecteden.parchment:parchment-api:1.19-R0.1-SNAPSHOT") {
-        exclude("net.minecraftforge:forgeflower")
-    }
-    implementation("org.jetbrains:annotations:23.0.0")
-    implementation("io.papermc:paperlib:1.0.2") {
-        exclude("net.minecraftforge:forgeflower")
-    }
+    paperweightDevBundle("gg.projecteden.parchment", "1.19-R0.1-SNAPSHOT")
+    compileOnly("gg.projecteden.parchment:parchment-api:1.19-R0.1-SNAPSHOT")
+    implementation("io.papermc:paperlib:1.0.2")
     implementation("gg.projecteden:eden-common:${eden_api_version}")
     implementation("gg.projecteden:eden-db:${eden_api_version}")
     implementation("gg.projecteden:eden-discord:${eden_api_version}")
@@ -63,7 +56,7 @@ dependencies {
     implementation("com.google.api-client:google-api-client:1.35.0")
     implementation("com.google.oauth-client:google-oauth-client-jetty:1.34.1")
     implementation("com.google.apis:google-api-services-sheets:v4-rev20220411-1.32.1")
-    implementation("net.wesjd:anvilgui-1_19_R1:1.5.3-SNAPSHOT")
+    implementation("net.wesjd:anvilgui:1.5.3-SNAPSHOT")
     implementation("dev.dbassett:skullcreator:3.0.1")
     implementation("com.vdurmont:emoji-java:5.1.1")
     compileOnly("me.lucko:helper:5.6.10")
@@ -91,13 +84,8 @@ dependencies {
     compileOnly("com.viaversion:viaversion-api:4.0.1")
     compileOnly("me.clip:placeholderapi:2.10.10")
     compileOnly("com.github.jikoo.OpenInv:openinvapi:4.1.8")
-    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.2.0") {
-        exclude("net.minecraftforge:forgeflower")
-    }
-    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.2.0") {
-        exclude("net.minecraftforge:forgeflower")
-        isTransitive = false
-    }
+    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.2.0")
+    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.2.0") { isTransitive = false }
     compileOnly("world.bentobox:bentobox:1.20.1-SNAPSHOT")
     compileOnly(files("libs/BuycraftX.jar"))
     compileOnly(files("libs/GlowAPI.jar"))
