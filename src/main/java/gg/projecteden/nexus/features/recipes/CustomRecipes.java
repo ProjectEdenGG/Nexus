@@ -342,13 +342,13 @@ public class CustomRecipes extends Feature implements Listener {
 
 	public void registerQuartz() {
 		shapeless().add(Material.QUARTZ_BLOCK).toMake(Material.QUARTZ, 4).build().type(RecipeType.QUARTZ).register();
-		shapeless().add(Material.QUARTZ_PILLAR).toMake(Material.QUARTZ_BLOCK, 1).build().type(RecipeType.QUARTZ).register();
+		shapeless().add(Material.QUARTZ_PILLAR).toMake(Material.QUARTZ_BLOCK).build().type(RecipeType.QUARTZ).register();
 		shapeless().add(Material.CHISELED_QUARTZ_BLOCK).toMake(Material.QUARTZ_SLAB, 2).build().type(RecipeType.QUARTZ).register();
-		shapeless().add(Material.QUARTZ_BRICKS).toMake(Material.QUARTZ_BLOCK, 4).build().type(RecipeType.QUARTZ).register();
+		shapeless().add(Material.QUARTZ_BRICKS).toMake(Material.QUARTZ_BLOCK).build().type(RecipeType.QUARTZ).register();
 	}
 
 	public void registerStoneBricks() {
-		shapeless().add(Material.STONE_BRICKS).toMake(Material.STONE, 1).build().type(RecipeType.STONE_BRICK).register();
+		shapeless().add(Material.STONE_BRICKS).toMake(Material.STONE).build().type(RecipeType.STONE_BRICK).register();
 		shapeless().add(Material.CHISELED_STONE_BRICKS).toMake(Material.STONE_BRICK_SLAB, 2).build().type(RecipeType.STONE_BRICK).register();
 		shapeless().add(Material.MOSSY_STONE_BRICKS).toMake(Material.STONE_BRICKS).build().type(RecipeType.STONE_BRICK).register();
 		shapeless().add(Material.CHISELED_DEEPSLATE).toMake(Material.COBBLED_DEEPSLATE_SLAB, 2).build().type(RecipeType.STONE_BRICK).register();
