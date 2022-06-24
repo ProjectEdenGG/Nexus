@@ -185,24 +185,22 @@ public class MaterialTag implements Tag<Material> {
 		CARTOGRAPHY_TABLE, BREWING_STAND, COMPOSTER, BARREL, FLETCHING_TABLE,
 		CAULDRON, LECTERN, STONECUTTER, LOOM, SMITHING_TABLE, GRINDSTONE);
 
-	public static final MaterialTag TREE_LOGS = new MaterialTag(OAK_LOG, SPRUCE_LOG, BIRCH_LOG, JUNGLE_LOG, ACACIA_LOG, DARK_OAK_LOG, WARPED_STEM, CRIMSON_STEM);
-	public static final MaterialTag STRIPPED_LOGS = new MaterialTag(STRIPPED_OAK_LOG, STRIPPED_SPRUCE_LOG, STRIPPED_BIRCH_LOG, STRIPPED_JUNGLE_LOG, STRIPPED_ACACIA_LOG, STRIPPED_DARK_OAK_LOG, STRIPPED_WARPED_STEM, STRIPPED_CRIMSON_STEM);
+	public static final MaterialTag TREE_LOGS = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getLog).forEach(this::append); }};
+	public static final MaterialTag STRIPPED_LOGS = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getStrippedLog).forEach(this::append); }};
+	public static final MaterialTag TREE_WOOD = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getWood).forEach(this::append); }};
+	public static final MaterialTag STRIPPED_WOOD = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getStrippedWood).forEach(this::append); }};
+	public static final MaterialTag WOOD_STAIRS = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getStair).forEach(this::append); }};
+	public static final MaterialTag WOOD_SLABS = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getSlab).forEach(this::append); }};
+	public static final MaterialTag WOOD_BUTTONS = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getButton).forEach(this::append); }};
+	public static final MaterialTag WOOD_DOORS = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getDoor).forEach(this::append); }};
+	public static final MaterialTag WOOD_TRAPDOORS = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getTrapDoor).forEach(this::append); }};
+	public static final MaterialTag WOOD_FENCES = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getFence).forEach(this::append); }};
+	public static final MaterialTag WOOD_FENCE_GATES = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getFenceGate).forEach(this::append); }};
+	public static final MaterialTag WOOD_PRESSURE_PLATES = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getPressurePlate).forEach(this::append); }};
+	public static final MaterialTag WOOD_SIGNS = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getSign).forEach(this::append); }};
+
 	public static final MaterialTag LOGS = new MaterialTag(TREE_LOGS, STRIPPED_LOGS);
-
-	public static final MaterialTag TREE_WOOD = new MaterialTag(OAK_WOOD, SPRUCE_WOOD, BIRCH_WOOD, JUNGLE_WOOD, ACACIA_WOOD, DARK_OAK_WOOD, WARPED_HYPHAE, CRIMSON_HYPHAE);
-	public static final MaterialTag STRIPPED_WOOD = new MaterialTag(STRIPPED_OAK_WOOD, STRIPPED_SPRUCE_WOOD, STRIPPED_BIRCH_WOOD, STRIPPED_JUNGLE_WOOD, STRIPPED_ACACIA_WOOD, STRIPPED_DARK_OAK_WOOD, STRIPPED_WARPED_HYPHAE, STRIPPED_CRIMSON_HYPHAE);
 	public static final MaterialTag WOOD = new MaterialTag(TREE_WOOD, STRIPPED_WOOD);
-
-	public static final MaterialTag WOOD_STAIRS = new MaterialTag(OAK_STAIRS, SPRUCE_STAIRS, BIRCH_STAIRS, JUNGLE_STAIRS, ACACIA_STAIRS, DARK_OAK_STAIRS, WARPED_STAIRS, CRIMSON_STAIRS);
-	public static final MaterialTag WOOD_SLABS = new MaterialTag(OAK_SLAB, SPRUCE_SLAB, BIRCH_SLAB, JUNGLE_SLAB, ACACIA_SLAB, DARK_OAK_SLAB, PETRIFIED_OAK_SLAB, WARPED_SLAB, CRIMSON_SLAB);
-
-	public static final MaterialTag WOOD_BUTTONS = new MaterialTag(OAK_BUTTON, SPRUCE_BUTTON, BIRCH_BUTTON, JUNGLE_BUTTON, ACACIA_BUTTON, DARK_OAK_BUTTON, WARPED_BUTTON, CRIMSON_BUTTON);
-	public static final MaterialTag WOOD_DOORS = new MaterialTag(OAK_DOOR, SPRUCE_DOOR, BIRCH_DOOR, JUNGLE_DOOR, ACACIA_DOOR, DARK_OAK_DOOR, WARPED_DOOR, CRIMSON_DOOR);
-	public static final MaterialTag WOOD_TRAPDOORS = new MaterialTag(OAK_TRAPDOOR, SPRUCE_TRAPDOOR, BIRCH_TRAPDOOR, JUNGLE_TRAPDOOR, ACACIA_TRAPDOOR, DARK_OAK_TRAPDOOR, WARPED_TRAPDOOR, CRIMSON_TRAPDOOR);
-	public static final MaterialTag WOOD_FENCES = new MaterialTag(OAK_FENCE, SPRUCE_FENCE, BIRCH_FENCE, JUNGLE_FENCE, ACACIA_FENCE, DARK_OAK_FENCE, WARPED_FENCE, CRIMSON_FENCE);
-	public static final MaterialTag WOOD_FENCE_GATES = new MaterialTag(OAK_FENCE_GATE, SPRUCE_FENCE_GATE, BIRCH_FENCE_GATE, JUNGLE_FENCE_GATE, ACACIA_FENCE_GATE, DARK_OAK_FENCE_GATE, WARPED_FENCE_GATE, CRIMSON_FENCE_GATE);
-	public static final MaterialTag WOOD_PRESSURE_PLATES = new MaterialTag(OAK_PRESSURE_PLATE, SPRUCE_PRESSURE_PLATE, BIRCH_PRESSURE_PLATE, JUNGLE_PRESSURE_PLATE, ACACIA_PRESSURE_PLATE, DARK_OAK_PRESSURE_PLATE, WARPED_PRESSURE_PLATE, CRIMSON_PRESSURE_PLATE);
-	public static final MaterialTag WOOD_SIGNS = new MaterialTag(OAK_SIGN, SPRUCE_SIGN, BIRCH_SIGN, JUNGLE_SIGN, ACACIA_SIGN, DARK_OAK_SIGN, WARPED_SIGN, CRIMSON_SIGN);
 
 	public static final MaterialTag ALL_WOOD = new MaterialTag(LOGS, WOOD, PLANKS, WOOD_STAIRS, WOOD_SLABS, WOOD_BUTTONS,
 		WOOD_DOORS, WOOD_TRAPDOORS, WOOD_FENCES, WOOD_FENCE_GATES, WOOD_PRESSURE_PLATES, WOOD_SIGNS);
