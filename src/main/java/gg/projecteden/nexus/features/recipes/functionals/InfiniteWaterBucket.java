@@ -91,6 +91,11 @@ public class InfiniteWaterBucket extends FunctionalRecipe {
 		}
 
 		final Block block = clickedBlock.getRelative(event.getBlockFace());
+
+		// prevent placing water in the nether
+		if (block.getWorld().isUltraWarm())
+			return;
+
 		final BlockState state = block.getState();
 
 		BlockPlaceEvent placeEvent = new BlockPlaceEvent(block, state, clickedBlock, item, event.getPlayer(), true, EquipmentSlot.HAND);
