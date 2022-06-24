@@ -59,7 +59,9 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
@@ -121,7 +123,7 @@ public class LegacyCommand extends _WarpSubCommand {
 	@Description("Reset all items to pending status")
 	void items_reset(LegacyItemTransferUser user) {
 		for (ReviewStatus status : EnumUtils.valuesExcept(ReviewStatus.class, ReviewStatus.PENDING))
-			user.getItems(ReviewStatus.PENDING).addAll(user.getItems().remove(status));
+			user.getItems(ReviewStatus.PENDING).addAll(Objects.requireNonNullElseGet(user.getItems().remove(status), Collections::emptyList));
 		new LegacyItemTransferUserService().save(user);
 		send(PREFIX + "Reset all of " + user.getNickname() + "'s items to pending status");
 	}
