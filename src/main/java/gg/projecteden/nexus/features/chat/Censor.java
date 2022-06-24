@@ -9,6 +9,7 @@ import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.models.chat.ChatterService;
 import gg.projecteden.nexus.models.chat.PrivateChannel;
 import gg.projecteden.nexus.models.chat.PublicChannel;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.punishments.Punishment;
 import gg.projecteden.nexus.models.punishments.PunishmentType;
 import gg.projecteden.nexus.models.punishments.Punishments;
@@ -131,7 +132,9 @@ public class Censor {
 
 							PunishmentType type;
 
-							if (event instanceof PublicChatEvent && !StaticChannel.LOCAL.getChannel().equals(event.getChannel()))
+							if (Rank.of(event.getChatter()) == Rank.GUEST)
+								type = PunishmentType.BAN;
+							else if (event instanceof PublicChatEvent && !StaticChannel.LOCAL.getChannel().equals(event.getChannel()))
 								type = PunishmentType.BAN;
 							else
 								type = PunishmentType.WARN;
