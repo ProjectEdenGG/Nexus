@@ -99,14 +99,13 @@ import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 // TODO
 //  - admin table (imageonmap "api"?)
-//  - cams (teleport the player around and spawn an NPC at their cams location which can be killed-[)
-//  - color menu (on interact with lobby armor stand/item frame)
+//  - cams (teleport the player around and spawn an NPC at their cams location which can be killed)
+//  - ~~color menu (on interact with lobby armor stand/item frame)~~ remove colored outfits
 //  - vent animation (open/close trapdoor)
 //  - door sabotages
-//  - show sabotage duration + progress on sidebar
-//  - crisis sfx + bossbar
-//  - show the red worldborder color during crisis
+//    - create custom inventory background
 //  - let impostors fix sabotages
+//    - it looks like i already have some code for this; am i sure it's not working?
 //  - Killing is broken?
 //  - add Darkness (1.19) potion effect to lights sabotage
 @Scoreboard(teams = false, sidebarType = MinigameScoreboard.Type.MINIGAMER)

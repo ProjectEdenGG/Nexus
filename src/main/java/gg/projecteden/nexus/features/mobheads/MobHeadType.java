@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.mobheads.variants.AxolotlVariant;
 import gg.projecteden.nexus.features.mobheads.variants.CatVariant;
 import gg.projecteden.nexus.features.mobheads.variants.CreeperVariant;
 import gg.projecteden.nexus.features.mobheads.variants.FoxVariant;
+import gg.projecteden.nexus.features.mobheads.variants.FrogVariant;
 import gg.projecteden.nexus.features.mobheads.variants.HorseVariant;
 import gg.projecteden.nexus.features.mobheads.variants.LlamaVariant;
 import gg.projecteden.nexus.features.mobheads.variants.MooshroomVariant;
@@ -32,6 +33,7 @@ import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fox;
+import org.bukkit.entity.Frog;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Llama;
@@ -57,11 +59,11 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty;
+import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.Nullables.isNotNullOrAir;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.RandomUtils.randomElement;
-import static gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty;
-import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 
 @Getter
 public enum MobHeadType implements MobHead {
@@ -136,6 +138,13 @@ public enum MobHeadType implements MobHead {
 		entity -> FoxVariant.of((Fox) entity),
 		(entity, type) -> ((Fox) entity).setFoxType((Fox.Type) type),
 		() -> randomElement(Fox.Type.class)
+	),
+
+	@HeadConfig(headId = "51343", entityType = EntityType.FROG, variantClass = FrogVariant.class)
+	FROG(
+		entity -> FrogVariant.of((Frog) entity),
+		(entity, type) -> ((Frog) entity).setVariant((Frog.Variant) type),
+		() -> randomElement(Frog.Variant.class)
 	),
 
 	@HeadConfig(headId = "321", entityType = EntityType.GHAST)
@@ -317,6 +326,9 @@ public enum MobHeadType implements MobHead {
 	@HeadConfig(headId = "25676", entityType = EntityType.WANDERING_TRADER)
 	WANDERING_TRADER,
 
+	@HeadConfig(headId = "52282", entityType = EntityType.WARDEN)
+	WARDEN,
+
 	@HeadConfig(headId = "35861", entityType = EntityType.WITCH)
 	WITCH,
 
@@ -399,7 +411,7 @@ public enum MobHeadType implements MobHead {
 	}
 
 	public double getChance() {
-		return new MobHeadChanceConfigService().get0().getChances().get(this);
+		return new MobHeadChanceConfigService().get0().getChances().getOrDefault(this, 0d);
 	}
 
 	@Nullable

@@ -15,6 +15,7 @@ public enum WoodType {
 	JUNGLE(Environment.NORMAL),
 	ACACIA(Environment.NORMAL),
 	DARK_OAK(Environment.NORMAL),
+	MANGROVE(Environment.NORMAL),
 	CRIMSON(Environment.NETHER),
 	WARPED(Environment.NETHER),
 	;

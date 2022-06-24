@@ -26,6 +26,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineE
 import gg.projecteden.nexus.framework.exceptions.preconfigured.MissingArgumentException;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.NoPermissionException;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -446,7 +447,22 @@ public abstract class ICustomCommand {
 		return getCommand(newEvent);
 	}
 
-	List<Method> getPathMethods(CommandEvent event) {
+	List<Method> getPathMethodsForExecution(CommandEvent event) {
+		return getPathMethods(event, Comparator.comparing(method ->
+				Arrays.stream(getLiteralWords(getPathString((Method) method)).split(" "))
+					.filter(Nullables::isNotNullOrEmpty)
+					.count())
+			.thenComparing(method ->
+				Arrays.stream(getPathString((Method) method).split(" "))
+					.filter(Nullables::isNotNullOrEmpty)
+					.count()));
+	}
+
+	List<Method> getPathMethodsForDisplay(CommandEvent event) {
+		return getPathMethods(event, Comparator.comparing(method -> getLiteralWords(getPathString((Method) method))));
+	}
+
+	List<Method> getPathMethods(CommandEvent event, Comparator<?> comparator) {
 		List<Method> methods = getPathMethods();
 
 		Map<String, Method> overridden = new HashMap<>();
@@ -461,7 +477,7 @@ public abstract class ICustomCommand {
 		methods.clear();
 		methods.addAll(overridden.values());
 
-		methods.sort(Comparator.comparing(method -> getLiteralWords(getPathString(method))));
+		methods.sort((Comparator<? super Method>) comparator);
 
 		List<Method> filtered = methods.stream()
 			.filter(method -> method.getAnnotation(Disabled.class) == null)

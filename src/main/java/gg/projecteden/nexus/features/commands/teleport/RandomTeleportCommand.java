@@ -14,9 +14,11 @@ import gg.projecteden.nexus.models.lwc.LWCProtection;
 import gg.projecteden.nexus.models.lwc.LWCProtectionService;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
-import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import io.papermc.lib.PaperLib;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -30,7 +32,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Aliases({"randomtp", "rtp", "wild"})
 public class RandomTeleportCommand extends CustomCommand {
-	private static final List<SubWorldGroup> ALLOWED_WORLD_GROUPS = List.of(SubWorldGroup.SURVIVAL, SubWorldGroup.RESOURCE);
 	private static final LWCProtectionService service = new LWCProtectionService();
 	private final AtomicInteger count = new AtomicInteger(0);
 	private boolean running = false;
@@ -39,45 +40,62 @@ public class RandomTeleportCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
+	@Getter
+	@AllArgsConstructor
+	private enum RTPWorld {
+		SURVIVAL(5000),
+		RESOURCE(5000),
+		;
+
+		private final int radius;
+
+		public World getWorld() {
+			return Objects.requireNonNull(Bukkit.getWorld(name().toLowerCase()));
+		}
+	}
+
+	@Path("[world]")
 	@Async
 	@Cooldown(value = TickTime.SECOND, x = 30, bypass = Group.ADMIN)
-	void rtp() {
-		final World world;
-		if (worldGroup() != WorldGroup.SURVIVAL)
-			world = Objects.requireNonNull(Bukkit.getWorld("survival"));
-		else
-			world = world();
+	void rtp(RTPWorld rtpWorld) {
+		if (rtpWorld == null) {
+			if (subWorldGroup() == SubWorldGroup.RESOURCE)
+				rtpWorld = RTPWorld.RESOURCE;
+			else
+				rtpWorld = RTPWorld.SURVIVAL;
+		}
+
+		final RTPWorld overworld = rtpWorld;
+		final World world = overworld.getWorld();
 
 		if (!running) {
 			send(PREFIX + "Teleporting to random location");
 			running = true;
 		}
 
-		int radius = 0;
-		switch (world.getName()) {
-			case "survival" -> radius = 5000;
-			case "resource" -> radius = 2500;
-			default -> error("You must be in a survival overworld to run this command");
-		}
-
 		count.getAndIncrement();
 
 		int range = 250;
-		List<Location> locationList = LocationUtils.getRandomPointInCircle(world, radius);
+		List<Location> locationList = LocationUtils.getRandomPoints(world, 10);
 
 		locationList.sort(Comparator.comparingInt(loc -> (int) (getDensity(loc, range) * 100000)));
 		Location best = locationList.get(0);
-		if (Nexus.getEnv() == Env.PROD)
-			if (service.getProtectionsInRange(best, 50).size() != 0 && count.get() < 5) {
-				rtp();
-				return;
-			}
+
+		if (service.getProtectionsInRange(best, 50).size() != 0 && count.get() < 5) {
+			rtp(overworld);
+			return;
+		}
+
+		// TODO 1.19 Improve logic to handle other regions like warps/towns (Check if can build?)
+		if (new WorldGuardUtils(world).getRegionNamesAt(best).contains("spawn")) {
+			rtp(overworld);
+			return;
+		}
 
 		PaperLib.getChunkAtAsync(best, true).thenAccept(chunk -> {
 			Block highestBlock = world.getHighestBlockAt(best);
 			if (!highestBlock.getType().isSolid() && count.get() < 10) {
-				Tasks.async(this::rtp);
+				Tasks.async(() -> rtp(overworld));
 				return;
 			}
 

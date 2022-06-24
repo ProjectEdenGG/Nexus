@@ -45,8 +45,11 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.bossbar.BossBar;
+import net.kyori.adventure.bossbar.BossBar.Overlay;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.title.Title;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -72,16 +75,20 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.api.common.utils.TimeUtils.TickTime.TICK;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static net.kyori.adventure.title.Title.Times.times;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -94,6 +101,8 @@ public class SabotageMatchData extends MatchData {
 
 	public static final int BRIGHT_LIGHT_LEVEL = 6;
 	public static final int DARK_LIGHT_LEVEL = 2;
+	private static final Sound ALARM_SOUND = Sound.sound(Key.key("minecraft", "custom.minigames.sabotage.alarm"), Sound.Source.MASTER, .25F, 1F);
+	private static final Title ALARM_TITLE = Title.title(Component.text('滍'), Component.empty(), times(TICK.duration(2), TICK.duration(12), TICK.duration(2)));
 
 	private final Map<UUID, UUID> votes = new HashMap<>();
 	private final BiMap<UUID, SabotageColor> playerColors = HashBiMap.create();
@@ -121,6 +130,9 @@ public class SabotageMatchData extends MatchData {
 			.build();
 	private final Map<UUID, Long> killCooldowns = new HashMap<>();
 	private Task sabotage = null;
+	private SabotageTaskPartData sabotageTaskPartData = null;
+	private BossBar sabotageBar = null;
+	private final List<Integer> sabotageTaskIds = new ArrayList<>();
 	private int sabotageTaskId = -1;
 	private int customSabotageTaskId = -1; // custom task created by the sabotage
 	private LocalDateTime sabotageStarted;
@@ -134,7 +146,6 @@ public class SabotageMatchData extends MatchData {
 	private Set<ArmorStandTask> armorStandTasksInit() {
 		Set<ArmorStandTask> set = new HashSet<>();
 		getArena().worldguard().getEntitiesInRegionByClass(getArena().getProtectedRegion(), ArmorStand.class).forEach(armorStand -> {
-			if (armorStand.getEquipment() == null) return;
 			ItemStack item = armorStand.getEquipment().getHelmet();
 			if (isNullOrAir(item)) return;
 			TaskPart part = TaskPart.get(item);
@@ -233,7 +244,7 @@ public class SabotageMatchData extends MatchData {
 		/**
 		 * Player is able to use the button to call an emergency meeting
 		 */
-		USABLE;
+		USABLE
 	}
 
 	public ButtonState canButton(HasUniqueId reporter) {
@@ -372,7 +383,7 @@ public class SabotageMatchData extends MatchData {
 	}
 
 	public void startMeeting(Minigamer origin, SabotageColor bodyReported) {
-		if (sabotage != null && sabotageTaskId == -1)
+		if (sabotageTaskPartData != null && sabotageTaskPartData.getDuration() > 0)
 			endSabotage(); // sabotage is non-persistent (i.e. reactor) so it should end when a meeting starts
 		meetingStarted = LocalDateTime.now();
 		votingScreen = new VotingScreen(origin, bodyReported);
@@ -450,7 +461,7 @@ public class SabotageMatchData extends MatchData {
 				display += " (" + (tie ? "Tied" : "Skipped") + ")";
 
 			// TODO: true animation
-			match.showTitle(Title.title(Component.empty(), new JsonBuilder(display).build(), Title.Times.of(fade, Duration.ofSeconds(7), fade)));
+			match.showTitle(Title.title(Component.empty(), new JsonBuilder(display).build(), times(fade, Duration.ofSeconds(7), fade)));
 			match.playSound(Sound.sound(org.bukkit.Sound.ENTITY_PLAYER_SPLASH_HIGH_SPEED, Sound.Source.PLAYER, 1.0F, 1.0F));
 			clearVotes();
 			votingScreen = null;
@@ -469,29 +480,53 @@ public class SabotageMatchData extends MatchData {
 	public void sabotage(Tasks sabotage) {
 		this.sabotage = new Task(sabotage);
 		sabotageStarted = LocalDateTime.now();
-		SabotageTaskPartData data = sabotage.getParts()[0].createTaskPartData();
-		int duration = data.getDuration();
-		if (duration > 0)
-			sabotageTaskId = match.getTasks().wait(TimeUtils.TickTime.SECOND.x(duration), () -> {
+		sabotageTaskPartData = sabotage.getParts()[0].createTaskPartData();
+		int duration = sabotageTaskPartData.getDuration();
+		this.sabotageBar = BossBar.bossBar(
+			getSabotageBarTitle(0),
+			1f,
+			BossBar.Color.RED,
+			Overlay.NOTCHED_10
+		);
+		if (duration > 0) {
+			AtomicInteger elapsed = new AtomicInteger();
+			sabotageTaskIds.add(match.getTasks().repeat(TimeUtils.TickTime.SECOND, TimeUtils.TickTime.SECOND, () -> {
+					int e = elapsed.incrementAndGet();
+					sabotageBar.progress(e / (float) duration);
+					sabotageBar.name(getSabotageBarTitle(e));
+					if (e % 2 == 0) {
+						match.playSound(ALARM_SOUND);
+						match.showTitle(ALARM_TITLE);
+					}
+				}));
+			sabotageTaskIds.add(match.getTasks().wait(TimeUtils.TickTime.SECOND.x(duration), () -> {
 				SabotageTeam.IMPOSTOR.players(match).forEach(Minigamer::scored);
 				match.end();
-			});
-		if (data.hasRunnable())
-			customSabotageTaskId = match.getTasks().repeat(0, 1, () -> data.runnable(match));
+			}));
+		}
+		if (sabotageTaskPartData.hasRunnable())
+			sabotageTaskIds.add(match.getTasks().repeat(0, 1, () -> sabotageTaskPartData.runnable(match)));
 		match.getMinigamers().forEach(this::initGlow);
+	}
+
+	private Component getSabotageBarTitle(int elapsed) {
+		return Component.text(sabotageTaskPartData.getBossBarTitle(match, elapsed), NamedTextColor.RED);
 	}
 
 	public void endSabotage() {
 		this.sabotage = null;
-		if (sabotageTaskId != -1) {
-			match.getTasks().cancel(sabotageTaskId);
-			sabotageTaskId = -1;
-		}
-		if (customSabotageTaskId != -1) {
-			match.getTasks().cancel(customSabotageTaskId);
-			customSabotageTaskId = -1;
-		}
+		sabotageTaskPartData = null;
 		sabotageStarted = null;
+
+		match.hideBossBar(sabotageBar);
+		sabotageBar = null;
+
+		Iterator<Integer> it = sabotageTaskIds.iterator();
+		while (it.hasNext()) {
+			match.getTasks().cancel(it.next());
+			it.remove();
+		}
+
 		match.getMinigamers().forEach(this::initGlow);
 	}
 
@@ -534,9 +569,9 @@ public class SabotageMatchData extends MatchData {
 		Set<TaskPart> tasks;
 		if (SabotageTeam.of(minigamer) == SabotageTeam.IMPOSTOR) {
 			if (sabotage != null)
-				tasks = Set.of(sabotage.nextPart());
+				tasks = Collections.singleton(sabotage.nextPart());
 			else
-				tasks = Set.of();
+				tasks = Collections.emptySet();
 		} else
 			tasks = getTasks(minigamer).stream().map(Task::nextPart).filter(Objects::nonNull).collect(Collectors.toSet());
 

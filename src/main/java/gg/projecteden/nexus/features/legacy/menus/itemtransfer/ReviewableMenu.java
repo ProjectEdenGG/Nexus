@@ -28,8 +28,9 @@ public class ReviewableMenu extends InventoryProvider {
 				continue;
 
 			final ItemBuilder skull = new ItemBuilder(Material.PLAYER_HEAD)
+				.name(user.getNerd().getColoredName())
 				.skullOwner(user)
-				.lore(count + " items pending review");
+				.lore("&f" + count + " items pending review");
 
 			items.add(ClickableItem.of(skull.build(), e -> new ItemReviewMenu(user).open(player)));
 		}

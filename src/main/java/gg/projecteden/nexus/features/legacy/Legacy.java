@@ -71,7 +71,7 @@ public class Legacy extends Feature {
 			final ProtectedRegion globalRegion = new WorldGuardUtils(world).getManager().getRegion("__global__");
 			if (globalRegion != null) {
 				CreativeFlagsCommand.setFlags(world);
-				globalRegion.setFlag(Flags.BUILD, State.DENY);
+				globalRegion.setFlag(Flags.PASSTHROUGH, State.DENY);
 				globalRegion.setFlag(Flags.MOB_SPAWNING, State.DENY);
 				globalRegion.setFlag(Flags.INVINCIBILITY, State.ALLOW);
 				globalRegion.setFlag(Flags.CHEST_ACCESS, State.ALLOW);

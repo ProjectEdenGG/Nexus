@@ -46,7 +46,7 @@ public class NameplatesListener implements Listener {
 		return nameplates().getNameplateManager();
 	}
 
-	private static List<Integer> taskIds = new ArrayList<>();
+	private static final List<Integer> taskIds = new ArrayList<>();
 
 	@EventHandler
 	public void on(ResourcePackUpdateStartEvent event) {
@@ -61,7 +61,7 @@ public class NameplatesListener implements Listener {
 	@EventHandler
 	public void on(ResourcePackUpdateCompleteEvent event) {
 		taskIds.add(Tasks.repeatAsync(TickTime.SECOND.x(5), TickTime.SECOND.x(5), () -> manager().spawnAll()));
-		taskIds.add(Tasks.repeat(0, 1, () -> OnlinePlayers.getAll().forEach(player -> Nameplates.get().updateTeamOf(player))));
+		taskIds.add(Tasks.repeat(0, 2, () -> OnlinePlayers.getAll().forEach(player -> Nameplates.get().updateTeamOf(player))));
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)

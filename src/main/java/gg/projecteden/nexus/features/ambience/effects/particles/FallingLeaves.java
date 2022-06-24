@@ -65,6 +65,7 @@ public class FallingLeaves extends ParticleEffect {
 		DARK_OAK(Material.DARK_OAK_LEAVES, Material.GREEN_TERRACOTTA),
 		AZALEA(Material.AZALEA_LEAVES, Material.GREEN_CONCRETE),
 		FLOWERING_AZALEA(Material.FLOWERING_AZALEA_LEAVES, Material.GREEN_CONCRETE),
+		MANGROVE(Material.MANGROVE_LEAVES, Material.GREEN_CONCRETE),
 		CAVE_VINES(Material.CAVE_VINES, Material.GREEN_CONCRETE),
 		;
 

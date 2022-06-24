@@ -5,12 +5,12 @@ import gg.projecteden.nexus.models.buildcontest.BuildContestService;
 
 public enum WarpMenu {
 	MAIN(4),
-	SURVIVAL(5),
+	SURVIVAL(3),
 	LEGACY(5),
 	MINIGAMES(3),
 	CREATIVE(),
 	SKYBLOCK(),
-	OTHER(5),
+	OTHER(4),
 	BUILD_CONTESTS(3);
 
 	private int size = 0;

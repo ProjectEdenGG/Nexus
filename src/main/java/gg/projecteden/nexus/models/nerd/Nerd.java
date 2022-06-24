@@ -1,8 +1,6 @@
 package gg.projecteden.nexus.models.nerd;
 
 import com.mongodb.DBObject;
-import de.tr7zw.nbtapi.NBTFile;
-import de.tr7zw.nbtapi.NBTList;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.PreLoad;
@@ -22,7 +20,6 @@ import gg.projecteden.nexus.models.badge.BadgeUserService;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.freeze.FreezeService;
-import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -38,20 +35,19 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.Color;
-import java.io.File;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -82,10 +78,10 @@ public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements
 	@PreLoad
 	void preLoad(DBObject dbObject) {
 		List<String> visitedWorldGroups = (List<String>) dbObject.get("visitedWorldGroups");
-		if (visitedWorldGroups.remove("ONEBLOCK"))
+		if (visitedWorldGroups != null && visitedWorldGroups.remove("ONEBLOCK"))
 			visitedWorldGroups.add("SKYBLOCK");
 		List<String> visitedSubWorldGroups = (List<String>) dbObject.get("visitedSubWorldGroups");
-		if (visitedSubWorldGroups.remove("LEGACY"))
+		if (visitedSubWorldGroups != null && visitedSubWorldGroups.remove("LEGACY"))
 			visitedSubWorldGroups.add("LEGACY1");
 
 		List<String> pronouns = (List<String>) dbObject.get("pronouns");
@@ -269,77 +265,67 @@ public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements
 		return PlayerUtils.isVanished(getOnlinePlayer());
 	}
 
-	@ToString.Exclude
-	@EqualsAndHashCode.Exclude
-	private transient NBTFile nbtFile;
-
-	public @NotNull NBTFile getNbtFile() {
-		if (isOnline())
-			return loadNbtFile();
-
-		if (nbtFile == null)
-			nbtFile = loadNbtFile();
-
-		return nbtFile;
-	}
-
-	@NotNull
-	private NBTFile loadNbtFile() {
-		try {
-			File file = Paths.get(Bukkit.getServer().getWorlds().get(0).getName() + "/playerdata/" + uuid + ".dat").toFile();
-			if (file.exists())
-				return new NBTFile(file);
-			throw new InvalidInputException("[Nerd]" + Nickname.of(uuid) + "'s data file does not exist");
-		} catch (Exception ex) {
-			throw new InvalidInputException("[Nerd] Error opening " + Nickname.of(uuid) + "'s data file");
-		}
+	public @NotNull WorldGroup getWorldGroup() {
+		return WorldGroup.of(getLocation());
 	}
 
 	public World getWorld() {
-		return getLocation().getWorld();
-	}
-
-	public World getOfflineWorld() {
 		if (isOnline())
 			return getOnlinePlayer().getWorld();
 
-		NBTFile dataFile = getNbtFile();
-		String dimension = dataFile.getString("Dimension").replace("minecraft:", "");
-		if (isNullOrEmpty(dimension))
-			dimension = dataFile.getString("SpawnWorld").replace("minecraft:", "");
-
-		if ("overworld".equals(dimension))
-			return Bukkit.getWorlds().get(0);
-
-		return Bukkit.getWorld(dimension);
-	}
-
-	public @NotNull WorldGroup getWorldGroup() {
-		return WorldGroup.of(getLocation());
+		return new NBTPlayer(this).getWorld();
 	}
 
 	public @NotNull Location getLocation() {
 		if (isOnline())
 			return getOnlinePlayer().getPlayer().getLocation();
 
+		return getOfflineLocation();
+	}
+
+	public Location getOfflineLocation() {
+		if (true)
+			return new NBTPlayer(this).getOfflineLocation();
+
+		// TODO 1.19 Remove if nbt is reliable
 		if (location != null)
 			return location;
 
 		try {
-			NBTFile file = getNbtFile();
-			World world = getOfflineWorld();
-			if (world == null)
-				throw new InvalidInputException("[Nerd]" + name + " is not in a valid world");
-
-			NBTList<Double> pos = file.getDoubleList("Pos");
-			NBTList<Float> rotation = file.getFloatList("Rotation");
-
-			location = new Location(world, pos.get(0), pos.get(1), pos.get(2), rotation.get(0), rotation.get(1));
+			location = new NBTPlayer(this).getOfflineLocation();
 			new NerdService().save(this);
 			return location;
 		} catch (Exception ex) {
 			throw new InvalidInputException("Could not get location of offline player " + name + ": " + ex.getMessage());
 		}
+	}
+
+	public List<ItemStack> getInventory() {
+		if (isOnline())
+			return Arrays.asList(getOnlinePlayer().getInventory().getContents());
+
+		return new NBTPlayer(this).getOfflineInventory();
+	}
+
+	public List<ItemStack> getEnderChest() {
+		if (isOnline())
+			return Arrays.asList(getOnlinePlayer().getEnderChest().getContents());
+
+		return new NBTPlayer(this).getOfflineEnderChest();
+	}
+
+	public List<ItemStack> getArmor() {
+		if (isOnline())
+			return Arrays.asList(getOnlinePlayer().getInventory().getArmorContents());
+
+		return new NBTPlayer(this).getOfflineArmor();
+	}
+
+	public ItemStack getOffHand() {
+		if (isOnline())
+			return getOnlinePlayer().getInventory().getItemInOffHand();
+
+		return new NBTPlayer(this).getOfflineOffHand();
 	}
 
 	public void addPronoun(Pronoun pronoun) {

@@ -24,6 +24,7 @@ public class ClientSideEntitiesConfig implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private boolean enabled;
+	private boolean enabled = true;
+	private int radius = 30;
 
 }

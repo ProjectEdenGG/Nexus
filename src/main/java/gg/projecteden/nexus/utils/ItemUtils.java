@@ -29,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -142,6 +143,20 @@ public class ItemUtils {
 			if (newItemStack.getAmount() > 0)
 				itemStacks.add(newItemStack.clone());
 		}
+	}
+
+	public static List<ItemStack> nonNullOrAir(ItemStack[] items) {
+		if (items == null)
+			return Collections.emptyList();
+
+		return nonNullOrAir(Arrays.asList(items));
+	}
+
+	public static List<ItemStack> nonNullOrAir(List<ItemStack> items) {
+		if (items == null)
+			return Collections.emptyList();
+
+		return items.stream().filter(Nullables::isNotNullOrAir).collect(Collectors.toList());
 	}
 
 	public static List<ItemStack> getShulkerContents(ItemStack itemStack) {

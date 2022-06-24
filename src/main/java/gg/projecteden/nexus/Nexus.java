@@ -4,6 +4,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.lishid.openinv.IOpenInv;
 import com.onarandombox.MultiverseCore.MultiverseCore;
+import com.onarandombox.multiverseinventories.MultiverseInventories;
 import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.ReflectionUtils;
@@ -297,6 +298,8 @@ public class Nexus extends JavaPlugin {
 	@Getter
 	private static MultiverseCore multiverseCore;
 	@Getter
+	private static MultiverseInventories multiverseInventories;
+	@Getter
 	private static Citizens citizens;
 	@Getter
 	private static BuycraftPluginBase buycraft;
@@ -330,6 +333,7 @@ public class Nexus extends JavaPlugin {
 		signMenuFactory = new SignMenuFactory(this);
 		protocolManager = ProtocolLibrary.getProtocolManager();
 		multiverseCore = (MultiverseCore) Bukkit.getPluginManager().getPlugin("Multiverse-Core");
+		multiverseInventories = (MultiverseInventories) Bukkit.getPluginManager().getPlugin("Multiverse-Inventories");
 		citizens = (Citizens) Bukkit.getPluginManager().getPlugin("Citizens");
 		buycraft = (BuycraftPluginBase) Bukkit.getServer().getPluginManager().getPlugin("BuycraftX");
 		openInv = (IOpenInv) Bukkit.getPluginManager().getPlugin("OpenInv");

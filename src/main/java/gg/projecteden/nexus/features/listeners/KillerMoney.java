@@ -28,7 +28,8 @@ public class KillerMoney implements Listener {
 	private static final List<SpawnReason> UNNATURAL_SPAWN_REASONS = List.of(
 		SpawnReason.SPAWNER,
 		SpawnReason.SPAWNER_EGG,
-		SpawnReason.NETHER_PORTAL
+		SpawnReason.NETHER_PORTAL,
+		SpawnReason.RAID
 	);
 
 	private static final List<DamageCause> DEATH_CAUSE_BLACKLIST = List.of(
@@ -86,16 +87,12 @@ public class KillerMoney implements Listener {
 		ENDER_DRAGON(50.0, 150.0, WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK),
 		ENDERMAN(.5, 2.0, WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK),
 		ENDERMITE(.5, 2.0, WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK),
-		EVOKER(.5, 2.0, WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK),
 		GHAST(3.0, 10.0, WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK),
 		GUARDIAN(.5, 2.0, WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK),
 		HUSK(.5, 2.0, WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK),
-		ILLUSIONER(.5, 2.0, WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK),
 		MAGMA_CUBE(.5, 2.0, WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK),
 		PIG_ZOMBIE(.5, 2.0, WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK),
-		PILLAGER(.5, 2.0, WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK),
 		PHANTOM(.5, 2.0, WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK),
-		RAVAGER(.5, 2.0, WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK),
 		SHULKER(.5, 2.0, WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK),
 		SILVERFISH(.5, 2.0, WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK),
 		SKELETON(.5, 2.0, WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK),
@@ -103,13 +100,11 @@ public class KillerMoney implements Listener {
 		SPIDER(.5, 2.0, WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK),
 		SQUID(.25, 1.5, WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK),
 		STRAY(.5, 2.0, WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK),
-		VEX(.5, 2.0, WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK),
-		VINDICATOR(.5, 2.0, WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK),
 		WITCH(.5, 2.0, WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK),
 		WITHER_SKELETON(.5, 2.0, WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK),
 		ZOMBIE(.5, 2.0, WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK),
-		ZOMBIE_HORSE(.5, 2.0, WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK),
-		ZOMBIE_VILLAGER(.5, 2.0, WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK);
+		ZOMBIE_VILLAGER(.5, 2.0, WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK),
+		;
 
 		private final double min;
 		private final double max;

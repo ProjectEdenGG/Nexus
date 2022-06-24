@@ -47,7 +47,7 @@ public class DailyRewardsMenu extends InventoryProvider {
 
 		for (int i = 1; i <= Math.max(MAX_DAY, user.getCurrentStreak().getStreak()); i++) {
 			final int day = i;
-			if (user.getCurrentStreak().getStreak() >= day)
+			if (user.getCurrentStreak().canClaim(day))
 				if (user.getCurrentStreak().hasClaimed(day))
 					items.add(ClickableItem.empty(ResourcePackNumber.of(day)
 						.player(player)

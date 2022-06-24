@@ -115,6 +115,7 @@ public class SocialMedia implements Listener {
 		REDDIT("https://reddit.com/u/ProjectEdenGG"),
 		STEAM("https://steamcommunity.com/groups/ProjectEdenGG", "12247"),
 		QUEUP("https://queup.net/join/projectedengg"),
+		GITHUB("https://github.com/ProjectEdenGG"),
 		;
 
 		private String name = "&3" + camelCase(name());

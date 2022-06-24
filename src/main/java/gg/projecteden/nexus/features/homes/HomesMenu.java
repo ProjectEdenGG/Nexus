@@ -166,4 +166,8 @@ public class HomesMenu {
 		return lore;
 	}
 
+	public static String getAccessListNamesAsString(Set<UUID> accessList) {
+		return String.join("\n", getAccessListNames(accessList));
+	}
+
 }

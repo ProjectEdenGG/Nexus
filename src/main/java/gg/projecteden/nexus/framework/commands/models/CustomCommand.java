@@ -1073,7 +1073,7 @@ public abstract class CustomCommand extends ICustomCommand {
 			send(PREFIX + "Aliases: " + String.join("&e, &3", aliases));
 
 		List<JsonBuilder> lines = new ArrayList<>();
-		final List<Method> methods = getPathMethods(event)
+		final List<Method> methods = getPathMethodsForDisplay(event)
 			.stream()
 			.filter(method -> {
 				Path path = method.getAnnotation(Path.class);

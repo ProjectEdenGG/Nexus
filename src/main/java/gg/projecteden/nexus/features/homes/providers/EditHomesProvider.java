@@ -17,7 +17,7 @@ import org.bukkit.Material;
 import java.util.ArrayList;
 import java.util.List;
 
-import static gg.projecteden.nexus.features.homes.HomesMenu.getAccessListNames;
+import static gg.projecteden.nexus.features.homes.HomesMenu.getAccessListNamesAsString;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Title("&3Home Editor")
@@ -119,7 +119,7 @@ public class EditHomesProvider extends InventoryProvider {
 				item = new ItemBuilder(Material.LIME_CONCRETE);
 
 			if (home.isLocked())
-				item.glow().loreize(false).lore("", "&f&cLocked", "&f", "&eClick to edit" + getAccessListNames(home.getAccessList()));
+				item.glow().loreize(false).lore("", "&f&cLocked", "&f", "&eClick to edit" + getAccessListNamesAsString(home.getAccessList()));
 			else
 				item.lore("", "&f&aUnlocked", "&f", "&eClick to edit");
 

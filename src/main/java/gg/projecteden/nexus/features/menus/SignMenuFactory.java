@@ -6,11 +6,11 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.BlockPosition;
-import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.stream.IntStream;
+import java.util.stream.Collectors;
 
 public final class SignMenuFactory {
 	private static final int ACTION_INDEX = 9;
@@ -133,39 +133,28 @@ public final class SignMenuFactory {
 		}
 
 		public void open(Player player) {
-			Location location = player.getLocation();
-			BlockPosition blockPosition = new BlockPosition(location.getBlockX(), Math.max(location.getBlockY() - 5, 0), location.getBlockZ());
+			Location location = player.getLocation().add(0, -4, 0);
 
-			player.sendBlockChange(blockPosition.toLocation(location.getWorld()), Material.OAK_WALL_SIGN.createBlockData());
+			List<Component> lines = this.lines.stream()
+				.map(line -> colorize ? new JsonBuilder(line).build().asComponent() : Component.text(line))
+				.collect(Collectors.toList());
+
+			while (lines.size() < 4)
+				lines.add(Component.text(""));
+
+			player.sendBlockChange(location, Material.OAK_SIGN.createBlockData());
+			player.sendSignChange(location, lines);
 
 			PacketContainer openSign = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.OPEN_SIGN_EDITOR);
-			PacketContainer signData = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.TILE_ENTITY_DATA);
-
-			openSign.getBlockPositionModifier().write(0, blockPosition);
-
-			NbtCompound signNBT = (NbtCompound) signData.getNbtModifier().read(0);
-
-			// DO NOT REMOVE "WW"
-			IntStream.range(0, SIGN_LINES).forEach(line ->
-					signNBT.put("Text" + (line + 1), lines.size() > line ? String.format(NBT_FORMAT, (colorize ? StringUtils.colorize(lines.get(line)) : lines.get(line))) : "WW"));
-
-			signNBT.put("x", blockPosition.getX());
-			signNBT.put("y", blockPosition.getY());
-			signNBT.put("z", blockPosition.getZ());
-			signNBT.put("id", NBT_BLOCK_ID);
-
-			signData.getBlockPositionModifier().write(0, blockPosition);
-			signData.getIntegers().write(0, ACTION_INDEX);
-			signData.getNbtModifier().write(0, signNBT);
-
+			BlockPosition position = new BlockPosition(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+			openSign.getBlockPositionModifier().write(0, position);
 			try {
-				ProtocolLibrary.getProtocolManager().sendServerPacket(player, signData);
 				ProtocolLibrary.getProtocolManager().sendServerPacket(player, openSign);
-			} catch (InvocationTargetException exception) {
-				exception.printStackTrace();
+			} catch (InvocationTargetException ex) {
+				ex.printStackTrace();
 			}
 
-			Nexus.getSignMenuFactory().signLocations.put(player, blockPosition);
+			Nexus.getSignMenuFactory().signLocations.put(player, position);
 			Nexus.getSignMenuFactory().inputReceivers.putIfAbsent(player, this);
 		}
 	}

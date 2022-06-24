@@ -63,7 +63,7 @@ public class VaultCommand extends CustomCommand {
 			this.user = user;
 			this.page = page;
 
-			open(user.get(page, player));
+			open(4, user.get(page, player));
 		}
 
 		@Override

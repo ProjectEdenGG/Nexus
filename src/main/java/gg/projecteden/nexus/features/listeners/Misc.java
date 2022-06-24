@@ -26,6 +26,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.models.mode.ModeUser;
 import gg.projecteden.nexus.models.mode.ModeUser.FlightMode;
 import gg.projecteden.nexus.models.mode.ModeUserService;
+import gg.projecteden.nexus.models.nerd.NBTPlayer;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -46,7 +47,9 @@ import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import me.libraryaddict.disguise.DisguiseAPI;
 import org.bukkit.Bukkit;
+import org.bukkit.Difficulty;
 import org.bukkit.GameMode;
+import org.bukkit.GameRule;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -115,10 +118,12 @@ public class Misc implements Listener {
 	static {
 		for (World world : Bukkit.getWorlds()) {
 			// Skip main world
-			if (world.equals(Bukkit.getWorlds().get(0)))
-				continue;
+			if (!world.equals(Bukkit.getWorlds().get(0)))
+				world.setKeepSpawnInMemory(false);
 
-			world.setKeepSpawnInMemory(false);
+			world.setGameRule(GameRule.COMMAND_BLOCK_OUTPUT, false);
+			if (WorldGroup.of(world) == WorldGroup.SURVIVAL)
+				world.setDifficulty(Difficulty.HARD);
 
 			// disable TIME_SINCE_SLEEP (used to determine when to spawn phantoms) outside the survival worlds
 			WorldGroup worldGroup = WorldGroup.of(world);
@@ -471,7 +476,7 @@ public class Misc implements Listener {
 	public void onConnect(AsyncPlayerPreLoginEvent event) {
 		Nerd nerd = Nerd.of(event.getUniqueId());
 		try {
-			World world = nerd.getOfflineWorld();
+			World world = new NBTPlayer(nerd).getWorld();
 			if (world == null) return;
 
 			if (SubWorldGroup.of(world) == SubWorldGroup.RESOURCE) {

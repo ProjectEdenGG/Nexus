@@ -20,9 +20,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+import static gg.projecteden.api.common.utils.UUIDUtils.isUUID0;
 import static gg.projecteden.nexus.models.banker.BankerService.rounded;
 import static gg.projecteden.nexus.models.banker.Transaction.TransactionCause.shopCauses;
-import static gg.projecteden.api.common.utils.UUIDUtils.isUUID0;
 
 @Data
 @Builder
@@ -81,6 +81,7 @@ public class Transaction {
 		this.description = description;
 		this.cause = cause;
 		this.shopGroup = shopGroup;
+		this.timestamp = LocalDateTime.now();
 
 		if (shopGroup == null)
 			throw new InvalidInputException("Could not determine shop group for transaction");
@@ -100,6 +101,7 @@ public class Transaction {
 		this.description = description;
 		this.cause = cause;
 		this.shopGroup = shopGroup;
+		this.timestamp = LocalDateTime.now();
 
 		if (shopGroup == null)
 			throw new InvalidInputException("Could not determine shop group for transaction");

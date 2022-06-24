@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands.staff;
 
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -21,6 +22,7 @@ import org.inventivetalent.glow.GlowAPI;
 
 import java.util.Collections;
 
+@Disabled
 @Permission(Group.STAFF)
 public class WhereIsCommand extends CustomCommand {
 	private static boolean enabled = true;

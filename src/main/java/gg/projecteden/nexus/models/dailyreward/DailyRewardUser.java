@@ -76,6 +76,10 @@ public class DailyRewardUser implements PlayerOwnedObject {
 			return claimed.contains(day);
 		}
 
+		public boolean canClaim(int day) {
+			return streak >= day;
+		}
+
 		public void claim(int day){
 			claimed.add(day);
 		}

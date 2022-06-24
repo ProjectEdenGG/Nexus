@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands.staff;
 
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.flags.Flag;
+import gg.projecteden.nexus.features.listeners.events.WorldGroupChangedEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
@@ -12,6 +13,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFo
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.LuckPermsUtils.PermissionChange;
 import gg.projecteden.nexus.utils.WorldGuardFlagUtils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.dv8tion.jda.annotations.ReplaceWith;
@@ -38,6 +40,9 @@ public class WorldGuardEditCommand extends CustomCommand implements Listener {
 
 	@Path("[enable]")
 	void toggle(Boolean enable) {
+		if (worldGroup() == WorldGroup.LEGACY && !isAdmin())
+			error("You cannot enable WorldGuard editing here");
+
 		if (enable == null) enable = !player().hasPermission(PERMISSION);
 
 		if (enable) {
@@ -73,6 +78,12 @@ public class WorldGuardEditCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		if (canWorldGuardEdit(event.getPlayer()))
+			off(event.getPlayer());
+	}
+
+	@EventHandler
+	public void on(WorldGroupChangedEvent event) {
+		if (event.getNewWorldGroup() == WorldGroup.LEGACY)
 			off(event.getPlayer());
 	}
 

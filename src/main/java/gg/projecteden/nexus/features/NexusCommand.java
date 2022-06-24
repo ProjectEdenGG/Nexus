@@ -3,6 +3,9 @@ package gg.projecteden.nexus.features;
 import de.tr7zw.nbtapi.NBTCompound;
 import de.tr7zw.nbtapi.NBTEntity;
 import de.tr7zw.nbtapi.NBTFile;
+import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.crates.models.CrateType;
@@ -36,6 +39,7 @@ import gg.projecteden.nexus.framework.features.Features;
 import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 import gg.projecteden.nexus.models.chatgames.ChatGamesConfig;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.models.nerd.NBTPlayer;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.quests.Quester;
@@ -52,9 +56,6 @@ import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.QueuedTask;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.api.common.utils.Env;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -96,9 +97,9 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.zip.ZipFile;
 
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 import static gg.projecteden.api.common.utils.TimeUtils.shortDateFormat;
 import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
+import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @NoArgsConstructor
 @Permission(Group.ADMIN)
@@ -435,7 +436,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 		if (!MaterialTag.ALL_AIR.isTagged(air.getType()))
 			error("You must be looking at the ground");
 
-		NBTFile dataFile = nerd.getNbtFile();
+		NBTFile dataFile = new NBTPlayer(nerd).getNbtFile();
 		NBTCompound rootVehicle = dataFile.getCompound("RootVehicle");
 		if (rootVehicle == null)
 			error("RootVehicle compound is null");
