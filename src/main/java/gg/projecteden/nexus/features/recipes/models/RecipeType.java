@@ -30,9 +30,9 @@ public enum RecipeType {
 	STONE_BRICK(Material.STONE_BRICKS),
 	MISC(Material.BLUE_ICE),
 	FUNCTIONAL(Material.CHEST, true),
+	FURNACE(Material.FURNACE, true),
 	DECORATION(CustomMaterial.WINDCHIMES_AMETHYST, true),
-	ARMOR(Material.DIAMOND_CHESTPLATE, true),
-	FURNACE(Material.FURNACE);
+	ARMOR(Material.DIAMOND_CHESTPLATE, true);
 
 	private final Material material;
 	private final int modelId;
