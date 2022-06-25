@@ -12,16 +12,20 @@ import gg.projecteden.nexus.models.clientsideentities.ClientSideEntitiesConfig;
 import gg.projecteden.nexus.models.clientsideentities.ClientSideEntitiesConfigService;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Hanging;
 import org.bukkit.entity.Player;
 
+import java.util.Objects;
 import java.util.Set;
 
+@SuppressWarnings("UnstableApiUsage")
 @Permission(Group.STAFF)
 public class ClientSideEntitiesCommand extends CustomCommand {
 	private final ClientSideEntitiesConfigService service = new ClientSideEntitiesConfigService();
@@ -41,10 +45,10 @@ public class ClientSideEntitiesCommand extends CustomCommand {
 			if (survival == null)
 				return;
 
-//			new WorldGuardUtils(survival).getEntitiesInRegion("spawn").forEach(entity -> {
-//				if (entity instanceof HangingEntity hanging)
-//					hanging.setCanTick(false);
-//			});
+			new WorldGuardUtils(survival).getEntitiesInRegion("spawn").forEach(entity -> {
+				if (entity instanceof Hanging hanging)
+					hanging.setCanTick(false);
+			});
 		});
 
 		Tasks.repeat(TickTime.SECOND, TickTime.SECOND, () -> {
@@ -77,9 +81,11 @@ public class ClientSideEntitiesCommand extends CustomCommand {
 		config.setEnabled(enabled);
 		service.save(config);
 
-		// TODO
-//		if (!enabled)
-//			player().getHiddenEntities(Nexus.getInstance()).forEach(uuid -> player().showEntity(Nexus.getInstance(), uuid));
+		if (!enabled)
+			player().getHiddenEntities(Nexus.getInstance()).stream()
+				.map(Bukkit::getEntity)
+				.filter(Objects::nonNull)
+				.forEach(entity -> player().showEntity(Nexus.getInstance(), entity));
 
 		send(PREFIX + (enabled ? "&aEnabled" : "&cDisabled"));
 	}
