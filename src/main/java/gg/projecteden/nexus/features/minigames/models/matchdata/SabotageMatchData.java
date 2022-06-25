@@ -473,8 +473,11 @@ public class SabotageMatchData extends MatchData {
 			if (team == SabotageTeam.JESTER) {
 				ejected.scored();
 				match.end();
-			} else if (ejected != null)
-				match.getMechanic().onDeath(new MinigamerDeathEvent(ejected));
+			} else if (ejected != null) {
+				MinigamerDeathEvent event = new MinigamerDeathEvent(ejected);
+				if (event.callEvent())
+					match.getMechanic().onDeath(event);
+			}
 		});
 	}
 

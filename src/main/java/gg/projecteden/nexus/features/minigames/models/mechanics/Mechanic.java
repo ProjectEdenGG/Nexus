@@ -436,6 +436,8 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 			return true;
 
 		// handle respawning
+		if (target.isRespawning())
+			return false;
 		if (viewer.isRespawning())
 			return false;
 

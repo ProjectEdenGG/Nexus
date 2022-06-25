@@ -583,7 +583,9 @@ public class Sabotage extends TeamMechanic {
 				&& event.getAttacker().getPlayer().getInventory().getItemInMainHand().isSimilar(KILL_ITEM.get()) && matchData.getKillCooldown(event.getMinigamer()) <= 0) {
 			matchData.putKillCooldown(event.getAttacker());
 			matchData.spawnBody(event.getMinigamer());
-			onDeath(new MinigamerDeathEvent(event.getMinigamer(), event.getAttacker(), event.getOriginalEvent()));
+			MinigamerDeathEvent deathEvent = new MinigamerDeathEvent(event.getMinigamer(), event.getAttacker(), event.getOriginalEvent());
+			if (deathEvent.callEvent())
+				onDeath(deathEvent);
 			if (event.getOriginalEvent() instanceof Cancellable cancellable)
 				cancellable.setCancelled(true);
 		} else
