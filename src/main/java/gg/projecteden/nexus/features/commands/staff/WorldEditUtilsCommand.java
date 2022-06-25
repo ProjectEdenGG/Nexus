@@ -16,6 +16,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.FakeWorldEdit;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldEditUtils.Paster;
@@ -26,6 +27,11 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.Ageable;
+import org.bukkit.block.data.Bisected;
+import org.bukkit.block.data.Bisected.Half;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Waterlogged;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,6 +39,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiConsumer;
+
+import static gg.projecteden.nexus.utils.BlockUtils.getBlocksInRadius;
 
 @Aliases("weutils")
 @Permission(Group.STAFF)
@@ -190,6 +199,70 @@ public class WorldEditUtilsCommand extends CustomCommand {
 
 		worldedit.paster().clipboard(clipboards.get(uuid())).at(location()).pasteAsync();
 		send("Pasted clipboard");
+	}
+
+	@Path("oceanflora <radius> [--kelpChance] [--seagrassChance] [--tallSeagrassChance] [--nothingWeight] [--minKelpAge] [--maxKelpAge]")
+	void oceanflora(
+		@Arg(min = 1, max = 50) int radius,
+		@Switch @Arg(value = "7.5", min = 1, max = 100) double kelpWeight,
+		@Switch @Arg(value = "20", min = 1, max = 100) double seagrassWeight,
+		@Switch @Arg(value = "7", min = 1, max = 100) double tallSeagrassWeight,
+		@Switch @Arg(value = "60", min = 1, max = 100) double nothingWeight,
+		@Switch @Arg(value = "12", min = 4, max = 25) int minKelpAge,
+		@Switch @Arg(value = "25", min = 4, max = 25) int maxKelpAge
+
+	) {
+		final Map<Material, Double> weights = Map.of(
+			Material.KELP, kelpWeight,
+			Material.SEAGRASS, seagrassWeight,
+			Material.TALL_SEAGRASS, tallSeagrassWeight,
+			Material.WATER, nothingWeight
+		);
+
+		int count = 0;
+		for (Block block : getBlocksInRadius(block(), radius, 0, radius)) {
+			final Location floor = world().getHighestBlockAt(block.getLocation()).getLocation();
+			while (floor.getBlock().getType() == Material.WATER || floor.getBlock().getType() == Material.AIR)
+				floor.add(0, -1, 0);
+
+			floor.add(0, 1, 0);
+
+			if (floor.getBlock().getType() != Material.WATER)
+				continue;
+
+			final Material material = RandomUtils.getWeightedRandom(weights);
+			++count;
+			switch (material) {
+				case KELP, SEAGRASS -> {
+					final BlockData blockData = material.createBlockData();
+					if (blockData instanceof Waterlogged waterlogged)
+						waterlogged.setWaterlogged(true);
+
+					if (blockData instanceof Ageable ageable)
+						ageable.setAge(RandomUtils.randomInt(minKelpAge, maxKelpAge));
+
+					floor.getBlock().setBlockData(blockData);
+				}
+				case TALL_SEAGRASS -> {
+					final BiConsumer<Location, Half> consumer = (location, half) -> {
+						final BlockData upper = Material.TALL_SEAGRASS.createBlockData();
+						if (upper instanceof Bisected bisected)
+							bisected.setHalf(half);
+
+						if (upper instanceof Waterlogged waterlogged)
+							waterlogged.setWaterlogged(true);
+
+						location.getBlock().setBlockData(upper);
+					};
+
+					consumer.accept(floor, Half.BOTTOM);
+					consumer.accept(floor.add(0, 1, 0), Half.TOP);
+				}
+				default -> --count;
+			}
+		}
+
+		send(count + " blocks changed");
 	}
 
 }
