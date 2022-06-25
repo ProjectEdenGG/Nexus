@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.models.Match;
@@ -25,7 +26,6 @@ import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks.Countdown;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -195,6 +195,7 @@ public class Murder extends TeamMechanic {
 	@Override
 	public void onDamage(@NotNull MinigamerDamageEvent event) {
 		super.onDamage(event);
+		event.setCancelled(true);
 
 		if (event.getOriginalEvent() != null && event.getOriginalEvent() instanceof EntityDamageByEntityEvent originalEvent) {
 			if (
@@ -204,7 +205,6 @@ public class Murder extends TeamMechanic {
 					event.getAttacker().getPlayer().getInventory().getItemInMainHand().getType() == Material.IRON_SWORD
 			) {
 				// Staby-stab
-				event.setCancelled(true);
 				kill(event.getMinigamer());
 			}
 		}
