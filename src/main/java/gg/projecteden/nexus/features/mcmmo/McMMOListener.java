@@ -43,6 +43,7 @@ import java.util.List;
 
 import static gg.projecteden.nexus.features.mcmmo.McMMO.TIER_ONE;
 import static gg.projecteden.nexus.features.mcmmo.McMMO.TIER_ONE_ALL;
+import static gg.projecteden.nexus.features.mcmmo.McMMO.TIER_TWO_ALL;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
@@ -78,8 +79,9 @@ public class McMMOListener implements Listener {
 
 	@EventHandler
 	public void onMcMMOLevelUp(McMMOPlayerLevelUpEvent event) {
-		if (event.getSkillLevel() == TIER_ONE)
-			Koda.say(Nickname.of(event.getPlayer()) + " reached level 100 in " + camelCase(event.getSkill().name()) + "! Congratulations!");
+		int skillLevel = event.getSkillLevel();
+		if (skillLevel > 0 && skillLevel % TIER_ONE == 0)
+			Koda.say(Nickname.of(event.getPlayer()) + " reached level " + skillLevel + " in " + camelCase(event.getSkill().name()) + "! Congratulations!");
 
 		final McMMOPlayer mcMMOPlayer = UserManager.getOfflinePlayer(event.getPlayer());
 
@@ -89,6 +91,8 @@ public class McMMOListener implements Listener {
 
 		if (powerLevel == TIER_ONE_ALL)
 			Koda.say(Nickname.of(event.getPlayer()) + " has mastered all their skills! Congratulations!");
+		else if (powerLevel == TIER_TWO_ALL)
+			Koda.say(Nickname.of(event.getPlayer()) + " has exceptionally mastered all their skills! Congratulations!");
 	}
 
 	void scheduler() {
