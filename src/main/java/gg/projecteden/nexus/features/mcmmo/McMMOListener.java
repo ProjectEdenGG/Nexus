@@ -3,8 +3,10 @@ package gg.projecteden.nexus.features.mcmmo;
 import com.gmail.nossr50.datatypes.player.McMMOPlayer;
 import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
 import com.gmail.nossr50.events.experience.McMMOPlayerLevelUpEvent;
+import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
 import com.gmail.nossr50.events.skills.unarmed.McMMOPlayerDisarmEvent;
 import com.gmail.nossr50.util.player.UserManager;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -14,14 +16,15 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Tag;
 import org.bukkit.TreeSpecies;
 import org.bukkit.TreeType;
+import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Ageable;
@@ -48,6 +51,24 @@ public class McMMOListener implements Listener {
 	public McMMOListener() {
 		Nexus.registerListener(this);
 		scheduler();
+	}
+
+	private static final List<PrimarySkillType> MELEE_SKILLS = List.of(PrimarySkillType.AXES, PrimarySkillType.SWORDS, PrimarySkillType.UNARMED);
+
+	@EventHandler
+	public void onEndExpGain(McMMOPlayerXpGainEvent event) {
+		final Player player = event.getPlayer();
+		if (player.getWorld().getEnvironment() != Environment.THE_END)
+			return;
+
+		final WorldGuardUtils worldguard = new WorldGuardUtils(player);
+		if (!worldguard.getRegionNamesAt(player.getLocation()).contains("endermanfarm-deny"))
+			return;
+
+		if (!MELEE_SKILLS.contains(event.getSkill()))
+			return;
+
+		event.setCancelled(true);
 	}
 
 	@EventHandler
