@@ -8,10 +8,10 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.GlowUtils;
+import gg.projecteden.nexus.utils.GlowUtils.GlowColor;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.inventivetalent.glow.GlowAPI;
 
 import java.util.Collections;
 
@@ -40,10 +40,10 @@ public class HealthCommand extends CustomCommand {
 	void target(@Arg(permission = Group.STAFF, min = 0.0, max = 20.0) Double health) {
 		LivingEntity target = getTargetLivingEntityRequired();
 
-		Tasks.GlowTask.builder()
+		GlowUtils.GlowTask.builder()
 			.duration(10 * 20)
 			.entity(target)
-			.color(GlowAPI.Color.RED)
+			.color(GlowColor.RED)
 			.viewers(Collections.singletonList(player()))
 			.start();
 

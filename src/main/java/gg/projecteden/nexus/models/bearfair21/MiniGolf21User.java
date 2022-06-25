@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigol
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfParticle;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
+import gg.projecteden.nexus.utils.GlowUtils.GlowColor;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -21,7 +22,6 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.entity.Snowball;
 import org.bukkit.inventory.ItemStack;
-import org.inventivetalent.glow.GlowAPI;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -91,7 +91,7 @@ public class MiniGolf21User implements PlayerOwnedObject {
 		return miniGolfColor.getColorType().getChatColor();
 	}
 
-	public GlowAPI.Color getGlowColor() {
+	public GlowColor getGlowColor() {
 		return this.miniGolfColor.getColorType().getGlowColor();
 	}
 

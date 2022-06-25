@@ -958,7 +958,7 @@ public class PlayerUtils {
 	 * @param hasPlayers list of optional players
 	 * @return list of non-null players
 	 */
-	public static @NonNull List<@NonNull Player> getNonNullPlayers(List<? extends @NonNull OptionalPlayer> hasPlayers) {
+	public static @NonNull List<@NonNull Player> getNonNullPlayers(Collection<? extends @NonNull OptionalPlayer> hasPlayers) {
 		return hasPlayers.stream().map(OptionalPlayer::getPlayer).filter(Objects::nonNull).collect(toList());
 	}
 

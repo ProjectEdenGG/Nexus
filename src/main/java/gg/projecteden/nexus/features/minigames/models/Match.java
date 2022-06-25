@@ -1,5 +1,9 @@
 package gg.projecteden.nexus.features.minigames.models;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan.FormatType;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan.TimespanBuilder;
 import gg.projecteden.nexus.features.commands.staff.admin.RebootCommand;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.minigames.Minigames;
@@ -25,6 +29,7 @@ import gg.projecteden.nexus.features.minigames.modifiers.NoModifier;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.BossBarBuilder;
+import gg.projecteden.nexus.utils.GlowUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
@@ -32,10 +37,6 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.Countdown.CountdownBuilder;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.api.common.utils.TimeUtils.Timespan;
-import gg.projecteden.api.common.utils.TimeUtils.Timespan.FormatType;
-import gg.projecteden.api.common.utils.TimeUtils.Timespan.TimespanBuilder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
@@ -56,7 +57,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.inventivetalent.glow.GlowAPI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -216,7 +216,7 @@ public class Match implements ForwardingAudience {
 
 		if (modifierBar != null) minigamer.getPlayer().hideBossBar(modifierBar);
 		if (scoreboard != null) scoreboard.handleQuit(minigamer);
-		GlowAPI.setGlowing(getPlayers(), GlowAPI.Color.NONE, minigamer.getPlayer());
+		GlowUtils.unglow(getPlayers()).receivers(minigamer.getPlayer()).run();
 
 		if (minigamers.size() == 0)
 			end();
@@ -274,7 +274,7 @@ public class Match implements ForwardingAudience {
 		if (scoreboard != null) scoreboard.handleEnd();
 
 		List<Player> players = getPlayers();
-		GlowAPI.setGlowing(players, GlowAPI.Color.NONE, players);
+		GlowUtils.unglow(players).receivers(players).run();
 
 		MatchManager.remove(this);
 	}
@@ -364,8 +364,8 @@ public class Match implements ForwardingAudience {
 				List<Player> teamMembers = team.getMinigamers(this).stream().map(Minigamer::getPlayer).collect(Collectors.toList());
 				List<Player> otherPlayers = new ArrayList<>(OnlinePlayers.getAll());
 				otherPlayers.removeAll(teamMembers);
-				GlowAPI.setGlowing(teamMembers, team.getColorType().getGlowColor(), teamMembers);
-				GlowAPI.setGlowing(otherPlayers, GlowAPI.Color.NONE, teamMembers);
+				GlowUtils.glow(teamMembers).receivers(teamMembers).run();
+				GlowUtils.unglow(otherPlayers).receivers(teamMembers).run();
 				glowUpdates.remove(team, taskId.get());
 			}));
 			glowUpdates.put(team, taskId.get());

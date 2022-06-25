@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.events.y2021.bearfair21.commands;
 import com.destroystokyo.paper.entity.Pathfinder;
 import com.sk89q.worldedit.regions.Region;
 import gg.projecteden.api.common.annotations.Disabled;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.PathfinderHelper;
 import gg.projecteden.nexus.features.particles.effects.LineEffect;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -17,8 +18,9 @@ import gg.projecteden.nexus.models.bearfair21.BearFair21WebConfig.Route;
 import gg.projecteden.nexus.models.bearfair21.BearFair21WebConfig.Web;
 import gg.projecteden.nexus.models.bearfair21.BearFair21WebConfigService;
 import gg.projecteden.nexus.models.particle.ParticleService;
-import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.GlowUtils;
+import gg.projecteden.nexus.utils.GlowUtils.GlowColor;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -26,7 +28,6 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -38,7 +39,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.inventivetalent.glow.GlowAPI.Color;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -122,7 +122,7 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 		pathfinder.moveTo(random.getPathLocation());
 		send("pathfinding to: " + StringUtils.getShortLocationString(random.getPathLocation()));
 
-		BlockUtils.glow(location.getBlock(), TickTime.SECOND.x(10), player());
+		GlowUtils.glow(location.getBlock(), TickTime.SECOND.x(10), player());
 	}
 
 	@Path("entity stop")
@@ -150,15 +150,15 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 		Route route = findRoute(player(), web, startNode, endNode, null, startNode, new Route(startNode), new HashSet<>());
 
 		Tasks.wait(wait += 10, () -> {
-			BlockUtils.glow(endNode.getPathLocation().getBlock(), ticks, player(), Color.BLUE);
-			BlockUtils.glow(startNode.getPathLocation().getBlock(), ticks, player(), Color.RED);
+			GlowUtils.glow(endNode.getPathLocation().getBlock(), ticks, player(), GlowColor.BLUE);
+			GlowUtils.glow(startNode.getPathLocation().getBlock(), ticks, player(), GlowColor.RED);
 
 			for (UUID nodeUuid : route.getNodeUuids()) {
 				Node node = web.getNodeById(nodeUuid);
 				Block block = node.getPathLocation().getBlock();
 
 				if (!route.getNodeUuids().getFirst().equals(nodeUuid) && !route.getNodeUuids().getLast().equals(nodeUuid))
-					BlockUtils.glow(block, ticks, player(), Color.WHITE);
+					GlowUtils.glow(block, ticks, player(), GlowColor.WHITE);
 			}
 		});
 	}

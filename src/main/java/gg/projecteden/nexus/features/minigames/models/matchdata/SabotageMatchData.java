@@ -31,6 +31,8 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineE
 import gg.projecteden.nexus.models.chat.PublicChannel;
 import gg.projecteden.nexus.utils.BossBarBuilder;
 import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.GlowUtils;
+import gg.projecteden.nexus.utils.GlowUtils.GlowColor;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
@@ -64,7 +66,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
-import org.inventivetalent.glow.GlowAPI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -587,8 +588,8 @@ public class SabotageMatchData extends MatchData {
 				match.getTasks().wait(1, () -> PacketUtils.sendFakeItem(entity, minigamer, entity.getEquipment().getHelmet(), EnumWrappers.ItemSlot.HEAD));
 			}
 		});
-		GlowAPI.setGlowing(disable, null, player);
-		GlowAPI.setGlowing(enable, GlowAPI.Color.WHITE, player);
+		GlowUtils.unglow(disable).receivers(player).run();
+		GlowUtils.glow(enable).color(GlowColor.WHITE).receivers(player).run();
 	}
 
 	private static final Duration fade = Duration.ofSeconds(1).dividedBy(2);
