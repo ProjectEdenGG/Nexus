@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.store;
 
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.commands.EmotesCommand;
@@ -180,6 +181,7 @@ public enum Package {
 		}
 	},
 
+	@Disabled
 	@Id("4496334")
 	@Category(StoreCategory.BOOSTS)
 	MARKET_SELL_PRICES {
@@ -348,6 +350,7 @@ public enum Package {
 		}
 	},
 
+	@Disabled
 	@Id("4714837")
 	@Category(StoreCategory.BOOSTS)
 	HALLOWEEN_CANDY {
@@ -468,21 +471,21 @@ public enum Package {
 	@Display(Material.DAYLIGHT_DETECTOR)
 	PTIME,
 
+	@Disabled
 	@Id("4722595")
 	@Category(StoreCategory.VISUALS)
-	@Permission(PlayerTimeCommand.PERMISSION)
 	@Display(model = CustomMaterial.PLAYER_PLUSHIE_SITTING)
 	PLAYER_PLUSHIES_TIER_1,
 
+	@Disabled
 	@Id("TODO")
 	@Category(StoreCategory.VISUALS)
-	@Permission(PlayerTimeCommand.PERMISSION)
 	@Display(model = CustomMaterial.PLAYER_PLUSHIE_STANDING)
 	PLAYER_PLUSHIES_TIER_2,
 
+	@Disabled
 	@Id("TODO")
 	@Category(StoreCategory.VISUALS)
-	@Permission(PlayerTimeCommand.PERMISSION)
 	@Display(model = CustomMaterial.PLAYER_PLUSHIE_DABBING)
 	PLAYER_PLUSHIES_TIER_3,
 
@@ -868,6 +871,10 @@ public enum Package {
 		if (getField().getAnnotation(PermissionGroup.class) != null)
 			return getField().getAnnotation(PermissionGroup.class).value();
 		return null;
+	}
+
+	public boolean isDisabled() {
+		return getField().isAnnotationPresent(Disabled.class);
 	}
 
 	@NotNull
