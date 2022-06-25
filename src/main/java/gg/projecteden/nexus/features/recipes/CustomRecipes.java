@@ -285,7 +285,7 @@ public class CustomRecipes extends Feature implements Listener {
 		for (WoodType wood : WoodType.values()) {
 			shapeless().add(wood.getStrippedLog(), 2).toMake(wood.getLog(), 2).build().type(RecipeType.MISC).register();
 			shapeless().add(wood.getStrippedWood(), 2).toMake(wood.getWood(), 2).build().type(RecipeType.MISC).register();
-			shapeless().add(wood.getStair()).toMake(wood.getPlanks(), 6).build().type(RecipeType.MISC).register();
+			shapeless().add(wood.getStair(), 4).toMake(wood.getPlanks(), 6).build().type(RecipeType.MISC).register();
 		}
 
 		dyeStation();
