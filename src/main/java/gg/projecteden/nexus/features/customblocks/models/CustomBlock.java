@@ -736,13 +736,13 @@ public enum CustomBlock implements Keyed {
 		;
 
 		@Getter
-		private final Material blockMaterial;
+		private final Material block;
 		@Getter
-		private final Material itemMaterial;
+		private final Material item;
 
-		CustomBlockType(Material blockMaterial, Material itemMaterial) {
-			this.blockMaterial = blockMaterial;
-			this.itemMaterial = itemMaterial;
+		CustomBlockType(Material block, Material itemMaterial) {
+			this.block = block;
+			this.item = itemMaterial;
 		}
 
 		public static Set<Material> getItemMaterials() {
@@ -750,7 +750,7 @@ public enum CustomBlock implements Keyed {
 			for (CustomBlockType type : values()) {
 				if (type == UNKNOWN) continue;
 
-				result.add(type.getItemMaterial());
+				result.add(type.getItem());
 			}
 			return result;
 		}
@@ -760,7 +760,7 @@ public enum CustomBlock implements Keyed {
 			for (CustomBlockType type : values()) {
 				if (type == UNKNOWN) continue;
 
-				result.add(type.getBlockMaterial());
+				result.add(type.getBlock());
 			}
 			return result;
 		}

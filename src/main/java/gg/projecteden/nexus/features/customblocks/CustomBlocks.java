@@ -21,12 +21,12 @@ import java.util.List;
 	TODO:
 		- Future Conversions on chunk generate/load, itemstacks & blocks
 		- WorldEdit handling
+		- Auto-Tool support
+		- BlockPhysicsEvent
 		- Tripwire implementation:
 			- Placing string needs properly update nearby tripwire to tripwire cross if suitable
 			- If placed next to hook, and both hooks exist, attach the hooks
-		- BlockPhysicsEvent
 		- 6 tick delay between block break
-		- Auto-Tool
 		- //
 		- Cannot Fix:
 			- Custom blocks may flash when placing blocks near them (clientside only) --> Titan

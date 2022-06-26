@@ -70,6 +70,7 @@ public class CustomBlockListener implements Listener {
 		Nexus.registerListener(this);
 
 		new CustomBlockSounds();
+		new ConversionListener();
 	}
 
 	@EventHandler
@@ -140,7 +141,7 @@ public class CustomBlockListener implements Listener {
 		CustomBlock customBlock = CustomBlock.fromBlock(above);
 		if (CustomBlock.NOTE_BLOCK == customBlock) {
 			NoteBlock noteBlock = (NoteBlock) above.getBlockData();
-			CustomBlockData data = CustomBlockUtils.getData(noteBlock, above.getLocation());
+			CustomBlockData data = CustomBlockUtils.getDataOrCreate(above.getLocation(), noteBlock);
 			if (data == null)
 				return;
 
@@ -276,7 +277,7 @@ public class CustomBlockListener implements Listener {
 		// initial checks
 		for (Block block : blocks) {
 			NoteBlock noteBlock = (NoteBlock) block.getBlockData();
-			CustomBlockData data = CustomBlockUtils.getData(noteBlock, block.getLocation().toBlockLocation());
+			CustomBlockData data = CustomBlockUtils.getDataOrCreate(block.getLocation().toBlockLocation(), noteBlock);
 			if (data == null)
 				continue;
 
@@ -316,7 +317,7 @@ public class CustomBlockListener implements Listener {
 		if (!block.getBlockData().matches(blockData))
 			return;
 
-		CustomBlockData data = CustomBlockUtils.getData(blockData, block.getLocation());
+		CustomBlockData data = CustomBlockUtils.getDataOrCreate(block.getLocation(), blockData);
 		if (data == null)
 			return;
 
@@ -642,7 +643,7 @@ public class CustomBlockListener implements Listener {
 	}
 
 	private void changePitch(NoteBlock noteBlock, Location location, boolean sneaking) {
-		CustomBlockData data = CustomBlockUtils.getData(noteBlock, location);
+		CustomBlockData data = CustomBlockUtils.getDataOrCreate(location, noteBlock);
 		if (data == null)
 			return;
 

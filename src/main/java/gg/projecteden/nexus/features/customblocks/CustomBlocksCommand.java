@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.customblocks;
 
+import gg.projecteden.nexus.features.customblocks.listeners.ConversionListener;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlockTab;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlockTag;
@@ -28,6 +29,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.MultipleFacing;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,6 +58,15 @@ public class CustomBlocksCommand extends CustomCommand {
 
 		CustomBlocks.setDebug(state);
 		send(PREFIX + (state ? "&aEnabled" : "&cDisabled"));
+	}
+
+	@Path("chunktest")
+	void chunk() {
+		List<Location> found = ConversionListener.getCustomBlockLocations(player().getLocation().getChunk().getChunkSnapshot(), world());
+		send("Size: " + found.size());
+		for (Location location : found) {
+			send(location.getBlock().getType() + " = " + StringUtils.getCoordinateString(location));
+		}
 	}
 
 	@Path
@@ -144,12 +155,20 @@ public class CustomBlocksCommand extends CustomCommand {
 			.toList();
 	}
 
-	/*
-		https://minecraft.fandom.com/wiki/Breaking
+	@Path("getBlockDirectional")
+	@Permission(Group.ADMIN)
+	void directionalBlock() {
+		Block block = getTargetBlockRequired();
+		if (!(block.getBlockData() instanceof MultipleFacing multipleFacing)) {
+			error("Block is not directional");
+			return;
+		}
 
-		If the tool and enchantments immediately equal or exceeds the hardness times 30, the block
-		breaks with no delay; otherwise a 6 tick (3⁄10 second) delay occurs before the next block begins to break.
-	 */
+		send("Faces = " + multipleFacing.getAllowedFaces());
+		line();
+		send("Facing = " + multipleFacing.getFaces());
+	}
+
 	@Path("getBlockHardness")
 	@Permission(Group.ADMIN)
 	void hardness() {
@@ -173,7 +192,7 @@ public class CustomBlocksCommand extends CustomCommand {
 		line();
 		send("Tool: " + itemType);
 		send("Item Destroy Speed: " + destroySpeedItem);
-		send("Is Best Tool: " + isBestTool);
+		send("Is Preferred Tool: " + isBestTool);
 		line();
 		send("Block Damage: " + blockDamage);
 		send("Break Times: " + breakTicks + "t | " + breakSeconds + "s");

@@ -29,6 +29,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Powerable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -103,22 +104,32 @@ public class CustomBlockUtils {
 		trackerService.save(tracker);
 	}
 
-	public static @Nullable CustomBlockData getData(@NonNull BlockData blockData, Location location) {
-		tracker = trackerService.fromWorld(location);
-		CustomBlockData data = tracker.get(location);
-		if (!data.exists()) {
-			CustomBlock customBlock = CustomBlock.fromBlockData(blockData, location.getBlock().getRelative(BlockFace.DOWN));
-			if (customBlock == null) {
-				debug("GetData: CustomBlock == null");
-				return null;
-			}
-
-			debug("GetData: creating new data for " + customBlock.name());
-			BlockFace facing = CustomBlockUtils.getFacing(customBlock, blockData, location.getBlock().getRelative(BlockFace.DOWN));
-			data = placeBlockDatabase(UUIDUtils.UUID0, customBlock, location, facing);
-		}
+	public static @Nullable CustomBlockData getDataOrCreate(@NonNull Location location, @NonNull BlockData blockData) {
+		CustomBlockData data = getData(location);
+		if (!data.exists())
+			data = createData(location, blockData);
 
 		return data;
+	}
+
+	public static @NonNull CustomBlockData getData(@NonNull Location location) {
+		return trackerService.fromWorld(location).get(location);
+	}
+
+	public static @Nullable CustomBlockData createData(@NonNull Location location, @NonNull BlockData blockData) {
+		CustomBlock customBlock = CustomBlock.fromBlockData(blockData, location.getBlock().getRelative(BlockFace.DOWN));
+		if (customBlock == null) {
+			debug("CreateData: CustomBlock == null");
+			return null;
+		}
+
+		BlockFace facing = CustomBlockUtils.getFacing(customBlock, blockData, location.getBlock().getRelative(BlockFace.DOWN));
+		return createData(location, customBlock, facing);
+	}
+
+	public static @NotNull CustomBlockData createData(@NonNull Location location, @NonNull CustomBlock customBlock, BlockFace facing) {
+		debug("CreateData: creating new data for " + customBlock.name());
+		return placeBlockDatabase(UUIDUtils.UUID0, customBlock, location, facing);
 	}
 
 	public static boolean equals(CustomBlock customBlock, BlockData blockData, boolean directional, Block underneath) {

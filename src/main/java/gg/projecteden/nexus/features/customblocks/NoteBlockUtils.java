@@ -36,7 +36,7 @@ public class NoteBlockUtils {
 
 
 	public static void play(NoteBlock noteBlock, Location location, boolean interacted) {
-		CustomBlockData data = CustomBlockUtils.getData(noteBlock, location);
+		CustomBlockData data = CustomBlockUtils.getDataOrCreate(location, noteBlock);
 		if (data == null)
 			return;
 
