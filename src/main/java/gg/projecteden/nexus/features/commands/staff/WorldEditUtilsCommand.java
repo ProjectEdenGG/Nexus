@@ -201,6 +201,15 @@ public class WorldEditUtilsCommand extends CustomCommand {
 		send("Pasted clipboard");
 	}
 
+	final List<Material> KEEP_GOING_DOWN = List.of(
+		Material.WATER,
+		Material.AIR,
+		Material.RED_CONCRETE,
+		Material.SEAGRASS,
+		Material.TALL_SEAGRASS,
+		Material.KELP
+	);
+
 	@Path("oceanflora <radius> [--kelpChance] [--seagrassChance] [--tallSeagrassChance] [--nothingWeight] [--minKelpAge] [--maxKelpAge]")
 	void oceanflora(
 		@Arg(min = 1, max = 50) int radius,
@@ -209,7 +218,7 @@ public class WorldEditUtilsCommand extends CustomCommand {
 		@Switch @Arg(value = "7", min = 1, max = 100) double tallSeagrassWeight,
 		@Switch @Arg(value = "60", min = 1, max = 100) double nothingWeight,
 		@Switch @Arg(value = "12", min = 4, max = 25) int minKelpAge,
-		@Switch @Arg(value = "25", min = 4, max = 25) int maxKelpAge
+		@Switch @Arg(value = "24", min = 4, max = 25) int maxKelpAge
 
 	) {
 		final Map<Material, Double> weights = Map.of(
@@ -222,7 +231,7 @@ public class WorldEditUtilsCommand extends CustomCommand {
 		int count = 0;
 		for (Block block : getBlocksInRadius(block(), radius, 0, radius)) {
 			final Location floor = world().getHighestBlockAt(block.getLocation()).getLocation();
-			while (floor.getBlock().getType() == Material.WATER || floor.getBlock().getType() == Material.AIR)
+			while (KEEP_GOING_DOWN.contains(floor.getBlock().getType()))
 				floor.add(0, -1, 0);
 
 			floor.add(0, 1, 0);
