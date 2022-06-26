@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.features.ambience.effects.particles.common;
 
 import gg.projecteden.nexus.models.ambience.AmbienceUser;
-import gg.projecteden.nexus.models.ambience.Variables.TimeQuadrant;
 import gg.projecteden.nexus.utils.BiomeTag;
 import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.WorldUtils;
 import lombok.AllArgsConstructor;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -55,7 +55,7 @@ public enum ParticleEffectType implements ConditionalParticleEffect {
 			if (!isCorrectMaterial(config, block))
 				return false;
 
-			if (!isTimeQuadrant(user, TimeQuadrant.NIGHT))
+			if (!isTimeQuadrant(user, WorldUtils.TimeQuadrant.NIGHT))
 				return false;
 
 			if (isStorming(user))

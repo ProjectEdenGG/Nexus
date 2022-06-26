@@ -17,11 +17,9 @@ public abstract class Effects extends Feature implements Listener {
 		sounds();
 	}
 
-	public void sounds() {
-	}
+	public void sounds() {}
 
-	public void particles() {
-	}
+	public void particles() {}
 
 	public Location loc(double x, double y, double z) {
 		return new Location(getWorld(), x, y, z);

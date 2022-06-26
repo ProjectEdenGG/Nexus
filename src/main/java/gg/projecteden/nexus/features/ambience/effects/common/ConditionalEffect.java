@@ -2,8 +2,8 @@ package gg.projecteden.nexus.features.ambience.effects.common;
 
 import gg.projecteden.nexus.features.ambience.Wind;
 import gg.projecteden.nexus.models.ambience.AmbienceUser;
-import gg.projecteden.nexus.models.ambience.Variables.TimeQuadrant;
 import gg.projecteden.nexus.utils.BiomeTag;
+import gg.projecteden.nexus.utils.WorldUtils.TimeQuadrant;
 import org.bukkit.World.Environment;
 
 public interface ConditionalEffect {

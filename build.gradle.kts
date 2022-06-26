@@ -35,6 +35,7 @@ repositories {
     maven { url = uri("https://repo.viaversion.com") }
     maven { url = uri("https://repo.extendedclip.com/content/repositories/placeholderapi/") }
     maven { url = uri("https://maven.enginehub.org/repo/") }
+    maven { url = uri("https://eldonexus.de/repository/maven-public/") }
 }
 
 dependencies {
@@ -87,6 +88,7 @@ dependencies {
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.2.0")
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.2.0") { isTransitive = false }
     compileOnly("world.bentobox:bentobox:1.20.1-SNAPSHOT")
+    compileOnly("nl.pim16aap2", "BigDoors", "0.1.8.39")
     compileOnly(files("libs/BuycraftX.jar"))
     compileOnly(files("libs/GlowAPI.jar"))
     compileOnly(files("libs/nuvotifier-universal-2.3.4.jar"))

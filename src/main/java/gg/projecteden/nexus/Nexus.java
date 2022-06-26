@@ -40,6 +40,7 @@ import net.citizensnpcs.Citizens;
 import net.luckperms.api.LuckPerms;
 import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.permission.Permission;
+import nl.pim16aap2.bigDoors.BigDoors;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Event;
@@ -315,6 +316,8 @@ public class Nexus extends JavaPlugin {
 	private static LuckPerms luckPerms = null;
 	@Getter
 	private static IOpenInv openInv = null;
+	@Getter
+	private static BigDoors bigDoors = null;
 
 	@Getter
 	// http://www.sauronsoftware.it/projects/cron4j/manual.php
@@ -343,6 +346,7 @@ public class Nexus extends JavaPlugin {
 		citizens = (Citizens) Bukkit.getPluginManager().getPlugin("Citizens");
 		buycraft = (BuycraftPluginBase) Bukkit.getServer().getPluginManager().getPlugin("BuycraftX");
 		openInv = (IOpenInv) Bukkit.getPluginManager().getPlugin("OpenInv");
+		bigDoors = BigDoors.get().getPlugin();
 		cron.start();
 		perms = getServer().getServicesManager().getRegistration(Permission.class).getProvider();
 		RegisteredServiceProvider<LuckPerms> lpProvider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
