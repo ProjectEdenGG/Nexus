@@ -172,6 +172,10 @@ public class PlayerUtils {
 			return this;
 		}
 
+		public OnlinePlayers world(String world) {
+			return world(Objects.requireNonNull(Bukkit.getWorld(world)));
+		}
+
 		public OnlinePlayers world(World world) {
 			this.world = world;
 			return this;

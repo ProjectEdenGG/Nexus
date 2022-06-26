@@ -12,7 +12,6 @@ public class Nullables extends gg.projecteden.api.common.utils.Nullables {
 	 * @param itemStack item
 	 * @return if item is not null or air
 	 */
-	// useful for streams
 	@Contract("null -> false; !null -> _")
 	public static boolean isNotNullOrAir(ItemStack itemStack) {
 		return !isNullOrAir(itemStack);
@@ -23,10 +22,19 @@ public class Nullables extends gg.projecteden.api.common.utils.Nullables {
 	 * @param material item
 	 * @return if item is not null or air
 	 */
-	// useful for streams
 	@Contract("null -> false; !null -> _")
 	public static boolean isNotNullOrAir(Material material) {
 		return !isNullOrAir(material);
+	}
+
+	/**
+	 * Tests if a block is not null or {@link MaterialTag#ALL_AIR air}
+	 * @param block block
+	 * @return if block is not null or air
+	 */
+	@Contract("null -> false; !null -> _")
+	public static boolean isNotNullOrAir(Block block) {
+		return !isNullOrAir(block);
 	}
 
 	/**
@@ -59,9 +67,14 @@ public class Nullables extends gg.projecteden.api.common.utils.Nullables {
 		return material == null || material.isEmpty();
 	}
 
+	/**
+	 * Tests if a block is null or {@link MaterialTag#ALL_AIR air}
+	 * @param block block
+	 * @return if block is null or air
+	 */
 	@Contract("null -> true; !null -> _")
 	public static boolean isNullOrAir(Block block) {
-		return block == null || block.getType().equals(Material.AIR);
+		return block == null || block.getType().isEmpty();
 	}
 
 }
