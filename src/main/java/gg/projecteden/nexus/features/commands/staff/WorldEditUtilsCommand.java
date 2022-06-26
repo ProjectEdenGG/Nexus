@@ -242,17 +242,38 @@ public class WorldEditUtilsCommand extends CustomCommand {
 			final Material material = RandomUtils.getWeightedRandom(weights);
 			++count;
 			switch (material) {
-				case KELP, SEAGRASS -> {
+				case KELP -> {
+					int age = RandomUtils.randomInt(minKelpAge, maxKelpAge);
+					while (age <= 25) {
+						if (floor.getBlock().getType() != Material.WATER)
+							break;
+
+						final BlockData blockData = (age == 25 ? Material.KELP : Material.KELP_PLANT).createBlockData();
+						if (blockData instanceof Waterlogged waterlogged)
+							waterlogged.setWaterlogged(true);
+
+						if (blockData instanceof Ageable ageable)
+							ageable.setAge(age);
+
+						age++;
+
+						floor.getBlock().setBlockData(blockData);
+						floor.add(0, 1, 0);
+					}
+				}
+				case SEAGRASS -> {
 					final BlockData blockData = material.createBlockData();
 					if (blockData instanceof Waterlogged waterlogged)
 						waterlogged.setWaterlogged(true);
 
-					if (blockData instanceof Ageable ageable)
-						ageable.setAge(RandomUtils.randomInt(minKelpAge, maxKelpAge));
-
 					floor.getBlock().setBlockData(blockData);
 				}
 				case TALL_SEAGRASS -> {
+					if (floor.clone().add(0, 1, 0).getBlock().getType() != Material.WATER) {
+						--count;
+						break;
+					}
+
 					final BiConsumer<Location, Half> consumer = (location, half) -> {
 						final BlockData upper = Material.TALL_SEAGRASS.createBlockData();
 						if (upper instanceof Bisected bisected)
