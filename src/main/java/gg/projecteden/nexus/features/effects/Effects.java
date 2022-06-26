@@ -2,11 +2,14 @@ package gg.projecteden.nexus.features.effects;
 
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import lombok.NoArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.event.Listener;
 
-public abstract class Effects extends Feature {
+@NoArgsConstructor
+public abstract class Effects extends Feature implements Listener {
 
 	@Override
 	public void onStart() {
