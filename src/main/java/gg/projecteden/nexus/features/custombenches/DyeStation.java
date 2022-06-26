@@ -11,6 +11,7 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.costume.Costume;
 import gg.projecteden.nexus.models.costume.CostumeUser;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -175,7 +176,7 @@ public class DyeStation extends CustomBench {
 
 		@Override
 		public void init() {
-			if (true)
+			if (!Rank.of(player).isStaff())
 				throw new InvalidInputException("Temporarily disabled");
 
 			addCloseItem();
