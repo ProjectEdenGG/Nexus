@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.listeners.events.FakePlayerInteractEvent;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
+import gg.projecteden.nexus.features.resourcepack.ResourcePack.RainbowBlockOrder;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ColorType;
@@ -138,8 +139,8 @@ public class Backpacks extends FunctionalRecipe {
 			displayName = backpack.getItemMeta().displayName();
 
 		ItemStack newBackpack = new ItemBuilder(backpack.clone())
-			.material(color.getShulkerBox())
 			.name(displayName)
+			.modelId(RainbowBlockOrder.of(color).ordinal() + 2)
 			.build();
 
 		copyContents(backpack, newBackpack);
