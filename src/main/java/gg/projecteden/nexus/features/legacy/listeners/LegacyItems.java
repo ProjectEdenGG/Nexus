@@ -5,10 +5,10 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -76,6 +76,8 @@ public class LegacyItems implements Listener {
 		if (isNullOrAir(item))
 			return item;
 
+		item = convertIfShulkerBox(world, item, null);
+
 		if (ModelId.of(item) == 0)
 			return item;
 
@@ -87,7 +89,12 @@ public class LegacyItems implements Listener {
 			.material(newModel.getMaterial())
 			.modelId(newModel.getData());
 
-		if (converted.material() == Material.SHULKER_BOX)
+		return convertIfShulkerBox(world, item, converted);
+	}
+
+	private static ItemStack convertIfShulkerBox(World world, ItemStack item, ItemBuilder builder) {
+		final ItemBuilder converted = builder == null ? new ItemBuilder(item) : builder;
+		if (MaterialTag.SHULKER_BOXES.isTagged(converted.material()))
 			converted
 				.shulkerBox(new ItemBuilder(item).shulkerBoxContents())
 				.nbt(nbt -> {
