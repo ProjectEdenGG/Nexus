@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.menus.sabotage;
+package gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.menus;
 
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;

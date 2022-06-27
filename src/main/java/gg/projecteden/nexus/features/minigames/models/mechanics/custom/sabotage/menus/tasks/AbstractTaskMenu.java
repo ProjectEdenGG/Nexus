@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.menus.sabotage.tasks;
+package gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.menus.tasks;
 
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.minigames.mechanics.Sabotage;

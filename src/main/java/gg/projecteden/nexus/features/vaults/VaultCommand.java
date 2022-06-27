@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.vaults;
 
-import gg.projecteden.nexus.features.listeners.TemporaryMenuListener;
+import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;

@@ -5,7 +5,6 @@ import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.chat.events.PublicChatEvent;
-import gg.projecteden.nexus.features.menus.sabotage.ImpostorMenu;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -25,6 +24,7 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.SabotageLight;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.SabotageTeam;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.Task;
+import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.menus.ImpostorMenu;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreboard;
 import gg.projecteden.nexus.features.nameplates.Nameplates;

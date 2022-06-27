@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.store.perks.autoinventory;
 
-import gg.projecteden.nexus.features.listeners.TemporaryMenuListener;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.store.perks.autoinventory.features.AutoCraft;

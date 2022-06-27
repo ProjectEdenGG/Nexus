@@ -1,6 +1,7 @@
-package gg.projecteden.nexus.features.listeners;
+package gg.projecteden.nexus.features.menus.api;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.listeners.common.TemporaryListener;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.Nullables;

@@ -1,6 +1,7 @@
-package gg.projecteden.nexus.features.menus.sabotage.tasks;
+package gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.menus.tasks;
 
 import com.google.common.util.concurrent.AtomicDouble;
+import gg.projecteden.api.common.utils.MathUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
@@ -12,7 +13,6 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.api.common.utils.MathUtils;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.event.inventory.InventoryCloseEvent;

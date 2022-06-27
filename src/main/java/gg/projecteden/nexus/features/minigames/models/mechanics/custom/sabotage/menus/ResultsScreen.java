@@ -1,5 +1,7 @@
-package gg.projecteden.nexus.features.menus.sabotage;
+package gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.menus;
 
+import gg.projecteden.api.common.utils.MathUtils;
+import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.annotations.Uncloseable;
@@ -8,8 +10,6 @@ import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.matchdata.SabotageMatchData;
 import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.api.common.utils.MathUtils;
-import gg.projecteden.api.common.utils.TimeUtils;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

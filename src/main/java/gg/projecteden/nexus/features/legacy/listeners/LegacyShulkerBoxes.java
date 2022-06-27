@@ -2,10 +2,10 @@ package gg.projecteden.nexus.features.legacy.listeners;
 
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.listeners.TemporaryMenuListener;
 import gg.projecteden.nexus.features.listeners.events.FakePlayerInteractEvent;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
+import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;

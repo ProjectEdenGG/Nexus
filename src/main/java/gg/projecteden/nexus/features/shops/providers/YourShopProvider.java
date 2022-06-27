@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.features.shops.providers;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.listeners.TemporaryMenuListener;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.shops.Shops;
 import gg.projecteden.nexus.features.shops.providers.common.ShopProvider;

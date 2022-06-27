@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.menus;
+package gg.projecteden.nexus.features.menus.api;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
@@ -7,6 +7,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.BlockPosition;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MathUtils;
 import gg.projecteden.nexus.utils.Tasks;

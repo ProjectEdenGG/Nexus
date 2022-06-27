@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.legacy.menus.itemtransfer;
 
-import gg.projecteden.nexus.features.listeners.TemporaryMenuListener;
+import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.legacy.itemtransfer.LegacyItemTransferUser;

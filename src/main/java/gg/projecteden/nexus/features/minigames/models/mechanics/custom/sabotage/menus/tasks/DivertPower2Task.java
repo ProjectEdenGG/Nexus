@@ -1,16 +1,11 @@
-package gg.projecteden.nexus.features.menus.sabotage.tasks;
+package gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.menus.tasks;
 
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.annotations.Rows;
-import gg.projecteden.nexus.features.menus.api.annotations.Title;
-import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.Task;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
-import org.jetbrains.annotations.NotNull;
 
 @Rows(3)
 @Title("Divert Power")

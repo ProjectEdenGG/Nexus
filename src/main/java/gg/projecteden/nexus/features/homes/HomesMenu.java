@@ -4,7 +4,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.homes.providers.EditHomeProvider;
 import gg.projecteden.nexus.features.homes.providers.EditHomesProvider;
 import gg.projecteden.nexus.features.homes.providers.SetHomeProvider;
-import gg.projecteden.nexus.features.menus.SignMenuFactory;
+import gg.projecteden.nexus.features.menus.api.SignMenuFactory;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
 import gg.projecteden.nexus.models.home.Home;
 import gg.projecteden.nexus.models.home.HomeOwner;
@@ -24,7 +24,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static gg.projecteden.nexus.features.menus.SignMenuFactory.ARROWS;
+import static gg.projecteden.nexus.features.menus.api.SignMenuFactory.ARROWS;
 import static gg.projecteden.nexus.utils.StringUtils.loreize;
 
 public class HomesMenu {

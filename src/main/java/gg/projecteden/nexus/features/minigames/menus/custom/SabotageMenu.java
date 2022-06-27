@@ -2,13 +2,13 @@ package gg.projecteden.nexus.features.minigames.menus.custom;
 
 import gg.projecteden.nexus.features.menus.MenuUtils.AnvilMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.sabotage.ArenaTasksMenu;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.mechanics.Sabotage;
 import gg.projecteden.nexus.features.minigames.menus.ArenaMenu;
 import gg.projecteden.nexus.features.minigames.menus.annotations.CustomMechanicSettings;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.arenas.SabotageArena;
+import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.menus.ArenaTasksMenu;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
 

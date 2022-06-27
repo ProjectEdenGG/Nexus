@@ -28,7 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.nexus.features.menus.SignMenuFactory.ARROWS;
+import static gg.projecteden.nexus.features.menus.api.SignMenuFactory.ARROWS;
 import static gg.projecteden.nexus.utils.LocationUtils.getCenteredLocation;
 
 @Aliases("bs")
