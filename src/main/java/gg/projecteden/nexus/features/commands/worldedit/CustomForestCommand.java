@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.features.commands.worldedit;
 
+import gg.projecteden.api.common.annotations.Environments;
+import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -25,10 +27,12 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.List;
@@ -49,13 +53,15 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @DoubleSlash
 @Aliases("cf")
+@NoArgsConstructor
+@Environments(Env.TEST)
 @Permission(Group.STAFF)
-public class CustomForestCommand extends CustomCommand {
+public class CustomForestCommand extends CustomCommand implements Listener {
 	private static final String PREFIX = StringUtils.getPrefix("CustomForest");
 	private final ForestGeneratorConfigService configService = new ForestGeneratorConfigService();
 	private final ForestGeneratorConfig config = configService.get0();
 	private final ForestGeneratorUserService userService = new ForestGeneratorUserService();
-	private final ForestGeneratorUser user;
+	private ForestGeneratorUser user;
 
 	public CustomForestCommand(@NonNull CommandEvent event) {
 		super(event);
