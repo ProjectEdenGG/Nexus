@@ -159,12 +159,11 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 	public static String pretty(ItemStack item, int amount) {
 		String name = camelCase(item.getType().name());
 
-		final Map<Enchantment, Integer> enchants = new HashMap<>() {{
-			if (item.getItemMeta() instanceof EnchantmentStorageMeta meta)
-				putAll(meta.getStoredEnchants());
-			else if (item.getItemMeta().hasEnchants())
-				putAll(item.getEnchantments());
-		}};
+		final Map<Enchantment, Integer> enchants = new HashMap<>();
+		if (item.getItemMeta() instanceof EnchantmentStorageMeta meta)
+			enchants.putAll(meta.getStoredEnchants());
+		else if (item.getItemMeta().hasEnchants())
+			enchants.putAll(item.getEnchantments());
 
 		if (!enchants.isEmpty())
 			name = enchants.keySet().stream().map(enchantment -> {
