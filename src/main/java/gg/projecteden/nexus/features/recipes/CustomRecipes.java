@@ -4,6 +4,7 @@ import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.custombenches.DyeStation;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
+import gg.projecteden.nexus.features.listeners.events.FixedCraftItemEvent;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
@@ -30,8 +31,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
+import org.bukkit.inventory.CraftingInventory;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
@@ -52,6 +56,7 @@ import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilde
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shapeless;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.smelt;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.surround;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @Depends({ResourcePack.class, CustomEnchants.class})
@@ -351,5 +356,81 @@ public class CustomRecipes extends Feature implements Listener {
 	public static String getItemName(ItemStack result) {
 		return stripColor(ItemUtils.getName(result).replaceAll(" ", "_").trim().toLowerCase());
 	}
+
+	// Stolen from https://github.com/ezeiger92/QuestWorld2/blob/70f2be317daee06007f89843c79b3b059515d133/src/main/java/com/questworld/extension/builtin/CraftMission.java
+	@EventHandler
+	public void fixCraftEvent(CraftItemEvent event) {
+		if (event instanceof FixedCraftItemEvent) return;
+
+		ItemStack item = event.getRecipe().getResult().clone();
+		ClickType click = event.getClick();
+
+		int recipeAmount = item.getAmount();
+
+		switch (click) {
+			case NUMBER_KEY:
+				if (event.getWhoClicked().getInventory().getItem(event.getHotbarButton()) != null)
+					recipeAmount = 0;
+				break;
+
+			case DROP:
+			case CONTROL_DROP:
+				ItemStack cursor = event.getCursor();
+				if (!isNullOrAir(cursor))
+					recipeAmount = 0;
+				break;
+
+			case SHIFT_RIGHT:
+			case SHIFT_LEFT:
+				if (recipeAmount == 0)
+					break;
+
+				int maxCraftable = getMaxCraftAmount(event.getInventory());
+				int capacity = fits(item, event.getView().getBottomInventory());
+
+				if (capacity < maxCraftable)
+					maxCraftable = ((capacity + recipeAmount - 1) / recipeAmount) * recipeAmount;
+
+				recipeAmount = maxCraftable;
+				break;
+			default:
+		}
+
+		if (recipeAmount == 0)
+			return;
+
+		item.setAmount(recipeAmount);
+
+		new FixedCraftItemEvent(item, event.getRecipe(), event.getView(), event.getSlotType(), event.getSlot(), event.getClick(), event.getAction(), event.getHotbarButton()).callEvent();
+	}
+
+	public static int getMaxCraftAmount(CraftingInventory inv) {
+		if (inv.getResult() == null)
+			return 0;
+
+		int resultCount = inv.getResult().getAmount();
+		int materialCount = Integer.MAX_VALUE;
+
+		for (ItemStack item : inv.getMatrix())
+			// this can in fact be null
+			if (item != null && item.getAmount() < materialCount)
+				materialCount = item.getAmount();
+
+		return resultCount * materialCount;
+	}
+
+	public static int fits(ItemStack stack, Inventory inv) {
+		ItemStack[] contents = inv.getContents();
+		int result = 0;
+
+		for (ItemStack item : contents)
+			if (item == null)
+				result += stack.getMaxStackSize();
+			else if (item.isSimilar(stack))
+				result += Math.max(stack.getMaxStackSize() - item.getAmount(), 0);
+
+		return result;
+	}
+
 
 }

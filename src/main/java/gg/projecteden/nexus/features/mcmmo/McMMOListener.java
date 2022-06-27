@@ -6,6 +6,7 @@ import com.gmail.nossr50.events.experience.McMMOPlayerLevelUpEvent;
 import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
 import com.gmail.nossr50.events.skills.unarmed.McMMOPlayerDisarmEvent;
 import com.gmail.nossr50.util.player.UserManager;
+import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Koda;
@@ -33,6 +34,7 @@ import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.Sapling;
@@ -70,6 +72,19 @@ public class McMMOListener implements Listener {
 			return;
 
 		event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onPlacePotionLauncherHopper(BlockPlaceEvent event) {
+		if (!event.getBlockPlaced().getType().equals(Material.HOPPER))
+			return;
+
+		NBTItem itemNBT = new NBTItem(event.getItemInHand());
+		if (!itemNBT.hasNBTData())
+			return;
+
+		if (itemNBT.asNBTString().contains("&8Potion Launcher"))
+			event.setCancelled(true);
 	}
 
 	@EventHandler

@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands.staff;
 
 import de.myzelyam.api.vanish.VanishAPI;
 import gg.projecteden.nexus.features.commands.GamemodeCommand;
+import gg.projecteden.nexus.features.listeners.events.SubWorldGroupChangedEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
@@ -10,15 +11,21 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redi
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.godmode.GodmodeService;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
+import lombok.NoArgsConstructor;
 import org.bukkit.GameMode;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
+@NoArgsConstructor
 @Permission(Group.STAFF)
 @Redirect(from = "/nocheats", to = "/cheats off")
 @Redirect(from = "/allcheats", to = "/cheats on")
-public class CheatsCommand extends CustomCommand {
+public class CheatsCommand extends CustomCommand implements Listener {
 	private static final String PREFIX = StringUtils.getPrefix("Cheats");
 
 	public CheatsCommand(CommandEvent event) {
@@ -64,6 +71,16 @@ public class CheatsCommand extends CustomCommand {
 		}
 
 		VanishAPI.hidePlayer(player);
+	}
+
+	@EventHandler
+	public void on(SubWorldGroupChangedEvent event) {
+		final Player player = event.getPlayer();
+
+		if (event.getNewSubWorldGroup() != SubWorldGroup.STAFF_SURVIVAL)
+			return;
+
+		Tasks.wait(20, () -> CheatsCommand.off(player));
 	}
 
 }

@@ -1,56 +1,29 @@
 package gg.projecteden.nexus.features.listeners;
 
-import com.destroystokyo.paper.ClientOption;
-import com.destroystokyo.paper.ClientOption.ChatVisibility;
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
+import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent.SlotType;
 import de.myzelyam.api.vanish.PlayerVanishStateChangeEvent;
-import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.NBTTileEntity;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.chat.Koda;
-import gg.projecteden.nexus.features.commands.GamemodeCommand;
-import gg.projecteden.nexus.features.commands.SpeedCommand;
 import gg.projecteden.nexus.features.listeners.events.FakePlayerInteractEvent;
-import gg.projecteden.nexus.features.listeners.events.FirstSubWorldGroupVisitEvent;
-import gg.projecteden.nexus.features.listeners.events.FirstWorldGroupVisitEvent;
-import gg.projecteden.nexus.features.listeners.events.FixedCraftItemEvent;
-import gg.projecteden.nexus.features.listeners.events.GolemBuildEvent.IronGolemBuildEvent;
-import gg.projecteden.nexus.features.listeners.events.GolemBuildEvent.SnowGolemBuildEvent;
-import gg.projecteden.nexus.features.listeners.events.LivingEntityDamageByPlayerEvent;
 import gg.projecteden.nexus.features.listeners.events.PlayerDamageByPlayerEvent;
 import gg.projecteden.nexus.features.listeners.events.WorldGroupChangedEvent;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.warps.Warps;
-import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.models.mode.ModeUser;
-import gg.projecteden.nexus.models.mode.ModeUser.FlightMode;
-import gg.projecteden.nexus.models.mode.ModeUserService;
-import gg.projecteden.nexus.models.nerd.NBTPlayer;
-import gg.projecteden.nexus.models.nerd.Nerd;
-import gg.projecteden.nexus.models.nerd.NerdService;
-import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.models.tip.Tip;
-import gg.projecteden.nexus.models.tip.Tip.TipType;
-import gg.projecteden.nexus.models.tip.TipService;
-import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.FireworkLauncher;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
-import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import me.libraryaddict.disguise.DisguiseAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
 import org.bukkit.GameMode;
 import org.bukkit.GameRule;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
@@ -64,12 +37,9 @@ import org.bukkit.entity.Bee;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
-import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
-import org.bukkit.entity.Snowman;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -77,42 +47,31 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.CraftItemEvent;
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerItemConsumeEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.metadata.MetadataValue;
-import org.bukkit.potion.PotionEffectType;
 
 import java.nio.file.Paths;
-import java.time.YearMonth;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import static gg.projecteden.nexus.utils.ItemUtils.getTool;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
+@SuppressWarnings("SwitchStatementWithTooFewBranches")
 public class Misc implements Listener {
 
 	static {
@@ -251,28 +210,19 @@ public class Misc implements Listener {
 
 		for (MaterialTag tag : slots.keySet()) {
 			final EquipmentSlot slot = slots.get(tag);
-			if (tag.isTagged(item)) {
-				final ItemStack existing = ItemUtils.clone(inventory.getItem(slot));
-				if (new PlayerArmorChangeEvent(event.getPlayer(), PlayerArmorChangeEvent.SlotType.valueOf(slot.name()), existing, item).callEvent()) {
-					inventory.setItem(EquipmentSlot.HAND, existing);
-					inventory.setItem(slot, ItemUtils.clone(item));
-					event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f);
-					return;
-				}
-			}
+			if (!tag.isTagged(item))
+				continue;
+
+			final ItemStack existing = ItemUtils.clone(inventory.getItem(slot));
+			final PlayerArmorChangeEvent armorChangeEvent = new PlayerArmorChangeEvent(event.getPlayer(), SlotType.valueOf(slot.name()), existing, item);
+			if (!armorChangeEvent.callEvent())
+				continue;
+
+			inventory.setItem(EquipmentSlot.HAND, existing);
+			inventory.setItem(slot, ItemUtils.clone(item));
+			event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f);
+			return;
 		}
-	}
-
-	@EventHandler
-	public void onEatGlowBerry(PlayerItemConsumeEvent event) {
-		Player player = event.getPlayer();
-		if (WorldGroup.of(player) == WorldGroup.MINIGAMES)
-			return;
-
-		if (event.getItem().getType() != Material.GLOW_BERRIES)
-			return;
-
-		player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.GLOWING).duration(TickTime.MINUTE.x(1.5)).build());
 	}
 
 	@EventHandler
@@ -353,15 +303,23 @@ public class Misc implements Listener {
 	public void onWanderingTraderSpawn(EntitySpawnEvent event) {
 		List<EntityType> types = Arrays.asList(EntityType.WANDERING_TRADER, EntityType.TRADER_LLAMA);
 		List<WorldGroup> worlds = Arrays.asList(WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK);
-		if (types.contains(event.getEntity().getType()))
-			if (!worlds.contains(WorldGroup.of(event.getLocation().getWorld())))
-				event.setCancelled(true);
+
+		if (!types.contains(event.getEntity().getType()))
+			return;
+
+		if (worlds.contains(WorldGroup.of(event.getLocation().getWorld())))
+			return;
+
+		event.setCancelled(true);
 	}
 
 	@EventHandler
-	public void onDamage(EntityDamageEvent event) {
-		if (event.isCancelled()) return;
-		if (!(event.getEntity() instanceof Player player)) return;
+	public void onSurvivalVoidDamage(EntityDamageEvent event) {
+		if (event.isCancelled())
+			return;
+
+		if (!(event.getEntity() instanceof Player player))
+			return;
 
 		if (event.getCause() != DamageCause.VOID)
 			return;
@@ -398,64 +356,6 @@ public class Misc implements Listener {
 	}
 
 	@EventHandler
-	public void onPlaceChest(BlockPlaceEvent event) {
-		if (WorldGroup.of(event.getPlayer()) != WorldGroup.SURVIVAL)
-			return;
-
-		if (!event.getBlockPlaced().getType().equals(Material.CHEST))
-			return;
-
-		Tip tip = new TipService().get(event.getPlayer());
-		if (tip.show(TipType.LWC_FURNACE))
-			PlayerUtils.send(event.getPlayer(), Koda.getDmFormat() + "Your chest is protected with LWC! Use /lwcinfo to learn more. " +
-					"Use &c/trust lock <player> &eto allow someone else to use it.");
-	}
-
-	@EventHandler
-	public void onPlaceFurnace(BlockPlaceEvent event) {
-		if (WorldGroup.of(event.getPlayer()) != WorldGroup.SURVIVAL)
-			return;
-
-		if (!event.getBlockPlaced().getType().equals(Material.FURNACE))
-			return;
-
-		Tip tip = new TipService().get(event.getPlayer());
-		if (tip.show(TipType.LWC_FURNACE))
-			PlayerUtils.send(event.getPlayer(), Koda.getDmFormat() + "Your furnace is protected with LWC! Use /lwcinfo to learn more. " +
-					"Use &c/trust lock <player> &eto allow someone else to use it.");
-	}
-
-	private static final String CHAT_DISABLED_WARNING = "&4&lWARNING: &4You have chat disabled! If this is by mistake, please turn it on in your settings.";
-	private static final long WARNING_LENGTH_TICKS = TickTime.MINUTE.x(1);
-
-	@EventHandler
-	public void onJoinWithChatDisabled(PlayerJoinEvent event) {
-		Tasks.wait(TickTime.SECOND.x(3), () -> {
-			Player player = event.getPlayer();
-			ChatVisibility setting = player.getClientOption(ClientOption.CHAT_VISIBILITY);
-			if (Arrays.asList(ChatVisibility.SYSTEM, ChatVisibility.HIDDEN).contains(setting)) {
-				PlayerUtils.send(player, "");
-				PlayerUtils.send(player, CHAT_DISABLED_WARNING);
-				PlayerUtils.send(player, "");
-				ActionBarUtils.sendActionBar(player, CHAT_DISABLED_WARNING, WARNING_LENGTH_TICKS);
-			}
-		});
-	}
-
-	@EventHandler
-	public void onPlacePotionLauncherHopper(BlockPlaceEvent event) {
-		if (!event.getBlockPlaced().getType().equals(Material.HOPPER))
-			return;
-
-		NBTItem itemNBT = new NBTItem(event.getItemInHand());
-		if (!itemNBT.hasNBTData())
-			return;
-
-		if (itemNBT.asNBTString().contains("&8Potion Launcher"))
-			event.setCancelled(true);
-	}
-
-	@EventHandler
 	public void onBreakEmptyShulkerBox(BlockBreakEvent event) {
 		if (!MaterialTag.SHULKER_BOXES.isTagged(event.getBlock().getType()))
 			return;
@@ -470,173 +370,22 @@ public class Misc implements Listener {
 		}
 	}
 
-	private static final List<UUID> toSpawn = new ArrayList<>();
-
 	@EventHandler
-	public void onConnect(AsyncPlayerPreLoginEvent event) {
-		Nerd nerd = Nerd.of(event.getUniqueId());
-		try {
-			World world = new NBTPlayer(nerd).getWorld();
-			if (world == null) return;
-
-			if (SubWorldGroup.of(world) == SubWorldGroup.RESOURCE) {
-				nerd = Nerd.of(event.getUniqueId());
-				if (nerd.getLastQuit().isBefore(YearMonth.now().atDay(1).atStartOfDay()))
-					toSpawn.add(event.getUniqueId());
-			}
-		} catch (InvalidInputException ignore) {}
-	}
-
-	@EventHandler
-	public void onJoin(PlayerJoinEvent event) {
+	public void on(WorldGroupChangedEvent event) {
 		final Player player = event.getPlayer();
-		if (toSpawn.contains(player.getUniqueId())) {
-			Warps.survival(player);
-			Nexus.log("Teleporting resource world player " + Nickname.of(player) + " to spawn");
-			toSpawn.remove(player.getUniqueId());
+
+		switch (event.getNewWorldGroup()) {
+			case MINIGAMES -> {
+				if (DisguiseAPI.isDisguised(player))
+					if (event.getOldWorldGroup() != WorldGroup.MINIGAMES)
+						DisguiseAPI.undisguiseToAll(player);
+			}
 		}
-
-		Tasks.wait(5, () -> {
-			if (toSpawn.contains(player.getUniqueId())) {
-				Warps.survival(player);
-				Nexus.log("Teleporting resource world player " + Nickname.of(player) + " to spawn [2]");
-				toSpawn.remove(player.getUniqueId());
-			}
-
-			WorldGroup worldGroup = WorldGroup.of(player);
-			SubWorldGroup subWorldGroup = SubWorldGroup.of(player);
-			if (worldGroup == WorldGroup.MINIGAMES)
-				joinMinigames(player);
-			else if (worldGroup == WorldGroup.CREATIVE)
-				joinCreative(player);
-
-			final Nerd nerd = Nerd.of(player);
-			if (!nerd.getVisitedWorldGroups().contains(worldGroup)) {
-				new FirstWorldGroupVisitEvent(player, worldGroup).callEvent();
-				nerd.getVisitedWorldGroups().add(worldGroup);
-				new NerdService().save(nerd);
-			}
-			if (!nerd.getVisitedSubWorldGroups().contains(subWorldGroup)) {
-				new FirstSubWorldGroupVisitEvent(player, subWorldGroup).callEvent();
-				nerd.getVisitedSubWorldGroups().add(subWorldGroup);
-				new NerdService().save(nerd);
-			}
-		});
 	}
 
 	@EventHandler
-	public void onWorldChange(PlayerChangedWorldEvent event) {
-		Player player = event.getPlayer();
-
-		final WorldGroup oldWorldGroup = WorldGroup.of(event.getFrom());
-		final WorldGroup newWorldGroup = WorldGroup.of(player);
-
-		if (newWorldGroup == WorldGroup.MINIGAMES)
-			Tasks.wait(5, () -> joinMinigames(player));
-		else if (newWorldGroup == WorldGroup.CREATIVE)
-			Tasks.wait(5, () -> joinCreative(player));
-
-		Tasks.wait(10, player::resetPlayerTime);
-
-		Nerd nerd = Nerd.of(player);
-		boolean isStaff = nerd.getRank().isStaff();
-
-		if (oldWorldGroup != newWorldGroup) {
-			new WorldGroupChangedEvent(player, oldWorldGroup, newWorldGroup).callEvent();
-
-			if (!nerd.getVisitedWorldGroups().contains(newWorldGroup)) {
-				new FirstWorldGroupVisitEvent(player, newWorldGroup).callEvent();
-
-				nerd.getVisitedWorldGroups().add(newWorldGroup);
-				new NerdService().save(nerd);
-			}
-		}
-
-		SubWorldGroup subWorldGroup = SubWorldGroup.of(player);
-		if (!nerd.getVisitedSubWorldGroups().contains(subWorldGroup)) {
-			new FirstSubWorldGroupVisitEvent(player, subWorldGroup).callEvent();
-			nerd.getVisitedSubWorldGroups().add(subWorldGroup);
-			new NerdService().save(nerd);
-		}
-
-		if (!isStaff) {
-			SpeedCommand.resetSpeed(player);
-			player.setAllowFlight(false);
-			player.setFlying(false);
-		} else {
-			if (nerd.isVanished() || nerd.getOnlinePlayer().getGameMode().equals(GameMode.SPECTATOR)) {
-				if (oldWorldGroup == WorldGroup.CREATIVE || oldWorldGroup == WorldGroup.STAFF) {
-					if (player.hasPermission("essentials.fly")) {
-						player.setFallDistance(0);
-						player.setAllowFlight(true);
-						player.setFlying(true);
-					}
-				}
-			} else {
-				Tasks.wait(5, () -> {
-					ModeUser mode = new ModeUserService().get(player);
-					GameMode gameMode = mode.getGamemode(newWorldGroup);
-					FlightMode flightMode = mode.getFlightMode(newWorldGroup);
-
-					if (gameMode.equals(GameMode.SPECTATOR)) {
-						flightMode.setAllowFlight(true);
-						flightMode.setFlying(true);
-					}
-
-					GamemodeCommand.setGameMode(player, gameMode);
-//					PlayerUtils.send(player, "GAMEMODE DEBUG: Setting to " + gameMode);
-
-					player.setAllowFlight(flightMode.isAllowFlight());
-					player.setFlying(flightMode.isFlying());
-//					PlayerUtils.send(player, "FLIGHT DEBUG: " + player.getAllowFlight() + " | " + player.isFlying());
-				});
-			}
-		}
-
-		if (event.getFrom().getName().equalsIgnoreCase("donortrial"))
-			Tasks.wait(20, () -> {
-				PlayerUtils.send(player, "Removing pets, disguises and ptime changes");
-				PlayerUtils.runCommandAsConsole("undisguiseplayer " + player.getName());
-				PlayerUtils.runCommandAsConsole("petadmin remove " + player.getName());
-				PlayerUtils.runCommandAsConsole("mpet remove " + player.getName());
-				PlayerUtils.runCommandAsOp(player, "particles stopall");
-				PlayerUtils.runCommandAsConsole("speed walk 1 " + player.getName());
-				player.resetPlayerTime();
-			});
-
-		if (player.getWorld().getName().equalsIgnoreCase("staff_world"))
-			Tasks.wait(20, () -> PlayerUtils.runCommand(player, "cheats off"));
-
-		if (DisguiseAPI.isDisguised(player))
-			if (!(oldWorldGroup == WorldGroup.MINIGAMES) && newWorldGroup == WorldGroup.MINIGAMES)
-				DisguiseAPI.undisguiseToAll(player);
-	}
-
-	public void joinMinigames(Player player) {
-		PlayerUtils.runCommand(player, "ch join m");
-	}
-
-	public void joinCreative(Player player) {
-		PlayerUtils.runCommand(player, "ch join c");
-	}
-
-	@EventHandler
-	public void onPlayerDamage(EntityDamageByEntityEvent event) {
-		Player attacker = null;
-		if (event.getDamager() instanceof Player) {
-			attacker = (Player) event.getDamager();
-		} else if (event.getDamager() instanceof Projectile projectile) {
-			if (projectile.getShooter() instanceof Player)
-				attacker = (Player) projectile.getShooter();
-		}
-
-		if (attacker == null)
-			return;
-
-		if (event.getEntity() instanceof Player player)
-			new PlayerDamageByPlayerEvent(player, attacker, event).callEvent();
-		else if (event.getEntity() instanceof LivingEntity livingEntity)
-			new LivingEntityDamageByPlayerEvent(livingEntity, attacker, event).callEvent();
+	public void resetPlayerTime(PlayerChangedWorldEvent event) {
+		Tasks.wait(10, event.getPlayer()::resetPlayerTime);
 	}
 
 	// ImageOnMap rotating frames on placement; rotate back one before placement to offset
@@ -664,155 +413,6 @@ public class Misc implements Listener {
 			return;
 
 		itemFrame.setRotation(itemFrame.getRotation().rotateCounterClockwise());
-	}
-
-	// Stolen from https://github.com/ezeiger92/QuestWorld2/blob/70f2be317daee06007f89843c79b3b059515d133/src/main/java/com/questworld/extension/builtin/CraftMission.java
-	@EventHandler
-	public void onCraft(CraftItemEvent event) {
-		if (event instanceof FixedCraftItemEvent) return;
-
-		ItemStack item = event.getRecipe().getResult().clone();
-		ClickType click = event.getClick();
-
-		int recipeAmount = item.getAmount();
-
-		switch (click) {
-			case NUMBER_KEY:
-				if (event.getWhoClicked().getInventory().getItem(event.getHotbarButton()) != null)
-					recipeAmount = 0;
-				break;
-
-			case DROP:
-			case CONTROL_DROP:
-				ItemStack cursor = event.getCursor();
-				if (!isNullOrAir(cursor))
-					recipeAmount = 0;
-				break;
-
-			case SHIFT_RIGHT:
-			case SHIFT_LEFT:
-				if (recipeAmount == 0)
-					break;
-
-				int maxCraftable = getMaxCraftAmount(event.getInventory());
-				int capacity = fits(item, event.getView().getBottomInventory());
-
-				if (capacity < maxCraftable)
-					maxCraftable = ((capacity + recipeAmount - 1) / recipeAmount) * recipeAmount;
-
-				recipeAmount = maxCraftable;
-				break;
-			default:
-		}
-
-		if (recipeAmount == 0)
-			return;
-
-		item.setAmount(recipeAmount);
-
-		new FixedCraftItemEvent(item, event.getRecipe(), event.getView(), event.getSlotType(), event.getSlot(), event.getClick(), event.getAction(), event.getHotbarButton()).callEvent();
-	}
-
-	public static int getMaxCraftAmount(CraftingInventory inv) {
-		if (inv.getResult() == null)
-			return 0;
-
-		int resultCount = inv.getResult().getAmount();
-		int materialCount = Integer.MAX_VALUE;
-
-		for (ItemStack item : inv.getMatrix())
-			// this can in fact be null
-			if (item != null && item.getAmount() < materialCount)
-				materialCount = item.getAmount();
-
-		return resultCount * materialCount;
-	}
-
-	public static int fits(ItemStack stack, Inventory inv) {
-		ItemStack[] contents = inv.getContents();
-		int result = 0;
-
-		for (ItemStack item : contents)
-			if (item == null)
-				result += stack.getMaxStackSize();
-			else if (item.isSimilar(stack))
-				result += Math.max(stack.getMaxStackSize() - item.getAmount(), 0);
-
-		return result;
-	}
-
-	@EventHandler
-	public void onSpawnIronGolem(BlockPlaceEvent event) {
-		if (!event.getBlock().getWorld().getName().contains("bingo"))
-			return;
-
-		Player player = event.getPlayer();
-		if (event.getBlock().getType().equals(Material.PUMPKIN)) {
-			Location HEAD = event.getBlock().getLocation();
-
-			Location TORSO = new Location(HEAD.getWorld(), HEAD.getX(), HEAD.getY() - 1, HEAD.getZ());
-			Location LEGS = new Location(HEAD.getWorld(), HEAD.getX(), HEAD.getY() - 2, HEAD.getZ());
-
-			Location ARM1_X = new Location(HEAD.getWorld(), HEAD.getX() - 1, HEAD.getY() - 1, HEAD.getZ());
-			Location ARM2_X = new Location(HEAD.getWorld(), HEAD.getX() + 1, HEAD.getY() - 1, HEAD.getZ());
-
-			Location ARM1_Z = new Location(HEAD.getWorld(), HEAD.getX(), HEAD.getY() - 1, HEAD.getZ() - 1);
-			Location ARM2_Z = new Location(HEAD.getWorld(), HEAD.getX(), HEAD.getY() - 1, HEAD.getZ() + 1);
-
-			if (Material.IRON_BLOCK.equals(TORSO.getBlock().getType()) && Material.IRON_BLOCK.equals(LEGS.getBlock().getType())) {
-				if (Material.IRON_BLOCK.equals(ARM1_X.getBlock().getType()) && Material.IRON_BLOCK.equals(ARM2_X.getBlock().getType())) {
-					event.setCancelled(true);
-					HEAD.getBlock().setType(Material.AIR);
-					TORSO.getBlock().setType(Material.AIR);
-					LEGS.getBlock().setType(Material.AIR);
-					ARM1_X.getBlock().setType(Material.AIR);
-					ARM2_X.getBlock().setType(Material.AIR);
-
-					Location location = event.getBlock().getLocation().add(0, -1, 0).toCenterLocation();
-					final IronGolem golem = location.getWorld().spawn(location, IronGolem.class);
-					if (golem.isValid())
-						new IronGolemBuildEvent(player, golem).callEvent();
-				} else if (Material.IRON_BLOCK.equals(ARM1_Z.getBlock().getType()) && Material.IRON_BLOCK.equals(ARM2_Z.getBlock().getType())) {
-					event.setCancelled(true);
-					HEAD.getBlock().setType(Material.AIR);
-					TORSO.getBlock().setType(Material.AIR);
-					LEGS.getBlock().setType(Material.AIR);
-					ARM1_Z.getBlock().setType(Material.AIR);
-					ARM2_Z.getBlock().setType(Material.AIR);
-
-					Location location = event.getBlock().getLocation().add(0, -1, 0).toCenterLocation();
-					final IronGolem golem = location.getWorld().spawn(location, IronGolem.class, SpawnReason.BUILD_IRONGOLEM);
-					if (golem.isValid())
-						new IronGolemBuildEvent(player, golem).callEvent();
-				}
-			}
-		}
-	}
-
-	@EventHandler
-	public void onSpawnSnowGolem(BlockPlaceEvent event) {
-		if (!event.getBlock().getWorld().getName().contains("bingo"))
-			return;
-
-		Player player = event.getPlayer();
-		if (List.of(Material.CARVED_PUMPKIN, Material.JACK_O_LANTERN).contains(event.getBlock().getType())) {
-			Location HEAD = event.getBlock().getLocation();
-
-			Location TORSO = new Location(HEAD.getWorld(), HEAD.getX(), HEAD.getY() - 1, HEAD.getZ());
-			Location LEGS = new Location(HEAD.getWorld(), HEAD.getX(), HEAD.getY() - 2, HEAD.getZ());
-
-			if (Material.SNOW_BLOCK.equals(TORSO.getBlock().getType()) && Material.SNOW_BLOCK.equals(LEGS.getBlock().getType())) {
-				event.setCancelled(true);
-				HEAD.getBlock().setType(Material.AIR);
-				TORSO.getBlock().setType(Material.AIR);
-				LEGS.getBlock().setType(Material.AIR);
-
-				Location location = event.getBlock().getLocation().add(0, -1, 0).toCenterLocation();
-				final Snowman golem = location.getWorld().spawn(location, Snowman.class, SpawnReason.BUILD_IRONGOLEM);
-				if (golem.isValid())
-					new SnowGolemBuildEvent(player, golem).callEvent();
-			}
-		}
 	}
 
 }
