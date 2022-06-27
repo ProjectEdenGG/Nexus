@@ -21,12 +21,12 @@ public abstract class Effects extends Feature implements Listener {
 
 	public void particles() {}
 
-	public Location loc(double x, double y, double z) {
-		return new Location(getWorld(), x, y, z);
-	}
-
 	public World getWorld() {
 		return Bukkit.getWorld("server");
+	}
+
+	public Location loc(double x, double y, double z) {
+		return new Location(getWorld(), x, y, z);
 	}
 
 	public boolean hasPlayersNearby(Location origin, double radius) {
