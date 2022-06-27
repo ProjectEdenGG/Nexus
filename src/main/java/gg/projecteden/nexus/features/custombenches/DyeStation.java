@@ -109,8 +109,6 @@ public class DyeStation extends CustomBench {
 		NORMAL,
 		CHEAT,
 		COSTUME,
-		;
-
 	}
 
 	@NoArgsConstructor
@@ -120,7 +118,7 @@ public class DyeStation extends CustomBench {
 		private DyeStationData data;
 
 		public DyeStationMenu(DyeStationMode mode) {
-			this.mode = mode;
+			this.mode = mode == null ? DyeStationMode.NORMAL : mode;
 		}
 
 		private static final SlotPos SLOT_INPUT = new SlotPos(1, 1);

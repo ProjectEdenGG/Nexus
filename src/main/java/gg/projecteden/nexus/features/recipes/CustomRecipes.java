@@ -296,6 +296,8 @@ public class CustomRecipes extends Feature implements Listener {
 	}
 
 	private void dyeStation() {
+		if (true) return;
+
 		// Magic Dye
 		shapeless().add(Material.GLASS_BOTTLE, Material.RED_DYE, Material.ORANGE_DYE, Material.YELLOW_DYE,
 			Material.GREEN_DYE, Material.CYAN_DYE, Material.BLUE_DYE, Material.PURPLE_DYE, Material.PINK_DYE)
