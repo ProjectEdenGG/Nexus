@@ -44,7 +44,7 @@ public class AmbientSounds {
 
 		// Looping Sound Management
 		Tasks.repeat(startDelay, TickTime.SECOND.x(1), () -> {
-			for (Player player : OnlinePlayers.getAll()) {
+			for (Player player : OnlinePlayers.where().world(SurvivalEffects.worldguard.getWorld()).region(SurvivalEffects.baseRegion).get()) {
 
 				boolean inArea;
 				boolean onList;
@@ -95,7 +95,7 @@ public class AmbientSounds {
 			case DUNGEON -> regionRegex += "_dungeon_";
 		}
 
-		@NotNull Set<ProtectedRegion> regions = SurvivalEffects.worldguard.getRegionsLikeAt(regionRegex, location);
+		@NotNull Set<ProtectedRegion> regions = SurvivalEffects.worldguard.getRegionsLikeAt(regionRegex + ".*", location);
 		if (regions.isEmpty())
 			return false;
 
