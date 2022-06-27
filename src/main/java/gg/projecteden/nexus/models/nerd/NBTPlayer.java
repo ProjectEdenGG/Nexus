@@ -164,6 +164,8 @@ public class NBTPlayer implements PlayerOwnedObject {
 		return new ItemStack(Material.AIR);
 	}
 
+	@Deprecated
+	// Do not use unless absolutely necessary. Will not handle inventories correctly.
 	public void setLocation(Location location) {
 		setPosition(location);
 		setRotation(location);
