@@ -8,6 +8,7 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.BlockPosition;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.MathUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
@@ -26,12 +27,6 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public final class SignMenuFactory {
-	private static final int ACTION_INDEX = 9;
-	private static final int SIGN_LINES = 4;
-
-	private static final String NBT_FORMAT = "{\"text\":\"%s\"}";
-	private static final String NBT_BLOCK_ID = "minecraft:sign";
-
 	private static final List<String> BLANK = Arrays.asList("", "", "", "");
 	public static final String ARROWS = "^ ^ ^ ^ ^ ^ ^ ^";
 
@@ -133,7 +128,9 @@ public final class SignMenuFactory {
 		}
 
 		public void open(Player player) {
-			Location location = player.getLocation().add(0, -4, 0);
+			final Location location = player.getLocation();
+			location.add(2, location.getY() > location.getWorld().getMinHeight() + 4 ? -4 : 4, 2);
+			location.setY(MathUtils.clamp(location.getY(), location.getWorld().getMinHeight(), location.getWorld().getMaxHeight() - 1));
 
 			List<Component> lines = this.lines.stream()
 				.map(line -> colorize ? new JsonBuilder(line).build().asComponent() : Component.text(line))
