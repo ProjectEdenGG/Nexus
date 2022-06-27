@@ -2,11 +2,10 @@ package gg.projecteden.nexus.features.survival;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import gg.projecteden.nexus.features.bigdoormanager.BigDoorManager;
 import gg.projecteden.nexus.features.effects.Effects;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
-import gg.projecteden.nexus.models.bigdoor.BigDoorConfig.DoorAction;
+import gg.projecteden.nexus.features.survival.BigDoorOpener.DoorAction;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
