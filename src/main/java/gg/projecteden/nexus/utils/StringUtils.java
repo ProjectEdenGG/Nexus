@@ -7,16 +7,20 @@ import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -153,7 +157,26 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 	}
 
 	public static String pretty(ItemStack item, int amount) {
-		return item.getAmount() * amount + " " + camelCase(item.getType().name());
+		String name = camelCase(item.getType().name());
+
+		final Map<Enchantment, Integer> enchants = new HashMap<>() {{
+			if (item.getItemMeta() instanceof EnchantmentStorageMeta meta)
+				putAll(meta.getStoredEnchants());
+			else if (item.getItemMeta().hasEnchants())
+				putAll(item.getEnchantments());
+		}};
+
+		if (!enchants.isEmpty())
+			name = enchants.keySet().stream().map(enchantment -> {
+				int level = enchants.get(enchantment);
+				final String key = camelCase(enchantment.getKey().getKey());
+				if (level > 1)
+					return key + " " + level;
+				else
+					return key;
+			}).collect(joining(", ")) + " " + name;
+
+		return item.getAmount() * amount + " " + name;
 	}
 
 	@NotNull
