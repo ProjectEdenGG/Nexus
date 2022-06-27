@@ -60,15 +60,10 @@ public class PowerUpUtils {
 	@Data
 	@RequiredArgsConstructor
 	public static class PowerUp {
-		@NonNull
-		public String name;
-		@SuppressWarnings("NullableProblems") // makes lombok include the field in RequiredArgsConstructor
-		@NonNull
-		boolean isPositive;
-		@NonNull
-		ItemStack itemStack;
-		@NonNull
-		Consumer<Minigamer> onPickup;
+		final String name;
+		final boolean isPositive;
+		final ItemStack itemStack;
+		final Consumer<Minigamer> onPickup;
 
 		public PowerUp(String name, boolean isPositive, Material material, Consumer<Minigamer> onPickup) {
 			this.name = name;
