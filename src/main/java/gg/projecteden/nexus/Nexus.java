@@ -185,7 +185,7 @@ public class Nexus extends JavaPlugin {
 	public static void registerListener(Listener listener) {
 		final boolean isTemporary = listener instanceof TemporaryListener;
 		if (listeners.contains(listener) && !isTemporary) {
-			Nexus.log("Ignoring duplicate listener registration for class " + listener.getClass().getSimpleName());
+			Nexus.debug("Ignoring duplicate listener registration for class " + listener.getClass().getSimpleName());
 			return;
 		}
 
