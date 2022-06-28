@@ -48,6 +48,7 @@ public class EasterEggs implements Listener {
 		};
 		private @NonNull SoundBuilder burpSound = new SoundBuilder(Sound.ENTITY_PLAYER_BURP).volume(0.5);
 		private @Nullable BiConsumer<Player, ItemStack> burpEffect;
+		private boolean consumeFood = true;
 
 		public StaffEasterEggBuilder(String uuid) {
 			this.uuid = UUID.fromString(uuid);
@@ -60,6 +61,11 @@ public class EasterEggs implements Listener {
 
 		public StaffEasterEggBuilder food(Set<Material> food) {
 			this.food = food;
+			return this;
+		}
+
+		public StaffEasterEggBuilder consumeFood(boolean consumeFood) {
+			this.consumeFood = consumeFood;
 			return this;
 		}
 
@@ -105,7 +111,8 @@ public class EasterEggs implements Listener {
 				return;
 
 			ItemStack foodItem = itemStack.clone();
-			itemStack.subtract();
+			if (consumeFood)
+				itemStack.subtract();
 
 			clicked.setFoodLevel(clicked.getFoodLevel() + 2);
 
@@ -171,6 +178,11 @@ public class EasterEggs implements Listener {
 			.food(MaterialTag.SEEDS.getValues())
 			.eatSound(Sound.ENTITY_PARROT_EAT)
 			.burpSound(Sound.ENTITY_PARROT_AMBIENT)),
+
+		THUNDER(new StaffEasterEggBuilder("6dbb7b77-a68e-448d-a5bc-fb531a7fe22d")
+			.food(Material.LIGHTNING_ROD)
+			.eatSound(new SoundBuilder(Sound.BLOCK_COPPER_STEP).volume(1))
+			.burpSound(new SoundBuilder(Sound.ENTITY_LIGHTNING_BOLT_THUNDER).volume(0.5))),
 
 		KNACK(new StaffEasterEggBuilder("32fc75e3-a278-43c4-99a7-90af03846dad")
 			.food(Material.EGG)
