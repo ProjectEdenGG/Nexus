@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -42,13 +43,17 @@ public class ItemCommand extends CustomCommand {
 	}
 
 	@Permission(Group.SENIOR_STAFF)
-	@Path("ingredients <material> [amount]")
-	void ingredients(Material material, @Arg("1") int amount) {
+	@Path("ingredients <material> [amount] [--index]")
+	void ingredients(Material material, @Arg("1") int amount, @Switch int index) {
 		final List<List<ItemStack>> recipes = RecipeUtils.uncraft(new ItemStack(material));
 		if (recipes.isEmpty())
 			error("No recipes found for &e" + camelCase(material));
 
-		recipes.get(0).forEach(item -> giveItems(item, item.getAmount() * amount));
+		if (index >= recipes.size())
+			error(camelCase(material) + " only has &e" + recipes.size() + plural(" recipe", recipes.size()));
+
+		for (int i = 0; i < amount; i++)
+			recipes.get(index).forEach(this::giveItem);
 	}
 
 }
