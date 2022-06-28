@@ -5,6 +5,8 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan.FormatType;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.clientside.models.ClientSideArmorStand;
+import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
@@ -53,7 +55,10 @@ import org.bukkit.block.data.type.RedstoneRail;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
@@ -469,6 +474,24 @@ public class TestCommand extends CustomCommand implements Listener {
 	@Path("autotool")
 	void autotool() {
 		AutoTool.getBestTool(Arrays.asList(getHotbarContents(player())), getTargetBlockRequired(), Dev.of(uuid()));
+	}
+
+	@Path("clientSide itemFrame")
+	void clientSide_itemFrame() {
+		final ItemFrame itemFrame = (ItemFrame) getTargetEntityRequired(EntityType.ITEM_FRAME);
+		final ClientSideItemFrame clientSideItemFrame = ClientSideItemFrame.of(itemFrame);
+
+		itemFrame.remove();
+		Tasks.wait(TickTime.SECOND, () -> clientSideItemFrame.send(player()));
+	}
+
+	@Path("clientSide armorStand")
+	void clientSide_armorStand() {
+		final ArmorStand armorStand = (ArmorStand) getTargetEntityRequired(EntityType.ARMOR_STAND);
+		final ClientSideArmorStand clientSideArmorStand = ClientSideArmorStand.of(armorStand);
+
+		armorStand.remove();
+		Tasks.wait(TickTime.SECOND, () -> clientSideArmorStand.send(player()));
 	}
 
 }
