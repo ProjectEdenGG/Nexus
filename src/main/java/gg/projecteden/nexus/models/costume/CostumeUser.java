@@ -6,6 +6,7 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.PreLoad;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.store.gallery.GalleryPackage;
 import gg.projecteden.nexus.features.store.gallery.StoreGallery;
@@ -217,6 +218,9 @@ public class CostumeUser implements PlayerOwnedObject {
 			return false;
 
 		if (DISABLED_WORLDS.contains(WorldGroup.of(player)))
+			return false;
+
+		if (AFK.get(this).isLimbo())
 			return false;
 
 		return true;
