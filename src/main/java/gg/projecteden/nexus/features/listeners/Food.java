@@ -16,6 +16,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.Map;
 
+import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class Food implements Listener {
@@ -60,7 +61,10 @@ public class Food implements Listener {
 			if (event.getInventory().getResult().getType() != material)
 				continue;
 
-			event.getInventory().setResult(new ItemBuilder(customMaterial).amount(event.getInventory().getResult().getAmount()).build());
+			event.getInventory().setResult(new ItemBuilder(customMaterial)
+				.name(camelCase(material.getKey().getKey()))
+				.amount(event.getInventory().getResult().getAmount())
+				.build());
 		}
 	}
 

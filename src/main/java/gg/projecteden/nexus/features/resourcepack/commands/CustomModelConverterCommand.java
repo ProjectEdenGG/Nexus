@@ -38,13 +38,6 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 	@Path("compute")
 	void compute() {
 		new CustomModelConfigService().edit0(config -> {
-			config.getOldModels().computeIfAbsent(Material.BEETROOT_SOUP, $ -> new ConcurrentHashMap<>()).put(0, "minecraft:item/beetroot_soup");
-			config.getOldModels().computeIfAbsent(Material.MUSHROOM_STEW, $ -> new ConcurrentHashMap<>()).put(0, "minecraft:item/mushroom_stew");
-			config.getOldModels().computeIfAbsent(Material.RABBIT_STEW, $ -> new ConcurrentHashMap<>()).put(0, "minecraft:item/rabbit_stew");
-			config.getNewModels().computeIfAbsent(Material.COOKIE, $ -> new ConcurrentHashMap<>()).put(10000, "minecraft:item/beetroot_soup");
-			config.getNewModels().computeIfAbsent(Material.COOKIE, $ -> new ConcurrentHashMap<>()).put(10001, "minecraft:item/mushroom_stew");
-			config.getNewModels().computeIfAbsent(Material.COOKIE, $ -> new ConcurrentHashMap<>()).put(10002, "minecraft:item/rabbit_stew");
-
 			config.setNewModels(new ConcurrentHashMap<>());
 			for (CustomModel model : ResourcePack.getModels().values())
 				config.getNewModels().computeIfAbsent(model.getMaterial(), $ -> new ConcurrentHashMap<>()).put(model.getData(), model.getId());
