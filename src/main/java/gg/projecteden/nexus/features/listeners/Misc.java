@@ -96,7 +96,7 @@ public class Misc implements Listener {
 
 	@EventHandler
 	public void on(PlayerTeleportEvent event) {
-		final WorldBorder border = event.getPlayer().getWorld().getWorldBorder();
+		final WorldBorder border = event.getTo().getWorld().getWorldBorder();
 		if (border.isInside(event.getTo()))
 			return;
 
