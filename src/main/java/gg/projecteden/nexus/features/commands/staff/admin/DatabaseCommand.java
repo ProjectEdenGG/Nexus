@@ -294,6 +294,9 @@ public class DatabaseCommand extends CustomCommand {
 		if (isUuid(value))
 			return UUID.fromString(value);
 
+		if (value.startsWith("hash-"))
+			return UUID.nameUUIDFromBytes(value.replace("hash-", "").getBytes());
+
 		return PlayerUtils.getPlayer(value).getUniqueId();
 	}
 
