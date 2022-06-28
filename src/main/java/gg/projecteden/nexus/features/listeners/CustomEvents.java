@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.listeners.events.FirstWorldGroupVisitEvent;
 import gg.projecteden.nexus.features.listeners.events.GolemBuildEvent.IronGolemBuildEvent;
 import gg.projecteden.nexus.features.listeners.events.GolemBuildEvent.SnowGolemBuildEvent;
 import gg.projecteden.nexus.features.listeners.events.LivingEntityDamageByPlayerEvent;
+import gg.projecteden.nexus.features.listeners.events.PlayerChangingWorldsEvent;
 import gg.projecteden.nexus.features.listeners.events.PlayerDamageByPlayerEvent;
 import gg.projecteden.nexus.features.listeners.events.SubWorldGroupChangedEvent;
 import gg.projecteden.nexus.features.listeners.events.WorldGroupChangedEvent;
@@ -14,6 +15,7 @@ import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -25,10 +27,25 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.util.List;
 
 public class CustomEvents implements Listener {
+
+	@EventHandler
+	public void onChangingWorlds(PlayerTeleportEvent event) {
+		final World fromWorld = event.getFrom().getWorld();
+		final World toWorld = event.getTo().getWorld();
+		if (fromWorld.equals(toWorld))
+			return;
+
+		final var changingWorldsEvent = new PlayerChangingWorldsEvent(event.getPlayer(), fromWorld, toWorld);
+		if (changingWorldsEvent.callEvent())
+			return;
+
+		event.setCancelled(true);
+	}
 
 	@EventHandler
 	public void onWorldChange(PlayerChangedWorldEvent event) {
