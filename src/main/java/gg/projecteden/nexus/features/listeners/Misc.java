@@ -5,11 +5,13 @@ import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent.SlotType;
 import de.myzelyam.api.vanish.PlayerVanishStateChangeEvent;
 import de.tr7zw.nbtapi.NBTTileEntity;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.commands.teleport.TeleportCommand;
 import gg.projecteden.nexus.features.listeners.events.FakePlayerInteractEvent;
 import gg.projecteden.nexus.features.listeners.events.PlayerDamageByPlayerEvent;
 import gg.projecteden.nexus.features.listeners.events.WorldGroupChangedEvent;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.warps.Warps;
+import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.utils.FireworkLauncher;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -29,6 +31,7 @@ import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
+import org.bukkit.WorldBorder;
 import org.bukkit.block.Beehive;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
@@ -56,6 +59,7 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -88,6 +92,16 @@ public class Misc implements Listener {
 			WorldGroup worldGroup = WorldGroup.of(world);
 			((CraftWorld) world).getHandle().paperConfig().entities.behavior.tickTimeSinceSleep = worldGroup == WorldGroup.SURVIVAL || worldGroup == WorldGroup.SKYBLOCK;
 		}
+	}
+
+	@EventHandler
+	public void on(PlayerTeleportEvent event) {
+		final WorldBorder border = event.getPlayer().getWorld().getWorldBorder();
+		if (border.isInside(event.getTo()))
+			return;
+
+		event.setCancelled(true);
+		PlayerUtils.send(event.getPlayer(), Commands.getPrefix(TeleportCommand.class) + "&cYou cannot teleport outside of the border");
 	}
 
 	@EventHandler
