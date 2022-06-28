@@ -7,8 +7,7 @@ import gg.projecteden.api.interfaces.DatabaseObject;
 import gg.projecteden.api.mongodb.serializers.LocalDateTimeConverter;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.bigdoormanager.BigDoorManager;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.WorldUtils.TimeQuadrant;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -64,10 +63,10 @@ public class BigDoorConfig implements DatabaseObject {
 	}
 
 	public List<Player> getPlayerInToggleRegion(Player player) {
-		WorldGuardUtils WGUtils = new WorldGuardUtils(this.getDoor().getWorld());
-		return WGUtils.getPlayersInRegion(this.toggleRegion)
-			.stream()
-			.filter(_player -> !PlayerUtils.isSelf(_player, player))
-			.toList();
+		return OnlinePlayers.where()
+			.world(getDoor().getWorld())
+			.region(toggleRegion)
+			.exclude(player)
+			.get();
 	}
 }
