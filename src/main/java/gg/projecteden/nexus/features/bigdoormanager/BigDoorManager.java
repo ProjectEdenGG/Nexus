@@ -67,7 +67,7 @@ public class BigDoorManager extends Feature implements Listener {
 			if (!gracePeriodDoors.isEmpty()) {
 				for (Long doorId : new ArrayList<>(gracePeriodDoors)) {
 					BigDoorConfig bigDoorConfig = bigDoorConfigService.fromDoorId(doorId);
-					if (bigDoorConfig == null) {
+					if (bigDoorConfig == null || bigDoorConfig.getGracePeriodStart() == null) {
 						gracePeriodDoors.remove(doorId);
 						continue;
 					}
@@ -78,10 +78,10 @@ public class BigDoorManager extends Feature implements Listener {
 
 //						Dev.WAKKA.send("Removing door " + bigDoorConfig.getDoorName() + " from grace period list");
 
+						gracePeriodDoors.remove(doorId);
+
 						bigDoorConfig.setGracePeriodStart(null);
 						bigDoorConfigService.save(bigDoorConfig);
-
-						gracePeriodDoors.remove(doorId);
 					}
 				}
 			}
