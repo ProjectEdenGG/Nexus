@@ -9,6 +9,7 @@ import com.gmail.nossr50.util.player.UserManager;
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.BlockUtils;
@@ -54,6 +55,12 @@ public class McMMOListener implements Listener {
 	public McMMOListener() {
 		Nexus.registerListener(this);
 		scheduler();
+	}
+
+	@EventHandler
+	public void onAfkGain(McMMOPlayerXpGainEvent event) {
+		if (AFK.get(event.getPlayer()).isAfk())
+			event.setCancelled(true);
 	}
 
 	private static final List<PrimarySkillType> MELEE_SKILLS = List.of(PrimarySkillType.AXES, PrimarySkillType.SWORDS, PrimarySkillType.UNARMED);
