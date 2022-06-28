@@ -14,26 +14,37 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.WorldUtils;
 import gg.projecteden.nexus.utils.WorldUtils.TimeQuadrant;
+import lombok.Data;
+import lombok.Getter;
 import nl.pim16aap2.bigDoors.BigDoors;
 import nl.pim16aap2.bigDoors.Commander;
 import nl.pim16aap2.bigDoors.Door;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /*
 	TODO:
 		- time of day, keep door open/closed
  */
 public class BigDoorManager extends Feature implements Listener {
+	@Data
+	public static class NamedBigDoor {
+		private final String name;
+	}
+
 	private static final BigDoorConfigService bigDoorConfigService = new BigDoorConfigService();
 
+	@Getter
 	private static final BigDoors bigDoors = Nexus.getBigDoors();
+	@Getter
 	private static final Commander commander = bigDoors.getCommander();
 
 	private static final List<Long> gracePeriodDoors = new ArrayList<>();
@@ -88,8 +99,26 @@ public class BigDoorManager extends Feature implements Listener {
 		});
 	}
 
-	public static Door getDoor(long id) {
-		return commander.getDoor(null, id);
+	public static Set<Door> getDoors() {
+		return getCommander().getDoors();
+	}
+
+	public static @Nullable Door getDoor(long id) {
+		for (Door door : getDoors()) {
+			if (door.getDoorUID() == id)
+				return door;
+		}
+
+		return null;
+	}
+
+	public static @Nullable Door getDoor(String doorName) {
+		for (Door door : getDoors()) {
+			if (door.getName().equalsIgnoreCase(doorName))
+				return door;
+		}
+
+		return null;
 	}
 
 	public static void toggleDoor(Door door) {

@@ -1,11 +1,18 @@
 package gg.projecteden.nexus.features.bigdoormanager;
 
+import gg.projecteden.nexus.features.bigdoormanager.BigDoorManager.NamedBigDoor;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.bigdoor.BigDoorConfig;
 import gg.projecteden.nexus.models.bigdoor.BigDoorConfigService;
 import lombok.NonNull;
+import nl.pim16aap2.bigDoors.Door;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class BigDoorManagerCommand extends CustomCommand {
 	private static final BigDoorConfigService configService = new BigDoorConfigService();
@@ -15,8 +22,13 @@ public class BigDoorManagerCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("create <doorName> <doorId>")
-	void create(String doorName, int doorId) {
+	@Path("create <doorId>")
+	void create(int doorId) {
+		Door door = BigDoorManager.getDoor(doorId);
+		if (door == null)
+			error("Unknown BigDoor Id " + doorId);
+
+		String doorName = door.getName();
 		config = configService.get(doorName);
 
 		config.setDoorId(doorId);
@@ -27,33 +39,47 @@ public class BigDoorManagerCommand extends CustomCommand {
 	}
 
 	@Path("delete <doorName>")
-	void create(String doorName) {
-		config = configService.get(doorName);
+	void create(NamedBigDoor door) {
+		config = configService.get(door.getName());
 		configService.delete(config);
-		send("Door \"" + doorName + "\" deleted from the database");
+		send("Door \"" + door.getName() + "\" deleted from the database");
 	}
 
 	@Path("setToggleRegion <doorName> <regionId>")
-	void setToggleRegion(String doorName, String regionId) {
-		config = configService.get(doorName);
+	void setToggleRegion(NamedBigDoor door, String regionId) {
+		config = configService.get(door.getName());
 
 		config.setToggleRegion(regionId);
 
 		configService.save(config);
 
-		send("Set door \"" + doorName + "\" toggle region to " + regionId);
+		send("Set door \"" + door.getName() + "\" toggle region to " + regionId);
 	}
 
 //	@Path("setTimeAction <doorName> <quadrant> <action>")
-//	void setTimeAction(String doorName, TimeQuadrant quadrant, DoorAction action){
-//		config = configService.get(doorName);
+//	void setTimeAction(NamedBigDoor door, TimeQuadrant quadrant, DoorAction action){
+//		config = configService.get(door.getName());
 //
 //		config.getTimeState().put(quadrant, action);
 //
 //		configService.save(config);
 //
-//		send("Set door \"" + doorName + "\" time quadrant of " + quadrant + " to apply action " + action);
+//		send("Set door \"" + door.getName() + "\" time quadrant of " + quadrant + " to apply action " + action);
 //	}
 
+	@ConverterFor(NamedBigDoor.class)
+	NamedBigDoor convertToNamedBigDoor(String value) {
+		Door door = BigDoorManager.getDoor(value);
+		if (door == null)
+			error("BigDoor named &e" + value + " &cnot found");
+		return new NamedBigDoor(door.getName());
+	}
 
+	@TabCompleterFor(NamedBigDoor.class)
+	List<String> tabCompleteNamedBigDoor(String filter) {
+		return BigDoorManager.getDoors().stream()
+			.map(Door::getName)
+			.filter(doorName -> doorName.toLowerCase().startsWith(filter.toLowerCase()))
+			.collect(Collectors.toList());
+	}
 }
