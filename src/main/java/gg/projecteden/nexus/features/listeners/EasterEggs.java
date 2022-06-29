@@ -164,10 +164,12 @@ public class EasterEggs implements Listener {
 	@AllArgsConstructor
 	public enum StaffEasterEgg {
 		GRIFFIN(new StaffEasterEggBuilder("86d7e0e2-c95e-4f22-8f99-a6e83b398307")
-			.food(Material.ICE)),
+			.food(Material.ICE)
+		),
 
 		WAKKA(new StaffEasterEggBuilder("e9e07315-d32c-4df7-bd05-acfe51108234")
-			.food(Material.REDSTONE)),
+			.food(Material.REDSTONE)
+		),
 
 		BLAST(new StaffEasterEggBuilder("a4274d94-10f2-4663-af3b-a842c7ec729c")
 			.food(Material.TNT)
@@ -182,38 +184,57 @@ public class EasterEggs implements Listener {
 					.offset(.5, .5, .5)
 					.location(player.getLocation())
 					.spawn();
-			})),
+			})
+		),
 
 		LEXI(new StaffEasterEggBuilder("d1de9ca8-78f6-4aae-87a1-8c112f675f12")
 			.food(MaterialTag.CANDLES.getValues())
-			.burpSound(new SoundBuilder(Sound.BLOCK_FIRE_AMBIENT).volume(2))),
+			.burpSound(new SoundBuilder(Sound.BLOCK_FIRE_AMBIENT).volume(2))
+		),
 
 		RAVEN(new StaffEasterEggBuilder("fce1fe67-9514-4117-bcf6-d0c49ca0ba41")
 			.food(MaterialTag.SEEDS.getValues())
 			.eatSound(Sound.ENTITY_PARROT_EAT)
-			.burpSound(Sound.ENTITY_PARROT_AMBIENT)),
+			.burpSound(Sound.ENTITY_PARROT_AMBIENT)
+		),
 
 		JOSH(new StaffEasterEggBuilder("5c3ddda9-51e1-4f9a-8233-e08cf0b26f11")
 			.food(Material.MYCELIUM)
-			.burpSound(Sound.ENTITY_COW_AMBIENT)),
+			.burpSound(Sound.ENTITY_COW_AMBIENT)
+		),
 
 		THUNDER(new StaffEasterEggBuilder("6dbb7b77-a68e-448d-a5bc-fb531a7fe22d")
 			.food(Material.LIGHTNING_ROD)
 			.eatSound(new SoundBuilder(Sound.BLOCK_COPPER_STEP).volume(1))
-			.burpSound(new SoundBuilder(Sound.ENTITY_LIGHTNING_BOLT_THUNDER).volume(0.5))),
+			.burpSound(new SoundBuilder(Sound.ENTITY_LIGHTNING_BOLT_THUNDER).volume(0.5))
+		),
+
+		BOFFO(new StaffEasterEggBuilder("b83bae78-83d6-43a0-9316-014a0a702ab2")
+			.food(Set.of(Material.STONE, Material.COBBLESTONE, Material.ANDESITE, Material.GRANITE, Material.DIORITE))
+			.burpSound(Sound.ENTITY_VILLAGER_YES)
+		),
 
 		KNACK(new StaffEasterEggBuilder("32fc75e3-a278-43c4-99a7-90af03846dad")
 			.food(Material.EGG)
-			.burpSound(Sound.ENTITY_CHICKEN_AMBIENT)),
+			.burpSound(Sound.ENTITY_CHICKEN_AMBIENT)
+		),
 
 		CYN(new StaffEasterEggBuilder("1d70383f-21ba-4b8b-a0b4-6c327fbdade1")
 			.food(Material.GOLD_NUGGET)
-			.burpSound(Sound.ENTITY_PIGLIN_ADMIRING_ITEM)),
+			.burpSound(Sound.ENTITY_PIGLIN_ADMIRING_ITEM)
+		),
 
 		MARSHY(new StaffEasterEggBuilder("a7fa3c9c-d3cb-494e-bff6-8b6d416b18e3")
 			.food(Material.CHEST)
 			.eatSound(Sound.ENTITY_ITEM_FRAME_ROTATE_ITEM)
-			.burpSound(Sound.ENTITY_ITEM_FRAME_BREAK)),
+			.burpSound(Sound.ENTITY_ITEM_FRAME_BREAK)
+		),
+
+		HOOTS(new StaffEasterEggBuilder("4f06f692-0b42-4706-9193-bcc716ce5936")
+			.food(Material.AMETHYST_SHARD)
+			.eatSound(Sound.BLOCK_AMETHYST_CLUSTER_PLACE)
+			.burpSound(Sound.BLOCK_AMETHYST_CLUSTER_BREAK)
+		),
 		;
 
 		private final StaffEasterEggBuilder builder;
