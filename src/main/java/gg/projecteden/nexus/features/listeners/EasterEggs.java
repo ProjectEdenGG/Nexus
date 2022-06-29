@@ -42,7 +42,7 @@ public class EasterEggs implements Listener {
 		private @NonNull Set<Material> food = new HashSet<>();
 		private boolean consumeFood = true;
 
-		private @NonNull SoundBuilder eatSound = new SoundBuilder(Sound.ENTITY_GENERIC_EAT).volume(0.5);
+		private @Nullable SoundBuilder eatSound = new SoundBuilder(Sound.ENTITY_GENERIC_EAT).volume(0.5);
 		private int eatSoundCount = 5;
 		private @NonNull BiConsumer<Player, ItemStack> eatEffect = (player, itemstack) -> {
 			Location headLoc = player.getLocation().add(0, 1.45, 0);
@@ -52,7 +52,7 @@ public class EasterEggs implements Listener {
 		private int eatEffectCount = 5;
 		private int eatMaxCount = 5;
 
-		private @NonNull SoundBuilder burpSound = new SoundBuilder(Sound.ENTITY_PLAYER_BURP).volume(0.5);
+		private @Nullable SoundBuilder burpSound = new SoundBuilder(Sound.ENTITY_PLAYER_BURP).volume(0.5);
 		private @Nullable BiConsumer<Player, ItemStack> burpEffect;
 
 		public StaffEasterEggBuilder(String uuid) {
@@ -84,6 +84,11 @@ public class EasterEggs implements Listener {
 			return this;
 		}
 
+		public StaffEasterEggBuilder noBurpSound() {
+			this.burpSound = null;
+			return this;
+		}
+
 		public StaffEasterEggBuilder burpEffect(BiConsumer<Player, ItemStack> burpEffect) {
 			this.burpEffect = burpEffect;
 			return this;
@@ -96,6 +101,11 @@ public class EasterEggs implements Listener {
 
 		public StaffEasterEggBuilder eatSound(SoundBuilder eatSound) {
 			this.eatSound = eatSound;
+			return this;
+		}
+
+		public StaffEasterEggBuilder noEatSound() {
+			this.eatSound = null;
 			return this;
 		}
 
@@ -140,8 +150,10 @@ public class EasterEggs implements Listener {
 			for (int i = 0; i < eatMaxCount; i++) {
 				int finalI = i;
 				Tasks.wait(wait, () -> {
-					if (finalI < eatSoundCount)
-						eatSound.clone().location(clicked.getLocation()).play();
+					if (eatSound != null) {
+						if (finalI < eatSoundCount)
+							eatSound.clone().location(clicked.getLocation()).play();
+					}
 
 					if (finalI < eatEffectCount)
 						eatEffect.accept(clicked, foodItem);
@@ -153,9 +165,11 @@ public class EasterEggs implements Listener {
 			wait += 4;
 
 			Tasks.wait(wait, () -> {
-				burpSound.clone().location(clicked.getLocation()).play();
-				if (burpEffect != null)
-					burpEffect.accept(clicked, itemStack);
+				if (burpSound != null) {
+					burpSound.clone().location(clicked.getLocation()).play();
+					if (burpEffect != null)
+						burpEffect.accept(clicked, itemStack);
+				}
 			});
 		}
 
@@ -228,6 +242,12 @@ public class EasterEggs implements Listener {
 			.food(Material.CHEST)
 			.eatSound(Sound.ENTITY_ITEM_FRAME_ROTATE_ITEM)
 			.burpSound(Sound.ENTITY_ITEM_FRAME_BREAK)
+		),
+
+		WIRE(new StaffEasterEggBuilder("27c0dcae-9643-4bdd-bb3d-34216d14761c")
+			.food(Set.of(Material.BROWN_MUSHROOM, Material.WARPED_FUNGUS))
+			.burpSound(Sound.ENTITY_VILLAGER_AMBIENT)
+
 		),
 
 		HOOTS(new StaffEasterEggBuilder("4f06f692-0b42-4706-9193-bcc716ce5936")
