@@ -1,12 +1,12 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.api.common.utils.MathUtils;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.parchment.OptionalPlayer;
-import gg.projecteden.api.common.utils.MathUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -218,7 +218,7 @@ public class SoundBuilder implements Cloneable {
 	public SoundBuilder clone() {
 		return new SoundBuilder(sound)
 			.receivers(new ArrayList<>(receivers))
-			.location(location.clone())
+			.location(location == null ? null : location.clone())
 			.category(category)
 			.muteMenuItem(muteMenuItem)
 			.pitch(pitch)

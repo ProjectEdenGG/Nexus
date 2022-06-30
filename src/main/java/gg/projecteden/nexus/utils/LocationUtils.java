@@ -270,6 +270,24 @@ public class LocationUtils {
 		RIGHT
 	}
 
+	public enum NeighborDirection {
+		NORTH,
+		EAST,
+		SOUTH,
+		WEST,
+		UP,
+		DOWN,
+		;
+
+		public BlockFace toBlockFace() {
+			return BlockFace.valueOf(name());
+		}
+
+		public static BlockFace[] blockFaces() {
+			return Arrays.stream(values()).map(NeighborDirection::toBlockFace).toArray(BlockFace[]::new);
+		}
+	}
+
 	public enum CardinalDirection implements IterableEnum {
 		NORTH(180),
 		EAST(270),

@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.customblocks.models.CustomBlockTag;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.framework.interfaces.IsColored;
+import gg.projecteden.nexus.utils.GlowUtils.GlowColor;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -36,7 +37,7 @@ public enum ColorType implements IsColored {
 			ChatColor.WHITE,
 			NamedTextColor.WHITE,
 			DyeColor.WHITE,
-			GlowAPI.Color.WHITE
+			GlowColor.WHITE
 	),
 	LIGHT_GRAY(
 			"light gray",
@@ -45,7 +46,7 @@ public enum ColorType implements IsColored {
 			ChatColor.GRAY,
 			NamedTextColor.GRAY,
 			DyeColor.LIGHT_GRAY,
-			GlowAPI.Color.GRAY
+			GlowColor.GRAY
 	),
 	GRAY(
 			"gray",
@@ -54,7 +55,7 @@ public enum ColorType implements IsColored {
 			ChatColor.DARK_GRAY,
 			NamedTextColor.DARK_GRAY,
 			DyeColor.GRAY,
-			GlowAPI.Color.DARK_GRAY
+			GlowColor.DARK_GRAY
 	),
 	BLACK(
 			"black",
@@ -63,7 +64,7 @@ public enum ColorType implements IsColored {
 			ChatColor.BLACK,
 			NamedTextColor.BLACK,
 			DyeColor.BLACK,
-			GlowAPI.Color.BLACK
+			GlowColor.BLACK
 	),
 	BROWN(
 			"brown",
@@ -81,7 +82,7 @@ public enum ColorType implements IsColored {
 			ChatColor.DARK_RED,
 			NamedTextColor.DARK_RED,
 			DyeColor.RED,
-			GlowAPI.Color.DARK_RED
+			GlowColor.DARK_RED
 	),
 	LIGHT_RED(
 			"light red",
@@ -91,7 +92,7 @@ public enum ColorType implements IsColored {
 			NamedTextColor.RED,
 			null,
 			DyeColor.RED,
-			GlowAPI.Color.RED
+			GlowColor.RED
 	),
 	ORANGE(
 			"orange",
@@ -100,7 +101,7 @@ public enum ColorType implements IsColored {
 			ChatColor.GOLD,
 			NamedTextColor.GOLD,
 			DyeColor.ORANGE,
-			GlowAPI.Color.GOLD
+			GlowColor.GOLD
 	),
 	YELLOW(
 			"yellow",
@@ -109,7 +110,7 @@ public enum ColorType implements IsColored {
 			ChatColor.YELLOW,
 			NamedTextColor.YELLOW,
 			DyeColor.YELLOW,
-			GlowAPI.Color.YELLOW
+			GlowColor.YELLOW
 	),
 	LIGHT_GREEN(
 			"lime",
@@ -118,7 +119,7 @@ public enum ColorType implements IsColored {
 			ChatColor.GREEN,
 			NamedTextColor.GREEN,
 			DyeColor.LIME,
-			GlowAPI.Color.GREEN
+			GlowColor.GREEN
 	),
 	GREEN(
 			"green",
@@ -127,7 +128,7 @@ public enum ColorType implements IsColored {
 			ChatColor.DARK_GREEN,
 			NamedTextColor.DARK_GREEN,
 			DyeColor.GREEN,
-			GlowAPI.Color.DARK_GREEN
+			GlowColor.DARK_GREEN
 	),
 	CYAN(
 			"cyan",
@@ -136,7 +137,7 @@ public enum ColorType implements IsColored {
 			ChatColor.DARK_AQUA,
 			NamedTextColor.DARK_AQUA,
 			DyeColor.CYAN,
-			GlowAPI.Color.DARK_AQUA
+			GlowColor.DARK_AQUA
 	),
 	LIGHT_BLUE(
 			"light blue",
@@ -145,7 +146,7 @@ public enum ColorType implements IsColored {
 			ChatColor.AQUA,
 			NamedTextColor.AQUA,
 			DyeColor.LIGHT_BLUE,
-			GlowAPI.Color.AQUA
+			GlowColor.AQUA
 	),
 	BLUE(
 			"blue",
@@ -154,7 +155,7 @@ public enum ColorType implements IsColored {
 			ChatColor.BLUE,
 			NamedTextColor.BLUE,
 			DyeColor.BLUE,
-			GlowAPI.Color.BLUE
+			GlowColor.BLUE
 	),
 	PURPLE(
 			"purple",
@@ -163,7 +164,7 @@ public enum ColorType implements IsColored {
 			ChatColor.DARK_PURPLE,
 			NamedTextColor.DARK_PURPLE,
 			DyeColor.PURPLE,
-			GlowAPI.Color.DARK_PURPLE
+			GlowColor.DARK_PURPLE
 	),
 	MAGENTA(
 			"magenta",
@@ -172,7 +173,7 @@ public enum ColorType implements IsColored {
 			ChatColor.LIGHT_PURPLE,
 			NamedTextColor.LIGHT_PURPLE,
 			DyeColor.MAGENTA,
-			GlowAPI.Color.PURPLE
+			GlowColor.PURPLE
 	),
 	PINK(
 			"pink",
@@ -181,7 +182,7 @@ public enum ColorType implements IsColored {
 			ChatColor.LIGHT_PURPLE,
 			NamedTextColor.LIGHT_PURPLE,
 			DyeColor.PINK,
-			GlowAPI.Color.PURPLE
+			GlowColor.PURPLE
 	);
 
 	private final @NotNull String name;
@@ -194,10 +195,10 @@ public enum ColorType implements IsColored {
 	private final @NotNull NamedTextColor namedColor;
 	private final @Nullable DyeColor dyeColor;
 	private final @NotNull DyeColor similarDyeColor;
-	private final @Nullable GlowAPI.Color glowColor;
+	private final @Nullable GlowUtils.GlowColor glowColor;
 
 	ColorType(@NotNull String name, @NotNull Color bukkitColor, @NotNull ChatColor chatColor, @NotNull ChatColor bukkitChatColor,
-			  NamedTextColor namedColor, @NotNull DyeColor dyeColor, @Nullable GlowAPI.Color glowColor) {
+			  NamedTextColor namedColor, @NotNull DyeColor dyeColor, @Nullable GlowUtils.GlowColor glowColor) {
 		this(name, bukkitColor, chatColor, bukkitChatColor, namedColor, dyeColor, dyeColor, glowColor);
 	}
 
@@ -237,7 +238,7 @@ public enum ColorType implements IsColored {
 	}
 
 	@Nullable
-	public static ColorType of(@Nullable GlowAPI.Color glowColor) {
+	public static ColorType of(@Nullable GlowUtils.GlowColor glowColor) {
 		if (glowColor == null) return null;
 		return Arrays.stream(values()).filter(colorType -> glowColor.equals(colorType.getGlowColor())).findFirst().orElse(null);
 	}

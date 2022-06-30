@@ -3,20 +3,20 @@ package gg.projecteden.nexus.models.nerd;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import gg.projecteden.api.common.utils.CompletableFutures;
+import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.framework.interfaces.IsColoredAndNamed;
+import gg.projecteden.nexus.utils.GlowUtils.GlowColor;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.api.common.utils.CompletableFutures;
-import gg.projecteden.api.common.utils.EnumUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.md_5.bungee.api.ChatColor;
-import org.inventivetalent.glow.GlowAPI;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
@@ -54,8 +54,8 @@ public enum Rank implements IsColoredAndNamed {
 	@Getter
 	private final ChatColor similarChatColor;
 
-	public GlowAPI.Color getGlowColor() {
-		return GlowAPI.Color.valueOf(similarChatColor.getName().toUpperCase());
+	public GlowColor getGlowColor() {
+		return GlowColor.valueOf(similarChatColor.getName().toUpperCase());
 	}
 
 	public static boolean exists(String key) {

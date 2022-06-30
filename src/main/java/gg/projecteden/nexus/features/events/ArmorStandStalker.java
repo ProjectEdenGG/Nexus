@@ -37,7 +37,7 @@ public class ArmorStandStalker extends Feature {
 				// BearFair21 - Halloween Island
 				add(Stalker.builder().uuid("720fc446-7598-4a99-9493-40bc784667dc").world(BearFair21.getWorld()).build());
 				// New Spawn - Owl on Fletcher Building
-				add(Stalker.builder().uuid("39fa0c4e-76bf-4773-bd32-c61e1cae3fc3").world("buildadmin").radius(25).build());
+				add(Stalker.builder().uuid("ce8e49c7-0170-4cbc-b551-14cabb89c102").world("survival").radius(25).build());
 
 				// Store Gallery
 				// Main Front Right

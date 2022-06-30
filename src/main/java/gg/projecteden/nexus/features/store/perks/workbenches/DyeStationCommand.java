@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.store.perks.workbenches;
 
-import gg.projecteden.nexus.features.custombenches.DyeStation;
-import gg.projecteden.nexus.features.custombenches.DyeStation.DyeStationMenu.StainChoice;
+import gg.projecteden.nexus.features.workbenches.DyeStation;
+import gg.projecteden.nexus.features.workbenches.DyeStation.DyeStationMenu.StainChoice;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;

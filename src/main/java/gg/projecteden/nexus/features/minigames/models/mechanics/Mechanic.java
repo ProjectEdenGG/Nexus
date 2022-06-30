@@ -275,7 +275,6 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 	}
 
 	public void onDeath(@NotNull MinigamerDeathEvent event) {
-		event.getMinigamer().clearState();
 		Minigamer attacker = event.getAttacker();
 		if (attacker != null)
 			giveKillHeal(attacker);
@@ -437,6 +436,8 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 			return true;
 
 		// handle respawning
+		if (target.isRespawning())
+			return false;
 		if (viewer.isRespawning())
 			return false;
 

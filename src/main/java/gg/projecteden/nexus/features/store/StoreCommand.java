@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.store;
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.store.BuycraftUtils.CouponCreator;
 import gg.projecteden.nexus.features.store.annotations.Category.StoreCategory;
@@ -36,8 +35,6 @@ import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import net.buycraft.plugin.data.Coupon;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -212,6 +209,9 @@ public class StoreCommand extends CustomCommand implements Listener {
 				}
 			else
 				for (Package storePackage : category.getPackages()) {
+					if (storePackage.isDisabled())
+						continue;
+
 					ItemBuilder item = storePackage.getDisplayItem();
 					boolean has = storePackage.has(contributor);
 					int count = storePackage.count(contributor);

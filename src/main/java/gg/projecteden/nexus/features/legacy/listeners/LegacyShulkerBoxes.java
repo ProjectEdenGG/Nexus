@@ -2,10 +2,10 @@ package gg.projecteden.nexus.features.legacy.listeners;
 
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.listeners.TemporaryMenuListener;
 import gg.projecteden.nexus.features.listeners.events.FakePlayerInteractEvent;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
+import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -37,7 +37,7 @@ import java.util.Optional;
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.api.common.utils.StringUtils.paste;
 import static gg.projecteden.nexus.features.legacy.Legacy.PREFIX;
-import static gg.projecteden.nexus.features.recipes.functionals.Backpacks.isBackpack;
+import static gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks.isBackpack;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class LegacyShulkerBoxes implements Listener {

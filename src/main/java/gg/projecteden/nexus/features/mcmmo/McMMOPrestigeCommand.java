@@ -4,13 +4,12 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.models.mcmmo.McMMOPrestige;
-import gg.projecteden.nexus.models.mcmmo.McMMOService;
+import gg.projecteden.nexus.models.mcmmo.McMMOPrestigeUserService;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import org.bukkit.OfflinePlayer;
 
 public class McMMOPrestigeCommand extends CustomCommand {
-	private static final McMMOService service = new McMMOService();
+	private static final McMMOPrestigeUserService service = new McMMOPrestigeUserService();
 
 	public McMMOPrestigeCommand(CommandEvent event) {
 		super(event);
@@ -18,12 +17,11 @@ public class McMMOPrestigeCommand extends CustomCommand {
 
 	@Path("[player]")
 	void main(@Arg("self") OfflinePlayer player) {
-		McMMOPrestige mcMMOPrestige = service.getPrestige(player.getUniqueId().toString());
+		final var user = service.get(player);
 
 		line();
 		send("&ePrestige for " + Nickname.of(player));
-		mcMMOPrestige.getPrestiges().forEach((type, count) -> send("&3" + camelCase(type) + ": &e" + count));
-
+		user.getPrestiges().forEach((type, count) -> send("&3" + camelCase(type) + ": &e" + count));
 	}
 
 }

@@ -46,6 +46,7 @@ import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.Repairable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -418,24 +419,37 @@ public class Shop implements PlayerOwnedObject {
 			return items;
 		}
 
+		public @Nullable Double getPricePerItem() {
+			if (!(price instanceof Number)) return null;
+			return (Double) price / item.getAmount();
+		}
+
 		@Override
-		public int compareTo(@NotNull Product product) {
-			if (item.getType().name().equals(product.getItem().getType().name())) {
-				if (exchangeType != product.getExchangeType())
-					return exchangeType.compareTo(product.getExchangeType());
-				else if (price instanceof Number && product.getPrice() instanceof Number)
-					if (exchangeType == ExchangeType.BUY)
-						return ((Double) product.getPrice()).compareTo((Double) price);
-					else
-						return ((Double) price).compareTo((Double) product.getPrice());
-				else if (price instanceof Number)
-					return ((Double) price).compareTo(Double.MAX_VALUE);
-				else if (product.getPrice() instanceof Number)
-					return ((Double) Double.MAX_VALUE).compareTo(((Double) product.getPrice()));
-				else
-					return 0;
-			} else
-				return item.getType().name().compareTo(product.getItem().getType().name());
+		public int compareTo(@NotNull Product other) {
+			// compare item type (ascending/alphabetical)
+			int cmp = item.getType().name().compareTo(other.getItem().getType().name());
+			if (cmp != 0) return cmp;
+
+			// compare exchange type (ascending)
+			cmp = exchangeType.compareTo(other.getExchangeType());
+			if (cmp != 0) return cmp;
+
+			// compare price (descending for BUY, ascending for SELL)
+			if (getPricePerItem() != null && other.getPricePerItem() != null) {
+				cmp = other.getPricePerItem().compareTo(getPricePerItem());
+				if (cmp != 0) {
+					cmp *= exchangeType == ExchangeType.BUY ? 1 : -1;
+					return cmp;
+				}
+			} else if (getPricePerItem() != null) {
+				cmp = getPricePerItem().compareTo(Double.MAX_VALUE);
+				if (cmp != 0) return cmp;
+			} else if (other.getPricePerItem() != null) {
+				cmp = ((Double) Double.MAX_VALUE).compareTo(other.getPricePerItem());
+				if (cmp != 0) return cmp;
+			}
+
+			return Integer.compare(item.getAmount(), other.getItem().getAmount());
 		}
 	}
 

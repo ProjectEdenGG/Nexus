@@ -5,22 +5,18 @@ import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.CustomToolBlock;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.LocationUtils.Axis;
-import gg.projecteden.nexus.utils.Tasks.GlowTask;
 import gg.projecteden.parchment.HasPlayer;
-import gg.projecteden.parchment.OptionalPlayer;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.block.Action;
@@ -31,14 +27,11 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.util.Vector;
-import org.inventivetalent.glow.GlowAPI.Color;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -246,42 +239,6 @@ public class BlockUtils {
 				return face;
 
 		return null;
-	}
-
-	public static void glow(Block block, long ticks, OptionalPlayer viewer) {
-		glow(block, ticks, viewer, Color.RED);
-	}
-
-	public static void glow(Block block, long ticks, OptionalPlayer viewer, Color color) {
-		glow(block, ticks, Collections.singletonList(viewer), color);
-	}
-
-	public static void glow(Block block, long ticks, List<? extends OptionalPlayer> viewers, Color color) {
-		List<Player> _viewers = PlayerUtils.getNonNullPlayers(viewers);
-
-		Material material = block.getType();
-		if (isNullOrAir(material))
-			material = Material.WHITE_CONCRETE;
-
-		Location location = block.getLocation();
-		World blockWorld = block.getWorld();
-		FallingBlock fallingBlock = blockWorld.spawnFallingBlock(LocationUtils.getCenteredLocation(location), material.createBlockData());
-		fallingBlock.setDropItem(false);
-		fallingBlock.setGravity(false);
-		fallingBlock.setInvulnerable(true);
-		fallingBlock.setVelocity(new Vector(0, 0, 0));
-
-		GlowTask.builder()
-				.duration(ticks)
-			.entity(fallingBlock)
-			.color(color)
-			.viewers(_viewers)
-			.onComplete(() -> {
-				fallingBlock.remove();
-				for (Player viewer : _viewers)
-					viewer.sendBlockChange(location, block.getType().createBlockData());
-			})
-			.start();
 	}
 
 	public static boolean tryPlaceEvent(@NotNull Player player, @NotNull Block block, @NotNull Block placedAgainst, Material material) {

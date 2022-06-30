@@ -18,6 +18,7 @@ import gg.projecteden.nexus.models.bearfair21.MiniGolf21User;
 import gg.projecteden.nexus.models.bearfair21.MiniGolf21UserService;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.FireworkLauncher;
+import gg.projecteden.nexus.utils.GlowUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.LocationUtils;
@@ -48,7 +49,6 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.util.Vector;
-import org.inventivetalent.glow.GlowAPI;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -329,7 +329,7 @@ public class MiniGolf {
 				// Rainbow Glow
 				if (user.getMiniGolfColor().equals(MiniGolfColor.RAINBOW)) {
 					if (updateRainbow)
-						GlowAPI.setGlowing(ball, color.get().getColorType().getGlowColor(), user.getOnlinePlayer());
+						GlowUtils.glow(ball).color(color.get().getColorType().getGlowColor()).receivers(user.getOnlinePlayer()).run();
 				}
 
 				Material _type = loc.getBlock().getType();

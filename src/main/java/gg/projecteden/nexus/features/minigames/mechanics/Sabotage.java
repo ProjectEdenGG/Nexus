@@ -5,7 +5,6 @@ import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.chat.events.PublicChatEvent;
-import gg.projecteden.nexus.features.menus.sabotage.ImpostorMenu;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -19,11 +18,13 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerCompleteTaskPartEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerVoteEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.SabotageMatchData;
+import gg.projecteden.nexus.features.minigames.models.matchdata.SabotageMatchData.ArmorStandTask;
 import gg.projecteden.nexus.features.minigames.models.matchdata.SabotageMatchData.Body;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.SabotageColor;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.SabotageLight;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.SabotageTeam;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.Task;
+import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.menus.ImpostorMenu;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreboard;
 import gg.projecteden.nexus.features.nameplates.Nameplates;
@@ -33,6 +34,7 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.GlowUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
@@ -79,7 +81,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffectType;
-import org.inventivetalent.glow.GlowAPI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -332,7 +333,8 @@ public class Sabotage extends TeamMechanic {
 		matchData.getVenters().remove(uuid);
 		matchData.getTasks().remove(uuid);
 		matchData.getPlayerColors().remove(uuid);
-		GlowAPI.setGlowing(matchData.getArmorStandTasks().stream().map(SabotageMatchData.ArmorStandTask::getEntity).collect(Collectors.toList()), GlowAPI.Color.NONE, event.getMinigamer().getPlayer());
+		final var entities = matchData.getArmorStandTasks().stream().map(ArmorStandTask::getEntity).collect(Collectors.toList());
+		GlowUtils.unglow(entities).receivers(event.getMinigamer().getPlayer()).run();
 	}
 
 	@Override
@@ -342,7 +344,8 @@ public class Sabotage extends TeamMechanic {
 		SabotageMatchData matchData = match.getMatchData();
 		match.hideBossBar(matchData.getBossbar());
 		match.getMinigamers().forEach(minigamer -> Chat.setActiveChannel(minigamer, Chat.StaticChannel.MINIGAMES));
-		GlowAPI.setGlowing(matchData.getArmorStandTasks().stream().map(SabotageMatchData.ArmorStandTask::getEntity).collect(Collectors.toList()), GlowAPI.Color.NONE, event.getMatch().getPlayers());
+		final var entities = matchData.getArmorStandTasks().stream().map(ArmorStandTask::getEntity).collect(Collectors.toList());
+		GlowUtils.unglow(entities).receivers(event.getMatch().getPlayers()).run();
 	}
 
 	@Override
@@ -580,7 +583,9 @@ public class Sabotage extends TeamMechanic {
 				&& event.getAttacker().getPlayer().getInventory().getItemInMainHand().isSimilar(KILL_ITEM.get()) && matchData.getKillCooldown(event.getMinigamer()) <= 0) {
 			matchData.putKillCooldown(event.getAttacker());
 			matchData.spawnBody(event.getMinigamer());
-			onDeath(new MinigamerDeathEvent(event.getMinigamer(), event.getAttacker(), event.getOriginalEvent()));
+			MinigamerDeathEvent deathEvent = new MinigamerDeathEvent(event.getMinigamer(), event.getAttacker(), event.getOriginalEvent());
+			if (deathEvent.callEvent())
+				onDeath(deathEvent);
 			if (event.getOriginalEvent() instanceof Cancellable cancellable)
 				cancellable.setCancelled(true);
 		} else

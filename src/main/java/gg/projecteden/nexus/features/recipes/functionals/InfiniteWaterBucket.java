@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.Levelled;
+import org.bukkit.block.data.Waterlogged;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -67,6 +68,10 @@ public class InfiniteWaterBucket extends FunctionalRecipe {
 		if (event.getAction() != Action.RIGHT_CLICK_BLOCK)
 			return;
 
+		// prevent placing water in the nether
+		if (event.getPlayer().getWorld().isUltraWarm())
+			return;
+
 		final ItemStack item = event.getItem();
 		if (!isInfiniteWaterBucket(item))
 			return;
@@ -90,11 +95,12 @@ public class InfiniteWaterBucket extends FunctionalRecipe {
 			return;
 		}
 
-		final Block block = clickedBlock.getRelative(event.getBlockFace());
+		final Block block;
 
-		// prevent placing water in the nether
-		if (block.getWorld().isUltraWarm())
-			return;
+		if (clickedBlock.getBlockData() instanceof Waterlogged)
+			block = clickedBlock;
+		else
+			block = clickedBlock.getRelative(event.getBlockFace());
 
 		final BlockState state = block.getState();
 
@@ -102,7 +108,11 @@ public class InfiniteWaterBucket extends FunctionalRecipe {
 		if (!placeEvent.callEvent() || !placeEvent.canBuild())
 			return;
 
-		block.setType(Material.WATER);
+		if (block.getBlockData() instanceof Waterlogged waterlogged) {
+			waterlogged.setWaterlogged(true);
+			block.setBlockData(waterlogged);
+		} else
+			block.setType(Material.WATER);
 	}
 
 	@Contract("null -> false")

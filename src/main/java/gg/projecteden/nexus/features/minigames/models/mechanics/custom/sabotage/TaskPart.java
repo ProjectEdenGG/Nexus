@@ -1,12 +1,12 @@
 package gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage;
 
-import gg.projecteden.nexus.features.menus.sabotage.tasks.AbstractTaskMenu;
-import gg.projecteden.nexus.features.menus.sabotage.tasks.DivertPower1Task;
-import gg.projecteden.nexus.features.menus.sabotage.tasks.DivertPower2Task;
-import gg.projecteden.nexus.features.menus.sabotage.tasks.LightsTask;
-import gg.projecteden.nexus.features.menus.sabotage.tasks.MedicalScanTask;
-import gg.projecteden.nexus.features.menus.sabotage.tasks.ReactorTask;
-import gg.projecteden.nexus.features.menus.sabotage.tasks.SwipeCardTask;
+import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.menus.tasks.AbstractTaskMenu;
+import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.menus.tasks.DivertPower1Task;
+import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.menus.tasks.DivertPower2Task;
+import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.menus.tasks.LightsTask;
+import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.menus.tasks.MedicalScanTask;
+import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.menus.tasks.ReactorTask;
+import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.menus.tasks.SwipeCardTask;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.taskpartdata.DivertPower1TaskPartData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.taskpartdata.LightsTaskPartData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.taskpartdata.ReactorTaskPartData;

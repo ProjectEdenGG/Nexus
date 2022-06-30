@@ -5,9 +5,6 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.interfaces.HasUniqueId;
-import gg.projecteden.nexus.features.menus.sabotage.AbstractVoteScreen;
-import gg.projecteden.nexus.features.menus.sabotage.ResultsScreen;
-import gg.projecteden.nexus.features.menus.sabotage.VotingScreen;
 import gg.projecteden.nexus.features.minigames.mechanics.Sabotage;
 import gg.projecteden.nexus.features.minigames.models.Loadout;
 import gg.projecteden.nexus.features.minigames.models.Match;
@@ -24,6 +21,9 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.Task;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.TaskPart;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.Tasks;
+import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.menus.AbstractVoteScreen;
+import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.menus.ResultsScreen;
+import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.menus.VotingScreen;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.taskpartdata.SabotageTaskPartData;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
@@ -31,6 +31,8 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineE
 import gg.projecteden.nexus.models.chat.PublicChannel;
 import gg.projecteden.nexus.utils.BossBarBuilder;
 import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.GlowUtils;
+import gg.projecteden.nexus.utils.GlowUtils.GlowColor;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
@@ -64,7 +66,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
-import org.inventivetalent.glow.GlowAPI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -472,8 +473,11 @@ public class SabotageMatchData extends MatchData {
 			if (team == SabotageTeam.JESTER) {
 				ejected.scored();
 				match.end();
-			} else if (ejected != null)
-				match.getMechanic().onDeath(new MinigamerDeathEvent(ejected));
+			} else if (ejected != null) {
+				MinigamerDeathEvent event = new MinigamerDeathEvent(ejected);
+				if (event.callEvent())
+					match.getMechanic().onDeath(event);
+			}
 		});
 	}
 
@@ -587,8 +591,8 @@ public class SabotageMatchData extends MatchData {
 				match.getTasks().wait(1, () -> PacketUtils.sendFakeItem(entity, minigamer, entity.getEquipment().getHelmet(), EnumWrappers.ItemSlot.HEAD));
 			}
 		});
-		GlowAPI.setGlowing(disable, null, player);
-		GlowAPI.setGlowing(enable, GlowAPI.Color.WHITE, player);
+		GlowUtils.unglow(disable).receivers(player).run();
+		GlowUtils.glow(enable).color(GlowColor.WHITE).receivers(player).run();
 	}
 
 	private static final Duration fade = Duration.ofSeconds(1).dividedBy(2);

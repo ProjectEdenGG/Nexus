@@ -45,7 +45,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import static gg.projecteden.nexus.features.menus.SignMenuFactory.ARROWS;
+import static gg.projecteden.nexus.features.menus.api.SignMenuFactory.ARROWS;
 
 public abstract class InventoryProvider {
 	protected Player player;

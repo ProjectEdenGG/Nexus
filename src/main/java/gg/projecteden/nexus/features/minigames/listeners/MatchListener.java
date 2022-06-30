@@ -24,6 +24,12 @@ import gg.projecteden.nexus.utils.BorderUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Boat;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.Hanging;
+import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -230,7 +236,7 @@ public class MatchListener implements Listener {
 	}
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-	public void onProjectileCollide(ProjectileCollideEvent event) {
+	public void onProjectileCollideWithPlayer(ProjectileCollideEvent event) {
 		if (!(event.getCollidedWith() instanceof Player))
 			return;
 
@@ -256,6 +262,26 @@ public class MatchListener implements Listener {
 			return;
 
 		if (!victim.getTeam().equals(attacker.getTeam()))
+			return;
+
+		event.setCancelled(true);
+	}
+
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+	public void onProjectileCollideWithEntity(ProjectileCollideEvent event) {
+		Entity collidedWith = event.getCollidedWith();
+		if (!(collidedWith instanceof Hanging
+			|| collidedWith instanceof ArmorStand
+			|| collidedWith instanceof Minecart
+			|| collidedWith instanceof Boat
+			|| collidedWith instanceof FallingBlock))
+			return;
+
+		if (!(event.getEntity().getShooter() instanceof Player player))
+			return;
+
+		Minigamer attacker = Minigamer.of(player);
+		if (!attacker.isPlaying())
 			return;
 
 		event.setCancelled(true);

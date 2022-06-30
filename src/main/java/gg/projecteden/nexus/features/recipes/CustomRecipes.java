@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.custombenches.DyeStation;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlockTag;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
+import gg.projecteden.nexus.features.listeners.events.FixedCraftItemEvent;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
@@ -13,6 +14,7 @@ import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.features.workbenches.DyeStation;
 import gg.projecteden.nexus.framework.features.Depends;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.ColorType;
@@ -38,10 +40,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
@@ -368,7 +373,9 @@ public class CustomRecipes extends Feature implements Listener {
 	}
 
 	public void misc() {
+		shaped("SLS", "L L", "LLL").add('S', Material.STRING).add('L', Material.LEATHER).toMake(Material.BUNDLE).build().type(RecipeType.MISC).register();
 		surround(Material.WATER_BUCKET).with(MaterialTag.WOOL).toMake(Material.WHITE_WOOL, 8).build().type(RecipeType.WOOL).register();
+		shapeless().add(Material.DROPPER).add(Material.BOW).toMake(Material.DISPENSER).build().type(RecipeType.MISC).register();
 		shapeless().add(Material.NETHER_WART_BLOCK).toMake(Material.NETHER_WART, 9).build().type(RecipeType.MISC).register();
 		shapeless().add(Material.BLUE_ICE).toMake(Material.PACKED_ICE, 9).build().type(RecipeType.MISC).register();
 		shapeless().add(Material.PACKED_ICE).toMake(Material.ICE, 9).build().type(RecipeType.MISC).register();
@@ -392,7 +399,7 @@ public class CustomRecipes extends Feature implements Listener {
 		for (WoodType wood : WoodType.values()) {
 			shapeless().add(wood.getStrippedLog(), 2).toMake(wood.getLog(), 2).build().type(RecipeType.MISC).register();
 			shapeless().add(wood.getStrippedWood(), 2).toMake(wood.getWood(), 2).build().type(RecipeType.MISC).register();
-			shapeless().add(wood.getStair()).toMake(wood.getPlanks(), 6).build().type(RecipeType.MISC).register();
+			shapeless().add(wood.getStair(), 2).toMake(wood.getPlanks(), 3).build().type(RecipeType.MISC).register();
 		}
 
 		dyeStation();
@@ -402,6 +409,8 @@ public class CustomRecipes extends Feature implements Listener {
 	}
 
 	private void dyeStation() {
+		if (true) return;
+
 		// Magic Dye
 		shapeless().add(Material.GLASS_BOTTLE, Material.RED_DYE, Material.ORANGE_DYE, Material.YELLOW_DYE,
 			Material.GREEN_DYE, Material.CYAN_DYE, Material.BLUE_DYE, Material.PURPLE_DYE, Material.PINK_DYE)
@@ -467,6 +476,81 @@ public class CustomRecipes extends Feature implements Listener {
 		for (ItemStack item : event.getInventory().getMatrix())
 			if (ModelId.of(item) != 0)
 				event.getInventory().setResult(new ItemStack(Material.AIR));
+	}
+
+	// Stolen from https://github.com/ezeiger92/QuestWorld2/blob/70f2be317daee06007f89843c79b3b059515d133/src/main/java/com/questworld/extension/builtin/CraftMission.java
+	@EventHandler
+	public void fixCraftEvent(CraftItemEvent event) {
+		if (event instanceof FixedCraftItemEvent) return;
+
+		ItemStack item = event.getRecipe().getResult().clone();
+		ClickType click = event.getClick();
+
+		int recipeAmount = item.getAmount();
+
+		switch (click) {
+			case NUMBER_KEY:
+				if (event.getWhoClicked().getInventory().getItem(event.getHotbarButton()) != null)
+					recipeAmount = 0;
+				break;
+
+			case DROP:
+			case CONTROL_DROP:
+				ItemStack cursor = event.getCursor();
+				if (!isNullOrAir(cursor))
+					recipeAmount = 0;
+				break;
+
+			case SHIFT_RIGHT:
+			case SHIFT_LEFT:
+				if (recipeAmount == 0)
+					break;
+
+				int maxCraftable = getMaxCraftAmount(event.getInventory());
+				int capacity = fits(item, event.getView().getBottomInventory());
+
+				if (capacity < maxCraftable)
+					maxCraftable = ((capacity + recipeAmount - 1) / recipeAmount) * recipeAmount;
+
+				recipeAmount = maxCraftable;
+				break;
+			default:
+		}
+
+		if (recipeAmount == 0)
+			return;
+
+		item.setAmount(recipeAmount);
+
+		new FixedCraftItemEvent(item, event.getRecipe(), event.getView(), event.getSlotType(), event.getSlot(), event.getClick(), event.getAction(), event.getHotbarButton()).callEvent();
+	}
+
+	public static int getMaxCraftAmount(CraftingInventory inv) {
+		if (inv.getResult() == null)
+			return 0;
+
+		int resultCount = inv.getResult().getAmount();
+		int materialCount = Integer.MAX_VALUE;
+
+		for (ItemStack item : inv.getMatrix())
+			// this can in fact be null
+			if (item != null && item.getAmount() < materialCount)
+				materialCount = item.getAmount();
+
+		return resultCount * materialCount;
+	}
+
+	public static int fits(ItemStack stack, Inventory inv) {
+		ItemStack[] contents = inv.getContents();
+		int result = 0;
+
+		for (ItemStack item : contents)
+			if (item == null)
+				result += stack.getMaxStackSize();
+			else if (item.isSimilar(stack))
+				result += Math.max(stack.getMaxStackSize() - item.getAmount(), 0);
+
+		return result;
 	}
 
 }

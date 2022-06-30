@@ -14,6 +14,8 @@ import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20User;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20UserService;
 import gg.projecteden.nexus.utils.CitizensUtils;
+import gg.projecteden.nexus.utils.GlowUtils;
+import gg.projecteden.nexus.utils.GlowUtils.GlowColor;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -43,7 +45,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
-import org.inventivetalent.glow.GlowAPI;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -286,10 +287,10 @@ public class Pugmas20 implements Listener {
 
 			LocationUtils.lookAt(player, blockLoc);
 
-			Tasks.GlowTask.builder()
+			GlowUtils.GlowTask.builder()
 					.duration(TickTime.SECOND.x(10))
 					.entity(fallingBlock)
-					.color(GlowAPI.Color.RED)
+					.color(GlowColor.RED)
 					.viewers(Collections.singletonList(player))
 					.onComplete(() -> {
 						fallingBlock.remove();

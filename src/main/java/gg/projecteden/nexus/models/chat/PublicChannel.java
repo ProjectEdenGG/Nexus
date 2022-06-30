@@ -20,6 +20,9 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty;
+import static gg.projecteden.api.common.utils.StringUtils.plural;
+
 @Data
 @Builder
 public class PublicChannel implements Channel {
@@ -82,8 +85,10 @@ public class PublicChannel implements Channel {
 			json.hover("&3Rank: " + nerd.getRank().getColoredName());
 		if (nerd.hasNickname())
 			json.hover("&3Real name: &e" + nerd.getName());
-		if (!nerd.getPronouns().isEmpty())
+		if (isNotNullOrEmpty(nerd.getPronouns()))
 			json.hover("&3Pronouns: " + nerd.getPronouns().stream().map(pronoun -> "&e" + pronoun + "&3").collect(Collectors.joining(", ")));
+		if (isNotNullOrEmpty(nerd.getFilteredPreferredNames()))
+			json.hover(plural("&3Preferred name", nerd.getFilteredPreferredNames().size()) + ": &e" + String.join("&3, &e", nerd.getFilteredPreferredNames()));
 
 		return json;
 	}

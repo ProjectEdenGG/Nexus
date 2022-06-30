@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.utils;
 
 import gg.projecteden.nexus.framework.exceptions.NexusException;
+import lombok.AllArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -43,4 +44,28 @@ public class WorldUtils {
 		return new Location(world, x, 0, z).add(center.getX(), 0, center.getZ());
 	}
 
+	@AllArgsConstructor
+	public enum TimeQuadrant {
+		MORNING(0, 2000),
+		DAY(2000, 12000),
+		EVENING(12000, 14000),
+		NIGHT(14000, 24000),
+		;
+
+		private final int minTime;
+		private final int maxTime;
+
+		public static TimeQuadrant of(World world) {
+			return of(world.getTime());
+		}
+
+		public static TimeQuadrant of(long time) {
+			for (TimeQuadrant quadrant : values()) {
+				if (time >= quadrant.minTime && time < quadrant.maxTime)
+					return quadrant;
+			}
+
+			return null;
+		}
+	}
 }

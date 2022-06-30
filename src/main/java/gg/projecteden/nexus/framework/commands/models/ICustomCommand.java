@@ -288,6 +288,9 @@ public abstract class ICustomCommand {
 		double argMaxDefault = (Double) Arg.class.getDeclaredMethod("max").getDefaultValue();
 
 		if (annotation != null) {
+			if (annotation.stripColor())
+				value = StringUtils.stripColor(value);
+
 			if (annotation.regex().length() > 0)
 				if (!value.matches(annotation.regex()))
 					throw new InvalidInputException(camelCase(name) + " must match regex " + annotation.regex());

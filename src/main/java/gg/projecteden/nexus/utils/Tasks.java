@@ -1,9 +1,8 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.parchment.HasPlayer;
-import gg.projecteden.parchment.OptionalPlayer;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,12 +10,10 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scheduler.BukkitWorker;
-import org.inventivetalent.glow.GlowAPI;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -205,19 +202,6 @@ public class Tasks {
 		void stop() {
 			cancel(taskId);
 		}
-	}
-
-	public static class GlowTask {
-
-		@Builder(buildMethodName = "start")
-		public GlowTask(long duration, Entity entity, GlowAPI.Color color, Runnable onComplete, List<? extends OptionalPlayer> viewers) {
-			List<Player> pViewers = PlayerUtils.getNonNullPlayers(viewers);
-			GlowAPI.setGlowing(entity, color, pViewers);
-			Tasks.wait(duration, () -> GlowAPI.setGlowing(entity, false, pViewers));
-			if (onComplete != null)
-				Tasks.wait(duration + 1, onComplete);
-		}
-
 	}
 
 	public static class ExpBarCountdown {

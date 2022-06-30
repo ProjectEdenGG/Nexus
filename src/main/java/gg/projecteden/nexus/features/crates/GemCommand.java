@@ -115,9 +115,9 @@ public class GemCommand extends CustomCommand implements Listener {
 
 	public boolean isGem(ItemStack item) {
 		if (isNullOrAir(item)) return false;
-		if (!item.getType().equals(Material.EMERALD)) return false;
+		if (!item.getType().equals(CustomMaterial.GEM_SAPPHIRE.getMaterial())) return false;
 		if (item.getEnchantments().isEmpty()) return false;
-		return ModelId.of(item) == 1;
+		return ModelId.of(item) == CustomMaterial.GEM_SAPPHIRE.getModelId();
 	}
 
 	public static ItemStack makeGem(Enchantment enchantment, int level) {

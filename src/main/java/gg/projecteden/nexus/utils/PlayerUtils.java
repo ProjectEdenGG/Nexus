@@ -51,6 +51,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.metadata.MetadataValue;
@@ -170,6 +171,10 @@ public class PlayerUtils {
 		public OnlinePlayers viewer(HasUniqueId player) {
 			this.viewer = player.getUniqueId();
 			return this;
+		}
+
+		public OnlinePlayers world(String world) {
+			return world(Objects.requireNonNull(Bukkit.getWorld(world)));
 		}
 
 		public OnlinePlayers world(World world) {
@@ -623,7 +628,9 @@ public class PlayerUtils {
 	}
 
 	public static boolean hasRoomFor(OptionalPlayer player, ItemStack... items) {
-		if (player.getPlayer() == null) return false;
+		if (player.getPlayer() == null)
+			return false;
+
 		return hasRoomFor(player.getPlayer(), items);
 	}
 
@@ -632,15 +639,25 @@ public class PlayerUtils {
 	}
 
 	public static boolean hasRoomFor(OptionalPlayer player, List<ItemStack> items) {
-		if (player.getPlayer() == null) return false;
+		if (player.getPlayer() == null)
+			return false;
+
 		return hasRoomFor(player.getPlayer(), items);
 	}
 
 	public static boolean hasRoomFor(Player player, List<ItemStack> items) {
+		return hasRoomFor(player.getInventory(), items);
+	}
+
+	public static boolean hasRoomFor(Inventory inventory, ItemStack item) {
+		return hasRoomFor(inventory, Collections.singletonList(item));
+	}
+
+	public static boolean hasRoomFor(Inventory inventory, List<ItemStack> items) {
 		int usedSlots = 0;
 		int openSlots = 0;
-		boolean[] fullSlot = new boolean[36];
-		ItemStack[] inv = player.getInventory().getContents();
+		boolean[] fullSlot = new boolean[inventory.getSize()];
+		ItemStack[] inv = inventory.getContents();
 		for (ItemStack item : items) {
 			if (isNullOrAir(item)) {
 				openSlots++;
@@ -649,7 +666,7 @@ public class PlayerUtils {
 
 			int maxStack = item.getMaxStackSize();
 			int needed = item.getAmount();
-			for (int i = 0; i < 36; i++) {
+			for (int i = 0; i < inventory.getSize(); i++) {
 				if (fullSlot[i]) continue;
 				ItemStack invItem = inv[i];
 				if (isNullOrAir(invItem)) {
@@ -980,7 +997,7 @@ public class PlayerUtils {
 	 * @param hasPlayers list of optional players
 	 * @return list of non-null players
 	 */
-	public static @NonNull List<@NonNull Player> getNonNullPlayers(List<? extends @NonNull OptionalPlayer> hasPlayers) {
+	public static @NonNull List<@NonNull Player> getNonNullPlayers(Collection<? extends @NonNull OptionalPlayer> hasPlayers) {
 		return hasPlayers.stream().map(OptionalPlayer::getPlayer).filter(Objects::nonNull).collect(toList());
 	}
 

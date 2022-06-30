@@ -17,6 +17,7 @@ depend:
 softdepend:
   - BentoBox
   - BlueMap
+  - BigDoors
   - BuycraftX
   - Citizens
   - GlowAPI

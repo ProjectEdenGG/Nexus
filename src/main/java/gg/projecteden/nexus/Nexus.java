@@ -12,8 +12,8 @@ import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.api.mongodb.MongoService;
 import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.discord.Discord;
-import gg.projecteden.nexus.features.listeners.TemporaryListener;
-import gg.projecteden.nexus.features.menus.SignMenuFactory;
+import gg.projecteden.nexus.features.listeners.common.TemporaryListener;
+import gg.projecteden.nexus.features.menus.api.SignMenuFactory;
 import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.framework.features.Features;
 import gg.projecteden.nexus.framework.persistence.mysql.MySQLPersistence;
@@ -35,11 +35,12 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import me.arcaniax.hdb.api.HeadDatabaseAPI;
+import me.lucko.spark.api.Spark;
 import net.buycraft.plugin.bukkit.BuycraftPluginBase;
 import net.citizensnpcs.Citizens;
 import net.luckperms.api.LuckPerms;
 import net.md_5.bungee.api.ChatColor;
-import net.milkbowl.vault.permission.Permission;
+import nl.pim16aap2.bigDoors.BigDoors;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Event;
@@ -182,11 +183,17 @@ public class Nexus extends JavaPlugin {
 	}
 
 	public static void registerListener(Listener listener) {
+		final boolean isTemporary = listener instanceof TemporaryListener;
+		if (listeners.contains(listener) && !isTemporary) {
+			Nexus.debug("Ignoring duplicate listener registration for class " + listener.getClass().getSimpleName());
+			return;
+		}
+
 		Nexus.debug("Registering listener: " + listener.getClass().getName());
 		if (getInstance().isEnabled()) {
 			getInstance().getServer().getPluginManager().registerEvents(listener, getInstance());
 			listeners.add(listener);
-			if (!(listener instanceof TemporaryListener))
+			if (!isTemporary)
 				for (Method method : ReflectionUtils.methodsAnnotatedWith(listener.getClass(), EventHandler.class))
 					eventHandlers.add((Class<? extends Event>) method.getParameters()[0].getType());
 		} else
@@ -304,11 +311,13 @@ public class Nexus extends JavaPlugin {
 	@Getter
 	private static BuycraftPluginBase buycraft;
 	@Getter
-	private static Permission perms = null;
-	@Getter
 	private static LuckPerms luckPerms = null;
 	@Getter
+	private static Spark spark = null;
+	@Getter
 	private static IOpenInv openInv = null;
+	@Getter
+	private static BigDoors bigDoors = null;
 
 	@Getter
 	// http://www.sauronsoftware.it/projects/cron4j/manual.php
@@ -337,11 +346,14 @@ public class Nexus extends JavaPlugin {
 		citizens = (Citizens) Bukkit.getPluginManager().getPlugin("Citizens");
 		buycraft = (BuycraftPluginBase) Bukkit.getServer().getPluginManager().getPlugin("BuycraftX");
 		openInv = (IOpenInv) Bukkit.getPluginManager().getPlugin("OpenInv");
+		bigDoors = BigDoors.get().getPlugin();
 		cron.start();
-		perms = getServer().getServicesManager().getRegistration(Permission.class).getProvider();
 		RegisteredServiceProvider<LuckPerms> lpProvider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
 		if (lpProvider != null)
 			luckPerms = lpProvider.getProvider();
+		RegisteredServiceProvider<Spark> sparkProvider = Bukkit.getServicesManager().getRegistration(Spark.class);
+		if (sparkProvider != null)
+			spark = sparkProvider.getProvider();
 	}
 
 }

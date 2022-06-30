@@ -12,9 +12,10 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.utils.GlowUtils;
+import gg.projecteden.nexus.utils.GlowUtils.GlowColor;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks.GlowTask;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -35,7 +36,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityTeleportEvent;
-import org.inventivetalent.glow.GlowAPI.Color;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -156,9 +156,9 @@ public class TameablesCommand extends CustomCommand implements Listener {
 	void find(TameableEntity entityType) {
 		List<Entity> entities = list(entityType);
 		entities.forEach(entity ->
-			GlowTask.builder()
+			GlowUtils.GlowTask.builder()
 				.entity(entity)
-				.color(Color.RED)
+				.color(GlowColor.RED)
 				.viewers(Collections.singletonList(player()))
 				.duration(TickTime.SECOND.x(10))
 				.start());
