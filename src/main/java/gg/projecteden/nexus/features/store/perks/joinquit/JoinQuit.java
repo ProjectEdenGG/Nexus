@@ -191,10 +191,10 @@ public class JoinQuit extends Feature implements Listener {
 	@EventHandler
 	public void on(PlayerVanishStateChangeEvent event) {
 		Consumer<Function<BroadcastBuilder, BroadcastBuilder>> broadcastSelf = builder ->
-			builder.apply(Broadcast.staffIngame().include(event.getUUID())).send();
+			builder.apply(Broadcast.staffIngame().hideFromConsole(true).include(event.getUUID())).send();
 
 		Consumer<Function<BroadcastBuilder, BroadcastBuilder>> broadcastOthers = builder ->
-			builder.apply(Broadcast.staffIngame().exclude(event.getUUID())).send();
+			builder.apply(Broadcast.staffIngame().hideFromConsole(true).exclude(event.getUUID())).send();
 
 		Tasks.wait(1, () -> {
 			Player player = Bukkit.getPlayer(event.getUUID());

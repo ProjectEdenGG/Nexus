@@ -247,6 +247,7 @@ public class AFKUser implements PlayerOwnedObject {
 			.exclude(uuid)
 			.message("&f" + presenceEmoji() + " &e" + getNickname() + " &7is " + (afk ? "now" : "no longer") + " AFK")
 			.muteMenuItem(MuteMenuItem.AFK)
+			.hideFromConsole(true)
 			.send();
 	}
 

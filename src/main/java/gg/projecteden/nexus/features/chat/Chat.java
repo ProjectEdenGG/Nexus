@@ -188,10 +188,11 @@ public class Chat extends Feature {
 		private final List<Target> targets;
 		private final List<UUID> include;
 		private final List<UUID> exclude;
+		private final boolean hideFromConsole;
 
 		@Builder(buildMethodName = "send", builderMethodName = "all")
 		public Broadcast(PublicChannel channel, Identity sender, String prefix, ComponentLike message, Function<Player, JsonBuilder> messageFunction,
-						 MuteMenuItem muteMenuItem, MessageType messageType, List<Target> targets, List<UUID> include, List<UUID> exclude) {
+						 MuteMenuItem muteMenuItem, MessageType messageType, List<Target> targets, List<UUID> include, List<UUID> exclude, boolean hideFromConsole) {
 			this.channel = channel == null ? ChatManager.getMainChannel() : channel;
 			this.sender = sender == null ? Identity.nil() : sender;
 			this.prefix = prefix;
@@ -202,6 +203,7 @@ public class Chat extends Feature {
 			this.targets = isNullOrEmpty(targets) ? List.of(Target.INGAME, Target.DISCORD) : targets;
 			this.include = include;
 			this.exclude = exclude;
+			this.hideFromConsole = hideFromConsole;
 
 			for (Target target : this.targets)
 				target.execute(this);
@@ -253,7 +255,8 @@ public class Chat extends Feature {
 				@Override
 				void execute(Broadcast broadcast) {
 					final ComponentLike component = broadcast.getMessage(this, null);
-					Bukkit.getConsoleSender().sendMessage(AdventureUtils.stripColor(component));
+					if (!broadcast.hideFromConsole)
+						Bukkit.getConsoleSender().sendMessage(AdventureUtils.stripColor(component));
 					List<Player> players = OnlinePlayers.getAll();
 
 					if (broadcast.channel != null && broadcast.sender != Identity.nil()) {
