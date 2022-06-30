@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.legacy.listeners;
 
 import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
+import gg.projecteden.nexus.features.listeners.Beehives;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -80,6 +81,7 @@ public class LegacyItems implements Listener {
 			return item;
 
 		item = convertIfShulkerBox(world, item, null);
+		item = Beehives.addLore(item);
 
 		if (ModelId.of(item) == 0)
 			return item;
