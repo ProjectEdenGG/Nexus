@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import nl.pim16aap2.bigDoors.Door;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 import java.time.LocalDateTime;
@@ -67,6 +68,8 @@ public class BigDoorConfig implements DatabaseObject {
 			.world(getDoor().getWorld())
 			.region(toggleRegion)
 			.exclude(player)
+			.vanished(false)
+			.filter(_player -> GameMode.SPECTATOR != _player.getGameMode())
 			.get();
 	}
 }
