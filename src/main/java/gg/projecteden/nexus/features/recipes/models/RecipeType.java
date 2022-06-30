@@ -34,7 +34,8 @@ public enum RecipeType {
 	DECORATION(CustomMaterial.WINDCHIMES_AMETHYST, true),
 	ARMOR(Material.DIAMOND_CHESTPLATE, true),
 	STONECUTTER(Material.STONECUTTER, true),
-	CUSTOM_BLOCKS(CustomMaterial.BLOCKS_CRATE_APPLE, true),;
+	CUSTOM_BLOCKS(CustomMaterial.BLOCKS_CRATE_APPLE, true),
+	;
 
 	private final Material material;
 	private final int modelId;
