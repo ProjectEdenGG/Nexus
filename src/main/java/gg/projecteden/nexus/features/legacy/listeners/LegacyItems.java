@@ -49,7 +49,10 @@ public class LegacyItems implements Listener {
 
 	@EventHandler
 	public void on(EntityAddToWorldEvent event) {
-		convert(event.getEntity());
+		Tasks.wait(3, () -> {
+			if (event.getEntity().isValid())
+				convert(event.getEntity());
+		});
 	}
 
 	public static List<ItemStack> convert(World world, List<ItemStack> contents) {

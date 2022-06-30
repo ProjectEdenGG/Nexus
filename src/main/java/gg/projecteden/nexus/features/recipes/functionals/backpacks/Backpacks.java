@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.recipes.functionals;
+package gg.projecteden.nexus.features.recipes.functionals.backpacks;
 
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.Nexus;
