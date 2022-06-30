@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.custombenches;
+package gg.projecteden.nexus.features.workbenches;
 
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.features.Feature;

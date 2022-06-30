@@ -6,7 +6,7 @@ import dev.morphia.annotations.Id;
 import gg.projecteden.api.interfaces.DatabaseObject;
 import gg.projecteden.api.mongodb.serializers.LocalDateTimeConverter;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
-import gg.projecteden.nexus.features.bigdoormanager.BigDoorManager;
+import gg.projecteden.nexus.features.bigdoors.BigDoorManager;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.WorldUtils.TimeQuadrant;
 import lombok.AllArgsConstructor;

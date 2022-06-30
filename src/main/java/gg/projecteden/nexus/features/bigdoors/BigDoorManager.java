@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.bigdoormanager;
+package gg.projecteden.nexus.features.bigdoors;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
