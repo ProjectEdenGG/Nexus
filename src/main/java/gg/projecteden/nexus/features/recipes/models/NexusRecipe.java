@@ -52,7 +52,7 @@ public class NexusRecipe {
 	@NotNull
 	protected List<ItemStack> getFilteredMatrix(PrepareItemCraftEvent event) {
 		return Arrays.stream(event.getInventory().getMatrix().clone())
-			.filter(Nullables::isNullOrAir)
+			.filter(Nullables::isNotNullOrAir)
 			.collect(Collectors.toList());
 	}
 

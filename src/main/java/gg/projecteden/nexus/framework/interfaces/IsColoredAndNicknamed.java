@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.framework.interfaces;
 
-import gg.projecteden.interfaces.Nicknamed;
+import gg.projecteden.api.interfaces.Nicknamed;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import org.jetbrains.annotations.NotNull;

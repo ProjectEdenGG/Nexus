@@ -39,7 +39,7 @@ public class TrustFeature extends Feature {
 
 		new HashMap<>(fastModuleCache).forEach((event, _modules) ->
 				new ArrayList<>(_modules).forEach(module -> {
-					if (module.getClass().getPackage().getName().contains(Nexus.getInstance().getClass().getPackage().getName()))
+					if (module.getClass().getPackageName().contains(Nexus.getInstance().getClass().getPackageName()))
 						fastModuleCache.get(event).remove(module);
 				}));
 

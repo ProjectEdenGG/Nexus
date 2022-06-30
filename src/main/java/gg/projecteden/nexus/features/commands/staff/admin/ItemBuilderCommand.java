@@ -13,6 +13,7 @@ import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
+import gg.projecteden.nexus.utils.ItemUtils.NBTDataType;
 import gg.projecteden.nexus.utils.ItemUtils.NBTDataType.NBTDataTypeType;
 import gg.projecteden.nexus.utils.SymbolBanner.Symbol;
 import lombok.NonNull;
@@ -249,7 +250,10 @@ public class ItemBuilderCommand extends CustomCommand {
 	@SneakyThrows
 	@Path("nbt set <type> <key> <value>")
 	void nbt_set(NBTDataTypeType type, String key, String value) {
-		final var clazz = type.getClazz().getConstructor().newInstance();
+		nbt_set(type.getClazz().getConstructor().newInstance(), key, value);
+	}
+
+	private <T> void nbt_set(NBTDataType<T> clazz, String key, String value) {
 		item.nbt(item -> clazz.getSetter().accept(item, key, clazz.getConverter().apply(value)));
 	}
 
@@ -287,9 +291,9 @@ public class ItemBuilderCommand extends CustomCommand {
 		item.unset(setting);
 	}
 
-	@Path("customModelData <id>")
-	void customModelData(int id) {
-		item.customModelData(id);
+	@Path("modelId <id>")
+	void modelId(int id) {
+		item.modelId(id);
 	}
 
 	@Path("soulbound")

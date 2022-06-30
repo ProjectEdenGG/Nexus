@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.utils;
 
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.parchment.HasPlayer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import me.lexikiq.HasPlayer;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;

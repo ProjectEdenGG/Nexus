@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.shops;
 
-import gg.projecteden.annotations.Async;
+import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.nexus.features.shops.providers.BrowseProductsProvider;
 import gg.projecteden.nexus.features.shops.providers.BrowseShopsProvider;
 import gg.projecteden.nexus.features.shops.providers.MainMenuProvider;

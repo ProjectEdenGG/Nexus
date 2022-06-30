@@ -25,22 +25,23 @@ import com.sk89q.worldedit.math.Vector3;
 import com.sk89q.worldedit.math.transform.Transform;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
+import com.sk89q.worldedit.regions.RegionSelector;
 import com.sk89q.worldedit.util.Direction;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.parchment.HasPlayer;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
-import me.lexikiq.HasPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -66,15 +67,16 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.sk89q.worldedit.extent.clipboard.io.BuiltInClipboardFormat.MCEDIT_SCHEMATIC;
 import static com.sk89q.worldedit.extent.clipboard.io.BuiltInClipboardFormat.SPONGE_SCHEMATIC;
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.BlockUtils.createDistanceSortedQueue;
 import static gg.projecteden.nexus.utils.StringUtils.getFlooredCoordinateString;
 import static gg.projecteden.nexus.utils.StringUtils.left;
-import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
 public class WorldEditUtils {
@@ -220,7 +222,6 @@ public class WorldEditUtils {
 		if (amount <= 0) return;
 		LocalSession session = plugin.getSession(player.getPlayer());
 		Region region = session.getSelection(worldEditWorld);
-		long oldSize = region.getVolume();
 		BlockVector3[] directions = directionType.apply(amount);
 
 		if (changeType == SelectionChangeType.EXPAND)
@@ -230,7 +231,14 @@ public class WorldEditUtils {
 
 		getPlayer(player).setSelection(region);
 		session.getRegionSelector(worldEditWorld).learnChanges();
-		long newSize = region.getVolume();
+		session.getRegionSelector(worldEditWorld).explainRegionAdjust(getPlayer(player), session);
+	}
+
+	@SneakyThrows
+	public void changeSelection(HasPlayer player, RegionSelector selector) {
+		LocalSession session = plugin.getSession(player.getPlayer());
+		getPlayer(player).setSelection(selector);
+		session.getRegionSelector(worldEditWorld).learnChanges();
 		session.getRegionSelector(worldEditWorld).explainRegionAdjust(getPlayer(player), session);
 	}
 
@@ -303,12 +311,16 @@ public class WorldEditUtils {
 	}
 
 	public List<Block> getBlocks(Region region, List<Material> materials) {
+		return getBlocks(region, block -> isNullOrEmpty(materials) || materials.contains(block.getType()));
+	}
+
+	public List<Block> getBlocks(Region region, Predicate<Block> predicate) {
 		List<Block> blockList = new ArrayList<>();
 		for (int x = region.getMinimumPoint().getBlockX(); x <= region.getMaximumPoint().getBlockX(); x++)
 			for (int y = region.getMinimumPoint().getBlockY(); y <= region.getMaximumPoint().getBlockY(); y++)
 				for (int z = region.getMinimumPoint().getBlockZ(); z <= region.getMaximumPoint().getBlockZ(); z++) {
 					Block blockAt = world.getBlockAt(x, y, z);
-					if (isNullOrEmpty(materials) || materials.contains(blockAt.getType()))
+					if (predicate == null || predicate.test(blockAt))
 						blockList.add(blockAt);
 				}
 		return blockList;

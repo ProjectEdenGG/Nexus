@@ -25,8 +25,7 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.utils.TimeUtils.TickTime;
-import joptsimple.internal.Strings;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -114,8 +113,8 @@ public class ConvertShopCommand extends CustomCommand {
 		private OfflinePlayer player;
 		private ItemStack item;
 		private double price;
-		private double moneyInSign = 0;
-		private int stock = 0;
+		private double moneyInSign;
+		private int stock;
 	}
 
 	private void convert(Sign sign) {
@@ -195,7 +194,7 @@ public class ConvertShopCommand extends CustomCommand {
 		SignData data = new SignData();
 		data.setPrice(Double.parseDouble(lines[1].replace("$", "").split(" \\| ")[0]));
 		String[] line3 = lines[2].split(" ");
-		String enchShort = Strings.join(Arrays.copyOfRange(line3, 0, line3.length - 1), " ");
+		String enchShort = String.join(" ", Arrays.copyOfRange(line3, 0, line3.length - 1));
 		Enchantment enchant = getEnchantFromShort(enchShort);
 		int level = Integer.parseInt(line3[line3.length - 1]);
 

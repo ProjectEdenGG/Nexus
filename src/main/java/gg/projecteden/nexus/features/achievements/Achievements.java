@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.achievements;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Bukkit;
 import org.bukkit.GameRule;
 import org.bukkit.World;
@@ -23,7 +23,7 @@ public class Achievements extends Feature {
 		});
 
 	/*
-		new Reflections(getClass().getPackage().getName()).getSubTypesOf(Listener.class).forEach(listener -> {
+		subTypesOf(Listener.class, getClass().getPackageName()).forEach(listener -> {
 			try {
 				if (listener.getAnnotation(Disabled.class) == null)
 					Nexus.registerListener(new ObjenesisStd().newInstance(listener));

@@ -1,5 +1,9 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
+import gg.projecteden.api.common.utils.EnumUtils;
+import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.api.common.utils.TimeUtils;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.NexusCommand.ReloadCondition;
 import gg.projecteden.nexus.features.chat.Koda;
@@ -13,10 +17,6 @@ import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.utils.EnumUtils;
-import gg.projecteden.utils.Env;
-import gg.projecteden.utils.TimeUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -37,6 +37,8 @@ public class RebootCommand extends CustomCommand implements Listener {
 	@Getter
 	private static boolean queued;
 	private static boolean rebooting;
+
+	public static final String TIME = "2 minutes";
 
 	private static final List<ReloadCondition> conditions = EnumUtils.valuesExcept(ReloadCondition.class, ReloadCondition.SMARTINVS);
 
@@ -64,14 +66,14 @@ public class RebootCommand extends CustomCommand implements Listener {
 
 		rebooting = true;
 
-		Koda.say("Rebooting server, come back in 60 seconds");
+		Koda.say("Rebooting server, come back in " + TIME);
 		title();
 
 		Tasks.wait(TickTime.SECOND.x(10), () -> {
 			rebooting = false;
 			conditions.forEach(ReloadCondition::run);
 			for (Player player : OnlinePlayers.getAll())
-				player.kickPlayer(colorize("&6&lRebooting server!\n&eCome back in about 60 seconds\n&f\n&7" + TimeUtils.shortDateTimeFormat(LocalDateTime.now()) + " EST"));
+				player.kickPlayer(colorize("&6&lRebooting server!\n&eCome back in about " + TIME + "\n&f\n&7" + TimeUtils.shortDateTimeFormat(LocalDateTime.now()) + " EST"));
 			Utils.bash("mark2 send -n " + (Nexus.getEnv() == Env.PROD ? "smp" : "test") + " ~restart");
 		});
 	}
@@ -80,7 +82,7 @@ public class RebootCommand extends CustomCommand implements Listener {
 		final TitleBuilder titleBuilder = new TitleBuilder()
 			.allPlayers()
 			.title("&cRebooting server")
-			.subtitle("&cCome back in ~60 seconds");
+			.subtitle("&cCome back in ~" + TIME);
 
 		titleBuilder.send();
 
@@ -111,8 +113,8 @@ public class RebootCommand extends CustomCommand implements Listener {
 		if (!rebooting)
 			return;
 
-		new TitleBuilder().players(event.getPlayer()).title("&cRebooting server").subtitle("&cCome back in ~60 seconds").send();
-		Koda.dm(event.getPlayer(), "Rebooting server, come back in 60 seconds");
+		new TitleBuilder().players(event.getPlayer()).title("&cRebooting server").subtitle("&cCome back in ~" + TIME).send();
+		Koda.dm(event.getPlayer(), "Rebooting server, come back in " + TIME);
 	}
 
 }

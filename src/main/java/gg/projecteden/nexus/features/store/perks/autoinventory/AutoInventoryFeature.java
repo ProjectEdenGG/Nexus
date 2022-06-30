@@ -5,10 +5,10 @@ import gg.projecteden.nexus.features.store.perks.autoinventory.features.AutoTool
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.DescriptionExtra;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.NoPermissionException;
+import gg.projecteden.parchment.HasPlayer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import me.lexikiq.HasPlayer;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

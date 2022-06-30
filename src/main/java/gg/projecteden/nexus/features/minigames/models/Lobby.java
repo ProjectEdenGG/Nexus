@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.minigames.models;
 
 import gg.projecteden.nexus.features.minigames.models.Match.MatchTasks.MatchTaskType;
 import gg.projecteden.nexus.features.minigames.models.events.matches.lobbies.LobbyTimerTickEvent;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.bukkit.Location;

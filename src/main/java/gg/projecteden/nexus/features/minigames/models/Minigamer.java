@@ -1,7 +1,9 @@
 package gg.projecteden.nexus.features.minigames.models;
 
-import com.google.common.base.Strings;
 import de.myzelyam.api.vanish.VanishAPI;
+import gg.projecteden.api.common.utils.Nullables;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.SpeedCommand;
 import gg.projecteden.nexus.features.minigames.Minigames;
@@ -25,15 +27,13 @@ import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.parchment.HasLocation;
+import gg.projecteden.parchment.HasOfflinePlayer;
+import gg.projecteden.parchment.HasPlayer;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-import me.lexikiq.HasLocation;
-import me.lexikiq.HasOfflinePlayer;
-import me.lexikiq.HasPlayer;
-import me.lexikiq.HasUniqueId;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.identity.Identified;
@@ -43,11 +43,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.jetbrains.annotations.Contract;
@@ -91,6 +93,7 @@ public final class Minigamer implements IsColoredAndNicknamed, HasPlayer, HasOff
 	// 1/2 = half a heart, /2s = half a heart every 2 sec, /4.5 = half a heart at max multiplier every 2s
 	private static final double HEALTH_PER_TICK = (1d/2d)/ TickTime.SECOND.x(2);
 	private static final long IMMOBILE_SECONDS = TickTime.SECOND.x(3);
+	private static final double INCREMENT_TELEPORTS_BY = 0.05;
 
 	@NotNull
 	public static Minigamer of(@NotNull UUID uuid) throws PlayerNotOnlineException {
@@ -262,7 +265,7 @@ public final class Minigamer implements IsColoredAndNicknamed, HasPlayer, HasOff
 	public boolean isInMatchRegion(@Nullable String type) {
 		return new WorldGuardUtils(getPlayer()).getRegionsAt(getPlayer().getLocation()).stream()
 				.anyMatch(region -> {
-					if (!Strings.isNullOrEmpty(type))
+					if (!Nullables.isNullOrEmpty(type))
 						return match.getArena().ownsRegion(region.getId(), type);
 					else
 						return region.getId().matches("^" + match.getArena().getRegionBaseName() + ".*");
@@ -360,18 +363,31 @@ public final class Minigamer implements IsColoredAndNicknamed, HasPlayer, HasOff
 	}
 
 	public CompletableFuture<Boolean> teleportAsync(@NotNull Location location, boolean withSlowness) {
+		return teleportAsync(location, withSlowness, false);
+	}
+
+	public CompletableFuture<Boolean> teleportAsync(@NotNull Location location, boolean withSlowness, boolean skipSafetyCheck) {
 		Utils.notNull(location, "Tried to teleport " + getName() + " to a null location");
 
 //		if (canTeleport)
 //			return CompletableFuture.completedFuture(false); // Already teleporting
 		canTeleport = true;
 
-		final Location up = location.clone().add(0, .5, 0);
-		final Vector still = new Vector(0, 0, 0);
+		final Location destination = location.clone();
+		Block destinationBlock = destination.getBlock();
+		if (!skipSafetyCheck && !destinationBlock.isPassable()) {
+			BoundingBox blockBox = destinationBlock.getBoundingBox();
+			int added = 0;
+			while (blockBox.contains(destination.toVector()) && added < 1) {
+				added += INCREMENT_TELEPORTS_BY;
+				destination.add(0, INCREMENT_TELEPORTS_BY, 0);
+			}
+		}
+		final Vector still = new Vector();
 		getPlayer().setVelocity(still);
 
 		final TeleportCause cause = match == null ? TeleportCause.COMMAND : TeleportCause.PLUGIN;
-		return getPlayer().teleportAsync(up, cause).thenApply(result -> {
+		return getPlayer().teleportAsync(destination, cause).thenApply(result -> {
 			canTeleport = false;
 			if (!result) return false;
 			getPlayer().setVelocity(still);
@@ -561,7 +577,6 @@ public final class Minigamer implements IsColoredAndNicknamed, HasPlayer, HasOff
 		// TODO: Possibly edit ConditionalPerms to disallow voxel?
 		getPlayer().setGameMode(match.getMechanic().getGameMode());
 		clearGameModeState(forceClearInventory);
-
 		unhideAll();
 	}
 

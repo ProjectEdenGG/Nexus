@@ -3,8 +3,11 @@ package gg.projecteden.nexus.models.autoinventory;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.interfaces.HasUniqueId;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.legacy.LegacyCommand.LegacyVaultMenu.LegacyVaultHolder;
+import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks.BackpackMenu.BackpackHolder;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.store.perks.autoinventory.AutoInventory;
 import gg.projecteden.nexus.features.store.perks.autoinventory.AutoInventoryFeature;
 import gg.projecteden.nexus.features.vaults.VaultCommand.VaultMenu.VaultHolder;
@@ -22,7 +25,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import me.lexikiq.HasUniqueId;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Barrel;
@@ -155,21 +157,25 @@ public class AutoInventoryUser implements PlayerOwnedObject {
 		HOPPER(Material.HOPPER),
 		DROPPER(Material.DROPPER),
 		DISPENSER(Material.DISPENSER),
-		BACKPACK(Material.SHULKER_BOX, 1),
+		BACKPACK(CustomMaterial.BACKPACK),
 		VAULT(Material.IRON_BARS),
 		ENDER_CHEST(Material.ENDER_CHEST),
 		;
 
 		@NonNull
 		private final Material material;
-		private int customModelData;
+		private int modelId;
+
+		AutoSortInventoryType(@NonNull CustomMaterial material) {
+			this.material = material.getMaterial();
+			this.modelId = material.getModelId();
+		}
 
 		@SneakyThrows
 		public static AutoSortInventoryType of(@Nullable Inventory inventory, String title) {
 			if (inventory == null)
 				return null;
 
-			title = stripColor(title);
 			InventoryHolder holder = inventory.getHolder();
 			if (holder instanceof Chest chest)
 				if (chest.getType() == Material.TRAPPED_CHEST)
@@ -200,11 +206,11 @@ public class AutoInventoryUser implements PlayerOwnedObject {
 
 			if (holder instanceof VaultHolder || holder instanceof LegacyVaultHolder)
 				return VAULT;
+			if (holder instanceof BackpackHolder)
+				return BACKPACK;
 
 			if (holder == null)
-				if (title.equalsIgnoreCase("Backpack"))
-					return BACKPACK;
-				else if (title.contains("Ender Chest"))
+				if (stripColor(title).contains("Ender Chest"))
 					return ENDER_CHEST;
 
 			return null;

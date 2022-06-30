@@ -1,15 +1,17 @@
 package gg.projecteden.nexus.features.commands.staff;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.utils.GlowUtils;
+import gg.projecteden.nexus.utils.GlowUtils.GlowColor;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -17,7 +19,6 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
-import org.inventivetalent.glow.GlowAPI;
 
 import java.util.Collections;
 
@@ -71,10 +72,10 @@ public class NearestBlockCommand extends CustomCommand {
 					LocationUtils.lookAt(player(), block.getLocation());
 					StringUtils.sendJsonLocation(PREFIX + "&3&l[Click to Teleport]", block.getLocation(), player());
 
-					Tasks.GlowTask.builder()
+					GlowUtils.GlowTask.builder()
 							.duration(TickTime.SECOND.x(10))
 							.entity(fallingBlock)
-							.color(GlowAPI.Color.RED)
+							.color(GlowColor.RED)
 							.viewers(Collections.singletonList(player()))
 							.onComplete(() -> {
 								fallingBlock.remove();

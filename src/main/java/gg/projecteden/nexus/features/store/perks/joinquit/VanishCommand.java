@@ -41,17 +41,17 @@ public class VanishCommand extends CustomCommand implements Listener {
 	@Path("(fj|fakejoin)")
 	@Permission("vanish.fakeannounce")
 	void fakeJoin() {
-		JoinQuit.join(player());
 		new NerdService().edit(nerd(), nerd -> nerd.setLastUnvanish(LocalDateTime.now()));
 		runCommand("vanish off");
+		JoinQuit.join(player());
 	}
 
 	@Path("(fq|fakequit)")
 	@Permission("vanish.fakeannounce")
 	void fakeQuit() {
 		JoinQuit.quit(player());
-		new NerdService().edit(nerd(), nerd -> nerd.setLastVanish(LocalDateTime.now()));
 		runCommand("vanish on");
+		new NerdService().edit(nerd(), nerd -> nerd.setLastVanish(LocalDateTime.now()));
 	}
 
 	private static final List<String> INTERACT_PERMISSIONS = List.of(

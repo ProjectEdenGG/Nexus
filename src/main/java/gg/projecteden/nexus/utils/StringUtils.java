@@ -1,30 +1,33 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.parchment.HasPlayer;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import me.lexikiq.HasPlayer;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static java.util.stream.Collectors.joining;
 
-public class StringUtils extends gg.projecteden.utils.StringUtils {
+public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 	@Getter
 	private static final String colorChar = "§";
 	@Getter
@@ -154,7 +157,25 @@ public class StringUtils extends gg.projecteden.utils.StringUtils {
 	}
 
 	public static String pretty(ItemStack item, int amount) {
-		return item.getAmount() * amount + " " + camelCase(item.getType().name());
+		String name = camelCase(item.getType().name());
+
+		final Map<Enchantment, Integer> enchants = new HashMap<>();
+		if (item.getItemMeta() instanceof EnchantmentStorageMeta meta)
+			enchants.putAll(meta.getStoredEnchants());
+		else if (item.getItemMeta().hasEnchants())
+			enchants.putAll(item.getEnchantments());
+
+		if (!enchants.isEmpty())
+			name = enchants.keySet().stream().map(enchantment -> {
+				int level = enchants.get(enchantment);
+				final String key = camelCase(enchantment.getKey().getKey());
+				if (level > 1)
+					return key + " " + level;
+				else
+					return key;
+			}).collect(joining(", ")) + " " + name;
+
+		return item.getAmount() * amount + " " + name;
 	}
 
 	@NotNull
@@ -295,9 +316,7 @@ public class StringUtils extends gg.projecteden.utils.StringUtils {
 	}
 
 	public static String getWorldDisplayName(Location location, String world) {
-		if (Arrays.asList("world", "world_nether", "world_the_end").contains(world))
-			world = world.replace("world", "legacy");
-		else if (world.contains("oneblock"))
+		if (world.contains("oneblock"))
 			world = world.replace("oneblock_world", "one_block");
 		else if (world.contains("bskyblock"))
 			world = world.replace("bskyblock_world", "skyblock");

@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.models.voter;
 
-import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.api.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 import gg.projecteden.nexus.models.voter.Voter.Vote;
 import gg.projecteden.nexus.utils.Tasks;

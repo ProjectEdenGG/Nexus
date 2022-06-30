@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.features.commands;
 
+import gg.projecteden.api.discord.DiscordId.Role;
+import gg.projecteden.api.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -20,8 +22,6 @@ import gg.projecteden.nexus.models.scheduledjobs.jobs.BirthdayBeginJob;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.BirthdayEndJob;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.BirthdayEndJob.BirthdayEndJobBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.utils.DiscordId.Role;
-import gg.projecteden.utils.DiscordId.TextChannel;
 import lombok.Getter;
 
 import java.time.LocalDate;

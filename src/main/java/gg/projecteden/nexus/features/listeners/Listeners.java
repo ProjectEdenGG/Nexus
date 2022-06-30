@@ -11,7 +11,7 @@ public class Listeners extends Feature {
 
 	@Override
 	public void onStart() {
-		registerListeners(getClass().getPackage().getName());
+		registerListeners(getClass().getPackageName());
 	}
 
 }

@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.events.y2020.pugmas20;
 
 import com.destroystokyo.paper.ParticleBuilder;
-import com.gmail.filoghost.holographicdisplays.api.Hologram;
-import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.models.AdventChest;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.models.Merchants;
@@ -14,9 +14,10 @@ import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20User;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20UserService;
 import gg.projecteden.nexus.utils.CitizensUtils;
+import gg.projecteden.nexus.utils.GlowUtils;
+import gg.projecteden.nexus.utils.GlowUtils.GlowColor;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -24,10 +25,10 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import lombok.Setter;
-import me.lexikiq.HasUniqueId;
+import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
+import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
@@ -44,7 +45,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
-import org.inventivetalent.glow.GlowAPI;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -74,10 +74,6 @@ public class Pugmas20 implements Listener {
 	@Getter
 	private static final String adventLore = "&ePugmas 2020 Advent Item";
 
-	@Getter
-	private static final Location initialSpawn = location(898.5, 52, 356.5);
-	@Getter
-	private static final Location subsequentSpawn = location(909.5, 52, 368.5);
 	@Getter
 	@Setter
 	private static boolean treeAnimating = false;
@@ -127,8 +123,9 @@ public class Pugmas20 implements Listener {
 		deleteNpcHolograms();
 		for (QuestNPC questNPC : QuestNPC.values()) {
 			NPC npc = CitizensUtils.getNPC(questNPC.getId());
-			Hologram hologram = HologramsAPI.createHologram(Nexus.getInstance(), npc.getStoredLocation().clone().add(0, 3.15, 0));
-			hologram.appendItemLine(new ItemStack(Material.EMERALD));
+
+			final Hologram hologram = HolographicDisplaysAPI.get(Nexus.getInstance()).createHologram(npc.getStoredLocation().clone().add(0, 3.15, 0));
+			hologram.getLines().appendItem(new ItemStack(Material.EMERALD));
 			holograms.add(hologram);
 		}
 	}
@@ -290,10 +287,10 @@ public class Pugmas20 implements Listener {
 
 			LocationUtils.lookAt(player, blockLoc);
 
-			Tasks.GlowTask.builder()
+			GlowUtils.GlowTask.builder()
 					.duration(TickTime.SECOND.x(10))
 					.entity(fallingBlock)
-					.color(GlowAPI.Color.RED)
+					.color(GlowColor.RED)
 					.viewers(Collections.singletonList(player))
 					.onComplete(() -> {
 						fallingBlock.remove();

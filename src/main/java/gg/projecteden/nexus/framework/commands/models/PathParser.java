@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.framework.commands.models;
 
-import gg.projecteden.exceptions.EdenException;
-import gg.projecteden.interfaces.PlayerOwnedObject;
+import gg.projecteden.api.common.exceptions.EdenException;
+import gg.projecteden.api.mongodb.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -47,7 +47,7 @@ class PathParser {
 	public PathParser(@NonNull CommandEvent event) {
 		this.event = event;
 		this.command = event.getCommand();
-		this.methods = Utils.reverse(command.getPathMethods(event));
+		this.methods = Utils.reverse(command.getPathMethodsForExecution(event));
 	}
 
 	@Data

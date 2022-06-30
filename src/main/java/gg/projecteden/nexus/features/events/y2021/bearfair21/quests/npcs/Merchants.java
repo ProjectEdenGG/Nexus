@@ -7,7 +7,7 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.islands.MainIsland;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.islands.MinigameNightIsland;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.WoodCutting.BearFair21TreeType;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.farming.FarmingLoot;
-import gg.projecteden.nexus.features.recipes.functionals.Backpacks;
+import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks;
 import gg.projecteden.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption;
 import gg.projecteden.nexus.models.bearfair21.BearFair21User;
 import gg.projecteden.nexus.models.bearfair21.BearFair21UserService;
@@ -27,7 +27,7 @@ import org.bukkit.potion.PotionType;
 import java.util.ArrayList;
 import java.util.List;
 
-import static gg.projecteden.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 public class Merchants {
 
@@ -171,7 +171,7 @@ public class Merchants {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
 						.maxUses(1)
-						.result(Backpacks.getBackpack(user.getPlayer()))
+						.result(Backpacks.getBackpack())
 						.ingredient(goldIngot.clone().amount(6)));
 					add(new TradeBuilder()
 						.result(new ItemStack(Material.ELYTRA))

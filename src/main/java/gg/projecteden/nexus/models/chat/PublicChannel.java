@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.models.chat;
 
+import gg.projecteden.api.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.features.commands.NearCommand.Near;
@@ -8,7 +9,6 @@ import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.utils.DiscordId.TextChannel;
 import lombok.Builder;
 import lombok.Data;
 import net.md_5.bungee.api.ChatColor;
@@ -19,6 +19,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty;
+import static gg.projecteden.api.common.utils.StringUtils.plural;
 
 @Data
 @Builder
@@ -82,8 +85,10 @@ public class PublicChannel implements Channel {
 			json.hover("&3Rank: " + nerd.getRank().getColoredName());
 		if (nerd.hasNickname())
 			json.hover("&3Real name: &e" + nerd.getName());
-		if (!nerd.getPronouns().isEmpty())
+		if (isNotNullOrEmpty(nerd.getPronouns()))
 			json.hover("&3Pronouns: " + nerd.getPronouns().stream().map(pronoun -> "&e" + pronoun + "&3").collect(Collectors.joining(", ")));
+		if (isNotNullOrEmpty(nerd.getFilteredPreferredNames()))
+			json.hover(plural("&3Preferred name", nerd.getFilteredPreferredNames().size()) + ": &e" + String.join("&3, &e", nerd.getFilteredPreferredNames()));
 
 		return json;
 	}

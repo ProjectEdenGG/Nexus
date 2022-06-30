@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -11,15 +12,13 @@ import gg.projecteden.nexus.models.pvp.PVP;
 import gg.projecteden.nexus.models.pvp.PVPService;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.parchment.HasPlayer;
+import gg.projecteden.parchment.event.player.PlayerUseRespawnAnchorEvent;
 import io.papermc.paper.event.player.PlayerBedFailEnterEvent;
 import lombok.NoArgsConstructor;
-import me.lexikiq.HasPlayer;
-import me.lexikiq.event.player.PlayerUseRespawnAnchorEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -52,7 +51,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 import static gg.projecteden.nexus.utils.PlayerUtils.isVanished;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
@@ -299,35 +297,22 @@ public class PVPCommand extends CustomCommand implements Listener {
 	public void onPlayerItemDamage(PlayerItemDamageEvent event) {
 		final Player player = event.getPlayer();
 
-		Consumer<String> debug = message -> {
-			if (Dev.WAKKA.is(player))
-				Dev.GRIFFIN.sendMessage(message);
-		};
-
-		debug.accept("=======");
-		debug.accept("0");
 		if (!service.get(player).isEnabled())
 			return;
 
 		final ItemStack item = event.getItem();
-		debug.accept("1 " + item.getType());
 		if (!MaterialTag.ARMOR.isTagged(item))
 			return;
 
-		debug.accept("2");
 		final EntityDamageEvent lastDamage = player.getLastDamageCause();
 		if (lastDamage == null)
 			return;
 
-		debug.accept("3 " + lastDamage.getClass().getSimpleName() + " / " + lastDamage.getCause());
 		if (!(lastDamage instanceof EntityDamageByEntityEvent attackEvent))
 			return;
 
-		debug.accept("4 " + attackEvent.getDamager().getType());
 		if (attackEvent.getDamager().getType() != EntityType.PLAYER)
 			return;
-
-		debug.accept("5 cancelling");
 
 		// Attempt #1
 		event.setCancelled(true);

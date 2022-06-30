@@ -9,13 +9,16 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor
 public class TaskPartData {
-    protected final TaskPart task;
 
-    // TODO: javadocs
+	protected final TaskPart task;
 
-    public boolean hasRunnable() {
-        return false;
-    }
+	// TODO: javadocs
+	// TODO refactor this to accept Match as a constructor parameter?
 
-    public void runnable(Match match) {}
+	public boolean hasRunnable() {
+		return false;
+	}
+
+	public void runnable(Match match) {
+	}
 }

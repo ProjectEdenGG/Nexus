@@ -10,8 +10,8 @@ import gg.projecteden.nexus.models.home.HomeService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
 
-import static gg.projecteden.nexus.features.homes.HomesMenu.getAccessListNames;
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.api.common.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.features.homes.HomesMenu.getAccessListNamesAsString;
 
 public class EditHomeProvider extends InventoryProvider {
 	private final Home home;
@@ -45,7 +45,7 @@ public class EditHomeProvider extends InventoryProvider {
 		if (home.isLocked()) {
 			contents.set(0, 7, ClickableItem.of(new ItemBuilder(Material.LIME_CONCRETE_POWDER)
 					.name("&eGive a player access")
-					.lore("&eto this home", "", "&fThey will be able to teleport to this home even if it is locked" + getAccessListNames(home.getAccessList())),
+					.lore("&eto this home", "", "&fThey will be able to teleport to this home even if it is locked" + getAccessListNamesAsString(home.getAccessList())),
 				e -> HomesMenu.allow(home, response -> refresh())
 			));
 

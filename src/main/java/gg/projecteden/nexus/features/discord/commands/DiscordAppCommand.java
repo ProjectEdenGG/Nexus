@@ -1,10 +1,12 @@
 package gg.projecteden.nexus.features.discord.commands;
 
-import gg.projecteden.discord.appcommands.AppCommandEvent;
-import gg.projecteden.discord.appcommands.annotations.Command;
-import gg.projecteden.discord.appcommands.annotations.Desc;
-import gg.projecteden.discord.appcommands.annotations.Optional;
-import gg.projecteden.discord.appcommands.annotations.RequiredRole;
+import gg.projecteden.api.discord.DiscordId;
+import gg.projecteden.api.discord.DiscordId.User;
+import gg.projecteden.api.discord.appcommands.AppCommandEvent;
+import gg.projecteden.api.discord.appcommands.annotations.Command;
+import gg.projecteden.api.discord.appcommands.annotations.Desc;
+import gg.projecteden.api.discord.appcommands.annotations.Optional;
+import gg.projecteden.api.discord.appcommands.annotations.RequiredRole;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.discord.appcommands.NexusAppCommand;
@@ -13,8 +15,6 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.models.discord.DiscordConfigService;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
-import gg.projecteden.utils.DiscordId;
-import gg.projecteden.utils.DiscordId.User;
 import net.dv8tion.jda.api.entities.Member;
 import org.apache.commons.lang.RandomStringUtils;
 

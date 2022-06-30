@@ -1,13 +1,15 @@
 package gg.projecteden.nexus.features.recipes;
 
+import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.custombenches.DyeStation;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
+import gg.projecteden.nexus.features.listeners.events.FixedCraftItemEvent;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
+import gg.projecteden.nexus.features.workbenches.DyeStation;
 import gg.projecteden.nexus.framework.features.Depends;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.ColorType;
@@ -18,7 +20,6 @@ import gg.projecteden.nexus.utils.ItemUtils.ItemStackComparator;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WoodType;
-import gg.projecteden.utils.Utils;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
@@ -30,8 +31,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
+import org.bukkit.inventory.CraftingInventory;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
@@ -39,20 +43,21 @@ import org.bukkit.inventory.RecipeChoice.ExactChoice;
 import org.bukkit.inventory.RecipeChoice.MaterialChoice;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.reflections.Reflections;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.api.common.utils.ReflectionUtils.subTypesOf;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.blast;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shapeless;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.smelt;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.surround;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
-import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 @Depends({ResourcePack.class, CustomEnchants.class})
 public class CustomRecipes extends Feature implements Listener {
@@ -77,7 +82,7 @@ public class CustomRecipes extends Feature implements Listener {
 			registerFurnace();
 			misc();
 
-			new Reflections(getClass().getPackage().getName()).getSubTypesOf(FunctionalRecipe.class).stream()
+			subTypesOf(FunctionalRecipe.class, getClass().getPackageName()).stream()
 				.map(clazz -> {
 					try {
 						if (!Utils.canEnable(clazz))
@@ -234,13 +239,13 @@ public class CustomRecipes extends Feature implements Listener {
 
 	public void registerQuartz() {
 		shapeless().add(Material.QUARTZ_BLOCK).toMake(Material.QUARTZ, 4).extra("quartz_uncrafting").build().type(RecipeType.QUARTZ).register();
-		shapeless().add(Material.QUARTZ_PILLAR).toMake(Material.QUARTZ_BLOCK, 1).extra("quartz_uncrafting").build().type(RecipeType.QUARTZ).register();
+		shapeless().add(Material.QUARTZ_PILLAR).toMake(Material.QUARTZ_BLOCK).extra("quartz_uncrafting").build().type(RecipeType.QUARTZ).register();
 		shapeless().add(Material.CHISELED_QUARTZ_BLOCK).toMake(Material.QUARTZ_SLAB, 2).extra("quartz_uncrafting").build().type(RecipeType.QUARTZ).register();
-		shapeless().add(Material.QUARTZ_BRICKS).toMake(Material.QUARTZ_BLOCK, 4).extra("quartz_uncrafting_bricks").build().type(RecipeType.QUARTZ).register();
+		shapeless().add(Material.QUARTZ_BRICKS).toMake(Material.QUARTZ_BLOCK).extra("quartz_uncrafting_bricks").build().type(RecipeType.QUARTZ).register();
 	}
 
 	public void registerStoneBricks() {
-		shapeless().add(Material.STONE_BRICKS).toMake(Material.STONE, 1).extra("stonebrick_uncrafting").build().type(RecipeType.STONE_BRICK).register();
+		shapeless().add(Material.STONE_BRICKS).toMake(Material.STONE).extra("stonebrick_uncrafting").build().type(RecipeType.STONE_BRICK).register();
 		shapeless().add(Material.CHISELED_STONE_BRICKS).toMake(Material.STONE_BRICK_SLAB, 2).extra("stonebrick_uncrafting").build().type(RecipeType.STONE_BRICK).register();
 		shapeless().add(Material.MOSSY_STONE_BRICKS).toMake(Material.STONE_BRICKS).extra("stonebrick_uncrafting").build().type(RecipeType.STONE_BRICK).register();
 		shapeless().add(Material.CHISELED_DEEPSLATE).toMake(Material.COBBLED_DEEPSLATE_SLAB, 2).extra("stonebrick_uncrafting").build().type(RecipeType.STONE_BRICK).register();
@@ -260,7 +265,9 @@ public class CustomRecipes extends Feature implements Listener {
 	}
 
 	public void misc() {
+		shaped("SLS", "L L", "LLL").add('S', Material.STRING).add('L', Material.LEATHER).toMake(Material.BUNDLE).build().type(RecipeType.MISC).register();
 		surround(Material.WATER_BUCKET).with(MaterialTag.WOOL).toMake(Material.WHITE_WOOL, 8).build().type(RecipeType.WOOL).register();
+		shapeless().add(Material.DROPPER).add(Material.BOW).toMake(Material.DISPENSER).build().type(RecipeType.MISC).register();
 		shapeless().add(Material.NETHER_WART_BLOCK).toMake(Material.NETHER_WART, 9).build().type(RecipeType.MISC).register();
 		shapeless().add(Material.BLUE_ICE).toMake(Material.PACKED_ICE, 9).build().type(RecipeType.MISC).register();
 		shapeless().add(Material.PACKED_ICE).toMake(Material.ICE, 9).build().type(RecipeType.MISC).register();
@@ -284,7 +291,7 @@ public class CustomRecipes extends Feature implements Listener {
 		for (WoodType wood : WoodType.values()) {
 			shapeless().add(wood.getStrippedLog(), 2).toMake(wood.getLog(), 2).build().type(RecipeType.MISC).register();
 			shapeless().add(wood.getStrippedWood(), 2).toMake(wood.getWood(), 2).build().type(RecipeType.MISC).register();
-			shapeless().add(wood.getStair()).toMake(wood.getPlanks(), 6).build().type(RecipeType.MISC).register();
+			shapeless().add(wood.getStair(), 2).toMake(wood.getPlanks(), 3).build().type(RecipeType.MISC).register();
 		}
 
 		dyeStation();
@@ -294,6 +301,8 @@ public class CustomRecipes extends Feature implements Listener {
 	}
 
 	private void dyeStation() {
+		if (true) return;
+
 		// Magic Dye
 		shapeless().add(Material.GLASS_BOTTLE, Material.RED_DYE, Material.ORANGE_DYE, Material.YELLOW_DYE,
 			Material.GREEN_DYE, Material.CYAN_DYE, Material.BLUE_DYE, Material.PURPLE_DYE, Material.PINK_DYE)
@@ -347,5 +356,81 @@ public class CustomRecipes extends Feature implements Listener {
 	public static String getItemName(ItemStack result) {
 		return stripColor(ItemUtils.getName(result).replaceAll(" ", "_").trim().toLowerCase());
 	}
+
+	// Stolen from https://github.com/ezeiger92/QuestWorld2/blob/70f2be317daee06007f89843c79b3b059515d133/src/main/java/com/questworld/extension/builtin/CraftMission.java
+	@EventHandler
+	public void fixCraftEvent(CraftItemEvent event) {
+		if (event instanceof FixedCraftItemEvent) return;
+
+		ItemStack item = event.getRecipe().getResult().clone();
+		ClickType click = event.getClick();
+
+		int recipeAmount = item.getAmount();
+
+		switch (click) {
+			case NUMBER_KEY:
+				if (event.getWhoClicked().getInventory().getItem(event.getHotbarButton()) != null)
+					recipeAmount = 0;
+				break;
+
+			case DROP:
+			case CONTROL_DROP:
+				ItemStack cursor = event.getCursor();
+				if (!isNullOrAir(cursor))
+					recipeAmount = 0;
+				break;
+
+			case SHIFT_RIGHT:
+			case SHIFT_LEFT:
+				if (recipeAmount == 0)
+					break;
+
+				int maxCraftable = getMaxCraftAmount(event.getInventory());
+				int capacity = fits(item, event.getView().getBottomInventory());
+
+				if (capacity < maxCraftable)
+					maxCraftable = ((capacity + recipeAmount - 1) / recipeAmount) * recipeAmount;
+
+				recipeAmount = maxCraftable;
+				break;
+			default:
+		}
+
+		if (recipeAmount == 0)
+			return;
+
+		item.setAmount(recipeAmount);
+
+		new FixedCraftItemEvent(item, event.getRecipe(), event.getView(), event.getSlotType(), event.getSlot(), event.getClick(), event.getAction(), event.getHotbarButton()).callEvent();
+	}
+
+	public static int getMaxCraftAmount(CraftingInventory inv) {
+		if (inv.getResult() == null)
+			return 0;
+
+		int resultCount = inv.getResult().getAmount();
+		int materialCount = Integer.MAX_VALUE;
+
+		for (ItemStack item : inv.getMatrix())
+			// this can in fact be null
+			if (item != null && item.getAmount() < materialCount)
+				materialCount = item.getAmount();
+
+		return resultCount * materialCount;
+	}
+
+	public static int fits(ItemStack stack, Inventory inv) {
+		ItemStack[] contents = inv.getContents();
+		int result = 0;
+
+		for (ItemStack item : contents)
+			if (item == null)
+				result += stack.getMaxStackSize();
+			else if (item.isSimilar(stack))
+				result += Math.max(stack.getMaxStackSize() - item.getAmount(), 0);
+
+		return result;
+	}
+
 
 }

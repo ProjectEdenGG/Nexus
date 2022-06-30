@@ -3,7 +3,9 @@ package gg.projecteden.nexus.models.boost;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -12,8 +14,6 @@ import gg.projecteden.nexus.models.boost.BoostConfig.DiscordHandler;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
-import gg.projecteden.utils.TimeUtils.Timespan;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,6 +26,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
@@ -40,6 +41,14 @@ public class Booster implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private List<Boost> boosts = new ArrayList<>();
+
+	public List<Boost> getBoosts(Boostable type) {
+		return getBoosts(boost -> boost.getType() == type);
+	}
+
+	public List<Boost> getBoosts(Predicate<Boost> predicate) {
+		return boosts.stream().filter(predicate).toList();
+	}
 
 	@Data
 	@NoArgsConstructor
@@ -161,8 +170,12 @@ public class Booster implements PlayerOwnedObject {
 			return getExpiration().isBefore(LocalDateTime.now());
 		}
 
-		public boolean canActivate() {
+		public boolean canActivateIfEnabled() {
 			return !isActive() && !isCancelled() && !isExpired();
+		}
+
+		public boolean canActivate() {
+			return canActivateIfEnabled() && !getType().isDisabled();
 		}
 
 		@NotNull

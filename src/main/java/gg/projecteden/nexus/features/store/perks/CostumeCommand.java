@@ -1,10 +1,8 @@
 package gg.projecteden.nexus.features.store.perks;
 
-import gg.projecteden.nexus.features.custombenches.DyeStation;
-import gg.projecteden.nexus.features.custombenches.DyeStation.DyeStationMenu;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
@@ -13,6 +11,8 @@ import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpda
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateStartEvent;
 import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
 import gg.projecteden.nexus.features.store.gallery.StoreGallery;
+import gg.projecteden.nexus.features.workbenches.DyeStation;
+import gg.projecteden.nexus.features.workbenches.DyeStation.DyeStationMenu;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -36,7 +36,6 @@ import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -245,10 +244,6 @@ public class CostumeCommand extends CustomCommand implements Listener {
 
 			for (Costume costume : Costume.values()) {
 				if (costume.getModel().getFileName().equals(ICON))
-					continue;
-
-				// legacy GG hat
-				if (costume.getModel().getMaterial() == Material.CYAN_STAINED_GLASS_PANE)
 					continue;
 
 				if (!isAvailableCostume(user, costume))

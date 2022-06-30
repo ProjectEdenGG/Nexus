@@ -1,6 +1,8 @@
 package gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf;
 
 import com.destroystokyo.paper.ParticleBuilder;
+import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.BF21PointSource;
@@ -11,10 +13,12 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigol
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfHole;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfParticle;
 import gg.projecteden.nexus.features.particles.ParticleUtils;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.models.bearfair21.MiniGolf21User;
 import gg.projecteden.nexus.models.bearfair21.MiniGolf21UserService;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.FireworkLauncher;
+import gg.projecteden.nexus.utils.GlowUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.LocationUtils;
@@ -24,8 +28,6 @@ import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.Env;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect.Type;
@@ -47,7 +49,6 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.util.Vector;
-import org.inventivetalent.glow.GlowAPI;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -61,15 +62,15 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 public class MiniGolf {
 	// @formatter:off
-	@Getter private static final ItemStack putter = new ItemBuilder(Material.IRON_HOE).customModelData(901).name("Putter").lore("&7A specialized club", "&7for finishing holes.", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).undroppable().build();
-	@Getter private static final ItemStack wedge = new ItemBuilder(Material.IRON_HOE).customModelData(903).name("Wedge").lore("&7A specialized club", "&7for tall obstacles", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).undroppable().build();
-	@Getter private static final ItemStack whistle = new ItemBuilder(Material.IRON_NUGGET).customModelData(901).name("Golf Whistle").lore("&7Returns your last", "&7hit golf ball to its", "&7previous location", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).undroppable().build();
-	@Getter private static final ItemBuilder golfBall = new ItemBuilder(Material.SNOWBALL).customModelData(901).name("Golf Ball").itemFlags(ItemFlag.HIDE_ATTRIBUTES).undroppable();
+	@Getter private static final ItemStack putter = new ItemBuilder(CustomMaterial.MINIGOLF_PUTTER).name("Putter").lore("&7A specialized club", "&7for finishing holes.", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).undroppable().build();
+	@Getter private static final ItemStack wedge = new ItemBuilder(CustomMaterial.MINIGOLF_WEDGE).name("Wedge").lore("&7A specialized club", "&7for tall obstacles", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).undroppable().build();
+	@Getter private static final ItemStack whistle = new ItemBuilder(CustomMaterial.MINIGOLF_WHISTLE).name("Golf Whistle").lore("&7Returns your last", "&7hit golf ball to its", "&7previous location", "").itemFlags(ItemFlag.HIDE_ATTRIBUTES).undroppable().build();
+	@Getter private static final ItemBuilder golfBall = new ItemBuilder(CustomMaterial.MINIGOLF_BALL).name("Golf Ball").itemFlags(ItemFlag.HIDE_ATTRIBUTES).undroppable();
 	@Getter private static final ItemStack scoreBook = new ItemBuilder(Material.WRITABLE_BOOK).name("Score Book").itemFlags(ItemFlag.HIDE_ATTRIBUTES).undroppable().build();
 	//
 	@Getter private static final List<ItemStack> clubs = Arrays.asList(putter, wedge);
@@ -134,7 +135,7 @@ public class MiniGolf {
 
 			List<ItemStack> golfBalls = Arrays.stream(MiniGolfColor.values())
 				.filter(Objects::nonNull)
-				.map(miniGolfColor -> (MiniGolf.getGolfBall().clone().customModelData(miniGolfColor.getCustomModelData()).build()))
+				.map(miniGolfColor -> (MiniGolf.getGolfBall().clone().modelId(miniGolfColor.getModelId()).build()))
 				.toList();
 
 			if (armorStand != null && !isNullOrEmpty(golfBalls)) {
@@ -328,7 +329,7 @@ public class MiniGolf {
 				// Rainbow Glow
 				if (user.getMiniGolfColor().equals(MiniGolfColor.RAINBOW)) {
 					if (updateRainbow)
-						GlowAPI.setGlowing(ball, color.get().getColorType().getGlowColor(), user.getOnlinePlayer());
+						GlowUtils.glow(ball).color(color.get().getColorType().getGlowColor()).receivers(user.getOnlinePlayer()).run();
 				}
 
 				Material _type = loc.getBlock().getType();

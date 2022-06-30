@@ -3,15 +3,15 @@ package gg.projecteden.nexus.features.fakenpc;
 import com.mojang.authlib.GameProfile;
 import lombok.NonNull;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.EntityPlayer;
-import net.minecraft.server.level.WorldServer;
-import net.minecraft.world.entity.EntityTypes;
-import net.minecraft.world.entity.decoration.EntityArmorStand;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_17_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
 
 import java.util.UUID;
 
@@ -21,34 +21,34 @@ public class NMSUtils {
 		return ((CraftServer) Bukkit.getServer()).getServer();
 	}
 
-	public static WorldServer getWorldServer(Location bukkitLocation) {
+	public static ServerLevel getWorldServer(Location bukkitLocation) {
 		return getWorldServer(bukkitLocation.getWorld());
 	}
 
-	public static WorldServer getWorldServer(World bukkitWorld) {
+	public static ServerLevel getWorldServer(World bukkitWorld) {
 		return ((CraftWorld) bukkitWorld).getHandle();
 	}
 
-	public static EntityPlayer createEntityPlayer(UUID uuid, @NonNull Location location, String name) {
+	public static ServerPlayer createEntityPlayer(UUID uuid, @NonNull Location location, String name) {
 		if (uuid == null)
 			uuid = UUID.randomUUID();
 
-		WorldServer world = getWorldServer(location);
+		ServerLevel world = getWorldServer(location);
 		GameProfile gameProfile = new GameProfile(uuid, name);
-		EntityPlayer entityPlayer = new EntityPlayer(NMSUtils.getServer(), world, gameProfile);
+		ServerPlayer entityPlayer = new ServerPlayer(NMSUtils.getServer(), world, gameProfile, null);
 		setLocation(entityPlayer, location);
 		return entityPlayer;
 	}
 
-	public static void setLocation(EntityPlayer entityPlayer, Location location) {
-		entityPlayer.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+	public static void setLocation(ServerPlayer entityPlayer, Location location) {
+		entityPlayer.moveTo(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
 	}
 
-	public static EntityArmorStand createHologram(net.minecraft.world.level.World world) {
-		EntityArmorStand armorStand = new EntityArmorStand(EntityTypes.c, world);
+	public static ArmorStand createHologram(net.minecraft.world.level.Level world) {
+		ArmorStand armorStand = new ArmorStand(EntityType.ARMOR_STAND, world);
 		armorStand.setMarker(true);
 		armorStand.setInvisible(true);
-		armorStand.setBasePlate(true);
+		armorStand.setNoBasePlate(true);
 		armorStand.setSmall(true);
 		armorStand.setCustomNameVisible(true);
 

@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.listeners;
 
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.StateFlag.State;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
@@ -16,8 +17,6 @@ import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldGuardFlagUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
-import joptsimple.internal.Strings;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -52,24 +51,24 @@ import java.util.Set;
 import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
 import static gg.projecteden.nexus.utils.EntityUtils.isHostile;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.ACTIONBAR_TICKS;
-import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.ALLOW_SPAWN;
-import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.FAREWELL_ACTIONBAR;
-import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.FAREWELL_SUBTITLE;
-import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.FAREWELL_TITLE;
-import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.GRASS_DECAY;
-import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.GREETING_ACTIONBAR;
-import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.GREETING_SUBTITLE;
-import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.GREETING_TITLE;
-import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.HANGING_BREAK;
-import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.HOSTILE_SPAWN;
-import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.MINIGAMES_WATER_DAMAGE;
-import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.MOB_AGGRESSION;
-import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.TAMING;
-import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.TITLE_FADE;
-import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.TITLE_TICKS;
-import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.USE_NOTE_BLOCKS;
-import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.USE_TRAP_DOORS;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.CustomFlags.ACTIONBAR_TICKS;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.CustomFlags.ALLOW_SPAWN;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.CustomFlags.FAREWELL_ACTIONBAR;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.CustomFlags.FAREWELL_SUBTITLE;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.CustomFlags.FAREWELL_TITLE;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.CustomFlags.GRASS_DECAY;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.CustomFlags.GREETING_ACTIONBAR;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.CustomFlags.GREETING_SUBTITLE;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.CustomFlags.GREETING_TITLE;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.CustomFlags.HANGING_BREAK;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.CustomFlags.HOSTILE_SPAWN;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.CustomFlags.MINIGAMES_WATER_DAMAGE;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.CustomFlags.MOB_AGGRESSION;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.CustomFlags.TAMING;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.CustomFlags.TITLE_FADE;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.CustomFlags.TITLE_TICKS;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.CustomFlags.USE_NOTE_BLOCKS;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.CustomFlags.USE_TRAP_DOORS;
 
 public class WorldGuardFlags implements Listener {
 
@@ -279,7 +278,7 @@ public class WorldGuardFlags implements Listener {
 
 		// Action Bar
 		String greeting_actionbar = (String) event.getRegion().getFlag(GREETING_ACTIONBAR.get());
-		if (!Strings.isNullOrEmpty(greeting_actionbar)) {
+		if (!Nullables.isNullOrEmpty(greeting_actionbar)) {
 			Integer actionbar_ticks = (Integer) event.getRegion().getFlag(ACTIONBAR_TICKS.get());
 			if (actionbar_ticks == null)
 				actionbar_ticks = 60;
@@ -292,7 +291,7 @@ public class WorldGuardFlags implements Listener {
 		// Titles
 		String greeting_title = (String) event.getRegion().getFlag(GREETING_TITLE.get());
 		String greeting_subtitle = (String) event.getRegion().getFlag(GREETING_SUBTITLE.get());
-		if (!(Strings.isNullOrEmpty(greeting_title) && Strings.isNullOrEmpty(greeting_subtitle))) {
+		if (!(Nullables.isNullOrEmpty(greeting_title) && Nullables.isNullOrEmpty(greeting_subtitle))) {
 			if (greeting_title == null)
 				greeting_title = "";
 			if (greeting_subtitle == null)
@@ -323,7 +322,7 @@ public class WorldGuardFlags implements Listener {
 			return;
 
 		String farewell_actionbar = (String) event.getRegion().getFlag(FAREWELL_ACTIONBAR.get());
-		if (!Strings.isNullOrEmpty(farewell_actionbar)) {
+		if (!Nullables.isNullOrEmpty(farewell_actionbar)) {
 
 			Integer actionbar_ticks = (Integer) event.getRegion().getFlag(ACTIONBAR_TICKS.get());
 			if (actionbar_ticks == null)
@@ -337,10 +336,10 @@ public class WorldGuardFlags implements Listener {
 		// Titles
 		String farewell_title = (String) event.getRegion().getFlag(FAREWELL_TITLE.get());
 		String farewell_subtitle = (String) event.getRegion().getFlag(FAREWELL_SUBTITLE.get());
-		if (!(Strings.isNullOrEmpty(farewell_title) && Strings.isNullOrEmpty(farewell_subtitle))) {
-			if (Strings.isNullOrEmpty(farewell_title))
+		if (!(Nullables.isNullOrEmpty(farewell_title) && Nullables.isNullOrEmpty(farewell_subtitle))) {
+			if (Nullables.isNullOrEmpty(farewell_title))
 				farewell_title = "";
-			if (Strings.isNullOrEmpty(farewell_subtitle))
+			if (Nullables.isNullOrEmpty(farewell_subtitle))
 				farewell_subtitle = "";
 
 			Integer title_ticks = (Integer) event.getRegion().getFlag(TITLE_TICKS.get());

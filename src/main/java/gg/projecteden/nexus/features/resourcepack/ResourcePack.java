@@ -1,33 +1,36 @@
 package gg.projecteden.nexus.features.resourcepack;
 
+import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.api.common.utils.MathUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationListener;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateStartEvent;
 import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
-import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelGroup;
 import gg.projecteden.nexus.features.resourcepack.models.files.FontFile;
+import gg.projecteden.nexus.features.resourcepack.models.files.ResourcePackOverriddenMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.files.SoundsFile;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.HttpUtils;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
+import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.utils.Env;
-import gg.projecteden.utils.MathUtils;
+import gg.projecteden.parchment.OptionalPlayerLike;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
-import me.lexikiq.OptionalPlayerLike;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -36,6 +39,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -51,7 +55,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static gg.projecteden.nexus.features.resourcepack.models.files.CustomModelGroup.addCustomModel;
+import static gg.projecteden.nexus.features.resourcepack.models.files.ResourcePackOverriddenMaterial.addCustomModelMaterial;
 
 @NoArgsConstructor
 public class ResourcePack extends Feature implements Listener {
@@ -70,7 +74,7 @@ public class ResourcePack extends Feature implements Listener {
 	private static FileSystem zipFile;
 
 	@Getter
-	private static List<CustomModelGroup> modelGroups;
+	private static List<ResourcePackOverriddenMaterial> modelGroups;
 	@Getter
 	private static List<CustomModelFolder> folders;
 	@Getter
@@ -139,27 +143,26 @@ public class ResourcePack extends Feature implements Listener {
 
 	static void readAllFiles() {
 		try {
+			soundsFile = SoundsFile.of(zipFile.getPath(SoundsFile.getPath()));
+			fontFile = FontFile.of(zipFile.getPath(FontFile.getPath()));
+
 			for (Path root : zipFile.getRootDirectories()) {
-				Files.walk(root).forEach(path -> {
-					try {
-						final String uri = path.toUri().toString();
+				try (var walker = Files.walk(root)) {
+					walker.forEach(path -> {
+						try {
+							final String uri = path.toUri().toString();
 
-						if (uri.contains(CustomModel.getVanillaSubdirectory()))
-							addCustomModel(path);
+							if (uri.contains(CustomModel.getVanillaSubdirectory()))
+								addCustomModelMaterial(path);
 
-						if (uri.endsWith(FontFile.getPath()))
-							fontFile = FontFile.of(path);
+							if (uri.contains(".ogg"))
+								SoundsFile.addAudioFile(path);
 
-						if (uri.endsWith(SoundsFile.getPath()))
-							soundsFile = SoundsFile.of(path);
-
-						if (uri.contains(".ogg"))
-							SoundsFile.addAudioFile(path);
-
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
-				});
+						} catch (Exception ex) {
+							ex.printStackTrace();
+						}
+					});
+				}
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -184,7 +187,7 @@ public class ResourcePack extends Feature implements Listener {
 	}
 
 	public static boolean isCustomItem(@Nullable ItemStack item) {
-		return item != null && !MaterialTag.ALL_AIR.isTagged(item.getType()) && CustomModelData.of(item) > 0;
+		return item != null && !MaterialTag.ALL_AIR.isTagged(item.getType()) && ModelId.of(item) > 0;
 	}
 
 	public static boolean isEnabledFor(Player player) {
@@ -248,15 +251,52 @@ public class ResourcePack extends Feature implements Listener {
 			return this;
 		}
 
+		private static final CustomMaterial BASE_MODEL = CustomMaterial.UI_NUMBERS_0;
+		private static final int MODEL_ID_START = BASE_MODEL.getModelId();
+
 		public ItemBuilder get() {
 			if (!hasResourcePack || (player != null && !ResourcePack.isEnabledFor(player)))
 				return new ItemBuilder(Material.ARROW).amount(MathUtils.clamp(number, 1, 64));
-			else
-				return new ItemBuilder(Material.LEATHER_HORSE_ARMOR)
-					.customModelData(2000 + number)
+			else {
+				return new ItemBuilder(BASE_MODEL)
+					.modelId(MODEL_ID_START + number)
 					.dyeColor(color)
 					.itemFlags(ItemFlag.HIDE_ATTRIBUTES);
+			}
 		}
+	}
+
+	@Getter
+	@AllArgsConstructor
+	public enum RainbowBlockOrder {
+		RED(ColorType.RED),
+		ORANGE(ColorType.ORANGE),
+		YELLOW(ColorType.YELLOW),
+		LIME(ColorType.LIGHT_GREEN),
+		GREEN(ColorType.GREEN),
+		CYAN(ColorType.CYAN),
+		LIGHT_BLUE(ColorType.LIGHT_BLUE),
+		BLUE(ColorType.BLUE),
+		PURPLE(ColorType.PURPLE),
+		MAGENTA(ColorType.MAGENTA),
+		PINK(ColorType.PINK),
+		BROWN(ColorType.BROWN),
+		BLACK(ColorType.BLACK),
+		GRAY(ColorType.GRAY),
+		LIGHT_GRAY(ColorType.LIGHT_GRAY),
+		WHITE(ColorType.WHITE),
+		;
+
+		private final ColorType colorType;
+
+		public static @NotNull RainbowBlockOrder of(ColorType colorType) {
+			for (RainbowBlockOrder color : values())
+				if (color.getColorType() == colorType)
+					return color;
+
+			throw new InvalidInputException("Unsupported color type");
+		}
+
 	}
 
 }

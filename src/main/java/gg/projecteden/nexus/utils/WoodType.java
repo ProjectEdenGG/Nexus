@@ -15,6 +15,12 @@ public enum WoodType {
 	JUNGLE(Environment.NORMAL),
 	ACACIA(Environment.NORMAL),
 	DARK_OAK(Environment.NORMAL),
+	MANGROVE(Environment.NORMAL) {
+		@Override
+		public Material getSapling() {
+			return Material.MANGROVE_PROPAGULE;
+		}
+	},
 	CRIMSON(Environment.NETHER),
 	WARPED(Environment.NETHER),
 	;
@@ -109,6 +115,13 @@ public enum WoodType {
 			return null;
 
 		return Material.matchMaterial(name() + "_BOAT");
+	}
+
+	public Material getChestBoat() {
+		if (environment == Environment.NETHER)
+			return null;
+
+		return Material.matchMaterial(name() + "_CHEST_BOAT");
 	}
 
 }

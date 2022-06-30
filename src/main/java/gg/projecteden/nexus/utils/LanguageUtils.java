@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.utils;
 
-import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TranslatableComponent;
 import org.bukkit.Bukkit;
@@ -10,14 +9,13 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-@UtilityClass
 public class LanguageUtils {
 	/**
 	 * Gets the default English translation for a specified translatable component
 	 * @param component Adventure TranslatableComponent
 	 * @return English translation
 	 */
-	public String translate(@NotNull TranslatableComponent component) {
+	public static String translate(@NotNull TranslatableComponent component) {
 		// uses Adventure's ComponentFlattener to convert translation keys to their translations w/ proper variable parsing
 		return AdventureUtils.asPlainText(component);
 	}
@@ -27,7 +25,7 @@ public class LanguageUtils {
 	 * @param key Minecraft key
 	 * @return English translation
 	 */
-	public String translate(@NotNull String key) {
+	public static String translate(@NotNull String key) {
 		return translate(Component.translatable(key));
 	}
 
@@ -36,7 +34,7 @@ public class LanguageUtils {
 	 * @param block a block
 	 * @return English translation
 	 */
-	public String translate(@NotNull Block block) {
+	public static String translate(@NotNull Block block) {
 		return translate(Bukkit.getUnsafe().getTranslationKey(block));
 	}
 
@@ -45,7 +43,7 @@ public class LanguageUtils {
 	 * @param material a material
 	 * @return English translation
 	 */
-	public String translate(@NotNull Material material) {
+	public static String translate(@NotNull Material material) {
 		return translate(Bukkit.getUnsafe().getTranslationKey(material));
 	}
 
@@ -54,7 +52,7 @@ public class LanguageUtils {
 	 * @param entity an entity
 	 * @return English translation
 	 */
-	public String translate(@NotNull EntityType entity) {
+	public static String translate(@NotNull EntityType entity) {
 		return translate(Bukkit.getUnsafe().getTranslationKey(entity));
 	}
 
@@ -63,7 +61,7 @@ public class LanguageUtils {
 	 * @param item an item
 	 * @return English translation
 	 */
-	public String translate(@NotNull ItemStack item) {
+	public static String translate(@NotNull ItemStack item) {
 		return translate(Bukkit.getUnsafe().getTranslationKey(item));
 	}
 }

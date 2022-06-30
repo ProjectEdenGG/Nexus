@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.Colorable;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationType;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
@@ -16,8 +17,8 @@ public class Table extends Dyeable implements Colorable {
 	@Getter
 	private final TableSize size;
 
-	public Table(String name, int modelData, Colorable.Type type, TableSize size) {
-		super(name, modelData, type);
+	public Table(String name, CustomMaterial material, Colorable.Type type, TableSize size) {
+		super(name, material, type);
 		this.size = size;
 		this.hitboxes = size.getHitboxes();
 		this.disabledPlacements = List.of(PlacementType.WALL, PlacementType.CEILING);

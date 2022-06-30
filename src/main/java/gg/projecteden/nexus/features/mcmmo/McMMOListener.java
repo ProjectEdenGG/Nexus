@@ -3,9 +3,13 @@ package gg.projecteden.nexus.features.mcmmo;
 import com.gmail.nossr50.datatypes.player.McMMOPlayer;
 import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
 import com.gmail.nossr50.events.experience.McMMOPlayerLevelUpEvent;
+import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
 import com.gmail.nossr50.events.skills.unarmed.McMMOPlayerDisarmEvent;
 import com.gmail.nossr50.util.player.UserManager;
+import de.tr7zw.nbtapi.NBTItem;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.BlockUtils;
@@ -14,14 +18,15 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Tag;
 import org.bukkit.TreeSpecies;
 import org.bukkit.TreeType;
+import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Ageable;
@@ -30,6 +35,7 @@ import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.Sapling;
@@ -40,6 +46,7 @@ import java.util.List;
 
 import static gg.projecteden.nexus.features.mcmmo.McMMO.TIER_ONE;
 import static gg.projecteden.nexus.features.mcmmo.McMMO.TIER_ONE_ALL;
+import static gg.projecteden.nexus.features.mcmmo.McMMO.TIER_TWO_ALL;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
@@ -51,14 +58,52 @@ public class McMMOListener implements Listener {
 	}
 
 	@EventHandler
+	public void onAfkGain(McMMOPlayerXpGainEvent event) {
+		if (AFK.get(event.getPlayer()).isAfk())
+			event.setCancelled(true);
+	}
+
+	private static final List<PrimarySkillType> MELEE_SKILLS = List.of(PrimarySkillType.AXES, PrimarySkillType.SWORDS, PrimarySkillType.UNARMED);
+
+	@EventHandler
+	public void onEndExpGain(McMMOPlayerXpGainEvent event) {
+		final Player player = event.getPlayer();
+		if (player.getWorld().getEnvironment() != Environment.THE_END)
+			return;
+
+		final WorldGuardUtils worldguard = new WorldGuardUtils(player);
+		if (!worldguard.getRegionNamesAt(player.getLocation()).contains("endermanfarm-deny"))
+			return;
+
+		if (!MELEE_SKILLS.contains(event.getSkill()))
+			return;
+
+		event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void onPlacePotionLauncherHopper(BlockPlaceEvent event) {
+		if (!event.getBlockPlaced().getType().equals(Material.HOPPER))
+			return;
+
+		NBTItem itemNBT = new NBTItem(event.getItemInHand());
+		if (!itemNBT.hasNBTData())
+			return;
+
+		if (itemNBT.asNBTString().contains("&8Potion Launcher"))
+			event.setCancelled(true);
+	}
+
+	@EventHandler
 	public void onMcMMOPlayerDisarm(McMMOPlayerDisarmEvent event) {
 		event.setCancelled(true);
 	}
 
 	@EventHandler
 	public void onMcMMOLevelUp(McMMOPlayerLevelUpEvent event) {
-		if (event.getSkillLevel() == TIER_ONE)
-			Koda.say(Nickname.of(event.getPlayer()) + " reached level 100 in " + camelCase(event.getSkill().name()) + "! Congratulations!");
+		int skillLevel = event.getSkillLevel();
+		if (skillLevel > 0 && skillLevel % TIER_ONE == 0)
+			Koda.say(Nickname.of(event.getPlayer()) + " reached level " + skillLevel + " in " + camelCase(event.getSkill().name()) + "! Congratulations!");
 
 		final McMMOPlayer mcMMOPlayer = UserManager.getOfflinePlayer(event.getPlayer());
 
@@ -68,6 +113,8 @@ public class McMMOListener implements Listener {
 
 		if (powerLevel == TIER_ONE_ALL)
 			Koda.say(Nickname.of(event.getPlayer()) + " has mastered all their skills! Congratulations!");
+		else if (powerLevel == TIER_TWO_ALL)
+			Koda.say(Nickname.of(event.getPlayer()) + " has exceptionally mastered all their skills! Congratulations!");
 	}
 
 	void scheduler() {

@@ -3,7 +3,8 @@ package gg.projecteden.nexus.models.legacy.itemtransfer;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.crates.models.CrateType;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import lombok.AllArgsConstructor;
@@ -30,6 +31,7 @@ public class LegacyItemTransferUser implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private Map<ReviewStatus, List<ItemStack>> items = new ConcurrentHashMap<>();
+	private Map<CrateType, Integer> crateKeys = new ConcurrentHashMap<>();
 
 	public List<ItemStack> getItems(ReviewStatus status) {
 		return items.computeIfAbsent(status, $ -> new ArrayList<>());
@@ -47,6 +49,11 @@ public class LegacyItemTransferUser implements PlayerOwnedObject {
 	public void deny(ItemStack item) {
 		getItems(ReviewStatus.PENDING).remove(item);
 		getItems(ReviewStatus.DENIED).add(item);
+	}
+
+	public void delay(ItemStack item) {
+		getItems(ReviewStatus.PENDING).remove(item);
+		getItems(ReviewStatus.DELAYED).add(item);
 	}
 
 	public int acceptAll() {
@@ -69,6 +76,7 @@ public class LegacyItemTransferUser implements PlayerOwnedObject {
 		PENDING,
 		ACCEPTED,
 		DENIED,
+		DELAYED,
 	}
 
 }

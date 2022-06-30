@@ -3,7 +3,7 @@ package gg.projecteden.nexus.models.dailyvotereward;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.votes.DailyVoteRewardsCommand.VoteStreakReward;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
@@ -58,6 +58,7 @@ public class DailyVoteReward implements PlayerOwnedObject {
 		private UUID uuid;
 		private int streak;
 		private boolean earnedToday;
+		@Builder.Default
 		private LocalDate start = LocalDate.now();
 		private LocalDate end;
 
@@ -67,6 +68,9 @@ public class DailyVoteReward implements PlayerOwnedObject {
 			earnedToday = true;
 
 			sendMessage(StringUtils.getPrefix("DailyVoteRewards") + "Your streak has &eincreased&3!");
+
+			if (true) // TODO 1.19 Rebalance
+				return;
 
 			if (streak % 30 == 0)
 				Mail.fromServer(uuid, WorldGroup.SURVIVAL, "Vote Streak Reward (Day #" + streak + ")", VoteStreakReward.DAY_30.getKeys()).send();

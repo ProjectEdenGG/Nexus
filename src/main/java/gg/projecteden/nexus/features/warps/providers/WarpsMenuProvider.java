@@ -3,12 +3,9 @@ package gg.projecteden.nexus.features.warps.providers;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.features.shops.providers.MainMenuProvider;
 import gg.projecteden.nexus.features.warps.WarpMenu;
-import gg.projecteden.nexus.features.warps.Warps;
 import gg.projecteden.nexus.models.buildcontest.BuildContest;
 import gg.projecteden.nexus.models.buildcontest.BuildContestService;
-import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
@@ -53,32 +50,10 @@ public class WarpsMenuProvider extends InventoryProvider {
 					contents.set(4, 4, ClickableItem.of(buildContest.getItemStack(), e -> warp("buildcontest")));
 			}
 			case SURVIVAL -> {
-				for (Warps.SurvivalWarp warp : Warps.SurvivalWarp.values()) {
-					contents.set(warp.getColumn(), warp.getRow(), ClickableItem.of(new ItemBuilder(warp.getItemStack())
-						.name("&3" + warp.getDisplayName())
-						.lore("&eClick to go to the " + warp.getDisplayName() + " warp"),
-						e -> WarpType.NORMAL.get(warp.name().replace("_", "")).teleportAsync(player)));
-				}
-				ItemBuilder shops = new ItemBuilder(Material.EMERALD).name("&3Shops").lore("&eThis will open", "&ethe shop menu");
+				ItemBuilder survival = new ItemBuilder(Material.GRASS_BLOCK).name("&3Survival").lore("&eClick to teleport to random spot in survival");
 				ItemBuilder resource = new ItemBuilder(Material.DIAMOND_PICKAXE).name("&3Resource").lore("&eClick to teleport to the resource world");
-				ItemBuilder legacy = new ItemBuilder(Material.MOSSY_COBBLESTONE).name("&3Legacy").lore("&eClick to view legacy world warps");
-				contents.set(1, 7, ClickableItem.of(shops, e -> new MainMenuProvider(null).open(player)));
-				contents.set(2, 7, ClickableItem.of(resource, e -> WarpType.NORMAL.get("resource").teleportAsync(player)));
-				contents.set(3, 7, ClickableItem.of(legacy, e -> new WarpsMenuProvider(WarpMenu.LEGACY).open(player)));
-				contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.BOOK).name("&3Info").lore("&eThese are the " +
-						"survival world warps.").lore("&eThey are spread out across the entire world.").loreize(false)));
-			}
-			case LEGACY -> {
-				for (Warps.LegacySurvivalWarp warp : Warps.LegacySurvivalWarp.values()) {
-					contents.set(warp.getColumn(), warp.getRow(), ClickableItem.of(warp.getItemStack(), "&3" + warp.getDisplayName(), "&eClick to go to the " + warp.getDisplayName() + " warp", e ->
-						WarpType.NORMAL.get("legacy_" + warp.name().replace("_", "")).teleportAsync(player)));
-				}
-				ItemBuilder shops2 = new ItemBuilder(Material.EMERALD).name("&3Shops").lore("&eThis will open", "&ethe shop menu");
-				ItemBuilder newWorld = new ItemBuilder(Material.GRASS_BLOCK).name("&3Survival").lore("&eClick to view the survival world warps");
-				contents.set(1, 7, ClickableItem.of(shops2, e -> new MainMenuProvider(null).open(player)));
-				contents.set(3, 7, ClickableItem.of(newWorld, e -> new WarpsMenuProvider(WarpMenu.SURVIVAL).open(player)));
-				contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.BOOK).name("&3Info").lore("&eThese are the " +
-						"legacy survival world warps.").lore("&eThey are spread out across the entire world.").loreize(false).build()));
+				contents.set(1, 2, ClickableItem.of(survival, e -> command("rtp")));
+				contents.set(1, 6, ClickableItem.of(resource, e -> warp("resource")));
 			}
 			case MINIGAMES -> {
 				ItemBuilder parkour = new ItemBuilder(Material.IRON_BOOTS).name("&3Parkour");
@@ -101,12 +76,10 @@ public class WarpsMenuProvider extends InventoryProvider {
 				contents.set(1, 1, ClickableItem.of(leaderboards, e -> warp("podiums")));
 				contents.set(1, 3, ClickableItem.of(staffhall, e -> warp("staffhall")));
 				contents.set(1, 5, ClickableItem.of(hoh, e -> command("hallofhistory")));
-				contents.set(1, 7, ClickableItem.of(wog, e -> command("wog")));
-				contents.set(2, 2, ClickableItem.of(banners, e -> warp("banners")));
-				contents.set(2, 4, ClickableItem.of(storetesting, e -> warp("store")));
-				contents.set(2, 6, ClickableItem.of(buildcontests, e -> new WarpsMenuProvider(WarpMenu.BUILD_CONTESTS).open(player)));
-				contents.set(3, 3, ClickableItem.of(walkthrough, e -> warp("2y")));
-				contents.set(3, 5, ClickableItem.of(bearfair, e -> command("bearfair21")));
+				contents.set(1, 7, ClickableItem.of(storetesting, e -> warp("store")));
+				contents.set(2, 2, ClickableItem.of(buildcontests, e -> new WarpsMenuProvider(WarpMenu.BUILD_CONTESTS).open(player)));
+				contents.set(2, 4, ClickableItem.of(walkthrough, e -> warp("2y")));
+				contents.set(2, 6, ClickableItem.of(bearfair, e -> command("bearfair21")));
 			}
 			case BUILD_CONTESTS -> {
 				ItemBuilder contest0 = new ItemBuilder(Material.JACK_O_LANTERN).name("&3Halloween - 2015");

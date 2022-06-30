@@ -1,9 +1,14 @@
 package gg.projecteden.nexus.features.store.perks.joinquit;
 
+import de.myzelyam.api.vanish.PlayerVanishStateChangeEvent;
+import gg.projecteden.api.discord.DiscordId.TextChannel;
+import gg.projecteden.nexus.features.chat.Chat.Broadcast;
+import gg.projecteden.nexus.features.chat.Chat.Broadcast.BroadcastBuilder;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.chat.bridge.RoleManager;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.features.discord.Discord;
+import gg.projecteden.nexus.features.listeners.Tab.Presence;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.discord.DiscordUser;
@@ -19,12 +24,12 @@ import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.DiscordId.TextChannel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -38,6 +43,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import static gg.projecteden.nexus.features.discord.Discord.discordize;
 
@@ -65,6 +72,11 @@ public class JoinQuit extends Feature implements Listener {
 	public static void join(Player player) {
 		if (isDuplicate(player, "join"))
 			return;
+
+		if (PlayerUtils.isVanished(player)) {
+			Broadcast.staffIngame().message(formatJoin(player, "[player] has joined while vanished").replaceAll("&[25]", "&7")).send();
+			return;
+		}
 
 		String message = "&a[player] &5has joined the server";
 		if (player.hasPermission("jq.custom") && joinMessages.size() > 0)
@@ -107,6 +119,11 @@ public class JoinQuit extends Feature implements Listener {
 
 		if (isDuplicate(player, "quit"))
 			return;
+
+		if (vanished.contains(player)) {
+			Broadcast.staffIngame().message(formatQuit(player, "[player] has left while vanished").replaceAll("&[45]", "&7")).send();
+			return;
+		}
 
 		String message = "&c[player] &5has left the server";
 		if (player.hasPermission("jq.custom") && quitMessages.size() > 0)
@@ -161,20 +178,43 @@ public class JoinQuit extends Feature implements Listener {
 			Koda.replyDiscord("**Welcome to Project Eden, " + Nickname.discordOf(player) + "!**");
 		}
 
-		if (!PlayerUtils.isVanished(player))
-			join(player);
+		join(player);
 	}
 
 	@EventHandler
 	public void onQuit(PlayerQuitEvent event) {
 		event.quitMessage(null);
 		Player player = event.getPlayer();
-		if (!vanished.contains(player))
-			quit(player, event.getReason());
+		quit(player, event.getReason());
+	}
+
+	@EventHandler
+	public void on(PlayerVanishStateChangeEvent event) {
+		Consumer<Function<BroadcastBuilder, BroadcastBuilder>> broadcastSelf = builder ->
+			builder.apply(Broadcast.staffIngame().hideFromConsole(true).include(event.getUUID())).send();
+
+		Consumer<Function<BroadcastBuilder, BroadcastBuilder>> broadcastOthers = builder ->
+			builder.apply(Broadcast.staffIngame().hideFromConsole(true).exclude(event.getUUID())).send();
+
+		Tasks.wait(1, () -> {
+			Player player = Bukkit.getPlayer(event.getUUID());
+			if (player == null || !player.isOnline())
+				return;
+
+			final String presence = "&f" + Presence.of(player).getCharacter() + " ";
+
+			if (event.isVanishing()) {
+				broadcastSelf.accept(builder -> builder.message(presence + "&7You vanished"));
+				broadcastOthers.accept(builder -> builder.message(presence + "&e" + Nickname.of(event.getUUID()) + " &7vanished"));
+			} else {
+				broadcastSelf.accept(builder -> builder.message(presence + "&7You unvanished"));
+				broadcastOthers.accept(builder -> builder.message(presence + "&e" + Nickname.of(event.getUUID()) + " &7unvanished"));
+			}
+		});
 	}
 
 	// Can't use Utils#isVanished on player in quit event
-	private static Set<Player> vanished = new HashSet<>();
+	private static final Set<Player> vanished = new HashSet<>();
 
 	static {
 		Tasks.repeat(2, 2, JoinQuit::updateVanished);

@@ -23,7 +23,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static gg.projecteden.nexus.features.menus.SignMenuFactory.ARROWS;
+import static gg.projecteden.nexus.features.menus.api.SignMenuFactory.ARROWS;
 
 @Title("Trusts")
 @RequiredArgsConstructor

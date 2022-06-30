@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands;
 
-import gg.projecteden.annotations.Async;
+import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.discord.ReactionVoter;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -16,7 +17,6 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.nickname.Nickname.NicknameHistoryEntry;
 import gg.projecteden.nexus.models.nickname.NicknameService;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.DiscordId.TextChannel;
 import lombok.NoArgsConstructor;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
@@ -104,7 +104,7 @@ public class NicknameCommand extends CustomCommand {
 		}, this::rethrow, TextChannel.STAFF_NICKNAME_QUEUE);
 	}
 
-	@Permission(Group.STAFF)
+	@Permission(Group.SENIOR_STAFF)
 	@Path("set <player> <nickname>")
 	void set(Nickname player, @Arg(min = 2, max = 16, regex = "[\\w]+") String nickname) {
 		player.setNickname(nickname);
@@ -114,7 +114,7 @@ public class NicknameCommand extends CustomCommand {
 
 	@Confirm
 	@Path("reset [player]")
-	void reset(@Arg(value = "self", permission = Group.STAFF) Nickname player) {
+	void reset(@Arg(value = "self", permission = Group.SENIOR_STAFF) Nickname player) {
 		if (!player.hasNickname())
 			error((isSelf(player) ? "You do not" : player.getName() + " doesn't") + " have a nickname");
 		player.setNickname((String) null);

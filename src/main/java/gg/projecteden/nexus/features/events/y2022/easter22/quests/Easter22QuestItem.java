@@ -1,19 +1,19 @@
 package gg.projecteden.nexus.features.events.y2022.easter22.quests;
 
 import gg.projecteden.nexus.features.quests.QuestItem;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 @Getter
 @AllArgsConstructor
 public enum Easter22QuestItem implements QuestItem {
-	EASTERS_PAINTBRUSH(new ItemBuilder(Material.PAPER).customModelData(2000).name("&eEaster's Paintbrush")),
-	PAINTBRUSH(new ItemBuilder(Material.PAPER).customModelData(2021).name("&ePaintbrush")),
-	PRISTINE_EGG(new ItemBuilder(Material.PAPER).customModelData(2022).name("&ePristine Egg")),
-	PAINTED_EGG(new ItemBuilder(Material.PAPER).customModelData(2023).name("&ePainted Egg")),
+	EASTERS_PAINTBRUSH(new ItemBuilder(CustomMaterial.EASTER22_EASTERS_PAINTBRUSH).name("&eEaster's Paintbrush")),
+	PAINTBRUSH(new ItemBuilder(CustomMaterial.EASTER22_PAINTBRUSH).name("&ePaintbrush")),
+	PRISTINE_EGG(new ItemBuilder(CustomMaterial.EASTER22_PRISTINE_EGG).name("&ePristine Egg")),
+	PAINTED_EGG(new ItemBuilder(CustomMaterial.EASTER22_PAINTED_EGG).name("&ePainted Egg")),
 	;
 
 	private final ItemBuilder itemBuilder;

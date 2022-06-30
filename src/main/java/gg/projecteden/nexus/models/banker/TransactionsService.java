@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.models.banker;
 
-import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.api.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 
 import java.time.LocalDateTime;
@@ -21,11 +21,15 @@ public class TransactionsService extends MongoPlayerService<Transactions> {
 
 	@Override
 	protected void beforeSave(Transactions transactions) {
-		final List<Transaction> txns = transactions.getTransactions();
-		txns.removeIf(transaction -> transaction.getTimestamp().isBefore(LocalDateTime.now().minusDays(60)));
+		try {
+			final List<Transaction> txns = transactions.getTransactions();
+			txns.removeIf(transaction -> transaction.getTimestamp().isBefore(LocalDateTime.now().minusDays(60)));
 
-		if (txns.size() > LIMIT)
-			transactions.setTransactions(txns.subList(txns.size() - LIMIT, txns.size()));
+			if (txns.size() > LIMIT)
+				transactions.setTransactions(txns.subList(txns.size() - LIMIT, txns.size()));
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 }

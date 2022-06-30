@@ -6,7 +6,8 @@ import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.PostLoad;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.common.utils.EnumUtils.IterableEnum;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.itemtags.ItemTagsUtils;
 import gg.projecteden.nexus.features.shops.ShopUtils;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -25,7 +26,6 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SerializationUtils.Json;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import gg.projecteden.utils.EnumUtils.IteratableEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -46,6 +46,7 @@ import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.Repairable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -56,9 +57,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 import static gg.projecteden.nexus.features.shops.ShopUtils.giveItems;
 import static gg.projecteden.nexus.features.shops.ShopUtils.prettyMoney;
 import static gg.projecteden.nexus.features.shops.Shops.PREFIX;
@@ -69,7 +72,6 @@ import static gg.projecteden.nexus.utils.PlayerUtils.hasRoomFor;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.StringUtils.pretty;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
-import static gg.projecteden.utils.UUIDUtils.UUID0;
 
 @Data
 @Entity(value = "shop", noClassnameStored = true)
@@ -85,7 +87,7 @@ public class Shop implements PlayerOwnedObject {
 	@Embedded
 	private List<Product> products = new ArrayList<>();
 	@Embedded
-	private List<ItemStack> holding = new ArrayList<>();
+	private Map<ShopGroup, List<ItemStack>> holding = new ConcurrentHashMap<>();
 	@Embedded
 	private List<Material> disabledResourceMarketItems = new ArrayList<>();
 
@@ -124,23 +126,28 @@ public class Shop implements PlayerOwnedObject {
 		return getProducts(shopGroup).stream().filter(product -> product.isEnabled() && product.isPurchasable() && !product.canFulfillPurchase()).collect(Collectors.toList());
 	}
 
-	public void addHolding(List<ItemStack> itemStacks) {
+	public void addHolding(ShopGroup shopGroup, List<ItemStack> itemStacks) {
 		if (isMarket())
 			return;
 
-		itemStacks.forEach(this::addHolding);
+		itemStacks.forEach(itemStack -> addHolding(shopGroup, itemStack));
 	}
 
-	public void addHolding(ItemStack itemStack) {
+	public void addHolding(ShopGroup shopGroup, ItemStack itemStack) {
 		if (isMarket())
 			return;
 
-		ItemUtils.combine(holding, itemStack.clone());
+		ItemUtils.combine(getHolding(shopGroup), itemStack.clone());
+	}
+
+	@NotNull
+	public List<ItemStack> getHolding(ShopGroup shopGroup) {
+		return holding.computeIfAbsent(shopGroup, $ -> new ArrayList<>());
 	}
 
 	public void removeProduct(Product product) {
 		products.remove(product);
-		ShopUtils.giveItems(uuid, product.getItemStacks());
+		ShopUtils.giveItems(uuid, product.getShopGroup(), product.getItemStacks());
 	}
 
 	public enum ShopGroup {
@@ -338,7 +345,7 @@ public class Shop implements PlayerOwnedObject {
 				if (meta.hasVariant())
 					variant = meta.getVariant();
 
-				builder.customModelData(variant.ordinal());
+				builder.modelId(variant.ordinal());
 				builder.lore("&7Axolotl Type: " + camelCase(variant));
 			}
 
@@ -412,29 +419,42 @@ public class Shop implements PlayerOwnedObject {
 			return items;
 		}
 
+		public @Nullable Double getPricePerItem() {
+			if (!(price instanceof Number)) return null;
+			return (Double) price / item.getAmount();
+		}
+
 		@Override
-		public int compareTo(@NotNull Product product) {
-			if (item.getType().name().equals(product.getItem().getType().name())) {
-				if (exchangeType != product.getExchangeType())
-					return exchangeType.compareTo(product.getExchangeType());
-				else if (price instanceof Number && product.getPrice() instanceof Number)
-					if (exchangeType == ExchangeType.BUY)
-						return ((Double) product.getPrice()).compareTo((Double) price);
-					else
-						return ((Double) price).compareTo((Double) product.getPrice());
-				else if (price instanceof Number)
-					return ((Double) price).compareTo(Double.MAX_VALUE);
-				else if (product.getPrice() instanceof Number)
-					return ((Double) Double.MAX_VALUE).compareTo(((Double) product.getPrice()));
-				else
-					return 0;
-			} else
-				return item.getType().name().compareTo(product.getItem().getType().name());
+		public int compareTo(@NotNull Product other) {
+			// compare item type (ascending/alphabetical)
+			int cmp = item.getType().name().compareTo(other.getItem().getType().name());
+			if (cmp != 0) return cmp;
+
+			// compare exchange type (ascending)
+			cmp = exchangeType.compareTo(other.getExchangeType());
+			if (cmp != 0) return cmp;
+
+			// compare price (descending for BUY, ascending for SELL)
+			if (getPricePerItem() != null && other.getPricePerItem() != null) {
+				cmp = other.getPricePerItem().compareTo(getPricePerItem());
+				if (cmp != 0) {
+					cmp *= exchangeType == ExchangeType.BUY ? 1 : -1;
+					return cmp;
+				}
+			} else if (getPricePerItem() != null) {
+				cmp = getPricePerItem().compareTo(Double.MAX_VALUE);
+				if (cmp != 0) return cmp;
+			} else if (other.getPricePerItem() != null) {
+				cmp = ((Double) Double.MAX_VALUE).compareTo(other.getPricePerItem());
+				if (cmp != 0) return cmp;
+			}
+
+			return Integer.compare(item.getAmount(), other.getItem().getAmount());
 		}
 	}
 
 	// Dumb enum due to morphia refusing to deserialize interfaces properly
-	public enum ExchangeType implements IteratableEnum {
+	public enum ExchangeType implements IterableEnum {
 		SELL(SellExchange.class),
 		TRADE(TradeExchange.class),
 		BUY(BuyExchange.class);
@@ -551,7 +571,7 @@ public class Shop implements PlayerOwnedObject {
 
 			product.setStock(product.getStock() - product.getItem().getAmount());
 			transaction(customer);
-			giveItems(customer.getUniqueId(), product.getItem());
+			giveItems(customer.getUniqueId(), product.getShopGroup(), product.getItem());
 		}
 
 		@Override
@@ -642,8 +662,8 @@ public class Shop implements PlayerOwnedObject {
 
 			product.setStock(product.getStock() - product.getItem().getAmount());
 			customer.getInventory().removeItem(price);
-			product.getShop().addHolding(price);
-			giveItems(customer.getUniqueId(), product.getItem());
+			product.getShop().addHolding(product.getShopGroup(), price);
+			giveItems(customer.getUniqueId(), product.getShopGroup(), product.getItem());
 		}
 
 		@Override
@@ -726,7 +746,7 @@ public class Shop implements PlayerOwnedObject {
 
 			for (ItemStack item : getMatchingItems(customer)) {
 				customer.getInventory().removeItem(item);
-				product.getShop().addHolding(item);
+				product.getShop().addHolding(product.getShopGroup(), item);
 			}
 		}
 

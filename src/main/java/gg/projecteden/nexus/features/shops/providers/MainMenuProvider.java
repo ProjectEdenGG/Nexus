@@ -23,9 +23,9 @@ public class MainMenuProvider extends ShopProvider {
 	public void init() {
 		super.init();
 
-		contents.set(1, 2, ClickableItem.of(Material.OAK_SIGN, "&6&lBrowse Market", e -> new BrowseMarketProvider(this).open(player)));
-		contents.set(1, 4, ClickableItem.of(Material.CHEST, "&6&lBrowse Shops", e -> new BrowseShopsProvider(this).open(player)));
-		contents.set(1, 6, ClickableItem.of(Material.CHEST, "&6&lBrowse Items", e -> new BrowseProductsProvider(this).open(player)));
+//		contents.set(1, 2, ClickableItem.of(Material.OAK_SIGN, "&6&lBrowse Market", e -> new BrowseMarketProvider(this).open(player)));
+		contents.set(1, 3, ClickableItem.of(Material.CHEST, "&6&lBrowse Shops", e -> new BrowseShopsProvider(this).open(player)));
+		contents.set(1, 5, ClickableItem.of(Material.CHEST, "&6&lBrowse Items", e -> new BrowseProductsProvider(this).open(player)));
 
 		contents.set(3, 3, ClickableItem.of(Material.COMPASS, "&6&lSearch Items", e -> new SearchProductsProvider(this).open(player)));
 		ItemStack head = new ItemBuilder(Material.PLAYER_HEAD).skullOwner(player).name("&6&lYour Shop").build();
@@ -56,7 +56,7 @@ public class MainMenuProvider extends ShopProvider {
 					.skullOwner(shops.get(index.getAndIncrement()))
 					.name("&6&lBrowse Shops");
 
-			contents.set(1, 4, ClickableItem.of(owner.build(), e -> new BrowseShopsProvider(this).open(player)));
+			contents.set(1, 3, ClickableItem.of(owner.build(), e -> new BrowseShopsProvider(this).open(player)));
 		}));
 	}
 

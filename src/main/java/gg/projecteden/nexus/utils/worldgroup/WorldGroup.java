@@ -1,8 +1,9 @@
 package gg.projecteden.nexus.utils.worldgroup;
 
+import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.parchment.OptionalLocation;
 import lombok.Getter;
-import me.lexikiq.OptionalLocation;
 import net.luckperms.api.context.ContextCalculator;
 import net.luckperms.api.context.ContextConsumer;
 import net.luckperms.api.context.ContextSet;
@@ -32,7 +33,7 @@ import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.UHC;
 public enum WorldGroup implements IWorldGroup {
 	SERVER("server"),
 	LEGACY(LEGACY1, LEGACY2),
-	SURVIVAL(List.of("safepvp", "events"), List.of(SubWorldGroup.SURVIVAL, SubWorldGroup.LEGACY, RESOURCE, STAFF_SURVIVAL)),
+	SURVIVAL(List.of("safepvp", "events"), List.of(SubWorldGroup.SURVIVAL, RESOURCE, STAFF_SURVIVAL)),
 	CREATIVE("creative", "buildcontest"),
 	MINIGAMES(List.of("gameworld"), List.of(DEATH_SWAP, UHC, BINGO)),
 	SKYBLOCK(SubWorldGroup.SKYBLOCK, ONEBLOCK),
@@ -103,6 +104,10 @@ public enum WorldGroup implements IWorldGroup {
 			return CREATIVE;
 
 		return UNKNOWN;
+	}
+
+	static {
+		LuckPermsUtils.registerContext(new WorldGroupCalculator());
 	}
 
 	public static class WorldGroupCalculator implements ContextCalculator<Player> {

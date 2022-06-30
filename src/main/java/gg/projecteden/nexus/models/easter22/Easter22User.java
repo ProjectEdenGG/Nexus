@@ -3,7 +3,8 @@ package gg.projecteden.nexus.models.easter22;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.interfaces.HasUniqueId;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.events.y2022.easter22.Easter22;
 import gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestTask;
 import gg.projecteden.nexus.features.quests.CommonQuestReward;
@@ -17,7 +18,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import me.lexikiq.HasUniqueId;
 import org.bukkit.Location;
 
 import java.util.HashSet;
@@ -36,7 +36,7 @@ public class Easter22User implements PlayerOwnedObject {
 	private UUID uuid;
 	private Set<Location> found = new HashSet<>();
 
-	private static transient final String PREFIX = StringUtils.getPrefix("Easter22");
+	private static final String PREFIX = StringUtils.getPrefix("Easter22");
 
 	public static Easter22User of(HasUniqueId player) {
 		return new Easter22UserService().get(player);

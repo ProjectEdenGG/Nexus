@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.achievements.listeners;
 
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.models.achievement.Achievement;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
@@ -19,6 +20,7 @@ import java.util.Set;
 
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
+@Disabled
 public class MiscListener implements Listener {
 
 	@EventHandler

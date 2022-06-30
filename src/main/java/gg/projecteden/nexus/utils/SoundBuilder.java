@@ -1,15 +1,15 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.api.common.utils.MathUtils;
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.utils.MathUtils;
+import gg.projecteden.parchment.OptionalPlayer;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import me.lexikiq.HasUniqueId;
-import me.lexikiq.OptionalPlayer;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
@@ -30,7 +30,7 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 @Data
 @NoArgsConstructor
@@ -218,7 +218,7 @@ public class SoundBuilder implements Cloneable {
 	public SoundBuilder clone() {
 		return new SoundBuilder(sound)
 			.receivers(new ArrayList<>(receivers))
-			.location(location.clone())
+			.location(location == null ? null : location.clone())
 			.category(category)
 			.muteMenuItem(muteMenuItem)
 			.pitch(pitch)

@@ -5,8 +5,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.store.gallery.annotations.Category.GalleryCategory;
 import gg.projecteden.nexus.utils.CitizensUtils;
-import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
-import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import net.citizensnpcs.api.npc.NPC;
@@ -60,7 +59,7 @@ public class StoreGalleryListener implements Listener {
 			event.setCancelled(true);
 
 			if (entity instanceof ItemFrame itemFrame && List.of(BlockFace.NORTH, BlockFace.SOUTH).contains(itemFrame.getAttachedFace()))
-				if (!isNullOrAir(itemFrame.getItem()) && CustomModelData.of(itemFrame.getItem()) == 1199)
+				if (!isNullOrAir(itemFrame.getItem()) && ModelId.of(itemFrame.getItem()) == 1199)
 					galleryPackage.onClickCart(player);
 				else
 					galleryPackage.onImageInteract(player);

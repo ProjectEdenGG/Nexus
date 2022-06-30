@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.utils;
 
 import com.google.common.collect.ImmutableSet;
+import gg.projecteden.parchment.HasHumanEntity;
 import lombok.EqualsAndHashCode;
-import me.lexikiq.HasHumanEntity;
 import org.bukkit.GameMode;
 import org.jetbrains.annotations.Contract;
 

@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.minigames.models.perks;
 
-import gg.projecteden.interfaces.Named;
+import gg.projecteden.api.interfaces.Named;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 

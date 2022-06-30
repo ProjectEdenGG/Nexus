@@ -7,7 +7,7 @@ import dev.morphia.mapping.Mapper;
 import gg.projecteden.nexus.features.mobheads.MobHeadType;
 import gg.projecteden.nexus.features.mobheads.common.MobHead;
 import gg.projecteden.nexus.features.mobheads.common.MobHeadVariant;
-import gg.projecteden.utils.EnumUtils;
+import gg.projecteden.api.common.utils.EnumUtils;
 import lombok.NoArgsConstructor;
 import org.bukkit.entity.EntityType;
 import org.jetbrains.annotations.NotNull;

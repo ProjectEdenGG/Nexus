@@ -6,7 +6,7 @@ import dev.morphia.mapping.MappedField;
 import dev.morphia.mapping.Mapper;
 import gg.projecteden.nexus.features.quests.tasks.common.IQuestTask;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.utils.EnumUtils;
+import gg.projecteden.api.common.utils.EnumUtils;
 import lombok.SneakyThrows;
 
 public class IQuestTaskConverter extends TypeConverter implements SimpleValueConverter {

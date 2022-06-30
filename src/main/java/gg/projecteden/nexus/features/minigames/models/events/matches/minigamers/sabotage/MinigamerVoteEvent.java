@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.sabotage;
 
-import gg.projecteden.nexus.features.menus.sabotage.VotingScreen;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerEvent;
+import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.menus.VotingScreen;
 import lombok.Getter;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;

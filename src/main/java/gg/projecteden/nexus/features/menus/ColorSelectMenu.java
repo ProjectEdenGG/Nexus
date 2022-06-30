@@ -10,7 +10,7 @@ import org.bukkit.Material;
 
 import java.util.function.Consumer;
 
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 
 @Title("Select Color")
 @RequiredArgsConstructor

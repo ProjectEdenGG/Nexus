@@ -45,7 +45,7 @@ public class Godmode implements PlayerOwnedObject {
 				return true;
 		if ("bearfair21".equals(player.getWorld().getName()) && new BearFair21ConfigService().get0().isEnabled(WARP) && !PlayerUtils.isVanished(player))
 			return false;
-		if (!Rank.of(player).isStaff())
+		if (!Rank.of(player).gte(Rank.ARCHITECT))
 			return false;
 		if (disabledWorlds.contains(WorldGroup.of(player)))
 			return false;

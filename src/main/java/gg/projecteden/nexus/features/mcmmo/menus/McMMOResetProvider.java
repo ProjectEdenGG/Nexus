@@ -11,8 +11,8 @@ import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
-import gg.projecteden.nexus.models.mcmmo.McMMOPrestige;
-import gg.projecteden.nexus.models.mcmmo.McMMOService;
+import gg.projecteden.nexus.models.mcmmo.McMMOPrestigeUser;
+import gg.projecteden.nexus.models.mcmmo.McMMOPrestigeUserService;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.Enchant;
@@ -35,7 +35,7 @@ import static gg.projecteden.nexus.features.mcmmo.McMMO.TIER_TWO;
 
 @Title("McMMO Reset")
 public class McMMOResetProvider extends InventoryProvider {
-	private static final McMMOService service = new McMMOService();
+	private static final McMMOPrestigeUserService service = new McMMOPrestigeUserService();
 	private static final int DEPOSIT = 10000; // eco reward for prestige
 	private static final String DEPOSIT_PRETTY = StringUtils.prettyMoney(DEPOSIT);
 	private static final int DEPOSIT_ALL = 20000; // bonus eco reward for prestiging all
@@ -204,7 +204,7 @@ public class McMMOResetProvider extends InventoryProvider {
 						})
 						.open(player)));
 
-		McMMOPrestige mcMMOPrestige = service.getPrestige(player.getUniqueId().toString());
+		var user = service.get(player);
 		for (ResetSkillType skill : ResetSkillType.values()) {
 			ItemBuilder item = new ItemBuilder(skill.getMaterial()).itemFlags(ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_ATTRIBUTES)
 				.name("&e" + StringUtils.camelCase(skill.name()))
@@ -215,7 +215,7 @@ public class McMMOResetProvider extends InventoryProvider {
 					"&f" + DEPOSIT_PRETTY + " (x" + MAX_DEPOSIT_MULTIPLIER + " for level " + TIER_TWO + ")",
 					"&f" + skill.getRewardDescription(),
 					"",
-					"&3Number of Prestieges: &e" + mcMMOPrestige.getPrestige(skill.name()))
+					"&3Number of Prestieges: &e" + user.getPrestige(skill))
 				.glow(mcmmoPlayer.getSkillLevel(PrimarySkillType.valueOf(skill.name())) >= TIER_ONE);
 
 			contents.set(skill.getRow(), skill.getColumn(), ClickableItem.of(item, (e) -> {
@@ -258,9 +258,7 @@ public class McMMOResetProvider extends InventoryProvider {
 			deposit += MAX_DEPOSIT_ALL_MULTIPLIER;
 		new BankerService().deposit(player, deposit, ShopGroup.SURVIVAL, TransactionCause.MCMMO_RESET);
 
-		McMMOPrestige mcMMOPrestige = service.getPrestige(player.getUniqueId().toString());
-		mcMMOPrestige.prestige("all");
-		service.save(mcMMOPrestige);
+		service.edit(player, McMMOPrestigeUser::prestigeAll);
 	}
 
 	public void prestige(Player player, ResetSkillType skill, boolean broadcast) {
@@ -274,13 +272,12 @@ public class McMMOResetProvider extends InventoryProvider {
 		new BankerService().deposit(player, reward, ShopGroup.SURVIVAL, TransactionCause.MCMMO_RESET);
 		mcmmoPlayer.modifySkill(PrimarySkillType.valueOf(skill.name()), 0);
 
-		McMMOPrestige mcMMOPrestige = service.getPrestige(player.getUniqueId().toString());
-		mcMMOPrestige.prestige(skill.name());
-		service.save(mcMMOPrestige);
+		final McMMOPrestigeUser user = service.get(player);
+		user.prestige(skill);
+		service.save(user);
 
-		// TODO Koda Broadcast
 		if (broadcast)
 			Koda.say(Nickname.of(player) + " has reset their " + skill.name().toLowerCase() + " skill for the " +
-					StringUtils.getNumberWithSuffix(mcMMOPrestige.getPrestige(skill.name())) + " time!");
+					StringUtils.getNumberWithSuffix(user.getPrestige(skill)) + " time!");
 	}
 }

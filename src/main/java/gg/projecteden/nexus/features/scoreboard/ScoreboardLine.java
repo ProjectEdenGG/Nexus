@@ -2,7 +2,10 @@ package gg.projecteden.nexus.features.scoreboard;
 
 import com.gmail.nossr50.datatypes.player.McMMOPlayer;
 import com.gmail.nossr50.util.player.UserManager;
-import gg.projecteden.nexus.features.commands.PushCommand;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan.TimespanBuilder;
+import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.nameplates.Nameplates;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.models.afk.AFKUser;
 import gg.projecteden.nexus.models.banker.BankerService;
@@ -25,10 +28,9 @@ import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.utils.TimeUtils.Timespan;
-import gg.projecteden.utils.TimeUtils.Timespan.TimespanBuilder;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import me.lucko.spark.api.statistic.StatisticWindow.MillisPerTick;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -45,6 +47,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import static gg.projecteden.nexus.utils.PlayerUtils.isVanished;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
@@ -76,6 +79,31 @@ public enum ScoreboardLine {
 		public String render(Player player) {
 			double tps1m = Bukkit.getTPS()[0];
 			return "&3TPS: &" + (tps1m >= 19 ? "e" : tps1m >= 16 ? "6" : "c") + new DecimalFormat("0.00").format(tps1m);
+		}
+	},
+
+	MSPT {
+		@Override
+		public String render(Player player) {
+			final var mspt = Nexus.getSpark().mspt();
+			if (mspt == null)
+				return "&3MSPT: &cnull";
+
+			final var recent = mspt.poll(MillisPerTick.MINUTES_1);
+			Function<Double, String> formatter = value -> {
+				if (value < 40)
+					return "&a" + Math.round(value);
+				else if (value > 50)
+					return "&c" + Math.round(value);
+				else
+					return "&e" + Math.round(value);
+			};
+			return "&3MSPT: %s&7/%s&7/%s&7/%s".formatted(
+				formatter.apply(recent.min()),
+				formatter.apply(recent.mean()),
+				formatter.apply(recent.percentile95th()),
+				formatter.apply(recent.max())
+			);
 		}
 	},
 
@@ -128,7 +156,7 @@ public enum ScoreboardLine {
 	PUSHING {
 		@Override
 		public String render(Player player) {
-			return "&3Pushing: &e" + player.hasPermission(PushCommand.PERMISSION);
+			return "&3Pushing: &e" + Nameplates.get().getPushService().get(player).isEnabled();
 		}
 	},
 
@@ -302,6 +330,7 @@ public enum ScoreboardLine {
 			if (ScoreboardLine.ONLINE.hasPermission(player)) put(ScoreboardLine.ONLINE, true);
 			if (ScoreboardLine.TICKETS.hasPermission(player)) put(ScoreboardLine.TICKETS, true);
 			if (ScoreboardLine.TPS.hasPermission(player)) put(ScoreboardLine.TPS, true);
+			if (ScoreboardLine.MSPT.hasPermission(player)) put(ScoreboardLine.MSPT, true);
 			if (ScoreboardLine.PING.hasPermission(player)) put(ScoreboardLine.PING, true);
 			if (ScoreboardLine.CHANNEL.hasPermission(player)) put(ScoreboardLine.CHANNEL, true);
 			if (ScoreboardLine.VANISHED.hasPermission(player)) put(ScoreboardLine.VANISHED, true);

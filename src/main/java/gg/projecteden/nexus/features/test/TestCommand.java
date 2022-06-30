@@ -1,6 +1,9 @@
 package gg.projecteden.nexus.features.test;
 
-import gg.projecteden.annotations.Async;
+import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan.FormatType;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
@@ -37,9 +40,6 @@ import gg.projecteden.nexus.utils.Tasks.ExpBarCountdown;
 import gg.projecteden.nexus.utils.Tasks.QueuedTask;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
-import gg.projecteden.utils.TimeUtils.Timespan;
-import gg.projecteden.utils.TimeUtils.Timespan.FormatType;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.citizensnpcs.api.npc.NPC;
@@ -60,7 +60,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
-import org.inventivetalent.glow.GlowAPI;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -421,16 +420,6 @@ public class TestCommand extends CustomCommand implements Listener {
 	@Path("sha1 <url>")
 	void sha1(String url) {
 		send(Utils.createSha1(url));
-	}
-
-	@Path("glow getColor <player>")
-	void getGlowColor(Player player) {
-		send(GlowAPI.getGlowColor(player, player()).name());
-	}
-
-	@Path("glow set <player> <color>")
-	void getGlowColor(Player player, GlowAPI.Color color) {
-		GlowAPI.setGlowing(player, color, player());
 	}
 
 	@Path("forceTpNPC")

@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.crates;
 
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
@@ -8,7 +9,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
+import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -114,18 +115,17 @@ public class GemCommand extends CustomCommand implements Listener {
 
 	public boolean isGem(ItemStack item) {
 		if (isNullOrAir(item)) return false;
-		if (!item.getType().equals(Material.EMERALD)) return false;
+		if (!item.getType().equals(CustomMaterial.GEM_SAPPHIRE.getMaterial())) return false;
 		if (item.getEnchantments().isEmpty()) return false;
-		return CustomModelData.of(item) == 1;
+		return ModelId.of(item) == CustomMaterial.GEM_SAPPHIRE.getModelId();
 	}
 
 	public static ItemStack makeGem(Enchantment enchantment, int level) {
-		return new ItemBuilder(Material.EMERALD)
-				.name("&#0fa8ffGem of " + StringUtils.camelCase(enchantment.getKey().getKey()))
-				.enchant(enchantment, level)
-				.lore(" ", "&fHold this gem and a tool", "&fto apply this enchantment")
-				.customModelData(1)
-				.build();
+		return new ItemBuilder(CustomMaterial.GEM_SAPPHIRE)
+			.name("&#0fa8ffGem of " + StringUtils.camelCase(enchantment.getKey().getKey()))
+			.enchant(enchantment, level)
+			.lore(" ", "&fHold this gem and a tool", "&fto apply this enchantment")
+			.build();
 	}
 
 }

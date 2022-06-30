@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage;
 
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.framework.interfaces.Colored;
@@ -7,7 +8,6 @@ import gg.projecteden.nexus.framework.interfaces.IsColoredAndNamed;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
-import me.lexikiq.HasUniqueId;
 import net.md_5.bungee.api.ChatColor;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;

@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.placeholderapi;
 
-import gg.projecteden.annotations.Disabled;
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.framework.features.Feature;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;

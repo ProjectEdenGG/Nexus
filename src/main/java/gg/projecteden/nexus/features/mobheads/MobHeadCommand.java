@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.mobheads;
 
+import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.nexus.features.mobheads.common.MobHead;
 import gg.projecteden.nexus.features.mobheads.common.MobHeadVariant;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -12,11 +13,12 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.MobHeadConverter;
+import gg.projecteden.nexus.models.mobheads.MobHeadChanceConfigService;
 import gg.projecteden.nexus.models.mobheads.MobHeadUser;
 import gg.projecteden.nexus.models.mobheads.MobHeadUser.MobHeadData;
 import gg.projecteden.nexus.models.mobheads.MobHeadUserService;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.utils.Utils;
+import gg.projecteden.nexus.utils.StringUtils;
 import kotlin.Pair;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -76,9 +78,9 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 			send(" &e" + camelCase(entityType));
 	}
 
-	@Path("validate chances")
+	@Path("chances validate")
 	@Permission(Group.ADMIN)
-	void validateChances() {
+	void chances_validate() {
 		List<MobHeadType> zeroChance = new ArrayList<>();
 		for (MobHeadType type : MobHeadType.values())
 			if (type.getChance() == 0)
@@ -92,6 +94,19 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Mobs with 0% chance to drop head:");
 		for (MobHeadType type : zeroChance)
 			send(" &e" + camelCase(type));
+	}
+
+	@Permission(Group.ADMIN)
+	@Path("chances get <type>")
+	void chances_get(MobHeadType type) {
+		send(PREFIX + "Chance of drop for &e" + camelCase(type) + "&3: &e" + StringUtils.getDf().format(type.getChance()));
+	}
+
+	@Permission(Group.ADMIN)
+	@Path("chances set <type> <chance>")
+	void chances_set(MobHeadType type, double chance) {
+		new MobHeadChanceConfigService().edit0(config -> config.getChances().put(type, chance));
+		send(PREFIX + "Set chance of drop for &e" + camelCase(type) + " &3to &e" + StringUtils.getDf().format(chance));
 	}
 
 	@Path("top kills [page]")

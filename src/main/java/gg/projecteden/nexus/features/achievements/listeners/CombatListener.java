@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.achievements.listeners;
 
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.models.achievement.Achievement;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
@@ -10,6 +11,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityResurrectEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 
+@Disabled
 public class CombatListener implements Listener {
 
 	@EventHandler

@@ -1,7 +1,8 @@
 package gg.projecteden.nexus.features.events.y2020.bearfair20.commands;
 
-import gg.projecteden.annotations.Async;
-import gg.projecteden.annotations.Disabled;
+import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.common.annotations.Disabled;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.discord.Discord;
@@ -29,7 +30,6 @@ import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.Utils.MapRotation;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.Timespan;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Location;
@@ -299,7 +299,7 @@ public class JigsawJam20Command extends CustomCommand implements Listener {
 		Location startFloored = floorLocation(orange.getLocation());
 		Location attemptFloored = floorLocation(attempt);
 
-		Axis axis = Axis.getAxis(startFloored, attemptFloored);
+		Axis axis = Axis.of(startFloored, attemptFloored);
 		double diff;
 
 		if (axis == Axis.Z)
@@ -416,7 +416,7 @@ public class JigsawJam20Command extends CustomCommand implements Listener {
 		for (Entity entity : EntityUtils.getNearbyEntities(location, 3).keySet())
 			if (entity.getType() == EntityType.ITEM_FRAME)
 				if (Math.floor(location.getY()) == Math.floor(entity.getLocation().getY()))
-					if (Axis.getAxis(location, entity.getLocation()) != null)
+					if (Axis.of(location, entity.getLocation()) != null)
 						return entity.getLocation();
 		return null;
 	}

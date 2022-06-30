@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands.staff;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -9,15 +10,15 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.whereis.WhereIs;
 import gg.projecteden.nexus.models.whereis.WhereIsService;
+import gg.projecteden.nexus.utils.GlowUtils;
+import gg.projecteden.nexus.utils.GlowUtils.GlowColor;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.inventivetalent.glow.GlowAPI;
 
 import java.util.Collections;
 
@@ -56,10 +57,10 @@ public class WhereIsCommand extends CustomCommand {
 
 		LocationUtils.lookAt(player(), playerArgLoc);
 
-		Tasks.GlowTask.builder()
+		GlowUtils.GlowTask.builder()
 				.duration(10 * 20)
 				.entity(playerArg)
-				.color(GlowAPI.Color.RED)
+				.color(GlowColor.RED)
 				.viewers(Collections.singletonList(player()))
 				.start();
 	}
@@ -132,7 +133,7 @@ public class WhereIsCommand extends CustomCommand {
 			return;
 		}
 
-		GlowAPI.setGlowing(glower, Rank.of(glower).getGlowColor(), viewer);
+		GlowUtils.glow(glower).color(Rank.of(glower).getGlowColor()).receivers(viewer).run();
 	}
 
 	private static void unglow(Player viewer) {
@@ -140,7 +141,7 @@ public class WhereIsCommand extends CustomCommand {
 	}
 
 	private static void unglow(Player glower, Player viewer) {
-		GlowAPI.setGlowing(glower, false, viewer);
+		GlowUtils.unglow(glower).receivers(viewer).run();
 	}
 
 }

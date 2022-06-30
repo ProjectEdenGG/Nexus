@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.models.quests;
 
 import dev.morphia.annotations.Converters;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.quests.tasks.common.IQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTask;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;

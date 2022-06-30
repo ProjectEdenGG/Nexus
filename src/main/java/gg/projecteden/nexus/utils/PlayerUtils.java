@@ -1,10 +1,11 @@
 package gg.projecteden.nexus.utils;
 
-import com.google.common.base.Strings;
 import com.google.gson.annotations.SerializedName;
 import com.viaversion.viaversion.api.Via;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
+import gg.projecteden.api.common.utils.Utils.MinMaxResult;
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -24,16 +25,14 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.nickname.NicknameService;
 import gg.projecteden.nexus.utils.PlayerUtils.VersionConfig.Version;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import gg.projecteden.utils.Utils.MinMaxResult;
+import gg.projecteden.parchment.HasOfflinePlayer;
+import gg.projecteden.parchment.HasPlayer;
+import gg.projecteden.parchment.OptionalPlayer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
-import me.lexikiq.HasOfflinePlayer;
-import me.lexikiq.HasPlayer;
-import me.lexikiq.HasUniqueId;
-import me.lexikiq.OptionalPlayer;
 import net.dv8tion.jda.annotations.ReplaceWith;
 import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
@@ -52,6 +51,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.metadata.MetadataValue;
@@ -79,11 +79,11 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.api.common.utils.UUIDUtils.isUuid;
 import static gg.projecteden.nexus.utils.ItemUtils.fixMaxStackSize;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.Utils.getMin;
-import static gg.projecteden.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.utils.UUIDUtils.isUuid;
 import static java.util.stream.Collectors.toList;
 
 @UtilityClass
@@ -171,6 +171,10 @@ public class PlayerUtils {
 		public OnlinePlayers viewer(HasUniqueId player) {
 			this.viewer = player.getUniqueId();
 			return this;
+		}
+
+		public OnlinePlayers world(String world) {
+			return world(Objects.requireNonNull(Bukkit.getWorld(world)));
 		}
 
 		public OnlinePlayers world(World world) {
@@ -624,7 +628,9 @@ public class PlayerUtils {
 	}
 
 	public static boolean hasRoomFor(OptionalPlayer player, ItemStack... items) {
-		if (player.getPlayer() == null) return false;
+		if (player.getPlayer() == null)
+			return false;
+
 		return hasRoomFor(player.getPlayer(), items);
 	}
 
@@ -633,15 +639,25 @@ public class PlayerUtils {
 	}
 
 	public static boolean hasRoomFor(OptionalPlayer player, List<ItemStack> items) {
-		if (player.getPlayer() == null) return false;
+		if (player.getPlayer() == null)
+			return false;
+
 		return hasRoomFor(player.getPlayer(), items);
 	}
 
 	public static boolean hasRoomFor(Player player, List<ItemStack> items) {
+		return hasRoomFor(player.getInventory(), items);
+	}
+
+	public static boolean hasRoomFor(Inventory inventory, ItemStack item) {
+		return hasRoomFor(inventory, Collections.singletonList(item));
+	}
+
+	public static boolean hasRoomFor(Inventory inventory, List<ItemStack> items) {
 		int usedSlots = 0;
 		int openSlots = 0;
-		boolean[] fullSlot = new boolean[36];
-		ItemStack[] inv = player.getInventory().getContents();
+		boolean[] fullSlot = new boolean[inventory.getSize()];
+		ItemStack[] inv = inventory.getContents();
 		for (ItemStack item : items) {
 			if (isNullOrAir(item)) {
 				openSlots++;
@@ -650,7 +666,7 @@ public class PlayerUtils {
 
 			int maxStack = item.getMaxStackSize();
 			int needed = item.getAmount();
-			for (int i = 0; i < 36; i++) {
+			for (int i = 0; i < inventory.getSize(); i++) {
 				if (fullSlot[i]) continue;
 				ItemStack invItem = inv[i];
 				if (isNullOrAir(invItem)) {
@@ -863,7 +879,7 @@ public class PlayerUtils {
 		List<ItemStack> finalItems = new ArrayList<>(items);
 		finalItems.removeIf(Nullables::isNullOrAir);
 		finalItems.removeIf(itemStack -> itemStack.getAmount() == 0);
-		if (!Strings.isNullOrEmpty(nbt)) {
+		if (!Nullables.isNullOrEmpty(nbt)) {
 			finalItems.clear();
 			NBTContainer nbtContainer = new NBTContainer(nbt);
 			for (ItemStack item : new ArrayList<>(items)) {
@@ -959,7 +975,7 @@ public class PlayerUtils {
 	 * @param hasPlayers list of optional players
 	 * @return list of non-null players
 	 */
-	public static @NonNull List<@NonNull Player> getNonNullPlayers(List<? extends @NonNull OptionalPlayer> hasPlayers) {
+	public static @NonNull List<@NonNull Player> getNonNullPlayers(Collection<? extends @NonNull OptionalPlayer> hasPlayers) {
 		return hasPlayers.stream().map(OptionalPlayer::getPlayer).filter(Objects::nonNull).collect(toList());
 	}
 

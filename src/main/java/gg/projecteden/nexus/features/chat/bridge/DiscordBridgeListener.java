@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.chat.bridge;
 
 import com.vdurmont.emoji.EmojiParser;
+import gg.projecteden.api.discord.DiscordId.User;
 import gg.projecteden.nexus.features.chat.Censor;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.chat.ChatManager;
@@ -13,8 +14,8 @@ import gg.projecteden.nexus.models.chat.PublicChannel;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.DiscordId.User;
 import lombok.NoArgsConstructor;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -106,11 +107,18 @@ public class DiscordBridgeListener extends ListenerAdapter {
 		final DiscordUser replyAuthor;
 
 		if (ingame) {
-			final String regex = "<@&\\d{18}> \\*\\*>\\*\\* ";
-			final Matcher matcher = Pattern.compile(regex).matcher(message.getContentRaw());
-			if (matcher.find()) {
-				replyAuthor = discordUserService.getFromRoleId(matcher.group().replaceAll("\\D", ""));
-				content = getContent(message.getContentRaw().replaceAll(regex, ""));
+			final String roleRegex = "<@&\\d{18}> \\*\\*>\\*\\* ";
+			final Matcher roleMatcher = Pattern.compile(roleRegex).matcher(message.getContentRaw());
+
+			final String plainRegex = "\\*\\*\\w{3,16}\\*\\* \\*\\*>\\*\\* ";
+			final Matcher plainMatcher = Pattern.compile(plainRegex).matcher(message.getContentRaw());
+
+			if (roleMatcher.find()) {
+				replyAuthor = discordUserService.getFromRoleId(roleMatcher.group().replaceAll("\\D", ""));
+				content = getContent(message.getContentRaw().replaceAll(roleRegex, ""));
+			} else if (plainMatcher.find()) {
+				replyAuthor = new DiscordUserService().get(PlayerUtils.getPlayer(plainMatcher.group().replaceAll("\\W", "")));
+				content = getContent(message.getContentRaw().replaceAll(plainRegex, ""));
 			} else {
 				replyAuthor = null;
 				content = getContent(message);

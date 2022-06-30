@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.framework.interfaces;
 
-import gg.projecteden.interfaces.Named;
+import gg.projecteden.api.interfaces.Named;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.TextComponent;

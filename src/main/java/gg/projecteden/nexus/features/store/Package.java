@@ -1,5 +1,8 @@
 package gg.projecteden.nexus.features.store;
 
+import gg.projecteden.api.common.annotations.Disabled;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.commands.EmotesCommand;
 import gg.projecteden.nexus.features.commands.AutoTorchCommand;
 import gg.projecteden.nexus.features.commands.HatCommand;
@@ -9,6 +12,7 @@ import gg.projecteden.nexus.features.commands.staff.PlayerHeadCommand;
 import gg.projecteden.nexus.features.commands.staff.admin.PermHelperCommand;
 import gg.projecteden.nexus.features.commands.staff.admin.PermHelperCommand.NumericPermission;
 import gg.projecteden.nexus.features.particles.WingsCommand;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.store.annotations.Category;
 import gg.projecteden.nexus.features.store.annotations.Category.StoreCategory;
 import gg.projecteden.nexus.features.store.annotations.Commands.Command;
@@ -49,7 +53,6 @@ import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.SneakyThrows;
 import net.luckperms.api.context.ImmutableContextSet;
 import org.bukkit.Bukkit;
@@ -64,6 +67,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static java.time.LocalDateTime.now;
@@ -177,6 +181,7 @@ public enum Package {
 		}
 	},
 
+	@Disabled
 	@Id("4496334")
 	@Category(StoreCategory.BOOSTS)
 	MARKET_SELL_PRICES {
@@ -345,6 +350,7 @@ public enum Package {
 		}
 	},
 
+	@Disabled
 	@Id("4714837")
 	@Category(StoreCategory.BOOSTS)
 	HALLOWEEN_CANDY {
@@ -375,7 +381,7 @@ public enum Package {
 
 	@Id("4610203")
 	@Category(StoreCategory.VISUALS)
-	@Display(value = Material.STONE_BUTTON, customModelData = 208)
+	@Display(model = CustomMaterial.COSTUMES_GG_HAT)
 	COSTUMES {
 		@Override
 		public void handleApply(UUID uuid) {
@@ -391,7 +397,7 @@ public enum Package {
 
 	@Id("4610206")
 	@Category(StoreCategory.VISUALS)
-	@Display(value = Material.STONE_BUTTON, customModelData = 208)
+	@Display(model = CustomMaterial.COSTUMES_GG_HAT)
 	COSTUMES_5 {
 		@Override
 		public void handleApply(UUID uuid) {
@@ -465,22 +471,22 @@ public enum Package {
 	@Display(Material.DAYLIGHT_DETECTOR)
 	PTIME,
 
+	@Disabled
 	@Id("4722595")
 	@Category(StoreCategory.VISUALS)
-	@Permission(PlayerTimeCommand.PERMISSION)
-	@Display(value = Material.LAPIS_LAZULI, customModelData = 1)
+	@Display(model = CustomMaterial.PLAYER_PLUSHIE_SITTING)
 	PLAYER_PLUSHIES_TIER_1,
 
+	@Disabled
 	@Id("TODO")
 	@Category(StoreCategory.VISUALS)
-	@Permission(PlayerTimeCommand.PERMISSION)
-	@Display(value = Material.LAPIS_LAZULI, customModelData = 10000)
+	@Display(model = CustomMaterial.PLAYER_PLUSHIE_STANDING)
 	PLAYER_PLUSHIES_TIER_2,
 
+	@Disabled
 	@Id("TODO")
 	@Category(StoreCategory.VISUALS)
-	@Permission(PlayerTimeCommand.PERMISSION)
-	@Display(value = Material.LAPIS_LAZULI, customModelData = 20000)
+	@Display(model = CustomMaterial.PLAYER_PLUSHIE_DABBING)
 	PLAYER_PLUSHIES_TIER_3,
 
 	@Id("2019251")
@@ -823,16 +829,22 @@ public enum Package {
 
 	@NotNull
 	public ItemBuilder getDisplayItem() {
-		Material material = Material.PAPER;;
-		int customModelData = 0;
+		Material material = Material.PAPER;
+		int modelId = 0;
 
 		Display annotation = getField().getAnnotation(Display.class);
 		if (annotation != null) {
-			material = annotation.value();
-			customModelData = annotation.customModelData();
+			if (!isNullOrAir(annotation.value())) {
+				material = annotation.value();
+			} else if (annotation.model() != CustomMaterial.INVISIBLE) {
+				material = annotation.model().getMaterial();
+				modelId = annotation.model().getModelId();
+			} else {
+				Nexus.warn("Invalid @Display on Package." + name());
+			}
 		}
 
-		return new ItemBuilder(material).customModelData(customModelData).name(camelCase(name()));
+		return new ItemBuilder(material).modelId(modelId).name(camelCase(name()));
 	}
 
 	@Nullable
@@ -859,6 +871,10 @@ public enum Package {
 		if (getField().getAnnotation(PermissionGroup.class) != null)
 			return getField().getAnnotation(PermissionGroup.class).value();
 		return null;
+	}
+
+	public boolean isDisabled() {
+		return getField().isAnnotationPresent(Disabled.class);
 	}
 
 	@NotNull

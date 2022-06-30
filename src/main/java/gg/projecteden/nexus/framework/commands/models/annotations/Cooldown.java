@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.framework.commands.models.annotations;
 
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

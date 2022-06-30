@@ -1,12 +1,12 @@
 package gg.projecteden.nexus.utils;
 
 import gg.projecteden.nexus.Nexus;
-import me.lexikiq.HasPlayer;
+import gg.projecteden.parchment.HasPlayer;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_19_R1.entity.CraftEntity;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -28,7 +28,7 @@ import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 public class EntityUtils {
 
 	public static void forcePacket(Entity entity) {
-		((CraftEntity) entity).getHandle().af = true; // hasImpulse = true
+		((CraftEntity) entity).getHandle().hasImpulse = true; // hasImpulse = true
 	}
 
 	@NotNull

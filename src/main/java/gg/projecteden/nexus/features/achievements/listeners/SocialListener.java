@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.achievements.listeners;
 
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.achievements.events.social.DiscordLinkEvent;
 import gg.projecteden.nexus.features.achievements.events.social.poof.PoofToEvent;
 import gg.projecteden.nexus.features.chat.events.ChannelChangeEvent;
@@ -18,9 +19,10 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
+@Disabled
 public class SocialListener implements Listener {
 
-	static {
+	public SocialListener() {
 		Tasks.repeat(300, 300, SocialListener::check);
 	}
 

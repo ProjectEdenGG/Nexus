@@ -1,6 +1,9 @@
 package gg.projecteden.nexus.features.votes;
 
-import gg.projecteden.annotations.Async;
+import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.common.utils.TimeUtils;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
+import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.nexus.features.commands.AgeCommand.ServerAge;
 import gg.projecteden.nexus.features.commands.staff.admin.PermHelperCommand;
 import gg.projecteden.nexus.features.commands.staff.admin.PermHelperCommand.NumericPermission;
@@ -26,9 +29,6 @@ import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.utils.TimeUtils;
-import gg.projecteden.utils.TimeUtils.Timespan;
-import gg.projecteden.utils.Utils;
 import lombok.NonNull;
 import net.luckperms.api.context.ImmutableContextSet;
 import org.bukkit.entity.Player;
@@ -45,10 +45,10 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.api.common.utils.TimeUtils.shortishDateTimeFormat;
 import static gg.projecteden.nexus.features.votes.Votes.GOAL;
 import static gg.projecteden.nexus.utils.StringUtils.ProgressBarStyle.NONE;
 import static gg.projecteden.nexus.utils.StringUtils.progressBar;
-import static gg.projecteden.utils.TimeUtils.shortishDateTimeFormat;
 
 @Aliases("votes")
 @Redirect(from = "/vps", to = "/vote points store")
@@ -127,7 +127,7 @@ public class VoteCommand extends CustomCommand {
 	}
 
 	@Async
-	@Permission(Group.ADMIN)
+	@Permission(Group.STAFF)
 	@Path("onlineCounts")
 	void onlineCounts() {
 		Map<Integer, List<Player>> activeVotes = new HashMap<>();

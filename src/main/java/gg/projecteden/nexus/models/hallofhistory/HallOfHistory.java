@@ -3,8 +3,8 @@ package gg.projecteden.nexus.models.hallofhistory;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.mongodb.serializers.LocalDateConverter;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.mongodb.serializers.LocalDateConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.nerd.Rank;
 import lombok.AllArgsConstructor;
@@ -37,7 +37,6 @@ public class HallOfHistory implements PlayerOwnedObject {
 	public static class RankHistory {
 		@NonNull
 		private Rank rank;
-		@NonNull
 		private boolean current;
 		@NonNull
 		private LocalDate promotionDate;

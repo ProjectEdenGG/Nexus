@@ -9,7 +9,7 @@ import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.annotations.MatchDataFor;
 import gg.projecteden.nexus.features.minigames.models.arenas.PixelPaintersArena;
 import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.utils.Utils;
+import gg.projecteden.api.common.utils.Utils;
 import lombok.Data;
 import lombok.experimental.Accessors;
 

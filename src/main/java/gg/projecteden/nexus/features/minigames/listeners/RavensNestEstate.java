@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.minigames.listeners;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import gg.projecteden.annotations.Disabled;
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.models.Match;

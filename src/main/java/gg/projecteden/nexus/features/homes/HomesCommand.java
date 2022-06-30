@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.homes;
 
-import gg.projecteden.annotations.Async;
+import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
@@ -13,7 +13,7 @@ import gg.projecteden.nexus.models.home.HomeOwner;
 import gg.projecteden.nexus.models.home.HomeService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.utils.Utils.MinMaxResult;
+import gg.projecteden.api.common.utils.Utils.MinMaxResult;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 

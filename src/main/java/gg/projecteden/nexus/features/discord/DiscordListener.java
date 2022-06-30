@@ -1,6 +1,9 @@
 package gg.projecteden.nexus.features.discord;
 
-import gg.projecteden.exceptions.EdenException;
+import gg.projecteden.api.discord.DiscordId.Role;
+import gg.projecteden.api.discord.DiscordId.TextChannel;
+import gg.projecteden.api.discord.DiscordId.User;
+import gg.projecteden.api.common.exceptions.EdenException;
 import gg.projecteden.nexus.models.badge.BadgeUser.Badge;
 import gg.projecteden.nexus.models.badge.BadgeUserService;
 import gg.projecteden.nexus.models.discord.DiscordConfigService;
@@ -11,9 +14,6 @@ import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.HttpUtils;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.DiscordId.Role;
-import gg.projecteden.utils.DiscordId.TextChannel;
-import gg.projecteden.utils.DiscordId.User;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import net.dv8tion.jda.api.entities.Message;

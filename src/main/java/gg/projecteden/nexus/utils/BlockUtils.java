@@ -2,24 +2,17 @@ package gg.projecteden.nexus.utils;
 
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.LocationUtils.Axis;
-import gg.projecteden.nexus.utils.Tasks.GlowTask;
-import me.lexikiq.HasPlayer;
-import me.lexikiq.OptionalPlayer;
+import gg.projecteden.parchment.HasPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
-import org.inventivetalent.glow.GlowAPI.Color;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -193,7 +186,7 @@ public class BlockUtils {
 	}
 
 	public static BlockFace getDirection(Location from, Location to) {
-		Axis axis = Axis.getAxis(from, to);
+		Axis axis = Axis.of(from, to);
 		if (axis == null)
 			throw new InvalidInputException("Locations not aligned on an axis, cannot determine direction");
 
@@ -229,39 +222,4 @@ public class BlockUtils {
 		return null;
 	}
 
-	public static void glow(Block block, long ticks, OptionalPlayer viewer) {
-		glow(block, ticks, viewer, Color.RED);
-	}
-
-	public static void glow(Block block, long ticks, OptionalPlayer viewer, Color color) {
-		glow(block, ticks, Collections.singletonList(viewer), color);
-	}
-
-	public static void glow(Block block, long ticks, List<? extends OptionalPlayer> viewers, Color color) {
-		List<Player> _viewers = PlayerUtils.getNonNullPlayers(viewers);
-
-		Material material = block.getType();
-		if (isNullOrAir(material))
-			material = Material.WHITE_CONCRETE;
-
-		Location location = block.getLocation();
-		World blockWorld = block.getWorld();
-		FallingBlock fallingBlock = blockWorld.spawnFallingBlock(LocationUtils.getCenteredLocation(location), material.createBlockData());
-		fallingBlock.setDropItem(false);
-		fallingBlock.setGravity(false);
-		fallingBlock.setInvulnerable(true);
-		fallingBlock.setVelocity(new Vector(0, 0, 0));
-
-		GlowTask.builder()
-				.duration(ticks)
-				.entity(fallingBlock)
-				.color(color)
-				.viewers(_viewers)
-				.onComplete(() -> {
-					fallingBlock.remove();
-					for (Player viewer : _viewers)
-						viewer.sendBlockChange(location, block.getType().createBlockData());
-				})
-				.start();
-	}
 }

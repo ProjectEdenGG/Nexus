@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.models.particle;
 
+import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.particles.Particles;
 import gg.projecteden.nexus.features.particles.effects.DiscoEffect;
@@ -12,7 +13,6 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.framework.features.Features;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.utils.EnumUtils;
 import lombok.Getter;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static gg.projecteden.nexus.features.menus.SignMenuFactory.ARROWS;
+import static gg.projecteden.nexus.features.menus.api.SignMenuFactory.ARROWS;
 
 @Getter
 public enum ParticleSetting {

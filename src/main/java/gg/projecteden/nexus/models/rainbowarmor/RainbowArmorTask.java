@@ -8,7 +8,7 @@ import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.ArmorSlot;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.MathUtils;
+import gg.projecteden.api.common.utils.MathUtils;
 import lombok.Builder;
 import lombok.Data;
 import org.bukkit.Color;

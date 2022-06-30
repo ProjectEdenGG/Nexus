@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.resourcepack.decoration.common;
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPlaceEvent;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Utils;
@@ -31,38 +32,30 @@ import java.util.List;
 public class DecorationConfig {
 	public static final String NBT_OWNER_KEY = "DecorationOwner";
 	protected String name;
-	protected int modelData;
 	protected @NonNull Material material = Material.PAPER;
+	protected int modelId;
 	protected List<String> lore = Collections.singletonList("Decoration");
 
 	protected List<Hitbox> hitboxes = Hitbox.NONE();
 	protected RotationType rotationType = RotationType.BOTH;
 	protected List<PlacementType> disabledPlacements = new ArrayList<>();
 
-	public DecorationConfig(String name, int modelData, @NotNull Material material, List<Hitbox> hitboxes) {
+	public DecorationConfig(String name, @NotNull CustomMaterial material, List<Hitbox> hitboxes) {
 		this.name = name;
-		this.modelData = modelData;
-		this.material = material;
+		this.modelId = material.getModelId();
+		this.material = material.getMaterial();
 		this.hitboxes = hitboxes;
 
 		if (this.isMultiBlock())
 			this.rotationType = RotationType.DEGREE_90;
 	}
 
-	public DecorationConfig(String name, int modelData, List<Hitbox> hitboxes) {
-		this(name, modelData, Material.PAPER, hitboxes);
-	}
-
-	public DecorationConfig(String name, int modelData) {
-		this(name, modelData, Hitbox.NONE());
-	}
-
-	public DecorationConfig(String name, int modelData, Material material) {
-		this(name, modelData, material, Hitbox.NONE());
+	public DecorationConfig(String name, CustomMaterial material) {
+		this(name, material, Hitbox.NONE());
 	}
 
 	public ItemStack getItem() {
-		ItemBuilder decor = new ItemBuilder(material).customModelData(modelData).name(name).lore(lore);
+		ItemBuilder decor = new ItemBuilder(material).modelId(modelId).name(name).lore(lore);
 
 		if (this instanceof Colorable colorable && colorable.isColorable())
 			decor.dyeColor(colorable.getType().getColor());

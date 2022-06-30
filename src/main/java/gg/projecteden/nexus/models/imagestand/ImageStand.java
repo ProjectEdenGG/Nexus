@@ -3,9 +3,10 @@ package gg.projecteden.nexus.models.imagestand;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.interfaces.DatabaseObject;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.interfaces.DatabaseObject;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.particles.effects.LineEffect;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PacketUtils;
@@ -16,17 +17,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import net.minecraft.world.phys.AABB;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
+import org.bukkit.craftbukkit.v1_19_R1.entity.CraftArmorStand;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BoundingBox;
-import org.inventivetalent.boundingbox.BoundingBoxAPI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,7 +40,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
-import static gg.projecteden.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 @Data
 @Entity(value = "image_stand", noClassnameStored = true)
@@ -149,11 +151,11 @@ public class ImageStand implements DatabaseObject {
 		}
 	}
 
-	public void updateBoundingBox(ArmorStand armorStand, BoundingBox boundingBox) {
-		if (armorStand == null || boundingBox == null)
+	public void updateBoundingBox(ArmorStand armorStand, BoundingBox box) {
+		if (armorStand == null || box == null)
 			return;
 
-		BoundingBoxAPI.setBoundingBox(armorStand, boundingBox);
+		((CraftArmorStand) armorStand).getHandle().setBoundingBox(new AABB(box.getMinX(), box.getMinY(), box.getMinZ(), box.getMaxX(), box.getMaxY(), box.getMaxZ()));
 	}
 
 	public List<ArmorStand> getArmorStands() {
@@ -262,17 +264,16 @@ public class ImageStand implements DatabaseObject {
 	@AllArgsConstructor
 	public enum ImageSize {
 		// Height x Width
-		_1x1(Material.PAPER, 1296),
-		_1x2(Material.PAPER, 1297),
-		_3x2(Material.PAPER, 1298),
-		_4x3(Material.PAPER, 1299),
+		_1x1(null),
+		_1x2(null),
+		_3x2(null),
+		_4x3(CustomMaterial.IMAGES_OUTLINE_4x3),
 		;
 
-		private final Material material;
-		private final int customModelData;
+		private final CustomMaterial material;
 
 		public ItemStack getOutlineItem() {
-			return new ItemBuilder(material).customModelData(customModelData).build();
+			return new ItemBuilder(material).build();
 		}
 
 		public BoundingBox getBoundingBox(Location location) {

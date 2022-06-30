@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.dailyrewards;
 
-import com.google.common.base.Strings;
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.ColorSelectMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
@@ -27,9 +27,9 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-import static gg.projecteden.nexus.features.menus.SignMenuFactory.ARROWS;
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.nexus.features.menus.api.SignMenuFactory.ARROWS;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 @Title("&3Daily Rewards")
 @RequiredArgsConstructor
@@ -47,7 +47,7 @@ public class DailyRewardsMenu extends InventoryProvider {
 
 		for (int i = 1; i <= Math.max(MAX_DAY, user.getCurrentStreak().getStreak()); i++) {
 			final int day = i;
-			if (user.getCurrentStreak().getStreak() >= day)
+			if (user.getCurrentStreak().canClaim(day))
 				if (user.getCurrentStreak().hasClaimed(day))
 					items.add(ClickableItem.empty(ResourcePackNumber.of(day)
 						.player(player)
@@ -160,7 +160,7 @@ public class DailyRewardsMenu extends InventoryProvider {
 					PlayerUtils.send(player, PREFIX + "&e" + votePoints + " &3vote points has been added to your balance");
 				}
 
-				if (!Strings.isNullOrEmpty(command))
+				if (!Nullables.isNullOrEmpty(command))
 					PlayerUtils.runCommandAsConsole(command.replaceAll("%player%", player.getName()));
 
 				saveAndReturn(day);

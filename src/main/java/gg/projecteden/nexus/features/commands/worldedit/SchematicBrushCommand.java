@@ -24,8 +24,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
 
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 @NoArgsConstructor
 @Permission(Group.STAFF)

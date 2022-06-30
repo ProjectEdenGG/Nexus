@@ -7,7 +7,7 @@ import gg.projecteden.nexus.models.mail.Mailer;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.QueuedTask;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -16,11 +16,7 @@ import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 
-public abstract class MongoPlayerService<T extends PlayerOwnedObject> extends gg.projecteden.mongodb.MongoPlayerService<T> {
-
-	static {
-		loadServices("gg.projecteden.nexus.models");
-	}
+public abstract class MongoPlayerService<T extends PlayerOwnedObject> extends gg.projecteden.api.mongodb.MongoPlayerService<T> {
 
 	@Override
 	public void save(T object) {

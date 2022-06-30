@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.listeners;
 
 import de.myzelyam.api.vanish.PlayerVanishStateChangeEvent;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
@@ -18,7 +19,6 @@ import gg.projecteden.nexus.models.socialmedia.SocialMediaUserService;
 import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange.PlayerRankChangeEvent;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.bukkit.Bukkit;
@@ -134,7 +134,7 @@ public class Tab implements Listener {
 			VANISHED(player -> Nerd.of(player).isVanished()),
 			;
 
-			private Predicate<Player> predicate;
+			private final Predicate<Player> predicate;
 
 			public boolean applies(Player player) {
 				return predicate.test(player);

@@ -1,11 +1,11 @@
 package gg.projecteden.nexus.features.afk;
 
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.utils.TimeUtils.Timespan;
 import org.bukkit.entity.Player;
 
 @Aliases("timeafk")

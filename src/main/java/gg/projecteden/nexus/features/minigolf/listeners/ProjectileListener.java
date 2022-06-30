@@ -7,7 +7,6 @@ import gg.projecteden.nexus.features.minigolf.models.MiniGolfUser;
 import gg.projecteden.nexus.features.minigolf.models.blocks.ModifierBlock;
 import gg.projecteden.nexus.features.minigolf.models.blocks.ModifierBlockType;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallModifierBlockEvent;
-import gg.projecteden.nexus.utils.Nullables;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;

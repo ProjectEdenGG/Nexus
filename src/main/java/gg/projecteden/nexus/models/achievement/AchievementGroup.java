@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.models.achievement;
 
-import gg.projecteden.utils.EnumUtils;
+import gg.projecteden.api.common.utils.EnumUtils;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;

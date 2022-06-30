@@ -21,6 +21,7 @@ import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.menus.api.opener.InventoryOpener;
+import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import lombok.Getter;
 import lombok.Setter;
@@ -103,6 +104,10 @@ public class SmartInventory {
 		try {
 			this.provider.setContents(contents);
 			this.provider.init();
+		} catch (NexusException ex) {
+			player.closeInventory();
+			player.sendMessage(ex.withPrefix(getProvider().getPrefix()));
+			return null;
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			player.closeInventory();

@@ -1,7 +1,8 @@
 package gg.projecteden.nexus.features.commands.staff;
 
-import com.google.common.base.Strings;
-import gg.projecteden.annotations.Async;
+import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.common.utils.Nullables;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -17,9 +18,9 @@ import gg.projecteden.nexus.models.staffhall.StaffHallConfig;
 import gg.projecteden.nexus.models.staffhall.StaffHallConfig.StaffHallRankGroup;
 import gg.projecteden.nexus.models.staffhall.StaffHallConfigService;
 import gg.projecteden.nexus.utils.CitizensUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -43,10 +44,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty;
+import static gg.projecteden.api.common.utils.TimeUtils.shortDateFormat;
+import static gg.projecteden.api.common.utils.TimeUtils.shortDateTimeFormat;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
-import static gg.projecteden.utils.TimeUtils.shortDateFormat;
-import static gg.projecteden.utils.TimeUtils.shortDateTimeFormat;
 
 @NoArgsConstructor
 public class StaffHallCommand extends CustomCommand implements Listener {
@@ -71,15 +73,15 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 				for (Nerd staff : ranks.get(rank))
 					try {
 						String html = "";
-						if (!Strings.isNullOrEmpty(staff.getPreferredName()))
-							html += "<span style=\"font-weight: bold;\">Preferred name:</span> " + staff.getPreferredName() + "<br/>";
+						if (isNotNullOrEmpty(staff.getFilteredPreferredNames()))
+							html += "<span style=\"font-weight: bold;\">" + StringUtils.plural("Preferred name", staff.getFilteredPreferredNames().size()) + ":</span> " + String.join(", ", staff.getFilteredPreferredNames()) + "<br/>";
 						if (staff.getBirthday() != null)
 							html += "<span style=\"font-weight: bold;\">Birthday:</span> " + shortDateFormat(staff.getBirthday())
 								+ " (" + staff.getBirthday().until(LocalDate.now()).getYears() + " years)<br/>";
 						if (staff.getPromotionDate() != null)
 							html += "<span style=\"font-weight: bold;\">Promotion date:</span> " + shortDateFormat(staff.getPromotionDate()) + "<br/>";
 						html += "<br/>";
-						if (!Strings.isNullOrEmpty(staff.getAbout()))
+						if (!Nullables.isNullOrEmpty(staff.getAbout()))
 							html += "<span style=\"font-weight: bold;\">About me:</span> " + staff.getAbout();
 
 						File file = Paths.get("plugins/website/meetthestaff/" + staff.getUuid() + ".html").toFile();
@@ -105,10 +107,10 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 		send("&e&lNickname: &3" + nerd.getNickname());
 		send("&e&lIGN: &3" + nerd.getName());
 		send("&e&lRank: &3" + nerd.getRank().getColoredName());
-		if (!isNullOrEmpty(nerd.getPreferredName()))
-			send("&e&lPreferred name: &3" + nerd.getPreferredName());
-		if (!nerd.getPronouns().isEmpty())
+		if (isNotNullOrEmpty(nerd.getPronouns()))
 			send("&e&lPronouns: &3" + String.join(",", nerd.getPronouns().stream().map(Enum::toString).toList()));
+		if (isNotNullOrEmpty(nerd.getFilteredPreferredNames()))
+			send(plural("&e&lPreferred name", nerd.getFilteredPreferredNames().size()) + ": &3" + String.join(", ", nerd.getFilteredPreferredNames()));
 		if (nerd.getBirthday() != null)
 			send("&e&lBirthday: &3" + shortDateFormat(nerd.getBirthday()) + " (" + nerd.getBirthday().until(LocalDate.now()).getYears() + " years)");
 		if (nerd.getFirstJoin() != null)

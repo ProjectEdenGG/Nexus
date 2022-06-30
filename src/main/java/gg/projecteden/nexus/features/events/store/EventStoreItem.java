@@ -1,23 +1,17 @@
 package gg.projecteden.nexus.features.events.store;
 
-import gg.projecteden.nexus.Nexus;
+import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.nexus.features.events.store.providers.EventStoreMenu;
-import gg.projecteden.nexus.features.events.store.providers.EventStoreProvider;
 import gg.projecteden.nexus.features.events.store.providers.purchasable.EventStoreEmojiHatProvider;
 import gg.projecteden.nexus.features.events.store.providers.purchasable.EventStoreParticlesProvider;
 import gg.projecteden.nexus.features.events.store.providers.purchasable.EventStoreWingsProvider;
 import gg.projecteden.nexus.features.particles.effects.WingsEffect.WingStyle;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.store.perks.emojihats.EmojiHat;
-import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.particle.ParticleType;
-import gg.projecteden.nexus.models.store.ContributorService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.utils.EnumUtils;
-import gg.projecteden.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -26,16 +20,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.jetbrains.annotations.NotNull;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
 
 import static gg.projecteden.nexus.features.events.Events.STORE_PREFIX;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.PlayerUtils.runCommand;
 import static gg.projecteden.nexus.utils.PlayerUtils.runCommandAsOp;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-import static gg.projecteden.nexus.utils.StringUtils.prettyMoney;
 
 @Getter
 @AllArgsConstructor
@@ -148,7 +138,7 @@ public enum EventStoreItem {
 			new EventStoreWingsProvider(currentMenu).open(player);
 		}
 	},
-	CHAT_EMOJIS(5, Material.MAP, 1000) {
+	CHAT_EMOJIS(5, CustomMaterial.EMOJI_100) {
 		@Override
 		public List<String> getLore() {
 			return List.of("&eSend custom emojis in chat!", "&f👀 💯 🔥 👍 👏 😍 😎",
@@ -181,54 +171,15 @@ public enum EventStoreItem {
 			player.closeInventory();
 		}
 	},
-	STORE_CREDIT(100, Material.PAPER) {
-		@Override
-		protected List<String> getLore() {
-			return List.of("&eConvert Event Tokens into coupons for the &c/store",
-				"",
-				"&6Price:&e " + getPrice() + " tokens per $USD");
-		}
-
-		@Override
-		public void onClick(Player player, EventStoreMenu currentMenu) {
-			Nexus.getSignMenuFactory()
-				.lines("", "Enter the amount", "of credit you", "want ($USD)")
-				.prefix(STORE_PREFIX)
-				.response(lines -> {
-					String line = lines[0];
-					if (isNullOrEmpty(line)) {
-						new EventStoreProvider().open(player);
-						return;
-					}
-
-					final double usd = convertToUSD(line);
-					final int price = (int) (usd * getPrice());
-
-					if (usd < 1)
-						throw new InvalidInputException("Amount must be $1 or more");
-
-					new EventUserService().edit(player, user -> user.charge(price));
-					new ContributorService().edit(player, user -> user.giveCredit(usd));
-
-					PlayerUtils.send(player, STORE_PREFIX + "You have purchased &e" + prettyMoney(usd) + " store credit. Manage with &c/store credit");
-				})
-				.open(player);
-		}
-
-		private double convertToUSD(String line) {
-			line = StringUtils.asParsableDecimal(line);
-			if (!Utils.isDouble(line))
-				throw new InvalidInputException(line + " is not a valid number");
-
-			final double input = BigDecimal.valueOf(Double.parseDouble(line)).setScale(2, RoundingMode.HALF_UP).doubleValue();
-			return Math.ceil(input * 2) / 2;
-		}
-	},
 	;
 
 	private final int price;
 	private final Material material;
-	private int customModelData;
+	private int modelId;
+
+	EventStoreItem(int price, CustomMaterial material) {
+		this(price, material.getMaterial(), material.getModelId());
+	}
 
 	protected List<String> getLore() {
 		return null;
@@ -236,7 +187,7 @@ public enum EventStoreItem {
 
 	@NotNull
 	public ItemBuilder getRawDisplayItem() {
-		return new ItemBuilder(material).customModelData(customModelData);
+		return new ItemBuilder(material).modelId(modelId);
 	}
 
 	public ItemBuilder getDisplayItem() {

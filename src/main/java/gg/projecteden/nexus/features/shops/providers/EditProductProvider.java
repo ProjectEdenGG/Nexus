@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.features.shops.providers;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.listeners.TemporaryMenuListener;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.shops.ShopCommand;
@@ -29,7 +29,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 
-import static gg.projecteden.nexus.features.menus.SignMenuFactory.ARROWS;
+import static gg.projecteden.nexus.features.menus.api.SignMenuFactory.ARROWS;
 import static gg.projecteden.nexus.utils.ItemUtils.isSimilar;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.pretty;
@@ -165,6 +165,7 @@ public class EditProductProvider extends ShopProvider {
 			if (previousMenu != null)
 				Tasks.wait(1, () -> previousMenu.open(player));
 		}
+
 	}
 
 	@Title("&0Remove Stock")

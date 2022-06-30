@@ -3,7 +3,8 @@ package gg.projecteden.nexus.models.resourcepack;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -75,8 +76,22 @@ public class LocalResourcePackUser implements PlayerOwnedObject {
 		return "&7Unknown";
 	}
 
+	public String getSaturnCommitUrl() {
+		if (isNullOrEmpty(saturnVersion))
+			return "";
+
+		return EdenSocialMediaSite.GITHUB.getUrl() + "/Saturn/commit/" + saturnVersion;
+	}
+
 	public String getTitanStatus() {
 		return hasTitan() ? "&aInstalled &3(&7" + getTitanVersion() + "&3)" : "&cNot installed";
+	}
+
+	public String getTitanCommitUrl() {
+		if (isNullOrEmpty(titanVersion))
+			return "";
+
+		return EdenSocialMediaSite.GITHUB.getUrl() + "/Titan/commit/" + titanVersion;
 	}
 
 	private static final Map<Status, ChatColor> STATUS_COLORS = Map.of(
